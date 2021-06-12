@@ -36,7 +36,6 @@
 #include "SharedBuffer.h"
 #include <gcrypt.h>
 #include <wtf/Condition.h>
-#include <wtf/Optional.h>
 #include <wtf/VectorHash.h>
 
 namespace WebCore {
@@ -115,7 +114,7 @@ private:
     void closeGCryptHandle();
 
     // FIXME: It would be nice to use something in WebCore for crypto...
-    Optional<gcry_cipher_hd_t> m_gCryptHandle { WTF::nullopt };
+    std::optional<gcry_cipher_hd_t> m_gCryptHandle { std::nullopt };
 };
 
 } // namespace WebCore

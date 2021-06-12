@@ -279,26 +279,26 @@ void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCo
 #endif
 }
 
-Optional<WebCore::RegistrableDomain> NetworkSession::firstPartyHostCNAMEDomain(const String& firstPartyHost)
+std::optional<WebCore::RegistrableDomain> NetworkSession::firstPartyHostCNAMEDomain(const String& firstPartyHost)
 {
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     if (!decltype(m_firstPartyHostCNAMEDomains)::isValidKey(firstPartyHost))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto iterator = m_firstPartyHostCNAMEDomains.find(firstPartyHost);
     if (iterator == m_firstPartyHostCNAMEDomains.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return iterator->value;
 #else
     UNUSED_PARAM(firstPartyHost);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
 void NetworkSession::resetCNAMEDomainData()
 {
     m_firstPartyHostCNAMEDomains.clear();
-    m_thirdPartyCNAMEDomainForTesting = WTF::nullopt;
+    m_thirdPartyCNAMEDomainForTesting = std::nullopt;
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

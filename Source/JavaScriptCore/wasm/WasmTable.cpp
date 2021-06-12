@@ -47,7 +47,7 @@ void Table::setLength(uint32_t length)
     ASSERT(m_mask == WTF::maskForSize(allocatedLength(length)));
 }
 
-Table::Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType type)
+Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
     : m_type(type)
     , m_maximum(maximum)
     , m_owner(nullptr)
@@ -58,14 +58,14 @@ Table::Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType type
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_jsValues = MallocPtr<WriteBarrier<Unknown>, VMMalloc>::malloc((sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    m_jsValues = MallocPtr<WriteBarrier<Unknown>, VMMalloc>::malloc(sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length)));
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
         new (&m_jsValues.get()[i]) WriteBarrier<Unknown>();
         m_jsValues.get()[i].setStartingValue(jsNull());
     }
 }
 
-RefPtr<Table> Table::tryCreate(uint32_t initial, Optional<uint32_t> maximum, TableElementType type)
+RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
 {
     if (!isValidLength(initial))
         return nullptr;
@@ -79,7 +79,7 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, Optional<uint32_t> maximum, Tab
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
+std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 {
     RELEASE_ASSERT(m_owner);
     if (delta == 0)
@@ -87,27 +87,25 @@ Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
     Locker locker { m_owner->cellLock() };
 
-    using Checked = Checked<uint32_t, RecordOverflow>;
-    Checked newLengthChecked = length();
+    CheckedUint32 newLengthChecked = length();
     newLengthChecked += delta;
-    uint32_t newLength;
-    if (newLengthChecked.safeGet(newLength) == CheckedState::DidOverflow)
-        return WTF::nullopt;
+    if (newLengthChecked.hasOverflowed())
+        return std::nullopt;
 
+    uint32_t newLength = newLengthChecked;
     if (maximum() && newLength > *maximum())
-        return WTF::nullopt;
+        return std::nullopt;
     if (!isValidLength(newLength))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto checkedGrow = [&] (auto& container, auto initializer) {
-        if (newLengthChecked.unsafeGet() > allocatedLength(m_length)) {
-            Checked reallocSizeChecked = allocatedLength(newLengthChecked.unsafeGet());
+        if (newLengthChecked > allocatedLength(m_length)) {
+            CheckedUint32 reallocSizeChecked = allocatedLength(newLengthChecked);
             reallocSizeChecked *= sizeof(*container.get());
-            uint32_t reallocSize;
-            if (reallocSizeChecked.safeGet(reallocSize) == CheckedState::DidOverflow)
+            if (reallocSizeChecked.hasOverflowed())
                 return false;
             // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-            container.realloc(reallocSize);
+            container.realloc(reallocSizeChecked);
         }
         for (uint32_t i = m_length; i < allocatedLength(newLength); ++i) {
             new (&container.get()[i]) std::remove_reference_t<decltype(*container.get())>();
@@ -118,13 +116,13 @@ Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
     if (auto* funcRefTable = asFuncrefTable()) {
         if (!checkedGrow(funcRefTable->m_importableFunctions, [] (auto&) { }))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!checkedGrow(funcRefTable->m_instances, [] (auto&) { }))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     if (!checkedGrow(m_jsValues, [defaultValue] (WriteBarrier<Unknown>& slot) { slot.setStartingValue(defaultValue); }))
-        return WTF::nullopt;
+        return std::nullopt;
 
     setLength(newLength);
     return newLength;
@@ -190,14 +188,14 @@ FuncRefTable* Table::asFuncrefTable()
     return m_type == TableElementType::Funcref ? static_cast<FuncRefTable*>(this) : nullptr;
 }
 
-FuncRefTable::FuncRefTable(uint32_t initial, Optional<uint32_t> maximum)
+FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum)
     : Table(initial, maximum, TableElementType::Funcref)
 {
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_importableFunctions = MallocPtr<WasmToWasmImportableFunction, VMMalloc>::malloc((sizeof(WasmToWasmImportableFunction) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    m_importableFunctions = MallocPtr<WasmToWasmImportableFunction, VMMalloc>::malloc(sizeof(WasmToWasmImportableFunction) * Checked<size_t>(allocatedLength(m_length)));
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_instances = MallocPtr<Instance*, VMMalloc>::malloc((sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    m_instances = MallocPtr<Instance*, VMMalloc>::malloc(sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length)));
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
         new (&m_importableFunctions.get()[i]) WasmToWasmImportableFunction();
         ASSERT(m_importableFunctions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.

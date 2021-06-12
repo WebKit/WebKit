@@ -33,7 +33,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -83,7 +83,7 @@ private:
     bool m_isAttached { false };
     RefPtr<RTCRtpTransformBackend> m_backend;
 
-    CheckedLock m_transformerLock;
+    Lock m_transformerLock;
     bool m_isTransformerInitialized WTF_GUARDED_BY_LOCK(m_transformerLock) { false };
     WeakPtr<RTCRtpScriptTransformer> m_transformer WTF_GUARDED_BY_LOCK(m_transformerLock);
 };

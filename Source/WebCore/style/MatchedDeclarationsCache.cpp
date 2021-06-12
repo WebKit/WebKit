@@ -138,7 +138,7 @@ void MatchedDeclarationsCache::sweep()
 {
     // Look for cache entries containing a style declaration with a single ref and remove them.
     // This may happen when an element attribute mutation causes it to generate a new inlineStyle()
-    // or presentationAttributeStyle(), potentially leaving this cache with the last ref on the old one.
+    // or presentationalHintStyle(), potentially leaving this cache with the last ref on the old one.
     auto hasOneRef = [](auto& declarations) {
         for (auto& matchedProperties : declarations) {
             if (matchedProperties.properties->hasOneRef())

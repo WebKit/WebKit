@@ -440,7 +440,7 @@ int x509v3_cache_extensions(X509 *x)
     if (!X509_digest(x, EVP_sha1(), x->sha1_hash, NULL))
         x->ex_flags |= EXFLAG_INVALID;
     /* V1 should mean no extensions ... */
-    if (!X509_get_version(x))
+    if (X509_get_version(x) == X509_VERSION_1)
         x->ex_flags |= EXFLAG_V1;
     /* Handle basic constraints */
     if ((bs = X509_get_ext_d2i(x, NID_basic_constraints, &j, NULL))) {

@@ -30,8 +30,8 @@
 #include "PlatformCALayerClient.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 
 #if USE(CG)
@@ -45,9 +45,10 @@ class PlatformCALayer;
 class TileController;
 
 class TileGrid : public PlatformCALayerClient {
-    WTF_MAKE_NONCOPYABLE(TileGrid); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(TileGrid);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    TileGrid(TileController&);
+    explicit TileGrid(TileController&);
     ~TileGrid();
 
 #if USE(CA)
@@ -67,12 +68,11 @@ public:
 
     bool prepopulateRect(const FloatRect&);
 
-    enum TileValidationPolicyFlags {
+    enum ValidationPolicyFlag : uint8_t {
         PruneSecondaryTiles = 1 << 0,
         UnparentAllTiles    = 1 << 1
     };
-    typedef unsigned TileValidationPolicy;
-    void revalidateTiles(TileValidationPolicy = 0);
+    void revalidateTiles(OptionSet<ValidationPolicyFlag> = { });
 
     bool tilesWouldChangeForCoverageRect(const FloatRect&) const;
 
@@ -93,20 +93,15 @@ public:
     void removeUnparentedTilesNow();
 #endif
 
-    typedef IntPoint TileIndex;
+    using TileIndex = IntPoint;
 
-    typedef unsigned TileCohort;
-    static const TileCohort VisibleTileCohort = UINT_MAX;
+    using TileCohort = unsigned;
+    static constexpr TileCohort visibleTileCohort = std::numeric_limits<TileCohort>::max();
 
     struct TileInfo {
         RefPtr<PlatformCALayer> layer;
-        TileCohort cohort; // VisibleTileCohort is visible.
-        bool hasStaleContent;
-
-        TileInfo()
-            : cohort(VisibleTileCohort)
-            , hasStaleContent(false)
-        { }
+        TileCohort cohort { visibleTileCohort };
+        bool hasStaleContent { false };
     };
 
 private:
@@ -158,19 +153,16 @@ private:
     Ref<PlatformCALayer> m_containerLayer;
 #endif
 
-    typedef HashMap<TileIndex, TileInfo> TileMap;
-    TileMap m_tiles;
+    HashMap<TileIndex, TileInfo> m_tiles;
 
     IntRect m_primaryTileCoverageRect;
     Vector<FloatRect> m_secondaryTileCoverageRects;
 
-    typedef Deque<TileCohortInfo> TileCohortList;
-    TileCohortList m_cohortList;
+    Deque<TileCohortInfo> m_cohortList;
 
     Timer m_cohortRemovalTimer;
 
-    typedef HashMap<PlatformCALayer*, int> RepaintCountMap;
-    RepaintCountMap m_tileRepaintCounts;
+    HashCountedSet<PlatformCALayer*> m_tileRepaintCounts;
     
     IntSize m_tileSize;
 
@@ -178,4 +170,3 @@ private:
 };
 
 }
-

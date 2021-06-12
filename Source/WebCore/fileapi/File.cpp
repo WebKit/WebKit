@@ -67,7 +67,7 @@ File::File(ScriptExecutionContext* context, URL&& url, String&& type, String&& p
 {
 }
 
-File::File(DeserializationContructor, ScriptExecutionContext* context, const String& path, const URL& url, const String& type, const String& name, const Optional<int64_t>& lastModified)
+File::File(DeserializationContructor, ScriptExecutionContext* context, const String& path, const URL& url, const String& type, const String& name, const std::optional<int64_t>& lastModified)
     : Blob(deserializationContructor, context, url, type, { }, path)
     , m_path(path)
     , m_name(name)
@@ -78,7 +78,7 @@ File::File(DeserializationContructor, ScriptExecutionContext* context, const Str
 File::File(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
     : Blob(context, WTFMove(blobPartVariants), propertyBag)
     , m_name(filename)
-    , m_lastModifiedDateOverride(propertyBag.lastModified.valueOr(WallTime::now().secondsSinceEpoch().milliseconds()))
+    , m_lastModifiedDateOverride(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
 {
 }
 

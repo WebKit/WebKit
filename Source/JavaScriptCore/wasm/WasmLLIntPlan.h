@@ -85,7 +85,7 @@ public:
 
 private:
     bool prepareImpl() final;
-    void didCompleteCompilation(const AbstractLocker&) final;
+    void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) final;
 
     Vector<std::unique_ptr<FunctionCodeBlock>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };

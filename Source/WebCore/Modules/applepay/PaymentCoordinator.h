@@ -30,7 +30,6 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -73,13 +72,13 @@ public:
 
     bool beginPaymentSession(Document&, PaymentSession&, const ApplePaySessionPaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
-    void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&);
-    void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&);
-    void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&);
+    void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&);
+    void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&);
+    void completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&);
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&);
+    void completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&&);
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentSession(Optional<PaymentAuthorizationResult>&&);
+    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&);
     void abortPaymentSession();
     void cancelPaymentSession();
 
@@ -93,7 +92,7 @@ public:
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     WEBCORE_EXPORT void didCancelPaymentSession(PaymentSessionError&&);
 
-    Optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
+    std::optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
 
     bool shouldEnableApplePayAPIs(Document&) const;
     WEBCORE_EXPORT Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;

@@ -31,26 +31,14 @@
 #include "MediaProducer.h"
 #include "MediaUsageInfo.h"
 #include "PlatformMediaSession.h"
-#include "SuccessOr.h"
 #include "Timer.h"
-#include <wtf/Optional.h>
-#include <wtf/TypeCasts.h>
-
-#if ENABLE(MEDIA_SESSION)
 #include <memory>
-#endif
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
-enum class MediaSessionMainContentPurpose {
-    MediaControls,
-    Autoplay
-};
-
-enum class MediaPlaybackState {
-    Playing,
-    Paused
-};
+enum class MediaSessionMainContentPurpose { MediaControls, Autoplay };
+enum class MediaPlaybackState { Playing, Paused };
 
 enum class MediaPlaybackDenialReason {
     UserGestureRequired,
@@ -62,14 +50,15 @@ enum class MediaPlaybackDenialReason {
 class Document;
 class HTMLMediaElement;
 class MediaMetadata;
-struct MediaPositionState;
 class MediaSession;
 class MediaSessionObserver;
 class SourceBuffer;
+
+struct MediaPositionState;
+
 enum class MediaSessionPlaybackState : uint8_t;
 
-class MediaElementSession final : public PlatformMediaSession
-{
+class MediaElementSession final : public PlatformMediaSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MediaElementSession(HTMLMediaElement&);
@@ -86,7 +75,7 @@ public:
     void isVisibleInViewportChanged();
     void inActiveDocumentChanged();
 
-    SuccessOr<MediaPlaybackDenialReason> playbackStateChangePermitted(MediaPlaybackState) const;
+    Expected<void, MediaPlaybackDenialReason> playbackStateChangePermitted(MediaPlaybackState) const;
     bool autoplayPermitted() const;
     bool dataLoadingPermitted() const;
     MediaPlayer::BufferingPolicy preferredBufferingPolicy() const;
@@ -173,10 +162,10 @@ public:
             || type == MediaType::VideoAudio;
     }
 
-    Optional<NowPlayingInfo> nowPlayingInfo() const final;
+    std::optional<NowPlayingInfo> nowPlayingInfo() const final;
 
     WEBCORE_EXPORT void updateMediaUsageIfChanged() final;
-    Optional<MediaUsageInfo> mediaUsageInfo() const { return m_mediaUsageInfo; }
+    std::optional<MediaUsageInfo> mediaUsageInfo() const { return m_mediaUsageInfo; }
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -187,7 +176,7 @@ public:
     void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument&) final;
 #endif
     void metadataChanged(const RefPtr<MediaMetadata>&);
-    void positionStateChanged(const Optional<MediaPositionState>&);
+    void positionStateChanged(const std::optional<MediaPositionState>&);
     void playbackStateChanged(MediaSessionPlaybackState);
     void actionHandlersChanged();
 
@@ -220,7 +209,7 @@ private:
     HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;
 
-    Optional<MediaUsageInfo> m_mediaUsageInfo;
+    std::optional<MediaUsageInfo> m_mediaUsageInfo;
 
     bool m_elementIsHiddenUntilVisibleInViewport { false };
     bool m_elementIsHiddenBecauseItWasRemovedFromDOM { false };

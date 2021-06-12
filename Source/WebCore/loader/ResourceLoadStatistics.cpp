@@ -351,10 +351,7 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
 
 static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
 {
-    builder.appendLiteral("    ");
-    builder.append(label);
-    builder.appendLiteral(": ");
-    builder.append(flag ? "Yes" : "No");
+    builder.append("    ", label, ": ", flag ? "Yes" : "No");
 }
 
 static void appendHashSet(StringBuilder& builder, const String& label, const HashSet<RegistrableDomain>& hashSet)
@@ -362,15 +359,9 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
     if (hashSet.isEmpty())
         return;
     
-    builder.appendLiteral("    ");
-    builder.append(label);
-    builder.appendLiteral(":\n");
-    
-    for (auto& entry : hashSet) {
-        builder.appendLiteral("        ");
-        builder.append(entry.string());
-        builder.append('\n');
-    }
+    builder.append("    ", label, ":\n");
+    for (auto& entry : hashSet)
+        builder.append("        ", entry.string(), '\n');
 }
 
 #if ENABLE(WEB_API_STATISTICS)
@@ -379,15 +370,9 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
     if (hashSet.isEmpty())
         return;
     
-    builder.appendLiteral("    ");
-    builder.append(label);
-    builder.appendLiteral(":\n");
-    
-    for (auto& entry : hashSet) {
-        builder.appendLiteral("        ");
-        builder.append(entry);
-        builder.append('\n');
-    }
+    builder.append("    ", label, ":\n");
+    for (auto& entry : hashSet)
+        builder.append("        ", entry, '\n');
 }
 
 static ASCIILiteral navigatorAPIEnumToString(ResourceLoadStatistics::NavigatorAPI navigatorEnum)
@@ -438,23 +423,18 @@ static void appendNavigatorAPIOptionSet(StringBuilder& builder, const OptionSet<
 {
     if (optionSet.isEmpty())
         return;
-    builder.appendLiteral("    navigatorFunctionsAccessed:\n");
-    for (auto navigatorAPI : optionSet) {
-        builder.appendLiteral("        ");
-        builder.append(navigatorAPIEnumToString(navigatorAPI).characters());
-        builder.append('\n');
-    }
+    builder.append("    navigatorFunctionsAccessed:\n");
+    for (auto navigatorAPI : optionSet)
+        builder.append("        ", navigatorAPIEnumToString(navigatorAPI), '\n');
 }
     
 static void appendScreenAPIOptionSet(StringBuilder& builder, const OptionSet<ResourceLoadStatistics::ScreenAPI>& optionSet)
 {
     if (optionSet.isEmpty())
         return;
-    builder.appendLiteral("    screenFunctionsAccessed:\n");
+    builder.append("    screenFunctionsAccessed:\n");
     for (auto screenAPI : optionSet) {
-        builder.appendLiteral("        ");
-        builder.append(screenAPIEnumToString(screenAPI).characters());
-        builder.append('\n');
+        builder.append("        ", screenAPIEnumToString(screenAPI), '\n');
     }
 }
 #endif
@@ -467,18 +447,12 @@ static bool hasHadRecentUserInteraction(WTF::Seconds interactionTimeSeconds)
 String ResourceLoadStatistics::toString() const
 {
     StringBuilder builder;
-    builder.appendLiteral("Registrable domain: ");
-    builder.append(registrableDomain.string());
-    builder.append('\n');
+    builder.append("Registrable domain: ", registrableDomain.string(), '\n');
 
     // User interaction
     appendBoolean(builder, "hadUserInteraction", hadUserInteraction);
     builder.append('\n');
-    builder.appendLiteral("    mostRecentUserInteraction: ");
-    if (hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()))
-        builder.appendLiteral("within 24 hours");
-    else
-        builder.appendLiteral("-1");
+    builder.append("    mostRecentUserInteraction: ", hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()) ? "within 24 hours" : "-1");
     builder.append('\n');
     appendBoolean(builder, "grandfathered", grandfathered);
     builder.append('\n');

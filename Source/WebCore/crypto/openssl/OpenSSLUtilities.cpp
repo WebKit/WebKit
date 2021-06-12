@@ -50,25 +50,25 @@ const EVP_MD* digestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
     }
 }
 
-Optional<Vector<uint8_t>> calculateDigest(const EVP_MD* algorithm, const Vector<uint8_t>& message)
+std::optional<Vector<uint8_t>> calculateDigest(const EVP_MD* algorithm, const Vector<uint8_t>& message)
 {
     EvpDigestCtxPtr ctx;
     if (!(ctx = EvpDigestCtxPtr(EVP_MD_CTX_create())))
-        return WTF::nullopt;
+        return std::nullopt;
 
     int digestLength = EVP_MD_size(algorithm);
     if (digestLength <= 0)
-        return WTF::nullopt;
+        return std::nullopt;
     Vector<uint8_t> digest(digestLength);
 
     if (EVP_DigestInit_ex(ctx.get(), algorithm, nullptr) != 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (EVP_DigestUpdate(ctx.get(), message.data(), message.size()) != 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (EVP_DigestFinal_ex(ctx.get(), digest.data(), nullptr) != 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return digest;
 }

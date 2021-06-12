@@ -25,7 +25,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/KeyValuePair.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 #ifdef __OBJC__

@@ -29,7 +29,7 @@
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
-#include <wtf/CheckedCondition.h>
+#include <wtf/Condition.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 
@@ -47,8 +47,8 @@ public:
 
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>) override;
 
-    bool handleWheelEventAfterMainThread(const PlatformWheelEvent&, ScrollingNodeID, Optional<WheelScrollGestureState>);
-    void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, Optional<WheelScrollGestureState>);
+    bool handleWheelEventAfterMainThread(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>);
+    void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>);
 
     WEBCORE_EXPORT void willSendEventToMainThread(const PlatformWheelEvent&) final;
     WEBCORE_EXPORT void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&) final;
@@ -60,7 +60,7 @@ public:
     void willStartRenderingUpdate();
     void didCompleteRenderingUpdate();
 
-    CheckedLock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
+    Lock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
     bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
 
@@ -104,10 +104,10 @@ private:
     };
 
     SynchronizationState m_state WTF_GUARDED_BY_LOCK(m_treeLock) { SynchronizationState::Idle };
-    CheckedCondition m_stateCondition;
+    Condition m_stateCondition;
 
     bool m_receivedBeganEventFromMainThread WTF_GUARDED_BY_LOCK(m_treeLock) { false };
-    CheckedCondition m_waitingForBeganEventCondition;
+    Condition m_waitingForBeganEventCondition;
 
     // Dynamically allocated because it has to use the ScrollingThread's runloop.
     std::unique_ptr<RunLoop::Timer<ThreadedScrollingTree>> m_delayedRenderingUpdateDetectionTimer WTF_GUARDED_BY_LOCK(m_treeLock);

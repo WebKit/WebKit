@@ -376,7 +376,7 @@ bool Structure::isValidPrototype(JSValue prototype)
     return prototype.isNull() || (prototype.isObject() && prototype.getObject()->mayBePrototype());
 }
 
-void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*& structure, PropertyTable*& table)
+bool Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*& structure, PropertyTable*& table)
 {
     ASSERT(structures.isEmpty());
     table = nullptr;
@@ -388,7 +388,7 @@ void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
         if (table) {
             // Leave the structure locked, so that the caller can do things to it atomically
             // before it loses its property table.
-            return;
+            return true;
         }
         
         structures.append(structure);
@@ -397,6 +397,7 @@ void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
     
     ASSERT(!structure);
     ASSERT(!table);
+    return false;
 }
 
 PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable)
@@ -410,10 +411,10 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
     Structure* structure;
     PropertyTable* table;
     
-    findStructuresAndMapForMaterialization(structures, structure, table);
+    bool didFindStructure = findStructuresAndMapForMaterialization(structures, structure, table);
     
     unsigned capacity = numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity);
-    if (table) {
+    if (didFindStructure) {
         table = table->copy(vm, capacity);
         structure->m_lock.unlock();
     } else
@@ -1494,7 +1495,7 @@ bool Structure::canAccessPropertiesQuicklyForEnumeration() const
     return true;
 }
 
-auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> Optional<PropertyHashEntry>
+auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> std::optional<PropertyHashEntry>
 {
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         if (const HashTable* propHashTable = info->staticPropHashTable) {
@@ -1502,7 +1503,7 @@ auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> Option
                 return PropertyHashEntry { propHashTable, entry };
         }
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Structure* Structure::setBrandTransitionFromExistingStructureImpl(Structure* structure, UniquedStringImpl* brandID)

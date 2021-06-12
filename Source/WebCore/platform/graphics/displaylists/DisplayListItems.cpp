@@ -514,7 +514,7 @@ static TextStream& operator<<(TextStream& ts, const DrawRect& item)
     return ts;
 }
 
-Optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
 {
     FloatRect bounds;
     bounds.fitToPoints(m_point1, m_point2);
@@ -548,7 +548,7 @@ void DrawLinesForText::apply(GraphicsContext& context) const
     context.drawLinesForText(point(), m_thickness, m_widths, m_printing, m_doubleLines);
 }
 
-Optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) const
 {
     // This function needs to return a value equal to or enclosing what GraphicsContext::computeLineBoundsAndAntialiasingModeForText() returns.
 
@@ -581,7 +581,7 @@ void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
     });
 }
 
-Optional<FloatRect> DrawDotsForDocumentMarker::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawDotsForDocumentMarker::localBounds(const GraphicsContext&) const
 {
     return m_rect;
 }
@@ -605,11 +605,7 @@ static TextStream& operator<<(TextStream& ts, const DrawEllipse& item)
 
 void DrawPath::apply(GraphicsContext& context) const
 {
-#if USE(CG)
     context.drawPath(m_path);
-#else
-    UNUSED_PARAM(context);
-#endif
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawPath&)
@@ -623,7 +619,7 @@ void DrawFocusRingPath::apply(GraphicsContext& context) const
     context.drawFocusRing(m_path, m_width, m_offset, m_color);
 }
 
-Optional<FloatRect> DrawFocusRingPath::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawFocusRingPath::localBounds(const GraphicsContext&) const
 {
     FloatRect result = m_path.fastBoundingRect();
     result.inflate(platformFocusRingWidth);
@@ -652,7 +648,7 @@ void DrawFocusRingRects::apply(GraphicsContext& context) const
     context.drawFocusRing(m_rects, m_width, m_offset, m_color);
 }
 
-Optional<FloatRect> DrawFocusRingRects::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawFocusRingRects::localBounds(const GraphicsContext&) const
 {
     FloatRect result;
     for (auto& rect : m_rects)
@@ -753,12 +749,45 @@ static TextStream& operator<<(TextStream& ts, const FillRectWithRoundedHole& ite
 
 #if ENABLE(INLINE_PATH_DATA)
 
-void FillInlinePath::apply(GraphicsContext& context) const
+void FillLine::apply(GraphicsContext& context) const
 {
     context.fillPath(path());
 }
 
-static TextStream& operator<<(TextStream& ts, const FillInlinePath& item)
+static TextStream& operator<<(TextStream& ts, const FillLine& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+void FillArc::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
+static TextStream& operator<<(TextStream& ts, const FillArc& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+void FillQuadCurve::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
+static TextStream& operator<<(TextStream& ts, const FillQuadCurve& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+void FillBezierCurve::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
+static TextStream& operator<<(TextStream& ts, const FillBezierCurve& item)
 {
     ts.dumpProperty("path", item.path());
     return ts;
@@ -863,7 +892,7 @@ static TextStream& operator<<(TextStream& ts, const PaintFrameForMedia& item)
 }
 #endif
 
-Optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
 {
     FloatRect bounds = m_rect;
     bounds.expand(m_lineWidth, m_lineWidth);
@@ -882,7 +911,7 @@ static TextStream& operator<<(TextStream& ts, const StrokeRect& item)
     return ts;
 }
 
-Optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) const
+std::optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) const
 {
     // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
     float strokeThickness = context.strokeThickness();
@@ -903,7 +932,7 @@ static TextStream& operator<<(TextStream& ts, const StrokePath& item)
     return ts;
 }
 
-Optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& context) const
+std::optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& context) const
 {
     float strokeThickness = context.strokeThickness();
 
@@ -923,7 +952,7 @@ static TextStream& operator<<(TextStream& ts, const StrokeEllipse& item)
     return ts;
 }
 
-Optional<FloatRect> StrokeLine::localBounds(const GraphicsContext& context) const
+std::optional<FloatRect> StrokeLine::localBounds(const GraphicsContext& context) const
 {
     float strokeThickness = context.strokeThickness();
 
@@ -954,22 +983,64 @@ static TextStream& operator<<(TextStream& ts, const StrokeLine& item)
 
 #if ENABLE(INLINE_PATH_DATA)
 
-Optional<FloatRect> StrokeInlinePath::localBounds(const GraphicsContext& context) const
+std::optional<FloatRect> StrokeArc::localBounds(const GraphicsContext& context) const
 {
     // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
     float strokeThickness = context.strokeThickness();
 
-    FloatRect bounds = path().fastBoundingRect();
+    auto bounds = path().fastBoundingRect();
     bounds.expand(strokeThickness, strokeThickness);
     return bounds;
 }
 
-void StrokeInlinePath::apply(GraphicsContext& context) const
+void StrokeArc::apply(GraphicsContext& context) const
 {
     context.strokePath(path());
 }
 
-static TextStream& operator<<(TextStream& ts, const StrokeInlinePath& item)
+static TextStream& operator<<(TextStream& ts, const StrokeArc& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+std::optional<FloatRect> StrokeQuadCurve::localBounds(const GraphicsContext& context) const
+{
+    // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
+    float strokeThickness = context.strokeThickness();
+
+    auto bounds = path().fastBoundingRect();
+    bounds.expand(strokeThickness, strokeThickness);
+    return bounds;
+}
+
+void StrokeQuadCurve::apply(GraphicsContext& context) const
+{
+    context.strokePath(path());
+}
+
+static TextStream& operator<<(TextStream& ts, const StrokeQuadCurve& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+std::optional<FloatRect> StrokeBezierCurve::localBounds(const GraphicsContext& context) const
+{
+    // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
+    float strokeThickness = context.strokeThickness();
+
+    auto bounds = path().fastBoundingRect();
+    bounds.expand(strokeThickness, strokeThickness);
+    return bounds;
+}
+
+void StrokeBezierCurve::apply(GraphicsContext& context) const
+{
+    context.strokePath(path());
+}
+
+static TextStream& operator<<(TextStream& ts, const StrokeBezierCurve& item)
 {
     ts.dumpProperty("path", item.path());
     return ts;
@@ -1001,7 +1072,8 @@ static TextStream& operator<<(TextStream& ts, const BeginTransparencyLayer& item
 
 void EndTransparencyLayer::apply(GraphicsContext& context) const
 {
-    context.endTransparencyLayer();
+    if (context.isInTransparencyLayer())
+        context.endTransparencyLayer();
 }
 
 #if USE(CG)
@@ -1096,7 +1168,10 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FillRoundedRect: ts << "fill-rounded-rect"; break;
     case ItemType::FillRectWithRoundedHole: ts << "fill-rect-with-rounded-hole"; break;
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath: ts << "fill-inline-path"; break;
+    case ItemType::FillLine: ts << "fill-line"; break;
+    case ItemType::FillArc: ts << "fill-arc"; break;
+    case ItemType::FillQuadCurve: ts << "fill-quad-curve"; break;
+    case ItemType::FillBezierCurve: ts << "fill-bezier-curve"; break;
 #endif
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
@@ -1111,7 +1186,9 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
     case ItemType::StrokeLine: ts << "stroke-line"; break;
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath: ts << "stroke-inline-path"; break;
+    case ItemType::StrokeArc: ts << "stroke-arc"; break;
+    case ItemType::StrokeQuadCurve: ts << "stroke-quad-curve"; break;
+    case ItemType::StrokeBezierCurve: ts << "stroke-bezier-curve"; break;
 #endif
     case ItemType::StrokePath: ts << "stroke-path"; break;
     case ItemType::StrokeEllipse: ts << "stroke-ellipse"; break;
@@ -1251,8 +1328,17 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         ts << item.get<FillRectWithRoundedHole>();
         break;
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath:
-        ts << item.get<FillInlinePath>();
+    case ItemType::FillLine:
+        ts << item.get<FillLine>();
+        break;
+    case ItemType::FillArc:
+        ts << item.get<FillArc>();
+        break;
+    case ItemType::FillQuadCurve:
+        ts << item.get<FillQuadCurve>();
+        break;
+    case ItemType::FillBezierCurve:
+        ts << item.get<FillBezierCurve>();
         break;
 #endif
     case ItemType::FillPath:
@@ -1288,8 +1374,14 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         ts << item.get<StrokeLine>();
         break;
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath:
-        ts << item.get<StrokeInlinePath>();
+    case ItemType::StrokeArc:
+        ts << item.get<StrokeArc>();
+        break;
+    case ItemType::StrokeQuadCurve:
+        ts << item.get<StrokeQuadCurve>();
+        break;
+    case ItemType::StrokeBezierCurve:
+        ts << item.get<StrokeBezierCurve>();
         break;
 #endif
     case ItemType::StrokePath:

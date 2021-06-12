@@ -42,7 +42,7 @@ struct WhitespaceContent {
     size_t length { 0 };
     bool isWordSeparator { true };
 };
-static Optional<WhitespaceContent> moveToNextNonWhitespacePosition(const StringView& textContent, size_t startPosition, bool preserveNewline, bool preserveTab)
+static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(const StringView& textContent, size_t startPosition, bool preserveNewline, bool preserveTab)
 {
     auto hasWordSeparatorCharacter = false;
     auto isWhitespaceCharacter = [&](auto character) {
@@ -54,7 +54,7 @@ static Optional<WhitespaceContent> moveToNextNonWhitespacePosition(const StringV
     auto nextNonWhiteSpacePosition = startPosition;
     while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition]))
         ++nextNonWhiteSpacePosition;
-    return nextNonWhiteSpacePosition == startPosition ? WTF::nullopt : makeOptional(WhitespaceContent { nextNonWhiteSpacePosition - startPosition, hasWordSeparatorCharacter });
+    return nextNonWhiteSpacePosition == startPosition ? std::nullopt : std::make_optional(WhitespaceContent { nextNonWhiteSpacePosition - startPosition, hasWordSeparatorCharacter });
 }
 
 static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBreakIterator& lineBreakIterator, const RenderStyle& style)
@@ -84,7 +84,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
     unsigned currentPosition = 0;
 
-    auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<InlineLayoutUnit> {
+    auto inlineItemWidth = [&](auto startPosition, auto length) -> std::optional<InlineLayoutUnit> {
         if (!inlineTextBox.canUseSimplifiedContentMeasuring())
             return { };
         return TextUtil::width(inlineTextBox, startPosition, startPosition + length, { });
@@ -106,7 +106,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             ASSERT(whitespaceContent->length);
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
-                auto width = simpleSingleWhitespaceContent ? makeOptional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
+                auto width = simpleSingleWhitespaceContent ? std::make_optional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
                 inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, whitespaceContent->isWordSeparator, width));
             };
             if (style.whiteSpace() == WhiteSpace::BreakSpaces) {

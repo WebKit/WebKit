@@ -154,11 +154,11 @@ size_t CryptoKeyRSA::keySizeInBits() const
 }
 
 // Convert the exponent vector to a 32-bit value, if possible.
-static Optional<uint32_t> exponentVectorToUInt32(const Vector<uint8_t>& exponent)
+static std::optional<uint32_t> exponentVectorToUInt32(const Vector<uint8_t>& exponent)
 {
     if (exponent.size() > 4) {
         if (std::any_of(exponent.begin(), exponent.end() - 4, [](uint8_t element) { return !!element; }))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     uint32_t result = 0;
@@ -209,7 +209,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
     callback(CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) });
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifier, Optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     // We need a local pointer variable to pass to d2i (DER to internal) functions().
     const uint8_t* ptr = keyData.data();
@@ -219,10 +219,10 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
     if (!pkey)
         return nullptr;
 
-    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Public, WTFMove(pkey), extractable, usages));
+    return adoptRef(new CryptoKeyRSA(identifier, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Public, WTFMove(pkey), extractable, usages));
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identifier, Optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     // We need a local pointer variable to pass to d2i (DER to internal) functions().
     const uint8_t* ptr = keyData.data();
@@ -236,7 +236,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
     if (!pkey)
         return nullptr;
 
-    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, WTFMove(pkey), extractable, usages));
+    return adoptRef(new CryptoKeyRSA(identifier, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, WTFMove(pkey), extractable, usages));
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const

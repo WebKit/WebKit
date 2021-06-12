@@ -62,16 +62,16 @@ Vector<String> Pasteboard::readAllStrings(const String& type)
 
 #endif
 
-Optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() const
+std::optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() const
 {
 #if PLATFORM(COCOA)
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
         return strategy->allPasteboardItemInfo(name(), m_changeCount, context());
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
+std::optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
 {
 #if PLATFORM(COCOA)
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
@@ -79,7 +79,7 @@ Optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
 #else
     UNUSED_PARAM(index);
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 String Pasteboard::readString(size_t index, const String& type)

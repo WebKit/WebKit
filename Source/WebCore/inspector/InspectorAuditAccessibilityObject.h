@@ -28,7 +28,6 @@
 #include "ExceptionOr.h"
 #include <JavaScriptCore/InspectorAuditAgent.h>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -47,39 +46,39 @@ public:
     ExceptionOr<Vector<Ref<Node>>> getElementsByComputedRole(Document&, const String& role, Node* container);
 
     struct ComputedProperties {
-        Optional<bool> busy;
+        std::optional<bool> busy;
         String checked;
         String currentState;
-        Optional<bool> disabled;
-        Optional<bool> expanded;
-        Optional<bool> focused;
-        Optional<int> headingLevel;
-        Optional<bool> hidden;
-        Optional<int> hierarchicalLevel;
-        Optional<bool> ignored;
-        Optional<bool> ignoredByDefault;
+        std::optional<bool> disabled;
+        std::optional<bool> expanded;
+        std::optional<bool> focused;
+        std::optional<int> headingLevel;
+        std::optional<bool> hidden;
+        std::optional<int> hierarchicalLevel;
+        std::optional<bool> ignored;
+        std::optional<bool> ignoredByDefault;
         String invalidStatus;
-        Optional<bool> isPopUpButton;
+        std::optional<bool> isPopUpButton;
         String label;
-        Optional<bool> liveRegionAtomic;
-        Optional<Vector<String>> liveRegionRelevant;
+        std::optional<bool> liveRegionAtomic;
+        std::optional<Vector<String>> liveRegionRelevant;
         String liveRegionStatus;
-        Optional<bool> pressed;
-        Optional<bool> readonly;
-        Optional<bool> required;
+        std::optional<bool> pressed;
+        std::optional<bool> readonly;
+        std::optional<bool> required;
         String role;
-        Optional<bool> selected;
+        std::optional<bool> selected;
     };
 
     ExceptionOr<RefPtr<Node>> getActiveDescendant(Node&);
-    ExceptionOr<Optional<Vector<RefPtr<Node>>>> getChildNodes(Node&);
-    ExceptionOr<Optional<ComputedProperties>> getComputedProperties(Node&);
-    ExceptionOr<Optional<Vector<RefPtr<Node>>>> getControlledNodes(Node&);
-    ExceptionOr<Optional<Vector<RefPtr<Node>>>> getFlowedNodes(Node&);
+    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getChildNodes(Node&);
+    ExceptionOr<std::optional<ComputedProperties>> getComputedProperties(Node&);
+    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getControlledNodes(Node&);
+    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getFlowedNodes(Node&);
     ExceptionOr<RefPtr<Node>> getMouseEventNode(Node&);
-    ExceptionOr<Optional<Vector<RefPtr<Node>>>> getOwnedNodes(Node&);
+    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getOwnedNodes(Node&);
     ExceptionOr<RefPtr<Node>> getParentNode(Node&);
-    ExceptionOr<Optional<Vector<RefPtr<Node>>>> getSelectedChildNodes(Node&);
+    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getSelectedChildNodes(Node&);
 
 private:
     explicit InspectorAuditAccessibilityObject(Inspector::InspectorAuditAgent&);

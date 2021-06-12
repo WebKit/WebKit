@@ -43,8 +43,8 @@ private:
     PerfLog();
     static PerfLog& singleton();
 
-    void write(const AbstractLocker&, const void*, size_t);
-    void flush(const AbstractLocker&);
+    void write(const void*, size_t) WTF_REQUIRES_LOCK(m_lock);
+    void flush() WTF_REQUIRES_LOCK(m_lock);
 
     FILE* m_file { nullptr };
     void* m_marker { nullptr };

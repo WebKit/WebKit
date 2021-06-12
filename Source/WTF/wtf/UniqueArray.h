@@ -73,7 +73,7 @@ struct UniqueArrayMaker<true, T> {
         // Do not use placement new like `new (storage) T[size]()`. `new T[size]()` requires
         // larger storage than the `sizeof(T) * size` storage since it want to store `size`
         // to somewhere.
-        T* storage = static_cast<T*>(UniqueArrayMalloc::malloc((Checked<size_t>(sizeof(T)) * size).unsafeGet()));
+        T* storage = static_cast<T*>(UniqueArrayMalloc::malloc(Checked<size_t>(sizeof(T)) * size));
         VectorTypeOperations<T>::initialize(storage, storage + size);
         return ResultType(storage);
     }

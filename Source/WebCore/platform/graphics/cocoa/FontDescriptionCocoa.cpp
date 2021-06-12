@@ -41,7 +41,7 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
     return convertArray<T>(array, std::make_index_sequence<size> { });
 }
 
-static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& string)
+static inline std::optional<SystemFontKind> matchSystemFontUse(const AtomString& string)
 {
     if (equalLettersIgnoringASCIICase(string, "-webkit-system-font")
         || equalLettersIgnoringASCIICase(string, "-apple-system")
@@ -90,7 +90,7 @@ static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& stri
     if (std::binary_search(strings.get().begin(), strings.get().end(), string, compareAsPointer))
         return SystemFontKind::TextStyle;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)

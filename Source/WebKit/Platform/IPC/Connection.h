@@ -33,12 +33,12 @@
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "Timeout.h"
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
@@ -104,7 +104,7 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 class MachMessage;
 class UnixMessage;
 
-class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop> {
+class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop>, public CanMakeWeakPtr<Connection> {
 public:
     enum SyncRequestIDType { };
     using SyncRequestID = ObjectIdentifier<SyncRequestIDType>;
@@ -189,7 +189,7 @@ public:
     };
     static bool identifierIsValid(Identifier identifier) { return MACH_PORT_VALID(identifier.port); }
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
-    Optional<audit_token_t> getAuditToken();
+    std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
 #elif OS(WINDOWS)
     typedef HANDLE Identifier;
@@ -243,6 +243,8 @@ public:
     void postConnectionDidCloseOnConnectionWorkQueue();
     template<typename T, typename C> uint64_t sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }); // Thread-safe.
+    template<typename T> static bool send(UniqueID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }); // Thread-safe.
+
     // Sync senders should check the SendSyncResult for true/false in case they need to know if the result was really received.
     // Sync senders should hold on to the SendSyncResult in case they reference the contents of the reply via DataRefererence / ArrayReference.
     using SendSyncResult = std::unique_ptr<Decoder>;
@@ -325,6 +327,8 @@ private:
     void platformInvalidate();
 
     bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
+
+    static HashMap<IPC::Connection::UniqueID, Connection*>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock);
     
     std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
 
@@ -382,6 +386,7 @@ private:
         unsigned m_throttlingLevel { 0 };
     };
 
+    static Lock s_connectionMapLock;
     Client& m_client;
     UniqueID m_uniqueID;
     bool m_isServer;
@@ -404,30 +409,30 @@ private:
     bool m_didReceiveInvalidMessage { false };
 
     // Incoming messages.
-    CheckedLock m_incomingMessagesLock;
+    Lock m_incomingMessagesLock;
     Deque<std::unique_ptr<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     std::unique_ptr<MessagesThrottler> m_incomingMessagesThrottler;
     MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
     // Outgoing messages.
-    CheckedLock m_outgoingMessagesLock;
+    Lock m_outgoingMessagesLock;
     Deque<UniqueRef<Encoder>> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
 
-    CheckedCondition m_waitForMessageCondition;
-    CheckedLock m_waitForMessageLock;
+    Condition m_waitForMessageCondition;
+    Lock m_waitForMessageLock;
 
     struct WaitForMessageState;
     WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { nullptr }; // NOLINT
 
     class SyncMessageState;
 
-    CheckedLock m_syncReplyStateLock;
+    Lock m_syncReplyStateLock;
     bool m_shouldWaitForSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock) { true };
     bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { true };
     struct PendingSyncReply;
     Vector<PendingSyncReply> m_pendingSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock);
 
-    CheckedLock m_incomingSyncMessageCallbackLock;
+    Lock m_incomingSyncMessageCallbackLock;
     HashMap<uint64_t, WTF::Function<void()>> m_incomingSyncMessageCallbacks WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
     RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
     uint64_t m_nextIncomingSyncMessageCallbackID WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock) { 0 };
@@ -515,6 +520,16 @@ bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption>
     return sendMessage(WTFMove(encoder), sendOptions);
 }
 
+template<typename T>
+bool Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions)
+{
+    Locker locker { s_connectionMapLock };
+    auto* connection = connectionMap().get(connectionID);
+    if (!connection)
+        return false;
+    return connection->send(WTFMove(message), destinationID, sendOptions);
+}
+
 uint64_t nextAsyncReplyHandlerID();
 void addAsyncReplyHandler(Connection&, uint64_t, CompletionHandler<void(Decoder*)>&&);
 CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection&, uint64_t);
@@ -579,7 +594,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
         return { };
 
     // Decode the reply.
-    Optional<typename T::ReplyArguments> replyArguments;
+    std::optional<typename T::ReplyArguments> replyArguments;
     *replyDecoder >> replyArguments;
     if (!replyArguments)
         return { };

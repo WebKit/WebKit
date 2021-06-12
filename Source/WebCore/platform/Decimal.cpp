@@ -1009,12 +1009,11 @@ String Decimal::toString() const
             return builder.toString();
         }
 
-        builder.appendLiteral("0.");
+        builder.append("0.");
         for (int i = adjustedExponent + 1; i < 0; ++i)
             builder.append('0');
 
         builder.append(digits);
-
     } else {
         builder.append(digits[0]);
         while (coefficientLength >= 2 && digits[coefficientLength - 1] == '0')

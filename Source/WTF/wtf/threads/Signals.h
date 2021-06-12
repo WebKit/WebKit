@@ -31,7 +31,6 @@
 #include <tuple>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
-#include <wtf/Optional.h>
 #include <wtf/PlatformRegisters.h>
 
 #if HAVE(MACH_EXCEPTIONS)
@@ -59,16 +58,16 @@ enum class Signal {
     Unknown = NumberOfSignals
 };
 
-inline std::tuple<int, Optional<int>> toSystemSignal(Signal signal)
+inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
 {
     switch (signal) {
     case Signal::AccessFault: return std::make_tuple(SIGSEGV, SIGBUS);
-    case Signal::IllegalInstruction: return std::make_tuple(SIGILL, WTF::nullopt);
-    case Signal::Usr: return std::make_tuple(SIGILL, WTF::nullopt);
-    case Signal::FloatingPoint: return std::make_tuple(SIGFPE, WTF::nullopt);
-    case Signal::Breakpoint: return std::make_tuple(SIGTRAP, WTF::nullopt);
+    case Signal::IllegalInstruction: return std::make_tuple(SIGILL, std::nullopt);
+    case Signal::Usr: return std::make_tuple(SIGILL, std::nullopt);
+    case Signal::FloatingPoint: return std::make_tuple(SIGFPE, std::nullopt);
+    case Signal::Breakpoint: return std::make_tuple(SIGTRAP, std::nullopt);
 #if !OS(DARWIN)
-    case Signal::Abort: return std::make_tuple(SIGABRT, WTF::nullopt);
+    case Signal::Abort: return std::make_tuple(SIGABRT, std::nullopt);
 #endif
     default: break;
     }

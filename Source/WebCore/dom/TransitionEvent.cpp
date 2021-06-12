@@ -33,7 +33,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TransitionEvent);
 
-TransitionEvent::TransitionEvent(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement, Optional<Seconds> timelineTime, WebAnimation* animation)
+TransitionEvent::TransitionEvent(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement, std::optional<Seconds> timelineTime, WebAnimation* animation)
     : AnimationEventBase(type, animation, timelineTime)
     , m_propertyName(propertyName)
     , m_elapsedTime(elapsedTime)

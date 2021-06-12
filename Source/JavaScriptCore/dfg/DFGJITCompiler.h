@@ -214,6 +214,11 @@ public:
         m_inByIds.append(InlineCacheWrapper<JITInByIdGenerator>(gen, slowPath));
     }
 
+    void addInByVal(const JITInByValGenerator& gen, SlowPathGenerator* slowPath)
+    {
+        m_inByVals.append(InlineCacheWrapper<JITInByValGenerator>(gen, slowPath));
+    }
+
     void addPrivateBrandAccess(const JITPrivateBrandAccessGenerator& gen, SlowPathGenerator* slowPath)
     {
         m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
@@ -353,6 +358,7 @@ private:
     Vector<InlineCacheWrapper<JITDelByIdGenerator>, 4> m_delByIds;
     Vector<InlineCacheWrapper<JITDelByValGenerator>, 4> m_delByVals;
     Vector<InlineCacheWrapper<JITInByIdGenerator>, 4> m_inByIds;
+    Vector<InlineCacheWrapper<JITInByValGenerator>, 4> m_inByVals;
     Vector<InlineCacheWrapper<JITInstanceOfGenerator>, 4> m_instanceOfs;
     Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
     Vector<JSCallRecord, 4> m_jsCalls;

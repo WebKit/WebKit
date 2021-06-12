@@ -70,7 +70,6 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
 
     initialize();
     suspendIfNeeded();
-    m_pendingActivity = makePendingActivity(*this);
 }
 
 ScriptProcessorNode::~ScriptProcessorNode()
@@ -132,13 +131,6 @@ void ScriptProcessorNode::uninitialize()
     }
 
     AudioNode::uninitialize();
-}
-
-void ScriptProcessorNode::didBecomeMarkedForDeletion()
-{
-    ASSERT(context().isGraphOwner());
-    m_pendingActivity = nullptr;
-    ASSERT(!hasPendingActivity());
 }
 
 void ScriptProcessorNode::process(size_t framesToProcess)

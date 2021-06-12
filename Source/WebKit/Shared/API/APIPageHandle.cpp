@@ -62,12 +62,12 @@ void PageHandle::encode(IPC::Encoder& encoder) const
 
 bool PageHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
-    Optional<WebKit::WebPageProxyIdentifier> pageProxyID;
+    std::optional<WebKit::WebPageProxyIdentifier> pageProxyID;
     decoder >> pageProxyID;
     if (!pageProxyID)
         return false;
 
-    Optional<WebCore::PageIdentifier> webPageID;
+    std::optional<WebCore::PageIdentifier> webPageID;
     decoder >> webPageID;
     if (!webPageID)
         return false;

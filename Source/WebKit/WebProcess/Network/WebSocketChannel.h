@@ -77,7 +77,7 @@ private:
     void refThreadableWebSocketChannel() final { ref(); }
     void derefThreadableWebSocketChannel() final { deref(); }
 
-    void notifySendFrame(WebCore::WebSocketFrame::OpCode, const char* data, size_t length);
+    void notifySendFrame(WebCore::WebSocketFrame::OpCode, const uint8_t* data, size_t length);
     void logErrorMessage(const String&);
 
     // Message receivers

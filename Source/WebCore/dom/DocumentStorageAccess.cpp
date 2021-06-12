@@ -74,7 +74,7 @@ void DocumentStorageAccess::hasStorageAccess(Document& document, Ref<DeferredPro
     DocumentStorageAccess::from(document)->hasStorageAccess(WTFMove(promise));
 }
 
-Optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
+std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
 {
     ASSERT(m_document.settings().storageAccessAPIEnabled());
 
@@ -97,7 +97,7 @@ Optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (!page)
         return false;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
@@ -145,7 +145,7 @@ void DocumentStorageAccess::requestStorageAccess(Document& document, Ref<Deferre
     DocumentStorageAccess::from(document)->requestStorageAccess(WTFMove(promise));
 }
 
-Optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQuickCheck()
+std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQuickCheck()
 {
     ASSERT(m_document.settings().storageAccessAPIEnabled());
 
@@ -172,7 +172,7 @@ Optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQu
     if (!UserGestureIndicator::processingUserGesture())
         return StorageAccessQuickResult::Reject;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)

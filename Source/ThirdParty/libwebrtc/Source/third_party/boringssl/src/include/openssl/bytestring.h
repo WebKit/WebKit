@@ -252,12 +252,16 @@ OPENSSL_EXPORT int CBS_get_any_asn1_element(CBS *cbs, CBS *out,
                                             size_t *out_header_len);
 
 // CBS_get_any_ber_asn1_element acts the same as |CBS_get_any_asn1_element| but
-// also allows indefinite-length elements to be returned. In that case,
-// |*out_header_len| and |CBS_len(out)| will both be two as only the header is
-// returned, otherwise it behaves the same as the previous function.
+// also allows indefinite-length elements to be returned and does not enforce
+// that lengths are minimal. For indefinite-lengths, |*out_header_len| and
+// |CBS_len(out)| will be equal as only the header is returned (although this is
+// also true for empty elements so the length must be checked too). If
+// |out_ber_found| is not NULL then it is set to one if any case of invalid DER
+// but valid BER is found, and to zero otherwise.
 OPENSSL_EXPORT int CBS_get_any_ber_asn1_element(CBS *cbs, CBS *out,
                                                 unsigned *out_tag,
-                                                size_t *out_header_len);
+                                                size_t *out_header_len,
+                                                int *out_ber_found);
 
 // CBS_get_asn1_uint64 gets an ASN.1 INTEGER from |cbs| using |CBS_get_asn1|
 // and sets |*out| to its value. It returns one on success and zero on error,
@@ -310,13 +314,24 @@ OPENSSL_EXPORT int CBS_get_optional_asn1_bool(CBS *cbs, int *out, unsigned tag,
                                               int default_value);
 
 // CBS_is_valid_asn1_bitstring returns one if |cbs| is a valid ASN.1 BIT STRING
-// and zero otherwise.
+// body and zero otherwise.
 OPENSSL_EXPORT int CBS_is_valid_asn1_bitstring(const CBS *cbs);
 
 // CBS_asn1_bitstring_has_bit returns one if |cbs| is a valid ASN.1 BIT STRING
-// and the specified bit is present and set. Otherwise, it returns zero. |bit|
-// is indexed starting from zero.
+// body and the specified bit is present and set. Otherwise, it returns zero.
+// |bit| is indexed starting from zero.
 OPENSSL_EXPORT int CBS_asn1_bitstring_has_bit(const CBS *cbs, unsigned bit);
+
+// CBS_is_valid_asn1_integer returns one if |cbs| is a valid ASN.1 INTEGER,
+// body and zero otherwise. On success, if |out_is_negative| is non-NULL,
+// |*out_is_negative| will be set to one if |cbs| is negative and zero
+// otherwise.
+OPENSSL_EXPORT int CBS_is_valid_asn1_integer(const CBS *cbs,
+                                             int *out_is_negative);
+
+// CBS_is_unsigned_asn1_integer returns one if |cbs| is a valid non-negative
+// ASN.1 INTEGER body and zero otherwise.
+OPENSSL_EXPORT int CBS_is_unsigned_asn1_integer(const CBS *cbs);
 
 // CBS_asn1_oid_to_text interprets |cbs| as DER-encoded ASN.1 OBJECT IDENTIFIER
 // contents (not including the element framing) and returns the ASCII

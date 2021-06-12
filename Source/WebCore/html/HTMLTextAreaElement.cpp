@@ -139,7 +139,7 @@ void HTMLTextAreaElement::childrenChanged(const ChildChange& change)
         setNonDirtyValue(defaultValue());
 }
 
-bool HTMLTextAreaElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLTextAreaElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
@@ -149,21 +149,21 @@ bool HTMLTextAreaElement::isPresentationAttribute(const QualifiedName& name) con
 
     if (name == wrapAttr)
         return true;
-    return HTMLTextFormControlElement::isPresentationAttribute(name);
+    return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTextAreaElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == wrapAttr) {
         if (shouldWrapText()) {
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
         } else {
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueNormal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueNormal);
         }
     } else
-        HTMLTextFormControlElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -323,7 +323,7 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&
     // If the text field has no focus, we don't need to take account of the
     // selection length. The selection is the source of text drag-and-drop in
     // that case, and nothing in the text field will be removed.
-    auto selectionRange = focused() ? document().frame()->selection().selection().toNormalizedRange() : WTF::nullopt;
+    auto selectionRange = focused() ? document().frame()->selection().selection().toNormalizedRange() : std::nullopt;
     unsigned selectionLength = selectionRange ? computeLengthForSubmission(plainText(*selectionRange)) : 0;
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;

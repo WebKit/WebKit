@@ -28,6 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "TableFormattingGeometry.h"
+#include "TableFormattingQuirks.h"
 #include "TableFormattingState.h"
 #include "TableGrid.h"
 #include <wtf/IsoMalloc.h>
@@ -37,7 +39,6 @@ namespace WebCore {
 namespace Layout {
 
 class InvalidationState;
-class TableFormattingGeometry;
 
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
@@ -48,7 +49,9 @@ public:
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
-    static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
+    const TableFormattingGeometry& formattingGeometry() const final { return m_tableFormattingGeometry; }
+    const TableFormattingQuirks& formattingQuirks() const final { return m_tableFormattingQuirks; }
+    const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 
 private:
     class TableLayout {
@@ -57,7 +60,7 @@ private:
 
         using DistributedSpaces = Vector<LayoutUnit>;
         DistributedSpaces distributedHorizontalSpace(LayoutUnit availableHorizontalSpace);
-        DistributedSpaces distributedVerticalSpace(Optional<LayoutUnit> availableVerticalSpace);
+        DistributedSpaces distributedVerticalSpace(std::optional<LayoutUnit> availableVerticalSpace);
 
     private:
         const TableFormattingContext& formattingContext() const { return m_formattingContext; }
@@ -69,17 +72,17 @@ private:
     TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    void layoutCell(const TableGrid::Cell&, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> usedCellHeight = WTF::nullopt);
-    void setUsedGeometryForCells(LayoutUnit availableHorizontalSpace);
+    void setUsedGeometryForCells(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace);
     void setUsedGeometryForRows(LayoutUnit availableHorizontalSpace);
     void setUsedGeometryForSections(const ConstraintsForInFlowContent&);
 
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
-    void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
+    void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace);
 
-    TableFormattingGeometry geometry() const;
-    const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
+
+    const TableFormattingGeometry m_tableFormattingGeometry;
+    const TableFormattingQuirks m_tableFormattingQuirks;
 };
 
 }

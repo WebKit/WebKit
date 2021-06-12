@@ -156,7 +156,12 @@ bool Connect(int *out_sock, const std::string &hostname_and_port) {
 
   int ret = getaddrinfo(hostname.c_str(), port.c_str(), &hint, &result);
   if (ret != 0) {
-    fprintf(stderr, "getaddrinfo returned: %s\n", gai_strerror(ret));
+#if defined(OPENSSL_WINDOWS)
+    const char *error = gai_strerrorA(ret);
+#else
+    const char *error = gai_strerror(ret);
+#endif
+    fprintf(stderr, "getaddrinfo returned: %s\n", error);
     return false;
   }
 

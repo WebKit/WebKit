@@ -177,50 +177,18 @@ func cipherAES(key, iv []byte, isRead bool) interface{} {
 
 // macSHA1 returns a macFunction for the given protocol version.
 func macSHA1(version uint16, key []byte) macFunction {
-	if version == VersionSSL30 {
-		mac := ssl30MAC{
-			h:   sha1.New(),
-			key: make([]byte, len(key)),
-		}
-		copy(mac.key, key)
-		return mac
-	}
 	return tls10MAC{hmac.New(sha1.New, key)}
 }
 
 func macMD5(version uint16, key []byte) macFunction {
-	if version == VersionSSL30 {
-		mac := ssl30MAC{
-			h:   md5.New(),
-			key: make([]byte, len(key)),
-		}
-		copy(mac.key, key)
-		return mac
-	}
 	return tls10MAC{hmac.New(md5.New, key)}
 }
 
 func macSHA256(version uint16, key []byte) macFunction {
-	if version == VersionSSL30 {
-		mac := ssl30MAC{
-			h:   sha256.New(),
-			key: make([]byte, len(key)),
-		}
-		copy(mac.key, key)
-		return mac
-	}
 	return tls10MAC{hmac.New(sha256.New, key)}
 }
 
 func macSHA384(version uint16, key []byte) macFunction {
-	if version == VersionSSL30 {
-		mac := ssl30MAC{
-			h:   sha512.New384(),
-			key: make([]byte, len(key)),
-		}
-		copy(mac.key, key)
-		return mac
-	}
 	return tls10MAC{hmac.New(sha512.New384, key)}
 }
 
@@ -317,43 +285,6 @@ func aeadCHACHA20POLY1305(version uint16, key, fixedNonce []byte) *tlsAead {
 	copy(nonce2, fixedNonce)
 
 	return &tlsAead{&xorNonceAEAD{nonce1, nonce2, aead}, false}
-}
-
-// ssl30MAC implements the SSLv3 MAC function, as defined in
-// www.mozilla.org/projects/security/pki/nss/ssl/draft302.txt section 5.2.3.1
-type ssl30MAC struct {
-	h   hash.Hash
-	key []byte
-}
-
-func (s ssl30MAC) Size() int {
-	return s.h.Size()
-}
-
-var ssl30Pad1 = [48]byte{0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36}
-
-var ssl30Pad2 = [48]byte{0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c}
-
-func (s ssl30MAC) MAC(digestBuf, seq, header, length, data []byte) []byte {
-	padLength := 48
-	if s.h.Size() == 20 {
-		padLength = 40
-	}
-
-	s.h.Reset()
-	s.h.Write(s.key)
-	s.h.Write(ssl30Pad1[:padLength])
-	s.h.Write(seq)
-	s.h.Write(header[:1])
-	s.h.Write(length)
-	s.h.Write(data)
-	digestBuf = s.h.Sum(digestBuf[:0])
-
-	s.h.Reset()
-	s.h.Write(s.key)
-	s.h.Write(ssl30Pad2[:padLength])
-	s.h.Write(digestBuf)
-	return s.h.Sum(digestBuf[:0])
 }
 
 // tls10MAC implements the TLS 1.0 MAC function. RFC 2246, section 6.2.3.

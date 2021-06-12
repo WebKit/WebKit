@@ -108,7 +108,7 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
     MediaSourcePrivate::AddStatus status = m_private->addSourceBuffer(contentType, m_webMParserEnabled, sourceBufferPrivate);
 
-    Optional<RemoteSourceBufferIdentifier> remoteSourceIdentifier;
+    std::optional<RemoteSourceBufferIdentifier> remoteSourceIdentifier;
     if (status == MediaSourcePrivate::AddStatus::Ok) {
         auto identifier = RemoteSourceBufferIdentifier::generate();
         auto remoteSourceBufferProxy = RemoteSourceBufferProxy::create(*m_connectionToWebProcess, identifier, sourceBufferPrivate.releaseNonNull(), *m_remoteMediaPlayerProxy);

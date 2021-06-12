@@ -31,7 +31,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "GenericTaskQueue.h"
 #include "HTMLDivElement.h"
 #include "MediaControllerInterface.h"
 #include "TextTrackRepresentation.h"
@@ -97,7 +96,6 @@ private:
 
     std::unique_ptr<TextTrackRepresentation> m_textTrackRepresentation;
 
-    GenericTaskQueue<Timer> m_taskQueue;
     WeakPtr<HTMLMediaElement> m_mediaElement;
     IntRect m_videoDisplaySize;
     int m_fontSize { 0 };

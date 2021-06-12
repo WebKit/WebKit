@@ -45,9 +45,9 @@ public:
 
     void waitForCompletion()
     {
-        std::unique_lock<Lock> lock(m_stateMutex);
+        Locker lock { m_stateMutex };
 
-        m_completionConditionVariable.wait(lock, [this] { return m_completed; });
+        m_completionConditionVariable.wait(m_stateMutex, [this] { return m_completed; });
     }
 
     void setCompleted()

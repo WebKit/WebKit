@@ -159,7 +159,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.proxyConfiguration = configuration().proxyConfiguration();
     parameters.networkSessionParameters.sourceApplicationBundleIdentifier = configuration().sourceApplicationBundleIdentifier();
     parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = configuration().sourceApplicationSecondaryIdentifier();
-    parameters.networkSessionParameters.attributedBundleIdentifier = configuration().attributedBundleIdentifier();
     parameters.networkSessionParameters.shouldLogCookieInformation = shouldLogCookieInformation;
     parameters.networkSessionParameters.httpProxy = WTFMove(httpProxy);
     parameters.networkSessionParameters.httpsProxy = WTFMove(httpsProxy);
@@ -523,7 +522,7 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const String& host, const String
         // because test cases may have app bound domains but no key.
         bool hasAppBoundDomains = keyExists || !domains.isEmpty();
         if (!hasAppBoundDomains) {
-            listener->didReceiveAppBoundDomainResult(WTF::nullopt);
+            listener->didReceiveAppBoundDomainResult(std::nullopt);
             return;
         }
         listener->didReceiveAppBoundDomainResult(schemeOrDomainIsAppBound(host, protocol, domains, schemes));
@@ -548,11 +547,11 @@ void WebsiteDataStore::getAppBoundSchemes(CompletionHandler<void(const HashSet<S
     });
 }
 
-Optional<HashSet<WebCore::RegistrableDomain>> WebsiteDataStore::appBoundDomainsIfInitialized()
+std::optional<HashSet<WebCore::RegistrableDomain>> WebsiteDataStore::appBoundDomainsIfInitialized()
 {
     ASSERT(RunLoop::isMain());
     if (!hasInitializedAppBoundDomains)
-        return WTF::nullopt;
+        return std::nullopt;
     return appBoundDomains();
 }
 

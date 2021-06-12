@@ -102,7 +102,7 @@ Storage::Record Entry::encodeAsStorageRecord() const
     Data header(encoder.buffer(), encoder.bufferSize());
     Data body;
     if (m_buffer)
-        body = { reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->size() };
+        body = { m_buffer->data(), m_buffer->size() };
 
     return { m_key, m_timeStamp, header, body, { } };
 }
@@ -118,20 +118,20 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     entry->m_response = WTFMove(response);
     entry->m_response.setSource(WebCore::ResourceResponse::Source::DiskCache);
 
-    Optional<bool> hasVaryingRequestHeaders;
+    std::optional<bool> hasVaryingRequestHeaders;
     decoder >> hasVaryingRequestHeaders;
     if (!hasVaryingRequestHeaders)
         return nullptr;
 
     if (*hasVaryingRequestHeaders) {
-        Optional<Vector<std::pair<String, String>>> varyingRequestHeaders;
+        std::optional<Vector<std::pair<String, String>>> varyingRequestHeaders;
         decoder >> varyingRequestHeaders;
         if (!varyingRequestHeaders)
             return nullptr;
         entry->m_varyingRequestHeaders = WTFMove(*varyingRequestHeaders);
     }
 
-    Optional<bool> isRedirect;
+    std::optional<bool> isRedirect;
     decoder >> isRedirect;
     if (!isRedirect)
         return nullptr;
@@ -142,7 +142,7 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
             return nullptr;
     }
 
-    Optional<Optional<Seconds>> maxAgeCap;
+    std::optional<std::optional<Seconds>> maxAgeCap;
     decoder >> maxAgeCap;
     if (!maxAgeCap)
         return nullptr;
@@ -224,7 +224,7 @@ void Entry::setNeedsValidation(bool value)
 
 void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
 {
-    json.appendLiteral("{\n"
+    json.append("{\n"
         "\"hash\": ");
     json.appendQuotedJSONString(m_key.hashAsString());
     json.append(",\n"
@@ -236,7 +236,7 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
         "\"timestamp\": ", m_timeStamp.secondsSinceEpoch().milliseconds(), ",\n"
         "\"URL\": ");
     json.appendQuotedJSONString(m_response.url().string());
-    json.appendLiteral(",\n"
+    json.append(",\n"
         "\"bodyHash\": ");
     json.appendQuotedJSONString(info.bodyHash);
     json.append(",\n"
@@ -244,15 +244,12 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
         "\"headers\": {\n");
     bool firstHeader = true;
     for (auto& header : m_response.httpHeaderFields()) {
-        if (!firstHeader)
-            json.appendLiteral(",\n");
-        firstHeader = false;
-        json.appendLiteral("    ");
+        json.append(std::exchange(firstHeader, false) ? "" : ",\n", "    ");
         json.appendQuotedJSONString(header.key);
-        json.appendLiteral(": ");
+        json.append(": ");
         json.appendQuotedJSONString(header.value);
     }
-    json.appendLiteral("\n"
+    json.append("\n"
         "}\n"
         "}");
 }

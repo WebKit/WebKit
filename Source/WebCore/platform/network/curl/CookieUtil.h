@@ -34,7 +34,7 @@ struct Cookie;
 
 namespace CookieUtil {
 
-Optional<Cookie> parseCookieHeader(const String&);
+std::optional<Cookie> parseCookieHeader(const String&);
 
 bool isIPAddress(const String&);
 

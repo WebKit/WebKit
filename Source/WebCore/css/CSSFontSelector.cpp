@@ -190,7 +190,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         return;
 
     SetForScope<bool> creatingFont(m_creatingFont, true);
-    Ref<CSSFontFace> fontFace = CSSFontFace::create(this, &fontFaceRule);
+    auto fontFace = CSSFontFace::create(*this, &fontFaceRule);
 
     if (!fontFace->setFamilies(*fontFamily))
         return;
@@ -280,14 +280,14 @@ void CSSFontSelector::fontCacheInvalidated()
     dispatchInvalidationCallbacks();
 }
 
-Optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescription& fontDescription, const AtomString& familyName)
+std::optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescription& fontDescription, const AtomString& familyName)
 {
     auto platformResult = FontDescription::platformResolveGenericFamily(fontDescription.script(), fontDescription.computedLocale(), familyName);
     if (!platformResult.isNull())
         return platformResult;
 
     if (!m_context)
-        return WTF::nullopt;
+        return std::nullopt;
 
     const auto& settings = m_context->settingsValues();
 
@@ -298,7 +298,7 @@ Optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescription
             return AtomString(*familyString);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomString& familyName)
@@ -310,7 +310,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     bool resolveGenericFamilyFirst = familyName == m_fontFamilyNames.at(FamilyNamesIndex::StandardFamily);
 
     AtomString familyForLookup = familyName;
-    Optional<FontDescription> overrideFontDescription;
+    std::optional<FontDescription> overrideFontDescription;
     const FontDescription* fontDescriptionForLookup = &fontDescription;
     auto resolveAndAssignGenericFamily = [&]() {
         if (auto genericFamilyOptional = resolveGenericFamily(fontDescription, familyName))

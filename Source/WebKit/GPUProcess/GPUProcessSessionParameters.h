@@ -51,28 +51,28 @@ struct GPUProcessSessionParameters {
     }
 
     template <class Decoder>
-    static Optional<GPUProcessSessionParameters> decode(Decoder& decoder)
+    static std::optional<GPUProcessSessionParameters> decode(Decoder& decoder)
     {
-        Optional<String> mediaCacheDirectory;
+        std::optional<String> mediaCacheDirectory;
         decoder >> mediaCacheDirectory;
         if (!mediaCacheDirectory)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<SandboxExtension::Handle> mediaCacheDirectorySandboxExtensionHandle;
+        std::optional<SandboxExtension::Handle> mediaCacheDirectorySandboxExtensionHandle;
         decoder >> mediaCacheDirectorySandboxExtensionHandle;
         if (!mediaCacheDirectorySandboxExtensionHandle)
-            return WTF::nullopt;
+            return std::nullopt;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-        Optional<String> mediaKeysStorageDirectory;
+        std::optional<String> mediaKeysStorageDirectory;
         decoder >> mediaKeysStorageDirectory;
         if (!mediaKeysStorageDirectory)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<SandboxExtension::Handle> mediaKeysStorageDirectorySandboxExtensionHandle;
+        std::optional<SandboxExtension::Handle> mediaKeysStorageDirectorySandboxExtensionHandle;
         decoder >> mediaKeysStorageDirectorySandboxExtensionHandle;
         if (!mediaKeysStorageDirectorySandboxExtensionHandle)
-            return WTF::nullopt;
+            return std::nullopt;
 #endif
 
         return GPUProcessSessionParameters {

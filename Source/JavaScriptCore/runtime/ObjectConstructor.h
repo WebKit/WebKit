@@ -163,7 +163,7 @@ JS_EXPORT_PRIVATE JSObject* objectConstructorFreeze(JSGlobalObject*, JSObject*);
 JS_EXPORT_PRIVATE JSObject* objectConstructorSeal(JSGlobalObject*, JSObject*);
 JSValue objectConstructorGetOwnPropertyDescriptor(JSGlobalObject*, JSObject*, const Identifier&);
 JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, JSObject*);
-JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode, Optional<CachedPropertyNamesKind>);
+JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode, std::optional<CachedPropertyNamesKind>);
 bool toPropertyDescriptor(JSGlobalObject*, JSValue, PropertyDescriptor&);
 
 JSC_DECLARE_HOST_FUNCTION(objectConstructorIs);

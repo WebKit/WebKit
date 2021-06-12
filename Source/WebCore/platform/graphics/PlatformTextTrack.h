@@ -78,51 +78,51 @@ struct PlatformTextTrackData {
     bool m_isDefault;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PlatformTextTrackData> decode(Decoder&);
+    template<class Decoder> static std::optional<PlatformTextTrackData> decode(Decoder&);
 };
 
 template <class Decoder>
-Optional<PlatformTextTrackData> PlatformTextTrackData::decode(Decoder& decoder)
+std::optional<PlatformTextTrackData> PlatformTextTrackData::decode(Decoder& decoder)
 {
-    Optional<String> label;
+    std::optional<String> label;
     decoder >> label;
     if (!label)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> language;
+    std::optional<String> language;
     decoder >> language;
     if (!language)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> url;
+    std::optional<String> url;
     decoder >> url;
     if (!url)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<TrackMode> mode;
+    std::optional<TrackMode> mode;
     decoder >> mode;
     if (!mode)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<TrackKind> kind;
+    std::optional<TrackKind> kind;
     decoder >> kind;
     if (!kind)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<TrackType> type;
+    std::optional<TrackType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<int> uniqueId;
+    std::optional<int> uniqueId;
     decoder >> uniqueId;
     if (!uniqueId)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> isDefault;
+    std::optional<bool> isDefault;
     decoder >> isDefault;
     if (!isDefault)
-        return WTF::nullopt;
+        return std::nullopt;
 
     PlatformTextTrackData data = {
         WTFMove(*label),

@@ -109,7 +109,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     encoder << m_scale;
     encoder << m_isOpaque;
 
-    Optional<ImageBufferBackendHandle> handle;
+    std::optional<ImageBufferBackendHandle> handle;
     if (m_frontBuffer.imageBuffer) {
         switch (m_type) {
         case Type::IOSurface:
@@ -212,19 +212,19 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
     switch (m_type) {
     case Type::IOSurface:
         if (shouldUseRemoteRendering)
-            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Accelerated, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat());
+            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Accelerated, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat());
         else
-            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
         break;
     case Type::Bitmap:
         if (shouldUseRemoteRendering)
-            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Unaccelerated, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat());
+            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Unaccelerated, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat());
         else
-            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
         break;
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     case Type::CGDisplayList:
-        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
         break;
 #endif
     }
@@ -397,7 +397,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
             ASSERT(m_type == Type::IOSurface);
             switch (contentsType) {
             case LayerContentsType::IOSurface: {
-                auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight), WebCore::sRGBColorSpaceRef());
+                auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight), WebCore::DestinationColorSpace::SRGB());
                 layer.contents = surface ? surface->asLayerContents() : nil;
                 break;
             }

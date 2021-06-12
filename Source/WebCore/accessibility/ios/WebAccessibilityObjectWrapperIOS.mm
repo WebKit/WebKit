@@ -147,7 +147,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 + (WebAccessibilityTextMarker *)textMarkerWithVisiblePosition:(VisiblePosition&)visiblePos cache:(AXObjectCache*)cache;
 + (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache;
-+ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const Optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache;
++ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const std::optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache;
 
 @end
 
@@ -207,7 +207,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
-+ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const Optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache
++ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const std::optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache
 {
     if (!cache)
         return nil;
@@ -2390,10 +2390,10 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return NSMakeRange(characterCount({ { *scope, 0 }, range.start }), characterCount(range));
 }
 
-- (Optional<SimpleRange>)_convertToDOMRange:(NSRange)range
+- (std::optional<SimpleRange>)_convertToDOMRange:(NSRange)range
 {
     if (range.location == NSNotFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // our critical assumption is that we are only called by input methods that
     // concentrate on a given area containing the selection
@@ -2405,7 +2405,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     auto selectionRoot = document->frame()->selection().selection().rootEditableElement();
     auto scope = selectionRoot ? selectionRoot : document->documentElement();
     if (!scope)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return resolveCharacterRange(makeRangeSelectingNodeContents(*scope), range);
 }
@@ -2774,15 +2774,15 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen];
 }
 
-- (Optional<SimpleRange>)rangeFromMarkers:(NSArray *)markers withText:(NSString *)text
+- (std::optional<SimpleRange>)rangeFromMarkers:(NSArray *)markers withText:(NSString *)text
 {
     auto originalRange = [self rangeForTextMarkers:markers];
     if (!originalRange)
-        return WTF::nullopt;
+        return std::nullopt;
     
     AXObjectCache* cache = self.axBackingObject->axObjectCache();
     if (!cache)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return cache->rangeMatchesTextNearRange(*originalRange, text);
 }
@@ -2848,20 +2848,20 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
-- (Optional<SimpleRange>)rangeForTextMarkers:(NSArray *)textMarkers
+- (std::optional<SimpleRange>)rangeForTextMarkers:(NSArray *)textMarkers
 {
     if ([textMarkers count] != 2)
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebAccessibilityTextMarker *startMarker = [textMarkers objectAtIndex:0];
     WebAccessibilityTextMarker *endMarker = [textMarkers objectAtIndex:1];
     
     if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
-        return WTF::nullopt;
+        return std::nullopt;
     
     AXObjectCache* cache = self.axBackingObject->axObjectCache();
     if (!cache)
-        return WTF::nullopt;
+        return std::nullopt;
     
     CharacterOffset startCharacterOffset = [startMarker characterOffset];
     CharacterOffset endCharacterOffset = [endMarker characterOffset];
@@ -2901,7 +2901,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [self textMarkersForRange:[self rangeForTextMarkers:textMarkers]];
 }
 
-- (NSArray *)textMarkersForRange:(const Optional<SimpleRange>&)range
+- (NSArray *)textMarkersForRange:(const std::optional<SimpleRange>&)range
 {
     if (!range)
         return nil;

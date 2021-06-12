@@ -40,11 +40,11 @@ public:
     static ExceptionOr<Ref<WaveShaperNode>> create(BaseAudioContext&, const WaveShaperOptions& = { });
 
     // setCurve() is called on the main thread.
-    ExceptionOr<void> setCurve(RefPtr<Float32Array>&&);
-    Float32Array* curve();
+    ExceptionOr<void> setCurveForBindings(RefPtr<Float32Array>&&);
+    Float32Array* curveForBindings();
 
-    void setOversample(OverSampleType);
-    OverSampleType oversample() const;
+    void setOversampleForBindings(OverSampleType);
+    OverSampleType oversampleForBindings() const;
 
     double latency() const { return latencyTime(); }
 
@@ -54,6 +54,7 @@ private:
     bool propagatesSilence() const final;
 
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
+    const WaveShaperProcessor* waveShaperProcessor() const { return static_cast<const WaveShaperProcessor*>(processor()); }
 };
 
 String convertEnumerationToString(WebCore::OverSampleType); // in JSOverSampleType.cpp

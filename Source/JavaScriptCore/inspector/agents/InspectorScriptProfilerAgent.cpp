@@ -64,7 +64,7 @@ void InspectorScriptProfilerAgent::willDestroyFrontendAndBackend(DisconnectReaso
     }
 }
 
-Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::startTracking(Optional<bool>&& includeSamples)
+Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::startTracking(std::optional<bool>&& includeSamples)
 {
     if (m_tracking)
         return { };
@@ -79,9 +79,9 @@ Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::startTracking(Option
         SamplingProfiler& samplingProfiler = vm.ensureSamplingProfiler(stopwatch);
 
         Locker locker { samplingProfiler.getLock() };
-        samplingProfiler.setStopWatch(locker, stopwatch);
-        samplingProfiler.noticeCurrentThreadAsJSCExecutionThread(locker);
-        samplingProfiler.start(locker);
+        samplingProfiler.setStopWatch(stopwatch);
+        samplingProfiler.noticeCurrentThreadAsJSCExecutionThreadWithLock();
+        samplingProfiler.startWithLock();
         m_enabledSamplingProfiler = true;
     }
 #else
@@ -218,8 +218,8 @@ void InspectorScriptProfilerAgent::trackingComplete()
         RELEASE_ASSERT(samplingProfiler);
 
         Locker locker { samplingProfiler->getLock() };
-        samplingProfiler->pause(locker);
-        Vector<SamplingProfiler::StackTrace> stackTraces = samplingProfiler->releaseStackTraces(locker);
+        samplingProfiler->pause();
+        Vector<SamplingProfiler::StackTrace> stackTraces = samplingProfiler->releaseStackTraces();
         locker.unlockEarly();
 
         Ref<Protocol::ScriptProfiler::Samples> samples = buildSamples(vm, WTFMove(stackTraces));
@@ -245,8 +245,8 @@ void InspectorScriptProfilerAgent::stopSamplingWhenDisconnecting()
     SamplingProfiler* samplingProfiler = vm.samplingProfiler();
     RELEASE_ASSERT(samplingProfiler);
     Locker locker { samplingProfiler->getLock() };
-    samplingProfiler->pause(locker);
-    samplingProfiler->clearData(locker);
+    samplingProfiler->pause();
+    samplingProfiler->clearData();
 
     m_enabledSamplingProfiler = false;
 #endif

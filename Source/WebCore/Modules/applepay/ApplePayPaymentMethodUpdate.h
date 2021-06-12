@@ -28,7 +28,6 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayDetailsUpdateBase.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,7 +38,7 @@ struct ApplePayPaymentMethodUpdate final : public ApplePayDetailsUpdateBase {
 #endif // ENABLE(APPLE_PAY_INSTALLMENTS)
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayPaymentMethodUpdate> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayPaymentMethodUpdate> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -52,18 +51,18 @@ void ApplePayPaymentMethodUpdate::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayPaymentMethodUpdate> ApplePayPaymentMethodUpdate::decode(Decoder& decoder)
+std::optional<ApplePayPaymentMethodUpdate> ApplePayPaymentMethodUpdate::decode(Decoder& decoder)
 {
     ApplePayPaymentMethodUpdate result;
 
     if (!result.decodeBase(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
 #define DECODE(name, type) \
-    Optional<type> name; \
+    std::optional<type> name; \
     decoder >> name; \
     if (!name) \
-        return WTF::nullopt; \
+        return std::nullopt; \
     result.name = WTFMove(*name); \
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)

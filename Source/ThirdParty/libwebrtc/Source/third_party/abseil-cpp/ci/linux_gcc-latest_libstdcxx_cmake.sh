@@ -14,17 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO(absl-team): This script isn't fully hermetic because
-# -DABSL_USE_GOOGLETEST_HEAD=ON means that this script isn't pinned to a fixed
-# version of GoogleTest. This means that an upstream change to GoogleTest could
-# break this test. Fix this by allowing this script to pin to a known-good
-# version of GoogleTest.
-
 set -euox pipefail
 
 if [[ -z ${ABSEIL_ROOT:-} ]]; then
   ABSEIL_ROOT="$(realpath $(dirname ${0})/..)"
 fi
+
+source "${ABSEIL_ROOT}/ci/cmake_common.sh"
 
 if [[ -z ${ABSL_CMAKE_CXX_STANDARDS:-} ]]; then
   ABSL_CMAKE_CXX_STANDARDS="11 14 17 20"
@@ -34,31 +30,36 @@ if [[ -z ${ABSL_CMAKE_BUILD_TYPES:-} ]]; then
   ABSL_CMAKE_BUILD_TYPES="Debug Release"
 fi
 
+if [[ -z ${ABSL_CMAKE_BUILD_SHARED:-} ]]; then
+  ABSL_CMAKE_BUILD_SHARED="OFF ON"
+fi
+
 source "${ABSEIL_ROOT}/ci/linux_docker_containers.sh"
 readonly DOCKER_CONTAINER=${LINUX_GCC_LATEST_CONTAINER}
 
 for std in ${ABSL_CMAKE_CXX_STANDARDS}; do
   for compilation_mode in ${ABSL_CMAKE_BUILD_TYPES}; do
-    echo "--------------------------------------------------------------------"
-    echo "Testing with CMAKE_BUILD_TYPE=${compilation_mode} and -std=c++${std}"
-
-    time docker run \
-      --volume="${ABSEIL_ROOT}:/abseil-cpp:ro" \
-      --workdir=/abseil-cpp \
-      --tmpfs=/buildfs:exec \
-      --cap-add=SYS_PTRACE \
-      --rm \
-      -e CFLAGS="-Werror" \
-      -e CXXFLAGS="-Werror" \
-      ${DOCKER_CONTAINER} \
-      /bin/bash -c "
-        cd /buildfs && \
-        cmake /abseil-cpp \
-          -DABSL_USE_GOOGLETEST_HEAD=ON \
-          -DABSL_RUN_TESTS=ON \
-          -DCMAKE_BUILD_TYPE=${compilation_mode} \
-          -DCMAKE_CXX_STANDARD=${std} && \
-        make -j$(nproc) && \
-        ctest -j$(nproc) --output-on-failure"
+    for build_shared in ${ABSL_CMAKE_BUILD_SHARED}; do
+      time docker run \
+        --mount type=bind,source="${ABSEIL_ROOT}",target=/abseil-cpp,readonly \
+        --tmpfs=/buildfs:exec \
+        --workdir=/buildfs \
+        --cap-add=SYS_PTRACE \
+        --rm \
+        -e CFLAGS="-Werror" \
+        -e CXXFLAGS="-Werror" \
+        ${DOCKER_EXTRA_ARGS:-} \
+        "${DOCKER_CONTAINER}" \
+        /bin/bash -c "
+          cmake /abseil-cpp \
+            -DABSL_GOOGLETEST_DOWNLOAD_URL=${ABSL_GOOGLETEST_DOWNLOAD_URL} \
+            -DBUILD_SHARED_LIBS=${build_shared} \
+            -DBUILD_TESTING=ON \
+            -DCMAKE_BUILD_TYPE=${compilation_mode} \
+            -DCMAKE_CXX_STANDARD=${std} \
+            -DCMAKE_MODULE_LINKER_FLAGS=\"-Wl,--no-undefined\" && \
+          make -j$(nproc) && \
+          ctest -j$(nproc) --output-on-failure"
+    done
   done
 done

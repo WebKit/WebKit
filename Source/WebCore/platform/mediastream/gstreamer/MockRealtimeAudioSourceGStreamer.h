@@ -48,7 +48,7 @@ private:
     bool interrupted() const final { return m_isInterrupted; };
     void setInterruptedForTesting(bool) final;
 
-    Optional<GStreamerAudioStreamDescription> m_streamFormat;
+    std::optional<GStreamerAudioStreamDescription> m_streamFormat;
     Vector<float> m_bipBopBuffer;
     uint32_t m_maximiumFrameCount;
     uint64_t m_samplesEmitted { 0 };

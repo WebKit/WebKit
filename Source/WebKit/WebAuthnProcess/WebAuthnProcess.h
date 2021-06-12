@@ -79,7 +79,7 @@ private:
 
     // Message Handlers
     void initializeWebAuthnProcess(WebAuthnProcessCreationParameters&&);
-    void createWebAuthnConnectionToWebProcess(WebCore::ProcessIdentifier, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
+    void createWebAuthnConnectionToWebProcess(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::Attachment>&&)>&&);
 
     void processDidTransitionToForeground();
     void processDidTransitionToBackground();

@@ -29,7 +29,6 @@
 #include "ReferrerPolicy.h"
 #include "ResourceLoadPriority.h"
 #include <JavaScriptCore/ScriptFetcher.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -58,7 +57,7 @@ protected:
     {
     }
 
-    CachedResourceHandle<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL, const String& crossOriginMode, String&& integrity, Optional<ResourceLoadPriority>) const;
+    CachedResourceHandle<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority>) const;
 
 private:
     String m_nonce;

@@ -200,7 +200,7 @@ class CppGenerator(Generator):
             raise ValueError("unknown type")
 
         if is_optional:
-            cpp_name = 'Optional<%s>&&' % cpp_name
+            cpp_name = 'std::optional<%s>&&' % cpp_name
         return cpp_name
 
     @staticmethod
@@ -244,7 +244,7 @@ class CppGenerator(Generator):
             raise ValueError("unknown type")
 
         if is_optional:
-            cpp_name = 'Optional<%s>' % cpp_name
+            cpp_name = 'std::optional<%s>' % cpp_name
         return cpp_name
 
     @staticmethod
@@ -288,7 +288,7 @@ class CppGenerator(Generator):
             raise ValueError("unknown type")
 
         if is_optional:
-            cpp_name = 'Optional<%s>&&' % cpp_name
+            cpp_name = 'std::optional<%s>&&' % cpp_name
         return cpp_name
 
     @staticmethod
@@ -332,7 +332,7 @@ class CppGenerator(Generator):
             raise ValueError("unknown type")
 
         if is_optional:
-            cpp_name = 'Optional<%s>&&' % cpp_name
+            cpp_name = 'std::optional<%s>&&' % cpp_name
         return cpp_name
 
     @staticmethod

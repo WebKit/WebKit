@@ -48,27 +48,28 @@ std::unique_ptr<AudioDSPKernel> WaveShaperProcessor::createKernel()
     return makeUnique<WaveShaperDSPKernel>(this);
 }
 
-void WaveShaperProcessor::setCurve(Float32Array* curve)
+void WaveShaperProcessor::setCurveForBindings(Float32Array* curve)
 {
+    ASSERT(isMainThread());
     // This synchronizes with process().
     Locker locker { m_processLock };
 
     m_curve = curve;
 }
 
-void WaveShaperProcessor::setOversample(OverSampleType oversample)
+void WaveShaperProcessor::setOversampleForBindings(OverSampleType oversample)
 {
+    ASSERT(isMainThread());
     // This synchronizes with process().
     Locker locker { m_processLock };
 
     m_oversample = oversample;
 
-    if (oversample != OverSampleNone) {
-        for (auto& audioDSPKernel : m_kernels) {
-            WaveShaperDSPKernel& kernel = static_cast<WaveShaperDSPKernel&>(*audioDSPKernel);
-            kernel.lazyInitializeOversampling();
-        }
-    }
+    if (oversample == OverSampleNone)
+        return;
+
+    for (auto& audioDSPKernel : m_kernels)
+        static_cast<WaveShaperDSPKernel&>(*audioDSPKernel).lazyInitializeOversampling();
 }
 
 void WaveShaperProcessor::process(const AudioBus* source, AudioBus* destination, size_t framesToProcess)
@@ -92,8 +93,8 @@ void WaveShaperProcessor::process(const AudioBus* source, AudioBus* destination,
     Locker locker { AdoptLock, m_processLock };
 
     // For each channel of our input, process using the corresponding WaveShaperDSPKernel into the output channel.
-    for (unsigned i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
+    for (size_t i = 0; i < m_kernels.size(); ++i)
+        static_cast<WaveShaperDSPKernel&>(*m_kernels[i]).process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 }
 
 } // namespace WebCore

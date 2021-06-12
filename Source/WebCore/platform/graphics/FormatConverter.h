@@ -59,7 +59,7 @@ public:
     {
         const unsigned MaxNumberOfComponents = 4;
         const unsigned MaxBytesPerComponent  = 4;
-        m_unpackedIntermediateSrcData = makeUniqueArray<uint8_t>((Checked<size_t>(m_srcSubRectangle.width()) * MaxNumberOfComponents * MaxBytesPerComponent).unsafeGet());
+        m_unpackedIntermediateSrcData = makeUniqueArray<uint8_t>(Checked<size_t>(m_srcSubRectangle.width()) * MaxNumberOfComponents * MaxBytesPerComponent);
 
         ASSERT(m_unpackedIntermediateSrcData.get());
     }

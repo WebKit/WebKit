@@ -120,7 +120,7 @@ protected:
     void didReceiveMemoryPressureEvent(bool isCritical);
 #endif
 
-    static Optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> createIPCConnectionPair();
+    static std::optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> createIPCConnectionPair();
 
 private:
     virtual bool shouldOverrideQuarantine() { return true; }
@@ -165,7 +165,7 @@ struct AuxiliaryProcessInitializationParameters {
     String clientIdentifier;
     String clientBundleIdentifier;
     uint32_t clientSDKVersion;
-    Optional<WebCore::ProcessIdentifier> processIdentifier;
+    std::optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
     WebCore::AuxiliaryProcessType processType;

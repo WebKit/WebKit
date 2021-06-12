@@ -33,7 +33,6 @@
 #include "PaymentContact.h"
 #include "PaymentInstallmentConfigurationWebCore.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -170,7 +169,7 @@ struct PaymentAuthorizationResult {
     Vector<RefPtr<ApplePayError>> errors;
 };
 
-WEBCORE_EXPORT bool isFinalStateResult(const Optional<PaymentAuthorizationResult>&);
+WEBCORE_EXPORT bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>&);
 
 } // namespace WebCore
 

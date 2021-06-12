@@ -45,11 +45,11 @@ RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess
 {
 }
 
-void RemoteImageDecoderAVFProxy::createDecoder(const IPC::DataReference& data, const String& mimeType, CompletionHandler<void(Optional<ImageDecoderIdentifier>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createDecoder(const IPC::DataReference& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
 {
     auto imageDecoder = ImageDecoderAVFObjC::create(SharedBuffer::create(data.data(), data.size()), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored);
 
-    Optional<ImageDecoderIdentifier> imageDecoderIdentifier;
+    std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;
     if (!imageDecoder)
         return completionHandler(WTFMove(imageDecoderIdentifier));
 
@@ -93,11 +93,11 @@ void RemoteImageDecoderAVFProxy::setExpectedContentSize(ImageDecoderIdentifier i
     m_imageDecoders.get(identifier)->setExpectedContentSize(expectedContentSize);
 }
 
-void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, const IPC::DataReference& data, bool allDataReceived, CompletionHandler<void(size_t frameCount, const IntSize& size, bool hasTrack, Optional<Vector<ImageDecoder::FrameInfo>>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, const IPC::DataReference& data, bool allDataReceived, CompletionHandler<void(size_t frameCount, const IntSize& size, bool hasTrack, std::optional<Vector<ImageDecoder::FrameInfo>>&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
     if (!m_imageDecoders.contains(identifier)) {
-        completionHandler(0, { }, false, WTF::nullopt);
+        completionHandler(0, { }, false, std::nullopt);
         return;
     }
 
@@ -106,35 +106,35 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
 
     auto frameCount = imageDecoder->frameCount();
 
-    Optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
+    std::optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
     if (frameCount)
         frameInfos = imageDecoder->frameInfos();
 
     completionHandler(frameCount, imageDecoder->size(), imageDecoder->hasTrack(), WTFMove(frameInfos));
 }
 
-void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, ColorSpaceData&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(std::optional<WTF::MachSendRight>&&, std::optional<WebCore::DestinationColorSpace>&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
-    Optional<WTF::MachSendRight> sendRight;
-    ColorSpaceData colorSpaceData;
+    std::optional<WTF::MachSendRight> sendRight;
+    std::optional<WebCore::DestinationColorSpace> colorSpace;
     if (!m_imageDecoders.contains(identifier)) {
-        completionHandler(WTFMove(sendRight), WTFMove(colorSpaceData));
+        completionHandler(WTFMove(sendRight), WTFMove(colorSpace));
         return;
     }
 
     auto frameImage = m_imageDecoders.get(identifier)->createFrameImageAtIndex(index);
     if (!frameImage) {
-        completionHandler(WTFMove(sendRight), WTFMove(colorSpaceData));
+        completionHandler(WTFMove(sendRight), WTFMove(colorSpace));
         return;
     }
 
     if (auto surface = IOSurface::createFromImage(frameImage.get())) {
         sendRight = surface->createSendRight();
-        colorSpaceData.cgColorSpace = surface->colorSpace();
+        colorSpace = surface->colorSpace();
     }
 
-    completionHandler(WTFMove(sendRight), WTFMove(colorSpaceData));
+    completionHandler(WTFMove(sendRight), WTFMove(colorSpace));
 }
 
 void RemoteImageDecoderAVFProxy::clearFrameBufferCache(ImageDecoderIdentifier identifier, size_t index)

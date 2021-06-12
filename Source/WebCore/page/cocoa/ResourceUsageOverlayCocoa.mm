@@ -467,7 +467,7 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
         size_t reclaimable = category.reclaimableSize.last();
         size_t external = category.externalSize.last();
         
-        String label = makeString(pad(' ', 11, category.name), ": ", formatByteNumber(dirty));
+        auto label = makeString(pad(' ', 11, category.name), ": ", formatByteNumber(dirty));
         if (external)
             label = label + makeString(" + ", formatByteNumber(external));
         if (reclaimable)

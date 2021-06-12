@@ -30,7 +30,7 @@
 #include "AudioDestination.h"
 #include "AudioOutputUnitAdaptor.h"
 #include <AudioUnit/AudioUnit.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
 
@@ -85,13 +85,13 @@ private:
 
     // Resolves the buffer size mismatch between the WebAudio engine and
     // the callback function from the actual audio device.
-    CheckedLock m_fifoLock;
+    Lock m_fifoLock;
     UniqueRef<PushPullFIFO> m_fifo WTF_GUARDED_BY_LOCK(m_fifoLock);
 
     std::unique_ptr<MultiChannelResampler> m_resampler;
     AudioIOPosition m_outputTimestamp;
 
-    CheckedLock m_dispatchToRenderThreadLock;
+    Lock m_dispatchToRenderThreadLock;
     Function<void(Function<void()>&&)> m_dispatchToRenderThread WTF_GUARDED_BY_LOCK(m_dispatchToRenderThreadLock);
 
     float m_contextSampleRate;

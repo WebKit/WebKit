@@ -203,9 +203,6 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
 
     input->connect(output);
 
-    // Let context know that a connection has been made.
-    context().incrementConnectionCount();
-
     updatePullStatus();
 
     return { };
@@ -521,9 +518,12 @@ void AudioNode::silenceOutputs()
 
 void AudioNode::enableOutputsIfNecessary()
 {
+    Locker locker { context().graphLock() };
+    if (isTailProcessing())
+        context().removeTailProcessingNode(*this);
+
     if (m_isDisabled && m_connectionRefCount > 0) {
         ASSERT(isMainThread());
-        Locker locker { context().graphLock() };
 
         m_isDisabled = false;
         for (auto& output : m_outputs)
@@ -545,10 +545,11 @@ void AudioNode::disableOutputsIfNecessary()
         // But internally our outputs should be disabled from the inputs they're connected to.
         // disable() can recursively deref connections (and call disable()) down a whole chain of connected nodes.
 
-        // If a node requires tail processing, we defer the disabling of
-        // the outputs so that the tail for the node can be output.
+        // If a node requires tail processing, we defer the disabling of the outputs so that the tail for the node can be output.
         // Otherwise, we can disable the outputs right away.
-        if (!requiresTailProcessing())
+        if (requiresTailProcessing())
+            context().addTailProcessingNode(*this);
+        else
             disableOutputs();
     }
 }
@@ -629,7 +630,6 @@ void AudioNode::markNodeForDeletionIfNecessary()
     // Mark for deletion at end of each render quantum or when context shuts down.
     context().markForDeletion(*this);
     m_isMarkedForDeletion = true;
-    didBecomeMarkedForDeletion();
 }
 
 void AudioNode::ref()
@@ -674,15 +674,15 @@ void AudioNode::derefWithLock()
 
 ExceptionOr<void> AudioNode::handleAudioNodeOptions(const AudioNodeOptions& options, const DefaultAudioNodeOptions& defaults)
 {
-    auto result = setChannelCount(options.channelCount.valueOr(defaults.channelCount));
+    auto result = setChannelCount(options.channelCount.value_or(defaults.channelCount));
     if (result.hasException())
         return result.releaseException();
 
-    result = setChannelCountMode(options.channelCountMode.valueOr(defaults.channelCountMode));
+    result = setChannelCountMode(options.channelCountMode.value_or(defaults.channelCountMode));
     if (result.hasException())
         return result.releaseException();
 
-    result = setChannelInterpretation(options.channelInterpretation.valueOr(defaults.channelInterpretation));
+    result = setChannelInterpretation(options.channelInterpretation.value_or(defaults.channelInterpretation));
     if (result.hasException())
         return result.releaseException();
 

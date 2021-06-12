@@ -32,7 +32,7 @@
 """Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
 import sys
 
-from webkitpy.common import multiprocessing_bootstrap
+from webkitpy.layout_tests.run_webkit_tests import main
 
 if sys.platform.startswith('linux'):
     import os
@@ -42,4 +42,5 @@ if sys.platform.startswith('linux'):
     import flatpakutils
     flatpakutils.run_in_sandbox_if_available(sys.argv)
 
-multiprocessing_bootstrap.run('webkitpy', 'layout_tests', 'run_webkit_tests.py')
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:], sys.stdout, sys.stderr))

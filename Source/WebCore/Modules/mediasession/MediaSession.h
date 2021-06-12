@@ -28,8 +28,7 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "ActiveDOMObject.h"
-#include "EventTarget.h"
-#include "GenericEventQueue.h"
+#include "ExceptionOr.h"
 #include "MediaPositionState.h"
 #include "MediaSessionAction.h"
 #include "MediaSessionActionHandler.h"
@@ -37,7 +36,6 @@
 #include "MediaSessionReadyState.h"
 #include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -50,8 +48,9 @@ class MediaMetadata;
 class MediaSessionCoordinator;
 class MediaSessionCoordinatorPrivate;
 class Navigator;
+template<typename> class DOMPromiseDeferred;
 
-class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public EventTargetWithInlineData {
+class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public CanMakeWeakPtr<MediaSession> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MediaSession> create(Navigator&);
@@ -66,10 +65,12 @@ public:
 
     void setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
 
-    ExceptionOr<void> setPositionState(Optional<MediaPositionState>&&);
-    Optional<MediaPositionState> positionState() const { return m_positionState; }
+    void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
-    WEBCORE_EXPORT Optional<double> currentPosition() const;
+    ExceptionOr<void> setPositionState(std::optional<MediaPositionState>&&);
+    std::optional<MediaPositionState> positionState() const { return m_positionState; }
+
+    WEBCORE_EXPORT std::optional<double> currentPosition() const;
 
     Document* document() const;
     
@@ -77,8 +78,7 @@ public:
     MediaSessionReadyState readyState() const { return m_readyState; };
     void setReadyState(MediaSessionReadyState);
 
-    MediaSessionCoordinator* coordinator() const { return m_coordinator.get(); }
-    WEBCORE_EXPORT void createCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
+    MediaSessionCoordinator& coordinator() const { return m_coordinator.get(); }
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
@@ -87,20 +87,20 @@ public:
 #endif
 
     bool hasActiveActionHandlers() const { return !m_actionHandlers.isEmpty(); }
-    WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&);
+    enum class TriggerGestureIndicator {
+        No,
+        Yes,
+    };
+    WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&, TriggerGestureIndicator = TriggerGestureIndicator::Yes);
 
     const Logger& logger() const { return *m_logger.get(); }
-
-    // EventTarget
-    using RefCounted::ref;
-    using RefCounted::deref;
 
     class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer() = default;
 
         virtual void metadataChanged(const RefPtr<MediaMetadata>&) { }
-        virtual void positionStateChanged(const Optional<MediaPositionState>&) { }
+        virtual void positionStateChanged(const std::optional<MediaPositionState>&) { }
         virtual void playbackStateChanged(MediaSessionPlaybackState) { }
         virtual void actionHandlersChanged() { }
 
@@ -123,15 +123,8 @@ private:
     void notifyActionHandlerObservers();
     void notifyReadyStateObservers();
 
-    // EventTarget
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-    EventTargetInterface eventTargetInterface() const final { return MediaSessionEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
-
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "MediaSession"; }
-    bool virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
     void stop() final;
 
@@ -140,19 +133,18 @@ private:
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
     MediaSessionPlaybackState m_playbackState { MediaSessionPlaybackState::None };
-    Optional<MediaPositionState> m_positionState;
-    Optional<double> m_lastReportedPosition;
+    std::optional<MediaPositionState> m_positionState;
+    std::optional<double> m_lastReportedPosition;
     MonotonicTime m_timeAtLastPositionUpdate;
     HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers;
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
 
     WeakHashSet<Observer> m_observers;
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    MediaSessionReadyState m_readyState { MediaSessionReadyState::HaveNothing };
-    RefPtr<MediaSessionCoordinator> m_coordinator;
+    MediaSessionReadyState m_readyState { MediaSessionReadyState::Havenothing };
+    const Ref<MediaSessionCoordinator> m_coordinator;
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)

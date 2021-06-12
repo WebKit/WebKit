@@ -105,7 +105,7 @@ Animation::~Animation() = default;
 
 bool Animation::animationsMatch(const Animation& other, bool matchProperties) const
 {
-    bool result = m_name == other.m_name
+    bool result = m_name.string == other.m_name.string
         && m_playState == other.m_playState
         && m_playStateSet == other.m_playStateSet
         && m_iterationCount == other.m_iterationCount
@@ -130,9 +130,9 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
     return !matchProperties || (m_property.mode == other.m_property.mode && m_property.id == other.m_property.id && m_propertySet == other.m_propertySet);
 }
 
-const String& Animation::initialName()
+auto Animation::initialName() -> const Name&
 {
-    static NeverDestroyed<String> initialValue(MAKE_STATIC_STRING_IMPL("none"));
+    static NeverDestroyed<Name> initialValue { Name { MAKE_STATIC_STRING_IMPL("none"), true } };
     return initialValue;
 }
 
@@ -161,7 +161,7 @@ TextStream& operator<<(TextStream& ts, Animation::AnimationDirection direction)
 TextStream& operator<<(TextStream& ts, const Animation& animation)
 {
     ts.dumpProperty("property", animation.property());
-    ts.dumpProperty("name", animation.name());
+    ts.dumpProperty("name", animation.name().string);
     ts.dumpProperty("iteration count", animation.iterationCount());
     ts.dumpProperty("delay", animation.iterationCount());
     ts.dumpProperty("duration", animation.duration());

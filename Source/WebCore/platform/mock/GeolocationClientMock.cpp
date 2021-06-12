@@ -72,7 +72,7 @@ void GeolocationClientMock::setPositionUnavailableError(const String& errorMessa
 {
     m_hasError = true;
     m_errorMessage = errorMessage;
-    m_lastPosition = WTF::nullopt;
+    m_lastPosition = std::nullopt;
     asyncUpdateController();
 }
 
@@ -126,7 +126,7 @@ void GeolocationClientMock::permissionTimerFired()
 
 void GeolocationClientMock::reset()
 {
-    m_lastPosition = WTF::nullopt;
+    m_lastPosition = std::nullopt;
     clearError();
     m_permissionState = PermissionStateUnset;
 }
@@ -157,7 +157,7 @@ void GeolocationClientMock::setEnableHighAccuracy(bool)
     // See https://bugs.webkit.org/show_bug.cgi?id=49438
 }
 
-Optional<GeolocationPositionData> GeolocationClientMock::lastPosition()
+std::optional<GeolocationPositionData> GeolocationClientMock::lastPosition()
 {
     return m_lastPosition;
 }

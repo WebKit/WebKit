@@ -323,24 +323,24 @@ String IDBKeyData::loggingString() const
         return "<invalid>"_s;
     case IndexedDB::KeyType::Array: {
         StringBuilder builder;
-        builder.appendLiteral("<array> - { ");
+        builder.append("<array> - { ");
         auto& array = WTF::get<Vector<IDBKeyData>>(m_value);
         for (size_t i = 0; i < array.size(); ++i) {
             builder.append(array[i].loggingString());
             if (i < array.size() - 1)
-                builder.appendLiteral(", ");
+                builder.append(", ");
         }
-        builder.appendLiteral(" }");
+        builder.append(" }");
         result = builder.toString();
         break;
     }
     case IndexedDB::KeyType::Binary: {
         StringBuilder builder;
-        builder.appendLiteral("<binary> - ");
+        builder.append("<binary> - ");
 
         auto* data = WTF::get<ThreadSafeDataBuffer>(m_value).data();
         if (!data) {
-            builder.appendLiteral("(null)");
+            builder.append("(null)");
             result = builder.toString();
             break;
         }
@@ -353,7 +353,7 @@ String IDBKeyData::loggingString() const
         }
 
         if (data->size() > 8)
-            builder.appendLiteral("...");
+            builder.append("...");
 
         result = builder.toString();
         break;

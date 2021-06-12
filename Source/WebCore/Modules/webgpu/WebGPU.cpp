@@ -31,7 +31,6 @@
 #include "GPURequestAdapterOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebGPUAdapter.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -40,7 +39,7 @@ Ref<WebGPU> WebGPU::create()
     return adoptRef(*new WebGPU);
 }
 
-void WebGPU::requestAdapter(Optional<GPURequestAdapterOptions>&& options, WebGPUAdapterPromise&& deferred) const
+void WebGPU::requestAdapter(std::optional<GPURequestAdapterOptions>&& options, WebGPUAdapterPromise&& deferred) const
 {
     auto adapter = WebGPUAdapter::create(WTFMove(options));
     deferred.resolve(adapter.get());

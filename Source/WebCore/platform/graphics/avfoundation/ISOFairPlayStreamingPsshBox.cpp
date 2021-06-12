@@ -50,7 +50,7 @@ bool ISOFairPlayStreamingKeyRequestInfoBox::parse(JSC::DataView& view, unsigned&
     if (!ISOBox::parse(view, localOffset))
         return false;
 
-    Checked<uint64_t, RecordOverflow> remaining = m_size;
+    CheckedUint64 remaining = m_size;
     remaining -= (localOffset - offset);
     if (remaining.hasOverflowed())
         return false;

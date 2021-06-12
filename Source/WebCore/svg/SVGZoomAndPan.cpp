@@ -30,7 +30,7 @@ namespace WebCore {
 template<typename CharacterType> static constexpr CharacterType disable[] = { 'd', 'i', 's', 'a', 'b', 'l', 'e' };
 template<typename CharacterType> static constexpr CharacterType magnify[] = { 'm', 'a', 'g', 'n', 'i', 'f', 'y' };
 
-template<typename CharacterType> static Optional<SVGZoomAndPanType> parseZoomAndPanGeneric(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<SVGZoomAndPanType> parseZoomAndPanGeneric(StringParsingBuffer<CharacterType>& buffer)
 {
     if (skipCharactersExactly(buffer, disable<CharacterType>))
         return SVGZoomAndPanDisable;
@@ -38,15 +38,15 @@ template<typename CharacterType> static Optional<SVGZoomAndPanType> parseZoomAnd
     if (skipCharactersExactly(buffer, magnify<CharacterType>))
         return SVGZoomAndPanMagnify;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuffer<LChar>& buffer)
+std::optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuffer<LChar>& buffer)
 {
     return parseZoomAndPanGeneric(buffer);
 }
 
-Optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuffer<UChar>& buffer)
+std::optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuffer<UChar>& buffer)
 {
     return parseZoomAndPanGeneric(buffer);
 }

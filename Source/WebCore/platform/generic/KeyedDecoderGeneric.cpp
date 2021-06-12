@@ -48,21 +48,21 @@ private:
     HashMap<String, std::unique_ptr<Node>> m_map;
 };
 
-static Optional<String> readString(WTF::Persistence::Decoder& decoder)
+static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
 {
-    Optional<size_t> size;
+    std::optional<size_t> size;
     decoder >> size;
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!size.value())
         return emptyString();
 
     Vector<uint8_t> buffer(size.value());
     if (!decoder.decodeFixedLengthData(buffer.data(), size.value()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto result = String::fromUTF8(buffer.data(), size.value());
     if (result.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }
@@ -73,7 +73,7 @@ static bool readSimpleValue(WTF::Persistence::Decoder& decoder, KeyedDecoderGene
     auto key = readString(decoder);
     if (!key)
         return false;
-    Optional<T> value;
+    std::optional<T> value;
     decoder >> value;
     if (!value)
         return false;
@@ -95,7 +95,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
 
     bool ok = true;
     while (ok) {
-        Optional<KeyedEncoderGeneric::Type> type;
+        std::optional<KeyedEncoderGeneric::Type> type;
         decoder >> type;
         if (!type)
             break;
@@ -107,7 +107,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
                 ok = false;
             if (!ok)
                 break;
-            Optional<size_t> size;
+            std::optional<size_t> size;
             decoder >> size;
             if (!size)
                 ok = false;

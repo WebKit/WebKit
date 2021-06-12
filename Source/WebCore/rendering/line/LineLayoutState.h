@@ -116,8 +116,8 @@ public:
     LayoutUnit endLineLogicalTop() const { return m_endLineLogicalTop; }
     void setEndLineLogicalTop(LayoutUnit logicalTop) { m_endLineLogicalTop = logicalTop; }
 
-    RootInlineBox* endLine() const { return m_endLine; }
-    void setEndLine(RootInlineBox* line) { m_endLine = line; }
+    LegacyRootInlineBox* endLine() const { return m_endLine; }
+    void setEndLine(LegacyRootInlineBox* line) { m_endLine = line; }
 
     LayoutUnit adjustedLogicalLineTop() const { return m_adjustedLogicalLineTop; }
     void setAdjustedLogicalLineTop(LayoutUnit value) { m_adjustedLogicalLineTop = value; }
@@ -142,7 +142,7 @@ public:
         m_repaintLogicalTop = m_repaintLogicalBottom = logicalHeight;
     }
 
-    void updateRepaintRangeFromBox(RootInlineBox* box, LayoutUnit paginationDelta = 0_lu)
+    void updateRepaintRangeFromBox(LegacyRootInlineBox* box, LayoutUnit paginationDelta = 0_lu)
     {
         m_usesRepaintBounds = true;
         m_repaintLogicalTop = std::min(m_repaintLogicalTop, box->logicalTopVisualOverflow() + std::min<LayoutUnit>(paginationDelta, 0));
@@ -156,7 +156,7 @@ public:
 private:
     LineInfo m_lineInfo;
     LayoutUnit m_endLineLogicalTop;
-    RootInlineBox* m_endLine { nullptr };
+    LegacyRootInlineBox* m_endLine { nullptr };
 
     LayoutUnit m_adjustedLogicalLineTop;
 

@@ -59,6 +59,7 @@ void WaveShaperDSPKernel::lazyInitializeOversampling()
 
 void WaveShaperDSPKernel::process(const float* source, float* destination, size_t framesToProcess)
 {
+    assertIsHeld(waveShaperProcessor()->processLock());
     switch (waveShaperProcessor()->oversample()) {
     case WaveShaperProcessor::OverSampleNone:
         processCurve(source, destination, framesToProcess);
@@ -79,6 +80,7 @@ void WaveShaperDSPKernel::processCurve(const float* source, float* destination, 
 {
     ASSERT(source && destination && waveShaperProcessor());
 
+    assertIsHeld(waveShaperProcessor()->processLock());
     Float32Array* curve = waveShaperProcessor()->curve();
     if (!curve) {
         // Act as "straight wire" pass-through if no curve is set.
@@ -163,10 +165,13 @@ void WaveShaperDSPKernel::reset()
 
 double WaveShaperDSPKernel::latencyTime() const
 {
-    size_t latencyFrames = 0;
-    WaveShaperDSPKernel* kernel = const_cast<WaveShaperDSPKernel*>(this);
+    if (!waveShaperProcessor()->processLock().tryLock())
+        return std::numeric_limits<double>::infinity();
 
-    switch (kernel->waveShaperProcessor()->oversample()) {
+    Locker locker { AdoptLock, waveShaperProcessor()->processLock() };
+
+    size_t latencyFrames = 0;
+    switch (waveShaperProcessor()->oversample()) {
     case WaveShaperProcessor::OverSampleNone:
         break;
     case WaveShaperProcessor::OverSample2x:

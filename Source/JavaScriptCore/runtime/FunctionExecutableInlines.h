@@ -35,5 +35,13 @@ inline void FunctionExecutable::finalizeUnconditionally(VM& vm)
     m_singleton.finalizeUnconditionally(vm);
 }
 
+JSString* FunctionExecutable::toString(JSGlobalObject* globalObject)
+{
+    RareData& rareData = ensureRareData();
+    if (!rareData.m_asString)
+        return toStringSlow(globalObject);
+    return rareData.m_asString.get();
+}
+
 } // namespace JSC
 

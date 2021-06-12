@@ -113,3 +113,5 @@ sources:
   path: patches/mesa/mesa_libdrm_deps.patch
 - kind: patch
   path: patches/mesa/0001-i915-Prevent-invalid-framebuffer-usage.patch
+- kind: patch
+  path: patches/mesa/0002-i965-Prevent-invalid-framebuffer-usage.patch

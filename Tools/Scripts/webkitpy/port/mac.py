@@ -37,6 +37,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE
 from webkitpy.common.version_name_map import VersionNameMap
+from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions, Config
 from webkitpy.port.darwin import DarwinPort
 
@@ -245,6 +246,8 @@ class MacPort(DarwinPort):
         return min(supportable_instances, default_count)
 
     def start_helper(self, pixel_tests=False, prefer_integrated_gpu=False):
+        self.stop_helper()
+
         helper_path = self._path_to_helper()
         if not helper_path:
             _log.error("No path to LayoutTestHelper binary")
@@ -253,9 +256,9 @@ class MacPort(DarwinPort):
         arguments = [helper_path, '--install-color-profile']
         if prefer_integrated_gpu:
             arguments.append('--prefer-integrated-gpu')
-        self._helper = self._executive.popen(arguments,
+        Port.helper = self._executive.popen(arguments,
             stdin=self._executive.PIPE, stdout=self._executive.PIPE, stderr=None)
-        is_ready = self._helper.stdout.readline()
+        is_ready = Port.helper.stdout.readline()
         if not is_ready.startswith(b'ready'):
             _log.error("LayoutTestHelper could not start")
             return False
@@ -271,17 +274,6 @@ class MacPort(DarwinPort):
                 # 'defaults' returns 1 if the domain did not exist
                 if e.exit_code != 1:
                     raise e
-
-    def stop_helper(self):
-        if self._helper:
-            _log.debug("Stopping LayoutTestHelper")
-            try:
-                self._helper.stdin.write(b"x\n")
-                self._helper.stdin.close()
-                self._helper.wait()
-            except IOError as e:
-                _log.debug("IOError raised while stopping helper: %s" % str(e))
-            self._helper = None
 
     def logging_patterns_to_strip(self):
         logging_patterns = []

@@ -1,0 +1,29 @@
+This test checks that tracks are sorted based on the user's preferred languages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+Tapping tracks button...
+Subtitles: [
+  "Off",
+  "Auto (Recommended)",
+  "label-en Captions",
+  "Descriptions",
+  "label-en",
+  "Spanish Captions",
+  "Spanish",
+  "Spanish Descriptions",
+  "Chinese (China mainland)",
+  "French Captions (label-fr)",
+  "French (label-fr)",
+  "French Descriptions",
+  "German Captions",
+  "German",
+  "German Descriptions"
+]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

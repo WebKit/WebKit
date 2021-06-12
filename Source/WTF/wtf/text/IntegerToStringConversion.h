@@ -96,7 +96,7 @@ inline void writeIntegerToBuffer(IntegerType integer, CharacterType* destination
 }
 
 template<typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
-static unsigned lengthOfIntegerAsStringImpl(UnsignedIntegerType number)
+constexpr unsigned lengthOfIntegerAsStringImpl(UnsignedIntegerType number)
 {
     unsigned length = 0;
 
@@ -112,7 +112,7 @@ static unsigned lengthOfIntegerAsStringImpl(UnsignedIntegerType number)
 }
 
 template<typename IntegerType>
-inline unsigned lengthOfIntegerAsString(IntegerType integer)
+constexpr unsigned lengthOfIntegerAsString(IntegerType integer)
 {
     static_assert(std::is_integral_v<IntegerType>);
     if constexpr (std::is_same_v<IntegerType, bool>) {
@@ -128,3 +128,6 @@ inline unsigned lengthOfIntegerAsString(IntegerType integer)
 }
 
 } // namespace WTF
+
+using WTF::lengthOfIntegerAsString;
+using WTF::writeIntegerToBuffer;

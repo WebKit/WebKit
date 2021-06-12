@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Optional<GPUPipelineLayoutDescriptor> WebGPUPipelineLayoutDescriptor::tryCreateGPUPipelineLayoutDescriptor() const
+std::optional<GPUPipelineLayoutDescriptor> WebGPUPipelineLayoutDescriptor::tryCreateGPUPipelineLayoutDescriptor() const
 {
     Vector<Ref<const GPUBindGroupLayout>> gpuLayouts;
     gpuLayouts.reserveCapacity(bindGroupLayouts.size());
@@ -41,7 +41,7 @@ Optional<GPUPipelineLayoutDescriptor> WebGPUPipelineLayoutDescriptor::tryCreateG
     for (const auto& layout : bindGroupLayouts) {
         if (!layout || !layout->bindGroupLayout()) {
             LOG(WebGPU, "GPUDevice::createPipelineLayout(): Invalid GPUBindGroupLayout!");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         
         gpuLayouts.uncheckedAppend(makeRef(*layout->bindGroupLayout()));

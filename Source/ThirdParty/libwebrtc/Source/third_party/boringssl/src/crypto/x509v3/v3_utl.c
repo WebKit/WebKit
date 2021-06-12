@@ -147,7 +147,7 @@ int X509V3_add_value_bool(const char *name, int asn1_bool,
     return X509V3_add_value(name, "FALSE", extlist);
 }
 
-int X509V3_add_value_bool_nf(char *name, int asn1_bool,
+int X509V3_add_value_bool_nf(const char *name, int asn1_bool,
                              STACK_OF(CONF_VALUE) **extlist)
 {
     if (asn1_bool)
@@ -194,7 +194,7 @@ static char *bignum_to_string(const BIGNUM *bn)
     return ret;
 }
 
-char *i2s_ASN1_ENUMERATED(X509V3_EXT_METHOD *method, ASN1_ENUMERATED *a)
+char *i2s_ASN1_ENUMERATED(X509V3_EXT_METHOD *method, const ASN1_ENUMERATED *a)
 {
     BIGNUM *bntmp = NULL;
     char *strtmp = NULL;
@@ -207,7 +207,7 @@ char *i2s_ASN1_ENUMERATED(X509V3_EXT_METHOD *method, ASN1_ENUMERATED *a)
     return strtmp;
 }
 
-char *i2s_ASN1_INTEGER(X509V3_EXT_METHOD *method, ASN1_INTEGER *a)
+char *i2s_ASN1_INTEGER(X509V3_EXT_METHOD *method, const ASN1_INTEGER *a)
 {
     BIGNUM *bntmp = NULL;
     char *strtmp = NULL;
@@ -220,7 +220,7 @@ char *i2s_ASN1_INTEGER(X509V3_EXT_METHOD *method, ASN1_INTEGER *a)
     return strtmp;
 }
 
-ASN1_INTEGER *s2i_ASN1_INTEGER(X509V3_EXT_METHOD *method, char *value)
+ASN1_INTEGER *s2i_ASN1_INTEGER(X509V3_EXT_METHOD *method, const char *value)
 {
     BIGNUM *bn = NULL;
     ASN1_INTEGER *aint;
@@ -282,7 +282,7 @@ int X509V3_add_value_int(const char *name, ASN1_INTEGER *aint,
     return ret;
 }
 
-int X509V3_get_value_bool(CONF_VALUE *value, int *asn1_bool)
+int X509V3_get_value_bool(const CONF_VALUE *value, int *asn1_bool)
 {
     char *btmp;
     if (!(btmp = value->value))
@@ -304,7 +304,7 @@ int X509V3_get_value_bool(CONF_VALUE *value, int *asn1_bool)
     return 0;
 }
 
-int X509V3_get_value_int(CONF_VALUE *value, ASN1_INTEGER **aint)
+int X509V3_get_value_int(const CONF_VALUE *value, ASN1_INTEGER **aint)
 {
     ASN1_INTEGER *itmp;
     if (!(itmp = s2i_ASN1_INTEGER(NULL, value->value))) {

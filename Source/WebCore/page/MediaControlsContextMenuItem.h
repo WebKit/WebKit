@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +43,7 @@ struct MediaControlsContextMenuItem {
     Vector<MediaControlsContextMenuItem> children;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MediaControlsContextMenuItem> decode(Decoder&);
+    template<class Decoder> static std::optional<MediaControlsContextMenuItem> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -58,13 +57,13 @@ void MediaControlsContextMenuItem::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<MediaControlsContextMenuItem> MediaControlsContextMenuItem::decode(Decoder& decoder)
+std::optional<MediaControlsContextMenuItem> MediaControlsContextMenuItem::decode(Decoder& decoder)
 {
 #define DECODE(name, type) \
-    Optional<type> name; \
+    std::optional<type> name; \
     decoder >> name; \
     if (!name) \
-        return WTF::nullopt; \
+        return std::nullopt; \
 
     DECODE(id, ID);
     DECODE(title, String);

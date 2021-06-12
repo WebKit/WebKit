@@ -123,8 +123,8 @@
 #include "NetworkStorageSession.h"
 #endif
 
-#define PAGE_ID ((m_frame ? m_frame->pageID().valueOr(PageIdentifier()) : PageIdentifier()).toUInt64())
-#define FRAME_ID ((m_frame ? m_frame->frameID().valueOr(FrameIdentifier()) : FrameIdentifier()).toUInt64())
+#define PAGE_ID ((m_frame ? m_frame->pageID().value_or(PageIdentifier()) : PageIdentifier()).toUInt64())
+#define FRAME_ID ((m_frame ? m_frame->frameID().value_or(FrameIdentifier()) : FrameIdentifier()).toUInt64())
 #define IS_MAIN_FRAME (m_frame ? m_frame->isMainFrame() : false)
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] DocumentLoader::" fmt, this, PAGE_ID, FRAME_ID, IS_MAIN_FRAME, ##__VA_ARGS__)
 
@@ -332,7 +332,7 @@ void DocumentLoader::stopLoading()
     
 #if ENABLE(APPLICATION_MANIFEST)
     for (auto callbackIdentifier : m_applicationManifestLoaders.values())
-        notifyFinishedLoadingApplicationManifest(callbackIdentifier, WTF::nullopt);
+        notifyFinishedLoadingApplicationManifest(callbackIdentifier, std::nullopt);
     m_applicationManifestLoaders.clear();
 #endif
 
@@ -468,9 +468,8 @@ void DocumentLoader::finishedLoading()
 
     maybeFinishLoadingMultipartContent();
 
-    MonotonicTime responseEndTime = m_timeOfLastDataReceived ? m_timeOfLastDataReceived : MonotonicTime::now();
-    timing().setResponseEnd(responseEndTime);
-
+    timing().markEndTime();
+    
     commitIfReady();
     if (!frameLoader())
         return;
@@ -556,13 +555,13 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
 {
     auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && url.protocolIsInHTTPFamily();
     if (!shouldTryLoadingThroughServiceWorker) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
     auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? m_frame->document()->topOrigin().data() : SecurityOriginData::fromURL(url);
     if (!ServiceWorkerProvider::singleton().serviceWorkerConnection().mayHaveServiceWorkerRegisteredForOrigin(origin)) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -570,7 +569,7 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
     connection.matchRegistration(WTFMove(origin), url, WTFMove(callback));
 }
 
-static inline bool areRegistrationsEqual(const Optional<ServiceWorkerRegistrationData>& a, const Optional<ServiceWorkerRegistrationData>& b)
+static inline bool areRegistrationsEqual(const std::optional<ServiceWorkerRegistrationData>& a, const std::optional<ServiceWorkerRegistrationData>& b)
 {
     if (!a)
         return !b;
@@ -637,7 +636,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         return completionHandler(WTFMove(newRequest));
     }
 
-    ASSERT(timing().fetchStart());
+    ASSERT(timing().startTime());
     if (didReceiveRedirectResponse) {
         // If the redirecting url is not allowed to display content from the target origin,
         // then block the redirect.
@@ -655,7 +654,6 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
             cancelMainResourceLoad(frameLoader()->blockedError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }
-        timing().addRedirect(redirectResponse.url(), newRequest.url());
     }
 
     ASSERT(m_frame);
@@ -712,7 +710,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (!didReceiveRedirectResponse)
         return completionHandler(WTFMove(newRequest));
 
-    auto navigationPolicyCompletionHandler = [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) mutable {
+    auto navigationPolicyCompletionHandler = [this, protectedThis = makeRef(*this), protectedFrame = makeRef(*m_frame), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) mutable {
         m_waitingForNavigationPolicy = false;
         switch (navigationPolicyDecision) {
         case NavigationPolicyDecision::IgnoreLoad:
@@ -1116,7 +1114,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     }
 }
 
-void DocumentLoader::commitLoad(const char* data, int length)
+void DocumentLoader::commitLoad(const uint8_t* data, int length)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
@@ -1139,6 +1137,9 @@ void DocumentLoader::commitLoad(const char* data, int length)
 
 ResourceError DocumentLoader::interruptedForPolicyChangeError() const
 {
+    if (!frameLoader())
+        return {};
+
     return frameLoader()->client().interruptedForPolicyChangeError(request());
 }
 
@@ -1157,7 +1158,7 @@ static inline bool shouldUseActiveServiceWorkerFromParent(const Document& docume
 }
 #endif
 
-void DocumentLoader::commitData(const char* bytes, size_t length)
+void DocumentLoader::commitData(const uint8_t* bytes, size_t length)
 {
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
@@ -1252,13 +1253,13 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
     m_writer.addData(bytes, length);
 }
 
-void DocumentLoader::dataReceived(CachedResource& resource, const char* data, int length)
+void DocumentLoader::dataReceived(CachedResource& resource, const uint8_t* data, int length)
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
     dataReceived(data, length);
 }
 
-void DocumentLoader::dataReceived(const char* data, int length)
+void DocumentLoader::dataReceived(const uint8_t* data, int length)
 {
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(data, length))
@@ -1279,7 +1280,6 @@ void DocumentLoader::dataReceived(const char* data, int length)
         frameLoader()->notifier().dispatchDidReceiveData(this, m_identifierForLoadWithoutResourceLoader, data, length, -1);
 
     m_applicationCacheHost->mainResourceDataReceived(data, length, -1, false);
-    m_timeOfLastDataReceived = MonotonicTime::now();
 
     if (!isMultipartReplacingLoad())
         commitLoad(data, length);
@@ -1478,7 +1478,7 @@ void DocumentLoader::finishedLoadingApplicationManifest(ApplicationManifestLoade
     m_applicationManifestLoaders.remove(&loader);
 }
 
-void DocumentLoader::notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, Optional<ApplicationManifest> manifest)
+void DocumentLoader::notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, std::optional<ApplicationManifest> manifest)
 {
     RELEASE_ASSERT(callbackIdentifier);
     RELEASE_ASSERT(m_frame);
@@ -1911,7 +1911,7 @@ bool DocumentLoader::maybeLoadEmpty()
 void DocumentLoader::startLoadingMainResource()
 {
     m_mainDocumentError = ResourceError();
-    timing().markStartTimeAndFetchStart();
+    timing().markStartTime();
     ASSERT(!m_mainResource);
     ASSERT(!m_loadingMainResource);
     m_loadingMainResource = true;
@@ -1932,7 +1932,6 @@ void DocumentLoader::startLoadingMainResource()
     m_request.clearHTTPUserAgent();
 
     ASSERT(timing().startTime());
-    ASSERT(timing().fetchStart());
 
     willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
         m_request = request;
@@ -2183,7 +2182,7 @@ void DocumentLoader::startIconLoading()
 
     auto findResult = m_linkIcons.findMatching([](auto& icon) { return icon.type == LinkIconType::Favicon; });
     if (findResult == notFound)
-        m_linkIcons.append({ document->completeURL("/favicon.ico"_s), LinkIconType::Favicon, String(), WTF::nullopt, { } });
+        m_linkIcons.append({ document->completeURL("/favicon.ico"_s), LinkIconType::Favicon, String(), std::nullopt, { } });
 
     if (!m_linkIcons.size())
         return;
@@ -2321,7 +2320,7 @@ void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolation
 }
 
 #if ENABLE(CONTENT_FILTERING)
-void DocumentLoader::dataReceivedThroughContentFilter(const char* data, int size)
+void DocumentLoader::dataReceivedThroughContentFilter(const uint8_t* data, int size)
 {
     dataReceived(data, size);
 }

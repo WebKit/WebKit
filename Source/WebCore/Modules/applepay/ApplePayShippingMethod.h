@@ -39,7 +39,7 @@ struct ApplePayShippingMethod final : public ApplePayShippingMethodData {
     String identifier;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayShippingMethod> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayShippingMethod> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -53,18 +53,18 @@ void ApplePayShippingMethod::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayShippingMethod> ApplePayShippingMethod::decode(Decoder& decoder)
+std::optional<ApplePayShippingMethod> ApplePayShippingMethod::decode(Decoder& decoder)
 {
     ApplePayShippingMethod result;
 
     if (!result.decodeData(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
 #define DECODE(name, type) \
-    Optional<type> name; \
+    std::optional<type> name; \
     decoder >> name; \
     if (!name) \
-        return WTF::nullopt; \
+        return std::nullopt; \
     result.name = WTFMove(*name); \
 
     DECODE(label, String)

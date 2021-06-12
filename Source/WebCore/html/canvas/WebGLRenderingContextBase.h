@@ -155,7 +155,7 @@ public:
 
     using BufferDataSource = WTF::Variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
     void bufferData(GCGLenum target, long long size, GCGLenum usage);
-    void bufferData(GCGLenum target, Optional<BufferDataSource>&&, GCGLenum usage);
+    void bufferData(GCGLenum target, std::optional<BufferDataSource>&&, GCGLenum usage);
     void bufferSubData(GCGLenum target, long long offset, BufferDataSource&&);
 
     GCGLenum checkFramebufferStatus(GCGLenum target);
@@ -208,10 +208,10 @@ public:
 
     RefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram&, GCGLuint index);
     RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram&, GCGLuint index);
-    Optional<Vector<RefPtr<WebGLShader>>> getAttachedShaders(WebGLProgram&);
+    std::optional<Vector<RefPtr<WebGLShader>>> getAttachedShaders(WebGLProgram&);
     GCGLint getAttribLocation(WebGLProgram&, const String& name);
     WebGLAny getBufferParameter(GCGLenum target, GCGLenum pname);
-    Optional<WebGLContextAttributes> getContextAttributes();
+    std::optional<WebGLContextAttributes> getContextAttributes();
     GCGLenum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
     virtual WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;
@@ -223,7 +223,7 @@ public:
     String getShaderInfoLog(WebGLShader&);
     RefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType);
     String getShaderSource(WebGLShader&);
-    virtual Optional<Vector<String>> getSupportedExtensions() = 0;
+    virtual std::optional<Vector<String>> getSupportedExtensions() = 0;
     virtual WebGLAny getTexParameter(GCGLenum target, GCGLenum pname);
     WebGLAny getUniform(WebGLProgram&, const WebGLUniformLocation&);
     RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram&, const String&);
@@ -284,14 +284,14 @@ public:
     using TexImageSource = WTF::Variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>>;
 #endif
 
-    virtual ExceptionOr<void> texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, Optional<TexImageSource>);
+    virtual ExceptionOr<void> texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, std::optional<TexImageSource>);
 
     void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param);
     void texParameteri(GCGLenum target, GCGLenum pname, GCGLint param);
 
     // These must be virtual so more validation can be added in WebGL 2.0.
     virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
-    virtual ExceptionOr<void> texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, Optional<TexImageSource>&&);
+    virtual ExceptionOr<void> texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, std::optional<TexImageSource>&&);
 
     template <class TypedArray, class DataType>
     class TypedList {
@@ -391,7 +391,7 @@ public:
 
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
-    Optional<PixelBuffer> paintRenderingResultsToPixelBuffer();
+    std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer();
 
     void removeSharedObject(WebGLSharedObject&);
     void removeContextObject(WebGLContextObject&);
@@ -426,7 +426,7 @@ public:
     // currently latched into the context - without traversing all of
     // the latched objects to find the current one, which would be
     // prohibitively expensive.
-    Lock& objectGraphLock();
+    Lock& objectGraphLock() WTF_RETURNS_LOCK(m_objectGraphLock);
 
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
@@ -851,7 +851,7 @@ protected:
                 return false;
             }
 
-            if (maxYAccessed.unsafeGet() > imageHeight) {
+            if (maxYAccessed > imageHeight) {
                 synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName,
                     "Not enough data supplied to upload to a 3D texture with depth > 1");
                 return false;
@@ -1029,12 +1029,12 @@ protected:
     // Helper function to validate input parameters for uniform functions.
     bool validateUniformLocation(const char* functionName, const WebGLUniformLocation*);
     template<typename T, typename TypedListType>
-    Optional<GCGLSpan<const T>> validateUniformParameters(const char* functionName, const WebGLUniformLocation* location, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0)
+    std::optional<GCGLSpan<const T>> validateUniformParameters(const char* functionName, const WebGLUniformLocation* location, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0)
     {
         return validateUniformMatrixParameters(functionName, location, false, values, requiredMinSize, srcOffset, srcLength);
     }
     template<typename T, typename TypedListType>
-    Optional<GCGLSpan<const T>> validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<TypedListType, T>&, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0);
+    std::optional<GCGLSpan<const T>> validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<TypedListType, T>&, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0);
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.
@@ -1077,7 +1077,7 @@ protected:
 #if !USE(ANGLE)
     // Helpers for simulating vertexAttrib0.
     void initVertexAttrib0();
-    Optional<bool> simulateVertexAttrib0(GCGLuint numVertex);
+    std::optional<bool> simulateVertexAttrib0(GCGLuint numVertex);
     bool validateSimulatedVertexAttrib0(GCGLuint numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 #endif
@@ -1113,10 +1113,10 @@ protected:
     OffscreenCanvas* offscreenCanvas();
 #endif
 
-    template <typename T> inline Optional<T> checkedAddAndMultiply(T value, T add, T multiply);
+    template <typename T> inline std::optional<T> checkedAddAndMultiply(T value, T add, T multiply);
     template <typename T> unsigned getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GCGLintptr uoffset, GCGLsizei n);
 
-    bool validateArrayBufferType(const char* functionName, GCGLenum type, Optional<JSC::TypedArrayType>);
+    bool validateArrayBufferType(const char* functionName, GCGLenum type, std::optional<JSC::TypedArrayType>);
 
 private:
     void scheduleTaskToDispatchContextLostEvent();
@@ -1138,15 +1138,15 @@ private:
 };
 
 template <typename T>
-inline Optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value, T add, T multiply)
+inline std::optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value, T add, T multiply)
 {
     Checked<T, RecordOverflow> checkedResult = Checked<T>(value);
     checkedResult += Checked<T>(add);
     checkedResult *= Checked<T>(multiply);
     if (checkedResult.hasOverflowed())
-        return WTF::nullopt;
+        return std::nullopt;
 
-    return checkedResult.unsafeGet();
+    return checkedResult.value();
 }
 
 template<typename T>

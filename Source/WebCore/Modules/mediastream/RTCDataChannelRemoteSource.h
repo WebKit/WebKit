@@ -40,7 +40,7 @@ public:
     ~RTCDataChannelRemoteSource();
 
     void sendStringData(const CString& text) { m_handler->sendStringData(text); }
-    void sendRawData(const char* data, size_t size) { m_handler->sendRawData(data, size); }
+    void sendRawData(const uint8_t* data, size_t size) { m_handler->sendRawData(data, size); }
     void close() { m_handler->close(); }
 
 private:
@@ -49,7 +49,7 @@ private:
     // RTCDataChannelHandlerClient
     void didChangeReadyState(RTCDataChannelState state) final { m_connection->didChangeReadyState(m_identifier, state); }
     void didReceiveStringData(const String& text) final { m_connection->didReceiveStringData(m_identifier, text); }
-    void didReceiveRawData(const char* data, size_t size) final { m_connection->didReceiveRawData(m_identifier, data, size); }
+    void didReceiveRawData(const uint8_t* data, size_t size) final { m_connection->didReceiveRawData(m_identifier, data, size); }
     void didDetectError() final { m_connection->didDetectError(m_identifier); }
     void bufferedAmountIsDecreasing(size_t amount) final { m_connection->bufferedAmountIsDecreasing(m_identifier, amount); }
 

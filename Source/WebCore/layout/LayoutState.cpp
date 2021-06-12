@@ -88,6 +88,15 @@ FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
     return establishedFormattingState(layoutBox.formattingContextRoot());
 }
 
+bool LayoutState::hasFormattingState(const ContainerBox& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesFormattingContext());
+    return m_blockFormattingStates.contains(&formattingContextRoot)
+        || m_inlineFormattingStates.contains(&formattingContextRoot)
+        || m_tableFormattingStates.contains(&formattingContextRoot)
+        || m_flexFormattingStates.contains(&formattingContextRoot);
+}
+
 FormattingState& LayoutState::establishedFormattingState(const ContainerBox& formattingContextRoot) const
 {
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {

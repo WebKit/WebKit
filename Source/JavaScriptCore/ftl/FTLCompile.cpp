@@ -30,8 +30,8 @@
 
 #include "AirCode.h"
 #include "AirDisassembler.h"
+#include "AirStackSlot.h"
 #include "B3Generate.h"
-#include "B3StackSlot.h"
 #include "B3Value.h"
 #include "B3ValueInlines.h"
 #include "CodeBlockWithJITType.h"
@@ -57,6 +57,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     if (shouldDumpDisassembly())
         state.proc->code().setDisassembler(makeUnique<B3::Air::Disassembler>());
+
+    if (!shouldDumpDisassembly() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
+        graph.freeDFGIRAfterLowering();
 
     {
         GraphSafepoint safepoint(state.graph, safepointResult);
@@ -150,10 +153,11 @@ void compile(State& state, Safepoint::Result& safepointResult)
         state.allocationFailed = true;
         return;
     }
-    
-    B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
-    if (vm.shouldBuilderPCToCodeOriginMapping())
+
+    if (vm.shouldBuilderPCToCodeOriginMapping()) {
+        B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
         codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer));
+    }
 
     CodeLocationLabel<JSEntryPtrTag> label = state.finalizer->b3CodeLinkBuffer->locationOf<JSEntryPtrTag>(state.proc->code().entrypointLabel(0));
     state.generatedFunction = label;

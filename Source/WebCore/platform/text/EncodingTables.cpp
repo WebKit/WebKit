@@ -7074,7 +7074,7 @@ const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("windows-949", &error) };
         ASSERT(U_SUCCESS(error));
-        auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> Optional<std::pair<uint16_t, UChar>> {
+        auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> std::optional<std::pair<uint16_t, UChar>> {
             std::array<uint8_t, 2> icuInput { static_cast<uint8_t>(pointer / 190u + 0x81), static_cast<uint8_t>(pointer % 190u + 0x41) };
             const char* input = reinterpret_cast<const char*>(icuInput.data());
             UChar icuOutput[2];
@@ -7082,7 +7082,7 @@ const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
             UErrorCode error = U_ZERO_ERROR;
             ucnv_toUnicode(icuConverter.get(), &output, output + 2, &input, input + sizeof(icuInput), nullptr, true, &error);
             if (icuOutput[0] == 0xFFFD)
-                return WTF::nullopt;
+                return std::nullopt;
             return {{ pointer, icuOutput[0] }};
         };
         size_t arrayIndex = 0;

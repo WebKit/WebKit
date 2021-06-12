@@ -154,7 +154,7 @@ void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
 void Clipboard::read(Ref<DeferredPromise>&& promise)
 {
     auto rejectPromiseAndClearActiveSession = [&] {
-        m_activeSession = WTF::nullopt;
+        m_activeSession = std::nullopt;
         promise->reject(NotAllowedError);
     };
 
@@ -198,7 +198,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
 
     auto frame = makeRefPtr(this->frame());
     if (!frame) {
-        m_activeSession = WTF::nullopt;
+        m_activeSession = std::nullopt;
         promise->reject(NotAllowedError);
         return;
     }
@@ -262,7 +262,7 @@ Clipboard::SessionIsValid Clipboard::updateSessionValidity()
         return SessionIsValid::No;
 
     if (m_activeSession->changeCount != activePasteboard().changeCount()) {
-        m_activeSession = WTF::nullopt;
+        m_activeSession = std::nullopt;
         return SessionIsValid::No;
     }
 
@@ -317,7 +317,7 @@ void Clipboard::ItemWriter::write(const Vector<RefPtr<ClipboardItem>>& items)
 #if PLATFORM(COCOA)
     m_changeCountAtStart = m_pasteboard->changeCount();
 #endif
-    m_dataToWrite.fill(WTF::nullopt, items.size());
+    m_dataToWrite.fill(std::nullopt, items.size());
     m_pendingItemCount = items.size();
     for (size_t index = 0; index < items.size(); ++index) {
         items[index]->collectDataForWriting(*m_clipboard, [this, protectedThis = makeRef(*this), index] (auto data) {
@@ -336,7 +336,7 @@ void Clipboard::ItemWriter::invalidate()
         reject();
 }
 
-void Clipboard::ItemWriter::setData(Optional<PasteboardCustomData>&& data, size_t index)
+void Clipboard::ItemWriter::setData(std::optional<PasteboardCustomData>&& data, size_t index)
 {
     if (index >= m_dataToWrite.size()) {
         ASSERT_NOT_REACHED();

@@ -29,6 +29,7 @@
 
 #include "StyleScopeOrdinal.h"
 #include <memory>
+#include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -54,7 +55,7 @@ namespace Style {
 
 class Resolver;
 
-class Scope {
+class Scope : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Scope(Document&);
@@ -133,6 +134,8 @@ private:
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
 
+    using ResolverScopes = HashMap<Ref<Resolver>, Vector<CheckedPtr<Scope>>>;
+    ResolverScopes collectResolverScopes();
     template <typename TestFunction> void evaluateMediaQueries(TestFunction&&);
 
     WEBCORE_EXPORT void flushPendingSelfUpdate();
@@ -182,7 +185,7 @@ private:
 
     String m_preferredStylesheetSetName;
 
-    Optional<UpdateType> m_pendingUpdate;
+    std::optional<UpdateType> m_pendingUpdate;
 
     bool m_hasDescendantWithPendingUpdate { false };
     bool m_usesStyleBasedEditability { false };

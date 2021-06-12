@@ -184,7 +184,7 @@ protected:
         Switch
     };
 
-    Optional<BreakContext> m_currentBreakContext;
+    std::optional<BreakContext> m_currentBreakContext;
 
     StringBuilder& m_stringBuilder;
     Intrinsics& m_intrinsics;
@@ -195,7 +195,7 @@ protected:
     std::unique_ptr<EntryPointScaffolding> m_entryPointScaffolding;
     Layout& m_layout;
     unsigned m_variableCount { 0 };
-    Optional<MangledVariableName> m_breakOutOfCurrentLoopEarlyVariable;
+    std::optional<MangledVariableName> m_breakOutOfCurrentLoopEarlyVariable;
     Indentation<4> m_indent { 0 };
     HashMap<AST::Expression*, Vector<Variable>> m_hoistedVariables;
 };
@@ -331,7 +331,7 @@ void FunctionDefinitionWriter::visit(AST::Fallthrough&)
 
 void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocation, AST::Expression* conditionExpression, AST::Expression* increment, AST::Statement& body)
 {
-    SetForScope<Optional<MangledVariableName>> loopVariableScope(m_breakOutOfCurrentLoopEarlyVariable, generateNextVariableName());
+    SetForScope<std::optional<MangledVariableName>> loopVariableScope(m_breakOutOfCurrentLoopEarlyVariable, generateNextVariableName());
 
     m_stringBuilder.append(
         m_indent, "bool ", *m_breakOutOfCurrentLoopEarlyVariable, " = false;\n",
@@ -350,7 +350,7 @@ void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocat
         }
 
         m_stringBuilder.append(m_indent, "do {\n");
-        SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Loop);
+        SetForScope<std::optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Loop);
 
         {
             IndentationScope doScope(m_indent);
@@ -464,7 +464,7 @@ void FunctionDefinitionWriter::visit(AST::SwitchCase& switchCase)
         m_stringBuilder.append(":\n");
     } else
         m_stringBuilder.append(m_indent, "default:\n");
-    SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Switch);
+    SetForScope<std::optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Switch);
     checkErrorAndVisit(switchCase.block());
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195812 Figure out whether we need to break or fallthrough.
 }

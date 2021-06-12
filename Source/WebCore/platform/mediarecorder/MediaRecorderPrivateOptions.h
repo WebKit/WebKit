@@ -32,12 +32,12 @@ namespace WebCore {
 
 struct MediaRecorderPrivateOptions {
     String mimeType;
-    Optional<unsigned> audioBitsPerSecond;
-    Optional<unsigned> videoBitsPerSecond;
-    Optional<unsigned> bitsPerSecond;
+    std::optional<unsigned> audioBitsPerSecond;
+    std::optional<unsigned> videoBitsPerSecond;
+    std::optional<unsigned> bitsPerSecond;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MediaRecorderPrivateOptions> decode(Decoder&);
+    template<class Decoder> static std::optional<MediaRecorderPrivateOptions> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -50,26 +50,26 @@ inline void MediaRecorderPrivateOptions::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-inline Optional<MediaRecorderPrivateOptions> MediaRecorderPrivateOptions::decode(Decoder& decoder)
+inline std::optional<MediaRecorderPrivateOptions> MediaRecorderPrivateOptions::decode(Decoder& decoder)
 {
     String mimeType;
     if (!decoder.decode(mimeType))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<unsigned>> audioBitsPerSecond;
+    std::optional<std::optional<unsigned>> audioBitsPerSecond;
     decoder >> audioBitsPerSecond;
     if (!audioBitsPerSecond)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<unsigned>> videoBitsPerSecond;
+    std::optional<std::optional<unsigned>> videoBitsPerSecond;
     decoder >> videoBitsPerSecond;
     if (!videoBitsPerSecond)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<unsigned>> bitsPerSecond;
+    std::optional<std::optional<unsigned>> bitsPerSecond;
     decoder >> bitsPerSecond;
     if (!bitsPerSecond)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return MediaRecorderPrivateOptions { WTFMove(mimeType), *audioBitsPerSecond, *videoBitsPerSecond, *bitsPerSecond };
 }

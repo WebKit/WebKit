@@ -38,7 +38,7 @@ struct WEBCORE_EXPORT CustomHeaderFields {
     bool thirdPartyDomainsMatch(const URL&) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<CustomHeaderFields> decode(Decoder&);
+    template<class Decoder> static std::optional<CustomHeaderFields> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -49,17 +49,17 @@ void CustomHeaderFields::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<CustomHeaderFields> CustomHeaderFields::decode(Decoder& decoder)
+std::optional<CustomHeaderFields> CustomHeaderFields::decode(Decoder& decoder)
 {
-    Optional<Vector<HTTPHeaderField>> fields;
+    std::optional<Vector<HTTPHeaderField>> fields;
     decoder >> fields;
     if (!fields)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<String>> thirdPartyDomains;
+    std::optional<Vector<String>> thirdPartyDomains;
     decoder >> thirdPartyDomains;
     if (!thirdPartyDomains)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return {{ WTFMove(*fields), WTFMove(*thirdPartyDomains) }};
 }

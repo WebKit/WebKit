@@ -58,7 +58,7 @@ public:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;
 
-    Optional<LayerRepaintRects> layerRepaintRects() const;
+    std::optional<LayerRepaintRects> layerRepaintRects() const;
 
     bool startAnimation(double timeOffset, const Animation&, const KeyframeList&) override;
     void animationPaused(double timeOffset, const String& name) override;

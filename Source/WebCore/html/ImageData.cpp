@@ -35,15 +35,15 @@
 
 namespace WebCore {
 
-static Checked<unsigned, RecordOverflow> computeDataSize(const IntSize& size)
+static CheckedUint32 computeDataSize(const IntSize& size)
 {
-    Checked<unsigned, RecordOverflow> checkedDataSize = 4;
+    CheckedUint32 checkedDataSize = 4;
     checkedDataSize *= static_cast<unsigned>(size.width());
     checkedDataSize *= static_cast<unsigned>(size.height());
     return checkedDataSize;
 }
 
-PredefinedColorSpace ImageData::computeColorSpace(Optional<ImageDataSettings> settings, PredefinedColorSpace defaultColorSpace)
+PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSettings> settings, PredefinedColorSpace defaultColorSpace)
 {
     if (settings && settings->colorSpace)
         return *settings->colorSpace;
@@ -56,7 +56,7 @@ Ref<ImageData> ImageData::create(PixelBuffer&& pixelBuffer)
     return adoptRef(*new ImageData(pixelBuffer.size(), pixelBuffer.takeData(), *colorSpace));
 }
 
-RefPtr<ImageData> ImageData::create(Optional<PixelBuffer>&& pixelBuffer)
+RefPtr<ImageData> ImageData::create(std::optional<PixelBuffer>&& pixelBuffer)
 {
     if (!pixelBuffer)
         return nullptr;
@@ -68,7 +68,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size)
     auto dataSize = computeDataSize(size);
     if (dataSize.hasOverflowed())
         return nullptr;
-    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
+    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize);
     if (!byteArray)
         return nullptr;
     return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), PredefinedColorSpace::SRGB));
@@ -77,20 +77,20 @@ RefPtr<ImageData> ImageData::create(const IntSize& size)
 RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray, PredefinedColorSpace colorSpace)
 {
     auto dataSize = computeDataSize(size);
-    if (dataSize.hasOverflowed() || dataSize.unsafeGet() != byteArray->length())
+    if (dataSize.hasOverflowed() || dataSize != byteArray->length())
         return nullptr;
 
     return adoptRef(*new ImageData(size, WTFMove(byteArray), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, Optional<ImageDataSettings> settings)
+ExceptionOr<Ref<ImageData>> ImageData::createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, std::optional<ImageDataSettings> settings)
 {
     IntSize size(rows, pixelsPerRow);
     auto dataSize = computeDataSize(size);
     if (dataSize.hasOverflowed())
         return Exception { RangeError, "Cannot allocate a buffer of this size"_s };
 
-    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
+    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize);
     if (!byteArray) {
         // FIXME: Does this need to be a "real" out of memory error with setOutOfMemoryError called on it?
         return Exception { RangeError, "Out of memory"_s };
@@ -100,7 +100,7 @@ ExceptionOr<Ref<ImageData>> ImageData::createUninitialized(unsigned rows, unsign
     return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Optional<ImageDataSettings> settings)
+ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, std::optional<ImageDataSettings> settings)
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
@@ -110,7 +110,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Optional
     if (dataSize.hasOverflowed())
         return Exception { RangeError, "Cannot allocate a buffer of this size"_s };
 
-    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
+    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize);
     if (!byteArray) {
         // FIXME: Does this need to be a "real" out of memory error with setOutOfMemoryError called on it?
         return Exception { RangeError, "Out of memory"_s };
@@ -121,7 +121,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Optional
     return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh, Optional<ImageDataSettings> settings)
+ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, std::optional<unsigned> sh, std::optional<ImageDataSettings> settings)
 {
     unsigned length = byteArray->length();
     if (!length || length % 4)
@@ -137,7 +137,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray
 
     IntSize size(sw, height);
     auto dataSize = computeDataSize(size);
-    if (dataSize.hasOverflowed() || dataSize.unsafeGet() != byteArray->length())
+    if (dataSize.hasOverflowed() || dataSize != byteArray->length())
         return Exception { RangeError };
 
     auto colorSpace = computeColorSpace(settings);

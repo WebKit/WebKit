@@ -357,6 +357,8 @@ class SimulatedDeviceManager(object):
         device.platform_device.booted_by_script = True
         host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
         SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+        # FIXME: Remove this delay once rdar://77234240 is resolved.
+        time.sleep(10)
 
     @staticmethod
     def device_count_for_type(device_type, host=None, use_booted_simulator=True, **kwargs):
@@ -579,7 +581,7 @@ class SimulatedDevice(object):
             return False
 
         service = self.UI_MANAGER_SERVICE.get(self.device_type.software_variant)
-        if service:
+        if not service:
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
 

@@ -42,7 +42,7 @@ namespace WebCore {
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:
-    FetchBodyOwner(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&);
+    FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
     ~FetchBodyOwner();
 
     bool bodyUsed() const { return isDisturbed(); }
@@ -68,7 +68,7 @@ public:
 
     bool hasLoadingError() const;
     ResourceError loadingError() const;
-    Optional<Exception> loadingException() const;
+    std::optional<Exception> loadingException() const;
 
     const String& contentType() const { return m_contentType; }
 
@@ -99,7 +99,7 @@ protected:
 
 private:
     // Blob loading routines
-    void blobChunk(const char*, size_t);
+    void blobChunk(const uint8_t*, size_t);
     void blobLoadingSucceeded();
     void blobLoadingFailed();
     void finishBlobLoading();
@@ -112,7 +112,7 @@ private:
 
         // FetchLoaderClient API
         void didReceiveResponse(const ResourceResponse&) final;
-        void didReceiveData(const char* data, size_t size) final { owner.blobChunk(data, size); }
+        void didReceiveData(const uint8_t* data, size_t size) final { owner.blobChunk(data, size); }
         void didFail(const ResourceError&) final;
         void didSucceed() final { owner.blobLoadingSucceeded(); }
 
@@ -121,14 +121,14 @@ private:
     };
 
 protected:
-    Optional<FetchBody> m_body;
+    std::optional<FetchBody> m_body;
     String m_contentType;
     bool m_isDisturbed { false };
     RefPtr<FetchBodySource> m_readableStreamSource;
     Ref<FetchHeaders> m_headers;
 
 private:
-    Optional<BlobLoader> m_blobLoader;
+    std::optional<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
 
     Variant<std::nullptr_t, Exception, ResourceError> m_loadingError;

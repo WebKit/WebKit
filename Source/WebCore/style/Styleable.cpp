@@ -140,10 +140,8 @@ static bool shouldConsiderAnimation(Element& element, const Animation& animation
     if (!animation.isValidAnimation())
         return false;
 
-    static NeverDestroyed<const String> animationNameNone(MAKE_STATIC_STRING_IMPL("none"));
-
-    auto& name = animation.name();
-    if (name == animationNameNone || name.isEmpty())
+    auto& name = animation.name().string;
+    if (name == "none" || name.isEmpty())
         return false;
 
     if (auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal()))
@@ -189,7 +187,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
 
             bool foundMatchingAnimation = false;
             for (auto& previousAnimation : previousAnimations) {
-                if (previousAnimation->animationName() == currentAnimation.name()) {
+                if (previousAnimation->animationName() == currentAnimation.name().string) {
                     // Timing properties or play state may have changed so we need to update the backing animation with
                     // the Animation found in the current style.
                     previousAnimation->setBackingAnimation(currentAnimation);
@@ -329,7 +327,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             // If a transition has not yet started or started when animations were last updated, use the timeline time at its creation
             // as its start time to ensure that it will produce a style with progress > 0.
             bool shouldUseTimelineTimeAtCreation = is<CSSTransition>(animation) && (!animation->startTime() || *animation->startTime() == styleable.element.document().timeline().currentTime());
-            animation->resolve(animatedStyle, nullptr, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*animation).timelineTimeAtCreation() : WTF::nullopt);
+            animation->resolve(animatedStyle, nullptr, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*animation).timelineTimeAtCreation() : std::nullopt);
             return animatedStyle;
         }
 
@@ -485,7 +483,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
     if (transitionPropertiesContainAll) {
         auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
         for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
-            Optional<bool> isShorthand;
+            std::optional<bool> isShorthand;
             auto property = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
             if (isShorthand && *isShorthand)
                 continue;

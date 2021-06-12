@@ -65,6 +65,7 @@ public:
 
     unsigned size() const;
     unsigned capacity() const;
+    unsigned memoryUse() const;
     bool isEmpty() const;
 
     void reserveInitialCapacity(unsigned keyCount) { m_impl.reserveInitialCapacity(keyCount); }
@@ -200,6 +201,12 @@ template<typename T, typename U, typename V, typename W>
 inline unsigned HashSet<T, U, V, W>::capacity() const
 {
     return m_impl.capacity(); 
+}
+
+template<typename T, typename U, typename V, typename W>
+inline unsigned HashSet<T, U, V, W>::memoryUse() const
+{
+    return capacity() * sizeof(T);
 }
 
 template<typename T, typename U, typename V, typename W>

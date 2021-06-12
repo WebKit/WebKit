@@ -38,7 +38,6 @@
 #include "WHLSLStageInOutSemantic.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -58,7 +57,7 @@ static bool matchMode(Binding::BindingDetails bindingType, AST::ResourceSemantic
     }), bindingType);
 }
 
-static Optional<HashMap<Binding*, size_t>> matchResources(Vector<EntryPointItem>& entryPointItems, Layout& layout, ShaderStage shaderStage)
+static std::optional<HashMap<Binding*, size_t>> matchResources(Vector<EntryPointItem>& entryPointItems, Layout& layout, ShaderStage shaderStage)
 {
     HashMap<Binding*, size_t> result;
     HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
@@ -91,7 +90,7 @@ static Optional<HashMap<Binding*, size_t>> matchResources(Vector<EntryPointItem>
         if (!WTF::holds_alternative<AST::ResourceSemantic>(semantic))
             continue;
         if (!itemIndices.contains(i))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return result;
@@ -137,7 +136,7 @@ static bool isAcceptableFormat(VertexFormat vertexFormat, AST::UnnamedType& unna
     }
 }
 
-static Optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<EntryPointItem>& vertexInputs, VertexAttributes& vertexAttributes, Intrinsics& intrinsics)
+static std::optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<EntryPointItem>& vertexInputs, VertexAttributes& vertexAttributes, Intrinsics& intrinsics)
 {
     HashMap<VertexAttribute*, size_t> result;
     HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
@@ -151,7 +150,7 @@ static Optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<
             if (stageInOutSemantic.index() != vertexAttribute.shaderLocation)
                 continue;
             if (!isAcceptableFormat(vertexAttribute.vertexFormat, *item.unnamedType, intrinsics))
-                return WTF::nullopt;
+                return std::nullopt;
             result.add(&vertexAttribute, i);
             itemIndices.add(i);
         }
@@ -163,7 +162,7 @@ static Optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<
         if (!WTF::holds_alternative<AST::StageInOutSemantic>(semantic))
             continue;
         if (!itemIndices.contains(i))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return result;
@@ -223,7 +222,7 @@ static bool isAcceptableFormat(TextureFormat textureFormat, AST::UnnamedType& un
     return false;
 }
 
-static Optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Vector<EntryPointItem>& fragmentOutputs, Vector<AttachmentDescriptor>& attachmentDescriptors, Intrinsics& intrinsics)
+static std::optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Vector<EntryPointItem>& fragmentOutputs, Vector<AttachmentDescriptor>& attachmentDescriptors, Intrinsics& intrinsics)
 {
     HashMap<AttachmentDescriptor*, size_t> result;
     HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
@@ -237,7 +236,7 @@ static Optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Ve
             if (stageInOutSemantic.index() != attachmentDescriptor.name)
                 continue;
             if (!isAcceptableFormat(attachmentDescriptor.textureFormat, *item.unnamedType, intrinsics, true))
-                return WTF::nullopt;
+                return std::nullopt;
             result.add(&attachmentDescriptor, i);
             itemIndices.add(i);
         }
@@ -249,13 +248,13 @@ static Optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Ve
         if (!WTF::holds_alternative<AST::StageInOutSemantic>(semantic))
             continue;
         if (!itemIndices.contains(i))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return result;
 }
 
-static bool matchDepthAttachment(Vector<EntryPointItem>& fragmentOutputs, Optional<AttachmentDescriptor>& depthStencilAttachmentDescriptor, Intrinsics& intrinsics)
+static bool matchDepthAttachment(Vector<EntryPointItem>& fragmentOutputs, std::optional<AttachmentDescriptor>& depthStencilAttachmentDescriptor, Intrinsics& intrinsics)
 {
     auto iterator = std::find_if(fragmentOutputs.begin(), fragmentOutputs.end(), [&](EntryPointItem& item) {
         auto& semantic = *item.semantic;
@@ -274,58 +273,58 @@ static bool matchDepthAttachment(Vector<EntryPointItem>& fragmentOutputs, Option
     return false;
 }
 
-Optional<MatchedRenderSemantics> matchSemantics(Program& program, RenderPipelineDescriptor& renderPipelineDescriptor, bool distinctFragmentShader, bool fragmentShaderExists)
+std::optional<MatchedRenderSemantics> matchSemantics(Program& program, RenderPipelineDescriptor& renderPipelineDescriptor, bool distinctFragmentShader, bool fragmentShaderExists)
 {
     auto vertexFunctions = program.nameContext().getFunctions(renderPipelineDescriptor.vertexEntryPointName, AST::NameSpace::NameSpace1);
     if (vertexFunctions.size() != 1 || !vertexFunctions[0].get().entryPointType() || !is<AST::FunctionDefinition>(vertexFunctions[0].get()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto& vertexShaderEntryPoint = downcast<AST::FunctionDefinition>(vertexFunctions[0].get());
     auto vertexShaderEntryPointItems = gatherEntryPointItems(program.intrinsics(), vertexShaderEntryPoint);
     if (!vertexShaderEntryPointItems)
-        return WTF::nullopt;
+        return std::nullopt;
     auto vertexShaderResourceMap = matchResources(vertexShaderEntryPointItems->inputs, renderPipelineDescriptor.layout, ShaderStage::Vertex);
     if (!vertexShaderResourceMap)
-        return WTF::nullopt;
+        return std::nullopt;
     auto matchedVertexAttributes = matchVertexAttributes(vertexShaderEntryPointItems->inputs, renderPipelineDescriptor.vertexAttributes, program.intrinsics());
     if (!matchedVertexAttributes)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!fragmentShaderExists)
         return {{ &vertexShaderEntryPoint, nullptr, *vertexShaderEntryPointItems, EntryPointItems(), *vertexShaderResourceMap, HashMap<Binding*, size_t>(), *matchedVertexAttributes, HashMap<AttachmentDescriptor*, size_t>() }};
 
     auto fragmentNameSpace = distinctFragmentShader ? AST::NameSpace::NameSpace2 : AST::NameSpace::NameSpace1;
     auto fragmentFunctions = program.nameContext().getFunctions(renderPipelineDescriptor.fragmentEntryPointName, fragmentNameSpace);
     if (fragmentFunctions.size() != 1 || !fragmentFunctions[0].get().entryPointType() || !is<AST::FunctionDefinition>(fragmentFunctions[0].get()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto& fragmentShaderEntryPoint = downcast<AST::FunctionDefinition>(fragmentFunctions[0].get());
     auto fragmentShaderEntryPointItems = gatherEntryPointItems(program.intrinsics(), fragmentShaderEntryPoint);
     if (!fragmentShaderEntryPointItems)
-        return WTF::nullopt;
+        return std::nullopt;
     auto fragmentShaderResourceMap = matchResources(fragmentShaderEntryPointItems->inputs, renderPipelineDescriptor.layout, ShaderStage::Fragment);
     if (!fragmentShaderResourceMap)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!matchInputsOutputs(vertexShaderEntryPointItems->outputs, fragmentShaderEntryPointItems->inputs))
-        return WTF::nullopt;
+        return std::nullopt;
     auto matchedColorAttachments = matchColorAttachments(fragmentShaderEntryPointItems->outputs, renderPipelineDescriptor.attachmentsStateDescriptor.attachmentDescriptors, program.intrinsics());
     if (!matchedColorAttachments)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!matchDepthAttachment(fragmentShaderEntryPointItems->outputs, renderPipelineDescriptor.attachmentsStateDescriptor.depthStencilAttachmentDescriptor, program.intrinsics()))
-        return WTF::nullopt;
+        return std::nullopt;
     return {{ &vertexShaderEntryPoint, &fragmentShaderEntryPoint, *vertexShaderEntryPointItems, *fragmentShaderEntryPointItems, *vertexShaderResourceMap, *fragmentShaderResourceMap, *matchedVertexAttributes, *matchedColorAttachments }};
 }
 
-Optional<MatchedComputeSemantics> matchSemantics(Program& program, ComputePipelineDescriptor& computePipelineDescriptor)
+std::optional<MatchedComputeSemantics> matchSemantics(Program& program, ComputePipelineDescriptor& computePipelineDescriptor)
 {
     auto functions = program.nameContext().getFunctions(computePipelineDescriptor.entryPointName, AST::NameSpace::NameSpace1);
     if (functions.size() != 1 || !functions[0].get().entryPointType() || !is<AST::FunctionDefinition>(functions[0].get()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto& entryPoint = downcast<AST::FunctionDefinition>(functions[0].get());
     auto entryPointItems = gatherEntryPointItems(program.intrinsics(), entryPoint);
     if (!entryPointItems)
-        return WTF::nullopt;
+        return std::nullopt;
     ASSERT(entryPointItems->outputs.isEmpty());
     auto resourceMap = matchResources(entryPointItems->inputs, computePipelineDescriptor.layout, ShaderStage::Compute);
     if (!resourceMap)
-        return WTF::nullopt;
+        return std::nullopt;
     return {{ &entryPoint, *entryPointItems, *resourceMap }};
 }
 

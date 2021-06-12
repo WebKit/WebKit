@@ -33,9 +33,9 @@ public:
     enum class AnimationState { Playing, Paused, Stopped };
 
     struct ApplicationResult {
-        Optional<WebCore::TransformationMatrix> transform;
-        Optional<double> opacity;
-        Optional<WebCore::FilterOperations> filters;
+        std::optional<WebCore::TransformationMatrix> transform;
+        std::optional<double> opacity;
+        std::optional<WebCore::FilterOperations> filters;
         bool hasRunningAnimations { false };
     };
 

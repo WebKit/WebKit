@@ -1,9 +1,9 @@
 
 PASS @counter-style 'pad: 10' is invalid
 PASS @counter-style 'pad: "X"' is invalid
-FAIL @counter-style 'pad: 0 "X"' is valid assert_not_equals: got disallowed value -1
-FAIL @counter-style 'pad: 10 "X"' is valid assert_not_equals: got disallowed value -1
-FAIL @counter-style 'pad: "X" 10' is valid assert_not_equals: got disallowed value -1
+PASS @counter-style 'pad: 0 "X"' is valid
+PASS @counter-style 'pad: 10 "X"' is valid
+PASS @counter-style 'pad: "X" 10' is valid
 PASS @counter-style 'pad: -1 "X"' is invalid
 PASS @counter-style 'pad: "X" -1' is invalid
 PASS @counter-style 'pad: 10 "X" "Y"' is invalid

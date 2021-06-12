@@ -82,7 +82,7 @@ GraphicsContextGL* WebGLSharedObject::getAGraphicsContextGL() const
     return m_contextGroup ? &m_contextGroup->getAGraphicsContextGL() : nullptr;
 }
 
-WTF::Lock& WebGLSharedObject::objectGraphLockForContext()
+Lock& WebGLSharedObject::objectGraphLockForContext()
 {
     // Should not call this if the object or context has been deleted.
     ASSERT(m_contextGroup);

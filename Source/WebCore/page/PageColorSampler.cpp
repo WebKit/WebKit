@@ -28,6 +28,7 @@
 
 #include "ContentfulPaintChecker.h"
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
@@ -39,6 +40,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "Logging.h"
 #include "Node.h"
 #include "Page.h"
 #include "PixelBuffer.h"
@@ -47,9 +49,10 @@
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "Settings.h"
+#include "Styleable.h"
+#include "WebAnimation.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/URL.h>
@@ -75,38 +78,55 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
         if (is<RenderImage>(renderer) || renderer->style().hasBackgroundImage())
             return false;
 
+        if (!is<Element>(node))
+            continue;
+
+        auto& element = downcast<Element>(node);
+        auto styleable = Styleable::fromElement(element);
+
         // Skip nodes with animations as the sample may get an odd color if the animation is in-progress.
-        if (renderer->style().hasTransitions() || renderer->style().hasAnimations())
+        if (styleable.hasRunningTransitions())
             return false;
+        if (auto* animations = styleable.animations()) {
+            for (auto& animation : *animations) {
+                if (!animation)
+                    continue;
+                if (animation->playState() == WebAnimation::PlayState::Running)
+                    return false;
+            }
+        }
 
         // Skip `<canvas>` but only if they've been drawn into. Guess this by seeing if there's already
         // a `CanvasRenderingContext`, which is only created by JavaScript.
-        if (is<HTMLCanvasElement>(node) && downcast<HTMLCanvasElement>(node).renderingContext())
+        if (is<HTMLCanvasElement>(element) && downcast<HTMLCanvasElement>(element).renderingContext())
             return false;
 
         // Skip 3rd-party `<iframe>` as the content likely won't match the rest of the page.
-        if (is<HTMLIFrameElement>(node) && !areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(node).location(), document.url()))
+        if (is<HTMLIFrameElement>(element) && !areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(element).location(), document.url()))
             return false;
     }
 
     return true;
 }
 
-static Optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
+static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
 {
     // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
 
     if (!isValidSampleLocation(document, location))
-        return WTF::nullopt;
+        return std::nullopt;
+
+    // FIXME: <https://webkit.org/b/225942> (Sampled Page Top Color: support sampling non-RGB values like P3)
+    auto colorSpace = DestinationColorSpace::SRGB();
 
     ASSERT(document.view());
-    auto snapshot = snapshotFrameRect(document.view()->frame(), IntRect(location, IntSize(1, 1)), SnapshotOptionsExcludeSelectionHighlighting | SnapshotOptionsPaintEverythingExcludingSelection);
+    auto snapshot = snapshotFrameRect(document.view()->frame(), IntRect(location, IntSize(1, 1)), { { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB }, { { }, snapshot->logicalSize() });
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->logicalSize() });
     if (!pixelBuffer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT(pixelBuffer->data().length() >= 4);
 
@@ -137,9 +157,9 @@ static Lab<float> averageColor(Lab<float> colors[], size_t count)
     };
 }
 
-Optional<Color> PageColorSampler::sampleTop(Page& page)
+std::optional<Color> PageColorSampler::sampleTop(Page& page)
 {
-    // If `WTF::nullopt` is returned then that means that no samples were taken (i.e. the `Page` is not ready yet).
+    // If `std::nullopt` is returned then that means that no samples were taken (i.e. the `Page` is not ready yet).
     // If an invalid `Color` is returned then that means that samples Were taken but they were too different.
 
     auto maxDifference = page.settings().sampledPageTopColorMaxDifference();
@@ -150,19 +170,19 @@ Optional<Color> PageColorSampler::sampleTop(Page& page)
 
     auto mainDocument = makeRefPtr(page.mainFrame().document());
     if (!mainDocument)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto frameView = makeRefPtr(page.mainFrame().view());
     if (!frameView)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Don't take samples if the layer tree is still frozen.
     if (frameView->needsLayout())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Don't attempt to hit test or sample if we don't have any content yet.
     if (!frameView->isVisuallyNonEmpty() || !frameView->hasContentfulDescendants() || !ContentfulPaintChecker::qualifiesForContentfulPaint(*frameView))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Decrease the width by one pixel so that the last sample is within bounds and not off-by-one.
     auto frameWidth = frameView->contentsWidth() - 1;

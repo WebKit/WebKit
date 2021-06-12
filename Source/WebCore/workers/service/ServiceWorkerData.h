@@ -44,7 +44,7 @@ struct ServiceWorkerData {
     ServiceWorkerData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerData> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -54,32 +54,32 @@ void ServiceWorkerData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerData> ServiceWorkerData::decode(Decoder& decoder)
+std::optional<ServiceWorkerData> ServiceWorkerData::decode(Decoder& decoder)
 {
-    Optional<ServiceWorkerIdentifier> identifier;
+    std::optional<ServiceWorkerIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<URL> scriptURL;
+    std::optional<URL> scriptURL;
     decoder >> scriptURL;
     if (!scriptURL)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<ServiceWorkerState> state;
+    std::optional<ServiceWorkerState> state;
     decoder >> state;
     if (!state)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WorkerType> type;
+    std::optional<WorkerType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<ServiceWorkerRegistrationIdentifier> registrationIdentifier;
+    std::optional<ServiceWorkerRegistrationIdentifier> registrationIdentifier;
     decoder >> registrationIdentifier;
     if (!registrationIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*identifier), WTFMove(*scriptURL), WTFMove(*state), WTFMove(*type), WTFMove(*registrationIdentifier) } };
 }

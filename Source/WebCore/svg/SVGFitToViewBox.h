@@ -64,12 +64,12 @@ protected:
 
     void reset();
     bool parseAttribute(const QualifiedName&, const AtomString&);
-    Optional<FloatRect> parseViewBox(StringView);
-    Optional<FloatRect> parseViewBox(StringParsingBuffer<LChar>&, bool validate = true);
-    Optional<FloatRect> parseViewBox(StringParsingBuffer<UChar>&, bool validate = true);
+    std::optional<FloatRect> parseViewBox(StringView);
+    std::optional<FloatRect> parseViewBox(StringParsingBuffer<LChar>&, bool validate = true);
+    std::optional<FloatRect> parseViewBox(StringParsingBuffer<UChar>&, bool validate = true);
 
 private:
-    template<typename CharacterType> Optional<FloatRect> parseViewBoxGeneric(StringParsingBuffer<CharacterType>&, bool validate = true);
+    template<typename CharacterType> std::optional<FloatRect> parseViewBoxGeneric(StringParsingBuffer<CharacterType>&, bool validate = true);
 
     Ref<SVGAnimatedRect> m_viewBox;
     Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio;

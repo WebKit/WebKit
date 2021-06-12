@@ -69,7 +69,7 @@ public:
     size_t size() const final { return m_mappedBuffer->size(); }
 
     const GstBuffer* getBuffer() const { return gst_sample_get_buffer(m_sample.get()); }
-    Optional<FloatSize> getVideoResolution() const { return getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())); }
+    std::optional<FloatSize> getVideoResolution() const { return getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())); }
 
 protected:
     GStreamerEncodedImageBuffer() = default;
@@ -120,7 +120,7 @@ public:
     {
         static Atomic<uint32_t> elementId;
         auto name = makeString(Name(), "-enc-", factoryName, "-", elementId.exchangeAdd(1));
-        auto* elem = gst_element_factory_make(factoryName, name.utf8().data());
+        auto* elem = makeGStreamerElement(factoryName, name.utf8().data());
         return elem;
     }
 

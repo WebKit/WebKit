@@ -56,13 +56,13 @@ template<class Encoder>
 void Model::encode(Encoder& encoder) const
 {
     encoder << static_cast<size_t>(m_data->size());
-    encoder.encodeFixedLengthData(m_data->dataAsUInt8Ptr(), m_data->size(), 1);
+    encoder.encodeFixedLengthData(m_data->data(), m_data->size(), 1);
 }
 
 template<class Decoder>
 RefPtr<Model> Model::decode(Decoder& decoder)
 {
-    Optional<size_t> length;
+    std::optional<size_t> length;
     decoder >> length;
     if (!length)
         return nullptr;

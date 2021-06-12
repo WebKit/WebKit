@@ -98,7 +98,7 @@ void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, RefPtr<Windo
 
     m_deltaMode = DOM_DELTA_PIXEL;
 
-    m_underlyingPlatformEvent = WTF::nullopt;
+    m_underlyingPlatformEvent = std::nullopt;
 }
 
 EventInterface WheelEvent::eventInterface() const

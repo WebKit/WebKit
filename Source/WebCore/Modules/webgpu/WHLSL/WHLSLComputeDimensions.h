@@ -28,7 +28,6 @@
 #if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLPrepare.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -42,7 +41,7 @@ class FunctionDefinition;
 
 class Program;
 
-Optional<ComputeDimensions> computeDimensions(Program&, AST::FunctionDefinition&);
+std::optional<ComputeDimensions> computeDimensions(Program&, AST::FunctionDefinition&);
 
 }
 

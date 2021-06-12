@@ -87,7 +87,7 @@ void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
     m_connection->getStats(*this, WTFMove(promise));
 }
 
-Optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
+std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
 {
     return PeerConnectionBackend::receiverCapabilities(context, kind);
 }
@@ -115,7 +115,7 @@ ExceptionOr<void> RTCRtpReceiver::setTransform(std::unique_ptr<RTCRtpTransform>&
     return { };
 }
 
-Optional<RTCRtpTransform::Internal> RTCRtpReceiver::transform()
+std::optional<RTCRtpTransform::Internal> RTCRtpReceiver::transform()
 {
     if (!m_transform)
         return { };

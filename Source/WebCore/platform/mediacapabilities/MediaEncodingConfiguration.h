@@ -34,7 +34,7 @@ struct MediaEncodingConfiguration : MediaConfiguration {
     MediaEncodingType type;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MediaEncodingConfiguration> decode(Decoder&);
+    template<class Decoder> static std::optional<MediaEncodingConfiguration> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -45,16 +45,16 @@ void MediaEncodingConfiguration::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<MediaEncodingConfiguration> MediaEncodingConfiguration::decode(Decoder& decoder)
+std::optional<MediaEncodingConfiguration> MediaEncodingConfiguration::decode(Decoder& decoder)
 {
     auto mediaConfiguration = MediaConfiguration::decode(decoder);
     if (!mediaConfiguration)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<MediaEncodingType> type;
+    std::optional<MediaEncodingType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *mediaConfiguration,

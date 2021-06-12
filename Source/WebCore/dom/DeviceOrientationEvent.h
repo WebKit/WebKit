@@ -49,19 +49,19 @@ public:
 
     virtual ~DeviceOrientationEvent();
 
-    Optional<double> alpha() const;
-    Optional<double> beta() const;
-    Optional<double> gamma() const;
+    std::optional<double> alpha() const;
+    std::optional<double> beta() const;
+    std::optional<double> gamma() const;
 
 #if PLATFORM(IOS_FAMILY)
-    Optional<double> compassHeading() const;
-    Optional<double> compassAccuracy() const;
+    std::optional<double> compassHeading() const;
+    std::optional<double> compassAccuracy() const;
 
-    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy);
+    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy);
 #else
-    Optional<bool> absolute() const;
+    std::optional<bool> absolute() const;
 
-    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute);
+    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute);
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

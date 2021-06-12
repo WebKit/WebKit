@@ -191,7 +191,7 @@ public:
 
     String takeRemaining()
     {
-        String result = makeString(m_text);
+        auto result = makeString(m_text);
         m_text = StringView();
         return result;
     }

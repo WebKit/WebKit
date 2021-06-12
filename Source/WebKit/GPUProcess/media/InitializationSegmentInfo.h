@@ -32,7 +32,6 @@
 #include "RemoteMediaDescription.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <wtf/MediaTime.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -52,17 +51,17 @@ struct InitializationSegmentInfo {
         }
 
         template <class Decoder>
-        static Optional<TrackInformation> decode(Decoder& decoder)
+        static std::optional<TrackInformation> decode(Decoder& decoder)
         {
-            Optional<MediaDescriptionInfo> mediaDescription;
+            std::optional<MediaDescriptionInfo> mediaDescription;
             decoder >> mediaDescription;
             if (!mediaDescription)
-                return WTF::nullopt;
+                return std::nullopt;
 
-            Optional<TrackPrivateRemoteIdentifier> identifier;
+            std::optional<TrackPrivateRemoteIdentifier> identifier;
             decoder >> identifier;
             if (!identifier)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{
                 WTFMove(*mediaDescription),
@@ -85,27 +84,27 @@ struct InitializationSegmentInfo {
     }
 
     template <class Decoder>
-    static Optional<InitializationSegmentInfo> decode(Decoder& decoder)
+    static std::optional<InitializationSegmentInfo> decode(Decoder& decoder)
     {
-        Optional<MediaTime> duration;
+        std::optional<MediaTime> duration;
         decoder >> duration;
         if (!duration)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Vector<TrackInformation>> audioTracks;
+        std::optional<Vector<TrackInformation>> audioTracks;
         decoder >> audioTracks;
         if (!audioTracks)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Vector<TrackInformation>> videoTracks;
+        std::optional<Vector<TrackInformation>> videoTracks;
         decoder >> videoTracks;
         if (!videoTracks)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Vector<TrackInformation>> textTracks;
+        std::optional<Vector<TrackInformation>> textTracks;
         decoder >> textTracks;
         if (!textTracks)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*duration),

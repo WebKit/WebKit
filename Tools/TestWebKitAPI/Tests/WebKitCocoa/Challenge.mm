@@ -551,7 +551,7 @@ TEST(WebKit, FastServerTrust)
 #else
     TCPServer server(TCPServer::Protocol::HTTPS, [](SSL* ssl) {
         EXPECT_FALSE(ssl);
-    }, WTF::nullopt, 2);
+    }, std::nullopt, 2);
 #endif
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);

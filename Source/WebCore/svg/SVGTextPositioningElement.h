@@ -51,8 +51,8 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
 
 private:
-    bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
 

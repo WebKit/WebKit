@@ -32,9 +32,9 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DisabledAdaptations.h"
+#include "DocumentEventTiming.h"
 #include "DocumentIdentifier.h"
 #include "DocumentTimelinesController.h"
-#include "DocumentTiming.h"
 #include "ElementIdentifier.h"
 #include "FocusOptions.h"
 #include "FontSelectorClient.h"
@@ -255,8 +255,6 @@ class Resolver;
 class Scope;
 }
 
-constexpr uint64_t HTMLMediaElementInvalidID = 0;
-
 enum PageshowEventPersistence { PageshowEventNotPersisted, PageshowEventPersisted };
 
 enum NodeListInvalidationType {
@@ -415,7 +413,7 @@ public:
 #endif
 
     void setReferrerPolicy(ReferrerPolicy);
-    ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.valueOr(ReferrerPolicy::NoReferrerWhenDowngrade); }
+    ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.value_or(ReferrerPolicy::NoReferrerWhenDowngrade); }
 
     bool isAlwaysOnLoggingAllowed() const;
 
@@ -446,7 +444,7 @@ public:
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
 
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
-    Optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint);
+    std::optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint);
 
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     WEBCORE_EXPORT Element* scrollingElement();
@@ -645,8 +643,8 @@ public:
     WEBCORE_EXPORT AXObjectCache* axObjectCache() const;
     void clearAXObjectCache();
 
-    WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
-    Optional<FrameIdentifier> frameID() const;
+    WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
+    std::optional<FrameIdentifier> frameID() const;
 
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
@@ -946,7 +944,7 @@ public:
     WEBCORE_EXPORT String domain() const;
     ExceptionOr<void> setDomain(const String& newDomain);
 
-    void overrideLastModified(const Optional<WallTime>&);
+    void overrideLastModified(const std::optional<WallTime>&);
     WEBCORE_EXPORT String lastModified() const;
 
     // The cookieURL is used to query the cookie database for this document's
@@ -1071,7 +1069,7 @@ public:
     void setHasNodesWithMissingStyle() { m_hasNodesWithMissingStyle = true; }
 
     // Extension for manipulating canvas drawing contexts for use in CSS
-    Optional<RenderingContext> getCSSCanvasContext(const String& type, const String& name, int width, int height);
+    std::optional<RenderingContext> getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
     String nameForCSSCanvasElement(const HTMLCanvasElement&) const;
 
@@ -1207,9 +1205,8 @@ public:
     DeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController();
 #endif
 
-    const DocumentTiming& timing() const { return m_documentTiming; }
-
     WEBCORE_EXPORT double monotonicTimestamp() const;
+    const DocumentEventTiming& eventTiming() const { return m_eventTiming; }
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int id);
@@ -1387,7 +1384,7 @@ public:
     MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
     void noteUserInteractionWithMediaElement();
     bool isCapturing() const { return MediaProducer::isCapturing(m_mediaState); }
-    WEBCORE_EXPORT void updateIsPlayingMedia(uint64_t = HTMLMediaElementInvalidID);
+    WEBCORE_EXPORT void updateIsPlayingMedia();
     void pageMutedStateDidChange();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1607,7 +1604,7 @@ public:
 
     void prepareCanvasesForDisplayIfNeeded();
     void clearCanvasPreparation(HTMLCanvasElement&);
-    void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final;
+    void canvasChanged(CanvasBase&, const std::optional<FloatRect>&) final;
     void canvasResized(CanvasBase&) final { };
     void canvasDestroyed(CanvasBase&) final;
 
@@ -1794,7 +1791,7 @@ private:
     std::unique_ptr<FormController> m_formController;
 
     Color m_cachedThemeColor;
-    Optional<Vector<WeakPtr<HTMLMetaElement>>> m_metaThemeColorElements;
+    std::optional<Vector<WeakPtr<HTMLMetaElement>>> m_metaThemeColorElements;
     WeakPtr<HTMLMetaElement> m_activeThemeColorMetaElement;
     Color m_applicationManifestThemeColor;
 
@@ -1918,7 +1915,7 @@ private:
     ViewportArguments m_viewportArguments;
     OptionSet<DisabledAdaptations> m_disabledAdaptations;
 
-    DocumentTiming m_documentTiming;
+    DocumentEventTiming m_eventTiming;
 
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
     
@@ -1954,8 +1951,6 @@ private:
 #if ENABLE(DEVICE_ORIENTATION)
     std::unique_ptr<DeviceOrientationAndMotionAccessController> m_deviceOrientationAndMotionAccessController;
 #endif
-
-    GenericTaskQueue<Timer> m_logMessageTaskQueue;
 
     Timer m_pendingTasksTimer;
     Vector<Task> m_pendingTasks;
@@ -2013,7 +2008,7 @@ private:
 
     String m_cachedDOMCookies;
 
-    Optional<WallTime> m_overrideLastModified;
+    std::optional<WallTime> m_overrideLastModified;
 
     HashSet<RefPtr<Element>> m_associatedFormControls;
     unsigned m_disabledFieldsetElementsCount { 0 };
@@ -2043,7 +2038,7 @@ private:
     MediaProducer::MediaStateFlags m_mediaState;
     bool m_userHasInteractedWithMediaElement { false };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
-    Optional<ReferrerPolicy> m_referrerPolicy;
+    std::optional<ReferrerPolicy> m_referrerPolicy;
     ReadyState m_readyState { Complete };
 
     MutationObserverOptions m_mutationObserverTypes { 0 };

@@ -86,7 +86,7 @@ public:
     private:
         ContentChangeObserver& m_contentChangeObserver;
         const Element& m_element;
-        Optional<bool> m_wasHidden;
+        std::optional<bool> m_wasHidden;
         bool m_hadRenderer { false };
     };
 

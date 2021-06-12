@@ -159,14 +159,14 @@ RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
     return renderWidget(); // This will return nullptr if the renderer is not a RenderWidget.
 }
 
-bool HTMLPlugInElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLPlugInElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr || name == vspaceAttr || name == hspaceAttr || name == alignAttr)
         return true;
-    return HTMLFrameOwnerElement::isPresentationAttribute(name);
+    return HTMLFrameOwnerElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLPlugInElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLPlugInElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -181,7 +181,7 @@ void HTMLPlugInElement::collectStyleForPresentationAttribute(const QualifiedName
     } else if (name == alignAttr)
         applyAlignmentAttributeToStyle(value, style);
     else
-        HTMLFrameOwnerElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLFrameOwnerElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLPlugInElement::defaultEventHandler(Event& event)

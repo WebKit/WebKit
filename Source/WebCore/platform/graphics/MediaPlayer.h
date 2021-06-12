@@ -53,6 +53,7 @@
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(AVF_CAPTIONS)
@@ -107,32 +108,32 @@ struct MediaEngineSupportParameters {
     }
 
     template <class Decoder>
-    static Optional<MediaEngineSupportParameters> decode(Decoder& decoder)
+    static std::optional<MediaEngineSupportParameters> decode(Decoder& decoder)
     {
-        Optional<ContentType> type;
+        std::optional<ContentType> type;
         decoder >> type;
         if (!type)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<URL> url;
+        std::optional<URL> url;
         decoder >> url;
         if (!url)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isMediaSource;
+        std::optional<bool> isMediaSource;
         decoder >> isMediaSource;
         if (!isMediaSource)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isMediaStream;
+        std::optional<bool> isMediaStream;
         decoder >> isMediaStream;
         if (!isMediaStream)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Vector<ContentType>> typesRequiringHardware;
+        std::optional<Vector<ContentType>> typesRequiringHardware;
         decoder >> typesRequiringHardware;
         if (!typesRequiringHardware)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ WTFMove(*type), WTFMove(*url), *isMediaSource, *isMediaStream, *typesRequiringHardware }};
     }
@@ -289,7 +290,7 @@ public:
 #endif
 };
 
-class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRefCounted<MediaPlayer, WTF::DestructionThread::Main> {
+class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRefCounted<MediaPlayer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaPlayer> {
     WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MediaPlayer> create(MediaPlayerClient&);
@@ -596,7 +597,7 @@ public:
 
     unsigned long long fileSize() const;
 
-    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
     String sourceApplicationIdentifier() const;
     Vector<String> preferredAudioCharacteristics() const;
@@ -660,6 +661,7 @@ public:
     void audioOutputDeviceChanged();
 
     MediaPlayerIdentifier identifier() const;
+    bool hasMediaEngine() const;
 
 private:
     MediaPlayer(MediaPlayerClient&);
@@ -679,8 +681,8 @@ private:
     URL m_url;
     ContentType m_contentType;
     String m_keySystem;
-    Optional<MediaPlayerEnums::MediaEngineIdentifier> m_activeEngineIdentifier;
-    Optional<MediaTime> m_pendingSeekRequest;
+    std::optional<MediaPlayerEnums::MediaEngineIdentifier> m_activeEngineIdentifier;
+    std::optional<MediaTime> m_pendingSeekRequest;
     IntSize m_size;
     Preload m_preload { Preload::Auto };
     double m_volume { 1 };
@@ -744,6 +746,11 @@ inline String MediaPlayer::audioOutputDeviceId() const
 inline String MediaPlayer::audioOutputDeviceIdOverride() const
 {
     return m_client ? m_client->audioOutputDeviceIdOverride() : String { };
+}
+
+inline bool MediaPlayer::hasMediaEngine() const
+{
+    return m_currentMediaEngine;
 }
 
 } // namespace WebCore

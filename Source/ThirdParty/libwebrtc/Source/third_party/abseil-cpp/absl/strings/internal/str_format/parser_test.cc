@@ -1,3 +1,17 @@
+// Copyright 2020 The Abseil Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "absl/strings/internal/str_format/parser.h"
 
 #include <string.h>
@@ -256,15 +270,22 @@ TEST_F(ConsumeUnboundConversionTest, Flags) {
       for (int k = 0; k < kNumFlags; ++k)
         if ((i >> k) & 1) fmt += kAllFlags[k];
       // flag order shouldn't matter
-      if (rev == 1) { std::reverse(fmt.begin(), fmt.end()); }
+      if (rev == 1) {
+        std::reverse(fmt.begin(), fmt.end());
+      }
       fmt += 'd';
       SCOPED_TRACE(fmt);
       EXPECT_TRUE(Run(fmt.c_str()));
-      EXPECT_EQ(fmt.find('-') == std::string::npos, !o.flags.left);
-      EXPECT_EQ(fmt.find('+') == std::string::npos, !o.flags.show_pos);
-      EXPECT_EQ(fmt.find(' ') == std::string::npos, !o.flags.sign_col);
-      EXPECT_EQ(fmt.find('#') == std::string::npos, !o.flags.alt);
-      EXPECT_EQ(fmt.find('0') == std::string::npos, !o.flags.zero);
+      EXPECT_EQ(fmt.find('-') == std::string::npos,
+                !FlagsContains(o.flags, Flags::kLeft));
+      EXPECT_EQ(fmt.find('+') == std::string::npos,
+                !FlagsContains(o.flags, Flags::kShowPos));
+      EXPECT_EQ(fmt.find(' ') == std::string::npos,
+                !FlagsContains(o.flags, Flags::kSignCol));
+      EXPECT_EQ(fmt.find('#') == std::string::npos,
+                !FlagsContains(o.flags, Flags::kAlt));
+      EXPECT_EQ(fmt.find('0') == std::string::npos,
+                !FlagsContains(o.flags, Flags::kZero));
     }
   }
 }
@@ -274,14 +295,14 @@ TEST_F(ConsumeUnboundConversionTest, BasicFlag) {
   for (const char* fmt : {"d", "llx", "G", "1$X"}) {
     SCOPED_TRACE(fmt);
     EXPECT_TRUE(Run(fmt));
-    EXPECT_TRUE(o.flags.basic);
+    EXPECT_EQ(o.flags, Flags::kBasic);
   }
 
   // Flag is off
   for (const char* fmt : {"3d", ".llx", "-G", "1$#X"}) {
     SCOPED_TRACE(fmt);
     EXPECT_TRUE(Run(fmt));
-    EXPECT_FALSE(o.flags.basic);
+    EXPECT_NE(o.flags, Flags::kBasic);
   }
 }
 

@@ -481,7 +481,7 @@ void PluginControllerProxy::streamDidReceiveResponse(uint64_t streamID, const St
 
 void PluginControllerProxy::streamDidReceiveData(uint64_t streamID, const IPC::DataReference& data)
 {
-    m_plugin->streamDidReceiveData(streamID, reinterpret_cast<const char*>(data.data()), data.size());
+    m_plugin->streamDidReceiveData(streamID, data.data(), data.size());
 }
 
 void PluginControllerProxy::streamDidFinishLoading(uint64_t streamID)
@@ -507,7 +507,7 @@ void PluginControllerProxy::manualStreamDidReceiveData(const IPC::DataReference&
     if (m_pluginCanceledManualStreamLoad)
         return;
 
-    m_plugin->manualStreamDidReceiveData(reinterpret_cast<const char*>(data.data()), data.size());
+    m_plugin->manualStreamDidReceiveData(data.data(), data.size());
 }
 
 void PluginControllerProxy::manualStreamDidFinishLoading()

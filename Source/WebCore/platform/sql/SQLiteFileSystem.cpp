@@ -79,8 +79,8 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String& path)
 
 bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
 {
-    String walFileName = makeString(fileName, "-wal"_s);
-    String shmFileName = makeString(fileName, "-shm"_s);
+    auto walFileName = makeString(fileName, "-wal"_s);
+    auto shmFileName = makeString(fileName, "-shm"_s);
 
     // Try to delete all three files whether or not they are there.
     FileSystem::deleteFile(fileName);
@@ -114,12 +114,12 @@ uint64_t SQLiteFileSystem::databaseFileSize(const String& fileName)
     return totalSize;
 }
 
-Optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
 {
     return FileSystem::fileCreationTime(fileName);
 }
 
-Optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
 {
     return FileSystem::fileModificationTime(fileName);
 }
@@ -127,7 +127,8 @@ Optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& file
 String SQLiteFileSystem::computeHashForFileName(const String& fileName)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    cryptoDigest->addBytes(fileName.utf8().data(), fileName.utf8().length());
+    auto utf8FileName = fileName.utf8();
+    cryptoDigest->addBytes(utf8FileName.data(), utf8FileName.length());
     auto digest = cryptoDigest->computeHash();
     
     // Convert digest to hex.

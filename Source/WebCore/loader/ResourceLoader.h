@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "LoadTiming.h"
 #include "ResourceHandleClient.h"
+#include "ResourceLoadTiming.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceLoaderTypes.h"
 #include "ResourceRequest.h"
@@ -104,7 +104,7 @@ public:
     virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(const ResourceResponse&, CompletionHandler<void()>&& policyCompletionHandler);
-    virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType);
+    virtual void didReceiveData(const uint8_t*, unsigned, long long encodedDataLength, DataPayloadType);
     virtual void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
     virtual void didFinishLoading(const NetworkLoadMetrics&);
     virtual void didFail(const ResourceError&);
@@ -143,7 +143,7 @@ public:
 
     void willSwitchToSubstituteResource();
 
-    const LoadTiming& loadTiming() { return m_loadTiming; }
+    const ResourceLoadTiming& loadTiming() { return m_loadTiming; }
 
 #if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
@@ -166,7 +166,7 @@ protected:
 
     bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
 
-    void didReceiveDataOrBuffer(const char*, unsigned, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const uint8_t*, unsigned, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
     
     void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_options.referrerPolicy = referrerPolicy; }
     ReferrerPolicy referrerPolicy() const { return m_options.referrerPolicy; }
@@ -181,7 +181,7 @@ protected:
     RefPtr<Frame> m_frame;
     RefPtr<DocumentLoader> m_documentLoader;
     ResourceResponse m_response;
-    LoadTiming m_loadTiming;
+    ResourceLoadTiming m_loadTiming;
 #if USE(QUICK_LOOK)
     std::unique_ptr<LegacyPreviewLoader> m_previewLoader;
 #endif
@@ -191,7 +191,7 @@ private:
     virtual void willCancel(const ResourceError&) = 0;
     virtual void didCancel(const ResourceError&) = 0;
 
-    void addDataOrBuffer(const char*, unsigned, SharedBuffer*, DataPayloadType);
+    void addDataOrBuffer(const uint8_t*, unsigned, SharedBuffer*, DataPayloadType);
     void loadDataURL();
     void finishNetworkLoad();
 
@@ -201,7 +201,7 @@ private:
     void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, CompletionHandler<void()>&&) override;
     void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) override;
-    void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
+    void didReceiveData(ResourceHandle*, const uint8_t*, unsigned, int encodedDataLength) override;
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength) override;
     void didFinishLoading(ResourceHandle*, const NetworkLoadMetrics&) override;
     void didFail(ResourceHandle*, const ResourceError&) override;

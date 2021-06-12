@@ -31,7 +31,6 @@
 #include "GPUPlatformTypes.h"
 #include "GPUProgrammableStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -48,24 +47,24 @@ public:
 
     bool isRenderPipeline() const { return true; }
 
-    bool recompile(const GPUDevice&, GPUProgrammableStageDescriptor&& vertexStage, Optional<GPUProgrammableStageDescriptor>&& fragmentStage);
+    bool recompile(const GPUDevice&, GPUProgrammableStageDescriptor&& vertexStage, std::optional<GPUProgrammableStageDescriptor>&& fragmentStage);
 
 #if USE(METAL)
     MTLDepthStencilState *depthStencilState() const { return m_depthStencilState.get(); }
 #endif
     PlatformRenderPipeline* platformRenderPipeline() const { return m_platformRenderPipeline.get(); }
     GPUPrimitiveTopology primitiveTopology() const { return m_primitiveTopology; }
-    Optional<GPUIndexFormat> indexFormat() const { return m_indexFormat; }
+    std::optional<GPUIndexFormat> indexFormat() const { return m_indexFormat; }
 
 private:
 #if USE(METAL)
-    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>, const RefPtr<GPUPipelineLayout>&, const GPURenderPipelineDescriptorBase&);
+    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, std::optional<GPUIndexFormat>, const RefPtr<GPUPipelineLayout>&, const GPURenderPipelineDescriptorBase&);
 
     RetainPtr<MTLDepthStencilState> m_depthStencilState;
 #endif // USE(METAL)
     PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
     GPUPrimitiveTopology m_primitiveTopology;
-    Optional<GPUIndexFormat> m_indexFormat;
+    std::optional<GPUIndexFormat> m_indexFormat;
 
     // Preserved for Web Inspector recompilation.
     RefPtr<GPUPipelineLayout> m_layout;

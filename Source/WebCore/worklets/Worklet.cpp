@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Worklet.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -69,6 +70,11 @@ void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options,
         return;
     }
 
+    if (!document->contentSecurityPolicy()->allowScriptFromSource(moduleURL)) {
+        promise.reject(Exception { SecurityError, "Not allowed by CSP"_s });
+        return;
+    }
+
     if (m_proxies.isEmpty())
         m_proxies.appendVector(createGlobalScopes());
 
@@ -77,7 +83,7 @@ void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options,
 
     for (auto& proxy : m_proxies) {
         proxy->postTaskForModeToWorkletGlobalScope([pendingTasks = pendingTasks.copyRef(), moduleURL = moduleURL.isolatedCopy(), credentials = options.credentials, pendingActivity = makePendingActivity(*this)](ScriptExecutionContext& context) mutable {
-            downcast<WorkletGlobalScope>(context).fetchAndInvokeScript(moduleURL, credentials, [pendingTasks = WTFMove(pendingTasks), pendingActivity = WTFMove(pendingActivity)](Optional<Exception>&& exception) mutable {
+            downcast<WorkletGlobalScope>(context).fetchAndInvokeScript(moduleURL, credentials, [pendingTasks = WTFMove(pendingTasks), pendingActivity = WTFMove(pendingActivity)](std::optional<Exception>&& exception) mutable {
                 callOnMainThread([pendingTasks = WTFMove(pendingTasks), exception = crossThreadCopy(exception), pendingActivity = WTFMove(pendingActivity)]() mutable {
                     if (exception)
                         pendingTasks->abort(WTFMove(*exception));

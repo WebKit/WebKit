@@ -43,7 +43,7 @@ static HTTPBody toHTTPBody(const FormData& formData)
         HTTPBody::Element element;
 
         switchOn(formDataElement.data,
-            [&] (const Vector<char>& bytes) {
+            [&] (const Vector<uint8_t>& bytes) {
                 element.type = HTTPBody::Element::Type::Data;
                 element.data = bytes;
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
@@ -130,7 +130,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
             break;
 
         case HTTPBody::Element::Type::File:
-            formData->appendFileRange(element.filePath, element.fileStart, element.fileLength.valueOr(BlobDataItem::toEndOfFile), element.expectedFileModificationTime);
+            formData->appendFileRange(element.filePath, element.fileStart, element.fileLength.value_or(BlobDataItem::toEndOfFile), element.expectedFileModificationTime);
             break;
 
         case HTTPBody::Element::Type::Blob:

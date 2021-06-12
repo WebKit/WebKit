@@ -48,9 +48,11 @@
 #include "JITDivGenerator.h"
 #include "JITLeftShiftGenerator.h"
 #include "JITRightShiftGenerator.h"
+#include "JITSizeStatistics.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
@@ -408,17 +410,35 @@ void SpeculativeJIT::addSlowPathGeneratorLambda(Function<void()>&& lambda)
 
 void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
 {
+    auto markSlowPathIfNeeded = [&] (Node* node) {
+        std::optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(Options::dumpDFGJITSizeStatistics())) {
+            String id = makeString("DFG_slow_", m_graph.opName(node->op()));
+            sizeMarker = vm().jitSizeStatistics->markStart(id, m_jit);
+        }
+        return sizeMarker;
+    };
+
     for (auto& slowPathGenerator : m_slowPathGenerators) {
         pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), slowPathGenerator->origin().semantic);
+        auto sizeMarker = markSlowPathIfNeeded(slowPathGenerator->currentNode());
+
         slowPathGenerator->generate(this);
+
+        if (UNLIKELY(sizeMarker))
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), m_jit);
     }
     for (auto& slowPathLambda : m_slowPathLambdas) {
         Node* currentNode = slowPathLambda.currentNode;
         m_currentNode = currentNode;
         m_outOfLineStreamIndex = slowPathLambda.streamIndex;
         pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), currentNode->origin.semantic);
+        auto sizeMarker = markSlowPathIfNeeded(currentNode);
+
         slowPathLambda.generator();
-        m_outOfLineStreamIndex = WTF::nullopt;
+        m_outOfLineStreamIndex = std::nullopt;
+        if (UNLIKELY(sizeMarker))
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), m_jit);
     }
 }
 
@@ -843,8 +863,8 @@ void SpeculativeJIT::checkArray(Node* node)
         return;
     }
 
-    Optional<GPRTemporary> temp;
-    Optional<GPRReg> tempGPR;
+    std::optional<GPRTemporary> temp;
+    std::optional<GPRReg> tempGPR;
     switch (arrayMode.type()) {
     case Array::Int32:
     case Array::Double:
@@ -1267,18 +1287,31 @@ void SpeculativeJIT::compileInByVal(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
     JSValueOperand key(this, node->child2());
+    JSValueRegsTemporary result(this, Reuse, key);
 
     GPRReg baseGPR = base.gpr();
-    JSValueRegs regs = key.jsValueRegs();
+    JSValueRegs keyRegs = key.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
 
     base.use();
     key.use();
 
-    flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    callOperation(operationInByVal, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, regs);
-    m_jit.exceptionCheck();
+    CodeOrigin codeOrigin = node->origin.semantic;
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    RegisterSet usedRegisters = this->usedRegisters();
+    JITInByValGenerator gen(
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
+        JSValueRegs::payloadOnly(baseGPR), keyRegs, resultRegs);
+    gen.generateFastPath(m_jit);
+
+    auto slowPath = slowPathCall(
+        gen.slowPathJump(), this, operationInByValOptimize,
+        NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
+        resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), gen.stubInfo(), nullptr, CCallHelpers::CellValue(baseGPR), keyRegs);
+
+    m_jit.addInByVal(gen, slowPath.get());
+    addSlowPathGenerator(WTFMove(slowPath));
+
     blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
 }
 
@@ -1711,8 +1744,8 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     SpeculateInt32Operand start(this, node->child2());
     GPRReg startGPR = start.gpr();
 
-    Optional<SpeculateInt32Operand> end;
-    Optional<GPRReg> endGPR;
+    std::optional<SpeculateInt32Operand> end;
+    std::optional<GPRReg> endGPR;
     if (node->child3()) {
         end.emplace(this, node->child3());
         endGPR.emplace(end->gpr());
@@ -2088,7 +2121,16 @@ void SpeculativeJIT::compileCurrentBlock()
                 m_jit.store8(TrustedImm32(0), &vm().didEnterVM);
         }
 
+        std::optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(Options::dumpDFGJITSizeStatistics())) {
+            String id = makeString("DFG_fast_", m_graph.opName(m_currentNode->op()));
+            sizeMarker = vm().jitSizeStatistics->markStart(id, m_jit);
+        }
+
         compile(m_currentNode);
+
+        if (UNLIKELY(sizeMarker))
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), m_jit);
 
         if (belongsInMinifiedGraph(m_currentNode->op()))
             m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));
@@ -4093,8 +4135,8 @@ void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
         return;
     }
 
-    Optional<JSValueOperand> left;
-    Optional<JSValueOperand> right;
+    std::optional<JSValueOperand> left;
+    std::optional<JSValueOperand> right;
 
     JSValueRegs leftRegs;
     JSValueRegs rightRegs;
@@ -4311,8 +4353,8 @@ void SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp(Node* node)
         return;
     }
 
-    Optional<JSValueOperand> left;
-    Optional<JSValueOperand> right;
+    std::optional<JSValueOperand> left;
+    std::optional<JSValueOperand> right;
 
     JSValueRegs leftRegs;
     JSValueRegs rightRegs;
@@ -4678,8 +4720,8 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    Optional<JSValueOperand> left;
-    Optional<JSValueOperand> right;
+    std::optional<JSValueOperand> left;
+    std::optional<JSValueOperand> right;
 
     JSValueRegs leftRegs;
     JSValueRegs rightRegs;
@@ -4692,14 +4734,14 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
     GPRReg scratchGPR = InvalidGPRReg;
     FPRReg scratchFPR = InvalidFPRReg;
 
-    Optional<FPRTemporary> fprScratch;
+    std::optional<FPRTemporary> fprScratch;
     if (needsScratchFPRReg) {
         fprScratch.emplace(this);
         scratchFPR = fprScratch->fpr();
     }
 
 #if USE(JSVALUE64)
-    Optional<GPRTemporary> gprScratch;
+    std::optional<GPRTemporary> gprScratch;
     if (needsScratchGPRReg) {
         gprScratch.emplace(this);
         scratchGPR = gprScratch->gpr();
@@ -5348,7 +5390,7 @@ template <typename Generator, typename RepatchingFunction, typename NonRepatchin
 void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC, bool needsScratchGPRReg, RepatchingFunction repatchingFunction, NonRepatchingFunction nonRepatchingFunction)
 {
     GPRReg scratchGPR = InvalidGPRReg;
-    Optional<GPRTemporary> gprScratch;
+    std::optional<GPRTemporary> gprScratch;
     if (needsScratchGPRReg) {
         gprScratch.emplace(this);
         scratchGPR = gprScratch->gpr();
@@ -5713,8 +5755,8 @@ void SpeculativeJIT::compileValueDiv(Node* node)
 
     ASSERT(node->isBinaryUseKind(UntypedUse));
 
-    Optional<JSValueOperand> left;
-    Optional<JSValueOperand> right;
+    std::optional<JSValueOperand> left;
+    std::optional<JSValueOperand> right;
 
     JSValueRegs leftRegs;
     JSValueRegs rightRegs;
@@ -9058,7 +9100,7 @@ void SpeculativeJIT::compileGetRestLength(Node* node)
     strictInt32Result(resultGPR, node);
 }
 
-void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, Optional<GPRReg> indexGPR, GPRReg lengthGPR, GPRReg resultGPR)
+void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, std::optional<GPRReg> indexGPR, GPRReg lengthGPR, GPRReg resultGPR)
 {
     if (target->isInt32Constant()) {
         int32_t value = target->asInt32();
@@ -9082,7 +9124,7 @@ void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, Optional<GPRReg> index
         return;
     }
 
-    Optional<SpeculateInt32Operand> index;
+    std::optional<SpeculateInt32Operand> index;
     if (!indexGPR) {
         index.emplace(this, target);
         indexGPR = index->gpr();
@@ -9126,7 +9168,7 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
 
         if (node->numChildren() == 4)
-            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), WTF::nullopt, lengthGPR, tempGPR);
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), std::nullopt, lengthGPR, tempGPR);
         else
             m_jit.move(lengthGPR, tempGPR);
 
@@ -9136,7 +9178,7 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         } else {
             GPRTemporary tempStartIndex(this);
             GPRReg startGPR = tempStartIndex.gpr();
-            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), WTF::nullopt, lengthGPR, startGPR);
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), std::nullopt, lengthGPR, startGPR);
 
             auto tooBig = m_jit.branch32(MacroAssembler::Above, startGPR, tempGPR);
             m_jit.sub32(startGPR, tempGPR); // the size of the array we'll make.
@@ -9226,10 +9268,10 @@ void SpeculativeJIT::compileArraySlice(Node* node)
     } else {
         m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), tempValue);
         if (node->numChildren() == 4)
-            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), WTF::nullopt, tempValue, tempGPR);
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), std::nullopt, tempValue, tempGPR);
         else
             m_jit.move(tempValue, tempGPR);
-        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), WTF::nullopt, tempValue, loadIndex);
+        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), std::nullopt, tempValue, loadIndex);
     }
 
     GPRTemporary temp5(this);
@@ -9283,7 +9325,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
     m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
 
     if (node->numChildren() == 4)
-        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), WTF::nullopt, lengthGPR, indexGPR);
+        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), std::nullopt, lengthGPR, indexGPR);
     else
         m_jit.move(TrustedImm32(0), indexGPR);
 
@@ -10278,7 +10320,7 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
     SpeculateCellOperand base(this, baseEdge);
     regs.append(SnippetParams::Value(base.gpr(), m_state.forNode(baseEdge).value()));
 
-    Optional<SpeculateCellOperand> globalObject;
+    std::optional<SpeculateCellOperand> globalObject;
     if (snippet->requireGlobalObject) {
         Edge& globalObjectEdge = node->child2();
         globalObject.emplace(this, globalObjectEdge);
@@ -10512,6 +10554,47 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
+}
+
+static void getExecutable(JITCompiler& jit, GPRReg functionGPR, GPRReg resultGPR)
+{
+    jit.loadPtr(JITCompiler::Address(functionGPR, JSFunction::offsetOfExecutableOrRareData()), resultGPR);
+    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, resultGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
+    jit.loadPtr(CCallHelpers::Address(resultGPR, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), resultGPR);
+    hasExecutable.link(&jit);
+}
+
+void SpeculativeJIT::compileFunctionToString(Node* node)
+{
+    SpeculateCellOperand function(this, node->child1());
+    GPRTemporary executable(this);
+    GPRTemporary result(this);
+    JITCompiler::JumpList slowCases;
+
+    speculateFunction(node->child1(), function.gpr());
+
+    m_jit.emitLoadStructure(vm(), function.gpr(), result.gpr(), executable.gpr());
+    m_jit.loadPtr(JITCompiler::Address(result.gpr(), Structure::classInfoOffset()), result.gpr());
+    static_assert(std::is_final_v<JSBoundFunction>, "We don't handle subclasses when comparing classInfo below");
+    slowCases.append(m_jit.branchPtr(CCallHelpers::Equal, result.gpr(), TrustedImmPtr(JSBoundFunction::info())));
+
+    getExecutable(m_jit, function.gpr(), executable.gpr());
+    JITCompiler::Jump isNativeExecutable = m_jit.branch8(JITCompiler::Equal, JITCompiler::Address(executable.gpr(), JSCell::typeInfoTypeOffset()), TrustedImm32(NativeExecutableType));
+
+    m_jit.loadPtr(MacroAssembler::Address(executable.gpr(), FunctionExecutable::offsetOfRareData()), result.gpr());
+    slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr()));
+    m_jit.loadPtr(MacroAssembler::Address(result.gpr(), FunctionExecutable::offsetOfAsStringInRareData()), result.gpr());
+    JITCompiler::Jump continuation = m_jit.jump();
+
+    isNativeExecutable.link(&m_jit);
+    m_jit.loadPtr(MacroAssembler::Address(executable.gpr(), NativeExecutable::offsetOfAsString()), result.gpr());
+
+    continuation.link(&m_jit);
+    slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr()));
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationFunctionToString, result.gpr(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), function.gpr()));
+
+    cellResult(result.gpr(), node);
 }
 
 void SpeculativeJIT::compileNumberToStringWithValidRadixConstant(Node* node)
@@ -11349,6 +11432,21 @@ void SpeculativeJIT::speculateNotCellNorBigInt(Edge edge)
 #endif
 }
 
+void SpeculativeJIT::speculateNotDouble(Edge edge)
+{
+    if (!needsTypeCheck(edge, ~SpecFullDouble))
+        return;
+    
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    GPRTemporary temp(this);
+    JSValueRegs regs = operand.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+    
+    JITCompiler::Jump done = m_jit.branchIfInt32(regs);
+    DFG_TYPE_CHECK(regs, edge, ~SpecFullDouble, m_jit.branchIfNumber(regs, tempGPR));
+    done.link(&m_jit);
+}
+
 void SpeculativeJIT::speculateOther(Edge edge, JSValueRegs regs, GPRReg tempGPR)
 {
     DFG_TYPE_CHECK(regs, edge, SpecOther, m_jit.branchIfNotOther(regs, tempGPR));
@@ -11530,6 +11628,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case NotCellNorBigIntUse:
         speculateNotCellNorBigInt(edge);
+        break;
+    case NotDoubleUse:
+        speculateNotDouble(edge);
         break;
     case OtherUse:
         speculateOther(edge);
@@ -13263,14 +13364,9 @@ void SpeculativeJIT::compileGetExecutable(Node* node)
 {
     SpeculateCellOperand function(this, node->child1());
     GPRTemporary result(this, Reuse, function);
-    GPRReg functionGPR = function.gpr();
-    GPRReg resultGPR = result.gpr();
-    speculateCellType(node->child1(), functionGPR, SpecFunction, JSFunctionType);
-    m_jit.loadPtr(JITCompiler::Address(functionGPR, JSFunction::offsetOfExecutableOrRareData()), resultGPR);
-    auto hasExecutable = m_jit.branchTestPtr(CCallHelpers::Zero, resultGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
-    m_jit.loadPtr(CCallHelpers::Address(resultGPR, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), resultGPR);
-    hasExecutable.link(&m_jit);
-    cellResult(resultGPR, node);
+    speculateFunction(node->child1(), function.gpr());
+    getExecutable(m_jit, function.gpr(), result.gpr());
+    cellResult(result.gpr(), node);
 }
 
 void SpeculativeJIT::compileGetGetter(Node* node)

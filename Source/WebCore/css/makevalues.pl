@@ -164,6 +164,8 @@ print HEADER << "EOF";
 
 #include <string.h>
 #include <wtf/Forward.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
@@ -204,6 +206,12 @@ inline CSSValueID convertToCSSValueID(int value)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+template<> struct DefaultHash<WebCore::CSSValueID> : IntHash<unsigned> { };
+template<> struct HashTraits<WebCore::CSSValueID> : StrongEnumHashTraits<WebCore::CSSValueID> { };
+} // namespace WTF
+
 EOF
 close HEADER;
 

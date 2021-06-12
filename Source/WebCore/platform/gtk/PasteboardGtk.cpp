@@ -29,7 +29,6 @@
 #include "PlatformStrategies.h"
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -256,12 +255,12 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 }
 #endif
 
-void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Optional<size_t>)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
 {
     text.text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
 }
 
-void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t>)
+void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t>)
 {
     reader.contentOrigin = readOrigin();
 
@@ -313,7 +312,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     }
 }
 
-void Pasteboard::read(PasteboardFileReader& reader, Optional<size_t>)
+void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
 {
     if (m_selectionData) {
         for (const auto& filePath : m_selectionData->filenames())

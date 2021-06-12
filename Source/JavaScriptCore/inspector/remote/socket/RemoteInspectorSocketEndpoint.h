@@ -60,7 +60,7 @@ public:
         virtual ~Listener() { }
 
         // These callbacks are not guaranteed to be called from the main thread.
-        virtual Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) = 0;
+        virtual std::optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) = 0;
         virtual void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, Status) = 0;
     };
 
@@ -69,8 +69,8 @@ public:
     RemoteInspectorSocketEndpoint();
     ~RemoteInspectorSocketEndpoint();
 
-    Optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort, Client&);
-    Optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
+    std::optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort, Client&);
+    std::optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
     void invalidateClient(Client&);
     void invalidateListener(Listener&);
 
@@ -78,9 +78,9 @@ public:
     inline void send(ConnectionID id, const Vector<uint8_t>& data) { send(id, data.data(), data.size()); }
     inline void send(ConnectionID id, const char* data, size_t length) { send(id, reinterpret_cast<const uint8_t*>(data), length); }
 
-    Optional<ConnectionID> createClient(PlatformSocketType, Client&);
+    std::optional<ConnectionID> createClient(PlatformSocketType, Client&);
 
-    Optional<uint16_t> getPort(ConnectionID) const;
+    std::optional<uint16_t> getPort(ConnectionID) const;
 
     void disconnect(ConnectionID);
 
@@ -168,7 +168,7 @@ protected:
         String address;
         uint16_t port;
         Listener& listener;
-        Optional<MonotonicTime> nextRetryTime;
+        std::optional<MonotonicTime> nextRetryTime;
         Seconds retryInterval { initialRetryInterval };
     };
 
@@ -183,8 +183,8 @@ protected:
     int pollingTimeout();
 
     mutable Lock m_connectionsLock;
-    HashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients;
-    HashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners;
+    HashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients WTF_GUARDED_BY_LOCK(m_connectionsLock);
+    HashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners WTF_GUARDED_BY_LOCK(m_connectionsLock);
 
     PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
     PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };

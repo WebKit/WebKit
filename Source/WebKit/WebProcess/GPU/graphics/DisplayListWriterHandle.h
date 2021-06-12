@@ -52,7 +52,10 @@ public:
     {
         auto& header = this->header();
         header.resumeReadingInfo = WTFMove(info);
-        return header.waitingStatus.compareExchangeWeak(SharedDisplayListHandle::WaitingStatus::Waiting, SharedDisplayListHandle::WaitingStatus::Resuming);
+        return header.waitingStatus.compareExchangeWeak(
+            static_cast<SharedDisplayListHandle::WaitingStatusStorageType>(SharedDisplayListHandle::WaitingStatus::Waiting),
+            static_cast<SharedDisplayListHandle::WaitingStatusStorageType>(SharedDisplayListHandle::WaitingStatus::Resuming)
+        );
     }
 
 private:

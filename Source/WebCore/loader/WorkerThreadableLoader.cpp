@@ -70,7 +70,7 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScop
     WorkerRunLoop& runLoop = workerOrWorkletGlobalScope.workerOrWorkletThread()->runLoop();
 
     // Create a unique mode just for this synchronous resource load.
-    String mode = makeString("loadResourceSynchronouslyMode", runLoop.createUniqueId());
+    auto mode = makeString("loadResourceSynchronouslyMode", runLoop.createUniqueId());
 
     auto loader = WorkerThreadableLoader::create(workerOrWorkletGlobalScope, client, mode, WTFMove(request), options, String());
     MessageQueueWaitResult result = MessageQueueMessageReceived;
@@ -229,10 +229,9 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(unsigned long 
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, int dataLength)
+void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const uint8_t* data, int dataLength)
 {
-    Vector<char> buffer(dataLength);
-    memcpy(buffer.data(), data, dataLength);
+    Vector<uint8_t> buffer(data, dataLength);
     m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), workerRequestIdentifier = m_workerRequestIdentifier, buffer = WTFMove(buffer)] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         protectedWorkerClientWrapper->didReceiveData(buffer.data(), buffer.size());

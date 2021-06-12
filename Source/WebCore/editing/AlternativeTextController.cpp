@@ -103,7 +103,7 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
 
     // If type is PanelTypeReversion, then the new range has been set. So we shouldn't clear it.
     if (type == AlternativeTextTypeCorrection)
-        m_rangeWithAlternative = WTF::nullopt;
+        m_rangeWithAlternative = std::nullopt;
     m_type = type;
     m_timer.startOneShot(correctionPanelTimerInterval);
 }
@@ -111,7 +111,7 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
 void AlternativeTextController::stopAlternativeTextUITimer()
 {
     m_timer.stop();
-    m_rangeWithAlternative = WTF::nullopt;
+    m_rangeWithAlternative = std::nullopt;
 }
 
 void AlternativeTextController::stopPendingCorrection(const VisibleSelection& oldSelection)
@@ -141,12 +141,12 @@ void AlternativeTextController::applyPendingCorrection(const VisibleSelection& s
     if (doApplyCorrection)
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted)); 
     else
-        m_rangeWithAlternative = WTF::nullopt;
+        m_rangeWithAlternative = std::nullopt;
 }
 
 bool AlternativeTextController::hasPendingCorrection() const
 {
-    return m_rangeWithAlternative.hasValue();
+    return m_rangeWithAlternative.has_value();
 }
 
 bool AlternativeTextController::isSpellingMarkerAllowed(const SimpleRange& misspellingRange) const
@@ -244,7 +244,7 @@ void AlternativeTextController::timerFired()
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
         auto adjacentWordRange = adjacentWords.toNormalizedRange();
-        m_document.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange, adjacentWordRange, WTF::nullopt);
+        m_document.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange, adjacentWordRange, std::nullopt);
     }
         break;
     case AlternativeTextTypeReversion: {
@@ -269,7 +269,7 @@ void AlternativeTextController::timerFired()
         Vector<String> suggestions;
         textChecker()->getGuessesForWord(m_originalText, paragraphText, m_document.selection().selection(), suggestions);
         if (suggestions.isEmpty()) {
-            m_rangeWithAlternative = WTF::nullopt;
+            m_rangeWithAlternative = std::nullopt;
             break;
         }
         String topSuggestion = suggestions.first();
@@ -332,7 +332,7 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
         break;
     }
 
-    m_rangeWithAlternative = WTF::nullopt;
+    m_rangeWithAlternative = std::nullopt;
 }
 
 bool AlternativeTextController::canEnableAutomaticSpellingCorrection() const

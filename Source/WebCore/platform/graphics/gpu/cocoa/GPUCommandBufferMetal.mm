@@ -111,7 +111,7 @@ void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, uint64_t srcOffs
     auto srcLength = checkedSum<NSUInteger>(size, srcOffset);
     auto dstLength = checkedSum<NSUInteger>(size, dstOffset);
     if (srcLength.hasOverflowed() || dstLength.hasOverflowed()
-        || srcLength.unsafeGet() > src->byteLength() || dstLength.unsafeGet() > dst->byteLength()) {
+        || srcLength > src->byteLength() || dstLength > dst->byteLength()) {
         LOG(WebGPU, "GPUCommandBuffer::copyBufferToBuffer(): Invalid offset or copy size!");
         return;
     }

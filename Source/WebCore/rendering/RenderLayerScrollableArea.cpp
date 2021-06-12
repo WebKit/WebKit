@@ -46,6 +46,7 @@
 #include "config.h"
 #include "RenderLayerScrollableArea.h"
 
+#include "Chrome.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Editor.h"
@@ -205,7 +206,7 @@ bool RenderLayerScrollableArea::usesAsyncScrolling() const
     return m_layer.compositor().useCoordinatedScrollingForLayer(m_layer);
 }
 
-void RenderLayerScrollableArea::setPostLayoutScrollPosition(Optional<ScrollPosition> position)
+void RenderLayerScrollableArea::setPostLayoutScrollPosition(std::optional<ScrollPosition> position)
 {
     m_postLayoutScrollPosition = position;
 }
@@ -216,7 +217,7 @@ void RenderLayerScrollableArea::applyPostLayoutScrollPositionIfNeeded()
         return;
 
     scrollToOffset(scrollOffsetFromPosition(m_postLayoutScrollPosition.value()));
-    m_postLayoutScrollPosition = WTF::nullopt;
+    m_postLayoutScrollPosition = std::nullopt;
 }
 
 void RenderLayerScrollableArea::scrollToXPosition(int x, const ScrollPositionChangeOptions& options)
@@ -482,7 +483,7 @@ ScrollingNodeID RenderLayerScrollableArea::scrollingNodeID() const
     return m_layer.backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
 
-bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
+bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
 {
     if (!isScrollableOrRubberbandable())
         return false;
@@ -1062,20 +1063,6 @@ bool RenderLayerScrollableArea::hasVerticalOverflow() const
     return scrollHeight() > roundToInt(m_layer.renderBox()->clientHeight());
 }
 
-static bool styleRequiresScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
-{
-    Overflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(PseudoId::Scrollbar) && ScrollbarTheme::theme().usesOverlayScrollbars();
-    return overflow == Overflow::Scroll && !overflowScrollActsLikeAuto;
-}
-
-static bool styleDefinesAutomaticScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
-{
-    Overflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(PseudoId::Scrollbar) && ScrollbarTheme::theme().usesOverlayScrollbars();
-    return overflow == Overflow::Auto || overflowScrollActsLikeAuto;
-}
-
 void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
 {
     RenderBox* box = m_layer.renderBox();
@@ -1090,19 +1077,19 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
 
     // If overflow requires a scrollbar, then we just need to enable or disable.
     auto& renderer = m_layer.renderer();
-    if (m_hBar && styleRequiresScrollbar(renderer.style(), HorizontalScrollbar))
+    if (m_hBar && box->hasAlwaysPresentScrollbar(ScrollbarOrientation::HorizontalScrollbar))
         m_hBar->setEnabled(hasHorizontalOverflow);
-    if (m_vBar && styleRequiresScrollbar(renderer.style(), VerticalScrollbar))
+    if (m_vBar && box->hasAlwaysPresentScrollbar(ScrollbarOrientation::VerticalScrollbar))
         m_vBar->setEnabled(hasVerticalOverflow);
 
     // Scrollbars with auto behavior may need to lay out again if scrollbars got added or removed.
-    bool autoHorizontalScrollBarChanged = box->hasHorizontalScrollbarWithAutoBehavior() && (hasHorizontalScrollbar() != hasHorizontalOverflow);
-    bool autoVerticalScrollBarChanged = box->hasVerticalScrollbarWithAutoBehavior() && (hasVerticalScrollbar() != hasVerticalOverflow);
+    bool autoHorizontalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::HorizontalScrollbar) && (hasHorizontalScrollbar() != hasHorizontalOverflow);
+    bool autoVerticalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::VerticalScrollbar) && (hasVerticalScrollbar() != hasVerticalOverflow);
 
     if (autoHorizontalScrollBarChanged || autoVerticalScrollBarChanged) {
-        if (box->hasHorizontalScrollbarWithAutoBehavior())
+        if (box->hasAutoScrollbar(ScrollbarOrientation::HorizontalScrollbar))
             setHasHorizontalScrollbar(hasHorizontalOverflow);
-        if (box->hasVerticalScrollbarWithAutoBehavior())
+        if (box->hasAutoScrollbar(ScrollbarOrientation::VerticalScrollbar))
             setHasVerticalScrollbar(hasVerticalOverflow);
 
         if (autoVerticalScrollBarChanged && shouldPlaceVerticalScrollbarOnLeft())
@@ -1212,7 +1199,7 @@ void RenderLayerScrollableArea::updateScrollInfoAfterLayout()
     if (canUseCompositedScrolling())
         m_layer.setNeedsPostLayoutCompositingUpdate();
 
-    updateScrollSnapState();
+    resnapAfterLayout();
 }
 
 bool RenderLayerScrollableArea::overflowControlsIntersectRect(const IntRect& localRect) const
@@ -1469,7 +1456,7 @@ void RenderLayerScrollableArea::updateSnapOffsets()
         return;
 
     RenderBox* box = m_layer.enclosingElement()->renderBox();
-    updateSnapOffsetsForScrollableArea(*this, *box, box->style(), box->paddingBoxRect());
+    updateSnapOffsetsForScrollableArea(*this, *box, box->style(), box->paddingBoxRect(), box->style().writingMode(), box->style().direction());
 }
 
 bool RenderLayerScrollableArea::isScrollSnapInProgress() const
@@ -1566,8 +1553,8 @@ void RenderLayerScrollableArea::updateScrollbarsAfterStyleChange(const RenderSty
 
     // To avoid doing a relayout in updateScrollbarsAfterLayout, we try to keep any automatic scrollbar that was already present.
     bool hadVerticalScrollbar = m_vBar;
-    bool needsHorizontalScrollbar = box->hasOverflowClip() && ((m_hBar && styleDefinesAutomaticScrollbar(box->style(), HorizontalScrollbar)) || styleRequiresScrollbar(box->style(), HorizontalScrollbar));
-    bool needsVerticalScrollbar = box->hasOverflowClip() && ((m_vBar && styleDefinesAutomaticScrollbar(box->style(), VerticalScrollbar)) || styleRequiresScrollbar(box->style(), VerticalScrollbar));
+    bool needsHorizontalScrollbar = (m_hBar && box->hasAutoScrollbar(ScrollbarOrientation::HorizontalScrollbar)) || box->hasAlwaysPresentScrollbar(ScrollbarOrientation::HorizontalScrollbar);
+    bool needsVerticalScrollbar = (m_vBar && box->hasAutoScrollbar(ScrollbarOrientation::VerticalScrollbar)) || box->hasAlwaysPresentScrollbar(ScrollbarOrientation::VerticalScrollbar);
     setHasHorizontalScrollbar(needsHorizontalScrollbar);
     setHasVerticalScrollbar(needsVerticalScrollbar);
 
@@ -1738,7 +1725,7 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
     scrollByRecursively(adjustedScrollDelta(delta));
 }
 
-Optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const ScrollPositionChangeOptions& options, const LayoutRect& revealRect, const LayoutRect& localExposeRect)
+std::optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const ScrollPositionChangeOptions& options, const LayoutRect& revealRect, const LayoutRect& localExposeRect)
 {
     ASSERT(m_layer.allowsCurrentScroll());
 
@@ -1755,7 +1742,7 @@ Optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const Scrol
         return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), UseTransforms).boundingBox());
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea)

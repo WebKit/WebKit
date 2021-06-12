@@ -27,8 +27,8 @@
 #pragma once
 
 #include <gcrypt.h>
+#include <optional>
 #include <wtf/Assertions.h>
-#include <wtf/Optional.h>
 
 namespace PAL {
 namespace GCrypt {
@@ -53,7 +53,7 @@ static inline void logError(gcry_error_t error)
 #endif
 }
 
-static inline Optional<int> aesAlgorithmForKeySize(size_t keySize)
+static inline std::optional<int> aesAlgorithmForKeySize(size_t keySize)
 {
     switch (keySize) {
     case 128:
@@ -63,7 +63,7 @@ static inline Optional<int> aesAlgorithmForKeySize(size_t keySize)
     case 256:
         return GCRY_CIPHER_AES256;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

@@ -26,19 +26,22 @@
 #include "config.h"
 #include "LocalAudioSessionRoutingArbitrator.h"
 
+#include "GPUProcess.h"
+#include "GPUProcessConnectionMessages.h"
+
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
 namespace WebKit {
 
 using namespace WebCore;
 
-UniqueRef<LocalAudioSessionRoutingArbitrator> LocalAudioSessionRoutingArbitrator::create()
+UniqueRef<LocalAudioSessionRoutingArbitrator> LocalAudioSessionRoutingArbitrator::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {
-    return makeUniqueRef<LocalAudioSessionRoutingArbitrator>();
+    return makeUniqueRef<LocalAudioSessionRoutingArbitrator>(gpuConnectionToWebProcess);
 }
 
-LocalAudioSessionRoutingArbitrator::LocalAudioSessionRoutingArbitrator()
-    : m_token(SharedRoutingArbitrator::Token::create())
+LocalAudioSessionRoutingArbitrator::LocalAudioSessionRoutingArbitrator(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+    : m_connectionToWebProcess(gpuConnectionToWebProcess)
 {
 }
 
@@ -46,27 +49,17 @@ LocalAudioSessionRoutingArbitrator::~LocalAudioSessionRoutingArbitrator() = defa
 
 void LocalAudioSessionRoutingArbitrator::processDidTerminate()
 {
-    if (SharedRoutingArbitrator::sharedInstance().isInRoutingArbitrationForToken(m_token))
-        leaveRoutingAbritration();
+    leaveRoutingAbritration();
 }
 
 void LocalAudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
-    m_category = category;
-    m_arbitrationStatus = ArbitrationStatus::Pending;
-    m_arbitrationUpdateTime = WallTime::now();
-
-    SharedRoutingArbitrator::sharedInstance().beginRoutingArbitrationForToken(m_token, category, [weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
-        if (weakThis)
-            weakThis->m_arbitrationStatus = error == RoutingArbitrationError::None ? ArbitrationStatus::Active : ArbitrationStatus::None;
-        callback(error, routeChanged);
-    });
+    m_connectionToWebProcess.connection().sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), 0);
 }
 
 void LocalAudioSessionRoutingArbitrator::leaveRoutingAbritration()
 {
-    SharedRoutingArbitrator::sharedInstance().endRoutingArbitrationForToken(m_token);
-    m_arbitrationStatus = ArbitrationStatus::None;
+    m_connectionToWebProcess.connection().send(Messages::GPUProcessConnection::EndRoutingArbitration(), 0);
 }
 
 }

@@ -51,7 +51,7 @@ public:
     // Enable local/live input for the specified device.
     virtual void enableInput(const String& inputDeviceId) = 0;
 
-    virtual void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
+    virtual void startRendering(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void restartRendering() { }
 
     // AudioDestinationNodes are owned by the BaseAudioContext so we forward the refcounting to its BaseAudioContext.

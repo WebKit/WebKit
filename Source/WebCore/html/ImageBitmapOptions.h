@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
@@ -38,8 +38,8 @@ struct ImageBitmapOptions {
     Orientation imageOrientation { Orientation::None };
     PremultiplyAlpha premultiplyAlpha { PremultiplyAlpha::Default };
     ColorSpaceConversion colorSpaceConversion { ColorSpaceConversion::Default };
-    Optional<unsigned> resizeWidth;
-    Optional<unsigned> resizeHeight;
+    std::optional<unsigned> resizeWidth;
+    std::optional<unsigned> resizeHeight;
     ResizeQuality resizeQuality { ResizeQuality::Low };
 };
 

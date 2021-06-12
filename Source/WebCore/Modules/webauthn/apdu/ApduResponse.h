@@ -52,7 +52,7 @@ public:
     };
 
     // Create a APDU response from the serialized message.
-    static Optional<ApduResponse> createFromMessage(const Vector<uint8_t>& data);
+    static std::optional<ApduResponse> createFromMessage(const Vector<uint8_t>& data);
 
     ApduResponse(Vector<uint8_t>&& data, Status);
     ApduResponse(ApduResponse&& that) = default;

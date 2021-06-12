@@ -228,10 +228,10 @@ void Performance::reportFirstContentfulPaint()
     queueEntry(*m_firstContentfulPaint);
 }
 
-void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& document, CachedResource& resource, const LoadTiming& timing, const NetworkLoadMetrics& metrics)
+void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& document, CachedResource& resource, const DocumentLoadTiming& timing, const NetworkLoadMetrics& metrics)
 {
     ASSERT(document.settings().performanceNavigationTimingAPIEnabled());
-    m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.timing(), document.securityOrigin(), documentLoader.triggeringAction().type());
+    m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.eventTiming(), document.securityOrigin(), documentLoader.triggeringAction().type());
     queueEntry(*m_navigationTiming);
 }
 
@@ -317,7 +317,7 @@ void Performance::resourceTimingBufferFullTimerFired()
     m_waitingForBackupBufferToBeProcessed = false;
 }
 
-ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalObject, const String& markName, Optional<PerformanceMarkOptions>&& markOptions)
+ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
     if (!m_userTiming)
         m_userTiming = makeUnique<PerformanceUserTiming>(*this);
@@ -337,7 +337,7 @@ void Performance::clearMarks(const String& markName)
     m_userTiming->clearMarks(markName);
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, Optional<StartOrMeasureOptions>&& startOrMeasureOptions, const String& endMark)
+ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, std::optional<StartOrMeasureOptions>&& startOrMeasureOptions, const String& endMark)
 {
     if (!m_userTiming)
         m_userTiming = makeUnique<PerformanceUserTiming>(*this);

@@ -31,7 +31,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS>)
+IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS>)
     : m_path(filePath)
     , m_type(type)
 {
@@ -68,7 +68,7 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void
         readSize = std::min(size, readSize);
         Vector<uint8_t> buffer(readSize);
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
-        int err = FileSystem::readFromFile(m_fileDescriptor, reinterpret_cast<char*>(buffer.data()), readSize);
+        int err = FileSystem::readFromFile(m_fileDescriptor, buffer.data(), readSize);
         err = err < 0 ? err : 0;
         auto data = Data(WTFMove(buffer));
         completionHandler(data, err);
@@ -79,7 +79,7 @@ void IOChannel::write(size_t offset, const Data& data, WorkQueue& queue, Functio
 {
     queue.dispatch([this, protectedThis = makeRef(*this), offset, data, completionHandler = WTFMove(completionHandler)] {
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
-        int err = FileSystem::writeToFile(m_fileDescriptor, reinterpret_cast<const char*>(data.data()), data.size());
+        int err = FileSystem::writeToFile(m_fileDescriptor, data.data(), data.size());
         err = err < 0 ? err : 0;
         completionHandler(err);
     });

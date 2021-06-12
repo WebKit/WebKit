@@ -74,14 +74,14 @@
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData
 {
     UNUSED_PARAM(assetWriter);
-    m_writer->appendData(static_cast<const char*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
+    m_writer->appendData(static_cast<const uint8_t*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
 }
 
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport
 {
     UNUSED_PARAM(assetWriter);
     UNUSED_PARAM(fragmentedMediaDataReport);
-    m_writer->appendData(static_cast<const char*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
+    m_writer->appendData(static_cast<const uint8_t*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
 }
 
 - (void)close
@@ -98,9 +98,8 @@ using namespace PAL;
 RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions& options)
 {
     auto writer = adoptRef(*new MediaRecorderPrivateWriter(hasAudio, hasVideo));
-    if (!writer->initialize())
+    if (!writer->initialize(options))
         return nullptr;
-    writer->setOptions(options);
     return writer;
 }
 
@@ -128,10 +127,23 @@ MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(bool hasAudio, bool hasVi
 
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 {
-    clear();
+    m_pendingAudioSampleQueue.clear();
+    m_pendingVideoSampleQueue.clear();
+    if (m_writer) {
+        [m_writer cancelWriting];
+        m_writer.clear();
+    }
+
+    // At this pointer, we should no longer be writing any data, so it should be safe to close and nullify m_data without locking.
+    if (m_writerDelegate)
+        [m_writerDelegate close];
+    m_data = nullptr;
+
+    if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
+        completionHandler(nullptr, 0);
 }
 
-bool MediaRecorderPrivateWriter::initialize()
+bool MediaRecorderPrivateWriter::initialize(const MediaRecorderPrivateOptions& options)
 {
     NSError *error = nil;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -149,21 +161,18 @@ bool MediaRecorderPrivateWriter::initialize()
         m_audioCompressor = AudioSampleBufferCompressor::create(compressedAudioOutputBufferCallback, this);
         if (!m_audioCompressor)
             return false;
+        if (options.audioBitsPerSecond)
+            m_audioCompressor->setBitsPerSecond(*options.audioBitsPerSecond);
     }
     if (m_hasVideo) {
-        m_videoCompressor = VideoSampleBufferCompressor::create(kCMVideoCodecType_H264, compressedVideoOutputBufferCallback, this);
+        m_videoCompressor = VideoSampleBufferCompressor::create(options.mimeType, compressedVideoOutputBufferCallback, this);
         if (!m_videoCompressor)
             return false;
+        if (options.videoBitsPerSecond)
+            m_videoCompressor->setBitsPerSecond(*options.videoBitsPerSecond);
     }
-    return true;
-}
 
-void MediaRecorderPrivateWriter::setOptions(const MediaRecorderPrivateOptions& options)
-{
-    if (options.audioBitsPerSecond && m_audioCompressor)
-        m_audioCompressor->setBitsPerSecond(*options.audioBitsPerSecond);
-    if (options.videoBitsPerSecond && m_videoCompressor)
-        m_videoCompressor->setBitsPerSecond(*options.videoBitsPerSecond);
+    return true;
 }
 
 void MediaRecorderPrivateWriter::processNewCompressedVideoSampleBuffers()
@@ -370,26 +379,6 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
         [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
 }
 
-// FIXME: This modifies m_data without grabbing m_dataLock.
-void MediaRecorderPrivateWriter::clear() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
-{
-    m_pendingAudioSampleQueue.clear();
-    m_pendingVideoSampleQueue.clear();
-    if (m_writer) {
-        [m_writer cancelWriting];
-        m_writer.clear();
-    }
-
-    // At this pointer, we should no longer be writing any data, so it should be safe to close and nullify m_data without locking.
-    if (m_writerDelegate)
-        [m_writerDelegate close];
-    m_data = nullptr;
-
-    if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
-        completionHandler(nullptr, 0);
-}
-
-
 static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer, CMTime startTime)
 {
     CMItemCount count = 0;
@@ -542,7 +531,7 @@ void MediaRecorderPrivateWriter::completeFetchData()
     m_fetchDataCompletionHandler(takeData(), currentTimeCode);
 }
 
-void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
+void MediaRecorderPrivateWriter::appendData(const uint8_t* data, size_t size)
 {
     Locker locker { m_dataLock };
     if (!m_data) {

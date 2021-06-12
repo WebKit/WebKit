@@ -30,7 +30,6 @@
 #include "ApplePayDetailsUpdateBase.h"
 #include "ApplePayError.h"
 #include "ApplePayShippingMethod.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -42,7 +41,7 @@ struct ApplePayPaymentMethodModeUpdate final : public ApplePayDetailsUpdateBase 
     Vector<ApplePayShippingMethod> newShippingMethods;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayPaymentMethodModeUpdate> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayPaymentMethodModeUpdate> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -54,23 +53,23 @@ void ApplePayPaymentMethodModeUpdate::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayPaymentMethodModeUpdate> ApplePayPaymentMethodModeUpdate::decode(Decoder& decoder)
+std::optional<ApplePayPaymentMethodModeUpdate> ApplePayPaymentMethodModeUpdate::decode(Decoder& decoder)
 {
     ApplePayPaymentMethodModeUpdate result;
 
     if (!result.decodeBase(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Vector<RefPtr<ApplePayError>>> errors;
+    std::optional<Vector<RefPtr<ApplePayError>>> errors;
     decoder >> errors;
     if (!errors)
-        return WTF::nullopt;
+        return std::nullopt;
     result.errors = WTFMove(*errors);
 
-    Optional<Vector<ApplePayShippingMethod>> newShippingMethods;
+    std::optional<Vector<ApplePayShippingMethod>> newShippingMethods;
     decoder >> newShippingMethods;
     if (!newShippingMethods)
-        return WTF::nullopt;
+        return std::nullopt;
     result.newShippingMethods = WTFMove(*newShippingMethods);
 
     return result;

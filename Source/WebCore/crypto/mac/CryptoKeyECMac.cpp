@@ -105,13 +105,13 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
     return curve == NamedCurve::P256 || curve == NamedCurve::P384;
 }
 
-Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
+std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
     size_t size = getKeySizeFromNamedCurve(curve);
     CCECCryptorRef ccPublicKey = nullptr;
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorGeneratePair(size, &ccPublicKey, &ccPrivateKey))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), true, usages);
     auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
@@ -354,8 +354,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length, InitialOctet
 
     // KeyBinary = uncompressed point + private key
-    Vector<uint8_t> keyBinary;
-    keyBinary.append(keyData.data() + index, keyData.size() - index);
+    Vector<uint8_t> keyBinary { keyData.data() + index, keyData.size() - index };
     if (!doesUncompressedPointMatchNamedCurve(curve, keyBinary.size()))
         return nullptr;
     keyBinary.append(keyData.data() + privateKeyPos, getKeySizeFromNamedCurve(curve) / 8);

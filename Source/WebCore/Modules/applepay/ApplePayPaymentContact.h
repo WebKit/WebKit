@@ -27,7 +27,6 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +41,7 @@ struct ApplePayPaymentContact {
     String phoneticGivenName;
     String phoneticFamilyName;
     String localizedPhoneticName;
-    Optional<Vector<String>> addressLines;
+    std::optional<Vector<String>> addressLines;
     String subLocality;
     String locality;
     String postalCode;

@@ -1,3 +1,46 @@
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove some of the unneeded WebKitLegacy Windows-specific plug-in code
+        https://bugs.webkit.org/show_bug.cgi?id=226410
+
+        Reviewed by Chris Dumez.
+
+        * PlatformFTW.cmake: Removed all the code in the win/Plugins directory,
+        and EmbeddedWidget.h/cpp.
+        * PlatformWin.cmake: Ditto.
+
+2021-05-27  Darin Adler  <darin@apple.com>
+
+        Next step toward using std::optional directly instead of through WTF::Optional typedef
+        https://bugs.webkit.org/show_bug.cgi?id=226280
+
+        Reviewed by Chris Dumez.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::diskUsageForOrigin): Accept the renaming done by do-webcore-rename.
+
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::switchToNewTestingSession): Do not use local
+        for return value of makeString.
+
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * Storage/StorageAreaSync.h:
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Replace LockHolder with Locker in local variables

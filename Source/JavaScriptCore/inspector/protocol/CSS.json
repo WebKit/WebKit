@@ -313,6 +313,7 @@
         {
             "name": "getFontDataForNode",
             "description": "Returns the primary font of the computed font cascade for a DOM node identified by <code>nodeId</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId" }
             ],
@@ -428,6 +429,7 @@
         {
             "name": "setLayoutContextTypeChangedMode",
             "description": "Change how layout context type changes are handled for nodes. When the new mode would observe nodes the frontend has not yet recieved, those nodes will be sent to the frontend immediately.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "mode", "$ref": "LayoutContextTypeChangedMode", "description": "The mode for how layout context type changes are handled." }
             ]
@@ -464,6 +466,7 @@
         {
             "name": "nodeLayoutContextTypeChanged",
             "description": "Called when a node's layout context type has changed.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node whose layout context type changed." },
                 { "name": "layoutContextType", "$ref": "LayoutContextType", "optional": true, "description": "The new layout context type of the node. When not provided, the <code>LayoutContextType</code> of the node is not a context for which Web Inspector has specific functionality." }

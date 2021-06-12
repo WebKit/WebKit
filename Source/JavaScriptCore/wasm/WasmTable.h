@@ -32,7 +32,6 @@
 #include "WasmLimits.h"
 #include "WriteBarrier.h"
 #include <wtf/MallocPtr.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -45,11 +44,11 @@ class Table : public ThreadSafeRefCounted<Table> {
     WTF_MAKE_NONCOPYABLE(Table);
     WTF_MAKE_FAST_ALLOCATED(Table);
 public:
-    static RefPtr<Table> tryCreate(uint32_t initial, Optional<uint32_t> maximum, TableElementType);
+    static RefPtr<Table> tryCreate(uint32_t initial, std::optional<uint32_t> maximum, TableElementType);
 
     JS_EXPORT_PRIVATE ~Table() = default;
 
-    Optional<uint32_t> maximum() const { return m_maximum; }
+    std::optional<uint32_t> maximum() const { return m_maximum; }
     uint32_t length() const { return m_length; }
 
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
@@ -78,20 +77,20 @@ public:
     void set(uint32_t, JSValue);
     JSValue get(uint32_t) const;
 
-    Optional<uint32_t> grow(uint32_t delta, JSValue defaultValue);
+    std::optional<uint32_t> grow(uint32_t delta, JSValue defaultValue);
     void copy(const Table* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     DECLARE_VISIT_AGGREGATE;
 
 protected:
-    Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType = TableElementType::Externref);
+    Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType = TableElementType::Externref);
 
     void setLength(uint32_t);
 
     uint32_t m_length;
     uint32_t m_mask;
     const TableElementType m_type;
-    const Optional<uint32_t> m_maximum;
+    const std::optional<uint32_t> m_maximum;
 
     MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
     JSObject* m_owner;
@@ -111,7 +110,7 @@ public:
     static ptrdiff_t offsetOfInstances() { return OBJECT_OFFSETOF(FuncRefTable, m_instances); }
 
 private:
-    FuncRefTable(uint32_t initial, Optional<uint32_t> maximum);
+    FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum);
 
     MallocPtr<WasmToWasmImportableFunction, VMMalloc> m_importableFunctions;
     // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.

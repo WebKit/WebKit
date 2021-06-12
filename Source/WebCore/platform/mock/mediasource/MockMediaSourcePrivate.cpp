@@ -181,7 +181,7 @@ MediaTime MockMediaSourcePrivate::currentMediaTime() const
     return m_player.currentMediaTime();
 }
 
-Optional<VideoPlaybackQualityMetrics> MockMediaSourcePrivate::videoPlaybackQualityMetrics()
+std::optional<VideoPlaybackQualityMetrics> MockMediaSourcePrivate::videoPlaybackQualityMetrics()
 {
     return VideoPlaybackQualityMetrics {
         m_totalVideoFrames,

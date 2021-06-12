@@ -102,7 +102,7 @@ void OfflineAudioDestinationNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -141,12 +141,12 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(Optional
         workletProxy->postTaskForModeToWorkletGlobalScope([offThreadRendering = WTFMove(offThreadRendering)](ScriptExecutionContext&) mutable {
             offThreadRendering();
         }, WorkerRunLoop::defaultMode());
-        return completionHandler(WTF::nullopt);
+        return completionHandler(std::nullopt);
     }
 
     // FIXME: We should probably limit the number of threads we create for offline audio.
     m_renderThread = Thread::create("offline renderer", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::Default);
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 }
 
 auto OfflineAudioDestinationNode::renderOnAudioThread() -> RenderResult

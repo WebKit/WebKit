@@ -194,7 +194,7 @@ FrameInfoData WebFrame::info() const
         ResourceRequest(url()),
         SecurityOriginData::fromFrame(m_coreFrame.get()),
         m_frameID,
-        parent ? Optional<WebCore::FrameIdentifier> { parent->frameID() } : WTF::nullopt,
+        parent ? std::optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
     };
 
     return info;
@@ -243,7 +243,7 @@ void WebFrame::invalidatePolicyListener()
     m_policyDownloadID = { };
     m_policyListenerID = 0;
     auto identifier = m_policyIdentifier;
-    m_policyIdentifier = WTF::nullopt;
+    m_policyIdentifier = std::nullopt;
     if (auto function = std::exchange(m_policyFunction, nullptr))
         function(PolicyAction::Ignore, *identifier);
     m_policyFunctionForNavigationAction = ForNavigationAction::No;
@@ -259,7 +259,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
         return;
 
     ASSERT(policyDecision.identifier == m_policyIdentifier);
-    m_policyIdentifier = WTF::nullopt;
+    m_policyIdentifier = std::nullopt;
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
     bool forNavigationAction = m_policyFunctionForNavigationAction == ForNavigationAction::Yes;
@@ -293,9 +293,9 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
         ASSERT_NOT_REACHED();
         return;
     }
-    auto policyDownloadID = *std::exchange(m_policyDownloadID, WTF::nullopt);
+    auto policyDownloadID = *std::exchange(m_policyDownloadID, std::nullopt);
 
-    Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
+    std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     isAppBound = m_isNavigatingToAppBoundDomain;
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::StartDownload(policyDownloadID, request,  isAppBound, suggestedName), 0);
 }
@@ -306,7 +306,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
         ASSERT_NOT_REACHED();
         return;
     }
-    auto policyDownloadID = *std::exchange(m_policyDownloadID, WTF::nullopt);
+    auto policyDownloadID = *std::exchange(m_policyDownloadID, std::nullopt);
 
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
@@ -320,7 +320,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     else
         mainResourceLoadIdentifier = 0;
 
-    Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
+    std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     isAppBound = m_isNavigatingToAppBoundDomain;
     webProcess.ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, response, isAppBound), 0);
 }
@@ -842,7 +842,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 
 RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
 {
-    auto snapshot = snapshotSelection(*coreFrame(), WebCore::SnapshotOptionsForceBlackText);
+    auto snapshot = snapshotSelection(*coreFrame(), { { WebCore::SnapshotFlags::ForceBlackText } });
     if (!snapshot)
         return nullptr;
 
@@ -881,7 +881,7 @@ bool WebFrame::shouldEnableInAppBrowserPrivacyProtections()
     return treeHasNonAppBoundFrame;
 }
 
-Optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBoundDomain() const
+std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBoundDomain() const
 {
     return fromCoreFrame(m_coreFrame->mainFrame())->isNavigatingToAppBoundDomain();
 }

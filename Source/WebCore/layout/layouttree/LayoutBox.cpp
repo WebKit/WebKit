@@ -30,6 +30,7 @@
 
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
@@ -41,7 +42,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
+Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_style(WTFMove(style))
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags.toRaw())
@@ -315,7 +316,6 @@ bool Box::isInlineLevelBox() const
     return display == DisplayType::Inline
         || display == DisplayType::InlineBox
         || display == DisplayType::InlineFlex
-        || display == DisplayType::WebKitInlineFlex
         || display == DisplayType::InlineGrid
         || isInlineBlockBox()
         || isInlineTableBox();
@@ -425,6 +425,17 @@ const Box* Box::previousInFlowOrFloatingSibling() const
     return previousSibling;
 }
 
+bool Box::isDescendantOf(const ContainerBox& ancestor) const
+{
+    if (ancestor.isInitialContainingBlock())
+        return true;
+    for (auto& containingBlock : containingBlockChain(*this)) {
+        if (&containingBlock == &ancestor)
+            return true;
+    }
+    return false;
+}
+
 bool Box::isOverflowVisible() const
 {
     auto isOverflowVisible = m_style.overflowX() == Overflow::Visible || m_style.overflowY() == Overflow::Visible;
@@ -503,7 +514,7 @@ void Box::setColumnWidth(LayoutUnit columnWidth)
     ensureRareData().columnWidth = columnWidth;
 }
 
-Optional<LayoutUnit> Box::columnWidth() const
+std::optional<LayoutUnit> Box::columnWidth() const
 {
     if (!hasRareData())
         return { };

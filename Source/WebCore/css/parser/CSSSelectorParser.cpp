@@ -59,7 +59,7 @@ private:
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-Optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet)
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet)
 {
     CSSSelectorParser parser(context, styleSheet);
     range.consumeWhitespace();
@@ -886,8 +886,8 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
 
     if (nString.length() > 2) {
         auto parsedNumber = parseInteger<int>(StringView { nString }.substring(1));
-        result.second = parsedNumber.valueOr(0);
-        return parsedNumber.hasValue();
+        result.second = parsedNumber.value_or(0);
+        return parsedNumber.has_value();
     }
 
     NumericSign sign = nString.length() == 1 ? NoSign : MinusSign;

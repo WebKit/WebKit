@@ -48,12 +48,13 @@ public:
 
     using WeakValueType = WebCore::AudioSessionRoutingArbitrationClient;
 
-private:
     // AudioSessionRoutingAbritrator
     void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&&) final;
     void leaveRoutingAbritration() final;
 
+private:
     WebProcess& m_process;
+    WebCore::AudioSession::ChangedObserver m_observer;
 };
 
 }

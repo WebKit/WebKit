@@ -29,9 +29,9 @@
 #include "AudioStreamDescription.h"
 
 #include "SharedBuffer.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -75,7 +75,7 @@ public:
     void pause();
     void resume();
 
-    void appendData(const char*, size_t);
+    void appendData(const uint8_t*, size_t);
 
     const String& mimeType() const;
     unsigned audioBitRate() const;
@@ -83,10 +83,8 @@ public:
 
 private:
     MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
-    void clear();
 
-    bool initialize();
-    void setOptions(const MediaRecorderPrivateOptions&);
+    bool initialize(const MediaRecorderPrivateOptions&);
 
     static void compressedVideoOutputBufferCallback(void*, CMBufferQueueTriggerToken);
     static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);
@@ -118,7 +116,7 @@ private:
 
     RetainPtr<AVAssetWriter> m_writer;
 
-    CheckedLock m_dataLock;
+    Lock m_dataLock;
     RefPtr<SharedBuffer> m_data WTF_GUARDED_BY_LOCK(m_dataLock);
     CompletionHandler<void(RefPtr<SharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
@@ -140,7 +138,7 @@ private:
     bool m_isFlushingSamples { false };
     bool m_shouldStopAfterFlushingSamples { false };
     bool m_firstVideoFrame { false };
-    Optional<CGAffineTransform> m_videoTransform;
+    std::optional<CGAffineTransform> m_videoTransform;
     CMTime m_resumedVideoTime { kCMTimeZero };
     CMTime m_currentVideoDuration { kCMTimeZero };
     CMTime m_currentAudioSampleTime { kCMTimeZero };

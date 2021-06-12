@@ -268,7 +268,7 @@ public:
 #endif
     };
 
-    const Optional<CreationData>& creationData() const
+    const std::optional<CreationData>& creationData() const
     {
         return m_creationData;
     }
@@ -331,7 +331,7 @@ private:
     FontWidthVariant m_widthVariant { FontWidthVariant::RegularWidth };
     TextRenderingMode m_textRenderingMode { TextRenderingMode::AutoTextRendering };
 
-    Optional<CreationData> m_creationData;
+    std::optional<CreationData> m_creationData;
 
     bool m_syntheticBold { false };
     bool m_syntheticOblique { false };

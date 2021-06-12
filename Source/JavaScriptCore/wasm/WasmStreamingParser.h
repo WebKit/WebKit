@@ -100,7 +100,7 @@ private:
     State parseFunctionSize(uint32_t);
     State parseFunctionPayload(Vector<uint8_t>&&);
 
-    Optional<Vector<uint8_t>> consume(const uint8_t* bytes, size_t, size_t&, size_t);
+    std::optional<Vector<uint8_t>> consume(const uint8_t* bytes, size_t, size_t&, size_t);
     Expected<uint32_t, State> consumeVarUInt32(const uint8_t* bytes, size_t, size_t&, IsEndOfStream);
 
     void moveToStateIfNotFailed(State);

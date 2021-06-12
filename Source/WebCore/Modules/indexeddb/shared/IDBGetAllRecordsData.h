@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IDBKeyRangeData.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -37,7 +36,7 @@ enum class GetAllType : uint8_t;
 struct IDBGetAllRecordsData {
     IDBKeyRangeData keyRangeData;
     IndexedDB::GetAllType getAllType;
-    Optional<uint32_t> count;
+    std::optional<uint32_t> count;
     uint64_t objectStoreIdentifier;
     uint64_t indexIdentifier;
 

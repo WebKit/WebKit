@@ -60,7 +60,7 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Worker);
     public:
-        using MessageCallback = Function<void(Optional<fido::FidoHidMessage>&&)>;
+        using MessageCallback = Function<void(std::optional<fido::FidoHidMessage>&&)>;
 
         enum class State : uint8_t  {
             Idle,
@@ -82,13 +82,13 @@ private:
 
         UniqueRef<HidConnection> m_connection;
         State m_state { State::Idle };
-        Optional<fido::FidoHidMessage> m_requestMessage;
-        Optional<fido::FidoHidMessage> m_responseMessage;
+        std::optional<fido::FidoHidMessage> m_requestMessage;
+        std::optional<fido::FidoHidMessage> m_responseMessage;
         MessageCallback m_callback;
     };
 
-    void continueAfterChannelAllocated(Optional<fido::FidoHidMessage>&&);
-    void continueAfterResponseReceived(Optional<fido::FidoHidMessage>&&);
+    void continueAfterChannelAllocated(std::optional<fido::FidoHidMessage>&&);
+    void continueAfterResponseReceived(std::optional<fido::FidoHidMessage>&&);
     void returnResponse(Vector<uint8_t>&&);
     void reset();
 

@@ -74,11 +74,11 @@ void AnimationTimeline::removeAnimation(WebAnimation& animation)
     }
 }
 
-Optional<double> AnimationTimeline::bindingsCurrentTime()
+std::optional<double> AnimationTimeline::bindingsCurrentTime()
 {
     auto time = currentTime();
     if (!time)
-        return WTF::nullopt;
+        return std::nullopt;
     return secondsToWebAnimationsAPITime(*time);
 }
 

@@ -39,7 +39,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
 #import <WebCore/GlyphPage.h>
-#import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/PageConsoleClient.h>
 #import <WebCore/PrintContext.h>
@@ -305,7 +305,7 @@ static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOption
     if (!coreFrame)
         return;
 
-    GraphicsContext graphicsContext(cgContext);
+    GraphicsContextCG graphicsContext(cgContext);
     PrintContext::spoolAllPagesWithBoundaries(*coreFrame, graphicsContext, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 

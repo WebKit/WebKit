@@ -72,7 +72,7 @@ template<typename CharacterType> static constexpr CharacterType cacheModeIdentif
 template<typename CharacterType> static constexpr CharacterType fallbackModeIdentifier[] = { 'F', 'A', 'L', 'L', 'B', 'A', 'C', 'K' };
 template<typename CharacterType> static constexpr CharacterType networkModeIdentifier[] = { 'N', 'E', 'T', 'W', 'O', 'R', 'K' };
 
-Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length)
+std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const uint8_t* data, int length)
 {
     static constexpr const char cacheManifestMIMEType[] = "text/cache-manifest";
     bool allowFallbackNamespaceOutsideManifestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
@@ -80,7 +80,7 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
 
     auto manifestString = TextResourceDecoder::create(ASCIILiteral::fromLiteralUnsafe(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
 
-    return readCharactersForParsing(manifestString, [&](auto buffer) -> Optional<ApplicationCacheManifest> {
+    return readCharactersForParsing(manifestString, [&](auto buffer) -> std::optional<ApplicationCacheManifest> {
         using CharacterType = typename decltype(buffer)::CharacterType;
     
         ApplicationCacheManifest manifest;
@@ -90,10 +90,10 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
         // Example: "CACHE MANIFEST #comment" is a valid signature.
         // Example: "CACHE MANIFEST;V2" is not.
         if (!skipCharactersExactly(buffer, cacheManifestIdentifier<CharacterType>))
-            return WTF::nullopt;
+            return std::nullopt;
     
         if (buffer.hasCharactersRemaining() && !isManifestWhitespaceOrNewline(*buffer))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Skip to the end of the line.
         skipUntil<isManifestNewline>(buffer);

@@ -266,6 +266,7 @@ angle::Result ContextMtl::drawTriFanArraysWithBaseVertex(const gl::Context *cont
         mRenderEncoder.drawIndexedInstancedBaseVertex(MTLPrimitiveTypeTriangle, genIndicesCount,
                                                       MTLIndexTypeUInt32, mTriFanArraysIndexBuffer,
                                                       0, instances, first);
+        prepareForTransformFeedbackPassTwo();
     }
 
     ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, first, count, instances,
@@ -305,6 +306,7 @@ angle::Result ContextMtl::drawTriFanArraysLegacy(const gl::Context *context,
 
         execDrawIndexedInstanced(MTLPrimitiveTypeTriangle, genIndicesCount, MTLIndexTypeUInt32,
                                  genIdxBuffer, genIdxBufferOffset, instances);
+        prepareForTransformFeedbackPassTwo();
     }
     ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, first, count, instances,
                         gl::DrawElementsType::InvalidEnum, reinterpret_cast<const void *>(0),
@@ -374,6 +376,7 @@ angle::Result ContextMtl::drawLineLoopArrays(const gl::Context *context,
 
         execDrawIndexedInstanced(MTLPrimitiveTypeLineStrip, genIndicesCount, MTLIndexTypeUInt32,
                                  genIdxBuffer, genIdxBufferOffset, instances);
+        prepareForTransformFeedbackPassTwo();
     }
     ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::LineLoop, first, count, instances,
                         gl::DrawElementsType::InvalidEnum, nullptr, false));
@@ -423,6 +426,7 @@ angle::Result ContextMtl::drawArraysImpl(const gl::Context *context,
         {
             execDrawInstanced(mtlType, first, count, instanceCount);
         }
+        prepareForTransformFeedbackPassTwo();
     }
     ANGLE_TRY(setupDraw(context, mode, first, count, instances, gl::DrawElementsType::InvalidEnum,
                         nullptr, false));
@@ -500,6 +504,7 @@ angle::Result ContextMtl::drawTriFanElements(const gl::Context *context,
 
             execDrawIndexedInstanced(MTLPrimitiveTypeTriangle, genIndicesCount, MTLIndexTypeUInt32,
                                      genIdxBuffer, genIdxBufferOffset, instances);
+            prepareForTransformFeedbackPassTwo();
         }
 
         ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, 0, count, instances, type,
@@ -529,6 +534,15 @@ angle::Result ContextMtl::drawLineLoopElementsNonInstancedNoPrimitiveRestart(
     return drawElementsImpl(context, gl::PrimitiveMode::LineStrip, count, type, indices, 0);
 }
 
+void ContextMtl::prepareForTransformFeedbackPassTwo()
+{
+    //If we don't have rasterization enabled, we can re-run the same vertex shader. Otherwise,
+    //We need to invalidate the render pipeline state.
+    if(!mState.isRasterizerDiscardEnabled())
+    {
+        invalidateRenderPipeline();
+    }
+}
 angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
                                                GLsizei count,
                                                gl::DrawElementsType type,
@@ -565,6 +579,7 @@ angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
 
             execDrawIndexedInstanced(MTLPrimitiveTypeLineStrip, genIndicesCount, MTLIndexTypeUInt32,
                                      genIdxBuffer, genIdxBufferOffset, instances);
+            prepareForTransformFeedbackPassTwo();
         }
 
         ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::LineLoop, 0, count, instances, type,
@@ -660,6 +675,7 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
                                      command.offset, instanceCount);
             }
         }
+        prepareForTransformFeedbackPassTwo();
     }
 
     ANGLE_TRY(setupDraw(context, mode, 0, convertedCounti32, instances, type, indices, false));
@@ -1394,6 +1410,19 @@ void ContextMtl::onEndTransformFeedback()
     {
         onTransformFeedbackStateChanged();
     }
+    if (getDisplay()->getFeatures().hasExplicitMemBarrier.enabled)
+    {
+        for(auto & bufferRef : mCurrentTransformFeedbackBuffers)
+        {
+            const mtl::BufferRef & constBufferRef = bufferRef->getCurrentBuffer();
+            mRenderEncoder.memoryBarrierWithResource(constBufferRef, mtl::kRenderStageVertex, mtl::kRenderStageVertex);
+        }
+    }
+    else
+    {
+        //End the command encoder, so any Transform Feedback changes are available to subsequent draw calls.
+        endEncoding(false);
+    }
 }
 
 angle::Result ContextMtl::onPauseTransformFeedback()
@@ -1820,7 +1849,10 @@ void ContextMtl::updateScissor(const gl::State &glState)
 
     // Clip the render area to the viewport.
     gl::Rectangle viewportClippedRenderArea;
-    gl::ClipRectangle(renderArea, glState.getViewport(), &viewportClippedRenderArea);
+    if (!gl::ClipRectangle(renderArea, glState.getViewport(), &viewportClippedRenderArea))
+    {
+        viewportClippedRenderArea = gl::Rectangle();
+    }
 
     gl::Rectangle scissoredArea = ClipRectToScissor(getState(), viewportClippedRenderArea, false);
     if (framebufferMtl->flipY())
@@ -2294,8 +2326,6 @@ angle::Result ContextMtl::handleDirtyDriverUniforms(const gl::Context *context,
     mDriverUniforms.depthRange[1] = depthRangeFar;
     mDriverUniforms.depthRange[2] = depthRangeDiff;
     mDriverUniforms.depthRange[3] = NeedToInvertDepthRange(depthRangeNear, depthRangeFar) ? -1 : 1;
-
-    // NOTE(hqle): preRotation & fragRotation are unused.
 
     // Sample coverage mask
     uint32_t sampleBitCount = mDrawFramebuffer->getSamples();

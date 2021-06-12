@@ -93,14 +93,14 @@ int FileHandle::read(void* data, int length)
 {
     if (!open())
         return -1;
-    return FileSystem::readFromFile(m_fileHandle, static_cast<char*>(data), length);
+    return FileSystem::readFromFile(m_fileHandle, data, length);
 }
 
 int FileHandle::write(const void* data, int length)
 {
     if (!open())
         return -1;
-    return FileSystem::writeToFile(m_fileHandle, static_cast<const char*>(data), length);
+    return FileSystem::writeToFile(m_fileHandle, data, length);
 }
 
 bool FileHandle::printf(const char* format, ...)

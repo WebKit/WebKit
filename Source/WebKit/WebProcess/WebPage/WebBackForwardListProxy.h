@@ -68,7 +68,7 @@ private:
     void close() override;
 
     WebPage* m_page;
-    mutable Optional<WebBackForwardListCounts> m_cachedBackForwardListCounts;
+    mutable std::optional<WebBackForwardListCounts> m_cachedBackForwardListCounts;
 };
 
 } // namespace WebKit

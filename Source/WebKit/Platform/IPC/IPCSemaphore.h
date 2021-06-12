@@ -27,7 +27,6 @@
 
 #include "Timeout.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 
 #if OS(DARWIN)
@@ -52,7 +51,7 @@ public:
     Semaphore& operator=(Semaphore&&);
 
     void encode(Encoder&) const;
-    static Optional<Semaphore> decode(Decoder&);
+    static std::optional<Semaphore> decode(Decoder&);
 
     void signal();
     bool wait();

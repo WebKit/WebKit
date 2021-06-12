@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CtapDriver.h"
 #include <WebCore/ApduResponse.h>
+#include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/U2fCommandConstructor.h>
 #include <WebCore/U2fResponseConverter.h>
@@ -156,7 +157,7 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
     case ApduResponse::Status::SW_NO_ERROR: {
         auto& options = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
         auto appId = processGoogleLegacyAppIdSupportExtension(options.extensions);
-        auto response = readU2fRegisterResponse(!appId ? options.rp.id : appId, apduResponse.data(), options.attestation);
+        auto response = readU2fRegisterResponse(!appId ? options.rp.id : appId, apduResponse.data(), AuthenticatorAttachment::CrossPlatform, options.attestation);
         if (!response) {
             receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F register response."_s });
             return;
@@ -208,9 +209,9 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
         RefPtr<AuthenticatorAssertionResponse> response;
         if (m_isAppId) {
             ASSERT(requestOptions.extensions && !requestOptions.extensions->appid.isNull());
-            response = readU2fSignResponse(requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data());
+            response = readU2fSignResponse(requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         } else
-            response = readU2fSignResponse(requestOptions.rpId, requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data());
+            response = readU2fSignResponse(requestOptions.rpId, requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         if (!response) {
             receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F sign response."_s });
             return;

@@ -2174,17 +2174,17 @@ a.disabled {
   font-size: var(--tinySize);
 }
 
-.lengend, .timeline>.content .lengend{
+.legend, .timeline>.content .legend{
   display: flex;
   flex-direction: row;
 }
 
-.lengend.horizontal, .timeline>.header .lengend {
+.legend.horizontal, .timeline>.header .legend {
   display: flex;
   flex-direction: column;
 }
 
-.lengend>.item {
+.legend>.item {
   font-size: var(--tinySize);
   text-align: left;
   margin: 4px;
@@ -2193,7 +2193,7 @@ a.disabled {
   align-items: center;
 }
 
-.lengend>.item .dot{
+.legend>.item .dot{
   width: var(--smallSize);
   height: var(--smallSize);
   border-radius: var(--smallSize);
@@ -2206,17 +2206,17 @@ a.disabled {
   margin: 0 var(--tinySize);
   position: relative;
 }
-.lengend>.item .dot img, .lengend>.item .dot .text {
+.legend>.item .dot img, .legend>.item .dot .text {
   width: var(--tinySize);
   height: var(--tinySize);
   font-size: var(--tinySize);
 } 
-.lengend>.item .dot>img, .lengend>.item .dot>.text {
+.legend>.item .dot>img, .legend>.item .dot>.text {
   position: absolute;
   top: calc((var(--smallSize) - var(--tinySize)) / 2);
   left: calc((var(--smallSize) - var(--tinySize)) / 2);
 }
-.timeline.lengend>.item .dot::before{
+.timeline.legend>.item .dot::before{
   left: calc(0px - var(--tinySize));
   width: var(--tinySize);
   content: "";
@@ -2226,7 +2226,7 @@ a.disabled {
   flex: none;
   position: absolute;
 }
-.timeline.lengend>.item .dot::after{
+.timeline.legend>.item .dot::after{
   right: calc(0px - var(--tinySize));
   width: var(--tinySize);
   content: "";
@@ -2236,7 +2236,7 @@ a.disabled {
   flex: none;
   position: absolute;
 }
-.lengend>.item .label{
+.legend>.item .label{
   font-size: var(--tinySize);
   padding: 0 4px;
 }

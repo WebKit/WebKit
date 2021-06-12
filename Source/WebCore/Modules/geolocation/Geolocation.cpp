@@ -56,7 +56,7 @@ static const ASCIILiteral originCannotRequestGeolocationErrorMessage { "Origin d
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Geolocation);
 
-static RefPtr<GeolocationPosition> createGeolocationPosition(Optional<GeolocationPositionData>&& position)
+static RefPtr<GeolocationPosition> createGeolocationPosition(std::optional<GeolocationPositionData>&& position)
 {
     if (!position)
         return nullptr;

@@ -119,19 +119,19 @@ String filenameForDisplay(const String& string)
 #endif
 }
 
-Optional<uint64_t> fileSize(PlatformFileHandle handle)
+std::optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
     GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
     if (!info)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return g_file_info_get_size(info.get());
 }
 
-Optional<WallTime> fileCreationTime(const String&)
+std::optional<WallTime> fileCreationTime(const String&)
 {
     // FIXME: Is there a way to retrieve file creation time with Gtk on platforms that support it?
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const String& suffix)
@@ -213,7 +213,7 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
     return g_seekable_truncate(G_SEEKABLE(g_io_stream_get_output_stream(G_IO_STREAM(handle))), offset, nullptr, nullptr);
 }
 
-int writeToFile(PlatformFileHandle handle, const char* data, int length)
+int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     if (!length)
         return 0;
@@ -224,7 +224,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     return bytesWritten;
 }
 
-int readFromFile(PlatformFileHandle handle, char* data, int length)
+int readFromFile(PlatformFileHandle handle, void* data, int length)
 {
     GUniqueOutPtr<GError> error;
     do {
@@ -236,12 +236,12 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
     return -1;
 }
 
-Optional<int32_t> getFileDeviceId(const CString& fsFile)
+std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(fsFile.data()));
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_filesystem_info(file.get(), G_FILE_ATTRIBUTE_UNIX_DEVICE, nullptr, nullptr));
     if (!fileInfo)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return g_file_info_get_attribute_uint32(fileInfo.get(), G_FILE_ATTRIBUTE_UNIX_DEVICE);
 }

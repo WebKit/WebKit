@@ -28,10 +28,10 @@
 #include <wtf/WorkQueue.h>
 
 #include <mutex>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Ref.h>
@@ -130,8 +130,8 @@ void WorkQueue::concurrentApply(size_t iterations, WTF::Function<void (size_t in
             }
         }
 
-        CheckedLock m_lock;
-        CheckedCondition m_condition;
+        Lock m_lock;
+        Condition m_condition;
         Deque<const Function<void()>*> m_queue WTF_GUARDED_BY_LOCK(m_lock);
 
         Vector<Ref<Thread>> m_workers;
@@ -149,8 +149,8 @@ void WorkQueue::concurrentApply(size_t iterations, WTF::Function<void (size_t in
     std::atomic<size_t> currentIndex(0);
     std::atomic<size_t> activeThreads(workerCount + 1);
 
-    CheckedCondition condition;
-    CheckedLock lock;
+    Condition condition;
+    Lock lock;
 
     Function<void ()> applier = [&, function = WTFMove(function)] {
         size_t index;

@@ -4,11 +4,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS parentDiv.style['alt'] is ""
-PASS window.getComputedStyle(parentDiv).getPropertyValue('alt') is "TestAlt"
+PASS window.getComputedStyle(parentDiv).getPropertyValue('alt') is "\"TestAlt\""
 PASS testDiv.style['alt'] is ""
 testDiv.style['alt'] = 'inherit'
 PASS testDiv.style['alt'] is "inherit"
-PASS window.getComputedStyle(testDiv).getPropertyValue('alt') is "TestAlt"
+PASS window.getComputedStyle(testDiv).getPropertyValue('alt') is "\"TestAlt\""
 testDiv.style['alt'] = 'initial'
 PASS testDiv.style['alt'] is "initial"
 PASS window.getComputedStyle(testDiv).getPropertyValue('alt') is "\"\""

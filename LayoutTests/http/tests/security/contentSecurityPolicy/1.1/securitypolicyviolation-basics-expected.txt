@@ -13,6 +13,7 @@ PASS window.e.violatedDirective is "violatedDirectiveValue"
 PASS window.e.effectiveDirective is "effectiveDirectiveValue"
 PASS window.e.originalPolicy is "originalPolicyValue"
 PASS window.e.sourceFile is "sourceFileValue"
+PASS window.e.disposition is "enforce"
 PASS window.e.lineNumber is 1
 PASS window.e.columnNumber is 1
 PASS window.e.statusCode is 200

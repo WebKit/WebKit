@@ -170,6 +170,13 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
     m_ringBuffer->getCurrentFrameBounds(startFrame1, endFrame1);
 #endif
 
+    if (m_isInNeedOfMoreData) {
+        m_isInNeedOfMoreData = false;
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, sampleCount, this, protectedThis = makeRefPtr(*this)] {
+            ALWAYS_LOG(logIdentifier, "needed more data, pushing ", sampleCount, " samples");
+        });
+    }
     m_ringBuffer->store(sampleBufferList, sampleCount, sampleTime.timeValue());
     m_lastPushedSampleCount = sampleCount;
 }
@@ -255,6 +262,13 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
     timeStamp += m_outputSampleOffset;
 
     if (timeStamp < startFrame || timeStamp + sampleCount > endFrame) {
+        if (!m_isInNeedOfMoreData) {
+            m_isInNeedOfMoreData = true;
+            DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+                ERROR_LOG(logIdentifier, "need more data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
+            });
+        }
         if (timeStamp < startFrame || timeStamp >= endFrame) {
             // We are out of the window, let's restart the offset computation.
             m_shouldComputeOutputSampleOffset = true;

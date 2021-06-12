@@ -44,7 +44,7 @@ std::unique_ptr<MachMessage> MachMessage::create(MessageName messageName, size_t
     auto bufferSize = CheckedSize(sizeof(MachMessage)) + size;
     if (bufferSize.hasOverflowed())
         return nullptr;
-    void* memory = WTF::fastZeroedMalloc(bufferSize.unsafeGet());
+    void* memory = WTF::fastZeroedMalloc(bufferSize);
     return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { messageName, size } };
 }
 

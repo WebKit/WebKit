@@ -53,7 +53,7 @@ TEST_P(AddNoiseTest, CheckNoiseAdded) {
   const int clamp = vpx_setup_noise(GET_PARAM(0), noise, kNoiseSize);
   uint8_t *const s =
       reinterpret_cast<uint8_t *>(vpx_calloc(image_size, sizeof(*s)));
-  ASSERT_TRUE(s != NULL);
+  ASSERT_NE(s, nullptr);
   memset(s, 99, image_size * sizeof(*s));
 
   ASM_REGISTER_STATE_CHECK(
@@ -106,8 +106,8 @@ TEST_P(AddNoiseTest, CheckCvsAssembly) {
 
   uint8_t *const s = reinterpret_cast<uint8_t *>(vpx_calloc(image_size, 1));
   uint8_t *const d = reinterpret_cast<uint8_t *>(vpx_calloc(image_size, 1));
-  ASSERT_TRUE(s != NULL);
-  ASSERT_TRUE(d != NULL);
+  ASSERT_NE(s, nullptr);
+  ASSERT_NE(d, nullptr);
 
   memset(s, 99, image_size);
   memset(d, 99, image_size);
@@ -129,20 +129,20 @@ TEST_P(AddNoiseTest, CheckCvsAssembly) {
 
 using std::make_tuple;
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     C, AddNoiseTest,
     ::testing::Values(make_tuple(3.25, vpx_plane_add_noise_c),
                       make_tuple(4.4, vpx_plane_add_noise_c)));
 
 #if HAVE_SSE2
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SSE2, AddNoiseTest,
     ::testing::Values(make_tuple(3.25, vpx_plane_add_noise_sse2),
                       make_tuple(4.4, vpx_plane_add_noise_sse2)));
 #endif
 
 #if HAVE_MSA
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     MSA, AddNoiseTest,
     ::testing::Values(make_tuple(3.25, vpx_plane_add_noise_msa),
                       make_tuple(4.4, vpx_plane_add_noise_msa)));

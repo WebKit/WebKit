@@ -90,13 +90,12 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
     fontFace.sourcesPopulated();
 }
 
-Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
+Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector& fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
 {
-    auto* context = fontSelector ? fontSelector->scriptExecutionContext() : nullptr;
+    auto* context = fontSelector.scriptExecutionContext();
     const auto* settings = context ? &context->settingsValues() : nullptr;
     auto result = adoptRef(*new CSSFontFace(settings, cssConnection, wrapper, isLocalFallback));
-    if (fontSelector)
-        result->addClient(*fontSelector);
+    result->addClient(fontSelector);
     return result;
 }
 
@@ -221,7 +220,7 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
     if (value.isFontStyleValue()) {
         auto result = Style::BuilderConverter::convertFontStyleFromValue(value);
-        return { result.valueOr(normalItalicValue()), result.valueOr(normalItalicValue()) };
+        return { result.value_or(normalItalicValue()), result.value_or(normalItalicValue()) };
     }
 
     ASSERT(value.isFontStyleRangeValue());

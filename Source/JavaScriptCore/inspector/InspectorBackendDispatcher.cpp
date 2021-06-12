@@ -113,7 +113,7 @@ void BackendDispatcher::dispatch(const String& message)
     {
         // In case this is a re-entrant call from a nested run loop, we don't want to lose
         // the outer request's id just because the inner request is bogus.
-        SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, WTF::nullopt);
+        SetForScope<std::optional<long>> scopedRequestId(m_currentRequestId, std::nullopt);
 
         auto parsedMessage = JSON::Value::parseJSON(message);
         if (!parsedMessage) {
@@ -148,7 +148,7 @@ void BackendDispatcher::dispatch(const String& message)
 
     {
         // We could be called re-entrantly from a nested run loop, so restore the previous id.
-        SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, requestId);
+        SetForScope<std::optional<long>> scopedRequestId(m_currentRequestId, requestId);
 
         auto methodValue = messageObject->getValue("method"_s);
         if (!methodValue) {
@@ -268,7 +268,7 @@ void BackendDispatcher::sendPendingErrors()
     m_frontendRouter->sendResponse(message->toJSONString());
 
     m_protocolErrors.clear();
-    m_currentRequestId = WTF::nullopt;
+    m_currentRequestId = std::nullopt;
 }
     
 void BackendDispatcher::reportProtocolError(CommonErrorCode errorCode, const String& errorMessage)
@@ -276,7 +276,7 @@ void BackendDispatcher::reportProtocolError(CommonErrorCode errorCode, const Str
     reportProtocolError(m_currentRequestId, errorCode, errorMessage);
 }
 
-void BackendDispatcher::reportProtocolError(Optional<long> relatedRequestId, CommonErrorCode errorCode, const String& errorMessage)
+void BackendDispatcher::reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode errorCode, const String& errorMessage)
 {
     ASSERT_ARG(errorCode, errorCode >= 0);
 
@@ -313,23 +313,23 @@ T BackendDispatcher::getPropertyValue(JSON::Object* params, const String& name, 
     return result;
 }
 
-Optional<bool> BackendDispatcher::getBoolean(JSON::Object* params, const String& name, bool required)
+std::optional<bool> BackendDispatcher::getBoolean(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<Optional<bool>>(params, name, required, &JSON::Value::asBoolean, "Boolean");
+    return getPropertyValue<std::optional<bool>>(params, name, required, &JSON::Value::asBoolean, "Boolean");
 }
 
-Optional<int> BackendDispatcher::getInteger(JSON::Object* params, const String& name, bool required)
+std::optional<int> BackendDispatcher::getInteger(JSON::Object* params, const String& name, bool required)
 {
     // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
-    Optional<int> (JSON::Value::*asInteger)() const = &JSON::Value::asInteger;
-    return getPropertyValue<Optional<int>>(params, name, required, asInteger, "Integer");
+    std::optional<int> (JSON::Value::*asInteger)() const = &JSON::Value::asInteger;
+    return getPropertyValue<std::optional<int>>(params, name, required, asInteger, "Integer");
 }
 
-Optional<double> BackendDispatcher::getDouble(JSON::Object* params, const String& name, bool required)
+std::optional<double> BackendDispatcher::getDouble(JSON::Object* params, const String& name, bool required)
 {
     // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
-    Optional<double> (JSON::Value::*asDouble)() const = &JSON::Value::asDouble;
-    return getPropertyValue<Optional<double>>(params, name, required, asDouble, "Number");
+    std::optional<double> (JSON::Value::*asDouble)() const = &JSON::Value::asDouble;
+    return getPropertyValue<std::optional<double>>(params, name, required, asDouble, "Number");
 }
 
 String BackendDispatcher::getString(JSON::Object* params, const String& name, bool required)

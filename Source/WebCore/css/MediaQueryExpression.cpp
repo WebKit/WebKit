@@ -34,7 +34,6 @@
 #include "MediaFeatureNames.h"
 #include "MediaQueryParserContext.h"
 #include <wtf/text/TextStream.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -78,22 +77,22 @@ static inline bool featureWithValidIdent(const AtomString& mediaFeature, const C
         return false;
 
     return mediaFeature == MediaFeatureNames::orientation
-    || mediaFeature == MediaFeatureNames::colorGamut
-    || mediaFeature == MediaFeatureNames::anyHover
-    || mediaFeature == MediaFeatureNames::anyPointer
-    || mediaFeature == MediaFeatureNames::hover
-    || mediaFeature == MediaFeatureNames::invertedColors
-    || mediaFeature == MediaFeatureNames::pointer
+        || mediaFeature == MediaFeatureNames::colorGamut
+        || mediaFeature == MediaFeatureNames::anyHover
+        || mediaFeature == MediaFeatureNames::anyPointer
+        || mediaFeature == MediaFeatureNames::hover
+        || mediaFeature == MediaFeatureNames::invertedColors
+        || mediaFeature == MediaFeatureNames::pointer
 #if ENABLE(APPLICATION_MANIFEST)
-    || mediaFeature == MediaFeatureNames::displayMode
+        || mediaFeature == MediaFeatureNames::displayMode
 #endif
 #if ENABLE(DARK_MODE_CSS)
-    || mediaFeature == MediaFeatureNames::prefersColorScheme
+        || mediaFeature == MediaFeatureNames::prefersColorScheme
 #endif
-    || mediaFeature == MediaFeatureNames::prefersContrast
-    || mediaFeature == MediaFeatureNames::prefersReducedMotion
-    || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
-    || mediaFeature == MediaFeatureNames::dynamicRange;
+        || mediaFeature == MediaFeatureNames::prefersContrast
+        || mediaFeature == MediaFeatureNames::prefersReducedMotion
+        || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
+        || mediaFeature == MediaFeatureNames::dynamicRange;
 }
 
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSPrimitiveValue& value)
@@ -102,8 +101,8 @@ static inline bool featureWithValidDensity(const String& mediaFeature, const CSS
         return false;
     
     return mediaFeature == MediaFeatureNames::resolution
-    || mediaFeature == MediaFeatureNames::minResolution
-    || mediaFeature == MediaFeatureNames::maxResolution;
+        || mediaFeature == MediaFeatureNames::minResolution
+        || mediaFeature == MediaFeatureNames::maxResolution;
 }
 
 static inline bool featureWithValidPositiveLength(const String& mediaFeature, const CSSPrimitiveValue& value)
@@ -112,30 +111,30 @@ static inline bool featureWithValidPositiveLength(const String& mediaFeature, co
         return false;
     
     return mediaFeature == MediaFeatureNames::height
-    || mediaFeature == MediaFeatureNames::maxHeight
-    || mediaFeature == MediaFeatureNames::minHeight
-    || mediaFeature == MediaFeatureNames::width
-    || mediaFeature == MediaFeatureNames::maxWidth
-    || mediaFeature == MediaFeatureNames::minWidth
-    || mediaFeature == MediaFeatureNames::deviceHeight
-    || mediaFeature == MediaFeatureNames::maxDeviceHeight
-    || mediaFeature == MediaFeatureNames::minDeviceHeight
-    || mediaFeature == MediaFeatureNames::deviceWidth
-    || mediaFeature == MediaFeatureNames::minDeviceWidth
-    || mediaFeature == MediaFeatureNames::maxDeviceWidth;
+        || mediaFeature == MediaFeatureNames::maxHeight
+        || mediaFeature == MediaFeatureNames::minHeight
+        || mediaFeature == MediaFeatureNames::width
+        || mediaFeature == MediaFeatureNames::maxWidth
+        || mediaFeature == MediaFeatureNames::minWidth
+        || mediaFeature == MediaFeatureNames::deviceHeight
+        || mediaFeature == MediaFeatureNames::maxDeviceHeight
+        || mediaFeature == MediaFeatureNames::minDeviceHeight
+        || mediaFeature == MediaFeatureNames::deviceWidth
+        || mediaFeature == MediaFeatureNames::minDeviceWidth
+        || mediaFeature == MediaFeatureNames::maxDeviceWidth;
 }
 
 static inline bool featureExpectingPositiveInteger(const String& mediaFeature)
 {
     return mediaFeature == MediaFeatureNames::color
-    || mediaFeature == MediaFeatureNames::maxColor
-    || mediaFeature == MediaFeatureNames::minColor
-    || mediaFeature == MediaFeatureNames::colorIndex
-    || mediaFeature == MediaFeatureNames::maxColorIndex
-    || mediaFeature == MediaFeatureNames::minColorIndex
-    || mediaFeature == MediaFeatureNames::monochrome
-    || mediaFeature == MediaFeatureNames::maxMonochrome
-    || mediaFeature == MediaFeatureNames::minMonochrome;
+        || mediaFeature == MediaFeatureNames::maxColor
+        || mediaFeature == MediaFeatureNames::minColor
+        || mediaFeature == MediaFeatureNames::colorIndex
+        || mediaFeature == MediaFeatureNames::maxColorIndex
+        || mediaFeature == MediaFeatureNames::minColorIndex
+        || mediaFeature == MediaFeatureNames::monochrome
+        || mediaFeature == MediaFeatureNames::maxMonochrome
+        || mediaFeature == MediaFeatureNames::minMonochrome;
 }
 
 static inline bool featureWithPositiveInteger(const String& mediaFeature, const CSSPrimitiveValue& value)
@@ -151,12 +150,12 @@ static inline bool featureWithPositiveNumber(const String& mediaFeature, const C
         return false;
     
     return mediaFeature == MediaFeatureNames::transform3d
-    || mediaFeature == MediaFeatureNames::devicePixelRatio
-    || mediaFeature == MediaFeatureNames::maxDevicePixelRatio
-    || mediaFeature == MediaFeatureNames::minDevicePixelRatio
-    || mediaFeature == MediaFeatureNames::transition
-    || mediaFeature == MediaFeatureNames::animation
-    || mediaFeature == MediaFeatureNames::transform2d;
+        || mediaFeature == MediaFeatureNames::devicePixelRatio
+        || mediaFeature == MediaFeatureNames::maxDevicePixelRatio
+        || mediaFeature == MediaFeatureNames::minDevicePixelRatio
+        || mediaFeature == MediaFeatureNames::transition
+        || mediaFeature == MediaFeatureNames::animation
+        || mediaFeature == MediaFeatureNames::transform2d;
 }
 
 static inline bool featureWithZeroOrOne(const String& mediaFeature, const CSSPrimitiveValue& value)
@@ -274,19 +273,8 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserToken
 
 String MediaQueryExpression::serialize() const
 {
-    if (!m_serializationCache.isNull())
-        return m_serializationCache;
-
-    StringBuilder result;
-    result.append('(');
-    result.append(m_mediaFeature.convertToASCIILowercase());
-    if (m_value) {
-        result.appendLiteral(": ");
-        result.append(m_value->cssText());
-    }
-    result.append(')');
-
-    m_serializationCache = result.toString();
+    if (m_serializationCache.isNull())
+        m_serializationCache = makeString('(', m_mediaFeature.convertToASCIILowercase(), m_value ? ": " : "", m_value ? m_value->cssText() : "", ')');
     return m_serializationCache;
 }
 

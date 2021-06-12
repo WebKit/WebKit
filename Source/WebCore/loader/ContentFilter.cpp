@@ -145,7 +145,7 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
     return m_state != State::Blocked;
 }
 
-bool ContentFilter::continueAfterDataReceived(const char* data, int length)
+bool ContentFilter::continueAfterDataReceived(const uint8_t* data, int length)
 {
     Ref<ContentFilterClient> protectedClient { m_client };
 

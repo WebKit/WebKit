@@ -31,8 +31,8 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
 #include <gst/pbutils/missing-plugins.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -81,12 +81,12 @@ struct _WebKitWebAudioSrcPrivate {
 
     bool hasRenderedAudibleFrame { false };
 
-    CheckedLock dispatchToRenderThreadLock;
+    Lock dispatchToRenderThreadLock;
     Function<void(Function<void()>&&)> dispatchToRenderThreadFunction WTF_GUARDED_BY_LOCK(dispatchToRenderThreadLock);
 
     bool dispatchDone WTF_GUARDED_BY_LOCK(dispatchLock);
-    CheckedLock dispatchLock;
-    CheckedCondition dispatchCondition;
+    Lock dispatchLock;
+    Condition dispatchCondition;
 
     _WebKitWebAudioSrcPrivate()
     {
@@ -208,7 +208,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcRenderIteration), src, nullptr));
     gst_task_set_lock(priv->task.get(), &priv->mutex);
 
-    priv->interleave = gst_element_factory_make("audiointerleave", nullptr);
+    priv->interleave = makeGStreamerElement("audiointerleave", nullptr);
 
     if (!priv->interleave) {
         GST_ERROR_OBJECT(src, "Failed to create audiointerleave");
@@ -221,7 +221,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     // appsrc ! . which is plugged to a new interleave request sinkpad.
     for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++) {
         GUniquePtr<gchar> appsrcName(g_strdup_printf("webaudioSrc%u", channelIndex));
-        GRefPtr<GstElement> appsrc = gst_element_factory_make("appsrc", appsrcName.get());
+        GRefPtr<GstElement> appsrc = makeGStreamerElement("appsrc", appsrcName.get());
         GRefPtr<GstCaps> monoCaps = adoptGRef(getGStreamerMonoAudioCaps(priv->sampleRate));
 
         GstAudioInfo info;
@@ -294,7 +294,7 @@ static void webKitWebAudioSrcGetProperty(GObject* object, guint propertyId, GVal
     }
 }
 
-static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(WebKitWebAudioSrc* src)
+static std::optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(WebKitWebAudioSrc* src)
 {
     WebKitWebAudioSrcPrivate* priv = src->priv;
 
@@ -303,7 +303,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(Web
     if (!priv->destination || !priv->bus) {
         GST_ELEMENT_ERROR(src, CORE, FAILED, ("Internal WebAudioSrc error"), ("Can't start without destination or bus"));
         gst_task_stop(src->priv->task.get());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     ASSERT(priv->pool);
@@ -319,7 +319,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(Web
             // FLUSHING and EOS are not errors.
             if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
                 GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         ASSERT(buffer);
@@ -330,7 +330,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(Web
         channelBufferList.uncheckedAppend(WTFMove(buffer));
     }
 
-    return makeOptional(channelBufferList);
+    return std::make_optional(channelBufferList);
 }
 
 static void webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>&& element, Vector<GRefPtr<GstBuffer>>&& channelBufferList)

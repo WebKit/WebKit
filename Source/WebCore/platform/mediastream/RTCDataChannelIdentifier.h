@@ -36,7 +36,7 @@ struct RTCDataChannelIdentifier {
     RTCDataChannelLocalIdentifier channelIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<RTCDataChannelIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<RTCDataChannelIdentifier> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -46,17 +46,17 @@ inline void RTCDataChannelIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-inline Optional<RTCDataChannelIdentifier> RTCDataChannelIdentifier::decode(Decoder& decoder)
+inline std::optional<RTCDataChannelIdentifier> RTCDataChannelIdentifier::decode(Decoder& decoder)
 {
-    Optional<ProcessIdentifier> processIdentifier;
+    std::optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<RTCDataChannelLocalIdentifier> channelIdentifier;
+    std::optional<RTCDataChannelLocalIdentifier> channelIdentifier;
     decoder >> channelIdentifier;
     if (!channelIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     return RTCDataChannelIdentifier { *processIdentifier, *channelIdentifier };
 }
 

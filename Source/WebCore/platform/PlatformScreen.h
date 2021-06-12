@@ -25,11 +25,8 @@
 
 #pragma once
 
-#if USE(GLIB)
-#include <wtf/Function.h>
-#endif
-
 #include <wtf/EnumTraits.h>
+#include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSScreen;
@@ -53,6 +50,7 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 
 namespace WebCore {
 
+class DestinationColorSpace;
 class FloatRect;
 class FloatSize;
 class Widget;
@@ -68,6 +66,7 @@ using IORegistryGPUID = int64_t; // Global IOKit I/O registryID that can match a
 int screenDepth(Widget*);
 int screenDepthPerComponent(Widget*);
 bool screenIsMonochrome(Widget*);
+WEBCORE_EXPORT DestinationColorSpace screenColorSpace(Widget* = nullptr);
 
 bool screenHasInvertedColors();
 
@@ -98,10 +97,6 @@ constexpr DynamicRangeMode preferredDynamicRangeMode(Widget* = nullptr) { return
 WEBCORE_EXPORT bool screenSupportsHighDynamicRange(Widget* = nullptr);
 #else
 constexpr bool screenSupportsHighDynamicRange(Widget* = nullptr) { return false; }
-#endif
-
-#if USE(CG)
-WEBCORE_EXPORT CGColorSpaceRef screenColorSpace(Widget* = nullptr);
 #endif
 
 struct ScreenProperties;

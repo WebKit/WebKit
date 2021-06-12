@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 
 #import "CurrentThisInsideBlockGetterTest.h"
-#import "DFGWorklist.h"
 #import "DateTests.h"
 #import "JSCast.h"
 #import "JSContextPrivate.h"
@@ -51,7 +50,6 @@
 #import <pthread.h>
 #import <vector>
 #import <wtf/MemoryFootprint.h>
-#import <wtf/Optional.h>
 #import <wtf/DataLog.h>
 #import <wtf/RetainPtr.h>
 
@@ -549,14 +547,7 @@ static void runJITThreadLimitTests()
         checkResult(@"Number of FTL threads should have been updated", updatedNumberOfThreads == targetNumberOfThreads);
     };
 
-    checkResult(@"runJITThreadLimitTests() must run at the very beginning to test the case where the global JIT worklist was not initialized yet", !JSC::DFG::existingGlobalDFGWorklistOrNull() && !JSC::DFG::existingGlobalFTLWorklistOrNull());
-
     testDFG();
-    JSC::DFG::ensureGlobalDFGWorklist();
-    testDFG();
-
-    testFTL();
-    JSC::DFG::ensureGlobalFTLWorklist();
     testFTL();
 #endif // ENABLE(DFG_JIT)
 }

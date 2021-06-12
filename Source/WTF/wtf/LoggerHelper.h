@@ -87,7 +87,7 @@ public:
     }
 #else // RELEASE_LOG_DISABLED
 
-#define LOGIDENTIFIER (WTF::nullopt)
+#define LOGIDENTIFIER (std::nullopt)
 
 #define ALWAYS_LOG(channelName, ...)  (UNUSED_PARAM(channelName))
 #define ERROR_LOG(channelName, ...)   (UNUSED_PARAM(channelName))

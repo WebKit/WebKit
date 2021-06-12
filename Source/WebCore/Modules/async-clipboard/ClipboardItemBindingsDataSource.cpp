@@ -123,7 +123,7 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
     });
 }
 
-void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destination, CompletionHandler<void(Optional<PasteboardCustomData>)>&& completion)
+void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)
 {
     m_itemTypeLoaders.clear();
     ASSERT(!m_completionHandler);
@@ -202,7 +202,7 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
 
     auto document = documentFromClipboard(clipboard.get());
     if (!document) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -215,7 +215,7 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
         else if (WTF::holds_alternative<Ref<SharedBuffer>>(data))
             customData.writeData(type, WTF::get<Ref<SharedBuffer>>(data).copyRef());
         else {
-            completionHandler(WTF::nullopt);
+            completionHandler(std::nullopt);
             return;
         }
     }
@@ -285,7 +285,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 
         auto bitmapImage = BitmapImage::create();
         bitmapImage->setData(WTFMove(bufferToSanitize), true);
-        auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+        auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
         if (!imageBuffer) {
             m_data = { nullString() };
             return;

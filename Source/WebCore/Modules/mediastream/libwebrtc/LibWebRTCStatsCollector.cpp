@@ -434,7 +434,7 @@ static inline void fillRTCIceCandidatePairStats(RTCStatsReport::IceCandidatePair
         stats.consentResponsesSent = *rtcStats.responses_sent;
 }
 
-static inline Optional<RTCIceCandidateType> iceCandidateState(const std::string& state)
+static inline std::optional<RTCIceCandidateType> iceCandidateState(const std::string& state)
 {
     if (state == "host")
         return RTCIceCandidateType::Host;

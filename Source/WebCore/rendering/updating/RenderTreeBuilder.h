@@ -65,6 +65,8 @@ public:
     bool hasBrokenContinuation() const { return m_hasBrokenContinuation; }
 
 private:
+    static void markBoxForRelayoutAfterSplit(RenderBox&);
+
     void attachInternal(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild);
 
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);

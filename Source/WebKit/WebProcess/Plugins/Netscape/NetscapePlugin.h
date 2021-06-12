@@ -195,12 +195,12 @@ private:
     void streamWillSendRequest(uint64_t streamID, const URL& requestURL, const URL& responseURL, int responseStatus) override;
     void streamDidReceiveResponse(uint64_t streamID, const URL& responseURL, uint32_t streamLength,
                                           uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
-    void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) override;
+    void streamDidReceiveData(uint64_t streamID, const uint8_t* bytes, int length) override;
     void streamDidFinishLoading(uint64_t streamID) override;
     void streamDidFail(uint64_t streamID, bool wasCancelled) override;
     void manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength, 
                                                 uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
-    void manualStreamDidReceiveData(const char* bytes, int length) override;
+    void manualStreamDidReceiveData(const uint8_t* bytes, int length) override;
     void manualStreamDidFinishLoading() override;
     void manualStreamDidFail(bool wasCancelled) override;
     

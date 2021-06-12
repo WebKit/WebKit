@@ -463,7 +463,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::compute
     return computedValues;
 }
 
-Optional<LayoutUnit> BlockMarginCollapse::marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values marginValues) const
+std::optional<LayoutUnit> BlockMarginCollapse::marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values marginValues) const
 {
     // When two or more margins collapse, the resulting margin width is the maximum of the collapsing margins' widths.
     // In the case of negative margins, the maximum of the absolute values of the negative adjoining margins is deducted from the maximum
@@ -539,7 +539,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiv
 LayoutUnit BlockMarginCollapse::marginBeforeIgnoringCollapsingThrough(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
 {
     ASSERT(layoutBox.isBlockLevelBox());
-    return marginValue(positiveNegativeMarginBefore(layoutBox, nonCollapsedValues)).valueOr(nonCollapsedValues.before);
+    return marginValue(positiveNegativeMarginBefore(layoutBox, nonCollapsedValues)).value_or(nonCollapsedValues.before);
 }
 
 UsedVerticalMargin BlockMarginCollapse::collapsedVerticalValues(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)

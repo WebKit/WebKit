@@ -68,7 +68,7 @@ bool InjectedBundlePageEditorClient::shouldEndEditing(WebPage& page, const Simpl
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage& page, Node& node, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
+bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage& page, Node& node, const std::optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
     if (m_client.shouldInsertNode) {
         RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(node);
@@ -77,28 +77,28 @@ bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage& page, Node& node,
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldInsertText(WebPage& page, const String& text, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
+bool InjectedBundlePageEditorClient::shouldInsertText(WebPage& page, const String& text, const std::optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
     if (m_client.shouldInsertText)
         return m_client.shouldInsertText(toAPI(&page), toAPI(text.impl()), toAPI(createHandle(rangeToReplace).get()), toAPI(action), m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldDeleteRange(WebPage& page, const Optional<WebCore::SimpleRange>& range)
+bool InjectedBundlePageEditorClient::shouldDeleteRange(WebPage& page, const std::optional<WebCore::SimpleRange>& range)
 {
     if (m_client.shouldDeleteRange)
         return m_client.shouldDeleteRange(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldChangeSelectedRange(WebPage& page, const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, Affinity affinity, bool stillSelecting)
+bool InjectedBundlePageEditorClient::shouldChangeSelectedRange(WebPage& page, const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange, Affinity affinity, bool stillSelecting)
 {
     if (m_client.shouldChangeSelectedRange)
         return m_client.shouldChangeSelectedRange(toAPI(&page), toAPI(createHandle(fromRange).get()), toAPI(createHandle(toRange).get()), toAPI(affinity), stillSelecting, m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldApplyStyle(WebPage& page, const StyleProperties& style, const Optional<SimpleRange>& range)
+bool InjectedBundlePageEditorClient::shouldApplyStyle(WebPage& page, const StyleProperties& style, const std::optional<SimpleRange>& range)
 {
     if (m_client.shouldApplyStyle)
         return m_client.shouldApplyStyle(toAPI(&page), toAPI(createHandle(style).get()), toAPI(createHandle(range).get()), m_client.base.clientInfo);
@@ -129,13 +129,13 @@ void InjectedBundlePageEditorClient::didChangeSelection(WebPage& page, const Str
         m_client.didChangeSelection(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage& page, const Optional<SimpleRange>& range)
+void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage& page, const std::optional<SimpleRange>& range)
 {
     if (m_client.willWriteToPasteboard)
         m_client.willWriteToPasteboard(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, const Optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
+void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, const std::optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
     if (m_client.getPasteboardDataForRange) {
         WKArrayRef types = nullptr;

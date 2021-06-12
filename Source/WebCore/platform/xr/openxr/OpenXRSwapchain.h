@@ -36,7 +36,7 @@ public:
     static std::unique_ptr<OpenXRSwapchain> create(XrInstance, XrSession, const XrSwapchainCreateInfo&);
     ~OpenXRSwapchain();
 
-    Optional<PlatformGLObject> acquireImage();
+    std::optional<PlatformGLObject> acquireImage();
     void releaseImage();
     XrSwapchain swapchain() const { return m_swapchain; }
     int32_t width() const { return m_createInfo.width; }

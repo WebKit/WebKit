@@ -22,7 +22,7 @@ import (
 )
 
 // The following structures reflect the JSON of ACVP DRBG tests. See
-// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_drbg.html#rfc.section.4
+// https://pages.nist.gov/ACVP/draft-vassilev-acvp-drbg.html#name-test-vectors
 
 type drbgTestVectorSet struct {
 	Groups []drbgTestGroup `json:"testGroups"`
@@ -79,7 +79,7 @@ func (d *drbg) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 
 	var ret []drbgTestGroupResponse
 	// See
-	// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_drbg.html#rfc.section.4
+	// https://pages.nist.gov/ACVP/draft-vassilev-acvp-drbg.html#name-test-vectors
 	// for details about the tests.
 	for _, group := range parsed.Groups {
 		response := drbgTestGroupResponse{
@@ -146,7 +146,7 @@ func (d *drbg) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 				return nil, fmt.Errorf("wrong length DRBG result: %d bytes but wanted %d", l, outLen)
 			}
 
-			// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_drbg.html#rfc.section.4
+			// https://pages.nist.gov/ACVP/draft-vassilev-acvp-drbg.html#name-responses
 			response.Tests = append(response.Tests, drbgTestResponse{
 				ID:     test.ID,
 				OutHex: hex.EncodeToString(result[0]),

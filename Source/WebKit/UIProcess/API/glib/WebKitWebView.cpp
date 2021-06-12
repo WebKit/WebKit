@@ -2561,10 +2561,10 @@ void webkitWebViewDismissCurrentScriptDialog(WebKitWebView* webView)
         webkitScriptDialogDismiss(webView->priv->currentScriptDialog);
 }
 
-Optional<WebKitScriptDialogType> webkitWebViewGetCurrentScriptDialogType(WebKitWebView* webView)
+std::optional<WebKitScriptDialogType> webkitWebViewGetCurrentScriptDialogType(WebKitWebView* webView)
 {
     if (!webView->priv->currentScriptDialog)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return static_cast<WebKitScriptDialogType>(webView->priv->currentScriptDialog->type);
 }
@@ -2820,7 +2820,7 @@ void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
 }
 #endif
 
-static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, const String& text, Optional<Vector<CompositionUnderline>>&& underlines, Optional<EditingRange>&& selectionRange)
+static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
 #if PLATFORM(GTK)
     webkitWebViewBaseSynthesizeCompositionKeyPress(WEBKIT_WEB_VIEW_BASE(webView), text, WTFMove(underlines), WTFMove(selectionRange));
@@ -2836,7 +2836,7 @@ void webkitWebViewSetComposition(WebKitWebView* webView, const String& text, con
 
 void webkitWebViewConfirmComposition(WebKitWebView* webView, const String& text)
 {
-    webkitWebViewSynthesizeCompositionKeyPress(webView, text, WTF::nullopt, WTF::nullopt);
+    webkitWebViewSynthesizeCompositionKeyPress(webView, text, std::nullopt, std::nullopt);
 }
 
 void webkitWebViewCancelComposition(WebKitWebView* webView, const String& text)
@@ -3783,7 +3783,7 @@ static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSer
                 builder.append(':', exceptionDetails.lineNumber);
             if (exceptionDetails.columnNumber > 0)
                 builder.append(':', exceptionDetails.columnNumber);
-            builder.appendLiteral(": ");
+            builder.append(": ");
         }
         builder.append(exceptionDetails.message);
         g_task_return_new_error(task, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
@@ -3815,7 +3815,7 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, WTF::nullopt, false };
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, false };
     webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
 }
 
@@ -3838,7 +3838,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, WTF::nullopt, true };
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, true };
     webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
 }
 
@@ -3936,7 +3936,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName));
-    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), URL { }, false, WTF::nullopt, true }, WTF::nullopt, world.get(), [task = WTFMove(task)] (auto&& result) {
+    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), URL { }, false, std::nullopt, true }, std::nullopt, world.get(), [task = WTFMove(task)] (auto&& result) {
         RefPtr<API::SerializedScriptValue> serializedScriptValue;
         ExceptionDetails exceptionDetails;
         if (result.has_value())
@@ -3981,7 +3981,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
-    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, false, WTF::nullopt, true },
+    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, false, std::nullopt, true },
         [task] (auto&& result) {
             RefPtr<API::SerializedScriptValue> serializedScriptValue;
             ExceptionDetails exceptionDetails;
@@ -4779,4 +4779,39 @@ void webkit_web_view_terminate_web_process(WebKitWebView* webView)
         Ref<WebKit::WebProcessProxy> protectedProcessProxy(provisionalPageProxy->process());
         protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
     }
+}
+
+/**
+ * webkit_web_view_set_cors_allowlist:
+ * @web_view: a #WebKitWebView
+ * @allowlist: (array zero-terminated=1) (element-type utf8) (transfer none) (nullable): an allowlist of URI patterns, or %NULL
+ *
+ * Sets the @allowlist for which
+ * [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+ * checks are disabled in @web_view. URI patterns must be of the form
+ * `[protocol]://[host]/[path]`, each component may contain the wildcard
+ * character (`*`) to represent zero or more other characters. All three
+ * components are required and must not be omitted from the URI
+ * patterns.
+ *
+ * Disabling CORS checks permits resources from other origins to load
+ * allowlisted resources. It does not permit the allowlisted resources
+ * to load resources from other origins.
+ *
+ * If this function is called multiple times, only the allowlist set by
+ * the most recent call will be effective.
+ *
+ * Since: 2.34
+ */
+void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* const* allowList)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    Vector<String> allowListVector;
+    if (allowList) {
+        for (auto str = allowList; *str; ++str)
+            allowListVector.append(String::fromUTF8(*str));
+    }
+
+    getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));
 }

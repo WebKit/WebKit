@@ -41,7 +41,7 @@ public:
 
     virtual void didReceiveResponse(const ResourceResponse&) { }
 
-    virtual void didReceiveData(const char*, size_t) { }
+    virtual void didReceiveData(const uint8_t*, size_t) { }
 
     virtual void didSucceed() = 0;
     virtual void didFail(const ResourceError&) = 0;

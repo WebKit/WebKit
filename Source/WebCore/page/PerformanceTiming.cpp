@@ -32,11 +32,11 @@
 #include "PerformanceTiming.h"
 
 #include "Document.h"
+#include "DocumentEventTiming.h"
+#include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
-#include "DocumentTiming.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "LoadTiming.h"
 #include "NetworkLoadMetrics.h"
 #include "Performance.h"
 #include "ResourceResponse.h"
@@ -50,7 +50,7 @@ PerformanceTiming::PerformanceTiming(DOMWindow* window)
 
 unsigned long long PerformanceTiming::navigationStart() const
 {
-    LoadTiming* timing = loadTiming();
+    auto* timing = documentLoadTiming();
     if (!timing)
         return 0;
 
@@ -59,11 +59,15 @@ unsigned long long PerformanceTiming::navigationStart() const
 
 unsigned long long PerformanceTiming::unloadEventStart() const
 {
-    LoadTiming* timing = loadTiming();
+    auto* timing = documentLoadTiming();
     if (!timing)
         return 0;
 
-    if (timing->hasCrossOriginRedirect() || !timing->hasSameOriginAsPreviousDocument())
+    auto* metrics = networkLoadMetrics();
+    if (!metrics)
+        return 0;
+
+    if (metrics->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument())
         return 0;
 
     return monotonicTimeToIntegerMilliseconds(timing->unloadEventStart());
@@ -71,11 +75,15 @@ unsigned long long PerformanceTiming::unloadEventStart() const
 
 unsigned long long PerformanceTiming::unloadEventEnd() const
 {
-    LoadTiming* timing = loadTiming();
+    auto* timing = documentLoadTiming();
     if (!timing)
         return 0;
 
-    if (timing->hasCrossOriginRedirect() || !timing->hasSameOriginAsPreviousDocument())
+    auto* metrics = networkLoadMetrics();
+    if (!metrics)
+        return 0;
+
+    if (metrics->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument())
         return 0;
 
     return monotonicTimeToIntegerMilliseconds(timing->unloadEventEnd());
@@ -83,163 +91,115 @@ unsigned long long PerformanceTiming::unloadEventEnd() const
 
 unsigned long long PerformanceTiming::redirectStart() const
 {
-    LoadTiming* timing = loadTiming();
-    if (!timing)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics
+        || metrics->hasCrossOriginRedirect
+        || !metrics->redirectCount)
         return 0;
 
-    if (timing->hasCrossOriginRedirect())
-        return 0;
-
-    return monotonicTimeToIntegerMilliseconds(timing->redirectStart());
+    return monotonicTimeToIntegerMilliseconds(metrics->redirectStart);
 }
 
 unsigned long long PerformanceTiming::redirectEnd() const
 {
-    LoadTiming* timing = loadTiming();
-    if (!timing)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics
+        || metrics->hasCrossOriginRedirect
+        || !metrics->redirectCount)
         return 0;
 
-    if (timing->hasCrossOriginRedirect())
-        return 0;
-
-    return monotonicTimeToIntegerMilliseconds(timing->redirectEnd());
+    return monotonicTimeToIntegerMilliseconds(metrics->fetchStart);
 }
 
 unsigned long long PerformanceTiming::fetchStart() const
 {
-    LoadTiming* timing = loadTiming();
-    if (!timing)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics)
         return 0;
 
-    return monotonicTimeToIntegerMilliseconds(timing->fetchStart());
+    return monotonicTimeToIntegerMilliseconds(metrics->fetchStart);
 }
 
 unsigned long long PerformanceTiming::domainLookupStart() const
 {
-    DocumentLoader* loader = documentLoader();
-    if (!loader)
-        return fetchStart();
-    
-    const NetworkLoadMetrics* timing = loader->response().deprecatedNetworkLoadMetricsOrNull();
-    
-    // This will be -1 when a DNS request is not performed.
-    // Rather than exposing a special value that indicates no DNS, we "backfill" with fetchStart.
-    if (!timing || timing->domainLookupStart < 0_ms)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics || !metrics->domainLookupStart)
         return fetchStart();
 
-    return resourceLoadTimeRelativeToFetchStart(timing->domainLookupStart);
+    return monotonicTimeToIntegerMilliseconds(metrics->domainLookupStart);
 }
 
 unsigned long long PerformanceTiming::domainLookupEnd() const
 {
-    DocumentLoader* loader = documentLoader();
-    if (!loader)
-        return domainLookupStart();
-    
-    const NetworkLoadMetrics* timing = loader->response().deprecatedNetworkLoadMetricsOrNull();
-    
-    // This will be -1 when a DNS request is not performed.
-    // Rather than exposing a special value that indicates no DNS, we "backfill" with domainLookupStart.
-    if (!timing || timing->domainLookupEnd < 0_ms)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics || !metrics->domainLookupEnd)
         return domainLookupStart();
 
-    return resourceLoadTimeRelativeToFetchStart(timing->domainLookupEnd);
+    return monotonicTimeToIntegerMilliseconds(metrics->domainLookupEnd);
 }
 
 unsigned long long PerformanceTiming::connectStart() const
 {
-    DocumentLoader* loader = documentLoader();
-    if (!loader)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics || !metrics->connectStart
+        || metrics->domainLookupEnd.secondsSinceEpoch() > metrics->connectStart.secondsSinceEpoch())
         return domainLookupEnd();
 
-    const NetworkLoadMetrics* timing = loader->response().deprecatedNetworkLoadMetricsOrNull();
-    
-    // connectStart will be -1 when a network request is not made.
-    // Rather than exposing a special value that indicates no new connection, we "backfill" with domainLookupEnd.
-    if (!timing)
-        return domainLookupEnd();
-    Seconds connectStart = timing->connectStart;
-    if (connectStart < 0_ms)
-        return domainLookupEnd();
-
-    // NetworkLoadMetrics's connect phase includes DNS, however Navigation Timing's
-    // connect phase should not. So if there is DNS time, trim it from the start.
-    if (timing->domainLookupEnd >= 0_ms && timing->domainLookupEnd > connectStart)
-        connectStart = timing->domainLookupEnd;
-
-    return resourceLoadTimeRelativeToFetchStart(connectStart);
+    return monotonicTimeToIntegerMilliseconds(metrics->connectStart);
 }
 
 unsigned long long PerformanceTiming::connectEnd() const
 {
-    DocumentLoader* loader = documentLoader();
-    if (!loader)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics || !metrics->connectEnd)
         return connectStart();
 
-    const NetworkLoadMetrics* timing = loader->response().deprecatedNetworkLoadMetricsOrNull();
-    
-    // connectEnd will be -1 when a network request is not made.
-    // Rather than exposing a special value that indicates no new connection, we "backfill" with connectStart.
-    if (!timing || timing->connectEnd < 0_ms)
-        return connectStart();
-
-    return resourceLoadTimeRelativeToFetchStart(timing->connectEnd);
+    return monotonicTimeToIntegerMilliseconds(metrics->connectEnd);
 }
 
 unsigned long long PerformanceTiming::secureConnectionStart() const
 {
-    DocumentLoader* loader = documentLoader();
-    if (!loader)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics)
+        return connectEnd();
+
+    if (!metrics->secureConnectionStart
+        || metrics->secureConnectionStart == reusedTLSConnectionSentinel)
         return 0;
 
-    const NetworkLoadMetrics* timing = loader->response().deprecatedNetworkLoadMetricsOrNull();
-    
-    if (!timing || timing->secureConnectionStart < 0_ms)
-        return 0;
-
-    return resourceLoadTimeRelativeToFetchStart(timing->secureConnectionStart);
+    return monotonicTimeToIntegerMilliseconds(metrics->secureConnectionStart);
 }
 
 unsigned long long PerformanceTiming::requestStart() const
 {
-    DocumentLoader* loader = documentLoader();
-    if (!loader)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics || !metrics->requestStart)
         return connectEnd();
     
-    Seconds requestStart = 0_ms;
-    if (const NetworkLoadMetrics* timing = loader->response().deprecatedNetworkLoadMetricsOrNull())
-        requestStart = timing->requestStart;
-    
-    ASSERT(requestStart >= 0_ms);
-    return resourceLoadTimeRelativeToFetchStart(requestStart);
+    return monotonicTimeToIntegerMilliseconds(metrics->requestStart);
 }
 
 unsigned long long PerformanceTiming::responseStart() const
 {
-    DocumentLoader* loader = documentLoader();
-    if (!loader)
+    auto* metrics = networkLoadMetrics();
+    if (!metrics || !metrics->responseStart)
         return requestStart();
 
-    Seconds responseStart = 0_ms;
-    if (const NetworkLoadMetrics* timing = loader->response().deprecatedNetworkLoadMetricsOrNull())
-        responseStart = timing->responseStart;
-    
-    ASSERT(responseStart >= 0_ms);
-    return resourceLoadTimeRelativeToFetchStart(responseStart);
+    return monotonicTimeToIntegerMilliseconds(metrics->responseStart);
 }
 
 unsigned long long PerformanceTiming::responseEnd() const
 {
-    LoadTiming* timing = loadTiming();
-    if (!timing)
-        return 0;
+    auto* metrics = networkLoadMetrics();
+    if (!metrics || !metrics->responseEnd)
+        return responseStart();
 
-    return monotonicTimeToIntegerMilliseconds(timing->responseEnd());
+    return monotonicTimeToIntegerMilliseconds(metrics->responseEnd);
 }
 
 unsigned long long PerformanceTiming::domLoading() const
 {
-    const DocumentTiming* timing = documentTiming();
+    auto* timing = documentEventTiming();
     if (!timing)
         return fetchStart();
 
@@ -248,7 +208,7 @@ unsigned long long PerformanceTiming::domLoading() const
 
 unsigned long long PerformanceTiming::domInteractive() const
 {
-    const DocumentTiming* timing = documentTiming();
+    auto* timing = documentEventTiming();
     if (!timing)
         return 0;
 
@@ -257,7 +217,7 @@ unsigned long long PerformanceTiming::domInteractive() const
 
 unsigned long long PerformanceTiming::domContentLoadedEventStart() const
 {
-    const DocumentTiming* timing = documentTiming();
+    auto* timing = documentEventTiming();
     if (!timing)
         return 0;
 
@@ -266,7 +226,7 @@ unsigned long long PerformanceTiming::domContentLoadedEventStart() const
 
 unsigned long long PerformanceTiming::domContentLoadedEventEnd() const
 {
-    const DocumentTiming* timing = documentTiming();
+    auto* timing = documentEventTiming();
     if (!timing)
         return 0;
 
@@ -275,7 +235,7 @@ unsigned long long PerformanceTiming::domContentLoadedEventEnd() const
 
 unsigned long long PerformanceTiming::domComplete() const
 {
-    const DocumentTiming* timing = documentTiming();
+    auto* timing = documentEventTiming();
     if (!timing)
         return 0;
 
@@ -284,7 +244,7 @@ unsigned long long PerformanceTiming::domComplete() const
 
 unsigned long long PerformanceTiming::loadEventStart() const
 {
-    LoadTiming* timing = loadTiming();
+    auto* timing = documentLoadTiming();
     if (!timing)
         return 0;
 
@@ -293,14 +253,14 @@ unsigned long long PerformanceTiming::loadEventStart() const
 
 unsigned long long PerformanceTiming::loadEventEnd() const
 {
-    LoadTiming* timing = loadTiming();
+    auto* timing = documentLoadTiming();
     if (!timing)
         return 0;
 
     return monotonicTimeToIntegerMilliseconds(timing->loadEventEnd());
 }
 
-DocumentLoader* PerformanceTiming::documentLoader() const
+const DocumentLoader* PerformanceTiming::documentLoader() const
 {
     auto* frame = this->frame();
     if (!frame)
@@ -309,52 +269,42 @@ DocumentLoader* PerformanceTiming::documentLoader() const
     return frame->loader().documentLoader();
 }
 
-const DocumentTiming* PerformanceTiming::documentTiming() const
+const DocumentEventTiming* PerformanceTiming::documentEventTiming() const
 {
     auto* frame = this->frame();
     if (!frame)
         return nullptr;
 
-    Document* document = frame->document();
+    auto* document = frame->document();
     if (!document)
         return nullptr;
 
-    return &document->timing();
+    return &document->eventTiming();
 }
 
-LoadTiming* PerformanceTiming::loadTiming() const
+const DocumentLoadTiming* PerformanceTiming::documentLoadTiming() const
 {
-    DocumentLoader* loader = documentLoader();
+    auto* loader = documentLoader();
     if (!loader)
         return nullptr;
 
     return &loader->timing();
 }
 
-unsigned long long PerformanceTiming::resourceLoadTimeRelativeToFetchStart(Seconds delta) const
+const NetworkLoadMetrics* PerformanceTiming::networkLoadMetrics() const
 {
-    ASSERT(delta >= 0_ms);
-
-    LoadTiming* timing = loadTiming();
-    if (!timing)
-        return 0;
-
-    WallTime fetchStart = timing->monotonicTimeToPseudoWallTime(timing->fetchStart());
-    WallTime combined = fetchStart + delta;
-    Seconds reduced = Performance::reduceTimeResolution(combined.secondsSinceEpoch());
-    return static_cast<unsigned long long>(reduced.milliseconds());
+    auto* loader = documentLoader();
+    if (!loader)
+        return nullptr;
+    return loader->response().deprecatedNetworkLoadMetricsOrNull();
 }
 
 unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(MonotonicTime timeStamp) const
 {
     ASSERT(timeStamp.secondsSinceEpoch().seconds() >= 0);
-
-    LoadTiming* timing = loadTiming();
-    if (!timing)
+    if (!timeStamp)
         return 0;
-
-    WallTime wallTime = timing->monotonicTimeToPseudoWallTime(timeStamp);
-    Seconds reduced = Performance::reduceTimeResolution(wallTime.secondsSinceEpoch());
+    Seconds reduced = Performance::reduceTimeResolution(timeStamp.approximateWallTime().secondsSinceEpoch());
     return static_cast<unsigned long long>(reduced.milliseconds());
 }
 

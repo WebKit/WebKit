@@ -34,9 +34,8 @@ Modules/cache/CacheStorageConnection.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheEngine.cpp
 Modules/cache/DOMCacheStorage.cpp
-Modules/cache/DOMWindowCaches.cpp
+Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
 Modules/cache/WorkerCacheStorageConnection.cpp
-Modules/cache/WorkerGlobalScopeCaches.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/credentialmanagement/BasicCredential.cpp
@@ -95,7 +94,6 @@ Modules/indexeddb/client/IDBConnectionToServer.cpp
 Modules/indexeddb/client/TransactionOperation.cpp
 Modules/indexeddb/server/IDBConnectionToClient.cpp
 Modules/indexeddb/server/IDBSerialization.cpp
-Modules/indexeddb/server/IDBSerializationContext.cpp
 Modules/indexeddb/server/IDBServer.cpp
 Modules/indexeddb/server/IndexValueEntry.cpp
 Modules/indexeddb/server/IndexValueStore.cpp
@@ -719,7 +717,6 @@ css/CSSAspectRatioValue.cpp
 css/CSSBasicShapes.cpp
 css/CSSBorderImage.cpp
 css/CSSBorderImageSliceValue.cpp
-css/CSSCalculationValue.cpp
 css/CSSCanvasValue.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSConditionRule.cpp
@@ -826,6 +823,15 @@ css/StyleSheet.cpp
 css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
 css/TransformFunctions.cpp
+css/calc/CSSCalcCategoryMapping.cpp
+css/calc/CSSCalcExpressionNode.cpp
+css/calc/CSSCalcExpressionNodeParser.cpp
+css/calc/CSSCalcInvertNode.cpp
+css/calc/CSSCalcNegateNode.cpp
+css/calc/CSSCalcOperationNode.cpp
+css/calc/CSSCalcPrimitiveValueNode.cpp
+css/calc/CSSCalcSymbolTable.cpp
+css/calc/CSSCalcValue.cpp
 css/parser/CSSAtRuleID.cpp
 css/parser/CSSDeferredParser.cpp
 css/parser/CSSParser.cpp
@@ -943,6 +949,7 @@ dom/EventContext.cpp
 dom/EventDispatcher.cpp
 dom/EventListenerMap.cpp
 dom/EventLoop.cpp
+dom/EventLoopEventQueue.cpp
 dom/EventNames.cpp
 dom/EventPath.cpp
 dom/EventTarget.cpp
@@ -952,7 +959,6 @@ dom/ExtensionStyleSheets.cpp
 dom/FocusEvent.cpp
 dom/FullscreenManager.cpp
 dom/GCReachableRef.cpp
-dom/GenericEventQueue.cpp
 dom/HashChangeEvent.cpp
 dom/IdTargetObserver.cpp
 dom/IdTargetObserverRegistry.cpp
@@ -1595,7 +1601,6 @@ loader/ImageLoader.cpp
 loader/LinkHeader.cpp
 loader/LinkLoader.cpp
 loader/LinkPreloadResourceClients.cpp
-loader/LoadTiming.cpp
 loader/LoaderStrategy.cpp
 loader/MediaResourceLoader.cpp
 loader/MixedContentChecker.cpp
@@ -1815,7 +1820,6 @@ page/scrolling/ScrollingTreeOverflowScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
 page/scrolling/ThreadedScrollingTree.cpp
-platform/CalculationValue.cpp
 platform/ContentType.cpp
 platform/ContextMenu.cpp
 platform/ContextMenuItem.cpp
@@ -1830,7 +1834,6 @@ platform/FileHandle.cpp
 platform/FileMonitor.cpp
 platform/FileStream.cpp
 platform/FrameRateMonitor.cpp
-platform/GenericTaskQueue.cpp
 platform/LayoutUnit.cpp
 platform/LegacySchemeRegistry.cpp
 platform/Length.cpp
@@ -1929,6 +1932,16 @@ platform/audio/StereoPanner.cpp
 platform/audio/UpSampler.cpp
 platform/audio/VectorMath.cpp
 platform/audio/ZeroPole.cpp
+platform/calc/CalcExpressionBlendLength.cpp
+platform/calc/CalcExpressionInversion.cpp
+platform/calc/CalcExpressionLength.cpp
+platform/calc/CalcExpressionNegation.cpp
+platform/calc/CalcExpressionNode.cpp
+platform/calc/CalcExpressionNumber.cpp
+platform/calc/CalcExpressionOperation.cpp
+platform/calc/CalcOperator.cpp
+platform/calc/CalculationCategory.cpp
+platform/calc/CalculationValue.cpp
 platform/encryptedmedia/CDMFactory.cpp
 platform/encryptedmedia/CDMLogging.cpp
 platform/encryptedmedia/CDMPrivate.cpp
@@ -1940,6 +1953,7 @@ platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp
 platform/graphics/AlphaPremultiplication.cpp
 platform/graphics/AnimationFrameRate.cpp
+platform/graphics/BifurcatedGraphicsContext.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
 platform/graphics/ColorBlending.cpp
@@ -1950,6 +1964,7 @@ platform/graphics/ColorSpace.cpp
 platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp
+platform/graphics/DestinationColorSpace.cpp
 platform/graphics/DisplayRefreshMonitor.cpp
 platform/graphics/DisplayRefreshMonitorClient.cpp
 platform/graphics/DisplayRefreshMonitorManager.cpp
@@ -1982,7 +1997,6 @@ platform/graphics/GradientImage.cpp
 platform/graphics/GraphicsContext.cpp
 platform/graphics/GraphicsContextGL.cpp
 platform/graphics/GraphicsContextGLImageExtractor.cpp
-platform/graphics/GraphicsContextImpl.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayerTransform.cpp
 platform/graphics/GraphicsLayerUpdater.cpp
@@ -2203,6 +2217,8 @@ platform/text/TextCodecUserDefined.cpp
 platform/text/TextEncoding.cpp
 platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
+platform/xr/openxr/OpenXRInput.cpp @no-unify
+platform/xr/openxr/OpenXRInputSource.cpp @no-unify
 platform/xr/openxr/OpenXRInstance.cpp @no-unify
 platform/xr/openxr/OpenXRExtensions.cpp @no-unify
 platform/xr/openxr/OpenXRLayer.cpp @no-unify
@@ -2221,10 +2237,8 @@ rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
 rendering/CaretRectComputation.cpp
 rendering/ClipRect.cpp
-rendering/ComplexLineLayout.cpp
 rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
-rendering/EllipsisBox.cpp
 rendering/EventRegion.cpp
 rendering/FixedTableLayout.cpp
 rendering/FlexibleBoxAlgorithm.cpp
@@ -2238,15 +2252,18 @@ rendering/HitTestLocation.cpp
 rendering/HitTestResult.cpp
 rendering/HitTestingTransformState.cpp
 rendering/ImageQualityController.cpp
-rendering/InlineBox.cpp
-rendering/InlineElementBox.cpp
-rendering/InlineFlowBox.cpp
 rendering/InlineIterator.cpp
-rendering/InlineTextBox.cpp
 rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
+rendering/LegacyEllipsisBox.cpp
+rendering/LegacyInlineBox.cpp
+rendering/LegacyInlineElementBox.cpp
+rendering/LegacyInlineFlowBox.cpp
+rendering/LegacyLineLayout.cpp
+rendering/LegacyRootInlineBox.cpp
+rendering/LegacyInlineTextBox.cpp
 rendering/MarkedText.cpp
 rendering/MarkedTextStyle.cpp
 rendering/OrderIterator.cpp
@@ -2334,14 +2351,12 @@ rendering/RenderVTTCue.cpp
 rendering/RenderVideo.cpp
 rendering/RenderView.cpp
 rendering/RenderWidget.cpp
-rendering/RootInlineBox.cpp
 rendering/ScrollAlignment.cpp
 rendering/SelectionRangeData.cpp
 rendering/TableLayout.cpp
 rendering/TextDecorationPainter.cpp
 rendering/TextPaintStyle.cpp
 rendering/TextPainter.cpp
-rendering/TrailingFloatsRootInlineBox.cpp
 rendering/line/LineBreaker.cpp
 rendering/line/LineInfo.cpp
 rendering/line/LineWidth.cpp

@@ -27,6 +27,11 @@ import multiprocessing
 import signal
 import sys
 
+if sys.version_info < (3, 0):
+    import Queue
+else:
+    import queue as Queue
+
 from webkitcorepy import OutputCapture, Timeout, log
 
 
@@ -146,6 +151,26 @@ class _BiDirectionalQueue(object):
                 return self.incoming.get(timeout=difference)
             return self.incoming.get()
 
+    def close(self):
+        with OutputCapture():
+            self.outgoing.close()
+            self.incoming.close()
+            self.outgoing.join_thread()
+            self.incoming.join_thread()
+
+
+class _DummyQueue(object):
+    def send(self, object):
+        if isinstance(object, _Message):
+            object(None)
+        return True
+
+    def receive(self, blocking=True):
+        pass
+
+    def close(self):
+        pass
+
 
 class _Process(object):
     name = None
@@ -228,7 +253,7 @@ class _Process(object):
 
     @classmethod
     def handler(cls, value, _):
-        if value == getattr(signal, 'SIGTERM'):
+        if value in (getattr(signal, 'SIGTERM'), getattr(signal, 'SIGINT')):
             cls.working = False
 
     @classmethod
@@ -246,6 +271,8 @@ class _Process(object):
 
         if getattr(signal, 'SIGTERM'):
             signal.signal(signal.SIGTERM, cls.handler)
+        if getattr(signal, 'SIGINT'):
+            signal.signal(signal.SIGINT, cls.handler)
 
         logger = logging.getLogger()
         for handler in logger.handlers:
@@ -280,6 +307,7 @@ class _Process(object):
                 sys.stdout.flush()
                 sys.stderr.flush()
                 queue.send(_State(_State.STOPPING))
+                cls.queue.close()
                 cls.queue = None
 
 
@@ -302,6 +330,7 @@ class TaskPool(object):
         self, workers=1, name=None, setup=None, teardown=None, grace_period=5, block_size=1000,
         setupargs=None, setupkwargs=None,
         teardownargs=None, teardownkwargs=None,
+        force_fork=False,
     ):
         # Ensure tblib is installed before creating child processes
         import tblib
@@ -309,40 +338,67 @@ class TaskPool(object):
         name = name or 'worker'
         if name == self.Process.name:
             raise ValueError("Parent process is already named {}".format(name))
+        self.name = name
 
         if workers < 1:
             raise ValueError('TaskPool requires positive number of workers')
 
-        self.queue = self.BiDirectionalQueue()
+        self.queue = None
+        self.workers = []
 
-        self.workers = [multiprocessing.Process(
-            target=self.Process.main,
-            args=(
-                '{}/{}'.format(name, count), logging.getLogger().getEffectiveLevel(),
-                setup, setupargs, setupkwargs,
-                self.BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
-                teardown, teardownargs, teardownkwargs,
-            ),
-        ) for count in range(workers)]
+        self._setup_args = (setup, setupargs or [], setupkwargs or {})
+        self._teardown_args = (teardown, teardownargs or [], teardownkwargs or {})
+        self._num_workers = int(workers)
+
         self._started = 0
 
         self.callbacks = {}
         self._id_count = 0
         self.grace_period = grace_period
         self.block_size = block_size
+        self.force_fork = force_fork
+
+        if not self.force_fork and self._num_workers == 1 and TaskPool.Process.queue:
+            raise ValueError('Illegal single-process TaskPool nesting')
 
     def __enter__(self):
+        if not self.force_fork and self._num_workers == 1:
+            TaskPool.Process.queue = _DummyQueue()
+            TaskPool.Process.name = TaskPool.Process.name or '{}/0'.format(self.name)
+            if self._setup_args[0]:
+                self._setup_args[0](*self._setup_args[1], **self._setup_args[2])
+            TaskPool.Process.working = True
+            return self
+
         from mock import patch
+
+        self.queue = self.BiDirectionalQueue()
+        self.workers = [multiprocessing.Process(
+            target=self.Process.main,
+            args=(
+                '{}/{}'.format(self.name, count), logging.getLogger().getEffectiveLevel(),
+                self._setup_args[0], self._setup_args[1], self._setup_args[2],
+                self.BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
+                self._teardown_args[0], self._teardown_args[1], self._teardown_args[2],
+            ),
+        ) for count in range(self._num_workers)]
 
         with Timeout(seconds=10, patch=False, handler=self.Exception('Failed to start all workers')):
             for worker in self.workers:
                 worker.start()
             while self._started < len(self.workers):
                 self.queue.receive()(self)
+
         return self
 
     def do(self, function, *args, **kwargs):
         callback = kwargs.pop('callback', None)
+        if not self.queue:
+            result = function(*args, **kwargs)
+            if callback:
+                callback(result)
+            return
+
         if callback:
             self.callbacks[self._id_count] = callback
         self.queue.send(self.Task(function, self._id_count, *args, **kwargs))
@@ -353,10 +409,13 @@ class TaskPool(object):
             while True:
                 try:
                     self.queue.receive(blocking=False)(self)
-                except Exception:
+                except Queue.Empty:
                     break
 
     def wait(self):
+        if not self.queue:
+            return
+
         for _ in self.workers:
             self.queue.send(None)
 
@@ -364,6 +423,16 @@ class TaskPool(object):
             self.queue.receive()(self)
 
     def __exit__(self, *args, **kwargs):
+        if not self.queue:
+            TaskPool.Process.working = False
+            try:
+                if self._teardown_args[0]:
+                    self._teardown_args[0](*self._teardown_args[1], **self._teardown_args[2])
+            finally:
+                TaskPool.Process.queue = None
+                TaskPool.Process.name = None
+            return
+
         from six import reraise
         try:
             inflight = sys.exc_info()
@@ -393,3 +462,7 @@ class TaskPool(object):
                     os.kill(worker.pid, signal.SIGKILL)
                 else:
                     worker.terminate()
+
+            self.queue.close()
+            self.queue = None
+            self.workers = []

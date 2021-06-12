@@ -50,14 +50,14 @@ SocketStreamHandle::SocketStreamState SocketStreamHandle::state() const
     return m_state;
 }
 
-void SocketStreamHandle::sendData(const char* data, size_t length, Function<void(bool)> completionHandler)
+void SocketStreamHandle::sendData(const uint8_t* data, size_t length, Function<void(bool)> completionHandler)
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false);
-    platformSend(reinterpret_cast<const uint8_t*>(data), length, WTFMove(completionHandler));
+    platformSend(data, length, WTFMove(completionHandler));
 }
 
-void SocketStreamHandle::sendHandshake(CString&& handshake, Optional<CookieRequestHeaderFieldProxy>&& headerFieldProxy, Function<void(bool, bool)> completionHandler)
+void SocketStreamHandle::sendHandshake(CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&& headerFieldProxy, Function<void(bool, bool)> completionHandler)
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false, false);

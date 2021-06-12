@@ -34,7 +34,6 @@
 #include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
@@ -369,17 +368,17 @@ bool CookieJarDB::hasCookies(const URL& url)
     return statement.step() == SQLITE_ROW;
 }
 
-Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session)
+std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session)
 {
     if (!isEnabled() || !m_database.isOpen())
-        return WTF::nullopt;
+        return std::nullopt;
 
     String requestHost = requestUrl.host().convertToASCIILowercase();
     if (requestHost.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!checkCookieAcceptPolicy(firstParty, requestUrl))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String requestPath = requestUrl.path().toString();
     if (requestPath.isEmpty())
@@ -395,7 +394,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         "AND ((domain = ?) OR (domain GLOB ?)) "\
         "ORDER BY length(path) DESC, lastupdated"_s);
     if (!pstmt)
-        return WTF::nullopt;
+        return std::nullopt;
 
     pstmt->bindInt64(1, WallTime::now().secondsSinceEpoch().milliseconds());
     pstmt->bindInt(2, httpOnly ? *httpOnly : -1);
@@ -511,7 +510,7 @@ bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, c
 
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
-    auto expires = cookie.expires.valueOr(0.0);
+    auto expires = cookie.expires.value_or(0.0);
     if (!cookie.session && MonotonicTime::fromRawSeconds(expires / WTF::msPerSecond) <= MonotonicTime::now())
         return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
 
@@ -530,7 +529,7 @@ bool CookieJarDB::setCookie(const Cookie& cookie)
     return checkSQLiteReturnCode(statement.step());
 }
 
-bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String& body, CookieJarDB::Source source, Optional<Seconds> cappedLifetime)
+bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String& body, CookieJarDB::Source source, std::optional<Seconds> cappedLifetime)
 {
     if (!isEnabled() || !m_database.isOpen())
         return false;

@@ -29,7 +29,6 @@
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -68,7 +67,7 @@ private:
     WeakPtr<Document> m_document;
     MonotonicTime m_timeAtLastRangeSearch;
     Vector<AppHighlightRangeData> m_unrestoredHighlights;
-    Optional<AppHighlightRangeData> m_unrestoredScrollHighlight;
+    std::optional<AppHighlightRangeData> m_unrestoredScrollHighlight;
 };
 
 #endif

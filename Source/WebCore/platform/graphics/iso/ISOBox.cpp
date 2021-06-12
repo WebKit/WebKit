@@ -36,14 +36,14 @@ ISOBox::PeekResult ISOBox::peekBox(DataView& view, unsigned offset)
 {
     uint64_t size = 0;
     if (!checkedRead<uint32_t>(size, view, offset, BigEndian))
-        return WTF::nullopt;
+        return std::nullopt;
 
     FourCC type = { uint32_t { 0 } };
     if (!checkedRead<uint32_t>(type, view, offset, BigEndian))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (size == 1 && !checkedRead<uint64_t>(size, view, offset, BigEndian))
-        return WTF::nullopt;
+        return std::nullopt;
     else if (!size)
         size = view.byteLength();
 

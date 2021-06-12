@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Encoder.h"
+#include "Logging.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "SharedMemory.h"
 #include <WebCore/DisplayList.h>
@@ -36,8 +37,7 @@
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
 
@@ -55,7 +55,7 @@ class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendT
     using BaseDisplayListImageBuffer::resolutionScale;
 
 public:
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, WebCore::DestinationColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         auto parameters = WebCore::ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat };
         if (BackendType::calculateSafeBackendSize(parameters).isEmpty())
@@ -136,10 +136,15 @@ protected:
         // Wait for our DisplayList to be flushed but do not hang.
         static constexpr unsigned maximumNumberOfTimeouts = 3;
         unsigned numberOfTimeouts = 0;
+#if !LOG_DISABLED
+        auto startTime = MonotonicTime::now();
+#endif
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "Waiting for Flush{" << m_sentFlushIdentifier << "} in Image(" << m_renderingResourceIdentifier << ")");
         while (numberOfTimeouts < maximumNumberOfTimeouts && hasPendingFlush()) {
             if (!m_remoteRenderingBackendProxy->waitForDidFlush())
                 ++numberOfTimeouts;
         }
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "Done waiting: " << MonotonicTime::now() - startTime << "; " << numberOfTimeouts << " timeout(s)");
     }
 
     WebCore::ImageBufferBackend* ensureBackendCreated() const override
@@ -156,7 +161,7 @@ protected:
         return m_backend.get();
     }
 
-    String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution) const override
+    String toDataURL(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution preserveResolution) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
@@ -165,7 +170,7 @@ protected:
         return m_remoteRenderingBackendProxy->getDataURLForImageBuffer(mimeType, quality, preserveResolution, m_renderingResourceIdentifier);
     }
 
-    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const override
+    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
@@ -196,20 +201,20 @@ protected:
         return bitmap->createImage();
     }
 
-    Optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const override
+    std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto pixelBuffer = WebCore::PixelBuffer::tryCreate(destinationFormat, srcRect.size());
         if (!pixelBuffer)
-            return WTF::nullopt;
+            return std::nullopt;
         size_t dataSize = pixelBuffer->data().byteLength();
 
         IPC::Timeout timeout = 5_s;
         SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetPixelBuffer(dataSize, timeout);
         if (!sharedMemory)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
         mutableThis.m_drawingContext.recorder().getPixelBuffer(destinationFormat, srcRect);
@@ -341,8 +346,8 @@ protected:
     }
 
     WebCore::DisplayList::FlushIdentifier m_sentFlushIdentifier;
-    CheckedLock m_receivedFlushIdentifierLock;
-    CheckedCondition m_receivedFlushIdentifierChangedCondition;
+    Lock m_receivedFlushIdentifierLock;
+    Condition m_receivedFlushIdentifierChangedCondition;
     WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 };

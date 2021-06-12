@@ -63,9 +63,9 @@ GeolocationProviderMock::~GeolocationProviderMock()
     WKGeolocationManagerSetProvider(m_geolocationManager, 0);
 }
 
-void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy, Optional<double> altitude, Optional<double> altitudeAccuracy, Optional<double> heading, Optional<double> speed, Optional<double> floorLevel)
+void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy, std::optional<double> altitude, std::optional<double> altitudeAccuracy, std::optional<double> heading, std::optional<double> speed, std::optional<double> floorLevel)
 {
-    m_position.adopt(WKGeolocationPositionCreate_c(WallTime::now().secondsSinceEpoch().seconds(), latitude, longitude, accuracy, altitude.hasValue(), altitude.valueOr(0), altitudeAccuracy.hasValue(), altitudeAccuracy.valueOr(0), heading.hasValue(), heading.valueOr(0), speed.hasValue(), speed.valueOr(0), floorLevel.hasValue(), floorLevel.valueOr(0)));
+    m_position.adopt(WKGeolocationPositionCreate_c(WallTime::now().secondsSinceEpoch().seconds(), latitude, longitude, accuracy, altitude.has_value(), altitude.value_or(0), altitudeAccuracy.has_value(), altitudeAccuracy.value_or(0), heading.has_value(), heading.value_or(0), speed.has_value(), speed.value_or(0), floorLevel.has_value(), floorLevel.value_or(0)));
 
     m_hasError = false;
     m_errorMessage.clear();

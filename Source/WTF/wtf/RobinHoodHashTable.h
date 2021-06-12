@@ -52,7 +52,6 @@
 #pragma once
 
 #include <wtf/HashTable.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 

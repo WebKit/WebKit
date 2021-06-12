@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "RootInlineBox.h"
+#include "LegacyRootInlineBox.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -88,9 +88,9 @@ public:
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
     // FIXME: Callers of these methods are dangerous and should be allowed explicitly or removed.
-    RootInlineBox* originatingLine() const { return m_originatingLine.get(); }
+    LegacyRootInlineBox* originatingLine() const { return m_originatingLine.get(); }
     void clearOriginatingLine() { m_originatingLine = nullptr; }
-    void setOriginatingLine(RootInlineBox& line) { m_originatingLine = makeWeakPtr(line); }
+    void setOriginatingLine(LegacyRootInlineBox& line) { m_originatingLine = makeWeakPtr(line); }
 
     LayoutSize locationOffsetOfBorderBox() const
     {
@@ -102,7 +102,7 @@ public:
 
 private:
     WeakPtr<RenderBox> m_renderer;
-    WeakPtr<RootInlineBox> m_originatingLine;
+    WeakPtr<LegacyRootInlineBox> m_originatingLine;
     LayoutRect m_frameRect;
     LayoutUnit m_paginationStrut;
     LayoutSize m_marginOffset;

@@ -35,7 +35,6 @@
 #import "WAKAppKitStubs.h"
 #import "WebEvent.h"
 #import "WindowsKeyboardCodes.h"
-#import <wtf/Optional.h>
 #import <wtf/WallTime.h>
 
 namespace WebCore {

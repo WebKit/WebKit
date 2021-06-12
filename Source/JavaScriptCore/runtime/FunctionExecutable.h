@@ -56,7 +56,7 @@ public:
     }
     static FunctionExecutable* fromGlobalCode(
         const Identifier& name, JSGlobalObject*, const SourceCode&, 
-        JSObject*& exception, int overrideLineNumber, Optional<int> functionConstructorParametersEndPosition);
+        JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition);
 
     static void destroy(JSCell*);
         
@@ -176,17 +176,17 @@ public:
     {
         if (overrideLineNumber == -1) {
             if (UNLIKELY(m_rareData))
-                m_rareData->m_overrideLineNumber = WTF::nullopt;
+                m_rareData->m_overrideLineNumber = std::nullopt;
             return;
         }
         ensureRareData().m_overrideLineNumber = overrideLineNumber;
     }
 
-    Optional<int> overrideLineNumber() const
+    std::optional<int> overrideLineNumber() const
     {
         if (UNLIKELY(m_rareData))
             return m_rareData->m_overrideLineNumber;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     int lineCount() const
@@ -285,6 +285,17 @@ public:
 
     void finalizeUnconditionally(VM&);
 
+    JSString* toString(JSGlobalObject*);
+    JSString* asStringConcurrently() const
+    {
+        if (!m_rareData)
+            return nullptr;
+        return m_rareData->m_asString.get();
+    }
+
+    static inline ptrdiff_t offsetOfRareData() { return OBJECT_OFFSETOF(FunctionExecutable, m_rareData); }
+    static inline ptrdiff_t offsetOfAsStringInRareData() { return OBJECT_OFFSETOF(RareData, m_asString); }
+
 private:
     friend class ExecutableBase;
     FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, Intrinsic, bool isInsideOrdinaryFunction);
@@ -304,6 +315,7 @@ private:
         unsigned m_typeProfilingEndOffset { UINT_MAX };
         std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
         WriteBarrier<Structure> m_cachedPolyProtoStructure;
+        WriteBarrier<JSString> m_asString;
     };
 
     RareData& ensureRareData()
@@ -313,6 +325,8 @@ private:
         return ensureRareDataSlow();
     }
     RareData& ensureRareDataSlow();
+
+    JSString* toStringSlow(JSGlobalObject*);
 
     // FIXME: We can merge rareData pointer and top-level executable pointer. First time, setting parent.
     // If RareData is required, materialize RareData, swap it, and store top-level executable pointer inside RareData.

@@ -62,7 +62,7 @@ class ActiveMapTest
       vpx_active_map_t map = vpx_active_map_t();
       map.cols = (kWidth + 15) / 16;
       map.rows = (kHeight + 15) / 16;
-      map.active_map = NULL;
+      map.active_map = nullptr;
       encoder->Control(VP8E_SET_ACTIVEMAP, &map);
     }
   }
@@ -85,7 +85,7 @@ TEST_P(ActiveMapTest, Test) {
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 }
 
-VP9_INSTANTIATE_TEST_CASE(ActiveMapTest,
-                          ::testing::Values(::libvpx_test::kRealTime),
-                          ::testing::Range(0, 9));
+VP9_INSTANTIATE_TEST_SUITE(ActiveMapTest,
+                           ::testing::Values(::libvpx_test::kRealTime),
+                           ::testing::Range(0, 9));
 }  // namespace

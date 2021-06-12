@@ -58,6 +58,7 @@ private:
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
     void setEnabled(bool) final;
+    MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     AudioTrackKind m_kind { None };

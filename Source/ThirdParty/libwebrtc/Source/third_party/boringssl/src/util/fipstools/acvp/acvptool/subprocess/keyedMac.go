@@ -15,14 +15,13 @@
 package subprocess
 
 import (
-	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 )
 
 // The following structures reflect the JSON of CMAC-AES tests. See
-// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_mac.html#rfc.section.4.2
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-mac.html#name-test-vectors
 
 type keyedMACTestVectorSet struct {
 	Groups []keyedMACTestGroup `json:"testGroups"`
@@ -122,24 +121,37 @@ func (k *keyedMACPrimitive) Process(vectorSet []byte, m Transactable) (interface
 				return nil, fmt.Errorf("failed to decode MsgHex in test case %d/%d: %v", group.ID, test.ID, err)
 			}
 
-			result, err := m.Transact(k.algo, 1, outputBytes, key, msg)
-			if err != nil {
-				return nil, fmt.Errorf("wrapper %s operation failed: %s", k.algo, err)
-			}
-
-			calculatedMAC := result[0]
-			if len(calculatedMAC) != int(group.MACBits/8) {
-				return nil, fmt.Errorf("%s operation returned incorrect length value", k.algo)
-			}
-
 			if generate {
+				result, err := m.Transact(k.algo, 1, outputBytes, key, msg)
+				if err != nil {
+					return nil, fmt.Errorf("wrapper %s operation failed: %s", k.algo, err)
+				}
+
+				calculatedMAC := result[0]
+				if len(calculatedMAC) != int(group.MACBits/8) {
+					return nil, fmt.Errorf("%s operation returned incorrect length value", k.algo)
+				}
+
 				respTest.MACHex = hex.EncodeToString(calculatedMAC)
 			} else {
 				expectedMAC, err := hex.DecodeString(test.MACHex)
 				if err != nil {
 					return nil, fmt.Errorf("failed to decode MACHex in test case %d/%d: %v", group.ID, test.ID, err)
 				}
-				ok := bytes.Equal(calculatedMAC, expectedMAC)
+				if 8*len(expectedMAC) != int(group.MACBits) {
+					return nil, fmt.Errorf("MACHex in test case %d/%d is %x, but should be %d bits", group.ID, test.ID, expectedMAC, group.MACBits)
+				}
+
+				result, err := m.Transact(k.algo+"/verify", 1, key, msg, expectedMAC)
+				if err != nil {
+					return nil, fmt.Errorf("wrapper %s operation failed: %s", k.algo, err)
+				}
+
+				if len(result[0]) != 1 || (result[0][0]&0xfe) != 0 {
+					return nil, fmt.Errorf("wrapper %s returned invalid success flag: %x", k.algo, result[0])
+				}
+
+				ok := result[0][0] == 1
 				respTest.Passed = &ok
 			}
 

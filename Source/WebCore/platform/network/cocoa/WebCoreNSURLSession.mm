@@ -32,8 +32,8 @@
 #import "SubresourceLoader.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/CheckedLock.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/Lock.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -50,13 +50,14 @@ using namespace WebCore;
 
 NS_ASSUME_NONNULL_BEGIN
 
-static NSDate * __nullable networkLoadMetricsDate(Seconds fetchStart, Seconds delta)
+static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 {
-    if (!fetchStart.value())
+    if (!time)
         return nil;
-    if (delta.value() == -1)
+    NSTimeInterval value = time.approximateWallTime().secondsSinceEpoch().seconds();
+    if (value <= 0)
         return nil;
-    return [NSDate dateWithTimeIntervalSince1970:fetchStart.value() + delta.value()];
+    return [NSDate dateWithTimeIntervalSince1970:value];
 }
 
 @interface WebCoreNSURLSessionTaskTransactionMetrics : NSObject
@@ -94,55 +95,57 @@ WEBCORE_SESSION_ADDITIONS_1;
 @dynamic fetchStartDate;
 - (nullable NSDate *)fetchStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, Seconds(0));
+    return networkLoadMetricsDate(_metrics.fetchStart);
 }
 
 @dynamic domainLookupStartDate;
 - (nullable NSDate *)domainLookupStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.domainLookupStart);
+    return networkLoadMetricsDate(_metrics.domainLookupStart);
 }
 
 @dynamic domainLookupEndDate;
 - (nullable NSDate *)domainLookupEndDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.domainLookupEnd);
+    return networkLoadMetricsDate(_metrics.domainLookupEnd);
 }
 
 @dynamic connectStartDate;
 - (nullable NSDate *)connectStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.connectStart);
+    return networkLoadMetricsDate(_metrics.connectStart);
 }
 
 @dynamic secureConnectionStartDate;
 - (nullable NSDate *)secureConnectionStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.secureConnectionStart);
+    if (_metrics.secureConnectionStart == reusedTLSConnectionSentinel)
+        return nil;
+    return networkLoadMetricsDate(_metrics.secureConnectionStart);
 }
 
 @dynamic connectEndDate;
 - (nullable NSDate *)connectEndDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.connectEnd);
+    return networkLoadMetricsDate(_metrics.connectEnd);
 }
 
 @dynamic requestStartDate;
 - (nullable NSDate *)requestStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.requestStart);
+    return networkLoadMetricsDate(_metrics.requestStart);
 }
 
 @dynamic responseStartDate;
 - (nullable NSDate *)responseStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.responseStart);
+    return networkLoadMetricsDate(_metrics.responseStart);
 }
 
 @dynamic responseEndDate;
 - (nullable NSDate *)responseEndDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.responseEnd);
+    return networkLoadMetricsDate(_metrics.responseEnd);
 }
 
 @dynamic networkProtocolName;
@@ -567,13 +570,13 @@ public:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
-    void dataReceived(PlatformMediaResource&, const char* /* data */, int /* length */) override;
+    void dataReceived(PlatformMediaResource&, const uint8_t* /* data */, int /* length */) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
 
 private:
-    CheckedLock m_taskLock;
+    Lock m_taskLock;
     WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task WTF_GUARDED_BY_LOCK(m_taskLock);
 };
 
@@ -611,7 +614,7 @@ bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResourc
     return [m_task resource:&resource shouldCacheResponse:response];
 }
 
-void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const char* data, int length)
+void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const uint8_t* data, int length)
 {
     Locker locker { m_taskLock };
     if (!m_task)
@@ -870,7 +873,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
 }
 
-- (void)resource:(PlatformMediaResource*)resource receivedData:(const char*)data length:(int)length
+- (void)resource:(PlatformMediaResource*)resource receivedData:(const uint8_t*)data length:(int)length
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);

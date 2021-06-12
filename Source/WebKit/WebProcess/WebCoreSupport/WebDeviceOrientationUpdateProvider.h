@@ -51,7 +51,7 @@ private:
     void startUpdatingDeviceMotion(WebCore::MotionManagerClient&) final;
     void stopUpdatingDeviceMotion(WebCore::MotionManagerClient&) final;
     void deviceOrientationChanged(double, double, double, double, double) final;
-    void deviceMotionChanged(double, double, double, double, double, double, Optional<double>, Optional<double>, Optional<double>) final;
+    void deviceMotionChanged(double, double, double, double, double, double, std::optional<double>, std::optional<double>, std::optional<double>) final;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

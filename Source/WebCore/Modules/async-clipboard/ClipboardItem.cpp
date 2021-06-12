@@ -93,7 +93,7 @@ void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
     m_dataSource->getType(type, WTFMove(promise));
 }
 
-void ClipboardItem::collectDataForWriting(Clipboard& destination, CompletionHandler<void(Optional<PasteboardCustomData>)>&& completion)
+void ClipboardItem::collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)
 {
     m_dataSource->collectDataForWriting(destination, WTFMove(completion));
 }

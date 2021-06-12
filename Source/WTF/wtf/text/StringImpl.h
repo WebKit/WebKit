@@ -1161,7 +1161,7 @@ inline StringImpl::StringImpl(CreateSymbolTag)
 
 template<typename T> inline size_t StringImpl::allocationSize(Checked<size_t> tailElementCount)
 {
-    return (tailOffset<T>() + tailElementCount * sizeof(T)).unsafeGet();
+    return tailOffset<T>() + tailElementCount * sizeof(T);
 }
 
 template<typename CharacterType>

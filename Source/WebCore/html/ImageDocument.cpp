@@ -92,7 +92,7 @@ private:
 
     ImageDocument& document() const;
 
-    void appendBytes(DocumentWriter&, const char*, size_t) override;
+    void appendBytes(DocumentWriter&, const uint8_t*, size_t) override;
     void finish() override;
 };
 
@@ -187,7 +187,7 @@ inline ImageDocument& ImageDocumentParser::document() const
     return downcast<ImageDocument>(*RawDataDocumentParser::document());
 }
 
-void ImageDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
+void ImageDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
 {
     document().updateDuringParsing();
 }

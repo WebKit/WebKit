@@ -39,9 +39,8 @@
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCALayer.h"
 #import <QuartzCore/QuartzCore.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/Seconds.h>
-#import <wtf/SoftLinking.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebCore {
 
@@ -55,6 +54,11 @@ Ref<DataDetectorHighlight> DataDetectorHighlight::createForSelection(Page& page,
 Ref<DataDetectorHighlight> DataDetectorHighlight::createForTelephoneNumber(Page& page, DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
 {
     return adoptRef(*new DataDetectorHighlight(page, client, DataDetectorHighlight::Type::TelephoneNumber, WTFMove(ddHighlight), WTFMove(range)));
+}
+
+Ref<DataDetectorHighlight> DataDetectorHighlight::createForImageOverlay(Page& page, DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
+{
+    return adoptRef(*new DataDetectorHighlight(page, client, DataDetectorHighlight::Type::ImageOverlay, WTFMove(ddHighlight), WTFMove(range)));
 }
 
 DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightClient& client, Type type, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
@@ -77,7 +81,7 @@ DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightCl
 
 void DataDetectorHighlight::setHighlight(DDHighlightRef highlight)
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
     if (!m_client)
@@ -88,7 +92,7 @@ void DataDetectorHighlight::setHighlight(DDHighlightRef highlight)
     if (!m_highlight)
         return;
 
-    CGRect highlightBoundingRect = DDHighlightGetBoundingRect(m_highlight.get());
+    CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(m_highlight.get());
     m_graphicsLayer->setPosition(FloatPoint(highlightBoundingRect.origin));
     m_graphicsLayer->setSize(FloatSize(highlightBoundingRect.size));
 
@@ -112,7 +116,7 @@ void DataDetectorHighlight::notifyFlushRequired(const GraphicsLayer*)
 
 void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, const FloatRect&, GraphicsLayerPaintBehavior)
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
     // FIXME: This needs to be moved into GraphicsContext as a DisplayList-compatible drawing command.
@@ -124,9 +128,9 @@ void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext&
     CGContextRef cgContext = graphicsContext.platformContext();
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CGLayerRef highlightLayer = DDHighlightGetLayerWithContext(highlight(), cgContext);
+    CGLayerRef highlightLayer = PAL::softLink_DataDetectors_DDHighlightGetLayerWithContext(highlight(), cgContext);
     ALLOW_DEPRECATED_DECLARATIONS_END
-    CGRect highlightBoundingRect = DDHighlightGetBoundingRect(highlight());
+    CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(highlight());
     highlightBoundingRect.origin = CGPointZero;
 
     CGContextDrawLayerInRect(cgContext, highlightBoundingRect, highlightLayer);

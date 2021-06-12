@@ -65,7 +65,7 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
         callback(inst.args[argIndex], role, bankForType(argType), widthForType(argType));
     }
 
-    forEachArgImpl(0, argIndex, inst, SameAsRep, WTF::nullopt, callback, WTF::nullopt);
+    forEachArgImpl(0, argIndex, inst, SameAsRep, std::nullopt, callback, std::nullopt);
     argIndex += inst.origin->numChildren();
 
     for (unsigned i = patchpoint->numGPScratchRegisters; i--;)

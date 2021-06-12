@@ -32,7 +32,6 @@
 
 #include "RenderBlockFlow.h"
 #include "ScrollableArea.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -180,8 +179,8 @@ private:
     int m_optionsWidth;
     int m_indexOffset;
 
-    Optional<int> m_indexOfFirstVisibleItemInsidePaddingTopArea;
-    Optional<int> m_indexOfFirstVisibleItemInsidePaddingBottomArea;
+    std::optional<int> m_indexOfFirstVisibleItemInsidePaddingTopArea;
+    std::optional<int> m_indexOfFirstVisibleItemInsidePaddingBottomArea;
 
     RefPtr<Scrollbar> m_vBar;
 };

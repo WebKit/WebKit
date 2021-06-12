@@ -122,7 +122,7 @@ bool MemoryCache::add(CachedResource& resource)
     resource.setInCache(true);
     
     resourceAccessed(resource);
-    
+
     LOG(ResourceLoading, "MemoryCache::add Added '%.255s', resource %p\n", resource.url().string().latin1().data(), &resource);
     return true;
 }
@@ -416,7 +416,8 @@ void MemoryCache::remove(CachedResource& resource)
         }
     }
 
-    resource.deleteIfPossible();
+    if (resource.canDelete())
+        resource.deleteThis();
 }
 
 auto MemoryCache::lruListFor(CachedResource& resource) -> LRUList&

@@ -29,7 +29,6 @@
 
 #include "WebGPUBindGroupBinding.h"
 #include "WebGPUBindGroupLayout.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -38,7 +37,7 @@ namespace WebCore {
 struct GPUBindGroupDescriptor;
 
 struct WebGPUBindGroupDescriptor {
-    Optional<GPUBindGroupDescriptor> tryCreateGPUBindGroupDescriptor() const;
+    std::optional<GPUBindGroupDescriptor> tryCreateGPUBindGroupDescriptor() const;
 
     RefPtr<const WebGPUBindGroupLayout> layout;
     Vector<WebGPUBindGroupBinding> bindings;

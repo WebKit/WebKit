@@ -38,7 +38,7 @@ enum ProtocolErrorCode {
     ServerError = -32000
 };
 
-CommandResult::CommandResult(RefPtr<JSON::Value>&& result, Optional<ErrorCode> errorCode)
+CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCode> errorCode)
     : m_errorCode(errorCode)
 {
     if (!m_errorCode) {
@@ -119,7 +119,7 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, Optional<ErrorCode> e
     }
 }
 
-CommandResult::CommandResult(ErrorCode errorCode, Optional<String> errorMessage)
+CommandResult::CommandResult(ErrorCode errorCode, std::optional<String> errorMessage)
     : m_errorCode(errorCode)
     , m_errorMessage(errorMessage)
 {

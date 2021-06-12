@@ -1528,8 +1528,6 @@
                 1022
                 1025
                 1026
-            ))
-            (allow mach-message-send (message-number
                 1028
                 1029
                 1030

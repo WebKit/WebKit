@@ -140,7 +140,7 @@ bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 #endif
 }
 
-Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
+std::optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
 {
 #if ENABLE(TOUCH_EVENTS)
     if (screenIsTouchPrimaryInputDevice())

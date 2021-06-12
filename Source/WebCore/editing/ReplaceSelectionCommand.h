@@ -54,7 +54,7 @@ public:
     VisibleSelection visibleSelectionForInsertedText() const { return m_visibleSelectionForInsertedText; }
     String documentFragmentPlainText() const { return m_documentFragmentPlainText; }
 
-    Optional<SimpleRange> insertedContentRange() const;
+    std::optional<SimpleRange> insertedContentRange() const;
 
 private:
     ReplaceSelectionCommand(Document&, RefPtr<DocumentFragment>&&, OptionSet<CommandOption>, EditAction);

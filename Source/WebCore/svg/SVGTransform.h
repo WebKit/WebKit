@@ -77,17 +77,17 @@ public:
             return Exception { NoModificationAllowedError };
 
         AffineTransform transform;
-        if (matrixInit.a.hasValue())
+        if (matrixInit.a)
             transform.setA(matrixInit.a.value());
-        if (matrixInit.b.hasValue())
+        if (matrixInit.b)
             transform.setB(matrixInit.b.value());
-        if (matrixInit.c.hasValue())
+        if (matrixInit.c)
             transform.setC(matrixInit.c.value());
-        if (matrixInit.d.hasValue())
+        if (matrixInit.d)
             transform.setD(matrixInit.d.value());
-        if (matrixInit.e.hasValue())
+        if (matrixInit.e)
             transform.setE(matrixInit.e.value());
-        if (matrixInit.f.hasValue())
+        if (matrixInit.f)
             transform.setF(matrixInit.f.value());
         m_value.setMatrix(transform);
         commitChange();

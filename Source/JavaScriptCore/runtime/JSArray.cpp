@@ -200,7 +200,7 @@ bool JSArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, 
 
     // 4. Else if P is an array index (15.4), then
     // a. Let index be ToUint32(P).
-    if (Optional<uint32_t> optionalIndex = parseIndex(propertyName)) {
+    if (std::optional<uint32_t> optionalIndex = parseIndex(propertyName)) {
         // b. Reject if index >= oldLen and oldLenDesc.[[Writable]] is false.
         uint32_t index = optionalIndex.value();
         // FIXME: Nothing prevents this from being called on a RuntimeArray, and the length function will always return 0 in that case.
@@ -504,14 +504,14 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
         return false;
 
     unsigned otherLength = otherArray->length();
-    Checked<unsigned, RecordOverflow> checkedNewLength = startIndex;
+    CheckedUint32 checkedNewLength = startIndex;
     checkedNewLength += otherLength;
 
-    unsigned newLength;
-    if (checkedNewLength.safeGet(newLength) == CheckedState::DidOverflow) {
+    if (checkedNewLength.hasOverflowed()) {
         throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
         return false;
     }
+    unsigned newLength = checkedNewLength;
 
     if (newLength >= MIN_SPARSE_ARRAY_INDEX)
         return false;
@@ -1041,13 +1041,13 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
             RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
 
-        Checked<unsigned, RecordOverflow> checkedLength(oldLength);
+        CheckedUint32 checkedLength(oldLength);
         checkedLength += count;
-        unsigned newLength;
-        if (CheckedState::DidOverflow == checkedLength.safeGet(newLength)) {
+        if (checkedLength.hasOverflowed()) {
             throwOutOfMemoryError(globalObject, scope);
             return true;
         }
+        unsigned newLength = checkedLength;
         if (newLength > MAX_STORAGE_VECTOR_LENGTH)
             return false;
         if (!ensureLength(vm, newLength)) {
@@ -1090,13 +1090,13 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
             RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
 
-        Checked<unsigned, RecordOverflow> checkedLength(oldLength);
+        CheckedUint32 checkedLength(oldLength);
         checkedLength += count;
-        unsigned newLength;
-        if (CheckedState::DidOverflow == checkedLength.safeGet(newLength)) {
+        if (checkedLength.hasOverflowed()) {
             throwOutOfMemoryError(globalObject, scope);
             return true;
         }
+        unsigned newLength = checkedLength;
         if (newLength > MAX_STORAGE_VECTOR_LENGTH)
             return false;
         if (!ensureLength(vm, newLength)) {

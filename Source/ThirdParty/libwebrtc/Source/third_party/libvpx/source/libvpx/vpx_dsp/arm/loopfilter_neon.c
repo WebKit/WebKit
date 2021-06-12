@@ -975,6 +975,17 @@ FUN_LPF_16_KERNEL(_, 8)        // lpf_16_kernel
 FUN_LPF_16_KERNEL(_dual_, 16)  // lpf_16_dual_kernel
 #undef FUN_LPF_16_KERNEL
 
+// Quiet warnings of the form: 'vpx_dsp/arm/loopfilter_neon.c|981 col 42|
+// warning: 'oq1' may be used uninitialized in this function
+// [-Wmaybe-uninitialized]', for oq1-op1. Without reworking the code or adding
+// an additional branch this warning cannot be silenced otherwise. The
+// loopfilter is only called when needed for a block so these output pixels
+// will be set.
+#if defined(__GNUC__) && __GNUC__ >= 4 && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 void vpx_lpf_horizontal_16_neon(uint8_t *s, int p, const uint8_t *blimit,
                                 const uint8_t *limit, const uint8_t *thresh) {
   uint8x8_t p7, p6, p5, p4, p3, p2, p1, p0, q0, q1, q2, q3, q4, q5, q6, q7, op6,
@@ -1090,3 +1101,7 @@ void vpx_lpf_vertical_16_dual_neon(uint8_t *s, int p, const uint8_t *blimit,
               vget_high_u8(oq0), vget_high_u8(oq1));
   }
 }
+
+#if defined(__GNUC__) && __GNUC__ >= 4 && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif

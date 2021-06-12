@@ -363,7 +363,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(_eventHandler);
     {
         JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
-        UserGestureIndicator gestureIndicator(_eventHandler->currentEventIsUserGesture() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
+        UserGestureIndicator gestureIndicator(_eventHandler->currentEventIsUserGesture() ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
         acceptedEvent = [_pluginPackage.get() pluginFuncs]->event(plugin, event);
     }
     [self didCallPlugInFunction];
@@ -1051,7 +1051,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 
     if (_manualStream->plugin())
-        _manualStream->didReceiveData(0, static_cast<const char *>([data bytes]), [data length]);
+        _manualStream->didReceiveData(0, static_cast<const uint8_t*>([data bytes]), [data length]);
 }
 
 - (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error
@@ -1127,7 +1127,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                                                                      textEncodingName:nil]);
         
         stream->startStreamWithResponse(response.get());
-        stream->didReceiveData(0, static_cast<const char*>([JSData bytes]), [JSData length]);
+        stream->didReceiveData(0, static_cast<const uint8_t*>([JSData bytes]), [JSData length]);
         stream->didFinishLoading(0);
     }
 }

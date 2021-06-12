@@ -263,6 +263,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
     std::unique_ptr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
+    IntSize viewSize { };
     bool shouldForwardNextKeyEvent { false };
     bool shouldForwardNextWheelEvent { false };
 #if !USE(GTK4)
@@ -282,7 +283,7 @@ struct _WebKitWebViewBasePrivate {
     KeyBindingTranslator keyBindingTranslator;
     TouchEventsMap touchEvents;
     IntSize contentsSize;
-    Optional<MotionEvent> lastMotionEvent;
+    std::optional<MotionEvent> lastMotionEvent;
     bool isBlank;
     bool shouldNotifyFocusEvents { true };
 
@@ -891,8 +892,10 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
     }
 #endif
 
+    priv->viewSize = viewRect.size();
+
     if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
-        drawingArea->setSize(viewRect.size());
+        drawingArea->setSize(priv->viewSize);
 }
 
 #if USE(GTK4)
@@ -1123,7 +1126,7 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
     ASSERT(!priv->dialog);
 
     int clickCount = 0;
-    Optional<FloatSize> movementDelta;
+    std::optional<FloatSize> movementDelta;
     GdkEventType eventType = gdk_event_get_event_type(event);
     switch (eventType) {
     case GDK_BUTTON_PRESS:
@@ -1223,7 +1226,7 @@ static void webkitWebViewBaseButtonPressed(WebKitWebViewBase* webViewBase, int c
     if (button == GDK_BUTTON_SECONDARY)
         priv->contextMenuEvent.reset(gdk_event_copy(event));
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, clickCount, WTF::nullopt));
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, clickCount, std::nullopt));
 }
 
 static void webkitWebViewBaseButtonReleased(WebKitWebViewBase* webViewBase, int clickCount, double x, double y, GtkGesture* gesture)
@@ -1239,7 +1242,7 @@ static void webkitWebViewBaseButtonReleased(WebKitWebViewBase* webViewBase, int 
     auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
     gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_CLAIMED);
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(gtk_gesture_get_last_event(gesture, sequence), { clampToInteger(x), clampToInteger(y) }, clickCount, WTF::nullopt));
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(gtk_gesture_get_last_event(gesture, sequence), { clampToInteger(x), clampToInteger(y) }, clickCount, std::nullopt));
 }
 #endif
 
@@ -1259,7 +1262,7 @@ static bool shouldInvertDirectionForScrollEvent(WebHitTestResultData::IsScrollba
 }
 
 #if !USE(GTK4)
-static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Optional<WebWheelEvent::Phase> phase = WTF::nullopt, Optional<WebWheelEvent::Phase> momentum = WTF::nullopt)
+static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, std::optional<WebWheelEvent::Phase> phase = std::nullopt, std::optional<WebWheelEvent::Phase> momentum = std::nullopt)
 {
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
     if (controller && controller->isSwipeGestureEnabled()) {
@@ -1275,7 +1278,7 @@ static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, Gd
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     ASSERT(!priv->dialog);
     if (phase)
-        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, phase.value(), momentum.valueOr(WebWheelEvent::Phase::PhaseNone)));
+        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, phase.value(), momentum.value_or(WebWheelEvent::Phase::PhaseNone)));
     else
         priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event));
 }
@@ -1471,7 +1474,7 @@ static gboolean webkitWebViewBaseMotion(WebKitWebViewBase* webViewBase, double x
     }
 
     auto* event = gtk_event_controller_get_current_event(controller);
-    Optional<FloatSize> movementDelta;
+    std::optional<FloatSize> movementDelta;
     MotionEvent motionEvent(FloatPoint(x, y), FloatPoint(x, y), gdk_event_get_modifier_state(event));
     if (priv->lastMotionEvent)
         movementDelta = motionEvent.position - priv->lastMotionEvent->position;
@@ -2362,6 +2365,51 @@ void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
     webkitWebViewBaseScheduleUpdateActivityState(webViewBase, flagsToUpdate);
 }
 
+IntSize webkitWebViewBaseGetViewSize(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    int width = priv->viewSize.width();
+    int height = priv->viewSize.height();
+
+    // First try the widget's own size. If it's already allocated,
+    // everything is fine and we'll just use that.
+    if (width > 0 || height > 0)
+        return IntSize(width, height);
+
+    GtkWidget* parent = gtk_widget_get_parent(GTK_WIDGET(webViewBase));
+
+    // If it's not allocated, then its size will be 0. This can be a problem
+    // if the web view is loaded in background and the container doesn't
+    // allocate non-visible children: e.g. GtkNotebook in GTK3 does allocate
+    // them, but GtkStack, and so GtkNotebook in GTK4 and HdyTabView don't.
+    // See https://gitlab.gnome.org/GNOME/epiphany/-/issues/1532
+    // In that case we go up through the hierarchy and try to find a parent
+    // with non-0 size.
+    while (parent) {
+#if USE(GTK4)
+        width = gtk_widget_get_width(parent);
+        height = gtk_widget_get_height(parent);
+
+        if (width > 0 || height > 0)
+#else
+        width = gtk_widget_get_allocated_width(parent);
+        height = gtk_widget_get_allocated_height(parent);
+
+        // The default widget size in GTK3 is 1x1, not 0x0.
+        if (width > 1 || height > 1)
+#endif
+            return IntSize(width, height);
+
+        parent = gtk_widget_get_parent(parent);
+    }
+
+    // If there was no such a parent, it's likely the widget widget isn't
+    // in a window, or the whole window isn't mapped. No point in trying
+    // in this case.
+
+    return IntSize();
+}
+
 bool webkitWebViewBaseIsInWindowActive(WebKitWebViewBase* webViewBase)
 {
     return webViewBase->priv->activityState.contains(ActivityState::WindowIsActive);
@@ -2382,7 +2430,7 @@ bool webkitWebViewBaseIsInWindow(WebKitWebViewBase* webViewBase)
     return webViewBase->priv->activityState.contains(ActivityState::IsInWindow);
 }
 
-void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, Optional<InputMethodState>&& state)
+void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, std::optional<InputMethodState>&& state)
 {
     webkitWebViewBase->priv->inputMethodFilter.setState(WTFMove(state));
 }
@@ -2472,7 +2520,7 @@ void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
         webkitWebViewBase->priv->acceleratedBackingStore->update({ });
 }
 
-RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase* webkitWebViewBase, Optional<IntRect>&& clipRect)
+RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase* webkitWebViewBase, std::optional<IntRect>&& clipRect)
 {
     WebPageProxy* page = webkitWebViewBase->priv->pageProxy.get();
 
@@ -2631,7 +2679,7 @@ WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBa
     return webViewBase->priv->inputMethodFilter.context();
 }
 
-void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, const String& text, Optional<Vector<CompositionUnderline>>&& underlines, Optional<EditingRange>&& selectionRange)
+void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
     webViewBase->priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(text, WTFMove(underlines), WTFMove(selectionRange)));
 }
@@ -2698,7 +2746,7 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
     if (buttons & GDK_BUTTON3_MASK)
         webEventButtons |= 2;
 
-    Optional<FloatSize> movementDelta;
+    std::optional<FloatSize> movementDelta;
     WebEvent::Type webEventType;
     switch (type) {
     case MouseEventType::Press:

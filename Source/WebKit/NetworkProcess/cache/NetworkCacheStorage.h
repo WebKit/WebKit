@@ -35,7 +35,6 @@
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/PriorityQueue.h>
 #include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>
@@ -56,7 +55,7 @@ public:
         WallTime timeStamp;
         Data header;
         Data body;
-        Optional<SHA1::Digest> bodyHash;
+        std::optional<SHA1::Digest> bodyHash;
 
         WTF_MAKE_FAST_ALLOCATED;
     };
@@ -144,8 +143,8 @@ private:
     void finishWriteOperation(WriteOperation&, int error = 0);
 
     bool shouldStoreBodyAsBlob(const Data& bodyData);
-    Optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
-    Data encodeRecord(const Record&, Optional<BlobStorage::Blob>);
+    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
+    Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
     void readRecord(ReadOperation&, const Data&);
 
     void updateFileModificationTime(const String& path);

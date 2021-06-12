@@ -27,7 +27,6 @@
 
 #include "Event.h"
 #include "IDBResourceIdentifier.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -46,7 +45,7 @@ public:
 
     struct Init : EventInit {
         uint64_t oldVersion { 0 };
-        Optional<uint64_t> newVersion;
+        std::optional<uint64_t> newVersion;
     };
 
     static Ref<IDBVersionChangeEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -59,7 +58,7 @@ public:
     bool isVersionChangeEvent() const final { return true; }
 
     uint64_t oldVersion() const { return m_oldVersion; }
-    Optional<uint64_t> newVersion() const { return m_newVersion; }
+    std::optional<uint64_t> newVersion() const { return m_newVersion; }
 
 private:
     IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType);
@@ -69,7 +68,7 @@ private:
 
     IDBResourceIdentifier m_requestIdentifier;
     uint64_t m_oldVersion;
-    Optional<uint64_t> m_newVersion;
+    std::optional<uint64_t> m_newVersion;
 };
 
 } // namespace WebCore

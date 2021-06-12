@@ -81,12 +81,12 @@ bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineL
             // We do not create markers for list items when the list-style-type is none, while other browsers do.
             // The side effect of having no marker is that in quirks mode we have to specifically check for list-item
             // and make sure it is treated as if it had content and stretched the line.
-            // see InlineFlowBox c'tor.
+            // see LegacyInlineFlowBox c'tor.
             return inlineLevelBox.layoutBox().style().isOriginalDisplayListItemType();
         }
         // Non-root inline boxes (e.g. <span>).
         auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
-        if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().valueOr(0_lu)) {
+        if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().value_or(0_lu)) {
             // Horizontal border and padding make the inline box stretch the line (e.g. <span style="padding: 10px;"></span>).
             return true;
         }
@@ -98,6 +98,7 @@ bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineL
 
 bool InlineFormattingQuirks::hasSoftWrapOpportunityAtImage() const
 {
+    ASSERT(layoutState().inQuirksMode());
     return !formattingContext().root().isTableCell();
 }
 

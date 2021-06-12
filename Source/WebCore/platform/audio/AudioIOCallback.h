@@ -48,17 +48,17 @@ struct AudioIOPosition {
         encoder << timestamp;
     }
 
-    template<typename Decoder> static Optional<AudioIOPosition> decode(Decoder& decoder)
+    template<typename Decoder> static std::optional<AudioIOPosition> decode(Decoder& decoder)
     {
-        Optional<Seconds> position;
+        std::optional<Seconds> position;
         decoder >> position;
         if (!position)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<MonotonicTime> timestamp;
+        std::optional<MonotonicTime> timestamp;
         decoder >> timestamp;
         if (!timestamp)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return AudioIOPosition { *position, *timestamp };
     }

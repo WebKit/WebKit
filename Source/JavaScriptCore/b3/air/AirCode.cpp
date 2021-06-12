@@ -34,7 +34,6 @@
 #include "AllowMacroScratchRegisterUsageIf.h"
 #include "B3BasicBlockUtils.h"
 #include "B3Procedure.h"
-#include "B3StackSlot.h"
 #include "CCallHelpers.h"
 #include <wtf/ListDump.h>
 #include <wtf/MathExtras.h>
@@ -57,6 +56,7 @@ static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 Code::Code(Procedure& proc)
     : m_proc(proc)
     , m_cfg(new CFG(*this))
+    , m_preserveB3Origins(proc.needsPCToOriginMap() || Options::dumpAirGraphAtEachPhase() || Options::dumpFTLDisassembly())
     , m_lastPhaseName("initial")
     , m_defaultPrologueGenerator(createSharedTask<PrologueGeneratorFunction>(&defaultPrologueGenerator))
 {
@@ -163,9 +163,9 @@ BasicBlock* Code::addBlock(double frequency)
     return result;
 }
 
-StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind, B3::StackSlot* b3Slot)
+StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind)
 {
-    StackSlot* result = m_stackSlots.addNew(byteSize, kind, b3Slot);
+    StackSlot* result = m_stackSlots.addNew(byteSize, kind);
     if (m_stackIsAllocated) {
         // FIXME: This is unnecessarily awful. Fortunately, it doesn't run often.
         unsigned extent = WTF::roundUpToMultipleOf(result->alignment(), frameSize() + byteSize);
@@ -173,11 +173,6 @@ StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind, B3::StackSl
         setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), extent));
     }
     return result;
-}
-
-StackSlot* Code::addStackSlot(B3::StackSlot* b3Slot)
-{
-    return addStackSlot(b3Slot->byteSize(), StackSlotKind::Locked, b3Slot);
 }
 
 Special* Code::addSpecial(std::unique_ptr<Special> special)
@@ -210,14 +205,14 @@ bool Code::isEntrypoint(BasicBlock* block) const
     return false;
 }
 
-Optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
+std::optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
 {
     RELEASE_ASSERT(m_entrypoints.size());
     for (unsigned i = 0; i < m_entrypoints.size(); ++i) {
         if (m_entrypoints[i].block() == block)
             return i;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOffsetList, StackSlot* slot)

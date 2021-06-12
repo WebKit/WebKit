@@ -65,7 +65,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSCCallbackFunction, (JSGlobalObject* globalOb
     return APICallbackFunction::constructImpl<JSCCallbackFunction>(globalObject, callFrame);
 }
 
-JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, Optional<Vector<GType>>&& parameters)
+JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     Structure* structure = globalObject->glibCallbackFunctionStructure();
     JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm.heap)) JSCCallbackFunction(vm, structure, type, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
@@ -73,7 +73,7 @@ JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalO
     return function;
 }
 
-JSCCallbackFunction::JSCCallbackFunction(VM& vm, Structure* structure, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, Optional<Vector<GType>>&& parameters)
+JSCCallbackFunction::JSCCallbackFunction(VM& vm, Structure* structure, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
     : InternalFunction(vm, structure, callJSCCallbackFunction, type == Type::Constructor ? constructJSCCallbackFunction : nullptr)
     , m_functionCallback(callAsFunction)
     , m_constructCallback(callAsConstructor)

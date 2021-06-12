@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 namespace Layout {
@@ -50,9 +50,9 @@ private:
 
     void set(Type type) { m_type = type; }
     void reset() { m_type = { }; }
-    Optional<Type> operator*() const { return m_type; }
+    std::optional<Type> operator*() const { return m_type; }
 
-    Optional<Type> m_type;
+    std::optional<Type> m_type;
 };
 
 class PhaseScope {

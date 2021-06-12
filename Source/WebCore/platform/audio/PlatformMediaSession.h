@@ -119,11 +119,11 @@ public:
     virtual void resumeBuffering() { }
     
     struct RemoteCommandArgument {
-        Optional<double> time;
-        Optional<bool> fastSeek;
+        std::optional<double> time;
+        std::optional<bool> fastSeek;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<RemoteCommandArgument> decode(Decoder&);
+        template<class Decoder> static std::optional<RemoteCommandArgument> decode(Decoder&);
     };
 
     enum RemoteControlCommandType : uint8_t {
@@ -201,7 +201,7 @@ public:
         virtual bool isCapturingAudio() const = 0;
     };
 
-    virtual Optional<NowPlayingInfo> nowPlayingInfo() const;
+    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;
     virtual void updateMediaUsageIfChanged() { }
 
     MediaSessionIdentifier mediaSessionIdentifier() const { return m_mediaSessionIdentifier; }
@@ -210,12 +210,9 @@ protected:
     PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
     PlatformMediaSessionClient& client() const { return m_client; }
 
-    PlatformMediaSessionManager& manager();
-
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
 
-    WeakPtr<PlatformMediaSessionManager> m_manager;
     PlatformMediaSessionClient& m_client;
     MediaSessionIdentifier m_mediaSessionIdentifier;
     State m_state { Idle };
@@ -291,13 +288,13 @@ template<class Encoder> inline void PlatformMediaSession::RemoteCommandArgument:
     encoder << time << fastSeek;
 }
 
-template<class Decoder> inline Optional<PlatformMediaSession::RemoteCommandArgument> PlatformMediaSession::RemoteCommandArgument::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<PlatformMediaSession::RemoteCommandArgument> PlatformMediaSession::RemoteCommandArgument::decode(Decoder& decoder)
 {
 #define DECODE(name, type) \
-    Optional<Optional<type>> name; \
+    std::optional<std::optional<type>> name; \
     decoder >> name; \
     if (!name) \
-        return WTF::nullopt; \
+        return std::nullopt; \
 
     DECODE(time, double);
     DECODE(fastSeek, bool);

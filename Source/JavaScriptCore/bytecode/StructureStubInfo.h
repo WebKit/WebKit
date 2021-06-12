@@ -38,7 +38,7 @@
 #include "StructureStubClearingWatchpoint.h"
 #include "StubInfoSummary.h"
 #include <wtf/Box.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 namespace JSC {
 
@@ -55,7 +55,8 @@ enum class AccessType : int8_t {
     TryGetById,
     GetByVal,
     Put,
-    In,
+    InById,
+    InByVal,
     InstanceOf,
     DeleteByID,
     DeleteByVal,
@@ -392,7 +393,7 @@ public:
     bool propertyIsInt32 : 1;
     bool propertyIsSymbol : 1;
 private:
-    CheckedLock m_bufferedStructuresLock;
+    Lock m_bufferedStructuresLock;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

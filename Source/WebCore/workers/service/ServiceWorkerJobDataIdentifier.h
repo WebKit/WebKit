@@ -41,7 +41,7 @@ struct ServiceWorkerJobDataIdentifier {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerJobDataIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerJobDataIdentifier> decode(Decoder&);
 };
 
 inline bool operator==(const ServiceWorkerJobDataIdentifier& a, const ServiceWorkerJobDataIdentifier& b)
@@ -56,17 +56,17 @@ void ServiceWorkerJobDataIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerJobDataIdentifier> ServiceWorkerJobDataIdentifier::decode(Decoder& decoder)
+std::optional<ServiceWorkerJobDataIdentifier> ServiceWorkerJobDataIdentifier::decode(Decoder& decoder)
 {
-    Optional<SWServerConnectionIdentifier> connectionIdentifier;
+    std::optional<SWServerConnectionIdentifier> connectionIdentifier;
     decoder >> connectionIdentifier;
     if (!connectionIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<ServiceWorkerJobIdentifier> jobIdentifier;
+    std::optional<ServiceWorkerJobIdentifier> jobIdentifier;
     decoder >> jobIdentifier;
     if (!jobIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*connectionIdentifier), WTFMove(*jobIdentifier) } };
 }

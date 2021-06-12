@@ -29,8 +29,8 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -56,7 +56,7 @@ public:
 
     void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
-    void didReceiveData(ResourceLoader*, const char*, int dataLength, int encodedDataLength);
+    void didReceiveData(ResourceLoader*, const uint8_t*, int dataLength, int encodedDataLength);
     void didFinishLoad(ResourceLoader*, const NetworkLoadMetrics&);
     void didFailToLoad(ResourceLoader*, const ResourceError&);
     void didCancelAuthenticationChallenge(long unsigned int, WebCore::DocumentLoader*, const WebCore::AuthenticationChallenge&);
@@ -65,15 +65,15 @@ public:
     void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, ResourceLoader* = nullptr);
-    void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
+    void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength);
     void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, const NetworkLoadMetrics&, ResourceLoader*);
     void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
 
-    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceRequest&, const ResourceResponse&, const char* data, int dataLength, int encodedDataLength, const ResourceError&);
+    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceRequest&, const ResourceResponse&, const uint8_t* data, int dataLength, int encodedDataLength, const ResourceError&);
 
 private:
     Frame& m_frame;
-    Optional<unsigned long> m_initialRequestIdentifier;
+    std::optional<unsigned long> m_initialRequestIdentifier;
 };
 
 } // namespace WebCore

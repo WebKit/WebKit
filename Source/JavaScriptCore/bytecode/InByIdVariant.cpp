@@ -27,12 +27,15 @@
 #include "config.h"
 #include "InByIdVariant.h"
 
+#include "CacheableIdentifierInlines.h"
+
 namespace JSC {
 
-InByIdVariant::InByIdVariant(const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet)
+InByIdVariant::InByIdVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
+    , m_identifier(WTFMove(identifier))
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);
@@ -42,6 +45,12 @@ InByIdVariant::InByIdVariant(const StructureSet& structureSet, PropertyOffset of
 
 bool InByIdVariant::attemptToMerge(const InByIdVariant& other)
 {
+    if (!!m_identifier != !!other.m_identifier)
+        return false;
+
+    if (m_identifier && (m_identifier != other.m_identifier))
+        return false;
+
     if (m_offset != other.m_offset)
         return false;
 
@@ -89,13 +98,13 @@ void InByIdVariant::dump(PrintStream& out) const
 
 void InByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
+    out.print("<id='", m_identifier, "', ");
     if (!isSet()) {
-        out.print("<empty>");
+        out.print("empty>");
         return;
     }
 
-    out.print(
-        "<", inContext(structureSet(), context), ", ", inContext(m_conditionSet, context));
+    out.print(inContext(structureSet(), context), ", ", inContext(m_conditionSet, context));
     out.print(", offset = ", offset());
     out.print(">");
 }

@@ -48,7 +48,7 @@ TEST(AnimationFrameRate, framesPerSecondNearestFullSpeed)
 TEST(AnimationFrameRate, preferredFrameIntervalWithUnspecifiedNominalFramesPerSecond)
 {
     OptionSet<ThrottlingReason> noThrottling;
-    Optional<FramesPerSecond> unspecifiedNominalFramesPerSecond;
+    std::optional<FramesPerSecond> unspecifiedNominalFramesPerSecond;
     
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), FullSpeedAnimationInterval);
@@ -192,7 +192,7 @@ TEST(AnimationFrameRate, preferredFramesPerSecondMatchNominalFrameRate)
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 90, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), FramesPerSecond(45));
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 50, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), FramesPerSecond(25));
 
-    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondMatchNominalFrameRateSetting), WTF::nullopt);
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondMatchNominalFrameRateSetting), std::nullopt);
 }
 
 TEST(AnimationFrameRate, preferredFramesPerSecondTarget60FPS)
@@ -207,7 +207,7 @@ TEST(AnimationFrameRate, preferredFramesPerSecondTarget60FPS)
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 90, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(45));
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 50, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(25));
 
-    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondTarget60FPSSetting), WTF::nullopt);
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondTarget60FPSSetting), std::nullopt);
 }
 
 TEST(AnimationFrameRate, preferredFramesPerSecondFromInterval)

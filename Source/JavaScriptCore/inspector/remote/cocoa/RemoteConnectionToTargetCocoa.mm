@@ -33,7 +33,6 @@
 #import "RemoteInspectionTarget.h"
 #import "RemoteInspector.h"
 #import <dispatch/dispatch.h>
-#import <wtf/Optional.h>
 #import <wtf/RunLoop.h>
 
 #if USE(WEB_THREAD)
@@ -121,9 +120,9 @@ RemoteConnectionToTarget::~RemoteConnectionToTarget()
     teardownRunLoop();
 }
 
-Optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
+std::optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return m_target ? Optional<TargetID>(m_target->targetIdentifier()) : WTF::nullopt;
+    return m_target ? std::optional<TargetID>(m_target->targetIdentifier()) : std::nullopt;
 }
 
 NSString *RemoteConnectionToTarget::connectionIdentifier() const
@@ -163,7 +162,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     if (!m_target)
         return false;
 
-    auto targetIdentifier = this->targetIdentifier().valueOr(0);
+    auto targetIdentifier = this->targetIdentifier().value_or(0);
 
     dispatchAsyncOnTarget([this, targetIdentifier, isAutomaticInspection, automaticallyPause, strongThis = makeRef(*this)]() {
         Locker locker { m_targetMutex };

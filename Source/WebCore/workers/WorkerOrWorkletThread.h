@@ -26,9 +26,9 @@
 #pragma once
 
 #include "WorkerRunLoop.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -66,7 +66,7 @@ public:
     const String& identifier() const { return m_identifier; }
 
     static HashSet<WorkerOrWorkletThread*>& workerOrWorkletThreads() WTF_REQUIRES_LOCK(workerOrWorkletThreadsLock());
-    static CheckedLock& workerOrWorkletThreadsLock() WTF_RETURNS_LOCK(s_workerOrWorkletThreadsLock);
+    static Lock& workerOrWorkletThreadsLock() WTF_RETURNS_LOCK(s_workerOrWorkletThreadsLock);
     static void releaseFastMallocFreeMemoryInAllThreads();
 
 protected:
@@ -82,7 +82,7 @@ private:
     virtual void evaluateScriptIfNecessary(String&) { }
     virtual bool shouldWaitForWebInspectorOnStartup() const { return false; }
 
-    static CheckedLock s_workerOrWorkletThreadsLock;
+    static Lock s_workerOrWorkletThreadsLock;
 
     String m_identifier;
     Lock m_threadCreationAndGlobalScopeLock;

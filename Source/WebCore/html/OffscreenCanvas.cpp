@@ -213,7 +213,7 @@ void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGL
 
 #endif // ENABLE(WEBGL)
 
-ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_detached)
         return Exception { InvalidStateError };
@@ -221,7 +221,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
     if (contextType == RenderingContextType::_2d) {
         if (m_context) {
             if (!is<OffscreenCanvasRenderingContext2D>(*m_context))
-                return { { WTF::nullopt } };
+                return { { std::nullopt } };
             return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
         }
 
@@ -231,7 +231,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
 
         m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this, WTFMove(settings));
         if (!m_context)
-            return { { WTF::nullopt } };
+            return { { std::nullopt } };
 
         return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
     }
@@ -244,7 +244,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
             if (is<WebGL2RenderingContext>(*m_context))
                 return { { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*m_context) } } };
 #endif
-            return { { WTF::nullopt } };
+            return { { std::nullopt } };
         }
 
         auto scope = DECLARE_THROW_SCOPE(state.vm());
@@ -253,7 +253,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
 
         createContextWebGL(contextType, WTFMove(attributes));
         if (!m_context)
-            return { { WTF::nullopt } };
+            return { { std::nullopt } };
 
 #if ENABLE(WEBGL2)
         if (is<WebGL2RenderingContext>(*m_context))
@@ -329,10 +329,10 @@ static String toEncodingMimeType(const String& mimeType)
     return mimeType.convertToASCIILowercase();
 }
 
-static Optional<double> qualityFromDouble(double qualityNumber)
+static std::optional<double> qualityFromDouble(double qualityNumber)
 {
     if (!(qualityNumber >= 0 && qualityNumber <= 1))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return qualityNumber;
 }
@@ -367,7 +367,7 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
     promise->resolveWithNewlyCreated<IDLInterface<Blob>>(WTFMove(blob));
 }
 
-void OffscreenCanvas::didDraw(const Optional<FloatRect>& rect)
+void OffscreenCanvas::didDraw(const std::optional<FloatRect>& rect)
 {
     clearCopiedImage();
     scheduleCommitToPlaceholderCanvas();
@@ -451,14 +451,14 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
         m_context->paintRenderingResultsToCanvas();
 
     if (m_placeholderData->bufferPipeSource) {
-        auto bufferCopy = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB, imageBuffer->context());
+        auto bufferCopy = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB(), imageBuffer->context());
         if (bufferCopy)
             m_placeholderData->bufferPipeSource->handle(WTFMove(bufferCopy));
     }
 
     Locker locker { m_placeholderData->bufferLock };
     bool shouldPushBuffer = !m_placeholderData->pendingCommitBuffer;
-    m_placeholderData->pendingCommitBuffer = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB, imageBuffer->context());
+    m_placeholderData->pendingCommitBuffer = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB(), imageBuffer->context());
     if (m_placeholderData->pendingCommitBuffer && shouldPushBuffer)
         pushBufferToPlaceholder();
 }

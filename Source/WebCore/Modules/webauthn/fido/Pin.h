@@ -88,7 +88,7 @@ WEBCORE_EXPORT cbor::CBORValue::MapValue encodeCOSEPublicKey(const Vector<uint8_
 WEBCORE_EXPORT Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& X, const Vector<uint8_t>& Y);
 
 // validateAndConvertToUTF8 convert the input to a UTF8 CString if it is a syntactically valid PIN.
-WEBCORE_EXPORT Optional<CString> validateAndConvertToUTF8(const String& pin);
+WEBCORE_EXPORT std::optional<CString> validateAndConvertToUTF8(const String& pin);
 
 // kMinBytes is the minimum number of *bytes* of PIN data that a CTAP2 device
 // will accept. Since the PIN is UTF-8 encoded, this could be a single code
@@ -106,7 +106,7 @@ struct RetriesRequest {
 
 // RetriesResponse reflects an authenticator's response to a |RetriesRequest|.
 struct RetriesResponse {
-    WEBCORE_EXPORT static Optional<RetriesResponse> parse(const Vector<uint8_t>&);
+    WEBCORE_EXPORT static std::optional<RetriesResponse> parse(const Vector<uint8_t>&);
 
     // retries is the number of PIN attempts remaining before the authenticator
     // locks.
@@ -125,8 +125,8 @@ struct KeyAgreementRequest {
 // |KeyAgreementRequest| and is also used as representation of the
 // authenticator's ephemeral key.
 struct KeyAgreementResponse {
-    WEBCORE_EXPORT static Optional<KeyAgreementResponse> parse(const Vector<uint8_t>&);
-    WEBCORE_EXPORT static Optional<KeyAgreementResponse> parseFromCOSE(const cbor::CBORValue::MapValue&);
+    WEBCORE_EXPORT static std::optional<KeyAgreementResponse> parse(const Vector<uint8_t>&);
+    WEBCORE_EXPORT static std::optional<KeyAgreementResponse> parseFromCOSE(const cbor::CBORValue::MapValue&);
 
     Ref<WebCore::CryptoKeyEC> peerKey;
 
@@ -140,7 +140,7 @@ private:
 class TokenRequest {
     WTF_MAKE_NONCOPYABLE(TokenRequest);
 public:
-    WEBCORE_EXPORT static Optional<TokenRequest> tryCreate(const CString& pin, const WebCore::CryptoKeyEC&);
+    WEBCORE_EXPORT static std::optional<TokenRequest> tryCreate(const CString& pin, const WebCore::CryptoKeyEC&);
     TokenRequest(TokenRequest&&) = default;
 
     // sharedKey returns the shared ECDH key that was used to encrypt the PIN.
@@ -163,7 +163,7 @@ private:
 // needed to show user-verification in future operations.
 class TokenResponse {
 public:
-    WEBCORE_EXPORT static Optional<TokenResponse> parse(const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& inBuffer);
+    WEBCORE_EXPORT static std::optional<TokenResponse> parse(const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& inBuffer);
 
     // pinAuth returns a pinAuth parameter for a request that will use the given
     // client-data hash.

@@ -28,7 +28,7 @@
 #include "Document.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
-#include "InlineElementBox.h"
+#include "LegacyInlineElementBox.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
@@ -1109,7 +1109,7 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
     }
 }
 
-std::unique_ptr<InlineElementBox> RenderListMarker::createInlineBox()
+std::unique_ptr<LegacyInlineElementBox> RenderListMarker::createInlineBox()
 {
     auto box = RenderBox::createInlineBox();
     box->setBehavesLikeText(isText());
@@ -1123,10 +1123,10 @@ bool RenderListMarker::isImage() const
 
 LayoutRect RenderListMarker::localSelectionRect()
 {
-    InlineBox* box = inlineBoxWrapper();
+    LegacyInlineBox* box = inlineBoxWrapper();
     if (!box)
         return LayoutRect(LayoutPoint(), size());
-    const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
+    const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
     LayoutUnit newLogicalTop { rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop() };
     if (rootBox.blockFlow().style().isHorizontalWritingMode())
         return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());
@@ -1365,7 +1365,7 @@ void RenderListMarker::addOverflowFromListMarker()
     LayoutUnit markerLogicalLeft;
     bool hitSelfPaintingLayer = false;
 
-    const RootInlineBox& rootBox = inlineBoxWrapper()->root();
+    const LegacyRootInlineBox& rootBox = inlineBoxWrapper()->root();
     LayoutUnit lineTop = rootBox.lineTop();
     LayoutUnit lineBottom = rootBox.lineBottom();
 
@@ -1957,7 +1957,7 @@ LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObjec
     if (selectionState() == HighlightState::None || !inlineBoxWrapper())
         return LayoutRect();
 
-    RootInlineBox& rootBox = inlineBoxWrapper()->root();
+    LegacyRootInlineBox& rootBox = inlineBoxWrapper()->root();
     LayoutRect rect(0_lu, rootBox.selectionTop() - y(), width(), rootBox.selectionHeight());
             
     if (clipToVisibleContent)

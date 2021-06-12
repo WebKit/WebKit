@@ -31,7 +31,6 @@
 #include "XRDeviceInfo.h"
 #include <WebCore/PlatformXR.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -44,7 +43,7 @@ public:
     // FIXME: Temporary and will be fixed later.
     static PlatformXR::LayerHandle defaultLayerHandle() { return 1; }
 
-    using DeviceInfoCallback = Function<void(Optional<XRDeviceInfo>)>;
+    using DeviceInfoCallback = Function<void(std::optional<XRDeviceInfo>)>;
     virtual void getPrimaryDeviceInfo(DeviceInfoCallback&&) = 0;
 
     // Session creation/termination.

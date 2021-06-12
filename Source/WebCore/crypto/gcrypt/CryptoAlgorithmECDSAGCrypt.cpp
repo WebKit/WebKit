@@ -62,18 +62,18 @@ static bool extractECDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t
     return true;
 }
 
-static Optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t keySizeInBytes)
+static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t keySizeInBytes)
 {
     // Perform digest operation with the specified algorithm on the given data.
     Vector<uint8_t> dataHash;
     {
         auto digestAlgorithm = hashCryptoDigestAlgorithm(hashAlgorithmIdentifier);
         if (!digestAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto digest = PAL::CryptoDigest::create(*digestAlgorithm);
         if (!digest)
-            return WTF::nullopt;
+            return std::nullopt;
 
         digest->addBytes(data.data(), data.size());
         dataHash = digest->computeHash();
@@ -84,13 +84,13 @@ static Optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<ui
     {
         auto shaAlgorithm = hashAlgorithmName(hashAlgorithmIdentifier);
         if (!shaAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         gcry_error_t error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags raw)(hash %s %b))",
             *shaAlgorithm, dataHash.size(), dataHash.data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
@@ -103,7 +103,7 @@ static Optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<ui
     gcry_error_t error = gcry_pk_sign(&signatureSexp, dataSexp, keySexp);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Retrieve MPI data of the resulting r and s integers. They are concatenated into
@@ -113,12 +113,12 @@ static Optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<ui
 
     if (!extractECDSASignatureInteger(signature, signatureSexp, "r", keySizeInBytes)
         || !extractECDSASignatureInteger(signature, signatureSexp, "s", keySizeInBytes))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return signature;
 }
 
-static Optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t keySizeInBytes)
+static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t keySizeInBytes)
 {
     // Bail if the signature size isn't double the key size (i.e. concatenated r and s components).
     if (signature.size() != keySizeInBytes * 2)
@@ -129,11 +129,11 @@ static Optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& s
     {
         auto digestAlgorithm = hashCryptoDigestAlgorithm(hashAlgorithmIdentifier);
         if (!digestAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto digest = PAL::CryptoDigest::create(*digestAlgorithm);
         if (!digest)
-            return WTF::nullopt;
+            return std::nullopt;
 
         digest->addBytes(data.data(), data.size());
         dataHash = digest->computeHash();
@@ -145,7 +145,7 @@ static Optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& s
         keySizeInBytes, signature.data(), keySizeInBytes, signature.data() + keySizeInBytes);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Construct the data s-expression that contains raw hashed data.
@@ -153,13 +153,13 @@ static Optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& s
     {
         auto shaAlgorithm = hashAlgorithmName(hashAlgorithmIdentifier);
         if (!shaAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags raw)(hash %s %b))",
             *shaAlgorithm, dataHash.size(), dataHash.data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 

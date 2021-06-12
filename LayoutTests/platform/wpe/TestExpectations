@@ -220,6 +220,10 @@ webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gest
 webkit.org/b/212145 http/tests/navigation/no-referrer-reset.html [ Timeout ]
 webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Timeout ]
 
+# Media Queries
+webkit.org/b/226521 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass Failure ]
+webkit.org/b/226521 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass ]
+
 # Nicosia
 webkit.org/b/213228 fast/viewport/viewport-1.html [ Crash Timeout Pass ]
 webkit.org/b/213228 fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html [ Pass Crash ]
@@ -651,6 +655,7 @@ webkit.org/b/225483 imported/w3c/web-platform-tests/webxr/xrView_match.https.htm
 webkit.org/b/225483 imported/w3c/web-platform-tests/webxr/xrView_oneframeupdate.https.html [ Pass ]
 [ Release ] imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]
@@ -707,20 +712,14 @@ webkit.org/b/225379 [ Debug ] imported/w3c/web-platform-tests/webxr/xrBoundedRef
 webkit.org/b/225379 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html [ Crash ]
 webkit.org/b/225379 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Crash ]
 
-# Test failing since async scrolling was activated in WPE.
+# Test failing since async overflow scrolling was activated in WPE.
 webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on-parent.html [ ImageOnlyFailure ]
 webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html [ ImageOnlyFailure ]
 webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
-webkit.org/b/224596 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html [ ImageOnlyFailure ]
-webkit.org/b/224596 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/224596 imported/blink/compositing/animation/hidden-animated-layer-should-not-have-scrollbars.html [ ImageOnlyFailure ]
-webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-001.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
-webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-empty-002.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.html [ ImageOnlyFailure ]
-webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-overflow.html [ ImageOnlyFailure ]
 
 # These tests are passing most of the times since r275515.

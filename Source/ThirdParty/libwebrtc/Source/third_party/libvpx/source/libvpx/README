@@ -1,4 +1,4 @@
-README - 9 December 2019
+README - 20 July 2020
 
 Welcome to the WebM VP8/VP9 Codec SDK!
 
@@ -62,6 +62,7 @@ COMPILING THE APPLICATIONS/LIBRARIES:
 
     arm64-android-gcc
     arm64-darwin-gcc
+    arm64-darwin20-gcc
     arm64-linux-gcc
     arm64-win64-gcc
     arm64-win64-vs15
@@ -112,6 +113,8 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     x86_64-darwin16-gcc
     x86_64-darwin17-gcc
     x86_64-darwin18-gcc
+    x86_64-darwin19-gcc
+    x86_64-darwin20-gcc
     x86_64-iphonesimulator-gcc
     x86_64-linux-gcc
     x86_64-linux-icc

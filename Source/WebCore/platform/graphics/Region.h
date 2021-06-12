@@ -27,7 +27,6 @@
 #define Region_h
 
 #include "IntRect.h"
-#include <wtf/Optional.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/Vector.h>
 
@@ -77,7 +76,7 @@ public:
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Region> decode(Decoder&);
+    template<class Decoder> static std::optional<Region> decode(Decoder&);
     // FIXME: Remove legacy decode.
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, Region&);
 
@@ -87,7 +86,7 @@ private:
         size_t segmentIndex { 0 };
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<Span> decode(Decoder&);
+        template<class Decoder> static std::optional<Span> decode(Decoder&);
     };
 
     class Shape {
@@ -122,7 +121,7 @@ private:
         static bool compareShapes(const Shape& shape1, const Shape& shape2);
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<Shape> decode(Decoder&);
+        template<class Decoder> static std::optional<Shape> decode(Decoder&);
 
 #ifndef NDEBUG
         void dump() const;
@@ -218,14 +217,14 @@ void Region::Span::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Region::Span> Region::Span::decode(Decoder& decoder)
+std::optional<Region::Span> Region::Span::decode(Decoder& decoder)
 {
-    Optional<int> y;
+    std::optional<int> y;
     decoder >> y;
     if (!y)
         return { };
 
-    Optional<uint64_t> segmentIndex;
+    std::optional<uint64_t> segmentIndex;
     decoder >> segmentIndex;
     if (!segmentIndex)
         return { };
@@ -241,17 +240,17 @@ void Region::Shape::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Region::Shape> Region::Shape::decode(Decoder& decoder)
+std::optional<Region::Shape> Region::Shape::decode(Decoder& decoder)
 {
-    Optional<Vector<int>> segments;
+    std::optional<Vector<int>> segments;
     decoder >> segments;
     if (!segments)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Vector<Region::Span>> spans;
+    std::optional<Vector<Region::Span>> spans;
     decoder >> spans;
     if (!spans)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Shape shape;
     shape.m_segments = WTFMove(*segments);
@@ -271,25 +270,25 @@ void Region::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Region> Region::decode(Decoder& decoder)
+std::optional<Region> Region::decode(Decoder& decoder)
 {
-    Optional<IntRect> bounds;
+    std::optional<IntRect> bounds;
     decoder >> bounds;
     if (!bounds)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> hasShape;
+    std::optional<bool> hasShape;
     decoder >> hasShape;
     if (!hasShape)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Region region = { *bounds };
 
     if (*hasShape) {
-        Optional<Shape> shape;
+        std::optional<Shape> shape;
         decoder >> shape;
         if (!shape)
-            return WTF::nullopt;
+            return std::nullopt;
         region.m_shape = makeUnique<Shape>(WTFMove(*shape));
     }
 
@@ -299,7 +298,7 @@ Optional<Region> Region::decode(Decoder& decoder)
 template<class Decoder>
 bool Region::decode(Decoder& decoder, Region& region)
 {
-    Optional<Region> decodedRegion;
+    std::optional<Region> decodedRegion;
     decoder >> decodedRegion;
     if (!decodedRegion)
         return false;

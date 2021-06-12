@@ -255,7 +255,7 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* renderer = node.renderer()) {
-        // FIXME: Factor the marker painting code out of InlineTextBox and teach simple line layout to use it.
+        // FIXME: Factor the marker painting code out of LegacyInlineTextBox and teach simple line layout to use it.
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*renderer))
             lineLayout->flow().ensureLineBoxes();
     }

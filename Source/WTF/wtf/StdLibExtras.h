@@ -558,28 +558,34 @@ template<typename Iterator, typename Predicate> constexpr bool allOfConstExpr(It
     return true;
 }
 
+template<typename OptionalType, class Callback> typename OptionalType::value_type valueOrCompute(OptionalType optional, Callback callback) 
+{
+    return optional ? *optional : callback();
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
 
+using WTF::GB;
 using WTF::KB;
 using WTF::MB;
-using WTF::GB;
 using WTF::approximateBinarySearch;
 using WTF::binarySearch;
 using WTF::bitwise_cast;
 using WTF::callStatelessLambda;
 using WTF::checkAndSet;
+using WTF::constructFixedSizeArrayWithArguments;
 using WTF::findBitInWord;
 using WTF::insertIntoBoundedVector;
+using WTF::is8ByteAligned;
 using WTF::isCompilationThread;
 using WTF::isPointerAligned;
 using WTF::isStatelessLambda;
-using WTF::is8ByteAligned;
+using WTF::makeUnique;
+using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
-using WTF::makeUnique;
-using WTF::makeUniqueWithoutFastMallocCheck;
-using WTF::constructFixedSizeArrayWithArguments;
+using WTF::valueOrCompute;

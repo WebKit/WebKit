@@ -450,9 +450,7 @@ TextStream& operator<<(TextStream& ts, DisplayType display)
     case DisplayType::Box: ts << "box"; break;
     case DisplayType::InlineBox: ts << "inline-box"; break;
     case DisplayType::Flex: ts << "flex"; break;
-    case DisplayType::WebKitFlex: ts << "web-kit-flex"; break;
     case DisplayType::InlineFlex: ts << "inline-flex"; break;
-    case DisplayType::WebKitInlineFlex: ts << "web-kit-inline-flex"; break;
     case DisplayType::Contents: ts << "contents"; break;
     case DisplayType::Grid: ts << "grid"; break;
     case DisplayType::InlineGrid: ts << "inline-grid"; break;

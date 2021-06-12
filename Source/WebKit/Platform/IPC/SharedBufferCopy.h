@@ -52,12 +52,12 @@ public:
     RefPtr<WebCore::SharedBuffer>& buffer() { return m_buffer; }
     const RefPtr<WebCore::SharedBuffer>& buffer() const { return m_buffer; }
 
-    const char* data() const { return m_buffer ? m_buffer->data() : nullptr; }
+    const uint8_t* data() const { return m_buffer ? m_buffer->data() : nullptr; }
     size_t size() const { return m_buffer ? m_buffer->size() : 0; }
     bool isEmpty() const { return m_buffer ? m_buffer->isEmpty() : true; }
 
     void encode(Encoder&) const;
-    static WARN_UNUSED_RETURN Optional<SharedBufferCopy> decode(Decoder&);
+    static WARN_UNUSED_RETURN std::optional<SharedBufferCopy> decode(Decoder&);
 
 private:
     RefPtr<WebCore::SharedBuffer> m_buffer;

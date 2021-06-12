@@ -94,13 +94,16 @@ public:
 
     Document* document() const;
 
+#if !RELEASE_LOG_DISABLED
+    const void* logIdentifier() const final { return m_private->logIdentifier(); }
+#endif
+
 protected:
     MediaStream(Document&, const MediaStreamTrackVector&);
     MediaStream(Document&, Ref<MediaStreamPrivate>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
-    const void* logIdentifier() const final { return m_private->logIdentifier(); }
     WTFLogChannel& logChannel() const final;
     const char* logClassName() const final { return "MediaStream"; }
 #endif

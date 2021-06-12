@@ -41,10 +41,16 @@
 
 namespace WebCore {
 
-static Optional<UniqueRef<AudioSession>>& sharedAudioSession()
+static std::optional<UniqueRef<AudioSession>>& sharedAudioSession()
 {
-    static NeverDestroyed<Optional<UniqueRef<AudioSession>>> session;
+    static NeverDestroyed<std::optional<UniqueRef<AudioSession>>> session;
     return session.get();
+}
+
+static WeakHashSet<AudioSession::ChangedObserver>& audioSessionChangedObservers()
+{
+    static NeverDestroyed<WeakHashSet<AudioSession::ChangedObserver>> observers;
+    return observers;
 }
 
 UniqueRef<AudioSession> AudioSession::create()
@@ -64,13 +70,26 @@ AudioSession::~AudioSession() = default;
 AudioSession& AudioSession::sharedSession()
 {
     if (!sharedAudioSession())
-        sharedAudioSession() = AudioSession::create();
+        setSharedSession(AudioSession::create());
     return *sharedAudioSession();
 }
 
 void AudioSession::setSharedSession(UniqueRef<AudioSession>&& session)
 {
     sharedAudioSession() = WTFMove(session);
+
+    audioSessionChangedObservers().forEach([] (auto& observer) {
+        observer(*sharedAudioSession());
+    });
+}
+
+void AudioSession::addAudioSessionChangedObserver(const ChangedObserver& observer)
+{
+    ASSERT(!audioSessionChangedObservers().contains(observer));
+    audioSessionChangedObservers().add(observer);
+
+    if (sharedAudioSession())
+        observer(*sharedAudioSession());
 }
 
 bool AudioSession::tryToSetActive(bool active)
@@ -180,7 +199,7 @@ void AudioSession::audioOutputDeviceChanged()
     notImplemented();
 }
 
-void AudioSession::setIsPlayingToBluetoothOverride(Optional<bool>)
+void AudioSession::setIsPlayingToBluetoothOverride(std::optional<bool>)
 {
     notImplemented();
 }

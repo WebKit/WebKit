@@ -60,9 +60,7 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
-
-    // EventTarget
-    void dispatchEvent(Event&) final;
+    bool virtualHasPendingActivity() const final;
 
     void settleRenderingPromise(ExceptionOr<Ref<AudioBuffer>>&&);
     void uninitialize() final;

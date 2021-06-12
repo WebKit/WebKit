@@ -43,7 +43,6 @@ public:
     Vector<String> overriddenTypes(const String& pasteboardName);
 
     bool getDataForOverride(const String& pasteboardName, const String& type, Vector<uint8_t>&) const;
-    bool getDataForOverride(const String& pasteboardName, const String& type, Vector<char>&) const;
 
 private:
     WebPasteboardOverrides();

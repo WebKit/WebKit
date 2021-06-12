@@ -35,7 +35,7 @@
 #include "Color.h"
 #include "ColorTransferFunctions.h"
 #include "GraphicsContext.h"
-#include "GraphicsContextImplCairo.h"
+#include "GraphicsContextCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformContextCairo.h"
@@ -89,19 +89,19 @@ void ImageBufferCairoBackend::clipToMask(GraphicsContext& destContext, const Flo
         Cairo::clipToImageBuffer(*destContext.platformContext(), image->platformImage().get(), destRect);
 }
 
-void ImageBufferCairoBackend::transformColorSpace(DestinationColorSpace srcColorSpace, DestinationColorSpace destColorSpace)
+void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace& newColorSpace)
 {
-    if (srcColorSpace == destColorSpace)
+    if (m_parameters.colorSpace == newColorSpace)
         return;
 
     // only sRGB <-> linearRGB are supported at the moment
-    if ((srcColorSpace != DestinationColorSpace::LinearSRGB && srcColorSpace != DestinationColorSpace::SRGB)
-        || (destColorSpace != DestinationColorSpace::LinearSRGB && destColorSpace != DestinationColorSpace::SRGB))
+    if ((m_parameters.colorSpace != DestinationColorSpace::LinearSRGB() && m_parameters.colorSpace != DestinationColorSpace::SRGB())
+        || (newColorSpace != DestinationColorSpace::LinearSRGB() && newColorSpace != DestinationColorSpace::SRGB()))
         return;
 
-    m_parameters.colorSpace = destColorSpace;
+    m_parameters.colorSpace = newColorSpace;
 
-    if (destColorSpace == DestinationColorSpace::LinearSRGB) {
+    if (newColorSpace == DestinationColorSpace::LinearSRGB()) {
         static const std::array<uint8_t, 256> linearRgbLUT = [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
@@ -112,7 +112,7 @@ void ImageBufferCairoBackend::transformColorSpace(DestinationColorSpace srcColor
             return array;
         }();
         platformTransformColorSpace(linearRgbLUT);
-    } else if (destColorSpace == DestinationColorSpace::SRGB) {
+    } else {
         static const std::array<uint8_t, 256> deviceRgbLUT= [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
@@ -126,7 +126,7 @@ void ImageBufferCairoBackend::transformColorSpace(DestinationColorSpace srcColor
     }
 }
 
-String ImageBufferCairoBackend::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const
+String ImageBufferCairoBackend::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const
 {
     Vector<uint8_t> encodedImage = toData(mimeType, quality);
     if (encodedImage.isEmpty())
@@ -135,7 +135,7 @@ String ImageBufferCairoBackend::toDataURL(const String& mimeType, Optional<doubl
     return makeString("data:", mimeType, ";base64,", base64Encoded(encodedImage.data(), encodedImage.size()));
 }
 
-Vector<uint8_t> ImageBufferCairoBackend::toData(const String& mimeType, Optional<double> quality) const
+Vector<uint8_t> ImageBufferCairoBackend::toData(const String& mimeType, std::optional<double> quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
     cairo_surface_t* image = cairo_get_target(context().platformContext()->cr());

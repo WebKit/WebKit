@@ -117,16 +117,16 @@ ALWAYS_INLINE uint32_t jsMapHashForAlreadyHashedValue(JSGlobalObject* globalObje
     return jsMapHashImpl<ExceptionExpectation::ShouldNotThrow>(globalObject, vm, value);
 }
 
-ALWAYS_INLINE Optional<uint32_t> concurrentJSMapHash(JSValue key)
+ALWAYS_INLINE std::optional<uint32_t> concurrentJSMapHash(JSValue key)
 {
     key = normalizeMapKey(key);
     if (key.isString()) {
         JSString* string = asString(key);
         if (string->length() > 10 * 1024)
-            return WTF::nullopt;
+            return std::nullopt;
         const StringImpl* impl = string->tryGetValueImpl();
         if (!impl)
-            return WTF::nullopt;
+            return std::nullopt;
         return impl->concurrentHash();
     }
 
@@ -169,7 +169,7 @@ ALWAYS_INLINE uint32_t nextCapacity(uint32_t capacity, uint32_t keyCount)
         // at the same capacity).
         return capacity;
     }
-    return (Checked<uint32_t>(capacity) * 2).unsafeGet();
+    return Checked<uint32_t>(capacity) * 2;
 }
 
 template <typename HashMapBucketType>
@@ -193,7 +193,7 @@ void HashMapImpl<HashMapBucketType>::finishCreation(JSGlobalObject* globalObject
     Base::finishCreation(vm);
 
     // This size should be the same to the case when you clone the map by calling add() repeatedly.
-    uint32_t capacity = ((Checked<uint32_t>(base->m_keyCount) * 2) + 1).unsafeGet();
+    uint32_t capacity = (Checked<uint32_t>(base->m_keyCount) * 2) + 1;
     RELEASE_ASSERT(capacity <= (1U << 31));
     capacity = std::max<uint32_t>(WTF::roundUpToPowerOfTwo(capacity), 4U);
     m_capacity = capacity;

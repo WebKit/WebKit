@@ -28,14 +28,14 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutUnit.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 namespace Layout {
 
 struct ComputedVerticalMargin {
-    Optional<LayoutUnit> before;
-    Optional<LayoutUnit> after;
+    std::optional<LayoutUnit> before;
+    std::optional<LayoutUnit> after;
 };
 
 struct UsedVerticalMargin {
@@ -46,8 +46,8 @@ struct UsedVerticalMargin {
     NonCollapsedValues nonCollapsedValues;
 
     struct CollapsedValues {
-        Optional<LayoutUnit> before;
-        Optional<LayoutUnit> after;
+        std::optional<LayoutUnit> before;
+        std::optional<LayoutUnit> after;
         bool isCollapsedThrough { false };
     };
     CollapsedValues collapsedValues;
@@ -60,10 +60,10 @@ struct UsedVerticalMargin {
     // inflow child's cached margin values.
     struct PositiveAndNegativePair {
         struct Values {
-            bool isNonZero() const { return positive.valueOr(0) || negative.valueOr(0); }
+            bool isNonZero() const { return positive.value_or(0) || negative.value_or(0); }
 
-            Optional<LayoutUnit> positive;
-            Optional<LayoutUnit> negative;
+            std::optional<LayoutUnit> positive;
+            std::optional<LayoutUnit> negative;
             bool isQuirk { false };
         };
         Values before;
@@ -74,19 +74,19 @@ struct UsedVerticalMargin {
 
 static inline LayoutUnit marginBefore(const UsedVerticalMargin& usedVerticalMargin)
 {
-    return usedVerticalMargin.collapsedValues.before.valueOr(usedVerticalMargin.nonCollapsedValues.before);
+    return usedVerticalMargin.collapsedValues.before.value_or(usedVerticalMargin.nonCollapsedValues.before);
 }
 
 static inline LayoutUnit marginAfter(const UsedVerticalMargin& usedVerticalMargin)
 {
     if (usedVerticalMargin.collapsedValues.isCollapsedThrough)
         return 0_lu;
-    return usedVerticalMargin.collapsedValues.after.valueOr(usedVerticalMargin.nonCollapsedValues.after);
+    return usedVerticalMargin.collapsedValues.after.value_or(usedVerticalMargin.nonCollapsedValues.after);
 }
 
 struct ComputedHorizontalMargin {
-    Optional<LayoutUnit> start;
-    Optional<LayoutUnit> end;
+    std::optional<LayoutUnit> start;
+    std::optional<LayoutUnit> end;
 };
 
 struct UsedHorizontalMargin {
@@ -95,9 +95,9 @@ struct UsedHorizontalMargin {
 };
 
 struct PrecomputedMarginBefore {
-    LayoutUnit usedValue() const { return collapsedValue.valueOr(nonCollapsedValue); }
+    LayoutUnit usedValue() const { return collapsedValue.value_or(nonCollapsedValue); }
     LayoutUnit nonCollapsedValue;
-    Optional<LayoutUnit> collapsedValue;
+    std::optional<LayoutUnit> collapsedValue;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveAndNegativeMarginBefore;
 };
 

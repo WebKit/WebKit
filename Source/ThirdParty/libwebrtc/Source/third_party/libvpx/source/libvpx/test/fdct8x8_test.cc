@@ -598,6 +598,7 @@ TEST_P(FwdTrans8x8HT, RoundTripErrorCheck) { RunRoundTripErrorCheck(); }
 
 TEST_P(FwdTrans8x8HT, ExtremalCheck) { RunExtremalCheck(); }
 
+#if HAVE_SSE2 && CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 class InvTrans8x8DCT : public FwdTrans8x8TestBase,
                        public ::testing::TestWithParam<Idct8x8Param> {
  public:
@@ -624,29 +625,31 @@ class InvTrans8x8DCT : public FwdTrans8x8TestBase,
   IdctFunc inv_txfm_;
   int thresh_;
 };
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(InvTrans8x8DCT);
 
 TEST_P(InvTrans8x8DCT, CompareReference) {
   CompareInvReference(ref_txfm_, thresh_);
 }
+#endif  // HAVE_SSE2 && CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 
 using std::make_tuple;
 
 #if CONFIG_VP9_HIGHBITDEPTH
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     C, FwdTrans8x8DCT,
     ::testing::Values(
         make_tuple(&vpx_fdct8x8_c, &vpx_idct8x8_64_add_c, 0, VPX_BITS_8),
         make_tuple(&vpx_highbd_fdct8x8_c, &idct8x8_10, 0, VPX_BITS_10),
         make_tuple(&vpx_highbd_fdct8x8_c, &idct8x8_12, 0, VPX_BITS_12)));
 #else
-INSTANTIATE_TEST_CASE_P(C, FwdTrans8x8DCT,
-                        ::testing::Values(make_tuple(&vpx_fdct8x8_c,
-                                                     &vpx_idct8x8_64_add_c, 0,
-                                                     VPX_BITS_8)));
+INSTANTIATE_TEST_SUITE_P(C, FwdTrans8x8DCT,
+                         ::testing::Values(make_tuple(&vpx_fdct8x8_c,
+                                                      &vpx_idct8x8_64_add_c, 0,
+                                                      VPX_BITS_8)));
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
 #if CONFIG_VP9_HIGHBITDEPTH
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     C, FwdTrans8x8HT,
     ::testing::Values(
         make_tuple(&vp9_fht8x8_c, &vp9_iht8x8_64_add_c, 0, VPX_BITS_8),
@@ -662,7 +665,7 @@ INSTANTIATE_TEST_CASE_P(
         make_tuple(&vp9_fht8x8_c, &vp9_iht8x8_64_add_c, 2, VPX_BITS_8),
         make_tuple(&vp9_fht8x8_c, &vp9_iht8x8_64_add_c, 3, VPX_BITS_8)));
 #else
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     C, FwdTrans8x8HT,
     ::testing::Values(
         make_tuple(&vp9_fht8x8_c, &vp9_iht8x8_64_add_c, 0, VPX_BITS_8),
@@ -672,13 +675,13 @@ INSTANTIATE_TEST_CASE_P(
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
 #if HAVE_NEON && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_CASE_P(NEON, FwdTrans8x8DCT,
-                        ::testing::Values(make_tuple(&vpx_fdct8x8_neon,
-                                                     &vpx_idct8x8_64_add_neon,
-                                                     0, VPX_BITS_8)));
+INSTANTIATE_TEST_SUITE_P(NEON, FwdTrans8x8DCT,
+                         ::testing::Values(make_tuple(&vpx_fdct8x8_neon,
+                                                      &vpx_idct8x8_64_add_neon,
+                                                      0, VPX_BITS_8)));
 
 #if !CONFIG_VP9_HIGHBITDEPTH
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     NEON, FwdTrans8x8HT,
     ::testing::Values(
         make_tuple(&vp9_fht8x8_c, &vp9_iht8x8_64_add_neon, 0, VPX_BITS_8),
@@ -689,11 +692,11 @@ INSTANTIATE_TEST_CASE_P(
 #endif  // HAVE_NEON && !CONFIG_EMULATE_HARDWARE
 
 #if HAVE_SSE2 && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_CASE_P(SSE2, FwdTrans8x8DCT,
-                        ::testing::Values(make_tuple(&vpx_fdct8x8_sse2,
-                                                     &vpx_idct8x8_64_add_sse2,
-                                                     0, VPX_BITS_8)));
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(SSE2, FwdTrans8x8DCT,
+                         ::testing::Values(make_tuple(&vpx_fdct8x8_sse2,
+                                                      &vpx_idct8x8_64_add_sse2,
+                                                      0, VPX_BITS_8)));
+INSTANTIATE_TEST_SUITE_P(
     SSE2, FwdTrans8x8HT,
     ::testing::Values(
         make_tuple(&vp9_fht8x8_sse2, &vp9_iht8x8_64_add_sse2, 0, VPX_BITS_8),
@@ -703,7 +706,7 @@ INSTANTIATE_TEST_CASE_P(
 #endif  // HAVE_SSE2 && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 
 #if HAVE_SSE2 && CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SSE2, FwdTrans8x8DCT,
     ::testing::Values(make_tuple(&vpx_fdct8x8_sse2, &vpx_idct8x8_64_add_c, 0,
                                  VPX_BITS_8),
@@ -716,7 +719,7 @@ INSTANTIATE_TEST_CASE_P(
                       make_tuple(&vpx_highbd_fdct8x8_sse2,
                                  &idct8x8_64_add_12_sse2, 12, VPX_BITS_12)));
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SSE2, FwdTrans8x8HT,
     ::testing::Values(
         make_tuple(&vp9_fht8x8_sse2, &vp9_iht8x8_64_add_c, 0, VPX_BITS_8),
@@ -726,7 +729,7 @@ INSTANTIATE_TEST_CASE_P(
 
 // Optimizations take effect at a threshold of 6201, so we use a value close to
 // that to test both branches.
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SSE2, InvTrans8x8DCT,
     ::testing::Values(
         make_tuple(&idct8x8_12_add_10_c, &idct8x8_12_add_10_sse2, 6225,
@@ -739,18 +742,18 @@ INSTANTIATE_TEST_CASE_P(
 
 #if HAVE_SSSE3 && VPX_ARCH_X86_64 && !CONFIG_VP9_HIGHBITDEPTH && \
     !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_CASE_P(SSSE3, FwdTrans8x8DCT,
-                        ::testing::Values(make_tuple(&vpx_fdct8x8_ssse3,
-                                                     &vpx_idct8x8_64_add_sse2,
-                                                     0, VPX_BITS_8)));
+INSTANTIATE_TEST_SUITE_P(SSSE3, FwdTrans8x8DCT,
+                         ::testing::Values(make_tuple(&vpx_fdct8x8_ssse3,
+                                                      &vpx_idct8x8_64_add_sse2,
+                                                      0, VPX_BITS_8)));
 #endif
 
 #if HAVE_MSA && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_CASE_P(MSA, FwdTrans8x8DCT,
-                        ::testing::Values(make_tuple(&vpx_fdct8x8_msa,
-                                                     &vpx_idct8x8_64_add_msa, 0,
-                                                     VPX_BITS_8)));
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(MSA, FwdTrans8x8DCT,
+                         ::testing::Values(make_tuple(&vpx_fdct8x8_msa,
+                                                      &vpx_idct8x8_64_add_msa,
+                                                      0, VPX_BITS_8)));
+INSTANTIATE_TEST_SUITE_P(
     MSA, FwdTrans8x8HT,
     ::testing::Values(
         make_tuple(&vp9_fht8x8_msa, &vp9_iht8x8_64_add_msa, 0, VPX_BITS_8),
@@ -760,9 +763,9 @@ INSTANTIATE_TEST_CASE_P(
 #endif  // HAVE_MSA && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 
 #if HAVE_VSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_CASE_P(VSX, FwdTrans8x8DCT,
-                        ::testing::Values(make_tuple(&vpx_fdct8x8_c,
-                                                     &vpx_idct8x8_64_add_vsx, 0,
-                                                     VPX_BITS_8)));
+INSTANTIATE_TEST_SUITE_P(VSX, FwdTrans8x8DCT,
+                         ::testing::Values(make_tuple(&vpx_fdct8x8_c,
+                                                      &vpx_idct8x8_64_add_vsx,
+                                                      0, VPX_BITS_8)));
 #endif  // HAVE_VSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 }  // namespace

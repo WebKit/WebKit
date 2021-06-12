@@ -6,9 +6,6 @@
 # in the file PATENTS. All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-# Some non-Chromium builds don't use Chromium's third_party/binutils.
-linux_use_bundled_binutils_override = true
-
 # Variable that can be used to support multiple build scenarios, like having
 # Chromium specific targets in a client project's GN file etc.
 build_with_chromium = false
@@ -43,4 +40,14 @@ if (host_os == "mac") {
          "Do not allow building targets with the default" +
              "hermetic toolchain if the minimum OS version is not met.")
   use_system_xcode = _result == 0
+}
+
+declare_args() {
+  # Tracing support requires //third_party/perfetto.
+  enable_base_tracing = false
+  use_perfetto_client_library = false
+
+  # Allows googletest to pretty-print various absl types.
+  # Defined here rather than in gtest.gni to match chromium.
+  gtest_enable_absl_printers = true
 }

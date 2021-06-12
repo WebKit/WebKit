@@ -49,11 +49,11 @@ public:
     bool needsLayout(const Box&);
 
     void setIntrinsicWidthConstraintsForBox(const Box&,  IntrinsicWidthConstraints);
-    Optional<IntrinsicWidthConstraints> intrinsicWidthConstraintsForBox(const Box&) const;
+    std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraintsForBox(const Box&) const;
     void clearIntrinsicWidthConstraints(const Box&);
 
     void setIntrinsicWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
-    Optional<IntrinsicWidthConstraints> intrinsicWidthConstraints() const { return m_intrinsicWidthConstraints; }
+    std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraints() const { return m_intrinsicWidthConstraints; }
 
     bool isBlockFormattingState() const { return m_type == Type::Block; }
     bool isInlineFormattingState() const { return m_type == Type::Inline; }
@@ -79,7 +79,7 @@ private:
     LayoutState& m_layoutState;
     Ref<FloatingState> m_floatingState;
     HashMap<const Box*, IntrinsicWidthConstraints> m_intrinsicWidthConstraintsForBoxes;
-    Optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
+    std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
     // FIXME: This needs WeakListHashSet
     OutOfFlowBoxList m_outOfFlowBoxes;
     Type m_type;
@@ -98,7 +98,7 @@ inline void FormattingState::clearIntrinsicWidthConstraints(const Box& layoutBox
     m_intrinsicWidthConstraintsForBoxes.remove(&layoutBox);
 }
 
-inline Optional<IntrinsicWidthConstraints> FormattingState::intrinsicWidthConstraintsForBox(const Box& layoutBox) const
+inline std::optional<IntrinsicWidthConstraints> FormattingState::intrinsicWidthConstraintsForBox(const Box& layoutBox) const
 {
     ASSERT(&m_layoutState.formattingStateForBox(layoutBox) == this);
     auto iterator = m_intrinsicWidthConstraintsForBoxes.find(&layoutBox);

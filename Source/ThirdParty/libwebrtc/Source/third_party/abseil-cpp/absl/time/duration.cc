@@ -356,7 +356,7 @@ namespace time_internal {
 // the remainder.  If it does not saturate, the remainder remain accurate,
 // but the returned quotient will over/underflow int64_t and should not be used.
 int64_t IDivDuration(bool satq, const Duration num, const Duration den,
-                   Duration* rem) {
+                     Duration* rem) {
   int64_t q = 0;
   if (IDivFastPath(num, den, &q, rem)) {
     return q;
@@ -763,7 +763,8 @@ void AppendNumberUnit(std::string* out, double n, DisplayUnit unit) {
 //   form "72h3m0.5s". Leading zero units are omitted.  As a special
 //   case, durations less than one second format use a smaller unit
 //   (milli-, micro-, or nanoseconds) to ensure that the leading digit
-//   is non-zero.  The zero duration formats as 0, with no unit.
+//   is non-zero.
+// Unlike Go, we format the zero duration as 0, with no unit.
 std::string FormatDuration(Duration d) {
   const Duration min_duration = Seconds(kint64min);
   if (d == min_duration) {

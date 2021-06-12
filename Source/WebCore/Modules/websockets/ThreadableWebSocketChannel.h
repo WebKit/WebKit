@@ -96,8 +96,8 @@ protected:
         URL url;
         bool areCookiesAllowed { true };
     };
-    static Optional<ValidatedURL> validateURL(Document&, const URL&);
-    WEBCORE_EXPORT static Optional<ResourceRequest> webSocketConnectRequest(Document&, const URL&);
+    static std::optional<ValidatedURL> validateURL(Document&, const URL&);
+    WEBCORE_EXPORT static std::optional<ResourceRequest> webSocketConnectRequest(Document&, const URL&);
 
     WebSocketIdentifier m_identifier;
 };

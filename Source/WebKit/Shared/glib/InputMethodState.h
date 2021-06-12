@@ -29,7 +29,6 @@
 #include <WebCore/InputMode.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 
 namespace IPC {
 class Decoder;
@@ -68,7 +67,7 @@ struct InputMethodState {
     void addHintsForAutocapitalizeType(WebCore::AutocapitalizeType);
 
     void encode(IPC::Encoder&) const;
-    static Optional<InputMethodState> decode(IPC::Decoder&);
+    static std::optional<InputMethodState> decode(IPC::Decoder&);
 
     Purpose purpose { Purpose::FreeForm };
     OptionSet<Hint> hints;

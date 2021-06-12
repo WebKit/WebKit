@@ -72,8 +72,7 @@ $(PROJECT_DIR)/Modules/beacon/Navigator+Beacon.idl
 $(PROJECT_DIR)/Modules/cache/CacheQueryOptions.idl
 $(PROJECT_DIR)/Modules/cache/DOMCache.idl
 $(PROJECT_DIR)/Modules/cache/DOMCacheStorage.idl
-$(PROJECT_DIR)/Modules/cache/DOMWindow+Caches.idl
-$(PROJECT_DIR)/Modules/cache/WorkerGlobalScope+Caches.idl
+$(PROJECT_DIR)/Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactInfo.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactProperty.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactsManager.idl

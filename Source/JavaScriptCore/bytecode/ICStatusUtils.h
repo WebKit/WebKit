@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BytecodeIndex.h"
+#include "CacheableIdentifier.h"
 #include "ExitFlag.h"
 
 namespace JSC {
@@ -70,6 +71,25 @@ void filterICStatusVariants(VariantVectorType& variants, const StructureSet& set
             variant.structureSet().filter(set);
             return variant.structureSet().isEmpty();
         });
+}
+
+template<typename VariantVectorType>
+CacheableIdentifier singleIdentifierForICStatus(VariantVectorType& variants)
+{
+    if (variants.isEmpty())
+        return nullptr;
+
+    CacheableIdentifier result = variants.first().identifier();
+    if (!result)
+        return nullptr;
+
+    for (size_t i = 1; i < variants.size(); ++i) {
+        CacheableIdentifier identifier = variants[i].identifier();
+        if (!identifier || identifier != result)
+            return nullptr;
+    }
+
+    return result;
 }
 
 ExitFlag hasBadCacheExitSite(CodeBlock* profiledBlock, BytecodeIndex);

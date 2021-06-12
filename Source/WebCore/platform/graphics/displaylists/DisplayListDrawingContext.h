@@ -40,7 +40,7 @@ public:
     WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM = { }, Recorder::Delegate* = nullptr);
 
     GraphicsContext& context() const { return const_cast<DrawingContext&>(*this).m_context; }
-    WEBCORE_EXPORT Recorder& recorder();
+    Recorder& recorder() { return m_context; };
     DisplayList takeDisplayList() { return std::exchange(m_displayList, { }); }
     DisplayList& displayList() { return m_displayList; }
     const DisplayList& displayList() const { return m_displayList; }
@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT void replayDisplayList(GraphicsContext&);
 
 protected:
-    GraphicsContext m_context;
+    Recorder m_context;
     DisplayList m_displayList;
     std::unique_ptr<InMemoryDisplayList> m_replayedDisplayList;
     bool m_tracksDisplayListReplay { false };

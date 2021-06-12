@@ -66,7 +66,7 @@ public:
     bool isHorizontal() const { return true; }
 
     const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }
-    const RootInlineBox* legacyRootInlineBox() const { return nullptr; }
+    const LegacyRootInlineBox* legacyRootInlineBox() const { return nullptr; }
 
     void traverseNext()
     {

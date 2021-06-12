@@ -22,6 +22,7 @@
 
 #include <initializer_list>
 #include <limits>
+#include <optional>
 #include <string.h>
 #include <type_traits>
 #include <utility>
@@ -716,21 +717,9 @@ public:
             OverflowHandler::overflowed();
         return Base::buffer()[i];
     }
-    T& at(Checked<size_t> i)
-    {
-        RELEASE_ASSERT(i < size());
-        return Base::buffer()[i];
-    }
-    const T& at(Checked<size_t> i) const
-    {
-        RELEASE_ASSERT(i < size());
-        return Base::buffer()[i];
-    }
 
     T& operator[](size_t i) { return at(i); }
     const T& operator[](size_t i) const { return at(i); }
-    T& operator[](Checked<size_t> i) { return at(i); }
-    const T& operator[](Checked<size_t> i) const { return at(i); }
 
     T* data() { return Base::buffer(); }
     const T* data() const { return Base::buffer(); }
@@ -1705,10 +1694,10 @@ struct CompactMapTraits {
 };
 
 template<typename T>
-struct CompactMapTraits<Optional<T>> {
+struct CompactMapTraits<std::optional<T>> {
     using ItemType = T;
-    static bool hasValue(const Optional<T>& returnValue) { return !!returnValue; }
-    static ItemType extractValue(Optional<T>&& returnValue) { return WTFMove(*returnValue); }
+    static bool hasValue(const std::optional<T>& returnValue) { return !!returnValue; }
+    static ItemType extractValue(std::optional<T>&& returnValue) { return WTFMove(*returnValue); }
 };
 
 template<typename T>

@@ -26,11 +26,12 @@
 #include "config.h"
 
 #include "MoveOnly.h"
+#include <optional>
 #include <wtf/Function.h>
 
 namespace TestWebKitAPI {
 
-static WTF::Function<int()> function_for_reentrancy_test;
+static Function<int()> function_for_reentrancy_test;
 static unsigned testObjectDestructorCalls = 0;
 
 enum class AssignmentMode { Null, Lambda, None };
@@ -190,12 +191,12 @@ struct FunctionDestructionChecker {
     }
 
     Function<unsigned()>& function;
-    static Optional<bool> functionAsBool;
-    static Optional<unsigned> functionResult;
+    static std::optional<bool> functionAsBool;
+    static std::optional<unsigned> functionResult;
 };
 
-Optional<bool> FunctionDestructionChecker::functionAsBool;
-Optional<unsigned> FunctionDestructionChecker::functionResult;
+std::optional<bool> FunctionDestructionChecker::functionAsBool;
+std::optional<unsigned> FunctionDestructionChecker::functionResult;
 
 TEST(WTF_Function, AssignBeforeDestroy)
 {
@@ -209,8 +210,8 @@ TEST(WTF_Function, AssignBeforeDestroy)
     EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
     EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
     EXPECT_EQ(1U, FunctionDestructionChecker::functionResult.value());
-    FunctionDestructionChecker::functionAsBool = WTF::nullopt;
-    FunctionDestructionChecker::functionResult = WTF::nullopt;
+    FunctionDestructionChecker::functionAsBool = std::nullopt;
+    FunctionDestructionChecker::functionResult = std::nullopt;
 
     a = FunctionDestructionChecker(a);
     a = MoveOnly { 2 };
@@ -218,8 +219,8 @@ TEST(WTF_Function, AssignBeforeDestroy)
     EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
     EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
     EXPECT_EQ(2U, FunctionDestructionChecker::functionResult.value());
-    FunctionDestructionChecker::functionAsBool = WTF::nullopt;
-    FunctionDestructionChecker::functionResult = WTF::nullopt;
+    FunctionDestructionChecker::functionAsBool = std::nullopt;
+    FunctionDestructionChecker::functionResult = std::nullopt;
 }
 
 static int returnThree()

@@ -129,15 +129,15 @@ private:
     }
 
 #if PLATFORM(MAC)
-    Optional<WebKit::WebPageOverlay::ActionContext> actionContextForResultAtPoint(WebKit::WebPageOverlay& pageOverlay, WebCore::FloatPoint location) final
+    std::optional<WebKit::WebPageOverlay::ActionContext> actionContextForResultAtPoint(WebKit::WebPageOverlay& pageOverlay, WebCore::FloatPoint location) final
     {
         if (!m_client.actionContextForResultAtPoint)
-            return WTF::nullopt;
+            return std::nullopt;
 
         WKBundleRangeHandleRef apiRange = nullptr;
         auto actionContext = (DDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
         if (!actionContext || !apiRange)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return { { actionContext, makeSimpleRange(WebKit::toImpl(apiRange)->coreRange()) } };
     }

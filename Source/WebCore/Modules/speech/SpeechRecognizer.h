@@ -49,7 +49,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     WEBCORE_EXPORT void start(Ref<RealtimeMediaSource>&&, bool mockSpeechRecognitionEnabled);
 #endif
-    WEBCORE_EXPORT void abort(Optional<SpeechRecognitionError>&& = WTF::nullopt);
+    WEBCORE_EXPORT void abort(std::optional<SpeechRecognitionError>&& = std::nullopt);
     WEBCORE_EXPORT void stop();
     WEBCORE_EXPORT void prepareForDestruction();
 

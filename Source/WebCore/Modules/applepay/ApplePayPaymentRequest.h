@@ -45,10 +45,10 @@ struct ApplePayPaymentRequest : ApplePayRequestBase {
     String currencyCode;
 
     ShippingType shippingType { ShippingType::Shipping };
-    Optional<Vector<ApplePayShippingMethod>> shippingMethods;
+    std::optional<Vector<ApplePayShippingMethod>> shippingMethods;
 
     ApplePayLineItem total;
-    Optional<Vector<ApplePayLineItem>> lineItems;
+    std::optional<Vector<ApplePayLineItem>> lineItems;
 
 #if defined(ApplePayPaymentRequestAdditions_members)
     ApplePayPaymentRequestAdditions_members

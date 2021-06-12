@@ -405,10 +405,10 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url, 
     return open(method, urlWithCredentials, async);
 }
 
-Optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
+std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 {
-    // A return value other than WTF::nullopt means we should not try to send, and we should return that value to the caller.
-    // WTF::nullopt means we are ready to send and should continue with the send algorithm.
+    // A return value other than std::nullopt means we should not try to send, and we should return that value to the caller.
+    // std::nullopt means we are ready to send and should continue with the send algorithm.
 
     if (!scriptExecutionContext())
         return ExceptionOr<void> { };
@@ -436,10 +436,10 @@ Optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     }
 
     m_error = false;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-ExceptionOr<void> XMLHttpRequest::send(Optional<SendTypes>&& sendType)
+ExceptionOr<void> XMLHttpRequest::send(std::optional<SendTypes>&& sendType)
 {
     InspectorInstrumentation::willSendXMLHttpRequest(scriptExecutionContext(), url().string());
     m_userGestureToken = UserGestureIndicator::currentUserGesture();
@@ -623,7 +623,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         }
     }
 
-    m_exceptionCode = WTF::nullopt;
+    m_exceptionCode = std::nullopt;
     m_error = false;
     m_uploadComplete = !request.httpBody();
     m_sendFlag = true;
@@ -699,8 +699,8 @@ bool XMLHttpRequest::internalAbort()
 
     // Cancelling m_loadingActivity may trigger a window.onload callback which can call open() on the same xhr.
     // This would create internalAbort reentrant call.
-    // m_loadingActivity is set to WTF::nullopt before being cancelled to exit early in any reentrant internalAbort() call.
-    auto loadingActivity = std::exchange(m_loadingActivity, WTF::nullopt);
+    // m_loadingActivity is set to std::nullopt before being cancelled to exit early in any reentrant internalAbort() call.
+    auto loadingActivity = std::exchange(m_loadingActivity, std::nullopt);
     loadingActivity->loader->cancel();
 
     // If window.onload callback calls open() and send() on the same xhr, m_loadingActivity is now set to a new value.
@@ -922,7 +922,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long)
 
     m_responseBuilder.shrinkToFit();
 
-    m_loadingActivity = WTF::nullopt;
+    m_loadingActivity = std::nullopt;
 
     m_sendFlag = false;
     changeState(DONE);
@@ -1016,7 +1016,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
     return TextResourceDecoder::create("text/plain", "UTF-8");
 }
 
-void XMLHttpRequest::didReceiveData(const char* data, int len)
+void XMLHttpRequest::didReceiveData(const uint8_t* data, int len)
 {
     if (m_error)
         return;
@@ -1038,7 +1038,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
         return;
 
     if (len == -1)
-        len = strlen(data);
+        len = strlen(reinterpret_cast<const char*>(data));
 
     if (useDecoder)
         m_responseBuilder.append(m_decoder->decode(data, len));
@@ -1161,7 +1161,7 @@ void XMLHttpRequest::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-void XMLHttpRequest::eventListenersDidChange()
+void XMLHttpRequest::updateHasRelevantEventListener()
 {
     m_hasRelevantEventListener = hasEventListeners(eventNames().abortEvent)
         || hasEventListeners(eventNames().errorEvent)
@@ -1169,14 +1169,20 @@ void XMLHttpRequest::eventListenersDidChange()
         || hasEventListeners(eventNames().loadendEvent)
         || hasEventListeners(eventNames().progressEvent)
         || hasEventListeners(eventNames().readystatechangeEvent)
-        || hasEventListeners(eventNames().timeoutEvent);
+        || hasEventListeners(eventNames().timeoutEvent)
+        || (m_upload && m_upload->hasRelevantEventListener());
+}
+
+void XMLHttpRequest::eventListenersDidChange()
+{
+    updateHasRelevantEventListener();
 }
 
 // An XMLHttpRequest object must not be garbage collected if its state is either opened with the send() flag set, headers received, or loading, and
 // it has one or more event listeners registered whose type is one of readystatechange, progress, abort, error, load, timeout, and loadend.
 bool XMLHttpRequest::virtualHasPendingActivity() const
 {
-    if (!m_hasRelevantEventListener && !(m_upload && m_upload->hasRelevantEventListener()))
+    if (!m_hasRelevantEventListener)
         return false;
 
     switch (readyState()) {

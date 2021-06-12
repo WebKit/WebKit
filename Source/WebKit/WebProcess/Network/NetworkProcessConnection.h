@@ -74,8 +74,8 @@ public:
 #endif
 
 #if HAVE(AUDIT_TOKEN)
-    void setNetworkProcessAuditToken(Optional<audit_token_t> auditToken) { m_networkProcessAuditToken = auditToken; }
-    Optional<audit_token_t> networkProcessAuditToken() const { return m_networkProcessAuditToken; }
+    void setNetworkProcessAuditToken(std::optional<audit_token_t> auditToken) { m_networkProcessAuditToken = auditToken; }
+    std::optional<audit_token_t> networkProcessAuditToken() const { return m_networkProcessAuditToken; }
 #endif
 
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy() const { return m_cookieAcceptPolicy; }
@@ -109,7 +109,7 @@ private:
     void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&);
 #endif
 #if ENABLE(WEB_RTC)
-    void connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler, CompletionHandler<void(Optional<bool>)>&&);
+    void connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler, CompletionHandler<void(std::optional<bool>)>&&);
 #endif
 
     void broadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
@@ -117,7 +117,7 @@ private:
     // The connection from the web process to the network process.
     Ref<IPC::Connection> m_connection;
 #if HAVE(AUDIT_TOKEN)
-    Optional<audit_token_t> m_networkProcessAuditToken;
+    std::optional<audit_token_t> m_networkProcessAuditToken;
 #endif
 
     RefPtr<WebIDBConnectionToServer> m_webIDBConnection;

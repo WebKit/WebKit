@@ -27,14 +27,13 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct RTCRtcpParameters {
     String cname;
-    Optional<bool> reducedSize;
+    std::optional<bool> reducedSize;
 };
 
 

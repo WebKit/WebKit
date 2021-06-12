@@ -30,7 +30,7 @@
 
 namespace WTF {
 
-Vector<String> platformUserPreferredLanguages()
+Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 {
     Vector<String> languages;
 

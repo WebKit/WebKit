@@ -70,14 +70,14 @@ static bool getFileSizeFromFindData(const WIN32_FIND_DATAW& findData, long long&
     return true;
 }
 
-static Optional<uint64_t> getFileSizeFromByHandleFileInformationStructure(const BY_HANDLE_FILE_INFORMATION& fileInformation)
+static std::optional<uint64_t> getFileSizeFromByHandleFileInformationStructure(const BY_HANDLE_FILE_INFORMATION& fileInformation)
 {
     ULARGE_INTEGER fileSize;
     fileSize.HighPart = fileInformation.nFileSizeHigh;
     fileSize.LowPart = fileInformation.nFileSizeLow;
 
     if (fileSize.QuadPart > static_cast<ULONGLONG>(std::numeric_limits<long long>::max()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return fileSize.QuadPart;
 }
@@ -103,20 +103,20 @@ static void fileModificationTimeFromFindData(const WIN32_FIND_DATAW& findData, t
     time = fileTime.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
 }
 
-Optional<uint64_t> fileSize(PlatformFileHandle fileHandle)
+std::optional<uint64_t> fileSize(PlatformFileHandle fileHandle)
 {
     BY_HANDLE_FILE_INFORMATION fileInformation;
     if (!::GetFileInformationByHandle(fileHandle, &fileInformation))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return getFileSizeFromByHandleFileInformationStructure(fileInformation);
 }
 
-Optional<WallTime> fileCreationTime(const String& path)
+std::optional<WallTime> fileCreationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return WTF::nullopt;
+        return std::nullopt;
 
     time_t time = 0;
     fileCreationTimeFromFindData(findData, time);
@@ -303,7 +303,7 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
     return SetFileInformationByHandle(handle, FileEndOfFileInfo, &eofInfo, sizeof(FILE_END_OF_FILE_INFO));
 }
 
-int writeToFile(PlatformFileHandle handle, const char* data, int length)
+int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     if (!isHandleValid(handle))
         return -1;
@@ -316,7 +316,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     return static_cast<int>(bytesWritten);
 }
 
-int readFromFile(PlatformFileHandle handle, char* data, int length)
+int readFromFile(PlatformFileHandle handle, void* data, int length)
 {
     if (!isHandleValid(handle))
         return -1;
@@ -339,16 +339,16 @@ String roamingUserSpecificStorageDirectory()
     return cachedStorageDirectory(CSIDL_APPDATA);
 }
 
-Optional<int32_t> getFileDeviceId(const CString& fsFile)
+std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     auto handle = openFile(fsFile.data(), FileOpenMode::Read);
     if (!isHandleValid(handle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     BY_HANDLE_FILE_INFORMATION fileInformation = { };
     if (!::GetFileInformationByHandle(handle, &fileInformation)) {
         closeFile(handle);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     closeFile(handle);

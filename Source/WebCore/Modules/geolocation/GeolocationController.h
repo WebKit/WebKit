@@ -53,10 +53,10 @@ public:
     void requestPermission(Geolocation&);
     void cancelPermissionRequest(Geolocation&);
 
-    WEBCORE_EXPORT void positionChanged(const Optional<GeolocationPositionData>&);
+    WEBCORE_EXPORT void positionChanged(const std::optional<GeolocationPositionData>&);
     WEBCORE_EXPORT void errorOccurred(GeolocationError&);
 
-    Optional<GeolocationPositionData> lastPosition();
+    std::optional<GeolocationPositionData> lastPosition();
 
     GeolocationClient& client() { return m_client; }
 
@@ -71,7 +71,7 @@ private:
 
     void activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState) override;
 
-    Optional<GeolocationPositionData> m_lastPosition;
+    std::optional<GeolocationPositionData> m_lastPosition;
 
     typedef HashSet<Ref<Geolocation>> ObserversSet;
     // All observers; both those requesting high accuracy and those not.

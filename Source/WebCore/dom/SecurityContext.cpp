@@ -136,11 +136,10 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
             flags &= ~SandboxStorageAccessByUserActivation;
         else {
             if (numberOfTokenErrors)
-                tokenErrors.appendLiteral(", '");
+                tokenErrors.append(", '");
             else
                 tokenErrors.append('\'');
-            tokenErrors.append(sandboxToken);
-            tokenErrors.append('\'');
+            tokenErrors.append(sandboxToken, '\'');
             numberOfTokenErrors++;
         }
 
@@ -149,9 +148,9 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
 
     if (numberOfTokenErrors) {
         if (numberOfTokenErrors > 1)
-            tokenErrors.appendLiteral(" are invalid sandbox flags.");
+            tokenErrors.append(" are invalid sandbox flags.");
         else
-            tokenErrors.appendLiteral(" is an invalid sandbox flag.");
+            tokenErrors.append(" is an invalid sandbox flag.");
         invalidTokensErrorMessage = tokenErrors.toString();
     }
 

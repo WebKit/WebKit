@@ -227,34 +227,34 @@ void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageB
     paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
 }
 
-Optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer()
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
-        return WTF::nullopt;
+        return std::nullopt;
     return readRenderingResultsForPainting();
 }
 
-Optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
-        return WTF::nullopt;
+        return std::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     return readRenderingResults();
 }
 
-Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
 {
     if (!makeContextCurrent())
-        return WTF::nullopt;
+        return std::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     return readCompositedResults();
 }
 
 #if !PLATFORM(COCOA)
-Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 {
     return readRenderingResults();
 }

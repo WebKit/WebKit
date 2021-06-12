@@ -3043,7 +3043,7 @@ class CppStyleTest(CppStyleTestBase):
 
         self.perform_function_definition_check(
             'Source/WTF/wtf/foo.h',
-            '    static Optional<std::tuple<>> decode(Decoder&)\n'
+            '    static std::optional<std::tuple<>> decode(Decoder&)\n'
             '    {',
             warning_none)
 
@@ -5654,29 +5654,6 @@ class WebKitStyleTest(CppStyleTestBase):
             "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
             "  [runtime/wtf_never_destroyed] [4]",
             'foo.mm')
-
-    def test_wtf_optional(self):
-        self.assert_lint(
-             'Optional<int> a;',
-             '',
-             'foo.cpp')
-
-        self.assert_lint(
-             'WTF::Optional<int> a;',
-             '',
-             'foo.cpp')
-
-        self.assert_lint(
-            'std::optional<int> a;',
-            "Use 'WTF::Optional<>' instead of 'std::optional<>'."
-            "  [runtime/wtf_optional] [4]",
-            'foo.cpp')
-
-        self.assert_lint(
-            'optional<int> a;',
-            "Use 'WTF::Optional<>' instead of 'std::optional<>'."
-            "  [runtime/wtf_optional] [4]",
-            'foo.cpp')
 
     def test_lock_guard(self):
         self.assert_lint(

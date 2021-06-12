@@ -143,8 +143,8 @@ def function_parameter_type(type, kind):
 def reply_type(type):
     if type == 'IPC::SharedBufferDataReference':
         return 'IPC::DataReference'
-    if type == 'Optional<IPC::SharedBufferDataReference>':
-        return 'Optional<IPC::DataReference>'
+    if type == 'std::optional<IPC::SharedBufferDataReference>':
+        return 'std::optional<IPC::DataReference>'
     return type
 
 
@@ -601,9 +601,9 @@ def class_template_headers(template_string):
         'Expected': {'headers': ['<wtf/Expected.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'HashMap': {'headers': ['<wtf/HashMap.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'HashSet': {'headers': ['<wtf/HashSet.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
-        'Optional': {'headers': ['<wtf/Optional.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'OptionSet': {'headers': ['<wtf/OptionSet.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Vector': {'headers': ['<wtf/Vector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'std::optional': {'headers': ['<optional>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::pair': {'headers': ['<utility>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'IPC::ArrayReference': {'headers': ['"ArrayReference.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
@@ -784,6 +784,7 @@ def headers_for_type(type):
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
         'webrtc::WebKitEncodedFrameInfo': ['<webrtc/sdk/WebKit/WebKitEncoder.h>', '<WebCore/LibWebRTCEnumTraits.h>'],
         'PlatformXR::Device::FrameData': ['<WebCore/PlatformXR.h>'],
+        'WebCore::DynamicRangeMode': ['<WebCore/PlatformScreen.h>'],
     }
 
     headers = []
@@ -906,7 +907,7 @@ def generate_message_handler(receiver):
                 move_parameters = message.name, ', '.join([move_type(reply_type(x.type)) for x in message.reply_parameters])
                 result.append('void %s::callReply(IPC::Decoder& decoder, CompletionHandler<void(%s)>&& completionHandler)\n{\n' % move_parameters)
                 for x in message.reply_parameters:
-                    result.append('    Optional<%s> %s;\n' % (reply_type(x.type), x.name))
+                    result.append('    std::optional<%s> %s;\n' % (reply_type(x.type), x.name))
                     result.append('    decoder >> %s;\n' % x.name)
                     result.append('    if (!%s) {\n        ASSERT_NOT_REACHED();\n        cancelReply(WTFMove(completionHandler));\n        return;\n    }\n' % x.name)
                 result.append('    completionHandler(')
@@ -1127,7 +1128,7 @@ def generate_message_names_implementation(receivers):
 
 
 def generate_js_value_conversion_function(result, receivers, function_name, argument_type, predicate=lambda message: True):
-    result.append('Optional<JSC::JSValue> %s(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)\n' % function_name)
+    result.append('std::optional<JSC::JSValue> %s(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)\n' % function_name)
     result.append('{\n')
     result.append('    switch (name) {\n')
     for receiver in receivers:
@@ -1154,13 +1155,13 @@ def generate_js_value_conversion_function(result, receivers, function_name, argu
     result.append('    default:\n')
     result.append('        break;\n')
     result.append('    }\n')
-    result.append('    return WTF::nullopt;\n')
+    result.append('    return std::nullopt;\n')
     result.append('}\n')
 
 
 def generate_js_argument_descriptions(receivers, function_name, arguments_from_message):
     result = []
-    result.append('Optional<Vector<ArgumentDescription>> %s(MessageName name)\n' % function_name)
+    result.append('std::optional<Vector<ArgumentDescription>> %s(MessageName name)\n' % function_name)
     result.append('{\n')
     result.append('    switch (name) {\n')
     for receiver in receivers:
@@ -1195,7 +1196,7 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
                 if argument.kind.startswith('enum:'):
                     enum_type = '"%s"' % argument_type
                     argument_type = argument.kind[5:]
-                if argument_type.startswith('Optional<') and argument_type.endswith('>'):
+                if argument_type.startswith('std::optional<') and argument_type.endswith('>'):
                     argument_type = argument_type[9:-1]
                     is_optional = True
                 result.append('            {"%s", "%s", %s, %s},\n' % (argument.name, argument_type, enum_type or 'nullptr', 'true' if is_optional else 'false'))
@@ -1207,7 +1208,7 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
     result.append('    default:\n')
     result.append('        break;\n')
     result.append('    }\n')
-    result.append('    return WTF::nullopt;\n')
+    result.append('    return std::nullopt;\n')
     result.append('}\n')
     return result
 

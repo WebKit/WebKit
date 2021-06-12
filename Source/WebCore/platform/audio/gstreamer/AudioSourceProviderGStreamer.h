@@ -25,8 +25,8 @@
 #include "GRefPtrGStreamer.h"
 #include "MainThreadNotifier.h"
 #include <gst/gst.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -86,7 +86,7 @@ private:
     unsigned long m_deinterleavePadAddedHandlerId { 0 };
     unsigned long m_deinterleaveNoMorePadsHandlerId { 0 };
     unsigned long m_deinterleavePadRemovedHandlerId { 0 };
-    CheckedLock m_adapterLock;
+    Lock m_adapterLock;
 };
 
 }

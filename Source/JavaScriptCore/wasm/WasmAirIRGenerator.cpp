@@ -850,11 +850,11 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
                 // This allows us to elide stack checks in the Wasm -> Embedder call IC stub. Since these will
                 // spill all arguments to the stack, we ensure that a stack check here covers the
                 // stack that such a stub would use.
-                (Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jsCallingConvention().headerSizeInBytes).unsafeGet()
+                Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jsCallingConvention().headerSizeInBytes
             ));
-            const int32_t checkSize = m_makesCalls ? (wasmFrameSize + extraFrameSize).unsafeGet() : wasmFrameSize.unsafeGet();
+            const int32_t checkSize = m_makesCalls ? (wasmFrameSize + extraFrameSize).value() : wasmFrameSize.value();
             bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
-            bool needsOverflowCheck = m_makesCalls || wasmFrameSize >= minimumParentCheckSize || needUnderflowCheck;
+            bool needsOverflowCheck = m_makesCalls || wasmFrameSize >= static_cast<int32_t>(minimumParentCheckSize) || needUnderflowCheck;
 
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
@@ -2163,7 +2163,7 @@ inline TypedTmp AirIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueT
         });
     }
 
-    Optional<B3::Air::Opcode> opcode;
+    std::optional<B3::Air::Opcode> opcode;
     if (isX86() || isARM64E())
         opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth(op));
     B3::Air::Opcode nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth(op));
@@ -2235,7 +2235,7 @@ inline void AirIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType
         });
     }
 
-    Optional<B3::Air::Opcode> opcode;
+    std::optional<B3::Air::Opcode> opcode;
     if (isX86() || isARM64E())
         opcode = OPCODE_FOR_WIDTH(AtomicXchg, accessWidth(op));
     B3::Air::Opcode nonAtomicOpcode = B3::Air::Nop;
@@ -2289,7 +2289,7 @@ TypedTmp AirIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueTyp
         });
     }
 
-    Optional<B3::Air::Opcode> opcode;
+    std::optional<B3::Air::Opcode> opcode;
     B3::Air::Opcode nonAtomicOpcode = B3::Air::Nop;
     B3::Commutativity commutativity = B3::NotCommutative;
     switch (op) {
@@ -2486,7 +2486,7 @@ TypedTmp AirIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valu
 
     m_currentBlock = failureCase;
     ([&] {
-        Optional<B3::Air::Opcode> opcode;
+        std::optional<B3::Air::Opcode> opcode;
         if (isX86() || isARM64E())
             opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth);
         B3::Air::Opcode nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth);
@@ -3155,7 +3155,7 @@ B3::PatchpointValue* AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const
     Checked<size_t> newSize = checkedSum<size_t>(patchArgs.size(), args.size());
     RELEASE_ASSERT(!newSize.hasOverflowed());
 
-    patchArgs.grow(newSize.unsafeGet());
+    patchArgs.grow(newSize);
     for (unsigned i = 0; i < args.size(); ++i)
         patchArgs[i + offset] = ConstrainedTmp(args[i], locations.params[i]);
 

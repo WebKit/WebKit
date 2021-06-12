@@ -187,7 +187,7 @@ function createSampleBuildRequest(platform, test)
 
     return BuildRequest.ensureSingleton('16733-' + platform.id(), {'triggerable': MockModels.triggerable,
         repositoryGroup: MockModels.svnRepositoryGroup,
-        'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test});
+        'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test, order: 0});
 }
 
 function createSampleBuildRequestWithPatch(platform, test, order)

@@ -83,14 +83,14 @@ HRESULT WebGeolocationPosition::initWithTimestamp(double timestamp, double latit
     return S_OK;
 }
 
-Optional<GeolocationPositionData> core(IWebGeolocationPosition* position)
+std::optional<GeolocationPositionData> core(IWebGeolocationPosition* position)
 {
     if (!position)
-        return WTF::nullopt;
+        return std::nullopt;
 
     COMPtr<WebGeolocationPosition> webGeolocationPosition(Query, position);
     if (!webGeolocationPosition)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return webGeolocationPosition->impl();
 }

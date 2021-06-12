@@ -1,4 +1,14 @@
 dialog {
+    position: absolute;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+    border: solid;
+    padding: 1em;
+    background: white;
+    color: black;
     display: none;
 }
 

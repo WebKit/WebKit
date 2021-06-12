@@ -81,7 +81,7 @@ public:
     ExceptionOr<void> open(const String& method, const String& url);
     ExceptionOr<void> open(const String& method, const URL&, bool async);
     ExceptionOr<void> open(const String& method, const String&, bool async, const String& user, const String& password);
-    ExceptionOr<void> send(Optional<SendTypes>&&);
+    ExceptionOr<void> send(std::optional<SendTypes>&&);
     void abort();
     ExceptionOr<void> setRequestHeader(const String& name, const String& value);
     ExceptionOr<void> overrideMimeType(const String& override);
@@ -133,7 +133,10 @@ public:
     void dispatchEvent(Event&) override;
 
 private:
+    friend class XMLHttpRequestUpload;
     explicit XMLHttpRequest(ScriptExecutionContext&);
+
+    void updateHasRelevantEventListener();
 
     // EventTarget.
     void eventListenersDidChange() final;
@@ -157,12 +160,12 @@ private:
     // ThreadableLoaderClient
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
-    void didReceiveData(const char* data, int dataLength) override;
+    void didReceiveData(const uint8_t* data, int dataLength) override;
     void didFinishLoading(unsigned long identifier) override;
     void didFail(const ResourceError&) override;
     void notifyIsDone(bool) final;
 
-    Optional<ExceptionOr<void>> prepareToSend();
+    std::optional<ExceptionOr<void>> prepareToSend();
     ExceptionOr<void> send(Document&);
     ExceptionOr<void> send(const String& = { });
     ExceptionOr<void> send(Blob&);
@@ -220,7 +223,7 @@ private:
         Ref<XMLHttpRequest> protectedThis; // Keep object alive while loading even if there is no longer a JS wrapper.
         Ref<ThreadableLoader> loader;
     };
-    Optional<LoadingActivity> m_loadingActivity;
+    std::optional<LoadingActivity> m_loadingActivity;
 
     String m_responseEncoding;
 
@@ -245,9 +248,9 @@ private:
 
     MonotonicTime m_sendingTime;
 
-    Optional<ExceptionCode> m_exceptionCode;
+    std::optional<ExceptionCode> m_exceptionCode;
     RefPtr<UserGestureToken> m_userGestureToken;
-    bool m_hasRelevantEventListener { false };
+    std::atomic<bool> m_hasRelevantEventListener;
 };
 
 inline auto XMLHttpRequest::responseType() const -> ResponseType

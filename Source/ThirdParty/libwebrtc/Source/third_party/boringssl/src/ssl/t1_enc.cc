@@ -191,15 +191,14 @@ static bool get_key_block_lengths(const SSL *ssl, size_t *out_mac_secret_len,
 
 static bool generate_key_block(const SSL *ssl, Span<uint8_t> out,
                                const SSL_SESSION *session) {
-  auto master_key =
-      MakeConstSpan(session->master_key, session->master_key_length);
+  auto secret = MakeConstSpan(session->secret, session->secret_length);
   static const char kLabel[] = "key expansion";
   auto label = MakeConstSpan(kLabel, sizeof(kLabel) - 1);
 
   const EVP_MD *digest = ssl_session_get_digest(session);
   // Note this function assumes that |session|'s key material corresponds to
   // |ssl->s3->client_random| and |ssl->s3->server_random|.
-  return tls1_prf(digest, out, master_key, label, ssl->s3->server_random,
+  return tls1_prf(digest, out, secret, label, ssl->s3->server_random,
                   ssl->s3->client_random);
 }
 
@@ -379,8 +378,7 @@ int SSL_export_keying_material(SSL *ssl, uint8_t *out, size_t out_len,
 
   const SSL_SESSION *session = SSL_get_session(ssl);
   const EVP_MD *digest = ssl_session_get_digest(session);
-  return tls1_prf(
-      digest, MakeSpan(out, out_len),
-      MakeConstSpan(session->master_key, session->master_key_length),
-      MakeConstSpan(label, label_len), seed, {});
+  return tls1_prf(digest, MakeSpan(out, out_len),
+                  MakeConstSpan(session->secret, session->secret_length),
+                  MakeConstSpan(label, label_len), seed, {});
 }

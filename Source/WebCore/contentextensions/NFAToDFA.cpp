@@ -321,11 +321,11 @@ static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, co
     return uniqueNodeIdAddResult.iterator->impl()->m_dfaNodeId;
 }
 
-Optional<DFA> NFAToDFA::convert(NFA&& nfa)
+std::optional<DFA> NFAToDFA::convert(NFA&& nfa)
 {
     auto serializedNFA = SerializedNFA::serialize(WTFMove(nfa));
     if (!serializedNFA)
-        return WTF::nullopt;
+        return std::nullopt;
 
     NFANodeClosures nfaNodeClosures = resolveEpsilonClosures(*serializedNFA);
     DFA dfa;

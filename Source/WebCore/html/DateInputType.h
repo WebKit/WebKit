@@ -45,8 +45,8 @@ private:
     const AtomString& formControlType() const override;
     DateComponentsType dateType() const override;
     StepRange createStepRange(AnyStepHandling) const override;
-    Optional<DateComponents> parseToDateComponents(const StringView&) const override;
-    Optional<DateComponents> setMillisecondToDateComponents(double) const override;
+    std::optional<DateComponents> parseToDateComponents(const StringView&) const override;
+    std::optional<DateComponents> setMillisecondToDateComponents(double) const override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;

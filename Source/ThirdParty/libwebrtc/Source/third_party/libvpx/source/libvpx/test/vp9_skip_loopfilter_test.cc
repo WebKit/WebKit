@@ -24,33 +24,42 @@ const char kVp9Md5File[] = "vp90-2-08-tile_1x8_frame_parallel.webm.md5";
 // Class for testing shutting off the loop filter.
 class SkipLoopFilterTest {
  public:
-  SkipLoopFilterTest() : video_(NULL), decoder_(NULL), md5_file_(NULL) {}
+  SkipLoopFilterTest()
+      : video_(nullptr), decoder_(nullptr), md5_file_(nullptr) {}
 
   ~SkipLoopFilterTest() {
-    if (md5_file_ != NULL) fclose(md5_file_);
+    if (md5_file_ != nullptr) fclose(md5_file_);
     delete decoder_;
     delete video_;
   }
 
   // If |threads| > 0 then set the decoder with that number of threads.
-  void Init(int num_threads) {
+  bool Init(int num_threads) {
     expected_md5_[0] = '\0';
     junk_[0] = '\0';
     video_ = new libvpx_test::WebMVideoSource(kVp9TestFile);
-    ASSERT_TRUE(video_ != NULL);
+    if (video_ == nullptr) {
+      EXPECT_NE(video_, nullptr);
+      return false;
+    }
     video_->Init();
     video_->Begin();
 
     vpx_codec_dec_cfg_t cfg = vpx_codec_dec_cfg_t();
     if (num_threads > 0) cfg.threads = num_threads;
     decoder_ = new libvpx_test::VP9Decoder(cfg, 0);
-    ASSERT_TRUE(decoder_ != NULL);
+    if (decoder_ == nullptr) {
+      EXPECT_NE(decoder_, nullptr);
+      return false;
+    }
 
     OpenMd5File(kVp9Md5File);
+    return !::testing::Test::HasFailure();
   }
 
   // Set the VP9 skipLoopFilter control value.
   void SetSkipLoopFilter(int value, vpx_codec_err_t expected_value) {
+    ASSERT_NE(decoder_, nullptr);
     decoder_->Control(VP9_SET_SKIP_LOOP_FILTER, value, expected_value);
   }
 
@@ -65,7 +74,7 @@ class SkipLoopFilterTest {
   }
 
   vpx_codec_err_t DecodeRemainingFrames() {
-    for (; video_->cxdata() != NULL; video_->Next()) {
+    for (; video_->cxdata() != nullptr; video_->Next()) {
       const vpx_codec_err_t res =
           decoder_->DecodeFrame(video_->cxdata(), video_->frame_size());
       if (res != VPX_CODEC_OK) return res;
@@ -85,13 +94,13 @@ class SkipLoopFilterTest {
   // TODO(fgalligan): Move the MD5 testing code into another class.
   void OpenMd5File(const std::string &md5_file_name) {
     md5_file_ = libvpx_test::OpenTestDataFile(md5_file_name);
-    ASSERT_TRUE(md5_file_ != NULL)
+    ASSERT_NE(md5_file_, nullptr)
         << "MD5 file open failed. Filename: " << md5_file_name;
   }
 
   // Reads the next line of the MD5 file.
   void ReadMd5() {
-    ASSERT_TRUE(md5_file_ != NULL);
+    ASSERT_NE(md5_file_, nullptr);
     const int res = fscanf(md5_file_, "%s  %s", expected_md5_, junk_);
     ASSERT_NE(EOF, res) << "Read md5 data failed";
     expected_md5_[32] = '\0';
@@ -121,7 +130,7 @@ TEST(SkipLoopFilterTest, ShutOffLoopFilter) {
   const int non_zero_value = 1;
   const int num_threads = 0;
   SkipLoopFilterTest skip_loop_filter;
-  skip_loop_filter.Init(num_threads);
+  ASSERT_TRUE(skip_loop_filter.Init(num_threads));
   skip_loop_filter.SetSkipLoopFilter(non_zero_value, VPX_CODEC_OK);
   ASSERT_EQ(VPX_CODEC_OK, skip_loop_filter.DecodeRemainingFrames());
   skip_loop_filter.CheckMd5(false);
@@ -131,7 +140,7 @@ TEST(SkipLoopFilterTest, ShutOffLoopFilterSingleThread) {
   const int non_zero_value = 1;
   const int num_threads = 1;
   SkipLoopFilterTest skip_loop_filter;
-  skip_loop_filter.Init(num_threads);
+  ASSERT_TRUE(skip_loop_filter.Init(num_threads));
   skip_loop_filter.SetSkipLoopFilter(non_zero_value, VPX_CODEC_OK);
   ASSERT_EQ(VPX_CODEC_OK, skip_loop_filter.DecodeRemainingFrames());
   skip_loop_filter.CheckMd5(false);
@@ -141,7 +150,7 @@ TEST(SkipLoopFilterTest, ShutOffLoopFilter8Threads) {
   const int non_zero_value = 1;
   const int num_threads = 8;
   SkipLoopFilterTest skip_loop_filter;
-  skip_loop_filter.Init(num_threads);
+  ASSERT_TRUE(skip_loop_filter.Init(num_threads));
   skip_loop_filter.SetSkipLoopFilter(non_zero_value, VPX_CODEC_OK);
   ASSERT_EQ(VPX_CODEC_OK, skip_loop_filter.DecodeRemainingFrames());
   skip_loop_filter.CheckMd5(false);
@@ -151,7 +160,7 @@ TEST(SkipLoopFilterTest, WithLoopFilter) {
   const int non_zero_value = 1;
   const int num_threads = 0;
   SkipLoopFilterTest skip_loop_filter;
-  skip_loop_filter.Init(num_threads);
+  ASSERT_TRUE(skip_loop_filter.Init(num_threads));
   skip_loop_filter.SetSkipLoopFilter(non_zero_value, VPX_CODEC_OK);
   skip_loop_filter.SetSkipLoopFilter(0, VPX_CODEC_OK);
   ASSERT_EQ(VPX_CODEC_OK, skip_loop_filter.DecodeRemainingFrames());
@@ -161,7 +170,7 @@ TEST(SkipLoopFilterTest, WithLoopFilter) {
 TEST(SkipLoopFilterTest, ToggleLoopFilter) {
   const int num_threads = 0;
   SkipLoopFilterTest skip_loop_filter;
-  skip_loop_filter.Init(num_threads);
+  ASSERT_TRUE(skip_loop_filter.Init(num_threads));
 
   for (int i = 0; i < 10; ++i) {
     skip_loop_filter.SetSkipLoopFilter(i % 2, VPX_CODEC_OK);

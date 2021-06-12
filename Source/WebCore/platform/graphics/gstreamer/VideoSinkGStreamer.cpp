@@ -71,35 +71,38 @@ class VideoRenderRequestScheduler {
 public:
     void start()
     {
-        Locker locker { m_sampleMutex };
+        Locker locker { m_sampleLock };
         m_unlocked = false;
     }
 
     void stop()
     {
-        Locker locker { m_sampleMutex };
+        Locker locker { m_sampleLock };
         m_sample = nullptr;
         m_unlocked = true;
     }
 
     void drain()
     {
-        Locker locker { m_sampleMutex };
+        Locker locker { m_sampleLock };
         m_sample = nullptr;
     }
 
     bool requestRender(WebKitVideoSink* sink, GstBuffer* buffer)
     {
-        Locker locker { m_sampleMutex };
-        if (m_unlocked)
-            return true;
+        GRefPtr<GstSample> sample;
+        {
+            Locker locker { m_sampleLock };
+            if (m_unlocked)
+                return true;
 
-        m_sample = webkitVideoSinkRequestRender(sink, buffer);
-        if (!m_sample)
-            return false;
+            m_sample = webkitVideoSinkRequestRender(sink, buffer);
+            if (!m_sample)
+                return false;
 
-        auto sample = WTFMove(m_sample);
-        locker.unlockEarly();
+            sample = std::exchange(m_sample, nullptr);
+        }
+
         if (LIKELY(GST_IS_SAMPLE(sample.get())))
             webkitVideoSinkRepaintRequested(sink, sample.get());
 
@@ -107,8 +110,8 @@ public:
     }
 
 private:
-    Lock m_sampleMutex;
-    GRefPtr<GstSample> m_sample;
+    Lock m_sampleLock;
+    GRefPtr<GstSample> m_sample WTF_GUARDED_BY_LOCK(m_sampleLock);
 
     // If this is true all processing should finish ASAP
     // This is necessary because there could be a race between

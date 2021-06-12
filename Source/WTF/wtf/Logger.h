@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -112,7 +112,7 @@ struct ConsoleLogValue<Argument, false> {
     }
 };
 
-WTF_EXPORT_PRIVATE extern CheckedLock loggerObserverLock;
+WTF_EXPORT_PRIVATE extern Lock loggerObserverLock;
 
 class Logger : public ThreadSafeRefCounted<Logger> {
     WTF_MAKE_NONCOPYABLE(Logger);
@@ -307,7 +307,7 @@ private:
     template<typename... Argument>
     static inline void log(WTFLogChannel& channel, WTFLogLevel level, const Argument&... arguments)
     {
-        String logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
+        auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
         WTFLog(&channel, "%s", logMessage.utf8().data());
@@ -333,7 +333,7 @@ private:
     template<typename... Argument>
     static inline void logVerbose(WTFLogChannel& channel, WTFLogLevel level, const char* file, const char* function, int line, const Argument&... arguments)
     {
-        String logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
+        auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
         WTFLogVerbose(file, line, function, &channel, "%s", logMessage.utf8().data());
@@ -363,7 +363,7 @@ private:
 
     WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& observers() WTF_REQUIRES_LOCK(observerLock());
 
-    static CheckedLock& observerLock() WTF_RETURNS_LOCK(loggerObserverLock)
+    static Lock& observerLock() WTF_RETURNS_LOCK(loggerObserverLock)
     {
         return loggerObserverLock;
     }

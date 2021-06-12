@@ -135,7 +135,7 @@ bool WebGLBuffer::associateBufferSubDataImpl(GCGLintptr offset, const void* data
         Checked<GCGLintptr, RecordOverflow> checkedBufferOffset(offset);
         Checked<GCGLsizeiptr, RecordOverflow> checkedDataLength(byteLength);
         Checked<GCGLintptr, RecordOverflow> checkedBufferMax = checkedBufferOffset + checkedDataLength;
-        if (checkedBufferMax.hasOverflowed() || offset > m_byteLength || checkedBufferMax.unsafeGet() > m_byteLength)
+        if (checkedBufferMax.hasOverflowed() || offset > m_byteLength || checkedBufferMax > m_byteLength)
             return false;
     }
 
@@ -189,12 +189,12 @@ bool WebGLBuffer::associateCopyBufferSubData(const WebGLBuffer& readBuffer, GCGL
         Checked<GCGLintptr, RecordOverflow> checkedReadBufferOffset(readOffset);
         Checked<GCGLsizeiptr, RecordOverflow> checkedDataLength(size);
         Checked<GCGLintptr, RecordOverflow> checkedReadBufferMax = checkedReadBufferOffset + checkedDataLength;
-        if (checkedReadBufferMax.hasOverflowed() || readOffset > readBuffer.byteLength() || checkedReadBufferMax.unsafeGet() > readBuffer.byteLength())
+        if (checkedReadBufferMax.hasOverflowed() || readOffset > readBuffer.byteLength() || checkedReadBufferMax > readBuffer.byteLength())
             return false;
 
         Checked<GCGLintptr, RecordOverflow> checkedWriteBufferOffset(writeOffset);
         Checked<GCGLintptr, RecordOverflow> checkedWriteBufferMax = checkedWriteBufferOffset + checkedDataLength;
-        if (checkedWriteBufferMax.hasOverflowed() || writeOffset > m_byteLength || checkedWriteBufferMax.unsafeGet() > m_byteLength)
+        if (checkedWriteBufferMax.hasOverflowed() || writeOffset > m_byteLength || checkedWriteBufferMax > m_byteLength)
             return false;
     }
 
@@ -236,13 +236,13 @@ GCGLsizeiptr WebGLBuffer::byteLength() const
     return m_byteLength;
 }
 
-Optional<unsigned> WebGLBuffer::getCachedMaxIndex(GCGLenum type)
+std::optional<unsigned> WebGLBuffer::getCachedMaxIndex(GCGLenum type)
 {
     for (auto& cache : m_maxIndexCache) {
         if (cache.type == type)
             return cache.maxIndex;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void WebGLBuffer::setCachedMaxIndex(GCGLenum type, unsigned value)

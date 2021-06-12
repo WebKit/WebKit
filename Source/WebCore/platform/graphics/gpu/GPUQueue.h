@@ -55,7 +55,7 @@ private:
 
     PlatformQueueSmartPtr m_platformQueue;
     WeakPtr<const GPUDevice> m_device;
-    DeferrableTask<Timer> m_presentTask;
+    MainThreadDeferrableTask m_presentTask;
 };
 
 } // namespace WebCore

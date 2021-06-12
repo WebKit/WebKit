@@ -80,6 +80,7 @@ srtp_err_status_t srtp_install_err_report_handler(
 
 void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...)
 {
+    char msg[512];
     va_list args;
     if (srtp_err_file != NULL) {
         va_start(args, format);
@@ -88,7 +89,6 @@ void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...)
     }
     if (srtp_err_report_handler != NULL) {
         va_start(args, format);
-        char msg[512];
         if (vsnprintf(msg, sizeof(msg), format, args) > 0) {
             /* strip trailing \n, callback should not have one */
             size_t l = strlen(msg);

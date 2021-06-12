@@ -63,8 +63,8 @@ public:
     virtual bool enabled() const;
 
     // DOMDebuggerBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<void> setURLBreakpoint(const String& url, Optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
-    Inspector::Protocol::ErrorStringOr<void> removeURLBreakpoint(const String& url, Optional<bool>&& isRegex) final;
+    Inspector::Protocol::ErrorStringOr<void> setURLBreakpoint(const String& url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Inspector::Protocol::ErrorStringOr<void> removeURLBreakpoint(const String& url, std::optional<bool>&& isRegex) final;
     Inspector::Protocol::ErrorStringOr<void> setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName, RefPtr<JSON::Object>&& options) final;
     Inspector::Protocol::ErrorStringOr<void> removeEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName) final;
 

@@ -38,7 +38,7 @@ public:
         return adoptRef(*new SecurityOrigin(WebCore::SecurityOriginData::fromURL(WTF::URL(WTF::URL(), string))));
     }
 
-    static Ref<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, Optional<uint16_t> port)
+    static Ref<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, std::optional<uint16_t> port)
     {
         return adoptRef(*new SecurityOrigin({ protocol, host, port }));
     }

@@ -70,12 +70,12 @@ private:
     template<typename T>
     bool trySendStream(T& message, Span&);
     template<typename T>
-    Optional<SendSyncResult> trySendSyncStream(T& message, typename T::Reply&, Timeout, Span&);
+    std::optional<SendSyncResult> trySendSyncStream(T& message, typename T::Reply&, Timeout, Span&);
     bool trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
     void sendProcessOutOfStreamMessage(Span&&);
 
-    Optional<Span> tryAcquire(Timeout);
-    Optional<Span> tryAcquireAll(Timeout);
+    std::optional<Span> tryAcquire(Timeout);
+    std::optional<Span> tryAcquireAll(Timeout);
 
     enum class WakeUpServer : bool {
         No,
@@ -102,7 +102,7 @@ private:
 
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
-    Optional<Semaphore> m_wakeUpSemaphore;
+    std::optional<Semaphore> m_wakeUpSemaphore;
 };
 
 template<typename T, typename U>
@@ -156,18 +156,18 @@ StreamClientConnection::SendSyncResult StreamClientConnection::sendSync(T&& mess
 }
 
 template<typename T>
-Optional<StreamClientConnection::SendSyncResult> StreamClientConnection::trySendSyncStream(T& message, typename T::Reply& reply, Timeout timeout, Span& span)
+std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::trySendSyncStream(T& message, typename T::Reply& reply, Timeout timeout, Span& span)
 {
     // In this function, SendSyncResult { } means error happened and caller should stop processing.
-    // WTF::nullopt means we couldn't send through the stream, so try sending out of stream.
+    // std::nullopt means we couldn't send through the stream, so try sending out of stream.
     auto syncRequestID = m_connection.makeSyncRequestID();
     if (!m_connection.pushPendingSyncRequestID(syncRequestID))
         return SendSyncResult { };
 
-    auto result = [&]() -> Optional<SendSyncResult> {
+    auto result = [&]() -> std::optional<SendSyncResult> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data, span.size };
         if (!(messageEncoder << syncRequestID << message.arguments()))
-            return WTF::nullopt;
+            return std::nullopt;
         auto wakeupResult = release(messageEncoder.size());
 
         if (wakeupResult == StreamClientConnection::WakeUpServer::Yes)
@@ -188,7 +188,7 @@ Optional<StreamClientConnection::SendSyncResult> StreamClientConnection::trySend
     m_connection.popPendingSyncRequestID(syncRequestID);
     if (result && *result) {
         auto& decoder = **result;
-        Optional<typename T::ReplyArguments> replyArguments;
+        std::optional<typename T::ReplyArguments> replyArguments;
         decoder >> replyArguments;
         if (!replyArguments)
             return SendSyncResult { };
@@ -223,7 +223,7 @@ inline void StreamClientConnection::sendProcessOutOfStreamMessage(Span&& span)
     auto result = release(encoder.size());
     UNUSED_VARIABLE(result);
 }
-inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire(Timeout timeout)
+inline std::optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire(Timeout timeout)
 {
     ClientLimit clientLimit = sharedClientLimit().load(std::memory_order_acquire);
     // This would mean we try to send messages after a timeout. It is a programming error.
@@ -250,10 +250,10 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
         // In the case where clientOffset < clientLimit we can arrive to a situation where
         // 0 < result.size < minimumMessageSize.
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquireAll(Timeout timeout)
+inline std::optional<StreamClientConnection::Span> StreamClientConnection::tryAcquireAll(Timeout timeout)
 {
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
@@ -273,7 +273,7 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
 
         m_buffer.clientWaitSemaphore().waitFor(timeout);
         if (timeout.didTimeOut())
-            return WTF::nullopt;
+            return std::nullopt;
     }
     // In case the transaction was cancelled, undo the transaction marker.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_release);

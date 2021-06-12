@@ -115,7 +115,7 @@ void RegistrationStore::removeRegistration(const ServiceWorkerRegistrationKey& k
     if (key.isEmpty())
         return;
 
-    m_updatedRegistrations.set(key, WTF::nullopt);
+    m_updatedRegistrations.set(key, std::nullopt);
     scheduleDatabasePushIfNecessary();
 }
 

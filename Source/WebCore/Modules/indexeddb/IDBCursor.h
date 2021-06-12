@@ -59,7 +59,7 @@ public:
     IDBKey* key() { return m_key.get(); };
     IDBKey* primaryKey() { return m_primaryKey.get(); };
     IDBValue value() { return m_value; };
-    const Optional<IDBKeyPath>& primaryKeyPath() { return m_keyPath; };
+    const std::optional<IDBKeyPath>& primaryKeyPath() { return m_keyPath; };
     JSValueInWrappedObject& keyWrapper() { return m_keyWrapper; }
     JSValueInWrappedObject& primaryKeyWrapper() { return m_primaryKeyWrapper; }
     JSValueInWrappedObject& valueWrapper() { return m_valueWrapper; }
@@ -83,7 +83,7 @@ public:
 
     virtual bool isKeyCursorWithValue() const { return false; }
 
-    Optional<IDBGetResult> iterateWithPrefetchedRecords(unsigned count, uint64_t lastWriteOperationID);
+    std::optional<IDBGetResult> iterateWithPrefetchedRecords(unsigned count, uint64_t lastWriteOperationID);
     void clearPrefetchedRecords();
 
 protected:
@@ -109,7 +109,7 @@ private:
     IDBKeyData m_keyData;
     IDBKeyData m_primaryKeyData;
     IDBValue m_value;
-    Optional<IDBKeyPath> m_keyPath;
+    std::optional<IDBKeyPath> m_keyPath;
 
     JSValueInWrappedObject m_keyWrapper;
     JSValueInWrappedObject m_primaryKeyWrapper;

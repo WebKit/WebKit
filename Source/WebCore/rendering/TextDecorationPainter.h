@@ -33,7 +33,7 @@ class FilterOperations;
 class FontCascade;
 class FloatRect;
 class GraphicsContext;
-class InlineTextBox;
+class LegacyInlineTextBox;
 class RenderObject;
 class RenderStyle;
 class RenderText;
@@ -43,9 +43,9 @@ class TextRun;
 class TextDecorationPainter {
 public:
     struct Styles;
-    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecoration> decorations, const RenderText&, bool isFirstLine, const FontCascade&, Optional<Styles> = WTF::nullopt);
+    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecoration> decorations, const RenderText&, bool isFirstLine, const FontCascade&, std::optional<Styles> = std::nullopt);
     
-    void setInlineTextBox(const InlineTextBox* inlineTextBox) { m_inlineTextBox = inlineTextBox; }
+    void setInlineTextBox(const LegacyInlineTextBox* inlineTextBox) { m_inlineTextBox = inlineTextBox; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setWidth(float width) { m_width = width; }
     void setTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
@@ -78,7 +78,7 @@ private:
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
-    const InlineTextBox* m_inlineTextBox { nullptr };
+    const LegacyInlineTextBox* m_inlineTextBox { nullptr };
     const FontCascade& m_font;
 
     Styles m_styles;

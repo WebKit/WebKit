@@ -46,7 +46,7 @@ public:
     ContentSecurityPolicyResponseHeaders isolatedCopy() const;
 
     template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static Optional<ContentSecurityPolicyResponseHeaders> decode(Decoder&);
+    template <class Decoder> static std::optional<ContentSecurityPolicyResponseHeaders> decode(Decoder&);
 
     enum EmptyTag { Empty };
     struct MarkableTraits {
@@ -84,31 +84,31 @@ void ContentSecurityPolicyResponseHeaders::encode(Encoder& encoder) const
 }
 
 template <class Decoder>
-Optional<ContentSecurityPolicyResponseHeaders> ContentSecurityPolicyResponseHeaders::decode(Decoder& decoder)
+std::optional<ContentSecurityPolicyResponseHeaders> ContentSecurityPolicyResponseHeaders::decode(Decoder& decoder)
 {
     ContentSecurityPolicyResponseHeaders headers;
 
-    Optional<uint64_t> headersSize;
+    std::optional<uint64_t> headersSize;
     decoder >> headersSize;
     if (!headersSize)
-        return WTF::nullopt;
+        return std::nullopt;
     for (size_t i = 0; i < *headersSize; ++i) {
-        Optional<String> header;
+        std::optional<String> header;
         decoder >> header;
         if (!header)
-            return WTF::nullopt;
-        Optional<ContentSecurityPolicyHeaderType> headerType;
+            return std::nullopt;
+        std::optional<ContentSecurityPolicyHeaderType> headerType;
         decoder >> headerType;
         if (!headerType)
-            return WTF::nullopt;
+            return std::nullopt;
         headers.m_headers.append(std::make_pair(WTFMove(*header), WTFMove(*headerType)));
     }
     headers.m_headers.shrinkToFit();
 
-    Optional<int> httpStatusCode;
+    std::optional<int> httpStatusCode;
     decoder >> httpStatusCode;
     if (!httpStatusCode)
-        return WTF::nullopt;
+        return std::nullopt;
     headers.m_httpStatusCode = *httpStatusCode;
 
     return headers;

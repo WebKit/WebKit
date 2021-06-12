@@ -39,7 +39,6 @@
 #include "WHLSLTypeReference.h"
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVisitor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

@@ -29,7 +29,6 @@
 
 #include "ApplePayErrorCode.h"
 #include "ApplePayErrorContactField.h"
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -39,7 +38,7 @@ namespace WebCore {
 
 class ApplePayError final : public RefCounted<ApplePayError> {
 public:
-    static Ref<ApplePayError> create(ApplePayErrorCode code, Optional<ApplePayErrorContactField> contactField, const String& message)
+    static Ref<ApplePayError> create(ApplePayErrorCode code, std::optional<ApplePayErrorContactField> contactField, const String& message)
     {
         return adoptRef(*new ApplePayError(code, contactField, message));
     }
@@ -49,8 +48,8 @@ public:
     ApplePayErrorCode code() const { return m_code; }
     void setCode(ApplePayErrorCode code) { m_code = code; }
 
-    Optional<ApplePayErrorContactField> contactField() const { return m_contactField; }
-    void setContactField(Optional<ApplePayErrorContactField> contactField) { m_contactField = contactField; }
+    std::optional<ApplePayErrorContactField> contactField() const { return m_contactField; }
+    void setContactField(std::optional<ApplePayErrorContactField> contactField) { m_contactField = contactField; }
 
     String message() const { return m_message; }
     void setMessage(String&& message) { m_message = WTFMove(message); }
@@ -59,7 +58,7 @@ public:
     template<class Decoder> static RefPtr<ApplePayError> decode(Decoder&);
 
 private:
-    ApplePayError(ApplePayErrorCode code, Optional<ApplePayErrorContactField> contactField, const String& message)
+    ApplePayError(ApplePayErrorCode code, std::optional<ApplePayErrorContactField> contactField, const String& message)
         : m_code(code)
         , m_contactField(contactField)
         , m_message(message)
@@ -67,7 +66,7 @@ private:
     }
 
     ApplePayErrorCode m_code;
-    Optional<ApplePayErrorContactField> m_contactField;
+    std::optional<ApplePayErrorContactField> m_contactField;
     String m_message;
 };
 
@@ -83,13 +82,13 @@ template<class Decoder>
 RefPtr<ApplePayError> ApplePayError::decode(Decoder& decoder)
 {
 #define DECODE(name, type) \
-    Optional<type> name; \
+    std::optional<type> name; \
     decoder >> name; \
     if (!name) \
         return nullptr; \
 
     DECODE(code, ApplePayErrorCode)
-    DECODE(contactField, Optional<ApplePayErrorContactField>)
+    DECODE(contactField, std::optional<ApplePayErrorContactField>)
     DECODE(message, String)
 
 #undef DECODE

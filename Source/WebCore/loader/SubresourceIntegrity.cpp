@@ -46,14 +46,14 @@ static bool isVCHAR(CharacterType c)
 template<typename CharacterType>
 struct IntegrityMetadataParser {
 public:
-    IntegrityMetadataParser(Optional<Vector<EncodedResourceCryptographicDigest>>& digests)
+    IntegrityMetadataParser(std::optional<Vector<EncodedResourceCryptographicDigest>>& digests)
         : m_digests(digests)
     {
     }
 
     bool operator()(StringParsingBuffer<CharacterType>& buffer)
     {
-        // Initialize hashes to be something other WTF::nullopt, to indicate
+        // Initialize hashes to be something other std::nullopt, to indicate
         // that at least one token was seen, and thus setting the empty flag
         // from section 3.3.3 Parse metadata, to false.
         if (!m_digests)
@@ -79,7 +79,7 @@ public:
     }
 
 private:
-    Optional<Vector<EncodedResourceCryptographicDigest>>& m_digests;
+    std::optional<Vector<EncodedResourceCryptographicDigest>>& m_digests;
 };
 
 }
@@ -96,12 +96,12 @@ static inline void splitOnSpaces(StringParsingBuffer<CharacterType> buffer, Func
     }
 }
 
-static Optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata)
+static std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata)
 {
     if (integrityMetadata.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Vector<EncodedResourceCryptographicDigest>> result;
+    std::optional<Vector<EncodedResourceCryptographicDigest>> result;
     
     readCharactersForParsing(integrityMetadata, [&result] (auto buffer) {
         using CharacterType = typename decltype(buffer)::CharacterType;
@@ -117,10 +117,10 @@ static bool isResponseEligible(const CachedResource& resource)
     return resource.isCORSSameOrigin();
 }
 
-static Optional<EncodedResourceCryptographicDigest::Algorithm> prioritizedHashFunction(EncodedResourceCryptographicDigest::Algorithm a, EncodedResourceCryptographicDigest::Algorithm b)
+static std::optional<EncodedResourceCryptographicDigest::Algorithm> prioritizedHashFunction(EncodedResourceCryptographicDigest::Algorithm a, EncodedResourceCryptographicDigest::Algorithm b)
 {
     if (a == b)
-        return WTF::nullopt;
+        return std::nullopt;
     return (a > b) ? a : b;
 }
 

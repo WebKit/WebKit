@@ -36,7 +36,7 @@
 #include <windows.h>
 #elif OS(HAIKU)
 #else
-#include <ucontext.h>
+#include <sys/ucontext.h>
 #endif
 
 namespace WTF {

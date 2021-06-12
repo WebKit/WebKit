@@ -20,7 +20,7 @@
 
 
 X509_EXTENSION *X509V3_EXT_conf_nid(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx,
-                                    int ext_nid, char *value) {
+                                    int ext_nid, const char *value) {
   assert(conf == NULL);
   return X509V3_EXT_nconf_nid(NULL, ctx, ext_nid, value);
 }

@@ -27,7 +27,6 @@
 #include <wtf/CPUTime.h>
 
 #include <windows.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 
@@ -48,7 +47,7 @@ static Seconds fileTimeToSeconds(const FILETIME& fileTime)
     return Seconds { durationIn100NS.QuadPart / hundredsOfNanosecondsPerSecond };
 }
 
-Optional<CPUTime> CPUTime::get()
+std::optional<CPUTime> CPUTime::get()
 {
     // https://msdn.microsoft.com/ja-jp/library/windows/desktop/ms683223(v=vs.85).aspx
     FILETIME creationTime;
@@ -56,7 +55,7 @@ Optional<CPUTime> CPUTime::get()
     FILETIME kernelTime;
     FILETIME userTime;
     if (!::GetProcessTimes(::GetCurrentProcess(), &creationTime, &exitTime, &kernelTime, &userTime))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return CPUTime { MonotonicTime::now(), fileTimeToSeconds(userTime), fileTimeToSeconds(kernelTime) };
 }

@@ -133,7 +133,7 @@ private:
     bool m_ioUnitStarted { false };
 
     mutable std::unique_ptr<RealtimeMediaSourceCapabilities> m_capabilities;
-    mutable Optional<RealtimeMediaSourceSettings> m_currentSettings;
+    mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
 #if !LOG_DISABLED
     void checkTimestamps(const AudioTimeStamp&, uint64_t, double);
@@ -811,7 +811,7 @@ void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSett
     if (shouldReconfigure)
         unit().reconfigure();
 
-    m_currentSettings = WTF::nullopt;
+    m_currentSettings = std::nullopt;
 }
 
 bool CoreAudioCaptureSource::interrupted() const

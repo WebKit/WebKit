@@ -91,7 +91,7 @@ public:
     {
         FileSystem::deleteFile(m_tempFilePath);
         FileSystem::deleteFile(m_tempFileSymlinkPath);
-        FileSystem::deleteEmptyDirectory(m_tempEmptyFolderPath);
+        FileSystem::deleteNonEmptyDirectory(m_tempEmptyFolderPath);
         FileSystem::deleteFile(m_tempEmptyFolderSymlinkPath);
         FileSystem::deleteFile(m_tempEmptyFilePath);
         FileSystem::deleteFile(m_spaceContainingFilePath);
@@ -626,7 +626,7 @@ TEST_F(FileSystemTest, hardLinkCount)
     EXPECT_TRUE(!linkCount);
 }
 
-static void runGetFileModificationTimeTest(const String& path, Function<Optional<WallTime>(const String&)>&& fileModificationTime)
+static void runGetFileModificationTimeTest(const String& path, Function<std::optional<WallTime>(const String&)>&& fileModificationTime)
 {
     auto modificationTime = fileModificationTime(path);
     EXPECT_TRUE(!!modificationTime);

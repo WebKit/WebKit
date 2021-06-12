@@ -147,11 +147,11 @@ void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAu
         [m_delegate.get() _automationSession:wrapper(session) setUserInput:value forCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
-static Optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAutomationSessionJavaScriptDialogType type)
+static std::optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAutomationSessionJavaScriptDialogType type)
 {
     switch (type) {
     case _WKAutomationSessionJavaScriptDialogTypeNone:
-        return WTF::nullopt;
+        return std::nullopt;
     case _WKAutomationSessionJavaScriptDialogTypePrompt:
         return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
     case _WKAutomationSessionJavaScriptDialogTypeConfirm:
@@ -171,7 +171,7 @@ static API::AutomationSessionClient::BrowsingContextPresentation toImpl(_WKAutom
     }
 }
 
-Optional<API::AutomationSessionClient::JavaScriptDialogType> AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
+std::optional<API::AutomationSessionClient::JavaScriptDialogType> AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView)
         return toImpl([m_delegate.get() _automationSession:wrapper(session) typeOfCurrentJavaScriptDialogForWebView:webView.get()]);

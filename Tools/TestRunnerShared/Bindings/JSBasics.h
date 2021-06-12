@@ -28,18 +28,18 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <initializer_list>
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WTR {
 
-Optional<bool> toOptionalBool(JSContextRef, JSValueRef);
-Optional<double> toOptionalDouble(JSContextRef, JSValueRef);
+std::optional<bool> toOptionalBool(JSContextRef, JSValueRef);
+std::optional<double> toOptionalDouble(JSContextRef, JSValueRef);
 
 JSRetainPtr<JSStringRef> createJSString(const char* = "");
 JSRetainPtr<JSStringRef> createJSString(JSContextRef, JSValueRef);
 
 JSValueRef makeValue(JSContextRef, const char*);
-JSValueRef makeValue(JSContextRef, Optional<bool>);
+JSValueRef makeValue(JSContextRef, std::optional<bool>);
 JSValueRef makeValue(JSContextRef, JSStringRef);
 
 JSValueRef property(JSContextRef, JSObjectRef, const char* name);

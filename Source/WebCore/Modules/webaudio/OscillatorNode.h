@@ -44,8 +44,8 @@ public:
 
     const char* activeDOMObjectName() const final { return "OscillatorNode"; }
 
-    OscillatorType type() const { return m_type; }
-    ExceptionOr<void> setType(OscillatorType);
+    OscillatorType typeForBindings() const { ASSERT(isMainThread()); return m_type; }
+    ExceptionOr<void> setTypeForBindings(OscillatorType);
 
     AudioParam* frequency() { return m_frequency.get(); }
     AudioParam* detune() { return m_detune.get(); }
@@ -62,15 +62,15 @@ private:
     double latencyTime() const final { return 0; }
 
     // Returns true if there are sample-accurate timeline parameter changes.
-    bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess);
+    bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess) WTF_REQUIRES_LOCK(m_processLock);
 
-    double processARate(int, float* destP, double virtualReadIndex, float* phaseIncrements);
-    double processKRate(int, float* destP, double virtualReadIndex);
+    double processARate(int, float* destP, double virtualReadIndex, float* phaseIncrements) WTF_REQUIRES_LOCK(m_processLock);
+    double processKRate(int, float* destP, double virtualReadIndex) WTF_REQUIRES_LOCK(m_processLock);
 
     bool propagatesSilence() const final;
 
     // One of the waveform types defined in the enum.
-    OscillatorType m_type;
+    OscillatorType m_type; // Only used on the main thread.
     
     // Frequency value in Hertz.
     RefPtr<AudioParam> m_frequency;
@@ -91,7 +91,7 @@ private:
     AudioFloatArray m_phaseIncrements;
     AudioFloatArray m_detuneValues;
     
-    RefPtr<PeriodicWave> m_periodicWave;
+    RefPtr<PeriodicWave> m_periodicWave WTF_GUARDED_BY_LOCK(m_processLock);
 };
 
 String convertEnumerationToString(OscillatorType); // In JSOscillatorNode.cpp

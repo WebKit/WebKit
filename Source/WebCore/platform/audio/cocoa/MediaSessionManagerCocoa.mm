@@ -169,7 +169,7 @@ void MediaSessionManagerCocoa::prepareToSendUserMediaPermissionRequest()
 
 void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()
 {
-    m_taskQueue.enqueueTask([this] () mutable {
+    callOnMainThread([this] () mutable {
         m_nowPlayingManager->setSupportsSeeking(computeSupportsSeeking());
         updateNowPlayingInfo();
 
@@ -228,7 +228,7 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
 
-    m_taskQueue.enqueueTask([weakSession = makeWeakPtr(session)] {
+    callOnMainThread([weakSession = makeWeakPtr(session)] {
         if (weakSession)
             weakSession->updateMediaUsageIfChanged();
     });
@@ -236,7 +236,7 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
     if (delayCallingUpdateNowPlaying == DelayCallingUpdateNowPlaying::No)
         updateNowPlayingInfo();
     else {
-        m_taskQueue.enqueueTask([this] {
+        callOnMainThread([this] {
             updateNowPlayingInfo();
         });
     }
@@ -361,7 +361,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    Optional<NowPlayingInfo> nowPlayingInfo;
+    std::optional<NowPlayingInfo> nowPlayingInfo;
     if (auto* session = nowPlayingEligibleSession())
         nowPlayingInfo = session->nowPlayingInfo();
 

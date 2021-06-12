@@ -61,7 +61,7 @@ public:
         m_positions.append({ DebuggerPausePositionType::Leave, position });
     }
 
-    Optional<JSTextPosition> breakpointLocationForLineColumn(int line, int column);
+    std::optional<JSTextPosition> breakpointLocationForLineColumn(int line, int column);
 
     void sort();
 

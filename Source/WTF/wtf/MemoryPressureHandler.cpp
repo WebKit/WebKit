@@ -108,7 +108,7 @@ void MemoryPressureHandler::setPageCount(unsigned pageCount)
     singleton().m_pageCount = pageCount;
 }
 
-Optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
+std::optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
 {
     switch (m_processState) {
     case WebsamProcessState::Inactive:
@@ -116,7 +116,7 @@ Optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
     case WebsamProcessState::Active:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)

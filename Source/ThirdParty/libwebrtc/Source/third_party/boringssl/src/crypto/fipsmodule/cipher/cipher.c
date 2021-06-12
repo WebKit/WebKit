@@ -225,7 +225,6 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 
   ctx->buf_len = 0;
   ctx->final_used = 0;
-  ctx->block_mask = ctx->cipher->block_size - 1;
   return 1;
 }
 
@@ -237,6 +236,15 @@ int EVP_EncryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 int EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
                        ENGINE *impl, const uint8_t *key, const uint8_t *iv) {
   return EVP_CipherInit_ex(ctx, cipher, impl, key, iv, 0);
+}
+
+// block_remainder returns the number of bytes to remove from |len| to get a
+// multiple of |ctx|'s block size.
+static int block_remainder(const EVP_CIPHER_CTX *ctx, int len) {
+  // |block_size| must be a power of two.
+  assert(ctx->cipher->block_size != 0);
+  assert((ctx->cipher->block_size & (ctx->cipher->block_size - 1)) == 0);
+  return len & (ctx->cipher->block_size - 1);
 }
 
 int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
@@ -264,7 +272,7 @@ int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
     return in_len == 0;
   }
 
-  if (ctx->buf_len == 0 && (in_len & ctx->block_mask) == 0) {
+  if (ctx->buf_len == 0 && block_remainder(ctx, in_len) == 0) {
     if (ctx->cipher->cipher(ctx, out, in, in_len)) {
       *out_len = in_len;
       return 1;
@@ -297,7 +305,7 @@ int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
     *out_len = 0;
   }
 
-  i = in_len & ctx->block_mask;
+  i = block_remainder(ctx, in_len);
   in_len -= i;
   if (in_len > 0) {
     if (!ctx->cipher->cipher(ctx, out, in, in_len)) {

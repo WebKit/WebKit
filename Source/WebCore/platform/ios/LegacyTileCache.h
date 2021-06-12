@@ -32,7 +32,6 @@
 #include "Timer.h"
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -132,7 +131,7 @@ public:
     unsigned tileCapacityForGrid(LegacyTileGrid*);
     Color colorForGridTileBorder(LegacyTileGrid*) const;
     bool setOverrideVisibleRect(const FloatRect&);
-    void clearOverrideVisibleRect() { m_overrideVisibleRect = WTF::nullopt; }
+    void clearOverrideVisibleRect() { m_overrideVisibleRect = std::nullopt; }
 
     void doPendingRepaints();
 
@@ -173,7 +172,7 @@ private:
     // Ensure there are no async calls on a dead tile cache.
     RetainPtr<LegacyTileCacheTombstone> m_tombstone;
 
-    Optional<FloatRect> m_overrideVisibleRect;
+    std::optional<FloatRect> m_overrideVisibleRect;
 
     IntSize m_tileSize { 512, 512 };
     

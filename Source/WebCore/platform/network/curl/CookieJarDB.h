@@ -58,9 +58,9 @@ public:
     CookieAcceptPolicy acceptPolicy() const { return m_acceptPolicy; }
 
     HashSet<String> allDomains();
-    Optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session);
+    std::optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
     Vector<Cookie> getAllCookies();
-    bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, Optional<Seconds> cappedLifetime = WTF::nullopt);
+    bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, std::optional<Seconds> cappedLifetime = std::nullopt);
     bool setCookie(const Cookie&);
 
     bool deleteCookie(const String& url, const String& name);

@@ -30,16 +30,20 @@ extern "C" {
 #endif
 
 
-// PMBTokens.
-//
-// PMBTokens is described in https://eprint.iacr.org/2020/072/20200324:214215
-// and provides anonymous tokens with private metadata. We implement the
-// construction with validity verification, described in appendix H,
-// construction 6.
+// For the following cryptographic schemes, we use P-384 instead of our usual
+// choice of P-256. See Appendix I of
+// https://eprint.iacr.org/2020/072/20200324:214215 which describes two attacks
+// which may affect smaller curves. In particular, p-1 for P-256 is smooth,
+// giving a low complexity for the p-1 attack. P-384's p-1 has a 281-bit prime
+// factor,
+// 3055465788140352002733946906144561090641249606160407884365391979704929268480326390471.
+// This lower-bounds the p-1 attack at O(2^140). The p+1 attack is lower-bounded
+// by O(p^(1/3)) or O(2^128), so we do not need to check the smoothness of p+1.
 
-// PMBTOKEN_NONCE_SIZE is the size of nonces used as part of the PMBToken
+
+// TRUST_TOKEN_NONCE_SIZE is the size of nonces used as part of the Trust_Token
 // protocol.
-#define PMBTOKEN_NONCE_SIZE 64
+#define TRUST_TOKEN_NONCE_SIZE 64
 
 typedef struct {
   // TODO(https://crbug.com/boringssl/334): These should store |EC_PRECOMP| so
@@ -47,7 +51,7 @@ typedef struct {
   EC_AFFINE pub0;
   EC_AFFINE pub1;
   EC_AFFINE pubs;
-} PMBTOKEN_CLIENT_KEY;
+} TRUST_TOKEN_CLIENT_KEY;
 
 typedef struct {
   EC_SCALAR x0;
@@ -62,47 +66,47 @@ typedef struct {
   EC_PRECOMP pub1_precomp;
   EC_AFFINE pubs;
   EC_PRECOMP pubs_precomp;
-} PMBTOKEN_ISSUER_KEY;
+} TRUST_TOKEN_ISSUER_KEY;
 
-// PMBTOKEN_PRETOKEN represents the intermediate state a client keeps during a
-// PMBToken issuance operation.
+// TRUST_TOKEN_PRETOKEN represents the intermediate state a client keeps during
+// a Trust_Token issuance operation.
 typedef struct pmb_pretoken_st {
-  uint8_t t[PMBTOKEN_NONCE_SIZE];
+  uint8_t t[TRUST_TOKEN_NONCE_SIZE];
   EC_SCALAR r;
   EC_AFFINE Tp;
-} PMBTOKEN_PRETOKEN;
+} TRUST_TOKEN_PRETOKEN;
 
-// PMBTOKEN_PRETOKEN_free releases the memory associated with |token|.
-OPENSSL_EXPORT void PMBTOKEN_PRETOKEN_free(PMBTOKEN_PRETOKEN *token);
+// TRUST_TOKEN_PRETOKEN_free releases the memory associated with |token|.
+OPENSSL_EXPORT void TRUST_TOKEN_PRETOKEN_free(TRUST_TOKEN_PRETOKEN *token);
 
-DEFINE_STACK_OF(PMBTOKEN_PRETOKEN)
+DEFINE_STACK_OF(TRUST_TOKEN_PRETOKEN)
+
+
+// PMBTokens.
+//
+// PMBTokens is described in https://eprint.iacr.org/2020/072/20200324:214215
+// and provides anonymous tokens with private metadata. We implement the
+// construction with validity verification, described in appendix H,
+// construction 6.
 
 // The following functions implement the corresponding |TRUST_TOKENS_METHOD|
 // functions for |TRUST_TOKENS_experiment_v1|'s PMBTokens construction which
 // uses P-384.
-//
-// We use P-384 instead of our usual choice of P-256. See Appendix I which
-// describes two attacks which may affect smaller curves. In particular, p-1 for
-// P-256 is smooth, giving a low complexity for the p-1 attack. P-384's p-1 has
-// a 281-bit prime factor,
-// 3055465788140352002733946906144561090641249606160407884365391979704929268480326390471.
-// This lower-bounds the p-1 attack at O(2^140). The p+1 attack is lower-bounded
-// by O(p^(1/3)) or O(2^128), so we do not need to check the smoothness of p+1.
 int pmbtoken_exp1_generate_key(CBB *out_private, CBB *out_public);
-int pmbtoken_exp1_client_key_from_bytes(PMBTOKEN_CLIENT_KEY *key,
+int pmbtoken_exp1_client_key_from_bytes(TRUST_TOKEN_CLIENT_KEY *key,
                                         const uint8_t *in, size_t len);
-int pmbtoken_exp1_issuer_key_from_bytes(PMBTOKEN_ISSUER_KEY *key,
+int pmbtoken_exp1_issuer_key_from_bytes(TRUST_TOKEN_ISSUER_KEY *key,
                                         const uint8_t *in, size_t len);
-STACK_OF(PMBTOKEN_PRETOKEN) * pmbtoken_exp1_blind(CBB *cbb, size_t count);
-int pmbtoken_exp1_sign(const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
+STACK_OF(TRUST_TOKEN_PRETOKEN) * pmbtoken_exp1_blind(CBB *cbb, size_t count);
+int pmbtoken_exp1_sign(const TRUST_TOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
                        size_t num_requested, size_t num_to_issue,
                        uint8_t private_metadata);
 STACK_OF(TRUST_TOKEN) *
-    pmbtoken_exp1_unblind(const PMBTOKEN_CLIENT_KEY *key,
-                          const STACK_OF(PMBTOKEN_PRETOKEN) * pretokens,
+    pmbtoken_exp1_unblind(const TRUST_TOKEN_CLIENT_KEY *key,
+                          const STACK_OF(TRUST_TOKEN_PRETOKEN) * pretokens,
                           CBS *cbs, size_t count, uint32_t key_id);
-int pmbtoken_exp1_read(const PMBTOKEN_ISSUER_KEY *key,
-                       uint8_t out_nonce[PMBTOKEN_NONCE_SIZE],
+int pmbtoken_exp1_read(const TRUST_TOKEN_ISSUER_KEY *key,
+                       uint8_t out_nonce[TRUST_TOKEN_NONCE_SIZE],
                        uint8_t *out_private_metadata, const uint8_t *token,
                        size_t token_len);
 
@@ -113,35 +117,58 @@ OPENSSL_EXPORT int pmbtoken_exp1_get_h_for_testing(uint8_t out[97]);
 // The following functions implement the corresponding |TRUST_TOKENS_METHOD|
 // functions for |TRUST_TOKENS_experiment_v2|'s PMBTokens construction which
 // uses P-384.
-//
-// We use P-384 instead of our usual choice of P-256. See Appendix I which
-// describes two attacks which may affect smaller curves. In particular, p-1 for
-// P-256 is smooth, giving a low complexity for the p-1 attack. P-384's p-1 has
-// a 281-bit prime factor,
-// 3055465788140352002733946906144561090641249606160407884365391979704929268480326390471.
-// This lower-bounds the p-1 attack at O(2^140). The p+1 attack is lower-bounded
-// by O(p^(1/3)) or O(2^128), so we do not need to check the smoothness of p+1.
 int pmbtoken_exp2_generate_key(CBB *out_private, CBB *out_public);
-int pmbtoken_exp2_client_key_from_bytes(PMBTOKEN_CLIENT_KEY *key,
+int pmbtoken_exp2_client_key_from_bytes(TRUST_TOKEN_CLIENT_KEY *key,
                                         const uint8_t *in, size_t len);
-int pmbtoken_exp2_issuer_key_from_bytes(PMBTOKEN_ISSUER_KEY *key,
+int pmbtoken_exp2_issuer_key_from_bytes(TRUST_TOKEN_ISSUER_KEY *key,
                                         const uint8_t *in, size_t len);
-STACK_OF(PMBTOKEN_PRETOKEN) * pmbtoken_exp2_blind(CBB *cbb, size_t count);
-int pmbtoken_exp2_sign(const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
+STACK_OF(TRUST_TOKEN_PRETOKEN) * pmbtoken_exp2_blind(CBB *cbb, size_t count);
+int pmbtoken_exp2_sign(const TRUST_TOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
                        size_t num_requested, size_t num_to_issue,
                        uint8_t private_metadata);
 STACK_OF(TRUST_TOKEN) *
-    pmbtoken_exp2_unblind(const PMBTOKEN_CLIENT_KEY *key,
-                          const STACK_OF(PMBTOKEN_PRETOKEN) * pretokens,
+    pmbtoken_exp2_unblind(const TRUST_TOKEN_CLIENT_KEY *key,
+                          const STACK_OF(TRUST_TOKEN_PRETOKEN) * pretokens,
                           CBS *cbs, size_t count, uint32_t key_id);
-int pmbtoken_exp2_read(const PMBTOKEN_ISSUER_KEY *key,
-                       uint8_t out_nonce[PMBTOKEN_NONCE_SIZE],
+int pmbtoken_exp2_read(const TRUST_TOKEN_ISSUER_KEY *key,
+                       uint8_t out_nonce[TRUST_TOKEN_NONCE_SIZE],
                        uint8_t *out_private_metadata, const uint8_t *token,
                        size_t token_len);
 
 // pmbtoken_exp2_get_h_for_testing returns H in uncompressed coordinates. This
 // function is used to confirm H was computed as expected.
 OPENSSL_EXPORT int pmbtoken_exp2_get_h_for_testing(uint8_t out[97]);
+
+
+// VOPRF.
+//
+// VOPRFs are described in https://tools.ietf.org/html/draft-irtf-cfrg-voprf-04
+// and provide anonymous tokens. This implementation uses TrustToken DSTs and
+// the DLEQ batching primitive from
+// https://eprint.iacr.org/2020/072/20200324:214215.
+// VOPRF only uses the |pub|' field of the TRUST_TOKEN_CLIENT_KEY and
+// |xs|/|pubs| fields of the TRUST_TOKEN_ISSUER_KEY.
+
+// The following functions implement the corresponding |TRUST_TOKENS_METHOD|
+// functions for |TRUST_TOKENS_experiment_v2|'s VOPRF construction which uses
+// P-384.
+int voprf_exp2_generate_key(CBB *out_private, CBB *out_public);
+int voprf_exp2_client_key_from_bytes(TRUST_TOKEN_CLIENT_KEY *key,
+                                     const uint8_t *in, size_t len);
+int voprf_exp2_issuer_key_from_bytes(TRUST_TOKEN_ISSUER_KEY *key,
+                                     const uint8_t *in, size_t len);
+STACK_OF(TRUST_TOKEN_PRETOKEN) * voprf_exp2_blind(CBB *cbb, size_t count);
+int voprf_exp2_sign(const TRUST_TOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
+                    size_t num_requested, size_t num_to_issue,
+                    uint8_t private_metadata);
+STACK_OF(TRUST_TOKEN) *
+    voprf_exp2_unblind(const TRUST_TOKEN_CLIENT_KEY *key,
+                       const STACK_OF(TRUST_TOKEN_PRETOKEN) * pretokens,
+                       CBS *cbs, size_t count, uint32_t key_id);
+int voprf_exp2_read(const TRUST_TOKEN_ISSUER_KEY *key,
+                    uint8_t out_nonce[TRUST_TOKEN_NONCE_SIZE],
+                    uint8_t *out_private_metadata, const uint8_t *token,
+                    size_t token_len);
 
 
 // Trust Tokens internals.
@@ -155,23 +182,23 @@ struct trust_token_method_st {
   // client_key_from_bytes decodes a client key from |in| and sets |key|
   // to the resulting key. It returns one on success and zero
   // on failure.
-  int (*client_key_from_bytes)(PMBTOKEN_CLIENT_KEY *key, const uint8_t *in,
+  int (*client_key_from_bytes)(TRUST_TOKEN_CLIENT_KEY *key, const uint8_t *in,
                                size_t len);
 
   // issuer_key_from_bytes decodes a issuer key from |in| and sets |key|
   // to the resulting key. It returns one on success and zero
   // on failure.
-  int (*issuer_key_from_bytes)(PMBTOKEN_ISSUER_KEY *key, const uint8_t *in,
+  int (*issuer_key_from_bytes)(TRUST_TOKEN_ISSUER_KEY *key, const uint8_t *in,
                                size_t len);
 
   // blind generates a new issuance request for |count| tokens. On
-  // success, it returns a newly-allocated |STACK_OF(PMBTOKEN_PRETOKEN)| and
+  // success, it returns a newly-allocated |STACK_OF(TRUST_TOKEN_PRETOKEN)| and
   // writes a request to the issuer to |cbb|. On failure, it returns NULL. The
-  // |STACK_OF(PMBTOKEN_PRETOKEN)|s should be passed to |pmbtoken_unblind| when
+  // |STACK_OF(TRUST_TOKEN_PRETOKEN)|s should be passed to |pmbtoken_unblind| when
   // the server responds.
   //
   // This function implements the AT.Usr0 operation.
-  STACK_OF(PMBTOKEN_PRETOKEN) *(*blind)(CBB *cbb, size_t count);
+  STACK_OF(TRUST_TOKEN_PRETOKEN) * (*blind)(CBB *cbb, size_t count);
 
   // sign parses a request for |num_requested| tokens from |cbs| and
   // issues |num_to_issue| tokens with |key| and a private metadata value of
@@ -179,7 +206,7 @@ struct trust_token_method_st {
   // success and zero on failure.
   //
   // This function implements the AT.Sig operation.
-  int (*sign)(const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
+  int (*sign)(const TRUST_TOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
               size_t num_requested, size_t num_to_issue,
               uint8_t private_metadata);
 
@@ -192,8 +219,8 @@ struct trust_token_method_st {
   //
   // This function implements the AT.Usr1 operation.
   STACK_OF(TRUST_TOKEN) *
-      (*unblind)(const PMBTOKEN_CLIENT_KEY *key,
-                 const STACK_OF(PMBTOKEN_PRETOKEN) * pretokens, CBS *cbs,
+      (*unblind)(const TRUST_TOKEN_CLIENT_KEY *key,
+                 const STACK_OF(TRUST_TOKEN_PRETOKEN) * pretokens, CBS *cbs,
                  size_t count, uint32_t key_id);
 
   // read parses a PMBToken from |token| and verifies it using |key|. On
@@ -201,8 +228,8 @@ struct trust_token_method_st {
   // |out_nonce| and |*out_private_metadata|. Otherwise, it returns zero. Note
   // that, unlike the output of |unblind|, |token| does not have a
   // four-byte key ID prepended.
-  int (*read)(const PMBTOKEN_ISSUER_KEY *key,
-              uint8_t out_nonce[PMBTOKEN_NONCE_SIZE],
+  int (*read)(const TRUST_TOKEN_ISSUER_KEY *key,
+              uint8_t out_nonce[TRUST_TOKEN_NONCE_SIZE],
               uint8_t *out_private_metadata, const uint8_t *token,
               size_t token_len);
 
@@ -219,14 +246,14 @@ struct trust_token_method_st {
 // Structure representing a single Trust Token public key with the specified ID.
 struct trust_token_client_key_st {
   uint32_t id;
-  PMBTOKEN_CLIENT_KEY key;
+  TRUST_TOKEN_CLIENT_KEY key;
 };
 
 // Structure representing a single Trust Token private key with the specified
 // ID.
 struct trust_token_issuer_key_st {
   uint32_t id;
-  PMBTOKEN_ISSUER_KEY key;
+  TRUST_TOKEN_ISSUER_KEY key;
 };
 
 struct trust_token_client_st {
@@ -243,7 +270,7 @@ struct trust_token_client_st {
   size_t num_keys;
 
   // pretokens is the intermediate state during an active issuance.
-  STACK_OF(PMBTOKEN_PRETOKEN)* pretokens;
+  STACK_OF(TRUST_TOKEN_PRETOKEN)* pretokens;
 
   // srr_key is the public key used to verify the signature of the SRR.
   EVP_PKEY *srr_key;
@@ -281,7 +308,7 @@ extern "C++" {
 
 BSSL_NAMESPACE_BEGIN
 
-BORINGSSL_MAKE_DELETER(PMBTOKEN_PRETOKEN, PMBTOKEN_PRETOKEN_free)
+BORINGSSL_MAKE_DELETER(TRUST_TOKEN_PRETOKEN, TRUST_TOKEN_PRETOKEN_free)
 
 BSSL_NAMESPACE_END
 

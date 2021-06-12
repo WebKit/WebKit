@@ -45,9 +45,9 @@ Color SVGAnimationColorFunction::colorFromString(SVGElement* targetElement, cons
     return { };
 }
 
-Optional<float> SVGAnimationIntegerFunction::calculateDistance(SVGElement*, const String& from, const String& to) const
+std::optional<float> SVGAnimationIntegerFunction::calculateDistance(SVGElement*, const String& from, const String& to) const
 {
-    return std::abs(parseInteger<int>(to).valueOr(0) - parseInteger<int>(from).valueOr(0));
+    return std::abs(parseInteger<int>(to).value_or(0) - parseInteger<int>(from).value_or(0));
 }
 
 }

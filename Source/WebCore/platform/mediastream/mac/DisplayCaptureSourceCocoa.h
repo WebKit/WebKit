@@ -110,8 +110,8 @@ private:
     void emitFrame();
 
     UniqueRef<Capturer> m_capturer;
-    Optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    Optional<RealtimeMediaSourceSettings> m_currentSettings;
+    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
     MonotonicTime m_startTime { MonotonicTime::nan() };

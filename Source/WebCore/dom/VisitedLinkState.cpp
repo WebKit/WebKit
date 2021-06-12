@@ -68,13 +68,13 @@ void VisitedLinkState::invalidateStyleForAllLinks()
     }
 }
 
-inline static Optional<SharedStringHash> linkHashForElement(const Element& element)
+inline static std::optional<SharedStringHash> linkHashForElement(const Element& element)
 {
     if (is<HTMLAnchorElement>(element))
         return downcast<HTMLAnchorElement>(element).visitedLinkHash();
     if (is<SVGAElement>(element))
         return downcast<SVGAElement>(element).visitedLinkHash();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void VisitedLinkState::invalidateStyleForLink(SharedStringHash linkHash)

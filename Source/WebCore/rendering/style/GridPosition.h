@@ -85,7 +85,7 @@ public:
     WEBCORE_EXPORT static void setMaxPositionForTesting(unsigned);
 
 private:
-    static Optional<int> gMaxPositionForTesting;
+    static std::optional<int> gMaxPositionForTesting;
 
     void setIntegerPosition(int integerPosition) { m_integerPosition = clampTo(integerPosition, min(), max()); }
 

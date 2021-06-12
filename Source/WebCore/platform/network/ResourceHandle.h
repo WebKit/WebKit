@@ -178,6 +178,15 @@ public:
     void clearAuthentication();
     WEBCORE_EXPORT virtual void cancel();
 
+    NetworkLoadMetrics* networkLoadMetrics();
+    void setNetworkLoadMetrics(Box<NetworkLoadMetrics>&&);
+
+    MonotonicTime startTimeBeforeRedirects() const;
+    bool hasCrossOriginRedirect() const;
+    void setHasCrossOriginRedirect(bool);
+    uint16_t redirectCount() const;
+    void incrementRedirectCount();
+
     // The client may be 0, in which case no callbacks will be made.
     WEBCORE_EXPORT ResourceHandleClient* client() const;
     WEBCORE_EXPORT void clearClient();
@@ -257,7 +266,7 @@ private:
 
     bool shouldRedirectAsGET(const ResourceRequest&, bool crossOrigin);
 
-    Optional<Credential> getCredential(const ResourceRequest&, bool);
+    std::optional<Credential> getCredential(const ResourceRequest&, bool);
     void restartRequestWithCredential(const ProtectionSpace&, const Credential&);
 
     void handleDataURL();

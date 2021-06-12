@@ -30,7 +30,6 @@
 
 #include "InspectorCanvas.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
@@ -231,7 +230,7 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
 {
     bool sharesVertexFragmentShader = false;
 
-    using ProgramTypeType = Optional<Inspector::Protocol::Canvas::ProgramType>;
+    using ProgramTypeType = std::optional<Inspector::Protocol::Canvas::ProgramType>;
     auto programType = WTF::switchOn(m_program,
 #if ENABLE(WEBGL)
         [&] (std::reference_wrapper<WebGLProgram>) -> ProgramTypeType {
@@ -249,14 +248,14 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
                     sharesVertexFragmentShader = true;
                 return Inspector::Protocol::Canvas::ProgramType::Render;
             }
-            return WTF::nullopt;
+            return std::nullopt;
         },
 #endif
         [&] (Monostate) -> ProgramTypeType {
 #if ENABLE(WEBGL) || ENABLE(WEBGPU)
             ASSERT_NOT_REACHED();
 #endif
-            return WTF::nullopt;
+            return std::nullopt;
         }
     );
     if (!programType) {

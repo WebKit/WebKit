@@ -682,4 +682,119 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         assert.strictEqual(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
         assert.strictEqual(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
     });
+
+    it('should be able to create an analysis task with a sequential test group', async () => {
+        const webkitId = 1;
+        const platformId = 1;
+        const triggerableId = 1234;
+
+        const db = TestServer.database();
+        await db.insert('tests', {name: 'Suite'});
+        const testRow = await db.selectFirstRow('tests', {name: 'Suite'});
+        const testId = testRow.id;
+        await db.insert('repositories', {id: webkitId, name: 'WebKit'});
+        await db.insert('platforms', {id: platformId, name: 'some platform'});
+        await db.insert('build_triggerables', {id: 1234, name: 'test-triggerable'});
+        await db.insert('triggerable_repository_groups', {id: 2345, name: 'webkit-only', triggerable: triggerableId});
+        await db.insert('triggerable_repositories', {repository: webkitId, group: 2345});
+        await db.insert('triggerable_configurations', {test: testId, platform: platformId, triggerable: triggerableId});
+        await addBuilderForReport(reportWithRevision[0]);
+
+        await TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
+        await TestServer.remoteAPI().postJSON('/api/report/', anotherReportWithRevision);
+        await Manifest.fetch();
+
+        const test = Test.findById(testId);
+        const somePlatform = Platform.findById(platformId);
+        const configRow = await db.selectFirstRow('test_configurations', {metric: test.metrics()[0].id(), platform: somePlatform.id()});
+        const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
+        assert.strictEqual(testRuns.length, 2);
+
+        const oneRevisionSet = {[webkitId]: {revision: '191622'}};
+        const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
+
+        const content = await PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 2,
+            testGroupName: 'Confirm', revisionSets: [oneRevisionSet, anotherRevisionSet],
+            startRun: testRuns[0]['id'], endRun: testRuns[1]['id'], needsNotification: true, repetitionType: 'sequential'});
+
+        const task = await AnalysisTask.fetchById(content['taskId']);
+        assert.strictEqual(task.name(), 'confirm');
+        assert(!task.hasResults());
+        assert(task.hasPendingRequests());
+        assert.deepStrictEqual(task.bugs(), []);
+        assert.deepStrictEqual(task.causes(), []);
+        assert.deepStrictEqual(task.fixes(), []);
+        assert.strictEqual(task.changeType(), null);
+        assert.strictEqual(task.platform().label(), 'some platform');
+        assert.strictEqual(task.metric().test().label(), 'Suite');
+
+        const testGroups = await TestGroup.fetchForTask(task.id());
+        assert.strictEqual(testGroups.length, 1);
+        const testGroup = testGroups[0];
+        assert.strictEqual(testGroup.name(), 'Confirm');
+        assert.ok(testGroup.needsNotification());
+        assert.strictEqual(testGroup.repetitionType(), 'sequential')
+        for (const commitSet of testGroup.requestedCommitSets())
+            assert.strictEqual(testGroup.repetitionCountForCommitSet(commitSet), 2);
+
+        const buildRequests = testGroup.buildRequests();
+        assert.strictEqual(buildRequests.length, 4);
+
+        assert.strictEqual(buildRequests[0].order(), 0);
+        assert.strictEqual(buildRequests[1].order(), 1);
+        assert.strictEqual(buildRequests[2].order(), 2);
+        assert.strictEqual(buildRequests[3].order(), 3);
+
+        assert(buildRequests[0].commitSet().equals(buildRequests[1].commitSet()));
+        assert(buildRequests[2].commitSet().equals(buildRequests[3].commitSet()));
+
+        const firstCommitSet = buildRequests[0].commitSet();
+        const secondCommitSet = buildRequests[2].commitSet();
+        const webkitRepository = Repository.findById(webkitId);
+        assert.strictEqual(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
+        assert.strictEqual(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
+    });
+
+    it('should reject with "InvalidRepetitionType" when repetition type is not "alternating" or "sequential"', async () => {
+        const webkitId = 1;
+        const platformId = 1;
+        const triggerableId = 1234;
+
+        const db = TestServer.database();
+        await db.insert('tests', {name: 'Suite'});
+        const testRow = await db.selectFirstRow('tests', {name: 'Suite'});
+        const testId = testRow.id;
+        await db.insert('repositories', {id: webkitId, name: 'WebKit'});
+        await db.insert('platforms', {id: platformId, name: 'some platform'});
+        await db.insert('build_triggerables', {id: 1234, name: 'test-triggerable'});
+        await db.insert('triggerable_repository_groups', {id: 2345, name: 'webkit-only', triggerable: triggerableId});
+        await db.insert('triggerable_repositories', {repository: webkitId, group: 2345});
+        await db.insert('triggerable_configurations', {test: testId, platform: platformId, triggerable: triggerableId});
+        await addBuilderForReport(reportWithRevision[0]);
+
+        await TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
+        await TestServer.remoteAPI().postJSON('/api/report/', anotherReportWithRevision);
+        await Manifest.fetch();
+
+        const test = Test.findById(testId);
+        const somePlatform = Platform.findById(platformId);
+        const configRow = await db.selectFirstRow('test_configurations', {metric: test.metrics()[0].id(), platform: somePlatform.id()});
+        const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
+        assert.strictEqual(testRuns.length, 2);
+
+        const oneRevisionSet = {[webkitId]: {revision: '191622'}};
+        const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
+        await assertThrows('InvalidRepetitionType', () => {
+            return PrivilegedAPI.sendRequest('create-analysis-task', {
+                name: 'confirm',
+                repetitionCount: 2,
+                testGroupName: 'Confirm',
+                revisionSets: [oneRevisionSet, anotherRevisionSet],
+                repetitionType: 'invalid-mode',
+                startRun: testRuns[0]['id'],
+                endRun: testRuns[1]['id'],
+                needsNotification: true
+            })
+        });
+    });
 });

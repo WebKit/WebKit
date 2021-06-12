@@ -50,7 +50,7 @@ public:
     RefPtr<WebCore::SecurityOrigin> topOrigin;
     WTF::ProcessID parentPID { 0 };
 #if HAVE(AUDIT_TOKEN)
-    Optional<audit_token_t> networkProcessAuditToken;
+    std::optional<audit_token_t> networkProcessAuditToken;
 #endif
     WebCore::ResourceRequest request;
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::ContentSniffingPolicy::SniffContent };
@@ -64,9 +64,9 @@ public:
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
-    Optional<NetworkActivityTracker> networkActivityTracker;
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
-    Optional<WebCore::PrivateClickMeasurement::PcmDataCarried> pcmDataCarried;
+    std::optional<NetworkActivityTracker> networkActivityTracker;
+    std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
+    std::optional<WebCore::PrivateClickMeasurement::PcmDataCarried> pcmDataCarried;
 };
 
 } // namespace WebKit

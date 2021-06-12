@@ -32,7 +32,6 @@
 #include "ScrollAnimatorMock.h"
 
 #include "ScrollableArea.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -86,53 +85,26 @@ void ScrollAnimatorMock::mouseExitedContentArea()
     ScrollAnimator::mouseExitedContentArea();
 }
 
+const char* ScrollAnimatorMock::scrollbarPrefix(Scrollbar* scrollbar) const
+{
+    return scrollbar == m_verticalScrollbar ? "Vertical" : scrollbar == m_horizontalScrollbar ? "Horizontal" : "Unknown";
+}
+
 void ScrollAnimatorMock::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 {
-    StringBuilder message;
-    message.appendLiteral("mouseEntered");
-    if (scrollbar == m_verticalScrollbar)
-        message.appendLiteral("Vertical");
-    else if (scrollbar == m_horizontalScrollbar)
-        message.appendLiteral("Horizontal");
-    else
-        message.appendLiteral("Unknown");
-    message.appendLiteral("Scrollbar");
-    m_logger(message.toString());
+    m_logger(makeString("mouseEntered", scrollbarPrefix(scrollbar), "Scrollbar"));
     ScrollAnimator::mouseEnteredScrollbar(scrollbar);
 }
 
 void ScrollAnimatorMock::mouseExitedScrollbar(Scrollbar* scrollbar) const
 {
-    StringBuilder message;
-    message.appendLiteral("mouseExited");
-    if (scrollbar == m_verticalScrollbar)
-        message.appendLiteral("Vertical");
-    else if (scrollbar == m_horizontalScrollbar)
-        message.appendLiteral("Horizontal");
-    else
-        message.appendLiteral("Unknown");
-    message.appendLiteral("Scrollbar");
-    m_logger(message.toString());
+    m_logger(makeString("mouseExited", scrollbarPrefix(scrollbar), "Scrollbar"));
     ScrollAnimator::mouseExitedScrollbar(scrollbar);
 }
 
 void ScrollAnimatorMock::mouseIsDownInScrollbar(Scrollbar* scrollbar, bool isPressed) const
 {
-    StringBuilder message;
-    message.appendLiteral("mouseIs");
-    if (isPressed)
-        message.appendLiteral("Down");
-    else
-        message.appendLiteral("Up");
-    message.appendLiteral("In");
-    if (scrollbar == m_verticalScrollbar)
-        message.appendLiteral("Vertical");
-    else if (scrollbar == m_horizontalScrollbar)
-        message.appendLiteral("Horizontal");
-    else
-        message.appendLiteral("Unknown");
-    message.appendLiteral("Scrollbar");
-    m_logger(message.toString());
+    m_logger(makeString(isPressed ? "mouseIsDownIn" : "mouseIsUpIn", scrollbarPrefix(scrollbar), "Scrollbar"));
     ScrollAnimator::mouseIsDownInScrollbar(scrollbar, isPressed);
 }
 

@@ -606,13 +606,13 @@ HRESULT AccessibleBase::get_accKeyboardShortcut(VARIANT vChild, __deref_opt_out 
         // Ctrl+Alt+Shift+Meta+key. MSDN states that keyboard shortcut strings
         // should not be localized and defines the separator as "+".
         if (modifiers.contains(PlatformEvent::Modifier::ControlKey))
-            accessKeyModifiersBuilder.appendLiteral("Ctrl+");
+            accessKeyModifiersBuilder.append("Ctrl+");
         if (modifiers.contains(PlatformEvent::Modifier::AltKey))
-            accessKeyModifiersBuilder.appendLiteral("Alt+");
+            accessKeyModifiersBuilder.append("Alt+");
         if (modifiers.contains(PlatformEvent::Modifier::ShiftKey))
-            accessKeyModifiersBuilder.appendLiteral("Shift+");
+            accessKeyModifiersBuilder.append("Shift+");
         if (modifiers.contains(PlatformEvent::Modifier::MetaKey))
-            accessKeyModifiersBuilder.appendLiteral("Win+");
+            accessKeyModifiersBuilder.append("Win+");
         accessKeyModifiers = accessKeyModifiersBuilder.toString();
     }
     *shortcut = BString(String(accessKeyModifiers + accessKey)).release();

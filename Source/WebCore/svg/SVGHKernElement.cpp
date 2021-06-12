@@ -42,37 +42,37 @@ Ref<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGHKernElement(tagName, document));
 }
 
-Optional<SVGKerningPair> SVGHKernElement::buildHorizontalKerningPair() const
+std::optional<SVGKerningPair> SVGHKernElement::buildHorizontalKerningPair() const
 {
     // FIXME: Can this be shared with SVGVKernElement::buildVerticalKerningPair?
 
     auto& u1 = attributeWithoutSynchronization(SVGNames::u1Attr);
     auto& g1 = attributeWithoutSynchronization(SVGNames::g1Attr);
     if (u1.isEmpty() && g1.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& u2 = attributeWithoutSynchronization(SVGNames::u2Attr);
     auto& g2 = attributeWithoutSynchronization(SVGNames::g2Attr);
     if (u2.isEmpty() && g2.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto glyphName1 = parseGlyphName(g1);
     if (!glyphName1)
-        return WTF::nullopt;
+        return std::nullopt;
     auto glyphName2 = parseGlyphName(g2);
     if (!glyphName2)
-        return WTF::nullopt;
+        return std::nullopt;
     auto unicodeString1 = parseKerningUnicodeString(u1);
     if (!unicodeString1)
-        return WTF::nullopt;
+        return std::nullopt;
     auto unicodeString2 = parseKerningUnicodeString(u2);
     if (!unicodeString2)
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool ok = false;
     auto kerning = attributeWithoutSynchronization(SVGNames::kAttr).string().toFloat(&ok);
     if (!ok)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return SVGKerningPair {
         WTFMove(unicodeString1->first),

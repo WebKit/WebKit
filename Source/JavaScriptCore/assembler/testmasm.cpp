@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2446,7 +2446,10 @@ static void testCagePreservesPACFailureBit()
     RELEASE_ASSERT(!Gigacage::disablingPrimitiveGigacageIsForbidden());
     auto cage = compile([] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
+        constexpr GPRReg storageGPR = GPRInfo::argumentGPR0;
+        constexpr GPRReg lengthGPR = GPRInfo::argumentGPR1;
+        constexpr GPRReg scratchGPR = GPRInfo::argumentGPR2;
+        jit.cageConditionallyAndUntag(Gigacage::Primitive, storageGPR, lengthGPR, scratchGPR);
         jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
         emitFunctionEpilogue(jit);
         jit.ret();
@@ -2459,12 +2462,7 @@ static void testCagePreservesPACFailureBit()
     CHECK_NOT_EQ(Gigacage::caged(Gigacage::Primitive, notCagedPtr), notCagedPtr);
     void* taggedNotCagedPtr = tagArrayPtr(notCagedPtr, 1);
 
-    if (isARM64E()) {
-        CHECK_NOT_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
-        CHECK_NOT_EQ(invoke<void*>(cage, taggedNotCagedPtr, 1), ptr);
-        void* cagedTaggedNotCagedPtr = invoke<void*>(cage, taggedNotCagedPtr, 1);
-        CHECK_NOT_EQ(cagedTaggedNotCagedPtr, removeArrayPtrTag(cagedTaggedNotCagedPtr));
-    } else
+    if (!isARM64E())
         CHECK_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
 
     CHECK_EQ(invoke<void*>(cage, taggedPtr, 1), ptr);
@@ -2570,7 +2568,8 @@ static void testBranchIfNotType()
                 }));                            \
     } while (false);
 
-void run(const char* filter)
+// Using WTF_IGNORES_THREAD_SAFETY_ANALYSIS because the function is still holding crashLock when exiting.
+void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     JSC::initialize();
     unsigned numberOfTests = 0;

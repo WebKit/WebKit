@@ -264,6 +264,8 @@ static const char* fragmentTemplateCommon =
 
         void applyTextureRGB(inout vec4 color, vec2 texCoord) { color = u_textureColorSpaceMatrix * SamplerFunction(s_sampler, texCoord); }
 
+        void applyPremultiply(inout vec4 color) { color = vec4(color.rgb * color.a, color.a); }
+
         vec3 yuvToRgb(float y, float u, float v)
         {
             // yuv is either bt601 or bt709 so the offset is the same
@@ -483,6 +485,7 @@ static const char* fragmentTemplateCommon =
             vec2 texCoord = transformTexCoord();
             applyManualRepeatIfNeeded(texCoord);
             applyTextureRGBIfNeeded(color, texCoord);
+            applyPremultiplyIfNeeded(color);
             applyTextureYUVIfNeeded(color, texCoord);
             applyTextureNV12IfNeeded(color, texCoord);
             applyTextureNV21IfNeeded(color, texCoord);
@@ -537,6 +540,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     SET_APPLIER_FROM_OPTIONS(ManualRepeat);
     SET_APPLIER_FROM_OPTIONS(TextureExternalOES);
     SET_APPLIER_FROM_OPTIONS(RoundedRectClip);
+    SET_APPLIER_FROM_OPTIONS(Premultiply);
 
     StringBuilder vertexShaderBuilder;
 

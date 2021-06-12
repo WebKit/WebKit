@@ -32,6 +32,7 @@
 #include "AudioSampleDataSource.h"
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioModule.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -112,6 +113,9 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
             if (!weakThis)
                 return;
 
+#if !RELEASE_LOG_DISABLED
+            newSource->setLogger(logger(), logIdentifier());
+#endif
             if (oldSource)
                 AudioMediaStreamTrackRendererUnit::singleton().removeSource(*oldSource);
 

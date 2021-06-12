@@ -33,7 +33,7 @@
 namespace WebCore {
 
 #if !PLATFORM(COCOA)
-DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, Optional<PageIdentifier> pageID)
+DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, std::optional<PageIdentifier> pageID)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(data)
@@ -44,7 +44,7 @@ DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPo
 {  
 }
 
-DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, Optional<PageIdentifier> pageID)
+DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, std::optional<PageIdentifier> pageID)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(0)
@@ -58,7 +58,7 @@ DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint
 
 std::unique_ptr<PasteboardContext> DragData::createPasteboardContext() const
 {
-    return PagePasteboardContext::create(Optional<PageIdentifier> { m_pageID });
+    return PagePasteboardContext::create(std::optional<PageIdentifier> { m_pageID });
 }
 
 } // namespace WebCore

@@ -47,7 +47,7 @@ class SharedBuffer;
 class WEBCORE_EXPORT NetworkSendQueue : public ContextDestructionObserver {
 public:
     using WriteString = Function<void(const CString& utf8)>;
-    using WriteRawData = Function<void(const char*, size_t)>;
+    using WriteRawData = Function<void(const uint8_t*, size_t)>;
     enum class Continue { No, Yes };
     using ProcessError = Function<Continue(ExceptionCode)>;
     NetworkSendQueue(ScriptExecutionContext&, WriteString&&, WriteRawData&&, ProcessError&&);

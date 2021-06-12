@@ -554,8 +554,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CSSOM.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CSSOM.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CSSOMView.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CSSOMView.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Caches.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Caches.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Compat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Compat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceMotion.cpp
@@ -574,8 +572,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+WebDatabase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+WebDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowCaches.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowCaches.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowSpeechSynthesis.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowSpeechSynthesis.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowWebDatabase.cpp
@@ -2568,6 +2564,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowLocalStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowLocalStorage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Caches.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Caches.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Crypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Crypto.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Fetch.cpp
@@ -2582,12 +2580,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowSessionStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowSessionStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorker.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope+Caches.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope+Caches.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeCaches.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeCaches.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerLocation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigator+GPU.cpp

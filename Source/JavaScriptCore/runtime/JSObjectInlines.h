@@ -264,7 +264,7 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, JSGlobalObject* 
 
     // Try indexed put first. This is required for correctness, since loads on property names that appear like
     // valid indices will never look in the named property storage.
-    if (Optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
         RELEASE_AND_RETURN(scope, putByIndex(thisObject, globalObject, index.value(), value, slot.isStrictMode()));
 
     if (thisObject->canPerformFastPutInline(vm, propertyName)) {
@@ -520,7 +520,7 @@ inline bool JSObject::putOwnDataPropertyMayBeIndex(JSGlobalObject* globalObject,
 {
     VM& vm = getVM(globalObject);
     validatePutOwnDataProperty(vm, propertyName, value);
-    if (Optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
         return putDirectIndex(globalObject, index.value(), value, 0, PutDirectIndexLikePutDirect);
 
     return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);

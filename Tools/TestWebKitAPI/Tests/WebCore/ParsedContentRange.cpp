@@ -112,11 +112,11 @@ TEST(WebCore, ParsedRequestRange)
         "bytes=1-999999999999999999999999"
     };
     for (const auto& input : failureCases)
-        EXPECT_EQ(WTF::nullopt, ParsedRequestRange::parse(input));
+        EXPECT_EQ(std::nullopt, ParsedRequestRange::parse(input));
 
-    auto compare = [] (const String& input, Optional<size_t> begin, Optional<size_t> end) {
+    auto compare = [] (const String& input, std::optional<size_t> begin, std::optional<size_t> end) {
         auto range = ParsedRequestRange::parse(input);
-        EXPECT_NE(WTF::nullopt, range);
+        EXPECT_NE(std::nullopt, range);
         
     };
     compare("bytes=1-1", 1, 1);

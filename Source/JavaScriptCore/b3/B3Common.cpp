@@ -31,7 +31,6 @@
 #include "DFGCommon.h"
 #include "FTLState.h"
 #include "Options.h"
-#include <wtf/Optional.h>
 
 namespace JSC { namespace B3 {
 
@@ -68,12 +67,12 @@ bool shouldSaveIRBeforePhase()
     return Options::verboseValidationFailure();
 }
 
-Optional<GPRReg> pinnedExtendedOffsetAddrRegister()
+std::optional<GPRReg> pinnedExtendedOffsetAddrRegister()
 {
 #if CPU(ARM64)
     return MacroAssembler::dataTempRegister;
 #elif CPU(X86_64)
-    return WTF::nullopt;
+    return std::nullopt;
 #else
 #error Unhandled architecture.
 #endif

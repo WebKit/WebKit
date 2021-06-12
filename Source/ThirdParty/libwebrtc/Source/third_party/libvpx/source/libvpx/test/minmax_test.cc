@@ -115,21 +115,21 @@ TEST_P(MinMaxTest, CompareReferenceAndVaryStride) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(C, MinMaxTest, ::testing::Values(&vpx_minmax_8x8_c));
+INSTANTIATE_TEST_SUITE_P(C, MinMaxTest, ::testing::Values(&vpx_minmax_8x8_c));
 
 #if HAVE_SSE2
-INSTANTIATE_TEST_CASE_P(SSE2, MinMaxTest,
-                        ::testing::Values(&vpx_minmax_8x8_sse2));
+INSTANTIATE_TEST_SUITE_P(SSE2, MinMaxTest,
+                         ::testing::Values(&vpx_minmax_8x8_sse2));
 #endif
 
 #if HAVE_NEON
-INSTANTIATE_TEST_CASE_P(NEON, MinMaxTest,
-                        ::testing::Values(&vpx_minmax_8x8_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, MinMaxTest,
+                         ::testing::Values(&vpx_minmax_8x8_neon));
 #endif
 
 #if HAVE_MSA
-INSTANTIATE_TEST_CASE_P(MSA, MinMaxTest,
-                        ::testing::Values(&vpx_minmax_8x8_msa));
+INSTANTIATE_TEST_SUITE_P(MSA, MinMaxTest,
+                         ::testing::Values(&vpx_minmax_8x8_msa));
 #endif
 
 }  // namespace

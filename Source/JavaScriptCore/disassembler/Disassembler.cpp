@@ -27,10 +27,10 @@
 #include "Disassembler.h"
 
 #include "MacroAssemblerCodeRef.h"
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/DataLog.h>
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Threading.h>
 
@@ -109,8 +109,8 @@ private:
         }
     }
     
-    CheckedLock m_lock;
-    CheckedCondition m_condition;
+    Lock m_lock;
+    Condition m_condition;
     Deque<std::unique_ptr<DisassemblyTask>> m_queue WTF_GUARDED_BY_LOCK(m_lock);
     bool m_working { false };
 };

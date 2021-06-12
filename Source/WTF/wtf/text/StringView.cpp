@@ -30,9 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unicode/ubrk.h>
 #include <unicode/unorm2.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
-#include <wtf/Optional.h>
+#include <wtf/Lock.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -138,7 +137,7 @@ auto StringView::SplitResult::Iterator::operator++() -> Iterator&
 class StringView::GraphemeClusters::Iterator::Impl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Impl(const StringView& stringView, Optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
+    Impl(const StringView& stringView, std::optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
         : m_stringView(stringView)
         , m_iterator(WTFMove(iterator))
         , m_index(index)
@@ -179,13 +178,13 @@ public:
 
 private:
     const StringView& m_stringView;
-    Optional<NonSharedCharacterBreakIterator> m_iterator;
+    std::optional<NonSharedCharacterBreakIterator> m_iterator;
     unsigned m_index;
     unsigned m_indexEnd;
 };
 
 StringView::GraphemeClusters::Iterator::Iterator(const StringView& stringView, unsigned index)
-    : m_impl(makeUnique<Impl>(stringView, stringView.isNull() ? WTF::nullopt : Optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
+    : m_impl(makeUnique<Impl>(stringView, stringView.isNull() ? std::nullopt : std::optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
 {
 }
 
@@ -360,7 +359,7 @@ StringView::UnderlyingString::UnderlyingString(const StringImpl& string)
 {
 }
 
-static CheckedLock underlyingStringsLock;
+static Lock underlyingStringsLock;
 
 static HashMap<const StringImpl*, StringView::UnderlyingString*>& underlyingStrings() WTF_REQUIRES_LOCK(underlyingStringsLock)
 {

@@ -24,16 +24,20 @@
  */
 
 [
+    ActiveDOMObject,
     Conditional=MEDIA_SESSION_COORDINATOR,
     EnabledBySetting=MediaSessionCoordinator,
     Exposed=Window,
     ExportMacro=WEBCORE_EXPORT,
-] interface MediaSessionCoordinator {
+    JSGenerateToJSObject,
+] interface MediaSessionCoordinator : EventTarget {
 
     Promise<undefined> join();
     undefined leave();
 
     readonly attribute MediaSessionCoordinatorState state;
+    attribute EventHandler oncoordinatorstatechange;
+
     readonly attribute DOMString? identifier;
 
     Promise<undefined> seekTo(unrestricted double time);

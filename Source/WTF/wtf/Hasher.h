@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
+#include <optional>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
@@ -159,10 +159,10 @@ template<typename TupleLike> std::enable_if_t<IsTypeComplete<std::tuple_size<Tup
     addTupleLikeHelper(hasher, tuple, std::make_index_sequence<std::tuple_size<TupleLike>::value> { });
 }
 
-template<typename T> void add(Hasher& hasher, const Optional<T>& optional)
+template<typename T> void add(Hasher& hasher, const std::optional<T>& optional)
 {
-    add(hasher, optional.hasValue());
-    if (optional.hasValue())
+    add(hasher, optional.has_value());
+    if (optional.has_value())
         add(hasher, optional.value());
 }
 

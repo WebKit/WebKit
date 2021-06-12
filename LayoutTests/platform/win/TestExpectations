@@ -547,10 +547,6 @@ webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
 # TODO CSS Grid Layout is not yet enabled.
 webkit.org/b/60731 fast/css-grid-layout/ [ Skip ]
 
-# TODO ENABLE(CSS_SCROLL_SNAP) is disabled.
-css3/scroll-snap/ [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap [ Skip ]
-
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ]
 
@@ -561,6 +557,8 @@ webkit.org/b/86914 fast/history/page-cache-closed-audiocontext.html [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-running-audiocontext.html [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-suspended-audiocontext.html [ Skip ]
 webkit.org/b/86914 media/W3C/audio [ Skip ]
+webkit.org/b/86914 http/tests/security/contentSecurityPolicy/audioworklet-script-src-blocked.html [ Skip ]
+webkit.org/b/86914 http/tests/security/contentSecurityPolicy/audioworklet-script-src-allowed.html [ Skip ]
 webkit.org/b/86914 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Skip ]
 webkit.org/b/86914 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Skip ]
 webkit.org/b/86914 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Skip ]

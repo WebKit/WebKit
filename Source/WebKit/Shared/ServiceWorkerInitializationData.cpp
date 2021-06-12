@@ -41,18 +41,18 @@ void ServiceWorkerInitializationData::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-Optional<ServiceWorkerInitializationData> ServiceWorkerInitializationData::decode(IPC::Decoder& decoder)
+std::optional<ServiceWorkerInitializationData> ServiceWorkerInitializationData::decode(IPC::Decoder& decoder)
 {
-    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if ENABLE(CONTENT_EXTENSIONS)
-    Optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
+    std::optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
     decoder >> contentRuleLists;
     if (!contentRuleLists)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
     
     return {{

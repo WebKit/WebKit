@@ -61,20 +61,33 @@
 #include <openssl/mem.h>
 #include <openssl/obj.h>
 
+#include "asn1_locl.h"
+
+
 int ASN1_TYPE_get(const ASN1_TYPE *a)
 {
-    if ((a->value.ptr != NULL) || (a->type == V_ASN1_NULL))
-        return (a->type);
-    else
-        return (0);
+    if (a->type == V_ASN1_BOOLEAN || a->type == V_ASN1_NULL ||
+        a->value.ptr != NULL) {
+        return a->type;
+    }
+    return 0;
+}
+
+const void *asn1_type_value_as_pointer(const ASN1_TYPE *a)
+{
+    if (a->type == V_ASN1_BOOLEAN) {
+        return a->value.boolean ? (void *)0xff : NULL;
+    }
+    if (a->type == V_ASN1_NULL) {
+        return NULL;
+    }
+    return a->value.ptr;
 }
 
 void ASN1_TYPE_set(ASN1_TYPE *a, int type, void *value)
 {
-    if (a->value.ptr != NULL) {
-        ASN1_TYPE **tmp_a = &a;
-        ASN1_primitive_free((ASN1_VALUE **)tmp_a, NULL);
-    }
+    ASN1_TYPE **tmp_a = &a;
+    ASN1_primitive_free((ASN1_VALUE **)tmp_a, NULL);
     a->type = type;
     if (type == V_ASN1_BOOLEAN)
         a->value.boolean = value ? 0xff : 0;
@@ -142,8 +155,7 @@ int ASN1_TYPE_cmp(const ASN1_TYPE *a, const ASN1_TYPE *b)
     case V_ASN1_UTF8STRING:
     case V_ASN1_OTHER:
     default:
-        result = ASN1_STRING_cmp((ASN1_STRING *)a->value.ptr,
-                                 (ASN1_STRING *)b->value.ptr);
+        result = ASN1_STRING_cmp(a->value.asn1_string, b->value.asn1_string);
         break;
     }
 

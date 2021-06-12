@@ -189,14 +189,14 @@ static bool mayHaveDensityCorrectedSize(CFDictionaryRef imageProperties)
         && (resolutionX != ImageResolution::DefaultResolution || resolutionY != ImageResolution::DefaultResolution);
 }
 
-static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imageProperties)
+static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
     auto exifDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyExifDictionary);
     auto tiffDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyTIFFDictionary);
 
     if (!exifDictionary || !tiffDictionary)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto widthProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);
     auto heightProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);
@@ -207,7 +207,7 @@ static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imag
     auto resolutionUnitProperty = (CFNumberRef)CFDictionaryGetValue(tiffDictionary, kCGImagePropertyTIFFResolutionUnit);
 
     if (!preferredWidthProperty || !preferredHeightProperty || !resolutionXProperty || !resolutionYProperty || !resolutionUnitProperty)
-        return WTF::nullopt;
+        return std::nullopt;
 
     int resolutionUnit;
     float sourceWidth, sourceHeight, preferredWidth, preferredHeight, resolutionWidth, resolutionHeight;
@@ -218,7 +218,7 @@ static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imag
         || !CFNumberGetValue(resolutionXProperty, kCFNumberFloat32Type, &resolutionWidth)
         || !CFNumberGetValue(resolutionYProperty, kCFNumberFloat32Type, &resolutionHeight)
         || !CFNumberGetValue(resolutionUnitProperty, kCFNumberIntType, &resolutionUnit)) {
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return ImageResolution::densityCorrectedSize(FloatSize(sourceWidth, sourceHeight), {
@@ -236,7 +236,7 @@ size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, 
     if (position >= sourceSize)
         return 0;
     
-    const char* source = sharedBuffer->data() + position;
+    auto* source = sharedBuffer->data() + position;
     size_t amount = std::min<size_t>(count, sourceSize - position);
     memcpy(buffer, source, amount);
     return amount;
@@ -387,23 +387,23 @@ RepetitionCount ImageDecoderCG::repetitionCount() const
 #endif
 }
 
-Optional<IntPoint> ImageDecoderCG::hotSpot() const
+std::optional<IntPoint> ImageDecoderCG::hotSpot() const
 {
     auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)
-        return WTF::nullopt;
+        return std::nullopt;
     
     int x = -1, y = -1;
     CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotX"));
     if (!num || !CFNumberGetValue(num, kCFNumberIntType, &x))
-        return WTF::nullopt;
+        return std::nullopt;
     
     num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotY"));
     if (!num || !CFNumberGetValue(num, kCFNumberIntType, &y))
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (x < 0 || y < 0)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return IntPoint(x, y);
 }
@@ -448,11 +448,11 @@ ImageDecoder::FrameMetadata ImageDecoderCG::frameMetadataAtIndex(size_t index) c
     
     auto orientation = orientationFromProperties(properties.get());
     if (!mayHaveDensityCorrectedSize(properties.get()))
-        return { orientation, WTF::nullopt };
+        return { orientation, std::nullopt };
 
     auto propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, createImageSourceMetadataOptions().get()));
     if (!propertiesWithMetadata)
-        return { orientation, WTF::nullopt };
+        return { orientation, std::nullopt };
     
     return { orientation, densityCorrectedSizeFromProperties(propertiesWithMetadata.get()) };
 }
@@ -513,8 +513,7 @@ bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
 
 unsigned ImageDecoderCG::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
-    IntSize frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return (frameSize.area() * 4).unsafeGet();
+    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
 }
 
 PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
@@ -530,7 +529,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
         
         if (decodingOptions.hasSizeForDrawing()) {
             // See which size is smaller: the image native size or the sizeForDrawing.
-            Optional<IntSize> sizeForDrawing = decodingOptions.sizeForDrawing();
+            std::optional<IntSize> sizeForDrawing = decodingOptions.sizeForDrawing();
             if (sizeForDrawing.value().unclampedArea() < size.unclampedArea())
                 size = sizeForDrawing.value();
         }

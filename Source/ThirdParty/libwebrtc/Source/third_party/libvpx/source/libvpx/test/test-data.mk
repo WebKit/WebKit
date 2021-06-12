@@ -2,6 +2,7 @@ LIBVPX_TEST_SRCS-yes += test-data.mk
 
 # Encoder test source
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += hantro_collage_w352h288.yuv
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += hantro_collage_w352h288_nv12.yuv
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += hantro_odd.yuv
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += desktop_office1.1280_720-020.yuv
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += slides_code_term_web_plot.1920_1080.yuv
@@ -26,7 +27,9 @@ LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += noisy_clip_640_360.y4m
 LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += rush_hour_444.y4m
 LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += screendata.y4m
 LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += niklas_640_480_30.yuv
-LIBVPX_TEST_DATA-$(CONFIG_RATE_CTRL) += bus_352x288_420_f20_b8.yuv
+LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += rc_interface_test_one_layer
+LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += rc_interface_test_svc
+LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += bus_352x288_420_f20_b8.yuv
 
 # Test vectors
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += vp80-00-comprehensive-001.ivf

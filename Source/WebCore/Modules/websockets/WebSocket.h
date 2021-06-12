@@ -36,7 +36,6 @@
 #include "Timer.h"
 #include <wtf/URL.h>
 #include "WebSocketChannelClient.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -62,7 +61,7 @@ public:
     virtual ~WebSocket();
 
     static HashSet<WebSocket*>& allActiveWebSockets() WTF_REQUIRES_LOCK(s_allActiveWebSocketsLock);
-    static CheckedLock& allActiveWebSocketsLock() WTF_RETURNS_LOCK(s_allActiveWebSocketsLock);
+    static Lock& allActiveWebSocketsLock() WTF_RETURNS_LOCK(s_allActiveWebSocketsLock);
 
     enum State {
         CONNECTING = 0,
@@ -80,7 +79,7 @@ public:
     ExceptionOr<void> send(JSC::ArrayBufferView&);
     ExceptionOr<void> send(Blob&);
 
-    ExceptionOr<void> close(Optional<unsigned short> code, const String& reason);
+    ExceptionOr<void> close(std::optional<unsigned short> code, const String& reason);
 
     RefPtr<ThreadableWebSocketChannel> channel() const;
 
@@ -132,7 +131,7 @@ private:
 
     enum class BinaryType { Blob, ArrayBuffer };
 
-    static CheckedLock s_allActiveWebSocketsLock;
+    static Lock s_allActiveWebSocketsLock;
     RefPtr<ThreadableWebSocketChannel> m_channel;
 
     State m_state { CONNECTING };

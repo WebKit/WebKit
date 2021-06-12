@@ -50,7 +50,7 @@ struct WebAuthenticationRequestData {
     WeakPtr<WebPageProxy> page;
     WebAuthenticationPanelResult panelResult { WebAuthenticationPanelResult::Unavailable };
     RefPtr<API::WebAuthenticationPanel> panel;
-    WTF::Optional<WebCore::GlobalFrameIdentifier> frameID;
+    std::optional<WebCore::GlobalFrameIdentifier> frameID;
     WebKit::FrameInfoData frameInfo;
 
     bool processingUserGesture;

@@ -29,7 +29,6 @@
 
 #include "WebGPUPipelineDescriptorBase.h"
 #include "WebGPUProgrammableStageDescriptor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -38,7 +37,7 @@ class GPUErrorScopes;
 struct GPUComputePipelineDescriptor;
 
 struct WebGPUComputePipelineDescriptor : WebGPUPipelineDescriptorBase {
-    Optional<GPUComputePipelineDescriptor> tryCreateGPUComputePipelineDescriptor(GPUErrorScopes&) const;
+    std::optional<GPUComputePipelineDescriptor> tryCreateGPUComputePipelineDescriptor(GPUErrorScopes&) const;
 
     WebGPUProgrammableStageDescriptor computeStage;
 };

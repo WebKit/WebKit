@@ -41,7 +41,7 @@ namespace WebKit {
 class SandboxExtensionImpl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtension::Type type, Optional<audit_token_t> auditToken = WTF::nullopt, OptionSet<SandboxExtension::Flags> flags = SandboxExtension::Flags::Default)
+    static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken = std::nullopt, OptionSet<SandboxExtension::Flags> flags = SandboxExtension::Flags::Default)
     {
         std::unique_ptr<SandboxExtensionImpl> impl { new SandboxExtensionImpl(path, type, auditToken, flags) };
         if (!impl->m_token)
@@ -89,7 +89,7 @@ public:
     }
 
 private:
-    char* sandboxExtensionForType(const char* path, SandboxExtension::Type type, Optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
+    char* sandboxExtensionForType(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
     {
         uint32_t extensionFlags = 0;
         if (flags & SandboxExtension::Flags::NoReport)
@@ -119,7 +119,7 @@ private:
         }
     }
 
-    SandboxExtensionImpl(const char* path, SandboxExtension::Type type, Optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
+    SandboxExtensionImpl(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
         : m_token { sandboxExtensionForType(path, type, auditToken, flags) }
     {
     }
@@ -158,11 +158,11 @@ void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
     m_sandboxExtension = 0;
 }
 
-auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> Optional<Handle>
+auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Handle>
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (dataReference.isEmpty())
         return {{ }};
@@ -219,19 +219,19 @@ void SandboxExtension::HandleArray::encode(IPC::Encoder& encoder) const
         encoder << handle;
 }
 
-Optional<SandboxExtension::HandleArray> SandboxExtension::HandleArray::decode(IPC::Decoder& decoder)
+std::optional<SandboxExtension::HandleArray> SandboxExtension::HandleArray::decode(IPC::Decoder& decoder)
 {
-    Optional<uint64_t> size;
+    std::optional<uint64_t> size;
     decoder >> size;
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
 
     SandboxExtension::HandleArray handles;
     for (size_t i = 0; i < *size; ++i) {
-        Optional<SandboxExtension::Handle> handle;
+        std::optional<SandboxExtension::Handle> handle;
         decoder >> handle;
         if (!handle)
-            return WTF::nullopt;
+            return std::nullopt;
         handles.append(WTFMove(*handle));
     }
     return WTFMove(handles);
@@ -280,7 +280,7 @@ bool SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, WTF::nullopt, SandboxExtension::Flags::DoNotCanonicalize);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, std::nullopt, SandboxExtension::Flags::DoNotCanonicalize);
     if (!handle.m_sandboxExtension) {
         LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
         return false;
@@ -378,7 +378,7 @@ bool SandboxExtension::createHandleForGenericExtension(ASCIILiteral extensionCla
     return true;
 }
 
-bool SandboxExtension::createHandleForMachLookup(ASCIILiteral service, Optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
+bool SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
 {
     ASSERT(!handle.m_sandboxExtension);
     
@@ -391,7 +391,7 @@ bool SandboxExtension::createHandleForMachLookup(ASCIILiteral service, Optional<
     return true;
 }
 
-SandboxExtension::HandleArray SandboxExtension::createHandlesForMachLookup(const Vector<ASCIILiteral>& services, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
+SandboxExtension::HandleArray SandboxExtension::createHandlesForMachLookup(const Vector<ASCIILiteral>& services, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags)
 {
     return createHandlesForResources(services, Function<bool(const ASCIILiteral&, Handle&)>([auditToken, flags] (const ASCIILiteral& service, Handle& handle) {
         if (!SandboxExtension::createHandleForMachLookup(service, auditToken, handle, flags)) {
@@ -415,7 +415,7 @@ bool SandboxExtension::createHandleForReadByAuditToken(const String& path, audit
     return true;
 }
 
-bool SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClass, Optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
+bool SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClass, std::optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
 {
     ASSERT(!handle.m_sandboxExtension);
 
@@ -428,7 +428,7 @@ bool SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClas
     return true;
 }
 
-SandboxExtension::HandleArray SandboxExtension::createHandlesForIOKitClassExtensions(const Vector<ASCIILiteral>& iokitClasses, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
+SandboxExtension::HandleArray SandboxExtension::createHandlesForIOKitClassExtensions(const Vector<ASCIILiteral>& iokitClasses, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags)
 {
     return createHandlesForResources(iokitClasses, Function<bool(const ASCIILiteral&, Handle&)>([auditToken, flags] (const ASCIILiteral& iokitClass, Handle& handle) {
         if (!SandboxExtension::createHandleForIOKitClassExtension(iokitClass, auditToken, handle, flags)) {

@@ -47,7 +47,7 @@ namespace WebCore {
 namespace ServiceWorkerFetch {
 
 // https://fetch.spec.whatwg.org/#http-fetch step 3.3
-static inline Optional<ResourceError> validateResponse(const ResourceResponse& response, FetchOptions::Mode mode, FetchOptions::Redirect redirect)
+static inline std::optional<ResourceError> validateResponse(const ResourceResponse& response, FetchOptions::Mode mode, FetchOptions::Redirect redirect)
 {
     if (response.type() == ResourceResponse::Type::Error)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is an error"_s, ResourceError::Type::General };
@@ -65,10 +65,15 @@ static inline Optional<ResourceError> validateResponse(const ResourceResponse& r
     return { };
 }
 
-static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, ResourceError>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo)
+static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo)
 {
     if (!result.has_value()) {
-        client->didFail(result.error());
+        auto& error = result.error();
+        if (!error) {
+            client->didNotHandle();
+            return;
+        }
+        client->didFail(*error);
         return;
     }
     auto response = WTFMove(result.value());
@@ -116,7 +121,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, R
             }
 
             if (auto chunk = result.returnValue())
-                client->didReceiveData(SharedBuffer::create(reinterpret_cast<const char*>(chunk->data), chunk->size));
+                client->didReceiveData(SharedBuffer::create(chunk->data, chunk->size));
             else
                 client->didFinish();
         });
@@ -134,7 +139,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, R
     });
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, Optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
 
@@ -148,7 +153,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     ASSERT(globalScope.registration().active()->state() == ServiceWorkerState::Activated);
 
     auto* formData = request.httpBody();
-    Optional<FetchBody> body;
+    std::optional<FetchBody> body;
     if (formData && !formData->isEmpty()) {
         body = FetchBody::fromFormData(globalScope, *formData);
         if (!body) {

@@ -86,7 +86,7 @@ size_t NetworkResourcesData::ResourceData::dataLength() const
     return m_dataBuffer ? m_dataBuffer->size() : 0;
 }
 
-void NetworkResourcesData::ResourceData::appendData(const char* data, size_t dataLength)
+void NetworkResourcesData::ResourceData::appendData(const uint8_t* data, size_t dataLength)
 {
     ASSERT(!hasContent());
     if (!m_dataBuffer)
@@ -221,7 +221,7 @@ static bool shouldBufferResourceData(const NetworkResourcesData::ResourceData& r
     return false;
 }
 
-NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResourceData(const String& requestId, const char* data, size_t dataLength)
+NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResourceData(const String& requestId, const uint8_t* data, size_t dataLength)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -311,7 +311,7 @@ Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cached
     return result;
 }
 
-void NetworkResourcesData::clear(Optional<String> preservedLoaderId)
+void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
 {
     m_requestIdsDeque.clear();
     m_contentSize = 0;

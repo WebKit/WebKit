@@ -176,6 +176,7 @@ $code.=<<___;
 .text
 
 .extern	OPENSSL_armcap_P
+.hidden OPENSSL_armcap_P
 .globl	sha1_block_data_order
 .type	sha1_block_data_order,%function
 .align	6
@@ -327,8 +328,6 @@ $code.=<<___;
 .long	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6	//K_60_79
 .asciz	"SHA1 block transform for ARMv8, CRYPTOGAMS by <appro\@openssl.org>"
 .align	2
-.comm	OPENSSL_armcap_P,4,4
-.hidden	OPENSSL_armcap_P
 ___
 }}}
 

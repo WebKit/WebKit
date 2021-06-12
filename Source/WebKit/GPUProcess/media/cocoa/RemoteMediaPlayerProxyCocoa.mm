@@ -49,11 +49,12 @@ static void setVideoInlineSizeIfPossible(LayerHostingContext& context, const Web
     [CATransaction commit];
 }
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, WebCore::DynamicRangeMode preferredDynamicRangeMode, CompletionHandler<void(std::optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
 {
     m_player->setPrivateBrowsingMode(privateMode);
     m_player->setPreload(preload);
     m_player->setPreservesPitch(preservesPitch);
+    m_player->setPreferredDynamicRangeMode(preferredDynamicRangeMode);
     if (prepareForRendering)
         m_player->prepareForRendering();
     m_videoContentScale = videoContentScale;
@@ -78,53 +79,53 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& 
     setVideoInlineSizeIfPossible(*m_inlineLayerHostingContext, size);
 }
 
-void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&& completionHandler)
 {
     if (!m_player) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
     auto nativeImage = m_player->nativeImageForCurrentTime();
     if (!nativeImage) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
     auto platformImage = nativeImage->platformImage();
     if (!platformImage) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
     auto surface = WebCore::IOSurface::createFromImage(platformImage.get());
     if (!surface) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
     completionHandler(surface->createSendRight());
 }
 
-void RemoteMediaPlayerProxy::pixelBufferForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::pixelBufferForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&& completionHandler)
 {
 #if !USE(AVFOUNDATION)
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 #else
     if (!m_player) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
     auto pixelBuffer = m_player->pixelBufferForCurrentTime();
     if (!pixelBuffer) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
     auto surface = WebCore::IOSurface::createFromPixelBuffer(pixelBuffer.get());
     if (!surface) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 

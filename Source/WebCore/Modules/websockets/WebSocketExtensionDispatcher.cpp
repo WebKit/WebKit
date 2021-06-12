@@ -71,9 +71,7 @@ const String WebSocketExtensionDispatcher::createHeaderValue() const
 
 void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters)
 {
-    if (!m_acceptedExtensionsBuilder.isEmpty())
-        m_acceptedExtensionsBuilder.appendLiteral(", ");
-    m_acceptedExtensionsBuilder.append(extensionToken);
+    m_acceptedExtensionsBuilder.append(m_acceptedExtensionsBuilder.isEmpty() ? "" : ", ", extensionToken);
     // FIXME: Should use ListHashSet to keep the order of the parameters.
     for (auto& parameter : extensionParameters) {
         m_acceptedExtensionsBuilder.append("; ", parameter.key);

@@ -27,14 +27,14 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
-#include "FormattingContext.h"
+#include "FormattingQuirks.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
-class FlexFormattingGeometry;
 class InvalidationState;
 // This class implements the layout logic for flex formatting contexts.
 // https://www.w3.org/TR/css-flexbox-1/
@@ -47,14 +47,18 @@ public:
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
-private:
-    FlexFormattingGeometry geometry() const;
+    const FlexFormattingGeometry& formattingGeometry() const final { return m_flexFormattingGeometry; }
+    const FormattingQuirks& formattingQuirks() const final { return m_flexFormattingQuirks; }
 
+private:
     void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);
     void computeIntrinsicWidthConstraintsForFlexItems();
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
+
+    const FlexFormattingGeometry m_flexFormattingGeometry;
+    const FormattingQuirks m_flexFormattingQuirks;
 };
 
 }

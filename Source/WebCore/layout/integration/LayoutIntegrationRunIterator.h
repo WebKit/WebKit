@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "InlineElementBox.h"
 #include "LayoutIntegrationRunIteratorLegacyPath.h"
 #include "LayoutIntegrationRunIteratorModernPath.h"
+#include "LegacyInlineElementBox.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -81,7 +81,7 @@ public:
     const RenderObject& renderer() const;
 
     // For intermediate porting steps only.
-    InlineBox* legacyInlineBox() const;
+    LegacyInlineBox* legacyInlineBox() const;
 
 protected:
     friend class RunIterator;
@@ -113,7 +113,7 @@ public:
     bool isSelectable(unsigned start, unsigned end) const;
     LayoutRect selectionRect(unsigned start, unsigned end) const;
 
-    InlineTextBox* legacyInlineBox() const { return downcast<InlineTextBox>(PathRun::legacyInlineBox()); }
+    LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(PathRun::legacyInlineBox()); }
 };
 
 class RunIterator {
@@ -269,7 +269,7 @@ inline const RenderObject& PathRun::renderer() const
     });
 }
 
-inline InlineBox* PathRun::legacyInlineBox() const
+inline LegacyInlineBox* PathRun::legacyInlineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.legacyInlineBox();

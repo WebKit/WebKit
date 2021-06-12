@@ -815,7 +815,7 @@ int main(int argc, char **argv) {
 #else
   if (vpx_codec_enc_init(&codec, encoder->codec_interface(), &cfg, 0))
 #endif  // CONFIG_VP9_HIGHBITDEPTH
-    die_codec(&codec, "Failed to initialize encoder");
+    die("Failed to initialize encoder");
 
   if (strncmp(encoder->name, "vp8", 3) == 0) {
     vpx_codec_control(&codec, VP8E_SET_CPUUSED, -speed);
@@ -831,6 +831,7 @@ int main(int argc, char **argv) {
   } else if (strncmp(encoder->name, "vp9", 3) == 0) {
     vpx_svc_extra_cfg_t svc_params;
     memset(&svc_params, 0, sizeof(svc_params));
+    vpx_codec_control(&codec, VP9E_SET_DISABLE_OVERSHOOT_MAXQ_CBR, 0);
     vpx_codec_control(&codec, VP8E_SET_CPUUSED, speed);
     vpx_codec_control(&codec, VP9E_SET_AQ_MODE, 3);
     vpx_codec_control(&codec, VP9E_SET_GF_CBR_BOOST_PCT, 0);
@@ -840,6 +841,7 @@ int main(int argc, char **argv) {
     vpx_codec_control(&codec, VP8E_SET_STATIC_THRESHOLD, 1);
     vpx_codec_control(&codec, VP9E_SET_TUNE_CONTENT, 0);
     vpx_codec_control(&codec, VP9E_SET_TILE_COLUMNS, get_msb(cfg.g_threads));
+    vpx_codec_control(&codec, VP9E_SET_DISABLE_LOOPFILTER, 0);
 #if ROI_MAP
     set_roi_map(encoder->name, &cfg, &roi);
     if (vpx_codec_control(&codec, VP9E_SET_ROI_MAP, &roi))

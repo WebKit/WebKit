@@ -47,7 +47,7 @@ struct WebsiteDataStoreParameters {
     ~WebsiteDataStoreParameters();
 
     void encode(IPC::Encoder&) const;
-    static Optional<WebsiteDataStoreParameters> decode(IPC::Decoder&);
+    static std::optional<WebsiteDataStoreParameters> decode(IPC::Decoder&);
 
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;

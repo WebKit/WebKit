@@ -59,9 +59,9 @@ private:
     GRefPtr<GSocketConnection> m_connection;
     const MessageHandlers& m_messageHandlers;
     gpointer m_userData;
-    Vector<char> m_readBuffer;
+    Vector<gchar> m_readBuffer;
     GSocketMonitor m_readMonitor;
-    Vector<char> m_writeBuffer;
+    Vector<gchar> m_writeBuffer;
     GSocketMonitor m_writeMonitor;
 };
 

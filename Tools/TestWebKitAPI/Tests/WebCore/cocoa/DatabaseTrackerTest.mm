@@ -44,7 +44,7 @@ TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
     String databaseFilePath = FileSystem::openTemporaryFile("tempEmptyDatabase", handle);
     FileSystem::closeFile(handle);
 
-    auto fileSize = FileSystem::fileSize(databaseFilePath).valueOr(0);
+    auto fileSize = FileSystem::fileSize(databaseFilePath).value_or(0);
     EXPECT_EQ(0U, fileSize);
 
     EXPECT_TRUE(DatabaseTracker::deleteDatabaseFileIfEmpty(databaseFilePath));

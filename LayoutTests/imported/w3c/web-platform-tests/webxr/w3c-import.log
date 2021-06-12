@@ -52,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getPose.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_lifetime.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_add_remove.https.html
@@ -79,6 +80,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestSessionDuringEnd.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_sameObject.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_viewer_availability.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html
@@ -97,3 +99,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html

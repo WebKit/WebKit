@@ -304,7 +304,7 @@ MessageQueueWaitResult WorkerOrWorkletScriptController::loadModuleSynchronously(
                     case ModuleFetchFailureKind::WasErrored:
                         protector->notifyLoadFailed(LoadableScript::Error {
                             LoadableScript::ErrorType::CachedScript,
-                            WTF::nullopt
+                            std::nullopt
                         });
                         break;
                     case ModuleFetchFailureKind::WasCanceled:
@@ -382,7 +382,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
     }
 }
 
-void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials credentials, CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     if (isExecutionForbidden()) {
         completionHandler(Exception { NotAllowedError });
@@ -399,12 +399,12 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
     {
         auto& promise = JSExecState::loadModule(globalObject, moduleURL.string(), JSC::JSScriptFetchParameters::create(vm, makeRef(scriptFetcher->parameters())), JSC::JSScriptFetcher::create(vm, { scriptFetcher.ptr() }));
 
-        auto task = createSharedTask<void(Optional<Exception>&&)>([completionHandler = WTFMove(completionHandler)](Optional<Exception>&& exception) mutable {
+        auto task = createSharedTask<void(std::optional<Exception>&&)>([completionHandler = WTFMove(completionHandler)](std::optional<Exception>&& exception) mutable {
             completionHandler(WTFMove(exception));
         });
 
         auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task, scriptFetcher](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
-            // task->run(WTF::nullopt);
+            // task->run(std::nullopt);
             VM& vm = globalObject->vm();
             JSLockHolder lock { vm };
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -415,7 +415,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
 
             auto* context = downcast<WorkerOrWorkletGlobalScope>(jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext());
             if (!context || !context->script()) {
-                task->run(WTF::nullopt);
+                task->run(std::nullopt);
                 return JSValue::encode(jsUndefined());
             }
 
@@ -424,7 +424,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
             if ((returnedException && vm.isTerminationException(returnedException)) || context->script()->isTerminatingExecution()) {
                 if (context->script())
                     context->script()->forbidExecution();
-                task->run(WTF::nullopt);
+                task->run(std::nullopt);
                 return JSValue::encode(jsUndefined());
             }
 
@@ -439,7 +439,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
                 context->reportException(message, { }, { }, { }, { }, { });
             }
 
-            task->run(WTF::nullopt);
+            task->run(std::nullopt);
             return JSValue::encode(jsUndefined());
         });
 

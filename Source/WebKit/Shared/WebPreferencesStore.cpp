@@ -52,13 +52,13 @@ void WebPreferencesStore::encode(IPC::Encoder& encoder) const
 
 bool WebPreferencesStore::decode(IPC::Decoder& decoder, WebPreferencesStore& result)
 {
-    Optional<ValueMap> values;
+    std::optional<ValueMap> values;
     decoder >> values;
     if (!values)
         return false;
     result.m_values = WTFMove(*values);
 
-    Optional<ValueMap> overriddenDefaults;
+    std::optional<ValueMap> overriddenDefaults;
     decoder >> overriddenDefaults;
     if (!overriddenDefaults)
         return false;

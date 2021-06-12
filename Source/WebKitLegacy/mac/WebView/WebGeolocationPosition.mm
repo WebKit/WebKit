@@ -27,7 +27,6 @@
 
 #import "WebGeolocationPositionInternal.h"
 #import <WebCore/GeolocationPositionData.h>
-#import <wtf/Optional.h>
 #import <wtf/RefPtr.h>
 
 using namespace WebCore;
@@ -56,10 +55,10 @@ using namespace WebCore;
 
 @implementation WebGeolocationPosition
 
-Optional<GeolocationPositionData> core(WebGeolocationPosition *position)
+std::optional<GeolocationPositionData> core(WebGeolocationPosition *position)
 {
     if (!position)
-        return WTF::nullopt;
+        return std::nullopt;
     return position->_internal->_position;
 }
 

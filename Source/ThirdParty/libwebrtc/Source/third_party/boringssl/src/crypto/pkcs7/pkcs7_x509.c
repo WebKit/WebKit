@@ -192,7 +192,8 @@ static int pkcs7_bundle_certificates_cb(CBB *out, const void *arg) {
     }
   }
 
-  return CBB_flush(out);
+  // |certificates| is a implicitly-tagged SET OF.
+  return CBB_flush_asn1_set_of(&certificates) && CBB_flush(out);
 }
 
 int PKCS7_bundle_certificates(CBB *out, const STACK_OF(X509) *certs) {
@@ -222,7 +223,8 @@ static int pkcs7_bundle_crls_cb(CBB *out, const void *arg) {
     }
   }
 
-  return CBB_flush(out);
+  // |crl_data| is a implicitly-tagged SET OF.
+  return CBB_flush_asn1_set_of(&crl_data) && CBB_flush(out);
 }
 
 int PKCS7_bundle_CRLs(CBB *out, const STACK_OF(X509_CRL) *crls) {
@@ -235,7 +237,7 @@ static PKCS7 *pkcs7_new(CBS *cbs) {
     return NULL;
   }
   OPENSSL_memset(ret, 0, sizeof(PKCS7));
-  ret->type = (ASN1_OBJECT *)OBJ_nid2obj(NID_pkcs7_signed);
+  ret->type = OBJ_nid2obj(NID_pkcs7_signed);
   ret->d.sign = OPENSSL_malloc(sizeof(PKCS7_SIGNED));
   if (ret->d.sign == NULL) {
     goto err;

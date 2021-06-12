@@ -120,11 +120,14 @@ class ChartPane extends ChartPaneBase {
         const createWithTestGroupCheckbox = this.content('create-with-test-group');
         const repetitionCount = this.content('confirm-repetition');
         const notifyOnCompletion = this.content('notify-on-completion');
+        const repetitionType = this.content('repetition-type');
         createWithTestGroupCheckbox.onchange = () => {
+            // FIXME: should invoke "enqueueToRender" instead.
             const shouldDisable = !createWithTestGroupCheckbox.checked;
             repetitionCount.disabled = shouldDisable;
             notifyOnCompletion.disabled = shouldDisable;
-        }
+            repetitionType.disabled = shouldDisable;
+        };
     }
 
     serializeState()
@@ -243,10 +246,11 @@ class ChartPane extends ChartPaneBase {
         const createWithTestGroup = this.content('create-with-test-group').checked;
         const repetitionCount = this.content('confirm-repetition').value;
         const notifyOnCompletion = this.content('notify-on-completion').checked;
+        const repetitionType = this.content('repetition-type').value;
 
         try {
             const analysisTask = await (createWithTestGroup ?
-                AnalysisTask.create(name, startPoint, endPoint, 'Confirm', repetitionCount, notifyOnCompletion) : AnalysisTask.create(name, startPoint, endPoint));
+                AnalysisTask.create(name, startPoint, endPoint, 'Confirm', repetitionCount, repetitionType, notifyOnCompletion) : AnalysisTask.create(name, startPoint, endPoint));
             newWindow.location.href = router.url('analysis/task/' + analysisTask.id());
             this.fetchAnalysisTasks(true);
         } catch(error) {
@@ -589,7 +593,16 @@ class ChartPane extends ChartPaneBase {
                                     <option>10</option>
                                 </select>
                             <label>iterations</label>
-                            <label><input type="checkbox" id="notify-on-completion" checked> Notify on completion</label>
+                        </li>
+                        <li>
+                            <label>In</label>
+                            <select id="repetition-type">
+                                <option value="alternating" selected>alternate (ABAB)</option>
+                                <option value="sequential">sequence (AABB)</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="notify-on-completion" checked>Notify on completion</label>
                         </li>
                     </form>
                     <ul class="chart-pane-filtering-options popover" style="display:none">

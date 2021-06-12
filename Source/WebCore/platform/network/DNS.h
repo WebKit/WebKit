@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <optional>
+#include <wtf/Forward.h>
+#include <wtf/Variant.h>
+
 #if OS(WINDOWS)
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -32,15 +36,11 @@
 #include <netinet/in.h>
 #endif
 
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
-#include <wtf/Variant.h>
-
 namespace WebCore {
 
 class IPAddress {
 public:
-    static Optional<IPAddress> fromSockAddrIn6(const struct sockaddr_in6&);
+    static std::optional<IPAddress> fromSockAddrIn6(const struct sockaddr_in6&);
     explicit IPAddress(const struct in_addr& address)
         : m_address(address)
     {
@@ -70,7 +70,7 @@ WEBCORE_EXPORT void prefetchDNS(const String& hostname);
 WEBCORE_EXPORT void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&&);
 WEBCORE_EXPORT void stopResolveDNS(uint64_t identifier);
 
-inline Optional<IPAddress> IPAddress::fromSockAddrIn6(const struct sockaddr_in6& address)
+inline std::optional<IPAddress> IPAddress::fromSockAddrIn6(const struct sockaddr_in6& address)
 {
     if (address.sin6_family == AF_INET6)
         return IPAddress { address.sin6_addr };

@@ -9,7 +9,7 @@ PASS: No Attribute Styles
 PASS: No Inherited Styles
 PASS: No Pseudo Element Styles
 PASS: Has Computed Styles
-PROPERTY: content: before;
+PROPERTY: content: "before";
 PROPERTY: color: rgb(0, 0, 255);
 MATCHED RULE:
   SELECTOR: input:before

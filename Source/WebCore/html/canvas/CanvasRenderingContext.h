@@ -28,22 +28,22 @@
 #include "CanvasBase.h"
 #include "GraphicsLayer.h"
 #include "ScriptWrappable.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class CanvasPattern;
+class DestinationColorSpace;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
 class TypedOMCSSImageValue;
 class WebGLObject;
-enum class DestinationColorSpace : uint8_t;
 enum class PixelFormat : uint8_t;
 
 class CanvasRenderingContext : public ScriptWrappable {
@@ -53,7 +53,7 @@ public:
     virtual ~CanvasRenderingContext();
 
     static HashSet<CanvasRenderingContext*>& instances() WTF_REQUIRES_LOCK(instancesLock());
-    static CheckedLock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     void ref();
     WEBCORE_EXPORT void deref();
@@ -112,7 +112,7 @@ protected:
     bool m_hasActiveInspectorCanvasCallTracer { false };
 
 private:
-    static CheckedLock s_instancesLock;
+    static Lock s_instancesLock;
 
     CanvasBase& m_canvas;
 };

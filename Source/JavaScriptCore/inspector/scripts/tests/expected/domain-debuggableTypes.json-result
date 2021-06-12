@@ -132,7 +132,6 @@ public:
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <tuple>
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -298,7 +297,6 @@ void DomainBackendDispatcher::Command(long protocol_requestId, RefPtr<JSON::Obje
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -400,7 +398,6 @@ void DomainFrontendDispatcher::Event()
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -912,7 +909,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-Optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 } // namespace Inspector
 

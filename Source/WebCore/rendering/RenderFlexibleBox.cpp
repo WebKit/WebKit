@@ -162,10 +162,10 @@ LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirection
     return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight()).toInt();
 }
 
-Optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
+std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
 {
     if (isWritingModeRoot() || m_numberOfInFlowChildrenOnFirstLine <= 0 || shouldApplyLayoutContainment(*this))
-        return Optional<LayoutUnit>();
+        return std::optional<LayoutUnit>();
     RenderBox* baselineChild = nullptr;
     int childNumber = 0;
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
@@ -184,14 +184,14 @@ Optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
     }
 
     if (!baselineChild)
-        return Optional<LayoutUnit>();
+        return std::optional<LayoutUnit>();
 
     if (!isColumnFlow() && !mainAxisIsChildInlineAxis(*baselineChild))
         return LayoutUnit { (crossAxisExtentForChild(*baselineChild) + baselineChild->logicalTop()).toInt() };
     if (isColumnFlow() && mainAxisIsChildInlineAxis(*baselineChild))
         return LayoutUnit { (mainAxisExtentForChild(*baselineChild) + baselineChild->logicalTop()).toInt() };
 
-    Optional<LayoutUnit> baseline = baselineChild->firstLineBaseline();
+    std::optional<LayoutUnit> baseline = baselineChild->firstLineBaseline();
     if (!baseline) {
         // FIXME: We should pass |direction| into firstLineBoxBaseline and stop bailing out if we're a writing mode root.
         // This would also fix some cases where the flexbox is orthogonal to its container.
@@ -202,7 +202,7 @@ Optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
     return LayoutUnit { (baseline.value() + baselineChild->logicalTop()).toInt() };
 }
 
-Optional<LayoutUnit> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode) const
+std::optional<LayoutUnit> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode) const
 {
     return firstLineBaseline();
 }
@@ -495,7 +495,7 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
     if (childCrossSizeIsDefinite(child, child.style().logicalWidth()))
         return child.logicalWidth();
 
-    Optional<LayoutUnit> childOverridingWidth;
+    std::optional<LayoutUnit> childOverridingWidth;
     if (child.hasOverridingLogicalWidth()) {
         // Temporarily clear potential overrides to compute the logical width otherwise it'll return the override size.
         childOverridingWidth = child.overridingLogicalWidth();
@@ -556,7 +556,7 @@ static bool childHasAspectRatio(const RenderBox& child)
     return child.hasIntrinsicAspectRatio() || child.style().hasAspectRatio();
 }
 
-Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox& child, SizeType sizeType, const Length& size)
+std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox& child, SizeType sizeType, const Length& size)
 {
     // If we have a horizontal flow, that means the main size is the width.
     // That's the logical width for horizontal writing modes, and the logical
@@ -572,7 +572,7 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox&
         // if necessary (see ComputeNextFlexLine and the call to
         // childHasIntrinsicMainAxisSize) so we can be sure that the two height
         // calls here will return up-to-date data.
-        Optional<LayoutUnit> height = child.computeContentLogicalHeight(sizeType, size, cachedChildIntrinsicContentLogicalHeight(child));
+        std::optional<LayoutUnit> height = child.computeContentLogicalHeight(sizeType, size, cachedChildIntrinsicContentLogicalHeight(child));
         if (!height)
             return height;
         return height.value() + child.scrollbarLogicalHeight();
@@ -791,18 +791,7 @@ Length RenderFlexibleBox::mainSizeLengthForChild(SizeType sizeType, const Render
     return { };
 }
 
-bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child)
-{
-    if (!childHasAspectRatio(child))
-        return false;
-    if (!child.intrinsicSize().height() && !child.style().hasAspectRatio()) {
-        // We can't compute a ratio in this case.
-        return false;
-    }
-    return childCrossSizeIsDefinite(child, crossSizeLengthForChild(MainOrPreferredSize, child));
-}
-
-// FIXME: computeMainSizeFromAspectRatioUsing may need to return an Optional<LayoutUnit> in the future
+// FIXME: computeMainSizeFromAspectRatioUsing may need to return an std::optional<LayoutUnit> in the future
 // rather than returning indefinite sizes as 0/-1.
 LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const
 {
@@ -819,7 +808,7 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
         return value;
     };
 
-    Optional<LayoutUnit> crossSize;
+    std::optional<LayoutUnit> crossSize;
     if (crossSizeLength.isFixed())
         crossSize = adjustForBoxSizing(child, crossSizeLength);
     else if (crossSizeLength.isAuto()) {
@@ -862,7 +851,7 @@ bool RenderFlexibleBox::canComputePercentageFlexBasis(const RenderBox& child, co
         return true;
     if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
         return false;
-    bool definite = child.computePercentageLogicalHeight(flexBasis, updateDescendants).hasValue();
+    bool definite = child.computePercentageLogicalHeight(flexBasis, updateDescendants).has_value();
     if (m_inLayout && (isHorizontalWritingMode() == child.isHorizontalWritingMode())) {
         // We can reach this code even while we're not laying ourselves out, such
         // as from mainSizeForPercentageResolution.
@@ -875,22 +864,28 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
 {
     if (flexBasis.isAuto())
         return false;
-    if (isColumnFlow() && flexBasis.isIntrinsic())
+    if (isColumnFlow() && (flexBasis.isIntrinsic() || flexBasis.type() == LengthType::Intrinsic))
         return false;
     if (flexBasis.isPercentOrCalculated())
         return canComputePercentageFlexBasis(child, flexBasis, UpdatePercentageHeightDescendants::No);
     return true;
 }
 
-bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
+bool RenderFlexibleBox::childHasComputableAspectRatio(const RenderBox& child) const
 {
     if (!childHasAspectRatio(child))
         return false;
-    if (!child.intrinsicSize().height() && !child.style().hasAspectRatio()) {
-        // We can't compute a ratio in this case.
-        return false;
-    }
+    return child.intrinsicSize().height() || child.style().hasAspectRatio();
+}
 
+bool RenderFlexibleBox::childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox& child)
+{
+    return childHasComputableAspectRatio(child)
+        && (childCrossSizeIsDefinite(child, crossSizeLengthForChild(MainOrPreferredSize, child)) || childCrossSizeShouldUseContainerCrossSize(child));
+}
+
+bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
+{
     // 9.8 https://drafts.csswg.org/css-flexbox/#definite-sizes
     // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
     // stretched flex items is the flex container's inner cross size (clamped to the flex item's min and max cross size)
@@ -952,7 +947,7 @@ LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child,
     if (childMainSizeIsDefinite(child, flexBasis))
         return std::max(0_lu, computeMainAxisExtentForChild(child, MainOrPreferredSize, flexBasis).value());
 
-    if (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child)) {
+    if (childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(child)) {
         const Length& crossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
         return adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, computeMainSizeFromAspectRatioUsing(child, crossSizeLength));
     }
@@ -1174,7 +1169,7 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUni
 
 LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(const RenderBox& child)
 {
-    LayoutUnit ascent = child.firstLineBaseline().valueOr(crossAxisExtentForChild(child));
+    LayoutUnit ascent = child.firstLineBaseline().value_or(crossAxisExtentForChild(child));
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
@@ -1209,40 +1204,40 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
 LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, LayoutUnit childSize)
 {
     Length max = mainSizeLengthForChild(MaxSize, child);
-    Optional<LayoutUnit> maxExtent = WTF::nullopt;
+    std::optional<LayoutUnit> maxExtent = std::nullopt;
     if (max.isSpecifiedOrIntrinsic()) {
         maxExtent = computeMainAxisExtentForChild(child, MaxSize, max);
-        childSize = std::min(childSize, maxExtent.valueOr(childSize));
+        childSize = std::min(childSize, maxExtent.value_or(childSize));
     }
 
     Length min = mainSizeLengthForChild(MinSize, child);
     // Intrinsic sizes in child's block axis are handled by the min-size:auto code path.
     if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child)))
-        return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize)));
+        return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).value_or(childSize)));
     
     if (shouldApplyMinSizeAutoForChild(child)) {
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
         LayoutUnit contentSize;
         Length childCrossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
-        if (child.isRenderReplaced() && useChildAspectRatio(child))
+        if (child.isRenderReplaced() && childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength))
             contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
         else
-            contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).valueOr(0);
+            contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).value_or(0);
         if (child.hasIntrinsicAspectRatio() && child.intrinsicSize().height())
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
         ASSERT(contentSize >= 0);
-        contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
+        contentSize = std::min(contentSize, maxExtent.value_or(contentSize));
         
         Length mainSize = mainSizeLengthForChild(MainOrPreferredSize, child);
         if (childMainSizeIsDefinite(child, mainSize)) {
-            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).valueOr(0);
+            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).value_or(0);
             ASSERT(resolvedMainSize >= 0);
-            LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.valueOr(resolvedMainSize));
+            LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.value_or(resolvedMainSize));
             return std::max(childSize, std::min(specifiedSize, contentSize));
         }
 
-        if (child.isRenderReplaced() && (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child))) {
+        if (child.isRenderReplaced() && childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(child)) {
             LayoutUnit transferredSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
             transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize);
             return std::max(childSize, std::min(transferredSize, contentSize));
@@ -1325,9 +1320,9 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
         // by definition we have an indefinite flex basis here and thus percentages should not resolve.
         if (child.needsLayout() || !m_intrinsicSizeAlongMainAxis.contains(&child)) {
             if (isHorizontalWritingMode() == child.isHorizontalWritingMode())
-                child.setOverridingContainingBlockContentLogicalHeight(WTF::nullopt);
+                child.setOverridingContainingBlockContentLogicalHeight(std::nullopt);
             else
-                child.setOverridingContainingBlockContentLogicalWidth(WTF::nullopt);
+                child.setOverridingContainingBlockContentLogicalWidth(std::nullopt);
             child.clearOverridingContentSize();
             child.setChildNeedsLayout(MarkOnlyThis);
             child.layoutIfNeeded();
@@ -2085,7 +2080,7 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
     if (LIKELY(gapLength.isNormal()))
         return { };
 
-    auto availableSize = usesRowGap ? availableLogicalHeightForPercentageComputation().valueOr(0_lu) : contentLogicalWidth();
+    auto availableSize = usesRowGap ? availableLogicalHeightForPercentageComputation().value_or(0_lu) : contentLogicalWidth();
     return minimumValueForLength(gapLength.length(), availableSize);
 }
 }

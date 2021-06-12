@@ -37,11 +37,10 @@
 #import <Metal/Metal.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/Optional.h>
 
 namespace WebCore {
 
-static Optional<MTLPixelFormat> tryGetSupportedPixelFormat(GPUTextureFormat format)
+static std::optional<MTLPixelFormat> tryGetSupportedPixelFormat(GPUTextureFormat format)
 {
     auto mtlFormat = static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(format));
 
@@ -52,7 +51,7 @@ static Optional<MTLPixelFormat> tryGetSupportedPixelFormat(GPUTextureFormat form
         return mtlFormat;
     default: {
         LOG(WebGPU, "GPUSwapChain::tryCreate(): Unsupported MTLPixelFormat!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
     }
 }

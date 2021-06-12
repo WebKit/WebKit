@@ -126,12 +126,12 @@ unsigned bitsPerPixel(GUID bitmapFormat)
 
 COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize& size, unsigned stride)
 {
-    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(size.height()) * stride;
+    CheckedSize numBytes = CheckedUint32(size.height()) * stride;
     if (numBytes.hasOverflowed())
         return nullptr;
 
     COMPtr<IWICBitmap> surface;
-    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmapFromMemory(size.width(), size.height(), wicBitmapFormat(), stride, static_cast<UINT>(numBytes.unsafeGet()), reinterpret_cast<BYTE*>(data), &surface);
+    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmapFromMemory(size.width(), size.height(), wicBitmapFormat(), stride, static_cast<UINT>(numBytes.value()), reinterpret_cast<BYTE*>(data), &surface);
     if (!SUCCEEDED(hr))
         return nullptr;
 

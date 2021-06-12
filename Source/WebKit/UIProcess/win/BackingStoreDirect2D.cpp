@@ -32,7 +32,7 @@
 #include <WebCore/BackingStoreBackendDirect2DImpl.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/Direct2DUtilities.h>
-#include <WebCore/GraphicsContextImplDirect2D.h>
+#include <WebCore/GraphicsContextDirect2D.h>
 #include <WebCore/PlatformContextDirect2D.h>
 #include <d2d1.h>
 #include <d3d11_1.h>

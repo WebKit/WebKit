@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -36,23 +36,23 @@ WEBCORE_EXPORT bool systemHasBattery();
 WEBCORE_EXPORT void resetSystemHasAC();
 WEBCORE_EXPORT void setSystemHasAC(bool);
 WEBCORE_EXPORT bool systemHasAC();
-WEBCORE_EXPORT Optional<bool> cachedSystemHasAC();
+WEBCORE_EXPORT std::optional<bool> cachedSystemHasAC();
 
 class WEBCORE_EXPORT SystemBatteryStatusTestingOverrides {
 public:
     static SystemBatteryStatusTestingOverrides& singleton();
 
-    void setHasAC(Optional<bool>&&);
-    Optional<bool> hasAC() { return m_hasAC; }
+    void setHasAC(std::optional<bool>&&);
+    std::optional<bool> hasAC() { return m_hasAC; }
 
-    void setHasBattery(Optional<bool>&&);
-    Optional<bool> hasBattery() { return  m_hasBattery; }
+    void setHasBattery(std::optional<bool>&&);
+    std::optional<bool> hasBattery() { return  m_hasBattery; }
 
     void setConfigurationChangedCallback(std::function<void()>&&);
 
 private:
-    Optional<bool> m_hasBattery;
-    Optional<bool> m_hasAC;
+    std::optional<bool> m_hasBattery;
+    std::optional<bool> m_hasAC;
     WTF::Function<void()> m_configurationChangedCallback;
 };
 

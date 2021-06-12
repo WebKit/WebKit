@@ -245,20 +245,7 @@ void DeleteByStatus::filter(const StructureSet& set)
 
 CacheableIdentifier DeleteByStatus::singleIdentifier() const
 {
-    if (m_variants.isEmpty())
-        return nullptr;
-
-    CacheableIdentifier result = m_variants.first().identifier();
-    if (!result)
-        return nullptr;
-    for (size_t i = 1; i < m_variants.size(); ++i) {
-        CacheableIdentifier identifier = m_variants[i].identifier();
-        if (!identifier)
-            return nullptr;
-        if (identifier != result)
-            return nullptr;
-    }
-    return result;
+    return singleIdentifierForICStatus(m_variants);
 }
 
 template<typename Visitor>

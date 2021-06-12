@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-static Optional<bool> hasBattery;
-static Optional<bool> hasAC;
+static std::optional<bool> hasBattery;
+static std::optional<bool> hasAC;
 
 void setSystemHasBattery(bool battery)
 {
@@ -44,7 +44,7 @@ bool systemHasBattery()
     if (auto overrideForTesting = SystemBatteryStatusTestingOverrides::singleton().hasBattery())
         return *overrideForTesting;
 
-    if (!hasBattery.hasValue()) {
+    if (!hasBattery.has_value()) {
         hasBattery = [] {
 #if PLATFORM(IOS) || PLATFORM(WATCHOS)
             // Devices running iOS / WatchOS always have a battery.
@@ -87,7 +87,7 @@ bool systemHasAC()
     if (auto overrideForTesting = SystemBatteryStatusTestingOverrides::singleton().hasAC())
         return *overrideForTesting;
 
-    if (!hasAC.hasValue()) {
+    if (!hasAC.has_value()) {
         hasAC = [] {
 #if PLATFORM(APPLETV)
             return true;
@@ -114,7 +114,7 @@ bool systemHasAC()
     return *hasAC;
 }
 
-Optional<bool> cachedSystemHasAC()
+std::optional<bool> cachedSystemHasAC()
 {
     return hasAC;
 }
@@ -125,14 +125,14 @@ SystemBatteryStatusTestingOverrides& SystemBatteryStatusTestingOverrides::single
     return instance;
 }
 
-void SystemBatteryStatusTestingOverrides::setHasBattery(Optional<bool>&& hasBattery)
+void SystemBatteryStatusTestingOverrides::setHasBattery(std::optional<bool>&& hasBattery)
 {
     m_hasBattery = WTFMove(hasBattery);
     if (m_configurationChangedCallback)
         m_configurationChangedCallback();
 }
 
-void SystemBatteryStatusTestingOverrides::setHasAC(Optional<bool>&& hasAC)
+void SystemBatteryStatusTestingOverrides::setHasAC(std::optional<bool>&& hasAC)
 {
     m_hasAC = WTFMove(hasAC);
     if (m_configurationChangedCallback)

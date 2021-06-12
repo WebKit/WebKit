@@ -64,7 +64,7 @@ template<class Encoder> void DetachedRTCDataChannel::encode(Encoder& encoder) co
 
 template<class Decoder> std::unique_ptr<DetachedRTCDataChannel> DetachedRTCDataChannel::decode(Decoder& decoder)
 {
-    Optional<RTCDataChannelIdentifier> identifier;
+    std::optional<RTCDataChannelIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
         return { };
@@ -73,12 +73,12 @@ template<class Decoder> std::unique_ptr<DetachedRTCDataChannel> DetachedRTCDataC
     if (!decoder.decode(label))
         return { };
 
-    Optional<RTCDataChannelInit> options;
+    std::optional<RTCDataChannelInit> options;
     decoder >> options;
     if (!options)
         return { };
 
-    Optional<RTCDataChannelState> state;
+    std::optional<RTCDataChannelState> state;
     decoder >> state;
     if (!state)
         return { };

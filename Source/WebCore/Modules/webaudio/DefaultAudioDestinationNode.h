@@ -36,7 +36,7 @@ class AudioDestination;
 class DefaultAudioDestinationNode final : public AudioDestinationNode, public AudioIOCallback {
     WTF_MAKE_ISO_ALLOCATED(DefaultAudioDestinationNode);
 public:
-    explicit DefaultAudioDestinationNode(AudioContext&, Optional<float> sampleRate = WTF::nullopt);
+    explicit DefaultAudioDestinationNode(AudioContext&, std::optional<float> sampleRate = std::nullopt);
     ~DefaultAudioDestinationNode();
 
     AudioContext& context();
@@ -44,9 +44,9 @@ public:
 
     unsigned framesPerBuffer() const;
     
-    void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) final;
-    void resume(CompletionHandler<void(Optional<Exception>&&)>&&);
-    void suspend(CompletionHandler<void(Optional<Exception>&&)>&&);
+    void startRendering(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
+    void resume(CompletionHandler<void(std::optional<Exception>&&)>&&);
+    void suspend(CompletionHandler<void(std::optional<Exception>&&)>&&);
     void close(CompletionHandler<void()>&&);
 
     void setMuted(bool muted) { m_muted = muted; }

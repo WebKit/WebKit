@@ -44,7 +44,7 @@ private:
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
-    Optional<LayoutUnit> firstLineBaseline() const final;
+    std::optional<LayoutUnit> firstLineBaseline() const final;
 
     LayoutUnit spaceWidth() const;
     void getSpaceHeightAndDepth(LayoutUnit& height, LayoutUnit& depth) const;

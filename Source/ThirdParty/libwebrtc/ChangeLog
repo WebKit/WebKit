@@ -1,3 +1,136 @@
+2021-06-07  Youenn Fablet  <youenn@apple.com>
+
+        Update libvpx to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226488
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Source/third_party/libvpx: Resynced.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2021-06-07  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
+
+        Update libyuv to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226489
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Source/third_party/libyuv: Resynced.
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        Updated 10 bits frame conversion routine to use new libyuv routines (covered by webrtc/vp9-profile2.html)
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2021-06-06  Youenn Fablet  <youenn@apple.com>
+
+        Update libsrtp to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226487
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libsrtp.xcconfig:
+        * Source/third_party/libsrtp: Resynced.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2021-06-03  Youenn Fablet  <youenn@apple.com>
+
+        Cherry-pick webrtc fix to correctly handle audio track state in case of renegotiation
+        https://bugs.webkit.org/show_bug.cgi?id=226577
+
+        Reviewed by Eric Carlson.
+
+        Cherry-pick https://webrtc.googlesource.com/src/+/c335b0e63bff56ca0fbfa617dee6a644c85df164%5E%21/.
+        We need to do small changes to peer_connection.cc given the upstream fix is based on a newer version
+        which has some code moved from peer_connection.cc to rtp_transmission_manager.cc.
+
+        * Source/webrtc/pc/audio_rtp_receiver.cc:
+        * Source/webrtc/pc/audio_rtp_receiver.h:
+        * Source/webrtc/pc/peer_connection.cc:
+        * Source/webrtc/pc/peer_connection_rtp_unittest.cc:
+        * Source/webrtc/pc/remote_audio_source.cc:
+        * Source/webrtc/pc/remote_audio_source.h:
+        * Source/webrtc/pc/rtp_sender_receiver_unittest.cc:
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Update boringssl to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226486
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * Source/third_party/boringssl/BUILD.generated.gni: Resynced.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Update pffft to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226491
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/pffft/BUILD.gn:
+        * Source/third_party/pffft/DIR_METADATA: Added.
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Update opus to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226490
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party: Resynced.
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Update to rnnoise to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226492
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/rnnoise/DIR_METADATA: Added.
+        * Source/third_party/rnnoise/OWNERS:
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Update abseil-cpp to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226485
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/abseil-cpp: Resynced.
+
+2021-05-31  Youenn Fablet  <youenn@apple.com>
+
+        Use tighter bitrate allocation rules for WebRTC H264 software encoder
+        https://bugs.webkit.org/show_bug.cgi?id=226319
+        <rdar://73150695>
+
+        Reviewed by Eric Carlson.
+
+        Software H264 encoder is sometimes overshooting target bitrate in which case WebRTC backend will start dropping frames.
+        The encoder might then think it is on target and will not try to increase compression.
+        This makes it possible to be locked in a very low frame rate but high quality image situation.
+        It is often better to preserve frame rate and lower quality, the application could always lower frame rate if desired.
+
+        To do so, we detect whether the encoder is using software code path or not.
+        If so, we compute the actual frame rate and compare it with the expected frame rate.
+        If the actual frame rate is twice smaller or even below, we enter in a low frame rate mode.
+        Otherwise, we are in a regular frame rate mode where we apply the normal bitrate rules.
+        In the low frame rate mode, we divide the target bitrate by 3 so as to quickly recover frame rate.
+
+        This works well in situations where motion increases from time to time.
+        It is still not perfect for instance in case the video is muted and gets unmuted or when the scene is completely still and suddenly large motion happens.
+        In those cases, frame rate is recovered after a minute or so according my testing.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (-[RTCVideoEncoderH264 setEncoderBitrateBps:frameRate:]):
+        (-[RTCVideoEncoderH264 updateBitRateAccordingActualFrameRate]):
+
 2021-05-20  Youenn Fablet  <youenn@apple.com>
 
         Enable VCP for H264 baseline

@@ -50,6 +50,8 @@ from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.tool.mocktool import MockOptions
 
+from webkitpy.test.markers import slow, xfail
+
 from webkitcorepy import OutputCapture
 
 
@@ -173,6 +175,7 @@ class PortTestCase(unittest.TestCase):
         port.start_helper()
         port.stop_helper()
 
+    @xfail
     def integration_test_http_server__normal(self):
         port = self.make_port()
         self.assert_servers_are_down('localhost', self.HTTP_PORTS)
@@ -181,6 +184,7 @@ class PortTestCase(unittest.TestCase):
         port.stop_http_server()
         self.assert_servers_are_down('localhost', self.HTTP_PORTS)
 
+    @xfail
     def integration_test_http_server__fails(self):
         port = self.make_port()
         # Test that if a port isn't available, the call fails.
@@ -209,6 +213,7 @@ class PortTestCase(unittest.TestCase):
         finally:
             port.stop_http_server()
 
+    @xfail
     def integration_test_http_server__two_servers(self):
         # Test that calling start() on two different ports causes the
         # first port to be treated as stale and killed.
@@ -344,6 +349,8 @@ class PortTestCase(unittest.TestCase):
         self.assertEqual(port.diff_image(b'foo', b'bar'), (b'', 0, 'ImageDiff crashed\n'))
         port.clean_up_test_run()
 
+    @slow
+    @xfail
     def integration_test_websocket_server__normal(self):
         port = self.make_port()
         self.assert_servers_are_down('localhost', self.WEBSOCKET_PORTS)
@@ -352,6 +359,7 @@ class PortTestCase(unittest.TestCase):
         port.stop_websocket_server()
         self.assert_servers_are_down('localhost', self.WEBSOCKET_PORTS)
 
+    @xfail
     def integration_test_websocket_server__fails(self):
         port = self.make_port()
 
@@ -376,6 +384,7 @@ class PortTestCase(unittest.TestCase):
         finally:
             port.stop_websocket_server()
 
+    @xfail
     def integration_test_websocket_server__two_servers(self):
         port = self.make_port()
 
@@ -410,6 +419,7 @@ class PortTestCase(unittest.TestCase):
         self.assertTrue(len(port.all_test_configurations()) > 0)
         self.assertTrue(port.test_configuration() in port.all_test_configurations(), "%s not in %s" % (port.test_configuration(), port.all_test_configurations()))
 
+    @xfail
     def integration_test_http_server__loop(self):
         port = self.make_port()
 
@@ -609,9 +619,8 @@ MOCK output of child process
         self._assert_config_file_for_platform(port, 'linux2', 'apache2.2-httpd.conf')
         self._assert_config_file_for_platform(port, 'linux3', 'apache2.2-httpd.conf')
 
-        port._win_php_version = lambda: '-php7'
-        self._assert_config_file_for_platform(port, 'cygwin', 'win-httpd-2.2-php7.conf')
-        self._assert_config_file_for_platform(port, 'win32', 'win-httpd-2.2-php7.conf')
+        self._assert_config_file_for_platform(port, 'cygwin', 'win-httpd-2.2.conf')
+        self._assert_config_file_for_platform(port, 'win32', 'win-httpd-2.2.conf')
 
         port._is_redhat_based = lambda: True
         port._apache_version = lambda: '2.2'

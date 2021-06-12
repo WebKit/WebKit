@@ -63,10 +63,8 @@ WebCore::NetworkStorageSession& NetworkStorageSessionMap::defaultStorageSession(
 void NetworkStorageSessionMap::switchToNewTestingSession()
 {
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
-    // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
-    String sessionName = makeString("WebKit Test-", getCurrentProcessID());
-
-    auto session = WebCore::createPrivateStorageSession(sessionName.createCFString().get());
+    // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
+    auto session = WebCore::createPrivateStorageSession(makeString("WebKit Test-", getCurrentProcessID()).createCFString().get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
@@ -86,13 +84,13 @@ void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, co
     if (!addResult.isNewEntry)
         return;
 
-    RetainPtr<CFStringRef> cfIdentifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
+    auto identifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
 
     RetainPtr<CFURLStorageSessionRef> storageSession;
     if (sessionID.isEphemeral())
-        storageSession = WebCore::createPrivateStorageSession(cfIdentifier.get());
+        storageSession = WebCore::createPrivateStorageSession(identifier.get());
     else
-        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get());
+        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(identifier.get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {

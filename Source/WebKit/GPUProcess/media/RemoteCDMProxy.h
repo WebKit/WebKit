@@ -60,7 +60,7 @@ public:
 
     bool supportsInitData(const AtomString&, const WebCore::SharedBuffer&);
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer& response);
-    Optional<String> sanitizeSessionId(const String& sessionId);
+    std::optional<String> sanitizeSessionId(const String& sessionId);
 
 private:
     friend class RemoteCDMFactoryProxy;

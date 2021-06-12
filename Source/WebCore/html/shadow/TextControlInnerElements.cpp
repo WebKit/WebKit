@@ -81,7 +81,7 @@ static inline bool isStrongPasswordTextField(const Element* element)
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element)->hasAutoFillStrongPasswordButton();
 }
 
-Optional<Style::ElementStyle> TextControlInnerContainer::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+std::optional<Style::ElementStyle> TextControlInnerContainer::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     auto elementStyle = resolveStyle(&parentStyle);
     if (isStrongPasswordTextField(shadowHost())) {
@@ -103,7 +103,7 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
     return adoptRef(*new TextControlInnerElement(document));
 }
 
-Optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
+std::optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
 {
     auto newStyle = RenderStyle::createPtr();
     newStyle->inheritFrom(*shadowHostStyle);
@@ -124,7 +124,7 @@ Optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(const 
         // style to calculate em lengths. Since the element might not be in a document, just pass nullptr
         // for the root element style, the parent element style, and the render view.
         auto emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EMS);
-        int pixels = emSize->computeLength<int>(CSSToLengthConversionData { newStyle.get(), nullptr, nullptr, nullptr, 1.0, WTF::nullopt });
+        int pixels = emSize->computeLength<int>(CSSToLengthConversionData { newStyle.get(), nullptr, nullptr, nullptr, 1.0, std::nullopt });
         newStyle->setFlexBasis(Length { pixels, LengthType::Fixed });
     }
 
@@ -187,7 +187,7 @@ RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
     return downcast<RenderTextControlInnerBlock>(HTMLDivElement::renderer());
 }
 
-Optional<Style::ElementStyle> TextControlInnerTextElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
+std::optional<Style::ElementStyle> TextControlInnerTextElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
 {
     auto style = downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
     return { makeUnique<RenderStyle>(WTFMove(style)) };
@@ -209,7 +209,7 @@ Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Documen
     return element;
 }
 
-Optional<Style::ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
+std::optional<Style::ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
 {
     auto style = resolveStyle(&parentStyle);
 
@@ -239,18 +239,18 @@ Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Doc
     return adoptRef(*new SearchFieldResultsButtonElement(document));
 }
 
-Optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
+std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
 {
     auto input = makeRefPtr(downcast<HTMLInputElement>(shadowHost()));
     if (input && input->maxResults() >= 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (shadowHostStyle && shadowHostStyle->appearance() != SearchFieldPart) {
         SetForScope<bool> canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
         return resolveStyle(&parentStyle);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
@@ -306,7 +306,7 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
     return element;
 }
 
-Optional<Style::ElementStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+std::optional<Style::ElementStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     auto elementStyle = resolveStyle(&parentStyle);
     auto& inputElement = downcast<HTMLInputElement>(*shadowHost());

@@ -48,8 +48,8 @@ struct HighlightRangeData : RefCounted<HighlightRangeData>, public CanMakeWeakPt
         return adoptRef(*new HighlightRangeData(WTFMove(range)));
     }
     Ref<StaticRange> range;
-    Optional<Position> startPosition;
-    Optional<Position> endPosition;
+    std::optional<Position> startPosition;
+    std::optional<Position> endPosition;
 };
 
 class Highlight : public RefCounted<Highlight> {

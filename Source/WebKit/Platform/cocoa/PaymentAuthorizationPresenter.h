@@ -76,12 +76,12 @@ public:
     Client& client() { return m_client; }
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
-    void completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&);
-    void completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
-    void completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&);
-    void completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&);
+    void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
+    void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
+    void completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
+    void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
+    void completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
     virtual void dismiss() = 0;

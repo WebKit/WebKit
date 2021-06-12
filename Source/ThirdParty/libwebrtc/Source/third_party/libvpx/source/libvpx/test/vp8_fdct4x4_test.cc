@@ -183,24 +183,24 @@ TEST_P(FdctTest, RoundTripErrorCheck) {
       << "Error: FDCT/IDCT has average roundtrip error > 1 per block";
 };
 
-INSTANTIATE_TEST_CASE_P(C, FdctTest, ::testing::Values(vp8_short_fdct4x4_c));
+INSTANTIATE_TEST_SUITE_P(C, FdctTest, ::testing::Values(vp8_short_fdct4x4_c));
 
 #if HAVE_NEON
-INSTANTIATE_TEST_CASE_P(NEON, FdctTest,
-                        ::testing::Values(vp8_short_fdct4x4_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, FdctTest,
+                         ::testing::Values(vp8_short_fdct4x4_neon));
 #endif  // HAVE_NEON
 
 #if HAVE_SSE2
-INSTANTIATE_TEST_CASE_P(SSE2, FdctTest,
-                        ::testing::Values(vp8_short_fdct4x4_sse2));
+INSTANTIATE_TEST_SUITE_P(SSE2, FdctTest,
+                         ::testing::Values(vp8_short_fdct4x4_sse2));
 #endif  // HAVE_SSE2
 
 #if HAVE_MSA
-INSTANTIATE_TEST_CASE_P(MSA, FdctTest,
-                        ::testing::Values(vp8_short_fdct4x4_msa));
+INSTANTIATE_TEST_SUITE_P(MSA, FdctTest,
+                         ::testing::Values(vp8_short_fdct4x4_msa));
 #endif  // HAVE_MSA
 #if HAVE_MMI
-INSTANTIATE_TEST_CASE_P(MMI, FdctTest,
-                        ::testing::Values(vp8_short_fdct4x4_mmi));
+INSTANTIATE_TEST_SUITE_P(MMI, FdctTest,
+                         ::testing::Values(vp8_short_fdct4x4_mmi));
 #endif  // HAVE_MMI
 }  // namespace

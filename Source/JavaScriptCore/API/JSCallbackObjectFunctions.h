@@ -434,7 +434,7 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, JSGlobalObject* glob
     }
 
     static_assert(std::is_final_v<JSCallbackObject<Parent>>, "Ensure no derived classes have custom deletePropertyByIndex implementation");
-    if (Optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
         RELEASE_AND_RETURN(scope, Parent::deletePropertyByIndex(thisObject, globalObject, index.value()));
     RELEASE_AND_RETURN(scope, Parent::deleteProperty(thisObject, globalObject, propertyName, slot));
 }

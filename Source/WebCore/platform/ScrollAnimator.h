@@ -38,7 +38,6 @@
 #include "WheelEventTestMonitor.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 #if ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)
 #include "ScrollController.h"
@@ -159,6 +158,9 @@ public:
     void updateScrollSnapState();
     bool activeScrollSnapIndexDidChange() const;
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned index);
+    void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
+    const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
 #endif
 
     // ScrollControllerClient.

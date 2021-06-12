@@ -266,7 +266,7 @@ bool CurlCacheManager::getCachedResponse(const String& url, ResourceResponse& re
     return false;
 }
 
-void CurlCacheManager::didReceiveData(ResourceHandle& job, const char* data, size_t size)
+void CurlCacheManager::didReceiveData(ResourceHandle& job, const uint8_t* data, size_t size)
 {
     if (m_disabled)
         return;

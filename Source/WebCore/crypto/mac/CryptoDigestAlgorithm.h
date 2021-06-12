@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static Optional<PAL::CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
+static std::optional<PAL::CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
 {
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -47,7 +47,7 @@ static Optional<PAL::CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgori
     case CryptoAlgorithmIdentifier::SHA_512:
         return PAL::CryptoDigest::Algorithm::SHA_512;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

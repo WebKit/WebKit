@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct SameSizeAsFloatingObject {
     WeakPtr<RenderBox> renderer;
-    WeakPtr<RootInlineBox> originatingLine;
+    WeakPtr<LegacyRootInlineBox> originatingLine;
     LayoutRect rect;
     int paginationStrut;
     LayoutSize size;
@@ -45,7 +45,7 @@ struct SameSizeAsFloatingObject {
 COMPILE_ASSERT(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), FloatingObject_should_stay_small);
 #if !ASSERT_ENABLED
 COMPILE_ASSERT(sizeof(WeakPtr<RenderBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
-COMPILE_ASSERT(sizeof(WeakPtr<RootInlineBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
+COMPILE_ASSERT(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
 #endif
 
 FloatingObject::FloatingObject(RenderBox& renderer)
@@ -222,14 +222,14 @@ public:
     LayoutUnit highValue() const { return LayoutUnit::max(); }
     void collectIfNeeded(const IntervalType&);
 
-    LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.valueOr(0); }
-    LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.valueOr(nextLogicalBottom()); }
+    LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
+    LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
     WeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_belowLogicalHeight;
-    Optional<LayoutUnit> m_nextLogicalBottom;
-    Optional<LayoutUnit> m_nextShapeLogicalBottom;
+    std::optional<LayoutUnit> m_nextLogicalBottom;
+    std::optional<LayoutUnit> m_nextShapeLogicalBottom;
 };
 
 inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalType& interval)

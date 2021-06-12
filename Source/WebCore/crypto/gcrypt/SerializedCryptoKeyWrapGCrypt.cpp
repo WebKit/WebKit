@@ -29,14 +29,13 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "NotImplemented.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
-Optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
+std::optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
 {
     notImplemented();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // Initially these helper functions were intended to perform KEK wrapping and unwrapping,

@@ -41,7 +41,7 @@ ParallelHelperClient::ParallelHelperClient(RefPtr<ParallelHelperPool>&& pool)
 ParallelHelperClient::~ParallelHelperClient()
 {
     Locker locker { *m_pool->m_lock };
-    finish(locker);
+    finishWithLock();
 
     for (size_t i = 0; i < m_pool->m_clients.size(); ++i) {
         if (m_pool->m_clients[i] == this) {
@@ -63,7 +63,7 @@ void ParallelHelperClient::setTask(RefPtr<SharedTask<void ()>>&& task)
 void ParallelHelperClient::finish()
 {
     Locker locker { *m_pool->m_lock };
-    finish(locker);
+    finishWithLock();
 }
 
 void ParallelHelperClient::doSomeHelping()
@@ -71,7 +71,7 @@ void ParallelHelperClient::doSomeHelping()
     RefPtr<SharedTask<void ()>> task;
     {
         Locker locker { *m_pool->m_lock };
-        task = claimTask(locker);
+        task = claimTask();
         if (!task)
             return;
     }
@@ -86,14 +86,14 @@ void ParallelHelperClient::runTaskInParallel(RefPtr<SharedTask<void ()>>&& task)
     finish();
 }
 
-void ParallelHelperClient::finish(const AbstractLocker&)
+void ParallelHelperClient::finishWithLock()
 {
     m_task = nullptr;
     while (m_numActive)
         m_pool->m_workCompleteCondition.wait(*m_pool->m_lock);
 }
 
-RefPtr<SharedTask<void ()>> ParallelHelperClient::claimTask(const AbstractLocker&)
+RefPtr<SharedTask<void ()>> ParallelHelperClient::claimTask()
 {
     if (!m_task)
         return nullptr;
@@ -148,7 +148,7 @@ void ParallelHelperPool::ensureThreads(unsigned numThreads)
     if (numThreads < m_numThreads)
         return;
     m_numThreads = numThreads;
-    if (getClientWithTask(locker))
+    if (getClientWithTask())
         didMakeWorkAvailable(locker);
 }
 
@@ -158,10 +158,11 @@ void ParallelHelperPool::doSomeHelping()
     RefPtr<SharedTask<void ()>> task;
     {
         Locker locker { *m_lock };
-        client = getClientWithTask(locker);
+        client = getClientWithTask();
         if (!client)
             return;
-        task = client->claimTask(locker);
+        assertIsHeld(*client->m_pool->m_lock);
+        task = client->claimTask();
     }
 
     client->runTask(task);
@@ -181,13 +182,15 @@ public:
     }
 
 private:
-    PollResult poll(const AbstractLocker& locker) final
+    PollResult poll(const AbstractLocker&) final
     {
         if (m_pool.m_isDying)
             return PollResult::Stop;
-        m_client = m_pool.getClientWithTask(locker);
+        assertIsHeld(*m_pool.m_lock);
+        m_client = m_pool.getClientWithTask();
         if (m_client) {
-            m_task = m_client->claimTask(locker);
+            assertIsHeld(*m_client->m_pool->m_lock);
+            m_task = m_client->claimTask();
             return PollResult::Work;
         }
         return PollResult::Wait;
@@ -213,12 +216,12 @@ void ParallelHelperPool::didMakeWorkAvailable(const AbstractLocker& locker)
     m_workAvailableCondition->notifyAll(locker);
 }
 
-bool ParallelHelperPool::hasClientWithTask(const AbstractLocker& locker)
+bool ParallelHelperPool::hasClientWithTask()
 {
-    return !!getClientWithTask(locker);
+    return !!getClientWithTask();
 }
 
-ParallelHelperClient* ParallelHelperPool::getClientWithTask(const AbstractLocker&)
+ParallelHelperClient* ParallelHelperPool::getClientWithTask()
 {
     // We load-balance by being random.
     unsigned startIndex = m_random.getUint32(m_clients.size());

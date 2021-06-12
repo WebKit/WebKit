@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,7 +62,7 @@ public:
 #endif
     };
 
-    const Optional<PlainText>& plainText() const { return m_plainText; }
+    const std::optional<PlainText>& plainText() const { return m_plainText; }
     void setPlainText(PlainText);
 
     struct URLData {
@@ -76,16 +75,16 @@ public:
 #endif
     };
 
-    const Optional<URLData>& urlData() const { return m_url; }
+    const std::optional<URLData>& urlData() const { return m_url; }
     void setURLData(URLData);
 
-    const Optional<WebContent>& webContent() const { return m_webContent; }
+    const std::optional<WebContent>& webContent() const { return m_webContent; }
     void setWebContent(WebContent);
 
 private:
-    Optional<PlainText> m_plainText;
-    Optional<URLData> m_url;
-    Optional<WebContent> m_webContent;
+    std::optional<PlainText> m_plainText;
+    std::optional<URLData> m_url;
+    std::optional<WebContent> m_webContent;
 };
 
 }

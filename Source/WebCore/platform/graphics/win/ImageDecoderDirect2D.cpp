@@ -38,7 +38,6 @@
 #include <WinCodec.h>
 #include <d2d1.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -123,9 +122,9 @@ RepetitionCount ImageDecoderDirect2D::repetitionCount() const
     return RepetitionCountNone;
 }
 
-Optional<IntPoint> ImageDecoderDirect2D::hotSpot() const
+std::optional<IntPoint> ImageDecoderDirect2D::hotSpot() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 IntSize ImageDecoderDirect2D::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
@@ -174,7 +173,7 @@ ImageDecoder::FrameMetadata ImageDecoderDirect2D::frameMetadataAtIndex(size_t) c
     PropVariantInit(&value);
     hr = metadata->GetMetadataByName(L"System.Photo.Orientation", &value);
     if (SUCCEEDED(hr))
-        return { ImageOrientation(static_cast<ImageOrientation::Orientation>(value.uiVal)), WTF::nullopt };
+        return { ImageOrientation(static_cast<ImageOrientation::Orientation>(value.uiVal)), std::nullopt };
 
     return { };
 }
@@ -230,8 +229,7 @@ unsigned ImageDecoderDirect2D::frameBytesAtIndex(size_t index, SubsamplingLevel 
     if (!m_nativeDecoder)
         return 0;
 
-    auto frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return (frameSize.area() * 4).unsafeGet();
+    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
 }
 
 void ImageDecoderDirect2D::setTargetContext(ID2D1RenderTarget* renderTarget)

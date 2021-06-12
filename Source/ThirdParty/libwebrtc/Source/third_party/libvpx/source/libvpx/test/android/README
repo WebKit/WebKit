@@ -16,7 +16,7 @@ Note: Both adb and ndk-build are available at:
 
 3) Run get_files.py to download the test files:
 python get_files.py -i /path/to/test-data.sha1 -o /path/to/put/files \
-  -u http://downloads.webmproject.org/test_data/libvpx
+  -u https://storage.googleapis.com/downloads.webmproject.org/test_data/libvpx
 
 4) Transfer files to device using adb. Ensure you have proper permissions for
 the target

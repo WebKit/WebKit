@@ -92,6 +92,7 @@ public:
         case MiscUse:
         case AnyIntUse:
         case DoubleRepAnyIntUse:
+        case NotDoubleUse:
             return;
             
         case KnownInt32Use:
@@ -273,6 +274,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToBoolean:
     case LogicalNot:
     case ToString:
+    case FunctionToString:
     case NumberToStringWithValidRadixConstant:
     case StrCat:
     case CallStringConstructor:
@@ -361,7 +363,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case FilterCallLinkStatus:
     case FilterGetByStatus:
     case FilterPutByIdStatus:
-    case FilterInByIdStatus:
+    case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:
     case FilterSetPrivateBrandStatus:

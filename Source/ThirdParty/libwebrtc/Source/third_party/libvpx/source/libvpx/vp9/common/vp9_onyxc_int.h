@@ -69,7 +69,16 @@ typedef struct {
   int mi_rows;
   int mi_cols;
   uint8_t released;
-  int frame_index;
+
+  // Note that frame_index/frame_coding_index are only set by set_frame_index()
+  // on the encoder side.
+
+  // TODO(angiebird): Set frame_index/frame_coding_index on the decoder side
+  // properly.
+  int frame_index;         // Display order in the video, it's equivalent to the
+                           // show_idx defined in EncodeFrameInfo.
+  int frame_coding_index;  // The coding order (starting from zero) of this
+                           // frame.
   vpx_codec_frame_buffer_t raw_frame_buffer;
   YV12_BUFFER_CONFIG buf;
 } RefCntBuffer;
@@ -226,7 +235,14 @@ typedef struct VP9Common {
   unsigned int frame_context_idx; /* Context to use/update */
   FRAME_COUNTS counts;
 
+  // TODO(angiebird): current_video_frame/current_frame_coding_index into a
+  // structure
   unsigned int current_video_frame;
+  // Each show or no show frame is assigned with a coding index based on its
+  // coding order (starting from zero).
+
+  // Current frame's coding index.
+  int current_frame_coding_index;
   BITSTREAM_PROFILE profile;
 
   // VPX_BITS_8 in profile 0 or 1, VPX_BITS_10 or VPX_BITS_12 in profile 2 or 3.
@@ -253,6 +269,20 @@ typedef struct VP9Common {
 
   int lf_row;
 } VP9_COMMON;
+
+static INLINE void init_frame_indexes(VP9_COMMON *cm) {
+  cm->current_video_frame = 0;
+  cm->current_frame_coding_index = 0;
+}
+
+static INLINE void update_frame_indexes(VP9_COMMON *cm, int show_frame) {
+  if (show_frame) {
+    // Don't increment frame counters if this was an altref buffer
+    // update not a real frame
+    ++cm->current_video_frame;
+  }
+  ++cm->current_frame_coding_index;
+}
 
 typedef struct {
   int frame_width;

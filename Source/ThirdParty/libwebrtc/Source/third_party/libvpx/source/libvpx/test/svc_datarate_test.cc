@@ -337,7 +337,7 @@ class DatarateOnePassCbrSvc : public OnePassCbrSvc {
     } else if (dynamic_drop_layer_ && single_layer_resize_) {
       // Change layer bitrates to set top layers to 0. This will trigger skip
       // encoding/dropping of top spatial layers.
-      if (video->frame() == 10) {
+      if (video->frame() == 2) {
         cfg_.rc_target_bitrate -=
             (cfg_.layer_target_bitrate[1] + cfg_.layer_target_bitrate[2]);
         middle_bitrate_ = cfg_.layer_target_bitrate[1];
@@ -348,10 +348,24 @@ class DatarateOnePassCbrSvc : public OnePassCbrSvc {
         cfg_.layer_target_bitrate[0] = 30;
         cfg_.rc_target_bitrate = cfg_.layer_target_bitrate[0];
         encoder->Config(&cfg_);
-      } else if (video->frame() == 300) {
+      } else if (video->frame() == 100) {
         // Set base spatial layer to very high to go back up to original size.
-        cfg_.layer_target_bitrate[0] = 300;
+        cfg_.layer_target_bitrate[0] = 400;
         cfg_.rc_target_bitrate = cfg_.layer_target_bitrate[0];
+        encoder->Config(&cfg_);
+      }
+    } else if (!dynamic_drop_layer_ && single_layer_resize_) {
+      if (video->frame() == 2) {
+        cfg_.layer_target_bitrate[0] = 30;
+        cfg_.layer_target_bitrate[1] = 50;
+        cfg_.rc_target_bitrate =
+            (cfg_.layer_target_bitrate[0] + cfg_.layer_target_bitrate[1]);
+        encoder->Config(&cfg_);
+      } else if (video->frame() == 160) {
+        cfg_.layer_target_bitrate[0] = 1500;
+        cfg_.layer_target_bitrate[1] = 2000;
+        cfg_.rc_target_bitrate =
+            (cfg_.layer_target_bitrate[0] + cfg_.layer_target_bitrate[1]);
         encoder->Config(&cfg_);
       }
     }
@@ -452,10 +466,12 @@ class DatarateOnePassCbrSvc : public OnePassCbrSvc {
     parse_superframe_index(static_cast<const uint8_t *>(pkt->data.frame.buf),
                            pkt->data.frame.sz, sizes_parsed, &count);
     // Count may be less than number of spatial layers because of frame drops.
-    for (int sl = 0; sl < number_spatial_layers_; ++sl) {
-      if (pkt->data.frame.spatial_layer_encoded[sl]) {
-        sizes[sl] = sizes_parsed[num_layers_encoded];
-        num_layers_encoded++;
+    if (number_spatial_layers_ > 1) {
+      for (int sl = 0; sl < number_spatial_layers_; ++sl) {
+        if (pkt->data.frame.spatial_layer_encoded[sl]) {
+          sizes[sl] = sizes_parsed[num_layers_encoded];
+          num_layers_encoded++;
+        }
       }
     }
     // For superframe with Intra-only count will be +1 larger
@@ -838,7 +854,7 @@ TEST_P(DatarateOnePassCbrSvcSingleBR, OnePassCbrSvc3SL_DisableEnableLayers) {
 // the fly switching to 1 spatial layer with dynamic resize enabled.
 // The resizer will resize the single layer down and back up again, as the
 // bitrate goes back up.
-TEST_P(DatarateOnePassCbrSvcSingleBR, OnePassCbrSvc3SL_SingleLayerResize) {
+TEST_P(DatarateOnePassCbrSvcSingleBR, OnePassCbrSvc2SL_SingleLayerResize) {
   SetSvcConfig(2, 1);
   cfg_.rc_buf_initial_sz = 500;
   cfg_.rc_buf_optimal_sz = 500;
@@ -850,10 +866,10 @@ TEST_P(DatarateOnePassCbrSvcSingleBR, OnePassCbrSvc3SL_SingleLayerResize) {
   cfg_.rc_dropframe_thresh = 30;
   cfg_.kf_max_dist = 9999;
   cfg_.rc_resize_allowed = 1;
-  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
-                                       0, 400);
-  top_sl_width_ = 640;
-  top_sl_height_ = 480;
+  ::libvpx_test::I420VideoSource video("desktop_office1.1280_720-020.yuv", 1280,
+                                       720, 15, 1, 0, 300);
+  top_sl_width_ = 1280;
+  top_sl_height_ = 720;
   cfg_.rc_target_bitrate = 800;
   ResetModel();
   dynamic_drop_layer_ = true;
@@ -873,6 +889,38 @@ TEST_P(DatarateOnePassCbrSvcSingleBR, OnePassCbrSvc3SL_SingleLayerResize) {
   // encoder will avoid loopfilter on these frames.
   EXPECT_EQ(GetNonRefFrames(), GetMismatchFrames());
 #endif
+}
+
+// For  pass CBR SVC with 1 spatial and 2 temporal layers with dynamic resize
+// and denoiser enabled. The resizer will resize the single layer down and back
+// up again, as the bitrate goes back up.
+TEST_P(DatarateOnePassCbrSvcSingleBR, OnePassCbrSvc1SL2TL_DenoiseResize) {
+  SetSvcConfig(1, 2);
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.g_threads = 1;
+  cfg_.temporal_layering_mode = 2;
+  cfg_.rc_dropframe_thresh = 30;
+  cfg_.kf_max_dist = 9999;
+  cfg_.rc_resize_allowed = 1;
+  ::libvpx_test::I420VideoSource video("desktop_office1.1280_720-020.yuv", 1280,
+                                       720, 12, 1, 0, 300);
+  top_sl_width_ = 1280;
+  top_sl_height_ = 720;
+  cfg_.rc_target_bitrate = 800;
+  ResetModel();
+  dynamic_drop_layer_ = false;
+  single_layer_resize_ = true;
+  denoiser_on_ = 1;
+  base_speed_setting_ = speed_setting_;
+  AssignLayerBitrates();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  // Expect at least one resize down and at least one resize back up.
+  EXPECT_GE(num_resize_down_, 1);
+  EXPECT_GE(num_resize_up_, 1);
 }
 
 // Run SVC encoder for 1 temporal layer, 2 spatial layers, with spatial
@@ -1481,29 +1529,29 @@ TEST_P(DatarateOnePassCbrSvcPostencodeDrop, OnePassCbrSvc2QL1TLScreen) {
 #endif
 }
 
-VP9_INSTANTIATE_TEST_CASE(DatarateOnePassCbrSvcSingleBR,
-                          ::testing::Range(5, 10));
+VP9_INSTANTIATE_TEST_SUITE(DatarateOnePassCbrSvcSingleBR,
+                           ::testing::Range(5, 10));
 
-VP9_INSTANTIATE_TEST_CASE(DatarateOnePassCbrSvcPostencodeDrop,
-                          ::testing::Range(5, 6));
+VP9_INSTANTIATE_TEST_SUITE(DatarateOnePassCbrSvcPostencodeDrop,
+                           ::testing::Range(5, 6));
 
-VP9_INSTANTIATE_TEST_CASE(DatarateOnePassCbrSvcInterLayerPredSingleBR,
-                          ::testing::Range(5, 10), ::testing::Range(0, 3));
+VP9_INSTANTIATE_TEST_SUITE(DatarateOnePassCbrSvcInterLayerPredSingleBR,
+                           ::testing::Range(5, 10), ::testing::Range(0, 3));
 
-VP9_INSTANTIATE_TEST_CASE(DatarateOnePassCbrSvcMultiBR, ::testing::Range(5, 10),
-                          ::testing::Range(0, 3));
+VP9_INSTANTIATE_TEST_SUITE(DatarateOnePassCbrSvcMultiBR,
+                           ::testing::Range(5, 10), ::testing::Range(0, 3));
 
-VP9_INSTANTIATE_TEST_CASE(DatarateOnePassCbrSvcFrameDropMultiBR,
-                          ::testing::Range(5, 10), ::testing::Range(0, 2),
-                          ::testing::Range(0, 3));
+VP9_INSTANTIATE_TEST_SUITE(DatarateOnePassCbrSvcFrameDropMultiBR,
+                           ::testing::Range(5, 10), ::testing::Range(0, 2),
+                           ::testing::Range(0, 3));
 
 #if CONFIG_VP9_TEMPORAL_DENOISING
-VP9_INSTANTIATE_TEST_CASE(DatarateOnePassCbrSvcDenoiser,
-                          ::testing::Range(5, 10), ::testing::Range(1, 3),
-                          ::testing::Range(0, 3), ::testing::Range(0, 4));
+VP9_INSTANTIATE_TEST_SUITE(DatarateOnePassCbrSvcDenoiser,
+                           ::testing::Range(5, 10), ::testing::Range(1, 3),
+                           ::testing::Range(0, 3), ::testing::Range(0, 4));
 #endif
 
-VP9_INSTANTIATE_TEST_CASE(DatarateOnePassCbrSvcSmallKF, ::testing::Range(5, 10),
-                          ::testing::Range(32, 36));
+VP9_INSTANTIATE_TEST_SUITE(DatarateOnePassCbrSvcSmallKF,
+                           ::testing::Range(5, 10), ::testing::Range(32, 36));
 }  // namespace
 }  // namespace svc_test

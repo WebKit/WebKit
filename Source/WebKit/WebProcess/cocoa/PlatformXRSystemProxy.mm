@@ -84,7 +84,7 @@ void PlatformXRSystemProxy::requestFrame(PlatformXR::Device::RequestFrameCallbac
     m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestFrame(), WTFMove(callback));
 }
 
-Optional<PlatformXR::LayerHandle> PlatformXRSystemProxy::createLayerProjection(uint32_t, uint32_t, bool)
+std::optional<PlatformXR::LayerHandle> PlatformXRSystemProxy::createLayerProjection(uint32_t, uint32_t, bool)
 {
     return PlatformXRCoordinator::defaultLayerHandle();
 }

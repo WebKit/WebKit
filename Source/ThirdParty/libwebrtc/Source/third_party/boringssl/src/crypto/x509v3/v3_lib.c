@@ -122,7 +122,7 @@ const X509V3_EXT_METHOD *X509V3_EXT_get_nid(int nid)
     return sk_X509V3_EXT_METHOD_value(ext_list, idx);
 }
 
-const X509V3_EXT_METHOD *X509V3_EXT_get(X509_EXTENSION *ext)
+const X509V3_EXT_METHOD *X509V3_EXT_get(const X509_EXTENSION *ext)
 {
     int nid;
     if ((nid = OBJ_obj2nid(ext->object)) == NID_undef)
@@ -203,7 +203,7 @@ int X509V3_add_standard_extensions(void)
 
 /* Return an extension internal structure */
 
-void *X509V3_EXT_d2i(X509_EXTENSION *ext)
+void *X509V3_EXT_d2i(const X509_EXTENSION *ext)
 {
     const X509V3_EXT_METHOD *method;
     const unsigned char *p;
@@ -217,49 +217,38 @@ void *X509V3_EXT_d2i(X509_EXTENSION *ext)
     return method->d2i(NULL, &p, ext->value->length);
 }
 
-/*
- * Get critical flag and decoded version of extension from a NID. The "idx"
- * variable returns the last found extension and can be used to retrieve
- * multiple extensions of the same NID. However multiple extensions with the
- * same NID is usually due to a badly encoded certificate so if idx is NULL
- * we choke if multiple extensions exist. The "crit" variable is set to the
- * critical value. The return value is the decoded extension or NULL on
- * error. The actual error can have several different causes, the value of
- * *crit reflects the cause: >= 0, extension found but not decoded (reflects
- * critical value). -1 extension not found. -2 extension occurs more than
- * once.
- */
-
-void *X509V3_get_d2i(STACK_OF(X509_EXTENSION) *x, int nid, int *crit,
-                     int *idx)
+void *X509V3_get_d2i(const STACK_OF(X509_EXTENSION) *extensions, int nid,
+                     int *out_critical, int *out_idx)
 {
     int lastpos;
     size_t i;
     X509_EXTENSION *ex, *found_ex = NULL;
-    if (!x) {
-        if (idx)
-            *idx = -1;
-        if (crit)
-            *crit = -1;
+    if (!extensions) {
+        if (out_idx)
+            *out_idx = -1;
+        if (out_critical)
+            *out_critical = -1;
         return NULL;
     }
-    if (idx)
-        lastpos = *idx + 1;
+    if (out_idx)
+        lastpos = *out_idx + 1;
     else
         lastpos = 0;
     if (lastpos < 0)
         lastpos = 0;
-    for (i = lastpos; i < sk_X509_EXTENSION_num(x); i++) {
-        ex = sk_X509_EXTENSION_value(x, i);
+    for (i = lastpos; i < sk_X509_EXTENSION_num(extensions); i++) {
+        ex = sk_X509_EXTENSION_value(extensions, i);
         if (OBJ_obj2nid(ex->object) == nid) {
-            if (idx) {
-                *idx = i;
+            if (out_idx) {
+                /* TODO(https://crbug.com/boringssl/379): Consistently reject
+                 * duplicate extensions. */
+                *out_idx = i;
                 found_ex = ex;
                 break;
             } else if (found_ex) {
                 /* Found more than one */
-                if (crit)
-                    *crit = -2;
+                if (out_critical)
+                    *out_critical = -2;
                 return NULL;
             }
             found_ex = ex;
@@ -267,16 +256,16 @@ void *X509V3_get_d2i(STACK_OF(X509_EXTENSION) *x, int nid, int *crit,
     }
     if (found_ex) {
         /* Found it */
-        if (crit)
-            *crit = X509_EXTENSION_get_critical(found_ex);
+        if (out_critical)
+            *out_critical = X509_EXTENSION_get_critical(found_ex);
         return X509V3_EXT_d2i(found_ex);
     }
 
     /* Extension not found */
-    if (idx)
-        *idx = -1;
-    if (crit)
-        *crit = -1;
+    if (out_idx)
+        *out_idx = -1;
+    if (out_critical)
+        *out_critical = -1;
     return NULL;
 }
 

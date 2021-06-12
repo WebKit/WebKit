@@ -232,7 +232,7 @@ public:
     bool hasBoldFont() const override { return false; }
     bool hasItalicFont() const override { return false; }
     bool hasMisspelling() const override;
-    Optional<SimpleRange> misspellingRange(const SimpleRange& start, AccessibilitySearchDirection) const override;
+    std::optional<SimpleRange> misspellingRange(const SimpleRange& start, AccessibilitySearchDirection) const override;
     bool hasPlainText() const override { return false; }
     bool hasSameFont(const AXCoreObject&) const override { return false; }
     bool hasSameFontColor(const AXCoreObject&) const override { return false; }
@@ -430,7 +430,7 @@ public:
     Path elementPath() const override { return Path(); }
     bool supportsPath() const override { return false; }
 
-    TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
+    TextIteratorBehaviors textIteratorBehaviorForTextRange() const override;
     PlainTextRange selectedTextRange() const override { return { }; }
     int insertionPointLineNumber() const override { return -1; }
 
@@ -524,7 +524,7 @@ public:
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
 
-    Optional<SimpleRange> elementRange() const override;
+    std::optional<SimpleRange> elementRange() const override;
     static bool replacedNodeNeedsCharacter(Node* replacedNode);
 
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;
@@ -538,7 +538,7 @@ public:
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
 
-    Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
+    std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
 #if PLATFORM(MAC)
     AXTextMarkerRangeRef textMarkerRangeForNSRange(const NSRange&) const override;
 #endif
@@ -795,9 +795,9 @@ protected:
     String outerHTML() const override;
 
 private:
-    Optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
-    Optional<SimpleRange> selectionRange() const;
-    Optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
+    std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
+    std::optional<SimpleRange> selectionRange() const;
+    std::optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
 
     AXID m_id { 0 };
 protected: // FIXME: Make the data members private.

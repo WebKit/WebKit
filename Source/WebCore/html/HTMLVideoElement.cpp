@@ -111,21 +111,23 @@ void HTMLVideoElement::didAttachRenderers()
     }
 }
 
-void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == widthAttr)
+    if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
-    else if (name == heightAttr)
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+    } else if (name == heightAttr) {
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-    else
-        HTMLMediaElement::collectStyleForPresentationAttribute(name, value, style);
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+    } else
+        HTMLMediaElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLVideoElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr)
         return true;
-    return HTMLMediaElement::isPresentationAttribute(name);
+    return HTMLMediaElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -281,7 +283,7 @@ void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
         renderer->updateFromElement();
 }
 
-RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, DestinationColorSpace colorSpace, PixelFormat pixelFormat) const
+RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat) const
 {
     auto* hostWindow = document().view() && document().view()->root() ? document().view()->root()->hostWindow() : nullptr;
     auto shouldUseDisplayList = document().settings().displayListDrawingEnabled() ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;

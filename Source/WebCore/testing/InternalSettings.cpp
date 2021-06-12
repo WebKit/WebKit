@@ -134,7 +134,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
 
 #if ENABLE(WEB_AUDIO)
-    AudioContext::setDefaultSampleRateForTesting(WTF::nullopt);
+    AudioContext::setDefaultSampleRateForTesting(std::nullopt);
 #endif
 }
 

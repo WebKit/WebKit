@@ -34,7 +34,6 @@
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
 #include "WebAssemblyModuleRecord.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 namespace AbstractModuleRecordInternal {
@@ -103,20 +102,20 @@ void AbstractModuleRecord::addExportEntry(const ExportEntry& entry)
     ASSERT_UNUSED(isNewEntry, isNewEntry); // This is guaranteed by the parser.
 }
 
-auto AbstractModuleRecord::tryGetImportEntry(UniquedStringImpl* localName) -> Optional<ImportEntry>
+auto AbstractModuleRecord::tryGetImportEntry(UniquedStringImpl* localName) -> std::optional<ImportEntry>
 {
     const auto iterator = m_importEntries.find(localName);
     if (iterator == m_importEntries.end())
-        return WTF::nullopt;
-    return Optional<ImportEntry>(iterator->value);
+        return std::nullopt;
+    return std::optional<ImportEntry>(iterator->value);
 }
 
-auto AbstractModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> Optional<ExportEntry>
+auto AbstractModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> std::optional<ExportEntry>
 {
     const auto iterator = m_exportEntries.find(exportName);
     if (iterator == m_exportEntries.end())
-        return WTF::nullopt;
-    return Optional<ExportEntry>(iterator->value);
+        return std::nullopt;
+    return std::optional<ExportEntry>(iterator->value);
 }
 
 auto AbstractModuleRecord::ExportEntry::createLocal(const Identifier& exportName, const Identifier& localName) -> ExportEntry
@@ -164,7 +163,7 @@ auto AbstractModuleRecord::resolveImport(JSGlobalObject* globalObject, const Ide
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Optional<ImportEntry> optionalImportEntry = tryGetImportEntry(localName.impl());
+    std::optional<ImportEntry> optionalImportEntry = tryGetImportEntry(localName.impl());
     if (!optionalImportEntry)
         return Resolution::notFound();
 
@@ -243,12 +242,12 @@ inline bool AbstractModuleRecord::ResolveQuery::Hash::equal(const ResolveQuery& 
     return lhs.moduleRecord == rhs.moduleRecord && lhs.exportName == rhs.exportName;
 }
 
-auto AbstractModuleRecord::tryGetCachedResolution(UniquedStringImpl* exportName) -> Optional<Resolution>
+auto AbstractModuleRecord::tryGetCachedResolution(UniquedStringImpl* exportName) -> std::optional<Resolution>
 {
     const auto iterator = m_resolutionCache.find(exportName);
     if (iterator == m_resolutionCache.end())
-        return WTF::nullopt;
-    return Optional<Resolution>(iterator->value);
+        return std::nullopt;
+    return std::optional<Resolution>(iterator->value);
 }
 
 void AbstractModuleRecord::cacheResolution(UniquedStringImpl* exportName, const Resolution& resolution)
@@ -605,14 +604,14 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
 
             //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
             if (!foundStarLinks) {
-                if (Optional<Resolution> cachedResolution = moduleRecord->tryGetCachedResolution(query.exportName.get())) {
+                if (std::optional<Resolution> cachedResolution = moduleRecord->tryGetCachedResolution(query.exportName.get())) {
                     if (!mergeToCurrentTop(*cachedResolution))
                         return Resolution::ambiguous();
                     continue;
                 }
             }
 
-            const Optional<ExportEntry> optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
+            const std::optional<ExportEntry> optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
             if (!optionalExportEntry) {
                 // If there is no matched exported binding in the current module,
                 // we need to look into the stars.
@@ -712,7 +711,7 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
 auto AbstractModuleRecord::resolveExport(JSGlobalObject* globalObject, const Identifier& exportName) -> Resolution
 {
     // Look up the cached resolution first before entering the resolving loop, since the loop setup takes some cost.
-    if (Optional<Resolution> cachedResolution = tryGetCachedResolution(exportName.impl()))
+    if (std::optional<Resolution> cachedResolution = tryGetCachedResolution(exportName.impl()))
         return *cachedResolution;
     return resolveExportImpl(globalObject, ResolveQuery(this, exportName.impl()));
 }

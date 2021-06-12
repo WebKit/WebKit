@@ -101,13 +101,13 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
         scheduleAnimation(client);
 }
 
-Optional<FramesPerSecond> DisplayRefreshMonitorManager::nominalFramesPerSecondForDisplay(PlatformDisplayID displayID, DisplayRefreshMonitorFactory* factory)
+std::optional<FramesPerSecond> DisplayRefreshMonitorManager::nominalFramesPerSecondForDisplay(PlatformDisplayID displayID, DisplayRefreshMonitorFactory* factory)
 {
     auto* monitor = ensureMonitorForDisplayID(displayID, factory);
     if (monitor)
         monitor->displayNominalFramesPerSecond();
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate)

@@ -27,8 +27,7 @@
 #include "UserAgent.h"
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/URL.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 
 // WARNING! WARNING! WARNING!
 //
@@ -59,51 +58,17 @@ static String getSystemSoftwareVersion()
     return "0.00";
 }
 
-static const String platformForUAString()
-{
-    static NeverDestroyed<const String> uaSystemSoftwareName(getSystemSoftwareName());
-    return uaSystemSoftwareName;
-}
-
-static const String platformVersionForUAString()
-{
-    static NeverDestroyed<const String> uaSystemSoftwareVersion(getSystemSoftwareVersion());
-    return uaSystemSoftwareVersion;
-}
-
 static constexpr const char* versionForUAString()
 {
     // https://bugs.webkit.org/show_bug.cgi?id=180365
     return "605.1.15";
 }
 
-static String buildUserAgentString()
+static String standardUserAgentStatic()
 {
-    StringBuilder uaString;
-    uaString.appendLiteral("Mozilla/5.0 ");
-    uaString.append('(');
-
-    uaString.appendLiteral("PlayStation; ");
-
-    uaString.append(platformForUAString());
-    uaString.append('/');
-    uaString.append(platformVersionForUAString());
-
-    uaString.appendLiteral(") AppleWebKit/");
-    uaString.append(versionForUAString());
-    uaString.appendLiteral(" (KHTML, like Gecko) ");
-
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-    uaString.appendLiteral("Version/14.0 Safari/");
-    uaString.append(versionForUAString());
-
-    return uaString.toString();
-}
-
-static const String standardUserAgentStatic()
-{
-    static NeverDestroyed<const String> uaStatic(buildUserAgentString());
+    static NeverDestroyed<String> uaStatic(makeString("Mozilla/5.0 (PlayStation; ", getSystemSoftwareName(), '/', getSystemSoftwareVersion(), ") AppleWebKit/", versionForUAString(), " (KHTML, like Gecko) ", "Version/14.0 Safari/", versionForUAString()));
     return uaStatic;
 }
 

@@ -100,11 +100,11 @@ static void addChildren(AXCoreObject& parentObject, Vector<RefPtr<Node>>& childN
     }
 }
 
-ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getChildNodes(Node& node)
+ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getChildNodes(Node& node)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    Optional<Vector<RefPtr<Node>>> result;
+    std::optional<Vector<RefPtr<Node>>> result;
 
     if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
         Vector<RefPtr<Node>> childNodes;
@@ -115,11 +115,11 @@ ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::g
     return result;
 }
 
-ExceptionOr<Optional<InspectorAuditAccessibilityObject::ComputedProperties>> InspectorAuditAccessibilityObject::getComputedProperties(Node& node)
+ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>> InspectorAuditAccessibilityObject::getComputedProperties(Node& node)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    Optional<InspectorAuditAccessibilityObject::ComputedProperties> result;
+    std::optional<InspectorAuditAccessibilityObject::ComputedProperties> result;
 
     if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
         ComputedProperties computedProperties;
@@ -239,11 +239,11 @@ ExceptionOr<Optional<InspectorAuditAccessibilityObject::ComputedProperties>> Ins
     return result;
 }
 
-ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getControlledNodes(Node& node)
+ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getControlledNodes(Node& node)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    Optional<Vector<RefPtr<Node>>> result;
+    std::optional<Vector<RefPtr<Node>>> result;
 
     if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
         Vector<RefPtr<Node>> controlledNodes;
@@ -261,11 +261,11 @@ ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::g
     return result;
 }
 
-ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getFlowedNodes(Node& node)
+ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getFlowedNodes(Node& node)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    Optional<Vector<RefPtr<Node>>> result;
+    std::optional<Vector<RefPtr<Node>>> result;
 
     if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
         Vector<RefPtr<Node>> flowedNodes;
@@ -295,11 +295,11 @@ ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getMouseEventNode(N
     return nullptr;
 }
 
-ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getOwnedNodes(Node& node)
+ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getOwnedNodes(Node& node)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    Optional<Vector<RefPtr<Node>>> result;
+    std::optional<Vector<RefPtr<Node>>> result;
 
     if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
         if (axObject->supportsARIAOwns()) {
@@ -331,11 +331,11 @@ ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getParentNode(Node&
     return nullptr;
 }
 
-ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getSelectedChildNodes(Node& node)
+ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getSelectedChildNodes(Node& node)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    Optional<Vector<RefPtr<Node>>> result;
+    std::optional<Vector<RefPtr<Node>>> result;
 
     if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
         Vector<RefPtr<Node>> selectedChildNodes;

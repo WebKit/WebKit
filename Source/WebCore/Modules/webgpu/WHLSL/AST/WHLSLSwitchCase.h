@@ -32,7 +32,6 @@
 #include "WHLSLConstantExpression.h"
 #include "WHLSLStatement.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -43,7 +42,7 @@ namespace AST {
 class SwitchCase final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SwitchCase(CodeLocation location, Optional<ConstantExpression>&& value, Block&& block)
+    SwitchCase(CodeLocation location, std::optional<ConstantExpression>&& value, Block&& block)
         : Statement(location, Kind::SwitchCase)
         , m_value(WTFMove(value))
         , m_block(WTFMove(block))
@@ -55,11 +54,11 @@ public:
     SwitchCase(const SwitchCase&) = delete;
     SwitchCase(SwitchCase&&) = default;
 
-    Optional<ConstantExpression>& value() { return m_value; }
+    std::optional<ConstantExpression>& value() { return m_value; }
     Block& block() { return m_block; }
 
 private:
-    Optional<ConstantExpression> m_value;
+    std::optional<ConstantExpression> m_value;
     Block m_block;
 };
 

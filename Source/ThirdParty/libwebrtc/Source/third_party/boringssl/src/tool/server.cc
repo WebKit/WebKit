@@ -61,6 +61,16 @@ static const struct argument kArguments[] = {
         "-ocsp-response", kOptionalArgument, "OCSP response file to send",
     },
     {
+        "-echconfig-key",
+        kOptionalArgument,
+        "File containing the private key corresponding to the ECHConfig.",
+    },
+    {
+        "-echconfig",
+        kOptionalArgument,
+        "File containing one ECHConfig.",
+    },
+    {
         "-loop", kBooleanArgument,
         "The server will continue accepting new sequential connections.",
     },
@@ -257,6 +267,47 @@ bool Server(const std::vector<std::string> &args) {
     }
     if (!SSL_CTX_use_certificate(ctx.get(), cert.get())) {
       fprintf(stderr, "Failed to set certificate.\n");
+      return false;
+    }
+  }
+
+  if (args_map.count("-echconfig-key") + args_map.count("-echconfig") == 1) {
+    fprintf(stderr,
+            "-echconfig and -echconfig-key must be specified together.\n");
+    return false;
+  }
+
+  if (args_map.count("-echconfig-key") != 0) {
+    std::string echconfig_key_path = args_map["-echconfig-key"];
+    std::string echconfig_path = args_map["-echconfig"];
+
+    // Load the ECH private key.
+    ScopedFILE echconfig_key_file(fopen(echconfig_key_path.c_str(), "rb"));
+    std::vector<uint8_t> echconfig_key;
+    if (echconfig_key_file == nullptr ||
+        !ReadAll(&echconfig_key, echconfig_key_file.get())) {
+      fprintf(stderr, "Error reading %s\n", echconfig_key_path.c_str());
+      return false;
+    }
+
+    // Load the ECHConfig.
+    ScopedFILE echconfig_file(fopen(echconfig_path.c_str(), "rb"));
+    std::vector<uint8_t> echconfig;
+    if (echconfig_file == nullptr ||
+        !ReadAll(&echconfig, echconfig_file.get())) {
+      fprintf(stderr, "Error reading %s\n", echconfig_path.c_str());
+      return false;
+    }
+
+    bssl::UniquePtr<SSL_ECH_SERVER_CONFIG_LIST> configs(
+        SSL_ECH_SERVER_CONFIG_LIST_new());
+    if (!configs ||
+        !SSL_ECH_SERVER_CONFIG_LIST_add(configs.get(),
+                                        /*is_retry_config=*/1, echconfig.data(),
+                                        echconfig.size(), echconfig_key.data(),
+                                        echconfig_key.size()) ||
+        !SSL_CTX_set1_ech_server_config_list(ctx.get(), configs.get())) {
+      fprintf(stderr, "Error setting server's ECHConfig and private key\n");
       return false;
     }
   }

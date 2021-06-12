@@ -114,7 +114,7 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
     m_codeBlock->expressionRangeForBytecodeIndex(m_bytecodeIndex, divot, unusedStartOffset, unusedEndOffset, line, column);
 
     ScriptExecutable* executable = m_codeBlock->ownerExecutable();
-    if (Optional<int> overrideLineNumber = executable->overrideLineNumber(m_codeBlock->vm()))
+    if (std::optional<int> overrideLineNumber = executable->overrideLineNumber(m_codeBlock->vm()))
         line = overrideLineNumber.value();
 }
 

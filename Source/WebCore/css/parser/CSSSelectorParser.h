@@ -91,6 +91,6 @@ private:
 
 
 
-Optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*);
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*);
 
 } // namespace WebCore

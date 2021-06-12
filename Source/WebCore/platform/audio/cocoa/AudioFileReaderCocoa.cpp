@@ -43,7 +43,7 @@ AudioBufferList* tryCreateAudioBufferList(size_t numberOfBuffers)
     if (bufferListSize.hasOverflowed())
         return nullptr;
 
-    auto allocated = tryFastCalloc(1, bufferListSize.unsafeGet());
+    auto allocated = tryFastCalloc(1, bufferListSize);
     AudioBufferList* bufferList;
     if (!allocated.getValue(bufferList))
         return nullptr;
@@ -62,7 +62,7 @@ bool validateAudioBufferList(AudioBufferList* bufferList)
     if (!bufferList)
         return false;
 
-    Optional<unsigned> expectedDataSize;
+    std::optional<unsigned> expectedDataSize;
     const AudioBuffer* buffer = bufferList->mBuffers;
     const AudioBuffer* bufferEnd = buffer + bufferList->mNumberBuffers;
     for ( ; buffer < bufferEnd; ++buffer) {

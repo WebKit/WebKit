@@ -82,7 +82,7 @@ void PaymentSetupConfiguration::encode(IPC::Encoder& encoder) const
     encoder << m_configuration;
 }
 
-Optional<PaymentSetupConfiguration> PaymentSetupConfiguration::decode(IPC::Decoder& decoder)
+std::optional<PaymentSetupConfiguration> PaymentSetupConfiguration::decode(IPC::Decoder& decoder)
 {
     static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
     static std::once_flag onceFlag;
@@ -95,7 +95,7 @@ Optional<PaymentSetupConfiguration> PaymentSetupConfiguration::decode(IPC::Decod
 
     auto configuration = IPC::decode<PKPaymentSetupConfiguration>(decoder, allowedClasses.get().get());
     if (!configuration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return PaymentSetupConfiguration { WTFMove(*configuration) };
 }

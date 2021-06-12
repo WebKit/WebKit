@@ -10,8 +10,8 @@ import("//testing/test.gni")
 import("libyuv.gni")
 
 declare_args() {
-  # Set to false to disable building with gflags.
-  libyuv_use_gflags = true
+  # Set to false to disable building with absl flags.
+  libyuv_use_absl_flags = true
 
   # When building a shared library using a target in WebRTC or
   # Chromium projects that depends on libyuv, setting this flag
@@ -32,15 +32,15 @@ config("libyuv_config") {
 # This target is built when no specific target is specified on the command line.
 group("default") {
   testonly = true
-  deps = [
-    ":libyuv",
-  ]
+  deps = [ ":libyuv" ]
   if (libyuv_include_tests) {
     deps += [
       ":compare",
       ":cpuid",
+      ":i444tonv12_eg",
       ":libyuv_unittest",
       ":psnr",
+      ":yuvconstants",
       ":yuvconvert",
     ]
   }
@@ -52,13 +52,9 @@ group("libyuv") {
 
   if (is_win && target_cpu == "x64") {
     # Compile with clang in order to get inline assembly
-    public_deps = [
-      ":libyuv_internal(//build/toolchain/win:win_clang_x64)",
-    ]
+    public_deps = [ ":libyuv_internal(//build/toolchain/win:win_clang_x64)" ]
   } else {
-    public_deps = [
-      ":libyuv_internal",
-    ]
+    public_deps = [ ":libyuv_internal" ]
   }
 
   if (libyuv_use_neon) {
@@ -73,7 +69,7 @@ group("libyuv") {
     deps += [ ":libyuv_mmi" ]
   }
 
-  if (!is_ios) {
+  if (!is_ios && !libyuv_disable_jpeg) {
     # Make sure that clients of libyuv link with libjpeg. This can't go in
     # libyuv_internal because in Windows x64 builds that will generate a clang
     # build of libjpeg, and we don't want two copies.
@@ -103,6 +99,7 @@ static_library("libyuv_internal") {
     "include/libyuv/scale.h",
     "include/libyuv/scale_argb.h",
     "include/libyuv/scale_row.h",
+    "include/libyuv/scale_uv.h",
     "include/libyuv/version.h",
     "include/libyuv/video_common.h",
 
@@ -137,6 +134,7 @@ static_library("libyuv_internal") {
     "source/scale_argb.cc",
     "source/scale_common.cc",
     "source/scale_gcc.cc",
+    "source/scale_uv.cc",
     "source/scale_win.cc",
     "source/video_common.cc",
   ]
@@ -150,7 +148,7 @@ static_library("libyuv_internal") {
     configs += [ "//build/config/gcc:symbol_visibility_default" ]
   }
 
-  if (!is_ios) {
+  if (!is_ios && !libyuv_disable_jpeg) {
     defines += [ "HAVE_JPEG" ]
 
     # Needed to pull in libjpeg headers. Can't add //third_party:jpeg to deps
@@ -176,6 +174,9 @@ static_library("libyuv_internal") {
       "-ffp-contract=fast",  # Enable fma vectorization for NEON.
     ]
   }
+  if (!libyuv_use_mmi) {
+    defines += [ "LIBYUV_DISABLE_MMI" ]
+  }
 }
 
 if (libyuv_use_neon) {
@@ -192,9 +193,7 @@ if (libyuv_use_neon) {
       "source/scale_neon64.cc",
     ]
 
-    deps = [
-      ":libyuv_internal",
-    ]
+    deps = [ ":libyuv_internal" ]
 
     public_configs = [ ":libyuv_config" ]
 
@@ -225,9 +224,7 @@ if (libyuv_use_msa) {
       "source/scale_msa.cc",
     ]
 
-    deps = [
-      ":libyuv_internal",
-    ]
+    deps = [ ":libyuv_internal" ]
 
     public_configs = [ ":libyuv_config" ]
   }
@@ -243,9 +240,7 @@ if (libyuv_use_mmi) {
       "source/scale_mmi.cc",
     ]
 
-    deps = [
-      ":libyuv_internal",
-    ]
+    deps = [ ":libyuv_internal" ]
 
     public_configs = [ ":libyuv_config" ]
   }
@@ -275,8 +270,6 @@ if (libyuv_include_tests) {
     testonly = true
 
     sources = [
-      # sources
-      # headers
       "unit_test/basictypes_test.cc",
       "unit_test/color_test.cc",
       "unit_test/compare_test.cc",
@@ -289,6 +282,7 @@ if (libyuv_include_tests) {
       "unit_test/rotate_test.cc",
       "unit_test/scale_argb_test.cc",
       "unit_test/scale_test.cc",
+      "unit_test/scale_uv_test.cc",
       "unit_test/unit_test.cc",
       "unit_test/unit_test.h",
       "unit_test/video_common_test.cc",
@@ -300,19 +294,20 @@ if (libyuv_include_tests) {
     ]
 
     defines = []
-    if (libyuv_use_gflags) {
-      defines += [ "LIBYUV_USE_GFLAGS" ]
-      deps += [ "//third_party/gflags" ]
+    if (libyuv_use_absl_flags) {
+      defines += [ "LIBYUV_USE_ABSL_FLAGS" ]
+      deps += [
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+      ]
     }
 
     configs += [ ":libyuv_unittest_warnings_config" ]
 
-    public_deps = [
-      "//testing/gtest",
-    ]
+    public_deps = [ "//testing/gtest" ]
     public_configs = [ ":libyuv_unittest_config" ]
 
-    if (is_linux) {
+    if (is_linux || is_chromeos) {
       cflags = [ "-fexceptions" ]
     }
     if (is_ios) {
@@ -349,10 +344,8 @@ if (libyuv_include_tests) {
       # sources
       "util/compare.cc",
     ]
-    deps = [
-      ":libyuv",
-    ]
-    if (is_linux) {
+    deps = [ ":libyuv" ]
+    if (is_linux || is_chromeos) {
       cflags = [ "-fexceptions" ]
     }
   }
@@ -362,10 +355,19 @@ if (libyuv_include_tests) {
       # sources
       "util/yuvconvert.cc",
     ]
-    deps = [
-      ":libyuv",
+    deps = [ ":libyuv" ]
+    if (is_linux || is_chromeos) {
+      cflags = [ "-fexceptions" ]
+    }
+  }
+
+  executable("yuvconstants") {
+    sources = [
+      # sources
+      "util/yuvconstants.c",
     ]
-    if (is_linux) {
+    deps = [ ":libyuv" ]
+    if (is_linux || is_chromeos) {
       cflags = [ "-fexceptions" ]
     }
   }
@@ -377,13 +379,19 @@ if (libyuv_include_tests) {
       "util/psnr_main.cc",
       "util/ssim.cc",
     ]
-    deps = [
-      ":libyuv",
-    ]
+    deps = [ ":libyuv" ]
 
     if (!is_ios && !libyuv_disable_jpeg) {
       defines = [ "HAVE_JPEG" ]
     }
+  }
+
+  executable("i444tonv12_eg") {
+    sources = [
+      # sources
+      "util/i444tonv12_eg.cc",
+    ]
+    deps = [ ":libyuv" ]
   }
 
   executable("cpuid") {
@@ -391,8 +399,6 @@ if (libyuv_include_tests) {
       # sources
       "util/cpuid.c",
     ]
-    deps = [
-      ":libyuv",
-    ]
+    deps = [ ":libyuv" ]
   }
 }

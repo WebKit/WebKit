@@ -35,7 +35,7 @@ bool booleanValue(WKTypeRef);
 bool booleanValue(const WKRetainPtr<WKTypeRef>&);
 
 double doubleValue(WKTypeRef);
-Optional<double> optionalDoubleValue(WKTypeRef);
+std::optional<double> optionalDoubleValue(WKTypeRef);
 
 WKStringRef stringValue(WKTypeRef);
 WTF::String toWTFString(WKTypeRef);
@@ -50,7 +50,7 @@ double doubleValue(WKDictionaryRef, const char* key);
 WKStringRef stringValue(WKDictionaryRef, const char* key);
 uint64_t uint64Value(WKDictionaryRef, const char* key);
 
-Optional<double> optionalDoubleValue(WKDictionaryRef, const char* key);
+std::optional<double> optionalDoubleValue(WKDictionaryRef, const char* key);
 
 template<typename T> void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const WKRetainPtr<T>& value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, bool value);
@@ -60,7 +60,7 @@ void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, doubl
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, WKStringRef value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, JSStringRef value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const WTF::String& value);
-template<typename T> void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const Optional<T>& value);
+template<typename T> void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const std::optional<T>& value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, int value) = delete;
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, unsigned value) = delete;
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const void* value) = delete;
@@ -85,9 +85,9 @@ inline double doubleValue(WKTypeRef value)
     return value && WKGetTypeID(value) == WKDoubleGetTypeID() ? WKDoubleGetValue(static_cast<WKDoubleRef>(value)) : 0;
 }
 
-inline Optional<double> optionalDoubleValue(WKTypeRef value)
+inline std::optional<double> optionalDoubleValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKDoubleGetTypeID() ? makeOptional(WKDoubleGetValue(static_cast<WKDoubleRef>(value))) : WTF::nullopt;
+    return value && WKGetTypeID(value) == WKDoubleGetTypeID() ? std::make_optional(WKDoubleGetValue(static_cast<WKDoubleRef>(value))) : std::nullopt;
 }
 
 inline WKStringRef stringValue(WKTypeRef value)
@@ -135,7 +135,7 @@ inline uint64_t uint64Value(WKDictionaryRef dictionary, const char* key)
     return uint64Value(value(dictionary, key));
 }
 
-inline Optional<double> optionalDoubleValue(WKDictionaryRef dictionary, const char* key)
+inline std::optional<double> optionalDoubleValue(WKDictionaryRef dictionary, const char* key)
 {
     return optionalDoubleValue(value(dictionary, key));
 }
@@ -180,7 +180,7 @@ inline void setValue(const WKRetainPtr<WKMutableDictionaryRef>& dictionary, cons
     setValue(dictionary, key, adoptWK(WKDoubleCreate(value)));
 }
 
-template<typename T> void setValue(const WKRetainPtr<WKMutableDictionaryRef>& dictionary, const char* key, const Optional<T>& value)
+template<typename T> void setValue(const WKRetainPtr<WKMutableDictionaryRef>& dictionary, const char* key, const std::optional<T>& value)
 {
     if (value)
         setValue(dictionary, key, *value);

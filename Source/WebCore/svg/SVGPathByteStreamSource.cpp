@@ -39,40 +39,40 @@ SVGPathSegType SVGPathByteStreamSource::nextCommand(SVGPathSegType)
     return static_cast<SVGPathSegType>(readSVGSegmentType());
 }
 
-Optional<SVGPathSegType> SVGPathByteStreamSource::parseSVGSegmentType()
+std::optional<SVGPathSegType> SVGPathByteStreamSource::parseSVGSegmentType()
 {
     return static_cast<SVGPathSegType>(readSVGSegmentType());
 }
 
-Optional<SVGPathSource::MoveToSegment> SVGPathByteStreamSource::parseMoveToSegment()
+std::optional<SVGPathSource::MoveToSegment> SVGPathByteStreamSource::parseMoveToSegment()
 {
     MoveToSegment segment;
     segment.targetPoint = readFloatPoint();
     return segment;
 }
 
-Optional<SVGPathSource::LineToSegment> SVGPathByteStreamSource::parseLineToSegment()
+std::optional<SVGPathSource::LineToSegment> SVGPathByteStreamSource::parseLineToSegment()
 {
     LineToSegment segment;
     segment.targetPoint = readFloatPoint();
     return segment;
 }
 
-Optional<SVGPathSource::LineToHorizontalSegment> SVGPathByteStreamSource::parseLineToHorizontalSegment()
+std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathByteStreamSource::parseLineToHorizontalSegment()
 {
     LineToHorizontalSegment segment;
     segment.x = readFloat();
     return segment;
 }
 
-Optional<SVGPathSource::LineToVerticalSegment> SVGPathByteStreamSource::parseLineToVerticalSegment()
+std::optional<SVGPathSource::LineToVerticalSegment> SVGPathByteStreamSource::parseLineToVerticalSegment()
 {
     LineToVerticalSegment segment;
     segment.y = readFloat();
     return segment;
 }
 
-Optional<SVGPathSource::CurveToCubicSegment> SVGPathByteStreamSource::parseCurveToCubicSegment()
+std::optional<SVGPathSource::CurveToCubicSegment> SVGPathByteStreamSource::parseCurveToCubicSegment()
 {
     CurveToCubicSegment segment;
     segment.point1 = readFloatPoint();
@@ -81,7 +81,7 @@ Optional<SVGPathSource::CurveToCubicSegment> SVGPathByteStreamSource::parseCurve
     return segment;
 }
 
-Optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathByteStreamSource::parseCurveToCubicSmoothSegment()
+std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathByteStreamSource::parseCurveToCubicSmoothSegment()
 {
     CurveToCubicSmoothSegment segment;
     segment.point2 = readFloatPoint();
@@ -89,7 +89,7 @@ Optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathByteStreamSource::pars
     return segment;
 }
 
-Optional<SVGPathSource::CurveToQuadraticSegment> SVGPathByteStreamSource::parseCurveToQuadraticSegment()
+std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathByteStreamSource::parseCurveToQuadraticSegment()
 {
     CurveToQuadraticSegment segment;
     segment.point1 = readFloatPoint();
@@ -97,14 +97,14 @@ Optional<SVGPathSource::CurveToQuadraticSegment> SVGPathByteStreamSource::parseC
     return segment;
 }
 
-Optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathByteStreamSource::parseCurveToQuadraticSmoothSegment()
+std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathByteStreamSource::parseCurveToQuadraticSmoothSegment()
 {
     CurveToQuadraticSmoothSegment segment;
     segment.targetPoint = readFloatPoint();
     return segment;
 }
 
-Optional<SVGPathSource::ArcToSegment> SVGPathByteStreamSource::parseArcToSegment()
+std::optional<SVGPathSource::ArcToSegment> SVGPathByteStreamSource::parseArcToSegment()
 {
     ArcToSegment segment;
     segment.rx = readFloat();

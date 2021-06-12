@@ -105,7 +105,7 @@ protected:
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
-    void paintPixelBufferToImageBuffer(Optional<WebCore::PixelBuffer>&&, WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&&, WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
 
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RefPtr<IPC::StreamServerConnection<RemoteGraphicsContextGL>> m_streamConnection;

@@ -62,7 +62,7 @@ inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, const gchar* name, GstPad* target);
 #if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(const GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
-Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
+std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
 bool getSampleVideoInfo(GstSample*, GstVideoInfo&);
 #endif
 const char* capsMediaType(const GstCaps*);
@@ -301,6 +301,10 @@ bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(
 });
 
 GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
+
+// These functions should be used for elements not provided by WebKit itself and not provided by GStreamer -core.
+GstElement* makeGStreamerElement(const char* factoryName, const char* name);
+GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 }
 

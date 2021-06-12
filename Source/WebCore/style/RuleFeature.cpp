@@ -55,7 +55,7 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     return false;
 }
 
-RuleFeature::RuleFeature(const RuleData& ruleData, Optional<MatchElement> matchElement)
+RuleFeature::RuleFeature(const RuleData& ruleData, std::optional<MatchElement> matchElement)
     : styleRule(&ruleData.styleRule())
     , selectorIndex(ruleData.selectorIndex())
     , selectorListIndex(ruleData.selectorListIndex())

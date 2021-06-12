@@ -235,10 +235,38 @@ void JITDelByIdGenerator::finalize(
         fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
 }
 
-JITInByIdGenerator::JITInByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
-    CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value)
-    : JITByIdGenerator(codeBlock, codeOrigin, callSite, AccessType::In, usedRegisters, base, value)
+JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result)
+    : Base(codeBlock, codeOrigin, callSiteIndex, AccessType::InByVal, usedRegisters)
+{
+    m_stubInfo->hasConstantIdentifier = false;
+
+    m_stubInfo->baseGPR = base.payloadGPR();
+    m_stubInfo->regs.propertyGPR = property.payloadGPR();
+    m_stubInfo->valueGPR = result.payloadGPR();
+#if USE(JSVALUE32_64)
+    m_stubInfo->baseTagGPR = base.tagGPR();
+    m_stubInfo->valueTagGPR = result.tagGPR();
+    m_stubInfo->v.propertyTagGPR = property.tagGPR();
+#endif
+}
+
+void JITInByValGenerator::generateFastPath(MacroAssembler& jit)
+{
+    m_start = jit.label();
+    m_slowPathJump = jit.patchableJump();
+    m_done = jit.label();
+}
+
+void JITInByValGenerator::finalize(
+    LinkBuffer& fastPath, LinkBuffer& slowPath)
+{
+    ASSERT(m_start.isSet());
+    Base::finalize(
+        fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
+}
+
+JITInByIdGenerator::JITInByIdGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters, CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value)
+    : JITByIdGenerator(codeBlock, codeOrigin, callSite, AccessType::InById, usedRegisters, base, value)
 {
     // FIXME: We are not supporting fast path for "length" property.
     UNUSED_PARAM(propertyName);

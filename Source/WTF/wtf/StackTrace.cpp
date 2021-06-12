@@ -86,7 +86,7 @@ std::unique_ptr<StackTrace> StackTrace::captureStackTrace(int maxFrames, int fra
     return trace;
 }
 
-auto StackTrace::demangle(void* pc) -> Optional<DemangleEntry>
+auto StackTrace::demangle(void* pc) -> std::optional<DemangleEntry>
 {
 #if HAVE(DLADDR)
     const char* mangledName = nullptr;
@@ -104,7 +104,7 @@ auto StackTrace::demangle(void* pc) -> Optional<DemangleEntry>
 #else
     UNUSED_PARAM(pc);
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void StackTrace::dump(PrintStream& out, const char* indentString) const
@@ -141,9 +141,9 @@ void StackTrace::dump(PrintStream& out, const char* indentString) const
         }
         const int frameNumber = i + 1;
         if (mangledName || cxaDemangled)
-            out.printf("%s%-3d %p %s\n", indentString, frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
+            out.printf("%s%s%-3d %p %s\n", m_prefix ? m_prefix : "", indentString, frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
         else
-            out.printf("%s%-3d %p\n", indentString, frameNumber, stack[i]);
+            out.printf("%s%s%-3d %p\n", m_prefix ? m_prefix : "", indentString, frameNumber, stack[i]);
     }
 
 #if HAVE(BACKTRACE_SYMBOLS)

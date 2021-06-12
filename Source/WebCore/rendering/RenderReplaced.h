@@ -31,7 +31,7 @@ public:
     virtual ~RenderReplaced();
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
-    LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = WTF::nullopt) const override;
+    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
 
     LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;
     LayoutRect replacedContentRect() const { return replacedContentRect(intrinsicSize()); }
@@ -62,10 +62,6 @@ protected:
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;
-
-    // This function determines if the object is allowed to compute aspect ratio from attributes width and height.
-    virtual bool canMapWidthHeightToAspectRatio() const { return false; }
-    Optional<double> intrinsicAspectRatioFromWidthHeight() const;
 
     virtual LayoutUnit minimumReplacedHeight() const { return 0_lu; }
 

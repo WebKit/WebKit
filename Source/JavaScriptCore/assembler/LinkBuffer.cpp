@@ -487,6 +487,13 @@ void LinkBuffer::performFinalization()
     MacroAssembler::cacheFlush(code(), m_size);
 }
 
+void LinkBuffer::runMainThreadFinalizationTasks()
+{
+    for (auto& task : m_mainThreadFinalizationTasks)
+        task->run();
+    m_mainThreadFinalizationTasks.clear();
+}
+
 #if DUMP_LINK_STATISTICS
 void LinkBuffer::dumpLinkStatistics(void* code, size_t initializeSize, size_t finalSize)
 {
@@ -542,7 +549,7 @@ void LinkBuffer::clearProfileStatistics()
     }
 }
 
-void LinkBuffer::dumpProfileStatistics(Optional<PrintStream*> outStream)
+void LinkBuffer::dumpProfileStatistics(std::optional<PrintStream*> outStream)
 {
     struct Stat {
         Profile profile;

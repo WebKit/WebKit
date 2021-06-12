@@ -31,6 +31,7 @@
 
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
+#import "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIView.h>
@@ -56,12 +57,22 @@ using namespace WebCore;
 UIScrollView *RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID(ScrollingNodeID nodeID) const
 {
     auto* treeNode = m_scrollingTree->nodeForID(nodeID);
-    if (!is<ScrollingTreeOverflowScrollingNode>(treeNode))
-        return nil;
 
-    auto* scrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(treeNode);
-    // All ScrollingTreeOverflowScrollingNodes are ScrollingTreeOverflowScrollingNodeIOS on iOS.
-    return static_cast<ScrollingTreeOverflowScrollingNodeIOS*>(scrollingNode)->scrollView();
+    if (is<ScrollingTreeOverflowScrollingNode>(treeNode)) {
+        auto* overflowScrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(treeNode);
+
+        // All ScrollingTreeOverflowScrollingNodes are ScrollingTreeOverflowScrollingNodeIOS on iOS.
+        return static_cast<ScrollingTreeOverflowScrollingNodeIOS*>(overflowScrollingNode)->scrollView();
+    }
+
+    if (is<ScrollingTreeFrameScrollingNode>(treeNode)) {
+        auto* frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(treeNode);
+
+        // All ScrollingTreeFrameScrollingNodes are ScrollingTreeFrameScrollingNodeRemoteIOS on iOS.
+        return static_cast<ScrollingTreeFrameScrollingNodeRemoteIOS*>(frameScrollingNode)->scrollView();
+    }
+
+    return nil;
 }
 
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)

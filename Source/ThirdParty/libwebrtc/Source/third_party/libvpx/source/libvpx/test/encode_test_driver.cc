@@ -91,7 +91,7 @@ void Encoder::EncodeFrameInternal(const VideoSource &video,
 
 void Encoder::Flush() {
   const vpx_codec_err_t res =
-      vpx_codec_encode(&encoder_, NULL, 0, 0, 0, deadline_);
+      vpx_codec_encode(&encoder_, nullptr, 0, 0, 0, deadline_);
   if (!encoder_.priv)
     ASSERT_EQ(VPX_CODEC_ERROR, res) << EncoderError();
   else
@@ -182,7 +182,7 @@ void EncoderTest::RunLoop(VideoSource *video) {
     BeginPassHook(pass);
     std::unique_ptr<Encoder> encoder(
         codec_->CreateEncoder(cfg_, deadline_, init_flags_, &stats_));
-    ASSERT_TRUE(encoder.get() != NULL);
+    ASSERT_NE(encoder.get(), nullptr);
 
     ASSERT_NO_FATAL_FAILURE(video->Begin());
     encoder->InitEncoder(video);
@@ -198,7 +198,7 @@ void EncoderTest::RunLoop(VideoSource *video) {
         codec_->CreateDecoder(dec_cfg, dec_init_flags));
     bool again;
     for (again = true; again; video->Next()) {
-      again = (video->img() != NULL);
+      again = (video->img() != nullptr);
 
       PreEncodeFrameHook(video);
       PreEncodeFrameHook(video, encoder.get());
@@ -216,7 +216,7 @@ void EncoderTest::RunLoop(VideoSource *video) {
         switch (pkt->kind) {
           case VPX_CODEC_CX_FRAME_PKT:
             has_cxdata = true;
-            if (decoder.get() != NULL && DoDecode()) {
+            if (decoder != nullptr && DoDecode()) {
               PreDecodeFrameHook(video, decoder.get());
               vpx_codec_err_t res_dec = decoder->DecodeFrame(
                   (const uint8_t *)pkt->data.frame.buf, pkt->data.frame.sz);
@@ -240,7 +240,7 @@ void EncoderTest::RunLoop(VideoSource *video) {
 
       // Flush the decoder when there are no more fragments.
       if ((init_flags_ & VPX_CODEC_USE_OUTPUT_PARTITION) && has_dxdata) {
-        const vpx_codec_err_t res_dec = decoder->DecodeFrame(NULL, 0);
+        const vpx_codec_err_t res_dec = decoder->DecodeFrame(nullptr, 0);
         if (!HandleDecodeResult(res_dec, *video, decoder.get())) break;
       }
 

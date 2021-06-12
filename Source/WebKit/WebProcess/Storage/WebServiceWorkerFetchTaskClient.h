@@ -59,7 +59,7 @@ private:
 
     void cleanup();
     
-    void didReceiveBlobChunk(const char* data, size_t size);
+    void didReceiveBlobChunk(const uint8_t* data, size_t);
     void didFinishBlobLoading();
 
     struct BlobLoader final : WebCore::FetchLoaderClient {
@@ -67,7 +67,7 @@ private:
 
         // FetchLoaderClient API
         void didReceiveResponse(const WebCore::ResourceResponse&) final { }
-        void didReceiveData(const char* data, size_t size) final { client->didReceiveBlobChunk(data, size); }
+        void didReceiveData(const uint8_t* data, size_t size) final { client->didReceiveBlobChunk(data, size); }
         void didFail(const WebCore::ResourceError& error) final { client->didFail(error); }
         void didSucceed() final { client->didFinishBlobLoading(); }
 
@@ -79,7 +79,7 @@ private:
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
     WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     WebCore::FetchIdentifier m_fetchIdentifier;
-    Optional<BlobLoader> m_blobLoader;
+    std::optional<BlobLoader> m_blobLoader;
     bool m_needsContinueDidReceiveResponseMessage { false };
     bool m_waitingForContinueDidReceiveResponseMessage { false };
     Variant<std::nullptr_t, Ref<WebCore::SharedBuffer>, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;

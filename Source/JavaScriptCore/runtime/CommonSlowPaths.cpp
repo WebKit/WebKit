@@ -830,14 +830,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_constructor)
     RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isConstructor(vm)));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_by_val)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpInByVal>();
-    auto& metadata = bytecode.metadata(codeBlock);
-    RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, GET_C(bytecode.m_base).jsValue(), GET_C(bytecode.m_property).jsValue(), &metadata.m_arrayProfile)));
-}
-
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_private_name)
 {
     BEGIN();
@@ -1403,7 +1395,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
         }
     }
 
-    Checked<unsigned, RecordOverflow> checkedArraySize = 0;
+    CheckedUint32 checkedArraySize = 0;
     for (int i = 0; i < numItems; i++) {
         if (bitVector.get(i)) {
             JSValue value = values[-i];
@@ -1415,7 +1407,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
     if (UNLIKELY(checkedArraySize.hasOverflowed()))
         THROW(createOutOfMemoryError(globalObject));
 
-    unsigned arraySize = checkedArraySize.unsafeGet();
+    unsigned arraySize = checkedArraySize;
     if (UNLIKELY(arraySize >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH))
         THROW(createOutOfMemoryError(globalObject));
 

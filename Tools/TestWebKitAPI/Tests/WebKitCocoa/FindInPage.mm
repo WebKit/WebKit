@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -38,10 +39,10 @@ typedef enum : NSUInteger {
     NSTextFinderAsynchronousDocumentFindOptionsWrap = 1 << 1,
 } NSTextFinderAsynchronousDocumentFindOptions;
 
-NSTextFinderAsynchronousDocumentFindOptions noFindOptions = (NSTextFinderAsynchronousDocumentFindOptions)0;
-NSTextFinderAsynchronousDocumentFindOptions backwardsFindOptions =NSTextFinderAsynchronousDocumentFindOptionsBackwards;
-NSTextFinderAsynchronousDocumentFindOptions wrapFindOptions =NSTextFinderAsynchronousDocumentFindOptionsWrap;
-NSTextFinderAsynchronousDocumentFindOptions wrapBackwardsFindOptions = (NSTextFinderAsynchronousDocumentFindOptions)(NSTextFinderAsynchronousDocumentFindOptionsWrap | NSTextFinderAsynchronousDocumentFindOptionsBackwards);
+constexpr auto noFindOptions = (NSTextFinderAsynchronousDocumentFindOptions)0;
+constexpr auto backwardsFindOptions = NSTextFinderAsynchronousDocumentFindOptionsBackwards;
+constexpr auto wrapFindOptions = NSTextFinderAsynchronousDocumentFindOptionsWrap;
+constexpr auto wrapBackwardsFindOptions = (NSTextFinderAsynchronousDocumentFindOptions)(NSTextFinderAsynchronousDocumentFindOptionsWrap | NSTextFinderAsynchronousDocumentFindOptionsBackwards);
 
 @protocol NSTextFinderAsynchronousDocumentFindMatch <NSObject>
 @property (retain, nonatomic, readonly) NSArray *textRects;
@@ -57,10 +58,10 @@ typedef id <NSTextFinderAsynchronousDocumentFindMatch> FindMatch;
 
 @end
 
-typedef struct {
+struct FindResult {
     RetainPtr<NSArray> matches;
-    BOOL didWrap;
-} FindResult;
+    BOOL didWrap { NO };
+};
 
 static FindResult findMatches(WKWebView *webView, NSString *findString, NSTextFinderAsynchronousDocumentFindOptions findOptions = noFindOptions, NSUInteger maxResults = NSUIntegerMax)
 {
@@ -294,5 +295,29 @@ TEST(WebKit, FindAndReplace)
     EXPECT_WK_STREQ("hi", [webView stringByEvaluatingJavaScript:@"second.value"]);
     EXPECT_WK_STREQ("hi hi", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+TEST(WebKit, FindTextInImageOverlay)
+{
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
+    {
+        auto [matches, didWrap] = findMatches(webView.get(), @"foobar");
+        EXPECT_EQ(1U, [matches count]);
+        EXPECT_FALSE(didWrap);
+    }
+
+    [webView evaluateJavaScript:@"document.body.appendChild(document.createTextNode('foobar'))" completionHandler:nil];
+
+    {
+        auto [matches, didWrap] = findMatches(webView.get(), @"foobar");
+        EXPECT_EQ(2U, [matches count]);
+        EXPECT_FALSE(didWrap);
+    }
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 #endif // !PLATFORM(IOS_FAMILY)

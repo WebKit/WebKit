@@ -151,6 +151,7 @@ public:
     void markedJSValueArrayAndGC();
     void classDefinitionWithJSSubclass();
     void proxyReturnedWithJSSubclassing();
+    void testJSObjectSetOnGlobalObjectSubclassDefinition();
 
     int failed() const { return m_failed; }
 
@@ -705,6 +706,22 @@ void TestAPI::proxyReturnedWithJSSubclassing()
     check(functionReturnsTrue("(function (subclass, Superclass) { return subclass.__proto__ == Superclass.prototype; })", subclass, Superclass), "proxy's prototype should match Superclass.prototype");
 }
 
+void TestAPI::testJSObjectSetOnGlobalObjectSubclassDefinition()
+{
+    JSClassDefinition globalClassDef = kJSClassDefinitionEmpty;
+    globalClassDef.className = "CustomGlobalClass";
+    JSClassRef globalClassRef = JSClassCreate(&globalClassDef);
+
+    JSContextRef context = JSGlobalContextCreate(globalClassRef);
+    JSObjectRef newObject = JSObjectMake(context, nullptr, nullptr);
+
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+    APIString propertyName("myObject");
+    JSObjectSetProperty(context, globalObject, propertyName, newObject, 0, nullptr);
+
+    check(JSEvaluateScript(context, propertyName, globalObject, nullptr, 1, nullptr) == newObject, "Setting a property on a custom global object should set the property");
+}
+
 void configureJSCForTesting()
 {
     JSC::Config::configureForTesting();
@@ -747,6 +764,7 @@ int testCAPIViaCpp(const char* filter)
     RUN(markedJSValueArrayAndGC());
     RUN(classDefinitionWithJSSubclass());
     RUN(proxyReturnedWithJSSubclassing());
+    RUN(testJSObjectSetOnGlobalObjectSubclassDefinition());
 
     if (tasks.isEmpty()) {
         dataLogLn("Filtered all tests: ERROR");

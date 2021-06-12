@@ -44,7 +44,7 @@ struct GPUProcessWakeupMessageArguments {
     GPUProcessWakeupReason reason { GPUProcessWakeupReason::Unspecified };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<GPUProcessWakeupMessageArguments> decode(Decoder&);
+    template<class Decoder> static std::optional<GPUProcessWakeupMessageArguments> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -57,27 +57,27 @@ void GPUProcessWakeupMessageArguments::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<GPUProcessWakeupMessageArguments> GPUProcessWakeupMessageArguments::decode(Decoder& decoder)
+std::optional<GPUProcessWakeupMessageArguments> GPUProcessWakeupMessageArguments::decode(Decoder& decoder)
 {
-    Optional<WebCore::DisplayList::ItemBufferIdentifier> itemBufferIdentifier;
+    std::optional<WebCore::DisplayList::ItemBufferIdentifier> itemBufferIdentifier;
     decoder >> itemBufferIdentifier;
     if (!itemBufferIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint64_t> offset;
+    std::optional<uint64_t> offset;
     decoder >> offset;
     if (!offset)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebCore::RenderingResourceIdentifier> destinationImageBufferIdentifier;
+    std::optional<WebCore::RenderingResourceIdentifier> destinationImageBufferIdentifier;
     decoder >> destinationImageBufferIdentifier;
     if (!destinationImageBufferIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<GPUProcessWakeupReason> reason;
+    std::optional<GPUProcessWakeupReason> reason;
     decoder >> reason;
     if (!reason)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *itemBufferIdentifier, *offset, *destinationImageBufferIdentifier, *reason }};
 }

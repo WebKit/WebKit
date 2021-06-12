@@ -85,7 +85,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
     return { };
 }
 
-Optional<OptionSet<ResourceType>> readResourceType(StringView name)
+std::optional<OptionSet<ResourceType>> readResourceType(StringView name)
 {
     if (name == "document")
         return { ResourceType::Document };
@@ -113,25 +113,25 @@ Optional<OptionSet<ResourceType>> readResourceType(StringView name)
         return { ResourceType::Popup };
     if (name == "ping")
         return { ResourceType::Ping };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<OptionSet<LoadType>> readLoadType(StringView name)
+std::optional<OptionSet<LoadType>> readLoadType(StringView name)
 {
     if (name == "first-party")
         return { LoadType::FirstParty };
     if (name == "third-party")
         return { LoadType::ThirdParty };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<OptionSet<LoadContext>> readLoadContext(StringView name)
+std::optional<OptionSet<LoadContext>> readLoadContext(StringView name)
 {
     if (name == "top-frame")
         return { LoadContext::TopFrame };
     if (name == "child-frame")
         return { LoadContext::ChildFrame };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool ResourceLoadInfo::isThirdParty() const

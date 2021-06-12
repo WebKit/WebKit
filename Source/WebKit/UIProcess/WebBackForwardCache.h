@@ -53,6 +53,7 @@ public:
     void pruneToSize(unsigned);
     void removeEntriesForProcess(WebProcessProxy&);
     void removeEntriesForPage(WebPageProxy&);
+    void removeEntriesForPageAndProcess(WebPageProxy&, WebProcessProxy&);
     void removeEntriesForSession(PAL::SessionID);
 
     void addEntry(WebBackForwardListItem&, std::unique_ptr<SuspendedPageProxy>&&);

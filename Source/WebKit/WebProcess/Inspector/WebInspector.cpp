@@ -262,7 +262,7 @@ void WebInspector::timelineRecordingChanged(bool active)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::TimelineRecordingChanged(active), m_page->identifier());
 }
 
-void WebInspector::setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference developerPreference, Optional<bool> overrideValue)
+void WebInspector::setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
 }

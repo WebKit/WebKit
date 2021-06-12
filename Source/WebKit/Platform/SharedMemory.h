@@ -32,7 +32,6 @@
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "Attachment.h"
-#include <wtf/Optional.h>
 #endif
 
 #if OS(WINDOWS)
@@ -90,7 +89,7 @@ public:
 #endif
 #if OS(WINDOWS)
         static void encodeHandle(IPC::Encoder&, HANDLE);
-        static Optional<HANDLE> decodeHandle(IPC::Decoder&);
+        static std::optional<HANDLE> decodeHandle(IPC::Decoder&);
 #endif
     private:
         friend class SharedMemory;
@@ -166,7 +165,7 @@ private:
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    Optional<int> m_fileDescriptor;
+    std::optional<int> m_fileDescriptor;
     bool m_isWrappingMap { false };
 #elif OS(DARWIN)
     mach_port_t m_port { MACH_PORT_NULL };

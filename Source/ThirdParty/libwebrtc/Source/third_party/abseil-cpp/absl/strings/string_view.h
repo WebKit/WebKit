@@ -36,6 +36,7 @@
 #include <limits>
 #include <string>
 
+#include "absl/base/attributes.h"
 #include "absl/base/config.h"
 #include "absl/base/internal/throw_delegate.h"
 #include "absl/base/macros.h"
@@ -180,8 +181,8 @@ class string_view {
 
   template <typename Allocator>
   string_view(  // NOLINT(runtime/explicit)
-      const std::basic_string<char, std::char_traits<char>, Allocator>&
-          str) noexcept
+      const std::basic_string<char, std::char_traits<char>, Allocator>& str
+          ABSL_ATTRIBUTE_LIFETIME_BOUND) noexcept
       // This is implemented in terms of `string_view(p, n)` so `str.size()`
       // doesn't need to be reevaluated after `ptr_` is set.
       : string_view(str.data(), str.size()) {}
@@ -398,12 +399,10 @@ class string_view {
 
   // string_view::compare()
   //
-  // Performs a lexicographical comparison between the `string_view` and
-  // another `absl::string_view`, returning -1 if `this` is less than, 0 if
-  // `this` is equal to, and 1 if `this` is greater than the passed string
-  // view. Note that in the case of data equality, a further comparison is made
-  // on the respective sizes of the two `string_view`s to determine which is
-  // smaller, equal, or greater.
+  // Performs a lexicographical comparison between this `string_view` and
+  // another `string_view` `x`, returning a negative value if `*this` is less
+  // than `x`, 0 if `*this` is equal to `x`, and a positive value if `*this`
+  // is greater than `x`.
   constexpr int compare(string_view x) const noexcept {
     return CompareImpl(length_, x.length_,
                        Min(length_, x.length_) == 0

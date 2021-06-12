@@ -28,7 +28,6 @@
 
 #include "Yarr.h"
 #include "YarrPattern.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
@@ -72,7 +71,7 @@ struct HashTable {
 
 #include "UnicodePatternTables.h"
 
-Optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodePropertyName, WTF::String unicodePropertyValue)
+std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodePropertyName, WTF::String unicodePropertyValue)
 {
     int propertyIndex = -1;
 
@@ -84,12 +83,12 @@ Optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodeP
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
 
     if (propertyIndex == -1)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    return Optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
+    return std::optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }
 
-Optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodePropertyValue)
+std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodePropertyValue)
 {
     int propertyIndex = -1;
 
@@ -98,9 +97,9 @@ Optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodeProper
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
     
     if (propertyIndex == -1)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    return Optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
+    return std::optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }
 
 std::unique_ptr<CharacterClass> createUnicodeCharacterClassFor(BuiltInCharacterClassID unicodeClassID)

@@ -56,94 +56,94 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << idempotentModeAutosizingOnlyHonorsPercentages;
 }
 
-Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
+std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
 {
-    Optional<bool> contentBlockersEnabled;
+    std::optional<bool> contentBlockersEnabled;
     decoder >> contentBlockersEnabled;
     if (!contentBlockersEnabled)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<WebsiteAutoplayPolicy> autoplayPolicy;
+    std::optional<WebsiteAutoplayPolicy> autoplayPolicy;
     decoder >> autoplayPolicy;
     if (!autoplayPolicy)
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if ENABLE(DEVICE_ORIENTATION)
-    Optional<WebCore::DeviceOrientationOrMotionPermissionState> deviceOrientationAndMotionAccessState;
+    std::optional<WebCore::DeviceOrientationOrMotionPermissionState> deviceOrientationAndMotionAccessState;
     decoder >> deviceOrientationAndMotionAccessState;
     if (!deviceOrientationAndMotionAccessState)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
     
-    Optional<OptionSet<WebsiteAutoplayQuirk>> allowedAutoplayQuirks;
+    std::optional<OptionSet<WebsiteAutoplayQuirk>> allowedAutoplayQuirks;
     decoder >> allowedAutoplayQuirks;
     if (!allowedAutoplayQuirks)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<WebCore::CustomHeaderFields>> customHeaderFields;
+    std::optional<Vector<WebCore::CustomHeaderFields>> customHeaderFields;
     decoder >> customHeaderFields;
     if (!customHeaderFields)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebsitePopUpPolicy> popUpPolicy;
+    std::optional<WebsitePopUpPolicy> popUpPolicy;
     decoder >> popUpPolicy;
     if (!popUpPolicy)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> customUserAgent;
+    std::optional<String> customUserAgent;
     decoder >> customUserAgent;
     if (!customUserAgent)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> customUserAgentAsSiteSpecificQuirks;
+    std::optional<String> customUserAgentAsSiteSpecificQuirks;
     decoder >> customUserAgentAsSiteSpecificQuirks;
     if (!customUserAgentAsSiteSpecificQuirks)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> customNavigatorPlatform;
+    std::optional<String> customNavigatorPlatform;
     decoder >> customNavigatorPlatform;
     if (!customNavigatorPlatform)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebsiteMetaViewportPolicy> metaViewportPolicy;
+    std::optional<WebsiteMetaViewportPolicy> metaViewportPolicy;
     decoder >> metaViewportPolicy;
     if (!metaViewportPolicy)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebsiteMediaSourcePolicy> mediaSourcePolicy;
+    std::optional<WebsiteMediaSourcePolicy> mediaSourcePolicy;
     decoder >> mediaSourcePolicy;
     if (!mediaSourcePolicy)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<WebsiteSimulatedMouseEventsDispatchPolicy> simulatedMouseEventsDispatchPolicy;
+    std::optional<WebsiteSimulatedMouseEventsDispatchPolicy> simulatedMouseEventsDispatchPolicy;
     decoder >> simulatedMouseEventsDispatchPolicy;
     if (!simulatedMouseEventsDispatchPolicy)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebsiteLegacyOverflowScrollingTouchPolicy> legacyOverflowScrollingTouchPolicy;
+    std::optional<WebsiteLegacyOverflowScrollingTouchPolicy> legacyOverflowScrollingTouchPolicy;
     decoder >> legacyOverflowScrollingTouchPolicy;
     if (!legacyOverflowScrollingTouchPolicy)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> allowContentChangeObserverQuirk;
+    std::optional<bool> allowContentChangeObserverQuirk;
     decoder >> allowContentChangeObserverQuirk;
     if (!allowContentChangeObserverQuirk)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebCore::AllowsContentJavaScript> allowsContentJavaScript;
+    std::optional<WebCore::AllowsContentJavaScript> allowsContentJavaScript;
     decoder >> allowsContentJavaScript;
     if (!allowsContentJavaScript)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebCore::MouseEventPolicy> mouseEventPolicy;
+    std::optional<WebCore::MouseEventPolicy> mouseEventPolicy;
     decoder >> mouseEventPolicy;
     if (!mouseEventPolicy)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> idempotentModeAutosizingOnlyHonorsPercentages;
+    std::optional<bool> idempotentModeAutosizingOnlyHonorsPercentages;
     decoder >> idempotentModeAutosizingOnlyHonorsPercentages;
     if (!idempotentModeAutosizingOnlyHonorsPercentages)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { {
         WTFMove(*contentBlockersEnabled),

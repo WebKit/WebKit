@@ -48,7 +48,7 @@ bool StackingItem::isStackingContext() const
 
 void StackingItem::addChildStackingItem(std::unique_ptr<StackingItem>&& item)
 {
-    auto zIndex = item->box().style().zIndex().valueOr(0);
+    auto zIndex = item->box().style().zIndex().value_or(0);
     if (zIndex < 0)
         m_negativeZOrderList.append(WTFMove(item));
     else
@@ -58,7 +58,7 @@ void StackingItem::addChildStackingItem(std::unique_ptr<StackingItem>&& item)
 void StackingItem::sortLists()
 {
     auto compareZIndex = [](const std::unique_ptr<StackingItem>& a, const std::unique_ptr<StackingItem>& b) {
-        return a->box().style().zIndex().valueOr(0) < b->box().style().zIndex().valueOr(0);
+        return a->box().style().zIndex().value_or(0) < b->box().style().zIndex().value_or(0);
     };
 
     std::stable_sort(m_positiveZOrderList.begin(), m_positiveZOrderList.end(), compareZIndex);

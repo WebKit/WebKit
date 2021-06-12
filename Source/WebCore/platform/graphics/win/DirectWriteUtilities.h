@@ -52,7 +52,7 @@ IDWriteGdiInterop* gdiInterop();
 
 IDWriteFontCollection1* webProcessFontCollection();
 
-HRESULT addFontFromDataToProcessCollection(const Vector<char>& fontData);
+HRESULT addFontFromDataToProcessCollection(const Vector<uint8_t>& fontData);
 COMPtr<IDWriteFontFamily> fontFamilyForCollection(IDWriteFontCollection*, const Vector<wchar_t>& localeName, const LOGFONT&);
 COMPtr<IDWriteFont> createWithPlatformFont(const LOGFONT&);
 Vector<wchar_t> familyNameForLocale(IDWriteFontFamily*, const Vector<wchar_t>& localeName);

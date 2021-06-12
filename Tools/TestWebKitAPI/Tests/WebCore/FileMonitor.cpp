@@ -101,13 +101,7 @@ static void resetTestState()
 
 static String createCommand(const String& path, const String& payload)
 {
-    StringBuilder command;
-    command.appendLiteral("echo \"");
-    command.append(payload);
-    command.appendLiteral("\" > ");
-    command.append(path);
-
-    return command.toString();
+    return makeString("echo \"", payload, "\" > ", path);
 }
 
 static String readContentsOfFile(const String& path)
@@ -126,7 +120,7 @@ static String readContentsOfFile(const String& path)
     });
 
     // Since we control the test files, we know we only need one read
-    int readBytes = FileSystem::readFromFile(source, reinterpret_cast<char*>(buffer.characters()), bufferSize);
+    int readBytes = FileSystem::readFromFile(source, buffer.characters(), bufferSize);
     if (readBytes < 0)
         return emptyString();
 
@@ -263,11 +257,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
     });
 
     testQueue->dispatch([this] () mutable {
-        StringBuilder command;
-        command.appendLiteral("rm -f ");
-        command.append(tempFilePath());
-
-        auto rc = system(command.toString().utf8().data());
+        auto rc = system(makeString("rm -f ", tempFilePath()).utf8().data());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -320,11 +310,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
     resetTestState();
 
     testQueue->dispatch([this] () mutable {
-        StringBuilder command;
-        command.appendLiteral("rm -f ");
-        command.append(tempFilePath());
-
-        auto rc = system(command.toString().utf8().data());
+        auto rc = system(makeString("rm -f ", tempFilePath()).utf8().data());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -359,11 +345,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
     });
 
     testQueue->dispatch([this] () mutable {
-        StringBuilder command;
-        command.appendLiteral("rm -f ");
-        command.append(tempFilePath());
-
-        auto rc = system(command.toString().utf8().data());
+        auto rc = system(makeString("rm -f ", tempFilePath()).utf8().data());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;

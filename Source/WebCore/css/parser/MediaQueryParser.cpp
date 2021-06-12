@@ -144,7 +144,7 @@ void MediaQueryParser::commitMediaQuery()
     // FIXME-NEWPARSER: Convoluted and awful, but we can't change the MediaQuerySet yet because of the
     // old parser.
     static const NeverDestroyed<String> defaultMediaType { "all"_s };
-    MediaQuery mediaQuery { m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType().valueOr(defaultMediaType), WTFMove(m_mediaQueryData.expressions()) };
+    MediaQuery mediaQuery { m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType().value_or(defaultMediaType), WTFMove(m_mediaQueryData.expressions()) };
     m_mediaQueryData.clear();
     m_querySet->addMediaQuery(WTFMove(mediaQuery));
 }
@@ -288,7 +288,7 @@ MediaQueryParser::MediaQueryData::MediaQueryData(MediaQueryParserContext context
 void MediaQueryParser::MediaQueryData::clear()
 {
     m_restrictor = MediaQuery::None;
-    m_mediaType = WTF::nullopt;
+    m_mediaType = std::nullopt;
     m_mediaFeature = String();
     m_expressions.clear();
 }

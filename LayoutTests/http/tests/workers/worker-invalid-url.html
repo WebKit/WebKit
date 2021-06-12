@@ -1,6 +1,6 @@
 <html>
 <body>
-<p>Test worker invalid url exceptions. Should print two "PASS" statements.</p>
+<p>Test worker invalid url exceptions. Should print one "PASS" statement.</p>
 <div id=result></div>
 <script>
 if (window.testRunner)
@@ -19,16 +19,6 @@ try {
         log("PASS: Got security error.");
     else
         log("FAIL: Got error code " + error.code + ". Expected error code 18.");
-}
-
-try {
-    new Worker("");
-    log("FAIL: No exception throw when accessing an invalid url.");
-} catch (error) {
-    if (error.code == 12)
-        log("PASS: Got syntax error.");
-    else
-        log("FAIL: Got error code " + error.code + ". Expected error code 12.");
 }
 </script>
 </body>

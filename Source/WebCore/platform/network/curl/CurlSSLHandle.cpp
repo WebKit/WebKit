@@ -82,13 +82,13 @@ void CurlSSLHandle::setClientCertificateInfo(const String& hostName, const Strin
     m_allowedClientHosts.set(hostName, ClientCertificate { certificate, key });
 }
 
-Optional<CurlSSLHandle::ClientCertificate> CurlSSLHandle::getSSLClientCertificate(const String& hostName) const
+std::optional<CurlSSLHandle::ClientCertificate> CurlSSLHandle::getSSLClientCertificate(const String& hostName) const
 {
     Locker locker { m_allowedClientHostsLock };
 
     auto it = m_allowedClientHosts.find(hostName);
     if (it == m_allowedClientHosts.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return it->value;
 }

@@ -62,7 +62,6 @@ public:
     void process(size_t framesToProcess) override;
     void initialize() override;
     void uninitialize() override;
-    void didBecomeMarkedForDeletion() override;
 
     size_t bufferSize() const { return m_bufferSize; }
 
@@ -102,7 +101,6 @@ private:
     unsigned m_numberOfOutputChannels;
 
     RefPtr<AudioBus> m_internalInputBus;
-    RefPtr<PendingActivity<ScriptProcessorNode>> m_pendingActivity;
     bool m_hasAudioProcessEventListener { false };
 };
 

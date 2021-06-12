@@ -38,14 +38,14 @@ class TextEncoding;
 struct FormDataElement {
     struct EncodedFileData;
     struct EncodedBlobData;
-    using Data = Variant<Vector<char>, EncodedFileData, EncodedBlobData>;
+    using Data = Variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData>;
 
     FormDataElement() = default;
     explicit FormDataElement(Data&& data)
         : data(WTFMove(data)) { }
-    explicit FormDataElement(Vector<char>&& array)
+    explicit FormDataElement(Vector<uint8_t>&& array)
         : data(WTFMove(array)) { }
-    FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, Optional<WallTime> expectedFileModificationTime)
+    FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
     explicit FormDataElement(const URL& blobURL)
         : data(EncodedBlobData { blobURL }) { }
@@ -59,12 +59,12 @@ struct FormDataElement {
     {
         encoder << data;
     }
-    template<typename Decoder> static Optional<FormDataElement> decode(Decoder& decoder)
+    template<typename Decoder> static std::optional<FormDataElement> decode(Decoder& decoder)
     {
-        Optional<Data> data;
+        std::optional<Data> data;
         decoder >> data;
         if (!data)
-            return WTF::nullopt;
+            return std::nullopt;
         return FormDataElement(WTFMove(*data));
     }
 
@@ -72,7 +72,7 @@ struct FormDataElement {
         String filename;
         int64_t fileStart { 0 };
         int64_t fileLength { 0 };
-        Optional<WallTime> expectedFileModificationTime;
+        std::optional<WallTime> expectedFileModificationTime;
 
         bool fileModificationTimeMatchesExpectation() const;
 
@@ -92,27 +92,27 @@ struct FormDataElement {
         {
             encoder << filename << fileStart << fileLength << expectedFileModificationTime;
         }
-        template<typename Decoder> static Optional<EncodedFileData> decode(Decoder& decoder)
+        template<typename Decoder> static std::optional<EncodedFileData> decode(Decoder& decoder)
         {
-            Optional<String> filename;
+            std::optional<String> filename;
             decoder >> filename;
             if (!filename)
-                return WTF::nullopt;
+                return std::nullopt;
             
-            Optional<int64_t> fileStart;
+            std::optional<int64_t> fileStart;
             decoder >> fileStart;
             if (!fileStart)
-                return WTF::nullopt;
+                return std::nullopt;
             
-            Optional<int64_t> fileLength;
+            std::optional<int64_t> fileLength;
             decoder >> fileLength;
             if (!fileLength)
-                return WTF::nullopt;
+                return std::nullopt;
             
-            Optional<Optional<WallTime>> expectedFileModificationTime;
+            std::optional<std::optional<WallTime>> expectedFileModificationTime;
             decoder >> expectedFileModificationTime;
             if (!expectedFileModificationTime)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{
                 WTFMove(*filename),
@@ -135,12 +135,12 @@ struct FormDataElement {
         {
             encoder << url;
         }
-        template<typename Decoder> static Optional<EncodedBlobData> decode(Decoder& decoder)
+        template<typename Decoder> static std::optional<EncodedBlobData> decode(Decoder& decoder)
         {
-            Optional<URL> url;
+            std::optional<URL> url;
             decoder >> url;
             if (!url)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{ WTFMove(*url) }};
         }
@@ -193,7 +193,7 @@ public:
     WEBCORE_EXPORT static Ref<FormData> create();
     WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
     WEBCORE_EXPORT static Ref<FormData> create(const CString&);
-    static Ref<FormData> create(Vector<char>&&);
+    static Ref<FormData> create(Vector<uint8_t>&&);
     static Ref<FormData> create(const Vector<char>&);
     static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = FormURLEncoded);
@@ -212,10 +212,10 @@ public:
 
     WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath);
-    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, Optional<WallTime> expectedModificationTime);
+    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime);
     WEBCORE_EXPORT void appendBlob(const URL& blobURL);
 
-    WEBCORE_EXPORT Vector<char> flatten() const; // omits files
+    WEBCORE_EXPORT Vector<uint8_t> flatten() const; // omits files
     String flattenToString() const; // omits files
 
     // Resolve all blob references so we only have file and data.
@@ -271,7 +271,7 @@ private:
     bool m_alwaysStream { false };
     Vector<char> m_boundary;
     bool m_containsPasswordData { false };
-    mutable Optional<uint64_t> m_lengthInBytes;
+    mutable std::optional<uint64_t> m_lengthInBytes;
 };
 
 inline bool operator==(const FormData& a, const FormData& b)

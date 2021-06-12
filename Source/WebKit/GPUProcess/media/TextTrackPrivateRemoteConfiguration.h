@@ -71,77 +71,77 @@ struct TextTrackPrivateRemoteConfiguration {
     }
 
     template <class Decoder>
-    static Optional<TextTrackPrivateRemoteConfiguration> decode(Decoder& decoder)
+    static std::optional<TextTrackPrivateRemoteConfiguration> decode(Decoder& decoder)
     {
-        Optional<AtomString> trackId;
+        std::optional<AtomString> trackId;
         decoder >> trackId;
         if (!trackId)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<AtomString> label;
+        std::optional<AtomString> label;
         decoder >> label;
         if (!label)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<AtomString> language;
+        std::optional<AtomString> language;
         decoder >> language;
         if (!language)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<AtomString> inBandMetadataTrackDispatchType;
+        std::optional<AtomString> inBandMetadataTrackDispatchType;
         decoder >> inBandMetadataTrackDispatchType;
         if (!inBandMetadataTrackDispatchType)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<MediaTime> startTimeVariance;
+        std::optional<MediaTime> startTimeVariance;
         decoder >> startTimeVariance;
         if (!startTimeVariance)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<int> trackIndex;
+        std::optional<int> trackIndex;
         decoder >> trackIndex;
         if (!trackIndex)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<WebCore::InbandTextTrackPrivate::CueFormat> cueFormat;
+        std::optional<WebCore::InbandTextTrackPrivate::CueFormat> cueFormat;
         decoder >> cueFormat;
         if (!cueFormat)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<WebCore::InbandTextTrackPrivate::Kind> kind;
+        std::optional<WebCore::InbandTextTrackPrivate::Kind> kind;
         decoder >> kind;
         if (!kind)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isClosedCaptions;
+        std::optional<bool> isClosedCaptions;
         decoder >> isClosedCaptions;
         if (!isClosedCaptions)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isSDH;
+        std::optional<bool> isSDH;
         decoder >> isSDH;
         if (!isSDH)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> containsOnlyForcedSubtitles;
+        std::optional<bool> containsOnlyForcedSubtitles;
         decoder >> containsOnlyForcedSubtitles;
         if (!containsOnlyForcedSubtitles)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isMainProgramContent;
+        std::optional<bool> isMainProgramContent;
         decoder >> isMainProgramContent;
         if (!isMainProgramContent)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isEasyToRead;
+        std::optional<bool> isEasyToRead;
         decoder >> isEasyToRead;
         if (!isEasyToRead)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isDefault;
+        std::optional<bool> isDefault;
         decoder >> isDefault;
         if (!isDefault)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*trackId),

@@ -41,7 +41,7 @@ public:
     virtual void ref() const = 0;
     virtual void deref() const = 0;
 
-    virtual void dataReceivedThroughContentFilter(const char*, int) = 0;
+    virtual void dataReceivedThroughContentFilter(const uint8_t*, int) = 0;
     virtual ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) = 0;
     virtual void cancelMainResourceLoadForContentFilter(const ResourceError&) = 0;
     virtual void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&) = 0;

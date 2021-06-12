@@ -80,14 +80,14 @@ void ArgumentCoder<WebKit::DocumentEditingContext::Range>::encode(Encoder& encod
     encoder << range.length;
 }
 
-Optional<WebKit::DocumentEditingContext::Range> ArgumentCoder<WebKit::DocumentEditingContext::Range>::decode(Decoder& decoder)
+std::optional<WebKit::DocumentEditingContext::Range> ArgumentCoder<WebKit::DocumentEditingContext::Range>::decode(Decoder& decoder)
 {
     WebKit::DocumentEditingContext::Range range;
 
     if (!decoder.decode(range.location))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(range.length))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return range;
 }
@@ -98,17 +98,17 @@ void ArgumentCoder<WebKit::DocumentEditingContext::TextRectAndRange>::encode(Enc
     encoder << rect.range;
 }
 
-Optional<WebKit::DocumentEditingContext::TextRectAndRange> ArgumentCoder<WebKit::DocumentEditingContext::TextRectAndRange>::decode(Decoder& decoder)
+std::optional<WebKit::DocumentEditingContext::TextRectAndRange> ArgumentCoder<WebKit::DocumentEditingContext::TextRectAndRange>::decode(Decoder& decoder)
 {
     WebKit::DocumentEditingContext::TextRectAndRange rect;
 
     if (!decoder.decode(rect.rect))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<WebKit::DocumentEditingContext::Range> range;
+    std::optional<WebKit::DocumentEditingContext::Range> range;
     decoder >> range;
     if (!range)
-        return WTF::nullopt;
+        return std::nullopt;
     rect.range = *range;
 
     return rect;
@@ -127,48 +127,48 @@ void ArgumentCoder<WebKit::DocumentEditingContext>::encode(Encoder& encoder, con
     encoder << context.textRects;
 }
 
-Optional<WebKit::DocumentEditingContext> ArgumentCoder<WebKit::DocumentEditingContext>::decode(Decoder& decoder)
+std::optional<WebKit::DocumentEditingContext> ArgumentCoder<WebKit::DocumentEditingContext>::decode(Decoder& decoder)
 {
     WebKit::DocumentEditingContext context;
 
-    Optional<WebCore::AttributedString> contextBefore;
+    std::optional<WebCore::AttributedString> contextBefore;
     decoder >> contextBefore;
     if (!contextBefore)
-        return WTF::nullopt;
+        return std::nullopt;
     context.contextBefore = *contextBefore;
 
-    Optional<WebCore::AttributedString> selectedText;
+    std::optional<WebCore::AttributedString> selectedText;
     decoder >> selectedText;
     if (!selectedText)
-        return WTF::nullopt;
+        return std::nullopt;
     context.selectedText = *selectedText;
 
-    Optional<WebCore::AttributedString> contextAfter;
+    std::optional<WebCore::AttributedString> contextAfter;
     decoder >> contextAfter;
     if (!contextAfter)
-        return WTF::nullopt;
+        return std::nullopt;
     context.contextAfter = *contextAfter;
 
-    Optional<WebCore::AttributedString> markedText;
+    std::optional<WebCore::AttributedString> markedText;
     decoder >> markedText;
     if (!markedText)
-        return WTF::nullopt;
+        return std::nullopt;
     context.markedText = *markedText;
 
-    Optional<WebCore::AttributedString> annotatedText;
+    std::optional<WebCore::AttributedString> annotatedText;
     decoder >> annotatedText;
     if (!annotatedText)
-        return WTF::nullopt;
+        return std::nullopt;
     context.annotatedText = *annotatedText;
 
-    Optional<WebKit::DocumentEditingContext::Range> selectedRangeInMarkedText;
+    std::optional<WebKit::DocumentEditingContext::Range> selectedRangeInMarkedText;
     decoder >> selectedRangeInMarkedText;
     if (!selectedRangeInMarkedText)
-        return WTF::nullopt;
+        return std::nullopt;
     context.selectedRangeInMarkedText = *selectedRangeInMarkedText;
 
     if (!decoder.decode(context.textRects))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return context;
 }
@@ -182,26 +182,26 @@ void ArgumentCoder<WebKit::DocumentEditingContextRequest>::encode(Encoder& encod
     encoder << request.textInputContext;
 }
 
-Optional<WebKit::DocumentEditingContextRequest> ArgumentCoder<WebKit::DocumentEditingContextRequest>::decode(Decoder& decoder)
+std::optional<WebKit::DocumentEditingContextRequest> ArgumentCoder<WebKit::DocumentEditingContextRequest>::decode(Decoder& decoder)
 {
     WebKit::DocumentEditingContextRequest request;
 
     if (!decoder.decode(request.options))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(request.surroundingGranularity))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(request.granularityCount))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(request.rect))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<WebCore::ElementContext>> optionalTextInputContext;
+    std::optional<std::optional<WebCore::ElementContext>> optionalTextInputContext;
     decoder >> optionalTextInputContext;
     if (!optionalTextInputContext)
-        return WTF::nullopt;
+        return std::nullopt;
 
     request.textInputContext = optionalTextInputContext.value();
 

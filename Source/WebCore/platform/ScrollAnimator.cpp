@@ -188,6 +188,11 @@ unsigned ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) cons
 {
     return m_scrollController.activeScrollSnapIndexForAxis(axis);
 }
+
+void ScrollAnimator::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
+{
+    return m_scrollController.setActiveScrollSnapIndexForAxis(axis, index);
+}
 #endif
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
@@ -270,10 +275,6 @@ void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 #if ENABLE(CSS_SCROLL_SNAP)
     auto scrollOffset = m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition()));
     m_scrollController.setActiveScrollSnapIndicesForOffset(scrollOffset);
-    if (m_scrollController.activeScrollSnapIndexDidChange()) {
-        m_scrollableArea.setCurrentHorizontalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
-        m_scrollableArea.setCurrentVerticalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
-    }
 #endif
 }
 
@@ -288,9 +289,14 @@ void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-void ScrollAnimator::updateScrollSnapState()
+void ScrollAnimator::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& info)
 {
-    m_scrollController.updateScrollSnapState(m_scrollableArea);
+    m_scrollController.setSnapOffsetsInfo(info);
+}
+
+const LayoutScrollSnapOffsetsInfo* ScrollAnimator::snapOffsetsInfo() const
+{
+    return m_scrollController.snapOffsetsInfo();
 }
 
 FloatPoint ScrollAnimator::scrollOffset() const
@@ -421,7 +427,7 @@ float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis
     if (!m_scrollController.usesScrollSnap())
         return newOffset;
 
-    Optional<float> originalOffset;
+    std::optional<float> originalOffset;
     float velocity = 0.;
     if (method == ScrollSnapPointSelectionMethod::Directional) {
         FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());

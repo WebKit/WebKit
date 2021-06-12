@@ -172,11 +172,14 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     case DisplayType::InlineBlock:
         return createRenderer<RenderBlockFlow>(element, WTFMove(style));
     case DisplayType::ListItem:
-        return createRenderer<RenderListItem>(element, WTFMove(style));
+        // <summary> elements with display:list-item should not be rendered as list items because
+        // they'd end up with two markers before the text (one from summary element and the other as
+        // a list item). Let them fallthrough in that case so they will create a RenderFlexibleBox.
+        if (creationType == CreateAllRenderers)
+            return createRenderer<RenderListItem>(element, WTFMove(style));
+        FALLTHROUGH;
     case DisplayType::Flex:
     case DisplayType::InlineFlex:
-    case DisplayType::WebKitFlex:
-    case DisplayType::WebKitInlineFlex:
         return createRenderer<RenderFlexibleBox>(element, WTFMove(style));
     case DisplayType::Grid:
     case DisplayType::InlineGrid:

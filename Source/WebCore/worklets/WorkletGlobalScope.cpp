@@ -155,7 +155,7 @@ ReferrerPolicy WorkletGlobalScope::referrerPolicy() const
     return ReferrerPolicy::NoReferrer;
 }
 
-void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(!isMainThread());
     script()->loadAndEvaluateModule(moduleURL, credentials, WTFMove(completionHandler));

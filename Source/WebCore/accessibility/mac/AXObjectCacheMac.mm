@@ -736,7 +736,7 @@ CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerR
 
 // TextMarkerRange <-> SimpleRange conversion.
 
-AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const Optional<SimpleRange>& range, bool isStart)
+AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::optional<SimpleRange>& range, bool isStart)
 {
     ASSERT(isMainThread());
     if (!cache || !range)
@@ -750,7 +750,7 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const Optiona
     return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }
 
-AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const Optional<SimpleRange>& range)
+AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::optional<SimpleRange>& range)
 {
     ASSERT(isMainThread());
     if (!cache)
@@ -761,16 +761,16 @@ AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const Option
     return textMarkerRangeFromMarkers(startTextMarker, endTextMarker).autorelease();
 }
 
-Optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextMarkerRangeRef textMarkerRange)
+std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextMarkerRangeRef textMarkerRange)
 {
     ASSERT(isMainThread());
     if (!cache || !textMarkerRange)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto startTextMarker = AXTextMarkerRangeStart(textMarkerRange);
     auto endTextMarker = AXTextMarkerRangeEnd(textMarkerRange);
     if (!startTextMarker || !endTextMarker)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CharacterOffset startCharacterOffset = characterOffsetForTextMarker(cache, startTextMarker.get());
     CharacterOffset endCharacterOffset = characterOffsetForTextMarker(cache, endTextMarker.get());

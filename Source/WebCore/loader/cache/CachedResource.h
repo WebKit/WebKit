@@ -45,7 +45,6 @@ class CachedResourceHandleBase;
 class CachedResourceLoader;
 class CachedResourceRequest;
 class CookieJar;
-class LoadTiming;
 class MemoryCache;
 class NetworkLoadMetrics;
 class SecurityOrigin;
@@ -113,7 +112,7 @@ public:
     virtual String encoding() const { return String(); }
     virtual const TextResourceDecoder* textResourceDecoder() const { return nullptr; }
     virtual void updateBuffer(SharedBuffer&);
-    virtual void updateData(const char* data, unsigned length);
+    virtual void updateData(const uint8_t* data, unsigned length);
     virtual void finishLoading(SharedBuffer*, const NetworkLoadMetrics&);
     virtual void error(CachedResource::Status);
 
@@ -134,7 +133,7 @@ public:
     static bool shouldUsePingLoad(Type type) { return type == Type::Beacon || type == Type::Ping; }
 
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
-    void setLoadPriority(const Optional<ResourceLoadPriority>&);
+    void setLoadPriority(const std::optional<ResourceLoadPriority>&);
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);
@@ -309,6 +308,8 @@ protected:
 
 private:
     class Callback;
+
+    void deleteThis();
 
     bool addClientToSet(CachedResourceClient&);
 

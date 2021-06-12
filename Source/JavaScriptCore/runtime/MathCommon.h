@@ -27,7 +27,6 @@
 
 #include "CPU.h"
 #include <cmath>
-#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -178,15 +177,15 @@ ALWAYS_INLINE constexpr UCPUStrictInt32 toUCPUStrictInt32(int32_t value)
     return static_cast<UCPUStrictInt32>(static_cast<uint32_t>(value));
 }
 
-inline Optional<double> safeReciprocalForDivByConst(double constant)
+inline std::optional<double> safeReciprocalForDivByConst(double constant)
 {
     // No "weird" numbers (NaN, Denormal, etc).
     if (!constant || !std::isnormal(constant))
-        return WTF::nullopt;
+        return std::nullopt;
 
     int exponent;
     if (std::frexp(constant, &exponent) != 0.5)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Note that frexp() returns the value divided by two
     // so we to offset this exponent by one.
@@ -195,7 +194,7 @@ inline Optional<double> safeReciprocalForDivByConst(double constant)
     // A double exponent is between -1022 and 1023.
     // Nothing we can do to invert 1023.
     if (exponent == 1023)
-        return WTF::nullopt;
+        return std::nullopt;
 
     double reciprocal = std::ldexp(1, -exponent);
     ASSERT(std::isnormal(reciprocal));

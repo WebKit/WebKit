@@ -28,15 +28,14 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "MediaSessionAction.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
 struct MediaSessionActionDetails {
     MediaSessionAction action = MediaSessionAction::Play;
-    Optional<double> seekOffset;
-    Optional<double> seekTime;
-    Optional<bool> fastSeek;
+    std::optional<double> seekOffset;
+    std::optional<double> seekTime;
+    std::optional<bool> fastSeek;
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
     String trackIdentifier;
 #endif

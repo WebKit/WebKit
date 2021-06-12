@@ -242,16 +242,6 @@ static void checkURLArgument(NSURL *url)
     _configuration->setSourceApplicationSecondaryIdentifier(identifier);
 }
 
-- (void)setAttributedBundleIdentifier:(NSString *)identifier
-{
-    _configuration->setAttributedBundleIdentifier(identifier);
-}
-
-- (NSString *)attributedBundleIdentifier
-{
-    return _configuration->attributedBundleIdentifier();
-}
-
 - (NSURL *)applicationCacheDirectory
 {
     return [NSURL fileURLWithPath:_configuration->applicationCacheDirectory() isDirectory:YES];

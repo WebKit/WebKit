@@ -46,6 +46,7 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
     m_identifier = deviceInfo.identifier;
     m_supportsStereoRendering = deviceInfo.supportsStereoRendering;
     m_supportsOrientationTracking = deviceInfo.supportsOrientationTracking;
+    m_recommendedResolution = deviceInfo.recommendedResolution;
     if (!deviceInfo.features.isEmpty())
         setEnabledFeatures(SessionMode::ImmersiveVr, deviceInfo.features);
 }
@@ -88,9 +89,9 @@ void XRDeviceProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& call
         m_xrSystem->requestFrame(WTFMove(callback));
 }
 
-Optional<PlatformXR::LayerHandle> XRDeviceProxy::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
+std::optional<PlatformXR::LayerHandle> XRDeviceProxy::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
-    return m_xrSystem ? m_xrSystem->createLayerProjection(width, height, alpha) : WTF::nullopt;
+    return m_xrSystem ? m_xrSystem->createLayerProjection(width, height, alpha) : std::nullopt;
 }
 
 void XRDeviceProxy::submitFrame(Vector<PlatformXR::Device::Layer>&&)

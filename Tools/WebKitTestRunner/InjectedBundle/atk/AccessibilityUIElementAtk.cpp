@@ -566,7 +566,7 @@ String attributesOfElement(AccessibilityUIElement* element)
     builder.append(element->role()->string(), '\n');
 
     // For the parent we print its role and its name, if available.
-    builder.appendLiteral("AXParent: ");
+    builder.append("AXParent: ");
     RefPtr<AccessibilityUIElement> parent = element->parentElement();
     AtkObject* atkParent = parent ? parent->platformUIElement().get() : nullptr;
     if (atkParent) {
@@ -575,7 +575,7 @@ String attributesOfElement(AccessibilityUIElement* element)
         if (parentName && parentName[0])
             builder.append(": ", parentName);
     } else
-        builder.appendLiteral("(null)");
+        builder.append("(null)");
     builder.append('\n');
 
     builder.append("AXChildren: ", element->childrenCount(), '\n');
@@ -1094,7 +1094,7 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     if (atkAttributeName.startsWith("row") || atkAttributeName.startsWith("col")) {
         String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, atkAttributeName);
         if (!attributeValue.isEmpty())
-            return parseIntegerAllowingTrailingJunk<int>(attributeValue).valueOr(0);
+            return parseIntegerAllowingTrailingJunk<int>(attributeValue).value_or(0);
     }
 
     return 0;
@@ -1394,7 +1394,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
         return JSStringCreateWithCharacters(0, 0);
 
     StringBuilder builder;
-    builder.appendLiteral("AXHelp: ");
+    builder.append("AXHelp: ");
 
     for (guint targetCount = 0; targetCount < targetList->len; targetCount++) {
         if (AtkObject* target = static_cast<AtkObject*>(g_ptr_array_index(targetList, targetCount))) {
@@ -1587,7 +1587,7 @@ bool AccessibilityUIElement::isIndeterminate() const
 
 int AccessibilityUIElement::hierarchicalLevel() const
 {
-    return parseIntegerAllowingTrailingJunk<int>(getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "level")).valueOr(0);
+    return parseIntegerAllowingTrailingJunk<int>(getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "level")).value_or(0);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()

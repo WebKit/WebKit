@@ -196,15 +196,15 @@ struct WebProcessCreationParameters {
     CString implementationLibraryName;
 #endif
 
-    Optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
+    std::optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
     
 #if PLATFORM(IOS)
     SandboxExtension::HandleArray compilerServiceExtensionHandles;
 #endif
 
-    Optional<SandboxExtension::Handle> containerManagerExtensionHandle;
-    Optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
-    Optional<SandboxExtension::Handle> launchServicesExtensionHandle;
+    std::optional<SandboxExtension::Handle> containerManagerExtensionHandle;
+    std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
+    std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
 
     SandboxExtension::HandleArray diagnosticsExtensionHandles;
 #if PLATFORM(IOS_FAMILY)
@@ -228,7 +228,7 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(COCOA)
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    Optional<SandboxExtension::HandleArray> preferencesExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> preferencesExtensionHandles;
 #endif
 #endif
 

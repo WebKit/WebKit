@@ -167,7 +167,7 @@ public:
 private:
     inline void* callbackContext() const { return reinterpret_cast<void*>(m_objectID); }
 
-    static CheckedLock mapLock;
+    static Lock mapLock;
     static HashMap<uintptr_t, AVFWrapper*>& map() WTF_REQUIRES_LOCK(mapLock);
     static AVFWrapper* avfWrapperForCallbackContext(void*) WTF_REQUIRES_LOCK(mapLock);
     void addToMap();
@@ -1416,7 +1416,7 @@ AVFWrapper::~AVFWrapper()
     m_avPlayer = 0;
 }
 
-CheckedLock AVFWrapper::mapLock;
+Lock AVFWrapper::mapLock;
 HashMap<uintptr_t, AVFWrapper*>& AVFWrapper::map()
 {
     static HashMap<uintptr_t, AVFWrapper*>& map = *new HashMap<uintptr_t, AVFWrapper*>;

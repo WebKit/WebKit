@@ -452,10 +452,10 @@ static void setContainerAndOffsetForRange(Node* node, unsigned offset, Node*& co
     }
 }
 
-Optional<SimpleRange> HTMLTextFormControlElement::selection() const
+std::optional<SimpleRange> HTMLTextFormControlElement::selection() const
 {
     if (!renderer() || !isTextField() || !hasCachedSelection())
-        return WTF::nullopt;
+        return std::nullopt;
 
     unsigned start = m_cachedSelectionStart;
     unsigned end = m_cachedSelectionEnd;
@@ -463,7 +463,7 @@ Optional<SimpleRange> HTMLTextFormControlElement::selection() const
     ASSERT(start <= end);
     auto innerText = innerTextElement();
     if (!innerText)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!innerText->firstChild())
         return SimpleRange { { *innerText, 0 }, { *innerText, 0 } };
@@ -489,7 +489,7 @@ Optional<SimpleRange> HTMLTextFormControlElement::selection() const
     }
 
     if (!startNode || !endNode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return SimpleRange { { *startNode, start }, { *endNode, end } };
 }
@@ -681,9 +681,9 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
     return index;
 }
 
-static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
+static void getNextSoftBreak(LegacyRootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
 {
-    RootInlineBox* next;
+    LegacyRootInlineBox* next;
     for (; line; line = next) {
         next = line->nextRootBox();
         if (next && !line->endsWithBreak()) {
@@ -715,7 +715,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 
     Node* breakNode;
     unsigned breakOffset;
-    RootInlineBox* line = renderer->firstRootBox();
+    LegacyRootInlineBox* line = renderer->firstRootBox();
     if (!line)
         return value();
 
@@ -803,7 +803,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
     textBlockStyle.setUnicodeBidi(parentStyle.unicodeBidi());
 
     if (auto innerText = innerTextElement()) {
-        if (const StyleProperties* properties = innerText->presentationAttributeStyle()) {
+        if (const StyleProperties* properties = innerText->presentationalHintStyle()) {
             RefPtr<CSSValue> value = properties->getPropertyCSSValue(CSSPropertyWebkitUserModify);
             if (is<CSSPrimitiveValue>(value))
                 textBlockStyle.setUserModify(downcast<CSSPrimitiveValue>(*value));

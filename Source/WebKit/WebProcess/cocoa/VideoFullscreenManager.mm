@@ -464,7 +464,7 @@ void VideoFullscreenManager::willExitFullscreen(PlaybackSessionContextIdentifier
     });
 }
 
-void VideoFullscreenManager::didEnterFullscreen(PlaybackSessionContextIdentifier contextId, Optional<WebCore::FloatSize> size)
+void VideoFullscreenManager::didEnterFullscreen(PlaybackSessionContextIdentifier contextId, std::optional<WebCore::FloatSize> size)
 {
     LOG(Fullscreen, "VideoFullscreenManager::didEnterFullscreen(%p, %x)", this, contextId);
 
@@ -477,7 +477,7 @@ void VideoFullscreenManager::didEnterFullscreen(PlaybackSessionContextIdentifier
     if (!videoElement)
         return;
 
-    videoElement->didEnterFullscreenOrPictureInPicture(size.valueOr(WebCore::FloatSize()));
+    videoElement->didEnterFullscreenOrPictureInPicture(size.value_or(WebCore::FloatSize()));
 
     if (interface->targetIsFullscreen() || interface->fullscreenStandby())
         return;

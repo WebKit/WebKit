@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <LocalAuthentication/LocalAuthentication.h>
+#import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -1524,9 +1525,9 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimun)
     EXPECT_EQ(result.pubKeyCredParams[0].type, WebCore::PublicKeyCredentialType::PublicKey);
     EXPECT_EQ(result.pubKeyCredParams[0].alg, -7);
 
-    EXPECT_EQ(result.timeout, WTF::nullopt);
+    EXPECT_EQ(result.timeout, std::nullopt);
     EXPECT_EQ(result.excludeCredentials.size(), 0lu);
-    EXPECT_EQ(result.authenticatorSelection, WTF::nullopt);
+    EXPECT_EQ(result.authenticatorSelection, std::nullopt);
     EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
     EXPECT_TRUE(result.extensions->appid.isNull());
     EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
@@ -1577,7 +1578,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
     EXPECT_EQ(result.excludeCredentials[0].idVector.size(), sizeof(identifier));
     EXPECT_EQ(memcmp(result.excludeCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
 
-    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, WTF::nullopt);
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, std::nullopt);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, false);
     EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Preferred);
 
@@ -1798,7 +1799,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
     auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
     auto result = [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options.get()];
 
-    EXPECT_EQ(result.timeout, WTF::nullopt);
+    EXPECT_EQ(result.timeout, std::nullopt);
     EXPECT_TRUE(result.rpId.isNull());
     EXPECT_EQ(result.allowCredentials.size(), 0lu);
     EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);

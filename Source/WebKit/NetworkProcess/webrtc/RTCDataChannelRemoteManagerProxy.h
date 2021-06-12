@@ -60,7 +60,7 @@ private:
     void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t amount);
 
     Ref<WorkQueue> m_queue;
-    HashMap<WebCore::ProcessIdentifier, Ref<IPC::Connection>> m_webProcessConnections;
+    HashMap<WebCore::ProcessIdentifier, IPC::Connection::UniqueID> m_webProcessConnections;
 };
 
 } // namespace WebKit

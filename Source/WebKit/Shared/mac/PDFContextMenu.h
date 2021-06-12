@@ -41,37 +41,37 @@ struct PDFContextMenuItem {
         encoder << title << enabled << separator << state << hasAction << tag;
     }
     
-    template<class Decoder> static Optional<PDFContextMenuItem> decode(Decoder& decoder)
+    template<class Decoder> static std::optional<PDFContextMenuItem> decode(Decoder& decoder)
     {
-        Optional<String> title;
+        std::optional<String> title;
         decoder >> title;
         if (!title)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> enabled;
+        std::optional<bool> enabled;
         decoder >> enabled;
         if (!enabled)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> separator;
+        std::optional<bool> separator;
         decoder >> separator;
         if (!separator)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<int> state;
+        std::optional<int> state;
         decoder >> state;
         if (!state)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> hasAction;
+        std::optional<bool> hasAction;
         decoder >> hasAction;
         if (!hasAction)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<int> tag;
+        std::optional<int> tag;
         decoder >> tag;
         if (!tag)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return { { WTFMove(*title), WTFMove(*enabled), WTFMove(*separator), WTFMove(*state), WTFMove(*hasAction), WTFMove(*tag) } };
     }
@@ -80,29 +80,29 @@ struct PDFContextMenuItem {
 struct PDFContextMenu {
     WebCore::IntPoint point;
     Vector<PDFContextMenuItem> items;
-    Optional<int> openInPreviewIndex;
+    std::optional<int> openInPreviewIndex;
     
     template<class Encoder> void encode(Encoder& encoder) const
     {
         encoder << point << items << openInPreviewIndex;
     }
     
-    template<class Decoder> static Optional<PDFContextMenu> decode(Decoder& decoder)
+    template<class Decoder> static std::optional<PDFContextMenu> decode(Decoder& decoder)
     {
-        Optional<WebCore::IntPoint> point;
+        std::optional<WebCore::IntPoint> point;
         decoder >> point;
         if (!point)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Vector<PDFContextMenuItem>> items;
+        std::optional<Vector<PDFContextMenuItem>> items;
         decoder >> items;
         if (!items)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Optional<int>> openInPreviewIndex;
+        std::optional<std::optional<int>> openInPreviewIndex;
         decoder >> openInPreviewIndex;
         if (!openInPreviewIndex)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*point),

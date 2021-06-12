@@ -123,6 +123,11 @@ async function addTriggerableAndCreateTask(name, webkitRevisions)
     await createAnalysisTask(name, webkitRevisions);
 }
 
+function assertOrderOfRequests(requests, expectedOrder)
+{
+    assert.deepEqual(requests.map(request => request.order()), expectedOrder);
+}
+
 describe('/privileged-api/add-build-requests', function() {
     prepareServerTest(this, 'node');
     beforeEach(() => {
@@ -134,7 +139,8 @@ describe('/privileged-api/add-build-requests', function() {
         const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
         const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
         let result = await PrivilegedAPI.sendRequest('create-test-group',
-            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), needsNotification: false, repetitionCount: 2, revisionSets});
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: false, repetitionCount: 2, revisionSets, commitSet: null});
         const insertedGroupId = result['testGroupId'];
 
         await PrivilegedAPI.sendRequest('update-test-group', {'group': insertedGroupId, mayNeedMoreRequests: true});
@@ -144,15 +150,17 @@ describe('/privileged-api/add-build-requests', function() {
         const group = testGroups[0];
         assert.strictEqual(group.id(), insertedGroupId);
         assert.strictEqual(group.mayNeedMoreRequests(), true);
-        assert.strictEqual(parseInt(group.repetitionCount()), 2);
-        assert.strictEqual(parseInt(group.initialRepetitionCount()), 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(+group.repetitionCountForCommitSet(commitSet), 2);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
 
         await PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2});
 
         const updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
         assert.strictEqual(updatedGroups.length, 1);
-        assert.strictEqual(parseInt(updatedGroups[0].repetitionCount()), 4);
-        assert.strictEqual(parseInt(updatedGroups[0].initialRepetitionCount()), 2);
+        for (const commitSet of updatedGroups[0].requestedCommitSets())
+            assert.strictEqual(+updatedGroups[0].repetitionCountForCommitSet(commitSet), 4);
+        assert.strictEqual(+updatedGroups[0].initialRepetitionCount(), 2);
         assert.strictEqual(group.mayNeedMoreRequests(), true);
         for (const commitSet of updatedGroups[0].requestedCommitSets()) {
             const buildRequests = updatedGroups[0].requestsForCommitSet(commitSet);
@@ -174,10 +182,308 @@ describe('/privileged-api/add-build-requests', function() {
         const group = testGroups[0];
         assert.strictEqual(group.id(), insertedGroupId);
         assert.strictEqual(group.mayNeedMoreRequests(), false);
-        assert.strictEqual(parseInt(group.repetitionCount()), 2);
-        assert.strictEqual(parseInt(group.initialRepetitionCount()), 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(+group.repetitionCountForCommitSet(commitSet), 2);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
         await group.updateHiddenFlag(true);
 
         await assertThrows('CannotAddToHiddenTestGroup', async () => await PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2}))
+    });
+
+    it('should reject with "CommitSetNotSupportedForAlternatingRepetitionType" when adding build requests for one commit set in an alternating test group', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group', {
+            name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+            needsNotification: false, repetitionCount: 2, repetitionType: 'alternating', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        await PrivilegedAPI.sendRequest('update-test-group', {'group': insertedGroupId, mayNeedMoreRequests: true});
+
+        const ignoreCache = true;
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), true);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'alternating');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(+group.repetitionCountForCommitSet(commitSet), 2);
+
+        const firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 2]);
+        const secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [1, 3]);
+
+        await assertThrows('CommitSetNotSupportedForAlternatingRepetitionType', () => {
+            return PrivilegedAPI.sendRequest('add-build-requests',
+                {group: insertedGroupId, addCount: 2, commitSet: secondCommitSet.id()})
+        });
+    });
+
+    it('should be able to build requests for first commit set with order shifted in a sequential test group', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), repetitionCount: 2,
+            test: MockData.someTestId(), needsNotification: false, repetitionType: 'sequential', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const ignoreCache = true;
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(testGroups.length, 1);
+        let group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(+group.repetitionCountForCommitSet(commitSet), 2);
+
+        let firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1]);
+        let secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [2, 3]);
+
+        await PrivilegedAPI.sendRequest('add-build-requests',
+            {group: insertedGroupId, addCount: 2, commitSet: firstCommitSet.id()});
+
+        const updatedGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(updatedGroups.length, 1);
+        group = updatedGroups[0];
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+
+        firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1, 2, 3]);
+        secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [4, 5]);
+    });
+
+    it('should not modify the order of preceding build requests when adding new build requests in a sequential test group', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), repetitionCount: 2,
+             test: MockData.someTestId(), needsNotification: false, repetitionType: 'sequential', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const ignoreCache = true;
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(testGroups.length, 1);
+        let group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(+group.repetitionCountForCommitSet(commitSet), 2);
+
+        let firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1]);
+        let secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [2, 3]);
+
+        await PrivilegedAPI.sendRequest('add-build-requests',
+            {group: insertedGroupId, addCount: 2, commitSet: secondCommitSet.id()});
+
+        const updatedGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(updatedGroups.length, 1);
+        group = updatedGroups[0];
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+
+        firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1]);
+        secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [2, 3, 4, 5]);
+    });
+
+    it('should shift the order of following build requests when adding retry for a specific commit set in a sequential test group with 3 commit sets', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}},
+            {[webkit.id()]: {revision: '192736'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), repetitionCount: 2,
+            test: MockData.someTestId(), needsNotification: false, repetitionType: 'sequential', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const ignoreCache = true;
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(testGroups.length, 1);
+        let group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 3);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(+group.repetitionCountForCommitSet(commitSet), 2);
+
+        let firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1]);
+        let secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [2, 3]);
+        let thirdCommitSet = group.requestedCommitSets()[2];
+        assertOrderOfRequests(group.requestsForCommitSet(thirdCommitSet), [4, 5]);
+
+        await PrivilegedAPI.sendRequest('add-build-requests',
+            {group: insertedGroupId, addCount: 2, commitSet: firstCommitSet.id()});
+
+        const updatedGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(updatedGroups.length, 1);
+        group = updatedGroups[0];
+        assert.strictEqual(+updatedGroups[0].initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 3);
+
+        firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1, 2, 3]);
+        secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [4, 5]);
+        thirdCommitSet = group.requestedCommitSets()[2];
+        assertOrderOfRequests(group.requestsForCommitSet(thirdCommitSet), [6, 7]);
+    });
+
+    it('should shift the order of build requests when adding retry for all commit sets in a sequential test group with 3 commit sets', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}},
+            {[webkit.id()]: {revision: '192736'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), repetitionCount: 2,
+            test: MockData.someTestId(), needsNotification: false, repetitionType: 'sequential', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const ignoreCache = true;
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        assert.strictEqual(testGroups.length, 1);
+        let group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 3);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(+group.repetitionCountForCommitSet(commitSet), 2);
+
+        let firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1]);
+        let secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [2, 3]);
+        let thirdCommitSet = group.requestedCommitSets()[2];
+        assertOrderOfRequests(group.requestsForCommitSet(thirdCommitSet), [4, 5]);
+
+        await PrivilegedAPI.sendRequest('add-build-requests',
+            {group: insertedGroupId, addCount: 2});
+
+        const updatedGroups = await TestGroup.fetchForTask(result['taskId'], ignoreCache);
+        group = updatedGroups[0];
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 3);
+
+        firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1, 2, 3]);
+        secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [4, 5, 6, 7]);
+        thirdCommitSet = group.requestedCommitSets()[2];
+        assertOrderOfRequests(group.requestsForCommitSet(thirdCommitSet), [8, 9, 10, 11]);
+    });
+
+    it('should reject with "NoCommitSetInTestGroup" if commit set is not in a sequential test group', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+            needsNotification: false, repetitionCount: 2, repetitionType: 'sequential', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        await PrivilegedAPI.sendRequest('update-test-group', {'group': insertedGroupId, mayNeedMoreRequests: true});
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), true);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(group.repetitionCountForCommitSet(commitSet), 2);
+
+        const firstCommitSet = group.requestedCommitSets()[0];
+        assertOrderOfRequests(group.requestsForCommitSet(firstCommitSet), [0, 1]);
+        const secondCommitSet = group.requestedCommitSets()[1];
+        assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [2, 3]);
+
+        const commitSet = firstCommitSet.id() + secondCommitSet.id() + 1;
+        await assertThrows('NoCommitSetInTestGroup', () => {
+            return PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2, commitSet});
+        });
+    });
+
+    it('should reject with "InvalidCommitSet" if commit set id is not an integer for a sequential test group', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+            needsNotification: false, repetitionCount: 2, repetitionType: 'sequential', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        await PrivilegedAPI.sendRequest('update-test-group', {'group': insertedGroupId, mayNeedMoreRequests: true});
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), true);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(group.repetitionCountForCommitSet(commitSet), 2);
+
+        const commitSet = 'invalid';
+        await assertThrows('InvalidCommitSet', () => {
+            return PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2, commitSet});
+        });
+    });
+
+    it('should reject with "InvalidCommitSet" if commit set id is not an integer for an alternating test group', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+            needsNotification: false, repetitionCount: 2, repetitionType: 'alternating', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        await PrivilegedAPI.sendRequest('update-test-group', {'group': insertedGroupId, mayNeedMoreRequests: true});
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), true);
+        assert.strictEqual(+group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'alternating');
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        for (const commitSet of group.requestedCommitSets())
+            assert.strictEqual(group.repetitionCountForCommitSet(commitSet), 2);
+
+        const commitSet = 'invalid';
+        await assertThrows('InvalidCommitSet', () => {
+            return PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2, commitSet})
+        });
     });
 });

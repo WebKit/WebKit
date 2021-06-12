@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CollectionScope.h"
-#include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>
@@ -41,7 +40,7 @@ struct GCRequest {
     {
     }
     
-    GCRequest(Optional<CollectionScope> scope)
+    GCRequest(std::optional<CollectionScope> scope)
         : scope(scope)
     {
     }
@@ -50,7 +49,7 @@ struct GCRequest {
     
     void dump(PrintStream&) const;
     
-    Optional<CollectionScope> scope;
+    std::optional<CollectionScope> scope;
     RefPtr<SharedTask<void()>> didFinishEndPhase;
 };
 

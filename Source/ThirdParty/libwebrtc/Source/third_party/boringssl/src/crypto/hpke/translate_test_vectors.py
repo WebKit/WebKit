@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 # Copyright (c) 2020, Google Inc.
 #
@@ -30,6 +30,8 @@ import sys
 HPKE_MODE_BASE = 0
 HPKE_MODE_PSK = 1
 HPKE_DHKEM_X25519_SHA256 = 0x0020
+HPKE_HKDF_SHA256 = 0x0001
+HPKE_AEAD_EXPORT_ONLY = 0xffff
 
 
 def read_test_vectors_and_generate_code(json_file_in_path, test_file_out_path):
@@ -47,8 +49,10 @@ def read_test_vectors_and_generate_code(json_file_in_path, test_file_out_path):
   lines = []
   for test in test_vecs:
     # Filter out test cases that we don't use.
-    if (test["mode"] not in [HPKE_MODE_BASE, HPKE_MODE_PSK] or
-        test["kem_id"] != HPKE_DHKEM_X25519_SHA256):
+    if (test["mode"] != HPKE_MODE_BASE or
+        test["kem_id"] != HPKE_DHKEM_X25519_SHA256 or
+        test["aead_id"] == HPKE_AEAD_EXPORT_ONLY or
+        test["kdf_id"] != HPKE_HKDF_SHA256):
       continue
 
     keys = ["mode", "kdf_id", "aead_id", "info", "skRm", "skEm", "pkRm", "pkEm"]
@@ -67,7 +71,7 @@ def read_test_vectors_and_generate_code(json_file_in_path, test_file_out_path):
 
     for i, exp in enumerate(test["exports"]):
       lines.append("# exports[{}]".format(i))
-      for key in ("exportContext", "exportLength", "exportValue"):
+      for key in ("exporter_context", "L", "exported_value"):
         lines.append("{} = {}".format(key, str(exp[key])))
 
     lines.append("")

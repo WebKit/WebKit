@@ -28,7 +28,6 @@
 #if ENABLE(WEB_RTC)
 
 #include "Event.h"
-#include <wtf/Optional.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -41,17 +40,17 @@ public:
 
     struct Init : EventInit {
         String address;
-        Optional<uint16_t> port;
+        std::optional<uint16_t> port;
         String url;
         uint16_t errorCode { 0 };
         String errorText;
     };
 
     static Ref<RTCPeerConnectionIceErrorEvent> create(const AtomString& type, Init&&);
-    static Ref<RTCPeerConnectionIceErrorEvent> create(CanBubble, IsCancelable, String&& address, Optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
+    static Ref<RTCPeerConnectionIceErrorEvent> create(CanBubble, IsCancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
 
     const String& address() const { return m_address; }
-    Optional<uint16_t> port() const { return m_port; }
+    std::optional<uint16_t> port() const { return m_port; }
     const String& url() const { return m_url; }
     uint16_t errorCode() const { return m_errorCode; }
     const String& errorText() const { return m_errorText; }
@@ -59,10 +58,10 @@ public:
     virtual EventInterface eventInterface() const;
 
 private:
-    RTCPeerConnectionIceErrorEvent(const AtomString& type, CanBubble, IsCancelable, String&& address, Optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
+    RTCPeerConnectionIceErrorEvent(const AtomString& type, CanBubble, IsCancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
 
     String m_address;
-    Optional<uint16_t> m_port;
+    std::optional<uint16_t> m_port;
     String m_url;
     uint16_t m_errorCode { 0 };
     String m_errorText;

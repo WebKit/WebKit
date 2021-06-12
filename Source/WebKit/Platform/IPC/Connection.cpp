@@ -57,6 +57,8 @@ const size_t maxPendingIncomingMessagesKillingThreshold { 50000 };
 
 std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
+Lock Connection::s_connectionMapLock;
+
 struct Connection::WaitForMessageState {
     WaitForMessageState(MessageName messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
         : messageName(messageName)
@@ -108,7 +110,7 @@ private:
     BinarySemaphore m_waitForSyncReplySemaphore;
 
     // Protects m_didScheduleDispatchMessagesWorkSet and m_messagesToDispatchWhileWaitingForSyncReply.
-    CheckedLock m_lock;
+    Lock m_lock;
 
     // The set of connections for which we've scheduled a call to dispatchMessageAndResetDidScheduleDispatchMessagesForConnection.
     HashSet<RefPtr<Connection>> m_didScheduleDispatchMessagesWorkSet WTF_GUARDED_BY_LOCK(m_lock);
@@ -268,13 +270,13 @@ Ref<Connection> Connection::createClientConnection(Identifier identifier, Client
     return adoptRef(*new Connection(identifier, false, client));
 }
 
-static HashMap<IPC::Connection::UniqueID, Connection*>& allConnections()
+HashMap<IPC::Connection::UniqueID, Connection*>& Connection::connectionMap()
 {
     static NeverDestroyed<HashMap<IPC::Connection::UniqueID, Connection*>> map;
     return map;
 }
 
-static CheckedLock asyncReplyHandlerMapLock;
+static Lock asyncReplyHandlerMapLock;
 static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap() WTF_REQUIRES_LOCK(asyncReplyHandlerMapLock)
 {
     ASSERT(asyncReplyHandlerMapLock.isHeld());
@@ -291,7 +293,11 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
 {
     ASSERT(RunLoop::isMain());
-    allConnections().add(m_uniqueID, this);
+
+    {
+        Locker locker { s_connectionMapLock };
+        connectionMap().add(m_uniqueID, this);
+    }
 
     platformInitialize(identifier);
 }
@@ -301,15 +307,21 @@ Connection::~Connection()
     ASSERT(RunLoop::isMain());
     ASSERT(!isValid());
 
-    allConnections().remove(m_uniqueID);
+    {
+        Locker locker { s_connectionMapLock };
+        connectionMap().remove(m_uniqueID);
+    }
 
     clearAsyncReplyHandlers(*this);
 }
 
-Connection* Connection::connection(UniqueID uniqueID)
+// WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function accesses connectionMap() without locking.
+// It is safe because this function is only called on the main thread and Connection objects are only
+// constructed / destroyed on the main thread.
+Connection* Connection::connection(UniqueID uniqueID) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(RunLoop::isMain());
-    return allConnections().get(uniqueID);
+    return connectionMap().get(uniqueID);
 }
 
 void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)

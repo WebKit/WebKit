@@ -94,11 +94,11 @@ public:
 
     VM* vm() { return m_vm; }
 
-    Optional<RefPtr<Thread>> ownerThread() const
+    std::optional<RefPtr<Thread>> ownerThread() const
     {
         if (m_hasOwnerThread)
             return m_ownerThread;
-        return WTF::nullopt;
+        return std::nullopt;
     }
     bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread.get() == &Thread::current(); }
 

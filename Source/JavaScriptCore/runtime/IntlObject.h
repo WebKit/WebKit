@@ -94,15 +94,15 @@ inline const LocaleSet& intlPluralRulesAvailableLocales() { return intlAvailable
 inline const LocaleSet& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
 inline const LocaleSet& intlListFormatAvailableLocales() { return intlAvailableLocales(); }
 
-TriState intlBooleanOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName);
-String intlStringOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
-unsigned intlNumberOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
+TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
+String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
+unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 
-using ResolveLocaleOptions = std::array<Optional<String>, numberOfRelevantExtensionKeys>;
+using ResolveLocaleOptions = std::array<std::optional<String>, numberOfRelevantExtensionKeys>;
 using RelevantExtensions = std::array<String, numberOfRelevantExtensionKeys>;
 struct ResolvedLocale {
     String locale;
@@ -130,7 +130,7 @@ bool isStructurallyValidLanguageTag(StringView);
 
 bool isWellFormedCurrencyCode(StringView);
 
-Optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
+std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
 
 struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;

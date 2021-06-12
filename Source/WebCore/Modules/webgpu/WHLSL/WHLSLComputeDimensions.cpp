@@ -32,15 +32,14 @@
 #include "WHLSLPrepare.h"
 #include "WHLSLProgram.h"
 #include "WHLSLVisitor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDefinition& entryPoint)
+std::optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDefinition& entryPoint)
 {
-    Optional<ComputeDimensions> computeDimensions;
+    std::optional<ComputeDimensions> computeDimensions;
 
     for (auto& functionDefinition : program.functionDefinitions()) {
         bool foundNumThreadsFunctionAttribute = false;
@@ -57,7 +56,7 @@ Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDef
             }), functionAttribute);
             if (!success) {
                 // Cannot declare multiple numthread attributes on a single function.
-                return WTF::nullopt;
+                return std::nullopt;
             }
         }
     }

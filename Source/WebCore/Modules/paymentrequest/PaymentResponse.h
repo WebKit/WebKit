@@ -83,7 +83,7 @@ public:
     const String& payerPhone() const { return m_payerPhone; }
     void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
 
-    void complete(Optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
+    void complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
     void retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
     void abortWithException(Exception&&);
     bool hasRetryPromise() const { return !!m_retryPromise; }

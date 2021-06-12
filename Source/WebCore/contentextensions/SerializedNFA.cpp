@@ -36,9 +36,9 @@ namespace ContentExtensions {
 template<typename T>
 bool writeAllToFile(FileSystem::PlatformFileHandle file, const T& container)
 {
-    const char* bytes = reinterpret_cast<const char*>(container.data());
+    auto bytes = reinterpret_cast<const uint8_t*>(container.data());
     size_t bytesLength = container.size() * sizeof(container[0]);
-    const char* end = bytes + bytesLength;
+    auto end = bytes + bytesLength;
     while (bytes < end) {
         auto written = FileSystem::writeToFile(file, bytes, bytesLength);
         if (written == -1)
@@ -49,12 +49,12 @@ bool writeAllToFile(FileSystem::PlatformFileHandle file, const T& container)
     return true;
 }
 
-Optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
+std::optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
 {
     auto file = FileSystem::invalidPlatformFileHandle;
     auto filename = FileSystem::openTemporaryFile("SerializedNFA", file);
     if (!FileSystem::isHandleValid(file))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool wroteSuccessfully = writeAllToFile(file, nfa.nodes)
         && writeAllToFile(file, nfa.transitions)
@@ -64,7 +64,7 @@ Optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
     if (!wroteSuccessfully) {
         FileSystem::closeFile(file);
         FileSystem::deleteFile(filename);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     bool mappedSuccessfully = false;
@@ -72,7 +72,7 @@ Optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
     FileSystem::closeFile(file);
     FileSystem::deleteFile(filename);
     if (!mappedSuccessfully)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Metadata metadata {
         nfa.nodes.size(),

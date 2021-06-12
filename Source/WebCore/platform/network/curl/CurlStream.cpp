@@ -144,7 +144,7 @@ void CurlStream::tryToReceive()
         destroyHandle();
 
     m_scheduler.callClientOnMainThread(m_streamID, [streamID = m_streamID, buffer = WTFMove(receiveBuffer), length = bytesReceived](Client& client) mutable {
-        client.didReceiveData(streamID, reinterpret_cast<const char*>(buffer.get()), length);
+        client.didReceiveData(streamID, buffer.get(), length);
     });
 }
 

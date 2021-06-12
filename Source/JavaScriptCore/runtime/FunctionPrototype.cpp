@@ -54,8 +54,7 @@ void FunctionPrototype::finishCreation(VM& vm, const String& name)
 
 void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction, JSFunction** hasInstanceSymbolFunction)
 {
-    JSFunction* toStringFunction = JSFunction::create(vm, globalObject, 0, vm.propertyNames->toString.string(), functionProtoFuncToString);
-    putDirectWithoutTransition(vm, vm.propertyNames->toString, toStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().toStringPublicName(), functionProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, FunctionToStringIntrinsic);
 
     *applyFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().applyPublicName(), functionPrototypeApplyCodeGenerator(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
     *callFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().callPublicName(), functionPrototypeCallCodeGenerator(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -81,58 +80,7 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
     if (thisValue.inherits<JSFunction>(vm)) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         Integrity::auditStructureID(vm, function->structureID());
-        if (function->isHostOrBuiltinFunction())
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", function->name(vm), "() {\n    [native code]\n}")));
-
-        FunctionExecutable* executable = function->jsExecutable();
-        if (executable->isClass())
-            return JSValue::encode(jsString(vm, executable->classSource().view().toString()));
-
-        String functionHeader;
-        switch (executable->parseMode()) {
-        case SourceParseMode::GeneratorWrapperFunctionMode:
-        case SourceParseMode::GeneratorWrapperMethodMode:
-            functionHeader = "function* ";
-            break;
-
-        case SourceParseMode::NormalFunctionMode:
-        case SourceParseMode::GetterMode:
-        case SourceParseMode::SetterMode:
-        case SourceParseMode::MethodMode:
-        case SourceParseMode::ProgramMode:
-        case SourceParseMode::ModuleAnalyzeMode:
-        case SourceParseMode::ModuleEvaluateMode:
-        case SourceParseMode::GeneratorBodyMode:
-        case SourceParseMode::AsyncGeneratorBodyMode:
-        case SourceParseMode::AsyncFunctionBodyMode:
-        case SourceParseMode::AsyncArrowFunctionBodyMode:
-            functionHeader = "function ";
-            break;
-
-        case SourceParseMode::ArrowFunctionMode:
-        case SourceParseMode::ClassFieldInitializerMode:
-            functionHeader = "";
-            break;
-
-        case SourceParseMode::AsyncFunctionMode:
-        case SourceParseMode::AsyncMethodMode:
-            functionHeader = "async function ";
-            break;
-
-        case SourceParseMode::AsyncArrowFunctionMode:
-            functionHeader = "async ";
-            break;
-
-        case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
-        case SourceParseMode::AsyncGeneratorWrapperMethodMode:
-            functionHeader = "async function* ";
-            break;
-        }
-
-        StringView source = executable->source().provider()->getRange(
-            executable->parametersStartOffset(),
-            executable->parametersStartOffset() + executable->source().length());
-        RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, functionHeader, function->name(vm), source)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(function->toString(globalObject)));
     }
 
     if (thisValue.inherits<InternalFunction>(vm)) {

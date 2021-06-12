@@ -21,8 +21,6 @@ import (
 	"time"
 )
 
-var errNoCertificateAlert = errors.New("tls: no certificate alert")
-
 // A Conn represents a secured connection.
 // It implements the net.Conn interface.
 type Conn struct {
@@ -61,8 +59,11 @@ type Conn struct {
 	// not applicable.
 	curveID CurveID
 	// quicTransportParams contains the QUIC transport params received
-	// by the peer.
+	// by the peer using codepoint 57.
 	quicTransportParams []byte
+	// quicTransportParams contains the QUIC transport params received
+	// by the peer using legacy codepoint 0xffa5.
+	quicTransportParamsLegacy []byte
 
 	clientRandom, serverRandom [32]byte
 	earlyExporterSecret        []byte
@@ -72,6 +73,9 @@ type Conn struct {
 	clientProtocol         string
 	clientProtocolFallback bool
 	usedALPN               bool
+
+	localApplicationSettings, peerApplicationSettings []byte
+	hasApplicationSettings                            bool
 
 	// verify_data values for the renegotiation extension.
 	clientVerify []byte
@@ -114,6 +118,9 @@ type Conn struct {
 	// not full for ExpectPackedEncryptedHandshake. If true, no more
 	// handshake data may be received until the next flight or epoch change.
 	seenHandshakePackEnd bool
+
+	// echAccepted indicates whether ECH was accepted for this connection.
+	echAccepted bool
 
 	tmp [16]byte
 }
@@ -378,22 +385,6 @@ func removePadding(payload []byte) ([]byte, byte) {
 	return payload[:len(payload)-int(toRemove)], good
 }
 
-// removePaddingSSL30 is a replacement for removePadding in the case that the
-// protocol version is SSLv3. In this version, the contents of the padding
-// are random and cannot be checked.
-func removePaddingSSL30(payload []byte) ([]byte, byte) {
-	if len(payload) < 1 {
-		return payload, 0
-	}
-
-	paddingLen := int(payload[len(payload)-1]) + 1
-	if paddingLen > len(payload) {
-		return payload, 0
-	}
-
-	return payload[:len(payload)-paddingLen], 255
-}
-
 func roundUp(a, b int) int {
 	return a + (b-a%b)%b
 }
@@ -476,11 +467,7 @@ func (hc *halfConn) decrypt(b *block) (ok bool, prefixLen int, contentType recor
 				payload = payload[explicitIVLen:]
 			}
 			c.CryptBlocks(payload, payload)
-			if hc.version == VersionSSL30 {
-				payload, paddingGood = removePaddingSSL30(payload)
-			} else {
-				payload, paddingGood = removePadding(payload)
-			}
+			payload, paddingGood = removePadding(payload)
 			b.resize(recordHeaderLen + explicitIVLen + len(payload))
 
 			// note that we still have a timing side-channel in the
@@ -751,7 +738,7 @@ func (hc *halfConn) splitBlock(b *block, n int) (*block, *block) {
 	return b, bb
 }
 
-func (c *Conn) useInTrafficSecret(version uint16, suite *cipherSuite, secret []byte) error {
+func (c *Conn) useInTrafficSecret(level encryptionLevel, version uint16, suite *cipherSuite, secret []byte) error {
 	if c.hand.Len() != 0 {
 		return c.in.setErrorLocked(errors.New("tls: buffered handshake messages on cipher change"))
 	}
@@ -760,6 +747,7 @@ func (c *Conn) useInTrafficSecret(version uint16, suite *cipherSuite, secret []b
 		side = clientWrite
 	}
 	if c.config.Bugs.MockQUICTransport != nil {
+		c.config.Bugs.MockQUICTransport.readLevel = level
 		c.config.Bugs.MockQUICTransport.readSecret = secret
 		c.config.Bugs.MockQUICTransport.readCipherSuite = suite.id
 	}
@@ -768,12 +756,13 @@ func (c *Conn) useInTrafficSecret(version uint16, suite *cipherSuite, secret []b
 	return nil
 }
 
-func (c *Conn) useOutTrafficSecret(version uint16, suite *cipherSuite, secret []byte) {
+func (c *Conn) useOutTrafficSecret(level encryptionLevel, version uint16, suite *cipherSuite, secret []byte) {
 	side := serverWrite
 	if c.isClient {
 		side = clientWrite
 	}
 	if c.config.Bugs.MockQUICTransport != nil {
+		c.config.Bugs.MockQUICTransport.writeLevel = level
 		c.config.Bugs.MockQUICTransport.writeSecret = secret
 		c.config.Bugs.MockQUICTransport.writeCipherSuite = suite.id
 	}
@@ -1032,11 +1021,6 @@ Again:
 		}
 		switch data[0] {
 		case alertLevelWarning:
-			if alert(data[1]) == alertNoCertificate {
-				c.in.freeBlock(b)
-				return errNoCertificateAlert
-			}
-
 			// drop on the floor
 			c.in.freeBlock(b)
 			goto Again
@@ -1111,7 +1095,7 @@ func (c *Conn) sendAlertLocked(level byte, err alert) error {
 // L < c.out.Mutex.
 func (c *Conn) sendAlert(err alert) error {
 	level := byte(alertLevelError)
-	if err == alertNoRenegotiation || err == alertCloseNotify || err == alertNoCertificate {
+	if err == alertNoRenegotiation || err == alertCloseNotify {
 		level = alertLevelWarning
 	}
 	return c.SendAlert(level, err)
@@ -1141,8 +1125,6 @@ func (c *Conn) writeRecord(typ recordType, data []byte) (n int, err error) {
 		msgType := data[0]
 		if c.config.Bugs.SendWrongMessageType != 0 && msgType == c.config.Bugs.SendWrongMessageType {
 			msgType += 42
-		} else if msgType == typeServerHello && c.config.Bugs.SendServerHelloAsHelloRetryRequest {
-			msgType = typeHelloRetryRequest
 		}
 		if msgType != data[0] {
 			data = append([]byte{msgType}, data[1:]...)
@@ -1359,13 +1341,6 @@ func (c *Conn) doReadHandshake() ([]byte, error) {
 // c.in.Mutex < L; c.out.Mutex < L.
 func (c *Conn) readHandshake() (interface{}, error) {
 	data, err := c.doReadHandshake()
-	if err == errNoCertificateAlert {
-		if c.hand.Len() != 0 {
-			// The warning alert may not interleave with a handshake message.
-			return nil, c.in.setErrorLocked(c.sendAlert(alertUnexpectedMessage))
-		}
-		return new(ssl3NoCertificateMsg), nil
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -1382,15 +1357,17 @@ func (c *Conn) readHandshake() (interface{}, error) {
 		m = &serverHelloMsg{
 			isDTLS: c.isDTLS,
 		}
-	case typeHelloRetryRequest:
-		m = new(helloRetryRequestMsg)
 	case typeNewSessionTicket:
 		m = &newSessionTicketMsg{
 			vers:   c.wireVersion,
 			isDTLS: c.isDTLS,
 		}
 	case typeEncryptedExtensions:
-		m = new(encryptedExtensionsMsg)
+		if c.isClient {
+			m = new(encryptedExtensionsMsg)
+		} else {
+			m = new(clientEncryptedExtensionsMsg)
+		}
 	case typeCertificate:
 		m = &certificateMsg{
 			hasRequestContext: c.vers >= VersionTLS13,
@@ -1440,7 +1417,6 @@ func (c *Conn) readHandshake() (interface{}, error) {
 		vers := uint16(data[4])<<8 | uint16(data[5])
 		if vers == VersionTLS12 && bytes.Equal(data[6:38], tls13HelloRetryRequest) {
 			m = new(helloRetryRequestMsg)
-			m.(*helloRetryRequestMsg).isServerHello = true
 		}
 	}
 
@@ -1608,22 +1584,23 @@ func (c *Conn) processTLS13NewSessionTicket(newSessionTicket *newSessionTicketMs
 	}
 
 	session := &ClientSessionState{
-		sessionTicket:      newSessionTicket.ticket,
-		vers:               c.vers,
-		wireVersion:        c.wireVersion,
-		cipherSuite:        cipherSuite.id,
-		masterSecret:       c.resumptionSecret,
-		serverCertificates: c.peerCertificates,
-		sctList:            c.sctList,
-		ocspResponse:       c.ocspResponse,
-		ticketCreationTime: c.config.time(),
-		ticketExpiration:   c.config.time().Add(time.Duration(newSessionTicket.ticketLifetime) * time.Second),
-		ticketAgeAdd:       newSessionTicket.ticketAgeAdd,
-		maxEarlyDataSize:   newSessionTicket.maxEarlyDataSize,
-		earlyALPN:          c.clientProtocol,
+		sessionTicket:            newSessionTicket.ticket,
+		vers:                     c.vers,
+		wireVersion:              c.wireVersion,
+		cipherSuite:              cipherSuite,
+		secret:                   deriveSessionPSK(cipherSuite, c.wireVersion, c.resumptionSecret, newSessionTicket.ticketNonce),
+		serverCertificates:       c.peerCertificates,
+		sctList:                  c.sctList,
+		ocspResponse:             c.ocspResponse,
+		ticketCreationTime:       c.config.time(),
+		ticketExpiration:         c.config.time().Add(time.Duration(newSessionTicket.ticketLifetime) * time.Second),
+		ticketAgeAdd:             newSessionTicket.ticketAgeAdd,
+		maxEarlyDataSize:         newSessionTicket.maxEarlyDataSize,
+		earlyALPN:                c.clientProtocol,
+		hasApplicationSettings:   c.hasApplicationSettings,
+		localApplicationSettings: c.localApplicationSettings,
+		peerApplicationSettings:  c.peerApplicationSettings,
 	}
-
-	session.masterSecret = deriveSessionPSK(cipherSuite, c.wireVersion, c.resumptionSecret, newSessionTicket.ticketNonce)
 
 	cacheKey := clientSessionCacheKey(c.conn.RemoteAddr(), c.config)
 	_, ok := c.config.ClientSessionCache.Get(cacheKey)
@@ -1667,7 +1644,7 @@ func (c *Conn) handlePostHandshakeMessage() error {
 		if c.config.Bugs.RejectUnsolicitedKeyUpdate {
 			return errors.New("tls: unexpected KeyUpdate message")
 		}
-		if err := c.useInTrafficSecret(c.in.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.in.trafficSecret)); err != nil {
+		if err := c.useInTrafficSecret(encryptionApplication, c.in.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.in.trafficSecret)); err != nil {
 			return err
 		}
 		if keyUpdate.keyUpdateRequest == keyUpdateRequested {
@@ -1701,7 +1678,7 @@ func (c *Conn) ReadKeyUpdateACK() error {
 		return errors.New("tls: received invalid KeyUpdate message")
 	}
 
-	return c.useInTrafficSecret(c.in.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.in.trafficSecret))
+	return c.useInTrafficSecret(encryptionApplication, c.in.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.in.trafficSecret))
 }
 
 func (c *Conn) Renegotiate() error {
@@ -1872,6 +1849,7 @@ func (c *Conn) ConnectionState() ConnectionState {
 		state.CipherSuite = c.cipherSuite.id
 		state.PeerCertificates = c.peerCertificates
 		state.VerifiedChains = c.verifiedChains
+		state.OCSPResponse = c.ocspResponse
 		state.ServerName = c.serverName
 		state.ChannelID = c.channelID
 		state.TokenBindingNegotiated = c.tokenBindingNegotiated
@@ -1882,18 +1860,13 @@ func (c *Conn) ConnectionState() ConnectionState {
 		state.PeerSignatureAlgorithm = c.peerSignatureAlgorithm
 		state.CurveID = c.curveID
 		state.QUICTransportParams = c.quicTransportParams
+		state.QUICTransportParamsLegacy = c.quicTransportParamsLegacy
+		state.HasApplicationSettings = c.hasApplicationSettings
+		state.PeerApplicationSettings = c.peerApplicationSettings
+		state.ECHAccepted = c.echAccepted
 	}
 
 	return state
-}
-
-// OCSPResponse returns the stapled OCSP response from the TLS server, if
-// any. (Only valid for client connections.)
-func (c *Conn) OCSPResponse() []byte {
-	c.handshakeMutex.Lock()
-	defer c.handshakeMutex.Unlock()
-
-	return c.ocspResponse
 }
 
 // VerifyHostname checks that the peer certificate chain is valid for
@@ -2015,14 +1988,17 @@ func (c *Conn) SendNewSessionTicket(nonce []byte) error {
 	}
 
 	state := sessionState{
-		vers:               c.vers,
-		cipherSuite:        c.cipherSuite.id,
-		masterSecret:       deriveSessionPSK(c.cipherSuite, c.wireVersion, c.resumptionSecret, nonce),
-		certificates:       peerCertificatesRaw,
-		ticketCreationTime: c.config.time(),
-		ticketExpiration:   c.config.time().Add(time.Duration(m.ticketLifetime) * time.Second),
-		ticketAgeAdd:       uint32(addBuffer[3])<<24 | uint32(addBuffer[2])<<16 | uint32(addBuffer[1])<<8 | uint32(addBuffer[0]),
-		earlyALPN:          []byte(c.clientProtocol),
+		vers:                     c.vers,
+		cipherSuite:              c.cipherSuite.id,
+		secret:                   deriveSessionPSK(c.cipherSuite, c.wireVersion, c.resumptionSecret, nonce),
+		certificates:             peerCertificatesRaw,
+		ticketCreationTime:       c.config.time(),
+		ticketExpiration:         c.config.time().Add(time.Duration(m.ticketLifetime) * time.Second),
+		ticketAgeAdd:             uint32(addBuffer[3])<<24 | uint32(addBuffer[2])<<16 | uint32(addBuffer[1])<<8 | uint32(addBuffer[0]),
+		earlyALPN:                []byte(c.clientProtocol),
+		hasApplicationSettings:   c.hasApplicationSettings,
+		localApplicationSettings: c.localApplicationSettings,
+		peerApplicationSettings:  c.peerApplicationSettings,
 	}
 
 	if !c.config.Bugs.SendEmptySessionTicket {
@@ -2058,7 +2034,7 @@ func (c *Conn) sendKeyUpdateLocked(keyUpdateRequest byte) error {
 	if err := c.flushHandshake(); err != nil {
 		return err
 	}
-	c.useOutTrafficSecret(c.out.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.out.trafficSecret))
+	c.useOutTrafficSecret(encryptionApplication, c.out.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.out.trafficSecret))
 	return nil
 }
 

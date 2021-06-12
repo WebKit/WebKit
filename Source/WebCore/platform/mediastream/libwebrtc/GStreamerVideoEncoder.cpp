@@ -80,11 +80,11 @@ public:
         }));
     }
 
-    static Optional<EncoderDefinition&> definition(EncoderId id)
+    static EncoderDefinition* definition(EncoderId id)
     {
         if (id == None)
-            return { };
-        return singleton()[id];
+            return nullptr;
+        return &singleton()[id];
     }
 };
 
@@ -158,7 +158,7 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, GRefPtr
     auto encoder = Encoders::definition(encoderId);
     ASSERT(encoder);
     if (encoder->parserName)
-        priv->parser = gst_element_factory_make(encoder->parserName, nullptr);
+        priv->parser = makeGStreamerElement(encoder->parserName, nullptr);
 
     encoder->setupEncoder(self);
 
@@ -200,7 +200,7 @@ static void webrtcVideoEncoderSetFormat(WebKitWebrtcVideoEncoder* self, const Gs
     for (const auto& pair : Encoders::singleton()) {
         const auto& encoder = pair.second;
         if (gst_caps_can_intersect(encoder.caps.get(), caps)) {
-            GRefPtr<GstElement> element = gst_element_factory_make(encoder.name, nullptr);
+            GRefPtr<GstElement> element = makeGStreamerElement(encoder.name, nullptr);
             webrtcVideoEncoderSetEncoder(self, WTFMove(element), pair.first);
             return;
         }

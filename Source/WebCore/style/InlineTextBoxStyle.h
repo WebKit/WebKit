@@ -30,7 +30,7 @@
 
 namespace WebCore {
     
-class InlineTextBox;
+class LegacyInlineTextBox;
 class RenderStyle;
 class TextUnderlineOffset;
 
@@ -51,7 +51,7 @@ struct WavyStrokeParameters {
     float step { 0 };
 };
 WavyStrokeParameters getWavyStrokeParameters(float fontSize);
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineTextBox*);
-float computeUnderlineOffset(TextUnderlinePosition, TextUnderlineOffset, const FontMetrics&, const InlineTextBox*, float textDecorationThickness);
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const LegacyInlineTextBox*);
+float computeUnderlineOffset(TextUnderlinePosition, TextUnderlineOffset, const FontMetrics&, const LegacyInlineTextBox*, float textDecorationThickness);
     
 } // namespace WebCore

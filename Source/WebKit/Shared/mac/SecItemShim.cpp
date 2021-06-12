@@ -63,13 +63,13 @@ static WeakPtr<NetworkProcess>& globalNetworkProcess()
     return networkProcess.get();
 }
 
-static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
+static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
-    Optional<SecItemResponseData> response;
+    std::optional<SecItemResponseData> response;
 
     if (RunLoop::isMain()) {
         if (!globalNetworkProcess()->parentProcessConnection()->sendSync(Messages::SecItemShimProxy::SecItemRequestSync(SecItemRequestData(requestType, query, attributesToMatch)), Messages::SecItemShimProxy::SecItemRequestSync::Reply(response), 0))
-            return WTF::nullopt;
+            return std::nullopt;
         return response;
     }
 

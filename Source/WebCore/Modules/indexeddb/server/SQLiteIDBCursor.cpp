@@ -35,7 +35,6 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include <sqlite3.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -100,7 +99,7 @@ SQLiteIDBCursor::~SQLiteIDBCursor()
         m_transaction->closeCursor(*this);
 }
 
-void SQLiteIDBCursor::currentData(IDBGetResult& result, const Optional<IDBKeyPath>& keyPath, ShouldIncludePrefetchedRecords shouldIncludePrefetchedRecords)
+void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBKeyPath>& keyPath, ShouldIncludePrefetchedRecords shouldIncludePrefetchedRecords)
 {
     ASSERT(!m_fetchedRecords.isEmpty());
 
@@ -134,78 +133,32 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const Optional<IDBKeyPat
 
 static String buildPreIndexStatement(bool isDirectionNext)
 {
-    StringBuilder builder;
-
-    builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT) AND value ");
-    if (isDirectionNext)
-        builder.append('>');
-    else
-        builder.append('<');
-
-    builder.appendLiteral(" CAST(? AS TEXT) ORDER BY value");
-    if (!isDirectionNext)
-        builder.appendLiteral(" DESC");
-
-    builder.append(';');
-
-    return builder.toString();
+    return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT) AND value ",
+        isDirectionNext ? '>' : '<', " CAST(? AS TEXT) ORDER BY value", isDirectionNext ? "" : " DESC", ';');
 }
 
 static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
-    StringBuilder builder;
-
-    builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key ");
-    if (!keyRange.lowerKey.isNull() && !keyRange.lowerOpen)
-        builder.appendLiteral(">=");
-    else
-        builder.append('>');
-
-    builder.appendLiteral(" CAST(? AS TEXT) AND key ");
-    if (!keyRange.upperKey.isNull() && !keyRange.upperOpen)
-        builder.appendLiteral("<=");
-    else
-        builder.append('<');
-
-    builder.appendLiteral(" CAST(? AS TEXT) ORDER BY key");
-    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique)
-        builder.appendLiteral(" DESC");
-
-    builder.appendLiteral(", value");
-    if (cursorDirection == IndexedDB::CursorDirection::Prev)
-        builder.appendLiteral(" DESC");
-
-    builder.append(';');
-
-    return builder.toString();
+    return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key ",
+        !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">=" : ">",
+        " CAST(? AS TEXT) AND key ",
+        !keyRange.upperKey.isNull() && !keyRange.upperOpen ? "<=" : "<",
+        " CAST(? AS TEXT) ORDER BY key",
+        cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique ? " DESC" : "",
+        ", value",
+        cursorDirection == IndexedDB::CursorDirection::Prev ? " DESC" : "",
+        ';');
 }
 
 static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
-    StringBuilder builder;
-
-    builder.appendLiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key ");
-
-    if (!keyRange.lowerKey.isNull() && !keyRange.lowerOpen)
-        builder.appendLiteral(">=");
-    else
-        builder.append('>');
-
-    builder.appendLiteral(" CAST(? AS TEXT) AND key ");
-
-    if (!keyRange.upperKey.isNull() && !keyRange.upperOpen)
-        builder.appendLiteral("<=");
-    else
-        builder.append('<');
-
-    builder.appendLiteral(" CAST(? AS TEXT) ORDER BY key");
-
-    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique)
-        builder.appendLiteral(" DESC");
-
-    builder.append(';');
-
-    return builder.toString();
+    return makeString("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key ",
+        !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">=" : ">",
+        " CAST(? AS TEXT) AND key ",
+        !keyRange.upperKey.isNull() && !keyRange.upperOpen ? "<=" : "<",
+        " CAST(? AS TEXT) ORDER BY key",
+        cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique ? " DESC" : "",
+        ';');
 }
 
 bool SQLiteIDBCursor::establishStatement()

@@ -58,7 +58,7 @@ RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& 
 void RemoteCDM::getSupportedConfiguration(CDMKeySystemConfiguration&& configuration, LocalStorageAccess access, SupportedConfigurationCallback&& callback)
 {
     if (!m_factory) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -135,7 +135,7 @@ RefPtr<SharedBuffer> RemoteCDM::sanitizeResponse(const SharedBuffer& response) c
     return response.copy();
 }
 
-Optional<String> RemoteCDM::sanitizeSessionId(const String& sessionId) const
+std::optional<String> RemoteCDM::sanitizeSessionId(const String& sessionId) const
 {
     // This check will be done, later, inside RemoteCDMInstanceSessionProxy::loadSession().
     return sessionId;

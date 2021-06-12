@@ -136,44 +136,6 @@ extern "C" {
 #error "HASH_MAKE_STRING must be defined!"
 #endif
 
-#if defined(DATA_ORDER_IS_BIG_ENDIAN)
-
-#define HOST_c2l(c, l)                     \
-  do {                                     \
-    (l) = (((uint32_t)(*((c)++))) << 24);  \
-    (l) |= (((uint32_t)(*((c)++))) << 16); \
-    (l) |= (((uint32_t)(*((c)++))) << 8);  \
-    (l) |= (((uint32_t)(*((c)++))));       \
-  } while (0)
-
-#define HOST_l2c(l, c)                        \
-  do {                                        \
-    *((c)++) = (uint8_t)(((l) >> 24) & 0xff); \
-    *((c)++) = (uint8_t)(((l) >> 16) & 0xff); \
-    *((c)++) = (uint8_t)(((l) >> 8) & 0xff);  \
-    *((c)++) = (uint8_t)(((l)) & 0xff);       \
-  } while (0)
-
-#elif defined(DATA_ORDER_IS_LITTLE_ENDIAN)
-
-#define HOST_c2l(c, l)                     \
-  do {                                     \
-    (l) = (((uint32_t)(*((c)++))));        \
-    (l) |= (((uint32_t)(*((c)++))) << 8);  \
-    (l) |= (((uint32_t)(*((c)++))) << 16); \
-    (l) |= (((uint32_t)(*((c)++))) << 24); \
-  } while (0)
-
-#define HOST_l2c(l, c)                        \
-  do {                                        \
-    *((c)++) = (uint8_t)(((l)) & 0xff);       \
-    *((c)++) = (uint8_t)(((l) >> 8) & 0xff);  \
-    *((c)++) = (uint8_t)(((l) >> 16) & 0xff); \
-    *((c)++) = (uint8_t)(((l) >> 24) & 0xff); \
-  } while (0)
-
-#endif  // DATA_ORDER
-
 int HASH_UPDATE(HASH_CTX *c, const void *data_, size_t len) {
   const uint8_t *data = data_;
 
@@ -247,13 +209,12 @@ int HASH_FINAL(uint8_t out[HASH_DIGEST_LENGTH], HASH_CTX *c) {
   // Append a 64-bit length to the block and process it.
   uint8_t *p = c->data + HASH_CBLOCK - 8;
 #if defined(DATA_ORDER_IS_BIG_ENDIAN)
-  HOST_l2c(c->Nh, p);
-  HOST_l2c(c->Nl, p);
+  CRYPTO_store_u32_be(p, c->Nh);
+  CRYPTO_store_u32_be(p + 4, c->Nl);
 #elif defined(DATA_ORDER_IS_LITTLE_ENDIAN)
-  HOST_l2c(c->Nl, p);
-  HOST_l2c(c->Nh, p);
+  CRYPTO_store_u32_le(p, c->Nl);
+  CRYPTO_store_u32_le(p + 4, c->Nh);
 #endif
-  assert(p == c->data + HASH_CBLOCK);
   HASH_BLOCK_DATA_ORDER(c->h, c->data, 1);
   c->num = 0;
   OPENSSL_memset(c->data, 0, HASH_CBLOCK);

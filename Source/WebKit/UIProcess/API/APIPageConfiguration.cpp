@@ -79,6 +79,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_applicationManifest = this->m_applicationManifest;
 #endif
     copy->m_shouldRelaxThirdPartyCookieBlocking = this->m_shouldRelaxThirdPartyCookieBlocking;
+    copy->m_attributedBundleIdentifier = this->m_attributedBundleIdentifier;
     for (auto& pair : this->m_urlSchemeHandlers)
         copy->m_urlSchemeHandlers.set(pair.key, pair.value.copyRef());
     copy->m_corsDisablingPatterns = this->m_corsDisablingPatterns;

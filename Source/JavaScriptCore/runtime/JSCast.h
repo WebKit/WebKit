@@ -149,7 +149,7 @@ inline bool inheritsJSTypeImpl(VM& vm, From* from, JSTypeRange range)
 // way to say that we are overloading just the first type in a template list...
 template<typename Target>
 struct InheritsTraits {
-    static constexpr Optional<JSTypeRange> typeRange { WTF::nullopt };
+    static constexpr std::optional<JSTypeRange> typeRange { std::nullopt };
     template<typename From>
     static inline bool inherits(VM& vm, From* from) { return FinalTypeDispatcher<std::is_final<Target>::value>::template inheritsGeneric<Target>(vm, from); }
 };
@@ -157,7 +157,7 @@ struct InheritsTraits {
 #define DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD(className, firstJSType, lastJSType) \
     template<> \
     struct InheritsTraits<className> { \
-        static constexpr Optional<JSTypeRange> typeRange { { static_cast<JSType>(firstJSType), static_cast<JSType>(lastJSType) } }; \
+        static constexpr std::optional<JSTypeRange> typeRange { { static_cast<JSType>(firstJSType), static_cast<JSType>(lastJSType) } }; \
         template<typename From> \
         static inline bool inherits(VM& vm, From* from) { return inheritsJSTypeImpl<className, From>(vm, from, *typeRange); } \
     }; \

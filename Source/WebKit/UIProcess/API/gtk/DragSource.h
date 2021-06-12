@@ -61,7 +61,7 @@ private:
 #else
     GRefPtr<GdkDragContext> m_drag;
 #endif
-    Optional<WebCore::SelectionData> m_selectionData;
+    std::optional<WebCore::SelectionData> m_selectionData;
 };
 
 } // namespace WebKit

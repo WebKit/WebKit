@@ -218,7 +218,7 @@ int main(int argc, char **argv) {
     die("Failed to open %s for reading.", infile_arg);
 
   if (vpx_codec_enc_init(&codec, encoder->codec_interface(), &cfg, 0))
-    die_codec(&codec, "Failed to initialize encoder");
+    die("Failed to initialize encoder");
 
   // Encode frames.
   while (vpx_img_read(&raw, infile)) {

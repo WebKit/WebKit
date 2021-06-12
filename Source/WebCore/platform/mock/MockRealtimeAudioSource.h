@@ -75,8 +75,8 @@ protected:
     unsigned m_channelCount { 2 };
 
 private:
-    Optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    Optional<RealtimeMediaSourceSettings> m_currentSettings;
+    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
     RunLoop::Timer<MockRealtimeAudioSource> m_timer;

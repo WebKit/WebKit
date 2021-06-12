@@ -104,7 +104,7 @@ class EmptyChromeClient : public ChromeClient {
 
     bool hoverSupportedByPrimaryPointingDevice() const final { return false; };
     bool hoverSupportedByAnyAvailablePointingDevice() const final { return false; }
-    Optional<PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const final { return WTF::nullopt; };
+    std::optional<PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const final { return std::nullopt; };
     OptionSet<PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const final { return { }; }
 
     void invalidateRootView(const IntRect&) final { }

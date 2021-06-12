@@ -29,24 +29,23 @@
 
 #include "RTCPriorityType.h"
 #include "ScriptExecutionContextIdentifier.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct RTCDataChannelInit {
-    Optional<bool> ordered;
-    Optional<unsigned short> maxPacketLifeTime;
-    Optional<unsigned short> maxRetransmits;
+    std::optional<bool> ordered;
+    std::optional<unsigned short> maxPacketLifeTime;
+    std::optional<unsigned short> maxRetransmits;
     String protocol;
-    Optional<bool> negotiated;
-    Optional<unsigned short> id;
+    std::optional<bool> negotiated;
+    std::optional<unsigned short> id;
     RTCPriorityType priority { RTCPriorityType::Low };
 
     RTCDataChannelInit isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<RTCDataChannelInit> decode(Decoder&);
+    template<class Decoder> static std::optional<RTCDataChannelInit> decode(Decoder&);
 };
 
 inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() const
@@ -61,19 +60,19 @@ template<class Encoder> void RTCDataChannelInit::encode(Encoder& encoder) const
     encoder << ordered << maxPacketLifeTime << maxRetransmits << protocol << negotiated << id << priority;
 }
 
-template<class Decoder> Optional<RTCDataChannelInit> RTCDataChannelInit::decode(Decoder& decoder)
+template<class Decoder> std::optional<RTCDataChannelInit> RTCDataChannelInit::decode(Decoder& decoder)
 {
-    Optional<bool> ordered;
+    std::optional<bool> ordered;
     decoder >> ordered;
     if (!ordered)
         return { };
 
-    Optional<unsigned short> maxPacketLifeTime;
+    std::optional<unsigned short> maxPacketLifeTime;
     decoder >> maxPacketLifeTime;
     if (!maxPacketLifeTime)
         return { };
 
-    Optional<unsigned short> maxRetransmits;
+    std::optional<unsigned short> maxRetransmits;
     decoder >> maxRetransmits;
     if (!maxRetransmits)
         return { };
@@ -82,17 +81,17 @@ template<class Decoder> Optional<RTCDataChannelInit> RTCDataChannelInit::decode(
     if (!decoder.decode(protocol))
         return { };
 
-    Optional<bool> negotiated;
+    std::optional<bool> negotiated;
     decoder >> negotiated;
     if (!negotiated)
         return { };
 
-    Optional<unsigned short> id;
+    std::optional<unsigned short> id;
     decoder >> id;
     if (!id)
         return { };
 
-    Optional<RTCPriorityType> priority;
+    std::optional<RTCPriorityType> priority;
     decoder >> priority;
     if (!priority)
         return { };
@@ -109,7 +108,7 @@ public:
     virtual void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) = 0;
 
     virtual bool sendStringData(const CString&) = 0;
-    virtual bool sendRawData(const char*, size_t) = 0;
+    virtual bool sendRawData(const uint8_t*, size_t) = 0;
     virtual void close() = 0;
 };
 

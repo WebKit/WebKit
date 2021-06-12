@@ -32,14 +32,17 @@
 #import "CSSStyleDeclaration.h"
 #import "ColorConversion.h"
 #import "ColorSerialization.h"
+#import "DataDetectionResultsStorage.h"
 #import "Editing.h"
 #import "ElementAncestorIterator.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
 #import "HTMLAnchorElement.h"
+#import "HTMLDivElement.h"
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
+#import "ImageExtractionResult.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "QualifiedName.h"
@@ -50,12 +53,12 @@
 #import "TextIterator.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
-#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 #if PLATFORM(MAC)
 template<> struct WTF::CFTypeTrait<DDResultRef> {
@@ -69,7 +72,7 @@ using namespace HTMLNames;
 
 #if PLATFORM(MAC)
 
-static Optional<DetectedItem> detectItem(const VisiblePosition& position, const SimpleRange& contextRange)
+static std::optional<DetectedItem> detectItem(const VisiblePosition& position, const SimpleRange& contextRange)
 {
     if (position.isNull())
         return { };
@@ -86,7 +89,7 @@ static Optional<DetectedItem> detectItem(const VisiblePosition& position, const 
 
     // Find the DDResultRef that intersects the hitTestResult's VisiblePosition.
     DDResultRef mainResult = nullptr;
-    Optional<SimpleRange> mainResultRange;
+    std::optional<SimpleRange> mainResultRange;
     CFIndex resultCount = CFArrayGetCount(results.get());
     for (CFIndex i = 0; i < resultCount; i++) {
         auto result = checked_cf_cast<DDResultRef>(CFArrayGetValueAtIndex(results.get(), i));
@@ -105,7 +108,7 @@ static Optional<DetectedItem> detectItem(const VisiblePosition& position, const 
     if (!view)
         return { };
 
-    auto actionContext = adoptNS([allocDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocDDActionContextInstance() init]);
     [actionContext setAllResults:@[ (__bridge id)mainResult ]];
     [actionContext setMainResult:mainResult];
 
@@ -116,9 +119,9 @@ static Optional<DetectedItem> detectItem(const VisiblePosition& position, const 
     } };
 }
 
-Optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult)
+std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult)
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return { };
 
     Node* node = hitTestResult.innerNonSharedNode();
@@ -129,7 +132,7 @@ Optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTes
         return { };
 
     VisiblePosition position;
-    Optional<SimpleRange> contextRange;
+    std::optional<SimpleRange> contextRange;
 
     if (!is<HTMLTextFormControlElement>(*node)) {
         position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);
@@ -197,18 +200,23 @@ bool DataDetection::canPresentDataDetectorsUIForElement(Element& element)
     auto& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
     if (resultAttribute.isEmpty())
         return false;
-    NSArray *results = element.document().frame()->dataDetectionResults();
+
+    auto* dataDetectionResults = element.document().frame()->dataDetectionResultsIfExists();
+    if (!dataDetectionResults)
+        return false;
+
+    NSArray *results = dataDetectionResults->documentLevelResults();
     if (!results)
         return false;
 
     auto resultIndices = StringView { resultAttribute }.split('/');
     auto indexIterator = resultIndices.begin();
-    auto result = [results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).valueOr(0)] coreResult];
+    auto result = [results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).value_or(0)] coreResult];
 
     // Handle the case of a signature block, where we need to follow the path down one or more subresult levels.
     while (++indexIterator != resultIndices.end()) {
         results = (__bridge NSArray *)PAL::softLink_DataDetectorsCore_DDResultGetSubResults(result);
-        result = (__bridge DDResultRef)results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).valueOr(0)];
+        result = (__bridge DDResultRef)results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).value_or(0)];
     }
 
     return PAL::softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result);
@@ -678,6 +686,20 @@ bool DataDetection::isDataDetectorElement(const Element& element)
 {
     return is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
 }
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+Ref<HTMLElement> DataDetection::createElementForImageOverlay(Document& document, const ImageExtractionDataDetectorInfo& info)
+{
+    auto container = HTMLDivElement::create(document);
+    if (auto frame = makeRefPtr(document.frame())) {
+        auto resultIdentifier = frame->dataDetectionResults().addImageOverlayDataDetectionResult(info.result.get());
+        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, String::number(resultIdentifier.toUInt64()));
+    }
+    return container;
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 } // namespace WebCore
 

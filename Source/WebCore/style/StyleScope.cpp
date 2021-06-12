@@ -652,33 +652,55 @@ void Scope::evaluateMediaQueriesForAppearanceChange()
     });
 }
 
+auto Scope::collectResolverScopes() -> ResolverScopes
+{
+    ASSERT(!m_shadowRoot);
+
+    if (!resolverIfExists())
+        return { };
+
+    ResolverScopes resolverScopes;
+
+    resolverScopes.add(makeRef(*resolverIfExists()), Vector<CheckedPtr<Scope>> { this });
+
+    for (auto* shadowRoot : m_document.inDocumentShadowRoots()) {
+        auto& scope = shadowRoot->styleScope();
+        auto* resolver = scope.resolverIfExists();
+        if (!resolver)
+            continue;
+        resolverScopes.add(makeRef(*resolver), Vector<CheckedPtr<Scope>> { }).iterator->value.append(&scope);
+    }
+    return resolverScopes;
+}
+
 template <typename TestFunction>
 void Scope::evaluateMediaQueries(TestFunction&& testFunction)
 {
-    auto* resolver = resolverIfExists();
-    if (!resolver)
-        return;
+    bool hadChanges = false;
 
-    auto evaluationChanges = testFunction(*resolver);
-    if (evaluationChanges) {
-        switch (evaluationChanges->type) {
-        case DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle: {
-            Invalidator invalidator(evaluationChanges->invalidationRuleSets);
-            invalidator.invalidateStyle(*this);
-            break;
-        }
-        case DynamicMediaQueryEvaluationChanges::Type::ResetStyle:
-            scheduleUpdate(UpdateType::ContentsOrInterpretation);
-            break;
-        }
+    auto resolverScopes = collectResolverScopes();
+    for (auto& [resolver, scopes] : resolverScopes) {
+        auto evaluationChanges = testFunction(resolver.get());
+        if (!evaluationChanges)
+            continue;
+        hadChanges = true;
 
+        for (auto& scope : scopes) {
+            switch (evaluationChanges->type) {
+            case DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle: {
+                Invalidator invalidator(evaluationChanges->invalidationRuleSets);
+                invalidator.invalidateStyle(*scope);
+                break;
+            }
+            case DynamicMediaQueryEvaluationChanges::Type::ResetStyle:
+                scope->scheduleUpdate(UpdateType::ContentsOrInterpretation);
+                break;
+            }
+        }
+    }
+
+    if (hadChanges)
         InspectorInstrumentation::mediaQueryResultChanged(m_document);
-    }
-
-    if (!m_shadowRoot) {
-        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
-            descendantShadowRoot->styleScope().evaluateMediaQueries(testFunction);
-    }
 }
 
 void Scope::didChangeActiveStyleSheetCandidates()

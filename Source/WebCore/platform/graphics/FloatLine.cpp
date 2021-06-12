@@ -62,13 +62,13 @@ const FloatLine FloatLine::extendedToBounds(const FloatRect& bounds) const
     return { left, right };
 }
 
-const Optional<FloatPoint> FloatLine::intersectionWith(const FloatLine& otherLine) const
+const std::optional<FloatPoint> FloatLine::intersectionWith(const FloatLine& otherLine) const
 {
     float denominator = ((m_start.x() - m_end.x()) * (otherLine.start().y() - otherLine.end().y())) - ((m_start.y() - m_end.y()) * (otherLine.start().x() - otherLine.end().x()));
     
     // A denominator of zero indicates the lines are parallel or coincident, which means there is no true intersection.
     if (!denominator)
-        return WTF::nullopt;
+        return std::nullopt;
     
     float thisLineCommonNumeratorFactor = (m_start.x() * m_end.y()) - (m_start.y() * m_end.x());
     float otherLineCommonNumeratorFactor = (otherLine.start().x() * otherLine.end().y()) - (otherLine.start().y() * otherLine.end().x());

@@ -51,7 +51,7 @@ struct WebsiteData {
         Entry isolatedCopy() const;
 
         void encode(IPC::Encoder&) const;
-        static Optional<WebsiteData::Entry> decode(IPC::Decoder&);
+        static std::optional<WebsiteData::Entry> decode(IPC::Decoder&);
     };
 
     WebsiteData isolatedCopy() const;

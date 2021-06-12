@@ -305,21 +305,21 @@ static String stripIndexQueryToMatchStoredValue(const char* originalQuery)
 static const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries()
 {
     static auto expectedTableAndIndexQueries = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
-        { "ObservedDomains"_s, std::make_pair<String, Optional<String>>(createObservedDomain, WTF::nullopt) },
-        { "TopLevelDomains"_s, std::make_pair<String, Optional<String>>(createTopLevelDomains, WTF::nullopt) },
-        { "StorageAccessUnderTopFrameDomains"_s, std::make_pair<String, Optional<String>>(createStorageAccessUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexStorageAccessUnderTopFrameDomains)) },
-        { "TopFrameUniqueRedirectsTo"_s, std::make_pair<String, Optional<String>>(createTopFrameUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsTo)) },
-        { "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, std::make_pair<String, Optional<String>>(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) },
-        { "TopFrameUniqueRedirectsFrom"_s, std::make_pair<String, Optional<String>>(createTopFrameUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsFrom)) },
-        { "TopFrameLinkDecorationsFrom"_s, std::make_pair<String, Optional<String>>(createTopFrameLinkDecorationsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLinkDecorationsFrom)) },
-        { "TopFrameLoadedThirdPartyScripts"_s, std::make_pair<String, Optional<String>>(createTopFrameLoadedThirdPartyScripts, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLoadedThirdPartyScripts)) },
-        { "SubframeUnderTopFrameDomains"_s, std::make_pair<String, Optional<String>>(createSubframeUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubframeUnderTopFrameDomains)) },
-        { "SubresourceUnderTopFrameDomains"_s, std::make_pair<String, Optional<String>>(createSubresourceUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUnderTopFrameDomains)) },
-        { "SubresourceUniqueRedirectsTo"_s, std::make_pair<String, Optional<String>>(createSubresourceUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsTo)) },
-        { "SubresourceUniqueRedirectsFrom"_s, std::make_pair<String, Optional<String>>(createSubresourceUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsFrom)) },
-        { "OperatingDates"_s, std::make_pair<String, Optional<String>>(createOperatingDates, stripIndexQueryToMatchStoredValue(createUniqueIndexOperatingDates)) },
-        { "UnattributedPrivateClickMeasurement"_s, std::make_pair<String, Optional<String>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
-        { "AttributedPrivateClickMeasurement"_s, std::make_pair<String, Optional<String>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) }
+        { "ObservedDomains"_s, std::make_pair<String, std::optional<String>>(createObservedDomain, std::nullopt) },
+        { "TopLevelDomains"_s, std::make_pair<String, std::optional<String>>(createTopLevelDomains, std::nullopt) },
+        { "StorageAccessUnderTopFrameDomains"_s, std::make_pair<String, std::optional<String>>(createStorageAccessUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexStorageAccessUnderTopFrameDomains)) },
+        { "TopFrameUniqueRedirectsTo"_s, std::make_pair<String, std::optional<String>>(createTopFrameUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsTo)) },
+        { "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, std::make_pair<String, std::optional<String>>(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) },
+        { "TopFrameUniqueRedirectsFrom"_s, std::make_pair<String, std::optional<String>>(createTopFrameUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsFrom)) },
+        { "TopFrameLinkDecorationsFrom"_s, std::make_pair<String, std::optional<String>>(createTopFrameLinkDecorationsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLinkDecorationsFrom)) },
+        { "TopFrameLoadedThirdPartyScripts"_s, std::make_pair<String, std::optional<String>>(createTopFrameLoadedThirdPartyScripts, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLoadedThirdPartyScripts)) },
+        { "SubframeUnderTopFrameDomains"_s, std::make_pair<String, std::optional<String>>(createSubframeUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubframeUnderTopFrameDomains)) },
+        { "SubresourceUnderTopFrameDomains"_s, std::make_pair<String, std::optional<String>>(createSubresourceUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUnderTopFrameDomains)) },
+        { "SubresourceUniqueRedirectsTo"_s, std::make_pair<String, std::optional<String>>(createSubresourceUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsTo)) },
+        { "SubresourceUniqueRedirectsFrom"_s, std::make_pair<String, std::optional<String>>(createSubresourceUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsFrom)) },
+        { "OperatingDates"_s, std::make_pair<String, std::optional<String>>(createOperatingDates, stripIndexQueryToMatchStoredValue(createUniqueIndexOperatingDates)) },
+        { "UnattributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
+        { "AttributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) }
     });
     
     return expectedTableAndIndexQueries;
@@ -398,19 +398,19 @@ void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
     }
 }
 
-Optional<Vector<String>> ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema()
+std::optional<Vector<String>> ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema()
 {
     Vector<String> missingTables;
     auto statement = m_database.prepareStatement("SELECT 1 from sqlite_master WHERE type='table' and tbl_name=?"_s);
     if (!statement) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
         if (statement->bindText(1, table) != SQLITE_OK) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema failed to bind, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
-            return WTF::nullopt;
+            return std::nullopt;
         }
         if (statement->step() != SQLITE_ROW) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema schema is missing table: %s", this, table.ascii().data());
@@ -419,7 +419,7 @@ Optional<Vector<String>> ResourceLoadStatisticsDatabaseStore::checkForMissingTab
         statement->reset();
     }
     if (missingTables.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return missingTables;
 }
@@ -470,14 +470,14 @@ TableAndIndexPair ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueri
         return { };
     }
 
-    Optional<String> index;
+    std::optional<String> index;
     if (getIndexStatement->step() == SQLITE_ROW) {
         auto rawIndex = String(getIndexStatement->columnText(0));
         if (!rawIndex.isEmpty())
             index = rawIndex;
     }
 
-    return std::make_pair<String, Optional<String>>(WTFMove(createTableQuery), WTFMove(index));
+    return std::make_pair<String, std::optional<String>>(WTFMove(createTableQuery), WTFMove(index));
 }
 
 bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema()
@@ -992,7 +992,7 @@ bool ResourceLoadStatisticsDatabaseStore::insertObservedDomain(const ResourceLoa
     return true;
 }
 
-bool ResourceLoadStatisticsDatabaseStore::relationshipExists(SQLiteStatementAutoResetScope& statement, Optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const
+bool ResourceLoadStatisticsDatabaseStore::relationshipExists(SQLiteStatementAutoResetScope& statement, std::optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const
 {
     if (!firstDomainID)
         return false;
@@ -1010,7 +1010,7 @@ bool ResourceLoadStatisticsDatabaseStore::relationshipExists(SQLiteStatementAuto
     return !!statement->columnInt(0);
 }
 
-Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const RegistrableDomain& domain) const
+std::optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const RegistrableDomain& domain) const
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1018,11 +1018,11 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
     if (!scopedStatement || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::domainIDFromString failed. Error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     }
     
     if (scopedStatement->step() != SQLITE_ROW)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return scopedStatement->columnInt(0);
 }
@@ -1030,20 +1030,11 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
 String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSet<RegistrableDomain>& domainList)
 {
     StringBuilder builder;
-    
     for (auto& topFrameResource : domainList) {
-        
         // Insert query will fail if top frame domain is not already in the database
-        auto result = ensureResourceStatisticsForRegistrableDomain(topFrameResource);
-        if (result.second) {
-            if (!builder.isEmpty())
-                builder.appendLiteral(", ");
-            builder.append('"');
-            builder.append(topFrameResource.string());
-            builder.append('"');
-        }
+        if (ensureResourceStatisticsForRegistrableDomain(topFrameResource).second)
+            builder.append(builder.isEmpty() ? "" : ", ", '"', topFrameResource.string(), '"');
     }
-
     return builder.toString();
 }
 
@@ -1260,14 +1251,8 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
 static String domainsToString(const HashSet<RegistrableDomain>& domains)
 {
     StringBuilder builder;
-    for (const auto& domainName : domains) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append('"');
-        builder.append(domainName.string());
-        builder.append('"');
-    }
-
+    for (const auto& domainName : domains)
+        builder.append(builder.isEmpty() ? "" : ", ", '"', domainName.string(), '"');
     return builder.toString();
 }
 
@@ -1336,11 +1321,8 @@ template <typename IteratorType>
 static String buildList(const WTF::IteratorRange<IteratorType>& values)
 {
     StringBuilder builder;
-    for (auto domainID : values) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domainID);
-    }
+    for (auto domainID : values)
+        builder.append(builder.isEmpty() ? "" : ", ", domainID);
     return builder.toString();
 }
 
@@ -1385,12 +1367,8 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     }
 
     StringBuilder builder;
-    for (auto value : results.keys()) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(value);
-    }
-
+    for (auto value : results.keys())
+        builder.append(builder.isEmpty() ? "" : ", ", value);
     auto domainIDsOfInterest = builder.toString();
 
     auto subresourceUnderTopFrameDomainsStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
@@ -1472,7 +1450,7 @@ bool ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const TopFrameDomain&
     return relationshipExists(scopedStatement, domainID(subFrameDomain), topFrameDomain);
 }
 
-void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1583,7 +1561,7 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener(Domain
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted for '"_s, domainInNeedOfStorageAccess.string(), "' under opener page from '"_s, openerDomain.string(), "', with user interaction in the opened window."_s));
     }
 
-    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, [](StorageAccessWasGranted) { });
+    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, [](StorageAccessWasGranted) { });
 }
 
 void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
@@ -1607,7 +1585,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& su
     grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, WTFMove(completionHandler));
 }
 
-void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1952,17 +1930,15 @@ void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionH
     std::sort(domains.begin(), domains.end(), WTF::codePointCompareLessThan);
 
     StringBuilder result;
-    result.appendLiteral("Resource load statistics:\n\n");
+    result.append("Resource load statistics:\n\n");
     for (auto& domain : domains)
         resourceToString(result, domain);
 
     auto thirdPartyData = aggregatedThirdPartyData();
     if (!thirdPartyData.isEmpty()) {
         result.append("\nITP Data:\n");
-        for (auto thirdParty : thirdPartyData) {
-            result.append(thirdParty.toString());
-            result.append('\n');
-        }
+        for (auto thirdParty : thirdPartyData)
+            result.append(thirdParty.toString(), '\n');
     }
     completionHandler(result.toString());
 }
@@ -2091,8 +2067,8 @@ Seconds ResourceLoadStatisticsDatabaseStore::getMostRecentlyUpdatedTimestamp(con
 {
     ASSERT(!RunLoop::isMain());
 
-    Optional<unsigned> subFrameDomainID = domainID(subDomain);
-    Optional<unsigned> topFrameDomainID = domainID(topFrameDomain);
+    std::optional<unsigned> subFrameDomainID = domainID(subDomain);
+    std::optional<unsigned> topFrameDomainID = domainID(topFrameDomain);
 
     if (!subFrameDomainID || !topFrameDomainID)
         return Seconds { ResourceLoadStatistics::NoExistingTimestamp };
@@ -2204,7 +2180,7 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const To
     insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
-std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, Optional<unsigned>> ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
+std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, std::optional<unsigned>> ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -2229,7 +2205,7 @@ std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, Optional<unsigned>> 
     if (!result) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain insertObservedDomain failed to complete, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
-        return { AddedRecord::No, WTF::nullopt };
+        return { AddedRecord::No, std::nullopt };
     }
 
     return { AddedRecord::Yes, domainID(domain).value() };
@@ -2540,10 +2516,10 @@ bool ResourceLoadStatisticsDatabaseStore::shouldEnforceSameSiteStrictFor(DomainD
     return false;
 }
 
-Optional<WallTime> ResourceLoadStatisticsDatabaseStore::mostRecentUserInteractionTime(const DomainData& statistic)
+std::optional<WallTime> ResourceLoadStatisticsDatabaseStore::mostRecentUserInteractionTime(const DomainData& statistic)
 {
     if (statistic.mostRecentUserInteractionTime.secondsSinceEpoch().value() <= 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return statistic.mostRecentUserInteractionTime;
 }
@@ -2748,17 +2724,12 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount(const Regi
 
 static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
 {
-    builder.appendLiteral("    ");
-    builder.append(label);
-    builder.appendLiteral(": ");
-    builder.append(flag ? "Yes" : "No");
+    builder.append("    ", label, ": ", flag ? "Yes" : "No");
 }
 
-static void appendNextEntry(StringBuilder& builder, String entry)
+static void appendNextEntry(StringBuilder& builder, const String& entry)
 {
-    builder.appendLiteral("        ");
-    builder.append(entry);
-    builder.append('\n');
+    builder.append("        ", entry, '\n');
 }
 
 String ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID(unsigned domainID) const
@@ -2821,9 +2792,7 @@ void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& 
     if (data->step() != SQLITE_ROW)
         return;
     
-    builder.appendLiteral("    ");
-    builder.append(tableName);
-    builder.appendLiteral(":\n");
+    builder.append("    ", tableName, ":\n");
     
     auto result = getDomainStringFromDomainID(data->columnInt(0));
     appendNextEntry(builder, result);
@@ -2850,18 +2819,16 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
         return;
     }
 
-    builder.appendLiteral("Registrable domain: ");
-    builder.append(domain);
-    builder.append('\n');
+    builder.append("Registrable domain: ", domain, '\n');
     
     // User interaction
     appendBoolean(builder, "hadUserInteraction", m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
     builder.append('\n');
-    builder.appendLiteral("    mostRecentUserInteraction: ");
+    builder.append("    mostRecentUserInteraction: ");
     if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex))))
-        builder.appendLiteral("within 24 hours");
+        builder.append("within 24 hours");
     else
-        builder.appendLiteral("-1");
+        builder.append("-1");
     builder.append('\n');
     appendBoolean(builder, "grandfathered", m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
     builder.append('\n');
@@ -2969,7 +2936,7 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
     }
 
     if (m_operatingDatesSize <= operatingDatesWindowShort - 1)
-        m_shortWindowOperatingDate = WTF::nullopt;
+        m_shortWindowOperatingDate = std::nullopt;
     else {
         if (getOperatingDateWindowStatement->bindInt(1, operatingDatesWindowShort - 1) != SQLITE_OK
             || getOperatingDateWindowStatement->step() != SQLITE_ROW) {
@@ -2981,7 +2948,7 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
     }
 
     if (m_operatingDatesSize <= operatingDatesWindowLong - 1)
-        m_longWindowOperatingDate = WTF::nullopt;
+        m_longWindowOperatingDate = std::nullopt;
     else {
         getOperatingDateWindowStatement->reset();
         if (getOperatingDateWindowStatement->bindInt(1, operatingDatesWindowLong - 1) != SQLITE_OK
@@ -3125,8 +3092,8 @@ PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMe
         if (attributionTriggerData != -1)
             attribution.setAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData { static_cast<uint32_t>(attributionTriggerData), WebCore::PrivateClickMeasurement::Priority(priority) });
 
-        Optional<WallTime> sourceEarliestTimeToSend;
-        Optional<WallTime> destinationEarliestTimeToSend;
+        std::optional<WallTime> sourceEarliestTimeToSend;
+        std::optional<WallTime> destinationEarliestTimeToSend;
         
         // A value of 0.0 indicates that the report has been sent to the respective site.
         if (sourceEarliestTimeToSendValue > 0.0)
@@ -3143,13 +3110,13 @@ PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMe
     return attribution;
 }
 
-std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPrivateClickMeasurement>> ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite)
+std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite)
 {
     auto sourceSiteDomainID = domainID(sourceSite.registrableDomain);
     auto destinationSiteDomainID = domainID(destinationSite.registrableDomain);
 
     if (!sourceSiteDomainID || !destinationSiteDomainID)
-        return std::make_pair(WTF::nullopt, WTF::nullopt);
+        return std::make_pair(std::nullopt, std::nullopt);
 
     auto findUnattributedScopedStatement = this->scopedStatement(m_findUnattributedStatement, findUnattributedQuery, "findPrivateClickMeasurement"_s);
     if (!findUnattributedScopedStatement
@@ -3167,11 +3134,11 @@ std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPriv
         ASSERT_NOT_REACHED();
     }
 
-    Optional<UnattributedPrivateClickMeasurement> unattributedPrivateClickMeasurement;
+    std::optional<UnattributedPrivateClickMeasurement> unattributedPrivateClickMeasurement;
     if (findUnattributedScopedStatement->step() == SQLITE_ROW)
         unattributedPrivateClickMeasurement = buildPrivateClickMeasurementFromDatabase(findUnattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed);
 
-    Optional<AttributedPrivateClickMeasurement> attributedPrivateClickMeasurement;
+    std::optional<AttributedPrivateClickMeasurement> attributedPrivateClickMeasurement;
     if (findAttributedScopedStatement->step() == SQLITE_ROW)
         attributedPrivateClickMeasurement = buildPrivateClickMeasurementFromDatabase(findAttributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed);
 
@@ -3260,7 +3227,7 @@ void ResourceLoadStatisticsDatabaseStore::removeUnattributed(PrivateClickMeasure
     }
 }
 
-Optional<PrivateClickMeasurement::AttributionSecondsUntilSendData> ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData)
+std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData> ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData)
 {
     // We should always clear expired clicks from the database before scheduling an attribution.
     clearExpiredPrivateClickMeasurement();
@@ -3270,7 +3237,7 @@ Optional<PrivateClickMeasurement::AttributionSecondsUntilSendData> ResourceLoadS
             RELEASE_LOG_INFO(PrivateClickMeasurement, "Got an invalid attribution.");
             debugBroadcastConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Got an invalid attribution."_s);
         }
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto data = attributionTriggerData.data;
@@ -3281,7 +3248,7 @@ Optional<PrivateClickMeasurement::AttributionSecondsUntilSendData> ResourceLoadS
         debugBroadcastConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Got an attribution with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "'."_s));
     }
 
-    PrivateClickMeasurement::AttributionSecondsUntilSendData secondsUntilSend { WTF::nullopt, WTF::nullopt };
+    PrivateClickMeasurement::AttributionSecondsUntilSendData secondsUntilSend { std::nullopt, std::nullopt };
 
     auto attribution = findPrivateClickMeasurement(sourceSite, destinationSite);
     auto& previouslyUnattributed = attribution.first;
@@ -3295,7 +3262,7 @@ Optional<PrivateClickMeasurement::AttributionSecondsUntilSendData> ResourceLoadS
         // We should always have a valid secondsUntilSend value for a previouslyUnattributed value because there can be no previous attribution with a higher priority.
         if (!secondsUntilSend.hasValidSecondsUntilSendValues()) {
             ASSERT_NOT_REACHED();
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         if (UNLIKELY(debugModeEnabled())) {
@@ -3318,7 +3285,7 @@ Optional<PrivateClickMeasurement::AttributionSecondsUntilSendData> ResourceLoadS
         if (!previouslyAttributed.value().hasPreviouslyBeenReported()) {
             auto secondsUntilSend = previouslyAttributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData));
             if (!secondsUntilSend.hasValidSecondsUntilSendValues())
-                return WTF::nullopt;
+                return std::nullopt;
 
             insertPrivateClickMeasurement(WTFMove(*previouslyAttributed), PrivateClickMeasurementAttributionType::Attributed);
 
@@ -3330,7 +3297,7 @@ Optional<PrivateClickMeasurement::AttributionSecondsUntilSendData> ResourceLoadS
     }
 
     if (!secondsUntilSend.hasValidSecondsUntilSendValues())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return secondsUntilSend;
 }
@@ -3351,7 +3318,7 @@ Vector<WebCore::PrivateClickMeasurement> ResourceLoadStatisticsDatabaseStore::al
     return attributions;
 }
 
-void ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement(Optional<RegistrableDomain> domain)
+void ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement(std::optional<RegistrableDomain> domain)
 {
     // Default to clear all entries if no domain is specified.
     String bindParameter = "%";
@@ -3414,15 +3381,15 @@ String ResourceLoadStatisticsDatabaseStore::attributionToString(WebCore::SQLiteS
         if (attributionTriggerData != -1) {
             builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
             if (earliestTimeToSend == -1)
-                builder.appendLiteral("Not set");
+                builder.append("Not set");
             else {
                 auto secondsUntilSend = WallTime::fromRawSeconds(earliestTimeToSend) - WallTime::now();
                 builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
             }
         } else
-            builder.appendLiteral("\nNo attribution trigger data.");
+            builder.append("\nNo attribution trigger data.");
     } else
-        builder.appendLiteral("\nNo attribution trigger data.");
+        builder.append("\nNo attribution trigger data.");
     builder.append('\n');
 
     return builder.toString();
@@ -3450,9 +3417,8 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
     unsigned unattributedNumber = 0;
     StringBuilder builder;
     while (unattributedScopedStatement->step() == SQLITE_ROW) {
-        if (!unattributedNumber)
-            builder.appendLiteral("Unattributed Private Click Measurements:");
-        builder.append("\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
+        const char* prefix = unattributedNumber ? "" : "Unattributed Private Click Measurements:";
+        builder.append(prefix, "\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
             attributionToString(unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed));
     }
 
@@ -3465,25 +3431,21 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
 
     unsigned attributedNumber = 0;
     while (attributedScopedStatement->step() == SQLITE_ROW) {
-        if (!attributedNumber) {
-            if (unattributedNumber)
-                builder.append('\n');
-            builder.appendLiteral("Attributed Private Click Measurements:\n");
-        } else
-            builder.append('\n');
-        builder.append("WebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
+        if (!attributedNumber)
+            builder.append(unattributedNumber ? "\n" : "", "Attributed Private Click Measurements:");
+        builder.append("\nWebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
             attributionToString(attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
     }
     return builder.toString();
 }
 
-std::pair<Optional<SourceEarliestTimeToSend>, Optional<DestinationEarliestTimeToSend>> ResourceLoadStatisticsDatabaseStore::earliestTimesToSend(const WebCore::PrivateClickMeasurement& attribution)
+std::pair<std::optional<SourceEarliestTimeToSend>, std::optional<DestinationEarliestTimeToSend>> ResourceLoadStatisticsDatabaseStore::earliestTimesToSend(const WebCore::PrivateClickMeasurement& attribution)
 {
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
     auto destinationSiteDomainID = domainID(attribution.destinationSite().registrableDomain);
 
     if (!sourceSiteDomainID || !destinationSiteDomainID)
-        return std::make_pair(WTF::nullopt, WTF::nullopt);
+        return std::make_pair(std::nullopt, std::nullopt);
 
     auto scopedStatement = this->scopedStatement(m_earliestTimesToSendStatement, earliestTimesToSendQuery, "earliestTimesToSend"_s);
 
@@ -3495,8 +3457,8 @@ std::pair<Optional<SourceEarliestTimeToSend>, Optional<DestinationEarliestTimeTo
         ASSERT_NOT_REACHED();
     }
 
-    Optional<SourceEarliestTimeToSend> earliestTimeToSendToSource;
-    Optional<DestinationEarliestTimeToSend> earliestTimeToSendToDestination;
+    std::optional<SourceEarliestTimeToSend> earliestTimeToSendToSource;
+    std::optional<DestinationEarliestTimeToSend> earliestTimeToSendToDestination;
     
     // A value of 0.0 indicates that the report has been sent to the respective site.
     if (scopedStatement->columnDouble(0) > 0.0)
@@ -3553,7 +3515,7 @@ void ResourceLoadStatisticsDatabaseStore::clearSentAttribution(WebCore::PrivateC
             return;
         }
         markReportAsSentToSource(*sourceSiteDomainID, *destinationSiteDomainID);
-        sourceEarliestTimeToSend = WTF::nullopt;
+        sourceEarliestTimeToSend = std::nullopt;
         break;
     case PrivateClickMeasurement::AttributionReportEndpoint::Destination:
         if (!destinationEarliestTimeToSend) {
@@ -3561,7 +3523,7 @@ void ResourceLoadStatisticsDatabaseStore::clearSentAttribution(WebCore::PrivateC
             return;
         }
         markReportAsSentToDestination(*sourceSiteDomainID, *destinationSiteDomainID);
-        destinationEarliestTimeToSend = WTF::nullopt;
+        destinationEarliestTimeToSend = std::nullopt;
     }
 
     // Don't clear the attribute from the database unless it has been reported both to the source and destination site.

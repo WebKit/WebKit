@@ -183,7 +183,7 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEve
     }
 
     m_typeAheadBuffer.append(number);
-    setValueAsInteger(parseIntegerAllowingTrailingJunk<int>(m_typeAheadBuffer).valueOr(0), DispatchInputAndChangeEvents);
+    setValueAsInteger(parseIntegerAllowingTrailingJunk<int>(m_typeAheadBuffer).value_or(0), DispatchInputAndChangeEvents);
 
     keyboardEvent.setDefaultHandled();
 }

@@ -51,6 +51,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*, ArrayBufferSharingMode);
 };
 
-Optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject*, JSArrayBuffer*, ArrayBufferSharingMode);
+std::optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject*, JSArrayBuffer*, ArrayBufferSharingMode);
 
 } // namespace JSC

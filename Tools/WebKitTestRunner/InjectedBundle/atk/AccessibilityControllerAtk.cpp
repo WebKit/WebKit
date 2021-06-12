@@ -100,6 +100,10 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
     return platformName;
 }
 
+void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value)
+{
+}
+
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();

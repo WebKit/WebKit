@@ -38,9 +38,10 @@
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Atomics.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/DataMutex.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
@@ -174,7 +175,7 @@ public:
     bool didLoadingProgress() const final;
     unsigned long long totalBytes() const final;
     bool hasSingleSecurityOrigin() const final;
-    Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
     void simulateAudioInterruption() final;
 #if ENABLE(WEB_AUDIO)
     AudioSourceProvider* audioSourceProvider() final;
@@ -183,8 +184,9 @@ public:
     bool supportsFullscreen() const final;
     MediaPlayer::MovieLoadType movieLoadType() const final;
 
-    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void acceleratedRenderingStateChanged() final;
+    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) override;
 
 #if USE(TEXTURE_MAPPER_GL)
     PlatformLayer* platformLayer() const override;
@@ -304,7 +306,7 @@ protected:
     void setAudioStreamProperties(GObject*);
 
     virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags);
-    void invalidateCachedPosition() { m_lastQueryTime.reset(); }
+    void invalidateCachedPosition() const;
 
     static void setAudioStreamPropertiesCallback(MediaPlayerPrivateGStreamer*, GObject*);
 
@@ -324,7 +326,7 @@ protected:
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     MediaPlayer* m_player;
     String m_referrer;
-    mutable MediaTime m_cachedPosition;
+    mutable std::optional<MediaTime> m_cachedPosition;
     mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition { false };
     bool m_isChangingRate { false };
@@ -376,8 +378,8 @@ protected:
     ImageOrientation m_videoSourceOrientation;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    CheckedLock m_cdmAttachmentLock;
-    CheckedCondition m_cdmAttachmentCondition;
+    Lock m_cdmAttachmentLock;
+    Condition m_cdmAttachmentCondition;
     RefPtr<CDMInstanceProxy> m_cdmInstance;
 
     Lock m_protectionMutex; // Guards access to m_handledProtectionEvents.
@@ -386,9 +388,36 @@ protected:
     bool m_isWaitingForKey { false };
 #endif
 
-    Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
+    std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
 private:
+    class TaskAtMediaTimeScheduler {
+    public:
+        enum PlaybackDirection {
+            Forward, // Schedule when targetTime <= currentTime. Used on forward playback, when playbackRate >= 0.
+            Backward // Schedule when targetTime >= currentTime. Used on backward playback, when playbackRate < 0.
+        };
+        void setTask(Function<void()>&& task, const MediaTime& targetTime, PlaybackDirection playbackDirection)
+        {
+            m_targetTime = targetTime;
+            m_task = WTFMove(task);
+            m_playbackDirection = playbackDirection;
+        }
+        std::optional<Function<void()>> checkTaskForScheduling(const MediaTime& currentTime)
+        {
+            if (!m_targetTime.isValid() || !currentTime.isFinite()
+                || (m_playbackDirection == Forward && currentTime < m_targetTime)
+                || (m_playbackDirection == Backward && currentTime > m_targetTime))
+                return std::optional<Function<void()>>();
+            m_targetTime = MediaTime::invalidTime();
+            return WTFMove(m_task);
+        }
+    private:
+        MediaTime m_targetTime = MediaTime::invalidTime();
+        PlaybackDirection m_playbackDirection = Forward;
+        Function<void()> m_task = Function<void()>();
+    };
+
     bool isPlayerShuttingDown() const { return m_isPlayerShuttingDown.load(); }
     MediaTime maxTimeLoaded() const;
     void setVideoSourceOrientation(ImageOrientation);
@@ -458,6 +487,7 @@ private:
 #endif
 
     void configureMediaStreamAudioTracks();
+    void invalidateCachedPositionOnNextIteration() const;
 
     Atomic<bool> m_isPlayerShuttingDown;
     GRefPtr<GstElement> m_textSink;
@@ -475,8 +505,8 @@ private:
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     bool m_hasVideo { false };
     bool m_hasAudio { false };
-    CheckedCondition m_drawCondition;
-    CheckedLock m_drawLock;
+    Condition m_drawCondition;
+    Lock m_drawLock;
     RunLoop::Timer<MediaPlayerPrivateGStreamer> m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
     RunLoop::Timer<MediaPlayerPrivateGStreamer> m_readyTimerHandler;
 #if USE(TEXTURE_MAPPER_GL)
@@ -491,7 +521,6 @@ private:
     mutable unsigned long long m_totalBytes { 0 };
     URL m_url;
     bool m_shouldPreservePitch { false };
-    mutable Optional<Seconds> m_lastQueryTime;
     bool m_isLegacyPlaybin;
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStreamPrivate> m_streamPrivate;
@@ -527,14 +556,13 @@ private:
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
 
     HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
-    Optional<bool> m_hasTaintedOrigin { WTF::nullopt };
+    std::optional<bool> m_hasTaintedOrigin { std::nullopt };
 
     GRefPtr<GstElement> m_fpsSink { nullptr };
     uint64_t m_totalVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
 
-    // This is set to true if no videoflip element has been added to the pipeline.
-    bool m_shouldHandleOrientationTags { false };
+    DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
 private:
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)

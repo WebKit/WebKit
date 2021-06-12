@@ -107,8 +107,8 @@ void ResourceUsageThread::platformSaveStateBeforeStarting()
 }
 
 struct ThreadInfo {
-    Optional<String> name;
-    Optional<float> cpuUsage;
+    std::optional<String> name;
+    std::optional<float> cpuUsage;
     unsigned long long previousUtime { 0 };
     unsigned long long previousStime { 0 };
 };
@@ -291,7 +291,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         else {
             String threadIdentifier = knownWorkerThreads.get(id);
             bool isWorkerThread = !threadIdentifier.isEmpty();
-            String name = it.value.name.valueOr(emptyString());
+            String name = it.value.name.value_or(emptyString());
             ThreadCPUInfo::Type type = (isWorkerThread || isWebKitThread(id, name)) ? ThreadCPUInfo::Type::WebKit : ThreadCPUInfo::Type::Unknown;
             data.cpuThreads.append(ThreadCPUInfo { name, threadIdentifier, cpuUsage, type });
         }
@@ -315,8 +315,8 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
 
     data.totalExternalSize = currentGCOwnedExternal;
 
-    data.timeOfNextEdenCollection = data.timestamp + vm->heap.edenActivityCallback()->timeUntilFire().valueOr(Seconds(std::numeric_limits<double>::infinity()));
-    data.timeOfNextFullCollection = data.timestamp + vm->heap.fullActivityCallback()->timeUntilFire().valueOr(Seconds(std::numeric_limits<double>::infinity()));
+    data.timeOfNextEdenCollection = data.timestamp + vm->heap.edenActivityCallback()->timeUntilFire().value_or(Seconds(std::numeric_limits<double>::infinity()));
+    data.timeOfNextFullCollection = data.timestamp + vm->heap.fullActivityCallback()->timeUntilFire().value_or(Seconds(std::numeric_limits<double>::infinity()));
 }
 
 } // namespace WebCore

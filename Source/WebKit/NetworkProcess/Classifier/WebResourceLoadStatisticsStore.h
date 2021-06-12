@@ -40,9 +40,9 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceLoadObserver.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -111,101 +111,34 @@ public:
     using StorageAccessScope = WebCore::StorageAccessScope;
     using RequestStorageAccessResult = WebCore::RequestStorageAccessResult;
 
-    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
-    {
-        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost, isEphemeral));
-    }
+    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession&, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral);
 
     ~WebResourceLoadStatisticsStore();
 
-struct ThirdPartyDataForSpecificFirstParty {
-    WebCore::RegistrableDomain firstPartyDomain;
-    bool storageAccessGranted;
-    Seconds timeLastUpdated;
+    struct ThirdPartyDataForSpecificFirstParty {
+        WebCore::RegistrableDomain firstPartyDomain;
+        bool storageAccessGranted;
+        Seconds timeLastUpdated;
 
-    String toString() const
-    {
-        return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0', "; Has been seen under ", firstPartyDomain.string(), " in the last 24 hours: ", WallTime::now().secondsSinceEpoch() - timeLastUpdated < 24_h ? '1' : '0');
-    }
+        String toString() const;
+        void encode(IPC::Encoder&) const;
+        static std::optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder&);
 
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << firstPartyDomain;
-        encoder << storageAccessGranted;
-        encoder << timeLastUpdated;
-    }
+        // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
+        bool operator==(const ThirdPartyDataForSpecificFirstParty&) const;
+    };
 
-    static Optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder& decoder)
-    {
-        Optional<WebCore::RegistrableDomain> decodedDomain;
-        decoder >> decodedDomain;
-        if (!decodedDomain)
-            return WTF::nullopt;
+    struct ThirdPartyData {
+        WebCore::RegistrableDomain thirdPartyDomain;
+        Vector<ThirdPartyDataForSpecificFirstParty> underFirstParties;
 
-        Optional<bool> decodedStorageAccess;
-        decoder >> decodedStorageAccess;
-        if (!decodedStorageAccess)
-            return WTF::nullopt;
-        
-        Optional<Seconds> decodedTimeLastUpdated;
-        decoder >> decodedTimeLastUpdated;
-        if (!decodedTimeLastUpdated)
-            return WTF::nullopt;
-        
-        return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess), WTFMove(*decodedTimeLastUpdated) }};
-    }
+        String toString() const;
+        void encode(IPC::Encoder&) const;
+        static std::optional<ThirdPartyData> decode(IPC::Decoder&);
 
-    bool operator==(ThirdPartyDataForSpecificFirstParty const other) const
-    {
-        return firstPartyDomain == other.firstPartyDomain && storageAccessGranted == other.storageAccessGranted;
-    }
-};
-
-struct ThirdPartyData {
-    WebCore::RegistrableDomain thirdPartyDomain;
-    Vector<ThirdPartyDataForSpecificFirstParty> underFirstParties;
-
-    String toString() const
-    {
-        StringBuilder stringBuilder;
-        stringBuilder.append("Third Party Registrable Domain: ", thirdPartyDomain.string(), "\n");
-        stringBuilder.appendLiteral("    {");
-
-        for (auto firstParty : underFirstParties) {
-            stringBuilder.appendLiteral("{ ");
-            stringBuilder.append(firstParty.toString());
-            stringBuilder.appendLiteral(" },");
-        }
-        stringBuilder.appendLiteral("}");
-        return stringBuilder.toString();
-    }
-
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << thirdPartyDomain;
-        encoder << underFirstParties;
-    }
-
-    static Optional<ThirdPartyData> decode(IPC::Decoder& decoder)
-    {
-        Optional<WebCore::RegistrableDomain> decodedDomain;
-        decoder >> decodedDomain;
-        if (!decodedDomain)
-            return WTF::nullopt;
-
-        Optional<Vector<ThirdPartyDataForSpecificFirstParty>> decodedFirstParties;
-        decoder >> decodedFirstParties;
-        if (!decodedFirstParties)
-            return WTF::nullopt;
-
-        return {{ WTFMove(*decodedDomain), WTFMove(*decodedFirstParties) }};
-    }
-
-    bool operator<(const ThirdPartyData &other) const
-    {
-        return underFirstParties.size() < other.underFirstParties.size();
-    }
-};
+        // FIXME: This sorts by number of underFirstParties, so it probably should be a named function, not operator<.
+        bool operator<(const ThirdPartyData&) const;
+    };
 
     void didDestroyNetworkSession(CompletionHandler<void()>&&);
 
@@ -227,9 +160,9 @@ struct ThirdPartyData {
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    StorageAccessWasGranted grantStorageAccessInStorageSession(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope);
+    StorageAccessWasGranted grantStorageAccessInStorageSession(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope);
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
-    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
+    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier);
     void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope,  CompletionHandler<void(RequestStorageAccessResult)>&&);
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
@@ -277,7 +210,7 @@ struct ThirdPartyData {
     void setPrevalentResourceForDebugMode(const RegistrableDomain&, CompletionHandler<void()>&&);
 
     void logTestingEvent(const String&);
-    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope, CompletionHandler<void(StorageAccessWasGranted)>&&);
+    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope, CompletionHandler<void(StorageAccessWasGranted)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
     bool needsUserInteractionQuirk(const RegistrableDomain&) const;
     void callUpdatePrevalentDomainsToBlockCookiesForHandler(const RegistrableDomainsToBlockCookiesFor&, CompletionHandler<void()>&&);
@@ -312,7 +245,7 @@ struct ThirdPartyData {
     // Private Click Measurement.
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
-    void attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, CompletionHandler<void(Optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&&);
+    void attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&&);
     void allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<WebCore::PrivateClickMeasurement>&&)>&&);
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementForRegistrableDomain(const WebCore::RegistrableDomain&);
@@ -329,7 +262,7 @@ private:
 
     void performDailyTasks();
 
-    void hasStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
+    void hasStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     void requestStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
     void requestStorageAccessUnderOpenerEphemeral(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
     void grantStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
@@ -363,9 +296,9 @@ private:
         WillSuspend,
         Suspended
     };
-    static CheckedLock suspendedStateLock;
+    static Lock suspendedStateLock;
     static State suspendedState WTF_GUARDED_BY_LOCK(suspendedStateLock);
-    static CheckedCondition suspendedStateChangeCondition;
+    static Condition suspendedStateChangeCondition;
 };
 
 } // namespace WebKit

@@ -49,7 +49,7 @@ public:
 
     virtual bool isCanvasObserverProxy() const { return false; }
 
-    virtual void canvasChanged(CanvasBase&, const Optional<FloatRect>& changedRect) = 0;
+    virtual void canvasChanged(CanvasBase&, const std::optional<FloatRect>& changedRect) = 0;
     virtual void canvasResized(CanvasBase&) = 0;
     virtual void canvasDestroyed(CanvasBase&) = 0;
 };
@@ -89,7 +89,7 @@ public:
 
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);
-    void notifyObserversCanvasChanged(const Optional<FloatRect>&);
+    void notifyObserversCanvasChanged(const std::optional<FloatRect>&);
     void notifyObserversCanvasResized();
     void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.
 
@@ -98,7 +98,7 @@ public:
     virtual GraphicsContext* drawingContext() const;
     virtual GraphicsContext* existingDrawingContext() const;
 
-    virtual void didDraw(const Optional<FloatRect>&) = 0;
+    virtual void didDraw(const std::optional<FloatRect>&) = 0;
 
     virtual Image* copiedImage() const = 0;
     virtual void clearCopiedImage() const = 0;

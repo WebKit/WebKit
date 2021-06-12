@@ -31,42 +31,73 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+#if PLATFORM(MAC)
+#include "DataDetectorHighlight.h"
+#endif
+
 namespace WebCore {
 
 class Document;
+class Element;
 class Frame;
 class GraphicsContext;
+class HTMLElement;
 class IntRect;
 class FloatQuad;
 class Page;
 class RenderElement;
 struct GapRects;
 
-class ImageOverlayController final : private PageOverlay::Client {
+class ImageOverlayController final : private PageOverlay::Client
+#if PLATFORM(MAC)
+    , DataDetectorHighlightClient
+#endif
+{
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ImageOverlayController(Page&);
 
     void selectionQuadsDidChange(Frame&, const Vector<FloatQuad>&);
+    void elementUnderMouseDidChange(Frame&, Element*);
+
     void documentDetached(const Document&);
 
 private:
     void willMoveToPage(PageOverlay&, Page*) final;
     void didMoveToPage(PageOverlay&, Page*) final { }
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
-    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final { return false; }
+    bool mouseEvent(PageOverlay&, const PlatformMouseEvent& event) final { return platformHandleMouseEvent(event); }
 
     bool shouldUsePageOverlayToPaintSelection(const RenderElement&);
 
     PageOverlay& installPageOverlayIfNeeded();
     void uninstallPageOverlayIfNeeded();
+    void uninstallPageOverlay();
+
+#if PLATFORM(MAC)
+    void updateDataDetectorHighlights(const HTMLElement&);
+    void clearDataDetectorHighlights();
+    bool handleDataDetectorAction(const HTMLElement&, const IntPoint&);
+
+    DataDetectorHighlight* activeHighlight() const final { return m_activeDataDetectorHighlight.get(); }
+#endif
+
+    void platformUpdateElementUnderMouse(Frame&, Element* elementUnderMouse);
+    bool platformHandleMouseEvent(const PlatformMouseEvent&);
 
     WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
-    WeakPtr<Document> m_currentOverlayDocument;
-    Vector<FloatQuad> m_overlaySelectionQuads;
-    LayoutRect m_selectionOverlayBounds;
+    WeakPtr<HTMLElement> m_hostElementForSelection;
+    Vector<FloatQuad> m_selectionQuads;
+    LayoutRect m_selectionClipRect;
     Color m_selectionBackgroundColor { Color::transparentBlack };
+
+#if PLATFORM(MAC)
+    using ContainerAndHighlight = std::pair<WeakPtr<HTMLElement>, Ref<DataDetectorHighlight>>;
+    Vector<ContainerAndHighlight> m_dataDetectorContainersAndHighlights;
+    RefPtr<DataDetectorHighlight> m_activeDataDetectorHighlight;
+    WeakPtr<HTMLElement> m_hostElementForDataDetectors;
+#endif
 };
 
 } // namespace WebCore

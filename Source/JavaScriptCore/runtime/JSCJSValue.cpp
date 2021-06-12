@@ -75,10 +75,10 @@ double JSValue::toNumberSlowCase(JSGlobalObject* globalObject) const
     return isUndefined() ? PNaN : 0; // null and false both convert to 0.
 }
 
-Optional<double> JSValue::toNumberFromPrimitive() const
+std::optional<double> JSValue::toNumberFromPrimitive() const
 {
     if (isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     if (isNumber())
         return asNumber();
     if (isBoolean())
@@ -87,7 +87,7 @@ Optional<double> JSValue::toNumberFromPrimitive() const
         return PNaN;
     if (isNull())
         return 0;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // https://tc39.es/ecma262/#sec-tobigint
@@ -218,7 +218,7 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (Optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
         RELEASE_AND_RETURN(scope, putToPrimitiveByIndex(globalObject, index.value(), value, slot.isStrictMode()));
 
     // Check if there are any setters or getters in the prototype chain

@@ -134,7 +134,6 @@
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
@@ -971,7 +970,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
-    _lastOutstandingPositionInformationRequest = WTF::nullopt;
+    _lastOutstandingPositionInformationRequest = std::nullopt;
     _isWaitingOnPositionInformation = NO;
 
     _focusRequiresStrongPasswordAssistance = NO;
@@ -1000,7 +999,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         _interactionViewsContainerView = nil;
     }
 
-    _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+    _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
 
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1544,7 +1543,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }
 }
 
-- (WTF::Optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+- (std::optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     NSMapTable<NSNumber *, UITouch *> *activeTouches = [_touchEventGestureRecognizer activeTouchesByIdentifier];
     for (NSNumber *touchIdentifier in activeTouches) {
@@ -1552,7 +1551,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         if ([touch.gestureRecognizers containsObject:gestureRecognizer])
             return [touchIdentifier unsignedIntValue];
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecognizer *recognizer)
@@ -2074,6 +2073,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_didScroll
 {
+    [self _updateFrameOfContainerForContextMenuHintPreviewsIfNeeded];
+
     [self _cancelLongPressGestureRecognizer];
     [self _cancelInteraction];
 }
@@ -2525,7 +2526,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (![self _currentPositionInformationIsValidForRequest:requestAndHandler->first])
             continue;
 
-        _pendingPositionInformationHandlers[index] = WTF::nullopt;
+        _pendingPositionInformationHandlers[index] = std::nullopt;
 
         if (requestAndHandler->second)
             requestAndHandler->second(updatedPositionInformation);
@@ -2624,7 +2625,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             if (![self ensurePositionInformationIsUpToDate:request])
                 return NO;
         }
-        return _positionInformation.nodeAtPositionHasDoubleClickHandler.valueOr(false);
+        return _positionInformation.nodeAtPositionHasDoubleClickHandler.value_or(false);
     }
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
@@ -3136,7 +3137,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
 {
     if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(*_lastOutstandingPositionInformationRequest))
-        _lastOutstandingPositionInformationRequest = WTF::nullopt;
+        _lastOutstandingPositionInformationRequest = std::nullopt;
 
     _isWaitingOnPositionInformation = NO;
 
@@ -3784,8 +3785,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
 #if ENABLE(IMAGE_EXTRACTION)
-    if (action == WebKit::imageExtractionAction())
-        return editorState.isContentEditable;
+    if (WebKit::isImageExtractionAction(action) && !editorState.isContentEditable)
+        return NO;
 #endif
 
     return [super canPerformAction:action withSender:sender];
@@ -4420,7 +4421,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UTF32Char)_characterBeforeCaretSelection
 {
-    return _lastInsertedCharacterToOverrideCharacterBeforeSelection.valueOr(_page->editorState().postLayoutData().characterBeforeSelection);
+    return _lastInsertedCharacterToOverrideCharacterBeforeSelection.value_or(_page->editorState().postLayoutData().characterBeforeSelection);
 }
 
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount
@@ -6429,7 +6430,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
 
-    _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+    _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
 }
 
 - (void)_updateInputContextAfterBlurringAndRefocusingElement
@@ -7029,7 +7030,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     [_webView _didChangeEditorState];
 
     if (!_page->editorState().isMissingPostLayoutData) {
-        _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+        _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
         if (!_usingGestureForSelection && _focusedElementInformation.autocapitalizeType == WebCore::AutocapitalizeType::Words)
             [UIKeyboardImpl.sharedInstance clearShiftState];
     }
@@ -7241,7 +7242,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         && [uiDelegate _webView:webView.get() fileUploadPanelContentIsManagedWithInitiatingFrame:wrapper(API::FrameInfo::create(WTFMove(_frameInfoForFileUploadPanel), _page.get()))];
 }
 
-- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
+- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (_shareSheet)
@@ -7283,14 +7284,14 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 #endif
 
-- (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
+- (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
 {
 #if HAVE(CONTACTSUI)
     _contactPicker = adoptNS([[WKContactPicker alloc] initWithView:self.webView]);
     [_contactPicker setDelegate:self];
     [_contactPicker presentWithRequestData:requestData completionHandler:WTFMove(completionHandler)];
 #else
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 #endif
 }
 
@@ -7398,14 +7399,14 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 #pragma mark - Implementation of WKActionSheetAssistantDelegate.
 
-- (Optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+- (std::optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
     WebKit::InteractionInformationRequest request(_positionInformation.request.point);
     request.includeSnapshot = true;
     request.includeLinkIndicator = assistant.needsLinkIndicator;
     request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
     if (![self ensurePositionInformationIsUpToDate:request])
-        return WTF::nullopt;
+        return std::nullopt;
 
     return _positionInformation;
 }
@@ -7522,6 +7523,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     CGRect sourceRect;
     if (positionInformation.isLink)
         sourceRect = positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates;
+    else if (!positionInformation.dataDetectorBounds.isEmpty())
+        sourceRect = positionInformation.dataDetectorBounds;
     else
         sourceRect = positionInformation.bounds;
 
@@ -7729,6 +7732,37 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         return;
 
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
+
+    _scrollViewForTargetedPreview = nil;
+    _scrollViewForTargetedPreviewInitialOffset = CGPointZero;
+}
+
+- (void)_updateFrameOfContainerForContextMenuHintPreviewsIfNeeded
+{
+    if (!_contextMenuHintContainerView)
+        return;
+
+    CGPoint newOffset = [_scrollViewForTargetedPreview convertPoint:CGPointZero toView:[_contextMenuHintContainerView superview]];
+
+    CGRect frame = [_contextMenuHintContainerView frame];
+    frame.origin.x = newOffset.x - _scrollViewForTargetedPreviewInitialOffset.x;
+    frame.origin.y = newOffset.y - _scrollViewForTargetedPreviewInitialOffset.y;
+    [_contextMenuHintContainerView setFrame:frame];
+}
+
+- (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+{
+    if (scrollingNodeID) {
+        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy()) {
+            if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID))
+                _scrollViewForTargetedPreview = scrollViewForScrollingNode;
+        }
+    }
+
+    if (!_scrollViewForTargetedPreview)
+        _scrollViewForTargetedPreview = self.webView.scrollView;
+
+    _scrollViewForTargetedPreviewInitialOffset = [_scrollViewForTargetedPreview convertPoint:CGPointZero toView:[_contextMenuHintContainerView superview]];
 }
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
@@ -7984,7 +8018,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
         *outGlobalPoint = locationInContentView;
 }
 
-static UIDropOperation dropOperationForWebCoreDragOperation(Optional<WebCore::DragOperation> operation)
+static UIDropOperation dropOperationForWebCoreDragOperation(std::optional<WebCore::DragOperation> operation)
 {
     if (operation) {
         if (*operation == WebCore::DragOperation::Move)
@@ -7995,11 +8029,11 @@ static UIDropOperation dropOperationForWebCoreDragOperation(Optional<WebCore::Dr
     return UIDropOperationCancel;
 }
 
-static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDropOperation dropOperation)
+static std::optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDropOperation dropOperation)
 {
     switch (dropOperation) {
     case UIDropOperationCancel:
-        return WTF::nullopt;
+        return std::nullopt;
     case UIDropOperationForbidden:
         return WebCore::DragOperation::Private;
     case UIDropOperationCopy:
@@ -8008,7 +8042,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
         return WebCore::DragOperation::Move;
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 - (WebCore::DragData)dragDataForDropSession:(id <UIDropSession>)session dragDestinationAction:(WKDragDestinationAction)dragDestinationAction
@@ -8079,7 +8113,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _waitingForEditDragSnapshot = YES;
 }
 
-- (void)_didReceiveEditDragSnapshot:(Optional<WebCore::TextIndicatorData>)data
+- (void)_didReceiveEditDragSnapshot:(std::optional<WebCore::TextIndicatorData>)data
 {
     _waitingForEditDragSnapshot = NO;
 
@@ -8090,7 +8124,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         action();
 }
 
-- (void)_deliverDelayedDropPreviewIfPossible:(Optional<WebCore::TextIndicatorData>)data
+- (void)_deliverDelayedDropPreviewIfPossible:(std::optional<WebCore::TextIndicatorData>)data
 {
     if (!_visibleContentViewSnapshot)
         return;
@@ -8406,19 +8440,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
 }
 
-- (void)overridePositionTrackingViewForTargetedPreviewIfNecessary:(UITargetedPreview *)targetedPreview containerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
-{
-    if (!scrollingNodeID)
-        return;
-
-    UIScrollView *positionTrackingView = self.webView.scrollView;
-    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
-        positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
-
-    if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
-        [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
-}
-
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
 {
     auto backgroundColor = [&]() -> UIColor * {
@@ -8435,10 +8456,15 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
     auto targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect, backgroundColor);
 
-    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
+    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
+}
+
+- (BOOL)positionInformationHasImageOverlayDataDetector
+{
+    return _positionInformation.isImageOverlayText && [_positionInformation.dataDetectorResults count];
 }
 
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible
@@ -8455,10 +8481,12 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         targetedPreview = createTargetedPreview(image.get(), self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, { }, nil);
     }
 
-    if (!targetedPreview)
-        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, nil);
+    if (!targetedPreview) {
+        auto boundsForFallbackPreview = self.positionInformationHasImageOverlayDataDetector ? _positionInformation.dataDetectorBounds : _positionInformation.bounds;
+        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, boundsForFallbackPreview, nil);
+    }
 
-    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_positionInformation.containerScrollingNodeID];
+    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
@@ -8563,7 +8591,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 
 - (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler
 {
-    _page->insertTextPlaceholder(WebCore::IntSize { size }, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ElementContext>& placeholder) {
+    _page->insertTextPlaceholder(WebCore::IntSize { size }, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ElementContext>& placeholder) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || ![strongSelf webView] || !placeholder) {
             completionHandler(nil);
@@ -8686,8 +8714,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
 {
-    [self _cancelLongPressGestureRecognizer];
-
     RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
     if (self.currentDragOrDropSession) {
         // FIXME: Support multiple simultaneous drag sessions in the future.
@@ -8735,6 +8761,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
     if (![dragItems count])
         _page->dragCancelled();
+    else
+        [self _cancelLongPressGestureRecognizer];
 
     RELEASE_LOG(DragAndDrop, "Drag session: %p starting with %tu items", session, [dragItems count]);
     _dragDropInteractionState.clearStagedDragSource([dragItems count] ? WebKit::DragDropInteractionState::DidBecomeActive::Yes : WebKit::DragDropInteractionState::DidBecomeActive::No);
@@ -9396,7 +9424,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         completion([self pointerRegionForPositionInformation:interactionInformation point:request.location]);
 
         if (_deferredPointerInteractionRequest) {
-            auto deferredRequest = std::exchange(_deferredPointerInteractionRequest, WTF::nullopt);
+            auto deferredRequest = std::exchange(_deferredPointerInteractionRequest, std::nullopt);
             [self doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
                 replyHandler(interactionInformation, deferredRequest->second.get());
             } forRequest:deferredRequest->first];
@@ -9633,8 +9661,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_invokeAllActionsToPerformAfterPendingImageExtraction:(WebKit::ProceedWithImageExtraction)proceedWithImageExtraction
 {
-    _pendingImageExtractionRequestIdentifier = WTF::nullopt;
-    _elementPendingImageExtraction = WTF::nullopt;
+    _pendingImageExtractionRequestIdentifier = std::nullopt;
+    _elementPendingImageExtraction = std::nullopt;
     for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
         block(proceedWithImageExtraction);
 }
@@ -10262,7 +10290,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!_positionInformation.touchCalloutEnabled)
         return continueWithContextMenuConfiguration(nil);
 
-    if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
+    if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment && !self.positionInformationHasImageOverlayDataDetector)
         return continueWithContextMenuConfiguration(nil);
 
     URL linkURL = _positionInformation.url;
@@ -10344,8 +10372,21 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return;
         }
 
+        bool canShowHTTPLinkOrDataDetectorPreview = ([&] {
+            if (linkURL.protocolIsInHTTPFamily())
+                return true;
+
+            if (WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
+                return true;
+
+            if ([strongSelf positionInformationHasImageOverlayDataDetector])
+                return true;
+
+            return false;
+        })();
+
         ASSERT_IMPLIES(strongSelf->_positionInformation.isImage, strongSelf->_positionInformation.image);
-        if (strongSelf->_positionInformation.isImage && strongSelf->_positionInformation.image && !strongSelf->_positionInformation.isLink) {
+        if (strongSelf->_positionInformation.isImage && strongSelf->_positionInformation.image && !canShowHTTPLinkOrDataDetectorPreview) {
             auto cgImage = strongSelf->_positionInformation.image->makeCGImageCopy();
 
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = NO;
@@ -10386,7 +10427,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #if ENABLE(DATA_DETECTION)
         // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
         // <rdar://problem/50572283>
-        if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL)) {
+        if (!canShowHTTPLinkOrDataDetectorPreview) {
             continueWithContextMenuConfiguration(nil);
             return;
         }
@@ -10430,19 +10471,28 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 }
 
 #if ENABLE(DATA_DETECTION)
+
 - (void)continueContextMenuInteractionWithDataDetectors:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto ddContextMenuActionClass = getDDContextMenuActionClass();
-    URL linkURL = _positionInformation.url;
-    NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
-    UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
+    auto context = retainPtr([self dataDetectionContextForPositionInformation:_positionInformation]);
+    RetainPtr<UIContextMenuConfiguration> configurationFromDataDetectors;
+
+    if (self.positionInformationHasImageOverlayDataDetector) {
+        DDScannerResult *scannerResult = [_positionInformation.dataDetectorResults firstObject];
+        configurationFromDataDetectors = [ddContextMenuActionClass contextMenuConfigurationWithResult:scannerResult.coreResult inView:self context:context.get() menuIdentifier:nil];
+    } else {
+        configurationFromDataDetectors = [ddContextMenuActionClass contextMenuConfigurationForURL:_positionInformation.url identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context.get() menuIdentifier:nil];
+        _page->startInteractionWithPositionInformation(_positionInformation);
+    }
+
     _contextMenuActionProviderDelegateNeedsOverride = YES;
-    _page->startInteractionWithPositionInformation(_positionInformation);
-    continueWithContextMenuConfiguration(configurationFromDD);
+    continueWithContextMenuConfiguration(configurationFromDataDetectors.get());
     END_BLOCK_OBJC_EXCEPTIONS
 }
-#endif
+
+#endif // ENABLE(DATA_DETECTION)
 
 - (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
 {

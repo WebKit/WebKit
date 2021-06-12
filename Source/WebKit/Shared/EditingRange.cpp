@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-Optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
+std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
 {
     ASSERT(editingRange.location != notFound);
     WebCore::CharacterRange range { editingRange.location, editingRange.length };
@@ -47,7 +47,7 @@ Optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, cons
         // That fits with AppKit's idea of an input context.
         auto* element = frame.selection().rootEditableElementOrDocumentElement();
         if (!element)
-            return WTF::nullopt;
+            return std::nullopt;
         return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
     }
 
@@ -55,13 +55,13 @@ Optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, cons
 
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(frame.selection().selection().visibleStart()));
     if (!paragraphStart)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
     return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
 }
 
-EditingRange EditingRange::fromRange(WebCore::Frame& frame, const Optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
+EditingRange EditingRange::fromRange(WebCore::Frame& frame, const std::optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
 {
     ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot);
 
@@ -86,14 +86,14 @@ void ArgumentCoder<WebKit::EditingRange>::encode(Encoder& encoder, const WebKit:
     encoder << editingRange.length;
 }
 
-Optional<WebKit::EditingRange> ArgumentCoder<WebKit::EditingRange>::decode(Decoder& decoder)
+std::optional<WebKit::EditingRange> ArgumentCoder<WebKit::EditingRange>::decode(Decoder& decoder)
 {
     WebKit::EditingRange editingRange;
 
     if (!decoder.decode(editingRange.location))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(editingRange.length))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return editingRange;
 }

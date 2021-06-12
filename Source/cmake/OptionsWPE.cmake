@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 31 1)
+SET_PROJECT_VERSION(2 33 1)
 
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
@@ -124,7 +124,7 @@ if (USE_SOUP2)
     set(WPE_API_VERSION 1.0)
     set(WPE_API_DOC_VERSION 1.0)
 else ()
-    set(SOUP_MINIMUM_VERSION 2.99.5)
+    set(SOUP_MINIMUM_VERSION 2.99.8)
     set(SOUP_API_VERSION 3.0)
     set(WPE_API_VERSION 1.1)
     # No API changes in 1.1, so keep using the same API documentation.
@@ -134,7 +134,7 @@ endif ()
 find_package(LibSoup ${SOUP_MINIMUM_VERSION} REQUIRED)
 
 if (WPE_API_VERSION VERSION_EQUAL "1.0")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 16 0 13)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 18 0 15)
 else ()
     CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 0 0 0)
 endif ()

@@ -29,7 +29,6 @@
 
 #include "FakeXRRigidTransformInit.h"
 #include "XREye.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -50,7 +49,7 @@ struct FakeXRViewInit {
     Vector<float> projectionMatrix;
     DeviceResolution resolution;
     FakeXRRigidTransformInit viewOffset;
-    Optional<FieldOfViewInit> fieldOfView;
+    std::optional<FieldOfViewInit> fieldOfView;
 };
 
 } // namespace WebCore

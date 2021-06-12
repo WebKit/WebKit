@@ -45,7 +45,7 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     : m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
-    , m_player(player)
+    , m_player(makeWeakPtr(*player))
     , m_mediaResourceLoader(*player->createResourceLoader())
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))
     , m_manager(manager)
@@ -64,14 +64,14 @@ PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
 
 RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 {
-    Optional<MachSendRight> sendRight;
+    std::optional<MachSendRight> sendRight;
     if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::NativeImageForCurrentTime(), Messages::RemoteMediaPlayerProxy::NativeImageForCurrentTime::Reply(sendRight), m_id))
         return nullptr;
 
     if (!sendRight)
         return nullptr;
 
-    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), sRGBColorSpaceRef());
+    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), WebCore::DestinationColorSpace::SRGB());
     if (!surface)
         return nullptr;
 
@@ -84,14 +84,14 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 
 RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime()
 {
-    Optional<MachSendRight> sendRight;
+    std::optional<MachSendRight> sendRight;
     if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTime(), Messages::RemoteMediaPlayerProxy::NativeImageForCurrentTime::Reply(sendRight), m_id))
         return nullptr;
 
     if (!sendRight)
         return nullptr;
 
-    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), nullptr);
+    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), WebCore::DestinationColorSpace::SRGB());
     if (!surface)
         return nullptr;
 

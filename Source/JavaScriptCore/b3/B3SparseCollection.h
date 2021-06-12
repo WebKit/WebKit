@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,6 +111,12 @@ public:
         m_vector.shrink(endIndex);
     }
 
+    void clearAll()
+    {
+        m_indexFreeList.clear();
+        m_vector.clear();
+    }
+
     unsigned size() const { return m_vector.size(); }
     bool isEmpty() const { return m_vector.isEmpty(); }
     
@@ -154,6 +160,8 @@ public:
         }
 
     private:
+        friend class SparseCollection;
+
         unsigned findNext(unsigned index)
         {
             while (index < m_collection->size() && !m_collection->at(index))

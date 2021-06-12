@@ -38,7 +38,7 @@ namespace WebCore {
 struct CDMMediaCapability {
     String contentType;
     String robustness;
-    Optional<CDMEncryptionScheme> encryptionScheme;
+    std::optional<CDMEncryptionScheme> encryptionScheme;
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -49,22 +49,22 @@ struct CDMMediaCapability {
     }
 
     template <class Decoder>
-    static Optional<CDMMediaCapability> decode(Decoder& decoder)
+    static std::optional<CDMMediaCapability> decode(Decoder& decoder)
     {
-        Optional<String> contentType;
+        std::optional<String> contentType;
         decoder >> contentType;
         if (!contentType)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<String> robustness;
+        std::optional<String> robustness;
         decoder >> robustness;
         if (!robustness)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Optional<CDMEncryptionScheme>> encryptionScheme;
+        std::optional<std::optional<CDMEncryptionScheme>> encryptionScheme;
         decoder >> encryptionScheme;
         if (!encryptionScheme)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*contentType),

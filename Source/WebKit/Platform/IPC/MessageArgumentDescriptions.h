@@ -26,7 +26,6 @@
 #pragma once
 
 #include "MessageNames.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -40,8 +39,8 @@ namespace IPC {
 
 class Decoder;
 
-Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
-Optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
+std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
+std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
 
 struct ArgumentDescription {
     const char* name;
@@ -50,7 +49,7 @@ struct ArgumentDescription {
     bool isOptional;
 };
 
-Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName);
-Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName);
+std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName);
+std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName);
 
 }

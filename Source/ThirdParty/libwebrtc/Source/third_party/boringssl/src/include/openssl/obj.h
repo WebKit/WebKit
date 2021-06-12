@@ -91,10 +91,16 @@ OPENSSL_EXPORT ASN1_OBJECT *OBJ_dup(const ASN1_OBJECT *obj);
 // less than, equal to or greater than |b|, respectively.
 OPENSSL_EXPORT int OBJ_cmp(const ASN1_OBJECT *a, const ASN1_OBJECT *b);
 
-// OBJ_get0_data returns a pointer to the DER representation of |obj|.
+// OBJ_get0_data returns a pointer to the DER representation of |obj|. This is
+// the contents of the DER-encoded identifier, not including the tag and length.
+// If |obj| does not have an associated object identifier (i.e. it is a nid-only
+// value), this value is the empty string.
 OPENSSL_EXPORT const uint8_t *OBJ_get0_data(const ASN1_OBJECT *obj);
 
-// OBJ_length returns the length of the DER representation of |obj|.
+// OBJ_length returns the length of the DER representation of |obj|. This is the
+// contents of the DER-encoded identifier, not including the tag and length. If
+// |obj| does not have an associated object identifier (i.e. it is a nid-only
+// value), this value is the empty string.
 OPENSSL_EXPORT size_t OBJ_length(const ASN1_OBJECT *obj);
 
 
@@ -124,9 +130,22 @@ OPENSSL_EXPORT int OBJ_txt2nid(const char *s);
 
 // Getting information about nids.
 
-// OBJ_nid2obj returns the ASN1_OBJECT corresponding to |nid|, or NULL if |nid|
-// is unknown.
-OPENSSL_EXPORT const ASN1_OBJECT *OBJ_nid2obj(int nid);
+// OBJ_nid2obj returns the |ASN1_OBJECT| corresponding to |nid|, or NULL if
+// |nid| is unknown.
+//
+// This function returns a static, immutable |ASN1_OBJECT|. Although the output
+// is not const, callers may not mutate it. It is also not necessary to release
+// the object with |ASN1_OBJECT_free|.
+//
+// However, functions like |X509_ALGOR_set0| expect to take ownership of a
+// possibly dynamically-allocated |ASN1_OBJECT|. |ASN1_OBJECT_free| is a no-op
+// for static |ASN1_OBJECT|s, so |OBJ_nid2obj| is compatible with such
+// functions.
+//
+// Callers are encouraged to store the result of this function in a const
+// pointer. However, if using functions like |X509_ALGOR_set0|, callers may use
+// a non-const pointer and manage ownership.
+OPENSSL_EXPORT ASN1_OBJECT *OBJ_nid2obj(int nid);
 
 // OBJ_nid2sn returns the short name for |nid|, or NULL if |nid| is unknown.
 OPENSSL_EXPORT const char *OBJ_nid2sn(int nid);

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(WEB_RTC)
@@ -39,7 +38,7 @@ struct STUNMessageLengths {
     size_t messageLengthWithPadding { 0 };
 };
 
-WEBCORE_EXPORT Optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(const uint8_t*, size_t);
+WEBCORE_EXPORT std::optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(const uint8_t*, size_t);
 
 enum class MessageType { STUN, Data };
 WEBCORE_EXPORT Vector<uint8_t> extractMessages(Vector<uint8_t>&&, MessageType, const Function<void(const uint8_t* data, size_t size)>&);

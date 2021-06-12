@@ -1379,9 +1379,9 @@
         assertIsCurrent(m_streamThread);
         m_context->multiDrawElementsInstancedANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), type, makeGCGLSpan(reinterpret_cast<const GCGLint*>(offsets.data()), offsets.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(instanceCounts.data()), instanceCounts.size()), drawcount);
     }
-    void paintRenderingResultsToPixelBuffer(CompletionHandler<void(Optional<WebCore::PixelBuffer>&&)>&& completionHandler)
+    void paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
-        Optional<WebCore::PixelBuffer> returnValue = { };
+        std::optional<WebCore::PixelBuffer> returnValue = { };
         assertIsCurrent(m_streamThread);
         returnValue = m_context->paintRenderingResultsToPixelBuffer();
         completionHandler(WTFMove(returnValue));

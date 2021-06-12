@@ -33,7 +33,6 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/Compiler.h>
 #import <wtf/MonotonicTime.h>
-#import <wtf/Optional.h>
 
 static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags flags)
 {
@@ -69,8 +68,8 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     BOOL _touching;
 
     std::unique_ptr<WebKit::NativeWebMouseEvent> _lastEvent;
-    Optional<CGPoint> _lastLocation;
-    Optional<UIEventButtonMask> _pressedButtonMask;
+    std::optional<CGPoint> _lastLocation;
+    std::optional<UIEventButtonMask> _pressedButtonMask;
 }
 
 - (void)setEnabled:(BOOL)enabled
@@ -82,8 +81,8 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
         _currentTouch = nil;
         _touching = NO;
         _lastEvent = nil;
-        _lastLocation = WTF::nullopt;
-        _pressedButtonMask = WTF::nullopt;
+        _lastLocation = std::nullopt;
+        _pressedButtonMask = std::nullopt;
     }
 }
 
@@ -92,7 +91,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return _lastEvent.get();
 }
 
-- (WTF::Optional<CGPoint>)lastMouseLocation
+- (std::optional<CGPoint>)lastMouseLocation
 {
     return _lastLocation;
 }
@@ -163,7 +162,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
-    _pressedButtonMask = WTF::nullopt;
+    _pressedButtonMask = std::nullopt;
 
     self.state = UIGestureRecognizerStateChanged;
 }
@@ -174,7 +173,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
-    _pressedButtonMask = WTF::nullopt;
+    _pressedButtonMask = std::nullopt;
 
     self.state = UIGestureRecognizerStateChanged;
 }

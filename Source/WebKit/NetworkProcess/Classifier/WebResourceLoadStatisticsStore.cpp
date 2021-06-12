@@ -60,8 +60,8 @@ namespace WebKit {
 using namespace WebCore;
 
 WebResourceLoadStatisticsStore::State WebResourceLoadStatisticsStore::suspendedState { WebResourceLoadStatisticsStore::State::Running };
-CheckedLock WebResourceLoadStatisticsStore::suspendedStateLock;
-CheckedCondition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
+Lock WebResourceLoadStatisticsStore::suspendedStateLock;
+Condition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
 
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
 {
@@ -186,6 +186,11 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
     RELEASE_ASSERT(RunLoop::isMain());
     RELEASE_ASSERT(!m_statisticsStore);
+}
+
+Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
+{
+    return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost, isEphemeral));
 }
 
 void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<void()>&& completionHandler)
@@ -371,7 +376,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
     });
 }
 
-void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(subFrameDomain != topFrameDomain);
     ASSERT(RunLoop::isMain());
@@ -395,7 +400,7 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& s
     });
 }
 
-void WebResourceLoadStatisticsStore::hasStorageAccessEphemeral(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void WebResourceLoadStatisticsStore::hasStorageAccessEphemeral(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isEphemeral());
 
@@ -527,7 +532,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpenerEphemeral(Re
 
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession())
-            storageSession->grantStorageAccess(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID);
+            storageSession->grantStorageAccess(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID);
     }
 }
 
@@ -564,7 +569,7 @@ void WebResourceLoadStatisticsStore::grantStorageAccessEphemeral(const Registrab
     completionHandler({ StorageAccessWasGranted::No, promptWasShown, scope, topFrameDomain, subFrameDomain });
 }
 
-StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStorageSession(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessScope scope)
+StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStorageSession(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessScope scope)
 {
     ASSERT(RunLoop::isMain());
 
@@ -572,7 +577,7 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStor
 
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession()) {
-            storageSession->grantStorageAccess(resourceDomain, firstPartyDomain, (scope == StorageAccessScope::PerFrame ? frameID : WTF::nullopt), pageID);
+            storageSession->grantStorageAccess(resourceDomain, firstPartyDomain, (scope == StorageAccessScope::PerFrame ? frameID : std::nullopt), pageID);
             ASSERT(storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
             isStorageGranted = true;
         }
@@ -581,7 +586,7 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStor
     return isStorageGranted ? StorageAccessWasGranted::Yes : StorageAccessWasGranted::No;
 }
 
-void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1527,7 +1532,7 @@ void WebResourceLoadStatisticsStore::markAllUnattributedPrivateClickMeasurementA
     });
 }
 
-void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributionDestinationSite& destinationSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&& completionHandler)
+void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributionDestinationSite& destinationSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1539,7 +1544,7 @@ void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const Priv
     postTask([this, sourceSite, destinationSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
-                completionHandler(WTF::nullopt);
+                completionHandler(std::nullopt);
             });
             return;
         }
@@ -1586,7 +1591,7 @@ void WebResourceLoadStatisticsStore::clearPrivateClickMeasurement()
         if (!m_statisticsStore)
             return;
 
-        m_statisticsStore->clearPrivateClickMeasurement(WTF::nullopt);
+        m_statisticsStore->clearPrivateClickMeasurement(std::nullopt);
     });
 }
     
@@ -1674,6 +1679,79 @@ void WebResourceLoadStatisticsStore::markAttributedPrivateClickMeasurementsAsExp
 
         postTaskReply(WTFMove(completionHandler));
     });
+}
+
+String WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::toString() const
+{
+    return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0', "; Has been seen under ", firstPartyDomain.string(), " in the last 24 hours: ", WallTime::now().secondsSinceEpoch() - timeLastUpdated < 24_h ? '1' : '0');
+}
+
+void WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::encode(IPC::Encoder& encoder) const
+{
+    encoder << firstPartyDomain;
+    encoder << storageAccessGranted;
+    encoder << timeLastUpdated;
+}
+
+auto WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::decode(IPC::Decoder& decoder) -> std::optional<ThirdPartyDataForSpecificFirstParty>
+{
+    std::optional<WebCore::RegistrableDomain> decodedDomain;
+    decoder >> decodedDomain;
+    if (!decodedDomain)
+        return std::nullopt;
+
+    std::optional<bool> decodedStorageAccess;
+    decoder >> decodedStorageAccess;
+    if (!decodedStorageAccess)
+        return std::nullopt;
+
+    std::optional<Seconds> decodedTimeLastUpdated;
+    decoder >> decodedTimeLastUpdated;
+    if (!decodedTimeLastUpdated)
+        return std::nullopt;
+
+    return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess), WTFMove(*decodedTimeLastUpdated) }};
+}
+
+bool WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::operator==(const ThirdPartyDataForSpecificFirstParty& other) const
+{
+    return firstPartyDomain == other.firstPartyDomain && storageAccessGranted == other.storageAccessGranted;
+}
+
+String WebResourceLoadStatisticsStore::ThirdPartyData::toString() const
+{
+    StringBuilder stringBuilder;
+    stringBuilder.append("Third Party Registrable Domain: ", thirdPartyDomain.string(), "\n    {");
+    for (auto firstParty : underFirstParties)
+        stringBuilder.append("{ ", firstParty.toString(), " },");
+    stringBuilder.append('}');
+    return stringBuilder.toString();
+}
+
+void WebResourceLoadStatisticsStore::ThirdPartyData::encode(IPC::Encoder& encoder) const
+{
+    encoder << thirdPartyDomain;
+    encoder << underFirstParties;
+}
+
+auto WebResourceLoadStatisticsStore::ThirdPartyData::decode(IPC::Decoder& decoder) -> std::optional<ThirdPartyData>
+{
+    std::optional<WebCore::RegistrableDomain> decodedDomain;
+    decoder >> decodedDomain;
+    if (!decodedDomain)
+        return std::nullopt;
+
+    std::optional<Vector<ThirdPartyDataForSpecificFirstParty>> decodedFirstParties;
+    decoder >> decodedFirstParties;
+    if (!decodedFirstParties)
+        return std::nullopt;
+
+    return {{ WTFMove(*decodedDomain), WTFMove(*decodedFirstParties) }};
+}
+
+bool WebResourceLoadStatisticsStore::ThirdPartyData::operator<(const ThirdPartyData &other) const
+{
+    return underFirstParties.size() < other.underFirstParties.size();
 }
 
 } // namespace WebKit

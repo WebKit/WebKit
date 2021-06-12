@@ -1,3 +1,1210 @@
+2021-06-07  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF][GStreamer] Fix clang TSA warnings in WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=226719
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Fix the remaning clang thread safety warnings in WTF::DataMutex.
+
+        The goal of this patch is to reduce the number of warnings in the
+        GStreamer codebase. Whether DataMutex should be deprecated in favor of
+        Locker with the clang TSA annotations is outside of the scope of this
+        patch.
+
+        * wtf/DataMutex.h:
+
+2021-06-07  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Remove spurious assert in WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=226714
+
+        Reviewed by Michael Catanzaro.
+
+        Remove DATA_MUTEX_CHECK(!mutex().isHeld()); from the DataMutexLocker
+        constructor, introduced in r278248.
+
+        Trying to lock a currently held mutex is not an error condition that
+        should crash the process, it will just wait for its turn to lock it.
+
+        * wtf/DataMutex.h:
+
+2021-06-06  Chris Dumez  <cdumez@apple.com>
+
+        Stop using legacy EventLoopDeferrableTask
+        https://bugs.webkit.org/show_bug.cgi?id=226700
+
+        Reviewed by Darin Adler.
+
+        Introduce new WTF::CancellableTask type which is a wrapper around a WTF::Function.
+        It can create a handle for the task and this handle can be used to check if the
+        task is still pending and to cancel it. This is useful when scheduling tasks in the
+        event loop for example as there are cases where we need to know if a task we
+        scheduled is still pending (to avoid double scheduling) or where we need to cancel
+        a previously scheduled task.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CancellableTask.h: Added.
+        (WTF::CancellableTask::CancellableTask):
+        (WTF::CancellableTask::operator()):
+        (WTF::CancellableTask::isPending const):
+        (WTF::CancellableTask::cancel):
+        (WTF::CancellableTask::Handle::Handle):
+        (WTF::CancellableTask::Handle::isPending const):
+        (WTF::CancellableTask::Handle::cancel):
+        (WTF::CancellableTask::createHandle):
+
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        FileSystem::readFromFile() should return data as `void*`
+        https://bugs.webkit.org/show_bug.cgi?id=226671
+
+        Reviewed by Darin Adler.
+
+        FileSystem::readFromFile() should return data as `void*` instead of `char*`. This is more flexible and
+        consistent with FileSystem::writeToFile().
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::appendFileContentsToFileHandle):
+        (WTF::FileSystemImpl::readOrMakeSalt):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::readFromFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::readFromFile):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::readFromFile):
+
+2021-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Implement off-by-default experimental feature for PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize
+        https://bugs.webkit.org/show_bug.cgi?id=226629
+
+        Reviewed by Brady Eidson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-06-04  Devin Rousso  <drousso@apple.com>
+
+        Add a way to prefix output of `WTFReportBacktrace` to make log filtering easier
+        https://bugs.webkit.org/show_bug.cgi?id=226390
+
+        Reviewed by Megan Gardner.
+
+        Often times while debugging I add `WTFLogAlways("<DR> ...")` to various places as indicators
+        that "logic has reached here". This is especially useful when debugging iOS as unlike macOS
+        there's no console output from `run-safari`, meaning that I have to use system logging,
+        which is often a deluge of unrelated information. Having "<DR>" as a prefix makes filtering
+        through the system logging trivial as I can ignore logs that don't have it. Unfortunately,
+        `WTFReportBacktrace` does not have a way to add this prefix, so it becomes much harder to
+        find in the logs. This patch enables adding a prefix to each line of `WTFReportBacktrace`
+        via a new function `WTFReportBactraceWithPrefix`.
+
+        * wtf/Assertions.h:
+        * wtf/Assertions.cpp:
+        (WTFReportBacktraceWithPrefix): Added.
+        (WTFPrintBacktraceWithPrefix): Added.
+
+        * wtf/StackTrace.h:
+        (WTF::StackTrace::StackTrace):
+        * wtf/StackTrace.cpp:
+        (WTF::StackTrace::dump const):
+
+2021-06-04  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix more GCC warnings
+        https://bugs.webkit.org/show_bug.cgi?id=226193
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add missing static_cast<void*> required to suppress GCC's -Wclass-memaccess warning when
+        intentionally not running constructors/destructors. There's already a static_assert to
+        ensure this is safe, which is better than usual for us.
+
+        * wtf/SmallSet.h:
+
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r277881.
+
+        Fix warning about unused function.
+
+        * wtf/cocoa/FileSystemCocoa.mm:
+
+2021-06-03  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r277744): Broke build on s390x mainframes
+        https://bugs.webkit.org/show_bug.cgi?id=226497
+
+        Reviewed by Darin Adler.
+
+        The problem is we have a template defined in a C++ source file, used by multiple source
+        files. This is not valid C++, so let's split the templates defined in StringBuilder.cpp out
+        into a new StringBuilderInternals.h that we can #include in both StringBuilder.cpp and
+        StringBuilderJSON.cpp.
+
+        Ideally we would move the template defined in StringBuilderJSON.cpp as well, and then
+        eliminate StringBuilderJSON.cpp since there would only be one function left. But that file
+        has an MPL license. It's easier to leave it be to keep the license situation simpler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::expandedCapacity):
+        (WTF::expandedCapacity): Deleted.
+        (WTF::StringBuilder::allocateBuffer): Deleted.
+        (WTF::StringBuilder::extendBufferForAppending): Deleted.
+        (WTF::StringBuilder::extendBufferForAppendingSlowCase): Deleted.
+        * wtf/text/StringBuilder.h:
+        * wtf/text/StringBuilderInternals.h: Added.
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::reallocateBuffer):
+        (WTF::StringBuilder::extendBufferForAppending):
+        (WTF::StringBuilder::extendBufferForAppendingSlowCase):
+        * wtf/text/StringBuilderJSON.cpp:
+
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Drop WTF::Vector overloads taking index as Checked<size_t>
+        https://bugs.webkit.org/show_bug.cgi?id=226553
+
+        Reviewed by Geoffrey Garen.
+
+        Drop WTF::Vector overloads taking index as Checked<size_t>. They are no longer needed now that
+        Checked<size_t> can implicitly get converted to size_t (r278338).
+
+        * wtf/Vector.h:
+        (WTF::Vector::at const):
+        (WTF::Vector::operator[] const):
+
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Drop Checked::safeGet()
+        https://bugs.webkit.org/show_bug.cgi?id=226537
+
+        Reviewed by Geoffrey Garen.
+
+        Drop Checked::safeGet() and replace with uses of Checked::operator T() or Checked::value().
+        safeGet() is a bit akward, having both a return value and an out-parameter.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::Checked::value const):
+        (WTF::operator+):
+        (WTF::operator-):
+        (WTF::operator*):
+        (WTF::operator/):
+
+2021-06-02  Antti Koivisto  <antti@apple.com>
+
+        Style::Scope should use CheckedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=226530
+
+        Reviewed by Sam Weinig.
+
+        * wtf/CMakeLists.txt:
+
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Use Checked aliases instead of Checked<T, RecordOverflow>
+        https://bugs.webkit.org/show_bug.cgi?id=226535
+
+        Reviewed by Keith Miller.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::userVisibleURL):
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::parseIPv4Piece):
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::dataWithUserTypedString):
+        * wtf/glib/SocketConnection.cpp:
+        (WTF::SocketConnection::sendMessage):
+
+2021-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CheckedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=226158
+
+        Reviewed by Antti Koivisto.
+
+        This patch introduces a new type of smart pointer, CheckedPtr, which behaves like RefPtr and
+        let each object keep track of pointers pointing to the object. Unlike CheckedPtr, the purpose of
+        this internal counter is to release assert that there is no outstanding pointer at the time
+        of destruction instead of keeping the object alive when there is one.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CheckedPtr.h: Added.
+        (WTF::CheckedPtr): Added.
+        (WTF::CheckedPtr::CheckedPtr): Added.
+        (WTF::CheckedPtr::~CheckedPtr): Added.
+        (WTF::CheckedPtr::isHashTableDeletedValue const): Added.
+        (WTF::CheckedPtr::operator UnspecifiedBoolType const): Added.
+        (WTF::CheckedPtr::operator! const): Added.
+        (WTF::CheckedPtr::get const): Added.
+        (WTF::CheckedPtr::get): Added.
+        (WTF::CheckedPtr::operator* const): Added.
+        (WTF::CheckedPtr::operator*): Added.
+        (WTF::CheckedPtr::operator-> const): Added.
+        (WTF::CheckedPtr::operator->): Added.
+        (WTF::CheckedPtr::operator== const): Added.
+        (WTF::CheckedPtr::operator=): Added.
+        (WTF::CheckedPtr::unspecifiedBoolTypeInstance const): Added.
+        (WTF::CheckedPtr::refIfNotNull): Added.
+        (WTF::CheckedPtr::derefIfNotNull): Added.
+        (WTF::makeCheckedPtr): Added.
+        (WTF::is): Added.
+        (WTF::CanMakeCheckedPtr): Added.
+        (WTF::CanMakeCheckedPtr::~CanMakeCheckedPtr): Added. Release assert that m_ptrCount is 0.
+        (WTF::CanMakeCheckedPtr::ptrCount const): Added.
+        (WTF::CanMakeCheckedPtr::incrementPtrCount): Added.
+        (WTF::CanMakeCheckedPtr::decrementPtrCount): Added. Note that we don't do anything when m_ptrCount
+        becomes 0 unlike RefPtr.
+        (WTF::HashTraits<CheckedPtr<P>>): Added.
+        (WTF::HashTraits<CheckedPtr<P>>::emptyValue): Added.
+        (WTF::HashTraits<CheckedPtr<P>>::peek): Added.
+        (WTF::HashTraits<CheckedPtr<P>>::customDeleteBucket): Added.
+
+2021-06-01  Darin Adler  <darin@apple.com>
+
+        Remove <wtf/Optional.h>
+        https://bugs.webkit.org/show_bug.cgi?id=226437
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Removed include of <wtf/Optional.h>.
+
+        * WTF.xcodeproj/project.pbxproj: Removed Optional.h.
+
+        * wtf/Markable.h: Added include of <optional>.
+        * wtf/OptionSet.h: Ditto.
+
+        * wtf/Optional.h: Emptied this file. On the Windows build system, we can't
+        seem to build successfully without an empty file here. The copied forwarding
+        header seems to linger even if we remove the original. Until we fix the
+        Windows build system, if we want to support incremental builds, we need
+        to keep this empty file around.
+
+        * wtf/PrintStream.h: Added include of <optional>.
+        * wtf/Seconds.h: Ditto.
+        * wtf/StackTrace.h: Ditto.
+
+        * wtf/StdLibExtras.h: Moved the valueOrCompute function here from Optional.h.
+        Re-sorted the "using" at the bottom of the file.
+
+        * wtf/URLHelpers.h: Added include of <optional>.
+        * wtf/Vector.h: Ditto.
+
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Rename Checked::unsafeGet() to Checked::value()
+        https://bugs.webkit.org/show_bug.cgi?id=226514
+
+        Reviewed by Darin Adler.
+
+        Rename Checked::unsafeGet() to Checked::value(). The "unsafeGet" naming is confusing as this
+        function isn't really unsafe since it will crash if the value has overflowed. Also add an
+        `operator T()` to implicitly convert a Checked to its underlying type without needing to
+        call value().
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::Checked::operator! const):
+        (WTF::Checked::operator bool const):
+        (WTF::Checked::operator T const):
+        (WTF::Checked::value const):
+        (WTF::Checked::operator==):
+        (WTF::Checked::operator< const):
+        (WTF::Checked::operator<= const):
+        (WTF::Checked::operator> const):
+        (WTF::Checked::operator>= const):
+        * wtf/ConcurrentBuffer.h:
+        * wtf/FastMalloc.cpp:
+        (WTF::fastCalloc):
+        (WTF::tryFastCalloc):
+        * wtf/Gigacage.cpp:
+        (Gigacage::tryMallocArray):
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::userVisibleURL):
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::parseIPv4Piece):
+        * wtf/UniqueArray.h:
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::dataWithUserTypedString):
+        * wtf/glib/SocketConnection.cpp:
+        (WTF::SocketConnection::readMessage):
+        (WTF::SocketConnection::sendMessage):
+        * wtf/text/CString.cpp:
+        (WTF::CStringBuffer::createUninitialized):
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::StringBuffer):
+        * wtf/text/StringBuilderJSON.cpp:
+        (WTF::StringBuilder::appendQuotedJSONString):
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeStringFromAdapters):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::allocationSize):
+        * wtf/text/StringToIntegerConversion.h:
+        (WTF::parseInteger):
+
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r277881.
+
+        Silence unused parameter warnings.
+
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+        (WTF::FileSystemImpl::allowsMaterializingDatalessFiles): Deleted.
+        (WTF::FileSystemImpl::isSafeToUseMemoryMapForPath): Deleted.
+        (WTF::FileSystemImpl::makeSafeToUseMemoryMapForPath): Deleted.
+
+2021-06-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Support building against uClibc
+        https://bugs.webkit.org/show_bug.cgi?id=226244
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/PlatformRegisters.h: Use the <sys/ucontext.h> header instead of
+        <ucontext.h>, which is enough to gain access to the type definitions
+        for CPU registers and is available on every libc. On the other hand,
+        uClibc does not have <ucontext.h>, so this fixes the build in that
+        case.
+
+2021-05-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop UncheckedCondition / UncheckedLock
+        https://bugs.webkit.org/show_bug.cgi?id=226432
+
+        Reviewed by Darin Adler.
+
+        Drop UncheckedCondition / UncheckedLock now that the whole codebase has been ported to
+        Condition / Lock, which support Clang thread safety analysis.
+
+        * wtf/Condition.h:
+        * wtf/Forward.h:
+        * wtf/Lock.cpp:
+        (WTF::Lock::lockSlow):
+        (WTF::Lock::unlockSlow):
+        (WTF::Lock::unlockFairlySlow):
+        (WTF::Lock::safepointSlow):
+        * wtf/Lock.h:
+        (WTF::assertIsHeld):
+        (WTF::WTF_ASSERTS_ACQUIRED_LOCK):
+
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove WTF::Optional synonym for std::optional, using that class template directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=226433
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Let the do-webcore-rename script rename Optional<> to std::optional<>.
+
+        * wtf/Optional.h: Remove WTF::Optional.
+
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in JSC::VMInspector
+        https://bugs.webkit.org/show_bug.cgi?id=226427
+
+        Reviewed by Mark Lam.
+
+        Add Lock::tryLockWithTimeout(), similar to tryLock() but gives up after a
+        specified timeout. This used to be implemented in VMInspector but I think
+        Lock is a better place for it.
+
+        * wtf/Lock.cpp:
+        (WTF::Lock::tryLockWithTimeout):
+        * wtf/Lock.h:
+
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Adopt clang thread safety annotations in WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=226431
+
+        Reviewed by Darin Adler.
+
+        Adopt clang thread safety annotations in WTF::DataMutex. This allows us to
+        stop using UncheckedCondition in a few places.
+
+        * wtf/DataMutex.h:
+        (WTF::DataMutex::DataMutex):
+
+2021-05-28  Darin Adler  <darin@apple.com>
+
+        Clients of optional should use has_value instead of relying on hasValue macro
+        https://bugs.webkit.org/show_bug.cgi?id=226395
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Hasher.h: Use has_value.
+
+        * wtf/Optional.h: Remove hasValue macro. Not needed any more, but also a bit
+        dangerous because of how widespread the use of hasValue is for things other
+        than WTF::Optional.
+
+2021-05-28  Alex Christensen  <achristensen@webkit.org>
+
+        Punycode encode U+0BE6 when not in context of other Tamil characters
+        https://bugs.webkit.org/show_bug.cgi?id=226409
+        <rdar://78160926>
+
+        Reviewed by Tim Horton.
+
+        It has quite legitimate use, so we don't want to always punycode encode it,
+        but when used in the context of non-Tamil characters we want to punycode encode it.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>):
+        (WTF::URLHelpers::isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>):
+        (WTF::URLHelpers::isOfScriptType):
+        (WTF::URLHelpers::isLookalikeSequence):
+        (WTF::URLHelpers::isLookalikeCharacter):
+        (WTF::URLHelpers::isArmenianLookalikeCharacter): Deleted.
+        (WTF::URLHelpers::isArmenianScriptCharacter): Deleted.
+        (WTF::URLHelpers::isArmenianLookalikeSequence): Deleted.
+
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in WTF::MetaAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=226396
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in WTF::MetaAllocator, as it is being phased out in favor on Lock,
+        which supports Clang thread safety analysis.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/MetaAllocator.h:
+
+2021-05-28  Robin Morisset  <rmorisset@apple.com>
+
+        Fix LikelyDenseUnsignedIntegerSet::clear()
+        https://bugs.webkit.org/show_bug.cgi?id=226388
+
+        Reviewed by Mark Lam.
+
+        There are two problems with it:
+        1) It calls BitVector::clearAll(), which does not free any memory.
+        Instead, it should call BitVector::~BitVector(), then do a placement new of a fresh BitVector (to get it back to its inline condition)
+        2) More problematically, it changes m_size before calling isBitVector() which relies crucially on the value of m_size.
+        So it is going to believe that it is in BitVector mode even when it is actually in HashSet mode.
+
+        * wtf/LikelyDenseUnsignedIntegerSet.h:
+        (WTF::LikelyDenseUnsignedIntegerSet::clear):
+
+2021-05-28  Sam Weinig  <weinig@apple.com>
+
+        Add stub implementation of CA separated portal bits for GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=226343
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformHave.h: Add HAVE_CORE_ANIMATION_SEPARATED_PORTALS.
+
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r277881.
+
+        Deal with IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES potentially not being defined on
+        older OSes.
+
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+        (WTF::FileSystemImpl::allowsMaterializingDatalessFiles):
+
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r277881.
+
+        Add missing header include.
+
+        * wtf/cocoa/FileSystemCocoa.mm:
+
+2021-05-27  Said Abou-Hallawa  <said@apple.com>
+
+        Values of keySplines control points must all be in the range 0 to 1
+        https://bugs.webkit.org/show_bug.cgi?id=226336
+
+        Reviewed by Sam Weinig.
+
+        * wtf/MathExtras.h:
+        (isInRange):
+        There are a least couple of implementations of this function in WebCore.
+        The next step is to remove the redundant code in WebCore and use this one.
+
+2021-05-27  Robin Morisset  <rmorisset@apple.com>
+
+        AirAllocateStackByGraphColoring should use the optimized interference graphs from AirAllocateRegistersByGraphColoring
+        https://bugs.webkit.org/show_bug.cgi?id=226258
+
+        Reviewed by Phil Pizlo.
+
+        I moved the interference graphs datastructures from AirAllocateRegistersByGraphColoring to their own wtf/InterferenceGraph.h file.
+        There are three of them:
+        - SmallInterferenceGraph, best for n < 400
+        - LargeInterferenceGraph, for n < 2**16
+        - HugeInterferenceGraph, for n up to 2**32
+        I also added "Iterable" versions of them, that have an operator[] method whose result you can iterate on to get all the indices which interfere with a given index.
+        SmallIterableInterferenceGraph is the same as the non-iterable version, but the Large and Huge versions are a bit slower than their counterparts and use 2x memory.
+
+        All of these were tested by running JetStream2 with the TEST_OPTIMIZED_INTERFERENCE_GRAPH set to 1.
+        This flag makes the optimized datastructures run in parallel with a reference implementation, and their results are checked for equality on every method call.
+        There is one small difference allowed: iteration is not guaranteed to go through elements in the same order.
+
+        I also added a clear() method to LikelyDenseUnsignedIntegerSet, and added the NotNull flag to its various uses of placement new.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/HashSet.h:
+        (WTF::W>::memoryUse const):
+        * wtf/InterferenceGraph.h: Added.
+        (WTF::InterferenceBitVector::contains):
+        (WTF::InterferenceBitVector::addAndReturnIsNewEntry):
+        (WTF::InterferenceBitVector::add):
+        (WTF::InterferenceBitVector::clear):
+        (WTF::InterferenceBitVector::mayClear):
+        (WTF::InterferenceBitVector::setMaxIndex):
+        (WTF::InterferenceBitVector::forEach):
+        (WTF::InterferenceBitVector::size const):
+        (WTF::InterferenceBitVector::memoryUse const):
+        (WTF::InterferenceBitVector::dumpMemoryUseInKB const):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator++):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator* const):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator== const):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator!= const):
+        (WTF::InterferenceBitVector::Iterable::begin const):
+        (WTF::InterferenceBitVector::Iterable::end const):
+        (WTF::InterferenceBitVector::operator[] const):
+        (WTF::InterferenceBitVector::index const):
+        (WTF::InterferenceVector::contains):
+        (WTF::InterferenceVector::addAndReturnIsNewEntry):
+        (WTF::InterferenceVector::add):
+        (WTF::InterferenceVector::clear):
+        (WTF::InterferenceVector::mayClear):
+        (WTF::InterferenceVector::setMaxIndex):
+        (WTF::InterferenceVector::forEach):
+        (WTF::InterferenceVector::size const):
+        (WTF::InterferenceVector::memoryUse const):
+        (WTF::InterferenceVector::dumpMemoryUseInKB const):
+        (WTF::InterferenceVector::Iterable::begin const):
+        (WTF::InterferenceVector::Iterable::end const):
+        (WTF::InterferenceVector::operator[] const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::contains):
+        (WTF::UndirectedEdgesDuplicatingAdapter::addAndReturnIsNewEntry):
+        (WTF::UndirectedEdgesDuplicatingAdapter::add):
+        (WTF::UndirectedEdgesDuplicatingAdapter::clear):
+        (WTF::UndirectedEdgesDuplicatingAdapter::mayClear):
+        (WTF::UndirectedEdgesDuplicatingAdapter::setMaxIndex):
+        (WTF::UndirectedEdgesDuplicatingAdapter::forEach):
+        (WTF::UndirectedEdgesDuplicatingAdapter::size const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::memoryUse const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::dumpMemoryUseInKB const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::operator[] const):
+        (WTF::UndirectedEdgesDedupAdapter::contains):
+        (WTF::UndirectedEdgesDedupAdapter::addAndReturnIsNewEntry):
+        (WTF::UndirectedEdgesDedupAdapter::add):
+        (WTF::UndirectedEdgesDedupAdapter::clear):
+        (WTF::UndirectedEdgesDedupAdapter::mayClear):
+        (WTF::UndirectedEdgesDedupAdapter::setMaxIndex):
+        (WTF::UndirectedEdgesDedupAdapter::forEach):
+        (WTF::UndirectedEdgesDedupAdapter::size const):
+        (WTF::UndirectedEdgesDedupAdapter::memoryUse const):
+        (WTF::UndirectedEdgesDedupAdapter::dumpMemoryUseInKB const):
+        (WTF::InterferenceHashSet::contains):
+        (WTF::InterferenceHashSet::addAndReturnIsNewEntry):
+        (WTF::InterferenceHashSet::add):
+        (WTF::InterferenceHashSet::clear):
+        (WTF::InterferenceHashSet::setMaxIndex):
+        (WTF::InterferenceHashSet::forEach):
+        (WTF::InterferenceHashSet::size const):
+        (WTF::InterferenceHashSet::memoryUse const):
+        (WTF::InterferenceHashSet::dumpMemoryUseInKB const):
+        (WTF::InstrumentedInterferenceGraph::contains):
+        (WTF::InstrumentedInterferenceGraph::addAndReturnIsNewEntry):
+        (WTF::InstrumentedInterferenceGraph::add):
+        (WTF::InstrumentedInterferenceGraph::clear):
+        (WTF::InstrumentedInterferenceGraph::mayClear):
+        (WTF::InstrumentedInterferenceGraph::setMaxIndex):
+        (WTF::InstrumentedInterferenceGraph::forEach):
+        (WTF::InstrumentedInterferenceGraph::size const):
+        (WTF::InstrumentedInterferenceGraph::memoryUse const):
+        (WTF::InstrumentedInterferenceGraph::dumpMemoryUseInKB const):
+        (WTF::InstrumentedIterableInterferenceGraph::Iterable::Iterable):
+        (WTF::InstrumentedIterableInterferenceGraph::Iterable::begin const):
+        (WTF::InstrumentedIterableInterferenceGraph::Iterable::end const):
+        (WTF::InstrumentedIterableInterferenceGraph::operator[] const):
+        * wtf/LikelyDenseUnsignedIntegerSet.h:
+        (WTF::LikelyDenseUnsignedIntegerSet::LikelyDenseUnsignedIntegerSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::clear):
+        (WTF::LikelyDenseUnsignedIntegerSet::add):
+        (WTF::LikelyDenseUnsignedIntegerSet::estimateHashSetSize):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToHashSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToBitVector):
+
+2021-05-27  Darin Adler  <darin@apple.com>
+
+        Next step toward using std::optional directly instead of through WTF::Optional typedef
+        https://bugs.webkit.org/show_bug.cgi?id=226280
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Accept the renaming done by do-webcore-rename.
+
+        * wtf/Optional.h: Remove WTF::nullopt_t and WTF::makeOptional.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::mapHostName): Convert from nullopt to std::nullopt.
+
+2021-05-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Abandon pending tasks on background thread when WebIDBServer is closed
+        https://bugs.webkit.org/show_bug.cgi?id=226295
+
+        Reviewed by Chris Dumez.
+
+        Make the wait end with either a new message or queue being killed.
+
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::waitForMessage):
+        * wtf/CrossThreadTask.h:
+        (WTF::CrossThreadTask::operator bool const):
+        * wtf/CrossThreadTaskHandler.cpp:
+        (WTF::CrossThreadTaskHandler::taskRunLoop):
+
+2021-05-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add check for timingsafe_bcmp
+        https://bugs.webkit.org/show_bug.cgi?id=226347
+
+        Reviewed by Chris Dumez.
+
+        Use HAVE(TIMINGSAFE_BCMP) in CryptographicUtilities code. Set its value in PlatformHave for
+        platforms not using CMake.
+
+        * wtf/CryptographicUtilities.cpp:
+        * wtf/CryptographicUtilities.h:
+        * wtf/PlatformHave.h:
+
+2021-05-27  Mikhail R. Gadelha  <mikhail.ramalho@gmail.com>
+
+        Increase NumberToStringBuffer to account for negative number
+        https://bugs.webkit.org/show_bug.cgi?id=226014
+
+        Reviewed by Robin Morisset.
+
+        In r250389, NumberToStringBuffer length was increased from 96 to 123 because:
+
+        <21 digits> + decimal point + <100 digits> + null char = 123.
+
+        however,
+
+        a = -100000000000000000000
+        a.toFixed(100)
+
+        is a valid conversion and it is 124 chars long, because of the "-" sign.
+
+        So this patch increases the length of NumberToStringBuffer to 124 and adds new
+        test cases.
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/dtoa.h:
+
+2021-05-27  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r277344
+        https://bugs.webkit.org/show_bug.cgi?id=225602
+        <rdar://78411776>
+
+        * wtf/PlatformHave.h:
+
+2021-05-27  Devin Rousso  <drousso@apple.com>
+
+        Use `NSLocale` SPI for comparing language identifiers instead of string comparison
+        https://bugs.webkit.org/show_bug.cgi?id=226252
+
+        Reviewed by Wenson Hsieh.
+
+        The existing `indexOfBestMatchingLanguageInList` logic uses (sub)string comparison of BCP47
+        language tags (e.g. looking for a `'-'` and comparing the substring before and after in the
+        input language and each item in the language list). While this does work for some languages,
+        it's really not the correct way to compare BCP47 language tags. Additionally, it basically
+        ignores the text after the first `'-'`, unless there's an exact match with the input
+        language. This leads to `"zh-CN"` and `"zh-HK"` being considered a (not exact) match, which
+        isn't ideal.
+
+        * wtf/Language.cpp:
+        * wtf/cocoa/LanguageCocoa.mm:
+        (WTF::indexOfBestMatchingLanguageInList): Added.
+        * wtf/spi/cocoa/NSLocaleSPI.h:
+
+2021-05-26  Cameron McCormack  <heycam@apple.com>
+
+        Prevent sbix glyphs from being rendered in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=226159
+        <rdar://77231959>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h: Add HAVE_CORE_TEXT_SBIX_IMAGE_SIZE_FUNCTIONS.
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Leverage the new Vector(const T*, size_t) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226304
+
+        Reviewed by Darin Adler.
+
+        Leverage the new Vector(const T*, size_t) constructor in existing code.
+
+        * wtf/text/WTFString.cpp:
+        (asciiDebug):
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Use timingsafe_bcmp() in WTF::constantTimeMemcmp() when available
+        https://bugs.webkit.org/show_bug.cgi?id=226294
+        <rdar://problem/78542643>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r278140 to address post-landing feedback.
+
+        * wtf/CryptographicUtilities.cpp:
+        (WTF::constantTimeMemcmp):
+        * wtf/CryptographicUtilities.h:
+        (WTF::constantTimeMemcmp):
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Use timingsafe_bcmp() in WTF::constantTimeMemcmp() when available
+        https://bugs.webkit.org/show_bug.cgi?id=226294
+
+        Reviewed by Alex Christensen.
+
+        Use timingsafe_bcmp() in WTF::constantTimeMemcmp() when available (iOS, macOS, FreeBSD, OpenBSD),
+        instead of our own custom implementation.
+
+        * wtf/CryptographicUtilities.cpp:
+        (WTF::constantTimeMemcmp):
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        [Hardening] Have the Ref<> destructor null out its pointer
+        https://bugs.webkit.org/show_bug.cgi?id=226293
+        <rdar://problem/78532149>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Ref.h:
+        (WTF::Ref::~Ref):
+
+2021-05-26  Alex Christensen  <achristensen@webkit.org>
+
+        URL path setter messes up UTF-8 encoding after ?
+        https://bugs.webkit.org/show_bug.cgi?id=226136
+
+        Reviewed by Chris Dumez.
+
+        escapePathWithoutCopying needs to tell percentEncodeCharacters to percent encode all non-ASCII characters in the output of UTF-8 encoding
+        in addition to ? and #.  Otherwise, we take the output of UTF-8 encoding and append each code unit to the input of URL parsing as if it were Latin-1.
+        This matches Chrome, Firefox, and reason.
+        Covered by a newly passing WPT test.
+        Other callers of percentEncodeCharacters use functions that already encode all non-ASCII characters.
+
+        * wtf/URL.cpp:
+        (WTF::escapePathWithoutCopying):
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in WTF::AutomaticThread
+        https://bugs.webkit.org/show_bug.cgi?id=226255
+
+        Reviewed by Keith Miller.
+
+        Stop using UncheckedLock in WTF::AutomaticThread as it is being phased out in favor of
+        Lock, which supports Clang thread safety analysis.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::wait):
+        (WTF::AutomaticThreadCondition::waitFor):
+        (WTF::AutomaticThread::AutomaticThread):
+        * wtf/AutomaticThread.h:
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::finishWithLock):
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        * wtf/ParallelHelperPool.h:
+        (WTF::ParallelHelperPool::numberOfThreads const):
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        * wtf/WorkerPool.h:
+
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Use UncheckedLock less in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=226212
+
+        Reviewed by Saam Barati.
+
+        Add support for unlockEarly() to Locker<Lock> specialization, for consistency
+        with the generic Locker.
+
+        * wtf/Lock.h:
+
+2021-05-25  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] REGRESSION(r254389) media controls needs the full list of language preferences for ordering tracks
+        https://bugs.webkit.org/show_bug.cgi?id=226038
+
+        Reviewed by Myles C. Maxfield and Eric Carlson.
+
+        Media controls need access to the full list of language preferences in order to properly
+        sort/order the list of tracks in the controls UI. For example, if a `<video>` has subtitles
+        for English, Spanish, and French, and the user has English (default) and French (alternate)
+        configured in the Language & Region view of System Preferences on macOS, WebKit should order
+        the subtitles list English, French, and then Spanish.
+
+        * wtf/Language.h:
+        * wtf/Language.cpp:
+        (WTF::cachedFullPlatformPreferredLanguages): Added.
+        (WTF::cachedMinimizedPlatformPreferredLanguages): Added.
+        (WTF::languageDidChange):
+        (WTF::defaultLanguage):
+        (WTF::userPreferredLanguages):
+        (WTF::platformLanguageDidChange): Deleted.
+        Move the caching in `wtf/cf/LanguageCF.cpp` to `wtf/Language.cpp` so that all platforms can
+        benefit from caching the result of `platformUserPreferredLanguages`.
+
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::platformUserPreferredLanguages):
+        (WTF::platformLanguageDidChange): Deleted.
+        * wtf/playstation/LanguagePlayStation.cpp:
+        (WTF::platformUserPreferredLanguages):
+        * wtf/spi/cocoa/NSLocaleSPI.h:
+        * wtf/unix/LanguageUnix.cpp:
+        (WTF::platformUserPreferredLanguages):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::platformUserPreferredLanguages):
+        Add `WTF::ShouldMinimizeLanguages` that controls whether `WTF::minimizedPreferredLanguages`
+        is called. Since the result is cached, create separate `Vector<String>` for each enum value.
+
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in html/canvas
+        https://bugs.webkit.org/show_bug.cgi?id=226186
+
+        Reviewed by Darin Adler.
+
+        Allow converting a Locker<Lock> to an AbstractLocker type. This allows porting
+        code from UncheckedLock to Lock even if said code is passing the Locker<Lock>
+        as parameter around as an AbstractLocker. This is very common in JSC and in
+        html/canvas.
+
+        Also make DropLockForScope work with Locker<Lock> to help port code over.
+
+        * wtf/Lock.h:
+
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Switch from WTF::Optional to std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Forward.h: Remove Optional forward declaration.
+        Also include Optional.h, just for now. Need to remove this once
+        we do the global rename.
+
+        * wtf/Optional.h: Replaced the entire WTF::Optional implementation
+        with a WTF::Optional "using" that makes it a synonym for std::optional.
+        WTF::nullopt being a synonym for std::nullopt and WTF::nullopt_t
+        being a synonym for std::nullopt_t. Also included functions so
+        that WTF::makeOptional calls std::make_optional and kept the
+        WTF extension named valueOrCompute. Need to remove these once we
+        do the global rename, and likely just get rid of valueOrCompute, and
+        then delete this entire header.
+
+        * wtf/Seconds.h: Added an include of FastMalloc.h, since it's no
+        longer pulled in because of including Optional.h.
+
+        * wtf/persistence/PersistentCoder.h: Use Forward.h for now instead of
+        forward-declaring WTF::optional.
+
+2021-05-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [AppleWin] JSC fails to build
+        https://bugs.webkit.org/show_bug.cgi?id=226225
+        <rdar://78330435>
+
+        Reviewed by Brent Fulgham.
+
+        Speculative build fix for missing script to generate unified sources. Make sure the WTF scripts directory exists before
+        copying the script there, and add a CMake log message to help further debugging if this is not the correct fix.
+
+        * wtf/CMakeLists.txt:
+
+2021-05-25  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Implement FileSystem without std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=226197
+
+        Reviewed by Chris Dumez.
+
+        The PlayStation 4 doesn't have support in its SDK for std::filesystem so backport the
+        functions jettisoned from FileSystemPOSIX and add them to a FileSystemPlayStation.cpp.
+        The ordering matches the contents of FileSystem.cpp.
+
+        Most of the functions ported to std::filesystem were just moved over as is from the commit
+        prior to r276879. Minor changes to the function signatures made when required.
+
+        The fileTypePotentiallyFollowingSymLinks function was created from the previous behavior
+        of fileMetadataUsingFunction and toFileMetataType.
+
+        The hardLinkCount was created from looking at the behavior hardLinkCount replaced in
+        r277446.
+
+        * wtf/FileSystem.cpp:
+        * wtf/PlatformHave.h:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/StdFilesystem.h:
+        * wtf/playstation/FileSystemPlayStation.cpp: Added.
+        (WTF::FileSystemImpl::fileTypePotentiallyFollowingSymLinks):
+        (WTF::FileSystemImpl::fileExists):
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+        (WTF::FileSystemImpl::moveFile):
+        (WTF::FileSystemImpl::fileSize):
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::volumeFreeSpace):
+        (WTF::FileSystemImpl::createSymbolicLink):
+        (WTF::FileSystemImpl::hardLink):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        (WTF::FileSystemImpl::hardLinkCount):
+        (WTF::FileSystemImpl::deleteNonEmptyDirectory):
+        (WTF::FileSystemImpl::fileModificationTime):
+        (WTF::FileSystemImpl::updateFileModificationTime):
+        (WTF::FileSystemImpl::isHiddenFile):
+        (WTF::FileSystemImpl::fileType):
+        (WTF::FileSystemImpl::fileTypeFollowingSymlinks):
+        (WTF::FileSystemImpl::pathFileName):
+        (WTF::FileSystemImpl::parentPath):
+        (WTF::FileSystemImpl::realPath):
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+        (WTF::FileSystemImpl::pathByAppendingComponents):
+        (WTF::FileSystemImpl::listDirectory):
+
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in WTF::RecursiveLock
+        https://bugs.webkit.org/show_bug.cgi?id=226206
+
+        Reviewed by Sam Weinig.
+
+        Stop using UncheckedLock in WTF::RecursiveLock and use a regular Lock instead.
+        This is a step towards phasing out UncheckedLock.
+
+        Note that despite this change, RecursiveLock still doesn't benefit from
+        Clang thread safety analysis. Its functions do conditional locking / unlocking
+        which are not currently supported by analysis. Even if they were, we'd need
+        a template specialization for RecursiveLockAdapter<Lock> since
+        RecursiveLockAdapter may wrap other types of Lock which do not support analysis.
+
+        * wtf/RecursiveLockAdapter.h:
+
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        The optimization done by appendLiteral has minimal value and is something we
+        can do without. It does not cut down the number of allocations, which is the
+        main cost of the StringBuilder class. Getting rid of the differently named
+        appendLiteral improves the design of the StringBuilder class for callers.
+        Our goal is to get as close as possible to a single append function.
+
+        If we decide we need an optimization for literals, we can come up with a
+        different way that is compatible with append. For example, we could assume
+        that any char array is a literal and check that at compile time in
+        StringConcatenate; that optimization would work for both makeString and
+        StringBuilder. Or we could use a strategy like ASCIILiteral.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::encodeForFileName): Streamline logic,
+        and use variadic append to make this more efficient.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::escapeString): Use append instead
+        of appendLiteral.
+        (WTF::JSONImpl::Value::writeJSON const): Ditto.
+
+        * wtf/Logger.h:
+        (WTF::Logger::log): Use auto for result of makeString.
+        (WTF::Logger::logVerbose): Ditto.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::toString const): Use makeString instead of StringBuilder.
+
+        * wtf/text/IntegerToStringConversion.h:
+        Made lengthOfIntegerAsString a constexpr function so we can use it to
+        compute the required size of arrays for conversion. Added using for both
+        lengthOfIntegerAsString and writeIntegerToBuffer so we can use them without
+        the WTF prefix as is customary for functions in WTF.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendLiteral): Deleted.
+
+        * wtf/text/StringConcatenate.h: Added support for appending StringImpl&,
+        StringImpl*, AtomStringImpl&, and AtomStringImpl*.
+
+2021-05-24  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, revert r276610 because it causes a 1% PLT regression.
+
+        * wtf/Bag.h:
+
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.cpp:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::wait):
+        (WTF::AutomaticThreadCondition::waitFor):
+        (WTF::AutomaticThread::AutomaticThread):
+        * wtf/AutomaticThread.h:
+        * wtf/CMakeLists.txt:
+        * wtf/CheckedCondition.h: Removed.
+        * wtf/CheckedLock.h: Removed.
+        * wtf/Condition.h:
+        * wtf/CrossThreadQueue.h:
+        * wtf/CrossThreadTaskHandler.h:
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/FastMalloc.cpp:
+        * wtf/Forward.h:
+        * wtf/Language.cpp:
+        * wtf/Lock.cpp:
+        (WTF::UncheckedLock::lockSlow):
+        (WTF::UncheckedLock::unlockSlow):
+        (WTF::UncheckedLock::unlockFairlySlow):
+        (WTF::UncheckedLock::safepointSlow):
+        * wtf/Lock.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_LOCK):
+        * wtf/Logger.cpp:
+        * wtf/Logger.h:
+        (WTF::Logger::WTF_RETURNS_LOCK):
+        * wtf/MessageQueue.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/MetaAllocator.h:
+        * wtf/OSLogPrintStream.h:
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        * wtf/ParallelHelperPool.h:
+        * wtf/ParallelJobsGeneric.h:
+        * wtf/ParallelVectorIterator.h:
+        * wtf/ReadWriteLock.h:
+        * wtf/RecursiveLockAdapter.h:
+        * wtf/RunLoop.h:
+        * wtf/SynchronizedFixedQueue.h:
+        * wtf/Threading.cpp:
+        (WTF::Thread::allThreadsLock):
+        * wtf/Threading.h:
+        * wtf/TimingScope.cpp:
+        * wtf/URL.cpp:
+        * wtf/WTFSemaphore.h:
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::concurrentApply):
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        * wtf/WorkerPool.h:
+        * wtf/cf/LanguageCF.cpp:
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::AtomStringTableLocker::AtomStringTableLocker):
+        * wtf/text/StringView.cpp:
+        * wtf/threads/BinarySemaphore.h:
+        * wtf/unicode/icu/CollatorICU.cpp:
+
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Make CheckedLock the default Lock
+        https://bugs.webkit.org/show_bug.cgi?id=226157
+
+        Reviewed by Darin Adler.
+
+        Make CheckedLock the default Lock so that we get more benefits from Clang
+        Thread Safety Analysis. Note that CheckedLock 100% relies on the existing
+        Lock implementation and merely adds the clang anotations for thread
+        safety.
+
+        That this patch does is:
+        1. Rename the Lock class to UncheckedLock
+        2. Rename the CheckedLock class to Lock
+        3. Rename the Condition class to UncheckedCondition
+        4. Rename the CheckedCondition class to Condition
+        5. Update the types of certain variables from Lock / Condition to
+           UncheckedLock / UncheckedCondition if I got a build failure. Build
+           failures are usually caused by the following facts:
+           - Locker<CheckedLock> doesn't subclass AbstractLocker which a lot of
+             JSC code passes as argument
+           - Locker<CheckedLock> has no move constructor
+           - Locker<CheckedLock> cannot be constructed from a lock pointer, only
+             a reference
+        
+        For now, CheckedLock and CheckedCondition remain as aliases to Lock and
+        Condition, in their respective CheckedLock.h / CheckedCondition.h headers.
+        I will drop them in a follow-up to reduce patch size.
+
+        I will also follow-up to try and get rid of as much usage of UncheckedLock
+        and UncheckedCondition as possible. I did not try very hard in this patch
+        to reduce patch size.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::wait):
+        (WTF::AutomaticThreadCondition::waitFor):
+        (WTF::AutomaticThread::AutomaticThread):
+        * wtf/AutomaticThread.h:
+        * wtf/CheckedCondition.h:
+        * wtf/CheckedLock.h:
+        * wtf/Condition.h:
+        * wtf/Lock.cpp:
+        (WTF::UncheckedLock::lockSlow):
+        (WTF::UncheckedLock::unlockSlow):
+        (WTF::UncheckedLock::unlockFairlySlow):
+        (WTF::UncheckedLock::safepointSlow):
+        * wtf/Lock.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_LOCK):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/MetaAllocator.h:
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        * wtf/ParallelHelperPool.h:
+        * wtf/RecursiveLockAdapter.h:
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        * wtf/WorkerPool.h:
+
 2021-05-23  Mark Lam  <mark.lam@apple.com>
 
         Remove ENABLE(MASM_PROBE) flag.

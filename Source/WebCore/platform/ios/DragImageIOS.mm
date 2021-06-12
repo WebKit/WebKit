@@ -94,7 +94,7 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
 
     RetainPtr<UIGraphicsImageRenderer> render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageSize]);
     UIImage *imageCopy = [render.get() imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
-        GraphicsContext context(rendererContext.CGContext);
+        GraphicsContextCG context(rendererContext.CGContext);
         context.translate(0, imageSize.height);
         context.scale({ adjustedImageScale, -adjustedImageScale });
         context.drawImage(*image, FloatPoint(), { orientation });
@@ -136,7 +136,7 @@ DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String
 
     auto renderer = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size]);
     auto image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
-        GraphicsContext context(rendererContext.CGContext);
+        GraphicsContextCG context(rendererContext.CGContext);
         context.translate(0, CGRectGetHeight(imageRect));
         context.scale({ 1, -1 });
         context.fillRoundedRect(FloatRoundedRect(imageRect, FloatRoundedRect::Radii(4)), Color::white);
@@ -204,7 +204,7 @@ DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData& indica
 
     auto renderer = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
     return [renderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
-        GraphicsContext context(rendererContext.CGContext);
+        GraphicsContextCG context(rendererContext.CGContext);
         // FIXME: The context flip here should not be necessary, and suggests that somewhere else in the regular
         // drag initiation flow, we unnecessarily flip the graphics context.
         context.translate(0, imageRect.height());
@@ -238,7 +238,7 @@ DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, boo
     auto& image = *textIndicator->contentImage();
     auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image.size()]);
     UIImage *finalImage = [render.get() imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
-        GraphicsContext context(rendererContext.CGContext);
+        GraphicsContextCG context(rendererContext.CGContext);
         context.drawImage(image, FloatPoint());
     }];
 
@@ -252,7 +252,7 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect& elemen
 
     auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
     UIImage *image = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
-        GraphicsContext context { rendererContext.CGContext };
+        GraphicsContextCG context { rendererContext.CGContext };
         context.translate(0, CGRectGetHeight(imageRect));
         context.scale({ 1, -1 });
         context.fillRoundedRect(swatch, color);

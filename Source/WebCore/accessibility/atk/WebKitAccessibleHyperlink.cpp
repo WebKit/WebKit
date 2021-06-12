@@ -151,13 +151,13 @@ static AtkObject* webkitAccessibleHyperlinkGetObject(AtkHyperlink* link, gint in
     return ATK_OBJECT(accessibleHyperlink->priv->hyperlinkImpl);
 }
 
-static gint rangeLengthForObject(AccessibilityObject& obj, const Optional<SimpleRange>& range)
+static gint rangeLengthForObject(AccessibilityObject& obj, const std::optional<SimpleRange>& range)
 {
     if (!range)
         return 0;
 
     // This is going to be the actual length in most of the cases
-    int baseLength = characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    int baseLength = characterCount(*range, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 
     // Check whether the current hyperlink belongs to a list item.
     // If so, we need to consider the length of the item's marker

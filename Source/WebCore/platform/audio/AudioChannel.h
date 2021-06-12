@@ -44,18 +44,18 @@ public:
     // Memory can be externally referenced, or can be internally allocated with an AudioFloatArray.
 
     // Reference an external buffer.
-    explicit AudioChannel(float* storage, size_t length)
-        : m_length(length)
-        , m_rawPointer(storage)
+    AudioChannel(float* storage, size_t length)
+        : m_rawPointer(storage)
+        , m_length(length)
         , m_silent(false)
     {
     }
 
     // Manage storage for us.
     explicit AudioChannel(size_t length)
-        : m_length(length)
+        : m_memBuffer(makeUnique<AudioFloatArray>(length))
+        , m_length(length)
     {
-        m_memBuffer = makeUnique<AudioFloatArray>(length);
     }
 
     // A "blank" audio channel -- must call set() before it's useful...
@@ -73,10 +73,6 @@ public:
 
     // How many sample-frames do we contain?
     size_t length() const { return m_length; }
-
-    // resizeSmaller() can only be called with a new length <= the current length.
-    // The data stored in the bus will remain undisturbed.
-    void resizeSmaller(size_t newLength);
 
     // Direct access to PCM sample data. Non-const accessor clears silent flag.
     float* mutableData()
@@ -122,10 +118,9 @@ public:
     float maxAbsValue() const;
 
 private:
-    size_t m_length { 0 };
-
     float* m_rawPointer { nullptr };
     std::unique_ptr<AudioFloatArray> m_memBuffer;
+    size_t m_length { 0 };
     bool m_silent { true };
 };
 

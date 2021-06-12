@@ -87,7 +87,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
 #if ENABLE(WHEEL_EVENT_REGIONS)
     auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
     if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
-        if (m_treeState.gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
+        if (m_treeState.gestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
             return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
 
         return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
@@ -110,7 +110,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
         return latchedNodeAndSteps->processingSteps;
     }
     if (wheelEvent.isGestureStart() || wheelEvent.isNonGestureEvent())
-        m_treeState.gestureState = WTF::nullopt;
+        m_treeState.gestureState = std::nullopt;
 
     auto processingSteps = computeWheelProcessingSteps(wheelEvent);
 
@@ -235,14 +235,14 @@ void ScrollingTree::traverseScrollingTree(VisitorFunction&& visitorFunction)
 void ScrollingTree::traverseScrollingTreeRecursive(ScrollingTreeNode& node, const VisitorFunction& visitorFunction)
 {
     bool scrolledSinceLastCommit = false;
-    Optional<FloatPoint> scrollPosition;
+    std::optional<FloatPoint> scrollPosition;
     if (is<ScrollingTreeScrollingNode>(node)) {
         auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(node);
         scrollPosition = scrollingNode.currentScrollPosition();
         scrolledSinceLastCommit = scrollingNode.scrolledSinceLastCommit();
     }
 
-    Optional<FloatPoint> layoutViewportOrigin;
+    std::optional<FloatPoint> layoutViewportOrigin;
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
@@ -476,7 +476,7 @@ void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeNode& node)
     }
 }
 
-Optional<ScrollingNodeID> ScrollingTree::latchedNodeID() const
+std::optional<ScrollingNodeID> ScrollingTree::latchedNodeID() const
 {
     return m_latchingController.latchedNodeID();
 }
@@ -498,13 +498,13 @@ void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
     m_treeState.mainFrameScrollPosition = position;
 }
 
-void ScrollingTree::setGestureState(Optional<WheelScrollGestureState> gestureState)
+void ScrollingTree::setGestureState(std::optional<WheelScrollGestureState> gestureState)
 {
     Locker locker { m_treeStateLock };
     m_treeState.gestureState = gestureState;
 }
 
-Optional<WheelScrollGestureState> ScrollingTree::gestureState()
+std::optional<WheelScrollGestureState> ScrollingTree::gestureState()
 {
     Locker locker { m_treeStateLock };
     return m_treeState.gestureState;
@@ -673,7 +673,7 @@ void ScrollingTree::scrollBySimulatingWheelEventForTesting(ScrollingNodeID nodeI
     downcast<ScrollingTreeScrollingNode>(*node).scrollBy(delta);
 }
 
-void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPerSecond> nominalFramesPerSecond)
+void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
 {
     Locker locker { m_treeStateLock };
     m_treeState.displayID = displayID;
@@ -700,7 +700,7 @@ void ScrollingTree::willProcessWheelEvent()
     m_lastWheelEventTime = MonotonicTime::now();
 }
 
-Optional<unsigned> ScrollingTree::nominalFramesPerSecond()
+std::optional<unsigned> ScrollingTree::nominalFramesPerSecond()
 {
     Locker locker { m_treeStateLock };
     return m_treeState.nominalFramesPerSecond;

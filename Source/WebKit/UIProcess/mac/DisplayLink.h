@@ -27,13 +27,14 @@
 
 #if HAVE(CVDISPLAYLINK)
 
+#include "Connection.h"
 #include "DisplayLinkObserverID.h"
 #include <CoreVideo/CVDisplayLink.h>
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 
 namespace IPC {
 class Connection;
@@ -83,8 +84,8 @@ private:
     };
 
     CVDisplayLinkRef m_displayLink { nullptr };
-    CheckedLock m_observersLock;
-    HashMap<RefPtr<IPC::Connection>, ConnectionClientInfo> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
+    Lock m_observersLock;
+    HashMap<IPC::Connection::UniqueID, ConnectionClientInfo> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
     WebCore::PlatformDisplayID m_displayID;
     WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
     WebCore::DisplayUpdate m_currentUpdate;

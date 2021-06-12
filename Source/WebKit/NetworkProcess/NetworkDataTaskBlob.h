@@ -85,12 +85,12 @@ private:
     void getSizeForNext();
     void dispatchDidReceiveResponse(Error = Error::NoError);
     void seek();
-    void consumeData(const char* data, int bytesRead);
+    void consumeData(const uint8_t* data, int bytesRead);
     void read();
     void readData(const WebCore::BlobDataItem&);
     void readFile(const WebCore::BlobDataItem&);
     void download();
-    bool writeDownload(const char* data, int bytesRead);
+    bool writeDownload(const uint8_t* data, int bytesRead);
     void cleanDownloadFiles();
     void didFailDownload(const WebCore::ResourceError&);
     void didFinishDownload();
@@ -101,7 +101,7 @@ private:
 
     RefPtr<WebCore::BlobData> m_blobData;
     std::unique_ptr<WebCore::AsyncFileStream> m_stream; // For asynchronous loading.
-    Vector<char> m_buffer;
+    Vector<uint8_t> m_buffer;
     Vector<long long> m_itemLengthList;
     State m_state { State::Suspended };
     long long m_rangeOffset { kPositionNotSpecified };

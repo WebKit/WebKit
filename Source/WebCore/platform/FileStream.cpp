@@ -47,7 +47,7 @@ FileStream::~FileStream()
     close();
 }
 
-long long FileStream::getSize(const String& path, Optional<WallTime> expectedModificationTime)
+long long FileStream::getSize(const String& path, std::optional<WallTime> expectedModificationTime)
 {
     // Check the modification time for the possible file change.
     auto modificationTime = FileSystem::fileModificationTime(path);
@@ -96,7 +96,7 @@ void FileStream::close()
     }
 }
 
-int FileStream::read(char* buffer, int bufferSize)
+int FileStream::read(void* buffer, int bufferSize)
 {
     if (!FileSystem::isHandleValid(m_handle))
         return -1;

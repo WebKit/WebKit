@@ -29,7 +29,6 @@
 
 #include "XRDeviceIdentifier.h"
 #include <WebCore/PlatformXR.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -50,19 +49,21 @@ public:
 private:
     XRDeviceProxy(XRDeviceInfo&&, PlatformXRSystemProxy&);
 
+    WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final { return m_recommendedResolution; }
     void initializeTrackingAndRendering(PlatformXR::SessionMode) final;
     void shutDownTrackingAndRendering() final;
     bool supportsSessionShutdownNotification() const final { return true; }
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
     Vector<PlatformXR::Device::ViewData> views(PlatformXR::SessionMode) const final;
     void requestFrame(PlatformXR::Device::RequestFrameCallback&&) final;
-    Optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) final;
+    std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) final;
     void deleteLayer(PlatformXR::LayerHandle) override { };
     void submitFrame(Vector<PlatformXR::Device::Layer>&&) final;
 
     XRDeviceIdentifier m_identifier;
     WeakPtr<PlatformXRSystemProxy> m_xrSystem;
     bool m_supportsStereoRendering { false };
+    WebCore::IntSize m_recommendedResolution { 0, 0 };
 };
 
 } // namespace WebKit

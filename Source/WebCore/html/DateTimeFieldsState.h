@@ -28,31 +28,28 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
 struct DateTimeFieldsState {
-    enum class Meridiem : bool {
-        AM,
-        PM,
-    };
+    enum class Meridiem : bool { AM, PM };
 
-    inline Optional<unsigned> hour23() const
+    std::optional<unsigned> hour23() const
     {
         if (!hour || !meridiem)
-            return WTF::nullopt;
+            return std::nullopt;
         return (*hour % 12) + (*meridiem == DateTimeFieldsState::Meridiem::PM ? 12 : 0);
     }
 
-    Optional<unsigned> year;
-    Optional<unsigned> month;
-    Optional<unsigned> dayOfMonth;
-    Optional<unsigned> hour;
-    Optional<unsigned> minute;
-    Optional<unsigned> second;
-    Optional<unsigned> millisecond;
-    Optional<Meridiem> meridiem;
+    std::optional<unsigned> year;
+    std::optional<unsigned> month;
+    std::optional<unsigned> dayOfMonth;
+    std::optional<unsigned> hour;
+    std::optional<unsigned> minute;
+    std::optional<unsigned> second;
+    std::optional<unsigned> millisecond;
+    std::optional<Meridiem> meridiem;
 };
 
 } // namespace WebCore

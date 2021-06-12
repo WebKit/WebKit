@@ -140,8 +140,8 @@ TEST_P(LevelTest, TestTargetLevelApi) {
   EXPECT_EQ(VPX_CODEC_OK, vpx_codec_destroy(&enc));
 }
 
-VP9_INSTANTIATE_TEST_CASE(LevelTest,
-                          ::testing::Values(::libvpx_test::kTwoPassGood,
-                                            ::libvpx_test::kOnePassGood),
-                          ::testing::Range(0, 9));
+VP9_INSTANTIATE_TEST_SUITE(LevelTest,
+                           ::testing::Values(::libvpx_test::kTwoPassGood,
+                                             ::libvpx_test::kOnePassGood),
+                           ::testing::Range(0, 9));
 }  // namespace

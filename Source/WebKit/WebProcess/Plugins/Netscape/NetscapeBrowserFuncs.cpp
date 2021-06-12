@@ -219,7 +219,7 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
         if (!fileContents)
             return NPERR_FILE_NOT_FOUND;
 
-        postBuffer = fileContents->data();
+        postBuffer = fileContents->dataAsCharPtr();
         postBufferSize = fileContents->size();
 
         // FIXME: The NPAPI spec states that the file should be deleted here.
@@ -245,7 +245,7 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
                 String contentLength = headerFields.get(HTTPHeaderName::ContentLength);
 
                 if (!contentLength.isNull())
-                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).valueOr(0), dataLength);
+                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).value_or(0), dataLength);
                 headerFields.remove(HTTPHeaderName::ContentLength);
 
                 postBuffer += location;

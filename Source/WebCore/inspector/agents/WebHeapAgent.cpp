@@ -28,7 +28,7 @@
 
 #include "InstrumentingAgents.h"
 #include "WebConsoleAgent.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ private:
     void timerFired();
 
     WebHeapAgent& m_agent;
-    CheckedLock m_collectionsLock;
+    Lock m_collectionsLock;
     Vector<GarbageCollectionData> m_collections WTF_GUARDED_BY_LOCK(m_collectionsLock);
     RunLoop::Timer<SendGarbageCollectionEventsTask> m_timer;
 };

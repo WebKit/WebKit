@@ -128,7 +128,7 @@ private:
     RefPtr<SharedBuffer> convertedDataIfNeeded(SharedBuffer* data) const;
     void didUpdateImageData();
     EncodedDataStatus updateImageData(bool allDataReceived);
-    void updateData(const char* data, unsigned length) override;
+    void updateData(const uint8_t* data, unsigned length) override;
     void error(CachedResource::Status) override;
     void responseReceived(const ResourceResponse&) override;
 

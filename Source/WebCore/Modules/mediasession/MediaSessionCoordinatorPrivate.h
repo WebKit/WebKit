@@ -32,7 +32,6 @@
 #include "MediaSessionCoordinatorState.h"
 #include "MediaSessionPlaybackState.h"
 #include "MediaSessionReadyState.h"
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -46,10 +45,10 @@ public:
     virtual ~MediaSessionCoordinatorClient() = default;
 
     virtual void seekSessionToTime(double, CompletionHandler<void(bool)>&&) = 0;
-    virtual void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&&) = 0;
+    virtual void playSession(std::optional<double> atTime, std::optional<double> hostTime, CompletionHandler<void(bool)>&&) = 0;
     virtual void pauseSession(CompletionHandler<void(bool)>&&) = 0;
     virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) = 0;
-    virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) { };
+    virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) = 0;
 };
 
 class MediaSessionCoordinatorPrivate : public RefCounted<MediaSessionCoordinatorPrivate> {
@@ -58,15 +57,15 @@ public:
 
     virtual String identifier() const = 0;
 
-    virtual void join(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
+    virtual void join(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void leave() = 0;
 
-    virtual void seekTo(double, CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
-    virtual void play(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
-    virtual void pause(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
-    virtual void setTrack(const String&, CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
+    virtual void seekTo(double, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
+    virtual void play(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
+    virtual void pause(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
+    virtual void setTrack(const String&, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
 
-    virtual void positionStateChanged(const Optional<MediaPositionState>&) = 0;
+    virtual void positionStateChanged(const std::optional<MediaPositionState>&) = 0;
     virtual void readyStateChanged(MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(MediaSessionPlaybackState) = 0;
     virtual void trackIdentifierChanged(const String&) = 0;

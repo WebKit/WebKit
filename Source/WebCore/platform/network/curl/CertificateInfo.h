@@ -50,7 +50,7 @@ public:
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
 
-    Optional<CertificateSummary> summary() const;
+    std::optional<CertificateSummary> summary() const;
 
     bool isEmpty() const { return m_certificateChain.isEmpty(); }
 
@@ -82,24 +82,24 @@ template<> struct Coder<WebCore::CertificateInfo> {
             encoder << certificate;
     }
 
-    static Optional<WebCore::CertificateInfo> decode(Decoder& decoder)
+    static std::optional<WebCore::CertificateInfo> decode(Decoder& decoder)
     {
-        Optional<int> verificationError;
+        std::optional<int> verificationError;
         decoder >> verificationError;
         if (!verificationError)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<size_t> numOfCerts;
+        std::optional<size_t> numOfCerts;
         decoder >> numOfCerts;
         if (!numOfCerts)
-            return WTF::nullopt;
+            return std::nullopt;
 
         WebCore::CertificateInfo::CertificateChain certificateChain;
         for (size_t i = 0; i < numOfCerts.value(); i++) {
-            Optional<WebCore::CertificateInfo::Certificate> certificate;
+            std::optional<WebCore::CertificateInfo::Certificate> certificate;
             decoder >> certificate;
             if (!certificate)
-                return WTF::nullopt;
+                return std::nullopt;
 
             certificateChain.append(WTFMove(certificate.value()));
         }

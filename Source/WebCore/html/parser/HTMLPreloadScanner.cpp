@@ -254,7 +254,7 @@ private:
                 m_nonceAttribute = attributeValue;
                 break;
             } else if (match(attributeName, referrerpolicyAttr)) {
-                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
                 break;
             } else if (match(attributeName, nomoduleAttr)) {
                 m_scriptIsNomodule = true;
@@ -285,7 +285,7 @@ private:
             else if (match(attributeName, typeAttr))
                 m_typeAttribute = attributeValue;
             else if (match(attributeName, referrerpolicyAttr))
-                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
             break;
         case TagId::Input:
             if (match(attributeName, srcAttr))
@@ -332,7 +332,7 @@ private:
         return m_charset;
     }
 
-    Optional<CachedResource::Type> resourceType() const
+    std::optional<CachedResource::Type> resourceType() const
     {
         switch (m_tagId) {
         case TagId::Script:

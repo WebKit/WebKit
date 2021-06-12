@@ -283,3 +283,13 @@ TEST(ErrTest, String) {
   // A buffer length of zero should not touch the buffer.
   ERR_error_string_n(err, nullptr, 0);
 }
+
+// Error-printing functions should return something with unknown errors.
+TEST(ErrTest, UnknownError) {
+  uint32_t err = ERR_PACK(0xff, 0xfff);
+  EXPECT_TRUE(ERR_lib_error_string(err));
+  EXPECT_TRUE(ERR_reason_error_string(err));
+  char buf[128];
+  ERR_error_string_n(err, buf, sizeof(buf));
+  EXPECT_NE(0u, strlen(buf));
+}

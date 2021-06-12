@@ -65,7 +65,7 @@ static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<u
     return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
 }
 
-Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, Optional<double>)
+Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, std::optional<double>)
 {
     Vector<uint8_t> encodedImage;
     if (!image || !encodeImage(image, mimeType, &encodedImage))
@@ -73,7 +73,7 @@ Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, Optional<do
     return encodedImage;
 }
 #else
-static bool encodeImage(cairo_surface_t* surface, const String& mimeType, Optional<double> quality, GUniqueOutPtr<gchar>& buffer, gsize& bufferSize)
+static bool encodeImage(cairo_surface_t* surface, const String& mimeType, std::optional<double> quality, GUniqueOutPtr<gchar>& buffer, gsize& bufferSize)
 {
     // List of supported image encoding types comes from the GdkPixbuf documentation.
     // http://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-saving.html#gdk-pixbuf-save-to-bufferv
@@ -116,16 +116,14 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, Option
     return !error;
 }
 
-Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, Optional<double> quality)
+Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, std::optional<double> quality)
 {
     GUniqueOutPtr<gchar> buffer;
     gsize bufferSize;
     if (!encodeImage(image, mimeType, quality, buffer, bufferSize))
         return { };
 
-    Vector<uint8_t> imageData;
-    imageData.append(buffer.get(), bufferSize);
-    return imageData;
+    return { reinterpret_cast<const uint8_t*>(buffer.get()), bufferSize };
 }
 #endif // !PLATFORM(GTK)
 

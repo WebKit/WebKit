@@ -51,7 +51,7 @@ struct ServiceWorkerClientData {
     static ServiceWorkerClientData from(ScriptExecutionContext&, SWClientConnection&);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerClientData> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerClientData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -61,32 +61,32 @@ void ServiceWorkerClientData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decoder)
+std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decoder)
 {
-    Optional<ServiceWorkerClientIdentifier> identifier;
+    std::optional<ServiceWorkerClientIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<ServiceWorkerClientType> type;
+    std::optional<ServiceWorkerClientType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<ServiceWorkerClientFrameType> frameType;
+    std::optional<ServiceWorkerClientFrameType> frameType;
     decoder >> frameType;
     if (!frameType)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<URL> url;
+    std::optional<URL> url;
     decoder >> url;
     if (!url)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
+    std::optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
     decoder >> lastNavigationWasAppBound;
     if (!lastNavigationWasAppBound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*lastNavigationWasAppBound) } };
 }

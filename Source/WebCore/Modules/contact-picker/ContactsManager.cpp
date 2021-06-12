@@ -40,7 +40,6 @@
 #include "UserGestureIndicator.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -106,7 +105,7 @@ void ContactsManager::select(const Vector<ContactProperty>& properties, const Co
 
     m_contactPickerIsShowing = true;
 
-    frame->page()->chrome().showContactPicker(requestData, [promise = WTFMove(promise), this] (Optional<Vector<ContactInfo>>&& info) {
+    frame->page()->chrome().showContactPicker(requestData, [promise = WTFMove(promise), this] (std::optional<Vector<ContactInfo>>&& info) {
         m_contactPickerIsShowing = false;
         if (info) {
             promise->resolve<IDLSequence<IDLDictionary<ContactInfo>>>(*info);

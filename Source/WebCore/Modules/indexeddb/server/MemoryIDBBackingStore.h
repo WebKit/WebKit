@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
 namespace WebCore {
 namespace IDBServer {
 
-class IDBSerializationContext;
 class MemoryObjectStore;
 
 class MemoryIDBBackingStore final : public IDBBackingStore {
@@ -51,8 +50,6 @@ public:
 
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
-
-    IDBSerializationContext& serializationContext() final;
 
 private:
     IDBError beginTransaction(const IDBTransactionInfo&) final;
@@ -95,7 +92,6 @@ private:
 
     IDBDatabaseIdentifier m_identifier;
     PAL::SessionID m_sessionID;
-    Ref<IDBSerializationContext> m_serializationContext;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;

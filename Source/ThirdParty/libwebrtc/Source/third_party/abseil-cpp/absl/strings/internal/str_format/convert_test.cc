@@ -1,3 +1,17 @@
+// Copyright 2020 The Abseil Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -215,6 +229,9 @@ TEST_F(FormatConvertTest, BasicString) {
   TestStringConvert(static_cast<const char*>("hello"));
   TestStringConvert(std::string("hello"));
   TestStringConvert(string_view("hello"));
+#if defined(ABSL_HAVE_STD_STRING_VIEW)
+  TestStringConvert(std::string_view("hello"));
+#endif  // ABSL_HAVE_STD_STRING_VIEW
 }
 
 TEST_F(FormatConvertTest, NullString) {
@@ -540,7 +557,8 @@ TEST_F(FormatConvertTest, Uint128) {
 }
 
 template <typename Floating>
-void TestWithMultipleFormatsHelper(const std::vector<Floating> &floats) {
+void TestWithMultipleFormatsHelper(const std::vector<Floating> &floats,
+                                   const std::set<Floating> &skip_verify) {
   const NativePrintfTraits &native_traits = VerifyNativeImplementation();
   // Reserve the space to ensure we don't allocate memory in the output itself.
   std::string str_format_result;
@@ -588,7 +606,16 @@ void TestWithMultipleFormatsHelper(const std::vector<Floating> &floats) {
           AppendPack(&str_format_result, format, absl::MakeSpan(args));
         }
 
-        if (string_printf_result != str_format_result) {
+#ifdef _MSC_VER
+        // MSVC has a different rounding policy than us so we can't test our
+        // implementation against the native one there.
+        continue;
+#elif defined(__APPLE__)
+        // Apple formats NaN differently (+nan) vs. (nan)
+        if (std::isnan(d)) continue;
+#endif
+        if (string_printf_result != str_format_result &&
+            skip_verify.find(d) == skip_verify.end()) {
           // We use ASSERT_EQ here because failures are usually correlated and a
           // bug would print way too many failed expectations causing the test
           // to time out.
@@ -602,12 +629,6 @@ void TestWithMultipleFormatsHelper(const std::vector<Floating> &floats) {
 }
 
 TEST_F(FormatConvertTest, Float) {
-#ifdef _MSC_VER
-  // MSVC has a different rounding policy than us so we can't test our
-  // implementation against the native one there.
-  return;
-#endif  // _MSC_VER
-
   std::vector<float> floats = {0.0f,
                                -0.0f,
                                .9999999f,
@@ -621,7 +642,8 @@ TEST_F(FormatConvertTest, Float) {
                                std::numeric_limits<float>::epsilon(),
                                std::numeric_limits<float>::epsilon() + 1.0f,
                                std::numeric_limits<float>::infinity(),
-                               -std::numeric_limits<float>::infinity()};
+                               -std::numeric_limits<float>::infinity(),
+                               std::nanf("")};
 
   // Some regression tests.
   floats.push_back(0.999999989f);
@@ -650,21 +672,14 @@ TEST_F(FormatConvertTest, Float) {
   std::sort(floats.begin(), floats.end());
   floats.erase(std::unique(floats.begin(), floats.end()), floats.end());
 
-#ifndef __APPLE__
-  // Apple formats NaN differently (+nan) vs. (nan)
-  floats.push_back(std::nan(""));
-#endif
-
-  TestWithMultipleFormatsHelper(floats);
+  TestWithMultipleFormatsHelper(floats, {});
 }
 
 TEST_F(FormatConvertTest, Double) {
-#ifdef _MSC_VER
-  // MSVC has a different rounding policy than us so we can't test our
-  // implementation against the native one there.
-  return;
-#endif  // _MSC_VER
-
+  // For values that we know won't match the standard library implementation we
+  // skip verification, but still run the algorithm to catch asserts/sanitizer
+  // bugs.
+  std::set<double> skip_verify;
   std::vector<double> doubles = {0.0,
                                  -0.0,
                                  .99999999999999,
@@ -678,7 +693,8 @@ TEST_F(FormatConvertTest, Double) {
                                  std::numeric_limits<double>::epsilon(),
                                  std::numeric_limits<double>::epsilon() + 1,
                                  std::numeric_limits<double>::infinity(),
-                                 -std::numeric_limits<double>::infinity()};
+                                 -std::numeric_limits<double>::infinity(),
+                                 std::nan("")};
 
   // Some regression tests.
   doubles.push_back(0.99999999999999989);
@@ -708,33 +724,29 @@ TEST_F(FormatConvertTest, Double) {
       "5084551339423045832369032229481658085593321233482747978262041447231"
       "68738177180919299881250404026184124858368.000000";
 
-  if (!gcc_bug_22142) {
-    for (int exp = -300; exp <= 300; ++exp) {
-      const double all_ones_mantissa = 0x1fffffffffffff;
-      doubles.push_back(std::ldexp(all_ones_mantissa, exp));
+  for (int exp = -300; exp <= 300; ++exp) {
+    const double all_ones_mantissa = 0x1fffffffffffff;
+    doubles.push_back(std::ldexp(all_ones_mantissa, exp));
+    if (gcc_bug_22142) {
+      skip_verify.insert(doubles.back());
     }
   }
 
   if (gcc_bug_22142) {
-    for (auto &d : doubles) {
-      using L = std::numeric_limits<double>;
-      double d2 = std::abs(d);
-      if (d2 == L::max() || d2 == L::min() || d2 == L::denorm_min()) {
-        d = 0;
-      }
-    }
+    using L = std::numeric_limits<double>;
+    skip_verify.insert(L::max());
+    skip_verify.insert(L::min());  // NOLINT
+    skip_verify.insert(L::denorm_min());
+    skip_verify.insert(-L::max());
+    skip_verify.insert(-L::min());  // NOLINT
+    skip_verify.insert(-L::denorm_min());
   }
 
   // Remove duplicates to speed up the logic below.
   std::sort(doubles.begin(), doubles.end());
   doubles.erase(std::unique(doubles.begin(), doubles.end()), doubles.end());
 
-#ifndef __APPLE__
-  // Apple formats NaN differently (+nan) vs. (nan)
-  doubles.push_back(std::nan(""));
-#endif
-
-  TestWithMultipleFormatsHelper(doubles);
+  TestWithMultipleFormatsHelper(doubles, skip_verify);
 }
 
 TEST_F(FormatConvertTest, DoubleRound) {
@@ -1055,11 +1067,6 @@ TEST_F(FormatConvertTest, ExtremeWidthPrecision) {
 }
 
 TEST_F(FormatConvertTest, LongDouble) {
-#ifdef _MSC_VER
-  // MSVC has a different rounding policy than us so we can't test our
-  // implementation against the native one there.
-  return;
-#endif  // _MSC_VER
   const NativePrintfTraits &native_traits = VerifyNativeImplementation();
   const char *const kFormats[] = {"%",    "%.3", "%8.5", "%9",  "%.5000",
                                   "%.60", "%+",  "% ",   "%-10"};
@@ -1120,10 +1127,18 @@ TEST_F(FormatConvertTest, LongDouble) {
       for (auto d : doubles) {
         FormatArgImpl arg(d);
         UntypedFormatSpecImpl format(fmt_str);
+        std::string result = FormatPack(format, {&arg, 1});
+
+#ifdef _MSC_VER
+        // MSVC has a different rounding policy than us so we can't test our
+        // implementation against the native one there.
+        continue;
+#endif  // _MSC_VER
+
         // We use ASSERT_EQ here because failures are usually correlated and a
         // bug would print way too many failed expectations causing the test to
         // time out.
-        ASSERT_EQ(StrPrint(fmt_str.c_str(), d), FormatPack(format, {&arg, 1}))
+        ASSERT_EQ(StrPrint(fmt_str.c_str(), d), result)
             << fmt_str << " " << StrPrint("%.18Lg", d) << " "
             << StrPrint("%La", d) << " " << StrPrint("%.1080Lf", d);
       }

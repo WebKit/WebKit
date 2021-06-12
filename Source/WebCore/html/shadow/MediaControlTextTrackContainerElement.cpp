@@ -386,8 +386,9 @@ void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
     for (auto& activeCue : m_mediaElement->currentlyActiveCues())
         activeCue.data()->recalculateStyles();
 
-    m_taskQueue.enqueueTask([this] () {
-        updateDisplay();
+    document().eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this)] () {
+        if (weakThis)
+            weakThis->updateDisplay();
     });
 }
 
@@ -418,7 +419,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
     IntRect paintingRect = IntRect(IntPoint(), layer->size());
 
     // FIXME (149422): This buffer should not be unconditionally unaccelerated.
-    auto buffer = ImageBuffer::create(paintingRect.size(), RenderingMode::Unaccelerated, deviceScaleFactor, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(paintingRect.size(), RenderingMode::Unaccelerated, deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
 

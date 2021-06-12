@@ -63,8 +63,8 @@ TEST_P(AltRefTest, MonotonicTimestamps) {
   EXPECT_GE(altref_count(), 1);
 }
 
-VP8_INSTANTIATE_TEST_CASE(AltRefTest,
-                          ::testing::Range(kLookAheadMin, kLookAheadMax));
+VP8_INSTANTIATE_TEST_SUITE(AltRefTest,
+                           ::testing::Range(kLookAheadMin, kLookAheadMax));
 
 #endif  // CONFIG_VP8_ENCODER
 
@@ -142,11 +142,11 @@ TEST_P(AltRefForcedKeyTestLarge, ForcedFrameIsKey) {
   }
 }
 
-VP8_INSTANTIATE_TEST_CASE(AltRefForcedKeyTestLarge,
-                          ::testing::Values(::libvpx_test::kOnePassGood),
-                          ::testing::Range(0, 9));
+VP8_INSTANTIATE_TEST_SUITE(AltRefForcedKeyTestLarge,
+                           ::testing::Values(::libvpx_test::kOnePassGood),
+                           ::testing::Range(0, 9));
 
-VP9_INSTANTIATE_TEST_CASE(AltRefForcedKeyTestLarge,
-                          ::testing::Values(::libvpx_test::kOnePassGood),
-                          ::testing::Range(0, 9));
+VP9_INSTANTIATE_TEST_SUITE(AltRefForcedKeyTestLarge,
+                           ::testing::Values(::libvpx_test::kOnePassGood),
+                           ::testing::Range(0, 9));
 }  // namespace

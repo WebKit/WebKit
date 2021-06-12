@@ -186,6 +186,17 @@ double vp9_log_block_var(VP9_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bs) {
   return log(var + 1.0);
 }
 
+#define DEFAULT_E_MIDPOINT 10.0
+static int scale_block_energy(VP9_COMP *cpi, unsigned int block_var) {
+  double energy;
+  double energy_midpoint;
+  energy_midpoint =
+      (cpi->oxcf.pass == 2) ? cpi->twopass.mb_av_energy : DEFAULT_E_MIDPOINT;
+  energy = log(block_var + 1.0) - energy_midpoint;
+  return clamp((int)round(energy), ENERGY_MIN, ENERGY_MAX);
+}
+#undef DEFAULT_E_MIDPOINT
+
 // Get the range of sub block energy values;
 void vp9_get_sub_block_energy(VP9_COMP *cpi, MACROBLOCK *mb, int mi_row,
                               int mi_col, BLOCK_SIZE bsize, int *min_e,
@@ -202,31 +213,35 @@ void vp9_get_sub_block_energy(VP9_COMP *cpi, MACROBLOCK *mb, int mi_row,
     *min_e = vp9_block_energy(cpi, mb, bsize);
     *max_e = *min_e;
   } else {
-    int energy;
-    *min_e = ENERGY_MAX;
-    *max_e = ENERGY_MIN;
+    unsigned int var;
+    // Because scale_block_energy is non-decreasing, we can find the min/max
+    // block variance and scale afterwards. This avoids a costly scaling at
+    // every iteration.
+    unsigned int min_var = UINT_MAX;
+    unsigned int max_var = 0;
 
     for (y = 0; y < ymis; ++y) {
       for (x = 0; x < xmis; ++x) {
         vp9_setup_src_planes(mb, cpi->Source, mi_row + y, mi_col + x);
-        energy = vp9_block_energy(cpi, mb, BLOCK_8X8);
-        *min_e = VPXMIN(*min_e, energy);
-        *max_e = VPXMAX(*max_e, energy);
+        vpx_clear_system_state();
+        var = block_variance(cpi, mb, BLOCK_8X8);
+        vpx_clear_system_state();
+        min_var = VPXMIN(min_var, var);
+        max_var = VPXMAX(max_var, var);
       }
     }
+    *min_e = scale_block_energy(cpi, min_var);
+    *max_e = scale_block_energy(cpi, max_var);
   }
 
   // Re-instate source pointers back to what they should have been on entry.
   vp9_setup_src_planes(mb, cpi->Source, mi_row, mi_col);
 }
 
-#define DEFAULT_E_MIDPOINT 10.0
 int vp9_block_energy(VP9_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bs) {
-  double energy;
-  double energy_midpoint;
+  unsigned int var;
   vpx_clear_system_state();
-  energy_midpoint =
-      (cpi->oxcf.pass == 2) ? cpi->twopass.mb_av_energy : DEFAULT_E_MIDPOINT;
-  energy = vp9_log_block_var(cpi, x, bs) - energy_midpoint;
-  return clamp((int)round(energy), ENERGY_MIN, ENERGY_MAX);
+  var = block_variance(cpi, x, bs);
+  vpx_clear_system_state();
+  return scale_block_energy(cpi, var);
 }

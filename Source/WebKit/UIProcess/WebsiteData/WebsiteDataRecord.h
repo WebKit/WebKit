@@ -32,7 +32,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -71,7 +70,7 @@ struct WebsiteDataRecord {
         uint64_t totalSize;
         HashMap<unsigned, uint64_t> typeSizes;
     };
-    Optional<Size> size;
+    std::optional<Size> size;
 
     HashSet<WebCore::SecurityOriginData> origins;
     HashSet<String> cookieHostNames;

@@ -65,10 +65,10 @@ static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferCopy&& buffer)
 }
 
 template <typename T>
-static Optional<IPC::SharedBufferCopy> convertToOptionalDataReference(T array)
+static std::optional<IPC::SharedBufferCopy> convertToOptionalDataReference(T array)
 {
     if (!array)
-        return WTF::nullopt;
+        return std::nullopt;
     return { SharedBuffer::create((const char*)array->data(), array->byteLength()) };
 }
 
@@ -100,7 +100,7 @@ void RemoteLegacyCDMSessionProxy::update(IPC::SharedBufferCopy&& update, UpdateC
 {
     auto updateArray = convertToUint8Array(WTFMove(update));
     if (!updateArray) {
-        completion(false, WTF::nullopt, 0, 0);
+        completion(false, std::nullopt, 0, 0);
         return;
     }
 

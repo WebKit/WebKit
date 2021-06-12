@@ -38,7 +38,7 @@ struct ApplePayDetailsUpdateBase : public ApplePayDetailsUpdateData {
     Vector<ApplePayLineItem> newLineItems;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayDetailsUpdateBase> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayDetailsUpdateBase> decode(Decoder&);
 
     template<class Decoder> WARN_UNUSED_RETURN bool decodeBase(Decoder&);
 };
@@ -52,11 +52,11 @@ void ApplePayDetailsUpdateBase::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayDetailsUpdateBase> ApplePayDetailsUpdateBase::decode(Decoder& decoder)
+std::optional<ApplePayDetailsUpdateBase> ApplePayDetailsUpdateBase::decode(Decoder& decoder)
 {
     ApplePayDetailsUpdateBase result;
     if (!result.decodeBase(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -67,7 +67,7 @@ bool ApplePayDetailsUpdateBase::decodeBase(Decoder& decoder)
         return false;
 
 #define DECODE(name, type) \
-    Optional<type> name; \
+    std::optional<type> name; \
     decoder >> name; \
     if (!name) \
         return false; \

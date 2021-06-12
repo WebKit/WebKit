@@ -571,7 +571,7 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
 bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
-    auto backing = WebCore::IOSurface::create(getInternalFramebufferSize(), WebCore::sRGBColorSpaceRef());
+    auto backing = IOSurface::create(getInternalFramebufferSize(), DestinationColorSpace::SRGB());
     if (!backing)
         return false;
 
@@ -610,6 +610,69 @@ bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface
     m_displayBufferBacking = WTFMove(backing);
     return true;
 }
+
+void* GraphicsContextGLOpenGL::createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage usage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
+{
+    if (target != GraphicsContextGL::TEXTURE_RECTANGLE_ARB && target != GraphicsContextGL::TEXTURE_2D) {
+        LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
+        return nullptr;
+    }
+
+    auto eglTextureTarget = [&] () -> EGLint {
+        if (target == GraphicsContextGL::TEXTURE_RECTANGLE_ARB)
+            return EGL_TEXTURE_RECTANGLE_ANGLE;
+        return EGL_TEXTURE_2D;
+    }();
+
+    if (eglTextureTarget != GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget()) {
+        LOG(WebGL, "Mismatch in EGL texture target: %d should be %d.", static_cast<int>(target), GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget());
+        return nullptr;
+    }
+
+    auto usageHintAngle = [&] () -> EGLint {
+        if (usage == PbufferAttachmentUsage::Read)
+            return EGL_IOSURFACE_READ_HINT_ANGLE;
+        if (usage == PbufferAttachmentUsage::Write)
+            return EGL_IOSURFACE_WRITE_HINT_ANGLE;
+        return EGL_IOSURFACE_READ_HINT_ANGLE | EGL_IOSURFACE_WRITE_HINT_ANGLE;
+    }();
+
+    const EGLint surfaceAttributes[] = {
+        EGL_WIDTH, width,
+        EGL_HEIGHT, height,
+        EGL_IOSURFACE_PLANE_ANGLE, static_cast<EGLint>(plane),
+        EGL_TEXTURE_TARGET, static_cast<EGLint>(eglTextureTarget),
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
+        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
+        EGL_TEXTURE_TYPE_ANGLE, static_cast<EGLint>(type),
+        // Only has an effect on the iOS Simulator.
+        EGL_IOSURFACE_USAGE_HINT_ANGLE, usageHintAngle,
+        EGL_NONE, EGL_NONE
+    };
+
+    auto display = platformDisplay();
+    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, surface, platformConfig(), surfaceAttributes);
+    if (!pbuffer) {
+        LOG(WebGL, "EGL_CreatePbufferFromClientBuffer failed.");
+        return nullptr;
+    }
+
+    if (!EGL_BindTexImage(display, pbuffer, EGL_BACK_BUFFER)) {
+        LOG(WebGL, "EGL_BindTexImage failed.");
+        EGL_DestroySurface(display, pbuffer);
+        return nullptr;
+    }
+
+    return pbuffer;
+}
+
+void GraphicsContextGLOpenGL::destroyPbufferAndDetachIOSurface(void* handle)
+{
+    auto display = platformDisplay();
+    EGL_ReleaseTexImage(display, handle, EGL_BACK_BUFFER);
+    EGL_DestroySurface(display, handle);
+}
+
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
@@ -661,13 +724,13 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
     markLayerComposited();
 }
 
-Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 {
     auto& displayBuffer = m_swapChain->displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)
-        return WTF::nullopt;
+        return std::nullopt;
     if (displayBuffer.surface->size() != getInternalFramebufferSize())
-        return WTF::nullopt;
+        return std::nullopt;
     // Note: We are using GL to read the IOSurface. At the time of writing, there are no convinient
     // functions to convert the IOSurface pixel data to ImageData. The image data ends up being
     // drawn to a ImageBuffer, but at the time there's no functions to construct a NativeImage
@@ -678,7 +741,7 @@ Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQuery(), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     gl::BindTexture(textureTarget, texture);
     if (!EGL_BindTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER))
-        return WTF::nullopt;
+        return std::nullopt;
     gl::TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     ScopedFramebuffer fbo;
     ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO, fbo);

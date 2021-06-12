@@ -60,7 +60,7 @@ void Semaphore::encode(Encoder&) const
 {
 }
 
-Optional<Semaphore> Semaphore::decode(Decoder&)
+std::optional<Semaphore> Semaphore::decode(Decoder&)
 {
     return Semaphore { };
 }

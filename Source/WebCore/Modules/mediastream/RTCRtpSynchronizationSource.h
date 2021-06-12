@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct RTCRtpSynchronizationSource : RTCRtpContributingSource {
-    Optional<bool> voiceActivityFlag;
+    std::optional<bool> voiceActivityFlag;
 };
 
 } // namespace WebCore

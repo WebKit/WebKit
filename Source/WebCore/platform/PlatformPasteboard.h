@@ -62,8 +62,8 @@ public:
     WEBCORE_EXPORT PlatformPasteboard();
     WEBCORE_EXPORT void updateSupportedTypeIdentifiers(const Vector<String>& types);
 #endif
-    WEBCORE_EXPORT Optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, int64_t changeCount);
-    WEBCORE_EXPORT Optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(int64_t changeCount);
+    WEBCORE_EXPORT std::optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, int64_t changeCount);
+    WEBCORE_EXPORT std::optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(int64_t changeCount);
 
     WEBCORE_EXPORT static void performAsDataOwner(DataOwnerType, Function<void()>&&);
 

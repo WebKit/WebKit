@@ -363,6 +363,7 @@ template<typename T> constexpr bool isLessThan(const T& a, const T& b) { return 
 template<typename T> constexpr bool isLessThanEqual(const T& a, const T& b) { return a <= b; }
 template<typename T> constexpr bool isGreaterThan(const T& a, const T& b) { return a > b; }
 template<typename T> constexpr bool isGreaterThanEqual(const T& a, const T& b) { return a >= b; }
+template<typename T> constexpr bool isInRange(const T& a, const T& min, const T& max) { return a >= min && a <= max; }
 
 #ifndef UINT64_C
 #if COMPILER(MSVC)

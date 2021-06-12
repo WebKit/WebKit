@@ -38,14 +38,14 @@ namespace Layout {
 TableWrapperQuirks::TableWrapperQuirks(const TableWrapperBlockFormattingContext& formattingContext)
     : BlockFormattingQuirks(formattingContext)
 {
-    ASSERT(layoutState().inQuirksMode());
 }
 
 LayoutUnit TableWrapperQuirks::overriddenTableHeight(const ContainerBox& tableBox) const
 {
+    ASSERT(layoutState().inQuirksMode());
     // In quirks mode always use the content height. Note that the tables with content take computed values into account.
     auto& formattingContext = downcast<BlockFormattingContext>(this->formattingContext());
-    return BlockFormattingGeometry(formattingContext).contentHeightForFormattingContextRoot(tableBox);
+    return formattingContext.formattingGeometry().contentHeightForFormattingContextRoot(tableBox);
 }
 
 }

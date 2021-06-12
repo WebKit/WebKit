@@ -34,7 +34,6 @@
 #include "Settings.h"
 #include "StyledElement.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringParsingBuffer.h>
 

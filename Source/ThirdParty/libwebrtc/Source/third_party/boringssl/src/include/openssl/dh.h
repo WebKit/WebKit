@@ -59,7 +59,6 @@
 
 #include <openssl/base.h>
 
-#include <openssl/ex_data.h>
 #include <openssl/thread.h>
 
 #if defined(__cplusplus)
@@ -69,6 +68,10 @@ extern "C" {
 
 // DH contains functions for performing Diffie-Hellman key agreement in
 // multiplicative groups.
+//
+// This module is deprecated and retained for legacy reasons only. It is not
+// considered a priority for performance or hardening work. Do not use it in
+// new code. Use X25519 or ECDH with P-256 instead.
 
 
 // Allocation and destruction.
@@ -136,6 +139,11 @@ OPENSSL_EXPORT int DH_set_length(DH *dh, unsigned priv_length);
 // and returned. It returns NULL on allocation failure.
 OPENSSL_EXPORT BIGNUM *BN_get_rfc3526_prime_1536(BIGNUM *ret);
 
+// DH_get_rfc7919_2048 returns the group `ffdhe2048` from
+// https://tools.ietf.org/html/rfc7919#appendix-A.1. It returns NULL if out
+// of memory.
+OPENSSL_EXPORT DH *DH_get_rfc7919_2048(void);
+
 
 // Parameter generation.
 
@@ -160,12 +168,37 @@ OPENSSL_EXPORT int DH_generate_parameters_ex(DH *dh, int prime_bits,
 // |dh|. It returns one on success and zero on error.
 OPENSSL_EXPORT int DH_generate_key(DH *dh);
 
-// DH_compute_key calculates the shared key between |dh| and |peers_key| and
-// writes it as a big-endian integer into |out|, which must have |DH_size|
-// bytes of space. It returns the number of bytes written, or a negative number
-// on error.
-OPENSSL_EXPORT int DH_compute_key(uint8_t *out, const BIGNUM *peers_key,
-                                  DH *dh);
+// DH_compute_key_padded calculates the shared key between |dh| and |peers_key|
+// and writes it as a big-endian integer into |out|, padded up to |DH_size|
+// bytes. It returns the number of bytes written, which is always |DH_size|, or
+// a negative number on error. |out| must have |DH_size| bytes of space.
+//
+// WARNING: this differs from the usual BoringSSL return-value convention.
+//
+// Note this function differs from |DH_compute_key| in that it preserves leading
+// zeros in the secret. This function is the preferred variant. It matches PKCS
+// #3 and avoids some side channel attacks. However, the two functions are not
+// drop-in replacements for each other. Using a different variant than the
+// application expects will result in sporadic key mismatches.
+//
+// Callers that expect a fixed-width secret should use this function over
+// |DH_compute_key|. Callers that use either function should migrate to a modern
+// primitive such as X25519 or ECDH with P-256 instead.
+OPENSSL_EXPORT int DH_compute_key_padded(uint8_t *out, const BIGNUM *peers_key,
+                                         DH *dh);
+
+// DH_compute_key_hashed calculates the shared key between |dh| and |peers_key|
+// and hashes it with the given |digest|. If the hash output is less than
+// |max_out_len| bytes then it writes the hash output to |out| and sets
+// |*out_len| to the number of bytes written. Otherwise it signals an error. It
+// returns one on success or zero on error.
+//
+// NOTE: this follows the usual BoringSSL return-value convention, but that's
+// different from |DH_compute_key| and |DH_compute_key_padded|.
+OPENSSL_EXPORT int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
+                                         size_t max_out_len,
+                                         const BIGNUM *peers_key,
+                                         const EVP_MD *digest);
 
 
 // Utility functions.
@@ -225,18 +258,6 @@ OPENSSL_EXPORT DH *DH_parse_parameters(CBS *cbs);
 OPENSSL_EXPORT int DH_marshal_parameters(CBB *cbb, const DH *dh);
 
 
-// ex_data functions.
-//
-// See |ex_data.h| for details.
-
-OPENSSL_EXPORT int DH_get_ex_new_index(long argl, void *argp,
-                                       CRYPTO_EX_unused *unused,
-                                       CRYPTO_EX_dup *dup_unused,
-                                       CRYPTO_EX_free *free_func);
-OPENSSL_EXPORT int DH_set_ex_data(DH *d, int idx, void *arg);
-OPENSSL_EXPORT void *DH_get_ex_data(DH *d, int idx);
-
-
 // Deprecated functions.
 
 // DH_generate_parameters behaves like |DH_generate_parameters_ex|, which is
@@ -266,6 +287,28 @@ OPENSSL_EXPORT DH *d2i_DHparams(DH **ret, const unsigned char **inp, long len);
 // Use |DH_marshal_parameters| instead.
 OPENSSL_EXPORT int i2d_DHparams(const DH *in, unsigned char **outp);
 
+// DH_compute_key behaves like |DH_compute_key_padded| but, contrary to PKCS #3,
+// returns a variable-length shared key with leading zeros. It returns the
+// number of bytes written, or a negative number on error. |out| must have
+// |DH_size| bytes of space.
+//
+// WARNING: this differs from the usual BoringSSL return-value convention.
+//
+// Note this function's running time and memory access pattern leaks information
+// about the shared secret. Particularly if |dh| is reused, this may result in
+// side channel attacks such as https://raccoon-attack.com/.
+//
+// |DH_compute_key_padded| is the preferred variant and avoids the above
+// attacks. However, the two functions are not drop-in replacements for each
+// other. Using a different variant than the application expects will result in
+// sporadic key mismatches.
+//
+// Callers that expect a fixed-width secret should use |DH_compute_key_padded|
+// instead. Callers that use either function should migrate to a modern
+// primitive such as X25519 or ECDH with P-256 instead.
+OPENSSL_EXPORT int DH_compute_key(uint8_t *out, const BIGNUM *peers_key,
+                                  DH *dh);
+
 
 struct dh_st {
   BIGNUM *p;
@@ -289,7 +332,6 @@ struct dh_st {
 
   int flags;
   CRYPTO_refcount_t references;
-  CRYPTO_EX_DATA ex_data;
 };
 
 

@@ -72,26 +72,98 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
 #endif
 }
 
-TEST_F(LibYUVBaseTest, TestCpuCompilerEnabled) {
-#if defined(__aarch64__)
-  printf("Arm64 build\n");
+TEST_F(LibYUVBaseTest, TestCompilerMacros) {
+  // Tests all macros used in public headers.
+#ifdef __ATOMIC_RELAXED
+  printf("__ATOMIC_RELAXED %d\n", __ATOMIC_RELAXED);
 #endif
-#if defined(__aarch64__) || defined(__ARM_NEON__) || defined(LIBYUV_NEON)
-  printf("Neon build enabled\n");
+#ifdef __cplusplus
+  printf("__cplusplus %ld\n", __cplusplus);
 #endif
-#if defined(__x86_64__) || defined(_M_X64)
-  printf("x64 build\n");
+#ifdef __clang_major__
+  printf("__clang_major__ %d\n", __clang_major__);
+#endif
+#ifdef __clang_minor__
+  printf("__clang_minor__ %d\n", __clang_minor__);
+#endif
+#ifdef __GNUC__
+  printf("__GNUC__ %d\n", __GNUC__);
+#endif
+#ifdef __GNUC_MINOR__
+  printf("__GNUC_MINOR__ %d\n", __GNUC_MINOR__);
+#endif
+#ifdef __i386__
+  printf("__i386__ %d\n", __i386__);
+#endif
+#ifdef __mips
+  printf("__mips %d\n", __mips);
+#endif
+#ifdef __mips_isa_rev
+  printf("__mips_isa_rev %d\n", __mips_isa_rev);
+#endif
+#ifdef __x86_64__
+  printf("__x86_64__ %d\n", __x86_64__);
 #endif
 #ifdef _MSC_VER
   printf("_MSC_VER %d\n", _MSC_VER);
 #endif
-#if !defined(LIBYUV_DISABLE_X86) &&                      \
-    (defined(GCC_HAS_AVX2) || defined(CLANG_HAS_AVX2) || \
-     defined(VISUALC_HAS_AVX2))
-  printf("Has AVX2 1\n");
-#else
-  printf("Has AVX2 0\n");
-// If compiler does not support AVX2, the following function not expected:
+#ifdef __aarch64__
+  printf("__aarch64__ %d\n", __aarch64__);
+#endif
+#ifdef __APPLE__
+  printf("__APPLE__ %d\n", __APPLE__);
+#endif
+#ifdef __arm__
+  printf("__arm__ %d\n", __arm__);
+#endif
+#ifdef __clang__
+  printf("__clang__ %d\n", __clang__);
+#endif
+#ifdef __CLR_VER
+  printf("__CLR_VER %d\n", __CLR_VER);
+#endif
+#ifdef __CYGWIN__
+  printf("__CYGWIN__ %d\n", __CYGWIN__);
+#endif
+#ifdef __llvm__
+  printf("__llvm__ %d\n", __llvm__);
+#endif
+#ifdef __mips_msa
+  printf("__mips_msa %d\n", __mips_msa);
+#endif
+#ifdef __native_client__
+  printf("__native_client__ %d\n", __native_client__);
+#endif
+#ifdef __pic__
+  printf("__pic__ %d\n", __pic__);
+#endif
+#ifdef __pnacl__
+  printf("__pnacl__ %d\n", __pnacl__);
+#endif
+#ifdef _M_IX86
+  printf("_M_IX86 %d\n", _M_IX86);
+#endif
+#ifdef _M_X64
+  printf("_M_X64 %d\n", _M_X64);
+#endif
+#ifdef _MIPS_ARCH_LOONGSON3A
+  printf("_MIPS_ARCH_LOONGSON3A %d\n", _MIPS_ARCH_LOONGSON3A);
+#endif
+#ifdef _WIN32
+  printf("_WIN32 %d\n", _WIN32);
+#endif
+#ifdef GG_LONGLONG
+  printf("GG_LONGLONG %d\n", GG_LONGLONG);
+#endif
+#ifdef INT_TYPES_DEFINED
+  printf("INT_TYPES_DEFINED\n");
+#endif
+#ifdef __has_feature
+  printf("__has_feature\n");
+#if __has_feature(memory_sanitizer)
+  printf("__has_feature(memory_sanitizer) %d\n",
+         __has_feature(memory_sanitizer));
+#endif
 #endif
 }
 
@@ -158,6 +230,23 @@ TEST_F(LibYUVBaseTest, TestLinuxNeon) {
 #if defined(__linux__) && defined(__ARM_NEON__)
   EXPECT_EQ(kCpuHasNEON, ArmCpuCaps("/proc/cpuinfo"));
 #endif
+}
+
+TEST_F(LibYUVBaseTest, TestLinuxMipsMsaMmi) {
+  if (FileExists("../../unit_test/testdata/mips.txt")) {
+    printf("Note: testing to load \"../../unit_test/testdata/mips.txt\"\n");
+
+    EXPECT_EQ(0, MipsCpuCaps("../../unit_test/testdata/mips.txt"));
+    EXPECT_EQ(kCpuHasMMI,
+              MipsCpuCaps("../../unit_test/testdata/mips_loongson3.txt"));
+    EXPECT_EQ(kCpuHasMMI,
+              MipsCpuCaps("../../unit_test/testdata/mips_loongson_mmi.txt"));
+    EXPECT_EQ(kCpuHasMSA, MipsCpuCaps("../../unit_test/testdata/mips_msa.txt"));
+    EXPECT_EQ(kCpuHasMMI | kCpuHasMSA,
+              MipsCpuCaps("../../unit_test/testdata/mips_loongson2k.txt"));
+  } else {
+    printf("WARNING: unable to load \"../../unit_test/testdata/mips.txt\"\n");
+  }
 }
 
 // TODO(fbarchard): Fix clangcl test of cpuflags.

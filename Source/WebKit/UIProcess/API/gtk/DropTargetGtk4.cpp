@@ -101,7 +101,7 @@ DropTarget::~DropTarget()
     g_cancellable_cancel(m_cancellable.get());
 }
 
-void DropTarget::accept(GdkDrop* drop, Optional<WebCore::IntPoint> position, unsigned)
+void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position, unsigned)
 {
     m_drop = drop;
     m_position = position;
@@ -294,14 +294,14 @@ void DropTarget::leave()
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    auto position = m_position.valueOr(IntPoint());
+    auto position = m_position.value_or(IntPoint());
     DragData dragData(&m_selectionData.value(), position, position, { });
     page->dragExited(dragData);
     page->resetCurrentDragInformation();
 
     m_drop = nullptr;
-    m_position = WTF::nullopt;
-    m_selectionData = WTF::nullopt;
+    m_position = std::nullopt;
+    m_selectionData = std::nullopt;
     m_cancellable = nullptr;
 }
 

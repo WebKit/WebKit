@@ -523,25 +523,25 @@ void Value::escapeString(StringBuilder& builder, StringView string)
     for (UChar codeUnit : string.codeUnits()) {
         switch (codeUnit) {
         case '\b':
-            builder.appendLiteral("\\b");
+            builder.append("\\b");
             continue;
         case '\f':
-            builder.appendLiteral("\\f");
+            builder.append("\\f");
             continue;
         case '\n':
-            builder.appendLiteral("\\n");
+            builder.append("\\n");
             continue;
         case '\r':
-            builder.appendLiteral("\\r");
+            builder.append("\\r");
             continue;
         case '\t':
-            builder.appendLiteral("\\t");
+            builder.append("\\t");
             continue;
         case '\\':
-            builder.appendLiteral("\\\\");
+            builder.append("\\\\");
             continue;
         case '"':
-            builder.appendLiteral("\\\"");
+            builder.append("\\\"");
             continue;
         }
         // We escape < and > to prevent script execution.
@@ -566,24 +566,24 @@ String Value::toJSONString() const
     return result.toString();
 }
 
-Optional<bool> Value::asBoolean() const
+std::optional<bool> Value::asBoolean() const
 {
     if (type() != Type::Boolean)
-        return WTF::nullopt;
+        return std::nullopt;
     return m_value.boolean;
 }
 
-Optional<double> Value::asDouble() const
+std::optional<double> Value::asDouble() const
 {
     if (type() != Type::Double && type() != Type::Integer)
-        return WTF::nullopt;
+        return std::nullopt;
     return m_value.number;
 }
 
-Optional<int> Value::asInteger() const
+std::optional<int> Value::asInteger() const
 {
     if (type() != Type::Double && type() != Type::Integer)
-        return WTF::nullopt;
+        return std::nullopt;
     return static_cast<int>(m_value.number);
 }
 
@@ -598,13 +598,13 @@ void Value::writeJSON(StringBuilder& output) const
 {
     switch (m_type) {
     case Type::Null:
-        output.appendLiteral("null");
+        output.append("null");
         break;
     case Type::Boolean:
         if (m_value.boolean)
-            output.appendLiteral("true");
+            output.append("true");
         else
-            output.appendLiteral("false");
+            output.append("false");
         break;
     case Type::String:
         appendDoubleQuotedString(output, m_value.string);
@@ -612,7 +612,7 @@ void Value::writeJSON(StringBuilder& output) const
     case Type::Double:
     case Type::Integer: {
         if (!std::isfinite(m_value.number))
-            output.appendLiteral("null");
+            output.append("null");
         else
             output.append(m_value.number);
         break;
@@ -648,27 +648,27 @@ size_t ObjectBase::memoryCost() const
     return memoryCost;
 }
 
-Optional<bool> ObjectBase::getBoolean(const String& name) const
+std::optional<bool> ObjectBase::getBoolean(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
     return value->asBoolean();
 }
 
-Optional<double> ObjectBase::getDouble(const String& name) const
+std::optional<double> ObjectBase::getDouble(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
     return value->asDouble();
 }
 
-Optional<int> ObjectBase::getInteger(const String& name) const
+std::optional<int> ObjectBase::getInteger(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
     return value->asInteger();
 }
 

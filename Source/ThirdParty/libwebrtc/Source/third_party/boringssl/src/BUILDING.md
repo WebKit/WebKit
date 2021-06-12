@@ -10,7 +10,7 @@ Unless otherwise noted, build tools must at most five years old, matching
 [Abseil guidelines](https://abseil.io/about/compatibility). If in doubt, use the
 most recent stable version of each tool.
 
-  * [CMake](https://cmake.org/download/) 3.0 or later is required.
+  * [CMake](https://cmake.org/download/) 3.5 or later is required.
 
   * A recent version of Perl is required. On Windows,
     [Active State Perl](http://www.activestate.com/activeperl/) has been
@@ -156,14 +156,6 @@ This mechanism is under development and may change over time. Please contact the
 BoringSSL maintainers if making use of it.
 
 ## Known Limitations on Windows
-
-  * Versions of CMake since 3.0.2 have a bug in its Ninja generator that causes
-    yasm to output warnings
-
-        yasm: warning: can open only one input file, only the last file will be processed
-
-    These warnings can be safely ignored. The cmake bug is
-    http://www.cmake.org/Bug/view.php?id=15253.
 
   * CMake can generate Visual Studio projects, but the generated project files
     don't have steps for assembling the assembly language source files, so they

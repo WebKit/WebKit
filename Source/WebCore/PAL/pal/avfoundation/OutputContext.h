@@ -37,7 +37,7 @@ class OutputDevice;
 
 class OutputContext {
 public:
-    static Optional<OutputContext>& sharedAudioPresentationOutputContext();
+    static std::optional<OutputContext>& sharedAudioPresentationOutputContext();
 
     bool supportsMultipleOutputDevices();
     String deviceName();

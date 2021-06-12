@@ -38,6 +38,7 @@
 #include "WebPreferencesKeys.h"
 #include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
+#include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
@@ -52,7 +53,7 @@ namespace {
 const unsigned maxTimeOutValue = 120000;
 
 // FIXME(188625): Support BLE authenticators.
-static AuthenticatorManager::TransportSet collectTransports(const Optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
+static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
     if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
@@ -87,7 +88,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Optional<Publi
 // If it is not specified or any of its credentials doesn't specify its own. We should discover all.
 // This is a variant of Step. 18.*.4 from https://www.w3.org/TR/webauthn/#discover-from-external-source
 // as of 7 August 2018.
-static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicKeyCredentialDescriptor>& allowCredentials, const Optional<AuthenticatorAttachment>& authenticatorAttachment)
+static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicKeyCredentialDescriptor>& allowCredentials, const std::optional<AuthenticatorAttachment>& authenticatorAttachment)
 {
     AuthenticatorManager::TransportSet result;
     if (allowCredentials.isEmpty()) {
@@ -134,7 +135,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
 }
 
 // Only roaming authenticators are supported for Google legacy AppID support.
-static void processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions, AuthenticatorManager::TransportSet& transports)
+static void processGoogleLegacyAppIdSupportExtension(const std::optional<AuthenticationExtensionsClientInputs>& extensions, AuthenticatorManager::TransportSet& transports)
 {
     if (!extensions) {
         // AuthenticatorCoordinator::create should always set it.
@@ -193,7 +194,7 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     runPresenter();
 }
 
-void AuthenticatorManager::cancelRequest(const PageIdentifier& pageID, const Optional<FrameIdentifier>& frameID)
+void AuthenticatorManager::cancelRequest(const PageIdentifier& pageID, const std::optional<FrameIdentifier>& frameID)
 {
     if (!m_pendingCompletionHandler)
         return;
@@ -424,14 +425,14 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 
 void AuthenticatorManager::initTimeOutTimer()
 {
-    Optional<unsigned> timeOutInMs;
+    std::optional<unsigned> timeOutInMs;
     WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
         timeOutInMs = options.timeout;
     }, [&](const PublicKeyCredentialRequestOptions& options) {
         timeOutInMs = options.timeout;
     });
 
-    unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.valueOr(maxTimeOutValue));
+    unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.value_or(maxTimeOutValue));
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
 }
 

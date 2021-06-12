@@ -236,7 +236,7 @@ int WebEditorClient::spellCheckerDocumentTag()
 
 #endif
 
-bool WebEditorClient::shouldDeleteRange(const Optional<SimpleRange>& range)
+bool WebEditorClient::shouldDeleteRange(const std::optional<SimpleRange>& range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView shouldDeleteDOMRange:kit(range)];
 }
@@ -257,7 +257,7 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
     return page->settings().selectTrailingWhitespaceEnabled();
 }
 
-bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const Optional<SimpleRange>& range)
+bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const std::optional<SimpleRange>& range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldApplyStyle:kit(&style.mutableCopy()->ensureCSSStyleDeclaration())
@@ -296,13 +296,13 @@ bool WebEditorClient::shouldEndEditing(const SimpleRange& range)
     return [[m_webView _editingDelegateForwarder] webView:m_webView shouldEndEditingInDOMRange:kit(range)];
 }
 
-bool WebEditorClient::shouldInsertText(const String& text, const Optional<SimpleRange>& range, EditorInsertAction action)
+bool WebEditorClient::shouldInsertText(const String& text, const std::optional<SimpleRange>& range, EditorInsertAction action)
 {
     WebView* webView = m_webView;
     return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:kit(range) givenAction:kit(action)];
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, Affinity selectionAffinity, bool stillSelecting)
+bool WebEditorClient::shouldChangeSelectedRange(const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange, Affinity selectionAffinity, bool stillSelecting)
 {
     return [m_webView _shouldChangeSelectedDOMRange:kit(fromRange) toDOMRange:kit(toRange) affinity:kit(selectionAffinity) stillSelecting:stillSelecting];
 }
@@ -408,12 +408,12 @@ void WebEditorClient::didWriteSelectionToPasteboard()
 #endif
 }
 
-void WebEditorClient::willWriteSelectionToPasteboard(const Optional<SimpleRange>&)
+void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<SimpleRange>&)
 {
     // Not implemented WebKit, only WebKit2.
 }
 
-void WebEditorClient::getClientPasteboardData(const Optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData)
+void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData)
 {
     // Not implemented WebKit, only WebKit2.
 }
@@ -570,7 +570,7 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 
 #endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
 
-bool WebEditorClient::shouldInsertNode(Node& node, const Optional<SimpleRange>& replacingRange, EditorInsertAction givenAction)
+bool WebEditorClient::shouldInsertNode(Node& node, const std::optional<SimpleRange>& replacingRange, EditorInsertAction givenAction)
 { 
     return [[m_webView _editingDelegateForwarder] webView:m_webView shouldInsertNode:kit(&node) replacingDOMRange:kit(replacingRange) givenAction:(WebViewInsertAction)givenAction];
 }

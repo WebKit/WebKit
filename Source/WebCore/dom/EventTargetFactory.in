@@ -23,7 +23,7 @@ MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA
 MediaQueryList
 MediaRecorder conditional=MEDIA_STREAM
-MediaSession conditional=MEDIA_SESSION
+MediaSessionCoordinator conditional=MEDIA_SESSION_COORDINATOR
 MediaSource conditional=MEDIA_SOURCE
 MediaStream conditional=MEDIA_STREAM
 MediaStreamTrack conditional=MEDIA_STREAM

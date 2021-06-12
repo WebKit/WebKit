@@ -35,7 +35,6 @@
 #import "Logging.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFContextMenu.h"
-#import "PDFKitSoftLink.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
@@ -72,7 +71,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLFormElement.h>
@@ -105,6 +104,8 @@
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
+
+#import "PDFKitSoftLink.h"
 
 #if HAVE(INCREMENTAL_PDF_APIS)
 @interface PDFDocument ()
@@ -646,7 +647,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
         auto view = frame.coreFrame()->view();
-        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view)];
+        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view).platformColorSpace()];
     }
 
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -1156,7 +1157,7 @@ void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInSt
     }
 }
 
-void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* loader, const char* data, int count)
+void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* loader, const uint8_t* data, int count)
 {
     if (!m_pdfPlugin)
         return;
@@ -1165,7 +1166,7 @@ void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStream
     if (!request)
         return;
 
-    request->addData(reinterpret_cast<const uint8_t*>(data), count);
+    request->addData(data, count);
 }
 
 void PDFPlugin::PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)
@@ -1683,14 +1684,14 @@ void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t
         m_isPostScript = true;
 }
 
-void PDFPlugin::streamDidReceiveData(uint64_t streamID, const char* bytes, int length)
+void PDFPlugin::streamDidReceiveData(uint64_t streamID, const uint8_t* bytes, int length)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));
 
-    CFDataAppendBytes(m_data.get(), reinterpret_cast<const UInt8*>(bytes), length);
+    CFDataAppendBytes(m_data.get(), bytes, length);
     m_streamedBytes += length;
 }
 
@@ -1728,7 +1729,7 @@ void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
         CFDataIncreaseLength(m_data.get(), targetLength - currentLength);
 }
 
-void PDFPlugin::manualStreamDidReceiveData(const char* bytes, int length)
+void PDFPlugin::manualStreamDidReceiveData(const uint8_t* bytes, int length)
 {
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));
@@ -1944,7 +1945,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
 #endif
 
-    GraphicsContext graphicsContext(context);
+    GraphicsContextCG graphicsContext(context);
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     graphicsContext.setIsCALayerContext(true);
@@ -2012,13 +2013,13 @@ IntPoint PDFPlugin::convertFromRootViewToPlugin(const IntPoint& point) const
 IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
 {
     IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
-    return m_rootViewToPluginTransform.inverse().valueOr(AffineTransform()).mapPoint(pointInPluginCoordinates);
+    return m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapPoint(pointInPluginCoordinates);
 }
 
 IntRect PDFPlugin::convertFromPDFViewToRootView(const IntRect& rect) const
 {
     IntRect rectInPluginCoordinates(rect.x(), rect.y(), rect.width(), rect.height());
-    return m_rootViewToPluginTransform.inverse().valueOr(AffineTransform()).mapRect(rectInPluginCoordinates);
+    return m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapRect(rectInPluginCoordinates);
 }
 
 IntPoint PDFPlugin::convertFromRootViewToPDFView(const IntPoint& point) const
@@ -2051,7 +2052,7 @@ IntRect PDFPlugin::boundsOnScreen() const
         return { };
 
     FloatRect bounds = FloatRect(FloatPoint(), size());
-    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().valueOr(AffineTransform()).mapRect(bounds);
+    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapRect(bounds);
     auto* page = m_frame->coreFrame()->page();
     if (!page)
         return { };
@@ -2078,7 +2079,7 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
         return;
 
     m_size = pluginSize;
-    m_rootViewToPluginTransform = pluginToRootViewTransform.inverse().valueOr(AffineTransform());
+    m_rootViewToPluginTransform = pluginToRootViewTransform.inverse().value_or(AffineTransform());
     [m_pdfLayerController setFrameSize:pluginSize];
 
     [CATransaction begin];
@@ -2341,7 +2342,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     if (!nsMenu)
         return false;
     
-    Optional<int> openInPreviewIndex;
+    std::optional<int> openInPreviewIndex;
     Vector<PDFContextMenuItem> items;
     auto itemCount = [nsMenu numberOfItems];
     for (int i = 0; i < itemCount; i++) {
@@ -2355,7 +2356,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     }
     PDFContextMenu contextMenu { point, WTFMove(items), WTFMove(openInPreviewIndex) };
 
-    Optional<int> selectedIndex = -1;
+    std::optional<int> selectedIndex = -1;
     webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier), Messages::WebPageProxy::ShowPDFContextMenu::Reply(selectedIndex));
 
     if (selectedIndex && *selectedIndex >= 0 && *selectedIndex < itemCount)
@@ -2605,7 +2606,7 @@ void PDFPlugin::openWithNativeApplication()
 void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
 {
     auto pasteboardTypes = makeVector<String>(types);
-    auto pageIdentifier = m_frame && m_frame->coreFrame() ? m_frame->coreFrame()->pageID() : WTF::nullopt;
+    auto pageIdentifier = m_frame && m_frame->coreFrame() ? m_frame->coreFrame()->pageID() : std::nullopt;
 
     int64_t newChangeCount;
     auto& webProcess = WebProcess::singleton();

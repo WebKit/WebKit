@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class InlineElementBox;
+class LegacyInlineElementBox;
 class HTMLElement;
 class Position;
 
@@ -40,11 +40,11 @@ public:
 
     bool isWBR() const final { return m_isWBR; }
 
-    std::unique_ptr<InlineElementBox> createInlineBox();
-    InlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
-    void setInlineBoxWrapper(InlineElementBox*);
+    std::unique_ptr<LegacyInlineElementBox> createInlineBox();
+    LegacyInlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
+    void setInlineBoxWrapper(LegacyInlineElementBox*);
     void deleteInlineBoxWrapper();
-    void replaceInlineBoxWrapper(InlineElementBox&);
+    void replaceInlineBoxWrapper(LegacyInlineElementBox&);
     void dirtyLineBoxes(bool fullLayout);
 
     IntRect linesBoundingBox() const;
@@ -86,7 +86,7 @@ private:
     void updateFromStyle() final;
     bool requiresLayer() const final { return false; }
 
-    InlineElementBox* m_inlineBoxWrapper;
+    LegacyInlineElementBox* m_inlineBoxWrapper;
     mutable int m_cachedLineHeight;
     bool m_isWBR;
 };

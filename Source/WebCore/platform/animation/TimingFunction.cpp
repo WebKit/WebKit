@@ -145,18 +145,12 @@ double TimingFunction::transformTime(double inputTime, double duration, bool bef
 
 ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const String& cssText)
 {
-    StringBuilder cssString;
-    cssString.append(getPropertyNameString(CSSPropertyAnimationTimingFunction));
-    cssString.appendLiteral(": ");
-    cssString.append(cssText);
-    auto styleProperties = MutableStyleProperties::create();
-    styleProperties->parseDeclaration(cssString.toString(), CSSParserContext(HTMLStandardMode));
-
-    if (auto cssValue = styleProperties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
-        if (auto timingFunction = createFromCSSValue(*cssValue.get()))
-            return timingFunction;
+    auto properties = MutableStyleProperties::create();
+    properties->parseDeclaration(makeString("animation-timing-function:", cssText), CSSParserContext(HTMLStandardMode));
+    if (auto value = properties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
+        if (auto function = createFromCSSValue(*value))
+            return function;
     }
-    
     return Exception { TypeError };
 }
 

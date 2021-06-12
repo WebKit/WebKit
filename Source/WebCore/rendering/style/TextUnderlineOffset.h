@@ -68,7 +68,7 @@ public:
 
     float lengthOr(float defaultValue) const
     {
-        return m_length.valueOr(defaultValue);
+        return m_length.value_or(defaultValue);
     }
 
     bool operator==(const TextUnderlineOffset& other) const
@@ -93,7 +93,7 @@ private:
             m_length = 0;
     }
 
-    Optional<float> m_length;
+    std::optional<float> m_length;
 };
 
 inline TextStream& operator<<(TextStream& ts, const TextUnderlineOffset& offset)

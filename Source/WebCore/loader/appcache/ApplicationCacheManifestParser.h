@@ -41,6 +41,6 @@ struct ApplicationCacheManifest {
     bool allowAllNetworkRequests { false }; // Wildcard found in NETWORK section.
 };
 
-Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length);
+std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const uint8_t* data, int length);
 
 } // namespace WebCore

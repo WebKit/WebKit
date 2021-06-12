@@ -139,7 +139,7 @@ private:
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<SlotAssignment> m_slotAssignment;
-    mutable Optional<PartMappings> m_partMappings;
+    mutable std::optional<PartMappings> m_partMappings;
 };
 
 inline Element* ShadowRoot::activeElement() const

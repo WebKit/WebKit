@@ -345,7 +345,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     SHA1 sha1;
     sha1.addBytes(m_cachedBytecode->data(), m_cachedBytecode->size());
     sha1.computeHash(computedHash);
-    FileSystem::writeToFile(tempFD, reinterpret_cast<const char*>(&computedHash), sizeof(computedHash));
+    FileSystem::writeToFile(tempFD, computedHash.data(), sizeof(computedHash));
 
     fsync(tempFD);
     rename(tempFileName, cacheFileName);

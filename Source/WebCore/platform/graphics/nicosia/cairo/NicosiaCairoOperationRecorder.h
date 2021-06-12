@@ -28,21 +28,20 @@
 
 #pragma once
 
-#include "GraphicsContextImpl.h"
+#include "GraphicsContext.h"
 #include "NicosiaPaintingOperation.h"
 
 namespace Nicosia {
 
-class CairoOperationRecorder final : public WebCore::GraphicsContextImpl {
+class CairoOperationRecorder final : public WebCore::GraphicsContext {
 public:
-    CairoOperationRecorder(WebCore::GraphicsContext&, PaintingOperations&);
+    CairoOperationRecorder(PaintingOperations&);
 
 private:
     bool hasPlatformContext() const override { return false; }
     PlatformGraphicsContext* platformContext() const override { return nullptr; }
 
     void updateState(const WebCore::GraphicsContextState&, WebCore::GraphicsContextState::StateChangeFlags) override;
-    void clearShadow() override;
 
     void setLineCap(WebCore::LineCap) override;
     void setLineDash(const WebCore::DashArray&, float) override;
@@ -53,6 +52,7 @@ private:
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&) override;
     void fillRect(const WebCore::FloatRect&, WebCore::Gradient&) override;
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode) override;
+    void fillRoundedRectImpl(const WebCore::FloatRoundedRect&, const WebCore::Color&) override { ASSERT_NOT_REACHED(); }
     void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode) override;
     void fillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&) override;
     void fillPath(const WebCore::Path&) override;
@@ -70,10 +70,9 @@ private:
 
     void drawRect(const WebCore::FloatRect&, float) override;
     void drawLine(const WebCore::FloatPoint&, const WebCore::FloatPoint&) override;
-    void drawLinesForText(const WebCore::FloatPoint&, float thickness, const WebCore::DashArray&, bool, bool) override;
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, const WebCore::DashArray&, bool, bool, WebCore::StrokeStyle) override;
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) override;
     void drawEllipse(const WebCore::FloatRect&) override;
-    void drawPath(const WebCore::Path&) override;
 
     void drawFocusRing(const WebCore::Path&, float, float, const WebCore::Color&) override;
     void drawFocusRing(const Vector<WebCore::FloatRect>&, float, float, const WebCore::Color&) override;
@@ -86,7 +85,7 @@ private:
     void scale(const WebCore::FloatSize&) override;
     void concatCTM(const WebCore::AffineTransform&) override;
     void setCTM(const WebCore::AffineTransform&) override;
-    WebCore::AffineTransform getCTM(WebCore::GraphicsContext::IncludeDeviceScale) override;
+    WebCore::AffineTransform getCTM(WebCore::GraphicsContext::IncludeDeviceScale) const override;
 
     void beginTransparencyLayer(float) override;
     void endTransparencyLayer() override;
@@ -95,12 +94,11 @@ private:
     void clipOut(const WebCore::FloatRect&) override;
     void clipOut(const WebCore::Path&) override;
     void clipPath(const WebCore::Path&, WebCore::WindRule) override;
-    WebCore::IntRect clipBounds() override;
+    WebCore::IntRect clipBounds() const override;
     void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect&) override;
-    void clipToDrawingCommands(const WebCore::FloatRect& destination, WebCore::DestinationColorSpace, Function<void(WebCore::GraphicsContext&)>&&) override;
+    WebCore::GraphicsContext::ClipToDrawingCommandsResult clipToDrawingCommands(const WebCore::FloatRect& destination, const WebCore::DestinationColorSpace&, Function<void(WebCore::GraphicsContext&)>&&) override;
 #if ENABLE(VIDEO)
     void paintFrameForMedia(WebCore::MediaPlayer&, const WebCore::FloatRect& destination) override;
-    bool canPaintFrameForMedia(const WebCore::MediaPlayer&) const override { return false; }
 #endif
 
     void applyDeviceScaleFactor(float) override;

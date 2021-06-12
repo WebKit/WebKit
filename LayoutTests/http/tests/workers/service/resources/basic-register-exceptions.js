@@ -4,7 +4,7 @@ function done()
 }
 
 var registrations = [
-    ["image-mime-type.php", {}],
+    ["image-mime-type.py", {}],
     ["", {}],
     ["http://127.0.0.1:abc", {}],
     ["somescheme://script.js", { }],

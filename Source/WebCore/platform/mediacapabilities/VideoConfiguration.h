@@ -28,7 +28,6 @@
 #include "ColorGamut.h"
 #include "HdrMetadataType.h"
 #include "TransferFunction.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,13 +38,13 @@ struct VideoConfiguration {
     uint32_t height;
     uint64_t bitrate;
     double framerate;
-    Optional<bool> alphaChannel;
-    Optional<ColorGamut> colorGamut;
-    Optional<HdrMetadataType> hdrMetadataType;
-    Optional<TransferFunction> transferFunction;
+    std::optional<bool> alphaChannel;
+    std::optional<ColorGamut> colorGamut;
+    std::optional<HdrMetadataType> hdrMetadataType;
+    std::optional<TransferFunction> transferFunction;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<VideoConfiguration> decode(Decoder&);
+    template<class Decoder> static std::optional<VideoConfiguration> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -63,52 +62,52 @@ void VideoConfiguration::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<VideoConfiguration> VideoConfiguration::decode(Decoder& decoder)
+std::optional<VideoConfiguration> VideoConfiguration::decode(Decoder& decoder)
 {
-    Optional<String> contentType;
+    std::optional<String> contentType;
     decoder >> contentType;
     if (!contentType)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint32_t> width;
+    std::optional<uint32_t> width;
     decoder >> width;
     if (!width)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint32_t> height;
+    std::optional<uint32_t> height;
     decoder >> height;
     if (!height)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint64_t> bitrate;
+    std::optional<uint64_t> bitrate;
     decoder >> bitrate;
     if (!bitrate)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<double> framerate;
+    std::optional<double> framerate;
     decoder >> framerate;
     if (!framerate)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<bool>> alphaChannel;
+    std::optional<std::optional<bool>> alphaChannel;
     decoder >> alphaChannel;
     if (!alphaChannel)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<ColorGamut>> colorGamut;
+    std::optional<std::optional<ColorGamut>> colorGamut;
     decoder >> colorGamut;
     if (!colorGamut)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<HdrMetadataType>> hdrMetadataType;
+    std::optional<std::optional<HdrMetadataType>> hdrMetadataType;
     decoder >> hdrMetadataType;
     if (!hdrMetadataType)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<TransferFunction>> transferFunction;
+    std::optional<std::optional<TransferFunction>> transferFunction;
     decoder >> transferFunction;
     if (!transferFunction)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *contentType,

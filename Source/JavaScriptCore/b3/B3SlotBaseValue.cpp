@@ -28,7 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3StackSlot.h"
+#include "AirStackSlot.h"
 
 namespace JSC { namespace B3 {
 

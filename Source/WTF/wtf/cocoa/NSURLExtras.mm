@@ -100,7 +100,7 @@ static String decodePercentEscapes(const String& string)
 
 NSString *decodeHostName(NSString *string)
 {
-    Optional<String> host = mapHostName(string, nullptr);
+    std::optional<String> host = mapHostName(string, nullptr);
     if (!host)
         return nil;
     return !*host ? string : (NSString *)*host;
@@ -108,7 +108,7 @@ NSString *decodeHostName(NSString *string)
 
 NSString *encodeHostName(NSString *string)
 {
-    Optional<String> host = mapHostName(string, decodePercentEscapes);
+    std::optional<String> host = mapHostName(string, decodePercentEscapes);
     if (!host)
         return nil;
     return !*host ? string : (NSString *)*host;
@@ -187,12 +187,12 @@ static NSData *dataWithUserTypedString(NSString *string)
     if (!inLength)
         return nil;
 
-    Checked<int, RecordOverflow> mallocLength = inLength;
+    CheckedInt32 mallocLength = inLength;
     mallocLength *= 3; // large enough to %-escape every character
     if (mallocLength.hasOverflowed())
         return nil;
     
-    char* outBytes = static_cast<char *>(malloc(mallocLength.unsafeGet()));
+    char* outBytes = static_cast<char *>(malloc(mallocLength));
     char* p = outBytes;
     int outLength = 0;
     for (int i = 0; i < inLength; i++) {

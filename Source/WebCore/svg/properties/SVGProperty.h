@@ -21,7 +21,6 @@
 #pragma once
 
 #include "SVGPropertyOwner.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -79,10 +78,10 @@ public:
     // Synchronizing the SVG attribute and its reflection here.
     bool isDirty() const { return m_state == SVGPropertyState::Dirty; }
     void setDirty() { m_state = SVGPropertyState::Dirty; }
-    Optional<String> synchronize()
+    std::optional<String> synchronize()
     {
         if (m_state == SVGPropertyState::Clean)
-            return WTF::nullopt;
+            return std::nullopt;
         m_state = SVGPropertyState::Clean;
         return valueAsString();
     }

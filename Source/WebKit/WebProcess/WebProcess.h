@@ -348,7 +348,7 @@ public:
 #endif
     void unblockServicesRequiredByAccessibility(const SandboxExtension::HandleArray&);
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
+    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
     void unblockPreferenceService(SandboxExtension::HandleArray&&);
 #endif
     void powerSourceDidChange(bool);
@@ -692,7 +692,7 @@ private:
     bool m_suppressMemoryPressureHandler { false };
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
-    Optional<double> m_cpuLimit;
+    std::optional<double> m_cpuLimit;
 
     String m_uiProcessName;
     WebCore::RegistrableDomain m_registrableDomain;
@@ -732,7 +732,7 @@ private:
     
     // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
     // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.
-    Optional<PAL::SessionID> m_sessionID;
+    std::optional<PAL::SessionID> m_sessionID;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };

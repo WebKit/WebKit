@@ -37,7 +37,7 @@ namespace NetworkCache {
 
 static const size_t gDefaultReadBufferSize = 4096;
 
-IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS>)
+IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS>)
     : m_path(filePath)
     , m_type(type)
 {

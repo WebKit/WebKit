@@ -71,13 +71,13 @@ void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candid
     // restrictions and origin.
     auto optionalConfiguration = getSupportedConfiguration(candidateConfiguration, restrictions, access);
     if (!optionalConfiguration) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
     auto consentCallback = [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), access] (ConsentStatus status, CDMKeySystemConfiguration&& configuration, CDMRestrictions&& restrictions) mutable {
         if (!weakThis) {
-            callback(WTF::nullopt);
+            callback(std::nullopt);
             return;
         }
         // 3.1.1.2 Get Supported Configuration and Consent, ctd.
@@ -131,7 +131,7 @@ bool CDMPrivate::isPersistentType(CDMSessionType sessionType)
     return false;
 }
 
-Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const CDMKeySystemConfiguration& candidateConfiguration, CDMRestrictions& restrictions, LocalStorageAccess access)
+std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const CDMKeySystemConfiguration& candidateConfiguration, CDMRestrictions& restrictions, LocalStorageAccess access)
 {
     // https://w3c.github.io/encrypted-media/#get-supported-configuration-and-consent
     // W3C Editor's Draft 09 November 2016
@@ -166,7 +166,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
 
         // 3.3. If supported types is empty, return NotSupported.
         if (supportedTypes.isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 3.4. Set the initDataTypes member of accumulated configuration to supported types.
         accumulatedConfiguration.initDataTypes = WTFMove(supportedTypes);
@@ -187,7 +187,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
         // If the implementation does not support use of Distinctive Identifier(s) in combination
         // with accumulated configuration and restrictions, return NotSupported.
         if (distinctiveIdentifiersRequirement(accumulatedConfiguration, restrictions) == CDMRequirement::NotAllowed)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
 
     case CDMRequirement::Optional:
@@ -200,7 +200,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
         // If the implementation requires use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)
         // in combination with accumulated configuration and restrictions, return NotSupported.
         if (distinctiveIdentifiersRequirement(accumulatedConfiguration, restrictions) == CDMRequirement::Required)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
 
@@ -222,7 +222,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
         // If the implementation does not support persisting state in combination with accumulated configuration
         // and restrictions, return NotSupported.
         if (this->persistentStateRequirement(accumulatedConfiguration, restrictions) == CDMRequirement::NotAllowed)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
 
     case CDMRequirement::Optional:
@@ -235,7 +235,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
         // If the implementation requires persisting state in combination with accumulated configuration
         // and restrictions, return NotSupported
         if (this->persistentStateRequirement(accumulatedConfiguration, restrictions) == CDMRequirement::Required)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
 
@@ -261,12 +261,12 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
         // 13.2. If accumulated configuration's persistentState value is "not-allowed" and the
         //       Is persistent session type? algorithm returns true for session type return NotSupported.
         if (accumulatedConfiguration.persistentState == CDMRequirement::NotAllowed && isPersistentType(sessionType))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 13.3. If the implementation does not support session type in combination with accumulated configuration
         //       and restrictions for other reasons, return NotSupported.
         if (!supportsSessionTypeWithConfiguration(sessionType, accumulatedConfiguration))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 13.4 If accumulated configuration's persistentState value is "optional" and the result of running the Is
         //      persistent session type? algorithm on session type is true, change accumulated configuration's persistentState
@@ -280,7 +280,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
 
     // 15. If the videoCapabilities and audioCapabilities members in candidate configuration are both empty, return NotSupported.
     if (candidateConfiguration.videoCapabilities.isEmpty() && candidateConfiguration.audioCapabilities.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // 16. ↳ If the videoCapabilities member in candidate configuration is non-empty:
     if (!candidateConfiguration.videoCapabilities.isEmpty()) {
@@ -290,7 +290,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
 
         // 16.2. If video capabilities is null, return NotSupported.
         if (!videoCapabilities)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 16.3 Set the videoCapabilities member of accumulated configuration to video capabilities.
         accumulatedConfiguration.videoCapabilities = WTFMove(videoCapabilities.value());
@@ -308,7 +308,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
 
         // 17.2. If audio capabilities is null, return NotSupported.
         if (!audioCapabilities)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 17.3 Set the audioCapabilities member of accumulated configuration to audio capabilities.
         accumulatedConfiguration.audioCapabilities = WTFMove(audioCapabilities.value());
@@ -350,16 +350,16 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
     // 20. If implementation in the configuration specified by the combination of the values in accumulated configuration
     //     is not supported or not allowed in the origin, return NotSupported.
     if (!supportsConfiguration(accumulatedConfiguration))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if ((accumulatedConfiguration.distinctiveIdentifier == CDMRequirement::Required || accumulatedConfiguration.persistentState == CDMRequirement::Required) && access == LocalStorageAccess::NotAllowed)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return accumulatedConfiguration;
     // NOTE: Continued in getConsentStatus().
 }
 
-Optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesForAudioVideoType(CDMPrivate::AudioVideoType type, const Vector<CDMMediaCapability>& requestedCapabilities, const CDMKeySystemConfiguration& partialConfiguration, CDMRestrictions& restrictions)
+std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesForAudioVideoType(CDMPrivate::AudioVideoType type, const Vector<CDMMediaCapability>& requestedCapabilities, const CDMKeySystemConfiguration& partialConfiguration, CDMRestrictions& restrictions)
 {
     // https://w3c.github.io/encrypted-media/#get-supported-capabilities-for-audio-video-type
     // W3C Editor's Draft 09 November 2016
@@ -384,10 +384,10 @@ Optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesForAudi
 
         // 3.3. If content type is the empty string, return null.
         if (requestedCapability.contentType.isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 3.4. If content type is an invalid or unrecognized MIME type, continue to the next iteration.
-        Optional<ParsedContentType> contentType = ParsedContentType::create(requestedCapability.contentType, Mode::Rfc2045);
+        std::optional<ParsedContentType> contentType = ParsedContentType::create(requestedCapability.contentType, Mode::Rfc2045);
         if (!contentType)
             continue;
 
@@ -448,7 +448,7 @@ Optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesForAudi
 
     // 4. If supported media capabilities is empty, return null.
     if (supportedMediaCapabilities.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // 5. Return supported media capabilities.
     return supportedMediaCapabilities;

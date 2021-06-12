@@ -1,3 +1,173 @@
+2021-06-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277464.
+        https://bugs.webkit.org/show_bug.cgi?id=226709
+
+        No longer necessary
+
+        Reverted changeset:
+
+        "Work around WebCore failing to build due to NDEBUG getting
+        undefined in release"
+        https://bugs.webkit.org/show_bug.cgi?id=225782
+        https://trac.webkit.org/changeset/277464
+
+2021-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Move DataDetectors softlinking in DataDetectorsSPI.h out into a separate PAL header
+        https://bugs.webkit.org/show_bug.cgi?id=226669
+
+        Reviewed by Sam Weinig.
+
+        Add the new softlinking headers. See WebCore/ChangeLog for more details.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/DataDetectorsCoreSoftLink.h:
+        * pal/cocoa/DataDetectorsCoreSoftLink.mm:
+
+        Move the `DDBinderPhoneNumberKey` soft link into `DataDetectorsCoreSoftLink` instead, since this symbol comes
+        from DataDetectorsCore rather than the DataDetectors framework.
+
+        * pal/mac/DataDetectorsSoftLink.h: Added.
+        * pal/mac/DataDetectorsSoftLink.mm: Added.
+        * pal/mac/QuickLookUISoftLink.h:
+        * pal/spi/mac/DataDetectorsSPI.h:
+
+2021-06-01  Darin Adler  <darin@apple.com>
+
+        Remove <wtf/Optional.h>
+        https://bugs.webkit.org/show_bug.cgi?id=226437
+
+        Reviewed by Chris Dumez.
+
+        * pal/SessionID.h: Include <optional>.
+        * pal/crypto/gcrypt/Utilities.h: Ditto.
+        * pal/crypto/tasn1/Utilities.cpp: Removed include of <wtf/Optional.h>.
+
+2021-06-01  Dana Estra  <destra@apple.com>
+
+        Adopt Reveal for phone numbers
+        https://bugs.webkit.org/show_bug.cgi?id=226383
+        rdar://78482517
+        
+        Reviewed by Tim Horton.
+        
+        Add declaration for RVItem method initWithURL.
+
+        * pal/spi/cocoa/RevealSPI.h:
+
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove WTF::Optional synonym for std::optional, using that class template directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=226433
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Let the do-webcore-rename script rename Optional<> to std::optional<>.
+
+2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Show context menu when clicking on data detection results in image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=226274
+        rdar://75504956
+
+        Reviewed by Tim Horton and Aditya Keerthi.
+
+        Add declarations for some SPI on RVItem and RVPresenter. See WebKit for more information about where these are
+        used.
+
+        * pal/spi/cocoa/RevealSPI.h:
+
+2021-05-27  Darin Adler  <darin@apple.com>
+
+        Next step toward using std::optional directly instead of through WTF::Optional typedef
+        https://bugs.webkit.org/show_bug.cgi?id=226280
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Accept the renaming done by do-webcore-rename.
+
+2021-05-26  Cameron McCormack  <heycam@apple.com>
+
+        Prevent sbix glyphs from being rendered in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=226159
+        <rdar://77231959>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cf/CoreTextSPI.h: Add declaration for an SPI that lets us
+        infer whether a glyph has an sbix image.
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Leverage the new Vector(const T*, size_t) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226304
+
+        Reviewed by Darin Adler.
+
+        Leverage the new Vector(const T*, size_t) constructor in existing code.
+
+        * pal/crypto/gcrypt/CryptoDigestGCrypt.cpp:
+        (PAL::CryptoDigest::computeHash):
+
+2021-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a PAL softlinking header for the Reveal framework
+        https://bugs.webkit.org/show_bug.cgi?id=226292
+
+        Reviewed by Tim Horton.
+
+        Add the new header and source file.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/RevealSoftLink.h: Added.
+        * pal/cocoa/RevealSoftLink.mm: Added.
+
+2021-05-24  Sam Weinig  <weinig@apple.com>
+
+        Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=226143
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        Add addional SPI for working with CGColorSpaceRefs.
+
+2021-05-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Settings: Increase contrast isn't detected in browser until an additional setting is applied
+        https://bugs.webkit.org/show_bug.cgi?id=225909
+
+        Reviewed by Per Arne Vollan.
+
+        * pal/spi/mac/HIServicesSPI.h:
+
+2021-05-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277940.
+        https://bugs.webkit.org/show_bug.cgi?id=226182
+
+        Caused Safari crash under IPC::typeFromCFTypeRef
+
+        Reverted changeset:
+
+        "Convert DestinationColorSpace from an enum to class wrapping
+        a platform color space (CGColorSpaceRef for CG ports, etc.)"
+        https://bugs.webkit.org/show_bug.cgi?id=226143
+        https://trac.webkit.org/changeset/277940
+
+2021-05-23  Sam Weinig  <weinig@apple.com>
+
+        Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=226143
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        Add addional SPI for working with CGColorSpaceRefs.
+
 2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Adopt QLItem in WKImageExtractionPreviewController

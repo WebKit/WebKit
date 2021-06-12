@@ -133,7 +133,7 @@ private:
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
-    Optional<ImageBufferBackendHandle> m_bufferHandle;
+    std::optional<ImageBufferBackendHandle> m_bufferHandle;
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_frontBufferFlusher;
 

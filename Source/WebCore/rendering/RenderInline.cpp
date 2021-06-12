@@ -28,9 +28,9 @@
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "InlineElementBox.h"
-#include "InlineTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LegacyInlineElementBox.h"
+#include "LegacyInlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
@@ -257,7 +257,7 @@ void RenderInline::generateLineBoxRects(GeneratorContext& context) const
 {
     if (!alwaysCreateLineBoxes())
         generateCulledLineBoxRects(context, this);
-    else if (InlineFlowBox* curr = firstLineBox()) {
+    else if (LegacyInlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
             context.addRect(FloatRect(curr->topLeft(), curr->size()));
     } else
@@ -283,7 +283,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
         if (is<RenderBox>(current)) {
             auto& renderBox = downcast<RenderBox>(current);
             if (renderBox.inlineBoxWrapper()) {
-                const RootInlineBox& rootBox = renderBox.inlineBoxWrapper()->root();
+                const LegacyRootInlineBox& rootBox = renderBox.inlineBoxWrapper()->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontCascade().fontMetrics().height();
@@ -298,8 +298,8 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
             if (!renderInline.alwaysCreateLineBoxes())
                 renderInline.generateCulledLineBoxRects(context, container);
             else {
-                for (InlineFlowBox* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
-                    const RootInlineBox& rootBox = childLine->root();
+                for (auto* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
+                    const LegacyRootInlineBox& rootBox = childLine->root();
                     const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                     int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                     int logicalHeight = containerStyle.fontMetrics().height();
@@ -318,8 +318,8 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
             }
         } else if (is<RenderText>(current)) {
             auto& currText = downcast<RenderText>(current);
-            for (InlineTextBox* childText = currText.firstTextBox(); childText; childText = childText->nextTextBox()) {
-                const RootInlineBox& rootBox = childText->root();
+            for (auto* childText = currText.firstTextBox(); childText; childText = childText->nextTextBox()) {
+                const LegacyRootInlineBox& rootBox = childText->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontCascade().fontMetrics().height();
@@ -331,7 +331,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
         } else if (is<RenderLineBreak>(current)) {
             if (auto* inlineBox = downcast<RenderLineBreak>(current).inlineBoxWrapper()) {
                 // FIXME: This could use a helper to share these with text path.
-                const RootInlineBox& rootBox = inlineBox->root();
+                const LegacyRootInlineBox& rootBox = inlineBox->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontMetrics().height();
@@ -449,7 +449,7 @@ LayoutUnit RenderInline::offsetLeft() const
         lineLayout->flow().ensureLineBoxes();
 #endif
     LayoutPoint topLeft;
-    if (InlineBox* firstBox = firstLineBoxIncludingCulling())
+    if (LegacyInlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
     return adjustedPositionRelativeToOffsetParent(topLeft).x();
 }
@@ -461,7 +461,7 @@ LayoutUnit RenderInline::offsetTop() const
         lineLayout->flow().ensureLineBoxes();
 #endif
     LayoutPoint topLeft;
-    if (InlineBox* firstBox = firstLineBoxIncludingCulling())
+    if (LegacyInlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
     return adjustedPositionRelativeToOffsetParent(topLeft).y();
 }
@@ -653,7 +653,7 @@ IntRect RenderInline::linesBoundingBox() const
         // Return the width of the minimal left side and the maximal right side.
         float logicalLeftSide = 0;
         float logicalRightSide = 0;
-        for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
             if (curr == firstLineBox() || curr->logicalLeft() < logicalLeftSide)
                 logicalLeftSide = curr->logicalLeft();
             if (curr == firstLineBox() || curr->logicalRight() > logicalRightSide)
@@ -672,7 +672,7 @@ IntRect RenderInline::linesBoundingBox() const
     return result;
 }
 
-InlineBox* RenderInline::culledInlineFirstLineBox() const
+LegacyInlineBox* RenderInline::culledInlineFirstLineBox() const
 {
     for (auto& current : childrenOfType<RenderObject>(*this)) {
         if (current.isFloatingOrOutOfFlowPositioned())
@@ -690,7 +690,7 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
                 return renderBR.inlineBoxWrapper();
         } else if (is<RenderInline>(current)) {
             auto& renderInline = downcast<RenderInline>(current);
-            if (InlineBox* result = renderInline.firstLineBoxIncludingCulling())
+            if (LegacyInlineBox* result = renderInline.firstLineBoxIncludingCulling())
                 return result;
         } else if (is<RenderText>(current)) {
             auto& renderText = downcast<RenderText>(current);
@@ -701,7 +701,7 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
     return nullptr;
 }
 
-InlineBox* RenderInline::culledInlineLastLineBox() const
+LegacyInlineBox* RenderInline::culledInlineLastLineBox() const
 {
     for (RenderObject* current = lastChild(); current; current = current->previousSibling()) {
         if (current->isFloatingOrOutOfFlowPositioned())
@@ -719,7 +719,7 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
                 return renderBR.inlineBoxWrapper();
         } else if (is<RenderInline>(*current)) {
             RenderInline& renderInline = downcast<RenderInline>(*current);
-            if (InlineBox* result = renderInline.lastLineBoxIncludingCulling())
+            if (LegacyInlineBox* result = renderInline.lastLineBoxIncludingCulling())
                 return result;
         } else if (is<RenderText>(*current)) {
             RenderText& renderText = downcast<RenderText>(*current);
@@ -763,7 +763,7 @@ LayoutRect RenderInline::culledInlineVisualOverflowBoundingBox() const
                 result.uniteIfNonZero(renderInline.linesVisualOverflowBoundingBox());
         } else if (is<RenderText>(current)) {
             // FIXME; Overflow from text boxes is lost. We will need to cache this information in
-            // InlineTextBoxes.
+            // LegacyInlineTextBoxes.
             auto& renderText = downcast<RenderText>(current);
             result.uniteIfNonZero(renderText.linesVisualOverflowBoundingBox());
         }
@@ -787,13 +787,13 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
     // Return the width of the minimal left side and the maximal right side.
     LayoutUnit logicalLeftSide = LayoutUnit::max();
     LayoutUnit logicalRightSide = LayoutUnit::min();
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         logicalLeftSide = std::min(logicalLeftSide, curr->logicalLeftVisualOverflow());
         logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
     }
 
-    const RootInlineBox& firstRootBox = firstLineBox()->root();
-    const RootInlineBox& lastRootBox = lastLineBox()->root();
+    const LegacyRootInlineBox& firstRootBox = firstLineBox()->root();
+    const LegacyRootInlineBox& lastRootBox = lastLineBox()->root();
     
     LayoutUnit logicalTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox.lineTop());
     LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
@@ -818,9 +818,9 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFr
     LayoutUnit logicalRightSide = LayoutUnit::min();
     LayoutUnit logicalTop;
     LayoutUnit logicalHeight;
-    InlineFlowBox* lastInlineInFragment = 0;
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        const RootInlineBox& root = curr->root();
+    LegacyInlineFlowBox* lastInlineInFragment = 0;
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        const LegacyRootInlineBox& root = curr->root();
         if (root.containingFragment() != fragment) {
             if (lastInlineInFragment)
                 break;
@@ -929,7 +929,7 @@ LayoutRect RenderInline::computeVisibleRectUsingPaintOffset(const LayoutRect& re
     return adjustedRect;
 }
 
-Optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // Repaint offset cache is only valid for root-relative repainting
     if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && !context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
@@ -963,7 +963,7 @@ Optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const LayoutRec
         bool isEmpty = !downcast<RenderBox>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-                return WTF::nullopt;
+                return std::nullopt;
             return adjustedRect;
         }
     }
@@ -1115,11 +1115,11 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
             } else if (!current.selfNeedsLayout()) {
                 if (is<RenderInline>(current)) {
                     auto& renderInline = downcast<RenderInline>(current);
-                    for (InlineFlowBox* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox())
+                    for (auto* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox())
                         childLine->root().markDirty();
                 } else if (is<RenderText>(current)) {
                     auto& renderText = downcast<RenderText>(current);
-                    for (InlineTextBox* childText = renderText.firstTextBox(); childText; childText = childText->nextTextBox())
+                    for (auto* childText = renderText.firstTextBox(); childText; childText = childText->nextTextBox())
                         childText->root().markDirty();
                 } else if (is<RenderLineBreak>(current)) {
                     auto& renderBR = downcast<RenderLineBreak>(current);
@@ -1137,12 +1137,12 @@ void RenderInline::deleteLines()
     m_lineBoxes.deleteLineBoxTree();
 }
 
-std::unique_ptr<InlineFlowBox> RenderInline::createInlineFlowBox()
+std::unique_ptr<LegacyInlineFlowBox> RenderInline::createInlineFlowBox()
 {
-    return makeUnique<InlineFlowBox>(*this);
+    return makeUnique<LegacyInlineFlowBox>(*this);
 }
 
-InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
+LegacyInlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 {
     setAlwaysCreateLineBoxes();
     auto newFlowBox = createInlineFlowBox();
@@ -1272,8 +1272,8 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     Vector<LayoutRect> rects;
     rects.append(LayoutRect());
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        const RootInlineBox& rootBox = curr->root();
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        const LegacyRootInlineBox& rootBox = curr->root();
         LayoutUnit top = std::max(rootBox.lineTop(), LayoutUnit(curr->logicalTop()));
         LayoutUnit bottom = std::min(rootBox.lineBottom(), LayoutUnit(curr->logicalBottom()));
         rects.append({ LayoutUnit(curr->x()), top, LayoutUnit(curr->logicalWidth()), bottom - top });

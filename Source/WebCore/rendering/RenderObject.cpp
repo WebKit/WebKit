@@ -469,7 +469,7 @@ RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
     return *lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
 }
 
-const RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
+RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
 {
     // Walk up the container chain to find the scrollable container that contains
     // this RenderObject. The important thing here is that `container()` respects
@@ -994,7 +994,7 @@ FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect& rect, const 
     return *computeFloatVisibleRectInContainer(rect, repaintContainer, visibleRectContextForRepaint());
 }
 
-Optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     if (container == this)
         return rect;
@@ -1008,14 +1008,14 @@ Optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRec
         bool isEmpty = !downcast<RenderBox>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-                return WTF::nullopt;
+                return std::nullopt;
             return adjustedRect;
         }
     }
     return parent->computeVisibleRectInContainer(adjustedRect, container, context);
 }
 
-Optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const
+std::optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const
 {
     ASSERT_NOT_REACHED();
     return FloatRect();

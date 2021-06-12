@@ -97,7 +97,7 @@ public:
         return type == Type::Exclude;
     }
 
-    Optional<Type> typeForElement(Element& element)
+    std::optional<Type> typeForElement(Element& element)
     {
         auto it = m_cache.find(element);
         if (it != m_cache.end())
@@ -108,7 +108,7 @@ public:
                 return rule.type;
         }
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
 private:
@@ -155,7 +155,7 @@ static bool isNotSpace(UChar character)
 class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
-        : m_iterator(*makeSimpleRange(start, end), TextIteratorIgnoresStyleVisibility)
+        : m_iterator(*makeSimpleRange(start, end), TextIteratorBehavior::IgnoresStyleVisibility)
         , m_node(start.firstNode())
         , m_pastEndNode(end.firstNode())
     {
@@ -165,7 +165,7 @@ public:
 
     void advance()
     {
-        m_text = WTF::nullopt;
+        m_text = std::nullopt;
         advanceNode();
 
         if (shouldAdvanceIteratorPastCurrentNode())
@@ -248,7 +248,7 @@ private:
     TextIterator m_iterator;
     RefPtr<Node> m_node;
     RefPtr<Node> m_pastEndNode;
-    Optional<Vector<String>> m_text;
+    std::optional<Vector<String>> m_text;
 };
 
 static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
@@ -288,10 +288,10 @@ static bool areEqualIgnoringLeadingAndTrailingWhitespaces(const String& content,
     return content.stripWhiteSpace() == originalContent.stripWhiteSpace();
 }
 
-static Optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Node* node)
+static std::optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Node* node)
 {
     if (!node)
-        return WTF::nullopt;
+        return std::nullopt;
 
     TextManipulationController::ManipulationTokenInfo result;
     result.documentURL = node->document().url();
@@ -754,7 +754,7 @@ void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDown
         insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *currentNode });
 }
 
-auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement) -> Optional<ManipulationFailureType>
+auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement) -> std::optional<ManipulationFailureType>
 {
     if (item.start.isOrphan() || item.end.isOrphan())
         return ManipulationFailureType::ContentChanged;
@@ -781,7 +781,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             downcast<HTMLInputElement>(*element).setValue(newValue.toString());
         else
             element->setAttribute(item.attributeName, newValue.toString());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     size_t currentTokenIndex = 0;
@@ -928,7 +928,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             m_manipulatedNodes.add(insertion.child.get());
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void TextManipulationController::removeNode(Node& node)

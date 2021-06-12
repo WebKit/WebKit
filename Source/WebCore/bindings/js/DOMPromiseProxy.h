@@ -29,7 +29,6 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -54,7 +53,7 @@ public:
     void reject(Exception, RejectAsHandled = RejectAsHandled::No);
     
 private:
-    Optional<ExceptionOr<Value>> m_valueOrException;
+    std::optional<ExceptionOr<Value>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -75,7 +74,7 @@ public:
     void reject(Exception, RejectAsHandled = RejectAsHandled::No);
 
 private:
-    Optional<ExceptionOr<void>> m_valueOrException;
+    std::optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -106,7 +105,7 @@ public:
     
 private:
     ResolveCallback m_resolveCallback;
-    Optional<ExceptionOr<void>> m_valueOrException;
+    std::optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -142,14 +141,14 @@ inline JSC::JSValue DOMPromiseProxy<IDLType>::promise(JSC::JSGlobalObject& lexic
 template<typename IDLType>
 inline void DOMPromiseProxy<IDLType>::clear()
 {
-    m_valueOrException = WTF::nullopt;
+    m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
 }
 
 template<typename IDLType>
 inline bool DOMPromiseProxy<IDLType>::isFulfilled() const
 {
-    return m_valueOrException.hasValue();
+    return m_valueOrException.has_value();
 }
 
 template<typename IDLType>
@@ -212,13 +211,13 @@ inline JSC::JSValue DOMPromiseProxy<IDLUndefined>::promise(JSC::JSGlobalObject& 
 
 inline void DOMPromiseProxy<IDLUndefined>::clear()
 {
-    m_valueOrException = WTF::nullopt;
+    m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
 }
 
 inline bool DOMPromiseProxy<IDLUndefined>::isFulfilled() const
 {
-    return m_valueOrException.hasValue();
+    return m_valueOrException.has_value();
 }
 
 inline void DOMPromiseProxy<IDLUndefined>::resolve()
@@ -281,14 +280,14 @@ inline JSC::JSValue DOMPromiseProxyWithResolveCallback<IDLType>::promise(JSC::JS
 template<typename IDLType>
 inline void DOMPromiseProxyWithResolveCallback<IDLType>::clear()
 {
-    m_valueOrException = WTF::nullopt;
+    m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
 }
 
 template<typename IDLType>
 inline bool DOMPromiseProxyWithResolveCallback<IDLType>::isFulfilled() const
 {
-    return m_valueOrException.hasValue();
+    return m_valueOrException.has_value();
 }
 
 template<typename IDLType>

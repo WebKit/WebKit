@@ -47,7 +47,7 @@ public:
     void setTargetRayMode(XRTargetRayMode mode) { m_targetRayMode = mode; }
     void setProfiles(Vector<String>&& profiles) { m_profiles = WTFMove(profiles); }
     void setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition = false);
-    void clearGripOrigin() { m_gripOrigin = WTF::nullopt; }
+    void clearGripOrigin() { m_gripOrigin = std::nullopt; }
     void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, bool emulatedPosition = false);
     void disconnect();
     void reconnect();
@@ -64,8 +64,8 @@ private:
     WebFakeXRInputController(PlatformXR::InputSourceHandle, const FakeXRInputSourceInit&);
 
     struct ButtonOrPlaceholder {
-        Optional<PlatformXR::Device::FrameData::InputSourceButton> button;
-        Optional<Vector<float>> axes;
+        std::optional<PlatformXR::Device::FrameData::InputSourceButton> button;
+        std::optional<Vector<float>> axes;
     };
     ButtonOrPlaceholder getButtonOrPlaceholder(FakeXRButtonStateInit::Type) const;
 
@@ -74,7 +74,7 @@ private:
     XRTargetRayMode m_targetRayMode { XRTargetRayMode::Gaze };
     Vector<String> m_profiles;
     PlatformXR::Device::FrameData::InputSourcePose m_pointerOrigin;
-    Optional<PlatformXR::Device::FrameData::InputSourcePose> m_gripOrigin;
+    std::optional<PlatformXR::Device::FrameData::InputSourcePose> m_gripOrigin;
     HashMap<FakeXRButtonStateInit::Type, FakeXRButtonStateInit, WTF::IntHash<FakeXRButtonStateInit::Type>, WTF::StrongEnumHashTraits<FakeXRButtonStateInit::Type>> m_buttons;
     bool m_connected { true };
     bool m_primarySelected { false };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+enum class AuthenticatorAttachment;
+
 struct AuthenticatorResponseData;
 
 class AuthenticatorResponse : public RefCounted<AuthenticatorResponse> {
@@ -43,7 +45,7 @@ public:
         Attestation
     };
 
-    static RefPtr<AuthenticatorResponse> tryCreate(AuthenticatorResponseData&&);
+    static RefPtr<AuthenticatorResponse> tryCreate(AuthenticatorResponseData&&, AuthenticatorAttachment);
     virtual ~AuthenticatorResponse() = default;
 
     virtual Type type() const = 0;
@@ -54,14 +56,16 @@ public:
     AuthenticationExtensionsClientOutputs extensions() const;
     void setClientDataJSON(Ref<ArrayBuffer>&&);
     ArrayBuffer* clientDataJSON() const;
+    WEBCORE_EXPORT AuthenticatorAttachment attachment() const;
 
 protected:
-    AuthenticatorResponse(Ref<ArrayBuffer>&&);
+    AuthenticatorResponse(Ref<ArrayBuffer>&&, AuthenticatorAttachment);
 
 private:
     Ref<ArrayBuffer> m_rawId;
     AuthenticationExtensionsClientOutputs m_extensions;
     RefPtr<ArrayBuffer> m_clientDataJSON;
+    AuthenticatorAttachment m_attachment;
 };
 
 } // namespace WebCore

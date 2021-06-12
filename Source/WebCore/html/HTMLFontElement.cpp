@@ -109,7 +109,7 @@ static bool parseFontSize(const CharacterType* characters, unsigned length, int&
         return false;
 
     // Step 8
-    int value = parseInteger<int>(digits).valueOr(0);
+    int value = parseInteger<int>(digits).value_or(0);
 
     // Step 9
     if (mode == RelativePlus)
@@ -175,26 +175,26 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, CSSValueID& si
     return true;
 }
 
-bool HTMLFontElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLFontElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == sizeAttr || name == colorAttr || name == faceAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLFontElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == sizeAttr) {
         CSSValueID size = CSSValueInvalid;
         if (cssValueFromFontSizeNumber(value, size))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, size);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyFontSize, size);
     } else if (name == colorAttr)
         addHTMLColorToStyle(style, CSSPropertyColor, value);
     else if (name == faceAttr) {
         if (auto fontFaceValue = CSSValuePool::singleton().createFontFaceValue(value))
             style.setProperty(CSSProperty(CSSPropertyFontFamily, WTFMove(fontFaceValue)));
     } else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 }

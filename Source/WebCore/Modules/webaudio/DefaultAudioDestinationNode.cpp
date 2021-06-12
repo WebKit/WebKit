@@ -47,8 +47,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 
-DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, Optional<float> sampleRate)
-    : AudioDestinationNode(context, sampleRate.valueOr(AudioDestination::hardwareSampleRate()))
+DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, std::optional<float> sampleRate)
+    : AudioDestinationNode(context, sampleRate.value_or(AudioDestination::hardwareSampleRate()))
 {
     ASSERT(BaseAudioContext::isSupportedSampleRate(AudioDestination::hardwareSampleRate()));
     initializeDefaultNodeOptions(2, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
@@ -148,21 +148,21 @@ Function<void(Function<void()>&&)> DefaultAudioDestinationNode::dispatchToRender
     return nullptr;
 }
 
-void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized())
         return completionHandler(Exception { InvalidStateError, "AudioDestinationNode is not initialized"_s });
 
     auto innerCompletionHandler = [completionHandler = WTFMove(completionHandler)](bool success) mutable {
-        completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
+        completionHandler(success ? std::nullopt : std::make_optional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
     };
 
     m_wasDestinationStarted = true;
     m_destination->start(dispatchToRenderThreadFunction(), WTFMove(innerCompletionHandler));
 }
 
-void DefaultAudioDestinationNode::resume(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void DefaultAudioDestinationNode::resume(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized()) {
@@ -173,11 +173,11 @@ void DefaultAudioDestinationNode::resume(CompletionHandler<void(Optional<Excepti
     }
     m_wasDestinationStarted = true;
     m_destination->start(dispatchToRenderThreadFunction(), [completionHandler = WTFMove(completionHandler)](bool success) mutable {
-        completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
+        completionHandler(success ? std::nullopt : std::make_optional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
     });
 }
 
-void DefaultAudioDestinationNode::suspend(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void DefaultAudioDestinationNode::suspend(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized()) {
@@ -189,7 +189,7 @@ void DefaultAudioDestinationNode::suspend(CompletionHandler<void(Optional<Except
 
     m_wasDestinationStarted = false;
     m_destination->stop([completionHandler = WTFMove(completionHandler)](bool success) mutable {
-        completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to stop the audio device"_s }));
+        completionHandler(success ? std::nullopt : std::make_optional(Exception { InvalidStateError, "Failed to stop the audio device"_s }));
     });
 }
 

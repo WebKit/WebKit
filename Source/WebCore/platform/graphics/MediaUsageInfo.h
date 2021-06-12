@@ -105,7 +105,7 @@ struct MediaUsageInfo {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MediaUsageInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<MediaUsageInfo> decode(Decoder&);
 };
 
 template<class Encoder> inline void MediaUsageInfo::encode(Encoder& encoder) const
@@ -143,7 +143,7 @@ template<class Encoder> inline void MediaUsageInfo::encode(Encoder& encoder) con
     encoder << isLargeEnoughForMainContent;
 }
 
-template<class Decoder> inline Optional<MediaUsageInfo> MediaUsageInfo::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<MediaUsageInfo> MediaUsageInfo::decode(Decoder& decoder)
 {
     MediaUsageInfo info;
 

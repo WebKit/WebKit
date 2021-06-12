@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 var Strings = {
-    version: "1.1.1",
+    version: "1.2",
     text: {
         testName: "Test Name",
         score: "Score",

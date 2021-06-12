@@ -24,9 +24,9 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaPlayerProxy NotRefCounted {
-    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale) -> (Optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId) Async
+    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, enum:uint8_t WebCore::DynamicRangeMode mode) -> (std::optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId) Async
 
-    Load(URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+    Load(URL url, std::optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
 #if ENABLE(MEDIA_SOURCE)
     LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
 #endif
@@ -76,7 +76,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    SetLegacyCDMSession(Optional<WebKit::RemoteLegacyCDMSessionIdentifier> instanceId)
+    SetLegacyCDMSession(std::optional<WebKit::RemoteLegacyCDMSessionIdentifier> instanceId)
     KeyAdded()
 #endif
 
@@ -105,10 +105,12 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier identifier, bool selected)
     TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier identifier, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
 
-    PerformTaskAtMediaTime(MediaTime mediaTime, MonotonicTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<MonotonicTime> monotonicTime) Async
-    WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous
+    PerformTaskAtMediaTime(MediaTime mediaTime, MonotonicTime messageTime) -> (std::optional<MediaTime> mediaTime, std::optional<MonotonicTime> monotonicTime) Async
+    WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (std::optional<bool> wouldTaint) Synchronous
 
     SetVideoPlaybackMetricsUpdateInterval(double interval)
+
+    SetPreferredDynamicRangeMode(enum:uint8_t WebCore::DynamicRangeMode mode)
 
 #if PLATFORM(IOS_FAMILY)
     ErrorLog() -> (String errorLog) Synchronous
@@ -121,8 +123,8 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #endif
 
 #if PLATFORM(COCOA)
-    NativeImageForCurrentTime() -> (Optional<MachSendRight> sendRight) Synchronous
-    PixelBufferForCurrentTime() -> (Optional<MachSendRight> sendRight) Synchronous
+    NativeImageForCurrentTime() -> (std::optional<MachSendRight> sendRight) Synchronous
+    PixelBufferForCurrentTime() -> (std::optional<MachSendRight> sendRight) Synchronous
 #endif
 }
 

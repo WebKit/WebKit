@@ -32,6 +32,7 @@
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextWin.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
@@ -157,7 +158,7 @@ void WebNodeHighlight::update()
 
     ::SelectObject(hdc.get(), hbmp.get());
 
-    GraphicsContext context(hdc.get());
+    GraphicsContextWin context(hdc.get());
     context.scale(m_inspectedWebView->page()->deviceScaleFactor());
     m_inspectedWebView->page()->inspectorController().drawHighlight(context);
 

@@ -48,8 +48,8 @@ enum class StopReplayReason : uint8_t {
 struct ReplayResult {
     std::unique_ptr<InMemoryDisplayList> trackedDisplayList;
     size_t numberOfBytesRead { 0 };
-    Optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
-    Optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
+    std::optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
+    std::optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
 
@@ -57,7 +57,7 @@ class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
     class Delegate;
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ImageBufferHashMap* = nullptr, const NativeImageHashMap* = nullptr, const FontRenderingResourceMap* = nullptr, Delegate* = nullptr);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ImageBufferHashMap* = nullptr, const NativeImageHashMap* = nullptr, const FontRenderingResourceMap* = nullptr, WebCore::ImageBuffer* maskImageBuffer = nullptr, Delegate* = nullptr);
     WEBCORE_EXPORT ~Replayer();
 
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
@@ -66,11 +66,13 @@ public:
     public:
         virtual ~Delegate() { }
         virtual bool apply(ItemHandle, GraphicsContext&) { return false; }
+        virtual void didCreateMaskImageBuffer(WebCore::ImageBuffer&) { }
+        virtual void didResetMaskImageBuffer() { }
     };
     
 private:
     GraphicsContext& context() const;
-    std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
+    std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
 
     GraphicsContext& m_context;
     RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;

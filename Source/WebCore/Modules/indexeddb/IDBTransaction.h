@@ -36,9 +36,9 @@
 #include "IDBTransactionMode.h"
 #include "IndexedDB.h"
 #include "Timer.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -112,8 +112,8 @@ public:
 
     Ref<IDBRequest> requestPutOrAdd(JSC::JSGlobalObject&, IDBObjectStore&, RefPtr<IDBKey>&&, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(JSC::JSGlobalObject&, IDBObjectStore&, const IDBGetRecordData&);
-    Ref<IDBRequest> requestGetAllObjectStoreRecords(JSC::JSGlobalObject&, IDBObjectStore&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
-    Ref<IDBRequest> requestGetAllIndexRecords(JSC::JSGlobalObject&, IDBIndex&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
+    Ref<IDBRequest> requestGetAllObjectStoreRecords(JSC::JSGlobalObject&, IDBObjectStore&, const IDBKeyRangeData&, IndexedDB::GetAllType, std::optional<uint32_t> count);
+    Ref<IDBRequest> requestGetAllIndexRecords(JSC::JSGlobalObject&, IDBIndex&, const IDBKeyRangeData&, IndexedDB::GetAllType, std::optional<uint32_t> count);
     Ref<IDBRequest> requestDeleteRecord(JSC::JSGlobalObject&, IDBObjectStore&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestClearObjectStore(JSC::JSGlobalObject&, IDBObjectStore&);
     Ref<IDBRequest> requestCount(JSC::JSGlobalObject&, IDBObjectStore&, const IDBKeyRangeData&);
@@ -254,7 +254,7 @@ private:
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
-    mutable CheckedLock m_referencedObjectStoreLock;
+    mutable Lock m_referencedObjectStoreLock;
     HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores WTF_GUARDED_BY_LOCK(m_referencedObjectStoreLock);
     HashMap<uint64_t, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores;
 

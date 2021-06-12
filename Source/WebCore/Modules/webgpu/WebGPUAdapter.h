@@ -29,7 +29,6 @@
 
 #include "GPURequestAdapterOptions.h"
 #include "IDLTypes.h"
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -42,17 +41,17 @@ template<typename IDLType> class DOMPromiseDeferred;
 
 class WebGPUAdapter : public RefCounted<WebGPUAdapter> {
 public:
-    static Ref<WebGPUAdapter> create(Optional<GPURequestAdapterOptions>&&);
+    static Ref<WebGPUAdapter> create(std::optional<GPURequestAdapterOptions>&&);
 
     using DeviceRequestPromise = DOMPromiseDeferred<IDLInterface<WebGPUDevice>>;
     void requestDevice(Document&, DeviceRequestPromise&&) const;
     
-    const Optional<GPURequestAdapterOptions>& options() const { return m_options; }
+    const std::optional<GPURequestAdapterOptions>& options() const { return m_options; }
 
 private:
-    explicit WebGPUAdapter(Optional<GPURequestAdapterOptions>&&);
+    explicit WebGPUAdapter(std::optional<GPURequestAdapterOptions>&&);
 
-    Optional<GPURequestAdapterOptions> m_options;
+    std::optional<GPURequestAdapterOptions> m_options;
 };
 
 } // namespace WebCore

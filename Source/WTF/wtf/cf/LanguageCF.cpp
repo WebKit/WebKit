@@ -30,15 +30,11 @@
 #include <mutex>
 #include <unicode/uloc.h>
 #include <wtf/Assertions.h>
-#include <wtf/CheckedLock.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cf/CFBundleSPI.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
-
-static CheckedLock preferredLanguagesLock;
 
 #if PLATFORM(MAC)
 static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
@@ -47,21 +43,11 @@ static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStrin
 }
 #endif
 
-static Vector<String>& preferredLanguages() WTF_REQUIRES_LOCK(preferredLanguagesLock)
-{
-    static LazyNeverDestroyed<Vector<String>> languages;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        languages.construct();
-    });
-    return languages;
-}
-
-static String httpStyleLanguageCode(CFStringRef language)
+static String httpStyleLanguageCode(CFStringRef language, ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
     RetainPtr<CFStringRef> preferredLanguageCode;
     // If we can minimize the language list to reduce fingerprinting, we can afford to be more lossless when canonicalizing the locale list.
-    if (canMinimizeLanguages())
+    if (shouldMinimizeLanguages == ShouldMinimizeLanguages::No || canMinimizeLanguages())
         preferredLanguageCode = adoptCF(CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, language));
     else {
         SInt32 languageCode;
@@ -88,14 +74,6 @@ static String httpStyleLanguageCode(CFStringRef language)
     return mutableLanguageCode.get();
 }
 
-void platformLanguageDidChange()
-{
-    {
-        Locker locker { preferredLanguagesLock };
-        preferredLanguages().clear();
-    }
-}
-
 void listenForLanguageChangeNotifications()
 {
 #if PLATFORM(MAC)
@@ -106,32 +84,23 @@ void listenForLanguageChangeNotifications()
 #endif
 }
 
-Vector<String> platformUserPreferredLanguages()
+Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
-    Locker locker { preferredLanguagesLock };
-    Vector<String>& userPreferredLanguages = preferredLanguages();
+    auto platformLanguages = adoptCF(CFLocaleCopyPreferredLanguages());
 
-    if (userPreferredLanguages.isEmpty()) {
-        RetainPtr<CFArrayRef> languages = adoptCF(CFLocaleCopyPreferredLanguages());
-        languages = minimizedLanguagesFromLanguages(languages.get());
-        CFIndex languageCount = CFArrayGetCount(languages.get());
-        if (!languageCount)
-            userPreferredLanguages.append("en");
-        else {
-            for (CFIndex i = 0; i < languageCount; i++)
-                userPreferredLanguages.append(httpStyleLanguageCode(static_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i))));
-        }
+    if (shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes)
+        platformLanguages = minimizedLanguagesFromLanguages(platformLanguages.get());
+
+    CFIndex platformLanguagesCount = CFArrayGetCount(platformLanguages.get());
+    if (!platformLanguagesCount)
+        return { "en"_s };
+
+    Vector<String> languages;
+    for (CFIndex i = 0; i < platformLanguagesCount; i++) {
+        auto platformLanguage = static_cast<CFStringRef>(CFArrayGetValueAtIndex(platformLanguages.get(), i));
+        languages.append(httpStyleLanguageCode(platformLanguage, shouldMinimizeLanguages));
     }
-
-    Vector<String> userPreferredLanguagesCopy;
-    userPreferredLanguagesCopy.reserveInitialCapacity(userPreferredLanguages.size());
-
-    for (auto& language : userPreferredLanguages)
-        userPreferredLanguagesCopy.uncheckedAppend(language.isolatedCopy());
-
-    return userPreferredLanguagesCopy;
-
-    return Vector<String>();
+    return languages;
 }
 
 } // namespace WTF

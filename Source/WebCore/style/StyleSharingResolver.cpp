@@ -241,7 +241,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
     if (!sharingCandidateHasIdenticalStyleAffectingAttributes(context, candidateElement))
         return false;
-    if (const_cast<StyledElement&>(candidateElement).additionalPresentationAttributeStyle() != const_cast<StyledElement&>(element).additionalPresentationAttributeStyle())
+    if (const_cast<StyledElement&>(candidateElement).additionalPresentationalHintStyle() != const_cast<StyledElement&>(element).additionalPresentationalHintStyle())
         return false;
     if (candidateElement.affectsNextSiblingElementStyle() || candidateElement.styleIsAffectedByPreviousSibling())
         return false;
@@ -347,7 +347,7 @@ bool SharingResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(const
     } else if (sharingCandidate.hasClass() && classNamesAffectedByRules(sharingCandidate.classNames()))
         return false;
 
-    if (const_cast<StyledElement&>(element).presentationAttributeStyle() != const_cast<StyledElement&>(sharingCandidate).presentationAttributeStyle())
+    if (const_cast<StyledElement&>(element).presentationalHintStyle() != const_cast<StyledElement&>(sharingCandidate).presentationalHintStyle())
         return false;
 
     return true;

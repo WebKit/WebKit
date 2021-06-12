@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TransformState.h"
 
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -170,7 +169,7 @@ FloatPoint TransformState::mappedPoint(bool* wasClamped) const
     if (m_direction == ApplyTransformDirection)
         return m_accumulatedTransform->mapPoint(point);
 
-    return m_accumulatedTransform->inverse().valueOr(TransformationMatrix()).projectPoint(point, wasClamped);
+    return m_accumulatedTransform->inverse().value_or(TransformationMatrix()).projectPoint(point, wasClamped);
 }
 
 FloatQuad TransformState::mappedQuad(bool* wasClamped) const
@@ -183,23 +182,23 @@ FloatQuad TransformState::mappedQuad(bool* wasClamped) const
     return quad;
 }
 
-Optional<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
+std::optional<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
 {
     if (wasClamped)
         *wasClamped = false;
 
     if (!m_lastPlanarSecondaryQuad)
-        return WTF::nullopt;
+        return std::nullopt;
 
     FloatQuad quad = *m_lastPlanarSecondaryQuad;
     mapQuad(quad, m_direction, wasClamped);
     return quad;
 }
 
-void TransformState::setLastPlanarSecondaryQuad(const Optional<FloatQuad>& quad)
+void TransformState::setLastPlanarSecondaryQuad(const std::optional<FloatQuad>& quad)
 {
     if (!quad) {
-        m_lastPlanarSecondaryQuad = WTF::nullopt;
+        m_lastPlanarSecondaryQuad = std::nullopt;
         return;
     }
     
@@ -220,7 +219,7 @@ void TransformState::mapQuad(FloatQuad& quad, TransformDirection direction, bool
         return;
     }
 
-    quad = m_accumulatedTransform->inverse().valueOr(TransformationMatrix()).projectQuad(quad, wasClamped);
+    quad = m_accumulatedTransform->inverse().value_or(TransformationMatrix()).projectQuad(quad, wasClamped);
 }
 
 void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* wasClamped)
@@ -234,7 +233,7 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* w
                 m_lastPlanarSecondaryQuad = t.mapQuad(*m_lastPlanarSecondaryQuad);
         }
     } else {
-        TransformationMatrix inverseTransform = t.inverse().valueOr(TransformationMatrix());
+        TransformationMatrix inverseTransform = t.inverse().value_or(TransformationMatrix());
         if (m_mapPoint)
             m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
         if (m_mapQuad) {

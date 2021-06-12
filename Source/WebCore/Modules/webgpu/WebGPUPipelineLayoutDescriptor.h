@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WebGPUBindGroupLayout.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -37,7 +36,7 @@ namespace WebCore {
 struct GPUPipelineLayoutDescriptor;
 
 struct WebGPUPipelineLayoutDescriptor {
-    Optional<GPUPipelineLayoutDescriptor> tryCreateGPUPipelineLayoutDescriptor() const;
+    std::optional<GPUPipelineLayoutDescriptor> tryCreateGPUPipelineLayoutDescriptor() const;
 
     Vector<RefPtr<WebGPUBindGroupLayout>> bindGroupLayouts;
 };

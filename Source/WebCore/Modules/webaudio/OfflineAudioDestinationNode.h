@@ -52,7 +52,7 @@ public:
 
     // AudioDestinationNode
     void enableInput(const String&) final { }
-    void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void startRendering(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
 
 private:
     enum class RenderResult { Failure, Suspended, Complete };

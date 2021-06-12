@@ -1634,7 +1634,7 @@ bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [playerController() isPlaying];
 }
 
-static Optional<bool> isPictureInPictureSupported;
+static std::optional<bool> isPictureInPictureSupported;
 
 void WebCore::setSupportsPictureInPicture(bool isSupported)
 {
@@ -1644,7 +1644,7 @@ void WebCore::setSupportsPictureInPicture(bool isSupported)
 bool WebCore::supportsPictureInPicture()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(WATCHOS)
-    if (isPictureInPictureSupported.hasValue())
+    if (isPictureInPictureSupported.has_value())
         return *isPictureInPictureSupported;
     return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];
 #else

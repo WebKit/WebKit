@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
-#import "TCCSPI.h"
+#import "TCCSoftLink.h"
 #import "UIKitSPI.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
@@ -64,10 +64,6 @@ SOFT_LINK_CLASS(SafariServices, SSReadingList)
 
 OBJC_CLASS DDAction;
 
-SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
-SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
-SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
-
 #if HAVE(APP_LINKS)
 static bool applicationHasAppLinkEntitlements()
 {
@@ -98,7 +94,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     WeakObjCPtr<id <WKActionSheetAssistantDelegate>> _delegate;
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
-    Optional<WebKit::InteractionInformationAtPosition> _positionInformation;
+    std::optional<WebKit::InteractionInformationAtPosition> _positionInformation;
 #if USE(UICONTEXTMENU)
 #if ENABLE(DATA_DETECTION)
     RetainPtr<UIContextMenuInteraction> _dataDetectorContextMenuInteraction;
@@ -333,9 +329,15 @@ static const CGFloat presentationElementRectPadding = 15;
 #endif
 }
 
-- (Optional<WebKit::InteractionInformationAtPosition>)currentPositionInformation
+- (std::optional<WebKit::InteractionInformationAtPosition>)currentPositionInformation
 {
     return _positionInformation;
+}
+
+static bool isJavaScriptURL(NSURL *url)
+{
+    auto scheme = url.scheme;
+    return scheme && [scheme caseInsensitiveCompare:@"javascript"] == NSOrderedSame;
 }
 
 - (void)_createSheetWithElementActions:(NSArray *)actions defaultTitle:(NSString *)defaultTitle showLinkTitle:(BOOL)showLinkTitle
@@ -348,8 +350,6 @@ static const CGFloat presentationElementRectPadding = 15;
         return;
 
     NSURL *targetURL = _positionInformation->url;
-    NSString *urlScheme = [targetURL scheme];
-    BOOL isJavaScriptURL = [urlScheme length] && [urlScheme caseInsensitiveCompare:@"javascript"] == NSOrderedSame;
     // FIXME: We should check if Javascript is enabled in the preferences.
 
     _interactionSheet = adoptNS([[WKActionSheet alloc] init]);
@@ -359,7 +359,7 @@ static const CGFloat presentationElementRectPadding = 15;
     NSString *titleString = nil;
     BOOL titleIsURL = NO;
     if (showLinkTitle && [[targetURL absoluteString] length]) {
-        if (isJavaScriptURL)
+        if (isJavaScriptURL(targetURL))
             titleString = WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link");
         else {
             titleString = WTF::userVisibleString(targetURL);
@@ -559,11 +559,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     if ([elementInfo imageURL]) {
-        if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+        if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
     }
 
-    if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame) {
+    if (!isJavaScriptURL(targetURL)) {
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
     }
@@ -595,10 +595,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList assistant:self]];
 #endif
-    if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+    if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
-    if (!targetURL.scheme.length || [targetURL.scheme caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
+
+    [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
 
 #if ENABLE(IMAGE_EXTRACTION)
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeImageExtractionActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeImageExtractionActionForElement:elementInfo])
@@ -1017,8 +1017,10 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
     case _WKElementActionTypeShare:
         if (URL(element.imageURL).protocolIsData() && element.image && [delegate respondsToSelector:@selector(actionSheetAssistant:shareElementWithImage:rect:)])
             [delegate actionSheetAssistant:self shareElementWithImage:element.image rect:element.boundingRect];
-        else
-            [delegate actionSheetAssistant:self shareElementWithURL:element.URL ?: element.imageURL rect:element.boundingRect];
+        else {
+            auto urlToShare = element.URL && !isJavaScriptURL(element.URL) ? element.URL : element.imageURL;
+            [delegate actionSheetAssistant:self shareElementWithURL:urlToShare rect:element.boundingRect];
+        }
         break;
     case _WKElementActionTypeImageExtraction:
 #if ENABLE(IMAGE_EXTRACTION)
@@ -1049,7 +1051,7 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
     [_interactionSheet setSheetDelegate:nil];
     _interactionSheet = nil;
     _elementInfo = nil;
-    _positionInformation = WTF::nullopt;
+    _positionInformation = std::nullopt;
     _needsLinkIndicator = NO;
     _isPresentingDDUserInterface = NO;
     _hasPendingActionSheet = NO;

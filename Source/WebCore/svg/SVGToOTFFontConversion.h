@@ -31,6 +31,6 @@ namespace WebCore {
 
 class SVGFontElement;
 
-Optional<Vector<char>> convertSVGToOTFFont(const SVGFontElement&);
+std::optional<Vector<uint8_t>> convertSVGToOTFFont(const SVGFontElement&);
 
 } // namespace WebCore

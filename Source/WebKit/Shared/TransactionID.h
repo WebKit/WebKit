@@ -27,7 +27,6 @@
 
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,12 +47,12 @@ public:
         ASSERT(isValidIdentifier(m_identifier));
         encoder << m_identifier;
     }
-    template<typename Decoder> static Optional<MonotonicObjectIdentifier> decode(Decoder& decoder)
+    template<typename Decoder> static std::optional<MonotonicObjectIdentifier> decode(Decoder& decoder)
     {
-        Optional<uint64_t> identifier;
+        std::optional<uint64_t> identifier;
         decoder >> identifier;
         if (!identifier)
-            return WTF::nullopt;
+            return std::nullopt;
         ASSERT(isValidIdentifier(*identifier));
         return MonotonicObjectIdentifier { *identifier };
     }

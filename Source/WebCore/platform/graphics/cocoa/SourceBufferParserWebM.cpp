@@ -456,7 +456,7 @@ public:
     const webm::TrackEntry& track() { return m_track; }
 
 private:
-    mutable Optional<AtomString> m_codec;
+    mutable std::optional<AtomString> m_codec;
     webm::TrackEntry m_track;
 };
 
@@ -628,12 +628,6 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
         m_status = m_parser->Feed(this, &m_reader);
         if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock) {
             m_reader->reclaimSegments();
-
-            // Audio tracks are grouped into meta-samples of a duration no more than m_minimumSampleDuration.
-            // But at the end of a file, no more audio data may be incoming, so flush and emit any pending
-            // audio buffers.
-            flushPendingAudioBuffers();
-
             completionHandler();
             return;
         }
@@ -654,7 +648,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
         }
 
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "received Ebml element while parsing Segment element. Rewound reader and reset parser, retrying");
-        m_rewindToPosition = WTF::nullopt;
+        m_rewindToPosition = std::nullopt;
         m_parser->DidSeek();
         m_state = State::None;
         continue;
@@ -961,7 +955,7 @@ webm::Status SourceBufferParserWebM::OnBlockBegin(const ElementMetadata& metadat
 
     *action = Action::kRead;
 
-    m_currentBlock = makeOptional<BlockVariant>(Block(block));
+    m_currentBlock = std::make_optional<BlockVariant>(Block(block));
 
     return Status(Status::kOkCompleted);
 }
@@ -972,7 +966,7 @@ webm::Status SourceBufferParserWebM::OnBlockEnd(const ElementMetadata& metadata,
     UNUSED_PARAM(block);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
-    m_currentBlock = WTF::nullopt;
+    m_currentBlock = std::nullopt;
 
     return Status(Status::kOkCompleted);
 }
@@ -988,7 +982,7 @@ webm::Status SourceBufferParserWebM::OnSimpleBlockBegin(const ElementMetadata& m
 
     *action = Action::kRead;
 
-    m_currentBlock = makeOptional<BlockVariant>(SimpleBlock(block));
+    m_currentBlock = std::make_optional<BlockVariant>(SimpleBlock(block));
 
     return Status(Status::kOkCompleted);
 }
@@ -1000,7 +994,7 @@ webm::Status SourceBufferParserWebM::OnSimpleBlockEnd(const ElementMetadata& met
 
     UNUSED_PARAM(block);
 
-    m_currentBlock = WTF::nullopt;
+    m_currentBlock = std::nullopt;
 
     return Status(Status::kOkCompleted);
 }
@@ -1066,7 +1060,7 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
     return trackData->consumeFrameData(*reader, metadata, bytesRemaining, CMTimeMake(block->timecode + m_currentTimecode, m_timescale), block->num_frames);
 }
 
-void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID, Optional<size_t> byteRangeOffset)
+void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID, std::optional<size_t> byteRangeOffset)
 {
     m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID, byteRangeOffset] () mutable {
         if (!m_didProvideMediaDataCallback)
@@ -1312,8 +1306,8 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
 
 
     m_packetDescriptions.append({ static_cast<int64_t>(*m_currentPacketByteOffset), 0, static_cast<UInt32>(*m_currentPacketSize) });
-    m_currentPacketByteOffset = WTF::nullopt;
-    m_currentPacketSize = WTF::nullopt;
+    m_currentPacketByteOffset = std::nullopt;
+    m_currentPacketSize = std::nullopt;
 
     auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration) * sampleCount;
     if (sampleDuration >= m_minimumSampleDuration)
@@ -1322,7 +1316,7 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
     return Skip(&reader, bytesRemaining);
 }
 
-void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(Optional<size_t> latestByteRangeOffset)
+void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(std::optional<size_t> latestByteRangeOffset)
 {
     if (m_packetDescriptions.isEmpty())
         return;

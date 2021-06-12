@@ -225,18 +225,10 @@ absl_source_set("endian") {
     "internal/unaligned_access.h",
   ]
   public_deps = [
+    ":base",
     ":config",
     ":core_headers",
   ]
-}
-
-absl_source_set("bits") {
-  public = [ "internal/bits.h" ]
-  public_deps = [
-    ":config",
-    ":core_headers",
-  ]
-  visibility = [ "//third_party/abseil-cpp/absl/*" ]
 }
 
 absl_source_set("exponential_biased") {

@@ -1932,7 +1932,7 @@ void SpeculativeJIT::compileToBoolean(Node* node, bool invert)
 
         bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
-        Optional<GPRTemporary> scratch;
+        std::optional<GPRTemporary> scratch;
         GPRReg scratchGPR = InvalidGPRReg;
         if (shouldCheckMasqueradesAsUndefined) {
             scratch.emplace(this);
@@ -2087,7 +2087,7 @@ void SpeculativeJIT::emitBranch(Node* node)
             GPRTemporary result(this);
             FPRTemporary fprValue(this);
             FPRTemporary fprTemp(this);
-            Optional<GPRTemporary> scratch;
+            std::optional<GPRTemporary> scratch;
 
             GPRReg scratchGPR = InvalidGPRReg;
             bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
@@ -2830,8 +2830,8 @@ void SpeculativeJIT::compile(Node* node)
             if (!m_compileOkay)
                 return;
             
-            Optional<GPRTemporary> result;
-            Optional<GPRReg> resultReg;
+            std::optional<GPRTemporary> result;
+            std::optional<GPRReg> resultReg;
             if (!resultIsUnboxed) {
                 result.emplace(this);
                 resultReg = result->gpr();
@@ -3296,7 +3296,7 @@ void SpeculativeJIT::compile(Node* node)
             // We are in generic mode!
             JSValueOperand base(this, baseEdge);
             JSValueOperand index(this, indexEdge);
-            Optional<JSValueOperand> args[2];
+            std::optional<JSValueOperand> args[2];
             baseGPR = base.gpr();
             indexGPR = index.gpr();
             for (unsigned i = numExtraArgs; i--;) {
@@ -3790,6 +3790,10 @@ void SpeculativeJIT::compile(Node* node)
         compileToStringOrCallStringConstructorOrStringValueOf(node);
         break;
     }
+
+    case FunctionToString:
+        compileFunctionToString(node);
+        break;
         
     case NewStringObject: {
         compileNewStringObject(node);
@@ -4071,7 +4075,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg cellGPR = cell.gpr();
 
         GPRReg tempGPR = InvalidGPRReg;
-        Optional<GPRTemporary> temp;
+        std::optional<GPRTemporary> temp;
         if (node->structureSet().size() > 1) {
             temp.emplace(this);
             tempGPR = temp->gpr();
@@ -4509,7 +4513,7 @@ void SpeculativeJIT::compile(Node* node)
         case StringUse: {
             SpeculateCellOperand input(this, node->child1());
             GPRTemporary result(this);
-            Optional<GPRTemporary> temp;
+            std::optional<GPRTemporary> temp;
 
             GPRReg tempGPR = InvalidGPRReg;
             if (node->child1().useKind() == CellUse) {
@@ -4968,8 +4972,8 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary structureID(this);
         GPRTemporary result(this);
 
-        Optional<SpeculateCellOperand> keyAsCell;
-        Optional<JSValueOperand> keyAsValue;
+        std::optional<SpeculateCellOperand> keyAsCell;
+        std::optional<JSValueOperand> keyAsValue;
         GPRReg keyGPR;
         if (node->child2().useKind() == UntypedUse) {
             keyAsValue.emplace(this, node->child2());
@@ -5258,7 +5262,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary temp2(this);
         GPRReg t2 = temp2.gpr();
 
-        Optional<SpeculateBooleanOperand> isLittleEndianOperand;
+        std::optional<SpeculateBooleanOperand> isLittleEndianOperand;
         if (node->child3())
             isLittleEndianOperand.emplace(this, node->child3());
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
@@ -5422,10 +5426,10 @@ void SpeculativeJIT::compile(Node* node)
         SpeculateInt32Operand index(this, m_graph.varArgChild(node, 1));
         GPRReg indexGPR = index.gpr();
 
-        Optional<SpeculateStrictInt52Operand> int52Value;
-        Optional<SpeculateDoubleOperand> doubleValue;
-        Optional<SpeculateInt32Operand> int32Value;
-        Optional<FPRTemporary> fprTemporary;
+        std::optional<SpeculateStrictInt52Operand> int52Value;
+        std::optional<SpeculateDoubleOperand> doubleValue;
+        std::optional<SpeculateInt32Operand> int32Value;
+        std::optional<FPRTemporary> fprTemporary;
         GPRReg valueGPR = InvalidGPRReg;
         FPRReg valueFPR = InvalidFPRReg;
         FPRReg tempFPR = InvalidFPRReg;
@@ -5461,7 +5465,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary temp3(this);
         GPRReg t3 = temp3.gpr();
 
-        Optional<SpeculateBooleanOperand> isLittleEndianOperand;
+        std::optional<SpeculateBooleanOperand> isLittleEndianOperand;
         if (m_graph.varArgChild(node, 3))
             isLittleEndianOperand.emplace(this, m_graph.varArgChild(node, 3));
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
@@ -5705,7 +5709,7 @@ void SpeculativeJIT::compile(Node* node)
     case FilterCallLinkStatus:
     case FilterGetByStatus:
     case FilterPutByIdStatus:
-    case FilterInByIdStatus:
+    case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:
     case FilterSetPrivateBrandStatus:

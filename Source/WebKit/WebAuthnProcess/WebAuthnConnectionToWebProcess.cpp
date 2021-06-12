@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,12 +69,12 @@ void WebAuthnConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& c
 
 void WebAuthnConnectionToWebProcess::makeCredential(Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
 }
 
 void WebAuthnConnectionToWebProcess::getAssertion(Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
 }
 
 void WebAuthnConnectionToWebProcess::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
@@ -82,9 +82,9 @@ void WebAuthnConnectionToWebProcess::handleRequest(WebAuthenticationRequestData&
     auto callback = [handler = WTFMove(handler)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
         ASSERT(RunLoop::isMain());
         WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
-            handler(response->data(), { });
+            handler(response->data(), response->attachment(), { });
         }, [&](const ExceptionData& exception) {
-            handler({ }, exception);
+            handler({ }, static_cast<AuthenticatorAttachment>(0), exception);
         });
     };
     m_WebAuthnProcess->authenticatorManager().handleRequest(WTFMove(data), WTFMove(callback));

@@ -133,7 +133,7 @@ unsigned VTTScanner::scanDigits(int& number)
         string = { m_data.characters16, numDigits };
 
     // Since these are ASCII digits, the only failure mode is overflow, so use the maximum int value.
-    number = parseInteger<int>(string).valueOr(std::numeric_limits<int>::max());
+    number = parseInteger<int>(string).value_or(std::numeric_limits<int>::max());
 
     // Consume the digits.
     seekTo(runOfDigits.end());

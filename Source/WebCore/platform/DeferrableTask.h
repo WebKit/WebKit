@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,15 @@
 
 #pragma once
 
-#include "GenericTaskQueue.h"
+#include <wtf/Function.h>
+#include <wtf/MainThread.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-template <typename T>
-class DeferrableTask : public CanMakeWeakPtr<DeferrableTask<T>> {
+class MainThreadDeferrableTask : public CanMakeWeakPtr<MainThreadDeferrableTask> {
 public:
-    DeferrableTask()
-        : m_dispatcher()
-    {
-    }
-
-    DeferrableTask(T& t)
-        : m_dispatcher(&t)
-    {
-    }
-
-    typedef WTF::Function<void ()> TaskFunction;
-
-    void scheduleTask(TaskFunction&& task)
-    {
-        if (m_isClosed)
-            return;
-
-        cancelTask();
-
-        m_pendingTask = true;
-        m_dispatcher.postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
-            if (!weakThis)
-                return;
-            ASSERT(weakThis->m_pendingTask);
-            weakThis->m_pendingTask = false;
-            task();
-        });
-    }
+    MainThreadDeferrableTask() = default;
 
     void close()
     {
@@ -69,15 +43,32 @@ public:
 
     void cancelTask()
     {
-        CanMakeWeakPtr<DeferrableTask<T>>::weakPtrFactory().revokeAll();
-        m_pendingTask = false;
+        weakPtrFactory().revokeAll();
+        m_isPending = false;
     }
-    bool hasPendingTask() const { return m_pendingTask; }
+
+    bool isPending() const { return m_isPending; }
+
+    void scheduleTask(Function<void()>&& task)
+    {
+        if (m_isClosed)
+            return;
+
+        cancelTask();
+
+        m_isPending = true;
+        callOnMainThread([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+            if (!weakThis)
+                return;
+            ASSERT(weakThis->isPending());
+            weakThis->m_isPending = false;
+            task();
+        });
+    }
 
 private:
-    TaskDispatcher<T> m_dispatcher;
-    bool m_pendingTask { false };
+    bool m_isPending { false };
     bool m_isClosed { false };
 };
 
-}
+} // namespace WebCore

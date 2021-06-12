@@ -57,7 +57,6 @@ SOFT_LINK_CONSTANT(libAccessibility, kAXSReduceMotionChangedNotification, CFStri
 #define ACCESSIBILITY_DOMAIN CFSTR("com.apple.universalaccess")
 #endif
 
-static bool reduceMotionNotificationReceived = false;
 static bool receivedPreferenceNotification = false;
 
 @interface WKPreferenceObserverForTesting : WKPreferenceObserver
@@ -72,15 +71,8 @@ static bool receivedPreferenceNotification = false;
 }
 @end
 
-static void notificationCallback(CFNotificationCenterRef center, void *observer, CFNotificationName name, const void *object, CFDictionaryRef userInfo)
-{
-    reduceMotionNotificationReceived = true;
-}
-
 TEST(WebKit, AccessibilityReduceMotion)
 {
-    CFNotificationCenterAddObserver(NOTIFICATION_CENTER, nullptr, &notificationCallback, REDUCED_MOTION_CHANGED_NOTIFICATION, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
-
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration addToWindow:YES]);
 
@@ -96,20 +88,15 @@ TEST(WebKit, AccessibilityReduceMotion)
 
     ASSERT_FALSE(reduceMotion());
 
-    reduceMotionNotificationReceived = false;
-
     CFPreferencesSetAppValue(REDUCED_MOTION_PREFERENCE, kCFBooleanTrue, ACCESSIBILITY_DOMAIN);
 
     TestWebKitAPI::Util::run(&receivedPreferenceNotification);
-    TestWebKitAPI::Util::run(&reduceMotionNotificationReceived);
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
 
     ASSERT_TRUE(reduceMotion());
 
     CFPreferencesSetAppValue(REDUCED_MOTION_PREFERENCE, nullptr, ACCESSIBILITY_DOMAIN);
-
-    CFNotificationCenterRemoveObserver(NOTIFICATION_CENTER, nullptr, REDUCED_MOTION_CHANGED_NOTIFICATION, nullptr);
 }
 
 #endif

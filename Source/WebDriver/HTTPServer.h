@@ -75,7 +75,7 @@ private:
     void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) final;
     void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;
 
-    Optional<ConnectionID> m_client;
+    std::optional<ConnectionID> m_client;
     HTTPParser m_parser;
 #endif
 };
@@ -89,12 +89,12 @@ public:
     explicit HTTPServer(HTTPRequestHandler&);
     ~HTTPServer() = default;
 
-    bool listen(const Optional<String>& host, unsigned port);
+    bool listen(const std::optional<String>& host, unsigned port);
     void disconnect();
 
 private:
 #if USE(INSPECTOR_SOCKET_SERVER)
-    Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) final;
+    std::optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) final;
     void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, RemoteInspectorSocketEndpoint::Listener::Status) final;
 #endif
 
@@ -105,7 +105,7 @@ private:
 #endif
 
 #if USE(INSPECTOR_SOCKET_SERVER)
-    Optional<ConnectionID> m_server;
+    std::optional<ConnectionID> m_server;
 #endif
 };
 

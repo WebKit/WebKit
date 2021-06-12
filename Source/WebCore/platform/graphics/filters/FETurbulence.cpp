@@ -374,7 +374,7 @@ void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData&
     filterRegion.scale(filter().filterScale());
     FloatPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
-    AffineTransform inverseTransfrom = filter().absoluteTransform().inverse().valueOr(AffineTransform());
+    AffineTransform inverseTransfrom = filter().absoluteTransform().inverse().value_or(AffineTransform());
 
     for (int y = startY; y < endY; ++y) {
         point.setY(point.y() + 1);
@@ -426,7 +426,7 @@ void FETurbulence::platformApplySoftware()
     int height = resultSize.height();
 
     unsigned maxNumThreads = height / 8;
-    unsigned optimalThreadNumber = std::min<unsigned>(area.unsafeGet() / s_minimalRectDimension, maxNumThreads);
+    unsigned optimalThreadNumber = std::min<unsigned>(area / s_minimalRectDimension, maxNumThreads);
     if (optimalThreadNumber > 1) {
         WTF::ParallelJobs<FillRegionParameters> parallelJobs(&WebCore::FETurbulence::fillRegionWorker, optimalThreadNumber);
 

@@ -104,7 +104,7 @@ namespace WebCore {
             // All executed on the main thread.
             void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
             void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
-            void didReceiveData(const char*, int dataLength) override;
+            void didReceiveData(const uint8_t*, int dataLength) override;
             void didFinishLoading(unsigned long identifier) override;
             void didFail(const ResourceError&) override;
             void didFinishTiming(const ResourceTiming&) override;

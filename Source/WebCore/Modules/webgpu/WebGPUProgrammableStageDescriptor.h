@@ -29,13 +29,12 @@
 
 #include "GPUProgrammableStageDescriptor.h"
 #include "WebGPUShaderModule.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct WebGPUProgrammableStageDescriptor : GPUProgrammableStageDescriptorBase {
-    Optional<GPUProgrammableStageDescriptor> tryCreateGPUProgrammableStageDescriptor() const;
+    std::optional<GPUProgrammableStageDescriptor> tryCreateGPUProgrammableStageDescriptor() const;
 
     RefPtr<WebGPUShaderModule> module;
 };

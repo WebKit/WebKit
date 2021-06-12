@@ -43,7 +43,12 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& request)
 
 void XMLHttpRequestUpload::eventListenersDidChange()
 {
-    m_hasRelevantEventListener = hasEventListeners(eventNames().abortEvent)
+    m_request.updateHasRelevantEventListener();
+}
+
+bool XMLHttpRequestUpload::hasRelevantEventListener() const
+{
+    return hasEventListeners(eventNames().abortEvent)
         || hasEventListeners(eventNames().errorEvent)
         || hasEventListeners(eventNames().loadEvent)
         || hasEventListeners(eventNames().loadendEvent)

@@ -93,10 +93,10 @@ public:
         if (verbose)
             dataLogLn("Found store/load:", *store);
 
-        auto extractArrayInfo = [&] (Value* value) -> Optional<AddrInfo> {
+        auto extractArrayInfo = [&] (Value* value) -> std::optional<AddrInfo> {
             patternMatchedValues.add(value);
 
-            Optional<AddrInfo> addr = { AddrInfo() };
+            std::optional<AddrInfo> addr = { AddrInfo() };
 
             Value* sum = value;
             if (value->opcode() == ZExt32)

@@ -22,15 +22,15 @@
 
 extern uint32_t OPENSSL_armcap_P;
 
-char CRYPTO_is_NEON_capable_at_runtime(void) {
+int CRYPTO_is_NEON_capable_at_runtime(void) {
   return (OPENSSL_armcap_P & ARMV7_NEON) != 0;
 }
 
-int CRYPTO_is_ARMv8_AES_capable(void) {
+int CRYPTO_is_ARMv8_AES_capable_at_runtime(void) {
   return (OPENSSL_armcap_P & ARMV8_AES) != 0;
 }
 
-int CRYPTO_is_ARMv8_PMULL_capable(void) {
+int CRYPTO_is_ARMv8_PMULL_capable_at_runtime(void) {
   return (OPENSSL_armcap_P & ARMV8_PMULL) != 0;
 }
 

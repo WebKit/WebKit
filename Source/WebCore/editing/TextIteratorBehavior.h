@@ -25,42 +25,44 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebCore {
 
-enum TextIteratorBehaviorFlag {
-    TextIteratorDefaultBehavior = 0,
-
+enum class TextIteratorBehavior : uint16_t {
     // Used by selection preservation code. There should be one character emitted between every VisiblePosition
     // in the Range used to create the TextIterator.
     // FIXME <rdar://problem/6028818>: This functionality should eventually be phased out when we rewrite
     // moveParagraphs to not clone/destroy moved content.
-    TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
+    EmitsCharactersBetweenAllVisiblePositions = 1 << 0,
 
-    TextIteratorEntersTextControls = 1 << 1,
+    EntersTextControls = 1 << 1,
 
     // Used when we want text for copying, pasting, and transposing.
-    TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
+    EmitsTextsWithoutTranscoding = 1 << 2,
 
     // Used when the visibility of the style should not affect text gathering.
-    TextIteratorIgnoresStyleVisibility = 1 << 3,
+    IgnoresStyleVisibility = 1 << 3,
 
     // Used when emitting the special 0xFFFC character is required. Children for replaced objects will be ignored.
-    TextIteratorEmitsObjectReplacementCharacters = 1 << 4,
+    EmitsObjectReplacementCharacters = 1 << 4,
 
     // Used when pasting inside password field.
-    TextIteratorEmitsOriginalText = 1 << 5,
+    EmitsOriginalText = 1 << 5,
 
-    TextIteratorEmitsImageAltText = 1 << 6,
+    EmitsImageAltText = 1 << 6,
 
-    TextIteratorBehavesAsIfNodesFollowing = 1 << 7,
+    BehavesAsIfNodesFollowing = 1 << 7,
 
     // Makes visiblity test take into account the visibility of the frame.
-    // FIXME: This should probably be always on unless TextIteratorIgnoresStyleVisibility is set.
-    TextIteratorClipsToFrameAncestors = 1 << 8,
+    // FIXME: This should probably be always on unless TextIteratorBehavior::IgnoresStyleVisibility is set.
+    ClipsToFrameAncestors = 1 << 8,
 
-    TextIteratorTraversesFlatTree = 1 << 9,
+    TraversesFlatTree = 1 << 9,
+
+    EntersImageOverlays = 1 << 10,
 };
 
-typedef unsigned short TextIteratorBehavior;
+using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;
 
 } // namespace WebCore

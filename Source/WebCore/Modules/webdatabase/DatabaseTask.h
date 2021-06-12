@@ -29,9 +29,9 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -58,8 +58,8 @@ public:
 
 private:
     bool m_taskCompleted WTF_GUARDED_BY_LOCK(m_synchronousLock) { false };
-    CheckedLock m_synchronousLock;
-    CheckedCondition m_synchronousCondition;
+    Lock m_synchronousLock;
+    Condition m_synchronousCondition;
 #if ASSERT_ENABLED
     bool m_hasCheckedForTermination { false };
 #endif

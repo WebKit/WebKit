@@ -30,7 +30,6 @@
 #include "Cookie.h"
 
 #include <wtf/DateMath.h>
-#include <wtf/Optional.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
@@ -81,13 +80,13 @@ bool domainMatch(const String& cookieDomain, const String& host)
     return false;
 }
 
-static Optional<double> parseExpiresMS(const char* expires)
+static std::optional<double> parseExpiresMS(const char* expires)
 {
     double tmp = WTF::parseDateFromNullTerminatedCharacters(expires);
     if (isnan(tmp))
         return { };
 
-    return Optional<double> {tmp};
+    return std::optional<double> {tmp};
 }
 
 static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cookie& result)
@@ -137,10 +136,10 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
     }
 }
 
-Optional<Cookie> parseCookieHeader(const String& cookieLine)
+std::optional<Cookie> parseCookieHeader(const String& cookieLine)
 {
     if (cookieLine.length() >= MAX_COOKIE_LINE)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // This Algorithm is based on the algorithm defined in RFC 6265 5.2 https://tools.ietf.org/html/rfc6265#section-5.2/
 

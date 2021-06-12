@@ -32,6 +32,6 @@ messages -> CacheStorageEngineConnection {
     DeleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result) Async
     PutRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result) Async
 
-    ClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> (Optional<WebCore::DOMCacheEngine::Error> error) Async
+    ClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::DOMCacheEngine::Error> error) Async
     EngineRepresentation() -> (String representation) Async
 }

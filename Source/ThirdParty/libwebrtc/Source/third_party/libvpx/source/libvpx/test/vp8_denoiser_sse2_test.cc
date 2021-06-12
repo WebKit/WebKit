@@ -110,5 +110,5 @@ TEST_P(VP8DenoiserTest, BitexactCheck) {
 }
 
 // Test for all block size.
-INSTANTIATE_TEST_CASE_P(SSE2, VP8DenoiserTest, ::testing::Values(0, 1));
+INSTANTIATE_TEST_SUITE_P(SSE2, VP8DenoiserTest, ::testing::Values(0, 1));
 }  // namespace

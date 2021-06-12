@@ -60,33 +60,36 @@
 #include <openssl/obj.h>
 #include <openssl/x509.h>
 
+#include "internal.h"
+
+
 long X509_get_version(const X509 *x509)
 {
+    // The default version is v1(0).
+    if (x509->cert_info->version == NULL) {
+        return X509_VERSION_1;
+    }
     return ASN1_INTEGER_get(x509->cert_info->version);
-}
-
-X509_CINF *X509_get_cert_info(const X509 *x509)
-{
-    return x509->cert_info;
 }
 
 int X509_set_version(X509 *x, long version)
 {
+    // TODO(davidben): Reject invalid version numbers.
     if (x == NULL)
         return (0);
     if (version == 0) {
-        M_ASN1_INTEGER_free(x->cert_info->version);
+        ASN1_INTEGER_free(x->cert_info->version);
         x->cert_info->version = NULL;
         return (1);
     }
     if (x->cert_info->version == NULL) {
-        if ((x->cert_info->version = M_ASN1_INTEGER_new()) == NULL)
+        if ((x->cert_info->version = ASN1_INTEGER_new()) == NULL)
             return (0);
     }
     return (ASN1_INTEGER_set(x->cert_info->version, version));
 }
 
-int X509_set_serialNumber(X509 *x, ASN1_INTEGER *serial)
+int X509_set_serialNumber(X509 *x, const ASN1_INTEGER *serial)
 {
     ASN1_INTEGER *in;
 
@@ -94,9 +97,9 @@ int X509_set_serialNumber(X509 *x, ASN1_INTEGER *serial)
         return (0);
     in = x->cert_info->serialNumber;
     if (in != serial) {
-        in = M_ASN1_INTEGER_dup(serial);
+        in = ASN1_INTEGER_dup(serial);
         if (in != NULL) {
-            M_ASN1_INTEGER_free(x->cert_info->serialNumber);
+            ASN1_INTEGER_free(x->cert_info->serialNumber);
             x->cert_info->serialNumber = in;
         }
     }
@@ -125,9 +128,9 @@ int X509_set1_notBefore(X509 *x, const ASN1_TIME *tm)
         return (0);
     in = x->cert_info->validity->notBefore;
     if (in != tm) {
-        in = M_ASN1_TIME_dup(tm);
+        in = ASN1_STRING_dup(tm);
         if (in != NULL) {
-            M_ASN1_TIME_free(x->cert_info->validity->notBefore);
+            ASN1_TIME_free(x->cert_info->validity->notBefore);
             x->cert_info->validity->notBefore = in;
         }
     }
@@ -168,9 +171,9 @@ int X509_set1_notAfter(X509 *x, const ASN1_TIME *tm)
         return (0);
     in = x->cert_info->validity->notAfter;
     if (in != tm) {
-        in = M_ASN1_TIME_dup(tm);
+        in = ASN1_STRING_dup(tm);
         if (in != NULL) {
-            M_ASN1_TIME_free(x->cert_info->validity->notAfter);
+            ASN1_TIME_free(x->cert_info->validity->notAfter);
             x->cert_info->validity->notAfter = in;
         }
     }
@@ -221,7 +224,7 @@ int X509_set_pubkey(X509 *x, EVP_PKEY *pkey)
     return (X509_PUBKEY_set(&(x->cert_info->key), pkey));
 }
 
-STACK_OF(X509_EXTENSION) *X509_get0_extensions(const X509 *x)
+const STACK_OF(X509_EXTENSION) *X509_get0_extensions(const X509 *x)
 {
     return x->cert_info->extensions;
 }
@@ -229,16 +232,6 @@ STACK_OF(X509_EXTENSION) *X509_get0_extensions(const X509 *x)
 const X509_ALGOR *X509_get0_tbs_sigalg(const X509 *x)
 {
     return x->cert_info->signature;
-}
-
-void X509_CINF_set_modified(X509_CINF *cinf)
-{
-    cinf->enc.modified = 1;
-}
-
-const X509_ALGOR *X509_CINF_get_signature(const X509_CINF *cinf)
-{
-    return cinf->signature;
 }
 
 X509_PUBKEY *X509_get_X509_PUBKEY(const X509 *x509)

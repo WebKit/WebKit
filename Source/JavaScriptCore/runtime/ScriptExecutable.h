@@ -54,7 +54,7 @@ public:
     unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }
     JS_EXPORT_PRIVATE unsigned endColumn() const;
 
-    Optional<int> overrideLineNumber(VM&) const;
+    std::optional<int> overrideLineNumber(VM&) const;
     unsigned typeProfilingStartOffset(VM&) const;
     unsigned typeProfilingEndOffset(VM&) const;
 

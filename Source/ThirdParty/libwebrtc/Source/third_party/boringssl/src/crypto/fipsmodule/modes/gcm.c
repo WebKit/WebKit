@@ -73,7 +73,7 @@ static const size_t kSizeTWithoutLower4Bits = (size_t) -16;
 
 #if defined(GHASH_ASM_X86_64) || defined(GHASH_ASM_X86)
 static inline void gcm_reduce_1bit(u128 *V) {
-  if (sizeof(size_t) == 8) {
+  if (sizeof(crypto_word_t) == 8) {
     uint64_t T = UINT64_C(0xe100000000000000) & (0 - (V->hi & 1));
     V->hi = (V->lo << 63) | (V->hi >> 1);
     V->lo = (V->lo >> 1) ^ T;
@@ -377,9 +377,10 @@ int CRYPTO_gcm128_encrypt(GCM128_CONTEXT *ctx, const AES_KEY *key,
       (*block)(ctx->Yi.c, ctx->EKi.c, key);
       ++ctr;
       ctx->Yi.d[3] = CRYPTO_bswap4(ctr);
-      for (size_t i = 0; i < 16; i += sizeof(size_t)) {
-        store_word_le(out + i,
-                      load_word_le(in + i) ^ ctx->EKi.t[i / sizeof(size_t)]);
+      for (size_t i = 0; i < 16; i += sizeof(crypto_word_t)) {
+        CRYPTO_store_word_le(out + i,
+                             CRYPTO_load_word_le(in + i) ^
+                                 ctx->EKi.t[i / sizeof(crypto_word_t)]);
       }
       out += 16;
       in += 16;
@@ -394,9 +395,10 @@ int CRYPTO_gcm128_encrypt(GCM128_CONTEXT *ctx, const AES_KEY *key,
       (*block)(ctx->Yi.c, ctx->EKi.c, key);
       ++ctr;
       ctx->Yi.d[3] = CRYPTO_bswap4(ctr);
-      for (size_t i = 0; i < 16; i += sizeof(size_t)) {
-        store_word_le(out + i,
-                      load_word_le(in + i) ^ ctx->EKi.t[i / sizeof(size_t)]);
+      for (size_t i = 0; i < 16; i += sizeof(crypto_word_t)) {
+        CRYPTO_store_word_le(out + i,
+                             CRYPTO_load_word_le(in + i) ^
+                                 ctx->EKi.t[i / sizeof(crypto_word_t)]);
       }
       out += 16;
       in += 16;
@@ -468,9 +470,10 @@ int CRYPTO_gcm128_decrypt(GCM128_CONTEXT *ctx, const AES_KEY *key,
       (*block)(ctx->Yi.c, ctx->EKi.c, key);
       ++ctr;
       ctx->Yi.d[3] = CRYPTO_bswap4(ctr);
-      for (size_t i = 0; i < 16; i += sizeof(size_t)) {
-        store_word_le(out + i,
-                      load_word_le(in + i) ^ ctx->EKi.t[i / sizeof(size_t)]);
+      for (size_t i = 0; i < 16; i += sizeof(crypto_word_t)) {
+        CRYPTO_store_word_le(out + i,
+                             CRYPTO_load_word_le(in + i) ^
+                                 ctx->EKi.t[i / sizeof(crypto_word_t)]);
       }
       out += 16;
       in += 16;
@@ -485,9 +488,10 @@ int CRYPTO_gcm128_decrypt(GCM128_CONTEXT *ctx, const AES_KEY *key,
       (*block)(ctx->Yi.c, ctx->EKi.c, key);
       ++ctr;
       ctx->Yi.d[3] = CRYPTO_bswap4(ctr);
-      for (size_t i = 0; i < 16; i += sizeof(size_t)) {
-        store_word_le(out + i,
-                      load_word_le(in + i) ^ ctx->EKi.t[i / sizeof(size_t)]);
+      for (size_t i = 0; i < 16; i += sizeof(crypto_word_t)) {
+        CRYPTO_store_word_le(out + i,
+                             CRYPTO_load_word_le(in + i) ^
+                                 ctx->EKi.t[i / sizeof(crypto_word_t)]);
       }
       out += 16;
       in += 16;

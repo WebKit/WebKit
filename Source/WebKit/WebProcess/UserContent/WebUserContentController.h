@@ -108,9 +108,9 @@ private:
     void removeAllContentRuleLists();
 #endif
 
-    void addUserScriptInternal(InjectedBundleScriptWorld&, const Optional<uint64_t>& userScriptIdentifier, WebCore::UserScript&&, InjectUserScriptImmediately);
+    void addUserScriptInternal(InjectedBundleScriptWorld&, const std::optional<uint64_t>& userScriptIdentifier, WebCore::UserScript&&, InjectUserScriptImmediately);
     void removeUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier);
-    void addUserStyleSheetInternal(InjectedBundleScriptWorld&, const Optional<uint64_t>& userStyleSheetIdentifier, WebCore::UserStyleSheet&&);
+    void addUserStyleSheetInternal(InjectedBundleScriptWorld&, const std::optional<uint64_t>& userStyleSheetIdentifier, WebCore::UserStyleSheet&&);
     void removeUserStyleSheetInternal(InjectedBundleScriptWorld&, uint64_t userStyleSheetIdentifier);
 #if ENABLE(USER_MESSAGE_HANDLERS)
     void addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, uint64_t userScriptMessageHandlerIdentifier, const String& name);
@@ -119,10 +119,10 @@ private:
 
     UserContentControllerIdentifier m_identifier;
 
-    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<Optional<uint64_t>, WebCore::UserScript>>> WorldToUserScriptMap;
+    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<std::optional<uint64_t>, WebCore::UserScript>>> WorldToUserScriptMap;
     WorldToUserScriptMap m_userScripts;
 
-    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<Optional<uint64_t>, WebCore::UserStyleSheet>>> WorldToUserStyleSheetMap;
+    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<std::optional<uint64_t>, WebCore::UserStyleSheet>>> WorldToUserStyleSheetMap;
     WorldToUserStyleSheetMap m_userStyleSheets;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)

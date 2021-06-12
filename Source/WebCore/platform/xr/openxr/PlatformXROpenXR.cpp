@@ -23,9 +23,10 @@
 #if ENABLE(WEBXR) && USE(OPENXR)
 
 #include "OpenXRExtensions.h"
+#include "OpenXRInput.h"
+#include "OpenXRInputSource.h"
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 using namespace WebCore;
@@ -78,7 +79,7 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
     auto configType = toXrViewConfigurationType(mode);
     auto viewsIterator = m_configurationViews.find(configType);
     if (viewsIterator != m_configurationViews.end())
-        return { static_cast<int>(viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
+        return { static_cast<int>(2 * viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
     return Device::recommendedResolution(mode);
 }
 
@@ -135,6 +136,9 @@ void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
         // Create the default reference spaces
         m_localSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL);
         m_viewSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_VIEW);
+
+        // Initialize input tracking
+        m_input = OpenXRInput::create(m_instance, m_session, m_localSpace);
     });
 }
 
@@ -231,6 +235,10 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
                 if (layerData)
                     frameData.layers.add(layer.key, *layerData);
             }
+
+            if (m_input)
+                frameData.inputSources = m_input->collectInputSources(m_frameState);
+
         } else {
             // https://www.khronos.org/registry/OpenXR/specs/1.0/man/html/XrFrameState.html
             // When shouldRender is false the application should avoid heavy GPU work where possible,
@@ -297,9 +305,9 @@ Vector<Device::ViewData> OpenXRDevice::views(SessionMode mode) const
     return views;
 }
 
-Optional<LayerHandle> OpenXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
+std::optional<LayerHandle> OpenXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
-    Optional<LayerHandle> handle;
+    std::optional<LayerHandle> handle;
 
     BinarySemaphore semaphore;
     m_queue.dispatch([this, width, height, alpha, &handle, &semaphore]() mutable {
@@ -454,6 +462,8 @@ void OpenXRDevice::pollEvents()
             break;
         }
         case XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED:
+            updateInteractionProfile();
+            break;
         case XR_TYPE_EVENT_DATA_MAIN_SESSION_VISIBILITY_CHANGED_EXTX:
         case XR_TYPE_EVENT_DATA_VISIBILITY_MASK_CHANGED_KHR:
         case XR_TYPE_EVENT_DATA_PERF_SETTINGS_EXT:
@@ -500,6 +510,7 @@ void OpenXRDevice::resetSession()
 {
     ASSERT(&RunLoop::current() == &m_queue.runLoop());
     m_layers.clear();
+    m_input.reset();
     if (m_session != XR_NULL_HANDLE) {
         xrDestroySession(m_session);
         m_session = XR_NULL_HANDLE;
@@ -562,6 +573,26 @@ void OpenXRDevice::updateStageParameters()
         // extended periods of tracking loss, or movement between pre-configured spaces, the boundsGeometry MUST report an empty array.
         m_stageParameters.bounds.clear();
     }
+}
+
+void OpenXRDevice::updateInteractionProfile()
+{
+    if (!m_input)
+        return;
+
+    m_input->updateInteractionProfile();
+
+    if (didNotifyInputInitialization)
+        return;
+
+    didNotifyInputInitialization = true;
+    auto inputSources = m_input->collectInputSources(m_frameState);
+    callOnMainThread([this, weakThis = makeWeakPtr(*this), inputSources = WTFMove(inputSources)]() mutable {
+        if (!weakThis)
+            return;
+        if (m_trackingAndRenderingClient)
+            m_trackingAndRenderingClient->sessionDidInitializeInputSources(WTFMove(inputSources));
+    });
 }
 
 } // namespace PlatformXR

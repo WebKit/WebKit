@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
-
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif

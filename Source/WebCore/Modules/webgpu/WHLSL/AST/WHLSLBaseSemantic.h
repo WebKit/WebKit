@@ -30,7 +30,6 @@
 #include "WHLSLCodeLocation.h"
 #include "WHLSLEntryPointType.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -62,7 +61,7 @@ public:
         Input,
         Output
     };
-    virtual bool isAcceptableForShaderItemDirection(ShaderItemDirection, const Optional<EntryPointType>&) const = 0;
+    virtual bool isAcceptableForShaderItemDirection(ShaderItemDirection, const std::optional<EntryPointType>&) const = 0;
 
 private:
     CodeLocation m_codeLocation;

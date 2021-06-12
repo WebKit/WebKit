@@ -49,11 +49,12 @@ public:
         for (auto& tuple : totals) {
             if (String(std::get<0>(tuple)) == String(compilerName) && String(std::get<1>(tuple)) == String(name)) {
                 std::get<2>(tuple) += duration;
+                std::get<3>(tuple) = std::max(std::get<3>(tuple), duration);
                 return std::get<2>(tuple);
             }
         }
 
-        totals.append({ compilerName, name, duration });
+        totals.append({ compilerName, name, duration, duration });
         return duration;
     }
 
@@ -61,12 +62,12 @@ public:
     {
         for (auto& tuple : totals) {
             dataLogLn(
-                "[", std::get<0>(tuple), "] ", std::get<1>(tuple), " total ms: ", std::get<2>(tuple).milliseconds());
+                "[", std::get<0>(tuple), "] ", std::get<1>(tuple), " total ms: ", std::get<2>(tuple).milliseconds(), " max ms: ", std::get<3>(tuple).milliseconds());
         }
     }
     
 private:
-    Vector<std::tuple<const char*, const char*, Seconds>> totals;
+    Vector<std::tuple<const char*, const char*, Seconds, Seconds>> totals;
     Lock lock;
 };
 

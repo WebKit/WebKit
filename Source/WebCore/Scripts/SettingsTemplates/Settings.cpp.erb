@@ -179,7 +179,7 @@ void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> 
 
 <%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
 <%- if @setting.hasComplexSetter? -%>
-void Settings::<%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride)
+void Settings::<%= @setting.setterFunctionName %>InspectorOverride(std::optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride)
 {
     if (m_values.<%= @setting.name %>InspectorOverride == <%= @setting.name %>InspectorOverride)
         return;

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static Optional<ApplePaySessionError> additionalError(NSError *error)
+static std::optional<ApplePaySessionError> additionalError(NSError *error)
 {
 #if HAVE(PASSKIT_INSTALLMENTS)
     // FIXME: Replace with PKPaymentErrorBindTokenUserInfoKey and
@@ -42,14 +42,14 @@ static Optional<ApplePaySessionError> additionalError(NSError *error)
     static constexpr NSInteger pkPaymentAuthorizationFeatureApplicationError = -2016;
 
     if (error.code != pkPaymentAuthorizationFeatureApplicationError)
-        return WTF::nullopt;
+        return std::nullopt;
 
     id bindTokenValue = error.userInfo[bindTokenKey];
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!bindTokenValue || [bindTokenValue isKindOfClass:NSString.class]);
     return ApplePaySessionError { "featureApplicationError"_s, { { "bindToken"_s, (NSString *)bindTokenValue } } };
 #else
     UNUSED_PARAM(error);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 

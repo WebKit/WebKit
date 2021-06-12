@@ -56,10 +56,10 @@ public:
     ServiceWorkerRegistrationKey isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerRegistrationKey> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerRegistrationKey> decode(Decoder&);
 
     String toDatabaseKey() const;
-    static Optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
+    static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
 
 #if !LOG_DISABLED
     String loggingString() const;
@@ -81,16 +81,16 @@ void ServiceWorkerRegistrationKey::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode(Decoder& decoder)
+std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode(Decoder& decoder)
 {
-    Optional<SecurityOriginData> topOrigin;
+    std::optional<SecurityOriginData> topOrigin;
     decoder >> topOrigin;
     if (!topOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     URL scope;
     if (!decoder.decode(scope))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ServiceWorkerRegistrationKey { WTFMove(*topOrigin), WTFMove(scope) };
 }

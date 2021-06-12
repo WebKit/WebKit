@@ -55,13 +55,13 @@ public:
 
     EffectTiming getBindingsTiming() const;
     EffectTiming getTiming() const;
-    BasicEffectTiming getBasicTiming(Optional<Seconds> = WTF::nullopt) const;
+    BasicEffectTiming getBasicTiming(std::optional<Seconds> = std::nullopt) const;
     ComputedEffectTiming getBindingsComputedTiming() const;
-    ComputedEffectTiming getComputedTiming(Optional<Seconds> = WTF::nullopt) const;
-    ExceptionOr<void> bindingsUpdateTiming(Optional<OptionalEffectTiming>);
-    ExceptionOr<void> updateTiming(Optional<OptionalEffectTiming>);
+    ComputedEffectTiming getComputedTiming(std::optional<Seconds> = std::nullopt) const;
+    ExceptionOr<void> bindingsUpdateTiming(std::optional<OptionalEffectTiming>);
+    ExceptionOr<void> updateTiming(std::optional<OptionalEffectTiming>);
 
-    virtual void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = WTF::nullopt) = 0;
+    virtual void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> = std::nullopt) = 0;
     virtual void invalidate() = 0;
     virtual void animationDidTick() = 0;
     virtual void animationDidPlay() = 0;
@@ -107,7 +107,7 @@ public:
 protected:
     explicit AnimationEffect();
 
-    virtual Optional<double> progressUntilNextStep(double) const;
+    virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
     enum class ComputedDirection : uint8_t { Forwards, Reverse };

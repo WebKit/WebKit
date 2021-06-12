@@ -151,9 +151,9 @@ using namespace Inspector;
 
 static const Seconds defaultTransientActivationDuration { 2_s };
 
-static Optional<Seconds>& transientActivationDurationOverrideForTesting()
+static std::optional<Seconds>& transientActivationDurationOverrideForTesting()
 {
-    static NeverDestroyed<Optional<Seconds>> overrideForTesting;
+    static NeverDestroyed<std::optional<Seconds>> overrideForTesting;
     return overrideForTesting;
 }
 
@@ -729,7 +729,8 @@ Navigator& DOMWindow::navigator()
 Performance& DOMWindow::performance() const
 {
     if (!m_performance) {
-        MonotonicTime timeOrigin = document() && document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : MonotonicTime::now();
+        auto* documentLoader = document() ? document()->loader() : nullptr;
+        auto timeOrigin = documentLoader ? documentLoader->timing().timeOrigin() : MonotonicTime::now();
         m_performance = Performance::create(document(), timeOrigin);
     }
     ASSERT(m_performance->scriptExecutionContext() == document());
@@ -748,12 +749,12 @@ void DOMWindow::freezeNowTimestamp()
 
 void DOMWindow::unfreezeNowTimestamp()
 {
-    m_frozenNowTimestamp = WTF::nullopt;
+    m_frozenNowTimestamp = std::nullopt;
 }
 
 ReducedResolutionSeconds DOMWindow::frozenNowTimestamp() const
 {
-    return m_frozenNowTimestamp.valueOr(nowTimestamp());
+    return m_frozenNowTimestamp.value_or(nowTimestamp());
 }
 
 Location& DOMWindow::location()
@@ -924,7 +925,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
             // Check target origin now since the target document may have changed since the timer was scheduled.
             if (!targetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
                 if (auto* pageConsole = console()) {
-                    String message = makeString("Unable to post message to ", targetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin().toString(), ".\n");
+                    auto message = makeString("Unable to post message to ", targetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin().toString(), ".\n");
                     if (stackTrace)
                         pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, *stackTrace);
                     else
@@ -939,7 +940,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
         UserGestureIndicator userGestureIndicator(userGestureToForward);
         InspectorInstrumentation::willDispatchPostMessage(frame, postMessageIdentifier);
 
-        auto event = MessageEvent::create(MessagePort::entanglePorts(*document(), WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, incumbentWindowProxy ? makeOptional(MessageEventSource(WTFMove(incumbentWindowProxy))) : WTF::nullopt);
+        auto event = MessageEvent::create(MessagePort::entanglePorts(*document(), WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, incumbentWindowProxy ? std::make_optional(MessageEventSource(WTFMove(incumbentWindowProxy))) : std::nullopt);
         dispatchEvent(event);
 
         InspectorInstrumentation::didDispatchPostMessage(frame, postMessageIdentifier);
@@ -1519,7 +1520,7 @@ Document* DOMWindow::document() const
     return downcast<Document>(ContextDestructionObserver::scriptExecutionContext());
 }
 
-void DOMWindow::overrideTransientActivationDurationForTesting(Optional<Seconds>&& override)
+void DOMWindow::overrideTransientActivationDurationForTesting(std::optional<Seconds>&& override)
 {
     transientActivationDurationOverrideForTesting() = WTFMove(override);
 }
@@ -1726,7 +1727,7 @@ void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping
 
     // FIXME: Should we use document()->scrollingElement()?
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
-    auto animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), document()->documentElement()) ? AnimatedScroll::Yes : AnimatedScroll::No;
+    auto animated = useSmoothScrolling(scrollToOptions.behavior.value_or(ScrollBehavior::Auto), document()->documentElement()) ? AnimatedScroll::Yes : AnimatedScroll::No;
     auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod);
     view->setContentsScrollPosition(layoutPos, scrollPositionChangeOptions);
 }
@@ -2145,7 +2146,7 @@ void DOMWindow::failedToRegisterDeviceMotionEventListener()
         document()->postTask([](auto& context) {
             if (auto* window = downcast<Document>(context).domWindow()) {
                 auto acceleration = DeviceMotionData::Acceleration::create();
-                window->dispatchEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, DeviceMotionData::create(acceleration.copyRef(), acceleration.copyRef(), DeviceMotionData::RotationRate::create(), WTF::nullopt).ptr()));
+                window->dispatchEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, DeviceMotionData::create(acceleration.copyRef(), acceleration.copyRef(), DeviceMotionData::RotationRate::create(), std::nullopt).ptr()));
             }
         });
     }

@@ -47,7 +47,7 @@ public:
     ~LegacyPreviewLoader();
 
     bool didReceiveResponse(const ResourceResponse&);
-    bool didReceiveData(const char* data, unsigned length);
+    bool didReceiveData(const uint8_t* data, unsigned length);
     bool didReceiveBuffer(const SharedBuffer&);
     bool didFinishLoading();
     void didFail();

@@ -148,7 +148,7 @@ size_t HTTPParser::expectedBodyLength() const
 
     for (const auto& header : m_message.requestHeaders) {
         if (header.startsWithIgnoringASCIICase(name))
-            return parseIntegerAllowingTrailingJunk<size_t>(StringView { header }.substring(nameLength)).valueOr(0);
+            return parseIntegerAllowingTrailingJunk<size_t>(StringView { header }.substring(nameLength)).value_or(0);
     }
 
     return 0;

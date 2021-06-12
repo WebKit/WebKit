@@ -62,7 +62,7 @@ struct ServiceWorkerJobData {
     ServiceWorkerJobData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerJobData> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerJobData> decode(Decoder&);
 
 private:
     ServiceWorkerJobData() = default;
@@ -86,42 +86,42 @@ void ServiceWorkerJobData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
+std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
 {
-    Optional<ServiceWorkerJobDataIdentifier> identifier;
+    std::optional<ServiceWorkerJobDataIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ServiceWorkerJobData jobData;
     jobData.m_identifier = *identifier;
 
     if (!decoder.decode(jobData.scriptURL))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(jobData.clientCreationURL))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<SecurityOriginData> topOrigin;
+    std::optional<SecurityOriginData> topOrigin;
     decoder >> topOrigin;
     if (!topOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
     jobData.topOrigin = WTFMove(*topOrigin);
 
     if (!decoder.decode(jobData.scopeURL))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(jobData.sourceContext))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(jobData.workerType))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(jobData.type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (jobData.type) {
     case ServiceWorkerJobType::Register: {
-        Optional<ServiceWorkerRegistrationOptions> registrationOptions;
+        std::optional<ServiceWorkerRegistrationOptions> registrationOptions;
         decoder >> registrationOptions;
         if (!registrationOptions)
-            return WTF::nullopt;
+            return std::nullopt;
         jobData.registrationOptions = WTFMove(*registrationOptions);
         break;
     }

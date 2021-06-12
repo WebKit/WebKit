@@ -63,7 +63,7 @@ public:
     void setSessionIDForTesting(PAL::SessionID) override;
 
 private:
-    StorageNamespaceImpl(WebCore::StorageType, Identifier, const Optional<WebCore::PageIdentifier>&, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
+    StorageNamespaceImpl(WebCore::StorageType, Identifier, const std::optional<WebCore::PageIdentifier>&, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
 
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
     uint64_t storageAreaMapCountForTesting() const final { return m_storageAreaMaps.size(); }
@@ -73,7 +73,7 @@ private:
 
     const WebCore::StorageType m_storageType;
     const Identifier m_storageNamespaceID;
-    Optional<WebCore::PageIdentifier> m_sessionPageID;
+    std::optional<WebCore::PageIdentifier> m_sessionPageID;
 
     // Only used for transient local storage namespaces.
     const RefPtr<WebCore::SecurityOrigin> m_topLevelOrigin;

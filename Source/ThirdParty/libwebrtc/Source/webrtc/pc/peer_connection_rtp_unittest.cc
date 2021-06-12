@@ -779,6 +779,56 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan, UnsignaledSsrcCreatesReceiverStreams) {
   EXPECT_EQ(receivers[0]->streams()[0]->id(), kStreamId1);
   EXPECT_EQ(receivers[0]->streams()[1]->id(), kStreamId2);
 }
+TEST_F(PeerConnectionRtpTestUnifiedPlan, TracksDoNotEndWhenSsrcChanges) {
+  constexpr uint32_t kFirstMungedSsrc = 1337u;
+
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  // Caller offers to receive audio and video.
+  RtpTransceiverInit init;
+  init.direction = RtpTransceiverDirection::kRecvOnly;
+  caller->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init);
+  caller->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init);
+
+  // Callee wants to send audio and video tracks.
+  callee->AddTrack(callee->CreateAudioTrack("audio_track"), {});
+  callee->AddTrack(callee->CreateVideoTrack("video_track"), {});
+
+  // Do inittial offer/answer exchange.
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+  ASSERT_TRUE(
+      caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
+  ASSERT_EQ(caller->observer()->add_track_events_.size(), 2u);
+  ASSERT_EQ(caller->pc()->GetReceivers().size(), 2u);
+
+  // Do a follow-up offer/answer exchange where the SSRCs are modified.
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+  auto answer = callee->CreateAnswer();
+  auto& contents = answer->description()->contents();
+  ASSERT_TRUE(!contents.empty());
+  for (size_t i = 0; i < contents.size(); ++i) {
+    auto& mutable_streams = contents[i].media_description()->mutable_streams();
+    ASSERT_EQ(mutable_streams.size(), 1u);
+    mutable_streams[0].ssrcs = {kFirstMungedSsrc + static_cast<uint32_t>(i)};
+  }
+  ASSERT_TRUE(
+      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(
+      caller->SetRemoteDescription(CloneSessionDescription(answer.get())));
+
+  // No furher track events should fire because we never changed direction, only
+  // SSRCs.
+  ASSERT_EQ(caller->observer()->add_track_events_.size(), 2u);
+  // We should have the same number of receivers as before.
+  auto receivers = caller->pc()->GetReceivers();
+  ASSERT_EQ(receivers.size(), 2u);
+  // The tracks are still alive.
+  EXPECT_EQ(receivers[0]->track()->state(),
+            MediaStreamTrackInterface::TrackState::kLive);
+  EXPECT_EQ(receivers[1]->track()->state(),
+            MediaStreamTrackInterface::TrackState::kLive);
+}
 
 // Tests that with Unified Plan if the the stream id changes for a track when
 // when setting a new remote description, that the media stream is updated

@@ -81,13 +81,13 @@ public:
     enum class DraggingPurpose { ForEditing, ForFileUpload, ForColorControl };
 
     // clientPosition is taken to be the position of the drag event within the target window, with (0,0) at the top left
-    WEBCORE_EXPORT DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), Optional<PageIdentifier> pageID = WTF::nullopt);
-    WEBCORE_EXPORT DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), Optional<PageIdentifier> pageID = WTF::nullopt);
+    WEBCORE_EXPORT DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), std::optional<PageIdentifier> pageID = std::nullopt);
+    WEBCORE_EXPORT DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), std::optional<PageIdentifier> pageID = std::nullopt);
     // This constructor should used only by WebKit2 IPC because DragData
     // is initialized by the decoder and not in the constructor.
     DragData() = default;
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> = { }, Optional<PageIdentifier> pageID = WTF::nullopt);
+    WEBCORE_EXPORT DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> = { }, std::optional<PageIdentifier> pageID = std::nullopt);
     const DragDataMap& dragDataMap();
     void getDragFileDescriptorData(int& size, String& pathname);
     void getDragFileContentData(int size, void* dataBlob);
@@ -117,7 +117,7 @@ public:
     bool containsPromise() const;
 #endif
 
-    Optional<PageIdentifier> pageID() const { return m_pageID; }
+    std::optional<PageIdentifier> pageID() const { return m_pageID; }
 
     std::unique_ptr<PasteboardContext> createPasteboardContext() const;
 
@@ -129,7 +129,7 @@ private:
     OptionSet<DragApplicationFlags> m_applicationFlags;
     Vector<String> m_fileNames;
     OptionSet<DragDestinationAction> m_dragDestinationActionMask;
-    Optional<PageIdentifier> m_pageID;
+    std::optional<PageIdentifier> m_pageID;
 #if PLATFORM(COCOA)
     String m_pasteboardName;
 #endif

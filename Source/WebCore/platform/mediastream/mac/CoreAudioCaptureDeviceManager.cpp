@@ -55,14 +55,14 @@ const Vector<CaptureDevice>& CoreAudioCaptureDeviceManager::captureDevices()
     return m_captureDevices;
 }
 
-Optional<CaptureDevice> CoreAudioCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
+std::optional<CaptureDevice> CoreAudioCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
 {
     ASSERT_UNUSED(type, type == CaptureDevice::DeviceType::Microphone);
     for (auto& device : captureDevices()) {
         if (device.persistentId() == deviceID)
             return device;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static bool deviceHasStreams(AudioObjectID deviceID, const AudioObjectPropertyAddress& address)
@@ -175,11 +175,13 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
 
 void CoreAudioCaptureDeviceManager::scheduleUpdateCaptureDevices()
 {
-    if (m_updateDeviceStateQueue.hasPendingTasks())
+    if (m_wasRefreshAudioCaptureDevicesScheduled)
         return;
 
-    m_updateDeviceStateQueue.enqueueTask([this] {
+    m_wasRefreshAudioCaptureDevicesScheduled = true;
+    callOnMainThread([this] {
         refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged::Notify);
+        m_wasRefreshAudioCaptureDevicesScheduled = false;
     });
 }
 
@@ -248,13 +250,13 @@ Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureD
     return m_coreAudioCaptureDevices;
 }
 
-Optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID(const String& deviceID)
+std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID(const String& deviceID)
 {
     for (auto& device : coreAudioCaptureDevices()) {
         if (device.persistentId() == deviceID && device.enabled())
             return device;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static inline bool hasDevice(const Vector<CoreAudioCaptureDevice>& devices, uint32_t deviceID, CaptureDevice::DeviceType deviceType)

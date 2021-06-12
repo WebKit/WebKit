@@ -32,8 +32,8 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/runtime_root.h>
-#import <wtf/CheckedLock.h>
 #import <wtf/HashMap.h>
+#import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -44,7 +44,7 @@
 // Wrapping WebCore implementation objects
 
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-static CheckedLock wrapperCacheLock;
+static Lock wrapperCacheLock;
 static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
 #else
 static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache()

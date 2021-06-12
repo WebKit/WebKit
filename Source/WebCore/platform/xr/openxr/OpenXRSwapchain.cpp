@@ -76,21 +76,21 @@ OpenXRSwapchain::~OpenXRSwapchain()
         xrDestroySwapchain(m_swapchain);
 }
 
-Optional<PlatformGLObject> OpenXRSwapchain::acquireImage()
+std::optional<PlatformGLObject> OpenXRSwapchain::acquireImage()
 {
     RELEASE_ASSERT_WITH_MESSAGE(!m_acquiredTexture , "Expected no acquired images. ReleaseImage not called?");
 
     auto acquireInfo = createStructure<XrSwapchainImageAcquireInfo, XR_TYPE_SWAPCHAIN_IMAGE_ACQUIRE_INFO>();
     uint32_t swapchainImageIndex = 0;
     auto result = xrAcquireSwapchainImage(m_swapchain, &acquireInfo, &swapchainImageIndex);
-    RETURN_IF_FAILED(result, "xrAcquireSwapchainImage", m_instance, WTF::nullopt);
+    RETURN_IF_FAILED(result, "xrAcquireSwapchainImage", m_instance, std::nullopt);
 
     RELEASE_ASSERT(swapchainImageIndex < m_imageBuffers.size());
 
     auto waitInfo = createStructure<XrSwapchainImageWaitInfo, XR_TYPE_SWAPCHAIN_IMAGE_WAIT_INFO>();
     waitInfo.timeout = XR_INFINITE_DURATION;
     result = xrWaitSwapchainImage(m_swapchain, &waitInfo);
-    RETURN_IF_FAILED(result, "xrWaitSwapchainImage", m_instance, WTF::nullopt);
+    RETURN_IF_FAILED(result, "xrWaitSwapchainImage", m_instance, std::nullopt);
 
     m_acquiredTexture = m_imageBuffers[swapchainImageIndex].image;
 

@@ -59,23 +59,23 @@ bool RemoteInspectorServer::start(const char* address, uint16_t port)
     return isRunning();
 }
 
-Optional<uint16_t> RemoteInspectorServer::getPort() const
+std::optional<uint16_t> RemoteInspectorServer::getPort() const
 {
     if (!isRunning())
-        return WTF::nullopt;
+        return std::nullopt;
 
     const auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
     return endpoint.getPort(m_server.value());
 }
 
-Optional<ConnectionID> RemoteInspectorServer::doAccept(RemoteInspectorSocketEndpoint& endpoint, PlatformSocketType socket)
+std::optional<ConnectionID> RemoteInspectorServer::doAccept(RemoteInspectorSocketEndpoint& endpoint, PlatformSocketType socket)
 {
     ASSERT(!isMainThread());
 
     auto& inspector = RemoteInspector::singleton();
     if (inspector.isConnected()) {
         LOG_ERROR("RemoteInspector can accept only 1 client");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (auto newID = endpoint.createClient(socket, inspector)) {
@@ -83,7 +83,7 @@ Optional<ConnectionID> RemoteInspectorServer::doAccept(RemoteInspectorSocketEndp
         return newID;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector

@@ -33,7 +33,6 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -49,7 +48,7 @@ public:
     bool isLoading() const { return m_loader && m_completionHandler; }
     String stringResult() const { return m_loader ? m_loader->stringResult() : String(); }
     RefPtr<JSC::ArrayBuffer> arrayBufferResult() const { return m_loader ? m_loader->arrayBufferResult() : nullptr; }
-    Optional<ExceptionCode> errorCode() const { return m_loader ? m_loader->errorCode() : WTF::nullopt; }
+    std::optional<ExceptionCode> errorCode() const { return m_loader ? m_loader->errorCode() : std::nullopt; }
 
 private:
     void didStartLoading() final { }

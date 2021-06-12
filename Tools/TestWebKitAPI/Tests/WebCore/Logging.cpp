@@ -129,7 +129,7 @@ TEST_F(LoggingTest, Initialization)
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=foo");
     EXPECT_EQ(TestChannel1.level, WTFLogLevel::Error);
 #if TEST_OUTPUT
-    EXPECT_TRUE(output().contains("Unknown logging level: foo", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("Unknown logging level: foo"));
 #endif
 
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=warning");
@@ -196,40 +196,40 @@ TEST_F(LoggingTest, WTFWillLogWithLevel)
 TEST_F(LoggingTest, LOG)
 {
     LOG(Channel1, "Log message.");
-    EXPECT_TRUE(output().contains("Log Message.", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("Log Message."));
 }
 
 TEST_F(LoggingTest, LOG_WITH_LEVEL)
 {
     LOG_WITH_LEVEL(Channel1, WTFLogLevel::Error, "Go and boil your bottoms, you sons of a silly person.");
-    EXPECT_TRUE(output().contains("sons of a silly person.", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("sons of a silly person."));
 
     LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "You don't frighten us, English pig dogs.");
     EXPECT_EQ(0u, output().length());
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Info);
     LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "I'm French. Why do you think I have this outrageous accent, you silly king?");
-    EXPECT_TRUE(output().contains("outrageous accent", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("outrageous accent"));
 
     LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "You don't frighten us with your silly knees-bent running around advancing behavior!");
     EXPECT_EQ(0u, output().length());
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Debug);
     LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "Go and tell your master that we have been charged by God with a sacred quest.");
-    EXPECT_TRUE(output().contains("sacred quest", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("sacred quest"));
 }
 
 TEST_F(LoggingTest, RELEASE_LOG)
 {
     RELEASE_LOG(Channel1, "Log message.");
-    EXPECT_TRUE(output().contains("Log Message.", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("Log Message."));
 }
 
 TEST_F(LoggingTest, RELEASE_LOG_IF)
 {
     bool enabled = true;
     RELEASE_LOG_IF(enabled, Channel1, "Your mother was a hamster,");
-    EXPECT_TRUE(output().contains("hamster,", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("hamster,"));
 
     enabled = false;
     RELEASE_LOG_IF(enabled, Channel1, "and your father smelt of elderberries ...");
@@ -239,28 +239,28 @@ TEST_F(LoggingTest, RELEASE_LOG_IF)
 TEST_F(LoggingTest, RELEASE_LOG_WITH_LEVEL)
 {
     RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Error, "You don't frighten us, English pig dogs.");
-    EXPECT_TRUE(output().contains("pig dogs.", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("pig dogs."));
 
     RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "Go and boil your bottoms, you sons of a silly person.");
     EXPECT_EQ(0u, output().length());
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Info);
     RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "I'm French. Why do you think I have this outrageous accent, you silly king?");
-    EXPECT_TRUE(output().contains("outrageous accent", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("outrageous accent"));
 
     RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "You don't frighten us with your silly knees-bent running around advancing behavior!");
     EXPECT_EQ(0u, output().length());
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Debug);
     RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "Go and tell your master that we have been charged by God with a sacred quest.");
-    EXPECT_TRUE(output().contains("sacred quest", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("sacred quest"));
 }
 
 TEST_F(LoggingTest, RELEASE_LOG_WITH_LEVEL_IF)
 {
     bool enabled = true;
     RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevel::Error, "Is there someone else up there that we can talk to?");
-    EXPECT_TRUE(output().contains("someone else", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("someone else"));
 
     RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevel::Debug, "No, now go away");
     EXPECT_EQ(0u, output().length());
@@ -278,7 +278,7 @@ TEST_F(LoggingTest, Logger)
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Error);
     EXPECT_TRUE(logger->willLog(TestChannel1, WTFLogLevel::Error));
     logger->error(TestChannel1, "You're using coconuts!");
-    EXPECT_TRUE(output().contains("You're using coconuts!", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("You're using coconuts!"));
     logger->warning(TestChannel1, "You're using coconuts!");
     EXPECT_EQ(0u, output().length());
     logger->info(TestChannel1, "You're using coconuts!");
@@ -287,13 +287,13 @@ TEST_F(LoggingTest, Logger)
     EXPECT_EQ(0u, output().length());
 
     logger->error(TestChannel1, Logger::LogSiteIdentifier("LoggingTest::Logger", this) , ": test output");
-    EXPECT_TRUE(output().contains("LoggingTest::Logger(", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("LoggingTest::Logger("));
 
     logger->error(TestChannel1, "What is ", 1, " + " , 12.5F, "?");
-    EXPECT_TRUE(output().contains("What is 1 + 12.5?", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("What is 1 + 12.5?"));
 
     logger->error(TestChannel1, "What, ", "ridden on a horse?");
-    EXPECT_TRUE(output().contains("What, ridden on a horse?", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("What, ridden on a horse?"));
 
     logger->setEnabled(this, false);
     EXPECT_FALSE(logger->enabled());
@@ -303,11 +303,11 @@ TEST_F(LoggingTest, Logger)
     logger->setEnabled(this, true);
     EXPECT_TRUE(logger->enabled());
     logger->error(TestChannel1, "You've got ", 2, " empty halves of ", "coconuts!");
-    EXPECT_TRUE(output().contains("You've got 2 empty halves of coconuts!", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("You've got 2 empty halves of coconuts!"));
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Error);
     logger->logAlways(TestChannel1, "I shall taunt you a second time!");
-    EXPECT_TRUE(output().contains("I shall taunt you a second time!", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("I shall taunt you a second time!"));
 
     logger->setEnabled(this, false);
     EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevel::Error));
@@ -322,12 +322,12 @@ TEST_F(LoggingTest, Logger)
     AtomString string1("AtomString", AtomString::ConstructFromLiteral);
     const AtomString string2("const AtomString", AtomString::ConstructFromLiteral);
     logger->logAlways(TestChannel1, string1, " and ", string2);
-    EXPECT_TRUE(output().contains("AtomString and const AtomString", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("AtomString and const AtomString"));
 
     String string3("String");
     const String string4("const String");
     logger->logAlways(TestChannel1, string3, " and ", string4);
-    EXPECT_TRUE(output().contains("String and const String", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("String and const String"));
 }
 
 TEST_F(LoggingTest, LoggerHelper)
@@ -335,26 +335,26 @@ TEST_F(LoggingTest, LoggerHelper)
     EXPECT_TRUE(logger().enabled());
 
     StringBuilder builder;
-    builder.appendLiteral("LoggingTest::TestBody(");
+    builder.append("LoggingTest::TestBody(");
     appendUnsigned64AsHex(reinterpret_cast<uintptr_t>(logIdentifier()), builder);
-    builder.appendLiteral(")");
+    builder.append(")");
     String signature = builder.toString();
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    EXPECT_TRUE(this->output().contains(signature, false));
+    EXPECT_TRUE(this->output().containsIgnoringASCIICase(signature));
 
     ALWAYS_LOG(LOGIDENTIFIER, "Welcome back", " my friends", " to the show", " that never ends");
     String result = this->output();
-    EXPECT_TRUE(result.contains(signature, false));
-    EXPECT_TRUE(result.contains("to the show that never", false));
+    EXPECT_TRUE(result.containsIgnoringASCIICase(signature));
+    EXPECT_TRUE(result.containsIgnoringASCIICase("to the show that never"));
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Warning);
 
     ERROR_LOG(LOGIDENTIFIER, "We're so glad you could attend");
-    EXPECT_TRUE(output().contains("We're so glad you could attend", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("We're so glad you could attend"));
 
     WARNING_LOG(LOGIDENTIFIER, "Come inside! ", "Come inside!");
-    EXPECT_TRUE(output().contains("Come inside! Come inside!", false));
+    EXPECT_TRUE(output().containsIgnoringASCIICase("Come inside! Come inside!"));
 
     INFO_LOG(LOGIDENTIFIER, "be careful as you pass.");
     EXPECT_EQ(0u, output().length());
@@ -379,13 +379,12 @@ public:
     WTFLogLevel level() const { return m_lastLevel; }
 
 private:
-    void didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, const String& logMessage) final
+    void didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Vector<JSONLogValue>&& logMessage) final
     {
         m_logBuffer.append(logMessage);
         m_lastChannel = channel;
         m_lastLevel = level;
     }
-
     StringBuilder m_logBuffer;
     WTFLogChannel m_lastChannel;
     WTFLogLevel m_lastLevel { WTFLogLevel::Error };
@@ -400,14 +399,14 @@ TEST_F(LoggingTest, LogObserver)
 
     logger().addObserver(observer);
     ALWAYS_LOG(LOGIDENTIFIER, "testing 1, 2, 3");
-    EXPECT_TRUE(this->output().contains("testing 1, 2, 3", false));
-    EXPECT_TRUE(observer.log().contains("testing 1, 2, 3", false));
+    EXPECT_TRUE(this->output().containsIgnoringASCIICase("testing 1, 2, 3"));
+    EXPECT_TRUE(observer.log().containsIgnoringASCIICase("testing 1, 2, 3"));
     EXPECT_STREQ(observer.channel().name, logChannel().name);
     EXPECT_EQ(static_cast<int>(WTFLogLevel::Always), static_cast<int>(observer.level()));
 
     logger().removeObserver(observer);
     ALWAYS_LOG("testing ", 1, ", ", 2, ", 3");
-    EXPECT_TRUE(this->output().contains("testing 1, 2, 3", false));
+    EXPECT_TRUE(this->output().containsIgnoringASCIICase("testing 1, 2, 3"));
     EXPECT_EQ(0u, observer.log().length());
 }
 #endif

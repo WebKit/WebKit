@@ -101,7 +101,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         if (drag.m_drag.get() != gtkDrag)
             return;
 
-        drag.m_selectionData = WTF::nullopt;
+        drag.m_selectionData = std::nullopt;
         drag.m_drag = nullptr;
 
         GdkDevice* device = gdk_drag_get_device(gtkDrag);
@@ -121,7 +121,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         if (drag.m_drag.get() != gtkDrag)
             return;
 
-        drag.m_selectionData = WTF::nullopt;
+        drag.m_selectionData = std::nullopt;
         drag.m_drag = nullptr;
     }), this);
 

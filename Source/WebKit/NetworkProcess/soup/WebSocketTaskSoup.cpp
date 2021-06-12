@@ -117,7 +117,7 @@ String WebSocketTask::acceptedExtensions() const
         auto* extension = SOUP_WEBSOCKET_EXTENSION(it->data);
 
         if (!result.isEmpty())
-            result.appendLiteral(", ");
+            result.append(", ");
         result.append(String::fromUTF8(SOUP_WEBSOCKET_EXTENSION_GET_CLASS(extension)->name));
 
         GUniquePtr<char> params(soup_websocket_extension_get_response_params(extension));

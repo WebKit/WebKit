@@ -56,7 +56,7 @@ public:
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     ~AudioContext();
 
-    WEBCORE_EXPORT static void setDefaultSampleRateForTesting(Optional<float>);
+    WEBCORE_EXPORT static void setDefaultSampleRateForTesting(std::optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
 
@@ -107,8 +107,8 @@ private:
 
     void constructCommon();
 
-    bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }
-    bool pageConsentRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequirePageConsentForAudioStartRestriction; }
+    bool userGestureRequiredForAudioStart() const { return m_restrictions & RequireUserGestureForAudioStartRestriction; }
+    bool pageConsentRequiredForAudioStart() const { return m_restrictions & RequirePageConsentForAudioStartRestriction; }
 
     bool willPausePlayback();
 
@@ -142,6 +142,7 @@ private:
     const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
+    bool virtualHasPendingActivity() const final;
 
     UniqueRef<DefaultAudioDestinationNode> m_destinationNode;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;

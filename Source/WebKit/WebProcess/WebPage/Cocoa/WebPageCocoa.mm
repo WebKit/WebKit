@@ -42,6 +42,7 @@
 #import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLOListElement.h>
 #import <WebCore/HTMLUListElement.h>
@@ -86,7 +87,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
-    ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.hasValue());
+    ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.has_value());
 
     if (parameters.frontboardServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);
@@ -199,6 +200,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
 #endif // PLATFORM(MAC)
 
     OptionSet<TextIndicatorOption> indicatorOptions { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges };
+    if (HTMLElement::isInsideImageOverlay(range))
+        indicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
+
     if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
         indicatorOptions.add(TextIndicatorOption::IncludeSnapshotWithSelectionHighlight);
     
@@ -317,7 +321,7 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
 
         CGPDFContextBeginPage(pdfContext.get(), dictionary);
 
-        GraphicsContext graphicsContext { pdfContext.get() };
+        GraphicsContextCG graphicsContext { pdfContext.get() };
         graphicsContext.scale({ 1, -1 });
         graphicsContext.translate(0, -bitmapSize.height());
 
@@ -446,6 +450,15 @@ PlatformXRSystemProxy& WebPage::xrSystemProxy()
         m_xrSystemProxy = std::unique_ptr<PlatformXRSystemProxy>(new PlatformXRSystemProxy(*this));
     return *m_xrSystemProxy;
 }
+#endif
+
+#if ENABLE(DATA_DETECTION)
+
+void WebPage::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+    send(Messages::WebPageProxy::HandleClickForDataDetectionResult(info, clickLocation));
+}
+
 #endif
 
 } // namespace WebKit

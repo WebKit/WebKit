@@ -47,6 +47,7 @@ void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inpu
 void multiplyByScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
 void addScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
 void add(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
+void substract(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
 
 // Finds the maximum magnitude of a float vector.
 float maximumMagnitude(const float* inputVector, size_t numberOfElementsToProcess);
@@ -64,6 +65,12 @@ void multiplyComplex(const float* realVector1, const float* imagVector1, const f
 void clamp(const float* inputVector, float mininum, float maximum, float* outputVector, size_t numberOfElementsToProcess);
 
 void linearToDecibels(const float* inputVector, float* outputVector, size_t numberOfElementsToProcess);
+
+// Calculates the linear interpolation between the supplied single-precision vectors
+// for (n = 0; n < numberOfElementsToProcess; ++n)
+//     outputVector[n] = inputVector1[n] + interpolationFactor * (inputVector2[n] - inputVector1[n]);
+// NOTE: Internal implementation may modify inputVector2.
+void interpolate(const float* inputVector1, float* inputVector2, float interpolationFactor, float* outputVector, size_t numberOfElementsToProcess);
 
 } // namespace VectorMath
 

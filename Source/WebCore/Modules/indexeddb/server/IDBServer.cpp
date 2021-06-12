@@ -733,7 +733,7 @@ void IDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, const
         FileSystem::moveFile(oldOriginPath, newOriginPath);
 }
 
-StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize)
+StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());

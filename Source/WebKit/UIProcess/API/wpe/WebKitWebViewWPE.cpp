@@ -225,5 +225,5 @@ void webkit_web_view_get_background_color(WebKitWebView* webView, WebKitColor* c
     auto& page = webkitWebViewGetPage(webView);
 
     auto& webCoreColor = page.backgroundColor();
-    webkitColorFillFromWebCoreColor(webCoreColor.valueOr(WebCore::Color::white), color);
+    webkitColorFillFromWebCoreColor(webCoreColor.value_or(WebCore::Color::white), color);
 }

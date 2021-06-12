@@ -30,7 +30,6 @@
 #include "WHLSLBaseSemantic.h"
 #include "WHLSLCodeLocation.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -58,7 +57,7 @@ public:
         SVGroupThreadID
     };
 
-    BuiltInSemantic(CodeLocation location, Variable variable, Optional<unsigned>&& targetIndex = WTF::nullopt)
+    BuiltInSemantic(CodeLocation location, Variable variable, std::optional<unsigned>&& targetIndex = std::nullopt)
         : BaseSemantic(location)
         , m_variable(variable)
         , m_targetIndex(WTFMove(targetIndex))
@@ -71,7 +70,7 @@ public:
     BuiltInSemantic(BuiltInSemantic&&) = default;
 
     Variable variable() const { return m_variable; }
-    Optional<unsigned>& targetIndex() { return m_targetIndex; }
+    std::optional<unsigned>& targetIndex() { return m_targetIndex; }
 
     bool operator==(const BuiltInSemantic& other) const
     {
@@ -118,11 +117,11 @@ public:
     }
 
     bool isAcceptableType(const UnnamedType&, const Intrinsics&) const override;
-    bool isAcceptableForShaderItemDirection(ShaderItemDirection, const Optional<EntryPointType>&) const override;
+    bool isAcceptableForShaderItemDirection(ShaderItemDirection, const std::optional<EntryPointType>&) const override;
 
 private:
     Variable m_variable;
-    Optional<unsigned> m_targetIndex;
+    std::optional<unsigned> m_targetIndex;
 };
 
 } // namespace AST

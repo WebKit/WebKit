@@ -119,7 +119,7 @@ RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)
     if (!m_page)
         return nullptr;
 
-    Optional<BackForwardItemIdentifier> itemID;
+    std::optional<BackForwardItemIdentifier> itemID;
     if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->identifier()))
         return nullptr;
 
@@ -152,7 +152,7 @@ const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecess
 
 void WebBackForwardListProxy::clearCachedListCounts()
 {
-    m_cachedBackForwardListCounts = WTF::nullopt;
+    m_cachedBackForwardListCounts = std::nullopt;
 }
 
 void WebBackForwardListProxy::close()

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "TextCodec.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
@@ -43,8 +43,8 @@ private:
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     bool m_littleEndian;
-    Optional<uint8_t> m_leadByte;
-    Optional<UChar> m_leadSurrogate;
+    std::optional<uint8_t> m_leadByte;
+    std::optional<UChar> m_leadSurrogate;
     bool m_shouldStripByteOrderMark { false };
 };
 

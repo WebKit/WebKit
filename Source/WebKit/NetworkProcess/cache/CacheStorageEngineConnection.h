@@ -74,7 +74,7 @@ private:
     void reference(uint64_t cacheIdentifier);
     void dereference(uint64_t cacheIdentifier);
 
-    void clearMemoryRepresentation(WebCore::ClientOrigin&&, CompletionHandler<void(Optional<WebCore::DOMCacheEngine::Error>&&)>&&);
+    void clearMemoryRepresentation(WebCore::ClientOrigin&&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
     void engineRepresentation( CompletionHandler<void(String&&)>&&);
     
     PAL::SessionID sessionID() const;

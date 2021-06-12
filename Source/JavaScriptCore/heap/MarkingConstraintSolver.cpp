@@ -55,7 +55,7 @@ bool MarkingConstraintSolver::didVisitSomething() const
     return false;
 }
 
-void MarkingConstraintSolver::execute(SchedulerPreference preference, ScopedLambda<Optional<unsigned>()> pickNext)
+void MarkingConstraintSolver::execute(SchedulerPreference preference, ScopedLambda<std::optional<unsigned>()> pickNext)
 {
     m_pickNextIsStillActive = true;
     RELEASE_ASSERT(!m_numThreadsThatMayProduceWork);
@@ -88,10 +88,10 @@ void MarkingConstraintSolver::drain(BitVector& unexecuted)
     auto end = unexecuted.end();
     if (iter == end)
         return;
-    auto pickNext = scopedLambda<Optional<unsigned>()>(
-        [&] () -> Optional<unsigned> {
+    auto pickNext = scopedLambda<std::optional<unsigned>()>(
+        [&] () -> std::optional<unsigned> {
             if (iter == end)
-                return WTF::nullopt;
+                return std::nullopt;
             return *iter++;
         });
     execute(NextConstraintFirst, pickNext);
@@ -125,13 +125,13 @@ void MarkingConstraintSolver::converge(const Vector<MarkingConstraint*>& order)
             return;
     }
     
-    auto pickNext = scopedLambda<Optional<unsigned>()>(
-        [&] () -> Optional<unsigned> {
+    auto pickNext = scopedLambda<std::optional<unsigned>()>(
+        [&] () -> std::optional<unsigned> {
             if (didVisitSomething())
-                return WTF::nullopt;
+                return std::nullopt;
             
             if (index >= order.size())
-                return WTF::nullopt;
+                return std::nullopt;
             
             MarkingConstraint& constraint = *order[index++];
             return constraint.index();
@@ -156,7 +156,7 @@ void MarkingConstraintSolver::addParallelTask(RefPtr<SharedTask<void(SlotVisitor
     m_toExecuteInParallel.append(TaskWithConstraint(WTFMove(task), &constraint));
 }
 
-void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, SchedulerPreference preference, ScopedLambda<Optional<unsigned>()> pickNext)
+void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, SchedulerPreference preference, ScopedLambda<std::optional<unsigned>()> pickNext)
 {
     for (;;) {
         bool doParallelWorkMode;
@@ -182,7 +182,7 @@ void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, Scheduler
                         return false;
                     
                     for (;;) {
-                        Optional<unsigned> pickResult = pickNext();
+                        std::optional<unsigned> pickResult = pickNext();
                         if (!pickResult) {
                             m_pickNextIsStillActive = false;
                             return false;

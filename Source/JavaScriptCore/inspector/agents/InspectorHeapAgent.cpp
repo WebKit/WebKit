@@ -152,24 +152,24 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::stopTracking()
     return { };
 }
 
-Optional<HeapSnapshotNode> InspectorHeapAgent::nodeForHeapObjectIdentifier(Protocol::ErrorString& errorString, unsigned heapObjectIdentifier)
+std::optional<HeapSnapshotNode> InspectorHeapAgent::nodeForHeapObjectIdentifier(Protocol::ErrorString& errorString, unsigned heapObjectIdentifier)
 {
     HeapProfiler* heapProfiler = m_environment.vm().heapProfiler();
     if (!heapProfiler) {
         errorString = "No heap snapshot"_s;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     HeapSnapshot* snapshot = heapProfiler->mostRecentSnapshot();
     if (!snapshot) {
         errorString = "No heap snapshot"_s;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
-    const Optional<HeapSnapshotNode> optionalNode = snapshot->nodeForObjectIdentifier(heapObjectIdentifier);
+    const std::optional<HeapSnapshotNode> optionalNode = snapshot->nodeForObjectIdentifier(heapObjectIdentifier);
     if (!optionalNode) {
         errorString = "No object for identifier, it may have been collected"_s;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return optionalNode;
@@ -185,7 +185,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
     DeferGC deferGC(vm.heap);
 
     unsigned heapObjectIdentifier = static_cast<unsigned>(heapObjectId);
-    const Optional<HeapSnapshotNode> optionalNode = nodeForHeapObjectIdentifier(errorString, heapObjectIdentifier);
+    const std::optional<HeapSnapshotNode> optionalNode = nodeForHeapObjectIdentifier(errorString, heapObjectIdentifier);
     if (!optionalNode)
         return makeUnexpected(errorString);
 
@@ -235,7 +235,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
     DeferGC deferGC(vm.heap);
 
     unsigned heapObjectIdentifier = static_cast<unsigned>(heapObjectId);
-    const Optional<HeapSnapshotNode> optionalNode = nodeForHeapObjectIdentifier(errorString, heapObjectIdentifier);
+    const std::optional<HeapSnapshotNode> optionalNode = nodeForHeapObjectIdentifier(errorString, heapObjectIdentifier);
     if (!optionalNode)
         return makeUnexpected(errorString);
 

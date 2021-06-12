@@ -181,7 +181,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     IntRect marginRect = snappedIntRect(marginR);
     auto intervals = makeUnique<RasterShapeIntervals>(marginRect.height(), -marginRect.y());
     // FIXME (149420): This buffer should not be unconditionally unaccelerated.
-    auto imageBuffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
 
     auto createShape = [&]() {
         auto rasterShape = makeUnique<RasterShape>(WTFMove(intervals), marginRect.size());
@@ -197,7 +197,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     if (image)
         graphicsContext.drawImage(*image, IntRect(IntPoint(), imageRect.size()));
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { IntPoint(), imageRect.size() });
     
     // We could get to a value where PixelBuffer could be nullopt. A case where ImageRect.size() is huge, PixelBuffer::tryCreate
@@ -213,7 +213,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     int minBufferY = std::max(0, marginRect.y() - imageRect.y());
     int maxBufferY = std::min(imageRect.height(), marginRect.maxY() - imageRect.y());
 
-    if ((imageRect.area() * 4).unsafeGet() == pixelArrayLength) {
+    if ((imageRect.area() * 4) == pixelArrayLength) {
         for (int y = minBufferY; y < maxBufferY; ++y) {
             int startX = -1;
             for (int x = 0; x < imageRect.width(); ++x, pixelArrayOffset += 4) {

@@ -49,13 +49,13 @@ struct MediaStreamRequest {
         encoder << isUserGesturePriviledged;
     }
 
-    template <class Decoder> static Optional<MediaStreamRequest> decode(Decoder& decoder)
+    template <class Decoder> static std::optional<MediaStreamRequest> decode(Decoder& decoder)
     {
         MediaStreamRequest request;
         if (decoder.decode(request.type) && decoder.decode(request.audioConstraints) && decoder.decode(request.videoConstraints) && decoder.decode(request.isUserGesturePriviledged))
             return request;
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 

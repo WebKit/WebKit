@@ -35,7 +35,6 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "GenericEventQueue.h"
 #include "HTMLMediaElement.h"
 #include "MediaSourcePrivateClient.h"
 #include "URLRegistry.h"
@@ -77,7 +76,7 @@ public:
     void sourceBufferDidChangeBufferedDirty(SourceBuffer&, bool);
 
     enum class EndOfStreamError { Network, Decode };
-    void streamEndedWithError(Optional<EndOfStreamError>);
+    void streamEndedWithError(std::optional<EndOfStreamError>);
 
     MediaTime duration() const final;
     std::unique_ptr<PlatformTimeRanges> buffered() const final;
@@ -100,7 +99,7 @@ public:
 
     enum class ReadyState { Closed, Open, Ended };
     ReadyState readyState() const { return m_readyState; }
-    ExceptionOr<void> endOfStream(Optional<EndOfStreamError>);
+    ExceptionOr<void> endOfStream(std::optional<EndOfStreamError>);
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 
@@ -174,11 +173,11 @@ private:
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     ReadyState m_readyState { ReadyState::Closed };
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 #endif
+    uint64_t m_associatedRegistryCount { 0 };
 };
 
 String convertEnumerationToString(MediaSource::EndOfStreamError);

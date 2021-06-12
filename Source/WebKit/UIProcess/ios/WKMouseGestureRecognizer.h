@@ -30,7 +30,7 @@
 
 @interface WKMouseGestureRecognizer : UIHoverGestureRecognizer
 
-- (WTF::Optional<CGPoint>)lastMouseLocation;
+- (std::optional<CGPoint>)lastMouseLocation;
 - (WebKit::NativeWebMouseEvent *)lastMouseEvent;
 
 - (UITouch *)mouseTouch;

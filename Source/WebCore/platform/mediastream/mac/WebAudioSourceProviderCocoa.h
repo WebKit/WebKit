@@ -77,8 +77,8 @@ private:
     Lock m_lock;
     AudioSourceProviderClient* m_client { nullptr };
 
-    Optional<CAAudioStreamDescription> m_inputDescription;
-    Optional<CAAudioStreamDescription> m_outputDescription;
+    std::optional<CAAudioStreamDescription> m_inputDescription;
+    std::optional<CAAudioStreamDescription> m_outputDescription;
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
     RefPtr<AudioSampleDataSource> m_dataSource;
 

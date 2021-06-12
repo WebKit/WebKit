@@ -43,11 +43,11 @@ OutputContext::OutputContext(RetainPtr<AVOutputContext>&& context)
 {
 }
 
-Optional<OutputContext>& OutputContext::sharedAudioPresentationOutputContext()
+std::optional<OutputContext>& OutputContext::sharedAudioPresentationOutputContext()
 {
-    static NeverDestroyed<Optional<OutputContext>> sharedAudioPresentationOutputContext = [] () -> Optional<OutputContext> {
+    static NeverDestroyed<std::optional<OutputContext>> sharedAudioPresentationOutputContext = [] () -> std::optional<OutputContext> {
         if (![PAL::getAVOutputContextClass() respondsToSelector:@selector(sharedAudioPresentationOutputContext)])
-            return WTF::nullopt;
+            return std::nullopt;
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         AVOutputContext* context = [getAVOutputContextClass() sharedSystemAudioContext];
@@ -55,7 +55,7 @@ Optional<OutputContext>& OutputContext::sharedAudioPresentationOutputContext()
         auto context = [getAVOutputContextClass() sharedAudioPresentationOutputContext];
 #endif
         if (!context)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return OutputContext(retainPtr(context));
     }();

@@ -22,7 +22,6 @@ const (
 	alertRecordOverflow               alert = 22
 	alertDecompressionFailure         alert = 30
 	alertHandshakeFailure             alert = 40
-	alertNoCertificate                alert = 41
 	alertBadCertificate               alert = 42
 	alertUnsupportedCertificate       alert = 43
 	alertCertificateRevoked           alert = 44
@@ -56,7 +55,6 @@ var alertText = map[alert]string{
 	alertRecordOverflow:               "record overflow",
 	alertDecompressionFailure:         "decompression failure",
 	alertHandshakeFailure:             "handshake failure",
-	alertNoCertificate:                "no certificate",
 	alertBadCertificate:               "bad certificate",
 	alertUnsupportedCertificate:       "unsupported certificate",
 	alertCertificateRevoked:           "revoked certificate",

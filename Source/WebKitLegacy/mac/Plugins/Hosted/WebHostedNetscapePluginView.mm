@@ -519,7 +519,7 @@ extern "C" {
         return;
     
     if (HostedNetscapePluginStream* manualStream = _proxy->manualStream())
-        manualStream->didReceiveData(0, static_cast<const char*>([data bytes]), [data length]);
+        manualStream->didReceiveData(0, static_cast<const uint8_t*>([data bytes]), [data length]);
 }
 
 - (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error

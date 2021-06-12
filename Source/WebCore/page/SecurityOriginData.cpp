@@ -78,25 +78,25 @@ String SecurityOriginData::databaseIdentifier() const
     if (equalIgnoringASCIICase(protocol, "file"))
         return "file__0"_s;
 
-    return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host), separatorCharacter, port.valueOr(0));
+    return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host), separatorCharacter, port.value_or(0));
 }
 
-Optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)
+std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)
 {
     // Make sure there's a first separator
     size_t separator1 = databaseIdentifier.find(separatorCharacter);
     if (separator1 == notFound)
-        return WTF::nullopt;
+        return std::nullopt;
     
     // Make sure there's a second separator
     size_t separator2 = databaseIdentifier.reverseFind(separatorCharacter);
     if (separator2 == notFound)
-        return WTF::nullopt;
+        return std::nullopt;
     
     // Ensure there were at least 2 separator characters. Some hostnames on intranets have
     // underscores in them, so we'll assume that any additional underscores are part of the host.
     if (separator1 == separator2)
-        return WTF::nullopt;
+        return std::nullopt;
     
     // Make sure the port section is a valid port number or doesn't exist.
     auto portLength = databaseIdentifier.length() - separator2 - 1;
@@ -104,11 +104,11 @@ Optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const St
 
     // Nothing after the colon is fine. Failure to parse after the colon is not.
     if (!port && portLength)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Treat port 0 like there is was no port specified.
     if (port && !*port)
-        port = WTF::nullopt;
+        port = std::nullopt;
 
     auto protocol = databaseIdentifier.substring(0, separator1);
     auto host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);

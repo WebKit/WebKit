@@ -46,7 +46,7 @@ auto DisplayList::Iterator::updateCurrentDrawingItemExtent(ItemType itemType) ->
         return ExtentUpdateResult::Success;
 
     if (!isDrawingItem(itemType)) {
-        m_currentExtent = WTF::nullopt;
+        m_currentExtent = std::nullopt;
         return ExtentUpdateResult::Success;
     }
 

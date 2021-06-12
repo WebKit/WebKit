@@ -31,7 +31,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 
 #include <mutex>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OSRandomSource.h>
 
@@ -64,7 +64,7 @@ private:
     inline uint8_t getByte();
     inline uint32_t getWord();
 
-    CheckedLock m_lock;
+    Lock m_lock;
     ARC4Stream m_stream;
     int m_count;
 };

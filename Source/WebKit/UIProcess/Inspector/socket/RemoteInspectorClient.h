@@ -89,7 +89,7 @@ private:
 
     String m_backendCommandsURL;
     RemoteInspectorObserver& m_observer;
-    Optional<ConnectionID> m_connectionID;
+    std::optional<ConnectionID> m_connectionID;
     HashMap<ConnectionID, Vector<Target>> m_targets;
     HashMap<std::pair<ConnectionID, TargetID>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;
 };

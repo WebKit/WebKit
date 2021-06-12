@@ -126,7 +126,7 @@ void MediaSessionManageriOS::mediaServerConnectionDied()
         return;
 
     m_havePresentedApplicationPID = false;
-    taskQueue().enqueueTask([] () {
+    callOnMainThread([] () {
         providePresentingApplicationPID();
     });
 }

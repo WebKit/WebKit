@@ -31,7 +31,6 @@
 #include "YarrUnicodeProperties.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -1080,10 +1079,10 @@ private:
 
     unsigned consumeNumber()
     {
-        Checked<unsigned, RecordOverflow> n = consumeDigit();
+        CheckedUint32 n = consumeDigit();
         while (peekIsDigit())
             n = n * 10 + consumeDigit();
-        return n.hasOverflowed() ? quantifyInfinite : n.unsafeGet();
+        return n.hasOverflowed() ? quantifyInfinite : n.value();
     }
 
     // https://tc39.es/ecma262/#prod-annexB-LegacyOctalEscapeSequence
@@ -1118,10 +1117,10 @@ private:
         return n;
     }
 
-    Optional<String> tryConsumeGroupName()
+    std::optional<String> tryConsumeGroupName()
     {
         if (atEndOfPattern())
-            return WTF::nullopt;
+            return std::nullopt;
 
         ParseState state = saveState();
         
@@ -1134,7 +1133,7 @@ private:
             while (!atEndOfPattern()) {
                 ch = tryConsumeIdentifierCharacter();
                 if (ch == '>')
-                    return Optional<String>(identifierBuilder.toString());
+                    return std::optional<String>(identifierBuilder.toString());
 
                 if (!isIdentifierPart(ch))
                     break;
@@ -1145,14 +1144,14 @@ private:
 
         restoreState(state);
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
-    Optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
+    std::optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
     {
         if (atEndOfPattern() || !isUnicodePropertyValueExpressionChar(peek())) {
             m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         StringBuilder expressionBuilder;
@@ -1168,7 +1167,7 @@ private:
                 consume();
                 if (errors) {
                     m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-                    return WTF::nullopt;
+                    return std::nullopt;
                 }
 
                 if (foundEquals) {
@@ -1199,7 +1198,7 @@ private:
         }
 
         m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     enum class ParenthesesType : uint8_t { Subpattern, Assertion };
@@ -1244,7 +1243,7 @@ private:
  *    void atomCharacterClassRange(UChar32 begin, UChar32 end)
  *    void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
  *    void atomCharacterClassEnd()
- *    void atomParenthesesSubpatternBegin(bool capture = true, Optional<String> groupName);
+ *    void atomParenthesesSubpatternBegin(bool capture = true, std::optional<String> groupName);
  *    void atomParentheticalAssertionBegin(bool invert = false);
  *    void atomParenthesesEnd();
  *    void atomBackReference(unsigned subpatternId);

@@ -61,7 +61,7 @@ public:
     WaitForNotificationBeforeInjecting waitForNotificationBeforeInjecting() const { return m_waitForNotificationBeforeInjecting; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<UserScript> decode(Decoder&);
+    template<class Decoder> static std::optional<UserScript> decode(Decoder&);
 
 private:
     String m_source;
@@ -86,42 +86,42 @@ void UserScript::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<UserScript> UserScript::decode(Decoder& decoder)
+std::optional<UserScript> UserScript::decode(Decoder& decoder)
 {
-    Optional<String> source;
+    std::optional<String> source;
     decoder >> source;
     if (!source)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<URL> url;
+    std::optional<URL> url;
     decoder >> url;
     if (!url)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<String>> allowlist;
+    std::optional<Vector<String>> allowlist;
     decoder >> allowlist;
     if (!allowlist)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<String>> blocklist;
+    std::optional<Vector<String>> blocklist;
     decoder >> blocklist;
     if (!blocklist)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<UserScriptInjectionTime> injectionTime;
+    std::optional<UserScriptInjectionTime> injectionTime;
     decoder >> injectionTime;
     if (!injectionTime)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<UserContentInjectedFrames> injectedFrames;
+    std::optional<UserContentInjectedFrames> injectedFrames;
     decoder >> injectedFrames;
     if (!injectedFrames)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<WaitForNotificationBeforeInjecting> waitForNotification;
+    std::optional<WaitForNotificationBeforeInjecting> waitForNotification;
     decoder >> waitForNotification;
     if (!waitForNotification)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return {{
         WTFMove(*source),

@@ -1,0 +1,19 @@
+no contrast
+no motion
+This tests that CSS Accessibility media queries get updates when settings change
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS defaultVisibility is 'visible'
+PASS updatedVisibility is 'hidden'
+PASS defaultVisibility is 'visible'
+PASS updatedVisibility is 'hidden'
+PASS defaultVisibility is 'hidden'
+PASS updatedVisibility is 'visible'
+PASS defaultVisibility is 'hidden'
+PASS updatedVisibility is 'visible'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

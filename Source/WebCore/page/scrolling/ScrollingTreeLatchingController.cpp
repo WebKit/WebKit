@@ -56,10 +56,10 @@ void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEven
     }
 }
 
-Optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchingDataForEvent(const PlatformWheelEvent& wheelEvent, bool allowLatching) const
+std::optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchingDataForEvent(const PlatformWheelEvent& wheelEvent, bool allowLatching) const
 {
     if (!allowLatching)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Locker locker { m_latchedNodeLock };
 
@@ -69,19 +69,19 @@ Optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> Scrol
         return m_latchedNodeAndSteps;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeID() const
+std::optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeID() const
 {
     Locker locker { m_latchedNodeLock };
     if (m_latchedNodeAndSteps)
         return m_latchedNodeAndSteps->scrollingNodeID;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchedNodeAndSteps() const
+std::optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchedNodeAndSteps() const
 {
     Locker locker { m_latchedNodeLock };
     return m_latchedNodeAndSteps;
@@ -112,7 +112,7 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
         if (!wheelEvent.isGestureContinuation())
             return false;
 
-        if (m_processingStepsForCurrentGesture.valueOr(OptionSet<WheelEventProcessingSteps> { }).contains(WheelEventProcessingSteps::MainThreadForScrolling) && processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
+        if (m_processingStepsForCurrentGesture.value_or(OptionSet<WheelEventProcessingSteps> { }).contains(WheelEventProcessingSteps::MainThreadForScrolling) && processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
             return true;
 
         return false;

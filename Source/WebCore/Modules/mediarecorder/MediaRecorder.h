@@ -69,14 +69,14 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
     
-    ExceptionOr<void> startRecording(Optional<unsigned>);
+    ExceptionOr<void> startRecording(std::optional<unsigned>);
     void stopRecording();
     ExceptionOr<void> requestData();
     ExceptionOr<void> pauseRecording();
     ExceptionOr<void> resumeRecording();
 
-    unsigned videoBitsPerSecond() const { return m_options.videoBitsPerSecond.valueOr(0); }
-    unsigned audioBitsPerSecond() const { return m_options.audioBitsPerSecond.valueOr(0); }
+    unsigned videoBitsPerSecond() const { return m_options.videoBitsPerSecond.value_or(0); }
+    unsigned audioBitsPerSecond() const { return m_options.audioBitsPerSecond.value_or(0); }
 
     MediaStream& stream() { return m_stream.get(); }
 
@@ -125,7 +125,7 @@ private:
     std::unique_ptr<MediaRecorderPrivate> m_private;
     RecordingState m_state { RecordingState::Inactive };
     Vector<Ref<MediaStreamTrackPrivate>> m_tracks;
-    Optional<unsigned> m_timeSlice;
+    std::optional<unsigned> m_timeSlice;
     Timer m_timeSliceTimer;
     
     bool m_isActive { true };

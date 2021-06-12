@@ -86,9 +86,9 @@ int main(int argc, char **argv) {
   res = vpx_codec_dec_init(&codec, decoder->codec_interface(), NULL,
                            VPX_CODEC_USE_POSTPROC);
   if (res == VPX_CODEC_INCAPABLE)
-    die_codec(&codec, "Postproc not supported by this decoder.");
+    die("Postproc not supported by this decoder.");
 
-  if (res) die_codec(&codec, "Failed to initialize decoder.");
+  if (res) die("Failed to initialize decoder.");
 
   while (vpx_video_reader_read_frame(reader)) {
     vpx_codec_iter_t iter = NULL;

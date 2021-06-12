@@ -86,7 +86,7 @@ protected:
     void processNativeSamples(CFArrayRef, const MediaTime&);
     void removeCompletedCues();
 
-    Vector<char> m_sampleInputBuffer;
+    Vector<uint8_t> m_sampleInputBuffer;
 
 private:
 #if !RELEASE_LOG_DISABLED

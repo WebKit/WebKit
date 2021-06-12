@@ -31,8 +31,6 @@
 #include "COMPropertyBag.h"
 #include "DOMCoreClasses.h"
 #include "MarshallingHelpers.h"
-#include "PluginDatabase.h"
-#include "PluginView.h"
 #include "WebActionPropertyBag.h"
 #include "WebChromeClient.h"
 #include "WebDataSource.h"
@@ -74,6 +72,7 @@
 #include <WebCore/FrameWin.h>
 #include <WebCore/GDIObjectCounter.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextWin.h>
 #include <WebCore/HTMLFormControlElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
@@ -321,8 +320,7 @@ HRESULT WebFrame::paintDocumentRectToContext(RECT rect, _In_ HDC deviceContext)
     // We can't paint with a layout still pending.
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    GraphicsContext gc(deviceContext);
-    gc.setShouldIncludeChildWindows(true);
+    GraphicsContextWin gc(deviceContext);
     gc.save();
     LONG width = rect.right - rect.left;
     LONG height = rect.bottom - rect.top;
@@ -352,8 +350,7 @@ HRESULT WebFrame::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, _In_ 
     // We can't paint with a layout still pending.
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    GraphicsContext gc(deviceContext);
-    gc.setShouldIncludeChildWindows(true);
+    GraphicsContextWin gc(deviceContext);
     gc.save();
     IntRect dirtyRect(rect);
     dirtyRect.move(-pt.x, -pt.y);
@@ -1808,8 +1805,7 @@ HRESULT WebFrame::spoolPages(HDC printDC, UINT startPage, UINT endPage, void* ct
     float headerHeight = 0, footerHeight = 0;
     headerAndFooterHeights(&headerHeight, &footerHeight);
 #if USE(CG) || USE(CAIRO)
-    GraphicsContext spoolCtx(pctx);
-    spoolCtx.setShouldIncludeChildWindows(true);
+    GraphicsContextWin spoolCtx(pctx);
 
     for (UINT ii = startPage; ii < endPage; ii++)
         spoolPage(pctx, spoolCtx, printDC, ui.get(), headerHeight, footerHeight, ii, pageCount);
@@ -2061,7 +2057,7 @@ void WebFrame::updateBackground()
     if (!coreFrame || !coreFrame->view())
         return;
 
-    Optional<Color> backgroundColor;
+    std::optional<Color> backgroundColor;
     if (webView()->transparent())
         backgroundColor = Color(Color::transparentBlack);
     coreFrame->view()->updateBackgroundRecursively(backgroundColor);

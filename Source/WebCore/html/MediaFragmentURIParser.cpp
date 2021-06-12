@@ -259,7 +259,7 @@ bool MediaFragmentURIParser::parseNPTTime(const LChar* timeString, unsigned leng
     // npt-ss        =   2DIGIT      ; 0-59
 
     String digits1 = collectDigits(timeString, length, offset);
-    int value1 = parseInteger<int>(digits1).valueOr(0);
+    int value1 = parseInteger<int>(digits1).value_or(0);
     if (offset >= length || timeString[offset] == ',') {
         time = MediaTime::createWithDouble(value1);
         return true;

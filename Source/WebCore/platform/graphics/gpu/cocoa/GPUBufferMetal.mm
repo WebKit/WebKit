@@ -183,7 +183,7 @@ void GPUBuffer::registerMappingCallback(MappingCallback&& callback, bool isRead,
         return;
     }
 
-    ASSERT(!m_mappingCallback && !m_mappingCallbackTask.hasPendingTask());
+    ASSERT(!m_mappingCallback && !m_mappingCallbackTask.isPending());
 
     // An existing callback means this buffer is in the mapped state.
     m_mappingCallback = PendingMappingCallback::create(WTFMove(callback));

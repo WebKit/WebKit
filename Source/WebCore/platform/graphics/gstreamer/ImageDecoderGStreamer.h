@@ -26,9 +26,9 @@
 #include "MIMETypeRegistry.h"
 #include "SampleMap.h"
 #include "SharedBuffer.h"
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,7 +58,7 @@ public:
     RepetitionCount repetitionCount() const final;
     String uti() const final;
     String filenameExtension() const final { return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType); }
-    Optional<IntPoint> hotSpot() const final { return WTF::nullopt; }
+    std::optional<IntPoint> hotSpot() const final { return std::nullopt; }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final { return size(); }
     bool frameIsCompleteAtIndex(size_t index) const final { return sampleAtIndex(index); }
@@ -84,12 +84,12 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(InnerDecoder);
     public:
-        static RefPtr<InnerDecoder> create(ImageDecoderGStreamer& decoder, const char* data, gssize size)
+        static RefPtr<InnerDecoder> create(ImageDecoderGStreamer& decoder, const uint8_t* data, gssize size)
         {
             return adoptRef(*new InnerDecoder(decoder, data, size));
         }
 
-        InnerDecoder(ImageDecoderGStreamer& decoder, const char* data, gssize size)
+        InnerDecoder(ImageDecoderGStreamer& decoder, const uint8_t* data, gssize size)
             : m_decoder(decoder)
             , m_runLoop(RunLoop::current())
         {
@@ -116,8 +116,8 @@ private:
         GRefPtr<GstElement> m_decodebin;
         RunLoop& m_runLoop;
 
-        CheckedCondition m_messageCondition;
-        CheckedLock m_messageLock;
+        Condition m_messageCondition;
+        Lock m_messageLock;
         bool m_messageDispatched WTF_GUARDED_BY_LOCK(m_messageLock) { false };
     };
 
@@ -131,14 +131,14 @@ private:
     DecodeOrderSampleMap::iterator m_cursor;
     Lock m_sampleGeneratorLock;
     bool m_eos { false };
-    Optional<IntSize> m_size;
+    std::optional<IntSize> m_size;
     String m_mimeType;
     RefPtr<ImageDecoderGStreamer::InnerDecoder> m_innerDecoder;
-    CheckedCondition m_sampleCondition;
-    CheckedLock m_sampleLock;
+    Condition m_sampleCondition;
+    Lock m_sampleLock;
     GRefPtr<GstSample> m_sample WTF_GUARDED_BY_LOCK(m_sampleLock);
-    CheckedCondition m_handlerCondition;
-    CheckedLock m_handlerLock;
+    Condition m_handlerCondition;
+    Lock m_handlerLock;
 };
 }
 #endif

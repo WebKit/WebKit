@@ -39,11 +39,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
 {
     auto bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)
-        return WTF::nullopt;
+        return std::nullopt;
 
     RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
     RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
@@ -51,7 +51,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), kUTTypePNG, 1, 0));
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!destination)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CGImageDestinationAddImage(destination.get(), cgImage.get(), 0);
     CGImageDestinationFinalize(destination.get());
@@ -59,12 +59,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return String([imageData base64EncodedStringWithOptions:0]);
 }
 
-Optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
+std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
 {
     RetainPtr<NSData> fileContents = adoptNS([[NSData alloc] initWithBase64EncodedString:base64EncodedFileContents options:0]);
     if (!fileContents) {
         LOG_ERROR("WebAutomationSession: unable to decode base64-encoded file contents.");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"WebDriver");
@@ -75,13 +75,13 @@ Optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFil
     [fileContents.get() writeToFile:localFilePath options:NSDataWritingAtomic error:&fileWriteError];
     if (fileWriteError) {
         LOG_ERROR("WebAutomationSession: Error writing image data to temporary file: %@", fileWriteError);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return String(localFilePath);
 }
 
-Optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
@@ -89,7 +89,7 @@ Optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protoco
     case Inspector::Protocol::Automation::VirtualKey::Alternate:
     case Inspector::Protocol::Automation::VirtualKey::Meta:
     case Inspector::Protocol::Automation::VirtualKey::Command:
-        return WTF::nullopt;
+        return std::nullopt;
     case Inspector::Protocol::Automation::VirtualKey::Help:
         return NSHelpFunctionKey;
     case Inspector::Protocol::Automation::VirtualKey::Backspace:
@@ -193,11 +193,11 @@ Optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protoco
     case Inspector::Protocol::Automation::VirtualKey::Function12:
         return NSF12FunctionKey;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
-Optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+std::optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::NumberPadMultiply:

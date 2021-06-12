@@ -31,8 +31,7 @@
 #include "AudioTrack.h"
 #include "AutoplayEvent.h"
 #include "CaptionUserPreferences.h"
-#include "DeferrableTask.h"
-#include "GenericEventQueue.h"
+#include "EventLoopEventQueue.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaCanStartListener.h"
@@ -46,7 +45,6 @@
 #include "VisibilityChangeClient.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
@@ -109,7 +107,7 @@ class RemotePlayback;
 using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
 using CueList = Vector<CueInterval>;
 
-using MediaProvider = Optional<Variant<
+using MediaProvider = std::optional<Variant<
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStream>,
 #endif
@@ -154,7 +152,7 @@ public:
     bool hasAudio() const override;
     bool hasRenderer() const { return static_cast<bool>(renderer()); }
 
-    static HashSet<HTMLMediaElement*>& allMediaElements();
+    WEBCORE_EXPORT static HashSet<HTMLMediaElement*>& allMediaElements();
 
     WEBCORE_EXPORT static RefPtr<HTMLMediaElement> bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose, const Document* = nullptr);
 
@@ -186,7 +184,7 @@ public:
 #endif
 
     void scheduleCheckPlaybackTargetCompatability();
-    void checkPlaybackTargetCompatablity();
+    void checkPlaybackTargetCompatibility();
     void scheduleResolvePendingPlayPromises();
     void scheduleRejectPendingPlayPromises(Ref<DOMException>&&);
     using PlayPromiseVector = Vector<DOMPromiseDeferred<void>>;
@@ -819,7 +817,7 @@ private:
     bool pausedForUserInteraction() const;
     bool couldPlayIfEnoughData() const;
     void dispatchPlayPauseEventsIfNeedsQuirks();
-    SuccessOr<MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
+    Expected<void, MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
 
     void setAutoplayEventPlaybackState(AutoplayEventPlaybackState);
     void userDidInterfereWithAutoplay();
@@ -930,39 +928,32 @@ private:
     void setInActiveDocument(bool);
 
     void checkForAudioAndVideo();
+    bool hasLiveSource() const;
 
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }
 #endif
 
-    friend class TaskDispatcher<HTMLMediaElement>;
-    void enqueueTaskForDispatcher(Function<void()>&&);
-
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
-    DeferrableTask<Timer> m_configureTextTracksTask;
-    DeferrableTask<Timer> m_checkPlaybackTargetCompatablityTask;
-    DeferrableTask<Timer> m_updateMediaStateTask;
-    DeferrableTask<Timer> m_mediaEngineUpdatedTask;
-    DeferrableTask<HTMLMediaElement> m_updatePlayStateTask;
-    DeferrableTask<Timer> m_resumeTaskQueue;
-    DeferrableTask<Timer> m_seekTaskQueue;
-    DeferrableTask<Timer> m_playbackControlsManagerBehaviorRestrictionsQueue;
-    DeferrableTask<Timer> m_bufferedTimeRangesChangedQueue;
-    GenericTaskQueue<Timer> m_promiseTaskQueue;
-    GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
-    GenericTaskQueue<Timer> m_resourceSelectionTaskQueue;
-    GenericTaskQueue<Timer> m_visibilityChangeTaskQueue;
-    GenericTaskQueue<Timer> m_fullscreenTaskQueue;
-    GenericTaskQueue<Timer> m_playbackTargetIsWirelessQueue;
+    CancellableTask::Handle m_configureTextTracksTask;
+    CancellableTask::Handle m_checkPlaybackTargetCompatibilityTask;
+    CancellableTask::Handle m_updateMediaStateTask;
+    CancellableTask::Handle m_mediaEngineUpdatedTask;
+    CancellableTask::Handle m_updatePlayStateTask;
+    CancellableTask::Handle m_resumeTask;
+    CancellableTask::Handle m_seekTask;
+    CancellableTask::Handle m_playbackControlsManagerBehaviorRestrictionsTask;
+    CancellableTask::Handle m_bufferedTimeRangesChangedTask;
+    EventLoopTaskQueue m_resourceSelectionTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
-    DeferrableTask<Timer> m_volumeRevertTaskQueue;
+    CancellableTask::Handle m_volumeRevertTask;
 #endif
 
     PlayPromiseVector m_pendingPlayPromises;
@@ -1116,7 +1107,7 @@ private:
     String m_subtitleTrackLanguage;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
 
-    Optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
+    std::optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
 
     RefPtr<AudioTrackList> m_audioTracks;
     RefPtr<TextTrackList> m_textTracks;
@@ -1145,7 +1136,7 @@ private:
 
     WeakPtr<const MediaResourceLoader> m_lastMediaResourceLoaderForTesting;
 
-    Optional<DynamicRangeMode> m_overrideDynamicRangeMode;
+    std::optional<DynamicRangeMode> m_overrideDynamicRangeMode;
 
     friend class TrackDisplayUpdateScope;
 
@@ -1162,7 +1153,6 @@ private:
     RefPtr<MediaKeys> m_mediaKeys;
     bool m_attachingMediaKeys { false };
     bool m_playbackBlockedWaitingForKey { false };
-    GenericTaskQueue<Timer> m_encryptedMediaQueue;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

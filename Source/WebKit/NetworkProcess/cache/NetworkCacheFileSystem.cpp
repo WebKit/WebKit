@@ -84,7 +84,7 @@ FileTimes fileTimes(const String& path)
 #elif OS(WINDOWS)
     auto createTime = FileSystem::fileCreationTime(path);
     auto modifyTime = FileSystem::fileModificationTime(path);
-    return { createTime.valueOr(WallTime()), modifyTime.valueOr(WallTime()) };
+    return { createTime.value_or(WallTime()), modifyTime.value_or(WallTime()) };
 #endif
 }
 

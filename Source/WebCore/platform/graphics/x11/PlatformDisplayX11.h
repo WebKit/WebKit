@@ -28,7 +28,7 @@
 #if PLATFORM(X11)
 
 #include "PlatformDisplay.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 typedef struct _XDisplay Display;
 
@@ -48,8 +48,8 @@ public:
     ::Display* native() const { return m_display; }
     void* visual() const;
     bool supportsXComposite() const;
-    bool supportsXDamage(Optional<int>& damageEventBase, Optional<int>& damageErrorBase) const;
-    bool supportsGLX(Optional<int>& glxErrorBase) const;
+    bool supportsXDamage(std::optional<int>& damageEventBase, std::optional<int>& damageErrorBase) const;
+    bool supportsGLX(std::optional<int>& glxErrorBase) const;
 
 private:
     PlatformDisplayX11(::Display*, NativeDisplayOwned);
@@ -65,13 +65,13 @@ private:
 #endif
 
     ::Display* m_display { nullptr };
-    mutable Optional<bool> m_supportsXComposite;
-    mutable Optional<bool> m_supportsXDamage;
-    mutable Optional<int> m_damageEventBase;
-    mutable Optional<int> m_damageErrorBase;
+    mutable std::optional<bool> m_supportsXComposite;
+    mutable std::optional<bool> m_supportsXDamage;
+    mutable std::optional<int> m_damageEventBase;
+    mutable std::optional<int> m_damageErrorBase;
 #if USE(GLX)
-    mutable Optional<bool> m_supportsGLX;
-    mutable Optional<int> m_glxErrorBase;
+    mutable std::optional<bool> m_supportsGLX;
+    mutable std::optional<int> m_glxErrorBase;
 #endif
     mutable void* m_visual { nullptr };
 };

@@ -396,7 +396,7 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
     auto& iconData = gTestRunner->openPanelFilesMediaIcon();
     CGImageRef imageRef = nullptr;
     if (!iconData.empty()) {
-        auto dataRef = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8*>(iconData.data()), iconData.size()));
+        auto dataRef = adoptCF(CFDataCreate(nullptr, iconData.data(), iconData.size()));
         auto imageProviderRef = adoptCF(CGDataProviderCreateWithCFData(dataRef.get()));
         imageRef = CGImageCreateWithJPEGDataProvider(imageProviderRef.get(), nullptr, true, kCGRenderingIntentDefault);
     }

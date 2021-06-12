@@ -51,8 +51,6 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     , m_pageID(pageID)
     , m_shouldRelaxThirdPartyCookieBlocking(shouldRelaxThirdPartyCookieBlocking)
 {
-    m_startTime = MonotonicTime::now();
-
     auto request = requestWithCredentials;
     if (request.url().protocolIsInHTTPFamily()) {
         if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
@@ -79,7 +77,6 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
     }
-    m_curlRequest->setStartTime(m_startTime);
     m_curlRequest->start();
 }
 
@@ -311,9 +308,6 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         if (m_curlRequest)
             m_curlRequest->cancel();
 
-        if (newRequest.url().protocolIsInHTTPFamily() && isCrossOrigin)
-            m_startTime = MonotonicTime::now();
-
         auto requestCopy = newRequest;
         restrictRequestReferrerToOriginIfNeeded(requestCopy);
         m_curlRequest = createCurlRequest(WTFMove(requestCopy));
@@ -321,7 +315,6 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
             m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
         }
-        m_curlRequest->setStartTime(m_startTime);
         m_curlRequest->start();
 
         if (m_state != State::Suspended) {
@@ -442,7 +435,6 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
     m_curlRequest->setUserPass(credential.user(), credential.password());
     if (shouldDisableServerTrustEvaluation)
         m_curlRequest->disableServerTrustEvaluation();
-    m_curlRequest->setStartTime(m_startTime);
     m_curlRequest->start();
 
     if (m_state != State::Suspended) {
@@ -454,7 +446,7 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
 void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 {
     auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies, ShouldAskITP::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
+    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ShouldAskITP::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
     if (!cookieHeaderField.isEmpty())
         request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
 }

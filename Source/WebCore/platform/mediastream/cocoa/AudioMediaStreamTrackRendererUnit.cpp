@@ -81,7 +81,9 @@ void AudioMediaStreamTrackRendererUnit::setAudioOutputDevice(const String& devic
 
 void AudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& source)
 {
-    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::addSource");
+#if !RELEASE_LOG_DISABLED
+    source->logger().logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
+#endif
     ASSERT(isMainThread());
 
     ASSERT(!m_sources.contains(source.get()));
@@ -100,7 +102,9 @@ void AudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& s
 
 void AudioMediaStreamTrackRendererUnit::removeSource(AudioSampleDataSource& source)
 {
-    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::removeSource");
+#if !RELEASE_LOG_DISABLED
+    source.logger().logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
+#endif
     ASSERT(isMainThread());
 
     bool shouldStop = !m_sources.isEmpty();

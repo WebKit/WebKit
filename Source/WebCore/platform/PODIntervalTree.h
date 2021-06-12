@@ -28,7 +28,6 @@
 
 #include "PODInterval.h"
 #include "PODRedBlackTree.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 // FIXME: The prefix "POD" here isn't correct; this tree works with non-POD types.
@@ -60,11 +59,11 @@ public:
         searchForOverlapsFrom(this->root(), adapter);
     }
 
-    Optional<IntervalType> nextIntervalAfter(const T& point)
+    std::optional<IntervalType> nextIntervalAfter(const T& point)
     {
         auto next = smallestNodeGreaterThanFrom(point, this->root());
         if (!next)
-            return WTF::nullopt;
+            return std::nullopt;
         return next->data();
     }
 

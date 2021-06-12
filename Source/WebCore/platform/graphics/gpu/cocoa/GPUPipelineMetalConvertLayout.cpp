@@ -45,28 +45,28 @@ static OptionSet<WHLSL::ShaderStage> convertShaderStageFlags(GPUShaderStageFlags
     return result;
 }
 
-static Optional<WHLSL::Binding::BindingDetails> convertBindingType(GPUBindGroupLayout::InternalBindingDetails internalBindingDetails)
+static std::optional<WHLSL::Binding::BindingDetails> convertBindingType(GPUBindGroupLayout::InternalBindingDetails internalBindingDetails)
 {
-    return WTF::visit(WTF::makeVisitor([&](GPUBindGroupLayout::UniformBuffer uniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+    return WTF::visit(WTF::makeVisitor([&](GPUBindGroupLayout::UniformBuffer uniformBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::UniformBufferBinding { uniformBuffer.internalLengthName } };
-    }, [&](GPUBindGroupLayout::DynamicUniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
-        return WTF::nullopt;
-    }, [&](GPUBindGroupLayout::Sampler) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::DynamicUniformBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
+        return std::nullopt;
+    }, [&](GPUBindGroupLayout::Sampler) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::SamplerBinding { } };
-    }, [&](GPUBindGroupLayout::SampledTexture) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::SampledTexture) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::TextureBinding { } };
-    }, [&](GPUBindGroupLayout::StorageBuffer storageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::StorageBuffer storageBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::StorageBufferBinding { storageBuffer.internalLengthName } };
-    }, [&](GPUBindGroupLayout::DynamicStorageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
-        return WTF::nullopt;
+    }, [&](GPUBindGroupLayout::DynamicStorageBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
+        return std::nullopt;
     }), internalBindingDetails);
 }
 
-Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
+std::optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
 {
     WHLSL::Layout result;
     if (layout.bindGroupLayouts().size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
+        return std::nullopt;
     for (size_t i = 0; i < layout.bindGroupLayouts().size(); ++i) {
         const auto& bindGroupLayout = layout.bindGroupLayouts()[i];
         WHLSL::BindGroup bindGroup;
@@ -78,9 +78,9 @@ Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
             if (auto bindingType = convertBindingType(bindingDetails.internalBindingDetails))
                 binding.binding = *bindingType;
             else
-                return WTF::nullopt;
+                return std::nullopt;
             if (bindingDetails.externalBinding.binding > std::numeric_limits<unsigned>::max())
-                return WTF::nullopt;
+                return std::nullopt;
             binding.externalName = bindingDetails.externalBinding.binding;
             binding.internalName = bindingDetails.internalName;
             bindGroup.bindings.append(WTFMove(binding));

@@ -34,23 +34,26 @@ namespace WebKit {
 
 void XRDeviceInfo::encode(IPC::Encoder& encoder) const
 {
-    encoder << identifier << supportsOrientationTracking << supportsStereoRendering << features;
+    encoder << identifier << supportsOrientationTracking << supportsStereoRendering << features << recommendedResolution;
 }
 
-Optional<XRDeviceInfo> XRDeviceInfo::decode(IPC::Decoder& decoder)
+std::optional<XRDeviceInfo> XRDeviceInfo::decode(IPC::Decoder& decoder)
 {
     XRDeviceInfo deviceFeatures;
     if (!decoder.decode(deviceFeatures.identifier))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(deviceFeatures.supportsOrientationTracking))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(deviceFeatures.supportsStereoRendering))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(deviceFeatures.features))
-        return WTF::nullopt;
+        return std::nullopt;
+
+    if (!decoder.decode(deviceFeatures.recommendedResolution))
+        return std::nullopt;
 
     return deviceFeatures;
 }

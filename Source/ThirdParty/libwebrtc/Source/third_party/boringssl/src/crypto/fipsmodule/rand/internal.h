@@ -36,6 +36,31 @@ extern "C" {
 void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
                                      const uint8_t user_additional_data[32]);
 
+#if defined(BORINGSSL_FIPS)
+
+// We overread from /dev/urandom or RDRAND by a factor of 10 and XOR to whiten.
+#define BORINGSSL_FIPS_OVERREAD 10
+
+// CRYPTO_get_seed_entropy writes |out_entropy_len| bytes of entropy, suitable
+// for seeding a DRBG, to |out_entropy|. It sets |*out_used_cpu| to one if the
+// entropy came directly from the CPU and zero if it came from the OS. It
+// actively obtains entropy from the CPU/OS and so should not be called from
+// within the FIPS module.
+void CRYPTO_get_seed_entropy(uint8_t *out_entropy, size_t out_entropy_len,
+                             int *out_used_cpu);
+
+// RAND_load_entropy supplies |entropy_len| bytes of entropy to the module. The
+// |from_cpu| parameter is true iff the entropy was obtained directly from the
+// CPU.
+void RAND_load_entropy(const uint8_t *entropy, size_t entropy_len,
+                       int from_cpu);
+
+// RAND_need_entropy is implemented outside of the FIPS module and is called
+// when the module has stopped because it has run out of entropy.
+void RAND_need_entropy(size_t bytes_needed);
+
+#endif  // BORINGSSL_FIPS
+
 // CRYPTO_sysrand fills |len| bytes at |buf| with entropy from the operating
 // system.
 void CRYPTO_sysrand(uint8_t *buf, size_t len);

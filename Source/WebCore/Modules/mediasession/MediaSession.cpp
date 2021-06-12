@@ -31,6 +31,7 @@
 #include "DOMWindow.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSMediaPositionState.h"
 #include "JSMediaSessionAction.h"
 #include "JSMediaSessionPlaybackState.h"
@@ -78,7 +79,7 @@ static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSes
     return PlatformMediaSession::NoCommand;
 }
 
-static Optional<std::pair<PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument>> platformCommandForMediaSessionAction(const MediaSessionActionDetails& actionDetails)
+static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument>> platformCommandForMediaSessionAction(const MediaSessionActionDetails& actionDetails)
 {
     PlatformMediaSession::RemoteControlCommandType command = PlatformMediaSession::NoCommand;
     PlatformMediaSession::RemoteCommandArgument argument;
@@ -127,41 +128,38 @@ static Optional<std::pair<PlatformMediaSession::RemoteControlCommandType, Platfo
 
 Ref<MediaSession> MediaSession::create(Navigator& navigator)
 {
-    return adoptRef(*new MediaSession(navigator));
+    auto session = adoptRef(*new MediaSession(navigator));
+    session->suspendIfNeeded();
+    return session;
 }
 
 MediaSession::MediaSession(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(makeWeakPtr(navigator))
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    , m_coordinator(MediaSessionCoordinator::create(navigator.scriptExecutionContext()))
+#endif
 {
     m_logger = makeRefPtr(Document::sharedLogger());
     m_logIdentifier = nextLogIdentifier();
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     auto* frame = navigator.frame();
-    if (auto* page = frame ? frame->page() : nullptr) {
-        if (auto coordinatorPrivate = page->mediaSessionCoordinator())
-            createCoordinator(*coordinatorPrivate);
-    }
+    auto* page = frame ? frame->page() : nullptr;
+    if (page && page->mediaSessionCoordinator())
+        m_coordinator->setMediaSessionCoordinatorPrivate(*page->mediaSessionCoordinator());
+    m_coordinator->setMediaSession(this);
 #endif
-
-    suspendIfNeeded();
 
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
 MediaSession::~MediaSession() = default;
 
-bool MediaSession::virtualHasPendingActivity() const
-{
-    return m_asyncEventQueue->hasPendingActivity();
-}
-
 void MediaSession::suspend(ReasonForSuspension reason)
 {
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    if (m_coordinator && reason == ReasonForSuspension::BackForwardCache)
+    if (reason == ReasonForSuspension::BackForwardCache)
         m_coordinator->leave();
 #else
     UNUSED_PARAM(reason);
@@ -171,8 +169,7 @@ void MediaSession::suspend(ReasonForSuspension reason)
 void MediaSession::stop()
 {
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    if (m_coordinator)
-        m_coordinator->close();
+    m_coordinator->close();
 #endif
 }
 
@@ -197,21 +194,6 @@ void MediaSession::setReadyState(MediaSessionReadyState state)
 
     m_readyState = state;
     notifyReadyStateObservers();
-}
-
-void MediaSession::createCoordinator(Ref<MediaSessionCoordinatorPrivate>&& coordinatorPrivate)
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    if (m_coordinator)
-        m_coordinator->setMediaSession(nullptr);
-
-    m_coordinator = MediaSessionCoordinator::create(WTFMove(coordinatorPrivate));
-
-    if (m_coordinator)
-        m_coordinator->setMediaSession(this);
-
-    m_asyncEventQueue->enqueueEvent(Event::create(eventNames().coordinatorchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 #endif
 
@@ -272,10 +254,24 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
     notifyActionHandlerObservers();
 }
 
-bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails)
+void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, DOMPromiseDeferred<void>&& promise)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (!callActionHandler(actionDetails, TriggerGestureIndicator::No)) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+
+    promise.resolve();
+}
+
+bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, TriggerGestureIndicator triggerGestureIndicator)
 {
     if (auto handler = m_actionHandlers.get(actionDetails.action)) {
-        UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
+        std::optional<UserGestureIndicator> maybeGestureIndicator;
+        if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
+            maybeGestureIndicator.emplace(ProcessingUserGesture, document());
         handler->handleEvent(actionDetails);
         return true;
     }
@@ -290,7 +286,7 @@ bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
     return true;
 }
 
-ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& state)
+ExceptionOr<void> MediaSession::setPositionState(std::optional<MediaPositionState>&& state)
 {
     if (state)
         ALWAYS_LOG(LOGIDENTIFIER, state.value());
@@ -298,7 +294,7 @@ ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& 
         ALWAYS_LOG(LOGIDENTIFIER, "{ }");
 
     if (!state) {
-        m_positionState = WTF::nullopt;
+        m_positionState = std::nullopt;
         notifyPositionStateObservers();
         return { };
     }
@@ -318,10 +314,10 @@ ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& 
     return { };
 }
 
-Optional<double> MediaSession::currentPosition() const
+std::optional<double> MediaSession::currentPosition() const
 {
     if (!m_positionState || !m_lastReportedPosition)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto actualPlaybackRate = m_playbackState == MediaSessionPlaybackState::Playing ? m_positionState->playbackRate : 0;
 

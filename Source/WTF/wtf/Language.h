@@ -35,13 +35,13 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE String defaultLanguage(); // Thread-safe.
-WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguages(); // Thread-safe, returns BCP 47 language tags.
+enum class ShouldMinimizeLanguages { No, Yes };
+
+WTF_EXPORT_PRIVATE String defaultLanguage(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe.
+WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguages(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe, returns BCP 47 language tags.
 WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguagesOverride();
 WTF_EXPORT_PRIVATE void overrideUserPreferredLanguages(const Vector<String>&);
 WTF_EXPORT_PRIVATE size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
-WTF_EXPORT_PRIVATE Vector<String> platformUserPreferredLanguages();
-WTF_EXPORT_PRIVATE void platformLanguageDidChange();
 
 // Called from platform specific code when the user's preferred language(s) change.
 WTF_EXPORT_PRIVATE void languageDidChange();
@@ -52,20 +52,22 @@ WTF_EXPORT_PRIVATE void addLanguageChangeObserver(void* context, LanguageChangeO
 WTF_EXPORT_PRIVATE void removeLanguageChangeObserver(void* context);
 WTF_EXPORT_PRIVATE String displayNameForLanguageLocale(const String&);
 
+Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes);
+
 #if PLATFORM(COCOA)
 bool canMinimizeLanguages();
 WTF_EXPORT_PRIVATE void listenForLanguageChangeNotifications();
 RetainPtr<CFArrayRef> minimizedLanguagesFromLanguages(CFArrayRef);
 #endif
 
-}
+} // namespace WTF
 
+using WTF::ShouldMinimizeLanguages;
 using WTF::defaultLanguage;
 using WTF::userPreferredLanguages;
 using WTF::userPreferredLanguagesOverride;
 using WTF::overrideUserPreferredLanguages;
 using WTF::indexOfBestMatchingLanguageInList;
-using WTF::platformUserPreferredLanguages;
 using WTF::addLanguageChangeObserver;
 using WTF::removeLanguageChangeObserver;
 using WTF::displayNameForLanguageLocale;

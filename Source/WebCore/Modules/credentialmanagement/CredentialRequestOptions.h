@@ -40,7 +40,7 @@ struct CredentialRequestOptions {
 
     MediationRequirement mediation;
     RefPtr<AbortSignal> signal;
-    Optional<PublicKeyCredentialRequestOptions> publicKey;
+    std::optional<PublicKeyCredentialRequestOptions> publicKey;
 };
 
 } // namespace WebCore

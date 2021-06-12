@@ -73,14 +73,14 @@ public:
     bool supportsSessions() const override;
     bool supportsInitData(const AtomString&, const SharedBuffer&) const override;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const override;
-    Optional<String> sanitizeSessionId(const String&) const override;
+    std::optional<String> sanitizeSessionId(const String&) const override;
 
     static const AtomString& sinfName();
-    static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);
+    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSinf(const SharedBuffer&);
 
     static const AtomString& skdName();
-    static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
+    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
     static const Vector<FourCC>& validFairPlayStreamingSchemes();

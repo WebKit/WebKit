@@ -686,7 +686,7 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
     return NotTypedArray;
 }
 
-Optional<SpeculatedType> speculationFromJSType(JSType type)
+std::optional<SpeculatedType> speculationFromJSType(JSType type)
 {
     switch (type) {
     case StringType:
@@ -718,7 +718,7 @@ Optional<SpeculatedType> speculationFromJSType(JSType type)
     case DataViewType:
         return SpecDataViewObject;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

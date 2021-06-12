@@ -70,8 +70,8 @@ private:
     void updatePreferences(const WebPreferencesStore&) override;
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
-    void setViewExposedRect(Optional<WebCore::FloatRect>) override;
-    Optional<WebCore::FloatRect> viewExposedRect() const override { return m_viewExposedRect; }
+    void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
+    std::optional<WebCore::FloatRect> viewExposedRect() const override { return m_viewExposedRect; }
 
     WebCore::FloatRect exposedContentRect() const override;
     void setExposedContentRect(const WebCore::FloatRect&) override;
@@ -98,7 +98,7 @@ private:
     void suspendPainting();
     void resumePainting();
     void setLayerHostingMode(LayerHostingMode) override;
-    void setColorSpace(const ColorSpaceData&) override;
+    void setColorSpace(std::optional<WebCore::DestinationColorSpace>) override;
     void addFence(const WTF::MachSendRight&) override;
 
     void addTransactionCallbackID(CallbackID) override;
@@ -145,7 +145,7 @@ private:
     RetainPtr<CALayer> m_debugInfoLayer;
     RetainPtr<CALayer> m_pendingRootLayer;
 
-    Optional<WebCore::FloatRect> m_viewExposedRect;
+    std::optional<WebCore::FloatRect> m_viewExposedRect;
 
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;

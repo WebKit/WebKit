@@ -67,6 +67,7 @@
 		1CBA02991FD87DF300179C7D /* FakeHelvetica-Helvetica-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CBA02941FD86EA100179C7D /* FakeHelvetica-Helvetica-400.ttf */; };
 		1CEA84DD203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CEA84DC203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf */; };
 		277CCEDD250F300A0050C572 /* UIScriptControllerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A71969250F0CE10093A1E2 /* UIScriptControllerCommon.cpp */; };
+		2904FA1E265CC5D900A7EBC9 /* StringFunctionsCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 2904FA1D265CC5D900A7EBC9 /* StringFunctionsCocoa.h */; };
 		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
 		29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */; };
 		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
@@ -261,6 +262,7 @@
 		26D758E6160BECDD00268472 /* GeolocationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationProviderMock.h; sourceTree = "<group>"; };
 		27A71969250F0CE10093A1E2 /* UIScriptControllerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIScriptControllerCommon.cpp; sourceTree = "<group>"; };
 		27A7196A250F0CFF0093A1E2 /* UIScriptControllerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerCommon.h; sourceTree = "<group>"; };
+		2904FA1D265CC5D900A7EBC9 /* StringFunctionsCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringFunctionsCocoa.h; sourceTree = "<group>"; };
 		29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
 		29210EA3144CAAA500835BB5 /* AccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityController.h; sourceTree = "<group>"; };
 		29210EA8144CAB8800835BB5 /* AccessibilityController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibilityController.idl; sourceTree = "<group>"; };
@@ -627,6 +629,7 @@
 			children = (
 				0FEB90A21905BC6A000FDBF3 /* CrashReporterInfo.h */,
 				0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */,
+				2904FA1D265CC5D900A7EBC9 /* StringFunctionsCocoa.h */,
 				2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */,
 				0F87B6141BACC4B9004EC572 /* TestRunnerWKWebView.h */,
 				0F87B6151BACC4B9004EC572 /* TestRunnerWKWebView.mm */,
@@ -979,6 +982,7 @@
 				2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */,
 				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
+				2904FA1E265CC5D900A7EBC9 /* StringFunctionsCocoa.h in Headers */,
 				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
 				2D058E0922E2EE2200E4C145 /* UIScriptControllerCocoa.h in Headers */,
 				2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */,

@@ -28,7 +28,6 @@
 #if ENABLE(WEBXR)
 
 #include "Event.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -58,7 +57,7 @@ private:
 
     RefPtr<WebXRFrame> m_frame;
     RefPtr<WebXRInputSource> m_inputSource;
-    Optional<int> m_buttonIndex;
+    std::optional<int> m_buttonIndex;
 };
 
 } // namespace WebCore

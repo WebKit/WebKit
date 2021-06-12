@@ -72,7 +72,7 @@ namespace WebKit {
 using namespace WebCore;
 
 enum class WaylandImpl { Unsupported, EGL, SHM };
-static Optional<WaylandImpl> s_waylandImpl;
+static std::optional<WaylandImpl> s_waylandImpl;
 
 #if USE(WPE_RENDERER)
 static bool isEGLImageAvailable(bool useIndexedGetString)

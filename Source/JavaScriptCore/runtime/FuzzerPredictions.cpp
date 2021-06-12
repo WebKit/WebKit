@@ -84,11 +84,11 @@ FuzzerPredictions::FuzzerPredictions(const char* filename)
     }
 }
 
-Optional<SpeculatedType> FuzzerPredictions::predictionFor(const String& key)
+std::optional<SpeculatedType> FuzzerPredictions::predictionFor(const String& key)
 {
     auto it = m_predictions.find(key);
     if (it == m_predictions.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return it->value;
 }
 

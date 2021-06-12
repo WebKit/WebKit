@@ -64,16 +64,16 @@ RefPtr<Frame> DOMSelection::frame() const
     return DOMWindowProperty::frame();
 }
 
-Optional<SimpleRange> DOMSelection::range() const
+std::optional<SimpleRange> DOMSelection::range() const
 {
     auto frame = this->frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
     auto range = frame->settings().liveRangeSelectionEnabled()
         ? frame->selection().selection().range()
         : frame->selection().selection().firstRange();
     if (!range || range->start.container->isInShadowTree())
-        return WTF::nullopt;
+        return std::nullopt;
     return range;
 }
 

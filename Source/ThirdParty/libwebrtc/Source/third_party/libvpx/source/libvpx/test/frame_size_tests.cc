@@ -69,7 +69,7 @@ class EncoderWithExpectedError : public ::libvpx_test::Encoder {
 #if CONFIG_VP9_ENCODER
     return &vpx_codec_vp9_cx_algo;
 #else
-    return NULL;
+    return nullptr;
 #endif
   }
 };
@@ -130,7 +130,7 @@ class VP9FrameSizeTestsLarge : public ::libvpx_test::EncoderTest,
       encoder->InitEncoder(video);
       ASSERT_FALSE(::testing::Test::HasFatalFailure());
       for (bool again = true; again; video->Next()) {
-        again = (video->img() != NULL);
+        again = (video->img() != nullptr);
 
         PreEncodeFrameHook(video, encoder.get());
         encoder->EncodeFrame(video, frame_flags_, expected_err);

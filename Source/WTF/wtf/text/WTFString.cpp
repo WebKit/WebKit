@@ -902,9 +902,7 @@ Vector<char> asciiDebug(StringImpl* impl)
         }
     }
     CString narrowString = buffer.toString().ascii();
-    Vector<char> result;
-    result.append(reinterpret_cast<const char*>(narrowString.data()), narrowString.length() + 1);
-    return result;
+    return { reinterpret_cast<const char*>(narrowString.data()), narrowString.length() + 1 };
 }
 
 Vector<char> asciiDebug(String& string)

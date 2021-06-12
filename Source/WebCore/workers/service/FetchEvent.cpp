@@ -56,8 +56,8 @@ FetchEvent::FetchEvent(const AtomString& type, Init&& initializer, IsTrusted isT
 FetchEvent::~FetchEvent()
 {
     if (auto callback = WTFMove(m_onResponse)) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Fetch event is destroyed without a response, respondWithEntered=%d, waitToRespond=%d, respondWithError=%d, respondPromise=%d", m_respondWithEntered, m_waitToRespond, m_respondWithError, !!m_respondPromise);
-        callback(makeUnexpected(ResourceError { errorDomainWebKitServiceWorker, 0, m_request->url(), "Fetch event is destroyed."_s, ResourceError::Type::Cancellation }));
+        RELEASE_LOG_ERROR_IF(m_respondWithEntered, ServiceWorker, "Fetch event is destroyed without a response, respondWithEntered=%d, waitToRespond=%d, respondWithError=%d, respondPromise=%d", m_respondWithEntered, m_waitToRespond, m_respondWithError, !!m_respondPromise);
+        callback(makeUnexpected(std::optional<ResourceError> { }));
     }
 }
 
@@ -106,7 +106,7 @@ void FetchEvent::respondWithError(ResourceError&& error)
     processResponse(makeUnexpected(WTFMove(error)));
 }
 
-void FetchEvent::processResponse(Expected<Ref<FetchResponse>, ResourceError>&& result)
+void FetchEvent::processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result)
 {
     m_respondPromise = nullptr;
     m_waitToRespond = false;

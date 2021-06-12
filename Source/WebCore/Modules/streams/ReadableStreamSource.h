@@ -30,7 +30,6 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamDefaultController.h"
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -63,7 +62,7 @@ protected:
 
 private:
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
-    Optional<ReadableStreamDefaultController> m_controller;
+    std::optional<ReadableStreamDefaultController> m_controller;
 };
 
 class SimpleReadableStreamSource

@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT Type type() const;
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
 
-    Optional<CertificateSummary> summary() const;
+    std::optional<CertificateSummary> summary() const;
 
     bool isEmpty() const { return type() == Type::None; }
 
@@ -120,7 +120,7 @@ namespace Persistence {
 
 template<> struct Coder<WebCore::CertificateInfo> {
     static WEBCORE_EXPORT void encode(Encoder&, const WebCore::CertificateInfo&);
-    static WEBCORE_EXPORT Optional<WebCore::CertificateInfo> decode(Decoder&);
+    static WEBCORE_EXPORT std::optional<WebCore::CertificateInfo> decode(Decoder&);
 };
 
 } // namespace WTF::Persistence

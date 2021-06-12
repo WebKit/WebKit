@@ -356,18 +356,26 @@ sub determineConfiguration
     }
 }
 
-sub determineNativeArchitecture(;$$)
+sub determineNativeArchitecture($)
 {
-    my ($target, $port) = @_;
-    $target = '' if !defined $target;
-    $port = 0 if !defined $port;
-    return if defined $nativeArchitectureMap{"$target:$port"};
+    my ($remotes) = @_;
+    return if defined $nativeArchitectureMap{@{$remotes}};
 
     my $output;
-    if ($target eq "") {
+    if (@{$remotes} == 0) {
         $output = `uname -m` unless isWindows();
     } else {
-        $output = `ssh -o NoHostAuthenticationForLocalhost=yes -p $port $target 'uname  -m'`;
+        foreach my $remote (@{$remotes}) {
+            my @split = split(':', $remote->{"address"});
+            my $target = $split[0];
+            my $port = 22;
+            $port = $split[1] if scalar(@split) > 1;
+            $output = `ssh -o NoHostAuthenticationForLocalhost=yes -p $port $target 'uname  -m'`;
+            last if ($? == 0);
+        }
+        if (length($output) == 0) {
+            die "Could not determineNativeArchitecture";
+        }
     }
     chomp $output if defined $output;
     $output = "x86_64" if (not defined $output);
@@ -378,7 +386,7 @@ sub determineNativeArchitecture(;$$)
     }
 
     $output = "arm" if $output =~ m/^armv[78]l$/;
-    $nativeArchitectureMap{"$target:$port"} = $output;
+    $nativeArchitectureMap{@{$remotes}} = $output;
 }
 
 sub determineArchitecture
@@ -386,7 +394,7 @@ sub determineArchitecture
     return if defined $architecture;
 
     determineBaseProductDir();
-    $architecture = nativeArchitecture();
+    $architecture = nativeArchitecture([]);
     if (isAppleCocoaWebKit() && $architecture eq "arm64") {
         determineXcodeSDK();
         if ($xcodeSDK eq "macosx.internal") {
@@ -1019,7 +1027,7 @@ sub XcodeOptions
         push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "tsan.xcconfig"));
     }
     push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "ubsan.xcconfig")) if $ubsanIsEnabled;
-    push @options, ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig") if $coverageIsEnabled;
+    push @options, XcodeCoverageSupportOptions() if $coverageIsEnabled;
     push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
     push @options, @baseProductDirOption;
@@ -1059,10 +1067,7 @@ sub XcodeOptionStringNoConfig
 
 sub XcodeCoverageSupportOptions()
 {
-    my @coverageSupportOptions = ();
-    push @coverageSupportOptions, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
-    push @coverageSupportOptions, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
-    return @coverageSupportOptions;
+    return ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig");
 }
 
 sub XcodeStaticAnalyzerOption()
@@ -1144,13 +1149,11 @@ sub passedArchitecture
     return $passedArchitecture;
 }
 
-sub nativeArchitecture(;$$)
+sub nativeArchitecture($)
 {
-    my ($target, $port) = @_;
-    $target = '' if !defined $target;
-    $port = 0 if !defined $port;
-    determineNativeArchitecture($target, $port);
-    return $nativeArchitectureMap{"$target:$port"};
+    my ($remotes) = @_;
+    determineNativeArchitecture($remotes);
+    return $nativeArchitectureMap{@{$remotes}};
 }
 
 sub architecture()
@@ -2384,7 +2387,10 @@ sub cmakeFilesPath()
 
 sub shouldRemoveCMakeCache(@)
 {
-    my (@buildArgs) = sort (@_, @originalArgv);
+    # For this check, ignore all arguments that do not begin with a dash. These
+    # are probably arguments specifying build targets. Changing those should
+    # not trigger a reconfiguration of the build.
+    my (@buildArgs) = grep(/^-/, sort(@_, @originalArgv));
 
     # We check this first, because we always want to create this file for a fresh build.
     my $productDir = File::Spec->catdir(baseProductDir(), configuration());

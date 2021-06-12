@@ -702,7 +702,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case DoubleRep: {
         JSValue child = forNode(node->child1()).value();
-        if (Optional<double> number = child.toNumberFromPrimitive()) {
+        if (std::optional<double> number = child.toNumberFromPrimitive()) {
             setConstant(node, jsDoubleNumber(*number));
             break;
         }
@@ -837,7 +837,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ArithClz32: {
         JSValue operand = forNode(node->child1()).value();
-        if (Optional<double> number = operand.toNumberFromPrimitive()) {
+        if (std::optional<double> number = operand.toNumberFromPrimitive()) {
             switch (node->child1().useKind()) {
             case Int32Use:
             case KnownInt32Use:
@@ -1232,7 +1232,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue child = forNode(node->child1()).value();
         switch (node->child1().useKind()) {
         case Int32Use:
-            if (Optional<double> number = child.toNumberFromPrimitive()) {
+            if (std::optional<double> number = child.toNumberFromPrimitive()) {
                 JSValue result = jsNumber(fabs(*number));
                 if (result.isInt32()) {
                     setConstant(node, result);
@@ -1242,7 +1242,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case DoubleRepUse:
-            if (Optional<double> number = child.toNumberFromPrimitive()) {
+            if (std::optional<double> number = child.toNumberFromPrimitive()) {
                 setConstant(node, jsDoubleNumber(fabs(*number)));
                 break;
             }
@@ -1285,7 +1285,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithCeil:
     case ArithTrunc: {
         JSValue operand = forNode(node->child1()).value();
-        if (Optional<double> number = operand.toNumberFromPrimitive()) {
+        if (std::optional<double> number = operand.toNumberFromPrimitive()) {
             if (node->child1().useKind() != DoubleRepUse)
                 didFoldClobberWorld();
             
@@ -1365,7 +1365,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case MapHash: {
         if (JSValue key = forNode(node->child1()).value()) {
-            if (Optional<uint32_t> hash = concurrentJSMapHash(key)) {
+            if (std::optional<uint32_t> hash = concurrentJSMapHash(key)) {
                 // Although C++ code uses uint32_t for the hash, the closest type in DFG IR is Int32
                 // and that's what MapHash returns. So, we have to cast to int32_t to avoid large
                 // unsigned values becoming doubles. This casting between signed and unsigned
@@ -1549,7 +1549,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 switch (node->op()) {
                 case IsCellWithType: {
                     bool ok = true;
-                    Optional<bool> result;
+                    std::optional<bool> result;
                     child.m_structure.forEach(
                         [&] (RegisteredStructure structure) {
                             bool matched = structure->typeInfo().type() == node->queriedType();
@@ -1745,7 +1745,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
 
         case IsCellWithType: {
-            Optional<SpeculatedType> filter = node->speculatedTypeForQuery();
+            std::optional<SpeculatedType> filter = node->speculatedTypeForQuery();
             if (!filter) {
                 if (!(child.m_type & SpecCell)) {
                     setConstant(node, jsBoolean(false));
@@ -2551,10 +2551,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // that's the conservative thing to do. Otherwise we'd need to write more code to mark such
             // paths as unreachable, or to return undefined. We could implement that eventually.
 
-            Checked<unsigned, RecordOverflow> argumentIndexChecked = index.asUInt32();
+            CheckedUint32 argumentIndexChecked = index.asUInt32();
             argumentIndexChecked += node->numberOfArgumentsToSkip();
-            unsigned argumentIndex;
-            if (argumentIndexChecked.safeGet(argumentIndex) != CheckedState::DidOverflow) {
+            if (!argumentIndexChecked.hasOverflowed()) {
+                unsigned argumentIndex = argumentIndexChecked;
                 if (inlineCallFrame) {
                     if (argumentIndex < static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1)) {
                         setForNode(node, m_state.operand(
@@ -2850,6 +2850,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
+        }
+        setForNode(node, m_vm.stringStructure.get());
+        break;
+    }
+
+    case FunctionToString: {
+        JSValue value = m_state.forNode(node->child1()).value();
+        if (value) {
+            JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, value);
+            if (JSString* asString = function->asStringConcurrently(m_vm)) {
+                setConstant(node, *m_graph.freeze(asString));
+                break;
+            }
         }
         setForNode(node, m_vm.stringStructure.get());
         break;
@@ -3786,7 +3799,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetTypedArrayByteOffset: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(forNode(node->child1()).m_value);
         if (view) {
-            Optional<unsigned> byteOffset = view->byteOffsetConcurrently();
+            std::optional<unsigned> byteOffset = view->byteOffsetConcurrently();
             if (byteOffset) {
                 setConstant(node, jsNumber(*byteOffset));
                 break;
@@ -4439,7 +4452,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case FilterCallLinkStatus:
     case FilterGetByStatus:
     case FilterPutByIdStatus:
-    case FilterInByIdStatus:
+    case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:
     case FilterSetPrivateBrandStatus:
@@ -4610,10 +4623,10 @@ void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
         break;
     }
         
-    case FilterInByIdStatus: {
+    case FilterInByStatus: {
         AbstractValue& value = forNode(node->child1());
         if (value.m_structure.isFinite())
-            node->inByIdStatus()->filter(value.m_structure.toStructureSet());
+            node->inByStatus()->filter(value.m_structure.toStructureSet());
         break;
     }
         
@@ -4872,7 +4885,7 @@ template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, double(*equivalentFunction)(double))
 {
     JSValue child = forNode(node->child1()).value();
-    if (Optional<double> number = child.toNumberFromPrimitive()) {
+    if (std::optional<double> number = child.toNumberFromPrimitive()) {
         if (node->child1().useKind() != DoubleRepUse)
             didFoldClobberWorld();
         setConstant(node, jsDoubleNumber(equivalentFunction(*number)));

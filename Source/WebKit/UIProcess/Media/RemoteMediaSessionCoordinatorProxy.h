@@ -70,14 +70,14 @@ private:
     void coordinatePlay(MediaSessionCommandCompletionHandler&&);
     void coordinatePause(MediaSessionCommandCompletionHandler&&);
     void coordinateSetTrack(const String&, MediaSessionCommandCompletionHandler&&);
-    void positionStateChanged(const Optional<WebCore::MediaPositionState>&);
+    void positionStateChanged(const std::optional<WebCore::MediaPositionState>&);
     void readyStateChanged(WebCore::MediaSessionReadyState);
     void playbackStateChanged(WebCore::MediaSessionPlaybackState);
     void trackIdentifierChanged(const String&);
 
     // MediaSessionCoordinatorClient
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
-    void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&&) final;
+    void playSession(std::optional<double> atTime, std::optional<double> hostTime, CompletionHandler<void(bool)>&&) final;
     void pauseSession(CompletionHandler<void(bool)>&&) final;
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;

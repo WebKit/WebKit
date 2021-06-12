@@ -83,7 +83,6 @@
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
@@ -94,7 +93,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGPUDevice);
 
-CheckedLock WebGPUDevice::s_instancesLock;
+Lock WebGPUDevice::s_instancesLock;
 
 RefPtr<WebGPUDevice> WebGPUDevice::tryCreate(ScriptExecutionContext& context, Ref<const WebGPUAdapter>&& adapter)
 {
@@ -112,7 +111,7 @@ HashSet<WebGPUDevice*>& WebGPUDevice::instances()
     return instances;
 }
 
-CheckedLock& WebGPUDevice::instancesLock()
+Lock& WebGPUDevice::instancesLock()
 {
     return s_instancesLock;
 }
@@ -286,7 +285,7 @@ Ref<WebGPUQueue> WebGPUDevice::getQueue() const
 void WebGPUDevice::popErrorScope(ErrorPromise&& promise)
 {
     String failMessage;
-    Optional<GPUError> error = m_errorScopes->popErrorScope(failMessage);
+    std::optional<GPUError> error = m_errorScopes->popErrorScope(failMessage);
     if (failMessage.isEmpty())
         promise.resolve(error);
     else

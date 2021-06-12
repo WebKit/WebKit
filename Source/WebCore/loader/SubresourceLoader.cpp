@@ -69,8 +69,8 @@
 
 #undef RELEASE_LOG_IF_ALLOWED
 #undef RELEASE_LOG_ERROR_IF_ALLOWED
-#define PAGE_ID ((frame() ? frame()->pageID().valueOr(PageIdentifier()) : PageIdentifier()).toUInt64())
-#define FRAME_ID ((frame() ? frame()->frameID().valueOr(FrameIdentifier()) : FrameIdentifier()).toUInt64())
+#define PAGE_ID ((frame() ? frame()->pageID().value_or(PageIdentifier()) : PageIdentifier()).toUInt64())
+#define FRAME_ID ((frame() ? frame()->frameID().value_or(FrameIdentifier()) : FrameIdentifier()).toUInt64())
 #if RELEASE_LOG_DISABLED
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) UNUSED_VARIABLE(this)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) UNUSED_VARIABLE(this)
@@ -310,7 +310,6 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             cancel();
             return completionHandler(WTFMove(newRequest));
         }
-        m_loadTiming.addRedirect(redirectResponse.url(), newRequest.url());
         m_resource->redirectReceived(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), continueWillSendRequest = WTFMove(continueWillSendRequest)] (ResourceRequest&& request) mutable {
             RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource done notifying clients");
             continueWillSendRequest(WTFMove(completionHandler), WTFMove(request));
@@ -479,7 +478,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             m_loadingMultipartContent = true;
 
             // We don't count multiParts in a CachedResourceLoader's request count
-            m_requestCountTracker = WTF::nullopt;
+            m_requestCountTracker = std::nullopt;
             if (!m_resource->isImage()) {
                 RELEASE_LOG_IF_ALLOWED("didReceiveResponse: canceling load because something about a multi-part non-image");
                 cancel();
@@ -515,7 +514,7 @@ void SubresourceLoader::didReceiveResponsePolicy()
         completionHandler();
 }
 
-void SubresourceLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
+void SubresourceLoader::didReceiveData(const uint8_t* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
 #if USE(QUICK_LOOK)
     if (auto previewLoader = m_previewLoader.get()) {
@@ -539,7 +538,7 @@ void SubresourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long e
     didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void SubresourceLoader::didReceiveDataOrBuffer(const char* data, int length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void SubresourceLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     ASSERT(m_resource);
 
@@ -733,8 +732,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     Ref<SubresourceLoader> protectedThis(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
 
-    // FIXME: Remove this with deprecatedNetworkLoadMetrics.
-    m_loadTiming.setResponseEnd(MonotonicTime::now());
+    m_loadTiming.markEndTime();
 
     if (networkLoadMetrics.isComplete())
         reportResourceTiming(networkLoadMetrics);
@@ -743,12 +741,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         // complete load metrics in didFinishLoad. In those cases, fall back to the possibility
         // that they populated partial load timing information on the ResourceResponse.
         const auto* timing = m_resource->response().deprecatedNetworkLoadMetricsOrNull();
-        Optional<NetworkLoadMetrics> empty;
-        if (!timing) {
-            empty.emplace();
-            timing = &empty.value();
-        }
-        reportResourceTiming(*timing);
+        reportResourceTiming(timing ? *timing : NetworkLoadMetrics { });
     }
 
     if (m_resource->type() != CachedResource::Type::MainResource)
@@ -862,7 +855,7 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
     if (reachedTerminalState())
         return;
 
-    m_requestCountTracker = WTF::nullopt;
+    m_requestCountTracker = std::nullopt;
     bool shouldPerformPostLoadActions = true;
 #if PLATFORM(IOS_FAMILY)
     if (m_state == CancelledWhileInitializing)

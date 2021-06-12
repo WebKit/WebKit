@@ -42,7 +42,7 @@ public:
 private:
     void notifyPowerSourceChanged();
 
-    Optional<int> m_tokenID;
+    std::optional<int> m_tokenID;
     PowerSourceNotifierCallback m_callback;
 };
 

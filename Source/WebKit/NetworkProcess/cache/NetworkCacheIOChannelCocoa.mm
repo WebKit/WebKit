@@ -51,7 +51,7 @@ static long dispatchQueueIdentifier(WorkQueue::QOS qos)
     }
 }
 
-IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS> qos)
+IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS> qos)
     : m_path(filePath)
     , m_type(type)
 {
@@ -66,17 +66,17 @@ IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS>
         unlink(path.data());
         oflag = O_RDWR | O_CREAT | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
-        dispatchQOS = qos.valueOr(WorkQueue::QOS::Background);
+        dispatchQOS = qos.value_or(WorkQueue::QOS::Background);
         break;
     case Type::Write:
         oflag = O_WRONLY | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
-        dispatchQOS = qos.valueOr(WorkQueue::QOS::Background);
+        dispatchQOS = qos.value_or(WorkQueue::QOS::Background);
         break;
     case Type::Read:
         oflag = O_RDONLY | O_NONBLOCK;
         mode = 0;
-        dispatchQOS = qos.valueOr(WorkQueue::QOS::Default);
+        dispatchQOS = qos.value_or(WorkQueue::QOS::Default);
     }
 
     int fd = ::open(path.data(), oflag, mode);

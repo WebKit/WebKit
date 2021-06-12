@@ -12,7 +12,7 @@
 
 #include "libyuv/cpu_id.h"
 
-#if defined(__clang__)
+#if defined(__clang__) && !defined(__wasm__)
 #if __has_include(<pthread.h>)
 #define LIBYUV_HAVE_PTHREAD 1
 #endif
@@ -30,7 +30,7 @@ namespace libyuv {
 void* ThreadMain(void* arg) {
   int* flags = static_cast<int*>(arg);
 
-  *flags = TestCpuFlag(kCpuHasSSSE3);
+  *flags = TestCpuFlag(kCpuInitialized);
   return nullptr;
 }
 #endif  // LIBYUV_HAVE_PTHREAD

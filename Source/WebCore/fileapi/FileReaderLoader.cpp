@@ -163,7 +163,7 @@ void FileReaderLoader::didReceiveResponse(unsigned long, const ResourceResponse&
         m_client->didStartLoading();
 }
 
-void FileReaderLoader::didReceiveData(const char* data, int dataLength)
+void FileReaderLoader::didReceiveData(const uint8_t* data, int dataLength)
 {
     ASSERT(data);
     ASSERT(dataLength > 0);

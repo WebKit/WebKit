@@ -76,7 +76,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebSocket);
 
-CheckedLock WebSocket::s_allActiveWebSocketsLock;
+Lock WebSocket::s_allActiveWebSocketsLock;
 
 const size_t maxReasonSizeInBytes = 123;
 
@@ -108,11 +108,10 @@ static String encodeProtocolString(const String& protocol)
 {
     StringBuilder builder;
     for (size_t i = 0; i < protocol.length(); i++) {
-        if (protocol[i] < 0x20 || protocol[i] > 0x7E) {
-            builder.appendLiteral("\\u");
-            builder.append(hex(protocol[i], 4));
-        } else if (protocol[i] == 0x5c)
-            builder.appendLiteral("\\\\");
+        if (protocol[i] < 0x20 || protocol[i] > 0x7E)
+            builder.append("\\u", hex(protocol[i], 4));
+        else if (protocol[i] == 0x5c)
+            builder.append("\\\\");
         else
             builder.append(protocol[i]);
     }
@@ -194,7 +193,7 @@ HashSet<WebSocket*>& WebSocket::allActiveWebSockets()
     return activeWebSockets;
 }
 
-CheckedLock& WebSocket::allActiveWebSocketsLock()
+Lock& WebSocket::allActiveWebSocketsLock()
 {
     return s_allActiveWebSocketsLock;
 }
@@ -407,7 +406,7 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
     return { };
 }
 
-ExceptionOr<void> WebSocket::close(Optional<unsigned short> optionalCode, const String& reason)
+ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, const String& reason)
 {
     int code = optionalCode ? optionalCode.value() : static_cast<int>(WebSocketChannel::CloseEventCodeNotSpecified);
     if (code == WebSocketChannel::CloseEventCodeNotSpecified)

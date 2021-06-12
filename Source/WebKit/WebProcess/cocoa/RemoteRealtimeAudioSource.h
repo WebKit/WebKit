@@ -96,7 +96,7 @@ private:
 
     RemoteRealtimeMediaSourceProxy m_proxy;
     UserMediaCaptureManager& m_manager;
-    Optional<WebCore::MediaConstraints> m_constraints;
+    std::optional<WebCore::MediaConstraints> m_constraints;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
 };

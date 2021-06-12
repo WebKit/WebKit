@@ -22,7 +22,7 @@ import (
 )
 
 // The following structures reflect the JSON of ACVP HMAC tests. See
-// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_mac.html#hmac_test_vectors
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-mac.html#name-test-vectors
 
 type hmacTestVectorSet struct {
 	Groups []hmacTestGroup `json:"testGroups"`
@@ -84,7 +84,7 @@ func (h *hmacPrimitive) Process(vectorSet []byte, m Transactable) (interface{}, 
 
 	var ret []hmacTestGroupResponse
 	// See
-	// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_mac.html#hmac_test_vectors
+	// https://pages.nist.gov/ACVP/draft-fussell-acvp-mac.html#name-test-vectors
 	// for details about the tests.
 	for _, group := range parsed.Groups {
 		response := hmacTestGroupResponse{
@@ -111,7 +111,7 @@ func (h *hmacPrimitive) Process(vectorSet []byte, m Transactable) (interface{}, 
 				return nil, fmt.Errorf("failed to decode key in test case %d/%d: %s", group.ID, test.ID, err)
 			}
 
-			// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_mac.html#hmac_vector_responses
+			// https://pages.nist.gov/ACVP/draft-fussell-acvp-mac.html#name-test-vectors
 			response.Tests = append(response.Tests, hmacTestResponse{
 				ID:     test.ID,
 				MACHex: hex.EncodeToString(h.hmac(msg, key, group.MACBits, m)),

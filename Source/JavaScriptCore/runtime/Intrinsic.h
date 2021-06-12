@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IterationKind.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -153,6 +152,7 @@ enum Intrinsic : uint8_t {
     AtomicsWaitIntrinsic,
     AtomicsXorIntrinsic,
     ParseIntIntrinsic,
+    FunctionToStringIntrinsic,
 
     // Getter intrinsics.
     TypedArrayLengthIntrinsic,
@@ -196,7 +196,7 @@ enum Intrinsic : uint8_t {
     WasmFunctionIntrinsic,
 };
 
-Optional<IterationKind> interationKindForIntrinsic(Intrinsic);
+std::optional<IterationKind> interationKindForIntrinsic(Intrinsic);
 
 const char* intrinsicName(Intrinsic);
 

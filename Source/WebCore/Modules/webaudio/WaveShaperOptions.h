@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct WaveShaperOptions : AudioNodeOptions {
-    Optional<Vector<float>> curve;
+    std::optional<Vector<float>> curve;
     OverSampleType oversample { OverSampleType::None };
 };
 

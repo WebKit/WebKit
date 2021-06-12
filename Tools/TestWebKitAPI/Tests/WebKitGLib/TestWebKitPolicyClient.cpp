@@ -115,14 +115,14 @@ public:
 
     bool loadURIAndWaitForAutoPlayed(const char* uri, WebKitAutoplayPolicy policy)
     {
-        m_autoplayed = WTF::nullopt;
+        m_autoplayed = std::nullopt;
         m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("autoplay", policy, nullptr));
         m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
 
         loadURI(uri);
         // Run until the user content messages come back from the test HTML.
         g_main_loop_run(m_mainLoop);
-        return m_autoplayed.valueOr(false);
+        return m_autoplayed.value_or(false);
     }
 
     bool runJSAndWaitForAutoPlayed(const char* script)
@@ -131,7 +131,7 @@ public:
 
         // Spin until autoplay status is reported, the run JS API can
         // complete its main loop before the promises in autoplay-check fire.
-        while (!m_autoplayed.hasValue())
+        while (!m_autoplayed.has_value())
             g_main_loop_run(m_mainLoop);
 
         return *m_autoplayed;
@@ -141,7 +141,7 @@ public:
     int m_policyDecisionTypeFilter { 0 };
     bool m_respondToPolicyDecisionAsynchronously { false };
     bool m_haltMainLoopAfterMakingDecision { false };
-    Optional<bool> m_autoplayed;
+    std::optional<bool> m_autoplayed;
     GRefPtr<WebKitPolicyDecision> m_previousPolicyDecision;
     GRefPtr<WebKitWebsitePolicies> m_websitePolicies;
 };

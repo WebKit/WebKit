@@ -115,9 +115,9 @@ inline unsigned JSArrayBufferView::byteOffset()
     return byteOffsetImpl<Mutator, unsigned>();
 }
 
-inline Optional<unsigned> JSArrayBufferView::byteOffsetConcurrently()
+inline std::optional<unsigned> JSArrayBufferView::byteOffsetConcurrently()
 {
-    return byteOffsetImpl<ConcurrentThread, Optional<unsigned>>();
+    return byteOffsetImpl<ConcurrentThread, std::optional<unsigned>>();
 }
 
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM& vm, JSValue value)

@@ -27,7 +27,6 @@
 
 #include "Debugger.h"
 #include "JSGlobalObject.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -83,7 +82,7 @@ private:
     }
 
     JSGlobalObject* m_globalObject { nullptr };
-    Optional<Seconds> m_startTime;
+    std::optional<Seconds> m_startTime;
     ProfilingReason m_reason;
 };
 

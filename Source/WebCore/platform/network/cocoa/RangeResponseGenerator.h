@@ -53,8 +53,8 @@ private:
     struct Data;
     class MediaResourceClient;
     void giveResponseToTasksWithFinishedRanges(Data&);
-    void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, const ParsedRequestRange&, Optional<size_t> expectedContentLength, const Data&);
-    static Optional<size_t> expectedContentLengthFromData(const Data&);
+    void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, const ParsedRequestRange&, std::optional<size_t> expectedContentLength, const Data&);
+    static std::optional<size_t> expectedContentLengthFromData(const Data&);
 
     HashMap<String, std::unique_ptr<Data>> m_map;
 };

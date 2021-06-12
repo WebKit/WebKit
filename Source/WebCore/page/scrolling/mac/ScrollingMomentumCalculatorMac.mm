@@ -83,7 +83,7 @@ Seconds ScrollingMomentumCalculatorMac::animationDuration()
 
 bool ScrollingMomentumCalculatorMac::requiresMomentumScrolling()
 {
-    if (m_requiresMomentumScrolling == WTF::nullopt)
+    if (m_requiresMomentumScrolling == std::nullopt)
         m_requiresMomentumScrolling = m_initialScrollOffset != retargetedScrollOffset() || m_initialVelocity.area();
     return m_requiresMomentumScrolling.value();
 }

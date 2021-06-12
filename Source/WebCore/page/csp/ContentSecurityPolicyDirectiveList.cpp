@@ -128,10 +128,8 @@ std::unique_ptr<ContentSecurityPolicyDirectiveList> ContentSecurityPolicyDirecti
     directives->parse(header, from);
 
     if (!checkEval(directives->operativeDirective(directives->m_scriptSrc.get()))) {
-        String evalDisabledMessage = makeString("Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n");
-        directives->setEvalDisabledErrorMessage(evalDisabledMessage);
-        String webAssemblyDisabledMessage = makeString("Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n");
-        directives->setWebAssemblyDisabledErrorMessage(webAssemblyDisabledMessage);
+        directives->setEvalDisabledErrorMessage(makeString("Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n"));
+        directives->setWebAssemblyDisabledErrorMessage(makeString("Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n"));
     }
 
     if (directives->isReportOnly() && directives->reportURIs().isEmpty())
@@ -369,13 +367,13 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
 // directive-name    = 1*( ALPHA / DIGIT / "-" )
 // directive-value   = *( WSP / <VCHAR except ";"> )
 //
-template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseDirective(StringParsingBuffer<CharacterType> buffer) -> Optional<ParsedDirective>
+template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseDirective(StringParsingBuffer<CharacterType> buffer) -> std::optional<ParsedDirective>
 {
     skipWhile<isASCIISpace>(buffer);
 
     // Empty directive (e.g. ";;;"). Exit early.
     if (buffer.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto nameBegin = buffer.position();
     skipWhile<isDirectiveNameCharacter>(buffer);
@@ -384,7 +382,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (nameBegin == buffer.position()) {
         skipWhile<isNotASCIISpace>(buffer);
         m_policy.reportUnsupportedDirective(String(nameBegin, buffer.position() - nameBegin));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto name = String(nameBegin, buffer.position() - nameBegin);
@@ -395,7 +393,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (!skipExactly<isASCIISpace>(buffer)) {
         skipWhile<isNotASCIISpace>(buffer);
         m_policy.reportUnsupportedDirective(String(nameBegin, buffer.position() - nameBegin));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     skipWhile<isASCIISpace>(buffer);
@@ -405,7 +403,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
 
     if (!buffer.atEnd()) {
         m_policy.reportInvalidDirectiveValueCharacter(name, String(valueBegin, buffer.end() - valueBegin));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // The directive-value may be empty.

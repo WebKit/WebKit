@@ -33,7 +33,7 @@ namespace WebCore {
 class TransitionEvent final : public AnimationEventBase {
     WTF_MAKE_ISO_ALLOCATED(TransitionEvent);
 public:
-    static Ref<TransitionEvent> create(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement, Optional<Seconds> timelineTime, WebAnimation* animation)
+    static Ref<TransitionEvent> create(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement, std::optional<Seconds> timelineTime, WebAnimation* animation)
     {
         return adoptRef(*new TransitionEvent(type, propertyName, elapsedTime, pseudoElement, timelineTime, animation));
     }
@@ -60,7 +60,7 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    TransitionEvent(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement, Optional<Seconds> timelineTime, WebAnimation*);
+    TransitionEvent(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement, std::optional<Seconds> timelineTime, WebAnimation*);
     TransitionEvent(const AtomString& type, const Init& initializer, IsTrusted);
 
     String m_propertyName;

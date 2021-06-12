@@ -880,7 +880,7 @@ void OrderedNamedLinesCollector::appendLines(CSSGridLineNamesValue& lineNamesVal
 
     auto& cssValuePool = CSSValuePool::singleton();
     for (const auto& lineName : iter->value)
-        lineNamesValue.append(cssValuePool.createValue(lineName, CSSUnitType::CSS_STRING));
+        lineNamesValue.append(cssValuePool.createCustomIdent(lineName));
 }
 
 void OrderedNamedLinesCollector::collectLineNamesForIndex(CSSGridLineNamesValue& lineNamesValue, unsigned i) const
@@ -1041,7 +1041,7 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
         return cssValuePool.createIdentifierValue(CSSValueAuto);
 
     if (position.isNamedGridArea())
-        return cssValuePool.createValue(position.namedGridLine(), CSSUnitType::CSS_STRING);
+        return cssValuePool.createCustomIdent(position.namedGridLine());
 
     auto list = CSSValueList::createSpaceSeparated();
     if (position.isSpan()) {
@@ -1051,7 +1051,7 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
         list->append(cssValuePool.createValue(position.integerPosition(), CSSUnitType::CSS_NUMBER));
 
     if (!position.namedGridLine().isNull())
-        list->append(cssValuePool.createValue(position.namedGridLine(), CSSUnitType::CSS_STRING));
+        list->append(cssValuePool.createCustomIdent(position.namedGridLine()));
     return list;
 }
 
@@ -1063,9 +1063,9 @@ static Ref<CSSValue> createTransitionPropertyValue(const Animation& animation)
     case Animation::TransitionMode::All:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAll);
     case Animation::TransitionMode::SingleProperty:
-        return CSSValuePool::singleton().createValue(getPropertyNameString(animation.property().id), CSSUnitType::CSS_STRING);
+        return CSSValuePool::singleton().createCustomIdent(getPropertyNameString(animation.property().id));
     case Animation::TransitionMode::UnknownProperty:
-        return CSSValuePool::singleton().createValue(animation.unknownProperty(), CSSUnitType::CSS_STRING);
+        return CSSValuePool::singleton().createCustomIdent(animation.unknownProperty());
     }
     ASSERT_NOT_REACHED();
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
@@ -1100,9 +1100,9 @@ static Ref<CSSValueList> valueForScrollSnapType(const ScrollSnapType& type)
 static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alignment)
 {
     auto value = CSSValueList::createSpaceSeparated();
-    value->append(CSSPrimitiveValue::create(alignment.y));
-    if (alignment.x != alignment.y)
-        value->append(CSSPrimitiveValue::create(alignment.x));
+    value->append(CSSPrimitiveValue::create(alignment.blockAlign));
+    if (alignment.inlineAlign != alignment.blockAlign)
+        value->append(CSSPrimitiveValue::create(alignment.inlineAlign));
     return value;
 }
 
@@ -1761,8 +1761,8 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
     for (auto& keyValue : *map) {
-        list->append(cssValuePool.createValue(keyValue.key, CSSUnitType::CSS_STRING));
-        double number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).valueOr(0);
+        list->append(cssValuePool.createCustomIdent(keyValue.key));
+        double number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).value_or(0);
         list->append(cssValuePool.createValue(number, CSSUnitType::CSS_NUMBER));
     }
     return list;
@@ -1842,7 +1842,7 @@ Ref<CSSFontStyleValue> ComputedStyleExtractor::fontNonKeywordStyleFromStyleValue
     return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(static_cast<float>(italic), CSSUnitType::CSS_DEG));
 }
 
-Ref<CSSFontStyleValue> ComputedStyleExtractor::fontStyleFromStyleValue(Optional<FontSelectionValue> italic, FontStyleAxis fontStyleAxis)
+Ref<CSSFontStyleValue> ComputedStyleExtractor::fontStyleFromStyleValue(std::optional<FontSelectionValue> italic, FontStyleAxis fontStyleAxis)
 {
     if (auto keyword = fontStyleKeyword(italic, fontStyleAxis))
         return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(keyword.value()));
@@ -3051,7 +3051,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitLocale:
             if (style.specifiedLocale().isNull())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
-            return cssValuePool.createValue(style.specifiedLocale(), CSSUnitType::CSS_STRING);
+            return cssValuePool.createCustomIdent(style.specifiedLocale());
         case CSSPropertyMarginTop:
             return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
         case CSSPropertyMarginRight: {
@@ -3423,8 +3423,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style.animations();
             if (t) {
-                for (size_t i = 0; i < t->size(); ++i)
-                    list->append(cssValuePool.createValue(t->animation(i).name(), CSSUnitType::CSS_STRING));
+                for (size_t i = 0; i < t->size(); ++i) {
+                    auto& name = t->animation(i).name();
+                    if (name.isIdentifier)
+                        list->append(cssValuePool.createCustomIdent(name.string));
+                    else
+                        list->append(cssValuePool.createValue(name.string, CSSUnitType::CSS_STRING));
+                }
             } else
                 list->append(cssValuePool.createIdentifierValue(CSSValueNone));
             return list;
@@ -3686,7 +3691,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitLineGrid:
             if (style.lineGrid().isNull())
                 return cssValuePool.createIdentifierValue(CSSValueNone);
-            return cssValuePool.createValue(style.lineGrid(), CSSUnitType::CSS_STRING);
+            return cssValuePool.createCustomIdent(style.lineGrid());
         case CSSPropertyWebkitLineSnap:
             return CSSPrimitiveValue::create(style.lineSnap());
         case CSSPropertyWebkitLineAlign:

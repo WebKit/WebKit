@@ -38,6 +38,7 @@
 #include "LayoutRect.h"
 #include "Page.h"
 #include "PageOverlayController.h"
+#include "PlatformMouseEvent.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SimpleRange.h"
@@ -57,38 +58,48 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
     if (!m_page || !m_page->chrome().client().needsImageOverlayControllerForSelectionPainting())
         return;
 
-    if (frame.editor().ignoreSelectionChanges())
+    if (frame.editor().ignoreSelectionChanges() || frame.editor().isGettingDictionaryPopupInfo())
         return;
 
-    auto overlayHostRenderer = ([&] () -> RenderElement* {
-        if (quads.isEmpty())
-            return nullptr;
+    m_hostElementForSelection = nullptr;
+    m_selectionQuads.clear();
+    m_selectionBackgroundColor = Color::transparentBlack;
+    m_selectionClipRect = { };
 
+    auto overlayHost = ([&] () -> RefPtr<HTMLElement> {
         auto selectedRange = frame.selection().selection().range();
         if (!selectedRange)
             return nullptr;
 
-        if (!HTMLElement::isInsideImageOverlay(*selectedRange) || selectedRange->collapsed())
+        if (!HTMLElement::isInsideImageOverlay(*selectedRange))
             return nullptr;
 
-        auto overlayHost = makeRefPtr(selectedRange->startContainer().shadowHost());
-        if (!overlayHost) {
-            ASSERT_NOT_REACHED();
-            return nullptr;
-        }
+        if (auto host = makeRefPtr(selectedRange->startContainer().shadowHost()); is<HTMLElement>(host))
+            return makeRefPtr(downcast<HTMLElement>(*host));
 
-        return overlayHost->renderer();
+        return nullptr;
     })();
 
-    if (!overlayHostRenderer || !shouldUsePageOverlayToPaintSelection(*overlayHostRenderer)) {
+    if (!overlayHost) {
         uninstallPageOverlayIfNeeded();
         return;
     }
 
-    m_overlaySelectionQuads = quads;
-    m_selectionOverlayBounds = overlayHostRenderer->absoluteBoundingBoxRect();
+    auto overlayHostRenderer = overlayHost->renderer();
+    if (!overlayHostRenderer) {
+        uninstallPageOverlayIfNeeded();
+        return;
+    }
+
+    if (!shouldUsePageOverlayToPaintSelection(*overlayHostRenderer)) {
+        uninstallPageOverlayIfNeeded();
+        return;
+    }
+
+    m_hostElementForSelection = makeWeakPtr(*overlayHost);
+    m_selectionQuads = quads;
     m_selectionBackgroundColor = overlayHostRenderer->selectionBackgroundColor();
-    m_currentOverlayDocument = makeWeakPtr(overlayHostRenderer->document());
+    m_selectionClipRect = overlayHostRenderer->absoluteBoundingBoxRect();
 
     installPageOverlayIfNeeded().setNeedsDisplay();
 }
@@ -102,8 +113,15 @@ bool ImageOverlayController::shouldUsePageOverlayToPaintSelection(const RenderEl
 
 void ImageOverlayController::documentDetached(const Document& document)
 {
-    if (&document == m_currentOverlayDocument)
-        uninstallPageOverlayIfNeeded();
+    if (m_hostElementForSelection && &document == &m_hostElementForSelection->document())
+        m_hostElementForSelection = nullptr;
+
+#if PLATFORM(MAC)
+    if (m_hostElementForDataDetectors && &document == &m_hostElementForDataDetectors->document())
+        m_hostElementForDataDetectors = nullptr;
+#endif
+
+    uninstallPageOverlayIfNeeded();
 }
 
 PageOverlay& ImageOverlayController::installPageOverlayIfNeeded()
@@ -116,12 +134,16 @@ PageOverlay& ImageOverlayController::installPageOverlayIfNeeded()
     return *m_overlay;
 }
 
-void ImageOverlayController::uninstallPageOverlayIfNeeded()
+void ImageOverlayController::uninstallPageOverlay()
 {
-    m_selectionOverlayBounds = { };
-    m_overlaySelectionQuads.clear();
+    m_hostElementForSelection = nullptr;
+    m_selectionQuads.clear();
     m_selectionBackgroundColor = Color::transparentBlack;
-    m_currentOverlayDocument = nullptr;
+    m_selectionClipRect = { };
+
+#if PLATFORM(MAC)
+    clearDataDetectorHighlights();
+#endif
 
     auto overlayToUninstall = std::exchange(m_overlay, nullptr);
     if (!m_page || !overlayToUninstall)
@@ -130,10 +152,23 @@ void ImageOverlayController::uninstallPageOverlayIfNeeded()
     m_page->pageOverlayController().uninstallPageOverlay(*overlayToUninstall, PageOverlay::FadeMode::DoNotFade);
 }
 
+void ImageOverlayController::uninstallPageOverlayIfNeeded()
+{
+    if (m_hostElementForSelection)
+        return;
+
+#if PLATFORM(MAC)
+    if (m_hostElementForDataDetectors)
+        return;
+#endif
+
+    uninstallPageOverlay();
+}
+
 void ImageOverlayController::willMoveToPage(PageOverlay&, Page* page)
 {
     if (!page)
-        uninstallPageOverlayIfNeeded();
+        uninstallPageOverlay();
 }
 
 void ImageOverlayController::drawRect(PageOverlay& pageOverlay, GraphicsContext& context, const IntRect& dirtyRect)
@@ -146,11 +181,11 @@ void ImageOverlayController::drawRect(PageOverlay& pageOverlay, GraphicsContext&
     GraphicsContextStateSaver stateSaver(context);
     context.clearRect(dirtyRect);
 
-    if (m_overlaySelectionQuads.isEmpty())
+    if (m_selectionQuads.isEmpty())
         return;
 
     Path coalescedSelectionPath;
-    for (auto& quad : m_overlaySelectionQuads) {
+    for (auto& quad : m_selectionQuads) {
         coalescedSelectionPath.moveTo(quad.p1());
         coalescedSelectionPath.addLineTo(quad.p2());
         coalescedSelectionPath.addLineTo(quad.p3());
@@ -160,8 +195,21 @@ void ImageOverlayController::drawRect(PageOverlay& pageOverlay, GraphicsContext&
     }
 
     context.setFillColor(m_selectionBackgroundColor);
-    context.clip(m_selectionOverlayBounds);
+    context.clip(m_selectionClipRect);
     context.fillPath(coalescedSelectionPath);
 }
+
+#if !PLATFORM(MAC)
+
+bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent&)
+{
+    return false;
+}
+
+void ImageOverlayController::elementUnderMouseDidChange(Frame&, Element*)
+{
+}
+
+#endif // !PLATFORM(MAC)
 
 } // namespace WebCore

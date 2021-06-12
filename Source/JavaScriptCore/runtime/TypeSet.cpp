@@ -95,42 +95,36 @@ String TypeSet::dumpTypes() const
     StringBuilder seen;
 
     if (m_seenTypes & TypeFunction)
-        seen.appendLiteral("Function ");
+        seen.append("Function ");
     if (m_seenTypes & TypeUndefined)
-        seen.appendLiteral("Undefined ");
+        seen.append("Undefined ");
     if (m_seenTypes & TypeNull)
-        seen.appendLiteral("Null ");
+        seen.append("Null ");
     if (m_seenTypes & TypeBoolean)
-        seen.appendLiteral("Boolean ");
+        seen.append("Boolean ");
     if (m_seenTypes & TypeAnyInt)
-        seen.appendLiteral("AnyInt ");
+        seen.append("AnyInt ");
     if (m_seenTypes & TypeNumber)
-        seen.appendLiteral("Number ");
+        seen.append("Number ");
     if (m_seenTypes & TypeString)
-        seen.appendLiteral("String ");
+        seen.append("String ");
     if (m_seenTypes & TypeObject)
-        seen.appendLiteral("Object ");
+        seen.append("Object ");
     if (m_seenTypes & TypeSymbol)
-        seen.appendLiteral("Symbol ");
+        seen.append("Symbol ");
 
-    for (const auto& shape : m_structureHistory) {
-        seen.append(shape->m_constructorName);
-        seen.append(' ');
-    }
+    for (const auto& shape : m_structureHistory)
+        seen.append(shape->m_constructorName, ' ');
 
     if (m_structureHistory.size()) 
-        seen.appendLiteral("\nStructures:[ ");
-    for (const auto& shape : m_structureHistory) {
-        seen.append(shape->stringRepresentation());
-        seen.append(' ');
-    }
+        seen.append("\nStructures:[ ");
+    for (const auto& shape : m_structureHistory)
+        seen.append(shape->stringRepresentation(), ' ');
     if (m_structureHistory.size())
         seen.append(']');
 
-    if (m_structureHistory.size()) {
-        seen.appendLiteral("\nLeast Common Ancestor: ");
-        seen.append(leastCommonAncestor());
-    }
+    if (m_structureHistory.size())
+        seen.append("\nLeast Common Ancestor: ", leastCommonAncestor());
 
     return seen.toString();
 }
@@ -258,59 +252,57 @@ String TypeSet::toJSONString() const
     StringBuilder json;
     json.append('{');
 
-    json.appendLiteral("\"displayTypeName\":");
+    json.append("\"displayTypeName\":");
     json.appendQuotedJSONString(displayName());
     json.append(',');
 
-    json.appendLiteral("\"primitiveTypeNames\":");
-    json.append('[');
+    json.append("\"primitiveTypeNames\":[");
     bool hasAnItem = false;
     if (m_seenTypes & TypeUndefined) {
         hasAnItem = true;
-        json.appendLiteral("\"Undefined\"");
+        json.append("\"Undefined\"");
     }
     if (m_seenTypes & TypeNull) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.appendLiteral("\"Null\"");
+        json.append("\"Null\"");
     }
     if (m_seenTypes & TypeBoolean) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.appendLiteral("\"Boolean\"");
+        json.append("\"Boolean\"");
     }
     if (m_seenTypes & TypeAnyInt) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.appendLiteral("\"Integer\"");
+        json.append("\"Integer\"");
     }
     if (m_seenTypes & TypeNumber) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.appendLiteral("\"Number\"");
+        json.append("\"Number\"");
     }
     if (m_seenTypes & TypeString) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.appendLiteral("\"String\"");
+        json.append("\"String\"");
     }
     if (m_seenTypes & TypeSymbol) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.appendLiteral("\"Symbol\"");
+        json.append("\"Symbol\"");
     }
     json.append(']');
 
     json.append(',');
 
-    json.appendLiteral("\"structures\":");
-    json.append('[');
+    json.append("\"structures\":[");
     hasAnItem = false;
     for (size_t i = 0; i < m_structureHistory.size(); i++) {
         if (hasAnItem)
@@ -360,11 +352,8 @@ String StructureShape::propertyHash()
         builder.append(property);
     }
 
-    if (m_proto) {
-        builder.append(':');
-        builder.appendLiteral("__proto__");
-        builder.append(m_proto->propertyHash());
-    }
+    if (m_proto)
+        builder.append(":__proto__", m_proto->propertyHash());
 
     m_propertyHash = makeUnique<String>(builder.toString());
     return *m_propertyHash;
@@ -437,50 +426,47 @@ String StructureShape::toJSONString() const
     StringBuilder json;
     json.append('{');
 
-    json.appendLiteral("\"constructorName\":");
+    json.append("\"constructorName\":");
     json.appendQuotedJSONString(m_constructorName);
     json.append(',');
 
-    json.appendLiteral("\"isInDictionaryMode\":");
+    json.append("\"isInDictionaryMode\":");
     if (m_isInDictionaryMode)
-        json.appendLiteral("true");
+        json.append("true");
     else
-        json.appendLiteral("false");
+        json.append("false");
     json.append(',');
 
-    json.appendLiteral("\"fields\":");
-    json.append('[');
+    json.append("\"fields\":[");
     bool hasAnItem = false;
-    for (auto it = m_fields.begin(), end = m_fields.end(); it != end; ++it) {
+    for (auto& field : m_fields) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
 
-        String fieldName((*it).get());
+        String fieldName(field.get());
         json.appendQuotedJSONString(fieldName);
     }
-    json.append(']');
-    json.append(',');
+    json.append("],");
 
-    json.appendLiteral("\"optionalFields\":");
-    json.append('[');
+    json.append("\"optionalFields\":[");
     hasAnItem = false;
-    for (auto it = m_optionalFields.begin(), end = m_optionalFields.end(); it != end; ++it) {
+    for (auto& field : m_optionalFields) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
 
-        String fieldName((*it).get());
+        String fieldName(field.get());
         json.appendQuotedJSONString(fieldName);
     }
     json.append(']');
     json.append(',');
 
-    json.appendLiteral("\"proto\":");
+    json.append("\"proto\":");
     if (m_proto)
         json.append(m_proto->toJSONString());
     else
-        json.appendLiteral("null");
+        json.append("null");
 
     json.append('}');
 

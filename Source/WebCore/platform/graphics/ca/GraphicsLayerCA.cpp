@@ -684,11 +684,14 @@ void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
     noteLayerPropertyChanged(ChildrenTransformChanged);
 }
 
-void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
+void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, std::optional<Seconds> beginTime, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
 {
     RefPtr<PlatformCAAnimation> anim = fromLayer->animationForKey(animationIdentifier);
     if (!anim)
         return;
+
+    if (beginTime && beginTime->seconds() != anim->beginTime())
+        anim->setBeginTime(beginTime->seconds());
 
     switch (operation) {
     case Move:
@@ -704,13 +707,12 @@ void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const Strin
 
 void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
 {
-    for (auto& animation : m_animations) {
-        if ((animatedPropertyIsTransformOrRelated(animation.m_property)
-            || animation.m_property == AnimatedPropertyOpacity
-            || animation.m_property == AnimatedPropertyBackgroundColor
-            || animation.m_property == AnimatedPropertyFilter)
-            && (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused))
-            moveOrCopyLayerAnimation(operation, animation.animationIdentifier(), fromLayer, toLayer);
+    for (auto& animationGroup : m_animationGroups) {
+        if ((animatedPropertyIsTransformOrRelated(animationGroup.m_property)
+            || animationGroup.m_property == AnimatedPropertyOpacity
+            || animationGroup.m_property == AnimatedPropertyBackgroundColor
+            || animationGroup.m_property == AnimatedPropertyFilter))
+            moveOrCopyLayerAnimation(operation, animationGroup.animationIdentifier(), animationGroup.computedBeginTime(), fromLayer, toLayer);
     }
 }
 
@@ -782,14 +784,35 @@ void GraphicsLayerCA::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
 }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-void GraphicsLayerCA::setSeparated(bool separated)
+void GraphicsLayerCA::setIsSeparated(bool isSeparated)
 {
-    if (separated == m_separated)
+    if (isSeparated == m_isSeparated)
         return;
 
-    GraphicsLayer::setSeparated(separated);
+    GraphicsLayer::setIsSeparated(isSeparated);
     noteLayerPropertyChanged(SeparatedChanged);
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+void GraphicsLayerCA::setIsSeparatedPortal(bool isSeparatedPortal)
+{
+    if (isSeparatedPortal == m_isSeparatedPortal)
+        return;
+
+    GraphicsLayer::setIsSeparatedPortal(isSeparatedPortal);
+    noteLayerPropertyChanged(SeparatedPortalChanged);
+
+}
+
+void GraphicsLayerCA::setIsDescendentOfSeparatedPortal(bool isDescendentOfSeparatedPortal)
+{
+    if (isDescendentOfSeparatedPortal == m_isDescendentOfSeparatedPortal)
+        return;
+
+    GraphicsLayer::setIsDescendentOfSeparatedPortal(isDescendentOfSeparatedPortal);
+    noteLayerPropertyChanged(DescendentOfSeparatedPortalChanged);
+}
+#endif
 #endif
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -1577,7 +1600,7 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     if (auto extent = animationExtent()) {
         // Adjust the animation extent to match the current animation position.
         auto animatingTransformWithAnchorPoint = transformByApplyingAnchorPoint(rects.animatingTransform);
-        bounds = animatingTransformWithAnchorPoint.inverse().valueOr(TransformationMatrix()).mapRect(*extent);
+        bounds = animatingTransformWithAnchorPoint.inverse().value_or(TransformationMatrix()).mapRect(*extent);
     }
 
     // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
@@ -1649,8 +1672,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         constexpr auto washBorderColor = Color::red.colorWithAlphaByte(100);
         
         m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
-        String name = makeString("Visible Tile Wash Layer 0x", hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase));
-        m_visibleTileWashLayer->setName(name);
+        m_visibleTileWashLayer->setName(makeString("Visible Tile Wash Layer 0x", hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase)));
         m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
         m_visibleTileWashLayer->setBorderColor(washBorderColor);
         m_visibleTileWashLayer->setBorderWidth(8);
@@ -1741,9 +1763,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         
         FloatRect initialClip(boundsOrigin(), size());
 
-        GraphicsContext context([&](GraphicsContext& context) {
-            return makeUnique<DisplayList::Recorder>(context, *m_displayList, GraphicsContextState(), initialClip, AffineTransform());
-        });
+        DisplayList::Recorder context(*m_displayList, GraphicsContextState(), initialClip, AffineTransform());
         paintGraphicsLayerContents(context, FloatRect(FloatPoint(), size()));
     }
 }
@@ -1988,7 +2008,15 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (m_uncommittedChanges & SeparatedChanged)
-        updateSeparated();
+        updateIsSeparated();
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    if (m_uncommittedChanges & SeparatedPortalChanged)
+        updateIsSeparatedPortal();
+
+    if (m_uncommittedChanges & DescendentOfSeparatedPortalChanged)
+        updateIsDescendentOfSeparatedPortal();
+#endif
 #endif
 
     if (m_uncommittedChanges & ChildrenChanged) {
@@ -2314,19 +2342,16 @@ void GraphicsLayerCA::updateFilters()
 
 void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
 {
-    using CheckedUnsigned = Checked<unsigned, RecordOverflow>;
-
     bool canHaveBackdropFilters = needsBackdrop();
-
     if (canHaveBackdropFilters) {
         canHaveBackdropFilters = false;
         IntRect backdropFilterRect = enclosingIntRect(m_backdropFiltersRect.rect());
         if (backdropFilterRect.width() > 0 && backdropFilterRect.height() > 0) {
-            CheckedUnsigned backdropFilterArea = CheckedUnsigned(backdropFilterRect.width()) * CheckedUnsigned(backdropFilterRect.height());
+            CheckedUint32 backdropFilterArea = CheckedUint32(backdropFilterRect.width()) * CheckedUint32(backdropFilterRect.height());
             if (!backdropFilterArea.hasOverflowed()) {
-                CheckedUnsigned newTotalBackdropFilterArea = CheckedUnsigned(commitState.totalBackdropFilterArea) + backdropFilterArea;
-                if (!newTotalBackdropFilterArea.hasOverflowed() && newTotalBackdropFilterArea.unsafeGet() <= cMaxTotalBackdropFilterArea) {
-                    commitState.totalBackdropFilterArea = newTotalBackdropFilterArea.unsafeGet();
+                CheckedUint32 newTotalBackdropFilterArea = CheckedUint32(commitState.totalBackdropFilterArea) + backdropFilterArea;
+                if (!newTotalBackdropFilterArea.hasOverflowed() && newTotalBackdropFilterArea <= cMaxTotalBackdropFilterArea) {
+                    commitState.totalBackdropFilterArea = newTotalBackdropFilterArea;
                     canHaveBackdropFilters = true;
                 }
             }
@@ -2435,10 +2460,22 @@ void GraphicsLayerCA::updateWindRule()
 }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-void GraphicsLayerCA::updateSeparated()
+void GraphicsLayerCA::updateIsSeparated()
 {
-    m_layer->setSeparated(m_separated);
+    m_layer->setIsSeparated(m_isSeparated);
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+void GraphicsLayerCA::updateIsSeparatedPortal()
+{
+    m_layer->setIsSeparatedPortal(m_isSeparatedPortal);
+}
+
+void GraphicsLayerCA::updateIsDescendentOfSeparatedPortal()
+{
+    m_layer->setIsDescendentOfSeparatedPortal(m_isDescendentOfSeparatedPortal);
+}
+#endif
 #endif
 
 bool GraphicsLayerCA::updateStructuralLayer()
@@ -3387,7 +3424,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     for (int internalFilterPropertyIndex = 0; internalFilterPropertyIndex < numAnimatedProperties; ++internalFilterPropertyIndex) {
         bool valuesOK;
         RefPtr<PlatformCAAnimation> caAnimation;
-        String keyPath = makeString("filters.filter_", animationIndex, '.', PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
+        auto keyPath = makeString("filters.filter_", animationIndex, '.', PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
         
         if (isKeyframe(valueList)) {
             caAnimation = createKeyframeAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
@@ -4037,6 +4074,58 @@ void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, Opt
     ts << indent << ")\n";
 }
 
+static TextStream& operator<<(TextStream& textStream, AnimatedPropertyID propertyID)
+{
+    switch (propertyID) {
+    case AnimatedPropertyInvalid: textStream << "invalid"; break;
+    case AnimatedPropertyTranslate: textStream << "translate"; break;
+    case AnimatedPropertyScale: textStream << "scale"; break;
+    case AnimatedPropertyRotate: textStream << "rotate"; break;
+    case AnimatedPropertyTransform: textStream << "transform"; break;
+    case AnimatedPropertyOpacity: textStream << "opacity"; break;
+    case AnimatedPropertyBackgroundColor: textStream << "background-color"; break;
+    case AnimatedPropertyFilter: textStream << "filter"; break;
+#if ENABLE(FILTERS_LEVEL_2)
+    case AnimatedPropertyWebkitBackdropFilter: textStream << "backdrop-filter"; break;
+#endif
+    }
+    return textStream;
+}
+
+void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, const char* category, const Vector<LayerPropertyAnimation>& animations)
+{
+    auto dumpAnimation = [&textStream](const LayerPropertyAnimation& animation) {
+        textStream << indent << "(" << animation.m_name;
+        {
+            TextStream::IndentScope indentScope(textStream);
+            textStream.dumpProperty("CA animation", animation.m_animation.get());
+            textStream.dumpProperty("property", animation.m_property);
+            textStream.dumpProperty("index", animation.m_index);
+            textStream.dumpProperty("subindex", animation.m_subIndex);
+            textStream.dumpProperty("time offset", animation.m_timeOffset);
+            textStream.dumpProperty("begin time", animation.m_beginTime);
+            textStream.dumpProperty("play state", (unsigned)animation.m_playState);
+            if (animation.m_pendingRemoval)
+                textStream.dumpProperty("pending removal", animation.m_pendingRemoval);
+            textStream << ")";
+        }
+    };
+    
+    if (animations.isEmpty())
+        return;
+    
+    textStream << indent << "(" << category << "\n";
+    {
+        TextStream::IndentScope indentScope(textStream);
+        for (const auto& animation : animations) {
+            TextStream::IndentScope indentScope(textStream);
+            dumpAnimation(animation);
+        }
+
+        textStream << ")\n";
+    }
+}
+
 void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTreeAsTextBehavior behavior) const
 {
     if (behavior & LayerTreeAsTextIncludeVisibleRects) {
@@ -4081,6 +4170,10 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTree
     if (behavior & LayerTreeAsTextDebug) {
         if (m_usesDisplayListDrawing)
             textStream << indent << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
+
+        dumpAnimations(textStream, "animations", m_animations);
+        dumpAnimations(textStream, "base value animations", m_baseValueTransformAnimations);
+        dumpAnimations(textStream, "animation groups", m_animationGroups);
     }
 }
 

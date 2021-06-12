@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include "DestinationColorSpace.h"
 #include "FloatPoint3D.h"
 #include "GraphicsTypesGL.h"
 #include "IntRect.h"
@@ -32,8 +33,7 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/ColorSpaceCG.h>
-#include <WebCore/IOSurface.h>
+#include "IOSurface.h"
 #include <wtf/MachSendRight.h>
 #endif
 
@@ -116,7 +116,7 @@ public:
     // when the platform has completed all steps to shut down the XR session.
     virtual bool supportsSessionShutdownNotification() const { return false; }
     virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
-    virtual Optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
+    virtual std::optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
     virtual void deleteLayer(LayerHandle) = 0;
 
     struct FrameData {
@@ -127,7 +127,7 @@ public:
             float w { 1.0f };
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<FloatQuaternion> decode(Decoder&);
+            template<class Decoder> static std::optional<FloatQuaternion> decode(Decoder&);
         };
 
         struct Pose {
@@ -135,7 +135,7 @@ public:
             FloatQuaternion orientation;
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<Pose> decode(Decoder&);
+            template<class Decoder> static std::optional<Pose> decode(Decoder&);
         };
 
         struct Fov {
@@ -146,7 +146,7 @@ public:
             float right { 0.0f };
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<Fov> decode(Decoder&);
+            template<class Decoder> static std::optional<Fov> decode(Decoder&);
         };
 
         static constexpr size_t projectionMatrixSize = 16;
@@ -159,7 +159,7 @@ public:
             Projection projection = { nullptr };
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<View> decode(Decoder&);
+            template<class Decoder> static std::optional<View> decode(Decoder&);
         };
 
         struct StageParameters {
@@ -167,17 +167,18 @@ public:
             Vector<WebCore::FloatPoint> bounds;
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<StageParameters> decode(Decoder&);
+            template<class Decoder> static std::optional<StageParameters> decode(Decoder&);
         };
 
         struct LayerData {
-            PlatformGLObject opaqueTexture { 0 };
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
             std::unique_ptr<WebCore::IOSurface> surface;
+#else
+            PlatformGLObject opaqueTexture { 0 };
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<LayerData> decode(Decoder&);
+            template<class Decoder> static std::optional<LayerData> decode(Decoder&);
         };
 
         struct InputSourceButton {
@@ -197,7 +198,7 @@ public:
             XRTargetRayMode targetRayMode { XRTargetRayMode::Gaze };
             Vector<String> profiles;
             InputSourcePose pointerOrigin;
-            Optional<InputSourcePose> gripOrigin;
+            std::optional<InputSourcePose> gripOrigin;
             Vector<InputSourceButton> buttons;
             Vector<float> axes;
         };
@@ -208,7 +209,7 @@ public:
         bool shouldRender { false };
         long predictedDisplayTime { 0 };
         Pose origin;
-        Optional<Pose> floorTransform;
+        std::optional<Pose> floorTransform;
         StageParameters stageParameters;
         Vector<View> views;
         HashMap<LayerHandle, LayerData> layers;
@@ -217,7 +218,7 @@ public:
         FrameData copy() const;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<FrameData> decode(Decoder&);
+        template<class Decoder> static std::optional<FrameData> decode(Decoder&);
     };
 
     struct LayerView {
@@ -294,17 +295,17 @@ void Device::FrameData::FloatQuaternion::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::FloatQuaternion> Device::FrameData::FloatQuaternion::decode(Decoder& decoder)
+std::optional<Device::FrameData::FloatQuaternion> Device::FrameData::FloatQuaternion::decode(Decoder& decoder)
 {
     Device::FrameData::FloatQuaternion floatQuaternion;
     if (!decoder.decode(floatQuaternion.x))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(floatQuaternion.y))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(floatQuaternion.z))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(floatQuaternion.w))
-        return WTF::nullopt;
+        return std::nullopt;
     return floatQuaternion;
 }
 
@@ -315,13 +316,13 @@ void Device::FrameData::Pose::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::Pose> Device::FrameData::Pose::decode(Decoder& decoder)
+std::optional<Device::FrameData::Pose> Device::FrameData::Pose::decode(Decoder& decoder)
 {
     Device::FrameData::Pose pose;
     if (!decoder.decode(pose.position))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(pose.orientation))
-        return WTF::nullopt;
+        return std::nullopt;
     return pose;
 }
 
@@ -332,17 +333,17 @@ void Device::FrameData::Fov::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::Fov> Device::FrameData::Fov::decode(Decoder& decoder)
+std::optional<Device::FrameData::Fov> Device::FrameData::Fov::decode(Decoder& decoder)
 {
     Device::FrameData::Fov fov;
     if (!decoder.decode(fov.up))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(fov.down))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(fov.left))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(fov.right))
-        return WTF::nullopt;
+        return std::nullopt;
     return fov;
 }
 
@@ -370,34 +371,34 @@ void Device::FrameData::View::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::View> Device::FrameData::View::decode(Decoder& decoder)
+std::optional<Device::FrameData::View> Device::FrameData::View::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::View view;
     if (!decoder.decode(view.offset))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool hasFov;
     if (!decoder.decode(hasFov))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hasFov) {
         PlatformXR::Device::FrameData::Fov fov;
         if (!decoder.decode(fov))
-            return WTF::nullopt;
+            return std::nullopt;
         view.projection = { WTFMove(fov) };
         return view;
     }
 
     bool hasProjectionMatrix;
     if (!decoder.decode(hasProjectionMatrix))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hasProjectionMatrix) {
         PlatformXR::Device::FrameData::ProjectionMatrix projectionMatrix;
         for (size_t i = 0; i < PlatformXR::Device::FrameData::projectionMatrixSize; ++i) {
             float f;
             if (!decoder.decode(f))
-                return WTF::nullopt;
+                return std::nullopt;
             projectionMatrix[i] = f;
         }
         view.projection = { WTFMove(projectionMatrix) };
@@ -416,37 +417,39 @@ void Device::FrameData::StageParameters::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::StageParameters> Device::FrameData::StageParameters::decode(Decoder& decoder)
+std::optional<Device::FrameData::StageParameters> Device::FrameData::StageParameters::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::StageParameters stageParameters;
     if (!decoder.decode(stageParameters.id))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(stageParameters.bounds))
-        return WTF::nullopt;
+        return std::nullopt;
     return stageParameters;
 }
 
 template<class Encoder>
 void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
-    encoder << opaqueTexture;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     WTF::MachSendRight surfaceSendRight = surface ? surface->createSendRight() : WTF::MachSendRight();
     encoder << surfaceSendRight;
+#else
+    encoder << opaqueTexture;
 #endif
 }
 
 template<class Decoder>
-Optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
+std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::LayerData layerData;
-    if (!decoder.decode(layerData.opaqueTexture))
-        return WTF::nullopt;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     WTF::MachSendRight surfaceSendRight;
     if (!decoder.decode(surfaceSendRight))
-        return WTF::nullopt;
-    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::sRGBColorSpaceRef());
+        return std::nullopt;
+    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());
+#else
+    if (!decoder.decode(layerData.opaqueTexture))
+        return std::nullopt;
 #endif
     return layerData;
 }
@@ -467,29 +470,29 @@ void Device::FrameData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
+std::optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData frameData;
     if (!decoder.decode(frameData.isTrackingValid))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.isPositionValid))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.isPositionEmulated))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.shouldRender))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.predictedDisplayTime))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.origin))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.floorTransform))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.stageParameters))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.views))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.layers))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return frameData;
 }

@@ -120,19 +120,19 @@ FloatPoint SVGPathBlender::blendAnimatedFloatPoint(const FloatPoint& fromPoint, 
 
 template<typename Function> using InvokeResult = typename std::invoke_result_t<Function, SVGPathSource>::value_type;
 template<typename Function> using ResultPair = std::pair<InvokeResult<Function>, InvokeResult<Function>>;
-template<typename Function> static Optional<ResultPair<Function>> pullFromSources(SVGPathSource& fromSource, SVGPathSource& toSource, Function&& function)
+template<typename Function> static std::optional<ResultPair<Function>> pullFromSources(SVGPathSource& fromSource, SVGPathSource& toSource, Function&& function)
 {
     InvokeResult<Function> fromResult;
     if (fromSource.hasMoreData()) {
         auto parsedFrom = std::invoke(function, fromSource);
         if (!parsedFrom)
-            return WTF::nullopt;
+            return std::nullopt;
         fromResult = WTFMove(*parsedFrom);
     }
 
     auto parsedTo = std::invoke(std::forward<Function>(function), toSource);
     if (!parsedTo)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ResultPair<Function> { WTFMove(fromResult), WTFMove(*parsedTo) };
 }

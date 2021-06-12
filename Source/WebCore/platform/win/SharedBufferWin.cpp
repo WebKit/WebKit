@@ -50,7 +50,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
     DWORD lastError = GetLastError();
 
     if (bytesToRead != INVALID_FILE_SIZE || lastError == NO_ERROR) {
-        Vector<char> buffer(bytesToRead);
+        Vector<uint8_t> buffer(bytesToRead);
         DWORD bytesRead;
         if (ReadFile(fileHandle, buffer.data(), bytesToRead, &bytesRead, 0) && bytesToRead == bytesRead)
             result = SharedBuffer::create(WTFMove(buffer));

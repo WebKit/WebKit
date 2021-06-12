@@ -42,7 +42,7 @@ struct URLSchemeTaskParameters {
     FrameInfoData frameInfo;
     
     void encode(IPC::Encoder&) const;
-    static Optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
+    static std::optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

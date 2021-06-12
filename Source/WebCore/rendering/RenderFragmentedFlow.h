@@ -41,11 +41,11 @@ class CurrentRenderFragmentContainerMaintainer;
 class RenderFragmentedFlow;
 class RenderStyle;
 class RenderFragmentContainer;
-class RootInlineBox;
+class LegacyRootInlineBox;
 
 typedef ListHashSet<RenderFragmentContainer*> RenderFragmentContainerList;
 typedef Vector<RenderLayer*> RenderLayerList;
-typedef HashMap<const RootInlineBox*, RenderFragmentContainer*> ContainingFragmentMap;
+typedef HashMap<const LegacyRootInlineBox*, RenderFragmentContainer*> ContainingFragmentMap;
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render

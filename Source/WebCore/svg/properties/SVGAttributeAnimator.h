@@ -73,7 +73,7 @@ public:
     virtual void apply(SVGElement*) = 0;
     virtual void stop(SVGElement* targetElement) = 0;
 
-    virtual Optional<float> calculateDistance(SVGElement*, const String&, const String&) const { return { }; }
+    virtual std::optional<float> calculateDistance(SVGElement*, const String&, const String&) const { return { }; }
 
 protected:
     bool isAnimatedStylePropertyAniamtor(const SVGElement*) const;

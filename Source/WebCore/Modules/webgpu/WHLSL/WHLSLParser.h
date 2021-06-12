@@ -32,7 +32,6 @@
 #include "WHLSLLexer.h"
 #include "WHLSLParsingMode.h"
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
 
 namespace WebCore {
@@ -68,9 +67,9 @@ private:
     bool peekType(Token::Type);
     template <Token::Type... types>
     bool peekTypes();
-    Optional<Token> tryType(Token::Type);
+    std::optional<Token> tryType(Token::Type);
     template <Token::Type... types>
-    Optional<Token> tryTypes();
+    std::optional<Token> tryTypes();
     Expected<Token, Error> consumeType(Token::Type);
     template <Token::Type... types>
     Expected<Token, Error> consumeTypes();
@@ -83,14 +82,14 @@ private:
     struct TypeSuffixAbbreviated {
         CodeLocation location;
         Token token;
-        Optional<unsigned> numElements;
+        std::optional<unsigned> numElements;
     };
     Expected<TypeSuffixAbbreviated, Error> parseTypeSuffixAbbreviated();
     struct TypeSuffixNonAbbreviated {
         CodeLocation location;
         Token token;
-        Optional<AST::AddressSpace> addressSpace;
-        Optional<unsigned> numElements;
+        std::optional<AST::AddressSpace> addressSpace;
+        std::optional<unsigned> numElements;
     };
     Expected<TypeSuffixNonAbbreviated, Error> parseTypeSuffixNonAbbreviated();
     Expected<Ref<AST::UnnamedType>, Error> parseAddressSpaceType();

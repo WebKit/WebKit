@@ -36,7 +36,6 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -74,7 +73,7 @@ Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, CSSImp
     return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerRule));
 }
 
-Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, Node& ownerNode, const Optional<bool>& isCleanOrigin)
+Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, Node& ownerNode, const std::optional<bool>& isCleanOrigin)
 {
     return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerNode, TextPosition(), false, isCleanOrigin));
 }
@@ -86,24 +85,16 @@ Ref<CSSStyleSheet> CSSStyleSheet::createInline(Ref<StyleSheetContents>&& sheet, 
 
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* ownerRule)
     : m_contents(WTFMove(contents))
-    , m_isInlineStylesheet(false)
-    , m_isDisabled(false)
-    , m_mutatedRules(false)
-    , m_ownerNode(0)
     , m_ownerRule(ownerRule)
-    , m_startPosition()
 {
     m_contents->registerClient(this);
 }
 
-CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const Optional<bool>& isOriginClean)
+CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const std::optional<bool>& isOriginClean)
     : m_contents(WTFMove(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
-    , m_isDisabled(false)
-    , m_mutatedRules(false)
     , m_isOriginClean(isOriginClean)
     , m_ownerNode(&ownerNode)
-    , m_ownerRule(0)
     , m_startPosition(startPosition)
 {
     ASSERT(isAcceptableCSSStyleSheetParent(&ownerNode));
@@ -295,19 +286,12 @@ ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
     return { };
 }
 
-ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& style, Optional<unsigned> index)
+ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& style, std::optional<unsigned> index)
 {
-    StringBuilder text;
-    text.append(selector);
-    text.appendLiteral(" { ");
-    text.append(style);
-    if (!style.isEmpty())
-        text.append(' ');
-    text.append('}');
-    auto insertRuleResult = insertRule(text.toString(), index.valueOr(length()));
+    auto text = makeString(selector, " { ", style, !style.isEmpty() ? " " : "", '}');
+    auto insertRuleResult = insertRule(text, index.value_or(length()));
     if (insertRuleResult.hasException())
         return insertRuleResult.releaseException();
-    
     // As per Microsoft documentation, always return -1.
     return -1;
 }
@@ -348,7 +332,6 @@ MediaList* CSSStyleSheet::media() const
 {
     if (!m_mediaQueries)
         return nullptr;
-
     if (!m_mediaCSSOMWrapper)
         m_mediaCSSOMWrapper = MediaList::create(m_mediaQueries.get(), const_cast<CSSStyleSheet*>(this));
     return m_mediaCSSOMWrapper.get();

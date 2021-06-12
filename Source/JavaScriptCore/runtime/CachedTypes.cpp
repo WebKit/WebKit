@@ -41,7 +41,6 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/MallocPtr.h>
-#include <wtf/Optional.h>
 #include <wtf/Packed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/UUID.h>
@@ -140,11 +139,11 @@ public:
         m_ptrToOffsetMap.add(ptr, offset);
     }
 
-    Optional<ptrdiff_t> cachedOffsetForPtr(const void* ptr)
+    std::optional<ptrdiff_t> cachedOffsetForPtr(const void* ptr)
     {
         auto it = m_ptrToOffsetMap.find(ptr);
         if (it == m_ptrToOffsetMap.end())
-            return WTF::nullopt;
+            return std::nullopt;
         return { it->value };
     }
 
@@ -184,7 +183,7 @@ private:
         }
 
         for (const auto& page : m_pages) {
-            int bytesWritten = FileSystem::writeToFile(m_fd, reinterpret_cast<char*>(page.buffer()), page.size());
+            int bytesWritten = FileSystem::writeToFile(m_fd, page.buffer(), page.size());
             if (bytesWritten == -1) {
                 error = BytecodeCacheError::StandardError(errno);
                 return nullptr;
@@ -314,11 +313,11 @@ void Decoder::cacheOffset(ptrdiff_t offset, void* ptr)
     m_offsetToPtrMap.add(offset, ptr);
 }
 
-WTF::Optional<void*> Decoder::cachedPtrForOffset(ptrdiff_t offset)
+std::optional<void*> Decoder::cachedPtrForOffset(ptrdiff_t offset)
 {
     auto it = m_offsetToPtrMap.find(offset);
     if (it == m_offsetToPtrMap.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return { it->value };
 }
 
@@ -482,7 +481,7 @@ public:
         if (!src)
             return;
 
-        if (Optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
+        if (std::optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
             this->m_offset = *offset - encoder.offsetOf(&this->m_offset);
             return;
         }
@@ -501,7 +500,7 @@ public:
         }
 
         ptrdiff_t bufferOffset = decoder.offsetOf(this->buffer());
-        if (Optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
+        if (std::optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
             isNewAllocation = false;
             return static_cast<Source*>(*ptr);
         }
@@ -823,9 +822,9 @@ private:
 };
 
 template<typename T>
-class CachedOptional : public VariableLengthObject<Optional<SourceType<T>>> {
+class CachedOptional : public VariableLengthObject<std::optional<SourceType<T>>> {
 public:
-    void encode(Encoder& encoder, const Optional<SourceType<T>>& source)
+    void encode(Encoder& encoder, const std::optional<SourceType<T>>& source)
     {
         if (!source)
             return;
@@ -833,15 +832,15 @@ public:
         this->template allocate<T>(encoder)->encode(encoder, *source);
     }
 
-    Optional<SourceType<T>> decode(Decoder& decoder) const
+    std::optional<SourceType<T>> decode(Decoder& decoder) const
     {
         if (this->isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
 
         return { this->template buffer<T>()->decode(decoder) };
     }
 
-    void decode(Decoder& decoder, Optional<SourceType<T>>& dst) const
+    void decode(Decoder& decoder, std::optional<SourceType<T>>& dst) const
     {
         dst = decode(decoder);
     }
@@ -849,7 +848,7 @@ public:
     void encode(Encoder& encoder, const std::unique_ptr<SourceType<T>>& source)
     {
         if (!source)
-            encode(encoder, WTF::nullopt);
+            encode(encoder, std::nullopt);
         else
             encode(encoder, { *source });
     }

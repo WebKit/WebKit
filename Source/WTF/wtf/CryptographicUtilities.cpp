@@ -28,7 +28,7 @@
 
 namespace WTF {
 
-// FIXME: Use platform APIs where available. See <rdar://problem/12685603> for Mac/iOS.
+#if !HAVE(TIMINGSAFE_BCMP)
 NEVER_INLINE int constantTimeMemcmp(const void* voidA, const void* voidB, size_t length)
 {
     const uint8_t* a = static_cast<const uint8_t*>(voidA);
@@ -40,5 +40,6 @@ NEVER_INLINE int constantTimeMemcmp(const void* voidA, const void* voidB, size_t
 
     return result;
 }
+#endif
 
 }

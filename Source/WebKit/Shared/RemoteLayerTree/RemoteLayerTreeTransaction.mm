@@ -68,31 +68,31 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
 #endif
 }
 
-auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder) -> Optional<LayerCreationProperties>
+auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder) -> std::optional<LayerCreationProperties>
 {
     LayerCreationProperties result;
     if (!decoder.decode(result.layerID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
     
     // PlatformCALayerRemoteCustom
     if (!decoder.decode(result.hostingContextID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.hostingDeviceScaleFactor))
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if ENABLE(MODEL_ELEMENT)
     // PlatformCALayerRemoteModelHosting
     bool hasModel;
     if (!decoder.decode(hasModel))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasModel) {
         auto model = WebCore::Model::decode(decoder);
         if (!model)
-            return WTF::nullopt;
+            return std::nullopt;
         result.model = model;
     }
 #endif
@@ -129,6 +129,10 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , userInteractionEnabled(true)
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , isSeparated(false)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    , isSeparatedPortal(false)
+    , isDescendentOfSeparatedPortal(false)
+#endif
 #endif
 {
 }
@@ -171,6 +175,10 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , eventRegion(other.eventRegion)
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , isSeparated(other.isSeparated)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    , isSeparatedPortal(other.isSeparatedPortal)
+    , isDescendentOfSeparatedPortal(other.isDescendentOfSeparatedPortal)
+#endif
 #endif
 {
     // FIXME: LayerProperties should reference backing store by ID, so that two layers can have the same backing store (for clones).
@@ -313,6 +321,14 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (changedProperties & SeparatedChanged)
         encoder << isSeparated;
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    if (changedProperties & SeparatedPortalChanged)
+        encoder << isSeparatedPortal;
+
+    if (changedProperties & DescendentOfSeparatedPortalChanged)
+        encoder << isDescendentOfSeparatedPortal;
+#endif
 #endif
 }
 
@@ -538,7 +554,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
     if (result.changedProperties & EventRegionChanged) {
-        Optional<WebCore::EventRegion> eventRegion;
+        std::optional<WebCore::EventRegion> eventRegion;
         decoder >> eventRegion;
         if (!eventRegion)
             return false;
@@ -550,18 +566,25 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(result.isSeparated))
             return false;
     }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    if (result.changedProperties & SeparatedPortalChanged) {
+        if (!decoder.decode(result.isSeparatedPortal))
+            return false;
+    }
+
+    if (result.changedProperties & DescendentOfSeparatedPortalChanged) {
+        if (!decoder.decode(result.isDescendentOfSeparatedPortal))
+            return false;
+    }
+#endif
 #endif
 
     return true;
 }
 
-RemoteLayerTreeTransaction::RemoteLayerTreeTransaction()
-{
-}
-
-RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
-{
-}
+RemoteLayerTreeTransaction::RemoteLayerTreeTransaction() = default;
+RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction() = default;
 
 void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 {
@@ -740,7 +763,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_isInStableState))
         return false;
 
-    Optional<Vector<TransactionCallbackID>> callbackIDs;
+    std::optional<Vector<TransactionCallbackID>> callbackIDs;
     decoder >> callbackIDs;
     if (!callbackIDs)
         return false;
@@ -952,6 +975,14 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SeparatedChanged)
             ts.dumpProperty("isSeparated", layerProperties.isSeparated);
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SeparatedPortalChanged)
+            ts.dumpProperty("isSeparatedPortal", layerProperties.isSeparatedPortal);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::DescendentOfSeparatedPortalChanged)
+            ts.dumpProperty("isDescendentOfSeparatedPortal", layerProperties.isDescendentOfSeparatedPortal);
+#endif
 #endif
     }
 }

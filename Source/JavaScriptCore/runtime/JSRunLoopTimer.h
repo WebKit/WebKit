@@ -61,7 +61,7 @@ public:
         void scheduleTimer(JSRunLoopTimer&, Seconds nextFireTime);
         void cancelTimer(JSRunLoopTimer&);
 
-        Optional<Seconds> timeUntilFire(JSRunLoopTimer&);
+        std::optional<Seconds> timeUntilFire(JSRunLoopTimer&);
 
     private:
         Lock m_lock;
@@ -96,7 +96,7 @@ public:
     JS_EXPORT_PRIVATE void addTimerSetNotification(TimerNotificationCallback);
     JS_EXPORT_PRIVATE void removeTimerSetNotification(TimerNotificationCallback);
 
-    JS_EXPORT_PRIVATE Optional<Seconds> timeUntilFire();
+    JS_EXPORT_PRIVATE std::optional<Seconds> timeUntilFire();
 
 protected:
     static constexpr Seconds s_decade { 60 * 60 * 24 * 365 * 10 };

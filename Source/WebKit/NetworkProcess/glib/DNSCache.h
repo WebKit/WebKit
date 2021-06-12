@@ -25,10 +25,9 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -44,7 +43,7 @@ public:
     ~DNSCache() = default;
 
     enum class Type { Default, IPv4Only, IPv6Only };
-    Optional<Vector<GRefPtr<GInetAddress>>> lookup(const CString& host, Type = Type::Default);
+    std::optional<Vector<GRefPtr<GInetAddress>>> lookup(const CString& host, Type = Type::Default);
     void update(const CString& host, Vector<GRefPtr<GInetAddress>>&&, Type = Type::Default);
     void clear();
 
@@ -61,7 +60,7 @@ private:
     void removeExpiredResponsesInMap(DNSCacheMap&);
     void pruneResponsesInMap(DNSCacheMap&);
 
-    CheckedLock m_lock;
+    Lock m_lock;
     DNSCacheMap m_dnsMap WTF_GUARDED_BY_LOCK(m_lock);
 #if GLIB_CHECK_VERSION(2, 59, 0)
     DNSCacheMap m_ipv4Map;

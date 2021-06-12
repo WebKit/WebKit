@@ -67,13 +67,13 @@ RenderMathMLOperator* RenderMathMLScripts::unembellishedOperator() const
     return downcast<RenderMathMLBlock>(base)->unembellishedOperator();
 }
 
-Optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAndGetReferenceChildren()
+std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAndGetReferenceChildren()
 {
     // All scripted elements must have at least one child.
     // The first child is the base.
     auto base = firstChildBox();
     if (!base)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ReferenceChildren reference;
     reference.base = base;
@@ -94,7 +94,7 @@ Optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAn
         // <mover> base overscript </mover>
         auto script = base->nextSiblingBox();
         if (!script || isPrescriptDelimiter(*script) || script->nextSiblingBox())
-            return WTF::nullopt;
+            return std::nullopt;
         reference.firstPostScript = script;
         return reference;
     }
@@ -106,10 +106,10 @@ Optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAn
         // <munderover> base subscript superscript </munderover>
         auto subScript = base->nextSiblingBox();
         if (!subScript || isPrescriptDelimiter(*subScript))
-            return WTF::nullopt;
+            return std::nullopt;
         auto superScript = subScript->nextSiblingBox();
         if (!superScript || isPrescriptDelimiter(*superScript) || superScript->nextSiblingBox())
-            return WTF::nullopt;
+            return std::nullopt;
         reference.firstPostScript = subScript;
         return reference;
     }
@@ -139,19 +139,19 @@ Optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAn
             if (isPrescriptDelimiter(*script)) {
                 // This is a <mprescripts/>. Let's check 2a) and 2c).
                 if (!numberOfScriptIsEven || reference.firstPreScript)
-                    return WTF::nullopt;
+                    return std::nullopt;
                 reference.firstPreScript = script->nextSiblingBox(); // We do 1).
                 reference.prescriptDelimiter = script;
                 continue;
             }
             numberOfScriptIsEven = !numberOfScriptIsEven;
         }
-        return numberOfScriptIsEven ? Optional<ReferenceChildren>(reference) : WTF::nullopt; // We verify 2b).
+        return numberOfScriptIsEven ? std::optional<ReferenceChildren>(reference) : std::nullopt; // We verify 2b).
     }
     }
 
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 LayoutUnit RenderMathMLScripts::spaceAfterScript()
@@ -466,11 +466,11 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     clearNeedsLayout();
 }
 
-Optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
+std::optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
 {
     auto* base = firstChildBox();
     if (!base)
-        return Optional<LayoutUnit>();
+        return std::optional<LayoutUnit>();
     return LayoutUnit { roundf(ascentForChild(*base) + base->logicalTop()) };
 }
 

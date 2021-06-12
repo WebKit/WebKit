@@ -22,14 +22,14 @@ class CreateAnalysisTaskPage extends PageWithHeading {
         this.part('form').listenToAction('startTesting', this._createAnalysisTaskWithGroup.bind(this));
     }
 
-    _createAnalysisTaskWithGroup(repetitionCount, testGroupName, commitSets, platform, test, taskName, notifyOnCompletion)
+    async _createAnalysisTaskWithGroup(testGroupName, repetitionCount, repetitionType, commitSets, platform, test, notifyOnCompletion, taskName)
     {
-        TestGroup.createWithTask(taskName, platform, test, testGroupName, repetitionCount, commitSets, notifyOnCompletion).then((task) => {
-            const url = this.router().url(`analysis/task/${task.id()}`);
+        try {
+            const task = await TestGroup.createWithTask(taskName, platform, test, testGroupName, repetitionCount, repetitionType, commitSets, notifyOnCompletion);
             location.href = this.router().url(`analysis/task/${task.id()}`);
-        }, (error) => {
+        } catch (error) {
             alert('Failed to create a new test group: ' + error);
-        });
+        }
     }
 
     render()

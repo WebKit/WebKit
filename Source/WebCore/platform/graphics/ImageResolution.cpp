@@ -28,17 +28,17 @@
 
 namespace WebCore {
 
-Optional<IntSize> ImageResolution::densityCorrectedSize(const FloatSize& sourceSize, const ResolutionMetadata& metadata)
+std::optional<IntSize> ImageResolution::densityCorrectedSize(const FloatSize& sourceSize, const ResolutionMetadata& metadata)
 {
     if (metadata.resolutionUnit != ResolutionUnit::Inches || metadata.resolution.isEmpty() || metadata.preferredSize.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto sizeFromResolution = sourceSize * DefaultResolution / metadata.resolution;
 
     if (sizeFromResolution == metadata.preferredSize)
         return roundedIntSize(metadata.preferredSize);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 }

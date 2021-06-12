@@ -106,7 +106,7 @@ private:
 
     RefPtr<ApplicationCache> loadCache(unsigned storageID);
     ApplicationCacheGroup* loadCacheGroup(const URL& manifestURL);
-    Optional<Vector<URL>> manifestURLs();
+    std::optional<Vector<URL>> manifestURLs();
     ApplicationCacheGroup* findInMemoryCacheGroup(const URL& manifestURL) const;
     bool deleteCacheGroup(const String& manifestURL);
     void vacuumDatabaseFile();

@@ -50,13 +50,24 @@ void ServiceWorkerInternals::setOnline(bool isOnline)
     });
 }
 
+void ServiceWorkerInternals::terminate()
+{
+    callOnMainThread([identifier = m_identifier] () {
+        SWContextManager::singleton().terminateWorker(identifier, Seconds::infinity(), [] { });
+    });
+}
+
 void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
 {
     event.onResponse([promise = WTFMove(promise), event = makeRef(event)] (auto&& result) mutable {
-        if (result.has_value())
-            promise.resolve(WTFMove(result.value()));
-        else
-            promise.reject(TypeError, result.error().localizedDescription());
+        if (!result.has_value()) {
+            String description;
+            if (auto& error = result.error())
+                description = error->localizedDescription();
+            promise.reject(TypeError, description);
+            return;
+        }
+        promise.resolve(WTFMove(result.value()));
     });
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,11 +58,13 @@ class BlockInsertionSet;
 class CFG;
 class Dominators;
 class NaturalLoops;
-class StackSlot;
 class Value;
 class Variable;
 
-namespace Air { class Code; }
+namespace Air {
+class Code;
+class StackSlot;
+} // namespace Air
 
 typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg);
 typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
@@ -112,7 +114,7 @@ public:
         setBlockOrderImpl(blocks);
     }
 
-    JS_EXPORT_PRIVATE StackSlot* addStackSlot(unsigned byteSize);
+    JS_EXPORT_PRIVATE Air::StackSlot* addStackSlot(unsigned byteSize);
     JS_EXPORT_PRIVATE Variable* addVariable(Type);
 
     JS_EXPORT_PRIVATE Type addTuple(Vector<Type>&& types);
@@ -163,11 +165,8 @@ public:
     Vector<BasicBlock*> blocksInPreOrder();
     Vector<BasicBlock*> blocksInPostOrder();
 
-    SparseCollection<StackSlot>& stackSlots() { return m_stackSlots; }
-    const SparseCollection<StackSlot>& stackSlots() const { return m_stackSlots; }
-
-    // Short for stackSlots().remove(). It's better to call this method since it's out of line.
-    void deleteStackSlot(StackSlot*);
+    SparseCollection<Air::StackSlot>& stackSlots();
+    const SparseCollection<Air::StackSlot>& stackSlots() const;
 
     SparseCollection<Variable>& variables() { return m_variables; }
     const SparseCollection<Variable>& variables() const { return m_variables; }
@@ -259,7 +258,11 @@ public:
     JS_EXPORT_PRIVATE RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
 
     PCToOriginMap& pcToOriginMap() { return m_pcToOriginMap; }
-    PCToOriginMap releasePCToOriginMap() { return WTFMove(m_pcToOriginMap); }
+    PCToOriginMap releasePCToOriginMap()
+    {
+        RELEASE_ASSERT(needsPCToOriginMap());
+        return WTFMove(m_pcToOriginMap);
+    }
 
     JS_EXPORT_PRIVATE void setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>);
 
@@ -272,13 +275,17 @@ public:
     JS_EXPORT_PRIVATE RegisterSet mutableGPRs();
     JS_EXPORT_PRIVATE RegisterSet mutableFPRs();
 
+    void setNeedsPCToOriginMap() { m_needsPCToOriginMap = true; }
+    bool needsPCToOriginMap() { return m_needsPCToOriginMap; }
+
+    JS_EXPORT_PRIVATE void freeUnneededB3ValuesAfterLowering();
+
 private:
     friend class BlockInsertionSet;
 
     JS_EXPORT_PRIVATE Value* addValueImpl(Value*);
     void setBlockOrderImpl(Vector<BasicBlock*>&);
 
-    SparseCollection<StackSlot> m_stackSlots;
     SparseCollection<Variable> m_variables;
     Vector<Vector<Type>> m_tuples;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
@@ -289,16 +296,17 @@ private:
     std::unique_ptr<BackwardsCFG> m_backwardsCFG;
     std::unique_ptr<BackwardsDominators> m_backwardsDominators;
     HashSet<ValueKey> m_fastConstants;
-    unsigned m_numEntrypoints { 1 };
     const char* m_lastPhaseName;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
     std::unique_ptr<Air::Code> m_code;
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
     PCToOriginMap m_pcToOriginMap;
+    unsigned m_numEntrypoints { 1 };
     unsigned m_optLevel { defaultOptLevel() };
     bool m_needsUsedRegisters { true };
     bool m_hasQuirks { false };
+    bool m_needsPCToOriginMap { false };
 };
     
 } } // namespace JSC::B3

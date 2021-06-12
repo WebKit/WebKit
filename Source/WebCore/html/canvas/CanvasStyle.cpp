@@ -119,7 +119,7 @@ inline CanvasStyle::CanvasStyle(CurrentColor color)
 CanvasStyle CanvasStyle::createFromString(const String& colorString, CanvasBase& canvasBase)
 {
     if (isCurrentColorString(colorString))
-        return CurrentColor { WTF::nullopt };
+        return CurrentColor { std::nullopt };
 
     Color color = parseColor(colorString, canvasBase);
     if (!color.isValid())

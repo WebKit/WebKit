@@ -285,7 +285,7 @@ void IconDatabase::startClearLoadedIconsTimer()
     m_clearLoadedIconsTimer.startOneShot(loadedIconExpirationTime);
 }
 
-Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& expired)
+std::optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& expired)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
@@ -294,17 +294,17 @@ Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& ex
         auto iconIDForIconURLStatement = m_db.prepareHeapStatement("SELECT IconInfo.iconID, IconInfo.stamp FROM IconInfo WHERE IconInfo.url = (?);"_s);
         if (!iconIDForIconURLStatement) {
             LOG_ERROR("Preparing statement iconIDForIconURL failed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_iconIDForIconURLStatement = iconIDForIconURLStatement.value().moveToUniquePtr();
     }
 
     if (m_iconIDForIconURLStatement->bindText(1, iconURL) != SQLITE_OK) {
         LOG_ERROR("FaviconDatabse::iconIDForIconURL failed: %s", m_db.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
-    Optional<int64_t> result;
+    std::optional<int64_t> result;
     if (m_iconIDForIconURLStatement->step() == SQLITE_ROW) {
         result = m_iconIDForIconURLStatement->columnInt64(0);
         expired = m_iconIDForIconURLStatement->columnInt64(1) <= floor((WallTime::now() - iconExpirationTime).secondsSinceEpoch().seconds());
@@ -366,7 +366,7 @@ Vector<uint8_t> IconDatabase::iconData(int64_t iconID)
     return result;
 }
 
-Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char>& iconData)
+std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<uint8_t>& iconData)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
@@ -376,7 +376,7 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
         auto addIconStatement = m_db.prepareHeapStatement("INSERT INTO IconInfo (url, stamp) VALUES (?, 0);"_s);
         if (!addIconStatement) {
             LOG_ERROR("Preparing statement addIcon failed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_addIconStatement = addIconStatement.value().moveToUniquePtr();
     }
@@ -384,14 +384,14 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
         auto addIconDataStatement = m_db.prepareHeapStatement("INSERT INTO IconData (iconID, data) VALUES (?, ?);"_s);
         if (!addIconDataStatement) {
             LOG_ERROR("Preparing statement addIconData failed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_addIconDataStatement = addIconDataStatement.value().moveToUniquePtr();
     }
 
     if (m_addIconStatement->bindText(1, iconURL) != SQLITE_OK) {
         LOG_ERROR("IconDatabase::addIcon failed: %s", m_db.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     m_addIconStatement->step();
@@ -400,7 +400,7 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
     auto iconID = m_db.lastInsertRowID();
     if (m_addIconDataStatement->bindInt64(1, iconID) != SQLITE_OK || m_addIconDataStatement->bindBlob(2, iconData.data(), iconData.size()) != SQLITE_OK) {
         LOG_ERROR("IconDatabase::addIcon failed: %s", m_db.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     m_addIconDataStatement->step();
@@ -538,7 +538,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
     ASSERT(isMainRunLoop());
 
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTFMove(completionHandler)]() mutable {
-        Optional<int64_t> iconID;
+        std::optional<int64_t> iconID;
         Vector<uint8_t> iconData;
         String iconURL;
         {
@@ -566,37 +566,33 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 return;
             }
 
-            Locker locker { m_loadedIconsLock };
-            auto it = m_loadedIcons.find(iconURL);
-            if (it != m_loadedIcons.end() && it->value.first) {
-                auto icon = it->value.first;
-                it->value.second = MonotonicTime::now();
+            auto icon = [&]() -> WebCore::PlatformImagePtr {
+                Locker locker { m_loadedIconsLock };
+                auto it = m_loadedIcons.find(iconURL);
+                if (it != m_loadedIcons.end() && it->value.first) {
+                    auto icon = it->value.first;
+                    it->value.second = MonotonicTime::now();
+                    startClearLoadedIconsTimer();
+                    return icon;
+                }
+
+                auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, MonotonicTime::now()));
+                if (!iconData.isEmpty()) {
+                    auto image = BitmapImage::create();
+                    if (image->setData(SharedBuffer::create(WTFMove(iconData)), true) < EncodedDataStatus::SizeAvailable)
+                        return nullptr;
+
+                    auto nativeImage = image->nativeImageForCurrentFrame();
+                    if (!nativeImage)
+                        return nullptr;
+
+                    addResult.iterator->value.first = nativeImage->platformImage();
+                }
+
+                auto icon = addResult.iterator->value.first;
                 startClearLoadedIconsTimer();
-                locker.unlockEarly();
-                completionHandler(WTFMove(icon));
-                return;
-            }
-
-            auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, MonotonicTime::now()));
-            if (!iconData.isEmpty()) {
-                auto image = BitmapImage::create();
-                if (image->setData(SharedBuffer::create(WTFMove(iconData)), true) < EncodedDataStatus::SizeAvailable) {
-                    completionHandler(nullptr);
-                    return;
-                }
-
-                auto nativeImage = image->nativeImageForCurrentFrame();
-                if (!nativeImage) {
-                    completionHandler(nullptr);
-                    return;
-                }
-
-                addResult.iterator->value.first = nativeImage->platformImage();
-            }
-
-            auto icon = addResult.iterator->value.first;
-            startClearLoadedIconsTimer();
-            locker.unlockEarly();
+                return icon;
+            }();
             completionHandler(WTFMove(icon));
         });
     });
@@ -610,7 +606,7 @@ String IconDatabase::iconURLForPageURL(const String& pageURL)
     return m_pageURLToIconURLMap.get(pageURL);
 }
 
-void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char* iconData, size_t iconDataSize, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
+void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconData, size_t iconDataSize, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
@@ -642,9 +638,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
         return;
     }
 
-    Vector<char> data;
-    data.reserveInitialCapacity(iconDataSize);
-    data.append(reinterpret_cast<const char*>(iconData), iconDataSize);
+    Vector<uint8_t> data { iconData, iconDataSize };
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), iconURL = iconURL.isolatedCopy(), iconData = WTFMove(data), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         bool result = false;
         if (m_db.isOpen()) {

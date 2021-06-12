@@ -256,7 +256,7 @@ public:
     void expressionRangeForBytecodeIndex(BytecodeIndex, int& divot,
         int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
 
-    Optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
+    std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
     // Because we might throw out baseline JIT code and all its baseline JIT data (m_jitData),
     // you need to be careful about the lifetime of when you use the return value of this function.
@@ -269,8 +269,6 @@ public:
 #if ENABLE(JIT)
     struct JITData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-        size_t size(const ConcurrentJSLocker&) const;
 
         Bag<StructureStubInfo> m_stubInfos;
         Bag<JITAddIC> m_addICs;
@@ -342,7 +340,7 @@ public:
     }
 
     void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
-    Optional<CodeOrigin> findPC(void* pc);
+    std::optional<CodeOrigin> findPC(void* pc);
 
     void setCalleeSaveRegisters(RegisterSet);
     void setCalleeSaveRegisters(RegisterAtOffsetList&&);
@@ -796,7 +794,7 @@ public:
     unsigned frameRegisterCount();
     int stackPointerOffset();
 
-    bool hasOpDebugForLineAndColumn(unsigned line, Optional<unsigned> column);
+    bool hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned> column);
 
     bool hasDebuggerRequests() const { return m_debuggerRequests; }
     void* debuggerRequestsAddress() { return &m_debuggerRequests; }
@@ -892,6 +890,12 @@ public:
         return bitwise_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
     }
 
+    template<typename Metadata>
+    ptrdiff_t offsetInMetadataTable(Metadata* metadata)
+    {
+        return bitwise_cast<uint8_t*>(metadata) - bitwise_cast<uint8_t*>(metadataTable());
+    }
+
     size_t metadataSizeInBytes()
     {
         return m_unlinkedCode->metadataSizeInBytes();
@@ -900,6 +904,7 @@ public:
     MetadataTable* metadataTable() { return m_metadata.get(); }
     const void* instructionsRawPointer() { return m_instructionsRawPointer; }
 
+    static ptrdiff_t offsetOfMetadataTable() { return OBJECT_OFFSETOF(CodeBlock, m_metadata); }
     static ptrdiff_t offsetOfInstructionsRawPointer() { return OBJECT_OFFSETOF(CodeBlock, m_instructionsRawPointer); }
 
     bool loopHintsAreEligibleForFuzzingEarlyReturn()

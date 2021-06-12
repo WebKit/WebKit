@@ -85,14 +85,14 @@ namespace WebCore {
         // CachedRawResourceClient
         void dataSent(CachedResource&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
         void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
-        void dataReceived(CachedResource&, const char* data, int dataLength) override;
+        void dataReceived(CachedResource&, const uint8_t* data, int dataLength) override;
         void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
         void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) override;
         void finishedTimingForWorkerLoad(const ResourceTiming&);
         void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
-        void didReceiveData(unsigned long identifier, const char* data, int dataLength);
+        void didReceiveData(unsigned long identifier, const uint8_t* data, int dataLength);
         void didFinishLoading(unsigned long identifier);
         void didFail(unsigned long identifier, const ResourceError&);
         void makeCrossOriginAccessRequest(ResourceRequest&&);
@@ -134,12 +134,12 @@ namespace WebCore {
         bool m_async;
         bool m_delayCallbacksForIntegrityCheck;
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
-        Optional<CrossOriginPreflightChecker> m_preflightChecker;
-        Optional<HTTPHeaderMap> m_originalHeaders;
+        std::optional<CrossOriginPreflightChecker> m_preflightChecker;
+        std::optional<HTTPHeaderMap> m_originalHeaders;
 
         ShouldLogError m_shouldLogError;
 #if ENABLE(SERVICE_WORKER)
-        Optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
+        std::optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
 #endif
     };
 

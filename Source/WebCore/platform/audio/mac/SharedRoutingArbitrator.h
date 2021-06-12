@@ -28,7 +28,6 @@
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
 #include "AudioSession.h"
-#include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -55,7 +54,7 @@ public:
     void endRoutingArbitrationForToken(const Token&);
 
 private:
-    Optional<AudioSession::CategoryType> m_currentCategory { AudioSession::CategoryType::None };
+    std::optional<AudioSession::CategoryType> m_currentCategory { AudioSession::CategoryType::None };
     WeakHashSet<Token> m_tokens;
     Vector<ArbitrationCallback> m_enqueuedCallbacks;
     bool m_setupArbitrationOngoing { false };

@@ -37,19 +37,19 @@ void ArgumentCoder<WebKit::InsertTextOptions>::encode(Encoder& encoder, const We
     encoder << options.editingRangeIsRelativeTo;
 }
 
-Optional<WebKit::InsertTextOptions> ArgumentCoder<WebKit::InsertTextOptions>::decode(Decoder& decoder)
+std::optional<WebKit::InsertTextOptions> ArgumentCoder<WebKit::InsertTextOptions>::decode(Decoder& decoder)
 {
     WebKit::InsertTextOptions options;
     if (!decoder.decode(options.registerUndoGroup))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(options.suppressSelectionUpdate))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(options.processingUserGesture))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(options.shouldSimulateKeyboardInput))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(options.editingRangeIsRelativeTo))
-        return WTF::nullopt;
+        return std::nullopt;
     return options;
 }
 

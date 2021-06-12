@@ -136,7 +136,7 @@ void AsyncFileStream::perform(WTF::Function<WTF::Function<void(FileStreamClient&
     });
 }
 
-void AsyncFileStream::getSize(const String& path, Optional<WallTime> expectedModificationTime)
+void AsyncFileStream::getSize(const String& path, std::optional<WallTime> expectedModificationTime)
 {
     // FIXME: Explicit return type here and in all the other cases like this below is a workaround for a deficiency
     // in the Windows compiler at the time of this writing. Could remove it if that is resolved.
@@ -167,7 +167,7 @@ void AsyncFileStream::close()
     });
 }
 
-void AsyncFileStream::read(char* buffer, int length)
+void AsyncFileStream::read(void* buffer, int length)
 {
     perform([buffer, length](FileStream& stream) -> WTF::Function<void(FileStreamClient&)> {
         int bytesRead = stream.read(buffer, length);

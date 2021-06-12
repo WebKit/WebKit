@@ -95,7 +95,7 @@ DropTarget::~DropTarget()
     g_signal_handlers_disconnect_by_data(m_webView, this);
 }
 
-void DropTarget::accept(GdkDragContext* drop, Optional<WebCore::IntPoint> position, unsigned time)
+void DropTarget::accept(GdkDragContext* drop, std::optional<WebCore::IntPoint> position, unsigned time)
 {
     if (m_leaveTimer.isActive()) {
         m_leaveTimer.stop();
@@ -105,7 +105,7 @@ void DropTarget::accept(GdkDragContext* drop, Optional<WebCore::IntPoint> positi
     m_drop = drop;
     m_position = position;
     m_dataRequestCount = 0;
-    m_selectionData = WTF::nullopt;
+    m_selectionData = std::nullopt;
 
     // WebCore needs the selection data to decide, so we need to preload the
     // data of targets we support. Once all data requests are done we start
@@ -246,8 +246,8 @@ void DropTarget::leaveTimerFired()
     page->resetCurrentDragInformation();
 
     m_drop = nullptr;
-    m_position = WTF::nullopt;
-    m_selectionData = WTF::nullopt;
+    m_position = std::nullopt;
+    m_selectionData = std::nullopt;
 }
 
 void DropTarget::leave()
@@ -277,8 +277,8 @@ void DropTarget::drop(IntPoint&& position, unsigned time)
     gtk_drag_finish(m_drop.get(), TRUE, FALSE, time);
 
     m_drop = nullptr;
-    m_position = WTF::nullopt;
-    m_selectionData = WTF::nullopt;
+    m_position = std::nullopt;
+    m_selectionData = std::nullopt;
 }
 
 } // namespace WebKit

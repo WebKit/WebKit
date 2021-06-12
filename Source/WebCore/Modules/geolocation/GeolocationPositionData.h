@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cmath>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -58,11 +57,11 @@ public:
     double longitude { std::numeric_limits<double>::quiet_NaN() };
     double accuracy { std::numeric_limits<double>::quiet_NaN() };
 
-    Optional<double> altitude;
-    Optional<double> altitudeAccuracy;
-    Optional<double> heading;
-    Optional<double> speed;
-    Optional<double> floorLevel;
+    std::optional<double> altitude;
+    std::optional<double> altitudeAccuracy;
+    std::optional<double> heading;
+    std::optional<double> speed;
+    std::optional<double> floorLevel;
 
     bool isValid() const;
 

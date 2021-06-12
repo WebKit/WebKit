@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 
 namespace WTF {
 
+class AbstractLocker;
 class AtomString;
 class AtomStringImpl;
 class BinarySemaphore;
@@ -32,6 +33,7 @@ class CString;
 class CrashOnOverflow;
 class FunctionDispatcher;
 class Hasher;
+class Lock;
 class Logger;
 class MonotonicTime;
 class OrdinalNumber;
@@ -67,7 +69,6 @@ template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
 template<typename> class OptionSet;
-template<typename> class Optional;
 template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename> struct RawPtrTraits;
@@ -115,6 +116,7 @@ template<class, class> class expected;
 template<class> class unexpected;
 }}} // namespace std::experimental::fundamentals_v3
 
+using WTF::AbstractLocker;
 using WTF::AtomString;
 using WTF::AtomStringImpl;
 using WTF::BinarySemaphore;
@@ -128,10 +130,10 @@ using WTF::HashMap;
 using WTF::HashSet;
 using WTF::Hasher;
 using WTF::LazyNeverDestroyed;
+using WTF::Lock;
 using WTF::Logger;
 using WTF::NeverDestroyed;
 using WTF::OptionSet;
-using WTF::Optional;
 using WTF::OrdinalNumber;
 using WTF::PrintStream;
 using WTF::RawPtrTraits;

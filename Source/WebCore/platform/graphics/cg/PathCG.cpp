@@ -31,7 +31,7 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include "IntRect.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
@@ -244,7 +244,7 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
     CGContextBeginPath(context);
     CGContextAddPath(context, platformPath());
 
-    GraphicsContext graphicsContext(context);
+    GraphicsContextCG graphicsContext(context);
     strokeStyleApplier(graphicsContext);
 
     bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
@@ -305,7 +305,7 @@ FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strok
     CGContextAddPath(context, platformPath());
 
     if (strokeStyleApplier) {
-        GraphicsContext graphicsContext(context);
+        GraphicsContextCG graphicsContext(context);
         strokeStyleApplier(graphicsContext);
     }
 

@@ -393,8 +393,7 @@ IMPLEMENT_ASN1_DUP_FUNCTION(X509_CRL)
 
 static int X509_REVOKED_cmp(const X509_REVOKED **a, const X509_REVOKED **b)
 {
-    return (ASN1_STRING_cmp((ASN1_STRING *)(*a)->serialNumber,
-                            (ASN1_STRING *)(*b)->serialNumber));
+    return ASN1_STRING_cmp((*a)->serialNumber, (*b)->serialNumber);
 }
 
 int X509_CRL_add0_revoked(X509_CRL *crl, X509_REVOKED *rev)
@@ -437,6 +436,11 @@ int X509_CRL_get0_by_cert(X509_CRL *crl, X509_REVOKED **ret, X509 *x)
 
 static int def_crl_verify(X509_CRL *crl, EVP_PKEY *r)
 {
+    if (X509_ALGOR_cmp(crl->sig_alg, crl->crl->sig_alg) != 0) {
+        OPENSSL_PUT_ERROR(X509, X509_R_SIGNATURE_ALGORITHM_MISMATCH);
+        return 0;
+    }
+
     return (ASN1_item_verify(ASN1_ITEM_rptr(X509_CRL_INFO),
                              crl->sig_alg, crl->signature, crl->crl, r));
 }

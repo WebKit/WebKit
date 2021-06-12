@@ -10,6 +10,11 @@ Creating 'data' which contains 64K of data
 PASS data.length is 65536
 Putting 'data' into 39 sessionStorage buckets.
 Putting 'data' into another bucket.h
+PASS Hit exception as expected
+Verify that data was never inserted.
+PASS storage.getItem(39) is null
+Removing bucket 38.
+Adding 'Hello!' into a new bucket.
 PASS Insertion worked.
 
 

@@ -28,11 +28,10 @@
 #include "config.h"
 #include "GCryptUtilities.h"
 
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
-Optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
+std::optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -46,11 +45,11 @@ Optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
     case CryptoAlgorithmIdentifier::SHA_512:
         return "sha512";
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
-Optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier identifier)
+std::optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -64,11 +63,11 @@ Optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier identifier)
     case CryptoAlgorithmIdentifier::SHA_512:
         return GCRY_MAC_HMAC_SHA512;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
-Optional<int> digestAlgorithm(CryptoAlgorithmIdentifier identifier)
+std::optional<int> digestAlgorithm(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -82,11 +81,11 @@ Optional<int> digestAlgorithm(CryptoAlgorithmIdentifier identifier)
     case CryptoAlgorithmIdentifier::SHA_512:
         return GCRY_MD_SHA512;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
-Optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithmIdentifier identifier)
+std::optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -100,57 +99,57 @@ Optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithm
     case CryptoAlgorithmIdentifier::SHA_512:
         return PAL::CryptoDigest::Algorithm::SHA_512;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
-Optional<size_t> mpiLength(gcry_mpi_t paramMPI)
+std::optional<size_t> mpiLength(gcry_mpi_t paramMPI)
 {
     // Retrieve the MPI length for the unsigned format.
     size_t dataLength = 0;
     gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, nullptr, 0, &dataLength, paramMPI);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return dataLength;
 }
 
-Optional<size_t> mpiLength(gcry_sexp_t paramSexp)
+std::optional<size_t> mpiLength(gcry_sexp_t paramSexp)
 {
     // Retrieve the MPI value stored in the s-expression: (name mpi-data)
     PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
     if (!paramMPI)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return mpiLength(paramMPI);
 }
 
-Optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
+std::optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
 {
     // Retrieve the MPI length.
     auto length = mpiLength(paramMPI);
     if (!length)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Copy the MPI data into a properly-sized buffer.
     Vector<uint8_t> output(*length);
     gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data(), output.size(), nullptr, paramMPI);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return output;
 }
 
-Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t targetLength)
+std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t targetLength)
 {
     // Retrieve the MPI length. Bail if the retrieved length is longer than target length.
     auto length = mpiLength(paramMPI);
     if (!length || *length > targetLength)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Fill out the output buffer with zeros. Properly determine the zero prefix length,
     // and copy the MPI data into memory area following the prefix (if any).
@@ -159,37 +158,37 @@ Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t target
     gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data() + prefixLength, targetLength, nullptr, paramMPI);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return output;
 }
 
-Optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
+std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
 {
     // Retrieve the MPI value stored in the s-expression: (name mpi-data)
     PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
     if (!paramMPI)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return mpiData(paramMPI);
 }
 
-Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t paramSexp, size_t targetLength)
+std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t paramSexp, size_t targetLength)
 {
     // Retrieve the MPI value stored in the s-expression: (name mpi-data)
     PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
     if (!paramMPI)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return mpiZeroPrefixedData(paramMPI, targetLength);
 }
 
-Optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
+std::optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
 {
     auto data = mpiData(mpi);
     if (!data)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (data->at(0) & 0x80)
         data->insert(0, 0x00);
@@ -197,11 +196,11 @@ Optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
     return data;
 }
 
-Optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t paramSexp)
+std::optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t paramSexp)
 {
     auto data = mpiData(paramSexp);
     if (!data)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (data->at(0) & 0x80)
         data->insert(0, 0x00);

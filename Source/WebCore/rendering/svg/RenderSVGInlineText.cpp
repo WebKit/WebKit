@@ -112,7 +112,7 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
         textAncestor->subtreeStyleDidChange(this);
 }
 
-std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()
+std::unique_ptr<LegacyInlineTextBox> RenderSVGInlineText::createTextBox()
 {
     auto box = makeUnique<SVGInlineTextBox>(*this);
     box->setHasVirtualLogicalHeight();

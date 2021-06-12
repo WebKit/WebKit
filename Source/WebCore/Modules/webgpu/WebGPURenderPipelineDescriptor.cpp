@@ -32,19 +32,19 @@
 
 namespace WebCore {
 
-Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor(GPUErrorScopes& errorScopes) const
+std::optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor(GPUErrorScopes& errorScopes) const
 {
     auto pipelineLayout = layout ? makeRefPtr(layout->pipelineLayout()) : nullptr;
 
     auto vertex = vertexStage.tryCreateGPUProgrammableStageDescriptor();
 
-    Optional<GPUProgrammableStageDescriptor> fragment;
+    std::optional<GPUProgrammableStageDescriptor> fragment;
     if (fragmentStage)
         fragment = fragmentStage->tryCreateGPUProgrammableStageDescriptor();
 
     if (!vertex || (fragmentStage && !fragment)) {
         errorScopes.generatePrefixedError("Invalid GPUProgrammableStageDescriptor!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // FIXME: Web GPU validation, e.g. fail if colorStates is larger than (max number of supported color states).

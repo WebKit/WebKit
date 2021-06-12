@@ -35,6 +35,7 @@
 #include "DFGCapabilities.h"
 #include "JITInlines.h"
 #include "JITOperations.h"
+#include "JITSizeStatistics.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
@@ -259,6 +260,12 @@ void JIT::privateCompileMainPass()
 
         OpcodeID opcodeID = currentInstruction->opcodeID();
 
+        std::optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(m_bytecodeIndex >= startBytecodeIndex && Options::dumpBaselineJITSizeStatistics())) {
+            String id = makeString("Baseline_fast_", opcodeNames[opcodeID]);
+            sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
+        }
+
         if (UNLIKELY(m_compilation)) {
             add64(
                 TrustedImm32(1),
@@ -278,7 +285,6 @@ void JIT::privateCompileMainPass()
         }
 
         switch (opcodeID) {
-        DEFINE_SLOW_OP(in_by_val)
         DEFINE_SLOW_OP(has_private_name)
         DEFINE_SLOW_OP(has_private_brand)
         DEFINE_SLOW_OP(less)
@@ -354,6 +360,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_beloweq)
         DEFINE_OP(op_try_get_by_id)
         DEFINE_OP(op_in_by_id)
+        DEFINE_OP(op_in_by_val)
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_by_id_with_this)
         DEFINE_OP(op_get_by_id_direct)
@@ -481,6 +488,9 @@ void JIT::privateCompileMainPass()
             RELEASE_ASSERT_NOT_REACHED();
         }
 
+        if (UNLIKELY(sizeMarker))
+            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+
         if (JITInternal::verbose)
             dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
     }
@@ -508,8 +518,9 @@ void JIT::privateCompileSlowCases()
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
     m_inByIdIndex = 0;
-    m_delByValIndex = 0;
+    m_inByValIndex = 0;
     m_delByIdIndex = 0;
+    m_delByValIndex = 0;
     m_instanceOfIndex = 0;
     m_privateBrandAccessIndex = 0;
     m_byValInstructionIndex = 0;
@@ -531,8 +542,15 @@ void JIT::privateCompileSlowCases()
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeIndex.offset(), label());
 
+        OpcodeID opcodeID = currentInstruction->opcodeID();
+
+        std::optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
+            String id = makeString("Baseline_slow_", opcodeNames[opcodeID]);
+            sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
+        }
+
         if (UNLIKELY(Options::traceBaselineJITExecution())) {
-            OpcodeID opcodeID = currentInstruction->opcodeID();
             unsigned bytecodeOffset = m_bytecodeIndex.offset();
             CodeBlock* codeBlock = m_codeBlock;
             probeDebug([=] (Probe::Context& ctx) {
@@ -553,6 +571,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_eq)
         DEFINE_SLOWCASE_OP(op_try_get_by_id)
         DEFINE_SLOWCASE_OP(op_in_by_id)
+        DEFINE_SLOWCASE_OP(op_in_by_val)
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_by_id_with_this)
         DEFINE_SLOWCASE_OP(op_get_by_id_direct)
@@ -589,7 +608,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
         DEFINE_SLOWCASE_OP(op_has_enumerable_indexed_property)
+#if !ENABLE(EXTRA_CTI_THUNKS)
         DEFINE_SLOWCASE_OP(op_get_from_scope)
+#endif
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
         DEFINE_SLOWCASE_OP(op_iterator_open)
@@ -624,7 +645,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_SLOW_OP(has_enumerable_structure_property)
         DEFINE_SLOWCASE_SLOW_OP(has_own_structure_property)
         DEFINE_SLOWCASE_SLOW_OP(in_structure_property)
+#if !ENABLE(EXTRA_CTI_THUNKS)
         DEFINE_SLOWCASE_SLOW_OP(resolve_scope)
+#endif
         DEFINE_SLOWCASE_SLOW_OP(check_tdz)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key)
         default:
@@ -639,6 +662,9 @@ void JIT::privateCompileSlowCases()
         
         emitJumpSlowToHot(jump(), 0);
         ++bytecodeCountHavingSlowCase;
+
+        if (UNLIKELY(sizeMarker))
+            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
     }
 
     RELEASE_ASSERT(bytecodeCountHavingSlowCase == m_bytecodeCountHavingSlowCase);
@@ -658,10 +684,6 @@ void JIT::privateCompileSlowCases()
 
 void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
-    MonotonicTime before { };
-    if (UNLIKELY(computeCompileTimes()))
-        before = MonotonicTime::now();
-    
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
     switch (level) {
     case DFG::CannotCompile:
@@ -713,6 +735,12 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     
     m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(BytecodeIndex(0)));
 
+    std::optional<JITSizeStatistics::Marker> sizeMarker;
+    if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
+        String id = makeString("Baseline_prologue");
+        sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
+    }
+
     Label entryLabel(this);
     if (m_disassembler)
         m_disassembler->setStartOfCode(entryLabel);
@@ -763,6 +791,9 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     }
     
     RELEASE_ASSERT(!JITCode::isJIT(m_codeBlock->jitType()));
+
+    if (UNLIKELY(sizeMarker))
+        m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
 
     privateCompileMainPass();
     privateCompileLinkPass();
@@ -817,20 +848,6 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
     m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_codeBlock, LinkBuffer::Profile::BaselineJIT, effort));
-
-    MonotonicTime after { };
-    if (UNLIKELY(computeCompileTimes())) {
-        after = MonotonicTime::now();
-
-        if (Options::reportTotalCompileTimes())
-            totalBaselineCompileTime += after - before;
-    }
-    if (UNLIKELY(reportCompileTimes())) {
-        CString codeBlockName = toCString(*m_codeBlock);
-        
-        dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", m_linkBuffer->size(), " bytes in ", (after - before).milliseconds(), " ms.\n");
-    }
-
     link();
 }
 
@@ -904,6 +921,7 @@ void JIT::link()
     finalizeInlineCaches(m_delByIds, patchBuffer);
     finalizeInlineCaches(m_delByVals, patchBuffer);
     finalizeInlineCaches(m_inByIds, patchBuffer);
+    finalizeInlineCaches(m_inByVals, patchBuffer);
     finalizeInlineCaches(m_instanceOfs, patchBuffer);
     finalizeInlineCaches(m_privateBrandAccesses, patchBuffer);
 
@@ -989,14 +1007,7 @@ CompilationResult JIT::finalizeOnMainThread()
     if (!m_jitCode)
         return CompilationFailed;
 
-    for (auto pair : m_virtualCalls) {
-        auto callLocation = m_linkBuffer->locationOfNearCall<JITThunkPtrTag>(pair.first);
-
-        CallLinkInfo& info = pair.second;
-        MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(*m_vm, info);
-        info.setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, *m_vm));
-        MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
-    }
+    m_linkBuffer->runMainThreadFinalizationTasks();
 
     {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
@@ -1019,6 +1030,13 @@ CompilationResult JIT::finalizeOnMainThread()
     m_codeBlock->setJITCode(m_jitCode.releaseNonNull());
 
     return CompilationSuccessful;
+}
+
+size_t JIT::codeSize() const
+{
+    if (!m_linkBuffer)
+        return 0;
+    return m_linkBuffer->size();
 }
 
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
@@ -1077,21 +1095,11 @@ int JIT::stackPointerOffsetFor(CodeBlock* codeBlock)
     return virtualRegisterForLocal(frameRegisterCountFor(codeBlock) - 1).offset();
 }
 
-bool JIT::reportCompileTimes()
-{
-    return Options::reportCompileTimes() || Options::reportBaselineCompileTimes();
-}
-
-bool JIT::computeCompileTimes()
-{
-    return reportCompileTimes() || Options::reportTotalCompileTimes();
-}
-
 HashMap<CString, Seconds> JIT::compileTimeStats()
 {
     HashMap<CString, Seconds> result;
     if (Options::reportTotalCompileTimes()) {
-        result.add("Total Compile Time", totalBaselineCompileTime + totalDFGCompileTime + totalFTLCompileTime);
+        result.add("Total Compile Time", totalCompileTime());
         result.add("Baseline Compile Time", totalBaselineCompileTime);
 #if ENABLE(DFG_JIT)
         result.add("DFG Compile Time", totalDFGCompileTime);

@@ -57,7 +57,7 @@ public:
         virtual void didScrollFrame(WebPageOverlay&, WebFrame*) { }
 
 #if PLATFORM(MAC)
-        virtual Optional<ActionContext> actionContextForResultAtPoint(WebPageOverlay&, WebCore::FloatPoint) { return WTF::nullopt; }
+        virtual std::optional<ActionContext> actionContextForResultAtPoint(WebPageOverlay&, WebCore::FloatPoint) { return std::nullopt; }
         virtual void dataDetectorsDidPresentUI(WebPageOverlay&) { }
         virtual void dataDetectorsDidChangeUI(WebPageOverlay&) { }
         virtual void dataDetectorsDidHideUI(WebPageOverlay&) { }
@@ -85,7 +85,7 @@ public:
         RetainPtr<DDActionContext> context;
         WebCore::SimpleRange range;
     };
-    Optional<ActionContext> actionContextForResultAtPoint(WebCore::FloatPoint);
+    std::optional<ActionContext> actionContextForResultAtPoint(WebCore::FloatPoint);
     void dataDetectorsDidPresentUI();
     void dataDetectorsDidChangeUI();
     void dataDetectorsDidHideUI();

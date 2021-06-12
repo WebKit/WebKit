@@ -60,8 +60,7 @@ private:
 unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
 {
     ASSERT(!backendSize.isEmpty());
-    Checked<unsigned, RecordOverflow> bytesPerRow = (Checked<unsigned, RecordOverflow>(backendSize.width()) * 4);
-    return bytesPerRow.unsafeGet();
+    return CheckedUint32(backendSize.width()) * 4;
 }
 
 RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const GraphicsContext& context)
@@ -174,7 +173,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
         // FIXME: Should this be using the same logic as ImageBufferUtilitiesCG?
 
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
         auto pixelBuffer = getPixelBuffer(format, logicalRect());
         if (!pixelBuffer)
             return nullptr;
@@ -192,7 +191,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
             return nullptr;
 
         auto imageSize = pixelBuffer->size();
-        return adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer->format().colorSpace), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+        return adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->format().colorSpace.platformColorSpace(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     }
 
     if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
@@ -213,7 +212,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
     return adoptCF(CGBitmapContextCreateImage(context.get()));
 }
 
-Vector<uint8_t> ImageBufferCGBackend::toData(const String& mimeType, Optional<double> quality) const
+Vector<uint8_t> ImageBufferCGBackend::toData(const String& mimeType, std::optional<double> quality) const
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
@@ -227,7 +226,7 @@ Vector<uint8_t> ImageBufferCGBackend::toData(const String& mimeType, Optional<do
     return WebCore::data(image.get(), destinationUTI.get(), quality);
 }
 
-String ImageBufferCGBackend::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
+String ImageBufferCGBackend::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution) const
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));

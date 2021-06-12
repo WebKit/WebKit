@@ -65,7 +65,7 @@ public:
     WebCore::RepetitionCount repetitionCount() const final;
     String uti() const final;
     String filenameExtension() const final;
-    Optional<WebCore::IntPoint> hotSpot() const final { return WTF::nullopt; }
+    std::optional<WebCore::IntPoint> hotSpot() const final { return std::nullopt; }
     String accessibilityDescription() const final { return String(); }
 
     WebCore::IntSize frameSizeAtIndex(size_t, WebCore::SubsamplingLevel = WebCore::SubsamplingLevel::Default) const final;
@@ -98,7 +98,7 @@ private:
     HashMap<int, WebCore::PlatformImagePtr, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_frameImages;
     Vector<ImageDecoder::FrameInfo> m_frameInfos;
     size_t m_frameCount { 0 };
-    Optional<WebCore::IntSize> m_size;
+    std::optional<WebCore::IntSize> m_size;
     bool m_hasTrack { false };
 };
 

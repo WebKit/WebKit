@@ -87,12 +87,8 @@ String CSSValueList::customCSSText() const
 {
     StringBuilder result;
     auto separator = separatorCSSText();
-    for (auto& value : m_values) {
-        if (!result.isEmpty())
-            result.append(separator);
-        result.append(value.get().cssText());
-    }
-
+    for (auto& value : m_values)
+        result.append(result.isEmpty() ? ""_s : separator, value.get().cssText());
     return result.toString();
 }
 

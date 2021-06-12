@@ -158,7 +158,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
         return nullptr;
 
     auto flags = Yarr::parseFlags(m_flags.string());
-    ASSERT(flags.hasValue());
+    ASSERT(flags);
     RegExp* regExp = RegExp::create(generator.vm(), m_pattern.string(), flags.value());
     if (regExp->isValid())
         return generator.emitNewRegExp(generator.finalDestination(dst), regExp);
@@ -859,7 +859,7 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
 
     if (const auto* identifier = node.name()) {
         ASSERT(!propertyName);
-        Optional<uint32_t> optionalIndex = parseIndex(*identifier);
+        std::optional<uint32_t> optionalIndex = parseIndex(*identifier);
         if (!optionalIndex) {
             generator.emitDirectPutById(newObj, *identifier, value.get());
             return;
@@ -3018,7 +3018,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
     OpcodeID opcodeID = this->opcodeID();
 
     if (opcodeID == op_less || opcodeID == op_lesseq || opcodeID == op_greater || opcodeID == op_greatereq) {
-        auto isUInt32 = [&] (ExpressionNode* node) -> Optional<UInt32Result> {
+        auto isUInt32 = [&] (ExpressionNode* node) -> std::optional<UInt32Result> {
             if (node->isBinaryOpNode() && static_cast<BinaryOpNode*>(node)->opcodeID() == op_urshift)
                 return UInt32Result::UInt32;
             if (node->isNumber() && static_cast<NumberNode*>(node)->isIntegerNode()) {
@@ -3026,7 +3026,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
                 if (value.isInt32() && value.asInt32() >= 0)
                     return UInt32Result::Constant;
             }
-            return WTF::nullopt;
+            return std::nullopt;
         };
         auto leftResult = isUInt32(m_expr1);
         auto rightResult = isUInt32(m_expr2);
@@ -4194,7 +4194,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
     RefPtr<RegisterID> enumeratorIndex;
 
-    Optional<Variable> baseVariable;
+    std::optional<Variable> baseVariable;
     if (m_expr->isResolveNode())
         baseVariable = generator.variable(static_cast<ResolveNode*>(m_expr)->identifier());
     else if (m_expr->isThisNode()) {
@@ -4738,7 +4738,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     RefPtr<Label> catchEndLabel;
     RefPtr<Label> finallyLabel;
     RefPtr<Label> finallyEndLabel;
-    Optional<FinallyContext> finallyContext;
+    std::optional<FinallyContext> finallyContext;
 
     if (m_finallyBlock) {
         finallyLabel = generator.newLabel();
@@ -5500,7 +5500,7 @@ void ArrayPatternNode::toString(StringBuilder& builder) const
             break;
 
         case BindingType::RestElement:
-            builder.appendLiteral("...");
+            builder.append("...");
             target.pattern->toString(builder);
             break;
         }
@@ -5542,7 +5542,7 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
     {
         RefPtr<RegisterID> newObject;
         IdentifierSet excludedSet;
-        Optional<CallArguments> args;
+        std::optional<CallArguments> args;
         unsigned numberOfComputedProperties = 0;
         unsigned indexInArguments = 2;
         if (m_containsRestElement) {
@@ -5595,7 +5595,7 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
                     temp = generator.newTemporary();
 
                 if (!target.propertyExpression) {
-                    Optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
+                    std::optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
                     if (!optionalIndex)
                         generator.emitGetById(temp.get(), rhs, target.propertyName);
                     else {
@@ -5820,7 +5820,7 @@ void RestParameterNode::collectBoundIdentifiers(Vector<Identifier>& identifiers)
 
 void RestParameterNode::toString(StringBuilder& builder) const
 {
-    builder.appendLiteral("...");
+    builder.append("...");
     m_pattern->toString(builder);
 }
 

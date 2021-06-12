@@ -38,21 +38,11 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-// FIXME (77983361): Remove this workaround when <rdar://problem/77977216> is fixed.
-#if defined(NDEBUG) && NDEBUG
-#define WK_NDEBUG 1
-#endif
-
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
-
-#if defined(WK_NDEBUG) && !defined(NDEBUG)
-#define NDEBUG 1
-#undef WK_NDEBUG
-#endif
 
 #if PLATFORM(MAC)
 #include <ColorSync/ColorSyncPriv.h>
@@ -242,6 +232,7 @@ typedef void (*CGSNotifyProcPtr)(CGSNotificationType, void* data, uint32_t data_
 
 WTF_EXTERN_C_BEGIN
 
+bool CGColorTransformConvertColorComponents(CGColorTransformRef, CGColorSpaceRef, CGColorRenderingIntent, const CGFloat srcComponents[], CGFloat dstComponents[]);
 CGColorRef CGColorTransformConvertColor(CGColorTransformRef, CGColorRef, CGColorRenderingIntent);
 CGColorTransformRef CGColorTransformCreate(CGColorSpaceRef, CFDictionaryRef attributes);
 
@@ -291,6 +282,8 @@ CGStyleRef CGGStateGetStyle(CGGStateRef);
 CGStyleType CGStyleGetType(CGStyleRef);
 const void *CGStyleGetData(CGStyleRef);
 CGColorRef CGStyleGetColor(CGStyleRef);
+bool CGColorSpaceEqualToColorSpace(CGColorSpaceRef, CGColorSpaceRef);
+CFStringRef CGColorSpaceCopyICCProfileDescription(CGColorSpaceRef);
 
 #if HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 size_t CGPathGetNumberOfElements(CGPathRef);

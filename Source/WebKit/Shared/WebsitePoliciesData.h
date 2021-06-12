@@ -73,7 +73,7 @@ struct WebsitePoliciesData {
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
 
     void encode(IPC::Encoder&) const;
-    static Optional<WebsitePoliciesData> decode(IPC::Decoder&);
+    static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

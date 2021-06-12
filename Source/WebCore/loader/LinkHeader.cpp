@@ -81,11 +81,11 @@ static bool isExtensionParameter(LinkHeader::LinkParameterName name)
 // <cat.jpg>; rel=preload
 //          ^            ^
 //          position     end
-template<typename CharacterType> static Optional<String> findURLBoundaries(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<String> findURLBoundaries(StringParsingBuffer<CharacterType>& buffer)
 {
     skipWhile<isSpaceOrTab>(buffer);
     if (!skipExactly(buffer, '<'))
-        return WTF::nullopt;
+        return std::nullopt;
     skipWhile<isSpaceOrTab>(buffer);
 
     auto urlStart = buffer.position();
@@ -93,7 +93,7 @@ template<typename CharacterType> static Optional<String> findURLBoundaries(Strin
     auto urlEnd = buffer.position();
     skipUntil(buffer, '>');
     if (!skipExactly(buffer, '>'))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return String(urlStart, urlEnd - urlStart);
 }
@@ -171,7 +171,7 @@ static LinkHeader::LinkParameterName paramterNameFromString(StringView name)
 // <cat.jpg>; rel=preload
 //                ^      ^
 //            position  end
-template<typename CharacterType> static Optional<LinkHeader::LinkParameterName> parseParameterName(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<LinkHeader::LinkParameterName> parseParameterName(StringParsingBuffer<CharacterType>& buffer)
 {
     auto nameStart = buffer.position();
     skipWhile<isValidParameterNameChar>(buffer);
@@ -185,7 +185,7 @@ template<typename CharacterType> static Optional<LinkHeader::LinkParameterName> 
     bool validParameterValueEnd = buffer.atEnd() || isParameterValueEnd(*buffer);
     if (validParameterValueEnd && isExtensionParameter(name))
         return name;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // Before:
@@ -299,7 +299,7 @@ template<typename CharacterType> static void findNextHeader(StringParsingBuffer<
 template<typename CharacterType> LinkHeader::LinkHeader(StringParsingBuffer<CharacterType>& buffer)
 {
     auto urlResult = findURLBoundaries(buffer);
-    if (urlResult == WTF::nullopt) {
+    if (urlResult == std::nullopt) {
         m_isValid = false;
         findNextHeader(buffer);
         return;

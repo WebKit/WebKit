@@ -52,13 +52,13 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void sendData(const IPC::DataReference&, uint64_t);
-    void sendHandshake(const IPC::DataReference&, const Optional<WebCore::CookieRequestHeaderFieldProxy>&, uint64_t);
+    void sendHandshake(const IPC::DataReference&, const std::optional<WebCore::CookieRequestHeaderFieldProxy>&, uint64_t);
     void close();
     
     // SocketStreamHandleClient
     void didOpenSocketStream(WebCore::SocketStreamHandle&) final;
     void didCloseSocketStream(WebCore::SocketStreamHandle&) final;
-    void didReceiveSocketStreamData(WebCore::SocketStreamHandle&, const char*, size_t) final;
+    void didReceiveSocketStreamData(WebCore::SocketStreamHandle&, const uint8_t*, size_t) final;
     void didFailToReceiveSocketStreamData(WebCore::SocketStreamHandle&) final;
     void didUpdateBufferedAmount(WebCore::SocketStreamHandle&, size_t) final;
     void didFailSocketStream(WebCore::SocketStreamHandle&, const WebCore::SocketStreamError&) final;

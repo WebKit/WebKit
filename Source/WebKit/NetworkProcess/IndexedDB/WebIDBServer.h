@@ -32,6 +32,7 @@
 #include <WebCore/StorageQuotaManager.h>
 #include <wtf/CrossThreadTaskHandler.h>
 #include <wtf/RefCounter.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 class StorageQuotaManager;
@@ -42,9 +43,9 @@ class IDBServer;
 
 namespace WebKit {
 
-class WebIDBServer final : public CrossThreadTaskHandler, public IPC::Connection::ThreadMessageReceiverRefCounted {
+class WebIDBServer final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static Ref<WebIDBServer> create(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&, CompletionHandler<void()>&&);
+    static Ref<WebIDBServer> create(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
 
     void getOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
     void closeAndDeleteDatabasesModifiedSince(WallTime, CompletionHandler<void()>&& callback);
@@ -86,29 +87,23 @@ public:
     void removeConnection(IPC::Connection&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-    void dispatchToThread(WTF::Function<void()>&&);
-    void close();
+    void close(CompletionHandler<void()>&& = { });
 
 private:
-    WebIDBServer(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&, CompletionHandler<void()>&&);
+    WebIDBServer(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
     ~WebIDBServer();
 
     void postTask(WTF::Function<void()>&&);
+    void postTaskReply(Function<void()>&&);
 
-    void tryClose();
+    Ref<WorkQueue> m_queue;
 
     Lock m_serverLock;
-    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
+    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server WTF_GUARDED_BY_LOCK(m_serverLock);
     bool m_isSuspended { false };
 
     HashMap<IPC::Connection::UniqueID, std::unique_ptr<WebIDBConnectionToClient>> m_connectionMap;
-    HashSet<IPC::Connection*> m_connections;
-
-    enum DataTaskCounterType { };
-    using DataTaskCounter = RefCounter<DataTaskCounterType>;
-    using DataTaskCounterToken = DataTaskCounter::Token;
-    DataTaskCounter m_dataTaskCounter;
-    CompletionHandler<void()> m_closeCallback;
+    WeakHashSet<IPC::Connection> m_connections; // Only used on the main thread.
 };
 
 } // namespace WebKit

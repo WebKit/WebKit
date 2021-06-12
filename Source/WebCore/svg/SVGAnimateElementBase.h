@@ -57,12 +57,12 @@ private:
     void calculateAnimatedValue(float progress, unsigned repeatCount) override;
     void applyResultsToTarget() override;
     void stopAnimation(SVGElement* targetElement) override;
-    Optional<float> calculateDistance(const String& fromString, const String& toString) override;
+    std::optional<float> calculateDistance(const String& fromString, const String& toString) override;
 
     bool hasInvalidCSSAttributeType() const;
 
     mutable RefPtr<SVGAttributeAnimator> m_animator;
-    mutable Optional<bool> m_hasInvalidCSSAttributeType;
+    mutable std::optional<bool> m_hasInvalidCSSAttributeType;
 };
 
 } // namespace WebCore

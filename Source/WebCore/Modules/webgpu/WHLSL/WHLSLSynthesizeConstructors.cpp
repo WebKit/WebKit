@@ -128,11 +128,11 @@ Expected<void, Error> synthesizeConstructors(Program& program)
             auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), &unnamedType, String(), nullptr, nullptr);
             AST::VariableDeclarations parameters;
             parameters.append(WTFMove(variableDeclaration));
-            AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, unnamedType, "operator cast"_str, WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
+            AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), std::nullopt, unnamedType, "operator cast"_str, WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
             program.append(WTFMove(copyConstructor));
         }
 
-        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, unnamedType, "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator, ParsingMode::StandardLibrary));
+        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), std::nullopt, unnamedType, "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator, ParsingMode::StandardLibrary));
         if (!program.append(WTFMove(defaultConstructor)))
             return makeUnexpected(Error("Could not synthesize default constructor"));
     }
@@ -148,7 +148,7 @@ Expected<void, Error> synthesizeConstructors(Program& program)
         auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), AST::TypeReference::wrap(location, namedType.get()), String(), nullptr, nullptr);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
-        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(location, namedType.get()), "operator cast"_str, WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
+        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), std::nullopt, AST::TypeReference::wrap(location, namedType.get()), "operator cast"_str, WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
         program.append(WTFMove(copyConstructor));
 
         if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType))) {
@@ -156,7 +156,7 @@ Expected<void, Error> synthesizeConstructors(Program& program)
             if (nativeTypeDeclaration.isOpaqueType())
                 continue;
         }
-        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(location, namedType.get()), "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator, ParsingMode::StandardLibrary));
+        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), std::nullopt, AST::TypeReference::wrap(location, namedType.get()), "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator, ParsingMode::StandardLibrary));
         if (!program.append(WTFMove(defaultConstructor)))
             return makeUnexpected(Error("Could not synthesize default constructor"));
     }

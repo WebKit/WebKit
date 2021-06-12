@@ -31,7 +31,7 @@
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 namespace JSC {
 class JSObject;
@@ -62,7 +62,7 @@ public:
     };
 
     HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
-    CheckedLock& paintDefinitionLock() WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }
+    Lock& paintDefinitionLock() WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }
 
     void prepareForDestruction() final
     {
@@ -93,7 +93,7 @@ private:
     bool isPaintWorkletGlobalScope() const final { return true; }
 
     HashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap WTF_GUARDED_BY_LOCK(m_paintDefinitionLock);
-    CheckedLock m_paintDefinitionLock;
+    Lock m_paintDefinitionLock;
     bool m_hasPreparedForDestruction { false };
 };
 

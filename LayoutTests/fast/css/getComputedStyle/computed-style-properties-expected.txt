@@ -10,7 +10,7 @@ Subheading B
 Heading B
 
 PASS computedStyleFor('outline', null, 'outline-offset') is '5px'
-PASS computedStyleFor('content', 'before', 'content') is "text"
+PASS computedStyleFor('content', 'before', 'content') is "\"text\""
 PASS computedStyleFor('content', 'after', 'content') is "\"test \" url(\"data:image/gif;base64,R0lGODlhAQABAJAAAP8AAAAAACwAAAAAAQABAAACAgQBADs=\")"
 PASS computedStyleFor('counter', null, 'counter-reset') is "section 0"
 PASS str.indexOf('subsection 0') != -1 is true

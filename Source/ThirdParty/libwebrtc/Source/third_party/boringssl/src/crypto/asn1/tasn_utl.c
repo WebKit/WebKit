@@ -66,6 +66,7 @@
 #include <openssl/thread.h>
 
 #include "../internal.h"
+#include "asn1_locl.h"
 
 
 /* Utility functions for manipulating fields and offsets */
@@ -91,8 +92,7 @@ int asn1_set_choice_selector(ASN1_VALUE **pval, int value,
 
 static CRYPTO_refcount_t *asn1_get_references(ASN1_VALUE **pval,
                                               const ASN1_ITEM *it) {
-  if (it->itype != ASN1_ITYPE_SEQUENCE &&
-      it->itype != ASN1_ITYPE_NDEF_SEQUENCE) {
+  if (it->itype != ASN1_ITYPE_SEQUENCE) {
     return NULL;
   }
   const ASN1_AUX *aux = it->funcs;

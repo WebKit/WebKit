@@ -48,7 +48,7 @@ private:
     explicit RTCEncodedVideoFrame(Ref<RTCRtpTransformableFrame>&&);
 
     Type m_type;
-    mutable Optional<Metadata> m_metadata;
+    mutable std::optional<Metadata> m_metadata;
 };
 
 } // namespace WebCore

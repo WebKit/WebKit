@@ -120,7 +120,7 @@ InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSVal
 }
 
 template<typename ResultType>
-ResultType intlOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
+ResultType intlOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
 {
     // GetOption (options, property, type="string", values, fallback)
     // https://tc39.github.io/ecma402/#sec-getoption
@@ -201,28 +201,28 @@ inline UCollationResult compareASCIIWithUCADUCET(const CharacterType1* character
 }
 
 // https://tc39.es/ecma402/#sec-getoptionsobject
-inline Optional<JSObject&> intlGetOptionsObject(JSGlobalObject* globalObject, JSValue options)
+inline JSObject* intlGetOptionsObject(JSGlobalObject* globalObject, JSValue options)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (options.isUndefined())
-        return WTF::nullopt;
+        return nullptr;
     if (LIKELY(options.isObject()))
-        return *asObject(options);
+        return asObject(options);
     throwTypeError(globalObject, scope, "options argument is not an object or undefined"_s);
-    return WTF::nullopt;
+    return nullptr;
 }
 
 // https://tc39.es/ecma402/#sec-coerceoptionstoobject
-inline Optional<JSObject&> intlCoerceOptionsToObject(JSGlobalObject* globalObject, JSValue optionsValue)
+inline JSObject* intlCoerceOptionsToObject(JSGlobalObject* globalObject, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (optionsValue.isUndefined())
-        return WTF::nullopt;
+        return nullptr;
     JSObject* options = optionsValue.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, WTF::nullopt);
-    return *options;
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    return options;
 }
 
 } // namespace JSC

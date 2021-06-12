@@ -27,7 +27,6 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -41,17 +40,17 @@ struct WebBackForwardListCounts {
         encoder << forwardCount;
     }
 
-    static Optional<WebBackForwardListCounts> decode(IPC::Decoder& decoder)
+    static std::optional<WebBackForwardListCounts> decode(IPC::Decoder& decoder)
     {
-        Optional<uint32_t> backCount;
+        std::optional<uint32_t> backCount;
         decoder >> backCount;
         if (!backCount)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<uint32_t> forwardCount;
+        std::optional<uint32_t> forwardCount;
         decoder >> forwardCount;
         if (!forwardCount)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return WebBackForwardListCounts { *backCount, *forwardCount };
     }

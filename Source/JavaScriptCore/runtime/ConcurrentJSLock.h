@@ -28,7 +28,6 @@
 #include "DeferGC.h"
 #include <wtf/Lock.h>
 #include <wtf/NoLock.h>
-#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -41,16 +40,16 @@ class ConcurrentJSLockerBase : public AbstractLocker {
     WTF_MAKE_NONCOPYABLE(ConcurrentJSLockerBase);
 public:
     explicit ConcurrentJSLockerBase(ConcurrentJSLock& lockable)
-        : m_locker(&lockable)
     {
+        m_locker.emplace(lockable);
     }
     explicit ConcurrentJSLockerBase(ConcurrentJSLock* lockable)
-        : m_locker(lockable)
     {
+        if (lockable)
+            m_locker.emplace(*lockable);
     }
 
     explicit ConcurrentJSLockerBase(NoLockingNecessaryTag)
-        : m_locker(NoLockingNecessary)
     {
     }
 
@@ -58,13 +57,14 @@ public:
     {
     }
     
-    void unlockEarly()
+    void unlockEarly() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
-        m_locker.unlockEarly();
+        if (m_locker)
+            m_locker->unlockEarly();
     }
 
 private:
-    ConcurrentJSLockerImpl m_locker;
+    std::optional<ConcurrentJSLockerImpl> m_locker;
 };
 
 class GCSafeConcurrentJSLocker : public ConcurrentJSLockerBase {
@@ -115,7 +115,7 @@ public:
     ConcurrentJSLocker(NoLockingNecessaryTag)
         : ConcurrentJSLockerBase(NoLockingNecessary)
 #if !defined(NDEBUG)
-        , m_disallowGC(WTF::nullopt)
+        , m_disallowGC(std::nullopt)
 #endif
     {
     }
@@ -124,7 +124,7 @@ public:
 
 #if !defined(NDEBUG)
 private:
-    Optional<DisallowGC> m_disallowGC;
+    std::optional<DisallowGC> m_disallowGC;
 #endif
 };
 

@@ -67,7 +67,7 @@ public:
     {
     }
 
-    RefPtr<ImageBuffer> getScratchBuffer(const IntSize& size)
+    RefPtr<ImageBuffer> getScratchBuffer(const IntSize& size) WTF_REQUIRES_LOCK(lock())
     {
         ASSERT(lock().isHeld());
         auto releaseLayerImage = makeScopeExit([this] {
@@ -85,11 +85,11 @@ public:
         clearScratchBuffer();
 
         // ShadowBlur is not used with accelerated drawing, so it's OK to make an unconditionally unaccelerated buffer.
-        m_imageBuffer = ImageBuffer::create(roundedSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+        m_imageBuffer = ImageBuffer::create(roundedSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
         return m_imageBuffer;
     }
 
-    bool setCachedShadowValues(const FloatSize& radius, const Color& color, const FloatRect& shadowRect, const FloatRoundedRect::Radii& radii, const FloatSize& layerSize)
+    bool setCachedShadowValues(const FloatSize& radius, const Color& color, const FloatRect& shadowRect, const FloatRoundedRect::Radii& radii, const FloatSize& layerSize) WTF_REQUIRES_LOCK(lock())
     {
         ASSERT(lock().isHeld());
         if (!m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastShadowRect == shadowRect &&  m_lastRadii == radii && m_lastLayerSize == layerSize)
@@ -105,7 +105,7 @@ public:
         return true;
     }
 
-    bool setCachedInsetShadowValues(const FloatSize& radius, const Color& color, const FloatRect& bounds, const FloatRect& shadowRect, const FloatRoundedRect::Radii& radii)
+    bool setCachedInsetShadowValues(const FloatSize& radius, const Color& color, const FloatRect& bounds, const FloatRect& shadowRect, const FloatRoundedRect::Radii& radii) WTF_REQUIRES_LOCK(lock())
     {
         ASSERT(lock().isHeld());
         if (m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastInsetBounds == bounds && shadowRect == m_lastShadowRect && radii == m_lastRadii)
@@ -121,8 +121,8 @@ public:
         return true;
     }
 
-    static ScratchBuffer& singleton();
-    static Lock& lock();
+    static ScratchBuffer& singleton() WTF_REQUIRES_LOCK(lock());
+    static Lock& lock() WTF_RETURNS_LOCK(s_lock) { return s_lock; }
 
 private:
     void scheduleScratchBufferPurge()
@@ -141,13 +141,15 @@ private:
         }
     }
 
-    void clearScratchBuffer()
+    void clearScratchBuffer() WTF_REQUIRES_LOCK(lock())
     {
         ASSERT(lock().isHeld());
         m_imageBuffer = nullptr;
         m_lastRadius = FloatSize();
         m_lastLayerSize = FloatSize();
     }
+
+    static Lock s_lock;
 
     RefPtr<ImageBuffer> m_imageBuffer;
     RunLoop::Timer<ScratchBuffer> m_purgeTimer;
@@ -161,17 +163,13 @@ private:
     FloatSize m_lastLayerSize;
 };
 
+Lock ScratchBuffer::s_lock;
+
 ScratchBuffer& ScratchBuffer::singleton()
 {
     ASSERT(lock().isHeld());
     static NeverDestroyed<ScratchBuffer> scratchBuffer;
     return scratchBuffer;
-}
-
-Lock& ScratchBuffer::lock()
-{
-    static Lock lock;
-    return lock;
 }
 
 static float radiusToLegacyRadius(float radius)
@@ -200,7 +198,9 @@ ShadowBlur::ShadowBlur(const GraphicsContextState& state)
     , m_shadowsIgnoreTransforms(state.shadowsIgnoreTransforms)
 {
 #if USE(CG)
-    if (state.shadowsUseLegacyRadius) {
+    // Core Graphics incorrectly renders shadows with radius > 8px (<rdar://problem/8103442>),
+    // but we need to preserve this buggy behavior for canvas and -webkit-box-shadow.
+    if (state.shadowRadiusMode == ShadowRadiusMode::Legacy) {
         float shadowBlur = radiusToLegacyRadius(state.shadowBlur);
         m_blurRadius = FloatSize(shadowBlur, shadowBlur);
     }
@@ -391,7 +391,7 @@ IntSize ShadowBlur::blurredEdgeSize() const
     return edgeSize;
 }
 
-Optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRect(const AffineTransform& transform, const FloatRect& shadowedRect, const IntRect& clipRect)
+std::optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRect(const AffineTransform& transform, const FloatRect& shadowedRect, const IntRect& clipRect)
 {
     LayerImageProperties calculatedLayerImageProperties;
 
@@ -404,7 +404,7 @@ Optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRec
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
         FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(shadowedRect));
         transformedPolygon.move(m_offset);
-        layerRect = transform.inverse().valueOr(AffineTransform()).mapQuad(transformedPolygon).boundingBox();
+        layerRect = transform.inverse().value_or(AffineTransform()).mapQuad(transformedPolygon).boundingBox();
     } else {
         layerRect = shadowedRect;
         layerRect.move(m_offset);
@@ -422,7 +422,7 @@ Optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRec
     if (!clipRect.contains(enclosingIntRect(layerRect))) {
         // If we are totally outside the clip region, we aren't painting at all.
         if (intersection(layerRect, clipRect).isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
 
         IntRect inflatedClip = clipRect;
         // Pixels at the edges can be affected by pixels outside the buffer,
@@ -606,7 +606,7 @@ void ShadowBlur::drawInsetShadow(const AffineTransform& transform, const IntRect
 
 void ShadowBlur::drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const LayerImageProperties& layerImageProperties, const DrawBufferCallback& drawBuffer)
 {
-    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
         return;
 
@@ -634,7 +634,7 @@ void ShadowBlur::drawRectShadowWithoutTiling(const AffineTransform&, const Float
 
 void ShadowBlur::drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const LayerImageProperties& layerImageProperties, const DrawBufferCallback& drawBuffer)
 {
-    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
         return;
 
@@ -694,37 +694,31 @@ void ShadowBlur::drawInsetShadowWithoutTiling(const AffineTransform&, const Floa
 
 void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectCallback& fillRect, const LayerImageProperties& layerImageProperties)
 {
-    RefPtr<ImageBuffer> layerImageBuffer;
+    FloatRect templateShadow = FloatRect(edgeSize.width(), edgeSize.height(), templateSize.width() - 2 * edgeSize.width(), templateSize.height() - 2 * edgeSize.height());
+
 #if USE(CG)
-    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
-    if (locker) {
-        layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
+    if (ScratchBuffer::lock().tryLock()) {
+        Locker locker { AdoptLock, ScratchBuffer::lock() };
+        auto layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
         if (!layerImageBuffer)
             return;
+        bool redrawNeeded = ScratchBuffer::singleton().setCachedShadowValues(m_blurRadius, m_color, templateShadow, shadowedRect.radii(), layerImageProperties.layerSize);
+        drawRectShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, shadowedRect, templateSize, edgeSize, drawImage, fillRect, templateShadow, redrawNeeded);
+        return;
     }
 #else
     UNUSED_PARAM(layerImageProperties);
 #endif
 
-    if (!layerImageBuffer) {
-        layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
-        if (!layerImageBuffer)
-            return;
-    }
-    auto* layerImage = layerImageBuffer.get();
+    if (auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8))
+        drawRectShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, shadowedRect, templateSize, edgeSize, drawImage, fillRect, templateShadow);
+}
 
-    FloatRect templateShadow = FloatRect(edgeSize.width(), edgeSize.height(), templateSize.width() - 2 * edgeSize.width(), templateSize.height() - 2 * edgeSize.height());
-
-    bool redrawNeeded = true;
-#if USE(CG)
-    // Only redraw in the scratch buffer if its cached contents don't match our needs
-    if (locker)
-        redrawNeeded = ScratchBuffer::singleton().setCachedShadowValues(m_blurRadius, m_color, templateShadow, shadowedRect.radii(), layerImageProperties.layerSize);
-#endif
-
+void ShadowBlur::drawRectShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform& transform, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectCallback& fillRect, const FloatRect& templateShadow, bool redrawNeeded)
+{
     if (redrawNeeded) {
         // Draw shadow into the ImageBuffer.
-        GraphicsContext& shadowContext = layerImage->context();
+        GraphicsContext& shadowContext = layerImage.context();
         GraphicsContextStateSaver shadowStateSaver(shadowContext);
 
         shadowContext.clearRect(FloatRect(0, 0, templateSize.width(), templateSize.height()));
@@ -737,7 +731,7 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
             path.addRoundedRect(FloatRoundedRect(templateShadow, shadowedRect.radii()));
             shadowContext.fillPath(path);
         }
-        blurAndColorShadowBuffer(*layerImage, templateSize);
+        blurAndColorShadowBuffer(layerImage, templateSize);
     }
 
     FloatSize offset = m_offset;
@@ -749,42 +743,36 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
     shadowBounds.inflateX(edgeSize.width());
     shadowBounds.inflateY(edgeSize.height());
 
-    drawLayerPiecesAndFillCenter(*layerImage, shadowBounds, shadowedRect.radii(), edgeSize, templateSize, drawImage, fillRect);
+    drawLayerPiecesAndFillCenter(layerImage, shadowBounds, shadowedRect.radii(), edgeSize, templateSize, drawImage, fillRect);
 }
 
 void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectWithHoleCallback& fillRectWithHole)
 {
-    RefPtr<ImageBuffer> layerImageBuffer;
-#if USE(CG)
-    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
-    if (locker) {
-        layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
-        if (!layerImageBuffer)
-            return;
-    }
-#endif
-
-    if (!layerImageBuffer) {
-        layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
-        if (!layerImageBuffer)
-            return;
-    }
-    auto* layerImage = layerImageBuffer.get();
-
     // Draw the rectangle with hole.
     FloatRect templateBounds(0, 0, templateSize.width(), templateSize.height());
     FloatRect templateHole = FloatRect(edgeSize.width(), edgeSize.height(), templateSize.width() - 2 * edgeSize.width(), templateSize.height() - 2 * edgeSize.height());
 
-    bool redrawNeeded = true;
 #if USE(CG)
-    // Only redraw in the scratch buffer if its cached contents don't match our needs
-    if (locker)
-        redrawNeeded = ScratchBuffer::singleton().setCachedInsetShadowValues(m_blurRadius, m_color, templateBounds, templateHole, holeRect.radii());
+    if (ScratchBuffer::lock().tryLock()) {
+        Locker locker { AdoptLock, ScratchBuffer::lock() };
+        auto layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
+        if (!layerImageBuffer)
+            return;
+        bool redrawNeeded = ScratchBuffer::singleton().setCachedInsetShadowValues(m_blurRadius, m_color, templateBounds, templateHole, holeRect.radii());
+        drawInsetShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, fullRect, holeRect, templateSize, edgeSize, drawImage, fillRectWithHole, templateBounds, templateHole, redrawNeeded);
+        return;
+    }
 #endif
 
+    if (auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8))
+        drawInsetShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, fullRect, holeRect, templateSize, edgeSize, drawImage, fillRectWithHole, templateBounds, templateHole);
+}
+
+void ShadowBlur::drawInsetShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectWithHoleCallback& fillRectWithHole, const FloatRect& templateBounds, const FloatRect& templateHole, bool redrawNeeded)
+{
     if (redrawNeeded) {
         // Draw shadow into a new ImageBuffer.
-        GraphicsContext& shadowContext = layerImage->context();
+        GraphicsContext& shadowContext = layerImage.context();
         GraphicsContextStateSaver shadowStateSaver(shadowContext);
         shadowContext.clearRect(templateBounds);
         shadowContext.setFillRule(WindRule::EvenOdd);
@@ -799,7 +787,7 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
 
         shadowContext.fillPath(path);
 
-        blurAndColorShadowBuffer(*layerImage, templateSize);
+        blurAndColorShadowBuffer(layerImage, templateSize);
     }
     FloatSize offset = m_offset;
     if (shadowsIgnoreTransforms())
@@ -817,7 +805,7 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
     // Fill the external part of the shadow (which may be visible because of offset).
     fillRectWithHole(boundingRect, destHoleBounds, m_color);
 
-    drawLayerPieces(*layerImage, destHoleBounds, holeRect.radii(), edgeSize, templateSize, drawImage);
+    drawLayerPieces(layerImage, destHoleBounds, holeRect.radii(), edgeSize, templateSize, drawImage);
 }
 
 void ShadowBlur::drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shadowBounds, const FloatRoundedRect::Radii& radii, const IntSize& bufferPadding, const IntSize& templateSize, const DrawImageCallback& drawImage)
@@ -905,7 +893,7 @@ void ShadowBlur::blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templa
     if (m_type != BlurShadow)
         return;
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     IntRect blurRect(IntPoint(), templateSize);
     auto layerData = layerImage.getPixelBuffer(format, blurRect);
     if (!layerData)
@@ -935,7 +923,7 @@ void ShadowBlur::drawShadowLayer(const AffineTransform& transform, const IntRect
 
     adjustBlurRadius(transform);
 
-    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties->layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties->layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
         return;
 

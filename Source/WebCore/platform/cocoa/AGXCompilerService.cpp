@@ -30,12 +30,11 @@
 
 #include <sys/utsname.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
-static Optional<bool> hasAGXCompilerService;
+static std::optional<bool> hasAGXCompilerService;
 
 void setDeviceHasAGXCompilerServiceForTesting()
 {

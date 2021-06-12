@@ -104,7 +104,6 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
 #if !RELEASE_LOG_DISABLED
     , m_logger(downcast<Document>(context).logger())
 #endif
@@ -155,13 +154,14 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
 void MediaSource::addedToRegistry()
 {
     DEBUG_LOG(LOGIDENTIFIER);
-    setPendingActivity(*this);
+    ++m_associatedRegistryCount;
 }
 
 void MediaSource::removedFromRegistry()
 {
     DEBUG_LOG(LOGIDENTIFIER);
-    unsetPendingActivity(*this);
+    ASSERT(m_associatedRegistryCount);
+    --m_associatedRegistryCount;
 }
 
 MediaTime MediaSource::duration() const
@@ -531,7 +531,7 @@ void MediaSource::setReadyState(ReadyState state)
     onReadyStateChange(oldState, state);
 }
 
-ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
+ExceptionOr<void> MediaSource::endOfStream(std::optional<EndOfStreamError> error)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -552,7 +552,7 @@ ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
     return { };
 }
 
-void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
+void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
 {
 #if !RELEASE_LOG_DISABLED
     if (error)
@@ -997,7 +997,7 @@ void MediaSource::openIfInEndedState()
 
 bool MediaSource::virtualHasPendingActivity() const
 {
-    return m_private || m_asyncEventQueue->hasPendingActivity();
+    return m_private || m_associatedRegistryCount;
 }
 
 void MediaSource::stop()
@@ -1077,10 +1077,7 @@ void MediaSource::scheduleEvent(const AtomString& eventName)
 {
     DEBUG_LOG(LOGIDENTIFIER, "scheduling '", eventName, "'");
 
-    auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
-    event->setTarget(this);
-
-    m_asyncEventQueue->enqueueEvent(WTFMove(event));
+    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 ScriptExecutionContext* MediaSource::scriptExecutionContext() const

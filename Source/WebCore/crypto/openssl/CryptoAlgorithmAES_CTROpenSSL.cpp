@@ -49,25 +49,25 @@ static const EVP_CIPHER* aesAlgorithm(size_t keySize)
     return nullptr;
 }
 
-static Optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>& key, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& inputText)
+static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>& key, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& inputText)
 {
     constexpr size_t blockSize = 16;
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
-        return WTF::nullopt;
+        return std::nullopt;
 
     EvpCipherCtxPtr ctx;
     int len;
 
     // Create and initialize the context
     if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
-        return WTF::nullopt;
+        return std::nullopt;
 
     const size_t blocks = roundUpToMultipleOf(blockSize, inputText.size()) / blockSize;
 
     // Detect loop
     if (counterLength < sizeof(size_t) * 8 && blocks > ((size_t)1 << counterLength))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Calculate capacity before overflow
     CryptoAlgorithmAES_CTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
@@ -83,19 +83,19 @@ static Optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>& key
     {
         // Initialize the encryption(decryption) operation
         if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), counter.data(), operation))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Disable padding
         if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
         if (1 != EVP_CipherUpdate(ctx.get(), outputText.data(), &len, inputText.data(), headSize))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Finalize the encryption(decryption)
         if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + len, &len))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     // Sedond part
@@ -106,19 +106,19 @@ static Optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>& key
 
         // Initialize the encryption(decryption) operation
         if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), remainingCounter.data(), operation))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Disable padding
         if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
         if (1 != EVP_CipherUpdate(ctx.get(), outputText.data() + headSize, &len, inputText.data() + headSize, tailSize))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Finalize the encryption(decryption)
         if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + headSize + len, &len))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return outputText;

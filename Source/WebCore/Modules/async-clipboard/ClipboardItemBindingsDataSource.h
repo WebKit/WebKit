@@ -28,7 +28,6 @@
 #include "ClipboardItemDataSource.h"
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,7 +49,7 @@ public:
 private:
     Vector<String> types() const final;
     void getType(const String&, Ref<DeferredPromise>&&) final;
-    void collectDataForWriting(Clipboard& destination, CompletionHandler<void(Optional<PasteboardCustomData>)>&&) final;
+    void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&) final;
 
     void invokeCompletionHandler();
 
@@ -90,7 +89,7 @@ private:
     };
 
     unsigned m_numberOfPendingClipboardTypes { 0 };
-    CompletionHandler<void(Optional<PasteboardCustomData>)> m_completionHandler;
+    CompletionHandler<void(std::optional<PasteboardCustomData>)> m_completionHandler;
     Vector<Ref<ClipboardItemTypeLoader>> m_itemTypeLoaders;
     WeakPtr<Clipboard> m_writingDestination;
 

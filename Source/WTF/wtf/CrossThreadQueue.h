@@ -27,12 +27,10 @@
 
 #include <limits>
 #include <wtf/Assertions.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 
@@ -46,16 +44,16 @@ public:
     void append(DataType&&);
 
     DataType waitForMessage();
-    Optional<DataType> tryGetMessage();
+    std::optional<DataType> tryGetMessage();
 
     void kill();
     bool isKilled() const;
     bool isEmpty() const;
 
 private:
-    mutable CheckedLock m_lock;
+    mutable Lock m_lock;
     Deque<DataType> m_queue WTF_GUARDED_BY_LOCK(m_lock);
-    CheckedCondition m_condition;
+    Condition m_condition;
     bool m_killed WTF_GUARDED_BY_LOCK(m_lock) { false };
 };
 
@@ -74,7 +72,7 @@ DataType CrossThreadQueue<DataType>::waitForMessage()
     Locker locker { m_lock };
 
     auto found = m_queue.end();
-    while (found == m_queue.end()) {
+    while (!m_killed && found == m_queue.end()) {
         found = m_queue.begin();
         if (found != m_queue.end())
             break;
@@ -88,7 +86,7 @@ DataType CrossThreadQueue<DataType>::waitForMessage()
 }
 
 template<typename DataType>
-Optional<DataType> CrossThreadQueue<DataType>::tryGetMessage()
+std::optional<DataType> CrossThreadQueue<DataType>::tryGetMessage()
 {
     Locker locker { m_lock };
 

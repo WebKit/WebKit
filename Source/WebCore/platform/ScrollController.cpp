@@ -99,18 +99,7 @@ bool ScrollController::usesScrollSnap() const
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableArea)
-{
-    const auto* snapOffsetInfo = scrollableArea.snapOffsetInfo();
-    if (!snapOffsetInfo) {
-        m_scrollSnapState = nullptr;
-        return;
-    }
-
-    updateScrollSnapPoints(*snapOffsetInfo);
-}
-
-void ScrollController::updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
+void ScrollController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
 {
     if (snapOffsetInfo.isEmpty()) {
         m_scrollSnapState = nullptr;
@@ -126,7 +115,12 @@ void ScrollController::updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo&
     if (shouldComputeCurrentSnapIndices)
         setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
 
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState new state: " << ValueOrNull(m_scrollSnapState.get()));
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " setSnapOffsetsInfo new state: " << ValueOrNull(m_scrollSnapState.get()));
+}
+
+const LayoutScrollSnapOffsetsInfo* ScrollController::snapOffsetsInfo() const
+{
+    return m_scrollSnapState ? &m_scrollSnapState->snapOffsetInfo() : nullptr;
 }
 
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
@@ -168,7 +162,7 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     setActiveScrollSnapIndexForAxis(axis, activeIndex);
 }
 
-float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float destinationOffset, float velocity, Optional<float> originalOffset)
+float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float destinationOffset, float velocity, std::optional<float> originalOffset)
 {
     if (!usesScrollSnap())
         return destinationOffset;
@@ -178,8 +172,8 @@ float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float dest
     if (!snapOffsets.size())
         return destinationOffset;
 
-    Optional<LayoutUnit> originalOffsetInLayoutUnits;
-    if (originalOffset.hasValue())
+    std::optional<LayoutUnit> originalOffsetInLayoutUnits;
+    if (originalOffset)
         originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / m_client.pageScaleFactor());
     LayoutSize viewportSize(m_client.viewportSize().width(), m_client.viewportSize().height());
     LayoutUnit offset = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, LayoutUnit(destinationOffset / m_client.pageScaleFactor()), velocity, originalOffsetInLayoutUnits).first;

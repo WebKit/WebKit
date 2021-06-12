@@ -37,7 +37,7 @@ class WebWheelEventCoalescer {
 public:
     // If this returns true, use nextEventToDispatch() to get the event to dispatch.
     bool shouldDispatchEvent(const NativeWebWheelEvent&);
-    Optional<WebWheelEvent> nextEventToDispatch();
+    std::optional<WebWheelEvent> nextEventToDispatch();
 
     NativeWebWheelEvent takeOldestEventBeingProcessed();
 

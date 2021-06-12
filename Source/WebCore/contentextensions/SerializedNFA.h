@@ -37,7 +37,7 @@ struct NFA;
 
 class SerializedNFA {
 public:
-    static Optional<SerializedNFA> serialize(NFA&&);
+    static std::optional<SerializedNFA> serialize(NFA&&);
     SerializedNFA(SerializedNFA&&) = default;
 
     template<typename T>

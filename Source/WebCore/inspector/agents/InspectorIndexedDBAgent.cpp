@@ -140,7 +140,7 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
         return;
     }
 
-    auto result = idbFactory->open(*context(), databaseName, WTF::nullopt);
+    auto result = idbFactory->open(*context(), databaseName, std::nullopt);
     if (result.hasException()) {
         requestCallback().sendFailure("Could not open database.");
         return;
@@ -150,7 +150,7 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
 }
 
 
-static Ref<Protocol::IndexedDB::KeyPath> keyPathFromIDBKeyPath(const Optional<IDBKeyPath>& idbKeyPath)
+static Ref<Protocol::IndexedDB::KeyPath> keyPathFromIDBKeyPath(const std::optional<IDBKeyPath>& idbKeyPath)
 {
     if (!idbKeyPath)
         return Protocol::IndexedDB::KeyPath::create().setType(Protocol::IndexedDB::KeyPath::Type::Null).release();

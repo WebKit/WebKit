@@ -55,7 +55,7 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&&, WTF::Function<bool(
 
 std::unique_ptr<Page> createPageForSanitizingWebContent();
 enum class MSOListQuirks : bool { CheckIfNeeded, Disabled };
-String sanitizeMarkup(const String&, MSOListQuirks = MSOListQuirks::Disabled, Optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer = WTF::nullopt);
+String sanitizeMarkup(const String&, MSOListQuirks = MSOListQuirks::Disabled, std::optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer = std::nullopt);
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&&, Document&, MSOListQuirks, const String& originalMarkup);
 
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const String& text);

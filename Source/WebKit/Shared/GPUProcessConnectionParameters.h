@@ -51,25 +51,25 @@ struct GPUProcessConnectionParameters {
 #endif
     }
 
-    static Optional<GPUProcessConnectionParameters> decode(IPC::Decoder& decoder)
+    static std::optional<GPUProcessConnectionParameters> decode(IPC::Decoder& decoder)
     {
 #if HAVE(TASK_IDENTITY_TOKEN)
-        Optional<MachSendRight> webProcessIdentityToken;
+        std::optional<MachSendRight> webProcessIdentityToken;
         decoder >> webProcessIdentityToken;
         if (!webProcessIdentityToken)
-            return WTF::nullopt;
+            return std::nullopt;
 #endif
 
-        Optional<Vector<String>> overrideLanguages;
+        std::optional<Vector<String>> overrideLanguages;
         decoder >> overrideLanguages;
         if (!overrideLanguages)
-            return WTF::nullopt;
+            return std::nullopt;
 
 #if ENABLE(IPC_TESTING_API)
-        Optional<bool> ignoreInvalidMessageForTesting;
+        std::optional<bool> ignoreInvalidMessageForTesting;
         decoder >> ignoreInvalidMessageForTesting;
         if (!ignoreInvalidMessageForTesting)
-            return WTF::nullopt;
+            return std::nullopt;
 #endif
 
         return GPUProcessConnectionParameters {

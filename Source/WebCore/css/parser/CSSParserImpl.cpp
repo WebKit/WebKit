@@ -88,7 +88,7 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& stri
 CSSParser::ParseResult CSSParserImpl::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)
 {
     CSSParserImpl parser(context, string);
-    auto ruleType = context.enclosingRuleType.valueOr(StyleRuleType::Style);
+    auto ruleType = context.enclosingRuleType.value_or(StyleRuleType::Style);
     parser.consumeDeclarationValue(parser.tokenizer()->tokenRange(), propertyID, important, ruleType);
     if (parser.m_parsedProperties.isEmpty())
         return CSSParser::ParseResult::Error;
@@ -207,7 +207,7 @@ void CSSParserImpl::parseDeferredKeyframeList(CSSParserTokenRange tokenRange, CS
 bool CSSParserImpl::parseDeclarationList(MutableStyleProperties* declaration, const String& string, const CSSParserContext& context)
 {
     CSSParserImpl parser(context, string);
-    auto ruleType = context.enclosingRuleType.valueOr(StyleRuleType::Style);
+    auto ruleType = context.enclosingRuleType.value_or(StyleRuleType::Style);
     parser.consumeDeclarationList(parser.tokenizer()->tokenRange(), ruleType);
     if (parser.m_parsedProperties.isEmpty())
         return false;

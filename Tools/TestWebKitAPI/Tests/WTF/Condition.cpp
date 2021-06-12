@@ -38,6 +38,7 @@ namespace TestWebKitAPI {
 
 namespace {
 
+static Lock lock;
 static constexpr bool verbose = false;
 
 enum NotifyStyle {
@@ -46,16 +47,16 @@ enum NotifyStyle {
 };
 
 template<typename Functor>
-void wait(Condition& condition, std::unique_lock<Lock>& locker, const Functor& predicate, Seconds timeout)
+void wait(Condition& condition, const Functor& predicate, Seconds timeout) WTF_REQUIRES_LOCK(lock)
 {
     if (timeout == Seconds::infinity())
-        condition.wait(locker, predicate);
+        condition.wait(lock, predicate);
     else {
         // This tests timeouts in the sense that it verifies that we can call wait() again after a
         // timeout happened. That's a non-trivial piece of functionality since upon timeout the
         // ParkingLot has to remove us from the queue.
         while (!predicate())
-            condition.waitFor(locker, timeout, predicate);
+            condition.waitFor(lock, timeout, predicate);
     }
 }
 
@@ -83,7 +84,6 @@ void runTest(
 {
     Deque<unsigned> queue;
     bool shouldContinue = true;
-    Lock lock;
     Condition emptyCondition;
     Condition fullCondition;
 
@@ -101,9 +101,9 @@ void runTest(
                     unsigned result;
                     unsigned shouldNotify = false;
                     {
-                        std::unique_lock<Lock> locker(lock);
+                        Locker locker { lock };
                         wait(
-                            emptyCondition, locker, 
+                            emptyCondition,
                             [&] () {
                                 if (verbose)
                                     dataLog(toString(Thread::current(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
@@ -134,9 +134,9 @@ void runTest(
                 for (unsigned i = 0; i < numMessagesPerProducer; ++i) {
                     bool shouldNotify = false;
                     {
-                        std::unique_lock<Lock> locker(lock);
+                        Locker locker { lock };
                         wait(
-                            fullCondition, locker,
+                            fullCondition,
                             [&] () {
                                 if (verbose)
                                     dataLog(toString(Thread::current(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
@@ -246,6 +246,15 @@ TEST(WTF_Condition, TimeoutTimesOut)
         lock, Seconds::fromMilliseconds(10), [] () -> bool { return false; });
     lock.unlock();
 
+    EXPECT_FALSE(result);
+}
+
+TEST(WTF_Condition, Basic)
+{
+    Lock lock;
+    Condition condition;
+    Locker locker { lock }; // Comment this to ensure that thread safety analysis creates a compile error.
+    bool result = condition.waitFor(lock, 0_s);
     EXPECT_FALSE(result);
 }
 

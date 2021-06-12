@@ -31,7 +31,6 @@
 #include "TextEncoding.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -44,7 +43,7 @@ struct CSSParserContext {
     URL baseURL;
     String charset;
     CSSParserMode mode { HTMLStandardMode };
-    Optional<StyleRuleType> enclosingRuleType;
+    std::optional<StyleRuleType> enclosingRuleType;
     bool isHTMLDocument { false };
 
     // This is only needed to support getMatchedCSSRules.

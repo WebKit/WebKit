@@ -140,24 +140,24 @@ ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsig
     return { };
 }
 
-bool SVGTextContentElement::isPresentationAttribute(const QualifiedName& name) const
+bool SVGTextContentElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name.matches(XMLNames::spaceAttr))
         return true;
-    return SVGGraphicsElement::isPresentationAttribute(name);
+    return SVGGraphicsElement::hasPresentationalHintsForAttribute(name);
 }
 
-void SVGTextContentElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void SVGTextContentElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name.matches(XMLNames::spaceAttr)) {
         if (value == "preserve")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
         else
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
         return;
     }
 
-    SVGGraphicsElement::collectStyleForPresentationAttribute(name, value, style);
+    SVGGraphicsElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void SVGTextContentElement::parseAttribute(const QualifiedName& name, const AtomString& value)

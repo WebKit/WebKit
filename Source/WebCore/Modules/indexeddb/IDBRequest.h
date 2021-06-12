@@ -84,7 +84,7 @@ public:
     JSValueInWrappedObject& cursorWrapper() { return m_cursorWrapper; }
 
     using Source = Variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>, RefPtr<IDBCursor>>;
-    const Optional<Source>& source() const { return m_source; }
+    const std::optional<Source>& source() const { return m_source; }
 
     ExceptionOr<DOMException*> error() const;
 
@@ -185,7 +185,7 @@ private:
     uint64_t m_currentTransactionOperationID { 0 };
 
     Result m_result;
-    Optional<Source> m_source;
+    std::optional<Source> m_source;
 
     RefPtr<IDBCursor> m_pendingCursor;
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;

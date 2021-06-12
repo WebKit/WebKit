@@ -88,7 +88,7 @@ private:
 
         void didChangeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState) final;
         void didReceiveStringData(WebCore::RTCDataChannelIdentifier, const String&) final;
-        void didReceiveRawData(WebCore::RTCDataChannelIdentifier, const char*, size_t) final;
+        void didReceiveRawData(WebCore::RTCDataChannelIdentifier, const uint8_t*, size_t) final;
         void didDetectError(WebCore::RTCDataChannelIdentifier) final;
         void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t) final;
 

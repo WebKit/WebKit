@@ -32,7 +32,6 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <initializer_list>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -89,7 +88,7 @@ public:
 
     // InspectorCanvasCallTracer
 #define PROCESS_ARGUMENT_DECLARATION(ArgumentType) \
-    Optional<InspectorCanvasCallTracer::ProcessedArgument> processArgument(ArgumentType); \
+    std::optional<InspectorCanvasCallTracer::ProcessedArgument> processArgument(ArgumentType); \
 // end of PROCESS_ARGUMENT_DECLARATION
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DECLARATION)
 #undef PROCESS_ARGUMENT_DECLARATION
@@ -173,7 +172,7 @@ private:
     MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };
     size_t m_bufferLimit { 100 * 1024 * 1024 };
     size_t m_bufferUsed { 0 };
-    Optional<size_t> m_frameCount;
+    std::optional<size_t> m_frameCount;
     size_t m_framesCaptured { 0 };
     bool m_contentChanged { false };
 };

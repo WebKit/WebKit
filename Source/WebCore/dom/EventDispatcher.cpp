@@ -152,7 +152,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     EventPath eventPath { node, event };
 
-    Optional<bool> shouldClearTargetsAfterDispatch;
+    std::optional<bool> shouldClearTargetsAfterDispatch;
     for (size_t i = eventPath.size(); i > 0; --i) {
         const EventContext& eventContext = eventPath.contextAt(i - 1);
         // FIXME: We should also set shouldClearTargetsAfterDispatch to true if an EventTarget object in eventContext's touch target list
@@ -205,7 +205,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         event.setTarget(finalTarget);
     }
 
-    if (shouldClearTargetsAfterDispatch.valueOr(false)) {
+    if (shouldClearTargetsAfterDispatch.value_or(false)) {
         event.setTarget(nullptr);
         event.setRelatedTarget(nullptr);
         // FIXME: We should also clear the event's touch target list.

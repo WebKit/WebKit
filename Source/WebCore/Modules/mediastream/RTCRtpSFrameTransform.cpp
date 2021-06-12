@@ -58,7 +58,7 @@ RTCRtpSFrameTransform::~RTCRtpSFrameTransform()
 {
 }
 
-void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, Optional<uint64_t> keyId, DOMPromiseDeferred<void>&& promise)
+void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, std::optional<uint64_t> keyId, DOMPromiseDeferred<void>&& promise)
 {
     auto algorithm = key.algorithm();
     if (!WTF::holds_alternative<CryptoKeyAlgorithm>(algorithm)) {
@@ -159,7 +159,7 @@ static void transformFrame(const uint8_t* data, size_t size, JSDOMGlobalObject& 
     auto result = transformer.transform(data, size);
     RELEASE_LOG_ERROR_IF(result.hasException(), WebRTC, "RTCRtpSFrameTransform failed transforming a frame");
 
-    auto buffer = result.hasException() ? SharedBuffer::create() : SharedBuffer::create(result.returnValue().data(), result.returnValue().size());
+    auto buffer = result.hasException() ? SharedBuffer::create() : SharedBuffer::create(result.releaseReturnValue());
     source.enqueue(toJS(&globalObject, &globalObject, buffer->tryCreateArrayBuffer().get()));
 }
 

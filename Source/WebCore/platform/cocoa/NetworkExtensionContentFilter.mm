@@ -145,7 +145,7 @@ void NetworkExtensionContentFilter::responseReceived(const ResourceResponse& res
     semaphore.wait();
 }
 
-void NetworkExtensionContentFilter::addData(const char* data, int length)
+void NetworkExtensionContentFilter::addData(const uint8_t* data, int length)
 {
     RetainPtr<NSData> copiedData { [NSData dataWithBytes:(void*)data length:length] };
 

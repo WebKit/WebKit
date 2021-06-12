@@ -67,7 +67,7 @@ RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) con
     DWORD size = GetFontData(hdc, table, 0, 0, 0);
     RefPtr<SharedBuffer> buffer;
     if (size != GDI_ERROR) {
-        Vector<char> data(size);
+        Vector<uint8_t> data(size);
         DWORD result = GetFontData(hdc, table, 0, (PVOID)data.data(), size);
         ASSERT_UNUSED(result, result == size);
         buffer = SharedBuffer::create(WTFMove(data));

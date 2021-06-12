@@ -34,7 +34,6 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -79,8 +78,6 @@ private:
     void derefEventTarget() override { deref(); }
 
     const char* activeDOMObjectName() const final;
-
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 
     Vector<RefPtr<SourceBuffer>> m_list;
 };

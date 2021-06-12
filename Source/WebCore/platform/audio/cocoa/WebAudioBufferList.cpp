@@ -44,7 +44,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
 
     CheckedSize bufferListSize = offsetof(AudioBufferList, mBuffers);
     bufferListSize += (sizeof(AudioBuffer) * std::max(1U, bufferCount));
-    m_listBufferSize = bufferListSize.unsafeGet();
+    m_listBufferSize = bufferListSize;
     m_canonicalList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
     memset(m_canonicalList.get(), 0, m_listBufferSize);
     m_canonicalList->mNumberBuffers = bufferCount;
@@ -60,7 +60,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, u
     setSampleCount(sampleCount);
 }
 
-static inline Optional<std::pair<size_t, size_t>> computeBufferSizes(uint32_t numberOfInterleavedChannels, uint32_t bytesPerFrame, uint32_t numberOfChannelStreams, uint32_t sampleCount)
+static inline std::optional<std::pair<size_t, size_t>> computeBufferSizes(uint32_t numberOfInterleavedChannels, uint32_t bytesPerFrame, uint32_t numberOfChannelStreams, uint32_t sampleCount)
 {
     size_t totalSampleCount;
     bool result = WTF::safeMultiply(sampleCount, numberOfInterleavedChannels, totalSampleCount);

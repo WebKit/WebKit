@@ -73,7 +73,7 @@ private:
 
     WeakHashSet<Client> m_clients;
     RetainPtr<RBSProcessMonitor> m_processMonitor;
-    mutable Optional<State> m_state;
+    mutable std::optional<State> m_state;
 };
 
 }

@@ -78,7 +78,7 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
     CGDataConsumerCallbacks callbacks = {
         [](void* info, const void* buffer, size_t count) -> size_t {
             auto handle = *static_cast<FileSystem::PlatformFileHandle*>(info);
-            return FileSystem::writeToFile(handle, static_cast<const char*>(buffer), count);
+            return FileSystem::writeToFile(handle, buffer, count);
         },
         nullptr
     };

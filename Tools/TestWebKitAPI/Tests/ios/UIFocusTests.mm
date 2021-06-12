@@ -29,7 +29,6 @@
 
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 
 @interface UIFocusDelegate : NSObject<WKUIDelegatePrivate>

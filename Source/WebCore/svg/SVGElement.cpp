@@ -298,13 +298,13 @@ const WeakHashSet<SVGElement>& SVGElement::instances() const
     return m_svgRareData->instances();
 }
 
-Optional<FloatRect> SVGElement::getBoundingBox() const
+std::optional<FloatRect> SVGElement::getBoundingBox() const
 {
     if (is<SVGGraphicsElement>(*this)) {
         if (auto renderer = this->renderer())
             return renderer->objectBoundingBox();
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Vector<Ref<SVGElement>> SVGElement::referencingElements() const
@@ -375,7 +375,7 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& val
 
     if (name == HTMLNames::tabindexAttr) {
         if (value.isEmpty())
-            setTabIndexExplicitly(WTF::nullopt);
+            setTabIndexExplicitly(std::nullopt);
         else if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
         return;
@@ -620,7 +620,7 @@ void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
     propertyAnimatorFactory().animatorWillBeDeleted(attributeName);
 }
 
-Optional<Style::ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+std::optional<Style::ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto styleElement = makeRefPtr(this->correspondingElement())) {
@@ -821,18 +821,18 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     return properties.get().get(attrName.localName());
 }
 
-bool SVGElement::isPresentationAttribute(const QualifiedName& name) const
+bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (cssPropertyIdForSVGAttributeName(name) > 0)
         return true;
-    return StyledElement::isPresentationAttribute(name);
+    return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
-void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID > 0)
-        addPropertyToPresentationAttributeStyle(style, propertyID, value);
+        addPropertyToPresentationalHintStyle(style, propertyID, value);
 }
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)

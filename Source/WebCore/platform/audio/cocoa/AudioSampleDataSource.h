@@ -87,8 +87,8 @@ private:
 
     void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
 
-    Optional<CAAudioStreamDescription> m_inputDescription;
-    Optional<CAAudioStreamDescription> m_outputDescription;
+    std::optional<CAAudioStreamDescription> m_inputDescription;
+    std::optional<CAAudioStreamDescription> m_outputDescription;
 
     MediaTime hostTime() const;
 
@@ -115,6 +115,8 @@ private:
     bool m_muted { false };
     bool m_shouldComputeOutputSampleOffset { true };
     uint64_t m_endFrameWhenNotEnoughData { 0 };
+
+    bool m_isInNeedOfMoreData { false };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

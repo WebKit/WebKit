@@ -114,7 +114,6 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
-    visibility = ["//visibility:private"],
     deps = [
         "//absl/base:config",
         "//absl/base:fast_type_id",
@@ -192,6 +191,7 @@ cc_library(
     ],
     hdrs = [
         "internal/flag.h",
+        "internal/sequence_lock.h",
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
@@ -377,11 +377,17 @@ cc_binary(
         "flag_benchmark.cc",
     ],
     copts = ABSL_TEST_COPTS,
+    linkopts = select({
+        "//conditions:default": [],
+    }) + ABSL_DEFAULT_LINKOPTS,
     tags = ["benchmark"],
     visibility = ["//visibility:private"],
     deps = [
+        "flag_benchmark.lds",
         ":flag",
         ":marshalling",
+        ":parse",
+        ":reflection",
         "//absl/strings",
         "//absl/time",
         "//absl/types:optional",
@@ -415,6 +421,7 @@ cc_test(
         ":flag",
         ":parse",
         ":reflection",
+        ":usage_internal",
         "//absl/base:raw_logging_internal",
         "//absl/base:scoped_set_env",
         "//absl/strings",
@@ -468,6 +475,25 @@ cc_test(
         ":usage_internal",
         "//absl/memory",
         "//absl/strings",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "sequence_lock_test",
+    size = "small",
+    timeout = "moderate",
+    srcs = [
+        "internal/sequence_lock_test.cc",
+    ],
+    copts = ABSL_TEST_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    shard_count = 31,
+    deps = [
+        ":flag_internal",
+        "//absl/base",
+        "//absl/container:fixed_array",
+        "//absl/time",
         "@com_google_googletest//:gtest_main",
     ],
 )

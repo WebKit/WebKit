@@ -29,7 +29,6 @@
 
 #include "CaptureDevice.h"
 #include "CaptureDeviceManager.h"
-#include "GenericTaskQueue.h"
 #include <CoreAudio/CoreAudio.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,9 +42,9 @@ public:
     static CoreAudioCaptureDeviceManager& singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
-    Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    Optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
+    std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
     const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
 
 private:
@@ -61,7 +60,7 @@ private:
     Vector<CaptureDevice> m_captureDevices;
     Vector<CaptureDevice> m_speakerDevices;
     Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
-    GenericTaskQueue<Timer> m_updateDeviceStateQueue;
+    bool m_wasRefreshAudioCaptureDevicesScheduled { false };
 };
 
 } // namespace WebCore

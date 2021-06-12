@@ -54,11 +54,11 @@ public:
     WEBCORE_EXPORT static void setLegacyTLSEnabled(bool);
 
     WEBCORE_EXPORT void platformSend(const uint8_t* data, size_t length, Function<void(bool)>&&) final;
-    WEBCORE_EXPORT void platformSendHandshake(const uint8_t* data, size_t length, const Optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final;
+    WEBCORE_EXPORT void platformSendHandshake(const uint8_t* data, size_t length, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final;
     WEBCORE_EXPORT void platformClose() final;
 private:
     size_t bufferedAmount() final;
-    Optional<size_t> platformSendInternal(const uint8_t*, size_t);
+    std::optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
     WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, SourceApplicationAuditToken&&, const StorageSessionProvider*);

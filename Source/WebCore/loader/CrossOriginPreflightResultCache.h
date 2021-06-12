@@ -46,12 +46,12 @@ public:
 
     CrossOriginPreflightResultCacheItem(MonotonicTime, StoredCredentialsPolicy, HashSet<String>&&, HashSet<String, ASCIICaseInsensitiveHash>&&);
 
-    Optional<String> validateMethodAndHeaders(const String& method, const HTTPHeaderMap&) const;
+    std::optional<String> validateMethodAndHeaders(const String& method, const HTTPHeaderMap&) const;
     bool allowsRequest(StoredCredentialsPolicy, const String& method, const HTTPHeaderMap&) const;
 
 private:
     bool allowsCrossOriginMethod(const String&, StoredCredentialsPolicy) const;
-    Optional<String> validateCrossOriginHeaders(const HTTPHeaderMap&, StoredCredentialsPolicy) const;
+    std::optional<String> validateCrossOriginHeaders(const HTTPHeaderMap&, StoredCredentialsPolicy) const;
 
     // FIXME: A better solution to holding onto the absolute expiration time might be
     // to start a timer for the expiration delta that removes this from the cache when

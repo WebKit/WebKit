@@ -110,16 +110,16 @@ bool Navigator::onLine() const
     return platformStrategies()->loaderStrategy()->isOnLine();
 }
 
-static Optional<URL> shareableURLForShareData(ScriptExecutionContext& context, const ShareData& data)
+static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& context, const ShareData& data)
 {
     if (data.url.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto url = context.completeURL(data.url);
     if (!url.isValid())
-        return WTF::nullopt;
+        return std::nullopt;
     if (!url.protocolIsInHTTPFamily() && !url.protocolIsData())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return url;
 }
@@ -155,7 +155,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
         return;
     }
 
-    Optional<URL> url = shareableURLForShareData(document, data);
+    std::optional<URL> url = shareableURLForShareData(document, data);
     ShareDataWithParsedURL shareData = {
         data,
         url,

@@ -98,7 +98,7 @@ bool CurlCacheEntry::isCached()
     return true;
 }
 
-bool CurlCacheEntry::saveCachedData(const char* data, size_t size)
+bool CurlCacheEntry::saveCachedData(const uint8_t* data, size_t size)
 {
     if (!openContentFile())
         return false;
@@ -113,12 +113,12 @@ bool CurlCacheEntry::readCachedData(ResourceHandle* job)
 {
     ASSERT(job->client());
 
-    Vector<char> buffer;
+    Vector<uint8_t> buffer;
     if (!loadFileToBuffer(m_contentFilename, buffer))
         return false;
 
-    if (buffer.size())
-        job->getInternal()->client()->didReceiveBuffer(job, SharedBuffer::create(buffer.data(), buffer.size()), buffer.size());
+    if (auto bufferSize = buffer.size())
+        job->getInternal()->client()->didReceiveBuffer(job, SharedBuffer::create(WTFMove(buffer)), bufferSize);
 
     return true;
 }
@@ -151,7 +151,7 @@ bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
 
 bool CurlCacheEntry::loadResponseHeaders()
 {
-    Vector<char> buffer;
+    Vector<uint8_t> buffer;
     if (!loadFileToBuffer(m_headerFilename, buffer))
         return false;
 
@@ -223,7 +223,7 @@ void CurlCacheEntry::generateBaseFilename(const CString& url)
     m_basename = baseNameBuilder.toString();
 }
 
-bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<char>& buffer)
+bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<uint8_t>& buffer)
 {
     // Open the file
     FileSystem::PlatformFileHandle inputFile = FileSystem::openFile(filepath, FileSystem::FileOpenMode::Read);

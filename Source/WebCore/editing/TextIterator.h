@@ -37,16 +37,16 @@ namespace WebCore {
 class RenderTextFragment;
 
 // Character ranges based on characters from the text iterator.
-WEBCORE_EXPORT uint64_t characterCount(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
-CharacterRange characterRange(const BoundaryPoint& start, const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
-CharacterRange characterRange(const SimpleRange& scope, const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
-BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t, TextIteratorBehavior = TextIteratorDefaultBehavior);
-WEBCORE_EXPORT SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange, TextIteratorBehavior = TextIteratorDefaultBehavior);
+WEBCORE_EXPORT uint64_t characterCount(const SimpleRange&, TextIteratorBehaviors = { });
+CharacterRange characterRange(const BoundaryPoint& start, const SimpleRange&, TextIteratorBehaviors = { });
+CharacterRange characterRange(const SimpleRange& scope, const SimpleRange&, TextIteratorBehaviors = { });
+BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t, TextIteratorBehaviors = { });
+WEBCORE_EXPORT SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange, TextIteratorBehaviors = { });
 
 // Text from the text iterator.
-WEBCORE_EXPORT String plainText(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
-WEBCORE_EXPORT bool hasAnyPlainText(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
-WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+WEBCORE_EXPORT String plainText(const SimpleRange&, TextIteratorBehaviors = { }, bool isDisplayString = false);
+WEBCORE_EXPORT bool hasAnyPlainText(const SimpleRange&, TextIteratorBehaviors = { });
+WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehaviors = { }, bool isDisplayString = false);
 
 // Find within the document, based on the text from the text iterator.
 SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
@@ -94,7 +94,7 @@ private:
 class TextIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT explicit TextIterator(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT explicit TextIterator(const SimpleRange&, TextIteratorBehaviors = { });
     WEBCORE_EXPORT ~TextIterator();
 
     bool atEnd() const { return !m_positionNode; }
@@ -123,7 +123,7 @@ private:
 
     Node* baseNodeForEmittingNewLine() const;
 
-    const TextIteratorBehavior m_behavior { TextIteratorDefaultBehavior };
+    const TextIteratorBehaviors m_behaviors;
 
     // Current position, not necessarily of the text being returned, but position as we walk through the DOM tree.
     Node* m_node { nullptr };
@@ -192,7 +192,7 @@ private:
     void emitCharacter(UChar, Node&, int startOffset, int endOffset);
     bool advanceRespectingRange(Node*);
 
-    const TextIteratorBehavior m_behavior { TextIteratorDefaultBehavior };
+    const TextIteratorBehaviors m_behaviors;
 
     // Current position, not necessarily of the text being returned, but position as we walk through the DOM tree.
     Node* m_node { nullptr };
@@ -229,7 +229,7 @@ private:
 // character at a time, or faster, as needed. Useful for searching.
 class CharacterIterator {
 public:
-    WEBCORE_EXPORT explicit CharacterIterator(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT explicit CharacterIterator(const SimpleRange&, TextIteratorBehaviors = { });
     
     bool atEnd() const { return m_underlyingIterator.atEnd(); }
     WEBCORE_EXPORT void advance(int numCharacters);
@@ -289,19 +289,19 @@ private:
     bool m_didLookAhead { true };
 };
 
-inline CharacterRange characterRange(const BoundaryPoint& start, const SimpleRange& range, TextIteratorBehavior behavior)
+inline CharacterRange characterRange(const BoundaryPoint& start, const SimpleRange& range, TextIteratorBehaviors behaviors)
 {
-    return { characterCount({ start, range.start }, behavior), characterCount(range, behavior) };
+    return { characterCount({ start, range.start }, behaviors), characterCount(range, behaviors) };
 }
 
-inline CharacterRange characterRange(const SimpleRange& scope, const SimpleRange& range, TextIteratorBehavior behavior)
+inline CharacterRange characterRange(const SimpleRange& scope, const SimpleRange& range, TextIteratorBehaviors behaviors)
 {
-    return characterRange(scope.start, range, behavior);
+    return characterRange(scope.start, range, behaviors);
 }
 
-inline BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t location, TextIteratorBehavior behavior)
+inline BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t location, TextIteratorBehaviors behaviors)
 {
-    return resolveCharacterRange(scope, { location, 0 }, behavior).start;
+    return resolveCharacterRange(scope, { location, 0 }, behaviors).start;
 }
 
 } // namespace WebCore

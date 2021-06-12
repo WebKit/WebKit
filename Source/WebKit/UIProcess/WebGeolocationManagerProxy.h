@@ -56,7 +56,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void resetPermissions();
 #endif
-    const Optional<WebCore::GeolocationPositionData>& lastPosition() const { return m_lastPosition; }
+    const std::optional<WebCore::GeolocationPositionData>& lastPosition() const { return m_lastPosition; }
 
     using API::Object::ref;
     using API::Object::deref;
@@ -85,7 +85,7 @@ private:
     HashSet<const IPC::Connection::Client*> m_highAccuracyRequesters;
 
     std::unique_ptr<API::GeolocationProvider> m_provider;
-    Optional<WebCore::GeolocationPositionData> m_lastPosition;
+    std::optional<WebCore::GeolocationPositionData> m_lastPosition;
 };
 
 } // namespace WebKit

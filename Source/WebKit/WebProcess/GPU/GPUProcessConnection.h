@@ -33,6 +33,7 @@
 #include "MessageReceiverMap.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include "SharedMemory.h"
+#include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
@@ -67,8 +68,8 @@ public:
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
 #if HAVE(AUDIT_TOKEN)
-    void setAuditToken(Optional<audit_token_t> auditToken) { m_auditToken = auditToken; }
-    Optional<audit_token_t> auditToken() const { return m_auditToken; }
+    void setAuditToken(std::optional<audit_token_t> auditToken) { m_auditToken = auditToken; }
+    std::optional<audit_token_t> auditToken() const { return m_auditToken; }
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
@@ -120,12 +121,17 @@ private:
 
     void didReceiveRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
+#if ENABLE(ROUTING_ARBITRATION)
+    void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, WebCore::AudioSessionRoutingArbitrationClient::ArbitrationCallback&&);
+    void endRoutingArbitration();
+#endif
+
     // The connection from the web process to the GPU process.
     Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
 
 #if HAVE(AUDIT_TOKEN)
-    Optional<audit_token_t> m_auditToken;
+    std::optional<audit_token_t> m_auditToken;
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<SampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;

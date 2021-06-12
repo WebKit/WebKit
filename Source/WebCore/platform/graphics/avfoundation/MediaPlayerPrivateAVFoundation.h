@@ -31,9 +31,9 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/WeakPtr.h>
 
@@ -323,7 +323,7 @@ private:
 
     WTF::Function<void()> m_pendingSeek;
 
-    mutable CheckedLock m_queuedNotificationsLock;
+    mutable Lock m_queuedNotificationsLock;
     Deque<Notification> m_queuedNotifications WTF_GUARDED_BY_LOCK(m_queuedNotificationsLock);
 
     mutable std::unique_ptr<PlatformTimeRanges> m_cachedLoadedTimeRanges;

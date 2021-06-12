@@ -83,7 +83,7 @@ public:
     bool isEmpty() const;
 
     RefPtr<WebCore::SharedBuffer> enclosingImageData() const;
-    Optional<uint64_t> fileSizeForDisplay() const;
+    std::optional<uint64_t> fileSizeForDisplay() const;
 
     void setHasEnclosingImage(bool hasEnclosingImage) { m_hasEnclosingImage = hasEnclosingImage; }
     bool hasEnclosingImage() const { return m_hasEnclosingImage; }

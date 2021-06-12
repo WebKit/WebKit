@@ -53,7 +53,7 @@ public:
     const StackingItem& rootStackingItem() const { return *m_rootStackingItem; }
      const ContainerBox& rootBox() const;
 
-    void setBoxNeedsDisplay(Box&, Optional<AbsoluteFloatRect> subrect = WTF::nullopt) const;
+    void setBoxNeedsDisplay(Box&, std::optional<AbsoluteFloatRect> subrect = std::nullopt) const;
 
 private:
     void setRootStackingItem(std::unique_ptr<StackingItem>&&);

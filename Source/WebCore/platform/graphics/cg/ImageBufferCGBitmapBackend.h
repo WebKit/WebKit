@@ -39,8 +39,9 @@ public:
     static IntSize calculateSafeBackendSize(const Parameters&);
     static size_t calculateMemoryCost(const Parameters&);
 
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, CGColorSpaceRef, const HostWindow*);
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const HostWindow*);
+
+    // FIXME: Rename to createUsingColorSpaceOfGraphicsContext() (or something like that).
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
 
     GraphicsContext& context() const override;
@@ -49,7 +50,7 @@ public:
 
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
 
-    Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
+    std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;

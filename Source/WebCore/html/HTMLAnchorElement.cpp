@@ -55,7 +55,6 @@
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -395,7 +394,7 @@ bool HTMLAnchorElement::isSystemPreviewLink()
 }
 #endif
 
-Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement() const
+std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement() const
 {
     using SourceID = PrivateClickMeasurement::SourceID;
     using SourceSite = PrivateClickMeasurement::SourceSite;
@@ -405,48 +404,48 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
     if (!page || page->sessionID().isEphemeral()
         || !document().settings().privateClickMeasurementEnabled()
         || !UserGestureIndicator::processingUserGesture())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto hasAttributionSourceIDAttr = hasAttributeWithoutSynchronization(attributionsourceidAttr);
     auto hasAttributionDestinationAttr = hasAttributeWithoutSynchronization(attributiondestinationAttr);
     if (!hasAttributionSourceIDAttr && !hasAttributionDestinationAttr)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto attributionSourceIDAttr = attributeWithoutSynchronization(attributionsourceidAttr);
     auto attributionDestinationAttr = attributeWithoutSynchronization(attributiondestinationAttr);
 
     if (!hasAttributionSourceIDAttr || !hasAttributionDestinationAttr || attributionSourceIDAttr.isEmpty() || attributionDestinationAttr.isEmpty()) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     RefPtr<Frame> frame = document().frame();
     if (!frame || !frame->isMainFrame()) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Private Click Measurement is only supported in the main frame."_s);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     
     auto attributionSourceID = parseHTMLNonNegativeInteger(attributionSourceIDAttr);
     if (!attributionSourceID) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     
     if (attributionSourceID.value() > PrivateClickMeasurement::SourceID::MaxEntropy) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to ", PrivateClickMeasurement::SourceID::MaxEntropy, " for Private Click Measurement."));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     URL destinationURL { URL(), attributionDestinationAttr };
     if (!destinationURL.isValid() || !destinationURL.protocolIsInHTTPFamily()) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     RegistrableDomain documentRegistrableDomain { document().url() };
     if (documentRegistrableDomain.matches(destinationURL)) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributionDestinationSite(destinationURL) };
@@ -456,7 +455,7 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
         auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { attributionSourceNonceAttr };
         if (!ephemeralNonce.isValid()) {
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
-            return WTF::nullopt;
+            return std::nullopt;
         }
         privateClickMeasurement.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
     }
@@ -508,7 +507,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     if (systemPreviewInfo.isPreview) {
         systemPreviewInfo.element.elementIdentifier = document().identifierForElement(*this);
         systemPreviewInfo.element.documentIdentifier = document().identifier();
-        systemPreviewInfo.element.webPageIdentifier = document().frame()->loader().pageID().valueOr(PageIdentifier { });
+        systemPreviewInfo.element.webPageIdentifier = document().frame()->loader().pageID().value_or(PageIdentifier { });
         if (auto* child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
     }
@@ -517,7 +516,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     auto referrerPolicy = hasRel(Relation::NoReferrer) ? ReferrerPolicy::NoReferrer : this->referrerPolicy();
 
     auto effectiveTarget = this->effectiveTarget();
-    Optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
+    std::optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
     if (hasRel(Relation::Opener))
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Allow;
     else if (hasRel(Relation::NoOpener) || (document().settings().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(effectiveTarget, "_blank")))
@@ -637,7 +636,7 @@ String HTMLAnchorElement::referrerPolicyForBindings() const
 ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 {
     if (document().settings().referrerPolicyAttributeEnabled())
-        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
 }
 

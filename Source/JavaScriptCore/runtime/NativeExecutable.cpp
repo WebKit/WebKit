@@ -93,4 +93,31 @@ CodeBlockHash NativeExecutable::hashFor(CodeSpecializationKind kind) const
     return CodeBlockHash(bitwise_cast<uintptr_t>(m_constructor));
 }
 
+JSString* NativeExecutable::toStringSlow(JSGlobalObject *globalObject)
+{
+    VM& vm = getVM(globalObject);
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = jsMakeNontrivialString(globalObject, "function ", name(), "() {\n    [native code]\n}");
+
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    JSString* asString = ::JSC::asString(value);
+    WTF::storeStoreFence();
+    m_asString.set(vm, this, asString);
+    return asString;
+}
+
+template<typename Visitor>
+void NativeExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    NativeExecutable* thisObject = jsCast<NativeExecutable*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_asString);
+}
+
+DEFINE_VISIT_CHILDREN(NativeExecutable);
+
 } // namespace JSC

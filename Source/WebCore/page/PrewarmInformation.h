@@ -36,7 +36,7 @@ struct WEBCORE_EXPORT PrewarmInformation {
     FontCache::PrewarmInformation fontCache;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PrewarmInformation> decode(Decoder&);
+    template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -46,9 +46,9 @@ void PrewarmInformation::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PrewarmInformation> PrewarmInformation::decode(Decoder& decoder)
+std::optional<PrewarmInformation> PrewarmInformation::decode(Decoder& decoder)
 {
-    Optional<FontCache::PrewarmInformation> fontCachePrewarmInformation;
+    std::optional<FontCache::PrewarmInformation> fontCachePrewarmInformation;
     decoder >> fontCachePrewarmInformation;
     if (!fontCachePrewarmInformation)
         return { };

@@ -51,7 +51,6 @@
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
 #include <algorithm>
-#include <wtf/Optional.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 

@@ -95,7 +95,7 @@ struct AttachmentDescriptor {
 
 struct AttachmentsStateDescriptor {
     Vector<AttachmentDescriptor> attachmentDescriptors;
-    Optional<AttachmentDescriptor> depthStencilAttachmentDescriptor;
+    std::optional<AttachmentDescriptor> depthStencilAttachmentDescriptor;
 };
 
 enum class ShaderStage : uint8_t {

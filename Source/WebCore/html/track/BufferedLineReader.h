@@ -56,7 +56,7 @@ public:
     void appendEndOfStream() { m_endOfStream = true; }
     bool isAtEndOfStream() const { return m_endOfStream && m_buffer.isEmpty(); }
 
-    Optional<String> nextLine();
+    std::optional<String> nextLine();
 
 private:
     SegmentedString m_buffer;

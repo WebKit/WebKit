@@ -29,7 +29,6 @@
 
 #include "B3Type.h"
 #include "B3Width.h"
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace B3 {
@@ -381,7 +380,7 @@ inline bool isCheckMath(Opcode opcode)
     }
 }
 
-Optional<Opcode> invertedCompare(Opcode, Type);
+std::optional<Opcode> invertedCompare(Opcode, Type);
 
 inline Opcode constPtrOpcode()
 {

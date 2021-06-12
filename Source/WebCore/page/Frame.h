@@ -68,6 +68,7 @@ namespace WebCore {
 
 class Color;
 class DOMWindow;
+class DataDetectionResultsStorage;
 class Document;
 class Editor;
 class Element;
@@ -139,7 +140,7 @@ public:
     WEBCORE_EXPORT void initWithSimpleHTMLDocument(const String& style, const URL&);
 #endif
     WEBCORE_EXPORT void setView(RefPtr<FrameView>&&);
-    WEBCORE_EXPORT void createView(const IntSize&, const Optional<Color>& backgroundColor,
+    WEBCORE_EXPORT void createView(const IntSize&, const std::optional<Color>& backgroundColor,
         const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
         bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
         ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
@@ -177,8 +178,8 @@ public:
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
 
-    WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
-    WEBCORE_EXPORT Optional<FrameIdentifier> frameID() const;
+    WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
+    WEBCORE_EXPORT std::optional<FrameIdentifier> frameID() const;
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
@@ -224,8 +225,8 @@ public:
     void deviceOrPageScaleFactorChanged();
     
 #if ENABLE(DATA_DETECTION)
-    void setDataDetectionResults(NSArray *results) { m_dataDetectionResults = results; }
-    NSArray *dataDetectionResults() const { return m_dataDetectionResults.get(); }
+    DataDetectionResultsStorage* dataDetectionResultsIfExists() const { return m_dataDetectionResults.get(); }
+    WEBCORE_EXPORT DataDetectionResultsStorage& dataDetectionResults();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -269,7 +270,7 @@ public:
 
     WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const IntPoint& framePoint) const;
     Document* documentAtPoint(const IntPoint& windowPoint);
-    WEBCORE_EXPORT Optional<SimpleRange> rangeForPoint(const IntPoint& framePoint);
+    WEBCORE_EXPORT std::optional<SimpleRange> rangeForPoint(const IntPoint& framePoint);
 
     WEBCORE_EXPORT String searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
     String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
@@ -348,7 +349,7 @@ private:
     UniqueRef<ScriptController> m_script;
 
 #if ENABLE(DATA_DETECTION)
-    RetainPtr<NSArray> m_dataDetectionResults;
+    std::unique_ptr<DataDetectionResultsStorage> m_dataDetectionResults;
 #endif
 #if PLATFORM(IOS_FAMILY)
     void betterApproximateNode(const IntPoint& testPoint, const NodeQualifier&, Node*& best, Node* failedNode, IntPoint& bestPoint, IntRect& bestRect, const IntRect& testRect);

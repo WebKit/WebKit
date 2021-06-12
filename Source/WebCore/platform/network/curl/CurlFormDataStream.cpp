@@ -70,13 +70,13 @@ void CurlFormDataStream::clean()
     }
 }
 
-const Vector<char>* CurlFormDataStream::getPostData()
+const Vector<uint8_t>* CurlFormDataStream::getPostData()
 {
     if (!m_formData)
         return nullptr;
 
     if (!m_postData)
-        m_postData = makeUnique<Vector<char>>(m_formData->flatten());
+        m_postData = makeUnique<Vector<uint8_t>>(m_formData->flatten());
 
     return m_postData.get();
 }
@@ -106,10 +106,10 @@ void CurlFormDataStream::computeContentLength()
         m_totalSize += element.lengthInBytes();
 }
 
-Optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
+std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
 {
     if (!m_formData)
-        return WTF::nullopt;
+        return std::nullopt;
 
     const auto totalElementSize = m_formData->elements().size();
     if (m_elementPosition >= totalElementSize)
@@ -123,19 +123,19 @@ Optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
         size_t bufferSize = size - totalReadBytes;
         char* bufferPosition = buffer + totalReadBytes;
 
-        Optional<size_t> readBytes = switchOn(element.data,
-            [&] (const Vector<char>& bytes) {
+        std::optional<size_t> readBytes = switchOn(element.data,
+            [&] (const Vector<uint8_t>& bytes) {
                 return readFromData(bytes, bufferPosition, bufferSize);
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
                 return readFromFile(fileData, bufferPosition, bufferSize);
             }, [] (const FormDataElement::EncodedBlobData&) {
                 ASSERT_NOT_REACHED();
-                return WTF::nullopt;
+                return std::nullopt;
             }
         );
 
         if (!readBytes)
-            return WTF::nullopt;
+            return std::nullopt;
 
         totalReadBytes += *readBytes;
     }
@@ -145,7 +145,7 @@ Optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
     return totalReadBytes;
 }
 
-Optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::EncodedFileData& fileData, char* buffer, size_t size)
+std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::EncodedFileData& fileData, char* buffer, size_t size)
 {
     if (m_fileHandle == FileSystem::invalidPlatformFileHandle)
         m_fileHandle = FileSystem::openFile(fileData.filename, FileSystem::FileOpenMode::Read);
@@ -153,7 +153,7 @@ Optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::Encoded
     if (!FileSystem::isHandleValid(m_fileHandle)) {
         LOG(Network, "Curl - Failed while trying to open %s for upload\n", fileData.filename.utf8().data());
         m_fileHandle = FileSystem::invalidPlatformFileHandle;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto readBytes = FileSystem::readFromFile(m_fileHandle, buffer, size);
@@ -161,7 +161,7 @@ Optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::Encoded
         LOG(Network, "Curl - Failed while trying to read %s for upload\n", fileData.filename.utf8().data());
         FileSystem::closeFile(m_fileHandle);
         m_fileHandle = FileSystem::invalidPlatformFileHandle;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (!readBytes) {
@@ -173,10 +173,10 @@ Optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::Encoded
     return readBytes;
 }
 
-Optional<size_t> CurlFormDataStream::readFromData(const Vector<char>& data, char* buffer, size_t size)
+std::optional<size_t> CurlFormDataStream::readFromData(const Vector<uint8_t>& data, char* buffer, size_t size)
 {
     size_t elementSize = data.size() - m_dataOffset;
-    const char* elementBuffer = data.data() + m_dataOffset;
+    const uint8_t* elementBuffer = data.data() + m_dataOffset;
 
     size_t readBytes = elementSize > size ? size : elementSize;
     memcpy(buffer, elementBuffer, readBytes);

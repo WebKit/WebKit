@@ -90,7 +90,7 @@ DragSource::DragSource(GtkWidget* webView)
         if (!drag.m_selectionData)
             return;
 
-        drag.m_selectionData = WTF::nullopt;
+        drag.m_selectionData = std::nullopt;
         drag.m_drag = nullptr;
 
         GdkDevice* device = gdk_drag_context_get_device(context);

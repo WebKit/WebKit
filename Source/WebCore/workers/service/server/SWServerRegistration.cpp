@@ -97,7 +97,7 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
         break;
     };
 
-    Optional<ServiceWorkerData> serviceWorkerData;
+    std::optional<ServiceWorkerData> serviceWorkerData;
     if (worker)
         serviceWorkerData = worker->data();
 
@@ -146,15 +146,15 @@ void SWServerRegistration::forEachConnection(const WTF::Function<void(SWServer::
 
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
-    Optional<ServiceWorkerData> installingWorkerData;
+    std::optional<ServiceWorkerData> installingWorkerData;
     if (m_installingWorker)
         installingWorkerData = m_installingWorker->data();
 
-    Optional<ServiceWorkerData> waitingWorkerData;
+    std::optional<ServiceWorkerData> waitingWorkerData;
     if (m_waitingWorker)
         waitingWorkerData = m_waitingWorker->data();
 
-    Optional<ServiceWorkerData> activeWorkerData;
+    std::optional<ServiceWorkerData> activeWorkerData;
     if (m_activeWorker)
         activeWorkerData = m_activeWorker->data();
 

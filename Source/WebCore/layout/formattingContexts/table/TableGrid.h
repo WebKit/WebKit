@@ -56,10 +56,10 @@ public:
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
 
     void setCollapsedBorder(const Edges& collapsedBorder) { m_collapsedBorder = collapsedBorder; }
-    Optional<Edges> collapsedBorder() const { return m_collapsedBorder; }
+    std::optional<Edges> collapsedBorder() const { return m_collapsedBorder; }
 
     void setWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
-    Optional<IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
+    std::optional<IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
     bool isEmpty() const { return m_slotMap.isEmpty(); }
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
@@ -73,18 +73,16 @@ public:
         void setLogicalWidth(LayoutUnit);
         LayoutUnit logicalWidth() const;
 
-        bool isFixedWidth() const;
+        void setFixedWidth(LayoutUnit fixedValue) { m_fixedWidth = fixedValue; }
+        std::optional<LayoutUnit> fixedWidth() const { return m_fixedWidth; }
 
-        void setHasFixedWidthCell() { m_hasFixedWidthCell = true; }
         const ContainerBox* box() const { return m_layoutBox.get(); }
 
     private:
-        bool hasFixedWidthCell() const { return m_hasFixedWidthCell; }
-
         LayoutUnit m_computedLogicalWidth;
         LayoutUnit m_computedLogicalLeft;
+        std::optional<LayoutUnit> m_fixedWidth;
         WeakPtr<const ContainerBox> m_layoutBox;
-        bool m_hasFixedWidthCell { false };
 
 #if ASSERT_ENABLED
         bool m_hasComputedWidth { false };
@@ -103,7 +101,6 @@ public:
         void addAnonymousColumn();
 
         LayoutUnit logicalWidth() const { return m_columnList.last().logicalRight() - m_columnList.first().logicalLeft(); }
-        bool hasFixedColumnsOnly() const;
 
     private:
         ColumnList m_columnList;
@@ -167,8 +164,6 @@ public:
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
         InlineLayoutUnit baseline() const { return m_baseline; }
 
-        bool isFixedWidth() const;
-
         const ContainerBox& box() const { return *m_layoutBox.get(); }
 
     private:
@@ -231,8 +226,8 @@ private:
 
     LayoutUnit m_horizontalSpacing;
     LayoutUnit m_verticalSpacing;
-    Optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
-    Optional<Edges> m_collapsedBorder;
+    std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
+    std::optional<Edges> m_collapsedBorder;
 };
 
 }

@@ -41,8 +41,8 @@ public:
     AtomString label() const final;
     AtomString language() const final;
     int trackIndex() const final;
-    Optional<uint64_t> trackUID() const final;
-    Optional<bool> defaultEnabled() const final;
+    std::optional<uint64_t> trackUID() const final;
+    std::optional<bool> defaultEnabled() const final;
 
 private:
     AudioTrackPrivateWebM(webm::TrackEntry&&);

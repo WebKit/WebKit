@@ -155,11 +155,11 @@ template<typename F, typename S> struct CrossThreadCopierBase<false, false, std:
 };
 
 // Default specialization for Optional of CrossThreadCopyable class.
-template<typename T> struct CrossThreadCopierBase<false, false, Optional<T>> {
-    template<typename U> static Optional<T> copy(U&& source)
+template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>> {
+    template<typename U> static std::optional<T> copy(U&& source)
     {
         if (!source)
-            return WTF::nullopt;
+            return std::nullopt;
         return CrossThreadCopier<T>::copy(std::forward<U>(source).value());
     }
 };

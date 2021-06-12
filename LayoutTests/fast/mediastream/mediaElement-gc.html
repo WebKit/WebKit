@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HTMLMediaElement GC</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/gc.js"></script>
+    <script>
+let stream;
+async function createMediaElement(setToNull)
+{
+    const video = document.createElement('video');
+    if (!stream)
+       stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    video.srcObject = stream;
+    video.onclick = () => { };
+    await video.play().then(() => { }, () => { });
+    await video.pause();
+    if (setToNull)
+        video.srcObject = null;
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+    await createMediaElement(false);
+    gc();
+    assert_equals(internals.mediaElementCount, 1);
+}, "Keep alive a video element with a live srcObject");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+    await createMediaElement(true);
+    gc();
+    assert_equals(internals.mediaElementCount, 1);
+}, "GC a video element with a live srcObject, then srcObject set to null");
+    </script>
+</head>
+<body>
+</body>
+</html>

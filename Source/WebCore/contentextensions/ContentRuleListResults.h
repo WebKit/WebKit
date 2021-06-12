@@ -47,7 +47,7 @@ struct ContentRuleListResults {
         }
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<Result> decode(Decoder&);
+        template<class Decoder> static std::optional<Result> decode(Decoder&);
     };
     struct Summary {
         bool blockedLoad { false };
@@ -56,7 +56,7 @@ struct ContentRuleListResults {
         bool hasNotifications { false };
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<Summary> decode(Decoder&);
+        template<class Decoder> static std::optional<Summary> decode(Decoder&);
     };
     using ContentRuleListIdentifier = String;
 
@@ -76,17 +76,17 @@ struct ContentRuleListResults {
         encoder << summary;
         encoder << results;
     }
-    template<class Decoder> static Optional<ContentRuleListResults> decode(Decoder& decoder)
+    template<class Decoder> static std::optional<ContentRuleListResults> decode(Decoder& decoder)
     {
-        Optional<Summary> summary;
+        std::optional<Summary> summary;
         decoder >> summary;
         if (!summary)
-            return WTF::nullopt;
+            return std::nullopt;
         
-        Optional<Vector<std::pair<ContentRuleListIdentifier, Result>>> results;
+        std::optional<Vector<std::pair<ContentRuleListIdentifier, Result>>> results;
         decoder >> results;
         if (!results)
-            return WTF::nullopt;
+            return std::nullopt;
         
         return {{
             WTFMove(*summary),
@@ -103,27 +103,27 @@ template<class Encoder> void ContentRuleListResults::Result::encode(Encoder& enc
     encoder << notifications;
 }
 
-template<class Decoder> auto ContentRuleListResults::Result::decode(Decoder& decoder) -> Optional<Result>
+template<class Decoder> auto ContentRuleListResults::Result::decode(Decoder& decoder) -> std::optional<Result>
 {
-    Optional<bool> blockedLoad;
+    std::optional<bool> blockedLoad;
     decoder >> blockedLoad;
     if (!blockedLoad)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<bool> madeHTTPS;
+    std::optional<bool> madeHTTPS;
     decoder >> madeHTTPS;
     if (!madeHTTPS)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<bool> blockedCookies;
+    std::optional<bool> blockedCookies;
     decoder >> blockedCookies;
     if (!blockedCookies)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<String>> notifications;
+    std::optional<Vector<String>> notifications;
     decoder >> notifications;
     if (!notifications)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         WTFMove(*blockedLoad),
@@ -141,27 +141,27 @@ template<class Encoder> void ContentRuleListResults::Summary::encode(Encoder& en
     encoder << hasNotifications;
 }
 
-template<class Decoder> auto ContentRuleListResults::Summary::decode(Decoder& decoder) -> Optional<Summary>
+template<class Decoder> auto ContentRuleListResults::Summary::decode(Decoder& decoder) -> std::optional<Summary>
 {
-    Optional<bool> blockedLoad;
+    std::optional<bool> blockedLoad;
     decoder >> blockedLoad;
     if (!blockedLoad)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<bool> madeHTTPS;
+    std::optional<bool> madeHTTPS;
     decoder >> madeHTTPS;
     if (!madeHTTPS)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<bool> blockedCookies;
+    std::optional<bool> blockedCookies;
     decoder >> blockedCookies;
     if (!blockedCookies)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<bool> hasNotifications;
+    std::optional<bool> hasNotifications;
     decoder >> hasNotifications;
     if (!hasNotifications)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return {{
         WTFMove(*blockedLoad),

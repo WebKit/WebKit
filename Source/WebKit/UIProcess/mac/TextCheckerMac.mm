@@ -437,11 +437,10 @@ void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const Str
 
 void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    Checked<uint64_t, RecordOverflow> endOfRangeChecked = grammarDetail.range.location;
+    CheckedUint64 endOfRangeChecked = grammarDetail.range.location;
     endOfRangeChecked += grammarDetail.range.length;
 
-    uint64_t endOfRange;
-    if (endOfRangeChecked.safeGet(endOfRange) == CheckedState::DidOverflow || endOfRange >= badGrammarPhrase.length())
+    if (endOfRangeChecked.hasOverflowed() || endOfRangeChecked >= badGrammarPhrase.length())
         return;
 
     NSDictionary *detail = @{

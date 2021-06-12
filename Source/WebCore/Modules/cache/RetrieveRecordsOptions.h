@@ -34,7 +34,7 @@ struct RetrieveRecordsOptions {
     RetrieveRecordsOptions isolatedCopy() const { return { request.isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<RetrieveRecordsOptions> decode(Decoder&);
+    template<class Decoder> static std::optional<RetrieveRecordsOptions> decode(Decoder&);
 
     ResourceRequest request;
     bool ignoreSearch { false };
@@ -48,32 +48,32 @@ template<class Encoder> inline void RetrieveRecordsOptions::encode(Encoder& enco
     encoder << request << ignoreSearch << ignoreMethod << ignoreVary << shouldProvideResponse;
 }
 
-template<class Decoder> inline Optional<RetrieveRecordsOptions> RetrieveRecordsOptions::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<RetrieveRecordsOptions> RetrieveRecordsOptions::decode(Decoder& decoder)
 {
-    Optional<ResourceRequest> request;
+    std::optional<ResourceRequest> request;
     decoder >> request;
     if (!request)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> ignoreSearch;
+    std::optional<bool> ignoreSearch;
     decoder >> ignoreSearch;
     if (!ignoreSearch)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> ignoreMethod;
+    std::optional<bool> ignoreMethod;
     decoder >> ignoreMethod;
     if (!ignoreMethod)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> ignoreVary;
+    std::optional<bool> ignoreVary;
     decoder >> ignoreVary;
     if (!ignoreVary)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> shouldProvideResponse;
+    std::optional<bool> shouldProvideResponse;
     decoder >> shouldProvideResponse;
     if (!shouldProvideResponse)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*request), WTFMove(*ignoreSearch), WTFMove(*ignoreMethod), WTFMove(*ignoreVary), WTFMove(*shouldProvideResponse) } };
 }

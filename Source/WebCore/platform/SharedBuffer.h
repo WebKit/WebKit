@@ -66,14 +66,13 @@ class SharedBufferDataView;
 class WEBCORE_EXPORT SharedBuffer : public RefCounted<SharedBuffer> {
 public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer); }
+    static Ref<SharedBuffer> create(const uint8_t* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
     static Ref<SharedBuffer> create(const char* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
-    static Ref<SharedBuffer> create(const unsigned char* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
     static Ref<SharedBuffer> create(FileSystem::MappedFileData&& mappedFileData) { return adoptRef(*new SharedBuffer(WTFMove(mappedFileData))); }
 
     enum class MayUseFileMapping : bool { No, Yes };
     static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode = FileSystem::MappedFileMode::Shared, MayUseFileMapping = MayUseFileMapping::Yes);
 
-    static Ref<SharedBuffer> create(Vector<char>&&);
     static Ref<SharedBuffer> create(Vector<uint8_t>&&);
 
 #if USE(FOUNDATION)
@@ -99,8 +98,8 @@ public:
     // Calling data() causes all the data segments to be copied into one segment if they are not already.
     // Iterate the segments using begin() and end() instead.
     // FIXME: Audit the call sites of this function and replace them with iteration if possible.
-    const char* data() const;
-    const uint8_t* dataAsUInt8Ptr() const;
+    const uint8_t* data() const;
+    const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
 
     // Creates an ArrayBuffer and copies this SharedBuffer's contents to that
     // ArrayBuffer without merging segmented buffers into a flat buffer.
@@ -111,9 +110,9 @@ public:
     bool isEmpty() const { return !size(); }
 
     void append(const SharedBuffer&);
-    void append(const char*, size_t);
     void append(const uint8_t*, size_t);
-    void append(Vector<char>&&);
+    void append(const char* data, size_t length) { append(reinterpret_cast<const uint8_t*>(data), length); }
+    void append(Vector<uint8_t>&&);
 
     void clear();
 
@@ -123,10 +122,10 @@ public:
     // To modify or combine the data, allocate a new DataSegment.
     class DataSegment : public ThreadSafeRefCounted<DataSegment> {
     public:
-        WEBCORE_EXPORT const char* data() const;
+        WEBCORE_EXPORT const uint8_t* data() const;
         WEBCORE_EXPORT size_t size() const;
 
-        static Ref<DataSegment> create(Vector<char>&& data)
+        static Ref<DataSegment> create(Vector<uint8_t>&& data)
         {
             data.shrinkToFit();
             return adoptRef(*new DataSegment(WTFMove(data)));
@@ -150,7 +149,7 @@ public:
         bool containsMappedFileData() const;
 
     private:
-        DataSegment(Vector<char>&& data)
+        DataSegment(Vector<uint8_t>&& data)
             : m_immutableData(WTFMove(data)) { }
 #if USE(CF)
         DataSegment(RetainPtr<CFDataRef>&& data)
@@ -167,7 +166,7 @@ public:
         DataSegment(FileSystem::MappedFileData&& data)
             : m_immutableData(WTFMove(data)) { }
 
-        Variant<Vector<char>,
+        Variant<Vector<uint8_t>,
 #if USE(CF)
             RetainPtr<CFDataRef>,
 #endif
@@ -204,9 +203,9 @@ public:
 
 private:
     explicit SharedBuffer() = default;
+    explicit SharedBuffer(const uint8_t*, size_t);
     explicit SharedBuffer(const char*, size_t);
-    explicit SharedBuffer(const unsigned char*, size_t);
-    explicit SharedBuffer(Vector<char>&&);
+    explicit SharedBuffer(Vector<uint8_t>&&);
     explicit SharedBuffer(FileSystem::MappedFileData&&);
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
@@ -235,7 +234,8 @@ class WEBCORE_EXPORT SharedBufferDataView {
 public:
     SharedBufferDataView(Ref<SharedBuffer::DataSegment>&&, size_t);
     size_t size() const;
-    const char* data() const;
+    const uint8_t* data() const;
+    const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
 #if USE(FOUNDATION)
     RetainPtr<NSData> createNSData() const;
 #endif

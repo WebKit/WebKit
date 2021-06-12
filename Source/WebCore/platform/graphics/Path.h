@@ -238,7 +238,7 @@ public:
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Path> decode(Decoder&);
+    template<class Decoder> static std::optional<Path> decode(Decoder&);
 
 #if ENABLE(INLINE_PATH_DATA)
     template<typename DataType> const DataType& inlineData() const;
@@ -250,8 +250,8 @@ public:
 private:
 #if ENABLE(INLINE_PATH_DATA)
     template<typename DataType> DataType& inlineData();
-    Optional<FloatRect> fastBoundingRectFromInlineData() const;
-    Optional<FloatRect> boundingRectFromInlineData() const;
+    std::optional<FloatRect> fastBoundingRectFromInlineData() const;
+    std::optional<FloatRect> boundingRectFromInlineData() const;
 #endif
 
     void moveToSlowCase(const FloatPoint&);
@@ -296,7 +296,7 @@ private:
     mutable bool m_copyPathBeforeMutation { false };
 #endif
 #if USE(CAIRO)
-    Optional<Vector<PathElement>> m_elements;
+    std::optional<Vector<PathElement>> m_elements;
 #endif
 };
 
@@ -340,18 +340,18 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
     });
 }
 
-template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
+template<class Decoder> std::optional<Path> Path::decode(Decoder& decoder)
 {
     Path path;
 
 #if ENABLE(INLINE_PATH_DATA)
     bool hasInlineData;
     if (!decoder.decode(hasInlineData))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hasInlineData) {
         if (!decoder.decode(path.m_inlineData))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return path;
     }
@@ -359,38 +359,38 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
 
     uint64_t numPoints;
     if (!decoder.decode(numPoints))
-        return WTF::nullopt;
+        return std::nullopt;
 
     path.clear();
 
     for (uint64_t i = 0; i < numPoints; ++i) {
         PathElement::Type elementType;
         if (!decoder.decode(elementType))
-            return WTF::nullopt;
+            return std::nullopt;
 
         switch (elementType) {
         case PathElement::Type::MoveToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))
-                return WTF::nullopt;
+                return std::nullopt;
             path.moveTo(point);
             break;
         }
         case PathElement::Type::AddLineToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))
-                return WTF::nullopt;
+                return std::nullopt;
             path.addLineTo(point);
             break;
         }
         case PathElement::Type::AddQuadCurveToPoint: {
             FloatPoint controlPoint;
             if (!decoder.decode(controlPoint))
-                return WTF::nullopt;
+                return std::nullopt;
 
             FloatPoint endPoint;
             if (!decoder.decode(endPoint))
-                return WTF::nullopt;
+                return std::nullopt;
 
             path.addQuadCurveTo(controlPoint, endPoint);
             break;
@@ -398,15 +398,15 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
         case PathElement::Type::AddCurveToPoint: {
             FloatPoint controlPoint1;
             if (!decoder.decode(controlPoint1))
-                return WTF::nullopt;
+                return std::nullopt;
 
             FloatPoint controlPoint2;
             if (!decoder.decode(controlPoint2))
-                return WTF::nullopt;
+                return std::nullopt;
 
             FloatPoint endPoint;
             if (!decoder.decode(endPoint))
-                return WTF::nullopt;
+                return std::nullopt;
 
             path.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
             break;

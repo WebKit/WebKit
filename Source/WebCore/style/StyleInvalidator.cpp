@@ -387,14 +387,23 @@ void Invalidator::invalidateHostAndSlottedStyleIfNeeded(ShadowRoot& shadowRoot)
 {
     auto& host = *shadowRoot.host();
     auto* resolver = shadowRoot.styleScope().resolverIfExists();
-    if (!resolver)
-        return;
-    auto& authorStyle = resolver->ruleSets().authorStyle();
 
-    if (!authorStyle.hostPseudoClassRules().isEmpty())
+    auto shouldInvalidateHost = [&] {
+        if (!resolver)
+            return true;
+        return !resolver->ruleSets().authorStyle().hostPseudoClassRules().isEmpty();
+    }();
+
+    if (shouldInvalidateHost)
         host.invalidateStyleInternal();
 
-    if (!authorStyle.slottedPseudoElementRules().isEmpty()) {
+    auto shouldInvalidateHostChildren = [&] {
+        if (!resolver)
+            return true;
+        return !resolver->ruleSets().authorStyle().slottedPseudoElementRules().isEmpty();
+    }();
+
+    if (shouldInvalidateHostChildren) {
         for (auto& shadowChild : childrenOfType<Element>(host))
             shadowChild.invalidateStyleInternal();
     }

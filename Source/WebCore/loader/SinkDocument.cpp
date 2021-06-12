@@ -48,7 +48,7 @@ private:
     }
 
     // Ignore all data.
-    void appendBytes(DocumentWriter&, const char*, size_t) override
+    void appendBytes(DocumentWriter&, const uint8_t*, size_t) override
     {
     }
 };

@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "ContentType.h"
 #import "Logging.h"
 #import <CoreMedia/CoreMedia.h>
 #import <Foundation/Foundation.h>
@@ -39,17 +40,29 @@ namespace WebCore {
 
 using namespace PAL;
 
-std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create(CMVideoCodecType outputCodecType, CMBufferQueueTriggerCallback callback, void* callbackObject)
+std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create(String mimeType, CMBufferQueueTriggerCallback callback, void* callbackObject)
 {
-    auto compressor = std::unique_ptr<VideoSampleBufferCompressor>(new VideoSampleBufferCompressor(outputCodecType));
+    auto profile = Profile::Baseline;
+    for (auto codec : ContentType(mimeType).codecs()) {
+        if (startsWithLettersIgnoringASCIICase(codec, "avc1.") && codec.length() >= 11) {
+            if (codec[5] == '6' && codec[6] == '4')
+                profile = Profile::High;
+            else if (codec[5] == '4' && (codec[6] == 'd' || codec[6] == 'D'))
+                profile = Profile::Main;
+            break;
+        }
+    }
+
+    auto compressor = std::unique_ptr<VideoSampleBufferCompressor>(new VideoSampleBufferCompressor(kCMVideoCodecType_H264, profile));
     if (!compressor->initialize(callback, callbackObject))
         return nullptr;
     return compressor;
 }
 
-VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType outputCodecType)
+VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType outputCodecType, Profile profile)
     : m_serialDispatchQueue { WorkQueue::create("com.apple.VideoSampleBufferCompressor") }
     , m_outputCodecType { outputCodecType }
+    , m_profile { profile }
 {
 }
 
@@ -113,6 +126,18 @@ static inline OSStatus setCompressionSessionProperty(VTCompressionSessionRef vtS
     return status;
 }
 
+CFStringRef VideoSampleBufferCompressor::vtProfileLevel() const
+{
+    switch (m_profile) {
+    case Profile::Baseline:
+        return kVTProfileLevel_H264_Baseline_AutoLevel;
+    case Profile::High:
+        return kVTProfileLevel_H264_High_AutoLevel;
+    case Profile::Main:
+        return kVTProfileLevel_H264_Main_AutoLevel;
+    }
+}
+
 bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptionRef formatDescription)
 {
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
@@ -136,6 +161,15 @@ bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptio
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration failed with %d", error);
     error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_ExpectedFrameRate, m_expectedFrameRate);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ExpectedFrameRate failed with %d", error);
+
+    error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_ProfileLevel, vtProfileLevel());
+    if (error) {
+        RELEASE_LOG_ERROR(MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ProfileLevel failed with %d for profile %d", error, m_profile);
+        if (m_profile != Profile::Baseline) {
+            error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Baseline_AutoLevel);
+            RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ProfileLevel failed with %d for default profile", error);
+        }
+    }
 
     if (m_outputBitRate) {
         error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_AverageBitRate, *m_outputBitRate);
@@ -184,7 +218,7 @@ RetainPtr<CMSampleBufferRef> VideoSampleBufferCompressor::takeOutputSampleBuffer
 
 unsigned VideoSampleBufferCompressor::bitRate() const
 {
-    return m_outputBitRate.valueOr(0);
+    return m_outputBitRate.value_or(0);
 }
 
 }

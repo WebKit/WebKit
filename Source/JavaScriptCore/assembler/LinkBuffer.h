@@ -40,7 +40,6 @@
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -153,6 +152,8 @@ public:
     ~LinkBuffer()
     {
     }
+
+    void runMainThreadFinalizationTasks();
     
     bool didFailToAllocate() const
     {
@@ -338,7 +339,13 @@ public:
     void didAlreadyDisassemble() { m_alreadyDisassembled = true; }
 
     JS_EXPORT_PRIVATE static void clearProfileStatistics();
-    JS_EXPORT_PRIVATE static void dumpProfileStatistics(Optional<PrintStream*> = WTF::nullopt);
+    JS_EXPORT_PRIVATE static void dumpProfileStatistics(std::optional<PrintStream*> = std::nullopt);
+
+    template<typename Functor>
+    void addMainThreadFinalizationTask(const Functor& functor)
+    {
+        m_mainThreadFinalizationTasks.append(createSharedTask<void()>(functor));
+    }
 
 private:
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithoutDisassemblyImpl();
@@ -419,6 +426,7 @@ private:
     MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
+    Vector<RefPtr<SharedTask<void()>>> m_mainThreadFinalizationTasks;
 
     static size_t s_profileCummulativeLinkedSizes[numberOfProfiles];
     static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];

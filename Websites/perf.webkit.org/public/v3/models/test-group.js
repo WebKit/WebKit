@@ -11,7 +11,8 @@ class TestGroup extends LabeledObject {
         this._isHidden = object.hidden;
         this._needsNotification = object.needsNotification;
         this._mayNeedMoreRequests = object.mayNeedMoreRequests;
-        this._initialRepetitionCount = object.initialRepetitionCount;
+        this._initialRepetitionCount = +object.initialRepetitionCount;
+        this._repetitionType = object.repetitionType;
         this._buildRequests = [];
         this._orderBuildRequestsLazily = new LazilyEvaluatedFunction((...buildRequests) => {
             return buildRequests.sort((a, b) => a.order() - b.order());
@@ -36,7 +37,8 @@ class TestGroup extends LabeledObject {
         this._needsNotification = object.needsNotification;
         this._notificationSentAt = object.notificationSentAt ? new Date(object.notificationSentAt) : null;
         this._mayNeedMoreRequests = object.mayNeedMoreRequests;
-        this._initialRepetitionCount = object.initialRepetitionCount;
+        this._initialRepetitionCount = +object.initialRepetitionCount;
+        this._repetitionType = object.repetitionType;
     }
 
     task() { return AnalysisTask.findById(this._taskId); }
@@ -46,6 +48,7 @@ class TestGroup extends LabeledObject {
     needsNotification() { return this._needsNotification; }
     mayNeedMoreRequests() { return this._mayNeedMoreRequests; }
     initialRepetitionCount() { return this._initialRepetitionCount; }
+    repetitionType() { return this._repetitionType; }
     notificationSentAt() { return this._notificationSentAt; }
     author() { return this._authorName; }
     addBuildRequest(request)
@@ -81,17 +84,59 @@ class TestGroup extends LabeledObject {
         return this._orderBuildRequestsLazily.evaluate(...this._buildRequests);
     }
 
-    repetitionCount()
+    repetitionCountForCommitSet(commitSet)
     {
         if (!this._buildRequests.length)
             return 0;
-        const commitSet = this._buildRequests[0].commitSet();
         let count = 0;
         for (const request of this._buildRequests) {
             if (request.isTest() && request.commitSet() == commitSet)
                 count++;
         }
         return count;
+    }
+
+    hasRetries()
+    {
+        return this.requestedCommitSets().some(commitSet => this.repetitionCountForCommitSet(commitSet) > this.initialRepetitionCount());
+    }
+
+    additionalRepetitionNeededToReachInitialRepetitionCount(commitSet)
+    {
+        const potentiallySuccessfulCount = this.requestsForCommitSet(commitSet).filter(
+            (request) => request.isTest() && (request.hasCompleted() || !request.hasFinished())).length;
+        return Math.max(0, this.initialRepetitionCount() - potentiallySuccessfulCount);
+    }
+
+    successfulTestCount(commitSet)
+    {
+        return this.requestsForCommitSet(commitSet).filter((request) => request.isTest() && request.hasCompleted()).length;
+    }
+
+    isFirstTestRequest(buildRequest)
+    {
+        return this._orderedBuildRequests().filter((request) => request.isTest())[0] == buildRequest;
+    }
+
+    precedingBuildRequest(buildRequest)
+    {
+        const orderedBuildRequests = this._orderedBuildRequests();
+        const buildRequestIndex = orderedBuildRequests.indexOf(buildRequest);
+        console.assert(buildRequestIndex >= 0);
+        return orderedBuildRequests[buildRequestIndex - 1];
+    }
+
+    retryCountForCommitSet(commitSet)
+    {
+        const retryCount = this.repetitionCountForCommitSet(commitSet) - this.initialRepetitionCount();
+        console.assert(retryCount >= 0);
+        return retryCount;
+    }
+
+    retryCountsAreSameForAllCommitSets()
+    {
+        const retryCountForFirstCommitSet = this.retryCountForCommitSet(this.requestedCommitSets()[0]);
+        return this.requestedCommitSets().every(commitSet => this.retryCountForCommitSet(commitSet) == retryCountForFirstCommitSet);
     }
 
     requestedCommitSets()
@@ -102,7 +147,6 @@ class TestGroup extends LabeledObject {
     static _computeRequestedCommitSets(...orderedBuildRequests)
     {
         const requestedCommitSets = [];
-        const commitSetLabelMap = new Map;
         for (const request of orderedBuildRequests) {
             const set = request.commitSet();
             if (!requestedCommitSets.includes(set))
@@ -219,6 +263,14 @@ class TestGroup extends LabeledObject {
         });
     }
 
+    async cancelPendingRequests()
+    {
+        return this._updateBuildRequest({
+            group: this.id(),
+            cancel: true,
+        });
+    }
+
     async didSendNotification()
     {
         return await this._updateBuildRequest({
@@ -228,11 +280,14 @@ class TestGroup extends LabeledObject {
         });
     }
 
-    async addMoreBuildRequests(addCount)
+    async addMoreBuildRequests(addCount, commitSet = null)
     {
+        console.assert(!commitSet || this.repetitionType() == 'sequential');
+        console.assert(!commitSet || commitSet instanceof CommitSet);
         return await this._updateBuildRequest({
             group: this.id(),
             addCount,
+            commitSet: commitSet ? commitSet.id() : null
         }, 'add-build-requests');
     }
 
@@ -244,44 +299,124 @@ class TestGroup extends LabeledObject {
         });
     }
 
-    static createWithTask(taskName, platform, test, groupName, repetitionCount, commitSets, notifyOnCompletion)
+    static async createWithTask(taskName, platform, test, groupName, repetitionCount, repetitionType, commitSets, notifyOnCompletion)
     {
         console.assert(commitSets.length == 2);
         const revisionSets = CommitSet.revisionSetsFromCommitSets(commitSets);
-        const params = {taskName, name: groupName, platform: platform.id(), test: test.id(), repetitionCount, revisionSets, needsNotification: !!notifyOnCompletion};
-        return PrivilegedAPI.sendRequest('create-test-group', params).then((data) => {
-            return AnalysisTask.fetchById(data['taskId'], true);
-        }).then((task) => {
-            return this.fetchForTask(task.id()).then(() => task);
-        });
+        const data = await PrivilegedAPI.sendRequest('create-test-group', {
+            taskName, name: groupName, platform: platform.id(), test: test.id(), repetitionCount, revisionSets,
+            repetitionType, needsNotification: !!notifyOnCompletion});
+        const task = await AnalysisTask.fetchById(data['taskId'], /* ignoreCache */ true);
+        await this.fetchForTask(task.id());
+        return task;
     }
 
-    static createWithCustomConfiguration(task, platform, test, groupName, repetitionCount, commitSets, notifyOnCompletion)
+    static async createWithCustomConfiguration(task, platform, test, groupName, repetitionCount, repetitionType, commitSets, notifyOnCompletion)
     {
         console.assert(commitSets.length == 2);
         const revisionSets = CommitSet.revisionSetsFromCommitSets(commitSets);
-        const params = {task: task.id(), name: groupName, platform: platform.id(), test: test.id(), repetitionCount, revisionSets, needsNotification: !!notifyOnCompletion};
-        return PrivilegedAPI.sendRequest('create-test-group', params).then((data) => {
-            return this.fetchForTask(data['taskId'], true);
-        });
+        const data = await PrivilegedAPI.sendRequest('create-test-group', {
+            task: task.id(), name: groupName, platform: platform.id(), test: test.id(), repetitionCount, repetitionType,
+            revisionSets, needsNotification: !!notifyOnCompletion});
+        await this.fetchById(data['testGroupId'], /* ignoreCache */ true);
+        return this.findAllByTask(data['taskId']);
     }
 
-    static createAndRefetchTestGroups(task, name, repetitionCount, commitSets, notifyOnCompletion)
+    static async createAndRefetchTestGroups(task, name, repetitionCount, repetitionType, commitSets, notifyOnCompletion)
     {
         console.assert(commitSets.length == 2);
         const revisionSets = CommitSet.revisionSetsFromCommitSets(commitSets);
-        return PrivilegedAPI.sendRequest('create-test-group', {
-            task: task.id(),
-            name: name,
-            repetitionCount: repetitionCount,
-            revisionSets: revisionSets,
-            needsNotification: !!notifyOnCompletion,
-        }).then((data) => this.fetchForTask(data['taskId'], true));
+        const data = await PrivilegedAPI.sendRequest('create-test-group', {
+            task: task.id(), name, repetitionCount, repetitionType, revisionSets,
+            needsNotification: !!notifyOnCompletion
+        });
+        await this.fetchById(data['testGroupId'], /* ignoreCache */ true);
+        return this.findAllByTask(data['taskId']);
+    }
+
+    async scheduleMoreRequestsOrClearFlag(maxRetryFactor)
+    {
+        if (!this.mayNeedMoreRequests())
+            return 0;
+
+        if (this.isHidden()) {
+            await this.clearMayNeedMoreBuildRequests();
+            return 0;
+        }
+
+        console.assert(['alternating', 'sequential'].includes(this.repetitionType()));
+        const repetitionLimit = maxRetryFactor * this.initialRepetitionCount();
+        const {retryCount, stopFutureRetries} = await (this.repetitionType() == 'alternating' ?
+            this._createAlternatingRetriesForTestGroup(repetitionLimit) : this._createSequentialRetriesForTestGroup(repetitionLimit));
+
+        if (stopFutureRetries)
+            await this.clearMayNeedMoreBuildRequests();
+
+        return retryCount;
+    }
+
+    async _createAlternatingRetriesForTestGroup(repetitionLimit)
+    {
+        const additionalRepetitionNeeded = this.requestedCommitSets().reduce(
+            (currentMax, commitSet) => Math.max(this.additionalRepetitionNeededToReachInitialRepetitionCount(commitSet), currentMax), 0);
+        console.assert(additionalRepetitionNeeded <= this.initialRepetitionCount());
+
+        const retryCount = this.requestedCommitSets().reduce(
+            (currentMin, commitSet) => Math.min(Math.floor(repetitionLimit - this.repetitionCountForCommitSet(commitSet)), currentMin), additionalRepetitionNeeded);
+
+        if (retryCount <= 0)
+            return {retryCount: 0, stopFutureRetries: true};
+
+        const eachCommitSetHasCompletedAtLeastOneTest = this.requestedCommitSets().every(this.successfulTestCount.bind(this));
+        if (!eachCommitSetHasCompletedAtLeastOneTest) {
+            const hasUnfinishedBuildRequest = this.requestedCommitSets().some((set) =>
+                this.requestsForCommitSet(set).some((request) => request.isTest() && !request.hasFinished()));
+            return {retryCount: 0, stopFutureRetries: !hasUnfinishedBuildRequest};
+        }
+
+        await this.addMoreBuildRequests(retryCount);
+        return {retryCount, stopFutureRetries: false};
+    }
+
+    async _createSequentialRetriesForTestGroup(repetitionLimit)
+    {
+        const lastItem = (array) => array[array.length - 1];
+        const commitSets = this.requestedCommitSets();
+        console.assert(commitSets.every((currentSet, index) =>
+            !index || lastItem(this.requestsForCommitSet(commitSets[index - 1])).order() < this.requestsForCommitSet(currentSet)[0].order()));
+
+        const allTestRequestsHaveFailedForSomeCommitSet = commitSets.some(commitSet =>
+            this.requestsForCommitSet(commitSet).every(request => !request.isTest() || request.hasFailed()));
+
+        if (allTestRequestsHaveFailedForSomeCommitSet)
+            return {retryCount: 0, stopFutureRetries: true};
+
+        for (const commitSet of commitSets) {
+            if (this.successfulTestCount(commitSet) >= this.initialRepetitionCount())
+                continue;
+
+            const additionalRepetition = this.additionalRepetitionNeededToReachInitialRepetitionCount(commitSet);
+            const retryCount = Math.min(Math.floor(repetitionLimit - this.repetitionCountForCommitSet(commitSet)), additionalRepetition);
+            if (retryCount <= 0)
+                continue;
+
+            await this.addMoreBuildRequests(retryCount, commitSet);
+            return {retryCount, stopFutureRetries: false};
+        }
+
+        return {retryCount: 0, stopFutureRetries: true};
     }
 
     static findAllByTask(taskId)
     {
         return TestGroup.all().filter((testGroup) => testGroup._taskId == taskId);
+    }
+
+    static async fetchById(testGroupId, ignoreCache = false)
+    {
+        const data = await this.cachedFetch(`/api/test-groups/${testGroupId}`, { }, ignoreCache);
+        this._createModelsFromFetchedTestGroups(data);
+        return this.findById(testGroupId);
     }
 
     static fetchForTask(taskId, ignoreCache = false)

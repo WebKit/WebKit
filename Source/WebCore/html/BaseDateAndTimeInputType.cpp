@@ -544,7 +544,7 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     parameters.isAnchorElementRTL = computedStyle->direction() == TextDirection::RTL;
     parameters.useDarkAppearance = document.useDarkAppearance(computedStyle);
 
-    auto date = parseToDateComponents(element.value()).valueOr(DateComponents());
+    auto date = parseToDateComponents(element.value()).value_or(DateComponents());
     parameters.hasSecondField = shouldHaveSecondField(date);
     parameters.hasMillisecondField = shouldHaveMillisecondField(date);
 

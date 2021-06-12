@@ -42,24 +42,12 @@ namespace WebCore {
 
 SharedBufferChunkReader::SharedBufferChunkReader(SharedBuffer* buffer, const Vector<char>& separator)
     : m_buffer(buffer)
-    , m_bufferPosition(0)
-    , m_segment(0)
-    , m_segmentLength(0)
-    , m_segmentIndex(0)
-    , m_reachedEndOfFile(false)
     , m_separator(separator)
-    , m_separatorIndex(0)
 {
 }
 
 SharedBufferChunkReader::SharedBufferChunkReader(SharedBuffer* buffer, const char* separator)
     : m_buffer(buffer)
-    , m_bufferPosition(0)
-    , m_segment(0)
-    , m_segmentLength(0)
-    , m_segmentIndex(0)
-    , m_reachedEndOfFile(false)
-    , m_separatorIndex(0)
 {
     setSeparator(separator);
 }
@@ -75,7 +63,7 @@ void SharedBufferChunkReader::setSeparator(const char* separator)
     m_separator.append(separator, strlen(separator));
 }
 
-bool SharedBufferChunkReader::nextChunk(Vector<char>& chunk, bool includeSeparator)
+bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSeparator)
 {
     if (m_reachedEndOfFile)
         return false;
@@ -83,7 +71,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<char>& chunk, bool includeSeparat
     chunk.clear();
     while (true) {
         while (m_segmentIndex < m_segmentLength) {
-            char currentCharacter = m_segment[m_segmentIndex++];
+            auto currentCharacter = m_segment[m_segmentIndex++];
             if (currentCharacter != m_separator[m_separatorIndex]) {
                 if (m_separatorIndex > 0) {
                     ASSERT_WITH_SECURITY_IMPLICATION(m_separatorIndex <= m_separator.size());
@@ -112,7 +100,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<char>& chunk, bool includeSeparat
         if (!m_segmentLength) {
             m_reachedEndOfFile = true;
             if (m_separatorIndex > 0)
-                chunk.append(m_separator.data(), m_separatorIndex);
+                chunk.append(reinterpret_cast<const uint8_t*>(m_separator.data()), m_separatorIndex);
             return !chunk.isEmpty();
         }
     }
@@ -122,14 +110,14 @@ bool SharedBufferChunkReader::nextChunk(Vector<char>& chunk, bool includeSeparat
 
 String SharedBufferChunkReader::nextChunkAsUTF8StringWithLatin1Fallback(bool includeSeparator)
 {
-    Vector<char> data;
+    Vector<uint8_t> data;
     if (!nextChunk(data, includeSeparator))
         return String();
 
     return data.size() ? String::fromUTF8WithLatin1Fallback(data.data(), data.size()) : emptyString();
 }
 
-size_t SharedBufferChunkReader::peek(Vector<char>& data, size_t requestedSize)
+size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize)
 {
     data.clear();
     if (requestedSize <= m_segmentLength - m_segmentIndex) {
@@ -141,7 +129,7 @@ size_t SharedBufferChunkReader::peek(Vector<char>& data, size_t requestedSize)
     data.append(m_segment + m_segmentIndex, readBytesCount);
 
     size_t bufferPosition = m_bufferPosition + m_segmentLength;
-    const char* segment = 0;
+    const uint8_t* segment = nullptr;
 
     // Let's pretend all the data is in one block.
     // FIXME: This class should be removed in favor of just iterating the segments of the SharedBuffer.

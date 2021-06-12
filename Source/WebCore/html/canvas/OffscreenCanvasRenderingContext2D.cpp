@@ -126,12 +126,12 @@ auto OffscreenCanvasRenderingContext2D::fontProxy() -> const FontProxy* {
     return &state().font;
 }
 
-void OffscreenCanvasRenderingContext2D::fillText(const String& text, float x, float y, Optional<float> maxWidth)
+void OffscreenCanvasRenderingContext2D::fillText(const String& text, float x, float y, std::optional<float> maxWidth)
 {
     drawText(text, x, y, true, maxWidth);
 }
 
-void OffscreenCanvasRenderingContext2D::strokeText(const String& text, float x, float y, Optional<float> maxWidth)
+void OffscreenCanvasRenderingContext2D::strokeText(const String& text, float x, float y, std::optional<float> maxWidth)
 {
     drawText(text, x, y, false, maxWidth);
 }

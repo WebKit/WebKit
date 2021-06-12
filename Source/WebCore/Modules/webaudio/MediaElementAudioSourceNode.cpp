@@ -83,6 +83,10 @@ MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
 void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
     auto protectedThis = makeRef(*this);
+
+    // Synchronize with process().
+    Locker locker { m_processLock };
+
     m_muted = wouldTaintOrigin();
 
     if (numberOfChannels != m_sourceNumberOfChannels || sourceSampleRate != m_sourceSampleRate) {
@@ -96,9 +100,6 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
 
         m_sourceNumberOfChannels = numberOfChannels;
         m_sourceSampleRate = sourceSampleRate;
-
-        // Synchronize with process().
-        Locker locker { m_processLock };
 
         if (sourceSampleRate != sampleRate()) {
             double scaleFactor = sourceSampleRate / sampleRate();
@@ -150,11 +151,6 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
 {
     AudioBus* outputBus = output(0)->bus();
 
-    if (m_muted || !m_sourceNumberOfChannels || !m_sourceSampleRate) {
-        outputBus->zero();
-        return;
-    }
-
     // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of
     // reconfiguring its playback engine, so we output silence in this case.
@@ -165,7 +161,8 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
     }
 
     Locker locker { AdoptLock, m_processLock };
-    if (m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
+
+    if (m_muted || !m_sourceNumberOfChannels || !m_sourceSampleRate || m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
         outputBus->zero();
         return;
     }

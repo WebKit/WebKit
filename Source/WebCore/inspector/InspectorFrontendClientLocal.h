@@ -134,7 +134,7 @@ protected:
 
 private:
     friend class FrontendMenuProvider;
-    Optional<bool> evaluationResultToBoolean(InspectorFrontendAPIDispatcher::EvaluationResult);
+    std::optional<bool> evaluationResultToBoolean(InspectorFrontendAPIDispatcher::EvaluationResult);
 
     InspectorController* m_inspectedPageController { nullptr };
     Page* m_frontendPage { nullptr };

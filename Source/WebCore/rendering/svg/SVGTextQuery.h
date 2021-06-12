@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class InlineFlowBox;
+class LegacyInlineFlowBox;
 class RenderObject;
 class SVGInlineTextBox;
 
@@ -49,7 +49,7 @@ private:
     typedef bool (SVGTextQuery::*ProcessTextFragmentCallback)(Data*, const SVGTextFragment&) const;
     bool executeQuery(Data*, ProcessTextFragmentCallback) const;
 
-    void collectTextBoxesInFlowBox(InlineFlowBox*);
+    void collectTextBoxesInFlowBox(LegacyInlineFlowBox*);
     bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
     void modifyStartEndPositionsRespectingLigatures(Data*, unsigned& startPosition, unsigned& endPosition) const;
 

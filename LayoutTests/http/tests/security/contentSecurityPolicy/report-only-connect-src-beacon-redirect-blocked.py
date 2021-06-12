@@ -11,13 +11,19 @@ print('''<!DOCTYPE html>
 <html>
 <head>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
+}
 </script>
 </head>
 <body>
 <pre id="console"></pre>
 <script>
+document.addEventListener('securitypolicyviolation', e => {
+    testRunner.notifyDone();
+});
+
 function log(msg)
 {
     document.getElementById("console").appendChild(document.createTextNode(msg + "\\n"));

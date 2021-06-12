@@ -36,8 +36,8 @@
 #include <mutex>
 #include <sqlite3.h>
 #include <thread>
-#include <wtf/CheckedLock.h>
 #include <wtf/FileSystem.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -72,7 +72,7 @@ static void initializeSQLiteIfNecessary()
     });
 }
 
-static CheckedLock isDatabaseOpeningForbiddenLock;
+static Lock isDatabaseOpeningForbiddenLock;
 static bool isDatabaseOpeningForbidden WTF_GUARDED_BY_LOCK(isDatabaseOpeningForbiddenLock) { false };
 
 void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)
@@ -119,8 +119,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
             m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
             LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
                 m_openErrorMessage.data());
-            sqlite3_close(m_db);
-            m_db = 0;
+            close(ShouldSetErrorState::No);
             return false;
         }
     }
@@ -131,8 +130,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     if (m_openError != SQLITE_OK) {
         m_openErrorMessage = sqlite3_errmsg(m_db);
         LOG_ERROR("SQLite database error when enabling extended errors - %s", m_openErrorMessage.data());
-        sqlite3_close(m_db);
-        m_db = 0;
+        close(ShouldSetErrorState::No);
         return false;
     }
 
@@ -150,7 +148,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     if (openMode != OpenMode::ReadOnly)
         useWALJournalMode();
 
-    String shmFileName = makeString(filename, "-shm"_s);
+    auto shmFileName = makeString(filename, "-shm"_s);
     if (FileSystem::fileExists(shmFileName)) {
         if (!FileSystem::isSafeToUseMemoryMapForPath(shmFileName)) {
             RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.latin1().data());
@@ -220,7 +218,7 @@ void SQLiteDatabase::useWALJournalMode()
     }
 }
 
-void SQLiteDatabase::close()
+void SQLiteDatabase::close(ShouldSetErrorState shouldSetErrorState)
 {
     if (m_db) {
         ASSERT_WITH_MESSAGE(!m_statementCount, "All SQLiteTransaction objects should be destroyed before closing the database");
@@ -232,16 +230,24 @@ void SQLiteDatabase::close()
             Locker locker { m_databaseClosingMutex };
             m_db = 0;
         }
+
+        int closeResult;
         if (m_useWAL) {
+            // Close in the scope of counter as it may acquire lock of database.
             SQLiteTransactionInProgressAutoCounter transactionCounter;
-            sqlite3_close(db);
+            closeResult = sqlite3_close(db);
         } else
-            sqlite3_close(db);
+            closeResult = sqlite3_close(db);
+
+        if (closeResult != SQLITE_OK)
+            RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::close: Failed to close database (%d) - %{public}s", closeResult, lastErrorMsg());
     }
 
-    m_openingThread = nullptr;
-    m_openError = SQLITE_ERROR;
-    m_openErrorMessage = CString();
+    if (shouldSetErrorState == ShouldSetErrorState::Yes) {
+        m_openingThread = nullptr;
+        m_openError = SQLITE_ERROR;
+        m_openErrorMessage = CString();
+    }
 }
 
 void SQLiteDatabase::overrideUnauthorizedFunctions()
@@ -387,15 +393,31 @@ bool SQLiteDatabase::executeCommand(ASCIILiteral query)
 
 bool SQLiteDatabase::tableExists(const String& tableName)
 {
-    if (!isOpen())
-        return false;
+    return !tableSQL(tableName).isEmpty();
+}
 
-    auto statement = prepareStatement("SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?;"_s);
-    if (!statement)
-        return false;
-    if (statement->bindText(1, tableName) != SQLITE_OK)
-        return false;
-    return statement->step() == SQLITE_ROW;
+String SQLiteDatabase::tableSQL(const String& tableName)
+{
+    if (!isOpen())
+        return { };
+
+    auto statement = prepareStatement("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?;"_s);
+    if (!statement || statement->bindText(1, tableName) != SQLITE_OK || statement->step() != SQLITE_ROW)
+        return { };
+
+    return statement->columnText(0);
+}
+
+String SQLiteDatabase::indexSQL(const String& indexName)
+{
+    if (!isOpen())
+        return { };
+
+    auto statement = prepareStatement("SELECT sql FROM sqlite_master WHERE type = 'index' AND name = ?;"_s);
+    if (!statement || statement->bindText(1, indexName) != SQLITE_OK || statement->step() != SQLITE_ROW)
+        return { };
+
+    return statement->columnText(0);
 }
 
 void SQLiteDatabase::clearAllTables()

@@ -303,10 +303,9 @@ bool tls13_derive_resumption_secret(SSL_HANDSHAKE *hs) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
-  hs->new_session->master_key_length = hs->transcript.DigestLen();
+  hs->new_session->secret_length = hs->transcript.DigestLen();
   return derive_secret(
-      hs,
-      MakeSpan(hs->new_session->master_key, hs->new_session->master_key_length),
+      hs, MakeSpan(hs->new_session->secret, hs->new_session->secret_length),
       label_to_span(kTLS13LabelResumption));
 }
 
@@ -354,8 +353,8 @@ bool tls13_derive_session_psk(SSL_SESSION *session, Span<const uint8_t> nonce) {
   const EVP_MD *digest = ssl_session_get_digest(session);
   // The session initially stores the resumption_master_secret, which we
   // override with the PSK.
-  auto session_key = MakeSpan(session->master_key, session->master_key_length);
-  return hkdf_expand_label(session_key, digest, session_key,
+  auto session_secret = MakeSpan(session->secret, session->secret_length);
+  return hkdf_expand_label(session_secret, digest, session_secret,
                            label_to_span(kTLS13LabelResumptionPSK), nonce);
 }
 
@@ -460,11 +459,10 @@ bool tls13_write_psk_binder(SSL_HANDSHAKE *hs, Span<uint8_t> msg) {
   if (!hash_transcript_and_truncated_client_hello(
           hs, context, &context_len, digest, msg,
           1 /* length prefix */ + hash_len) ||
-      !tls13_psk_binder(verify_data, &verify_data_len,
-                        ssl->session->ssl_version, digest,
-                        MakeConstSpan(ssl->session->master_key,
-                                      ssl->session->master_key_length),
-                        MakeConstSpan(context, context_len)) ||
+      !tls13_psk_binder(
+          verify_data, &verify_data_len, ssl->session->ssl_version, digest,
+          MakeConstSpan(ssl->session->secret, ssl->session->secret_length),
+          MakeConstSpan(context, context_len)) ||
       verify_data_len != hash_len) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
@@ -485,11 +483,10 @@ bool tls13_verify_psk_binder(SSL_HANDSHAKE *hs, SSL_SESSION *session,
   if (!hash_transcript_and_truncated_client_hello(hs, context, &context_len,
                                                   hs->transcript.Digest(),
                                                   msg.raw, CBS_len(binders)) ||
-      !tls13_psk_binder(
-          verify_data, &verify_data_len, hs->ssl->version,
-          hs->transcript.Digest(),
-          MakeConstSpan(session->master_key, session->master_key_length),
-          MakeConstSpan(context, context_len)) ||
+      !tls13_psk_binder(verify_data, &verify_data_len, hs->ssl->version,
+                        hs->transcript.Digest(),
+                        MakeConstSpan(session->secret, session->secret_length),
+                        MakeConstSpan(context, context_len)) ||
       // We only consider the first PSK, so compare against the first binder.
       !CBS_get_u8_length_prefixed(binders, &binder)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
@@ -507,6 +504,42 @@ bool tls13_verify_psk_binder(SSL_HANDSHAKE *hs, SSL_SESSION *session,
     return false;
   }
 
+  return true;
+}
+
+bool tls13_ech_accept_confirmation(
+    SSL_HANDSHAKE *hs, bssl::Span<uint8_t> out,
+    bssl::Span<const uint8_t> server_hello_ech_conf) {
+  // Compute the hash of the transcript concatenated with
+  // |server_hello_ech_conf| without modifying |hs->transcript|.
+  uint8_t context_hash[EVP_MAX_MD_SIZE];
+  unsigned context_hash_len;
+  ScopedEVP_MD_CTX ctx;
+  if (!hs->transcript.CopyToHashContext(ctx.get(), hs->transcript.Digest()) ||
+      !EVP_DigestUpdate(ctx.get(), server_hello_ech_conf.data(),
+                        server_hello_ech_conf.size()) ||
+      !EVP_DigestFinal_ex(ctx.get(), context_hash, &context_hash_len)) {
+    return false;
+  }
+
+  // Per draft-ietf-tls-esni-09, accept_confirmation is computed with
+  // Derive-Secret, which derives a secret of size Hash.length. That value is
+  // then truncated to the first 8 bytes. Note this differs from deriving an
+  // 8-byte secret because the target length is included in the derivation.
+  uint8_t accept_confirmation_buf[EVP_MAX_MD_SIZE];
+  bssl::Span<uint8_t> accept_confirmation =
+      MakeSpan(accept_confirmation_buf, hs->transcript.DigestLen());
+  if (!hkdf_expand_label(accept_confirmation, hs->transcript.Digest(),
+                         hs->secret(), label_to_span("ech accept confirmation"),
+                         MakeConstSpan(context_hash, context_hash_len))) {
+    return false;
+  }
+
+  if (out.size() > accept_confirmation.size()) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return false;
+  }
+  OPENSSL_memcpy(out.data(), accept_confirmation.data(), out.size());
   return true;
 }
 

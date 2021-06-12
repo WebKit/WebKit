@@ -34,7 +34,6 @@
 #include "HTMLParserIdioms.h"
 #include "HighlightData.h"
 #include "HighlightRegister.h"
-#include "InlineElementBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LayoutRepainter.h"
@@ -302,7 +301,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     LayoutUnit top = adjustedPaintOffset.y() + visualOverflowRect().y();
     LayoutUnit bottom = adjustedPaintOffset.y() + visualOverflowRect().maxY();
     if (isSelected() && m_inlineBoxWrapper) {
-        const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
+        const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
         LayoutUnit selTop = paintOffset.y() + rootBox.selectionTop();
         LayoutUnit selBottom = paintOffset.y() + selTop + rootBox.selectionHeight();
         top = std::min(selTop, top);
@@ -478,23 +477,6 @@ RoundedRect RenderReplaced::roundedContentBoxRect() const
         borderLeft() + paddingLeft(), borderRight() + paddingRight());
 }
 
-Optional<double> RenderReplaced::intrinsicAspectRatioFromWidthHeight() const
-{
-    if (!settings().aspectRatioOfImgFromWidthAndHeightEnabled())
-        return Optional<double>();
-
-    if (!canMapWidthHeightToAspectRatio())
-        return Optional<double>();
-
-    ASSERT(element());
-    double attributeWidth = parseValidHTMLFloatingPointNumber(element()->getAttribute(HTMLNames::widthAttr)).valueOr(0);
-    double attributeHeight = parseValidHTMLFloatingPointNumber(element()->getAttribute(HTMLNames::heightAttr)).valueOr(0);
-    if (attributeWidth > 0 && attributeHeight > 0)
-        return attributeWidth / attributeHeight;
-
-    return Optional<double>();
-}
-
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     // If there's an embeddedContentBox() of a remote, referenced document available, this code-path should never be used.
@@ -510,10 +492,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     if (!hasIntrinsicAspectRatio())
         return;
 
-    if (intrinsicSize.isEmpty()) {
-        intrinsicRatio = intrinsicAspectRatioFromWidthHeight().valueOr(0);
+    if (intrinsicSize.isEmpty())
         return;
-    }
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
 }
@@ -580,16 +560,13 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
             // If 'height' and 'width' both have computed values of 'auto' and the element has no intrinsic width, but does have an intrinsic height and intrinsic ratio;
             // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
             // of 'width' is: (used height) * (intrinsic ratio)
-            if (intrinsicRatio && ((computedHeightIsAuto && !hasIntrinsicWidth && hasIntrinsicHeight) || !computedHeightIsAuto)) {
+            if (!computedHeightIsAuto || (!hasIntrinsicWidth && hasIntrinsicHeight)) {
                 LayoutUnit estimatedUsedWidth = hasIntrinsicWidth ? LayoutUnit(constrainedSize.width()) : computeConstrainedLogicalWidth(shouldComputePreferred);
-                LayoutUnit logicalHeight = computeReplacedLogicalHeight(Optional<LayoutUnit>(estimatedUsedWidth));
-                BoxSizing boxSizing = BoxSizing::ContentBox;
-                if (style().hasAspectRatio())
-                    boxSizing = style().boxSizingForAspectRatio();
+                LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth));
+                BoxSizing boxSizing = style().hasAspectRatio() ? style().boxSizingForAspectRatio() : BoxSizing::ContentBox;
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(resolveWidthForRatio(borderAndPaddingLogicalHeight(), borderAndPaddingLogicalWidth(), logicalHeight, intrinsicRatio, boxSizing), shouldComputePreferred);
             }
 
-            
             // If 'height' and 'width' both have computed values of 'auto' and the
             // element has an intrinsic ratio but no intrinsic height or width, then
             // the used value of 'width' is undefined in CSS 2.1. However, it is
@@ -622,7 +599,7 @@ static inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogica
     return LayoutUnit(round(logicalWidth / aspectRatio));
 }
 
-LayoutUnit RenderReplaced::computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth) const
+LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
     if (hasReplacedLogicalHeight())
@@ -755,7 +732,7 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
         // We're a block-level replaced element.  Just return our own dimensions.
         return LayoutRect(LayoutPoint(), size());
     
-    const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
+    const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
     LayoutUnit newLogicalTop { rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop() };
     if (rootBox.blockFlow().style().isHorizontalWritingMode())
         return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());

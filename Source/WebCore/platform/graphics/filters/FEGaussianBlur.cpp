@@ -541,7 +541,7 @@ void FEGaussianBlur::platformApplySoftware()
 
     IntSize paintSize = absolutePaintRect().size();
     paintSize.scale(filter().filterScale());
-    auto tmpImageData = Uint8ClampedArray::tryCreateUninitialized((paintSize.area() * 4).unsafeGet());
+    auto tmpImageData = Uint8ClampedArray::tryCreateUninitialized(paintSize.area() * 4);
     if (!tmpImageData)
         return;
 

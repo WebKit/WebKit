@@ -97,16 +97,4 @@ bool WebPasteboardOverrides::getDataForOverride(const String& pasteboardName, co
     return true;
 }
 
-bool WebPasteboardOverrides::getDataForOverride(const String& pasteboardName, const String& type, Vector<char>& data) const
-{
-    Vector<uint8_t> foundBuffer;
-    if (!getDataForOverride(pasteboardName, type, foundBuffer))
-        return false;
-
-    data.resize(foundBuffer.size());
-    memcpy(data.data(), foundBuffer.data(), foundBuffer.size());
-
-    return true;
-}
-
 } // namespace WebKit

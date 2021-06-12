@@ -77,6 +77,9 @@ public:
 
     ~SourceProxy()
     {
+        // Make sure the rendering thread is stopped before we proceed with the destruction.
+        stop();
+
         if (m_ringBuffer)
             static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage()).invalidate();
 

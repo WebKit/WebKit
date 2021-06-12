@@ -123,23 +123,23 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
     m_frame->invalidate();
 }
 
-Optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() const
+std::optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() const
 {
     if (m_frame->page())
         return m_frame->page()->webPageProxyIdentifier();
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<PageIdentifier> WebFrameLoaderClient::pageID() const
+std::optional<PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     if (m_frame->page())
         return m_frame->page()->identifier();
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
+std::optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
 {
     return m_frame->frameID();
 }
@@ -207,7 +207,7 @@ void WebFrameLoaderClient::detachedFromParent2()
     if (m_frameSpecificStorageAccessIdentifier) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(
             m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
-        m_frameSpecificStorageAccessIdentifier = WTF::nullopt;
+        m_frameSpecificStorageAccessIdentifier = std::nullopt;
     }
 #endif
 
@@ -444,7 +444,7 @@ void WebFrameLoaderClient::dispatchWillChangeDocument(const URL& currentUrl, con
     if (m_frameSpecificStorageAccessIdentifier && !WebCore::areRegistrableDomainsEqual(currentUrl, newUrl)) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(
             m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
-        m_frameSpecificStorageAccessIdentifier = WTF::nullopt;
+        m_frameSpecificStorageAccessIdentifier = std::nullopt;
     }
 #endif
 }
@@ -563,7 +563,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), truncatedTitle.string, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<HasInsecureContent> hasInsecureContent, Optional<UsedLegacyTLS> usedLegacyTLSFromPageCache)
+void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent> hasInsecureContent, std::optional<UsedLegacyTLS> usedLegacyTLSFromPageCache)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -856,7 +856,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
     if (!webPage->send(Messages::WebPageProxy::DecidePolicyForResponse(m_frame->frameID(), m_frame->info(), identifier, navigationID, response, request, canShowResponse, downloadAttribute, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())))) {
         WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: ignoring because WebPageProxy::DecidePolicyForResponse failed");
-        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { identifier, WTF::nullopt, PolicyAction::Ignore, 0, { }, { } });
+        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { identifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
     }
 }
 
@@ -957,8 +957,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     auto requester = navigationAction.requester().value();
 
     auto* requestingFrame = requester.globalFrameIdentifier().frameID ? WebProcess::singleton().webFrame(requester.globalFrameIdentifier().frameID) : nullptr;
-    Optional<WebCore::FrameIdentifier> originatingFrameID;
-    Optional<WebCore::FrameIdentifier> parentFrameID;
+    std::optional<WebCore::FrameIdentifier> originatingFrameID;
+    std::optional<WebCore::FrameIdentifier> parentFrameID;
     if (requestingFrame) {
         originatingFrameID = requestingFrame->frameID();
         if (auto* parentFrame = requestingFrame->parentFrame())
@@ -973,7 +973,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         WTFMove(parentFrameID),
     };
 
-    Optional<WebPageProxyIdentifier> originatingPageID;
+    std::optional<WebPageProxyIdentifier> originatingPageID;
     if (auto& pageID = requester.globalFrameIdentifier().pageID) {
         if (auto* webPage = WebProcess::singleton().webPage(pageID))
             originatingPageID = webPage->webPageProxyIdentifier();
@@ -1023,7 +1023,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
         if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationActionSync::Reply(policyDecision))) {
             WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC");
-            m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, WTF::nullopt, PolicyAction::Ignore, 0, { }, { } });
+            m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
             return;
         }
 
@@ -1035,7 +1035,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
     if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), listenerID))) {
         WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send async IPC");
-        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, WTF::nullopt, PolicyAction::Ignore, 0, { }, { } });
+        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
     }
 }
 
@@ -1152,7 +1152,7 @@ void WebFrameLoaderClient::didReplaceMultipartContent()
     webPage->didReplaceMultipartContent(m_frame);
 }
 
-void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
+void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const uint8_t* data, int length)
 {
     if (!m_pluginView)
         loader->commitData(data, length);
@@ -1189,7 +1189,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
                 return;
 
             RefPtr<SharedBuffer> mainResourceData = loader->mainResourceData();
-            IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(mainResourceData ? mainResourceData->data() : 0), mainResourceData ? mainResourceData->size() : 0);
+            IPC::DataReference dataReference(mainResourceData ? mainResourceData->data() : nullptr, mainResourceData ? mainResourceData->size() : 0);
             webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
         }
 
@@ -1933,7 +1933,7 @@ void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
-void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackIdentifier, const Optional<WebCore::ApplicationManifest>& manifest)
+void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackIdentifier, const std::optional<WebCore::ApplicationManifest>& manifest)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

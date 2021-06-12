@@ -98,7 +98,7 @@ TEST(IntSize, DiagonalLengthAndArea)
     WebCore::IntSize test(1024, 768);
 
     EXPECT_EQ(1638400, test.diagonalLengthSquared());
-    EXPECT_EQ(786432U, test.area().unsafeGet());
+    EXPECT_EQ(786432U, test.area().value());
 }
 
 TEST(IntSize, Scale)

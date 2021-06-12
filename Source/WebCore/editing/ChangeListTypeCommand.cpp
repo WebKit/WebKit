@@ -33,12 +33,11 @@
 #include "HTMLElement.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-static Optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
+static std::optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
 {
     auto startNode = selection.start().containerNode();
     auto endNode = selection.end().containerNode();
@@ -58,16 +57,16 @@ static Optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listCo
     if (is<HTMLOListElement>(listToReplace))
         return {{ ChangeListTypeCommand::Type::ConvertToUnorderedList, listToReplace.releaseNonNull() }};
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(Document& document)
+std::optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(Document& document)
 {
     if (auto frame = makeRefPtr(document.frame())) {
         if (auto typeAndElement = listConversionTypeForSelection(frame->selection().selection()))
             return typeAndElement->first;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Ref<HTMLElement> ChangeListTypeCommand::createNewList(const HTMLElement& listToReplace)

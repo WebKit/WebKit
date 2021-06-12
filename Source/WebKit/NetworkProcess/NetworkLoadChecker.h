@@ -81,7 +81,7 @@ public:
 
     void setCSPResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders&& headers) { m_cspResponseHeaders = WTFMove(headers); }
 #if ENABLE(CONTENT_EXTENSIONS)
-    void setContentExtensionController(URL&& mainDocumentURL, Optional<UserContentControllerIdentifier> identifier)
+    void setContentExtensionController(URL&& mainDocumentURL, std::optional<UserContentControllerIdentifier> identifier)
     {
         m_mainDocumentURL = WTFMove(mainDocumentURL);
         m_userContentControllerIdentifier = identifier;
@@ -138,10 +138,10 @@ private:
     DocumentURL m_documentURL;
     RefPtr<WebCore::SecurityOrigin> m_origin;
     RefPtr<WebCore::SecurityOrigin> m_topOrigin;
-    Optional<WebCore::ContentSecurityPolicyResponseHeaders> m_cspResponseHeaders;
+    std::optional<WebCore::ContentSecurityPolicyResponseHeaders> m_cspResponseHeaders;
 #if ENABLE(CONTENT_EXTENSIONS)
     URL m_mainDocumentURL;
-    Optional<UserContentControllerIdentifier> m_userContentControllerIdentifier;
+    std::optional<UserContentControllerIdentifier> m_userContentControllerIdentifier;
 #endif
 
     std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;

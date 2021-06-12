@@ -26,7 +26,7 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include "IntSize.h"
 #include "PixelBufferFormat.h"
 #include "PixelFormat.h"
@@ -43,8 +43,8 @@ class PixelBuffer {
 public:
     static bool supportedPixelFormat(PixelFormat);
 
-    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
-    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
 
     PixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
     PixelBuffer(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
@@ -62,12 +62,12 @@ public:
     PixelBuffer deepClone() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PixelBuffer> decode(Decoder&);
+    template<class Decoder> static std::optional<PixelBuffer> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
 
-    WEBCORE_EXPORT static Checked<unsigned, RecordOverflow> computeBufferSize(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static CheckedUint32 computeBufferSize(const PixelBufferFormat&, const IntSize&);
 
     PixelBufferFormat m_format;
     IntSize m_size;
@@ -78,41 +78,43 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PixelBuffer&)
 
 template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
 {
-    ASSERT(m_data->byteLength() == (m_size.area().unsafeGet() * 4));
+    ASSERT(m_data->byteLength() == (m_size.area() * 4));
 
     encoder << m_format;
     encoder << m_size;
     encoder.encodeFixedLengthData(m_data->data(), m_data->byteLength(), 1);
 }
 
-template<class Decoder> Optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
+template<class Decoder> std::optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
 {
-    PixelBufferFormat format;
-    if (!decoder.decode(format))
-        return WTF::nullopt;
+    std::optional<PixelBufferFormat> format;
+    decoder >> format;
+    if (!format)
+        return std::nullopt;
 
     // FIXME: Support non-8 bit formats.
-    if (!(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8))
-        return WTF::nullopt;
+    if (!(format->pixelFormat == PixelFormat::RGBA8 || format->pixelFormat == PixelFormat::BGRA8))
+        return std::nullopt;
 
-    IntSize size;
-    if (!decoder.decode(size))
-        return WTF::nullopt;
+    std::optional<IntSize> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
 
-    auto computedBufferSize = PixelBuffer::computeBufferSize(format, size);
+    auto computedBufferSize = PixelBuffer::computeBufferSize(*format, *size);
     if (computedBufferSize.hasOverflowed())
-        return WTF::nullopt;
+        return std::nullopt;
 
-    auto bufferSize = computedBufferSize.unsafeGet();
+    auto bufferSize = computedBufferSize;
     if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    auto result = PixelBuffer::tryCreateForDecoding(format, size, bufferSize);
+    auto result = PixelBuffer::tryCreateForDecoding(WTFMove(*format), *size, bufferSize);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decodeFixedLengthData(result->m_data->data(), result->m_data->byteLength(), 1))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

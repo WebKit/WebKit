@@ -128,11 +128,11 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
     return false;
 }
 
-Optional<CertificateSummary> CertificateInfo::summary() const
+std::optional<CertificateSummary> CertificateInfo::summary() const
 {
     auto chain = certificateChain();
     if (!chain)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CertificateSummary summaryInfo;
 
@@ -201,17 +201,17 @@ static void encodeCFData(Encoder& encoder, CFDataRef data)
     encoder.encodeFixedLengthData(bytePtr, static_cast<size_t>(length));
 }
 
-static Optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
+static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
 {
-    Optional<uint64_t> size;
+    std::optional<uint64_t> size;
     decoder >> size;
 
     if (UNLIKELY(!isInBounds<size_t>(*size)))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto pointer = decoder.bufferPointerForDirectRead(static_cast<size_t>(*size));
     if (!pointer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return adoptCF(CFDataCreate(nullptr, pointer, *size));
 }
@@ -229,23 +229,23 @@ static void encodeSecTrustRef(Encoder& encoder, SecTrustRef trust)
     encodeCFData(encoder, data.get());
 }
 
-static Optional<RetainPtr<SecTrustRef>> decodeSecTrustRef(Decoder& decoder)
+static std::optional<RetainPtr<SecTrustRef>> decodeSecTrustRef(Decoder& decoder)
 {
-    Optional<bool> hasTrust;
+    std::optional<bool> hasTrust;
     decoder >> hasTrust;
     if (!hasTrust)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!*hasTrust)
         return { nullptr };
 
     auto trustData = decodeCFData(decoder);
     if (!trustData)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto trust = adoptCF(SecTrustDeserialize(trustData->get(), nullptr));
     if (!trust)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return trust;
 }
@@ -268,19 +268,19 @@ static void encodeCertificateChain(Encoder& encoder, CFArrayRef certificateChain
     }
 }
 
-static Optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& decoder)
+static std::optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& decoder)
 {
-    Optional<uint64_t> size;
+    std::optional<uint64_t> size;
     decoder >> size;
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto array = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
 
     for (size_t i = 0; i < *size; ++i) {
         auto data = decodeCFData(decoder);
         if (!data)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto certificate = adoptCF(SecCertificateCreateWithData(0, data->get()));
         CFArrayAppendValue(array.get(), certificate.get());
@@ -312,19 +312,19 @@ void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::Ce
     }
 }
 
-Optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decoder& decoder)
+std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decoder& decoder)
 {
-    Optional<WebCore::CertificateInfo::Type> certificateInfoType;
+    std::optional<WebCore::CertificateInfo::Type> certificateInfoType;
     decoder >> certificateInfoType;
     if (!certificateInfoType)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (*certificateInfoType) {
 #if HAVE(SEC_TRUST_SERIALIZATION)
     case WebCore::CertificateInfo::Type::Trust: {
         auto trust = decodeSecTrustRef(decoder);
         if (!trust)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return WebCore::CertificateInfo(WTFMove(*trust));
     }
@@ -333,7 +333,7 @@ Optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decod
     case WebCore::CertificateInfo::Type::CertificateChain: {
         auto certificateChain = decodeCertificateChain(decoder);
         if (!certificateChain)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return WebCore::CertificateInfo(WTFMove(*certificateChain));
     }
@@ -343,7 +343,7 @@ Optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decod
         return WebCore::CertificateInfo();
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Persistence

@@ -30,7 +30,7 @@
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelState.h"
 #include "SharedBuffer.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -63,7 +63,7 @@ private:
     // RTCDataChannelHandler API
     void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
     bool sendStringData(const CString&) final;
-    bool sendRawData(const char*, size_t) final;
+    bool sendRawData(const uint8_t*, size_t) final;
     void close() final;
 
     // webrtc::DataChannelObserver API
@@ -82,7 +82,7 @@ private:
     void postTask(Function<void()>&&);
 
     rtc::scoped_refptr<webrtc::DataChannelInterface> m_channel;
-    CheckedLock m_clientLock;
+    Lock m_clientLock;
     RTCDataChannelHandlerClient* m_client WTF_GUARDED_BY_LOCK(m_clientLock) { nullptr };
     ScriptExecutionContextIdentifier m_contextIdentifier;
     PendingMessages m_bufferedMessages;

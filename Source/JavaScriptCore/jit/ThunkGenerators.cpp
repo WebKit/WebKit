@@ -90,8 +90,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
     CCallHelpers::Jump continuation = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    auto handler = vm.jitStubs->existingCTIStub(handleExceptionGenerator, NoLockingNecessary);
-    RELEASE_ASSERT(handler);
+    auto handler = vm.getCTIStub(handleExceptionGenerator);
     patchBuffer.link(continuation, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
 }
@@ -132,7 +131,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
 #endif
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.jitStubs->existingCTIStub(handlerGenerator, NoLockingNecessary).retaggedCode<NoPtrTag>()));
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handlerGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "CheckException");
 }
 
@@ -324,7 +323,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     // NullSetterFunctionType does not get the fast path support. But it is OK since using NullSetterFunctionType is extremely rare.
     notJSFunction.link(&jit);
     slowCase.append(jit.branchIfNotType(GPRInfo::regT0, InternalFunctionType));
-    void* executableAddress = vm.getCTIInternalFunctionTrampolineFor(kind, NoLockingNecessary).executableAddress();
+    void* executableAddress = vm.getCTIInternalFunctionTrampolineFor(kind).executableAddress();
     jit.move(CCallHelpers::TrustedImmPtr(executableAddress), GPRInfo::regT4);
     jit.jump().linkTo(callCode, &jit);
 
@@ -389,6 +388,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
                 return virtualThunkForConstructCall;
             return virtualThunkForConstructConstruct;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     };
     return vm.getCTIStub(generator()).retagged<JITStubRoutinePtrTag>();
 }

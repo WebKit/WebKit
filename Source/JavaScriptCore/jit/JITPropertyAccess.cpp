@@ -1573,6 +1573,76 @@ void JIT::emitSlow_op_in_by_id(const Instruction* currentInstruction, Vector<Slo
     gen.reportSlowPathCall(coldPathBegin, call);
 }
 
+void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpInByVal>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    ArrayProfile* profile = &metadata.m_arrayProfile;
+
+    emitGetVirtualRegister(base, regT0);
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
+    emitGetVirtualRegister(property, regT1);
+    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+
+    JITInByValGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(regT0));
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_inByVals.append(gen);
+
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emitSlow_op_in_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpInByVal>();
+    VirtualRegister dst = bytecode.m_dst;
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    ArrayProfile* profile = &metadata.m_arrayProfile;
+
+    JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
+
+    Label coldPathBegin = label();
+
+#if !ENABLE(EXTRA_CTI_THUNKS)
+    Call call = callOperation(operationInByValOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, regT0, regT1);
+#else
+    VM& vm = this->vm();
+    uint32_t bytecodeOffset = m_bytecodeIndex.offset();
+    ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
+
+    constexpr GPRReg bytecodeOffsetGPR = argumentGPR4;
+    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+
+    constexpr GPRReg stubInfoGPR = argumentGPR3;
+    constexpr GPRReg profileGPR = argumentGPR2;
+    constexpr GPRReg baseGPR = regT0;
+    constexpr GPRReg propertyGPR = regT1;
+    static_assert(baseGPR == argumentGPR0 || !isARM64());
+    static_assert(propertyGPR == argumentGPR1);
+
+    move(TrustedImmPtr(gen.stubInfo()), stubInfoGPR);
+    move(TrustedImmPtr(profile), profileGPR);
+    // slow_op_get_by_val_prepareCallGenerator will do exactly what we need.
+    // So, there's no point in creating a duplicate thunk just to give it a different name.
+    static_assert(std::is_same<decltype(operationInByValOptimize), decltype(operationGetByValOptimize)>::value);
+    emitNakedNearCall(vm.getCTIStub(slow_op_get_by_val_prepareCallGenerator).retaggedCode<NoPtrTag>());
+
+    Call call = appendCall(operationInByValOptimize);
+    emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
+
+    emitPutVirtualRegister(dst, returnValueGPR);
+#endif // ENABLE(EXTRA_CTI_THUNKS)
+
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
 void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
 {
     if (!needsVarInjectionChecks)
@@ -1589,6 +1659,7 @@ void JIT::emitResolveClosure(VirtualRegister dst, VirtualRegister scope, bool ne
     emitPutVirtualRegister(dst);
 }
 
+#if !ENABLE(EXTRA_CTI_THUNKS)
 void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpResolveScope>();
@@ -1692,6 +1763,252 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
         break;
     }
 }
+#else // ENABLE(EXTRA_CTI_THUNKS)
+
+void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpResolveScope>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister scope = bytecode.m_scope;
+    ResolveType resolveType = metadata.m_resolveType;
+
+    VM& vm = this->vm();
+    uint32_t bytecodeOffset = m_bytecodeIndex.offset();
+    ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
+    ASSERT(m_codeBlock->instructionAt(m_bytecodeIndex) == currentInstruction);
+
+    constexpr GPRReg metadataGPR = regT7;
+    constexpr GPRReg scopeGPR = regT6;
+    constexpr GPRReg bytecodeOffsetGPR = regT5;
+
+    if (resolveType == ModuleVar)
+        move(TrustedImmPtr(metadata.m_lexicalEnvironment.get()), regT0);
+    else {
+        ptrdiff_t metadataOffset = m_codeBlock->offsetInMetadataTable(&metadata);
+
+#define RESOLVE_SCOPE_GENERATOR(resolveType) op_resolve_scope_##resolveType##Generator,
+        static const ThunkGenerator generators[] = {
+            FOR_EACH_RESOLVE_TYPE(RESOLVE_SCOPE_GENERATOR)
+        };
+#undef RESOLVE_SCOPE_GENERATOR
+
+        emitGetVirtualRegister(scope, scopeGPR);
+        move(TrustedImmPtr(metadataOffset), metadataGPR);
+        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+        emitNakedNearCall(vm.getCTIStub(generators[resolveType]).retaggedCode<NoPtrTag>());
+    }
+
+    emitPutVirtualRegister(dst);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(ResolveType resolveType, const char* thunkName)
+{
+    // The thunk generated by this function can only work with the LLInt / Baseline JIT because
+    // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
+    // DFG/FTL may inline functions belonging to other globalObjects, which may not match
+    // CallFrame::codeBlock().
+    using Metadata = OpResolveScope::Metadata;
+    constexpr GPRReg metadataGPR = regT7; // incoming
+    constexpr GPRReg scopeGPR = regT6; // incoming
+    constexpr GPRReg bytecodeOffsetGPR = regT5; // incoming - pass thru to slow path.
+    constexpr GPRReg globalObjectGPR = regT4;
+    UNUSED_PARAM(bytecodeOffsetGPR);
+    RELEASE_ASSERT(thunkIsUsedForOpResolveScope(resolveType));
+
+    tagReturnAddress();
+
+    loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
+    loadPtr(Address(regT3, CodeBlock::offsetOfMetadataTable()), regT3);
+    addPtr(regT3, metadataGPR);
+
+    JumpList slowCase;
+
+    auto emitVarInjectionCheck = [&] (bool needsVarInjectionChecks, GPRReg globalObjectGPR = InvalidGPRReg) {
+        if (!needsVarInjectionChecks)
+            return;
+        if (globalObjectGPR == InvalidGPRReg) {
+            globalObjectGPR = regT4;
+            loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
+            loadPtr(Address(regT3, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+        }
+        loadPtr(Address(globalObjectGPR, OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint)), regT3);
+        slowCase.append(branch8(Equal, Address(regT3, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
+    };
+
+    auto emitResolveClosure = [&] (bool needsVarInjectionChecks) {
+        emitVarInjectionCheck(needsVarInjectionChecks);
+        move(scopeGPR, regT0);
+        load32(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_localScopeDepth)), regT1);
+
+        Label loop = label();
+        Jump done = branchTest32(Zero, regT1);
+        {
+            loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
+            sub32(TrustedImm32(1), regT1);
+            jump().linkTo(loop, this);
+        }
+        done.link(this);
+    };
+
+    auto emitCode = [&] (ResolveType resolveType) {
+        switch (resolveType) {
+        case GlobalProperty:
+        case GlobalPropertyWithVarInjectionChecks: {
+            // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject().
+            loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
+            loadPtr(Address(regT3, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), globalObjectGPR);
+            load32(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_globalLexicalBindingEpoch)), regT1);
+            slowCase.append(branch32(NotEqual, Address(globalObjectGPR, JSGlobalObject::offsetOfGlobalLexicalBindingEpoch()), regT1));
+            move(globalObjectGPR, regT0);
+            break;
+        }
+
+        case GlobalVar:
+        case GlobalVarWithVarInjectionChecks:
+        case GlobalLexicalVar:
+        case GlobalLexicalVarWithVarInjectionChecks: {
+            // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject() for GlobalVar*,
+            // and codeBlock->globalObject()->globalLexicalEnvironment() for GlobalLexicalVar*.
+            loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
+            loadPtr(Address(regT3, CodeBlock::offsetOfGlobalObject()), regT0);
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT0);
+            if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
+                loadPtr(Address(regT0, JSGlobalObject::offsetOfGlobalLexicalEnvironment()), regT0);
+            break;
+        }
+        case ClosureVar:
+        case ClosureVarWithVarInjectionChecks:
+            emitResolveClosure(needsVarInjectionChecks(resolveType));
+            break;
+        case Dynamic:
+            slowCase.append(jump());
+            break;
+        case LocalClosureVar:
+        case ModuleVar:
+        case UnresolvedProperty:
+        case UnresolvedPropertyWithVarInjectionChecks:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    };
+
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks: {
+        JumpList skipToEnd;
+        load32(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_resolveType)), regT0);
+
+        Jump notGlobalProperty = branch32(NotEqual, regT0, TrustedImm32(resolveType));
+        emitCode(resolveType);
+        skipToEnd.append(jump());
+
+        notGlobalProperty.link(this);
+        emitCode(needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar);
+
+        skipToEnd.link(this);
+        break;
+    }
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks: {
+        JumpList skipToEnd;
+        load32(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_resolveType)), regT0);
+
+        Jump notGlobalProperty = branch32(NotEqual, regT0, TrustedImm32(GlobalProperty));
+        emitCode(GlobalProperty);
+        skipToEnd.append(jump());
+        notGlobalProperty.link(this);
+
+        Jump notGlobalPropertyWithVarInjections = branch32(NotEqual, regT0, TrustedImm32(GlobalPropertyWithVarInjectionChecks));
+        emitCode(GlobalPropertyWithVarInjectionChecks);
+        skipToEnd.append(jump());
+        notGlobalPropertyWithVarInjections.link(this);
+
+        Jump notGlobalLexicalVar = branch32(NotEqual, regT0, TrustedImm32(GlobalLexicalVar));
+        emitCode(GlobalLexicalVar);
+        skipToEnd.append(jump());
+        notGlobalLexicalVar.link(this);
+
+        Jump notGlobalLexicalVarWithVarInjections = branch32(NotEqual, regT0, TrustedImm32(GlobalLexicalVarWithVarInjectionChecks));
+        emitCode(GlobalLexicalVarWithVarInjectionChecks);
+        skipToEnd.append(jump());
+        notGlobalLexicalVarWithVarInjections.link(this);
+
+        slowCase.append(jump());
+        skipToEnd.link(this);
+        break;
+    }
+
+    default:
+        emitCode(resolveType);
+        break;
+    }
+
+    ret();
+
+    LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    auto slowCaseHandler = vm().getCTIStub(slow_op_resolve_scopeGenerator);
+    patchBuffer.link(slowCase, CodeLocationLabel(slowCaseHandler.retaggedCode<NoPtrTag>()));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, thunkName);
+}
+
+#define DEFINE_RESOLVE_SCOPE_GENERATOR(resolveType) \
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_resolve_scope_##resolveType##Generator(VM& vm) \
+    { \
+        if constexpr (!thunkIsUsedForOpResolveScope(resolveType)) \
+            return { }; \
+        JIT jit(vm); \
+        return jit.generateOpResolveScopeThunk(resolveType, "Baseline: op_resolve_scope_" #resolveType); \
+    }
+FOR_EACH_RESOLVE_TYPE(DEFINE_RESOLVE_SCOPE_GENERATOR)
+#undef DEFINE_RESOLVE_SCOPE_GENERATOR
+
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm)
+{
+    // The thunk generated by this function can only work with the LLInt / Baseline JIT because
+    // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
+    // DFG/FTL may inline functions belonging to other globalObjects, which may not match
+    // CallFrame::codeBlock().
+    JIT jit(vm);
+
+    // The fast path already pushed the return address.
+#if CPU(X86_64)
+    jit.push(X86Registers::ebp);
+#elif CPU(ARM64)
+    jit.pushPair(framePointerRegister, linkRegister);
+#endif
+
+    constexpr GPRReg bytecodeOffsetGPR = regT5;
+    jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
+
+    constexpr GPRReg codeBlockGPR = argumentGPR3;
+    constexpr GPRReg globalObjectGPR = argumentGPR0;
+    constexpr GPRReg instructionGPR = argumentGPR1;
+
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
+    jit.loadPtr(Address(codeBlockGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    jit.loadPtr(Address(codeBlockGPR, CodeBlock::offsetOfInstructionsRawPointer()), instructionGPR);
+    jit.addPtr(bytecodeOffsetGPR, instructionGPR);
+
+    jit.setupArguments<decltype(operationResolveScopeForBaseline)>(globalObjectGPR, instructionGPR);
+    jit.prepareCallOperation(vm);
+    Call operation = jit.call(OperationPtrTag);
+    Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
+
+#if CPU(X86_64)
+    jit.pop(X86Registers::ebp);
+#elif CPU(ARM64)
+    jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#endif
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationResolveScopeForBaseline));
+    auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
+    patchBuffer.link(exceptionCheck, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
+}
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 void JIT::emitLoadWithStructureCheck(VirtualRegister scope, Structure** structureSlot)
 {
@@ -1719,6 +2036,7 @@ void JIT::emitGetClosureVar(VirtualRegister scope, uintptr_t operand)
     loadPtr(Address(regT0, JSLexicalEnvironment::offsetOfVariables() + operand * sizeof(Register)), regT0);
 }
 
+#if !ENABLE(EXTRA_CTI_THUNKS)
 void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetFromScope>();
@@ -1844,26 +2162,232 @@ void JIT::emitSlow_op_get_from_scope(const Instruction* currentInstruction, Vect
     auto bytecode = currentInstruction->as<OpGetFromScope>();
     auto& metadata = bytecode.metadata(m_codeBlock);
     VirtualRegister dst = bytecode.m_dst;
-
-#if !ENABLE(EXTRA_CTI_THUNKS)
     callOperationWithProfile(metadata, operationGetFromScope, dst, TrustedImmPtr(m_codeBlock->globalObject()), currentInstruction);
-#else
+}
+
+#else // ENABLE(EXTRA_CTI_THUNKS)
+
+void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetFromScope>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister scope = bytecode.m_scope;
+    ResolveType resolveType = metadata.m_getPutInfo.resolveType();
+
     VM& vm = this->vm();
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
     ASSERT(m_codeBlock->instructionAt(m_bytecodeIndex) == currentInstruction);
 
-    constexpr GPRReg bytecodeOffsetGPR = argumentGPR2;
-    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+    constexpr GPRReg metadataGPR = regT7;
+    constexpr GPRReg scopeGPR = regT6;
+    constexpr GPRReg bytecodeOffsetGPR = regT5;
 
-    emitNakedNearCall(vm.getCTIStub(slow_op_get_from_scopeGenerator).retaggedCode<NoPtrTag>());
+    if (resolveType == GlobalVar) {
+        uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&metadata.m_operand);
+        emitGetVarFromPointer(bitwise_cast<JSValue*>(*operandSlot), regT0);
+    } else {
+        ptrdiff_t metadataOffset = m_codeBlock->offsetInMetadataTable(&metadata);
 
-    emitValueProfilingSite(metadata, returnValueGPR);
-    emitPutVirtualRegister(dst, returnValueGPR);
-#endif // ENABLE(EXTRA_CTI_THUNKS)
+#define GET_FROM_SCOPE_GENERATOR(resolveType) op_get_from_scope_##resolveType##Generator,
+        static const ThunkGenerator generators[] = {
+            FOR_EACH_RESOLVE_TYPE(GET_FROM_SCOPE_GENERATOR)
+        };
+#undef GET_FROM_SCOPE_GENERATOR
+
+        emitGetVirtualRegister(scope, scopeGPR);
+        move(TrustedImmPtr(metadataOffset), metadataGPR);
+        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+        emitNakedNearCall(vm.getCTIStub(generators[resolveType]).retaggedCode<NoPtrTag>());
+    }
+    emitPutVirtualRegister(dst);
 }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(ResolveType resolveType, const char* thunkName)
+{
+    // The thunk generated by this function can only work with the LLInt / Baseline JIT because
+    // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
+    // DFG/FTL may inline functions belonging to other globalObjects, which may not match
+    // CallFrame::codeBlock().
+    using Metadata = OpGetFromScope::Metadata;
+    constexpr GPRReg metadataGPR = regT7;
+    constexpr GPRReg scopeGPR = regT6;
+    RELEASE_ASSERT(thunkIsUsedForOpGetFromScope(resolveType));
+
+    tagReturnAddress();
+
+    loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
+    loadPtr(Address(regT3, CodeBlock::offsetOfMetadataTable()), regT3);
+    addPtr(regT3, metadataGPR);
+
+    JumpList slowCase;
+
+    auto emitLoadWithStructureCheck = [&] (GPRReg scopeGPR, int32_t metadataStructureOffset) {
+        loadPtr(Address(metadataGPR, metadataStructureOffset), regT1);
+        move(scopeGPR, regT0);
+        slowCase.append(branchTestPtr(Zero, regT1));
+        load32(Address(regT1, Structure::structureIDOffset()), regT1);
+        slowCase.append(branch32(NotEqual, Address(regT0, JSCell::structureIDOffset()), regT1));
+    };
+
+    auto emitVarInjectionCheck = [&] (bool needsVarInjectionChecks) {
+        if (!needsVarInjectionChecks)
+            return;
+        loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
+        loadPtr(Address(regT3, CodeBlock::offsetOfGlobalObject()), regT3);
+        loadPtr(Address(regT3, OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint)), regT3);
+        slowCase.append(branch8(Equal, Address(regT3, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
+    };
+    
+    auto emitGetVarFromPointer = [&] (int32_t operand, GPRReg reg) {
+        loadPtr(Address(metadataGPR, operand), reg);
+        loadPtr(reg, reg);
+    };
+
+    auto emitGetVarFromIndirectPointer = [&] (int32_t operand, GPRReg reg) {
+        loadPtr(Address(metadataGPR, operand), reg);
+        loadPtr(reg, reg);
+    };
+
+    auto emitGetClosureVar = [&] (GPRReg scopeGPR, GPRReg operandGPR) {
+        static_assert(1 << 3 == sizeof(Register));
+        lshift64(TrustedImm32(3), operandGPR);
+        addPtr(scopeGPR, operandGPR);
+        loadPtr(Address(operandGPR, JSLexicalEnvironment::offsetOfVariables()), regT0);
+    };
+
+    auto emitCode = [&] (ResolveType resolveType, bool indirectLoadForOperand) {
+        switch (resolveType) {
+        case GlobalProperty:
+        case GlobalPropertyWithVarInjectionChecks: {
+            emitLoadWithStructureCheck(scopeGPR, OBJECT_OFFSETOF(Metadata, m_structure)); // Structure check covers var injection since we don't cache structures for anything but the GlobalObject. Additionally, resolve_scope handles checking for the var injection.
+
+            constexpr GPRReg base = regT0;
+            constexpr GPRReg result = regT0;
+            constexpr GPRReg offset = regT1;
+            constexpr GPRReg scratch = regT2;
+
+            jitAssert(scopedLambda<Jump(void)>([&] () -> Jump {
+                loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
+                loadPtr(Address(regT3, CodeBlock::offsetOfGlobalObject()), regT3);
+                return branchPtr(Equal, base, regT3);
+            }));
+
+            loadPtr(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_operand)), offset);
+            if (ASSERT_ENABLED) {
+                Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
+                abortWithReason(JITOffsetIsNotOutOfLine);
+                isOutOfLine.link(this);
+            }
+            loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
+            neg32(offset);
+            signExtend32ToPtr(offset, offset);
+            load64(BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), result);
+            break;
+        }
+        case GlobalVar:
+        case GlobalVarWithVarInjectionChecks:
+        case GlobalLexicalVar:
+        case GlobalLexicalVarWithVarInjectionChecks:
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            if (indirectLoadForOperand)
+                emitGetVarFromIndirectPointer(OBJECT_OFFSETOF(Metadata, m_operand), regT0);
+            else
+                emitGetVarFromPointer(OBJECT_OFFSETOF(Metadata, m_operand), regT0);
+            if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks) // TDZ check.
+                slowCase.append(branchIfEmpty(regT0));
+            break;
+        case ClosureVar:
+        case ClosureVarWithVarInjectionChecks:
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            loadPtr(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_operand)), regT3);
+            emitGetClosureVar(scopeGPR, regT3);
+            break;
+        case Dynamic:
+            slowCase.append(jump());
+            break;
+        case LocalClosureVar:
+        case ModuleVar:
+        case UnresolvedProperty:
+        case UnresolvedPropertyWithVarInjectionChecks:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    };
+
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks: {
+        JumpList skipToEnd;
+        load32(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_getPutInfo)), regT0);
+        and32(TrustedImm32(GetPutInfo::typeBits), regT0); // Load ResolveType into T0
+
+        Jump isNotGlobalProperty = branch32(NotEqual, regT0, TrustedImm32(resolveType));
+        emitCode(resolveType, false);
+        skipToEnd.append(jump());
+
+        isNotGlobalProperty.link(this);
+        emitCode(needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar, true);
+
+        skipToEnd.link(this);
+        break;
+    }
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks: {
+        JumpList skipToEnd;
+        load32(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_getPutInfo)), regT0);
+        and32(TrustedImm32(GetPutInfo::typeBits), regT0); // Load ResolveType into T0
+
+        Jump isGlobalProperty = branch32(Equal, regT0, TrustedImm32(GlobalProperty));
+        Jump notGlobalPropertyWithVarInjections = branch32(NotEqual, regT0, TrustedImm32(GlobalPropertyWithVarInjectionChecks));
+        isGlobalProperty.link(this);
+        emitCode(GlobalProperty, false);
+        skipToEnd.append(jump());
+        notGlobalPropertyWithVarInjections.link(this);
+
+        Jump notGlobalLexicalVar = branch32(NotEqual, regT0, TrustedImm32(GlobalLexicalVar));
+        emitCode(GlobalLexicalVar, true);
+        skipToEnd.append(jump());
+        notGlobalLexicalVar.link(this);
+
+        Jump notGlobalLexicalVarWithVarInjections = branch32(NotEqual, regT0, TrustedImm32(GlobalLexicalVarWithVarInjectionChecks));
+        emitCode(GlobalLexicalVarWithVarInjectionChecks, true);
+        skipToEnd.append(jump());
+        notGlobalLexicalVarWithVarInjections.link(this);
+
+        slowCase.append(jump());
+
+        skipToEnd.link(this);
+        break;
+    }
+
+    default:
+        emitCode(resolveType, false);
+        break;
+    }
+
+    static_assert(ValueProfile::numberOfBuckets == 1);
+    store64(regT0, Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_profile)));
+
+    ret();
+
+    LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    auto slowCaseHandler = vm().getCTIStub(slow_op_get_from_scopeGenerator);
+    patchBuffer.link(slowCase, CodeLocationLabel(slowCaseHandler.retaggedCode<NoPtrTag>()));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, thunkName);
+}
+
+#define DEFINE_GET_FROM_SCOPE_GENERATOR(resolveType) \
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_get_from_scope_##resolveType##Generator(VM& vm) \
+    { \
+        if constexpr (!thunkIsUsedForOpGetFromScope(resolveType)) \
+            return { }; \
+        JIT jit(vm); \
+        return jit.generateOpGetFromScopeThunk(resolveType, "Baseline: op_get_from_scope_" #resolveType); \
+    }
+FOR_EACH_RESOLVE_TYPE(DEFINE_GET_FROM_SCOPE_GENERATOR)
+#undef DEFINE_GET_FROM_SCOPE_GENERATOR
+
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& vm)
 {
     // The thunk generated by this function can only work with the LLInt / Baseline JIT because
@@ -1875,11 +2399,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
 #if CPU(X86_64)
     jit.push(X86Registers::ebp);
 #elif CPU(ARM64)
-    jit.tagReturnAddress();
     jit.pushPair(framePointerRegister, linkRegister);
 #endif
 
-    constexpr GPRReg bytecodeOffsetGPR = argumentGPR2;
+    using Metadata = OpGetFromScope::Metadata;
+    constexpr GPRReg metadataGPR = regT7;
+    constexpr GPRReg bytecodeOffsetGPR = regT5;
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
 
     constexpr GPRReg codeBlockGPR = argumentGPR3;
@@ -1891,10 +2416,15 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     jit.loadPtr(Address(codeBlockGPR, CodeBlock::offsetOfInstructionsRawPointer()), instructionGPR);
     jit.addPtr(bytecodeOffsetGPR, instructionGPR);
 
+    ASSERT(RegisterSet::calleeSaveRegisters().contains(GPRInfo::numberTagRegister));
+    jit.move(metadataGPR, GPRInfo::numberTagRegister); // Preserve metadata in a callee saved register.
     jit.setupArguments<decltype(operationGetFromScope)>(globalObjectGPR, instructionGPR);
     jit.prepareCallOperation(vm);
-    CCallHelpers::Call operation = jit.call(OperationPtrTag);
-    CCallHelpers::Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
+    Call operation = jit.call(OperationPtrTag);
+    Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
+
+    jit.store64(regT0, Address(GPRInfo::numberTagRegister, OBJECT_OFFSETOF(Metadata, m_profile)));
+    jit.move(TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
 
 #if CPU(X86_64)
     jit.pop(X86Registers::ebp);
@@ -1903,10 +2433,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
 #endif
     jit.ret();
 
+    exceptionCheck.link(&jit);
+    jit.move(TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
+    Jump jumpToHandler = jit.jump();
+
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationGetFromScope));
-    auto handler = vm.jitStubs->existingCTIStub(popThunkStackPreservesAndHandleExceptionGenerator, NoLockingNecessary);
-    patchBuffer.link(exceptionCheck, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
+    auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
+    patchBuffer.link(jumpToHandler, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_from_scope");
 }
 #endif // ENABLE(EXTRA_CTI_THUNKS)
@@ -2126,7 +2660,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_to_scopeGenerator(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationPutToScope));
-    auto handler = vm.jitStubs->existingCTIStub(popThunkStackPreservesAndHandleExceptionGenerator, NoLockingNecessary);
+    auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_to_scope");
 }

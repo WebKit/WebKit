@@ -71,7 +71,7 @@ void ScrollingCoordinatorNicosia::commitTreeStateIfNeeded()
     scrollingTree()->commitTreeState(WTFMove(stateTree));
 }
 
-bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode, Optional<WheelScrollGestureState> gestureState)
+bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode, std::optional<WheelScrollGestureState> gestureState)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -83,7 +83,7 @@ bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWhe
     return true;
 }
 
-void ScrollingCoordinatorNicosia::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
+void ScrollingCoordinatorNicosia::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
 {
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, gestureState);

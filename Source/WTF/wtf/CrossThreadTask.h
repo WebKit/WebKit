@@ -49,6 +49,8 @@ public:
         m_taskFunction();
     }
 
+    explicit operator bool() const { return !!m_taskFunction; }
+
 protected:
     Function<void ()> m_taskFunction;
 };

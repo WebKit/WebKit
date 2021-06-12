@@ -33,7 +33,6 @@
 #include "MarginTypes.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -157,49 +156,14 @@ struct VerticalGeometry {
     ContentHeightAndMargin contentHeightAndMargin;
 };
 
-struct HorizontalConstraints {
-    LayoutUnit logicalRight() const { return logicalLeft + logicalWidth; }
-
-    LayoutUnit logicalLeft;
-    LayoutUnit logicalWidth;
-};
-
-struct VerticalConstraints {
-    LayoutUnit logicalTop;
-    Optional<LayoutUnit> logicalHeight;
-};
-
-struct ConstraintsForInFlowContent {
-    HorizontalConstraints horizontal;
-    VerticalConstraints vertical;
-};
-
-struct ConstraintsForOutOfFlowContent {
-    HorizontalConstraints horizontal;
-    VerticalConstraints vertical;
-    // Borders and padding are resolved against the containing block's content box as if the box was an in-flow box.
-    LayoutUnit borderAndPaddingConstraints;
-};
-
-struct IntrinsicWidthConstraints {
-    void expand(LayoutUnit horizontalValue);
-    IntrinsicWidthConstraints& operator+=(const IntrinsicWidthConstraints&);
-    IntrinsicWidthConstraints& operator+=(LayoutUnit);
-    IntrinsicWidthConstraints& operator-=(const IntrinsicWidthConstraints&);
-    IntrinsicWidthConstraints& operator-=(LayoutUnit);
-
-    LayoutUnit minimum;
-    LayoutUnit maximum;
-};
-
 struct OverriddenHorizontalValues {
-    Optional<LayoutUnit> width;
-    Optional<UsedHorizontalMargin> margin;
+    std::optional<LayoutUnit> width;
+    std::optional<UsedHorizontalMargin> margin;
 };
 
 struct OverriddenVerticalValues {
     // Consider collapsing it.
-    Optional<LayoutUnit> height;
+    std::optional<LayoutUnit> height;
 };
 
 inline LayoutUnit toLayoutUnit(InlineLayoutUnit value)
@@ -229,38 +193,6 @@ inline InlineLayoutUnit maxInlineLayoutUnit()
 #else
     return LayoutUnit::max();
 #endif
-}
-
-inline void IntrinsicWidthConstraints::expand(LayoutUnit horizontalValue)
-{
-    minimum += horizontalValue;
-    maximum += horizontalValue;
-}
-
-inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator+=(const IntrinsicWidthConstraints& other)
-{
-    minimum += other.minimum;
-    maximum += other.maximum;
-    return *this;
-}
-
-inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator+=(LayoutUnit value)
-{
-    expand(value);
-    return *this;
-}
-
-inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator-=(const IntrinsicWidthConstraints& other)
-{
-    minimum -= other.minimum;
-    maximum -= other.maximum;
-    return *this;
-}
-
-inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator-=(LayoutUnit value)
-{
-    expand(-value);
-    return *this;
 }
 
 struct SlotPosition {

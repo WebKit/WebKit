@@ -1,3 +1,151 @@
+2021-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Private static method should define privateClassBrandIdentifier in class-scope
+        https://bugs.webkit.org/show_bug.cgi?id=226656
+        rdar://78313139
+
+        Reviewed by Keith Miller.
+
+        * stress/private-in-error.js: Added.
+        (shouldThrow):
+        (x):
+        (prototype.foo):
+        * stress/private-static-method-declaration-error.js: Added.
+        (shouldThrow):
+        (prototype.get x):
+        (prototype.foo.D.a):
+        (prototype.foo.D.prototype.b):
+        (prototype.foo.D):
+        (prototype.foo):
+
+2021-06-04  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception checker validation in objectPrototypeHasOwnProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=226651
+        rdar://78861296
+
+        Reviewed by Keith Miller.
+
+        * stress/placate-exception-checker-in-objectPrototypeHasOwnProperty.js: Added.
+
+2021-06-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should speculate on CompareStrictEq(@x, @x)
+        https://bugs.webkit.org/show_bug.cgi?id=226621
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/untyped-stricteq-self.js: Added.
+        (foo):
+        * stress/untyped-stricteq-self-fail.js: Added.
+        (bar):
+        (foo):
+
+2021-06-04  Keith Miller  <keith_miller@apple.com>
+
+        Fix tests that fail under executable allocation fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=226593
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/memcpy-wasm-large.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * microbenchmarks/memcpy-wasm-medium.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * microbenchmarks/memcpy-wasm-small.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * microbenchmarks/memcpy-wasm.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * stress/bit-op-with-object-returning-int32.js:
+        (numberOfDFGCompiles):
+        (bitOr): Deleted.
+        (bitXor): Deleted.
+        (bitNot): Deleted.
+        (bitLShift): Deleted.
+        * stress/bitwise-not-fixup-rules.js:
+        (numberOfDFGCompiles):
+        (let.o.valueOf): Deleted.
+
+2021-06-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Optimize Function.prototype.toString
+        https://bugs.webkit.org/show_bug.cgi?id=226418
+        <rdar://77861846>
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/function-to-string.js: Added.
+        (f):
+        (C):
+        (C.prototype.method1):
+        (C.prototype.method2):
+        (test):
+        (test2):
+
+2021-06-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement JIT ICs for InByVal
+        https://bugs.webkit.org/show_bug.cgi?id=226563
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/in-by-val-int32.js: Added.
+        * microbenchmarks/in-by-val-string-index.js: Added.
+        * microbenchmarks/in-by-val-symbol.js: Added.
+
+2021-06-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix an ASSERT in objectPrototypeHasOwnProperty() to account for TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=226609
+        rdar://78465046
+
+        Reviewed by Robin Morisset.
+
+        * stress/termination-exception-in-objectPrototypeHasOwnProperty.js: Added.
+
+2021-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make $vm's accessor test functions robust against primitive |this|
+        https://bugs.webkit.org/show_bug.cgi?id=226591
+
+        Reviewed by Saam Barati.
+
+        * stress/test-static-accessor-on-primitive.js: Added.
+        (shouldThrow):
+
+2021-05-28  Robin Morisset  <rmorisset@apple.com>
+
+        Fix LikelyDenseUnsignedIntegerSet::clear()
+        https://bugs.webkit.org/show_bug.cgi?id=226388
+        rdar://78607433
+
+        Reviewed by Mark Lam.
+
+        * stress/stack-allocation-regression.js: Added.
+        (foo):
+
+2021-05-28  Saam Barati  <sbarati@apple.com>
+
+        Don't sink arguments past the context of the inline call frame they were created in
+        https://bugs.webkit.org/show_bug.cgi?id=226363
+        <rdar://78392801>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/dont-sink-arguments-past-inline-call-frame.js: Added.
+        (foo):
+        (fooWrap):
+        (empty):
+        (bar):
+
 2021-05-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Support Ergonomic Brand Checks proposal (`#x in obj`)

@@ -52,7 +52,7 @@ private:
 
     Document& m_document;
     int m_errorCount { 0 };
-    Optional<TextPosition> m_lastErrorPosition;
+    std::optional<TextPosition> m_lastErrorPosition;
     StringBuilder m_errorMessages;
 };
 

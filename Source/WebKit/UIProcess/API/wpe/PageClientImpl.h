@@ -62,7 +62,7 @@ public:
 #endif
 
     void sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
-    void setInputMethodState(Optional<InputMethodState>&&);
+    void setInputMethodState(std::optional<InputMethodState>&&);
 
 private:
     // PageClient

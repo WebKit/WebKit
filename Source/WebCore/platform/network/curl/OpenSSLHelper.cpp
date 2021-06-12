@@ -109,16 +109,14 @@ public:
             ::BIO_free(m_bio);
     }
 
-    Optional<Vector<uint8_t>> getDataAsVector() const
+    std::optional<Vector<uint8_t>> getDataAsVector() const
     {
         uint8_t* data { nullptr };
         auto length = ::BIO_get_mem_data(m_bio, &data);
         if (length < 0)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Vector<uint8_t> result;
-        result.append(data, length);
-        return result;
+        return Vector { data, static_cast<size_t>(length) };
     }
 
     String getDataAsString() const
@@ -160,10 +158,10 @@ static Vector<WebCore::CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_C
     return result;
 }
 
-Optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX* ctx)
+std::optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX* ctx)
 {
     if (!ctx)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WebCore::CertificateInfo(X509_STORE_CTX_get_error(ctx), pemDataFromCtx(ctx));
 }
@@ -217,24 +215,24 @@ static String getSubjectName(const X509* x509)
     return bio.getDataAsString();
 }
 
-static Optional<Seconds> convertASN1TimeToSeconds(const ASN1_TIME* ans1Time)
+static std::optional<Seconds> convertASN1TimeToSeconds(const ASN1_TIME* ans1Time)
 {
     if (!ans1Time)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if ((ans1Time->type != V_ASN1_UTCTIME && ans1Time->type != V_ASN1_GENERALIZEDTIME) || !ans1Time->data)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // UTCTIME         : YYmmddHHMM[SS]
     // GENERALIZEDTIME : YYYYmmddHHMM[SS]
     int digitLength = ans1Time->type == V_ASN1_UTCTIME ? 10 : 12;
     if (ans1Time->length < digitLength)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto data = ans1Time->data;
     for (int i = 0; i < digitLength; i++) {
         if (!isASCIIDigit(data[i]))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     struct tm time { };
@@ -252,7 +250,7 @@ static Optional<Seconds> convertASN1TimeToSeconds(const ASN1_TIME* ans1Time)
 
     time.tm_mon = (data[0] - '0') * 10 + (data[1] - '0') - 1;
     if (time.tm_mon < 0 || time.tm_mon > 11)
-        return WTF::nullopt;
+        return std::nullopt;
     time.tm_mday = (data[2] - '0') * 10 + (data[3] - '0');
     time.tm_hour = (data[4] - '0') * 10 + (data[5] - '0');
     time.tm_min = (data[6] - '0') * 10 + (data[7] - '0');
@@ -299,12 +297,12 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
     }
 }
 
-Optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem)
+std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem)
 {
     BIO bio { pem };
     auto x509 = bio.readX509();
     if (!x509)
-        return WTF::nullopt;
+        return std::nullopt;
 
     WebCore::CertificateSummary summaryInfo;
 

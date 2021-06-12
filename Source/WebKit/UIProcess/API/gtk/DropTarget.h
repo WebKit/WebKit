@@ -59,7 +59,7 @@ public:
     void didPerformAction();
 
 private:
-    void accept(PlatformDropContext*, Optional<WebCore::IntPoint> = WTF::nullopt, unsigned = 0);
+    void accept(PlatformDropContext*, std::optional<WebCore::IntPoint> = std::nullopt, unsigned = 0);
     void enter(WebCore::IntPoint&&, unsigned = 0);
     void update(WebCore::IntPoint&&, unsigned = 0);
     void leave();
@@ -79,10 +79,10 @@ private:
 #else
     GRefPtr<GdkDragContext> m_drop;
 #endif
-    Optional<WebCore::IntPoint> m_position;
+    std::optional<WebCore::IntPoint> m_position;
     unsigned m_dataRequestCount { 0 };
-    Optional<WebCore::SelectionData> m_selectionData;
-    Optional<WebCore::DragOperation> m_operation;
+    std::optional<WebCore::SelectionData> m_selectionData;
+    std::optional<WebCore::DragOperation> m_operation;
 #if USE(GTK4)
     GRefPtr<GCancellable> m_cancellable;
 #else

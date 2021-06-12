@@ -83,9 +83,9 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
         notifyFocusedIn();
 }
 
-void InputMethodFilter::setState(Optional<InputMethodState>&& state)
+void InputMethodFilter::setState(std::optional<InputMethodState>&& state)
 {
-    bool focusChanged = state.hasValue() != m_state.hasValue();
+    bool focusChanged = state.has_value() != m_state.has_value();
     if (focusChanged && !state)
         notifyFocusedOut();
 

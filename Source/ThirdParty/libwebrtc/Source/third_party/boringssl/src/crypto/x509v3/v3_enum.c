@@ -87,7 +87,8 @@ const X509V3_EXT_METHOD v3_crl_reason = {
     (void *)crl_reasons
 };
 
-char *i2s_ASN1_ENUMERATED_TABLE(X509V3_EXT_METHOD *method, ASN1_ENUMERATED *e)
+char *i2s_ASN1_ENUMERATED_TABLE(X509V3_EXT_METHOD *method,
+                                const ASN1_ENUMERATED *e)
 {
     const ENUMERATED_NAMES *enam;
     long strval;

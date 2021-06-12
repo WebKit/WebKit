@@ -25,101 +25,20 @@
 
 #pragma once
 
-#include "Timer.h"
-#include <wtf/Deque.h>
+#include "ContextDestructionObserver.h"
+#include "EventLoop.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
-#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
-
-namespace WTF {
-class Lock;
-};
 
 namespace WebCore {
 
-template <typename T>
-class TaskDispatcher {
+class TaskQueueBase : public CanMakeWeakPtr<TaskQueueBase> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TaskDispatcher(T* context)
-        : m_context(context)
-    {
-    }
-
-    void postTask(Function<void()>&& function)
-    {
-        ASSERT(m_context);
-        m_context->enqueueTaskForDispatcher(WTFMove(function));
-    }
-
-private:
-    T* m_context;
-};
-
-template<>
-class TaskDispatcher<Timer> : public CanMakeWeakPtr<TaskDispatcher<Timer>, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    TaskDispatcher();
-    void postTask(Function<void()>&&);
-
-private:
-    static Timer& sharedTimer();
-    static void sharedTimerFired();
-    static Deque<WeakPtr<TaskDispatcher<Timer>>>& pendingDispatchers() WTF_REQUIRES_LOCK(s_sharedLock);
-
-    void dispatchOneTask();
-
-    static CheckedLock s_sharedLock;
-    Deque<Function<void()>> m_pendingTasks WTF_GUARDED_BY_LOCK(s_sharedLock);
-};
-
-template <typename T>
-class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T>> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    GenericTaskQueue()
-        : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>())
-    {
-        ASSERT(isMainThread());
-    }
-
-    explicit GenericTaskQueue(T& t)
-        : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>(&t))
-    {
-        ASSERT(isMainThread());
-    }
-
-    explicit GenericTaskQueue(T* t)
-        : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>(t))
-        , m_isClosed(!t)
-    {
-        ASSERT(isMainThread());
-    }
-
-    ~GenericTaskQueue()
-    {
-        if (!isMainThread())
-            m_dispatcher->postTask([dispatcher = WTFMove(m_dispatcher)] { });
-    }
-
-    typedef WTF::Function<void ()> TaskFunction;
-
-    void enqueueTask(TaskFunction&& task)
-    {
-        if (m_isClosed)
-            return;
-
-        ++m_pendingTasks;
-        m_dispatcher->postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
-            if (!weakThis)
-                return;
-            ASSERT(weakThis->m_pendingTasks);
-            --weakThis->m_pendingTasks;
-            task();
-        });
-    }
+    bool hasPendingTasks() const { return m_pendingTasks; }
+    bool isClosed() const { return m_isClosed; }
 
     void close()
     {
@@ -129,17 +48,65 @@ public:
 
     void cancelAllTasks()
     {
-        CanMakeWeakPtr<GenericTaskQueue<T>>::weakPtrFactory().revokeAll();
+        weakPtrFactory().revokeAll();
         m_pendingTasks = 0;
     }
 
-    bool hasPendingTasks() const { return m_pendingTasks; }
-    bool isClosed() const { return m_isClosed; }
+protected:
+    ~TaskQueueBase() = default;
+    void incrementPendingTasks() { ++m_pendingTasks; }
+    void decrementPendingTasks() { ASSERT(m_pendingTasks); --m_pendingTasks; }
 
 private:
-    UniqueRef<TaskDispatcher<T>> m_dispatcher;
     unsigned m_pendingTasks { 0 };
     bool m_isClosed { false };
+};
+
+// Relies on a shared Timer, only safe to use on the MainThread. Please use EventLoopTaskQueue
+// (or dispatch directly to the HTML event loop) whenever possible.
+class MainThreadTaskQueue : public TaskQueueBase {
+public:
+    MainThreadTaskQueue()
+    {
+        ASSERT(isMainThread());
+    }
+
+    void enqueueTask(Function<void()>&& task)
+    {
+        if (isClosed())
+            return;
+
+        incrementPendingTasks();
+        callOnMainThread([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+            if (!weakThis)
+                return;
+            weakThis->decrementPendingTasks();
+            task();
+        });
+    }
+};
+
+// Similar to MainThreadTaskQueue but based on the HTML event loop.
+class EventLoopTaskQueue : public TaskQueueBase, private ContextDestructionObserver {
+public:
+    EventLoopTaskQueue(ScriptExecutionContext* context)
+        : ContextDestructionObserver(context)
+    { }
+
+    // FIXME: Pass a TaskSource instead of assuming TaskSource::MediaElement.
+    void enqueueTask(Function<void()>&& task)
+    {
+        if (isClosed() || !scriptExecutionContext())
+            return;
+
+        incrementPendingTasks();
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+            if (!weakThis)
+                return;
+            weakThis->decrementPendingTasks();
+            task();
+        });
+    }
 };
 
 }

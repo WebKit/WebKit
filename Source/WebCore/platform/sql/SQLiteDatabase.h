@@ -28,8 +28,8 @@
 
 #include <functional>
 #include <sqlite3.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/Expected.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -59,12 +59,15 @@ public:
     enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
     WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
     bool isOpen() const { return m_db; }
-    WEBCORE_EXPORT void close();
+    enum class ShouldSetErrorState : bool { No, Yes };
+    WEBCORE_EXPORT void close(ShouldSetErrorState = ShouldSetErrorState::Yes);
 
     WEBCORE_EXPORT bool executeCommandSlow(const String&);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     
     WEBCORE_EXPORT bool tableExists(const String&);
+    WEBCORE_EXPORT String tableSQL(const String&);
+    WEBCORE_EXPORT String indexSQL(const String&);
     WEBCORE_EXPORT void clearAllTables();
     WEBCORE_EXPORT int runVacuumCommand();
     WEBCORE_EXPORT int runIncrementalVacuumCommand();
@@ -180,7 +183,7 @@ private:
 
     bool m_useWAL { false };
 
-    CheckedLock m_authorizerLock;
+    Lock m_authorizerLock;
     RefPtr<DatabaseAuthorizer> m_authorizer WTF_GUARDED_BY_LOCK(m_authorizerLock);
 
     Lock m_lockingMutex;

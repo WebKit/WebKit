@@ -58,7 +58,7 @@ public:
         return adoptRef(*new WorkerScriptLoader);
     }
 
-    Optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
+    std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
     void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode);
 
     void notifyError();
@@ -77,7 +77,7 @@ public:
     const ResourceError& error() const { return m_error; }
 
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
-    void didReceiveData(const char* data, int dataLength) override;
+    void didReceiveData(const uint8_t* data, int dataLength) override;
     void didFinishLoading(unsigned long identifier) override;
     void didFail(const ResourceError&) override;
 

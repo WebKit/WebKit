@@ -146,7 +146,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     if (!clipperData.isValidForGeometry(objectBoundingBox, absoluteTransform)) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
-        auto maskImage = SVGRenderingContext::createImageBuffer(objectBoundingBox, absoluteTransform, DestinationColorSpace::SRGB, RenderingMode::Unaccelerated, &context);
+        auto maskImage = SVGRenderingContext::createImageBuffer(objectBoundingBox, absoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, &context);
         if (!maskImage)
             return false;
 
@@ -274,10 +274,10 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
         AffineTransform transform;
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());
-        point = transform.inverse().valueOr(AffineTransform()).mapPoint(point);
+        point = transform.inverse().value_or(AffineTransform()).mapPoint(point);
     }
 
-    point = clipPathElement().animatedLocalTransform().inverse().valueOr(AffineTransform()).mapPoint(point);
+    point = clipPathElement().animatedLocalTransform().inverse().value_or(AffineTransform()).mapPoint(point);
 
     for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();

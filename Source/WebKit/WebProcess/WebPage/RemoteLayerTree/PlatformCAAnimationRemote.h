@@ -151,7 +151,7 @@ public:
         }
 
         void encode(IPC::Encoder&) const;
-        static Optional<Properties> decode(IPC::Decoder&);
+        static std::optional<Properties> decode(IPC::Decoder&);
 
         String keyPath;
         PlatformCAAnimation::AnimationType animationType;

@@ -52,17 +52,17 @@
 #import <wtf/FileSystem.h>
 #import <wtf/RandomNumber.h>
 #import <wtf/Scope.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WallTime.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringBuilder.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <rootless.h>
 #endif
-
-#import <wtf/SoftLinking.h>
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
@@ -195,12 +195,12 @@ static void setNotifyOptions()
 }
 
 #if USE(CACHE_COMPILED_SANDBOX)
-static Optional<Vector<char>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
+static std::optional<Vector<char>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
 {
     FileHandle file = shouldLock ? FileHandle(path, FileSystem::FileOpenMode::Read, lockMode) : FileHandle(path, FileSystem::FileOpenMode::Read);
     file.open();
     if (!file)
-        return WTF::nullopt;
+        return std::nullopt;
 
     char chunk[4096];
     constexpr size_t chunkSize = WTF_ARRAY_LENGTH(chunk);
@@ -240,7 +240,7 @@ constexpr const char* processStorageClass(WebCore::AuxiliaryProcessType type)
 }
 #endif // USE(APPLE_INTERNAL_SDK)
 
-static Optional<CString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
+static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
 {
     StringBuilder builder;
     for (size_t i = 0; i < initializationParameters.count(); ++i) {
@@ -255,7 +255,7 @@ static Optional<CString> setAndSerializeSandboxParameters(const SandboxInitializ
     if (isProfilePath) {
         auto contents = fileContents(profileOrProfilePath);
         if (!contents)
-            return WTF::nullopt;
+            return std::nullopt;
         builder.appendCharacters(contents->data(), contents->size());
     } else
         builder.append(profileOrProfilePath);
@@ -646,8 +646,7 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
             String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
             if (clientIdentifier.isNull())
                 clientIdentifier = parameters.clientIdentifier;
-            String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', clientIdentifier);
-            sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
+            sandboxParameters.setUserDirectorySuffix(makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier));
         }
     }
 

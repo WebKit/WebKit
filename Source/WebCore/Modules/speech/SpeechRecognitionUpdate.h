@@ -61,7 +61,7 @@ public:
     WEBCORE_EXPORT Vector<SpeechRecognitionResultData> result() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SpeechRecognitionUpdate> decode(Decoder&);
+    template<class Decoder> static std::optional<SpeechRecognitionUpdate> decode(Decoder&);
 
 private:
     using Content = Variant<WTF::Monostate, SpeechRecognitionError, Vector<SpeechRecognitionResultData>>;
@@ -79,22 +79,22 @@ void SpeechRecognitionUpdate::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SpeechRecognitionUpdate> SpeechRecognitionUpdate::decode(Decoder& decoder)
+std::optional<SpeechRecognitionUpdate> SpeechRecognitionUpdate::decode(Decoder& decoder)
 {
-    Optional<SpeechRecognitionConnectionClientIdentifier> clientIdentifier;
+    std::optional<SpeechRecognitionConnectionClientIdentifier> clientIdentifier;
     decoder >> clientIdentifier;
     if (!clientIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<SpeechRecognitionUpdateType> type;
+    std::optional<SpeechRecognitionUpdateType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Content> content;
+    std::optional<Content> content;
     decoder >> content;
     if (!content)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return SpeechRecognitionUpdate { WTFMove(*clientIdentifier), WTFMove(*type), WTFMove(*content) };
 }

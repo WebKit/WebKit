@@ -27,12 +27,12 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
 struct AuthenticationExtensionsClientOutputs {
-    Optional<bool> appid;
+    std::optional<bool> appid;
 };
 
 } // namespace WebCore

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "GenericTaskQueue.h"
 #include "ReducedResolutionSeconds.h"
 #include "Timer.h"
+#include <wtf/CancellableTask.h>
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakHashSet.h>
@@ -50,7 +50,7 @@ public:
     void detachFromDocument();
     void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
 
-    Optional<Seconds> currentTime();
+    std::optional<Seconds> currentTime();
 
     WEBCORE_EXPORT void suspendAnimations();
     WEBCORE_EXPORT void resumeAnimations();
@@ -67,7 +67,7 @@ private:
     void maybeClearCachedCurrentTime();
 
     WeakHashSet<DocumentTimeline> m_timelines;
-    GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
+    CancellableTask::Handle m_currentTimeClearingTask;
     Document& m_document;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     bool m_isSuspended { false };

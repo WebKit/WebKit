@@ -119,36 +119,36 @@ static void encodeTimingFunction(IPC::Encoder& encoder, TimingFunction* timingFu
     }
 }
 
-static Optional<RefPtr<TimingFunction>> decodeTimingFunction(IPC::Decoder& decoder)
+static std::optional<RefPtr<TimingFunction>> decodeTimingFunction(IPC::Decoder& decoder)
 {
     TimingFunction::TimingFunctionType type;
     if (!decoder.decode(type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     RefPtr<TimingFunction> timingFunction;
     switch (type) {
     case TimingFunction::LinearFunction:
         timingFunction = LinearTimingFunction::create();
         if (!decoder.decode(*static_cast<LinearTimingFunction*>(timingFunction.get())))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
 
     case TimingFunction::CubicBezierFunction:
         timingFunction = CubicBezierTimingFunction::create();
         if (!decoder.decode(*static_cast<CubicBezierTimingFunction*>(timingFunction.get())))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
 
     case TimingFunction::StepsFunction:
         timingFunction = StepsTimingFunction::create();
         if (!decoder.decode(*static_cast<StepsTimingFunction*>(timingFunction.get())))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
 
     case TimingFunction::SpringFunction:
         timingFunction = SpringTimingFunction::create();
         if (!decoder.decode(*static_cast<SpringTimingFunction*>(timingFunction.get())))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
 
@@ -190,71 +190,71 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     encoder << animations;
 }
 
-Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder)
+std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder)
 {
     PlatformCAAnimationRemote::Properties properties;
     if (!decoder.decode(properties.keyPath))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.animationType))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.beginTime))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.duration))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.timeOffset))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.repeatCount))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.speed))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.fillMode))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.valueFunction))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool hasTimingFunction;
     if (!decoder.decode(hasTimingFunction))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hasTimingFunction) {
         if (auto timingFunction = decodeTimingFunction(decoder))
             properties.timingFunction = WTFMove(*timingFunction);
         else
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     if (!decoder.decode(properties.autoReverses))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.removedOnCompletion))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.additive))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.reverseTimingFunctions))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.hasExplicitBeginTime))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.keyValues))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(properties.keyTimes))
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint64_t numTimingFunctions;
     if (!decoder.decode(numTimingFunctions))
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (numTimingFunctions) {
         properties.timingFunctions.reserveInitialCapacity(numTimingFunctions);
@@ -263,12 +263,12 @@ Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Prope
             if (auto timingFunction = decodeTimingFunction(decoder))
                 properties.timingFunctions.uncheckedAppend(WTFMove(*timingFunction));
             else
-                return WTF::nullopt;
+                return std::nullopt;
         }
     }
 
     if (!decoder.decode(properties.animations))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WTFMove(properties);
 }

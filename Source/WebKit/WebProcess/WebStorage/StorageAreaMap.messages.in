@@ -25,6 +25,6 @@ messages -> StorageAreaMap NotRefCounted {
     DidRemoveItem(uint64_t storageMapSeed, String key)
     DidClear(uint64_t storageMapSeed)
 
-    DispatchStorageEvent(Optional<WebKit::StorageAreaImplIdentifier> storageAreaImplID, String key, String oldValue, String newValue, String urlString)
+    DispatchStorageEvent(std::optional<WebKit::StorageAreaImplIdentifier> storageAreaImplID, String key, String oldValue, String newValue, String urlString)
     ClearCache()
 }

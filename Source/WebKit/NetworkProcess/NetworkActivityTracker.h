@@ -77,7 +77,7 @@ public:
     void complete(CompletionCode);
 
 #if HAVE(NW_ACTIVITY)
-    nw_activity_t getPlatformObject() { return m_networkActivity.get(); }
+    nw_activity_t getPlatformObject() const { return m_networkActivity.get(); }
 #endif
 
 private:

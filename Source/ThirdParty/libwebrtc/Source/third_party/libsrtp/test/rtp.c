@@ -53,6 +53,8 @@
 #include <sys/socket.h>
 #endif
 
+#include "cipher_priv.h"
+
 #define PRINT_DEBUG 0   /* set to 1 to print out debugging data */
 #define VERBOSE_DEBUG 0 /* set to 1 to print out more data      */
 
@@ -148,7 +150,7 @@ int rtp_sender_init(rtp_sender_t sender,
     /* set header values */
     sender->message.header.ssrc = htonl(ssrc);
     sender->message.header.ts = 0;
-    sender->message.header.seq = (uint16_t)rand();
+    sender->message.header.seq = (uint16_t)srtp_cipher_rand_u32_for_tests();
     sender->message.header.m = 0;
     sender->message.header.pt = 0x1;
     sender->message.header.version = 2;

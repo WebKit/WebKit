@@ -37,7 +37,7 @@ twopass_encoder() {
 
   eval "${VPX_TEST_PREFIX}" "${encoder}" "${codec}" "${YUV_RAW_INPUT_WIDTH}" \
       "${YUV_RAW_INPUT_HEIGHT}" "${YUV_RAW_INPUT}" "${output_file}" 100 \
-      ${devnull}
+      ${devnull} || return 1
 
   [ -e "${output_file}" ] || return 1
 }

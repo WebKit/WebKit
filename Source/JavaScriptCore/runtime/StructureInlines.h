@@ -172,7 +172,7 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
     Structure* tableStructure;
     PropertyTable* table;
     
-    findStructuresAndMapForMaterialization(structures, tableStructure, table);
+    bool didFindStructure = findStructuresAndMapForMaterialization(structures, tableStructure, table);
 
     HashSet<UniquedStringImpl*> seenProperties;
 
@@ -195,13 +195,16 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
         }
 
         if (!functor(PropertyMapEntry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes()))) {
-            if (table)
+            if (didFindStructure) {
+                assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
                 tableStructure->m_lock.unlock();
+            }
             return;
         }
     }
     
-    if (table) {
+    if (didFindStructure) {
+        assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
         for (auto& entry : *table) {
             if (seenProperties.contains(entry.key))
                 continue;

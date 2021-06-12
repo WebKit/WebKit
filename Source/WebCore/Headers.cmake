@@ -341,7 +341,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     crypto/SerializedCryptoKeyWrap.h
 
-    css/CSSCalculationValue.h
     css/CSSConditionRule.h
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h
@@ -388,6 +387,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/StyleSheet.h
     css/StyleSheetContents.h
     css/StyleSheetList.h
+
+    css/calc/CSSCalcValue.h
 
     css/parser/CSSParser.h
     css/parser/CSSParserContext.h
@@ -438,13 +439,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DeviceOrientationData.h
     dom/DeviceOrientationOrMotionPermissionState.h
     dom/Document.h
+    dom/DocumentEventTiming.h
     dom/DocumentFontLoader.h
     dom/DocumentFragment.h
     dom/DocumentFullscreen.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h
     dom/DocumentStorageAccess.h
-    dom/DocumentTiming.h
     dom/DocumentType.h
     dom/Element.h
     dom/ElementAncestorIterator.h
@@ -460,6 +461,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventListener.h
     dom/EventListenerMap.h
     dom/EventListenerOptions.h
+    dom/EventLoop.h
+    dom/EventLoopEventQueue.h
     dom/EventModifierInit.h
     dom/EventNames.h
     dom/EventQueue.h
@@ -473,7 +476,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FragmentScriptingPermission.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h
-    dom/GenericEventQueue.h
     dom/InlineStyleSheetOwner.h
     dom/KeyboardEvent.h
     dom/LiveNodeList.h
@@ -523,7 +525,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/SpaceSplitString.h
     dom/StaticRange.h
     dom/StyledElement.h
-    dom/SuccessOr.h
     dom/TaskSource.h
     dom/Text.h
     dom/TextEvent.h
@@ -775,6 +776,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/CrossOriginAccessControl.h
     loader/CrossOriginPreflightResultCache.h
     loader/CustomHeaderFields.h
+    loader/DocumentLoadTiming.h
     loader/DocumentLoader.h
     loader/DocumentWriter.h
     loader/EmptyClients.h
@@ -795,7 +797,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/LinkLoader.h
     loader/LinkLoaderClient.h
     loader/LoadSchedulingMode.h
-    loader/LoadTiming.h
     loader/LoaderStrategy.h
     loader/MediaResourceLoader.h
     loader/MixedContentChecker.h
@@ -811,6 +812,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/ResourceLoadNotifier.h
     loader/ResourceLoadObserver.h
     loader/ResourceLoadStatistics.h
+    loader/ResourceLoadTiming.h
     loader/ResourceLoader.h
     loader/ResourceLoaderOptions.h
     loader/ResourceLoaderTypes.h
@@ -1003,7 +1005,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/AbortableTaskQueue.h
     platform/CPUMonitor.h
-    platform/CalculationValue.h
     platform/ColorChooser.h
     platform/ColorChooserClient.h
     platform/ContentFilterUnblockHandler.h
@@ -1156,6 +1157,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/audio/gstreamer/AudioDestinationGStreamer.h
 
+    platform/calc/CalcExpressionNode.h
+    platform/calc/CalculationValue.h
+
     platform/encryptedmedia/CDMEncryptionScheme.h
     platform/encryptedmedia/CDMFactory.h
     platform/encryptedmedia/CDMInstance.h
@@ -1180,6 +1184,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ANGLEWebKitBridge.h
     platform/graphics/AnimationFrameRate.h
     platform/graphics/AudioTrackPrivate.h
+    platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
     platform/graphics/Color.h
     platform/graphics/ColorComponents.h
@@ -1197,6 +1202,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ConcreteImageBuffer.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
+    platform/graphics/DestinationColorSpace.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
     platform/graphics/DisplayRefreshMonitorFactory.h
@@ -1238,7 +1244,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GraphicsContext.h
     platform/graphics/GraphicsContextGL.h
     platform/graphics/GraphicsContextGLAttributes.h
-    platform/graphics/GraphicsContextImpl.h
     platform/graphics/GraphicsLayer.h
     platform/graphics/GraphicsLayerClient.h
     platform/graphics/GraphicsLayerFactory.h
@@ -1285,6 +1290,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaSourcePrivateClient.h
     platform/graphics/MediaUsageInfo.h
     platform/graphics/NativeImage.h
+    platform/graphics/NullGraphicsContext.h
     platform/graphics/OpenGLESShims.h
     platform/graphics/OpenGLShims.h
     platform/graphics/Path.h
@@ -1293,6 +1299,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PixelBuffer.h
     platform/graphics/PixelBufferFormat.h
     platform/graphics/PixelFormat.h
+    platform/graphics/PlatformColorSpace.h
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformImage.h
     platform/graphics/PlatformImageBuffer.h
@@ -1323,6 +1330,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/WidthCache.h
     platform/graphics/WindRule.h
 
+    platform/graphics/angle/ANGLEHeaders.h
     platform/graphics/angle/ExtensionsGLANGLE.h
 
     platform/graphics/displaylists/DisplayList.h
@@ -1510,7 +1518,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/BreakLines.h
     rendering/ClipPathOperation.h
     rendering/ClipRect.h
-    rendering/ComplexLineLayout.h
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
@@ -1518,12 +1525,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/HitTestLocation.h
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
-    rendering/InlineBox.h
-    rendering/InlineElementBox.h
-    rendering/InlineFlowBox.h
-    rendering/InlineTextBox.h
     rendering/LayerAncestorClippingStack.h
     rendering/LayerFragment.h
+    rendering/LegacyInlineBox.h
+    rendering/LegacyInlineElementBox.h
+    rendering/LegacyInlineFlowBox.h
+    rendering/LegacyInlineTextBox.h
+    rendering/LegacyLineLayout.h
+    rendering/LegacyRootInlineBox.h
     rendering/MarkedText.h
     rendering/OrderIterator.h
     rendering/OverlapTestRequestClient.h
@@ -1569,9 +1578,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderVideo.h
     rendering/RenderView.h
     rendering/RenderWidget.h
-    rendering/RootInlineBox.h
     rendering/ScrollAlignment.h
     rendering/SelectionRangeData.h
+    rendering/TextBoxSelectableRange.h
 
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h

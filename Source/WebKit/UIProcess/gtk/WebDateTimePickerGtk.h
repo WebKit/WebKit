@@ -51,7 +51,7 @@ private:
 
     GtkWidget* m_popover { nullptr };
     GtkWidget* m_calendar { nullptr };
-    Optional<WebCore::DateComponents> m_currentDate;
+    std::optional<WebCore::DateComponents> m_currentDate;
     WebCore::SecondFormat m_secondFormat { WebCore::SecondFormat::None };
     bool m_inUpdate { false };
 };

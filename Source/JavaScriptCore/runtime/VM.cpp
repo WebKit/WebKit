@@ -43,7 +43,6 @@
 #include "CommonIdentifiers.h"
 #include "ControlFlowProfiler.h"
 #include "CustomGetterSetter.h"
-#include "DFGWorklist.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DateInstance.h"
 #include "DebuggerScope.h"
@@ -81,6 +80,7 @@
 #include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
 #include "JITOperationList.h"
+#include "JITSizeStatistics.h"
 #include "JITThunks.h"
 #include "JITWorklist.h"
 #include "JSAPIGlobalObject.h"
@@ -567,13 +567,16 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 #endif // ENABLE(FTL_JIT)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
-
-        jitStubs->preinitializeCTIThunks(*this);
     }
 #endif // ENABLE(JIT)
 
     if (Options::forceDebuggerBytecodeGeneration() || Options::alwaysUseShadowChicken())
         ensureShadowChicken();
+
+#if ENABLE(JIT)
+    if (Options::dumpBaselineJITSizeStatistics() || Options::dumpDFGJITSizeStatistics())
+        jitSizeStatistics = makeUnique<JITSizeStatistics>();
+#endif
 
     VMInspector::instance().add(this);
 
@@ -615,20 +618,8 @@ VM::~VM()
     
 #if ENABLE(JIT)
     if (JITWorklist* worklist = JITWorklist::existingGlobalWorklistOrNull())
-        worklist->completeAllForVM(*this);
+        worklist->cancelAllPlansForVM(*this);
 #endif // ENABLE(JIT)
-
-#if ENABLE(DFG_JIT)
-    // Make sure concurrent compilations are done, but don't install them, since there is
-    // no point to doing so.
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::existingWorklistForIndexOrNull(i)) {
-            worklist->removeNonCompilingPlansForVM(*this);
-            worklist->waitUntilAllPlansForVMAreReady(*this);
-            worklist->removeAllReadyPlansForVM(*this);
-        }
-    }
-#endif // ENABLE(DFG_JIT)
     
     waitForAsynchronousDisassembly();
     
@@ -888,14 +879,13 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
     return getOrCreate(m_fastBoundExecutable);
 }
 
-MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind, Optional<NoLockingNecessaryTag> noLockingNecessary)
+MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
 {
-    UNUSED_PARAM(noLockingNecessary);
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         if (kind == CodeForCall)
-            return jitStubs->ctiInternalFunctionCall(*this, noLockingNecessary).retagged<JSEntryPtrTag>();
-        return jitStubs->ctiInternalFunctionConstruct(*this, noLockingNecessary).retagged<JSEntryPtrTag>();
+            return jitStubs->ctiInternalFunctionCall(*this).retagged<JSEntryPtrTag>();
+        return jitStubs->ctiInternalFunctionConstruct(*this).retagged<JSEntryPtrTag>();
     }
 #endif
     if (kind == CodeForCall)

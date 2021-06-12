@@ -42,7 +42,7 @@ public:
 private:
     TextEncoderStreamEncoder() = default;
 
-    Optional<UChar> m_pendingHighSurrogate;
+    std::optional<UChar> m_pendingHighSurrogate;
 };
 
 }

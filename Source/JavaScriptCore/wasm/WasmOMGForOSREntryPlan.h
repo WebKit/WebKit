@@ -55,10 +55,10 @@ private:
     using Base::m_lock;
 
     bool isComplete() const final { return m_completed; }
-    void complete(const AbstractLocker& locker) final
+    void complete() WTF_REQUIRES_LOCK(m_lock) final
     {
         m_completed = true;
-        runCompletionTasks(locker);
+        runCompletionTasks();
     }
 
     Ref<Module> m_module;

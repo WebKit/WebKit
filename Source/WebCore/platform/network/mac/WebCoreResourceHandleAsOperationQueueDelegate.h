@@ -24,8 +24,9 @@
  */
 
 #import <dispatch/dispatch.h>
-#import <wtf/CheckedLock.h>
+#import <wtf/Box.h>
 #import <wtf/Function.h>
+#import <wtf/Lock.h>
 #import <wtf/MessageQueue.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -33,12 +34,13 @@
 #import <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
+class NetworkLoadMetrics;
 class ResourceHandle;
 class SynchronousLoaderMessageQueue;
 }
 
 @interface WebCoreResourceHandleAsOperationQueueDelegate : NSObject <NSURLConnectionDelegate> {
-    CheckedLock m_lock;
+    Lock m_lock;
     WebCore::ResourceHandle* m_handle WTF_GUARDED_BY_LOCK(m_lock);
 
     // Synchronous delegates on operation queue wait until main thread sends an asynchronous response.
@@ -46,7 +48,7 @@ class SynchronousLoaderMessageQueue;
     RefPtr<WebCore::SynchronousLoaderMessageQueue> m_messageQueue;
     RetainPtr<NSURLRequest> m_requestResult;
     RetainPtr<NSCachedURLResponse> m_cachedResponseResult;
-    Optional<SchedulePairHashSet> m_scheduledPairs;
+    std::optional<SchedulePairHashSet> m_scheduledPairs;
     BOOL m_boolResult;
 }
 

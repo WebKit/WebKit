@@ -26,8 +26,8 @@
 #include "config.h"
 #include <wtf/TimingScope.h>
 
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 
 namespace WTF {
 
@@ -60,7 +60,7 @@ public:
 
 private:
     HashMap<const char*, CallData> totals WTF_GUARDED_BY_LOCK(lock);
-    CheckedLock lock;
+    Lock lock;
 };
 
 State& state()

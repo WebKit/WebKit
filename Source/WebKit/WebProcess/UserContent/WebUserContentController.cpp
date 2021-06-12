@@ -405,7 +405,7 @@ void WebUserContentController::removeAllContentRuleLists()
 }
 #endif
 
-void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, const Optional<uint64_t>& userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)
+void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, const std::optional<uint64_t>& userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)
 {
     if (immediately == InjectUserScriptImmediately::Yes) {
         Page::forEachPage([&] (auto& page) {
@@ -423,7 +423,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
         });
     }
 
-    auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<Optional<uint64_t>, WebCore::UserScript>>(); }).iterator->value;
+    auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<std::optional<uint64_t>, WebCore::UserScript>>(); }).iterator->value;
     if (userScriptIdentifier && scriptsInWorld.findMatching([&](auto& pair) { return pair.first == userScriptIdentifier; }) != notFound)
         return;
 
@@ -432,7 +432,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
 
 void WebUserContentController::addUserScript(InjectedBundleScriptWorld& world, UserScript&& userScript)
 {
-    addUserScriptInternal(world, WTF::nullopt, WTFMove(userScript), InjectUserScriptImmediately::No);
+    addUserScriptInternal(world, std::nullopt, WTFMove(userScript), InjectUserScriptImmediately::No);
 }
 
 void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld& world, const URL& url)
@@ -470,9 +470,9 @@ void WebUserContentController::removeUserScripts(InjectedBundleScriptWorld& worl
     m_userScripts.remove(&world);
 }
 
-void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWorld& world, const Optional<uint64_t>& userStyleSheetIdentifier, UserStyleSheet&& userStyleSheet)
+void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWorld& world, const std::optional<uint64_t>& userStyleSheetIdentifier, UserStyleSheet&& userStyleSheet)
 {
-    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<Optional<uint64_t>, WebCore::UserStyleSheet>>(); }).iterator->value;
+    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<std::optional<uint64_t>, WebCore::UserStyleSheet>>(); }).iterator->value;
     if (userStyleSheetIdentifier && styleSheetsInWorld.findMatching([&](auto& pair) { return pair.first == userStyleSheetIdentifier; }) != notFound)
         return;
 
@@ -488,7 +488,7 @@ void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWor
 
 void WebUserContentController::addUserStyleSheet(InjectedBundleScriptWorld& world, UserStyleSheet&& userStyleSheet)
 {
-    addUserStyleSheetInternal(world, WTF::nullopt, WTFMove(userStyleSheet));
+    addUserStyleSheetInternal(world, std::nullopt, WTFMove(userStyleSheet));
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 

@@ -33,13 +33,13 @@ public:
     NullTextBreakIterator& operator=(const NullTextBreakIterator&) = delete;
     NullTextBreakIterator& operator=(NullTextBreakIterator&&) = default;
 
-    Optional<unsigned> preceding(unsigned) const
+    std::optional<unsigned> preceding(unsigned) const
     {
         ASSERT_NOT_REACHED();
         return { };
     }
 
-    Optional<unsigned> following(unsigned) const
+    std::optional<unsigned> following(unsigned) const
     {
         ASSERT_NOT_REACHED();
         return { };

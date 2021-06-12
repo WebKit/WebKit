@@ -31,13 +31,15 @@
 #include "IntSize.h"
 #include "IntSizeHash.h"
 #include "Timer.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
+
+class DestinatationColorSpace;
 
 class IOSurfacePool {
     WTF_MAKE_NONCOPYABLE(IOSurfacePool);
@@ -47,7 +49,7 @@ class IOSurfacePool {
 public:
     WEBCORE_EXPORT static IOSurfacePool& sharedPool();
 
-    std::unique_ptr<IOSurface> takeSurface(IntSize, CGColorSpaceRef, IOSurface::Format);
+    std::unique_ptr<IOSurface> takeSurface(IntSize, const DestinationColorSpace&, IOSurface::Format);
     WEBCORE_EXPORT void addSurface(std::unique_ptr<IOSurface>);
 
     void discardAllSurfaces();
@@ -101,7 +103,7 @@ private:
 
     void showPoolStatistics(const char*);
 
-    CheckedLock m_lock;
+    Lock m_lock;
     RunLoop::Timer<IOSurfacePool> m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceMap m_cachedSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceQueue m_inUseSurfaces WTF_GUARDED_BY_LOCK(m_lock);

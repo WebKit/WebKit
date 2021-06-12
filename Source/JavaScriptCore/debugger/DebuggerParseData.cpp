@@ -27,11 +27,10 @@
 #include "DebuggerParseData.h"
 
 #include "Parser.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 
-Optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column)
+std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column)
 {
     DebuggerPausePosition position = { DebuggerPausePositionType::Invalid, JSTextPosition(line, column, 0) };
     auto it = std::lower_bound(m_positions.begin(), m_positions.end(), position, [] (const DebuggerPausePosition& a, const DebuggerPausePosition& b) {
@@ -40,7 +39,7 @@ Optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn
         return a.position.line < b.position.line;
     });
     if (it == m_positions.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (line == it->position.line && column == it->position.column()) {
         // Found an exact position match. Roll forward if this was a function Entry.
@@ -68,7 +67,7 @@ Optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn
     // Valid pause location. Use it.
     auto& firstSlidePosition = *it;
     if (firstSlidePosition.type != DebuggerPausePositionType::Enter)
-        return Optional<JSTextPosition>(firstSlidePosition.position);
+        return std::optional<JSTextPosition>(firstSlidePosition.position);
 
     // Determine if we should enter this function or skip past it.
     // If entryStackSize is > 0 we are skipping functions.
@@ -95,11 +94,11 @@ Optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn
         }
 
         // Found pause position.
-        return Optional<JSTextPosition>(slidePosition.position);
+        return std::optional<JSTextPosition>(slidePosition.position);
     }
 
     // No pause positions found.
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DebuggerPausePositions::sort()

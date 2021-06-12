@@ -1014,25 +1014,6 @@ END
         self.assertIn("-some content", diff)
         self.assertIn("+changed content", diff)
 
-    def clean_bogus_dir(self):
-        self.bogus_dir = self.scm._bogus_dir_name()
-        if os.path.exists(self.bogus_dir):
-            shutil.rmtree(self.bogus_dir)
-
-    @slow
-    def test_diff_for_file_with_existing_bogus_dir(self):
-        self.clean_bogus_dir()
-        os.mkdir(self.bogus_dir)
-        self.do_test_diff_for_file()
-        self.assertTrue(os.path.exists(self.bogus_dir))
-        shutil.rmtree(self.bogus_dir)
-
-    @slow
-    def test_diff_for_file_with_missing_bogus_dir(self):
-        self.clean_bogus_dir()
-        self.do_test_diff_for_file()
-        self.assertFalse(os.path.exists(self.bogus_dir))
-
     @slow
     def test_svn_lock(self):
         if self.scm.svn_version() >= Version(1, 7):
@@ -1088,7 +1069,7 @@ class GitTest(SCMTest):
         run_command(['rm', '-rf', self.untracking_checkout_path])
 
     def test_remote_branch_ref(self):
-        self.assertEqual(self.tracking_scm.remote_branch_ref(), 'refs/remotes/origin/master')
+        self.assertIn(self.tracking_scm.remote_branch_ref(), ('refs/remotes/origin/master', 'refs/remotes/origin/main'))
 
         os.chdir(self.untracking_checkout_path)
         self.assertRaises(ScriptError, self.untracking_scm.remote_branch_ref)
@@ -1198,7 +1179,7 @@ class GitTest(SCMTest):
 
     def test_native_branch(self):
         scm = self.tracking_scm
-        self.assertEqual('master', scm.native_branch(scm.checkout_root))
+        self.assertIn(scm.native_branch(scm.checkout_root), ('master', 'main'))
 
     def test_rename_files(self):
         scm = self.tracking_scm

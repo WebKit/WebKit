@@ -23,7 +23,7 @@
 
       window.addEventListener("load", function() {
         document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
-        document.getElementById("mainThreadScrollingReasons").innerText = window.internals.mainThreadScrollingReasons();
+        document.getElementById("synchronousScrollingReasons").innerText = window.internals.synchronousScrollingReasons();
       }, false);
     }
   </script>
@@ -36,6 +36,6 @@
   </div>
 
   <pre id="layerTree"></pre>
-  <pre id="mainThreadScrollingReasons"></pre>
+  <pre id="synchronousScrollingReasons"></pre>
 </body>
 </html>

@@ -62,7 +62,7 @@ void PaymentSetupFeatures::encode(IPC::Encoder& encoder) const
     encoder << m_platformFeatures;
 }
 
-Optional<PaymentSetupFeatures> PaymentSetupFeatures::decode(IPC::Decoder& decoder)
+std::optional<PaymentSetupFeatures> PaymentSetupFeatures::decode(IPC::Decoder& decoder)
 {
     static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
     static std::once_flag onceFlag;
@@ -76,7 +76,7 @@ Optional<PaymentSetupFeatures> PaymentSetupFeatures::decode(IPC::Decoder& decode
 
     auto platformFeatures = IPC::decode<NSArray<PKPaymentSetupFeature *>>(decoder, allowedClasses.get().get());
     if (!platformFeatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return PaymentSetupFeatures { WTFMove(*platformFeatures) };
 }

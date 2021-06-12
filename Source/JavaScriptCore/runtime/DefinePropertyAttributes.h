@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
+#include <optional>
 #include <wtf/TriState.h>
 
 namespace JSC {
@@ -99,10 +99,10 @@ public:
         return extractTriState(WritableShift) != TriState::Indeterminate;
     }
 
-    Optional<bool> writable() const
+    std::optional<bool> writable() const
     {
         if (!hasWritable())
-            return WTF::nullopt;
+            return std::nullopt;
         return extractTriState(WritableShift) == TriState::True;
     }
 
@@ -111,10 +111,10 @@ public:
         return extractTriState(ConfigurableShift) != TriState::Indeterminate;
     }
 
-    Optional<bool> configurable() const
+    std::optional<bool> configurable() const
     {
         if (!hasConfigurable())
-            return WTF::nullopt;
+            return std::nullopt;
         return extractTriState(ConfigurableShift) == TriState::True;
     }
 
@@ -123,10 +123,10 @@ public:
         return extractTriState(EnumerableShift) != TriState::Indeterminate;
     }
 
-    Optional<bool> enumerable() const
+    std::optional<bool> enumerable() const
     {
         if (!hasEnumerable())
-            return WTF::nullopt;
+            return std::nullopt;
         return extractTriState(EnumerableShift) == TriState::True;
     }
 

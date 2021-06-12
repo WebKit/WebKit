@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "GenericTaskQueue.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,10 +37,7 @@ struct MediaEncodingConfiguration;
 class MediaCapabilities : public RefCounted<MediaCapabilities> {
 public:
     void decodingInfo(Document&, MediaDecodingConfiguration&&, Ref<DeferredPromise>&&);
-    void encodingInfo(MediaEncodingConfiguration&&, Ref<DeferredPromise>&&);
-
-private:
-    GenericTaskQueue<Timer> m_taskQueue;
+    void encodingInfo(Document&, MediaEncodingConfiguration&&, Ref<DeferredPromise>&&);
 };
 
 } // namespace WebCore

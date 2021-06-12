@@ -73,7 +73,7 @@ public:
     void stopElementSelection();
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
-    void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, Optional<bool>);
+    void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>);
 
     void setFrontendConnection(IPC::Attachment);
 

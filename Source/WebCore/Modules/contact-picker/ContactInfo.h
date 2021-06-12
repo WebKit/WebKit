@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,7 +36,7 @@ struct ContactInfo {
     Vector<String> tel;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ContactInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<ContactInfo> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -49,22 +48,22 @@ void ContactInfo::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ContactInfo> ContactInfo::decode(Decoder& decoder)
+std::optional<ContactInfo> ContactInfo::decode(Decoder& decoder)
 {
-    Optional<Vector<String>> name;
+    std::optional<Vector<String>> name;
     decoder >> name;
     if (!name)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Vector<String>> email;
+    std::optional<Vector<String>> email;
     decoder >> email;
     if (!email)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Vector<String>> tel;
+    std::optional<Vector<String>> tel;
     decoder >> tel;
     if (!tel)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *name, *email, *tel }};
 }

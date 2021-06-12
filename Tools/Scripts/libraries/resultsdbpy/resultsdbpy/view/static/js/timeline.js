@@ -856,7 +856,7 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false) {
             unexpected: plural ? 'Some tests crashed' : 'Test crashed',
         },
     };
-    let result = `<div class="lengend horizontal">
+    let result = `<div class="legend horizontal">
             ${Object.keys(legendDetails).map((key) => {
                 const dot = REF.createRef({
                     onElementMount: (element) => {

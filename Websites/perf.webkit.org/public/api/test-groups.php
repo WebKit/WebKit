@@ -94,6 +94,7 @@ function format_test_group($group_row) {
         'needsNotification' => Database::is_true($group_row['testgroup_needs_notification']),
         'mayNeedMoreRequests' => Database::is_true($group_row['testgroup_may_need_more_requests']),
         'initialRepetitionCount' => $group_row['testgroup_initial_repetition_count'],
+        'repetitionType' => $group_row['testgroup_repetition_type'],
         'buildRequests' => array(),
         'commitSets' => array(),
     );

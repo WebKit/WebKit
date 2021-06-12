@@ -38,16 +38,16 @@
 
 namespace WebCore {
 
-Optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
+std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     CMVideoCodecType codec = kCMVideoCodecType_HEVC;
     if (hasAlphaChannel) {
         if (!PAL::isAVFoundationFrameworkAvailable() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto codecCode = FourCC::fromString(AVVideoCodecTypeHEVCWithAlpha);
         if (!codecCode)
-            return WTF::nullopt;
+            return std::nullopt;
 
         codec = codecCode.value().value;
     }
@@ -57,12 +57,12 @@ Optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& par
         bool isMain10 = parameters.generalProfileSpace == 0
             && (parameters.generalProfileIDC == 2 || parameters.generalProfileCompatibilityFlags == 1);
         if (!isMain10)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     OSStatus status = VTSelectAndCreateVideoDecoderInstance(codec, kCFAllocatorDefault, nullptr, nullptr);
     if (status != noErr)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!canLoad_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary()
         || !canLoad_VideoToolbox_kVTHEVCDecoderCapability_SupportedProfiles()
@@ -70,30 +70,30 @@ Optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& par
         || !canLoad_VideoToolbox_kVTHEVCDecoderProfileCapability_IsHardwareAccelerated()
         || !canLoad_VideoToolbox_kVTHEVCDecoderProfileCapability_MaxDecodeLevel()
         || !canLoad_VideoToolbox_kVTHEVCDecoderProfileCapability_MaxPlaybackLevel())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto capabilities = adoptCF(VTCopyHEVCDecoderCapabilitiesDictionary());
     if (!capabilities)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto supportedProfiles = (CFArrayRef)CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_SupportedProfiles);
     if (!supportedProfiles || CFGetTypeID(supportedProfiles) != CFArrayGetTypeID())
-        return WTF::nullopt;
+        return std::nullopt;
 
     int16_t generalProfileIDC = parameters.generalProfileIDC;
     auto cfGeneralProfileIDC = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt16Type, &generalProfileIDC));
     auto searchRange = CFRangeMake(0, CFArrayGetCount(supportedProfiles));
     if (!CFArrayContainsValue(supportedProfiles, searchRange, cfGeneralProfileIDC.get()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto perProfileSupport = (CFDictionaryRef)CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_PerProfileSupport);
     if (!perProfileSupport || CFGetTypeID(perProfileSupport) != CFDictionaryGetTypeID())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto generalProfileIDCString = String::number(generalProfileIDC).createCFString();
     auto profileSupport = (CFDictionaryRef)CFDictionaryGetValue(perProfileSupport, generalProfileIDCString.get());
     if (!profileSupport || CFGetTypeID(profileSupport) != CFDictionaryGetTypeID())
-        return WTF::nullopt;
+        return std::nullopt;
 
     MediaCapabilitiesInfo info;
 
@@ -107,17 +107,17 @@ Optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& par
     if (cfMaxDecodeLevel && CFGetTypeID(cfMaxDecodeLevel) == CFNumberGetTypeID()) {
         int16_t maxDecodeLevel = 0;
         if (!CFNumberGetValue(cfMaxDecodeLevel, kCFNumberSInt16Type, &maxDecodeLevel))
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (parameters.generalLevelIDC > maxDecodeLevel)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     auto cfMaxPlaybackLevel = (CFNumberRef)CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxPlaybackLevel);
     if (cfMaxPlaybackLevel && CFGetTypeID(cfMaxPlaybackLevel) == CFNumberGetTypeID()) {
         int16_t maxPlaybackLevel = 0;
         if (!CFNumberGetValue(cfMaxPlaybackLevel, kCFNumberSInt16Type, &maxPlaybackLevel))
-            return WTF::nullopt;
+            return std::nullopt;
 
         info.smooth = parameters.generalLevelIDC <= maxPlaybackLevel;
     }
@@ -137,29 +137,29 @@ static CMVideoCodecType codecType(DoViParameters::Codec codec)
     }
 }
 
-static Optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(CFDictionaryRef dictionary, const void* key)
+static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(CFDictionaryRef dictionary, const void* key)
 {
     auto value = CFDictionaryGetValue(dictionary, key);
     if (!value || CFGetTypeID(value) != CFArrayGetTypeID())
-        return WTF::nullopt;
+        return std::nullopt;
     NSArray *array = (__bridge NSArray *)value;
     Vector<uint16_t> vector;
     vector.reserveInitialCapacity(array.count);
     for (id value in array) {
         if (![value isKindOfClass:NSString.class])
-            return WTF::nullopt;
+            return std::nullopt;
         auto numericValue = parseInteger<uint16_t>(String((NSString *)value));
         if (!numericValue)
-            return WTF::nullopt;
+            return std::nullopt;
         vector.uncheckedAppend(*numericValue);
     }
     return vector;
 }
 
-Optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
+std::optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     if (hasAlphaChannel)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hdrSupport) {
         // Platform supports HDR playback of HEVC Main10 Profile, which is signalled by DoVi profiles 4, 5, 7, & 8.
@@ -170,39 +170,39 @@ Optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& par
         case 8:
             break;
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
     OSStatus status = VTSelectAndCreateVideoDecoderInstance(codecType(parameters.codec), kCFAllocatorDefault, nullptr, nullptr);
     if (status != noErr)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!canLoad_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary()
         || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_SupportedProfiles()
         || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_SupportedLevels()
         || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_IsHardwareAccelerated())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto capabilities = adoptCF(VTCopyHEVCDecoderCapabilitiesDictionary());
     if (!capabilities)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto supportedProfiles = parseStringArrayFromDictionaryToUInt16Vector(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedProfiles);
     if (!supportedProfiles)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto supportedLevels = parseStringArrayFromDictionaryToUInt16Vector(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedLevels);
     if (!supportedLevels)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto isHardwareAcceleratedCF = (CFBooleanRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_IsHardwareAccelerated);
     if (!isHardwareAcceleratedCF || CFGetTypeID(isHardwareAcceleratedCF) != CFBooleanGetTypeID())
-        return WTF::nullopt;
+        return std::nullopt;
     bool isHardwareAccelerated = CFBooleanGetValue(isHardwareAcceleratedCF);
 
     if (!supportedProfiles.value().contains(parameters.bitstreamProfileID) || !supportedLevels.value().contains(parameters.bitstreamLevelID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { true, true, isHardwareAccelerated } };
 }

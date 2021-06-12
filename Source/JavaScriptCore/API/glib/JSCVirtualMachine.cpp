@@ -23,8 +23,8 @@
 #include "JSCContextPrivate.h"
 #include "JSCVirtualMachinePrivate.h"
 #include "JSContextRef.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -49,7 +49,7 @@ struct _JSCVirtualMachinePrivate {
 
 WEBKIT_DEFINE_TYPE(JSCVirtualMachine, jsc_virtual_machine, G_TYPE_OBJECT)
 
-static CheckedLock wrapperCacheMutex;
+static Lock wrapperCacheMutex;
 
 static HashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap() WTF_REQUIRES_LOCK(wrapperCacheMutex)
 {

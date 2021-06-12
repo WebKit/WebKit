@@ -58,7 +58,7 @@ public:
 
     SampleFlags flags() const override;
     PlatformSample platformSample() override;
-    Optional<ByteRange> byteRange() const override;
+    std::optional<ByteRange> byteRange() const override;
     void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
@@ -103,7 +103,7 @@ protected:
     {
     }
 
-    Optional<MediaSample::ByteRange> byteRangeForAttachment(CFStringRef key) const;
+    std::optional<MediaSample::ByteRange> byteRangeForAttachment(CFStringRef key) const;
 
     virtual ~MediaSampleAVFObjC() = default;
     RetainPtr<CMSampleBufferRef> m_sample;

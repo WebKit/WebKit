@@ -559,7 +559,7 @@ void CachedImage::updateBuffer(SharedBuffer& data)
     CachedResource::updateBuffer(data);
 }
 
-void CachedImage::updateData(const char* data, unsigned length)
+void CachedImage::updateData(const uint8_t* data, unsigned length)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
     updateBufferInternal(SharedBuffer::create(data, length));

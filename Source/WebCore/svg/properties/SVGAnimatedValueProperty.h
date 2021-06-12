@@ -86,7 +86,7 @@ public:
     // Managing the relationship with the owner.
     void setDirty() override { m_baseVal->setDirty(); }
     bool isDirty() const override { return m_baseVal->isDirty(); }
-    Optional<String> synchronize() override { return m_baseVal->synchronize(); }
+    std::optional<String> synchronize() override { return m_baseVal->synchronize(); }
 
     // Used by RenderSVGElements and DumpRenderTree.
     const ValueType& currentValue() const

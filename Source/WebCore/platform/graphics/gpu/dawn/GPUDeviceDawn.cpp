@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>& options)
+RefPtr<GPUDevice> GPUDevice::tryCreate(const std::optional<GPURequestAdapterOptions>& options)
 {
     return nullptr;
 }

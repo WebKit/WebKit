@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <vector>
 
 #include <openssl/bio.h>
 #include <openssl/bytestring.h>
@@ -30,7 +31,7 @@
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
 
-#include "../internal.h"
+#include "../../crypto/internal.h"
 #include "./fuzzer_tags.h"
 
 namespace {
@@ -324,7 +325,7 @@ class TLSFuzzer {
         MoveBIOs(ssl_handoff.get(), ssl.get());
         // Ordinarily we would call SSL_serialize_handoff(ssl.get().  But for
         // fuzzing, use the serialized handoff that's getting fuzzed.
-        if (!SSL_apply_handoff(ssl_handoff.get(), handoff_)) {
+        if (!bssl::SSL_apply_handoff(ssl_handoff.get(), handoff_)) {
           if (debug_) {
             fprintf(stderr, "Handoff failed.\n");
           }
@@ -334,7 +335,7 @@ class TLSFuzzer {
       } else if (ret < 0 &&
                  SSL_get_error(ssl_handshake, ret) == SSL_ERROR_HANDBACK) {
         MoveBIOs(ssl_handback.get(), ssl_handoff.get());
-        if (!SSL_apply_handback(ssl_handback.get(), handback_)) {
+        if (!bssl::SSL_apply_handback(ssl_handback.get(), handback_)) {
           if (debug_) {
             fprintf(stderr, "Handback failed.\n");
           }
@@ -497,7 +498,8 @@ class TLSFuzzer {
           if (!CBS_get_u24_length_prefixed(cbs, &handoff)) {
             return nullptr;
           }
-          handoff_.CopyFrom(handoff);
+          handoff_.assign(CBS_data(&handoff),
+                          CBS_data(&handoff) + CBS_len(&handoff));
           bssl::SSL_set_handoff_mode(ssl.get(), 1);
           break;
         }
@@ -507,8 +509,18 @@ class TLSFuzzer {
           if (!CBS_get_u24_length_prefixed(cbs, &handback)) {
             return nullptr;
           }
-          handback_.CopyFrom(handback);
+          handback_.assign(CBS_data(&handback),
+                           CBS_data(&handback) + CBS_len(&handback));
           bssl::SSL_set_handoff_mode(ssl.get(), 1);
+          break;
+        }
+
+        case kHintsTag: {
+          CBS hints;
+          if (!CBS_get_u24_length_prefixed(cbs, &hints)) {
+            return nullptr;
+          }
+          SSL_set_handshake_hints(ssl.get(), CBS_data(&hints), CBS_len(&hints));
           break;
         }
 
@@ -567,7 +579,7 @@ class TLSFuzzer {
   Protocol protocol_;
   Role role_;
   bssl::UniquePtr<SSL_CTX> ctx_;
-  bssl::Array<uint8_t> handoff_, handback_;
+  std::vector<uint8_t> handoff_, handback_;
 };
 
 const BIO_METHOD TLSFuzzer::kBIOMethod = {

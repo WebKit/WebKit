@@ -62,7 +62,41 @@ class AutomaticThreadCondition;
 // a task at random. So long as any client has a task, all threads in the pool will continue
 // running the available tasks. Threads go idle when no client has tasks to run.
 
-class ParallelHelperPool;
+class ParallelHelperClient;
+
+class ParallelHelperPool : public ThreadSafeRefCounted<ParallelHelperPool> {
+public:
+    WTF_EXPORT_PRIVATE ParallelHelperPool(CString&& threadName);
+    WTF_EXPORT_PRIVATE ~ParallelHelperPool();
+
+    WTF_EXPORT_PRIVATE void ensureThreads(unsigned numThreads);
+
+    unsigned numberOfThreads() const { return m_numThreads; }
+    
+    WTF_EXPORT_PRIVATE void doSomeHelping();
+
+private:
+    friend class ParallelHelperClient;
+    class Thread;
+    friend class Thread;
+
+    void didMakeWorkAvailable(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
+
+    bool hasClientWithTask() WTF_REQUIRES_LOCK(m_lock);
+    ParallelHelperClient* getClientWithTask() WTF_REQUIRES_LOCK(m_lock);
+    
+    Box<Lock> m_lock; // AutomaticThread wants this in a box for safety.
+    Ref<AutomaticThreadCondition> m_workAvailableCondition;
+    Condition m_workCompleteCondition;
+
+    WeakRandom m_random;
+    
+    Vector<ParallelHelperClient*> m_clients WTF_GUARDED_BY_LOCK(*m_lock);
+    Vector<RefPtr<AutomaticThread>> m_threads;
+    CString m_threadName;
+    unsigned m_numThreads { 0 }; // This can be larger than m_threads.size() because we start threads only once there is work.
+    bool m_isDying { false };
+};
 
 // A client is a placeholder for a parallel algorithm. A parallel algorithm will have a task that
 // can be run concurrently. Whenever a client has a task set (you have called setTask() or
@@ -141,7 +175,7 @@ public:
     {
         setTask(createSharedTask<void ()>(functor));
     }
-    
+
     WTF_EXPORT_PRIVATE void finish();
 
     WTF_EXPORT_PRIVATE void doSomeHelping();
@@ -168,48 +202,13 @@ public:
 private:
     friend class ParallelHelperPool;
 
-    void finish(const AbstractLocker&);
-    RefPtr<SharedTask<void ()>> claimTask(const AbstractLocker&);
+    void finishWithLock() WTF_REQUIRES_LOCK(*m_pool->m_lock);
+    RefPtr<SharedTask<void ()>> claimTask() WTF_REQUIRES_LOCK(*m_pool->m_lock);
     void runTask(const RefPtr<SharedTask<void ()>>&);
-    
+
     RefPtr<ParallelHelperPool> m_pool;
     RefPtr<SharedTask<void ()>> m_task;
     unsigned m_numActive { 0 };
-};
-
-class ParallelHelperPool : public ThreadSafeRefCounted<ParallelHelperPool> {
-public:
-    WTF_EXPORT_PRIVATE ParallelHelperPool(CString&& threadName);
-    WTF_EXPORT_PRIVATE ~ParallelHelperPool();
-
-    WTF_EXPORT_PRIVATE void ensureThreads(unsigned numThreads);
-
-    unsigned numberOfThreads() const { return m_numThreads; }
-    
-    WTF_EXPORT_PRIVATE void doSomeHelping();
-
-private:
-    friend class ParallelHelperClient;
-    class Thread;
-    friend class Thread;
-
-    void didMakeWorkAvailable(const AbstractLocker&);
-
-    bool hasClientWithTask(const AbstractLocker&);
-    ParallelHelperClient* getClientWithTask(const AbstractLocker&);
-    ParallelHelperClient* waitForClientWithTask(const AbstractLocker&);
-    
-    Box<Lock> m_lock; // AutomaticThread wants this in a box for safety.
-    Ref<AutomaticThreadCondition> m_workAvailableCondition;
-    Condition m_workCompleteCondition;
-
-    WeakRandom m_random;
-    
-    Vector<ParallelHelperClient*> m_clients;
-    Vector<RefPtr<AutomaticThread>> m_threads;
-    CString m_threadName;
-    unsigned m_numThreads { 0 }; // This can be larger than m_threads.size() because we start threads only once there is work.
-    bool m_isDying { false };
 };
 
 } // namespace WTF

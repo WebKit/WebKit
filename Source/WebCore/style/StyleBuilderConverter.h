@@ -27,7 +27,7 @@
 #pragma once
 
 #include "BasicShapeFunctions.h"
-#include "CSSCalculationValue.h"
+#include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleValue.h"
@@ -42,6 +42,8 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSReflectValue.h"
+#include "CalcExpressionLength.h"
+#include "CalcExpressionOperation.h"
 #include "FontSelectionValueInlines.h"
 #include "Frame.h"
 #include "GridPositionsResolver.h"
@@ -56,7 +58,6 @@
 #include "TabSize.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 namespace Style {
@@ -115,12 +116,12 @@ public:
 #endif
     static GridTrackSize convertGridTrackSize(BuilderState&, const CSSValue&);
     static Vector<GridTrackSize> convertGridTrackSizeList(BuilderState&, const CSSValue&);
-    static Optional<GridPosition> convertGridPosition(BuilderState&, const CSSValue&);
+    static std::optional<GridPosition> convertGridPosition(BuilderState&, const CSSValue&);
     static GridAutoFlow convertGridAutoFlow(BuilderState&, const CSSValue&);
-    static Optional<Length> convertWordSpacing(BuilderState&, const CSSValue&);
-    static Optional<float> convertPerspective(BuilderState&, const CSSValue&);
-    static Optional<Length> convertMarqueeIncrement(BuilderState&, const CSSValue&);
-    static Optional<FilterOperations> convertFilterOperations(BuilderState&, const CSSValue&);
+    static std::optional<Length> convertWordSpacing(BuilderState&, const CSSValue&);
+    static std::optional<float> convertPerspective(BuilderState&, const CSSValue&);
+    static std::optional<Length> convertMarqueeIncrement(BuilderState&, const CSSValue&);
+    static std::optional<FilterOperations> convertFilterOperations(BuilderState&, const CSSValue&);
 #if PLATFORM(IOS_FAMILY)
     static bool convertTouchCallout(BuilderState&, const CSSValue&);
 #endif
@@ -135,7 +136,7 @@ public:
     static bool convertSmoothScrolling(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
     static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
-    static Optional<FontSelectionValue> convertFontStyleFromValue(const CSSValue&);
+    static std::optional<FontSelectionValue> convertFontStyleFromValue(const CSSValue&);
     static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStretch(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
@@ -151,7 +152,7 @@ public:
     static StyleContentAlignmentData convertContentAlignmentData(BuilderState&, const CSSValue&);
     static GlyphOrientation convertGlyphOrientation(BuilderState&, const CSSValue&);
     static GlyphOrientation convertGlyphOrientationOrAuto(BuilderState&, const CSSValue&);
-    static Optional<Length> convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
+    static std::optional<Length> convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
     static FontSynthesis convertFontSynthesis(BuilderState&, const CSSValue&);
     
     static BreakBetween convertPageBreakBetween(BuilderState&, const CSSValue&);
@@ -920,11 +921,11 @@ inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState&, c
 {
     auto& values = downcast<CSSValueList>(value);
     ScrollSnapAlign alignment;
-    alignment.y = downcast<CSSPrimitiveValue>(*values.item(0));
+    alignment.blockAlign = downcast<CSSPrimitiveValue>(*values.item(0));
     if (values.length() == 1)
-        alignment.x = alignment.y;
+        alignment.inlineAlign = alignment.blockAlign;
     else
-        alignment.x = downcast<CSSPrimitiveValue>(*values.item(1));
+        alignment.inlineAlign = downcast<CSSPrimitiveValue>(*values.item(1));
     return alignment;
 }
 
@@ -1058,8 +1059,7 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
     // auto | <custom-ident> | [ <integer> && <custom-ident>? ] | [ span && [ <integer> || <custom-ident> ] ]
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-        // We translate <ident> to <string> during parsing as it makes handling it simpler.
-        if (primitiveValue.isString()) {
+        if (primitiveValue.isCustomIdent()) {
             position.setNamedGridArea(primitiveValue.stringValue());
             return true;
         }
@@ -1088,7 +1088,7 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
     }
 
     String gridLineName;
-    if (currentValue && currentValue->isString()) {
+    if (currentValue && currentValue->isCustomIdent()) {
         gridLineName = currentValue->stringValue();
         ++it;
     }
@@ -1139,12 +1139,12 @@ inline GridTrackSize BuilderConverter::convertGridTrackSize(BuilderState& builde
     return createGridTrackSize(value, builderState);
 }
 
-inline Optional<GridPosition> BuilderConverter::convertGridPosition(BuilderState&, const CSSValue& value)
+inline std::optional<GridPosition> BuilderConverter::convertGridPosition(BuilderState&, const CSSValue& value)
 {
     GridPosition gridPosition;
     if (createGridPosition(value, gridPosition))
         return gridPosition;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState&, const CSSValue& value)
@@ -1203,9 +1203,9 @@ inline CSSToLengthConversionData BuilderConverter::csstoLengthConversionDataWith
     return builderState.cssToLengthConversionData().copyWithAdjustedZoom(zoom);
 }
 
-inline Optional<Length> BuilderConverter::convertWordSpacing(BuilderState& builderState, const CSSValue& value)
+inline std::optional<Length> BuilderConverter::convertWordSpacing(BuilderState& builderState, const CSSValue& value)
 {
-    Optional<Length> wordSpacing;
+    std::optional<Length> wordSpacing;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNormal)
         wordSpacing = RenderStyle::initialWordSpacing();
@@ -1219,7 +1219,7 @@ inline Optional<Length> BuilderConverter::convertWordSpacing(BuilderState& build
     return wordSpacing;
 }
 
-inline Optional<float> BuilderConverter::convertPerspective(BuilderState& builderState, const CSSValue& value)
+inline std::optional<float> BuilderConverter::convertPerspective(BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNone)
@@ -1233,23 +1233,23 @@ inline Optional<float> BuilderConverter::convertPerspective(BuilderState& builde
     else
         ASSERT_NOT_REACHED();
 
-    return perspective < 0 ? Optional<float>(WTF::nullopt) : Optional<float>(perspective);
+    return perspective < 0 ? std::optional<float>(std::nullopt) : std::optional<float>(perspective);
 }
 
-inline Optional<Length> BuilderConverter::convertMarqueeIncrement(BuilderState& builderState, const CSSValue& value)
+inline std::optional<Length> BuilderConverter::convertMarqueeIncrement(BuilderState& builderState, const CSSValue& value)
 {
     Length length = downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
     if (length.isUndefined())
-        return WTF::nullopt;
+        return std::nullopt;
     return length;
 }
 
-inline Optional<FilterOperations> BuilderConverter::convertFilterOperations(BuilderState& builderState, const CSSValue& value)
+inline std::optional<FilterOperations> BuilderConverter::convertFilterOperations(BuilderState& builderState, const CSSValue& value)
 {
     FilterOperations operations;
     if (builderState.createFilterOperations(value, operations))
         return operations;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState&, const CSSValue& value)
@@ -1305,15 +1305,15 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
     return normalStretchValue();
 }
 
-// The input value needs to parsed and valid, this function returns WTF::nullopt if the input was "normal".
-inline Optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(const CSSValue& value)
+// The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
+inline std::optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(const CSSValue& value)
 {
     ASSERT(is<CSSFontStyleValue>(value));
     const auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
 
     auto valueID = fontStyleValue.fontStyleValue->valueID();
     if (valueID == CSSValueNormal)
-        return WTF::nullopt;
+        return std::nullopt;
     if (valueID == CSSValueItalic)
         return italicValue();
     ASSERT(valueID == CSSValueOblique);
@@ -1529,7 +1529,7 @@ inline GlyphOrientation BuilderConverter::convertGlyphOrientationOrAuto(BuilderS
     return convertGlyphOrientation(builderState, value);
 }
 
-inline Optional<Length> BuilderConverter::convertLineHeight(BuilderState& builderState, const CSSValue& value, float multiplier)
+inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& builderState, const CSSValue& value, float multiplier)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNormal)
@@ -1558,7 +1558,7 @@ inline Optional<Length> BuilderConverter::convertLineHeight(BuilderState& builde
 
     // FIXME: The parser should only emit the above types, so this should never be reached. We should change the
     // type of this function to return just a Length (and not an Optional).
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline FontSynthesis BuilderConverter::convertFontSynthesis(BuilderState&, const CSSValue& value)

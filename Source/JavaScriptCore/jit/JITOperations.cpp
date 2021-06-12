@@ -32,11 +32,9 @@
 #include "ArrayConstructor.h"
 #include "CacheableIdentifierInlines.h"
 #include "CommonSlowPathsInlines.h"
-#include "DFGCompilationMode.h"
 #include "DFGDriver.h"
 #include "DFGOSREntry.h"
 #include "DFGThunks.h"
-#include "DFGWorklist.h"
 #include "Debugger.h"
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
@@ -46,6 +44,7 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JITToDFGDeferredCompilationCallback.h"
+#include "JITWorklist.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
@@ -395,7 +394,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisOptimize, EncodedJSValue, (JSGl
     }));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationInById, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
+JSC_DEFINE_JIT_OPERATION(operationInByIdGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -416,7 +415,7 @@ JSC_DEFINE_JIT_OPERATION(operationInById, EncodedJSValue, (JSGlobalObject* globa
     }
     JSObject* baseObject = asObject(baseValue);
 
-    LOG_IC((ICEvent::OperationInById, baseObject->classInfo(vm), ident));
+    LOG_IC((ICEvent::OperationInByIdGeneric, baseObject->classInfo(vm), ident));
 
     scope.release();
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
@@ -449,19 +448,64 @@ JSC_DEFINE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (JSGlobalObjec
     bool found = baseObject->getPropertySlot(globalObject, ident, slot);
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
-        repatchInByID(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo);
+        repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::Normal);
     return JSValue::encode(jsBoolean(found));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationInByVal, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue key))
+JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* arrayProfile, EncodedJSValue encodedBase, EncodedJSValue encodedKey))
 {
     SuperSamplerScope superSamplerScope(false);
-    
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    if (!baseValue.isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
+        return encodedJSValue();
+    }
+    JSObject* baseObject = asObject(baseValue);
+    if (arrayProfile)
+        arrayProfile->observeStructure(baseObject->structure(vm));
+
+    JSValue key = JSValue::decode(encodedKey);
+    uint32_t i;
+    if (key.getUInt32(i)) {
+        // FIXME: InByVal should have inline caching for integer indices too, as GetByVal does.
+        // https://bugs.webkit.org/show_bug.cgi?id=226619
+        if (arrayProfile)
+            arrayProfile->observeIndexedRead(vm, baseObject, i);
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(baseObject->hasProperty(globalObject, i))));
+    }
+
+    const Identifier propertyName = key.toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
+    bool found = baseObject->getPropertySlot(globalObject, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    if (CacheableIdentifier::isCacheableIdentifierCell(key) && (key.isSymbol() || !parseIndex(propertyName))) {
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        CacheableIdentifier identifier = CacheableIdentifier::createFromCell(key.asCell());
+        if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
+            repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::NormalByVal);
+    }
+
+    return JSValue::encode(jsBoolean(found));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationInByValGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* arrayProfile, EncodedJSValue base, EncodedJSValue key))
+{
+    SuperSamplerScope superSamplerScope(false);
+
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, JSValue::decode(key))));
+    stubInfo->tookSlowPath = true;
+    return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, JSValue::decode(base), JSValue::decode(key), arrayProfile)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationHasPrivateName, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue key))
@@ -821,7 +865,7 @@ static void putByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue su
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+    if (std::optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
         byValInfo->tookSlowPath = true;
         uint32_t i = *index;
         if (baseValue.isObject()) {
@@ -864,7 +908,7 @@ static void directPutByVal(JSGlobalObject* globalObject, JSObject* baseObject, J
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (Optional<uint32_t> maybeIndex = subscript.tryGetAsUint32Index()) {
+    if (std::optional<uint32_t> maybeIndex = subscript.tryGetAsUint32Index()) {
         byValInfo->tookSlowPath = true;
         uint32_t index = *maybeIndex;
 
@@ -890,7 +934,7 @@ static void directPutByVal(JSGlobalObject* globalObject, JSObject* baseObject, J
     auto property = subscript.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (Optional<uint32_t> index = parseIndex(property)) {
+    if (std::optional<uint32_t> index = parseIndex(property)) {
         byValInfo->tookSlowPath = true;
         scope.release();
         baseObject->putDirectIndex(globalObject, index.value(), value, 0, ecmaMode.isStrict() ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
@@ -1898,40 +1942,28 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         return encodeResult(nullptr, nullptr);
     }
 
-    // We cannot be in the process of asynchronous compilation and also have an optimized
-    // replacement.
-    DFG::Worklist* worklist = DFG::existingGlobalDFGWorklistOrNull();
-    ASSERT(
-        !worklist
-        || !(worklist->compilationState(DFG::CompilationKey(codeBlock, DFG::DFGMode)) != DFG::Worklist::NotKnown
-        && codeBlock->hasOptimizedReplacement()));
+    // The call to JITWorklist::completeAllReadyPlansForVM() will complete all ready
+    // (i.e. compiled) code blocks. But if it completes ours, we also need to know
+    // what the result was so that we don't plow ahead and attempt OSR or immediate
+    // reoptimization. This will have already also set the appropriate JIT execution
+    // count threshold depending on what happened, so if the compilation was anything
+    // but successful we just want to return early. See the case for worklistState ==
+    // JITWorklist::Compiled, below.
 
-    DFG::Worklist::State worklistState;
-    if (worklist) {
-        // The call to DFG::Worklist::completeAllReadyPlansForVM() will complete all ready
-        // (i.e. compiled) code blocks. But if it completes ours, we also need to know
-        // what the result was so that we don't plow ahead and attempt OSR or immediate
-        // reoptimization. This will have already also set the appropriate JIT execution
-        // count threshold depending on what happened, so if the compilation was anything
-        // but successful we just want to return early. See the case for worklistState ==
-        // DFG::Worklist::Compiled, below.
-        
-        // Note that we could have alternatively just called Worklist::compilationState()
-        // here, and if it returned Compiled, we could have then called
-        // completeAndScheduleOSR() below. But that would have meant that it could take
-        // longer for code blocks to be completed: they would only complete when *their*
-        // execution count trigger fired; but that could take a while since the firing is
-        // racy. It could also mean that code blocks that never run again after being
-        // compiled would sit on the worklist until next GC. That's fine, but it's
-        // probably a waste of memory. Our goal here is to complete code blocks as soon as
-        // possible in order to minimize the chances of us executing baseline code after
-        // optimized code is already available.
-        worklistState = worklist->completeAllReadyPlansForVM(
-            vm, DFG::CompilationKey(codeBlock, DFG::DFGMode));
-    } else
-        worklistState = DFG::Worklist::NotKnown;
+    // Note that we could have alternatively just called Worklist::compilationState()
+    // here, and if it returned Compiled, we could have then called
+    // completeAndScheduleOSR() below. But that would have meant that it could take
+    // longer for code blocks to be completed: they would only complete when *their*
+    // execution count trigger fired; but that could take a while since the firing is
+    // racy. It could also mean that code blocks that never run again after being
+    // compiled would sit on the worklist until next GC. That's fine, but it's
+    // probably a waste of memory. Our goal here is to complete code blocks as soon as
+    // possible in order to minimize the chances of us executing baseline code after
+    // optimized code is already available.
+    JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(
+        vm, JITCompilationKey(codeBlock, JITCompilationMode::DFG));
 
-    if (worklistState == DFG::Worklist::Compiling) {
+    if (worklistState == JITWorklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("compiling"));
         // We cannot be in the process of asynchronous compilation and also have an optimized
         // replacement.
@@ -1940,7 +1972,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         return encodeResult(nullptr, nullptr);
     }
 
-    if (worklistState == DFG::Worklist::Compiled) {
+    if (worklistState == JITWorklist::Compiled) {
         // If we don't have an optimized replacement but we did just get compiled, then
         // the compilation failed or was invalidated, in which case the execution count
         // thresholds have already been set appropriately by
@@ -1991,7 +2023,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         if (bytecodeIndex)
             numVarsWithValues = codeBlock->numCalleeLocals();
 
-        Operands<Optional<JSValue>> mustHandleValues(codeBlock->numParameters(), numVarsWithValues, 0);
+        Operands<std::optional<JSValue>> mustHandleValues(codeBlock->numParameters(), numVarsWithValues, 0);
         int localsUsedForCalleeSaves = static_cast<int>(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters());
         for (size_t i = 0; i < mustHandleValues.size(); ++i) {
             Operand operand = mustHandleValues.operandForIndex(i);
@@ -2003,7 +2035,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
 
         CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
         CompilationResult result = DFG::compile(
-            vm, replacementCodeBlock, nullptr, DFG::DFGMode, bytecodeIndex,
+            vm, replacementCodeBlock, nullptr, JITCompilationMode::DFG, bytecodeIndex,
             mustHandleValues, JITToDFGDeferredCompilationCallback::create());
         
         if (result != CompilationSuccessful) {
@@ -2250,7 +2282,7 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
         }
     }
 
-    if (Optional<int32_t> index = subscript.tryGetAsInt32()) {
+    if (std::optional<int32_t> index = subscript.tryGetAsInt32()) {
         int32_t i = *index;
         if (isJSString(baseValue)) {
             if (i >= 0 && asString(baseValue)->canGetIndex(i))
@@ -2362,7 +2394,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByVal, EncodedJSValue, (JSGlobalObject* glo
     if (LIKELY(baseValue.isCell())) {
         JSCell* base = baseValue.asCell();
 
-        if (Optional<uint32_t> index = property.tryGetAsUint32Index())
+        if (std::optional<uint32_t> index = property.tryGetAsUint32Index())
             RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, *index));
 
         if (property.isString()) {
@@ -2897,6 +2929,60 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);
 }
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject* globalObject, const Instruction* pc))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+
+    auto bytecode = pc->as<OpResolveScope>();
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
+    JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
+    JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
+    // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    auto& metadata = bytecode.metadata(codeBlock);
+    ResolveType resolveType = metadata.m_resolveType;
+
+    // ModuleVar does not keep the scope register value alive in DFG.
+    ASSERT(resolveType != ModuleVar);
+
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks:
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks: {
+        if (resolvedScope->isGlobalObject()) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
+            bool hasProperty = globalObject->hasProperty(globalObject, ident);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            if (hasProperty) {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
+                metadata.m_globalObject.set(vm, codeBlock, globalObject);
+                metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
+            }
+        } else if (resolvedScope->isGlobalLexicalEnvironment()) {
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+
+    return JSValue::encode(resolvedScope);
+}
+#endif
 
 JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const Instruction* pc))
 {

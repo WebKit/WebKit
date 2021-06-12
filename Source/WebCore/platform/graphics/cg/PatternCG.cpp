@@ -30,7 +30,7 @@
 #if USE(CG)
 
 #include "AffineTransform.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MainThread.h>
@@ -43,7 +43,7 @@ static void patternCallback(void* info, CGContextRef context)
     if (!platformImage)
         return;
 
-    CGRect rect = GraphicsContext(context).roundToDevicePixels(
+    CGRect rect = GraphicsContextCG(context).roundToDevicePixels(
         FloatRect(0, 0, CGImageGetWidth(platformImage), CGImageGetHeight(platformImage)));
     CGContextDrawImage(context, rect, platformImage);
 }

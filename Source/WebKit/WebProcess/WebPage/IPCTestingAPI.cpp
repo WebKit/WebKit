@@ -209,17 +209,17 @@ static JSValueRef createTypeError(JSContextRef context, const String& message)
     return toRef(JSC::createTypeError(toJS(context), message));
 }
 
-static Optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
+static std::optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
 {
     if (jsValue.isNumber()) {
         double value = jsValue.asNumber();
         if (value < 0 || trunc(value) != value)
-            return WTF::nullopt;
+            return std::nullopt;
         return value;
     }
     if (jsValue.isBigInt())
         return JSC::JSBigInt::toBigUInt64(jsValue);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 JSObjectRef JSIPCSemaphore::createJSWrapper(JSContextRef context)
@@ -665,7 +665,7 @@ JSValueRef JSIPC::addOutgoingMessageListener(JSContextRef context, JSObjectRef, 
     return JSValueMakeUndefined(context);
 }
 
-static Optional<uint64_t> destinationIDFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
+static std::optional<uint64_t> destinationIDFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
 {
     auto jsValue = toJS(globalObject, valueRef);
     auto result = convertToUint64(jsValue);
@@ -674,7 +674,7 @@ static Optional<uint64_t> destinationIDFromArgument(JSC::JSGlobalObject* globalO
     return result;
 }
 
-static Optional<uint64_t> messageIDFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
+static std::optional<uint64_t> messageIDFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
 {
     auto jsValue = toJS(globalObject, valueRef);
     auto result = convertToUint64(jsValue);
@@ -744,14 +744,14 @@ template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JS
 
 #if ENABLE(GPU_PROCESS)
 template <typename ObjectIdentifierType>
-Optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::CatchScope& scope)
+std::optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::CatchScope& scope)
 {
     auto jsPropertyValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), propertyName));
     if (scope.exception())
-        return WTF::nullopt;
+        return std::nullopt;
     auto number = convertToUint64(jsPropertyValue);
     if (!number)
-        return WTF::nullopt;
+        return std::nullopt;
     return makeObjectIdentifier<ObjectIdentifierType>(*number);
 }
 
@@ -1270,7 +1270,7 @@ JSValueRef JSIPC::createSharedMemory(JSContextRef context, JSObjectRef, JSObject
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
 
-    auto size = argumentCount ? convertToUint64(toJS(globalObject, arguments[0])) : Optional<uint64_t> { };
+    auto size = argumentCount ? convertToUint64(toJS(globalObject, arguments[0])) : std::optional<uint64_t> { };
     if (!size) {
         *exception = createTypeError(context, "Must specify the size"_s);
         return JSValueMakeUndefined(context);
@@ -1342,7 +1342,7 @@ JSValueRef JSIPC::retrieveID(JSContextRef context, JSObjectRef thisObject, JSVal
     return toRef(vm, jsValue);
 }
 
-static JSC::JSValue createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* globalObject, Optional<Vector<IPC::ArgumentDescription>>&& argumentDescriptions)
+static JSC::JSValue createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* globalObject, std::optional<Vector<IPC::ArgumentDescription>>&& argumentDescriptions)
 {
     if (!argumentDescriptions)
         return JSC::jsNull();

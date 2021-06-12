@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ISOProtectionSystemSpecificHeaderBox.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -93,17 +92,17 @@ public:
     static FourCC boxTypeName() { return "fpsk"; }
 
     const ISOFairPlayStreamingKeyRequestInfoBox& requestInfo() const { return m_requestInfo; }
-    const Optional<ISOFairPlayStreamingKeyAssetIdBox>& assetID() const { return m_assetID; }
-    const Optional<ISOFairPlayStreamingKeyContextBox>& content() const { return m_context; }
-    const Optional<ISOFairPlayStreamingKeyVersionListBox>& versionList() const { return m_versionList; }
+    const std::optional<ISOFairPlayStreamingKeyAssetIdBox>& assetID() const { return m_assetID; }
+    const std::optional<ISOFairPlayStreamingKeyContextBox>& content() const { return m_context; }
+    const std::optional<ISOFairPlayStreamingKeyVersionListBox>& versionList() const { return m_versionList; }
 
 private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
     ISOFairPlayStreamingKeyRequestInfoBox m_requestInfo;
-    Optional<ISOFairPlayStreamingKeyAssetIdBox> m_assetID;
-    Optional<ISOFairPlayStreamingKeyContextBox> m_context;
-    Optional<ISOFairPlayStreamingKeyVersionListBox> m_versionList;
+    std::optional<ISOFairPlayStreamingKeyAssetIdBox> m_assetID;
+    std::optional<ISOFairPlayStreamingKeyContextBox> m_context;
+    std::optional<ISOFairPlayStreamingKeyVersionListBox> m_versionList;
 };
 
 class WEBCORE_EXPORT ISOFairPlayStreamingInitDataBox final : public ISOBox {

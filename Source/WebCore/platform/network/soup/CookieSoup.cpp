@@ -70,9 +70,9 @@ Cookie::Cookie(SoupCookie* cookie)
     , domain(String::fromUTF8(soup_cookie_get_domain(cookie)))
     , path(String::fromUTF8(soup_cookie_get_path(cookie)))
 #if USE(SOUP2)
-    , expires(soup_cookie_get_expires(cookie) ? makeOptional(static_cast<double>(soup_date_to_time_t(soup_cookie_get_expires(cookie))) * 1000) : WTF::nullopt)
+    , expires(soup_cookie_get_expires(cookie) ? std::make_optional(static_cast<double>(soup_date_to_time_t(soup_cookie_get_expires(cookie))) * 1000) : std::nullopt)
 #else
-    , expires(soup_cookie_get_expires(cookie) ? makeOptional(static_cast<double>(g_date_time_to_unix(soup_cookie_get_expires(cookie))) * 1000) : WTF::nullopt)
+    , expires(soup_cookie_get_expires(cookie) ? std::make_optional(static_cast<double>(g_date_time_to_unix(soup_cookie_get_expires(cookie))) * 1000) : std::nullopt)
 #endif
     , httpOnly(soup_cookie_get_http_only(cookie))
     , secure(soup_cookie_get_secure(cookie))

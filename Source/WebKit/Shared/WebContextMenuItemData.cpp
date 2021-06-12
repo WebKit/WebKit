@@ -113,36 +113,36 @@ void WebContextMenuItemData::encode(IPC::Encoder& encoder) const
     encoder << m_submenu;
 }
 
-Optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decoder& decoder)
+std::optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decoder& decoder)
 {
     WebCore::ContextMenuItemType type;
     if (!decoder.decode(type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     WebCore::ContextMenuAction action;
     if (!decoder.decode(action))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String title;
     if (!decoder.decode(title))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool checked;
     if (!decoder.decode(checked))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool enabled;
     if (!decoder.decode(enabled))
-        return WTF::nullopt;
+        return std::nullopt;
 
     unsigned indentationLevel;
     if (!decoder.decode(indentationLevel))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Vector<WebContextMenuItemData>> submenu;
+    std::optional<Vector<WebContextMenuItemData>> submenu;
     decoder >> submenu;
     if (!submenu)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (type) {
     case WebCore::ActionType:
@@ -155,7 +155,7 @@ Optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decoder& de
         break;
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>& coreItemVector)

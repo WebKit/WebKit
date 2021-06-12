@@ -39,7 +39,6 @@
 #if PLATFORM(COCOA)
 #include "SharedRingBufferStorage.h"
 #include <WebCore/AudioDestinationCocoa.h>
-#include <wtf/Optional.h>
 #else
 #include <WebCore/AudioDestinationGStreamer.h>
 #endif

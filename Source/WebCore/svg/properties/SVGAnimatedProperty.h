@@ -27,7 +27,6 @@
 
 #include "SVGAttributeAnimator.h"
 #include "SVGPropertyOwner.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -51,7 +50,7 @@ public:
     // Control the synchronization between the attribute and its reflection in baseVal.
     virtual bool isDirty() const { return false; }
     virtual void setDirty() { }
-    virtual Optional<String> synchronize() { return WTF::nullopt; }
+    virtual std::optional<String> synchronize() { return std::nullopt; }
     
     // Control the animation life cycle.
     bool isAnimating() const { return m_animators.computeSize(); }

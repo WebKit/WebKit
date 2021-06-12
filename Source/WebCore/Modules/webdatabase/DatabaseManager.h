@@ -28,8 +28,8 @@
 #include "DatabaseDetails.h"
 #include "ExceptionOr.h"
 #include <wtf/Assertions.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -87,7 +87,7 @@ private:
     DatabaseManagerClient* m_client { nullptr };
     bool m_databaseIsAvailable { true };
 
-    CheckedLock m_proposedDatabasesLock;
+    Lock m_proposedDatabasesLock;
     HashSet<ProposedDatabase*> m_proposedDatabases WTF_GUARDED_BY_LOCK(m_proposedDatabasesLock);
 };
 

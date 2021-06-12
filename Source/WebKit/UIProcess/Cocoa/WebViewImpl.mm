@@ -32,7 +32,6 @@
 #import "APILegacyContextHistoryClient.h"
 #import "APINavigation.h"
 #import "AppKitSPI.h"
-#import "ColorSpaceData.h"
 #import "CoreTextHelpers.h"
 #import "FontInfo.h"
 #import "FullscreenClient.h"
@@ -66,6 +65,7 @@
 #import "WKNSURLExtras.h"
 #import "WKPDFHUDView.h"
 #import "WKPrintingView.h"
+#import "WKRevealItemPresenter.h"
 #import "WKSafeBrowsingWarning.h"
 #import <WebKit/WKShareSheet.h>
 #import "WKTextInputWindowController.h"
@@ -90,6 +90,8 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/CompositionHighlight.h>
+#import <WebCore/DataDetectorElementInfo.h>
+#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragData.h>
 #import <WebCore/DragItem.h>
@@ -118,7 +120,6 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
@@ -154,6 +155,9 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
 SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
+
+#import <pal/cocoa/RevealSoftLink.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
@@ -1513,6 +1517,7 @@ NSWindow *WebViewImpl::window()
 void WebViewImpl::handleProcessSwapOrExit()
 {
     dismissContentRelativeChildWindowsWithAnimation(true);
+    m_page->closeSharedPreviewPanelIfNecessary();
 
     notifyInputContextAboutDiscardedComposition();
 
@@ -1550,7 +1555,7 @@ void WebViewImpl::didRelaunchProcess()
 
 void WebViewImpl::setDrawsBackground(bool drawsBackground)
 {
-    Optional<WebCore::Color> backgroundColor;
+    std::optional<WebCore::Color> backgroundColor;
     if (!drawsBackground)
         backgroundColor = WebCore::Color(WebCore::Color::transparentBlack);
     m_page->setBackgroundColor(backgroundColor);
@@ -1997,7 +2002,7 @@ void WebViewImpl::updateViewExposedRect()
     if (m_useContentPreparationRectForVisibleRect)
         exposedRect = CGRectUnion(m_contentPreparationRect, exposedRect);
 
-    m_page->setViewExposedRect(m_clipsToVisibleRect ? Optional<WebCore::FloatRect>(exposedRect) : WTF::nullopt);
+    m_page->setViewExposedRect(m_clipsToVisibleRect ? std::optional<WebCore::FloatRect>(exposedRect) : std::nullopt);
 }
 
 void WebViewImpl::setClipsToVisibleRect(bool clipsToVisibleRect)
@@ -2393,6 +2398,7 @@ void WebViewImpl::viewDidMoveToWindow()
         m_flagsChangedEventMonitor = nil;
 
         dismissContentRelativeChildWindowsWithAnimation(false);
+        m_page->closeSharedPreviewPanelIfNecessary();
 
         if (m_immediateActionGestureRecognizer) {
             // Work around <rdar://problem/22646404> by explicitly cancelling the animation.
@@ -2500,21 +2506,28 @@ void WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *flagsChan
     m_page->handleMouseEvent(webEvent);
 }
 
-ColorSpaceData WebViewImpl::colorSpace()
+WebCore::DestinationColorSpace WebViewImpl::colorSpace()
 {
     if (!m_colorSpace) {
-        if (m_targetWindowForMovePreparation)
-            m_colorSpace = [m_targetWindowForMovePreparation colorSpace];
-        else if (NSWindow *window = [m_view window])
-            m_colorSpace = window.colorSpace;
-        else
+        m_colorSpace = [&] () -> NSColorSpace * {
+            if (m_targetWindowForMovePreparation)
+                return [m_targetWindowForMovePreparation colorSpace];
+            
+            if (NSWindow *window = [m_view window])
+                return [window colorSpace];
+
+            return nil;
+        }();
+
+        if (!m_colorSpace)
             m_colorSpace = [NSScreen mainScreen].colorSpace;
+    
+        if (!m_colorSpace)
+            m_colorSpace = [NSColorSpace sRGBColorSpace];
     }
 
-    ColorSpaceData colorSpaceData;
-    colorSpaceData.cgColorSpace = [m_colorSpace CGColorSpace];
-
-    return colorSpaceData;
+    ASSERT(m_colorSpace);
+    return WebCore::DestinationColorSpace { [m_colorSpace CGColorSpace] };
 }
 
 void WebViewImpl::setUnderlayColor(NSColor *underlayColor)
@@ -2540,12 +2553,12 @@ NSColor *WebViewImpl::pageExtendedBackgroundColor() const
     return WebCore::nsColor(color);
 }
 
-void WebViewImpl::setOverlayScrollbarStyle(Optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle)
+void WebViewImpl::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle)
 {
     m_page->setOverlayScrollbarStyle(scrollbarStyle);
 }
 
-Optional<WebCore::ScrollbarOverlayStyle> WebViewImpl::overlayScrollbarStyle() const
+std::optional<WebCore::ScrollbarOverlayStyle> WebViewImpl::overlayScrollbarStyle() const
 {
     return m_page->overlayScrollbarStyle();
 }
@@ -3007,7 +3020,7 @@ void WebViewImpl::showShareSheet(const WebCore::ShareDataWithParsedURL& data, WT
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:view]);
     [_shareSheet setDelegate:view];
 
-    [_shareSheet presentWithParameters:data inRect:WTF::nullopt completionHandler:WTFMove(completionHandler)];
+    [_shareSheet presentWithParameters:data inRect:std::nullopt completionHandler:WTFMove(completionHandler)];
 }
 
 void WebViewImpl::shareSheetDidDismiss(WKShareSheet *shareSheet)
@@ -3610,8 +3623,8 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
     if ([m_view window].isKeyWindow || hasActiveImmediateAction) {
         WebCore::DictionaryLookup::hidePopup();
 
-        if (DataDetectorsLibrary())
-            [[getDDActionsManagerClass() sharedManager] requestBubbleClosureUnanchorOnFailure:YES];
+        if (PAL::isDataDetectorsFrameworkAvailable())
+            [[PAL::getDDActionsManagerClass() sharedManager] requestBubbleClosureUnanchorOnFailure:YES];
     }
 
     clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::FadeOut);
@@ -4103,7 +4116,7 @@ NSDragOperation WebViewImpl::draggingEntered(id <NSDraggingInfo> draggingInfo)
     return NSDragOperationCopy;
 }
 
-static NSDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
+static NSDragOperation kit(std::optional<WebCore::DragOperation> dragOperation)
 {
     if (!dragOperation)
         return NSDragOperationNone;
@@ -5713,36 +5726,39 @@ bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)
 
 void WebViewImpl::beginPreviewPanelControl(QLPreviewPanel *panel)
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    auto controller = m_page->imageExtractionPreviewController();
-    if (!controller)
-        return;
-
-    panel.dataSource = controller;
-    panel.delegate = controller;
-#else
-    UNUSED_PARAM(panel);
-#endif
+    m_page->beginPreviewPanelControl(panel);
 }
 
 void WebViewImpl::endPreviewPanelControl(QLPreviewPanel *panel)
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    auto controller = m_page->imageExtractionPreviewController();
-    if (!controller)
-        return;
+    m_page->endPreviewPanelControl(panel);
+}
 
-    if (panel.dataSource == controller)
-        panel.dataSource = nil;
+#if ENABLE(DATA_DETECTION)
 
-    if (panel.delegate == controller)
-        panel.delegate = nil;
-
-    m_page->resetImageExtractionPreview();
+void WebViewImpl::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+#if ENABLE(REVEAL)
+    m_revealItemPresenter = adoptNS([[WKRevealItemPresenter alloc] initWithWebViewImpl:*this item:adoptNS([PAL::allocRVItemInstance() initWithDDResult:info.result.get()]).get() frame:info.elementBounds menuLocation:clickLocation]);
+    [m_revealItemPresenter setShouldUseDefaultHighlight:NO];
+    [m_revealItemPresenter showContextMenu];
 #else
-    UNUSED_PARAM(panel);
+    UNUSED_PARAM(info);
+    UNUSED_PARAM(clickLocation);
 #endif
 }
+
+#endif // ENABLE(DATA_DETECTION)
+
+#if ENABLE(REVEAL)
+
+void WebViewImpl::didFinishPresentation(WKRevealItemPresenter *presenter)
+{
+    if (presenter == m_revealItemPresenter)
+        m_revealItemPresenter = nil;
+}
+
+#endif // ENABLE(REVEAL)
 
 } // namespace WebKit
 

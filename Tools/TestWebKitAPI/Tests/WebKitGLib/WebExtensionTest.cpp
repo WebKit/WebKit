@@ -549,6 +549,7 @@ static char* echoCallback(const char* message)
 
 static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, gpointer)
 {
+    webkit_web_page_send_message_to_view(page, webkit_user_message_new("WindowObjectCleared", nullptr), nullptr, nullptr, nullptr);
     GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
     g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
     GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(jsContext.get(), "echo", G_CALLBACK(echoCallback), NULL, NULL, G_TYPE_STRING, 1, G_TYPE_STRING));
@@ -558,6 +559,11 @@ static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, W
     GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructor(fileClass, "GFile", G_CALLBACK(g_file_new_for_path), nullptr, nullptr, G_TYPE_OBJECT, 1, G_TYPE_STRING));
     jsc_class_add_method(fileClass, "path", G_CALLBACK(g_file_get_path), nullptr, nullptr, G_TYPE_STRING, 0, G_TYPE_NONE);
     jsc_context_set_value(jsContext.get(), "GFile", constructor.get());
+}
+
+static void isolatedWorldWindowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, gpointer)
+{
+    webkit_web_page_send_message_to_view(page, webkit_user_message_new("WindowObjectClearedIsolatedWorld", nullptr), nullptr, nullptr, nullptr);
 }
 
 static WebKitWebPage* getWebPage(WebKitWebExtension* extension, uint64_t pageID, GDBusMethodInvocation* invocation)
@@ -714,6 +720,7 @@ extern "C" WTF_EXPORT_DECLARATION void webkit_web_extension_initialize_with_user
     g_signal_connect(extension, "user-message-received", G_CALLBACK(extensionMessageReceivedCallback), nullptr);
     g_signal_connect(extension, "page-created", G_CALLBACK(pageCreatedCallback), extension);
     g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), nullptr);
+    g_signal_connect(isolatedWorld, "window-object-cleared", G_CALLBACK(isolatedWorldWindowObjectCleared), nullptr);
 
     registerGResource();
 

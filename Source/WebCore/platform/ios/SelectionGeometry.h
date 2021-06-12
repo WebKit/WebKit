@@ -28,15 +28,12 @@
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "WritingMode.h"
+#include <optional>
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
-enum class SelectionRenderingBehavior : uint8_t {
-    CoalesceBoundingRects,
-    UseIndividualQuads,
-};
+enum class SelectionRenderingBehavior : bool { CoalesceBoundingRects, UseIndividualQuads };
 
 class SelectionGeometry {
     WTF_MAKE_FAST_ALLOCATED;
@@ -111,7 +108,7 @@ private:
     bool m_isRubyText { false };
     int m_pageNumber { 0 };
 
-    mutable Optional<IntRect> m_cachedEnclosingRect;
+    mutable std::optional<IntRect> m_cachedEnclosingRect;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SelectionGeometry);

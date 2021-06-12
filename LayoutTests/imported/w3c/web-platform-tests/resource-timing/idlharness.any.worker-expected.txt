@@ -24,9 +24,9 @@ PASS PerformanceResourceTiming interface: attribute secureConnectionStart
 PASS PerformanceResourceTiming interface: attribute requestStart
 PASS PerformanceResourceTiming interface: attribute responseStart
 PASS PerformanceResourceTiming interface: attribute responseEnd
-FAIL PerformanceResourceTiming interface: attribute transferSize assert_true: The prototype object must have a property "transferSize" expected true got false
-FAIL PerformanceResourceTiming interface: attribute encodedBodySize assert_true: The prototype object must have a property "encodedBodySize" expected true got false
-FAIL PerformanceResourceTiming interface: attribute decodedBodySize assert_true: The prototype object must have a property "decodedBodySize" expected true got false
+PASS PerformanceResourceTiming interface: attribute transferSize
+PASS PerformanceResourceTiming interface: attribute encodedBodySize
+PASS PerformanceResourceTiming interface: attribute decodedBodySize
 PASS PerformanceResourceTiming interface: operation toJSON()
 PASS PerformanceResourceTiming must be primary interface of resource
 PASS Stringification of resource
@@ -44,11 +44,11 @@ PASS PerformanceResourceTiming interface: resource must inherit property "secure
 PASS PerformanceResourceTiming interface: resource must inherit property "requestStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "responseStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "responseEnd" with the proper type
-FAIL PerformanceResourceTiming interface: resource must inherit property "transferSize" with the proper type assert_inherits: property "transferSize" not found in prototype chain
-FAIL PerformanceResourceTiming interface: resource must inherit property "encodedBodySize" with the proper type assert_inherits: property "encodedBodySize" not found in prototype chain
-FAIL PerformanceResourceTiming interface: resource must inherit property "decodedBodySize" with the proper type assert_inherits: property "decodedBodySize" not found in prototype chain
+PASS PerformanceResourceTiming interface: resource must inherit property "transferSize" with the proper type
+PASS PerformanceResourceTiming interface: resource must inherit property "encodedBodySize" with the proper type
+PASS PerformanceResourceTiming interface: resource must inherit property "decodedBodySize" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "toJSON()" with the proper type
-FAIL PerformanceResourceTiming interface: default toJSON operation on resource assert_true: property "transferSize" should be present in the output of PerformanceResourceTiming.prototype.toJSON() expected true got false
+PASS PerformanceResourceTiming interface: default toJSON operation on resource
 PASS Performance interface: operation clearResourceTimings()
 PASS Performance interface: operation setResourceTimingBufferSize(unsigned long)
 PASS Performance interface: attribute onresourcetimingbufferfull

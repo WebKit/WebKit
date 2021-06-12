@@ -69,7 +69,7 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
 }
 
 template<typename T>
-Decoder& Decoder::decodeNumber(Optional<T>& optional)
+Decoder& Decoder::decodeNumber(std::optional<T>& optional)
 {
     if (!bufferIsLargeEnoughToContain(sizeof(T)))
         return *this;
@@ -83,52 +83,52 @@ Decoder& Decoder::decodeNumber(Optional<T>& optional)
     return *this;
 }
 
-Decoder& Decoder::operator>>(Optional<bool>& result)
+Decoder& Decoder::operator>>(std::optional<bool>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<uint8_t>& result)
+Decoder& Decoder::operator>>(std::optional<uint8_t>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<uint16_t>& result)
+Decoder& Decoder::operator>>(std::optional<uint16_t>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<int16_t>& result)
+Decoder& Decoder::operator>>(std::optional<int16_t>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<uint32_t>& result)
+Decoder& Decoder::operator>>(std::optional<uint32_t>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<uint64_t>& result)
+Decoder& Decoder::operator>>(std::optional<uint64_t>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<int32_t>& result)
+Decoder& Decoder::operator>>(std::optional<int32_t>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<int64_t>& result)
+Decoder& Decoder::operator>>(std::optional<int64_t>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<float>& result)
+Decoder& Decoder::operator>>(std::optional<float>& result)
 {
     return decodeNumber(result);
 }
 
-Decoder& Decoder::operator>>(Optional<double>& result)
+Decoder& Decoder::operator>>(std::optional<double>& result)
 {
     return decodeNumber(result);
 }

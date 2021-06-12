@@ -36,7 +36,7 @@ public:
     ~WebKitPopupMenu() = default;
 
     void selectItem(unsigned itemIndex);
-    void activateItem(Optional<unsigned> itemIndex);
+    void activateItem(std::optional<unsigned> itemIndex);
 
 private:
     WebKitPopupMenu(WKWPE::View&, WebPopupMenuProxy::Client&);
@@ -47,7 +47,7 @@ private:
 
     WKWPE::View& m_view;
     GRefPtr<WebKitOptionMenu> m_menu;
-    Optional<unsigned> m_selectedItem;
+    std::optional<unsigned> m_selectedItem;
 };
 
 } // namespace WebKit

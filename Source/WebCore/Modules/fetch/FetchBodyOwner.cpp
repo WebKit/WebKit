@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
+FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(&context)
     , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
@@ -252,7 +252,7 @@ void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
     m_blobLoader->loader->start(*scriptExecutionContext(), blob);
     if (!m_blobLoader->loader->isStarted()) {
         m_body->loadingFailed(Exception { TypeError, "Blob loading failed"_s});
-        m_blobLoader = WTF::nullopt;
+        m_blobLoader = std::nullopt;
         return;
     }
 }
@@ -261,7 +261,7 @@ void FetchBodyOwner::finishBlobLoading()
 {
     ASSERT(m_blobLoader);
 
-    m_blobLoader = WTF::nullopt;
+    m_blobLoader = std::nullopt;
 }
 
 void FetchBodyOwner::blobLoadingSucceeded()
@@ -288,7 +288,7 @@ void FetchBodyOwner::blobLoadingFailed()
     finishBlobLoading();
 }
 
-void FetchBodyOwner::blobChunk(const char* data, size_t size)
+void FetchBodyOwner::blobChunk(const uint8_t* data, size_t size)
 {
     ASSERT(data);
     ASSERT(m_readableStreamSource);
@@ -375,14 +375,14 @@ ResourceError FetchBodyOwner::loadingError() const
     });
 }
 
-Optional<Exception> FetchBodyOwner::loadingException() const
+std::optional<Exception> FetchBodyOwner::loadingException() const
 {
     return WTF::switchOn(m_loadingError, [](const ResourceError& error) {
         return Exception { TypeError, error.localizedDescription().isEmpty() ? "Loading failed"_s : error.localizedDescription() };
     }, [](const Exception& exception) {
         return Exception { exception };
-    }, [](auto&&) -> Optional<Exception> {
-        return WTF::nullopt;
+    }, [](auto&&) -> std::optional<Exception> {
+        return std::nullopt;
     });
 }
 

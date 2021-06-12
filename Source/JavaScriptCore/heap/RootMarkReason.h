@@ -43,7 +43,7 @@ namespace JSC {
     v(WeakMapSpace) \
     v(WeakSets) \
     v(Output) \
-    v(DFGWorkLists) \
+    v(JITWorkList) \
     v(CodeBlocks) \
     v(DOMGCOutput)
 

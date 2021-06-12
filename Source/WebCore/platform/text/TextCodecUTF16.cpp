@@ -77,7 +77,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
         if (std::exchange(m_shouldStripByteOrderMark, false) && codeUnit == byteOrderMark)
             return;
         if (m_leadSurrogate) {
-            auto leadSurrogate = *std::exchange(m_leadSurrogate, WTF::nullopt);
+            auto leadSurrogate = *std::exchange(m_leadSurrogate, std::nullopt);
             if (U16_IS_TRAIL(codeUnit)) {
                 result.appendCharacter(U16_GET_SUPPLEMENTARY(leadSurrogate, codeUnit));
                 return;
@@ -104,7 +104,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
     };
 
     if (m_leadByte && p < end) {
-        auto leadByte = *std::exchange(m_leadByte, WTF::nullopt);
+        auto leadByte = *std::exchange(m_leadByte, std::nullopt);
         if (m_littleEndian)
             processBytesLE(leadByte, p[0]);
         else
@@ -133,8 +133,8 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
     if (flush) {
         m_shouldStripByteOrderMark = false;
         if (m_leadByte || m_leadSurrogate) {
-            m_leadByte = WTF::nullopt;
-            m_leadSurrogate = WTF::nullopt;
+            m_leadByte = std::nullopt;
+            m_leadSurrogate = std::nullopt;
             sawError = true;
             result.append(replacementCharacter);
         }
@@ -145,7 +145,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
 
 Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling) const
 {
-    Vector<uint8_t> result(WTF::checkedProduct<size_t>(string.length(), 2).unsafeGet());
+    Vector<uint8_t> result(WTF::checkedProduct<size_t>(string.length(), 2));
     auto* bytes = result.data();
 
     if (m_littleEndian) {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Michael Pruett <michael@68k.org>
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,15 +43,21 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSFile.h"
+#include "JSIDBSerializationGlobalObject.h"
 #include "Logging.h"
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
 #include "ThreadSafeDataBuffer.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <wtf/AutodrainedPool.h>
+#include <wtf/MessageQueue.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -430,7 +436,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return toJS(*lexicalGlobalObject, *globalObject, keyData.maybeCreateIDBKey().get());
 }
 
-static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject, JSValue value, const IDBIndexInfo& info, Optional<IDBKeyPath> objectStoreKeyPath, const IDBKeyData& objectStoreKey)
+static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject, JSValue value, const IDBIndexInfo& info, std::optional<IDBKeyPath> objectStoreKeyPath, const IDBKeyData& objectStoreKey)
 {
     auto visitor = WTF::makeVisitor([&](const String& string) -> Vector<IDBKeyData> {
         // Value doesn't contain auto-generated key, so we need to manually add key if it is possibly auto-generated.
@@ -466,7 +472,7 @@ static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject
     return WTF::visit(visitor, info.keyPath());
 }
 
-void generateIndexKeyForValue(JSGlobalObject& lexicalGlobalObject, const IDBIndexInfo& info, JSValue value, IndexKey& outKey, const Optional<IDBKeyPath>& objectStoreKeyPath, const IDBKeyData& objectStoreKey)
+void generateIndexKeyForValue(JSGlobalObject& lexicalGlobalObject, const IDBIndexInfo& info, JSValue value, IndexKey& outKey, const std::optional<IDBKeyPath>& objectStoreKeyPath, const IDBKeyData& objectStoreKey)
 {
     auto keyDatas = createKeyPathArray(lexicalGlobalObject, value, info, objectStoreKeyPath, objectStoreKey);
     if (keyDatas.isEmpty())
@@ -503,7 +509,7 @@ IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject& lexicalGlo
     return indexKeys;
 }
 
-Optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& lexicalGlobalObject, const IDBValue& value, const IDBKeyData& key, const Optional<IDBKeyPath>& keyPath)
+std::optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& lexicalGlobalObject, const IDBValue& value, const IDBKeyData& key, const std::optional<IDBKeyPath>& keyPath)
 {
     auto jsValue = deserializeIDBValueToJSValue(lexicalGlobalObject, value);
     if (jsValue.isUndefined() || !keyPath || !WTF::holds_alternative<String>(keyPath.value()) || !isIDBKeyPathValid(keyPath.value()))
@@ -513,10 +519,80 @@ Optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& lexic
     if (!injectIDBKeyIntoScriptValue(lexicalGlobalObject, key, jsValue, keyPath.value())) {
         auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
         propagateException(lexicalGlobalObject, throwScope, Exception(UnknownError, "Cannot inject key into script value"_s));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return jsValue;
+}
+
+class IDBSerializationContext {
+public:
+    IDBSerializationContext()
+        : m_thread(Thread::current())
+    {
+    }
+
+    ~IDBSerializationContext()
+    {
+        ASSERT(&m_thread == &Thread::current());
+        if (!m_vm)
+            return;
+
+        JSC::JSLockHolder lock(*m_vm);
+        m_globalObject.clear();
+        m_vm = nullptr;
+    }
+
+    JSC::JSGlobalObject& globalObject()
+    {
+        ASSERT(&m_thread == &Thread::current());
+
+        initializeVM();
+        return *m_globalObject.get();
+    }
+
+private:
+    void initializeVM()
+    {
+        if (m_vm)
+            return;
+
+        ASSERT(!m_globalObject);
+        m_vm = JSC::VM::create();
+        m_vm->heap.acquireAccess();
+        JSVMClientData::initNormalWorld(m_vm.get(), WorkerThreadType::Worklet);
+
+        JSC::JSLockHolder locker(m_vm.get());
+        m_globalObject.set(*m_vm, JSIDBSerializationGlobalObject::create(*m_vm, JSIDBSerializationGlobalObject::createStructure(*m_vm, JSC::jsNull()), normalWorld(*m_vm)));
+    }
+
+    RefPtr<JSC::VM> m_vm;
+    JSC::Strong<JSIDBSerializationGlobalObject> m_globalObject;
+    Thread& m_thread;
+};
+
+void callOnIDBSerializationThreadAndWait(Function<void(JSC::JSGlobalObject&)>&& function)
+{
+    static NeverDestroyed<MessageQueue<Function<void(JSC::JSGlobalObject&)>>> queue;
+    static std::once_flag createThread;
+
+    std::call_once(createThread, [] {
+        Thread::create("IndexedDB Serialization", [] {
+            IDBSerializationContext serializationContext;
+            while (auto function = queue->waitForMessage()) {
+                AutodrainedPool pool;
+                (*function)(serializationContext.globalObject());
+            }
+        });
+    });
+
+    BinarySemaphore semaphore;
+    auto newFuntion = [&semaphore, function = WTFMove(function)](JSC::JSGlobalObject& globalObject) {
+        function(globalObject);
+        semaphore.signal();
+    };
+    queue->append(makeUnique<Function<void(JSC::JSGlobalObject&)>>(WTFMove(newFuntion)));
+    semaphore.wait();
 }
 
 } // namespace WebCore

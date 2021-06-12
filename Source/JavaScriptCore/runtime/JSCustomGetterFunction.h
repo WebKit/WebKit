@@ -51,21 +51,21 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
-    JS_EXPORT_PRIVATE static JSCustomGetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, CustomFunctionPointer, Optional<DOMAttributeAnnotation> = WTF::nullopt);
+    JS_EXPORT_PRIVATE static JSCustomGetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, CustomFunctionPointer, std::optional<DOMAttributeAnnotation> = std::nullopt);
 
     DECLARE_EXPORT_INFO;
 
     const Identifier& propertyName() const { return m_propertyName; }
     CustomFunctionPointer getter() const { return m_getter; };
     CustomFunctionPointer customFunctionPointer() const { return m_getter; };
-    Optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; };
+    std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; };
 
 private:
-    JSCustomGetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, CustomFunctionPointer, Optional<DOMAttributeAnnotation>);
+    JSCustomGetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, CustomFunctionPointer, std::optional<DOMAttributeAnnotation>);
 
     Identifier m_propertyName;
     CustomFunctionPointer m_getter;
-    Optional<DOMAttributeAnnotation> m_domAttribute;
+    std::optional<DOMAttributeAnnotation> m_domAttribute;
 };
 
 } // namespace JSC

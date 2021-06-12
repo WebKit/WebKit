@@ -232,7 +232,7 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
         return false;
 
     PlatformContextDirect2D scratchContextD2D(scratchRenderTarget());
-    GraphicsContext scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
+    GraphicsContextDirect2D scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
     strokeStyleApplier(scratchContext);
 
 #if ASSERT_ENABLED
@@ -342,7 +342,7 @@ FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strok
         return FloatRect();
 
     PlatformContextDirect2D scratchContextD2D(scratchRenderTarget());
-    GraphicsContext scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
+    GraphicsContextDirect2D scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
     if (strokeStyleApplier)
         strokeStyleApplier(scratchContext);

@@ -29,7 +29,7 @@
 
 #include "ExceptionOr.h"
 #include "RTCRtpTransformBackend.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ public:
     void setAuthenticationSize(uint64_t);
     void setMediaType(RTCRtpTransformBackend::MediaType);
 
-    WEBCORE_EXPORT ExceptionOr<void> setEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t>);
+    WEBCORE_EXPORT ExceptionOr<void> setEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t>);
     WEBCORE_EXPORT ExceptionOr<Vector<uint8_t>> transform(const uint8_t*, size_t);
 
     const Vector<uint8_t>& authenticationKey() const { return m_authenticationKey; }
@@ -65,7 +65,7 @@ private:
     ExceptionOr<Vector<uint8_t>> encryptFrame(const uint8_t*, size_t);
 
     enum class ShouldUpdateKeys { No, Yes };
-    ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes) WTF_REQUIRES_LOCK(m_keyLock);
+    ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes) WTF_REQUIRES_LOCK(m_keyLock);
 
     ExceptionOr<Vector<uint8_t>> computeSaltKey(const Vector<uint8_t>&);
     ExceptionOr<Vector<uint8_t>> computeAuthenticationKey(const Vector<uint8_t>&);
@@ -76,7 +76,7 @@ private:
     Vector<uint8_t> computeEncryptedDataSignature(const Vector<uint8_t>& nonce, const uint8_t* header, size_t headerSize, const uint8_t* data, size_t dataSize, const Vector<uint8_t>& key);
     void updateAuthenticationSize();
 
-    CheckedLock m_keyLock;
+    Lock m_keyLock;
     bool m_hasKey { false };
     Vector<uint8_t> m_authenticationKey;
     Vector<uint8_t> m_encryptionKey;

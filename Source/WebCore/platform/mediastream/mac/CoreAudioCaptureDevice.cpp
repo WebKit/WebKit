@@ -121,13 +121,13 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
     return true;
 }
 
-Optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID, DeviceType type, const String& groupID)
+std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID, DeviceType type, const String& groupID)
 {
     ASSERT(type == CaptureDevice::DeviceType::Microphone || type == CaptureDevice::DeviceType::Speaker);
     String persistentID;
     String label;
     if (!getDeviceInfo(deviceID, type, persistentID, label))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return CoreAudioCaptureDevice(deviceID, persistentID, type, label, groupID.isNull() ? persistentID : groupID);
 }

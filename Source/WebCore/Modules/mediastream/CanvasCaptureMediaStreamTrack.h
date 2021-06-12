@@ -40,7 +40,7 @@ class Image;
 class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
     WTF_MAKE_ISO_ALLOCATED(CanvasCaptureMediaStreamTrack);
 public:
-    static Ref<CanvasCaptureMediaStreamTrack> create(Document&, Ref<HTMLCanvasElement>&&, Optional<double>&& frameRequestRate);
+    static Ref<CanvasCaptureMediaStreamTrack> create(Document&, Ref<HTMLCanvasElement>&&, std::optional<double>&& frameRequestRate);
 
     HTMLCanvasElement& canvas() { return m_canvas.get(); }
     void requestFrame() { static_cast<Source&>(source()).requestFrame(); }
@@ -52,16 +52,16 @@ private:
 
     class Source final : public RealtimeMediaSource, private CanvasObserver {
     public:
-        static Ref<Source> create(HTMLCanvasElement&, Optional<double>&& frameRequestRate);
+        static Ref<Source> create(HTMLCanvasElement&, std::optional<double>&& frameRequestRate);
         
         void requestFrame() { m_shouldEmitFrame = true; }
-        Optional<double> frameRequestRate() const { return m_frameRequestRate; }
+        std::optional<double> frameRequestRate() const { return m_frameRequestRate; }
 
     private:
-        Source(HTMLCanvasElement&, Optional<double>&&);
+        Source(HTMLCanvasElement&, std::optional<double>&&);
 
         // CanvasObserver API
-        void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final;
+        void canvasChanged(CanvasBase&, const std::optional<FloatRect>&) final;
         void canvasResized(CanvasBase&) final;
         void canvasDestroyed(CanvasBase&) final;
 
@@ -76,10 +76,10 @@ private:
         void requestFrameTimerFired();
 
         bool m_shouldEmitFrame { true };
-        Optional<double> m_frameRequestRate;
+        std::optional<double> m_frameRequestRate;
         Timer m_requestFrameTimer;
         Timer m_captureCanvasTimer;
-        Optional<RealtimeMediaSourceSettings> m_currentSettings;
+        std::optional<RealtimeMediaSourceSettings> m_currentSettings;
         HTMLCanvasElement* m_canvas;
         RefPtr<Image> m_currentImage;
     };

@@ -1,3 +1,127 @@
+2021-06-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Remove unused GraphicsContext::shouldIncludeChildWindows()
+        https://bugs.webkit.org/show_bug.cgi?id=226567
+
+        Reviewed by Don Olmstead.
+
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+        (WebFrame::paintScrollViewRectToContextAtPoint):
+        (WebFrame::spoolPages):
+        * WebView.cpp:
+        (WebView::updateBackingStore):
+        (WebView::paint):
+        (WebView::paintIntoBackingStore):
+        * WebView.h: Removed WindowsToPaint.
+
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove some of the unneeded WebKitLegacy Windows-specific plug-in code
+        https://bugs.webkit.org/show_bug.cgi?id=226410
+
+        Reviewed by Chris Dumez.
+
+        * Plugins/PaintHooks.asm: Removed.
+        * Plugins/PlatformModule.h: Removed.
+        * Plugins/PluginDatabase.cpp: Removed.
+        * Plugins/PluginDatabase.h: Removed.
+        * Plugins/PluginDatabaseWin.cpp: Removed.
+        * Plugins/PluginDebug.cpp: Removed.
+        * Plugins/PluginDebug.h: Removed.
+        * Plugins/PluginMainThreadScheduler.cpp: Removed.
+        * Plugins/PluginMainThreadScheduler.h: Removed.
+        * Plugins/PluginMessageThrottlerWin.cpp: Removed.
+        * Plugins/PluginMessageThrottlerWin.h: Removed.
+        * Plugins/PluginPackage.cpp: Removed.
+        * Plugins/PluginPackage.h: Removed.
+        * Plugins/PluginPackageWin.cpp: Removed.
+        * Plugins/PluginQuirkSet.h: Removed.
+        * Plugins/PluginStream.cpp: Removed.
+        * Plugins/PluginStream.h: Removed.
+        * Plugins/PluginView.cpp: Removed.
+        * Plugins/PluginView.h: Removed.
+        * Plugins/PluginViewWin.cpp: Removed.
+        * Plugins/npapi.cpp: Removed.
+        * WebCoreSupport/EmbeddedWidget.cpp: Removed.
+        * WebCoreSupport/EmbeddedWidget.h: Removed.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Removed includes of
+        PluginDatabase.h, PluginPackage.h, PluginView.h.
+        (WebFrameLoaderClient::WebFrameLoaderClient): Removed m_manualLoader and
+        m_hasSetnResponseToPlugin.
+        (WebFrameLoaderClient::setMainDocumentError): Removed all the code here,
+        which was only used for m_manualLoader.
+        (WebFrameLoaderClient::committedLoad): Removed code that runs only if
+        m_manualLoader is non-null.
+        (WebFrameLoaderClient::finishedLoading): Removed all the code here, which
+        was only used for m_manualLoader.
+        (WebFrameLoaderClient::objectContentType): Removed call to plug-in database
+        to figure out MIME type and select a plug-in to load.
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin const): Deleted.
+        (WebFrameLoaderClient::createPlugin): Return nullptr. No longer support
+        Netscape-style plug-ins, nor call the embeddedViewWithArguments function.
+        (WebFrameLoaderClient::redirectDataToPlugin): Removed all the code here.
+        * WebCoreSupport/WebFrameLoaderClient.h: Removed dispatchDidFailToStartPlugin,
+        m_manualLoader, and m_hasSentResponseToPlugin.
+        * WebCoreSupport/WebPluginInfoProvider.cpp: Removed include of PluginDatabase.h.
+        (WebPluginInfoProvider::refreshPlugins): Removed all the code here.
+        (WebPluginInfoProvider::pluginInfo): Ditto.
+        (WebPluginInfoProvider::webVisiblePluginInfo): Ditto.
+        * WebFrame.cpp: Removed includes of PluginDatabase.h and PluginView.h.
+        * WebView.cpp: Ditto.
+        (WebView::WebViewWndProc): Removed workaround specifically for the
+        Windows Media Player plug-in.
+        (WebView::addAdditionalPluginDirectory): Removed all the code here.
+
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove WTF::Optional synonym for std::optional, using that class template directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=226433
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Let the do-webcore-rename script rename Optional<> to std::optional<>.
+
+2021-05-27  Darin Adler  <darin@apple.com>
+
+        Next step toward using std::optional directly instead of through WTF::Optional typedef
+        https://bugs.webkit.org/show_bug.cgi?id=226280
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Accept the renaming done by do-webcore-rename.
+
+2021-05-25  Tim Horton  <timothy_horton@apple.com>
+
+        Virtualize GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=226170
+
+        Reviewed by Simon Fraser.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::draw):
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+        (WebFrame::paintScrollViewRectToContextAtPoint):
+        (WebFrame::spoolPages):
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::update):
+        * WebView.cpp:
+        (WebView::paintWithDirect2D):
+        (WebView::paintIntoBackingStore):
+
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accKeyboardShortcut): Use append instead of appnedLiteral.
+        * WebView.cpp: Ditto.
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Replace LockHolder with Locker in local variables

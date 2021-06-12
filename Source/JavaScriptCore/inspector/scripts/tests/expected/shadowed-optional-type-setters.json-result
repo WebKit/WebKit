@@ -121,7 +121,6 @@ private:
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <tuple>
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -215,7 +214,6 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -300,7 +298,6 @@ namespace Inspector {
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -414,11 +411,11 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Runtime' Domain
 template<>
-Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String&);
+std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String&);
 
 } // namespace TestHelpers
 
@@ -480,8 +477,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Runtime' Domain
 
-template<>
-Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String& protocolString)
+template<> std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Runtime::KeyPath::Type::Null,
@@ -492,7 +488,7 @@ Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Ru
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Runtime::KeyPath::Type)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -868,7 +864,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-Optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
 {
@@ -883,7 +879,7 @@ inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
 }
 
 template<>
-inline Optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String& value)
+inline std::optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String& value)
 {
     if (value == "null")
         return TestProtocolRuntimeKeyPathTypeNull;
@@ -891,7 +887,7 @@ inline Optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String&
         return TestProtocolRuntimeKeyPathTypeString;
     if (value == "array")
         return TestProtocolRuntimeKeyPathTypeArray;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1002,9 +998,9 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"type"], @"type");
-    Optional<TestProtocolRuntimeKeyPathType> type = fromProtocolString<TestProtocolRuntimeKeyPathType>(payload[@"type"]);
+    auto type = fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)payload[@"type"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(type, @"type");
-    self.type = type.value();
+    self.type = *type;
 
     self.string = payload[@"string"];
 
@@ -1037,7 +1033,7 @@ using namespace Inspector;
 
 - (TestProtocolRuntimeKeyPathType)type
 {
-    return fromProtocolString<TestProtocolRuntimeKeyPathType>([super stringForKey:@"type"]).value();
+    return fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)[super stringForKey:@"type"]).value();
 }
 
 - (void)setString:(NSString *)string

@@ -1034,6 +1034,9 @@ webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Skip
 # Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
 media/video-supports-fullscreen.html [ Skip ]
 
+# Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
+media/video-with-alpha.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -2097,6 +2100,11 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 # outline: auto -focusring.
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
+
+# Modal <dialog> support
+webkit.org/b/226175 imported/blink/dialog/modal-dialog-in-replaced-renderer.html [ ImageOnlyFailure ]
+webkit.org/b/226175 imported/blink/dialog/modal-dialog-in-table-column.html [ ImageOnlyFailure ]
+webkit.org/b/226175 imported/blink/dialog/modal-dialog-sibling.html [ ImageOnlyFailure ]
 
 # Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
 webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [ Skip ]
@@ -3589,14 +3597,8 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-po
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vlr-033.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-002.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-004.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-006.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-008.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-010.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-012.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-014.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-016.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-018.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-020.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vrl-030.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-095.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-109.xht [ ImageOnlyFailure ]
@@ -4541,7 +4543,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html 
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/218325 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-001.html [ Pass ImageOnlyFailure ]
 webkit.org/b/218325 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
 
@@ -4739,10 +4740,7 @@ webkit.org/b/224357 imported/w3c/web-platform-tests/css/css-writing-modes/sizing
 webkit.org/b/224357 imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl.html [ ImageOnlyFailure ]
 
 # @counter-style ref tests that currently fail
-imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-008.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-005.html [ ImageOnlyFailure ]
@@ -4771,10 +4769,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-sette
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-010.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-011.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-012.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-014.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-033.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-034.html [ ImageOnlyFailure ]
@@ -4813,10 +4807,7 @@ imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css
 imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-060.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-061.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-111.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-114.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-115.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-019.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020a.html [ ImageOnlyFailure ]
@@ -4844,10 +4835,7 @@ imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-083.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-084.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-085.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-107.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-108.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-109.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-110.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
@@ -4874,6 +4862,8 @@ webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.ht
 webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.html [ Skip ]
 
 webkit.org/b/226002 fast/layoutformattingcontext/table-simple-row-height.html [ Skip ]
+webkit.org/b/226364 fast/layoutformattingcontext/table-with-percent-columns-and-spacing.html [ Skip ]
+[ Debug ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ Skip ]
 
 # This webstorage test has crashed since it was imported.
 imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]
@@ -4883,3 +4873,6 @@ imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]
 # Skip WebXR while flakey
 imported/w3c/web-platform-tests/webxr [ Skip ]
 http/wpt/webxr [ Skip ]
+
+# Invalid test. Tests color(lab ...) which has been removed from the standard.
+imported/w3c/web-platform-tests/css/css-color/predefined-013.html [ Skip ]

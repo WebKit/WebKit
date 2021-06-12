@@ -65,7 +65,7 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
 
 bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& certificateInfo)
 {
-    Optional<GRefPtr<GTlsCertificate>> certificate;
+    std::optional<GRefPtr<GTlsCertificate>> certificate;
     decoder >> certificate;
     if (!certificate)
         return false;
@@ -197,10 +197,10 @@ void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttri
     ASSERT_NOT_REACHED();
 }
 
-Optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
+std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const DictionaryPopupInfo&)
@@ -219,10 +219,10 @@ void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder&, const Ref<Font>&)
     ASSERT_NOT_REACHED();
 }
 
-Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&)
+std::optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if ENABLE(VIDEO)
@@ -231,10 +231,10 @@ void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& 
     ASSERT_NOT_REACHED();
 }
 
-Optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
+std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif
 

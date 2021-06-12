@@ -46,10 +46,10 @@ String MediaQuery::serialize() const
     StringBuilder result;
     switch (m_restrictor) {
     case MediaQuery::Only:
-        result.appendLiteral("only ");
+        result.append("only ");
         break;
     case MediaQuery::Not:
-        result.appendLiteral("not ");
+        result.append("not ");
         break;
     case MediaQuery::None:
         shouldOmitMediaType = !m_expressions.isEmpty() && m_mediaType == "all";
@@ -62,7 +62,7 @@ String MediaQuery::serialize() const
     }
     for (auto& expression : m_expressions) {
         if (needsAnd)
-            result.appendLiteral(" and ");
+            result.append(" and ");
         result.append(expression.serialize());
         needsAnd = true;
     }

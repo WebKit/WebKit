@@ -56,7 +56,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         self.calculate_types_requiring_shape_assertions(domains)
 
         secondary_headers = [
-            '<wtf/Optional.h>',
+            '<optional>',
             '<wtf/text/CString.h>',
         ]
 
@@ -108,8 +108,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         def generate_conversion_method_body(enum_type, cpp_protocol_type):
             body_lines = []
             body_lines.extend([
-                'template<>',
-                'Optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
+                'template<> std::optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
                 '{',
                 '    static const size_t constantValues[] = {',
             ])
@@ -124,7 +123,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
                 '        if (protocolString == enum_constant_values[constantValues[i]])',
                 '            return (%s)constantValues[i];' % cpp_protocol_type,
                 '',
-                '    return WTF::nullopt;',
+                '    return std::nullopt;',
                 '}',
             ])
             return '\n'.join(body_lines)

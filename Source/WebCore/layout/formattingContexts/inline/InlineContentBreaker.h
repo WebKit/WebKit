@@ -43,7 +43,7 @@ public:
     struct PartialRun {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
-        Optional<InlineLayoutUnit> hyphenWidth { };
+        std::optional<InlineLayoutUnit> hyphenWidth { };
     };
     enum class IsEndOfLine { No, Yes };
     struct Result {
@@ -58,11 +58,11 @@ public:
         };
         struct PartialTrailingContent {
             size_t trailingRunIndex { 0 };
-            Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
+            std::optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
         };
         Action action { Action::Keep };
         IsEndOfLine isEndOfLine { IsEndOfLine::No };
-        Optional<PartialTrailingContent> partialTrailingContent { };
+        std::optional<PartialTrailingContent> partialTrailingContent { };
         const InlineItem* lastWrapOpportunityItem { nullptr };
     };
 
@@ -84,7 +84,7 @@ public:
         bool hasTrailingCollapsibleContent() const { return !!collapsibleLogicalWidth(); }
         bool isFullyCollapsible() const { return logicalWidth() == collapsibleLogicalWidth(); }
 
-        void append(const InlineItem&, InlineLayoutUnit logicalWidth, Optional<InlineLayoutUnit> collapsibleWidth);
+        void append(const InlineItem&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth);
         void reset();
 
         struct Run {
@@ -108,7 +108,7 @@ public:
         InlineLayoutUnit contentLogicalRight { 0 };
         InlineLayoutUnit availableWidth { 0 };
         InlineLayoutUnit collapsibleWidth { 0 };
-        Optional<InlineLayoutUnit> trailingSoftHyphenWidth;
+        std::optional<InlineLayoutUnit> trailingSoftHyphenWidth;
         bool hasFullyCollapsibleTrailingRun { false };
         bool hasContent { false };
         bool hasWrapOpportunityAtPreviousPosition { false };
@@ -121,7 +121,7 @@ public:
 private:
     Result processOverflowingContent(const ContinuousContent&, const LineStatus&) const;
     OverflowingTextContent processOverflowingContentWithText(const ContinuousContent&, const LineStatus&) const;
-    Optional<PartialRun> tryBreakingTextRun(const ContinuousContent::Run& overflowRun, InlineLayoutUnit logicalLeft, Optional<InlineLayoutUnit> availableWidth, bool hasWrapOpportunityAtPreviousPosition) const;
+    std::optional<PartialRun> tryBreakingTextRun(const ContinuousContent::Run& overflowRun, InlineLayoutUnit logicalLeft, std::optional<InlineLayoutUnit> availableWidth, bool hasWrapOpportunityAtPreviousPosition) const;
 
     enum class WordBreakRule {
         AtArbitraryPosition        = 1 << 0,

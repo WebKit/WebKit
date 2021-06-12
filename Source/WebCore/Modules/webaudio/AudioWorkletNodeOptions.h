@@ -35,15 +35,14 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/KeyValuePair.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
 struct AudioWorkletNodeOptions : AudioNodeOptions {
     unsigned numberOfInputs = 1;
     unsigned numberOfOutputs = 1;
-    Optional<Vector<unsigned>> outputChannelCount;
-    Optional<Vector<WTF::KeyValuePair<String, double>>> parameterData;
+    std::optional<Vector<unsigned>> outputChannelCount;
+    std::optional<Vector<WTF::KeyValuePair<String, double>>> parameterData;
     JSC::Strong<JSC::JSObject> processorOptions;
 };
 

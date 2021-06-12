@@ -29,7 +29,6 @@
 
 #include "ApplePayLineItemData.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,7 +44,7 @@ struct ApplePayLineItem final : public ApplePayLineItemData {
     String amount;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayLineItem> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayLineItem> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -58,29 +57,29 @@ void ApplePayLineItem::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
+std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
 {
     ApplePayLineItem result;
 
     if (!result.decodeData(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Type> type;
+    std::optional<Type> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
     result.type = WTFMove(*type);
 
-    Optional<String> label;
+    std::optional<String> label;
     decoder >> label;
     if (!label)
-        return WTF::nullopt;
+        return std::nullopt;
     result.label = WTFMove(*label);
 
-    Optional<String> amount;
+    std::optional<String> amount;
     decoder >> amount;
     if (!amount)
-        return WTF::nullopt;
+        return std::nullopt;
     result.amount = WTFMove(*amount);
 
     return result;

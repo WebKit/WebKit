@@ -55,47 +55,47 @@ struct RemoteAudioSessionConfiguration {
     }
 
     template <class Decoder>
-    static Optional<RemoteAudioSessionConfiguration> decode(Decoder& decoder)
+    static std::optional<RemoteAudioSessionConfiguration> decode(Decoder& decoder)
     {
-        Optional<String> routingContextUID;
+        std::optional<String> routingContextUID;
         decoder >> routingContextUID;
         if (!routingContextUID)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<float> sampleRate;
+        std::optional<float> sampleRate;
         decoder >> sampleRate;
         if (!sampleRate)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<size_t> bufferSize;
+        std::optional<size_t> bufferSize;
         decoder >> bufferSize;
         if (!bufferSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<size_t> numberOfOutputChannels;
+        std::optional<size_t> numberOfOutputChannels;
         decoder >> numberOfOutputChannels;
         if (!numberOfOutputChannels)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<size_t> maximumNumberOfOutputChannels;
+        std::optional<size_t> maximumNumberOfOutputChannels;
         decoder >> maximumNumberOfOutputChannels;
         if (!maximumNumberOfOutputChannels)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<size_t> preferredBufferSize;
+        std::optional<size_t> preferredBufferSize;
         decoder >> preferredBufferSize;
         if (!preferredBufferSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isMuted;
+        std::optional<bool> isMuted;
         decoder >> isMuted;
         if (!isMuted)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isActive;
+        std::optional<bool> isActive;
         decoder >> isActive;
         if (!isActive)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*routingContextUID),

@@ -27,7 +27,6 @@
 #include "CSSValue.h"
 #include "ColorTypes.h"
 #include "WritingMode.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -85,14 +84,14 @@ public:
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
 
-    Optional<CSSSelectorList> parseSelector(const String&);
+    std::optional<CSSSelectorList> parseSelector(const String&);
 
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 
     WEBCORE_EXPORT static Color parseColor(const String&, bool strict = false);
     static Color parseSystemColor(StringView);
-    static Optional<SRGBA<uint8_t>> parseNamedColor(StringView);
-    static Optional<SRGBA<uint8_t>> parseHexColor(StringView);
+    static std::optional<SRGBA<uint8_t>> parseNamedColor(StringView);
+    static std::optional<SRGBA<uint8_t>> parseHexColor(StringView);
 
 private:
     ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);

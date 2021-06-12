@@ -30,7 +30,7 @@
 
 #include "AudioContext.h"
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ public:
 
     // hasValue is set to true if a valid timeline value is returned.
     // otherwise defaultValue is returned.
-    Optional<float> valueForContextTime(BaseAudioContext&, float defaultValue, float minValue, float maxValue);
+    std::optional<float> valueForContextTime(BaseAudioContext&, float defaultValue, float minValue, float maxValue);
 
     // Given the time range, calculates parameter values into the values buffer
     // and returns the last parameter value calculated for "values" or the defaultValue if none were calculated.
@@ -87,9 +87,9 @@ private:
         static ParamEvent createExponentialRampEvent(float value, Seconds time);
         static ParamEvent createSetTargetEvent(float target, Seconds time, float timeConstant);
         static ParamEvent createSetValueCurveEvent(Vector<float>&& curve, Seconds time, Seconds duration);
-        static ParamEvent createCancelValuesEvent(Seconds cancelTime, Optional<SavedEvent>&&);
+        static ParamEvent createCancelValuesEvent(Seconds cancelTime, std::optional<SavedEvent>&&);
 
-        ParamEvent(Type type, float value, Seconds time, float timeConstant, Seconds duration, Vector<float>&& curve, double curvePointsPerSecond, float curveEndValue, Optional<SavedEvent>&& savedEvent)
+        ParamEvent(Type type, float value, Seconds time, float timeConstant, Seconds duration, Vector<float>&& curve, double curvePointsPerSecond, float curveEndValue, std::optional<SavedEvent>&& savedEvent)
             : m_type(type)
             , m_value(value)
             , m_time(time)
@@ -155,7 +155,7 @@ private:
         // holds the event that is being cancelled, so that processing can
         // continue as if the event still existed up until we reach the actual
         // scheduled cancel time.
-        Optional<SavedEvent> m_savedEvent;
+        std::optional<SavedEvent> m_savedEvent;
     };
 
     // State of the timeline for the current event.
@@ -207,7 +207,7 @@ private:
 
     Vector<ParamEvent> m_events WTF_GUARDED_BY_LOCK(m_eventsLock);
 
-    mutable CheckedLock m_eventsLock;
+    mutable Lock m_eventsLock;
 };
 
 } // namespace WebCore

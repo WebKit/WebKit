@@ -29,6 +29,7 @@
 
 #include "Decoder.h"
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include <WebCore/ConcreteImageBuffer.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
@@ -44,7 +45,7 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, publ
     using BaseConcreteImageBuffer::putPixelBuffer;
 
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::DestinationColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     {
         return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, nullptr, remoteRenderingBackend, renderingResourceIdentifier);
     }
@@ -92,17 +93,29 @@ private:
         if (item.is<WebCore::DisplayList::FlushContext>()) {
             BaseConcreteImageBuffer::flushContext();
             auto identifier = item.get<WebCore::DisplayList::FlushContext>().identifier();
+            LOG_WITH_STREAM(SharedDisplayLists, stream << "Acknowledging Flush{" << identifier << "} in Image(" << m_renderingResourceIdentifier << ")");
             m_remoteRenderingBackend.didFlush(identifier, m_renderingResourceIdentifier);
             return true;
         }
 
         if (item.is<WebCore::DisplayList::MetaCommandChangeItemBuffer>()) {
             auto nextBufferIdentifier = item.get<WebCore::DisplayList::MetaCommandChangeItemBuffer>().identifier();
+            LOG_WITH_STREAM(SharedDisplayLists, stream << "Switching to Items[" << nextBufferIdentifier << "]");
             m_remoteRenderingBackend.setNextItemBufferToRead(nextBufferIdentifier, m_renderingResourceIdentifier);
             return true;
         }
 
         return m_remoteRenderingBackend.applyMediaItem(item, context);
+    }
+
+    void didCreateMaskImageBuffer(WebCore::ImageBuffer& imageBuffer) final
+    {
+        m_remoteRenderingBackend.didCreateMaskImageBuffer(imageBuffer);
+    }
+
+    void didResetMaskImageBuffer() final
+    {
+        m_remoteRenderingBackend.didResetMaskImageBuffer();
     }
 
     RemoteRenderingBackend& m_remoteRenderingBackend;

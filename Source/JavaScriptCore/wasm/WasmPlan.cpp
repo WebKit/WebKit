@@ -52,7 +52,7 @@ Plan::Plan(Context* context, CompletionTask&& task)
     m_completionTasks.append(std::make_pair(context, WTFMove(task)));
 }
 
-void Plan::runCompletionTasks(const AbstractLocker&)
+void Plan::runCompletionTasks()
 {
     ASSERT(isComplete() && !hasWork());
 
@@ -106,21 +106,21 @@ bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
 
     // FIXME: Make 0 index not so magical: https://bugs.webkit.org/show_bug.cgi?id=171395
     if (m_completionTasks.isEmpty() || (m_completionTasks.size() == 1 && !m_completionTasks[0].first)) {
-        fail(locker, "WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"_s);
+        fail("WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"_s);
         return true;
     }
 
     return false;
 }
 
-void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
+void Plan::fail(String&& errorMessage)
 {
     if (failed())
         return;
     ASSERT(errorMessage);
     dataLogLnIf(WasmPlanInternal::verbose, "failing with message: ", errorMessage);
     m_errorMessage = WTFMove(errorMessage);
-    complete(locker);
+    complete();
 }
 
 #if ENABLE(WEBASSEMBLY_B3JIT)

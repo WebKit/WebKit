@@ -55,11 +55,11 @@ void ClipboardItemPasteboardDataSource::getType(const String& type, Ref<Deferred
         promise->reject(NotAllowedError);
 }
 
-void ClipboardItemPasteboardDataSource::collectDataForWriting(Clipboard&, CompletionHandler<void(Optional<PasteboardCustomData>)>&& completion)
+void ClipboardItemPasteboardDataSource::collectDataForWriting(Clipboard&, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)
 {
     // FIXME: Not implemented. This is needed to support writing platform-backed ClipboardItems
     // back to the pasteboard using Clipboard.write().
-    completion(WTF::nullopt);
+    completion(std::nullopt);
 }
 
 } // namespace WebCore

@@ -1111,8 +1111,8 @@ TEST(URLSchemeHandler, LoadsFromNetwork)
         connection.webSocketHandshake();
     });
 
-    Optional<bool> loadSuccess;
-    Optional<bool> webSocketSuccess;
+    std::optional<bool> loadSuccess;
+    std::optional<bool> webSocketSuccess;
     bool done = false;
 
     auto handler = adoptNS([TestURLSchemeHandler new]);
@@ -1152,8 +1152,8 @@ TEST(URLSchemeHandler, LoadsFromNetwork)
     }];
     
     auto runTest = [&] {
-        loadSuccess = WTF::nullopt;
-        webSocketSuccess = WTF::nullopt;
+        loadSuccess = std::nullopt;
+        webSocketSuccess = std::nullopt;
         done = false;
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
@@ -1202,7 +1202,7 @@ TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
         }}},
     });
 
-    Optional<bool> loadSuccess;
+    std::optional<bool> loadSuccess;
     bool done = false;
 
     auto handler = adoptNS([TestURLSchemeHandler new]);
@@ -1230,7 +1230,7 @@ TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
     }];
 
     auto runTest = [&] {
-        loadSuccess = WTF::nullopt;
+        loadSuccess = std::nullopt;
         done = false;
         configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1602,8 +1602,8 @@ TEST(URLSchemeHandler, Ranges)
 
         auto rangeBeginString = requestRangeString.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length());
         auto rangeEndString = requestRangeString.substring(dash + 1, end - dash - 1);
-        auto rangeBegin = parseInteger<uint64_t>(rangeBeginString).valueOr(0);
-        auto rangeEnd = rangeEndString == "*" ? [videoData length] : parseInteger<uint64_t>(rangeEndString).valueOr(0);
+        auto rangeBegin = parseInteger<uint64_t>(rangeBeginString).value_or(0);
+        auto rangeEnd = rangeEndString == "*" ? [videoData length] : parseInteger<uint64_t>(rangeEndString).value_or(0);
 
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:206 HTTPVersion:@"HTTP/1.1" headerFields:@{
             @"Content-Range" : [NSString stringWithFormat:@"bytes %llu-%llu/%lu", rangeBegin, rangeEnd, (unsigned long)[videoData length]],

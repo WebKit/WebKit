@@ -30,7 +30,6 @@
 #include "InspectorProtocolTypes.h"
 #include <functional>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -96,11 +95,11 @@ public:
     void sendPendingErrors();
 
     void reportProtocolError(CommonErrorCode, const String& errorMessage);
-    void reportProtocolError(Optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
+    void reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
 
-    Optional<bool> getBoolean(JSON::Object*, const String& name, bool required);
-    Optional<int> getInteger(JSON::Object*, const String& name, bool required);
-    Optional<double> getDouble(JSON::Object*, const String& name, bool required);
+    std::optional<bool> getBoolean(JSON::Object*, const String& name, bool required);
+    std::optional<int> getInteger(JSON::Object*, const String& name, bool required);
+    std::optional<double> getDouble(JSON::Object*, const String& name, bool required);
     String getString(JSON::Object*, const String& name, bool required);
     RefPtr<JSON::Value> getValue(JSON::Object*, const String& name, bool required);
     RefPtr<JSON::Object> getObject(JSON::Object*, const String& name, bool required);
@@ -122,7 +121,7 @@ private:
 
     // For synchronously handled requests, avoid plumbing requestId through every
     // call that could potentially fail with a protocol error.
-    Optional<long> m_currentRequestId { WTF::nullopt };
+    std::optional<long> m_currentRequestId { std::nullopt };
 };
 
 } // namespace Inspector

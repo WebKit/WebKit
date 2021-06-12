@@ -96,6 +96,7 @@ WK_EXPORT bool WKBundlePageCanShowMIMEType(WKBundlePageRef, WKStringRef mimeType
 WK_EXPORT void* WKAccessibilityRootObject(WKBundlePageRef);
 WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);
 WK_EXPORT bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef);
+WK_EXPORT void WKAccessibilityTestingInjectPreference(WKBundlePageRef, WKStringRef domain, WKStringRef key, WKStringRef encodedValue);
 
 WK_EXPORT void WKAccessibilityEnableEnhancedAccessibility(bool);
 WK_EXPORT bool WKAccessibilityEnhancedAccessibilityEnabled();

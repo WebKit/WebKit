@@ -44,25 +44,25 @@ void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, GRefPtr<GVariant
     encoder << DataReference(static_cast<const uint8_t*>(g_variant_get_data(variant.get())), g_variant_get_size(variant.get()));
 }
 
-Optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decoder& decoder)
+std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decoder& decoder)
 {
     CString variantTypeString;
     if (!decoder.decode(variantTypeString))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (variantTypeString.isNull())
         return GRefPtr<GVariant>();
 
     if (!g_variant_type_string_is_valid(variantTypeString.data()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     DataReference data;
     if (!decoder.decode(data))
-        return WTF::nullopt;
+        return std::nullopt;
 
     GUniquePtr<GVariantType> variantType(g_variant_type_new(variantTypeString.data()));
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
-    return Optional<GRefPtr<GVariant> >(g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE));
+    return std::optional<GRefPtr<GVariant> >(g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE));
 }
 
 void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<GTlsCertificate> certificate)
@@ -96,11 +96,11 @@ void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<G
     }
 }
 
-Optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode(Decoder& decoder)
+std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode(Decoder& decoder)
 {
     uint32_t chainLength;
     if (!decoder.decode(chainLength))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!chainLength)
         return GRefPtr<GTlsCertificate>();
@@ -111,7 +111,7 @@ Optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::deco
     for (uint32_t i = 0; i < chainLength; i++) {
         IPC::DataReference certificateDataReference;
         if (!decoder.decode(certificateDataReference))
-            return WTF::nullopt;
+            return std::nullopt;
 
         GRefPtr<GByteArray> certificateData = adoptGRef(g_byte_array_sized_new(certificateDataReference.size()));
         g_byte_array_append(certificateData.get(), certificateDataReference.data(), certificateDataReference.size());

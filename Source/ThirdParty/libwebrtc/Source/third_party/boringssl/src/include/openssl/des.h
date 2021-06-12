@@ -65,6 +65,12 @@ extern "C" {
 
 
 // DES.
+//
+// This module is deprecated and retained for legacy reasons only. It is slow
+// and may leak key material with timing or cache side channels. Moreover,
+// single-keyed DES is broken and can be brute-forced in under a day.
+//
+// Use a modern cipher, such as AES-GCM or ChaCha20-Poly1305, instead.
 
 
 typedef struct DES_cblock_st {

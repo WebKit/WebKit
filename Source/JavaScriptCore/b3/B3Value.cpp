@@ -38,7 +38,6 @@
 #include "B3OriginDump.h"
 #include "B3ProcedureInlines.h"
 #include "B3SlotBaseValue.h"
-#include "B3StackSlot.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
 #include "B3WasmBoundsCheckValue.h"
@@ -434,7 +433,7 @@ Value* Value::invertedCompare(Procedure& proc) const
 {
     if (numChildren() != 2)
         return nullptr;
-    if (Optional<Opcode> invertedOpcode = B3::invertedCompare(opcode(), child(0)->type())) {
+    if (std::optional<Opcode> invertedOpcode = B3::invertedCompare(opcode(), child(0)->type())) {
         ASSERT(!kind().hasExtraBits());
         return proc.add<Value>(*invertedOpcode, type(), origin(), child(0), child(1));
     }

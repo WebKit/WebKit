@@ -110,7 +110,8 @@ FunctionOverrides& FunctionOverrides::overrides()
 FunctionOverrides::FunctionOverrides(const char* overridesFileName)
 {
     FunctionOverridesAssertScope assertScope;
-    parseOverridesInFile(Locker { m_lock }, overridesFileName);
+    Locker locker { m_lock };
+    parseOverridesInFile(overridesFileName);
 }
 
 void FunctionOverrides::reinstallOverrides()
@@ -119,8 +120,8 @@ void FunctionOverrides::reinstallOverrides()
     FunctionOverrides& overrides = FunctionOverrides::overrides();
     Locker locker { overrides.m_lock };
     const char* overridesFileName = Options::functionOverrides();
-    overrides.clear(locker);
-    overrides.parseOverridesInFile(locker, overridesFileName);
+    overrides.clear();
+    overrides.parseOverridesInFile(overridesFileName);
 }
 
 static void initializeOverrideInfo(const SourceCode& origCode, const String& newBody, FunctionOverrides::OverrideInfo& info)
@@ -248,7 +249,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
     FAIL_WITH_ERROR(SYNTAX_ERROR, ("'", keyword, "' clause end delimiter '", delimiter, "' not found:\n", builder.toString(), "\n", "Are you missing a '}' before the delimiter?\n"));
 }
 
-void FunctionOverrides::parseOverridesInFile(const AbstractLocker&, const char* fileName)
+void FunctionOverrides::parseOverridesInFile(const char* fileName)
 {
     FunctionOverridesAssertScope assertScope;
     if (!fileName)

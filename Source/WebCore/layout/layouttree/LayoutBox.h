@@ -61,7 +61,7 @@ public:
 
     enum BaseTypeFlag : uint8_t {
         BoxFlag                    = 1 << 0,
-        InlineTextBoxFlag          = 1 << 1,
+        LegacyInlineTextBoxFlag          = 1 << 1,
         LineBreakBoxFlag           = 1 << 2,
         ReplacedBoxFlag            = 1 << 3,
         InitialContainingBlockFlag = 1 << 4,
@@ -146,12 +146,13 @@ public:
     const Box* previousSibling() const { return m_previousSibling; }
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
+    bool isDescendantOf(const ContainerBox&) const;
 
     // FIXME: This is currently needed for style updates.
     Box* nextSibling() { return m_nextSibling; }
 
     bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
-    bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
+    bool isInlineTextBox() const { return baseTypeFlags().contains(LegacyInlineTextBoxFlag); }
     bool isLineBreakBox() const { return baseTypeFlags().contains(LineBreakBoxFlag); }
     bool isReplacedBox() const { return baseTypeFlags().contains(ReplacedBoxFlag); }
 
@@ -169,7 +170,7 @@ public:
     size_t columnSpan() const;
 
     void setColumnWidth(LayoutUnit);
-    Optional<LayoutUnit> columnWidth() const;
+    std::optional<LayoutUnit> columnWidth() const;
 
     void setParent(ContainerBox& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
@@ -182,7 +183,7 @@ public:
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
 
 protected:
-    Box(Optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag>);
+    Box(std::optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag>);
 
 private:
     class BoxRareData {
@@ -191,7 +192,7 @@ private:
         BoxRareData() = default;
 
         CellSpan tableCellSpan;
-        Optional<LayoutUnit> columnWidth;
+        std::optional<LayoutUnit> columnWidth;
     };
 
     bool hasRareData() const { return m_hasRareData; }
@@ -207,7 +208,7 @@ private:
     static RareDataMap& rareDataMap();
 
     RenderStyle m_style;
-    Optional<ElementAttributes> m_elementAttributes;
+    std::optional<ElementAttributes> m_elementAttributes;
 
     ContainerBox* m_parent { nullptr };
     Box* m_previousSibling { nullptr };

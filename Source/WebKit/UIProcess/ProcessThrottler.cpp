@@ -205,7 +205,7 @@ void ProcessThrottler::processReadyToSuspend()
 void ProcessThrottler::clearPendingRequestToSuspend()
 {
     m_prepareToSuspendTimeoutTimer.stop();
-    m_pendingRequestToSuspendID = WTF::nullopt;
+    m_pendingRequestToSuspendID = std::nullopt;
 }
 
 void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspensionImminent)

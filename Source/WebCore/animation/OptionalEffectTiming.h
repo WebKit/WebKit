@@ -34,8 +34,8 @@
 namespace WebCore {
 
 struct OptionalEffectTiming {
-    Optional<Variant<double, String>> duration;
-    Optional<double> iterations; // This value cannot be a MarkableDouble since we need to check for a NaN value.
+    std::optional<Variant<double, String>> duration;
+    std::optional<double> iterations; // This value cannot be a MarkableDouble since we need to check for a NaN value.
     MarkableDouble delay;
     MarkableDouble endDelay;
     MarkableDouble iterationStart;

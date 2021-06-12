@@ -32,7 +32,6 @@
 #include "AudioBus.h"
 #include "AudioIOCallback.h"
 #include <memory>
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -78,7 +77,7 @@ public:
 protected:
     explicit AudioDestination(AudioIOCallback&);
 
-    CheckedLock m_callbackLock;
+    Lock m_callbackLock;
     AudioIOCallback* m_callback WTF_GUARDED_BY_LOCK(m_callbackLock) { nullptr };
 };
 

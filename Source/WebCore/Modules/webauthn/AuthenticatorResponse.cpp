@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-RefPtr<AuthenticatorResponse> AuthenticatorResponse::tryCreate(AuthenticatorResponseData&& data)
+RefPtr<AuthenticatorResponse> AuthenticatorResponse::tryCreate(AuthenticatorResponseData&& data, AuthenticatorAttachment attachment)
 {
     if (!data.rawId)
         return nullptr;
@@ -43,13 +43,13 @@ RefPtr<AuthenticatorResponse> AuthenticatorResponse::tryCreate(AuthenticatorResp
         if (!data.attestationObject)
             return nullptr;
 
-        return AuthenticatorAttestationResponse::create(data.rawId.releaseNonNull(), data.attestationObject.releaseNonNull());
+        return AuthenticatorAttestationResponse::create(data.rawId.releaseNonNull(), data.attestationObject.releaseNonNull(), attachment);
     }
 
     if (!data.authenticatorData || !data.signature)
         return nullptr;
 
-    return AuthenticatorAssertionResponse::create(data.rawId.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle), AuthenticationExtensionsClientOutputs { data.appid });
+    return AuthenticatorAssertionResponse::create(data.rawId.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle), AuthenticationExtensionsClientOutputs { data.appid }, attachment);
 }
 
 AuthenticatorResponseData AuthenticatorResponse::data() const
@@ -85,8 +85,14 @@ ArrayBuffer* AuthenticatorResponse::clientDataJSON() const
     return m_clientDataJSON.get();
 }
 
-AuthenticatorResponse::AuthenticatorResponse(Ref<ArrayBuffer>&& rawId)
+AuthenticatorAttachment AuthenticatorResponse::attachment() const
+{
+    return m_attachment;
+}
+
+AuthenticatorResponse::AuthenticatorResponse(Ref<ArrayBuffer>&& rawId, AuthenticatorAttachment attachment)
     : m_rawId(WTFMove(rawId))
+    , m_attachment(attachment)
 {
 }
 

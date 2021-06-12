@@ -340,7 +340,7 @@ public:
 
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
-    virtual void setPosition(const FloatPoint& p) { m_approximatePosition = WTF::nullopt; m_position = p; }
+    virtual void setPosition(const FloatPoint& p) { m_approximatePosition = std::nullopt; m_position = p; }
 
     // approximatePosition, if set, overrides position() and is used during coverage rect computation.
     FloatPoint approximatePosition() const { return m_approximatePosition ? m_approximatePosition.value() : m_position; }
@@ -395,8 +395,13 @@ public:
     virtual void setUsesDisplayListDrawing(bool b) { m_usesDisplayListDrawing = b; }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    bool isSeparated() const { return m_separated; }
-    virtual void setSeparated(bool b) { m_separated = b; }
+    bool isIsSeparated() const { return m_isSeparated; }
+    virtual void setIsSeparated(bool b) { m_isSeparated = b; }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    bool isSeparatedPortal() const { return m_isSeparatedPortal; }
+    virtual void setIsSeparatedPortal(bool b) { m_isSeparatedPortal = b; }
+#endif
 #endif
 
     bool needsBackdrop() const { return !m_backdropFilters.isEmpty(); }
@@ -629,8 +634,8 @@ public:
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
     virtual bool isCoordinatedGraphicsLayer() const { return false; }
 
-    const Optional<FloatRect>& animationExtent() const { return m_animationExtent; }
-    void setAnimationExtent(Optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
+    const std::optional<FloatRect>& animationExtent() const { return m_animationExtent; }
+    void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
     static void traverse(GraphicsLayer&, const WTF::Function<void (GraphicsLayer&)>&);
 
@@ -665,6 +670,14 @@ protected:
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    bool isDescendentOfSeparatedPortal() const { return m_isDescendentOfSeparatedPortal; }
+    virtual void setIsDescendentOfSeparatedPortal(bool b) { m_isDescendentOfSeparatedPortal = b; }
+#endif
+#endif
+
+
     void dumpProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const;
     virtual void dumpAdditionalProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const { }
 
@@ -683,7 +696,7 @@ protected:
     FloatPoint m_position;
 
     // If set, overrides m_position. Only used for coverage computation.
-    Optional<FloatPoint> m_approximatePosition;
+    std::optional<FloatPoint> m_approximatePosition;
 
     FloatPoint3D m_anchorPoint { 0.5f, 0.5f, 0 };
     FloatSize m_size;
@@ -731,7 +744,11 @@ protected:
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    bool m_separated : 1;
+    bool m_isSeparated : 1;
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    bool m_isSeparatedPortal : 1;
+    bool m_isDescendentOfSeparatedPortal : 1;
+#endif
 #endif
 
     int m_repaintCount { 0 };
@@ -752,7 +769,7 @@ protected:
     FloatSize m_contentsTilePhase;
     FloatSize m_contentsTileSize;
     FloatRoundedRect m_backdropFiltersRect;
-    Optional<FloatRect> m_animationExtent;
+    std::optional<FloatRect> m_animationExtent;
 
     EventRegion m_eventRegion;
 #if USE(CA)

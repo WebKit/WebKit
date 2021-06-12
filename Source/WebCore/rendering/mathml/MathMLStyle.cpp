@@ -113,7 +113,7 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
     // The mathvariant attributes override the default behavior.
     auto* element = downcast<RenderElement>(renderer)->element();
     if (is<MathMLElement>(element)) {
-        Optional<MathMLElement::MathVariant> mathVariant = downcast<MathMLElement>(element)->specifiedMathVariant();
+        std::optional<MathMLElement::MathVariant> mathVariant = downcast<MathMLElement>(element)->specifiedMathVariant();
         if (mathVariant)
             m_mathVariant = mathVariant.value();
     }

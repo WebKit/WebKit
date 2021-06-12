@@ -34,31 +34,34 @@ namespace Layout {
 
 class BlockFormattingContext;
 
+class BlockFormattingContext;
+
 // This class implements positioning and sizing for boxes participating in a block formatting context.
 class BlockFormattingGeometry : public FormattingGeometry {
 public:
     BlockFormattingGeometry(const BlockFormattingContext&);
 
-    ContentHeightAndMargin inFlowContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
-    ContentWidthAndMargin inFlowContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
+    ContentHeightAndMargin inFlowContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
+    ContentWidthAndMargin inFlowContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
-    Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
-    LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
+    LayoutUnit staticVerticalPosition(const Box&, LayoutUnit containingBlockContentBoxTop) const;
     LayoutUnit staticHorizontalPosition(const Box&, const HorizontalConstraints&) const;
 
-    IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
+    IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&) const;
 
-    ContentWidthAndMargin computedContentWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider);
+    ContentWidthAndMargin computedContentWidthAndMargin(const Box&, const HorizontalConstraints&, std::optional<LayoutUnit> availableWidthFloatAvoider) const;
 
 private:
-    ContentHeightAndMargin inFlowNonReplacedContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
-    ContentWidthAndMargin inFlowNonReplacedContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
-    ContentWidthAndMargin inFlowReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
+    ContentHeightAndMargin inFlowNonReplacedContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
+    ContentWidthAndMargin inFlowNonReplacedContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
+    ContentWidthAndMargin inFlowReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
     const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingGeometry::formattingContext()); }
 };
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(BlockFormattingGeometry, isBlockFormattingGeometry())
 
 #endif

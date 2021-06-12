@@ -79,7 +79,7 @@ void RemoteLegacyCDM::setPlayerId(MediaPlayerIdentifier identifier)
     if (!m_factory)
         return;
 
-    Optional<MediaPlayerIdentifier> optionalId;
+    std::optional<MediaPlayerIdentifier> optionalId;
     if (identifier)
         optionalId = identifier;
     m_factory->gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMProxy::SetPlayerId(optionalId), m_identifier);

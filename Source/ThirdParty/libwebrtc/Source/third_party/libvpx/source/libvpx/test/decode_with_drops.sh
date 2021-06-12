@@ -40,7 +40,7 @@ decode_with_drops() {
   fi
 
   eval "${VPX_TEST_PREFIX}" "${decoder}" "${input_file}" "${output_file}" \
-      "${drop_mode}" ${devnull}
+      "${drop_mode}" ${devnull} || return 1
 
   [ -e "${output_file}" ] || return 1
 }
@@ -52,10 +52,10 @@ decode_with_drops() {
 decode_with_drops_vp8() {
   if [ "$(vp8_decode_available)" = "yes" ]; then
     # Test sequence mode: Drop frames 2-28.
-    decode_with_drops "${VP8_IVF_FILE}" "vp8" "2-28"
+    decode_with_drops "${VP8_IVF_FILE}" "vp8" "2-28" || return 1
 
     # Test pattern mode: Drop 3 of every 4 frames.
-    decode_with_drops "${VP8_IVF_FILE}" "vp8" "3/4"
+    decode_with_drops "${VP8_IVF_FILE}" "vp8" "3/4" || return 1
   fi
 }
 
@@ -66,10 +66,10 @@ decode_with_drops_vp8() {
 decode_with_drops_vp9() {
   if [ "$(vp9_decode_available)" = "yes" ]; then
     # Test sequence mode: Drop frames 2-28.
-    decode_with_drops "${VP9_IVF_FILE}" "vp9" "2-19"
+    decode_with_drops "${VP9_IVF_FILE}" "vp9" "2-19" || return 1
 
     # Test pattern mode: Drop 3 of every 4 frames.
-    decode_with_drops "${VP9_IVF_FILE}" "vp9" "3/4"
+    decode_with_drops "${VP9_IVF_FILE}" "vp9" "3/4" || return 1
   fi
 }
 

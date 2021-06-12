@@ -29,7 +29,7 @@ class SVGVKernElement final : public SVGElement {
 public:
     static Ref<SVGVKernElement> create(const QualifiedName&, Document&);
 
-    Optional<SVGKerningPair> buildVerticalKerningPair() const;
+    std::optional<SVGKerningPair> buildVerticalKerningPair() const;
 
 private:
     SVGVKernElement(const QualifiedName&, Document&);

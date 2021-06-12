@@ -131,7 +131,7 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
         receivedTarget();
 }
 
-void Event::setCurrentTarget(EventTarget* currentTarget, Optional<bool> isInShadowTree)
+void Event::setCurrentTarget(EventTarget* currentTarget, std::optional<bool> isInShadowTree)
 {
     m_currentTarget = currentTarget;
     m_currentTargetIsInShadowTree = isInShadowTree ? *isInShadowTree : (is<Node>(currentTarget) && downcast<Node>(*currentTarget).isInShadowTree());

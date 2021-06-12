@@ -1621,7 +1621,7 @@ IDOMRange* DOMRange::createInstance(WebCore::Range* range)
     return newRange;
 }
 
-IDOMRange* DOMRange::createInstance(const Optional<WebCore::SimpleRange>& range)
+IDOMRange* DOMRange::createInstance(const std::optional<WebCore::SimpleRange>& range)
 {
     return createInstance(createLiveRange(range).get());
 }

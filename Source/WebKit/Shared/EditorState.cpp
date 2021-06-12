@@ -246,7 +246,7 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
 #endif
 
-    Optional<Optional<FontAttributes>> optionalFontAttributes;
+    std::optional<std::optional<FontAttributes>> optionalFontAttributes;
     decoder >> optionalFontAttributes;
     if (!optionalFontAttributes)
         return false;

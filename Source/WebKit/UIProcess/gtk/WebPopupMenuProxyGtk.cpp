@@ -67,10 +67,10 @@ void WebPopupMenuProxyGtk::selectItem(unsigned itemIndex)
     m_selectedItem = itemIndex;
 }
 
-void WebPopupMenuProxyGtk::activateItem(Optional<unsigned> itemIndex)
+void WebPopupMenuProxyGtk::activateItem(std::optional<unsigned> itemIndex)
 {
     if (m_client)
-        m_client->valueChangedForPopupMenu(this, itemIndex.valueOr(m_selectedItem.valueOr(-1)));
+        m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
 }
 
 bool WebPopupMenuProxyGtk::activateItemAtPath(GtkTreePath* path)
@@ -404,7 +404,7 @@ void WebPopupMenuProxyGtk::hidePopupMenu()
     }
 #endif
 
-    activateItem(WTF::nullopt);
+    activateItem(std::nullopt);
 
     if (m_currentSearchString) {
         g_string_free(m_currentSearchString, TRUE);
@@ -428,14 +428,14 @@ void WebPopupMenuProxyGtk::cancelTracking()
     hidePopupMenu();
 }
 
-Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval, uint32_t time)
+std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval, uint32_t time)
 {
     gunichar keychar = gdk_keyval_to_unicode(keyval);
     if (!g_unichar_isprint(keychar))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (time < m_previousKeyEventTime)
-        return WTF::nullopt;
+        return std::nullopt;
 
     static const uint32_t typeaheadTimeoutMs = 1000;
     if (time - m_previousKeyEventTime > typeaheadTimeoutMs) {
@@ -469,7 +469,7 @@ Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval, uin
     GUniquePtr<char> normalizedPrefix(g_utf8_normalize(m_currentSearchString->str, prefixLength, G_NORMALIZE_ALL));
     GUniquePtr<char> prefix(normalizedPrefix ? g_utf8_casefold(normalizedPrefix.get(), -1) : nullptr);
     if (!prefix)
-        return WTF::nullopt;
+        return std::nullopt;
 
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(m_treeView));
     for (unsigned i = 0; i < itemCount; i++, index = (index + 1) % itemCount) {
@@ -492,7 +492,7 @@ Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval, uin
             return index;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool WebPopupMenuProxyGtk::typeAheadFind(unsigned keyval, uint32_t timestamp)

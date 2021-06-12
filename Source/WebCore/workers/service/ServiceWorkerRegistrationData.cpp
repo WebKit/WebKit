@@ -38,9 +38,9 @@ ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() cons
         scopeURL.isolatedCopy(),
         updateViaCache,
         lastUpdateTime,
-        installingWorker ? Optional<ServiceWorkerData>(installingWorker->isolatedCopy()) : WTF::nullopt,
-        waitingWorker ? Optional<ServiceWorkerData>(waitingWorker->isolatedCopy()) : WTF::nullopt,
-        activeWorker ? Optional<ServiceWorkerData>(activeWorker->isolatedCopy()) : WTF::nullopt,
+        installingWorker ? std::optional<ServiceWorkerData>(installingWorker->isolatedCopy()) : std::nullopt,
+        waitingWorker ? std::optional<ServiceWorkerData>(waitingWorker->isolatedCopy()) : std::nullopt,
+        activeWorker ? std::optional<ServiceWorkerData>(activeWorker->isolatedCopy()) : std::nullopt,
     };
 }
 

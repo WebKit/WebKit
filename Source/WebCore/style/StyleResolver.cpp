@@ -576,7 +576,7 @@ bool Resolver::hasViewportDependentMediaQueries() const
     return m_ruleSets.hasViewportDependentMediaQueries();
 }
 
-Optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMediaQueries()
+std::optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMediaQueries()
 {
     return m_ruleSets.evaluateDynamicMediaQueryRules(m_mediaQueryEvaluator);
 }

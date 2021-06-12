@@ -28,7 +28,6 @@
 #include "JSCInlines.h"
 #include "ParseInt.h"
 #include "StackFrame.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
@@ -209,17 +208,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
     String messageString = sanitizedMessageString(globalObject);
     RETURN_IF_EXCEPTION(scope, String());
 
-    if (!nameString.length())
-        return messageString;
-
-    if (!messageString.length())
-        return nameString;
-
-    StringBuilder builder;
-    builder.append(nameString);
-    builder.appendLiteral(": ");
-    builder.append(messageString);
-    return builder.toString();
+    return makeString(nameString, nameString.isEmpty() || messageString.isEmpty() ? "" : ": ", messageString);
 }
 
 void ErrorInstance::finalizeUnconditionally(VM& vm)

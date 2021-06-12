@@ -32,7 +32,6 @@
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/Optional.h>
 
 class WebGLLayerSwapChain final : public WebCore::GraphicsContextGLIOSurfaceSwapChain {
 public:
@@ -47,7 +46,7 @@ private:
 
 @implementation WebGLLayer {
     BOOL _preparedForDisplay;
-    Optional<WebGLLayerSwapChain> _swapChain;
+    std::optional<WebGLLayerSwapChain> _swapChain;
 }
 
 - (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque

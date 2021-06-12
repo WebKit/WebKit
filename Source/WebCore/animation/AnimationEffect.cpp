@@ -67,13 +67,13 @@ EffectTiming AnimationEffect::getTiming() const
     return timing;
 }
 
-BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) const
+BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<Seconds> startTime) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
     // to return them all as a single BasicEffectTiming.
 
-    auto localTime = [this, startTime]() -> Optional<Seconds> {
+    auto localTime = [this, startTime]() -> std::optional<Seconds> {
         // 4.5.4. Local time
         // https://drafts.csswg.org/web-animations-1/#local-time-section
 
@@ -82,7 +82,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) c
         // Otherwise, the local time is unresolved.
         if (m_animation)
             return m_animation->currentTime(startTime);
-        return WTF::nullopt;
+        return std::nullopt;
     }();
 
     auto phase = [this, localTime]() -> AnimationEffectPhase {
@@ -119,7 +119,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) c
         return AnimationEffectPhase::Active;
     }();
 
-    auto activeTime = [this, localTime, phase]() -> Optional<Seconds> {
+    auto activeTime = [this, localTime, phase]() -> std::optional<Seconds> {
         // 3.8.3.1. Calculating the active time
         // https://drafts.csswg.org/web-animations-1/#calculating-the-active-time
 
@@ -135,7 +135,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) c
             if (m_fill == FillMode::Backwards || m_fill == FillMode::Both)
                 return std::max(*localTime - m_delay, 0_s);
             // Otherwise, return an unresolved time value.
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         // If the animation effect is in the active phase, return the result of evaluating local time - start delay.
@@ -150,11 +150,11 @@ BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) c
             if (m_fill == FillMode::Forwards || m_fill == FillMode::Both)
                 return std::max(std::min(*localTime - m_delay, m_activeDuration), 0_s);
             // Otherwise, return an unresolved time value.
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         // Otherwise (the local time is unresolved), return an unresolved time value.
-        return WTF::nullopt;
+        return std::nullopt;
     }();
 
     return { localTime, activeTime, m_endTime, m_activeDuration, phase };
@@ -167,7 +167,7 @@ ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
     return getComputedTiming();
 }
 
-ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startTime) const
+ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<Seconds> startTime) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
@@ -177,7 +177,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
     auto activeTime = basicEffectTiming.activeTime;
     auto phase = basicEffectTiming.phase;
 
-    auto overallProgress = [this, phase, activeTime]() -> Optional<double> {
+    auto overallProgress = [this, phase, activeTime]() -> std::optional<double> {
         // 3.8.3.2. Calculating the overall progress
         // https://drafts.csswg.org/web-animations-1/#calculating-the-overall-progress
 
@@ -185,7 +185,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the active time is unresolved, return unresolved.
         if (!activeTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. Calculate an initial value for overall progress based on the first matching condition from below,
         double overallProgress;
@@ -204,7 +204,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
         return std::abs(overallProgress);
     }();
 
-    auto simpleIterationProgress = [this, overallProgress, phase, activeTime]() -> Optional<double> {
+    auto simpleIterationProgress = [this, overallProgress, phase, activeTime]() -> std::optional<double> {
         // 3.8.3.3. Calculating the simple iteration progress
         // https://drafts.csswg.org/web-animations-1/#calculating-the-simple-iteration-progress
 
@@ -214,7 +214,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the overall progress is unresolved, return unresolved.
         if (!overallProgress)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. If overall progress is infinity, let the simple iteration progress be iteration start % 1.0,
         // otherwise, let the simple iteration progress be overall progress % 1.0.
@@ -233,7 +233,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
         return simpleIterationProgress;
     }();
 
-    auto currentIteration = [this, activeTime, phase, simpleIterationProgress, overallProgress]() -> Optional<double> {
+    auto currentIteration = [this, activeTime, phase, simpleIterationProgress, overallProgress]() -> std::optional<double> {
         // 3.8.4. Calculating the current iteration
         // https://drafts.csswg.org/web-animations-1/#calculating-the-current-iteration
 
@@ -241,7 +241,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the active time is unresolved, return unresolved.
         if (!activeTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. If the animation effect is in the after phase and the iteration count is infinity, return infinity.
         if (phase == AnimationEffectPhase::After && std::isinf(m_iterations))
@@ -282,7 +282,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
         return AnimationEffect::ComputedDirection::Reverse;
     }();
 
-    auto directedProgress = [simpleIterationProgress, currentDirection]() -> Optional<double> {
+    auto directedProgress = [simpleIterationProgress, currentDirection]() -> std::optional<double> {
         // 3.9.1. Calculating the directed progress
         // https://drafts.csswg.org/web-animations-1/#calculating-the-directed-progress
 
@@ -290,7 +290,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the simple iteration progress is unresolved, return unresolved.
         if (!simpleIterationProgress)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. Calculate the current direction (we implement this as a separate method).
 
@@ -302,7 +302,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
         return 1 - *simpleIterationProgress;
     }();
 
-    auto transformedProgress = [this, directedProgress, currentDirection, phase]() -> Optional<double> {
+    auto transformedProgress = [this, directedProgress, currentDirection, phase]() -> std::optional<double> {
         // 3.10.1. Calculating the transformed progress
         // https://drafts.csswg.org/web-animations-1/#calculating-the-transformed-progress
 
@@ -310,7 +310,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
         //
         // 1. If the directed progress is unresolved, return unresolved.
         if (!directedProgress)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (auto iterationDuration = m_iterationDuration.seconds()) {
             bool before = false;
@@ -352,7 +352,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
     return computedTiming;
 }
 
-ExceptionOr<void> AnimationEffect::bindingsUpdateTiming(Optional<OptionalEffectTiming> timing)
+ExceptionOr<void> AnimationEffect::bindingsUpdateTiming(std::optional<OptionalEffectTiming> timing)
 {
     auto retVal = updateTiming(timing);
     if (!retVal.hasException() && timing && is<CSSAnimation>(animation()))
@@ -360,7 +360,7 @@ ExceptionOr<void> AnimationEffect::bindingsUpdateTiming(Optional<OptionalEffectT
     return retVal;
 }
 
-ExceptionOr<void> AnimationEffect::updateTiming(Optional<OptionalEffectTiming> timing)
+ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTiming> timing)
 {
     // 6.5.4. Updating the timing of an AnimationEffect
     // https://drafts.csswg.org/web-animations/#updating-animationeffect-timing
@@ -541,10 +541,10 @@ void AnimationEffect::setTimingFunction(const RefPtr<TimingFunction>& timingFunc
     m_timingFunction = timingFunction;
 }
 
-Optional<double> AnimationEffect::progressUntilNextStep(double iterationProgress) const
+std::optional<double> AnimationEffect::progressUntilNextStep(double iterationProgress) const
 {
     if (!is<StepsTimingFunction>(m_timingFunction))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto numberOfSteps = downcast<StepsTimingFunction>(*m_timingFunction).numberOfSteps();
     auto nextStepProgress = ceil(iterationProgress * numberOfSteps) / numberOfSteps;

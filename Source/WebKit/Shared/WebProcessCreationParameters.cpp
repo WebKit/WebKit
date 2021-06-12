@@ -209,13 +209,13 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.injectedBundlePath))
         return false;
     
-    Optional<SandboxExtension::Handle> injectedBundlePathExtensionHandle;
+    std::optional<SandboxExtension::Handle> injectedBundlePathExtensionHandle;
     decoder >> injectedBundlePathExtensionHandle;
     if (!injectedBundlePathExtensionHandle)
         return false;
     parameters.injectedBundlePathExtensionHandle = WTFMove(*injectedBundlePathExtensionHandle);
 
-    Optional<SandboxExtension::HandleArray> additionalSandboxExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> additionalSandboxExtensionHandles;
     decoder >> additionalSandboxExtensionHandles;
     if (!additionalSandboxExtensionHandles)
         return false;
@@ -225,19 +225,19 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if PLATFORM(IOS_FAMILY)
     
-    Optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
     decoder >> cookieStorageDirectoryExtensionHandle;
     if (!cookieStorageDirectoryExtensionHandle)
         return false;
     parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*cookieStorageDirectoryExtensionHandle);
 
-    Optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
     decoder >> containerCachesDirectoryExtensionHandle;
     if (!containerCachesDirectoryExtensionHandle)
         return false;
     parameters.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
 
-    Optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
     decoder >> containerTemporaryDirectoryExtensionHandle;
     if (!containerTemporaryDirectoryExtensionHandle)
         return false;
@@ -245,7 +245,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    Optional<SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandle;
+    std::optional<SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandle;
     decoder >> enableRemoteWebInspectorExtensionHandle;
     if (!enableRemoteWebInspectorExtensionHandle)
         return false;
@@ -259,7 +259,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if ENABLE(MEDIA_STREAM)
 
-    Optional<SandboxExtension::Handle> audioCaptureExtensionHandle;
+    std::optional<SandboxExtension::Handle> audioCaptureExtensionHandle;
     decoder >> audioCaptureExtensionHandle;
     if (!audioCaptureExtensionHandle)
         return false;
@@ -341,7 +341,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.uiProcessBundleResourcePath))
         return false;
     
-    Optional<SandboxExtension::Handle> uiProcessBundleResourcePathExtensionHandle;
+    std::optional<SandboxExtension::Handle> uiProcessBundleResourcePathExtensionHandle;
     decoder >> uiProcessBundleResourcePathExtensionHandle;
     if (!uiProcessBundleResourcePathExtensionHandle)
         return false;
@@ -405,7 +405,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.mediaMIMETypes))
         return false;
 
-    Optional<WebCore::ScreenProperties> screenProperties;
+    std::optional<WebCore::ScreenProperties> screenProperties;
     decoder >> screenProperties;
     if (!screenProperties)
         return false;
@@ -426,52 +426,52 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #endif
 
-    Optional<Optional<WebProcessDataStoreParameters>> websiteDataStoreParameters;
+    std::optional<std::optional<WebProcessDataStoreParameters>> websiteDataStoreParameters;
     decoder >> websiteDataStoreParameters;
     if (!websiteDataStoreParameters)
         return false;
     parameters.websiteDataStoreParameters = WTFMove(*websiteDataStoreParameters);
 
 #if PLATFORM(IOS)
-    Optional<SandboxExtension::HandleArray> compilerServiceExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> compilerServiceExtensionHandles;
     decoder >> compilerServiceExtensionHandles;
     if (!compilerServiceExtensionHandles)
         return false;
     parameters.compilerServiceExtensionHandles = WTFMove(*compilerServiceExtensionHandles);
 #endif
 
-    Optional<Optional<SandboxExtension::Handle>> containerManagerExtensionHandle;
+    std::optional<std::optional<SandboxExtension::Handle>> containerManagerExtensionHandle;
     decoder >> containerManagerExtensionHandle;
     if (!containerManagerExtensionHandle)
         return false;
     parameters.containerManagerExtensionHandle = WTFMove(*containerManagerExtensionHandle);
 
-    Optional<Optional<SandboxExtension::Handle>> mobileGestaltExtensionHandle;
+    std::optional<std::optional<SandboxExtension::Handle>> mobileGestaltExtensionHandle;
     decoder >> mobileGestaltExtensionHandle;
     if (!mobileGestaltExtensionHandle)
         return false;
     parameters.mobileGestaltExtensionHandle = WTFMove(*mobileGestaltExtensionHandle);
 
-    Optional<Optional<SandboxExtension::Handle>> launchServicesExtensionHandle;
+    std::optional<std::optional<SandboxExtension::Handle>> launchServicesExtensionHandle;
     decoder >> launchServicesExtensionHandle;
     if (!launchServicesExtensionHandle)
         return false;
     parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
 
-    Optional<SandboxExtension::HandleArray> diagnosticsExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> diagnosticsExtensionHandles;
     decoder >> diagnosticsExtensionHandles;
     if (!diagnosticsExtensionHandles)
         return false;
     parameters.diagnosticsExtensionHandles = WTFMove(*diagnosticsExtensionHandles);
 
 #if PLATFORM(IOS_FAMILY)
-    Optional<SandboxExtension::HandleArray> dynamicMachExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> dynamicMachExtensionHandles;
     decoder >> dynamicMachExtensionHandles;
     if (!dynamicMachExtensionHandles)
         return false;
     parameters.dynamicMachExtensionHandles = WTFMove(*dynamicMachExtensionHandles);
 
-    Optional<SandboxExtension::HandleArray> dynamicIOKitExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> dynamicIOKitExtensionHandles;
     decoder >> dynamicIOKitExtensionHandles;
     if (!dynamicIOKitExtensionHandles)
         return false;
@@ -479,13 +479,13 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(COCOA)
-    Optional<bool> systemHasBattery;
+    std::optional<bool> systemHasBattery;
     decoder >> systemHasBattery;
     if (!systemHasBattery)
         return false;
     parameters.systemHasBattery = WTFMove(*systemHasBattery);
 
-    Optional<bool> systemHasAC;
+    std::optional<bool> systemHasAC;
     decoder >> systemHasAC;
     if (!systemHasAC)
         return false;
@@ -499,13 +499,13 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.supportsPictureInPicture))
         return false;
 
-    Optional<WebCore::RenderThemeIOS::CSSValueToSystemColorMap> cssValueToSystemColorMap;
+    std::optional<WebCore::RenderThemeIOS::CSSValueToSystemColorMap> cssValueToSystemColorMap;
     decoder >> cssValueToSystemColorMap;
     if (!cssValueToSystemColorMap)
         return false;
     parameters.cssValueToSystemColorMap = WTFMove(*cssValueToSystemColorMap);
 
-    Optional<WebCore::Color> focusRingColor;
+    std::optional<WebCore::Color> focusRingColor;
     decoder >> focusRingColor;
     if (!focusRingColor)
         return false;
@@ -520,7 +520,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if PLATFORM(COCOA)
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    Optional<Optional<SandboxExtension::HandleArray>> preferencesExtensionHandles;
+    std::optional<std::optional<SandboxExtension::HandleArray>> preferencesExtensionHandles;
     decoder >> preferencesExtensionHandles;
     if (!preferencesExtensionHandles)
         return false;
@@ -529,7 +529,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(GTK)
-    Optional<bool> useSystemAppearanceForScrollbars;
+    std::optional<bool> useSystemAppearanceForScrollbars;
     decoder >> useSystemAppearanceForScrollbars;
     if (!useSystemAppearanceForScrollbars)
         return false;
@@ -537,7 +537,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
-    Optional<std::pair<int64_t, double>> overrideUserInterfaceIdiomAndScale;
+    std::optional<std::pair<int64_t, double>> overrideUserInterfaceIdiomAndScale;
     decoder >> overrideUserInterfaceIdiomAndScale;
     if (!overrideUserInterfaceIdiomAndScale)
         return false;

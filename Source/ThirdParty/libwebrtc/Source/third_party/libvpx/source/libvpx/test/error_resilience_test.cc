@@ -573,10 +573,10 @@ TEST_P(ErrorResilienceTestLargeCodecControls, CodecControl3TemporalLayers) {
   }
 }
 
-VP8_INSTANTIATE_TEST_CASE(ErrorResilienceTestLarge, ONE_PASS_TEST_MODES,
-                          ::testing::Values(true));
-VP8_INSTANTIATE_TEST_CASE(ErrorResilienceTestLargeCodecControls,
-                          ONE_PASS_TEST_MODES);
-VP9_INSTANTIATE_TEST_CASE(ErrorResilienceTestLarge, ONE_PASS_TEST_MODES,
-                          ::testing::Values(true));
+VP8_INSTANTIATE_TEST_SUITE(ErrorResilienceTestLarge, ONE_PASS_TEST_MODES,
+                           ::testing::Values(true));
+VP8_INSTANTIATE_TEST_SUITE(ErrorResilienceTestLargeCodecControls,
+                           ONE_PASS_TEST_MODES);
+VP9_INSTANTIATE_TEST_SUITE(ErrorResilienceTestLarge, ONE_PASS_TEST_MODES,
+                           ::testing::Values(true));
 }  // namespace

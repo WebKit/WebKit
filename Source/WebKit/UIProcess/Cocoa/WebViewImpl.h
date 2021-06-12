@@ -61,6 +61,7 @@ OBJC_CLASS WKDOMPasteMenuDelegate;
 OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
+OBJC_CLASS WKRevealItemPresenter;
 OBJC_CLASS WKSafeBrowsingWarning;
 OBJC_CLASS WKShareSheet;
 OBJC_CLASS WKViewLayoutStrategy;
@@ -94,7 +95,9 @@ class PageConfiguration;
 }
 
 namespace WebCore {
+class DestinationColorSpace;
 class IntPoint;
+struct DataDetectorElementInfo;
 struct ShareDataWithParsedURL;
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
@@ -168,7 +171,6 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
-struct ColorSpaceData;
 struct WebHitTestResultData;
 
 enum class ContinueUnsafeLoad : bool;
@@ -189,6 +191,7 @@ public:
     NSWindow *window();
 
     WebPageProxy& page() { return m_page.get(); }
+    NSView *view() const { return m_view.getAutoreleased(); }
 
     void processWillSwap();
     void processDidExit();
@@ -313,7 +316,7 @@ public:
 
     NSView *hitTest(CGPoint);
 
-    ColorSpaceData colorSpace();
+    WebCore::DestinationColorSpace colorSpace();
 
     void setUnderlayColor(NSColor *);
     NSColor *underlayColor() const;
@@ -323,8 +326,8 @@ public:
     _WKRectEdge rubberBandingEnabled();
     void setRubberBandingEnabled(_WKRectEdge);
 
-    void setOverlayScrollbarStyle(Optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
-    Optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const;
+    void setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
+    std::optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const;
 
     void beginDeferringViewInWindowChanges();
     // FIXME: Merge these two?
@@ -669,6 +672,14 @@ public:
     void setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate*);
 #endif
 
+#if ENABLE(DATA_DETECTION)
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+#endif
+
+#if ENABLE(REVEAL)
+    void didFinishPresentation(WKRevealItemPresenter *);
+#endif
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
@@ -846,7 +857,7 @@ private:
     String m_promisedFilename;
     String m_promisedURL;
 
-    Optional<NSInteger> m_spellCheckerDocumentTag;
+    std::optional<NSInteger> m_spellCheckerDocumentTag;
 
     CGFloat m_totalHeightOfBanners { 0 };
 
@@ -883,6 +894,10 @@ private:
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     RefPtr<MediaSessionCoordinatorProxyPrivate> m_coordinatorForTesting;
+#endif
+
+#if ENABLE(REVEAL)
+    RetainPtr<WKRevealItemPresenter> m_revealItemPresenter;
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)

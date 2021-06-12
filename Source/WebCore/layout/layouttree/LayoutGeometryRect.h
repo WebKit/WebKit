@@ -68,7 +68,7 @@ public:
     void moveVertically(LayoutUnit);
     void moveBy(LayoutPoint);
 
-    void expand(Optional<LayoutUnit>, Optional<LayoutUnit>);
+    void expand(std::optional<LayoutUnit>, std::optional<LayoutUnit>);
     void expandHorizontally(LayoutUnit delta) { expand(delta, { }); }
     void expandVertically(LayoutUnit delta) { expand({ }, delta); }
     void expandToContain(const Rect&);
@@ -286,11 +286,11 @@ inline void Rect::moveBy(LayoutPoint offset)
     m_rect.moveBy(offset);
 }
 
-inline void Rect::expand(Optional<LayoutUnit> width, Optional<LayoutUnit> height)
+inline void Rect::expand(std::optional<LayoutUnit> width, std::optional<LayoutUnit> height)
 {
     ASSERT(!width || m_hasValidWidth);
     ASSERT(!height || m_hasValidHeight);
-    m_rect.expand(width.valueOr(0), height.valueOr(0));
+    m_rect.expand(width.value_or(0), height.value_or(0));
 }
 
 inline void Rect::expandToContain(const Rect& rect)

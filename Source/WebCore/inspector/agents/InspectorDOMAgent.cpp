@@ -117,7 +117,6 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -132,16 +131,16 @@ using namespace HTMLNames;
 static const size_t maxTextSize = 10000;
 static const UChar ellipsisUChar[] = { 0x2026, 0 };
 
-static Optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
+static std::optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 {
     if (!colorObject)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto r = colorObject->getInteger(Protocol::DOM::RGBAColor::rKey);
     auto g = colorObject->getInteger(Protocol::DOM::RGBAColor::gKey);
     auto b = colorObject->getInteger(Protocol::DOM::RGBAColor::bKey);
     if (!r || !g || !b)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto a = colorObject->getDouble(Protocol::DOM::RGBAColor::aKey);
     if (!a)
@@ -151,7 +150,7 @@ static Optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 
 static Color parseConfigColor(const String& fieldName, JSON::Object& configObject)
 {
-    return parseColor(configObject.getObject(fieldName)).valueOr(Color::transparentBlack);
+    return parseColor(configObject.getObject(fieldName)).value_or(Color::transparentBlack);
 }
 
 static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
@@ -577,7 +576,7 @@ Node* InspectorDOMAgent::nodeForId(Protocol::DOM::NodeId id)
     return m_idToNode.get(id);
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMAgent::requestChildNodes(Protocol::DOM::NodeId nodeId, Optional<int>&& depth)
+Protocol::ErrorStringOr<void> InspectorDOMAgent::requestChildNodes(Protocol::DOM::NodeId nodeId, std::optional<int>&& depth)
 {
     int sanitizedDepth;
 
@@ -1070,7 +1069,7 @@ Protocol::ErrorStringOr<Ref<Protocol::DOM::AccessibilityProperties>> InspectorDO
     return buildObjectForAccessibilityProperties(*node);
 }
 
-Protocol::ErrorStringOr<std::tuple<String /* searchId */, int /* resultCount */>> InspectorDOMAgent::performSearch(const String& query, RefPtr<JSON::Array>&& nodeIds, Optional<bool>&& caseSensitive)
+Protocol::ErrorStringOr<std::tuple<String /* searchId */, int /* resultCount */>> InspectorDOMAgent::performSearch(const String& query, RefPtr<JSON::Array>&& nodeIds, std::optional<bool>&& caseSensitive)
 {
     Protocol::ErrorString errorString;
 
@@ -1240,7 +1239,7 @@ std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highligh
     }
 
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->showInfo = highlightInspectorObject->getBoolean(Protocol::DOM::HighlightConfig::showInfoKey).valueOr(false);
+    highlightConfig->showInfo = highlightInspectorObject->getBoolean(Protocol::DOM::HighlightConfig::showInfoKey).value_or(false);
     highlightConfig->content = parseConfigColor(Protocol::DOM::HighlightConfig::contentColorKey, *highlightInspectorObject);
     highlightConfig->padding = parseConfigColor(Protocol::DOM::HighlightConfig::paddingColorKey, *highlightInspectorObject);
     highlightConfig->border = parseConfigColor(Protocol::DOM::HighlightConfig::borderColorKey, *highlightInspectorObject);
@@ -1261,7 +1260,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enab
     return { };
 }
 #else
-Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, Optional<bool>&& showRulers)
+Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, std::optional<bool>&& showRulers)
 {
     Protocol::ErrorString errorString;
 
@@ -1274,7 +1273,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enab
 }
 #endif
 
-Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates)
+Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto quad = makeUnique<FloatQuad>(FloatRect(x, y, width, height));
     innerHighlightQuad(WTFMove(quad), WTFMove(color), WTFMove(outlineColor), WTFMove(usePageCoordinates));
@@ -1282,7 +1281,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x, int y, int
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&& quadObject, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates)
+Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&& quadObject, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto quad = makeUnique<FloatQuad>();
     if (!parseQuad(WTFMove(quadObject), quad.get()))
@@ -1293,11 +1292,11 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&
     return { };
 }
 
-void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates)
+void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->content = parseColor(WTFMove(color)).valueOr(Color::transparentBlack);
-    highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).valueOr(Color::transparentBlack);
+    highlightConfig->content = parseColor(WTFMove(color)).value_or(Color::transparentBlack);
+    highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).value_or(Color::transparentBlack);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     m_overlay->highlightQuad(WTFMove(quad), *highlightConfig);
 }
@@ -1392,7 +1391,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(Ref<JSON::Obj
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(Ref<JSON::Object>&& highlightInspectorObject, Optional<Protocol::DOM::NodeId>&& nodeId, const Protocol::Runtime::RemoteObjectId& objectId)
+Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(Ref<JSON::Object>&& highlightInspectorObject, std::optional<Protocol::DOM::NodeId>&& nodeId, const Protocol::Runtime::RemoteObjectId& objectId)
 {
     Protocol::ErrorString errorString;
 
@@ -1463,8 +1462,8 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const Protocol::
     if (frame->ownerElement()) {
         auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(WTFMove(color)).valueOr(Color::transparentBlack);
-        highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).valueOr(Color::transparentBlack);
+        highlightConfig->content = parseColor(WTFMove(color)).value_or(Color::transparentBlack);
+        highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).value_or(Color::transparentBlack);
         m_overlay->highlightNode(frame->ownerElement(), *highlightConfig);
     }
 
@@ -1478,7 +1477,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::hideHighlight()
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Inspector::Protocol::DOM::NodeId nodeId,  Ref<JSON::Object>&& gridColor, Optional<bool>&& showLineNames, Optional<bool>&& showLineNumbers, Optional<bool>&& showExtendedGridLines, Optional<bool>&& showTrackSizes, Optional<bool>&& showAreaNames)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Inspector::Protocol::DOM::NodeId nodeId,  Ref<JSON::Object>&& gridColor, std::optional<bool>&& showLineNames, std::optional<bool>&& showLineNumbers, std::optional<bool>&& showExtendedGridLines, std::optional<bool>&& showTrackSizes, std::optional<bool>&& showAreaNames)
 {
     Protocol::ErrorString errorString;
     Node* node = assertNode(errorString, nodeId);
@@ -1491,18 +1490,18 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Insp
 
     InspectorOverlay::Grid::Config config;
     config.gridColor = *parsedColor;
-    config.showLineNames = showLineNames.valueOr(false);
-    config.showLineNumbers = showLineNumbers.valueOr(false);
-    config.showExtendedGridLines = showExtendedGridLines.valueOr(false);
-    config.showTrackSizes = showTrackSizes.valueOr(false);
-    config.showAreaNames = showAreaNames.valueOr(false);
+    config.showLineNames = showLineNames.value_or(false);
+    config.showLineNumbers = showLineNumbers.value_or(false);
+    config.showExtendedGridLines = showExtendedGridLines.value_or(false);
+    config.showTrackSizes = showTrackSizes.value_or(false);
+    config.showAreaNames = showAreaNames.value_or(false);
 
     m_overlay->setGridOverlayForNode(*node, config);
 
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(Optional<Protocol::DOM::NodeId>&& nodeId)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(std::optional<Protocol::DOM::NodeId>&& nodeId)
 {
     if (nodeId) {
         Protocol::ErrorString errorString;
@@ -1518,7 +1517,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(Opti
     return { };
 }
 
-Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorDOMAgent::moveTo(Protocol::DOM::NodeId nodeId, Protocol::DOM::NodeId targetNodeId, Optional<Protocol::DOM::NodeId>&& insertBeforeNodeId)
+Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorDOMAgent::moveTo(Protocol::DOM::NodeId nodeId, Protocol::DOM::NodeId targetNodeId, std::optional<Protocol::DOM::NodeId>&& insertBeforeNodeId)
 {
     Protocol::ErrorString errorString;
 

@@ -37,7 +37,6 @@
 #include "ScrollingTreeGestureState.h"
 #include "ScrollingTreeLatchingController.h"
 #include "WheelEventTestMonitor.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
@@ -124,7 +123,7 @@ public:
     
     WEBCORE_EXPORT ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
-    using VisitorFunction = WTF::Function<void (ScrollingNodeID, ScrollingNodeType, Optional<FloatPoint> scrollPosition, Optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit)>;
+    using VisitorFunction = WTF::Function<void (ScrollingNodeID, ScrollingNodeType, std::optional<FloatPoint> scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit)>;
     void traverseScrollingTree(VisitorFunction&&);
 
     // Called after a scrolling tree node has handled a scroll and updated its layers.
@@ -185,7 +184,7 @@ public:
     WEBCORE_EXPORT bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 
     ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
-    Optional<ScrollingNodeID> latchedNodeID() const;
+    std::optional<ScrollingNodeID> latchedNodeID() const;
     void clearLatchedNode();
 
     bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
@@ -217,9 +216,9 @@ public:
     virtual void willSendEventToMainThread(const PlatformWheelEvent&) { }
     virtual void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&) { };
 
-    CheckedLock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
+    Lock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
-    void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond);
+    void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
     
     bool hasProcessedWheelEventsRecently();
@@ -228,7 +227,7 @@ public:
     struct ScrollUpdate {
         ScrollingNodeID nodeID { 0 };
         FloatPoint scrollPosition;
-        Optional<FloatPoint> layoutViewportOrigin;
+        std::optional<FloatPoint> layoutViewportOrigin;
         ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
         
         bool canMerge(const ScrollUpdate& other) const
@@ -252,15 +251,15 @@ protected:
     FloatPoint mainFrameScrollPosition() const WTF_REQUIRES_LOCK(m_treeStateLock);
     void setMainFrameScrollPosition(FloatPoint);
 
-    void setGestureState(Optional<WheelScrollGestureState>);
-    Optional<WheelScrollGestureState> gestureState();
+    void setGestureState(std::optional<WheelScrollGestureState>);
+    std::optional<WheelScrollGestureState> gestureState();
 
-    Optional<FramesPerSecond> nominalFramesPerSecond();
+    std::optional<FramesPerSecond> nominalFramesPerSecond();
 
     void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
     void removeAllNodes() WTF_REQUIRES_LOCK(m_treeLock);
 
-    CheckedLock m_treeLock; // Protects the scrolling tree.
+    Lock m_treeLock; // Protects the scrolling tree.
 
 private:
     void updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&) WTF_REQUIRES_LOCK(m_treeLock);
@@ -296,14 +295,14 @@ private:
         EventTrackingRegions eventTrackingRegions;
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
-        Optional<FramesPerSecond> nominalFramesPerSecond;
-        Optional<WheelScrollGestureState> gestureState;
+        std::optional<FramesPerSecond> nominalFramesPerSecond;
+        std::optional<WheelScrollGestureState> gestureState;
         HashSet<ScrollingNodeID> nodesWithActiveRubberBanding;
         HashSet<ScrollingNodeID> nodesWithActiveScrollSnap;
         HashSet<ScrollingNodeID> nodesWithActiveUserScrolls;
     };
     
-    CheckedLock m_treeStateLock;
+    Lock m_treeStateLock;
     TreeState m_treeState WTF_GUARDED_BY_LOCK(m_treeStateLock);
 
     struct SwipeState {
@@ -317,13 +316,13 @@ private:
         RectEdges<bool> mainFramePinnedState { true, true, true, true };
     };
 
-    CheckedLock m_swipeStateLock;
+    Lock m_swipeStateLock;
     SwipeState m_swipeState WTF_GUARDED_BY_LOCK(m_swipeStateLock);
 
-    CheckedLock m_pendingScrollUpdatesLock;
+    Lock m_pendingScrollUpdatesLock;
     Vector<ScrollUpdate> m_pendingScrollUpdates WTF_GUARDED_BY_LOCK(m_pendingScrollUpdatesLock);
 
-    CheckedLock m_lastWheelEventTimeLock;
+    Lock m_lastWheelEventTimeLock;
     MonotonicTime m_lastWheelEventTime WTF_GUARDED_BY_LOCK(m_lastWheelEventTimeLock);
 
 protected:

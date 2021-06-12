@@ -49,7 +49,7 @@ struct DebuggableInfoData {
     static DebuggableInfoData empty();
 
     void encode(IPC::Encoder&) const;
-    static Optional<DebuggableInfoData> decode(IPC::Decoder&);
+    static std::optional<DebuggableInfoData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

@@ -40,7 +40,6 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -226,7 +225,7 @@ struct Segment {
 
     Kind kind;
     uint32_t sizeInBytes;
-    Optional<I32InitExpr> offsetIfActive;
+    std::optional<I32InitExpr> offsetIfActive;
     // Bytes are allocated at the end.
     uint8_t& byte(uint32_t pos)
     {
@@ -236,7 +235,7 @@ struct Segment {
 
     static void destroy(Segment*);
     typedef std::unique_ptr<Segment, decltype(&Segment::destroy)> Ptr;
-    static Segment::Ptr create(Optional<I32InitExpr>, uint32_t, Kind);
+    static Segment::Ptr create(std::optional<I32InitExpr>, uint32_t, Kind);
 
     bool isActive() const { return kind == Kind::Active; }
     bool isPassive() const { return kind == Kind::Passive; }
@@ -255,7 +254,7 @@ struct Element {
         Declared,
     };
 
-    Element(Element::Kind kind, TableElementType elementType, Optional<uint32_t> tableIndex, Optional<I32InitExpr> initExpr)
+    Element(Element::Kind kind, TableElementType elementType, std::optional<uint32_t> tableIndex, std::optional<I32InitExpr> initExpr)
         : kind(kind)
         , elementType(elementType)
         , tableIndexIfActive(WTFMove(tableIndex))
@@ -263,7 +262,7 @@ struct Element {
     { }
 
     Element(Element::Kind kind, TableElementType elemType)
-        : Element(kind, elemType, WTF::nullopt, WTF::nullopt)
+        : Element(kind, elemType, std::nullopt, std::nullopt)
     { }
 
     uint32_t length() const { return functionIndices.size(); }
@@ -275,8 +274,8 @@ struct Element {
 
     Kind kind;
     TableElementType elementType;
-    Optional<uint32_t> tableIndexIfActive;
-    Optional<I32InitExpr> offsetIfActive;
+    std::optional<uint32_t> tableIndexIfActive;
+    std::optional<I32InitExpr> offsetIfActive;
 
     // Index may be nullFuncIndex.
     Vector<uint32_t> functionIndices;
@@ -290,7 +289,7 @@ public:
         ASSERT(!*this);
     }
 
-    TableInformation(uint32_t initial, Optional<uint32_t> maximum, bool isImport, TableElementType type)
+    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type)
         : m_initial(initial)
         , m_maximum(maximum)
         , m_isImport(isImport)
@@ -303,13 +302,13 @@ public:
     explicit operator bool() const { return m_isValid; }
     bool isImport() const { return m_isImport; }
     uint32_t initial() const { return m_initial; }
-    Optional<uint32_t> maximum() const { return m_maximum; }
+    std::optional<uint32_t> maximum() const { return m_maximum; }
     TableElementType type() const { return m_type; }
     Type wasmType() const { return m_type == TableElementType::Funcref ? Types::Funcref : Types::Externref; }
 
 private:
     uint32_t m_initial;
-    Optional<uint32_t> m_maximum;
+    std::optional<uint32_t> m_maximum;
     bool m_isImport { false };
     bool m_isValid { false };
     TableElementType m_type;

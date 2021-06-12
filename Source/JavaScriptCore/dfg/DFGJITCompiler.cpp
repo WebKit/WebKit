@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "CodeBlockWithJITType.h"
 #include "DFGFailedFinalizer.h"
 #include "DFGInlineCacheWrapperInlines.h"
 #include "DFGJITCode.h"
@@ -254,6 +255,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     finalizeInlineCaches(m_delByIds, linkBuffer);
     finalizeInlineCaches(m_delByVals, linkBuffer);
     finalizeInlineCaches(m_inByIds, linkBuffer);
+    finalizeInlineCaches(m_inByVals, linkBuffer);
     finalizeInlineCaches(m_instanceOfs, linkBuffer);
     finalizeInlineCaches(m_privateBrandAccesses, linkBuffer);
 
@@ -398,8 +400,11 @@ void JITCompiler::compile()
 
     disassemble(*linkBuffer);
 
-    m_graph.m_plan.setFinalizer(makeUnique<JITFinalizer>(
-        m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer)));
+    auto codeRef = FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
+    m_jitCode->initializeCodeRefForDFG(codeRef, codeRef.code());
+
+    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer));
+    m_graph.m_plan.setFinalizer(WTFMove(finalizer));
 }
 
 void JITCompiler::compileFunction()
@@ -502,8 +507,12 @@ void JITCompiler::compileFunction()
 
     MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
 
-    m_graph.m_plan.setFinalizer(makeUnique<JITFinalizer>(
-        m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck));
+    m_jitCode->initializeCodeRefForDFG(
+        FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),
+        withArityCheck);
+
+    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);
+    m_graph.m_plan.setFinalizer(WTFMove(finalizer));
 }
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)

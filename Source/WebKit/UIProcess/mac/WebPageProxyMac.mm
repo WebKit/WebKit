@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "APIUIClient.h"
-#import "ColorSpaceData.h"
 #import "Connection.h"
 #import "DataReference.h"
 #import "EditorState.h"
@@ -46,12 +45,14 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WKImageExtractionPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AttributedString.h>
+#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>
@@ -344,7 +345,7 @@ void WebPageProxy::assistiveTechnologyMakeFirstResponder()
     pageClient().assistiveTechnologyMakeFirstResponder();
 }
 
-ColorSpaceData WebPageProxy::colorSpace()
+WebCore::DestinationColorSpace WebPageProxy::colorSpace()
 {
     return pageClient().colorSpace();
 }
@@ -512,10 +513,10 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData
 #endif
 
 #if ENABLE(PDFKIT_PLUGIN)
-void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(Optional<int32_t>&&)>&& completionHandler)
+void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
 {
     if (!contextMenu.items.size())
-        return completionHandler(WTF::nullopt);
+        return completionHandler(std::nullopt);
     
     RetainPtr<WKPDFMenuTarget> menuTarget = adoptNS([[WKPDFMenuTarget alloc] init]);
     RetainPtr<NSMenu> nsMenu = adoptNS([[NSMenu alloc] init]);
@@ -557,7 +558,7 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 #endif
         return completionHandler(tag);
     }
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 }
 #endif
 
@@ -716,6 +717,28 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
     return NSColor.controlBackgroundColor.CGColor;
 #else
     return NSColor.whiteColor.CGColor;
+#endif
+}
+
+void WebPageProxy::beginPreviewPanelControl(QLPreviewPanel *panel)
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    [m_imageExtractionPreviewController beginControl:panel];
+#endif
+}
+
+void WebPageProxy::endPreviewPanelControl(QLPreviewPanel *panel)
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    if (auto controller = std::exchange(m_imageExtractionPreviewController, nil))
+        [controller endControl:panel];
+#endif
+}
+
+void WebPageProxy::closeSharedPreviewPanelIfNecessary()
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    [m_imageExtractionPreviewController closePanelIfNecessary];
 #endif
 }
 

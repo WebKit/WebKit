@@ -49,11 +49,11 @@ static const EVP_CIPHER* aesAlgorithm(size_t keySize)
     return nullptr;
 }
 
-static Optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, Vector<uint8_t>&& plainText)
+static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, Vector<uint8_t>&& plainText)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
-        return WTF::nullopt;
+        return std::nullopt;
 
     EvpCipherCtxPtr ctx;
 
@@ -62,32 +62,32 @@ static Optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const 
 
     // Create and initialize the context
     if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Disable padding
     if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Initialize the encryption operation
     if (1 != EVP_EncryptInit_ex(ctx.get(), algorithm, nullptr, key.data(), iv.data()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Provide the message to be encrypted, and obtain the encrypted output
     if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.data(), &len, plainText.data(), plainText.size()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Finalize the encryption. Further ciphertext bytes may be written at this stage
     if (1 != EVP_EncryptFinal_ex(ctx.get(), cipherText.data() + len, &len))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return cipherText;
 }
 
-static Optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& cipherText)
+static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& cipherText)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
-        return WTF::nullopt;
+        return std::nullopt;
 
     EvpCipherCtxPtr ctx;
 
@@ -97,19 +97,19 @@ static Optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const 
 
     // Create and initialize the context
     if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Initialize the decryption operation
     if (1 != EVP_DecryptInit_ex(ctx.get(), algorithm, nullptr, key.data(), iv.data()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Provide the message to be decrypted, and obtain the plaintext output
     if (1 != EVP_DecryptUpdate(ctx.get(), plainText.data(), &len, cipherText.data(), cipherSize))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Finalize the decryption. Further plaintext bytes may be written at this stage
     if (1 != EVP_DecryptFinal_ex(ctx.get(), plainText.data() + len, &len))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return plainText;
 }

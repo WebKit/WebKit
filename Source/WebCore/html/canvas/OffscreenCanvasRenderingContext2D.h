@@ -47,8 +47,8 @@ public:
 
     void setFont(const String&);
     CanvasDirection direction() const;
-    void fillText(const String& text, float x, float y, Optional<float> maxWidth = WTF::nullopt);
-    void strokeText(const String& text, float x, float y, Optional<float> maxWidth = WTF::nullopt);
+    void fillText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
+    void strokeText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
     Ref<TextMetrics> measureText(const String& text);
 
 private:

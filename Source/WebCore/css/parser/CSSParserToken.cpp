@@ -414,146 +414,127 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
 
         CSSParserTokenType nextType = nextToken->type();
         if (tokensNeedingComment.buffer[nextType]) {
-            builder.appendLiteral("/**/");
+            builder.append("/**/");
             return;
         }
 
         if (nextType == DelimiterToken && ((delimitersNeedingComment == nextToken->delimiter()) || ... || false)) {
-            builder.appendLiteral("/**/");
+            builder.append("/**/");
             return;
         }
     };
 
     switch (type()) {
-    case IdentToken: {
+    case IdentToken:
         serializeIdentifier(value().toString(), builder);
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken, LeftParenthesisToken }, '-');
         break;
-    }
-    case FunctionToken: {
+    case FunctionToken:
         serializeIdentifier(value().toString(), builder);
         builder.append('(');
         break;
-    }
-    case AtKeywordToken: {
+    case AtKeywordToken:
         builder.append('@');
         serializeIdentifier(value().toString(), builder);
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
-    }
-    case HashToken: {
+    case HashToken:
         builder.append('#');
         serializeIdentifier(value().toString(), builder, (getHashTokenType() == HashTokenUnrestricted));
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
-    }
-    case UrlToken: {
-        builder.appendLiteral("url(");
+    case UrlToken:
+        builder.append("url(");
         serializeIdentifier(value().toString(), builder);
         builder.append(')');
         break;
-    }
-    case DelimiterToken: {
+    case DelimiterToken:
         switch (delimiter()) {
-        case '\\': {
-            builder.appendLiteral("\\\n");
+        case '\\':
+            builder.append("\\\n");
             break;
-        }
+
         case '#':
-        case '-': {
+        case '-':
             builder.append(delimiter());
             appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken }, '-');
             break;
-        }
 
-        case '@': {
+        case '@':
             builder.append('@');
             appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken }, '-');
             break;
-        }
 
         case '.':
-        case '+': {
+        case '+':
             builder.append(delimiter());
             appendCommentIfNeeded({ NumberToken, PercentageToken, DimensionToken });
             break;
-        }
 
-        case '/': {
+        case '/':
             builder.append('/');
             // Weirdly Clang errors if you try to use the fold expression in buildNextTokenNeedsCommentTable() because the true value is unused.
             // So we just build the table by hand here instead. See: rdar://69710661
             appendCommentIfNeeded({ }, '*');
             break;
-        }
 
         default:
             builder.append(delimiter());
             break;
         }
-
         break;
-    }
-    case NumberToken: {
-        // These won't properly preserve the NumericValueType flag
+    case NumberToken:
+        // These won't properly preserve the NumericValueType flag.
         if (m_numericSign == PlusSign)
             builder.append('+');
         builder.append(numericValue());
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken }, '%');
         break;
-    }
-    case PercentageToken: {
+    case PercentageToken:
         builder.append(numericValue(), '%');
         break;
-    }
-    case DimensionToken: {
-        // This will incorrectly serialize e.g. 4e3e2 as 4000e2
+    case DimensionToken:
+        // This will incorrectly serialize e.g. 4e3e2 as 4000e2.
         builder.append(numericValue());
         serializeIdentifier(value().toString(), builder);
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
-    }
-    case UnicodeRangeToken: {
-        builder.appendLiteral("U+");
-        builder.append(hex(unicodeRangeStart()));
-        builder.append('-');
-        builder.append(hex(unicodeRangeEnd()));
+    case UnicodeRangeToken:
+        builder.append("U+", hex(unicodeRangeStart()), '-', hex(unicodeRangeEnd()));
         break;
-    }
-    case StringToken: {
+    case StringToken:
         serializeString(value().toString(), builder);
         break;
-    }
 
     case IncludeMatchToken:
-        builder.appendLiteral("~=");
+        builder.append("~=");
         break;
     case DashMatchToken:
-        builder.appendLiteral("|=");
+        builder.append("|=");
         break;
     case PrefixMatchToken:
-        builder.appendLiteral("^=");
+        builder.append("^=");
         break;
     case SuffixMatchToken:
-        builder.appendLiteral("$=");
+        builder.append("$=");
         break;
     case SubstringMatchToken:
-        builder.appendLiteral("*=");
+        builder.append("*=");
         break;
     case ColumnToken:
-        builder.appendLiteral("||");
+        builder.append("||");
         break;
     case CDOToken:
-        builder.appendLiteral("<!--");
+        builder.append("<!--");
         break;
     case CDCToken:
-        builder.appendLiteral("-->");
+        builder.append("-->");
         break;
     case BadStringToken:
-        builder.appendLiteral("'\n");
+        builder.append("'\n");
         break;
     case BadUrlToken:
-        builder.appendLiteral("url(()");
+        builder.append("url(()");
         break;
     case WhitespaceToken:
         builder.append(' ');

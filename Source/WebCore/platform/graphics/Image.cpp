@@ -188,8 +188,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
     }
 
 #if PLATFORM(IOS_FAMILY)
+    // FIXME: We should re-test this and remove this iOS behavior difference if possible.
     // When using accelerated drawing on iOS, it's faster to stretch an image than to tile it.
-    if (ctxt.isAcceleratedContext()) {
+    if (ctxt.renderingMode() == RenderingMode::Accelerated) {
         if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
             FloatRect visibleSrcRect;
             visibleSrcRect.setX(0);

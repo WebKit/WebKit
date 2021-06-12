@@ -128,16 +128,13 @@ Ref<CSSImageSetValue> CSSImageSetValue::imageSetWithStylesResolved(Style::Builde
 String CSSImageSetValue::customCSSText() const
 {
     StringBuilder result;
-    result.appendLiteral("image-set(");
-
+    result.append("image-set(");
     size_t length = this->length();
     for (size_t i = 0; i + 1 < length; i += 2) {
         if (i > 0)
-            result.appendLiteral(", ");
-
+            result.append(", ");
         result.append(item(i)->cssText(), ' ', item(i + 1)->cssText());
     }
-
     result.append(')');
     return result.toString();
 }

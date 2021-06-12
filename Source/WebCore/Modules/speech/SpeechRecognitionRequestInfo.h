@@ -41,7 +41,7 @@ struct SpeechRecognitionRequestInfo {
     FrameIdentifier frameIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SpeechRecognitionRequestInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<SpeechRecognitionRequestInfo> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -51,42 +51,42 @@ void SpeechRecognitionRequestInfo::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SpeechRecognitionRequestInfo> SpeechRecognitionRequestInfo::decode(Decoder& decoder)
+std::optional<SpeechRecognitionRequestInfo> SpeechRecognitionRequestInfo::decode(Decoder& decoder)
 {
-    Optional<SpeechRecognitionConnectionClientIdentifier> clientIdentifier;
+    std::optional<SpeechRecognitionConnectionClientIdentifier> clientIdentifier;
     decoder >> clientIdentifier;
     if (!clientIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> lang;
+    std::optional<String> lang;
     decoder >> lang;
     if (!lang)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> continuous;
+    std::optional<bool> continuous;
     decoder >> continuous;
     if (!continuous)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> interimResults;
+    std::optional<bool> interimResults;
     decoder >> interimResults;
     if (!interimResults)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint64_t> maxAlternatives;
+    std::optional<uint64_t> maxAlternatives;
     decoder >> maxAlternatives;
     if (!maxAlternatives)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<ClientOrigin> clientOrigin;
+    std::optional<ClientOrigin> clientOrigin;
     decoder >> clientOrigin;
     if (!clientOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FrameIdentifier> frameIdentifier;
+    std::optional<FrameIdentifier> frameIdentifier;
     decoder >> frameIdentifier;
     if (!frameIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         WTFMove(*clientIdentifier),

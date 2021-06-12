@@ -37,20 +37,23 @@ class TableFormattingContext;
 
 class TableFormattingGeometry : public FormattingGeometry {
 public:
-    TableFormattingGeometry(const TableFormattingContext&, const TableGrid&);
+    TableFormattingGeometry(const TableFormattingContext&);
 
     LayoutUnit cellBoxContentHeight(const ContainerBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
-    Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox);
-    IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);
-    InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
+    std::optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
+    IntrinsicWidthConstraints intrinsicWidthConstraintsForCellContent(const TableGrid::Cell&) const;
+    InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox) const;
+    LayoutUnit horizontalSpaceForCellContent(const TableGrid::Cell&) const;
+    LayoutUnit verticalSpaceForCellContent(const TableGrid::Cell&, std::optional<LayoutUnit> availableVerticalSpace) const;
 
 private:
     const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }
-    const TableGrid& m_grid;
 };
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(TableFormattingGeometry, isTableFormattingGeometry())
 
 #endif

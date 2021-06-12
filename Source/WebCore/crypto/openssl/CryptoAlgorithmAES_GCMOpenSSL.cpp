@@ -49,11 +49,11 @@ static const EVP_CIPHER* aesAlgorithm(size_t keySize)
     return nullptr;
 }
 
-static Optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, uint8_t tagLength)
+static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, uint8_t tagLength)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
-        return WTF::nullopt;
+        return std::nullopt;
 
     EvpCipherCtxPtr ctx;
     int len;
@@ -63,51 +63,51 @@ static Optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const 
 
     // Create and initialize the context
     if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Disable padding
     if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Initialize the encryption operation
     if (1 != EVP_EncryptInit_ex(ctx.get(), algorithm, nullptr, nullptr, nullptr))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Set IV length
     if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_IVLEN, iv.size(), nullptr))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Initialize key and IV
     if (1 != EVP_EncryptInit_ex(ctx.get(), nullptr, nullptr, key.data(), iv.data()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Provide any AAD data
     if (additionalData.size() > 0) {
         if (1 != EVP_EncryptUpdate(ctx.get(), nullptr, &len, additionalData.data(), additionalData.size()))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     // Provide the message to be encrypted, and obtain the encrypted output
     if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.data(), &len, plainText.data(), plainText.size()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Finalize the encryption. Normally ciphertext bytes may be written at
     // this stage, but this does not occur in GCM mode
     if (1 != EVP_EncryptFinal_ex(ctx.get(), cipherText.data() + len, &len))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Get the tag
     if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_GET_TAG, tagLength, cipherText.data() + tagOffset))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return cipherText;
 }
 
-static Optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, uint8_t tagLength)
+static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, uint8_t tagLength)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
-        return WTF::nullopt;
+        return std::nullopt;
 
     EvpCipherCtxPtr ctx;
     int len;
@@ -115,47 +115,46 @@ static Optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const 
     int cipherTextLen = cipherText.size() - tagLength;
 
     Vector<uint8_t> plainText(cipherText.size());
-    Vector<uint8_t> tag(tagLength);
-    memcpy(tag.data(), cipherText.data() + cipherTextLen, tagLength);
+    Vector<uint8_t> tag { cipherText.data() + cipherTextLen, tagLength };
 
     // Create and initialize the context
     if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Disable padding
     if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Initialize the encryption operation
     if (1 != EVP_DecryptInit_ex(ctx.get(), algorithm, nullptr, nullptr, nullptr))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Set IV length
     if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_IVLEN, iv.size(), nullptr))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Initialize key and IV
     if (1 != EVP_DecryptInit_ex(ctx.get(), nullptr, nullptr, key.data(), iv.data()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Provide any AAD data
     if (additionalData.size() > 0) {
         if (1 != EVP_DecryptUpdate(ctx.get(), nullptr, &len, additionalData.data(), additionalData.size()))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     // Set expected tag value
     if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_TAG, tag.size(), tag.data()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Provide the message to be encrypted, and obtain the encrypted output
     if (1 != EVP_DecryptUpdate(ctx.get(), plainText.data(), &len, cipherText.data(), cipherTextLen))
-        return WTF::nullopt;
+        return std::nullopt;
     plainTextLen = len;
 
     // Finalize the decryption
     if (1 != EVP_DecryptFinal_ex(ctx.get(), plainText.data() + len, &len))
-        return WTF::nullopt;
+        return std::nullopt;
 
     plainTextLen += len;
 
@@ -166,7 +165,7 @@ static Optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const 
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    auto output = cryptEncrypt(key.key(), parameters.ivVector(), plainText, parameters.additionalDataVector(), parameters.tagLength.valueOr(0) / 8);
+    auto output = cryptEncrypt(key.key(), parameters.ivVector(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
@@ -174,7 +173,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(const Crypt
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformDecrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    auto output = cryptDecrypt(key.key(), parameters.ivVector(), cipherText, parameters.additionalDataVector(), parameters.tagLength.valueOr(0) / 8);
+    auto output = cryptDecrypt(key.key(), parameters.ivVector(), cipherText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

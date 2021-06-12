@@ -213,7 +213,7 @@ static NSArray<NSString *> *controlArray()
     _activeControl = nil;
 }
 
-- (Optional<NSUInteger>)_controlIndexForEvent:(NSEvent *)event
+- (std::optional<NSUInteger>)_controlIndexForEvent:(NSEvent *)event
 {
     CGPoint initialPoint = NSPointToCGPoint(event.locationInWindow);
     initialPoint.x -= [_layer frame].origin.x;
@@ -224,7 +224,7 @@ static NSArray<NSString *> *controlArray()
         if (CGRectContainsPoint(windowSpaceRect, initialPoint))
             return index;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 - (NSString *)_controlForEvent:(NSEvent *)event

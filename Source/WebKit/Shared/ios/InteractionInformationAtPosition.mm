@@ -28,11 +28,7 @@
 
 #import "ArgumentCodersCocoa.h"
 #import "WebCoreArgumentCoders.h"
-#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
-SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 
 namespace WebKit {
 
@@ -77,10 +73,9 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << handle;
 #if ENABLE(DATA_DETECTION)
     encoder << isDataDetectorLink;
-    if (isDataDetectorLink) {
-        encoder << dataDetectorIdentifier;
-        encoder << dataDetectorResults;
-    }
+    encoder << dataDetectorIdentifier;
+    encoder << dataDetectorResults;
+    encoder << dataDetectorBounds;
 #endif
 #if ENABLE(DATALIST_ELEMENT)
     encoder << preventTextInteraction;
@@ -173,7 +168,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.cursor))
         return false;
     
-    Optional<WebCore::TextIndicatorData> linkIndicator;
+    std::optional<WebCore::TextIndicatorData> linkIndicator;
     decoder >> linkIndicator;
     if (!linkIndicator)
         return false;
@@ -189,17 +184,18 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
 #if ENABLE(DATA_DETECTION)
     if (!decoder.decode(result.isDataDetectorLink))
         return false;
-    
-    if (result.isDataDetectorLink) {
-        if (!decoder.decode(result.dataDetectorIdentifier))
-            return false;
 
-        auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ [NSArray class], getDDScannerResultClass() ]);
-        if (!dataDetectorResults)
-            return false;
+    if (!decoder.decode(result.dataDetectorIdentifier))
+        return false;
 
-        result.dataDetectorResults = WTFMove(*dataDetectorResults);
-    }
+    auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ NSArray.class, PAL::getDDScannerResultClass() ]);
+    if (!dataDetectorResults)
+        return false;
+
+    result.dataDetectorResults = WTFMove(*dataDetectorResults);
+
+    if (!decoder.decode(result.dataDetectorBounds))
+        return false;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

@@ -131,13 +131,13 @@ private:
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
     void showPaymentUI(WebCore::PageIdentifier destinationID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
-    void completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&);
-    void completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&);
-    void completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&);
+    void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
+    void completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
+    void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
+    void completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
+    void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
     void abortPaymentSession();
     void cancelPaymentSession();
 
@@ -159,20 +159,20 @@ private:
     void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
     void platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession&);
-    void platformCompleteShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&);
-    void platformCompleteShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&);
-    void platformCompletePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&);
+    void platformCompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
+    void platformCompleteShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
+    void platformCompletePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void platformCompletePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
+    void platformCompletePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void platformCompletePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
+    void platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
     void platformHidePaymentUI();
 #if PLATFORM(COCOA)
     RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
 #endif
 
     Client& m_client;
-    Optional<WebCore::PageIdentifier> m_destinationID;
+    std::optional<WebCore::PageIdentifier> m_destinationID;
 
     enum class State {
         // Idle - Nothing's happening.

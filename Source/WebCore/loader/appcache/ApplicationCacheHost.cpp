@@ -149,7 +149,7 @@ bool ApplicationCacheHost::maybeLoadFallbackForMainError(const ResourceRequest& 
     return false;
 }
 
-void ApplicationCacheHost::mainResourceDataReceived(const char*, int, long long, bool)
+void ApplicationCacheHost::mainResourceDataReceived(const uint8_t*, int, long long, bool)
 {
 }
 

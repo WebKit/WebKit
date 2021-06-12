@@ -39,41 +39,20 @@ CSSLineBoxContainValue::CSSLineBoxContainValue(OptionSet<LineBoxContain> value)
 String CSSLineBoxContainValue::customCSSText() const
 {
     StringBuilder text;
-
     if (m_value.contains(LineBoxContain::Block))
-        text.appendLiteral("block");
-
-    if (m_value.contains(LineBoxContain::Inline)) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.appendLiteral("inline");
-    }
-    if (m_value.contains(LineBoxContain::Font)) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.appendLiteral("font");
-    }
-    if (m_value.contains(LineBoxContain::Glyphs)) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.appendLiteral("glyphs");
-    }
-    if (m_value.contains(LineBoxContain::Replaced)) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.appendLiteral("replaced");
-    }
-    if (m_value.contains(LineBoxContain::InlineBox)) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.appendLiteral("inline-box");
-    }
-    if (m_value.contains(LineBoxContain::InitialLetter)) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.appendLiteral("initial-letter");
-    }
-
+        text.append("block");
+    if (m_value.contains(LineBoxContain::Inline))
+        text.append(text.isEmpty() ? "" : " ", "inline");
+    if (m_value.contains(LineBoxContain::Font))
+        text.append(text.isEmpty() ? "" : " ", "font");
+    if (m_value.contains(LineBoxContain::Glyphs))
+        text.append(text.isEmpty() ? "" : " ", "glyphs");
+    if (m_value.contains(LineBoxContain::Replaced))
+        text.append(text.isEmpty() ? "" : " ", "replaced");
+    if (m_value.contains(LineBoxContain::InlineBox))
+        text.append(text.isEmpty() ? "" : " ", "inline-box");
+    if (m_value.contains(LineBoxContain::InitialLetter))
+        text.append(text.isEmpty() ? "" : " ", "initial-letter");
     return text.toString();
 }
 

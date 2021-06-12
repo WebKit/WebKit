@@ -45,19 +45,19 @@ void SecItemResponseData::encode(IPC::Encoder& encoder) const
         encoder << m_resultObject;
 }
 
-Optional<SecItemResponseData> SecItemResponseData::decode(IPC::Decoder& decoder)
+std::optional<SecItemResponseData> SecItemResponseData::decode(IPC::Decoder& decoder)
 {
     int64_t resultCode;
     if (!decoder.decode(resultCode))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool expectResultObject;
     if (!decoder.decode(expectResultObject))
-        return WTF::nullopt;
+        return std::nullopt;
 
     RetainPtr<CFTypeRef> result;
     if (expectResultObject && !decoder.decode(result))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ static_cast<OSStatus>(resultCode), WTFMove(result) }};
 }

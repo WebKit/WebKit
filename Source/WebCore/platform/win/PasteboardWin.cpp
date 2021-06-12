@@ -48,7 +48,6 @@
 #include "TextEncoding.h"
 #include "WebCoreInstanceHandle.h"
 #include "markup.h"
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/CString.h>
@@ -246,7 +245,7 @@ static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC&
         results.add("text/plain");
 }
 
-Optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
+std::optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
 {
     if (::IsClipboardFormatAvailable(CustomDataClipboardFormat) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CustomDataClipboardFormat)) {
@@ -262,14 +261,14 @@ Optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
         ::CloseClipboard();
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
 {
     ListHashSet<String> domPasteboardTypes;
 
-    Optional<PasteboardCustomData> customData = readPasteboardCustomData();
+    std::optional<PasteboardCustomData> customData = readPasteboardCustomData();
 
     if (customData && customData->origin() == origin) {
         for (const auto& type : customData->orderedTypes())
@@ -317,7 +316,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 
 String Pasteboard::readOrigin()
 {
-    Optional<PasteboardCustomData> customData = readPasteboardCustomData();
+    std::optional<PasteboardCustomData> customData = readPasteboardCustomData();
 
     if (customData)
         return customData->origin();
@@ -347,7 +346,7 @@ String Pasteboard::readString(const String& type)
 
 String Pasteboard::readStringInCustomData(const String& type)
 {
-    Optional<PasteboardCustomData> customData = readPasteboardCustomData();
+    std::optional<PasteboardCustomData> customData = readPasteboardCustomData();
 
     if (customData)
         return customData->readStringInCustomData(type);
@@ -370,7 +369,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
     return reader.count ? FileContentState::MayContainFilePaths : FileContentState::NoFileOrImageData;
 }
 
-void Pasteboard::read(PasteboardFileReader& reader, Optional<size_t>)
+void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
 {
 #if USE(CF)
     if (m_dataObject) {
@@ -834,7 +833,7 @@ bool Pasteboard::canSmartReplace()
     return ::IsClipboardFormatAvailable(WebSmartPasteFormat);
 }
 
-void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Optional<size_t>)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
 {
     if (::IsClipboardFormatAvailable(CF_UNICODETEXT) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT)) {
@@ -1119,7 +1118,7 @@ void Pasteboard::write(const PasteboardWebContent&)
 {
 }
 
-void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t>)
+void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, std::optional<size_t>)
 {
 }
 

@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +44,7 @@ struct Cookie {
     Cookie() = default;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Cookie> decode(Decoder&);
+    template<class Decoder> static std::optional<Cookie> decode(Decoder&);
 
     WEBCORE_EXPORT bool operator==(const Cookie&) const;
     WEBCORE_EXPORT unsigned hash() const;
@@ -86,7 +85,7 @@ struct Cookie {
     String path;
     // Creation and expiration dates are expressed as milliseconds since the UNIX epoch.
     double created { 0 };
-    Optional<double> expires;
+    std::optional<double> expires;
     bool httpOnly { false };
     bool secure { false };
     bool session { false };
@@ -130,35 +129,35 @@ void Cookie::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Cookie> Cookie::decode(Decoder& decoder)
+std::optional<Cookie> Cookie::decode(Decoder& decoder)
 {
     Cookie cookie;
     if (!decoder.decode(cookie.name))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.value))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.domain))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.path))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.created))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.expires))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.httpOnly))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.secure))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.session))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.comment))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.commentURL))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.ports))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.sameSite))
-        return WTF::nullopt;
+        return std::nullopt;
     return cookie;
 }
 

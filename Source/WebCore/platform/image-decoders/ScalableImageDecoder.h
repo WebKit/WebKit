@@ -33,7 +33,7 @@
 #include "ScalableImageDecoderFrame.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -192,16 +192,16 @@ public:
 
     // If the image has a cursor hot-spot, stores it in the argument
     // and returns true. Otherwise returns false.
-    Optional<IntPoint> hotSpot() const override { return WTF::nullopt; }
+    std::optional<IntPoint> hotSpot() const override { return std::nullopt; }
 
 protected:
     RefPtr<SharedBuffer::DataSegment> m_data;
     Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache WTF_GUARDED_BY_LOCK(m_lock);
-    mutable CheckedLock m_lock;
+    mutable Lock m_lock;
     bool m_premultiplyAlpha;
     bool m_ignoreGammaAndColorProfile;
     ImageOrientation m_orientation;
-    Optional<IntSize> m_densityCorrectedSize;
+    std::optional<IntSize> m_densityCorrectedSize;
 
 private:
     virtual void tryDecodeSize(bool) = 0;

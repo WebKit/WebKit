@@ -49,7 +49,7 @@ private:
     // AudioSession
     CategoryType category() const final { return m_category; }
     void audioOutputDeviceChanged() final;
-    void setIsPlayingToBluetoothOverride(Optional<bool>) final;
+    void setIsPlayingToBluetoothOverride(std::optional<bool>) final;
     void setCategory(CategoryType, RouteSharingPolicy) final;
     AudioSession::CategoryType categoryOverride() const final { return m_categoryOverride; }
     void setCategoryOverride(CategoryType) final;
@@ -67,19 +67,19 @@ private:
     void addMutedStateObserver(MutedStateObserver*) final;
     void removeMutedStateObserver(MutedStateObserver*) final;
 
-    Optional<bool> m_lastMutedState;
+    std::optional<bool> m_lastMutedState;
     AudioSession::CategoryType m_category { AudioSession::CategoryType::None };
 #if ENABLE(ROUTING_ARBITRATION)
     bool m_setupArbitrationOngoing { false };
     bool m_inRoutingArbitration { false };
-    Optional<bool> m_playingToBluetooth;
-    Optional<bool> m_playingToBluetoothOverride;
+    std::optional<bool> m_playingToBluetooth;
+    std::optional<bool> m_playingToBluetoothOverride;
 #endif
     AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };
     mutable bool m_hasSampleRateObserver { false };
     mutable bool m_hasBufferSizeObserver { false };
-    mutable Optional<double> m_sampleRate;
-    mutable Optional<size_t> m_bufferSize;
+    mutable std::optional<double> m_sampleRate;
+    mutable std::optional<size_t> m_bufferSize;
 };
 
 }

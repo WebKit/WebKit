@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #import "AuxiliaryProcess.h"
 #import "Connection.h"
 #import "Logging.h"
-#import "TCCSPI.h"
+#import "TCCSoftLink.h"
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VersionChecks.h>
@@ -37,16 +37,9 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/StringHash.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
-SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
-SOFT_LINK(TCC, TCCAccessPreflightWithAuditToken, TCCAccessPreflightResult, (CFStringRef service, audit_token_t token, CFDictionaryRef options), (service, token, options))
-SOFT_LINK_CONSTANT(TCC, kTCCServiceWebKitIntelligentTrackingPrevention, CFStringRef)
-
 
 namespace WebKit {
 
@@ -57,10 +50,10 @@ bool isRunningTest(const String& bundleID)
     return bundleID == "com.apple.WebKit.TestWebKitAPI"_s || bundleID == "com.apple.WebKit.WebKitTestRunner"_s || bundleID == "org.webkit.WebKitTestRunnerApp"_s;
 }
 
-Optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(const String& bundleID)
+std::optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(const String& bundleID)
 {
     if (bundleID.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     static auto appBoundDomainList = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, Vector<WebCore::RegistrableDomain>> {
         {"inAppBrowserPrivacyTestIdentifier"_s, Vector<WebCore::RegistrableDomain> { WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1") }},
@@ -70,7 +63,7 @@ Optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(const Str
     if (appBoundDomainIter != appBoundDomainList->end())
         return appBoundDomainIter->value;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if ASSERT_ENABLED
@@ -119,7 +112,7 @@ static bool determineITPStateInternal(bool appWasLinkedOnOrAfter, const String& 
 
     TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000)
-    result = TCCAccessPreflight(getkTCCServiceWebKitIntelligentTrackingPrevention(), nullptr);
+    result = TCCAccessPreflight(get_TCC_kTCCServiceWebKitIntelligentTrackingPrevention(), nullptr);
 #endif
     return result != kTCCAccessPreflightDenied;
 }
@@ -185,7 +178,7 @@ bool doesParentProcessHaveITPEnabled(AuxiliaryProcess& auxiliaryProcess, bool ha
             RELEASE_LOG_ERROR(IPC, "Unable to get parent process audit token");
             return;
         }
-        result = TCCAccessPreflightWithAuditToken(getkTCCServiceWebKitIntelligentTrackingPrevention(), auditToken.value(), nullptr);
+        result = TCCAccessPreflightWithAuditToken(get_TCC_kTCCServiceWebKitIntelligentTrackingPrevention(), auditToken.value(), nullptr);
 #endif
         itpEnabled = result != kTCCAccessPreflightDenied;
     });

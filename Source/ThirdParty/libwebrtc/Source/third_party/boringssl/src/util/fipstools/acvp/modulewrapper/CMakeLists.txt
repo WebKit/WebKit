@@ -4,6 +4,7 @@ if(FIPS)
   add_executable(
     modulewrapper
 
+    main.cc
     modulewrapper.cc
   )
 

@@ -124,13 +124,13 @@ public:
         m_decoder = TextResourceDecoder::create("text/plain"_s, textEncoding, useDetector);
     }
 
-    void didReceiveData(const char* data, int dataLength) override
+    void didReceiveData(const uint8_t* data, int dataLength) override
     {
         if (!dataLength)
             return;
 
         if (dataLength == -1)
-            dataLength = strlen(data);
+            dataLength = strlen(reinterpret_cast<const char*>(data));
 
         m_responseText.append(m_decoder->decode(data, dataLength));
     }
@@ -213,32 +213,30 @@ static Ref<Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap
     return headersValue;
 }
 
-Ref<Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics* timing, ResourceLoader& resourceLoader)
+Ref<Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
 {
-    auto& loadTiming = resourceLoader.loadTiming();
-
     auto elapsedTimeSince = [&] (const MonotonicTime& time) {
         return m_environment.executionStopwatch().elapsedTimeSince(time).seconds();
     };
-    Optional<NetworkLoadMetrics> empty;
-    if (!timing) {
-        empty.emplace();
-        timing = &empty.value();
-    }
+    auto millisecondsSinceFetchStart = [&] (const MonotonicTime& time) {
+        if (!time)
+            return 0.0;
+        return (time - timing.fetchStart).milliseconds();
+    };
 
     return Protocol::Network::ResourceTiming::create()
-        .setStartTime(elapsedTimeSince(loadTiming.startTime()))
-        .setRedirectStart(elapsedTimeSince(loadTiming.redirectStart()))
-        .setRedirectEnd(elapsedTimeSince(loadTiming.redirectEnd()))
-        .setFetchStart(elapsedTimeSince(loadTiming.fetchStart()))
-        .setDomainLookupStart(timing->domainLookupStart.milliseconds())
-        .setDomainLookupEnd(timing->domainLookupEnd.milliseconds())
-        .setConnectStart(timing->connectStart.milliseconds())
-        .setConnectEnd(timing->connectEnd.milliseconds())
-        .setSecureConnectionStart(timing->secureConnectionStart.milliseconds())
-        .setRequestStart(timing->requestStart.milliseconds())
-        .setResponseStart(timing->responseStart.milliseconds())
-        .setResponseEnd(timing->responseEnd.milliseconds())
+        .setStartTime(elapsedTimeSince(resourceLoader.loadTiming().startTime()))
+        .setRedirectStart(elapsedTimeSince(timing.redirectStart))
+        .setRedirectEnd(elapsedTimeSince(timing.fetchStart))
+        .setFetchStart(elapsedTimeSince(timing.fetchStart))
+        .setDomainLookupStart(millisecondsSinceFetchStart(timing.domainLookupStart))
+        .setDomainLookupEnd(millisecondsSinceFetchStart(timing.domainLookupEnd))
+        .setConnectStart(millisecondsSinceFetchStart(timing.connectStart))
+        .setConnectEnd(millisecondsSinceFetchStart(timing.connectEnd))
+        .setSecureConnectionStart(millisecondsSinceFetchStart(timing.secureConnectionStart))
+        .setRequestStart(millisecondsSinceFetchStart(timing.requestStart))
+        .setResponseStart(millisecondsSinceFetchStart(timing.responseStart))
+        .setResponseEnd(millisecondsSinceFetchStart(timing.responseEnd))
         .release();
 }
 
@@ -274,11 +272,11 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
     if (!networkLoadMetrics.requestHeaders.isEmpty())
         metrics->setRequestHeaders(buildObjectForHeaders(networkLoadMetrics.requestHeaders));
 
-    if (networkLoadMetrics.requestHeaderBytesSent != std::numeric_limits<uint32_t>::max())
+    if (networkLoadMetrics.requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
         metrics->setRequestHeaderBytesSent(networkLoadMetrics.requestHeaderBytesSent);
     if (networkLoadMetrics.requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
         metrics->setRequestBodyBytesSent(networkLoadMetrics.requestBodyBytesSent);
-    if (networkLoadMetrics.responseHeaderBytesReceived != std::numeric_limits<uint32_t>::max())
+    if (networkLoadMetrics.responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
         metrics->setResponseHeaderBytesReceived(networkLoadMetrics.responseHeaderBytesReceived);
     if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
         metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
@@ -353,8 +351,10 @@ RefPtr<Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourc
         .setSource(responseSource(response.source()))
         .release();
 
-    if (resourceLoader)
-        responseObject->setTiming(buildObjectForTiming(response.deprecatedNetworkLoadMetricsOrNull(), *resourceLoader));
+    if (resourceLoader) {
+        auto* metrics = response.deprecatedNetworkLoadMetricsOrNull();
+        responseObject->setTiming(buildObjectForTiming(metrics ? *metrics : NetworkLoadMetrics { }, *resourceLoader));
+    }
 
     if (auto& certificateInfo = response.certificateInfo()) {
         auto securityPayload = Protocol::Security::Security::create()
@@ -459,7 +459,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     auto initiatorObject = buildInitiatorObject(document, &request);
 
     String url = loader ? loader->url().string() : request.url().string();
-    Optional<Protocol::Page::ResourceType> typePayload;
+    std::optional<Protocol::Page::ResourceType> typePayload;
     if (type != InspectorPageAgent::OtherResource)
         typePayload = protocolResourceType;
     m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTFMove(initiatorObject), buildObjectForResourceResponse(redirectResponse, nullptr), WTFMove(typePayload), targetId);
@@ -504,7 +504,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
 
     String requestId = IdentifiersFactory::requestId(identifier);
 
-    Optional<ResourceResponse> realResponse;
+    std::optional<ResourceResponse> realResponse;
     if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
         callOnMainThreadAndWait([&] {
             // We do not need to isolate response since it comes straight from IPC, but we might want to isolate it for extra safety.
@@ -572,7 +572,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
         didReceiveData(identifier, nullptr, cachedResource->encodedSize(), 0);
 }
 
-void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
+void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength)
 {
     if (m_hiddenRequestIdentifiers.contains(identifier))
         return;
@@ -592,17 +592,15 @@ void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char*
     m_frontendDispatcher->dataReceived(requestId, timestamp(), dataLength, encodedDataLength);
 }
 
-void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
+void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
 {
     if (m_hiddenRequestIdentifiers.remove(identifier))
         return;
 
     double elapsedFinishTime;
-    if (resourceLoader && networkLoadMetrics.isComplete()) {
-        MonotonicTime fetchStart = resourceLoader->loadTiming().fetchStart();
-        Seconds fetchStartInInspector = m_environment.executionStopwatch().elapsedTimeSince(fetchStart);
-        elapsedFinishTime = (fetchStartInInspector + networkLoadMetrics.responseEnd).seconds();
-    } else
+    if (networkLoadMetrics.isComplete())
+        elapsedFinishTime = m_environment.executionStopwatch().elapsedTimeSince(networkLoadMetrics.responseEnd).seconds();
+    else
         elapsedFinishTime = timestamp();
 
     String requestId = IdentifiersFactory::requestId(identifier);
@@ -616,7 +614,7 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
     if (resourceData && resourceData->cachedResource())
         sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(resourceData->cachedResource());
 
-    Optional<NetworkLoadMetrics> realMetrics;
+    std::optional<NetworkLoadMetrics> realMetrics;
     if (platformStrategies()->loaderStrategy()->shouldPerformSecurityChecks() && !networkLoadMetrics.isComplete()) {
         callOnMainThreadAndWait([&] {
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
@@ -1066,7 +1064,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::setInterceptionEnabled(bool
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(const String& url, Protocol::Network::NetworkStage networkStage, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex)
+Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(const String& url, Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
     Intercept intercept;
     intercept.url = url;
@@ -1082,7 +1080,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(const Strin
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::removeInterception(const String& url, Protocol::Network::NetworkStage networkStage, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex)
+Protocol::ErrorStringOr<void> InspectorNetworkAgent::removeInterception(const String& url, Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
     Intercept intercept;
     intercept.url = url;
@@ -1214,7 +1212,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const 
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, Optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers)
+Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers)
 {
     auto pendingInterceptResponse = m_pendingInterceptResponses.take(requestId);
     if (!pendingInterceptResponse)
@@ -1247,8 +1245,10 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const
             return makeUnexpected("Unable to decode given content"_s);
 
         overrideData = SharedBuffer::create(WTFMove(*buffer));
-    } else
-        overrideData = SharedBuffer::create(content.utf8().data(), content.utf8().length());
+    } else {
+        auto utf8Content = content.utf8();
+        overrideData = SharedBuffer::create(utf8Content.data(), utf8Content.length());
+    }
 
     pendingInterceptResponse->respond(overrideResponse, overrideData);
 
@@ -1273,8 +1273,10 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
             return makeUnexpected("Unable to decode given content"_s);
 
         data = SharedBuffer::create(WTFMove(*buffer));
-    } else
-        data = SharedBuffer::create(content.utf8().data(), content.utf8().length());
+    } else {
+        auto utf8Content = content.utf8();
+        data = SharedBuffer::create(utf8Content.data(), utf8Content.length());
+    }
 
     // Mimic data URL load behavior - report didReceiveResponse & didFinishLoading.
     ResourceResponse response(pendingRequest->m_loader->url(), mimeType, data->size(), String());
@@ -1356,10 +1358,10 @@ Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& 
     return TextResourceDecoder::create("text/plain"_s, "UTF-8");
 }
 
-Optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
+std::optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
 {
     if (!InspectorNetworkAgent::shouldTreatAsText(cachedResource.mimeType()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String result;
     bool base64Encoded;
@@ -1368,7 +1370,7 @@ Optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResou
         return result;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, String* result, bool* base64Encoded)
@@ -1421,7 +1423,7 @@ static Ref<Protocol::Page::SearchResult> buildObjectForSearchResult(const Protoc
     return searchResult;
 }
 
-static Optional<String> textContentForResourceData(const NetworkResourcesData::ResourceData& resourceData)
+static std::optional<String> textContentForResourceData(const NetworkResourcesData::ResourceData& resourceData)
 {
     if (resourceData.hasContent() && !resourceData.base64Encoded())
         return resourceData.content();
@@ -1429,7 +1431,7 @@ static Optional<String> textContentForResourceData(const NetworkResourcesData::R
     if (resourceData.cachedResource())
         return InspectorNetworkAgent::textContentForCachedResource(*resourceData.cachedResource());
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>& result)

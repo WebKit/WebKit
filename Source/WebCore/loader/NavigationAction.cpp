@@ -40,7 +40,7 @@ namespace WebCore {
 static GlobalFrameIdentifier createGlobalFrameIdentifier(const Document& document)
 {
     if (document.frame())
-        return { document.frame()->loader().pageID().valueOr(PageIdentifier { }), document.frame()->loader().frameID().valueOr(FrameIdentifier { }) };
+        return { document.frame()->loader().pageID().value_or(PageIdentifier { }), document.frame()->loader().frameID().value_or(FrameIdentifier { }) };
     return GlobalFrameIdentifier();
 }
 
@@ -84,20 +84,20 @@ static bool shouldTreatAsSameOriginNavigation(const Document& document, const UR
     return url.protocolIsAbout() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url));
 }
 
-static Optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForFirstEventWithKeyState(Event* event)
+static std::optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForFirstEventWithKeyState(Event* event)
 {
     if (UIEventWithKeyState* uiEvent = findEventWithKeyState(event))
         return NavigationAction::UIEventWithKeyStateData { *uiEvent };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-static Optional<NavigationAction::MouseEventData> mouseEventDataForFirstMouseEvent(Event* event)
+static std::optional<NavigationAction::MouseEventData> mouseEventDataForFirstMouseEvent(Event* event)
 {
     for (Event* e = event; e; e = e->underlyingEvent()) {
         if (e->isMouseEvent())
             return NavigationAction::MouseEventData { static_cast<const MouseEvent&>(*e) };
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomString& downloadAttribute)
@@ -153,7 +153,7 @@ void NavigationAction::setTargetBackForwardItem(HistoryItem& item)
 
 void NavigationAction::setSourceBackForwardItem(HistoryItem* item)
 {
-    m_sourceBackForwardItemIdentifier = item ? makeOptional(item->identifier()) : WTF::nullopt;
+    m_sourceBackForwardItemIdentifier = item ? std::make_optional(item->identifier()) : std::nullopt;
 }
 
 }

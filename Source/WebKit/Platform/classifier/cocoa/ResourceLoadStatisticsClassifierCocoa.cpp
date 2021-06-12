@@ -105,7 +105,7 @@ bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
 
 const struct svm_model* ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel()
 {
-    static Optional<struct svm_model*> corePredictionModel;
+    static std::optional<struct svm_model*> corePredictionModel;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         auto path = storagePath();

@@ -56,6 +56,7 @@
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebPageOverlay.h"
+#include "WebProcess.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObjectInterface.h>
 #include <WebCore/ApplicationCacheStorage.h>
@@ -228,6 +229,16 @@ WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef pageRef, W
 void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef pageRef)
 {
     WebKit::toImpl(pageRef)->insertNewlineInQuotedContent();
+}
+
+void WKAccessibilityTestingInjectPreference(WKBundlePageRef pageRef, WKStringRef domain, WKStringRef key, WKStringRef encodedValue)
+{
+    if (!pageRef)
+        return;
+    
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    WebKit::WebProcess::singleton().notifyPreferencesChanged(WebKit::toWTFString(domain), WebKit::toWTFString(key), WebKit::toWTFString(encodedValue));
+#endif
 }
 
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
@@ -852,7 +863,7 @@ WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
 
 void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEventThrottlingBehavior* behavior)
 {
-    Optional<WebCore::EventThrottlingBehavior> behaviorValue;
+    std::optional<WebCore::EventThrottlingBehavior> behaviorValue;
     if (behavior) {
         switch (*behavior) {
         case kWKEventThrottlingBehaviorResponsive:

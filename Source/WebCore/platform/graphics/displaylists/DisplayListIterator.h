@@ -26,7 +26,6 @@
 #pragma once
 
 #include "DisplayList.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 namespace DisplayList {
@@ -56,14 +55,14 @@ public:
 
     struct Value {
         ItemHandle item;
-        Optional<FloatRect> extent;
+        std::optional<FloatRect> extent;
         size_t itemSizeInBuffer { 0 };
     };
 
-    Optional<Value> operator*() const
+    std::optional<Value> operator*() const
     {
         if (!m_isValid)
-            return WTF::nullopt;
+            return std::nullopt;
         return {{
             ItemHandle { m_currentBufferForItem },
             m_currentExtent,
@@ -95,7 +94,7 @@ private:
 
     uint8_t m_fixedBufferForCurrentItem[sizeOfFixedBufferForCurrentItem] { 0 };
     uint8_t* m_currentBufferForItem { nullptr };
-    Optional<FloatRect> m_currentExtent;
+    std::optional<FloatRect> m_currentExtent;
     size_t m_currentItemSizeInBuffer { 0 };
     bool m_isValid { true };
 };

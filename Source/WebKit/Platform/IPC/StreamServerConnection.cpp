@@ -59,11 +59,11 @@ void StreamServerConnectionBase::enqueueMessage(Connection&, std::unique_ptr<Dec
     m_workQueue.wakeUp();
 }
 
-Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquire()
+std::optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquire()
 {
     ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
     if (serverLimit == ServerLimit::serverIsSleepingTag)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
     if (result.size < minimumMessageSize) {
@@ -72,7 +72,7 @@ Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquir
     }
 
     if (result.size < minimumMessageSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

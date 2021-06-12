@@ -75,7 +75,7 @@ private:
     {
     }
 
-    void appendBytes(DocumentWriter&, const char*, size_t) final;
+    void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void createDocumentStructure();
 
     HTMLMediaElement* m_mediaElement { nullptr };
@@ -130,7 +130,7 @@ void MediaDocumentParser::createDocumentStructure()
     frame->loader().setOutgoingReferrer(document.completeURL(m_outgoingReferrer));
 }
 
-void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
+void MediaDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
 {
     if (m_mediaElement)
         return;

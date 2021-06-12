@@ -77,7 +77,7 @@ static Ref<FetchResponse> createResponse(ScriptExecutionContext& context, const 
 {
     auto resourceResponse = record.response;
     resourceResponse.setSource(ResourceResponse::Source::DOMCache);
-    auto response = FetchResponse::create(context, WTF::nullopt, record.responseHeadersGuard, WTFMove(resourceResponse));
+    auto response = FetchResponse::create(context, std::nullopt, record.responseHeadersGuard, WTFMove(resourceResponse));
     response->setBodyData(copyResponseBody(record.responseBody), record.responseBodySize);
     return response;
 }
@@ -115,7 +115,7 @@ Vector<Ref<FetchResponse>> DOMCache::cloneResponses(const Vector<DOMCacheEngine:
     });
 }
 
-void DOMCache::matchAll(Optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
+void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -299,7 +299,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 }
 
                 if (auto chunk = result.returnValue())
-                    data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+                    data->append(chunk->data, chunk->size);
                 else
                     taskHandler->addResponseBody(recordPosition, response, WTFMove(data));
             });
@@ -383,7 +383,7 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
             }
 
             if (auto chunk = result.returnValue())
-                data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+                data->append(chunk->data, chunk->size);
             else
                 this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<SharedBuffer> { WTFMove(data) });
         });
@@ -418,10 +418,10 @@ void DOMCache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromis
 static Ref<FetchRequest> createRequest(ScriptExecutionContext& context, const DOMCacheEngine::Record& record)
 {
     auto requestHeaders = FetchHeaders::create(record.requestHeadersGuard, HTTPHeaderMap { record.request.httpHeaderFields() });
-    return FetchRequest::create(context, WTF::nullopt, WTFMove(requestHeaders),  ResourceRequest { record.request }, FetchOptions { record.options }, String { record.referrer });
+    return FetchRequest::create(context, std::nullopt, WTFMove(requestHeaders),  ResourceRequest { record.request }, FetchOptions { record.options }, String { record.referrer });
 }
 
-void DOMCache::keys(Optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
+void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;

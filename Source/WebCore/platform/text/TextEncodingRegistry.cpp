@@ -39,9 +39,9 @@
 #include <mutex>
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -91,7 +91,7 @@ struct TextEncodingNameHash {
 using TextEncodingNameMap = HashMap<const char*, const char*, TextEncodingNameHash>;
 using TextCodecMap = HashMap<const char*, NewTextCodecFunction>;
 
-static CheckedLock encodingRegistryLock;
+static Lock encodingRegistryLock;
 
 static TextEncodingNameMap* textEncodingNameMap WTF_GUARDED_BY_LOCK(encodingRegistryLock);
 static TextCodecMap* textCodecMap WTF_GUARDED_BY_LOCK(encodingRegistryLock);

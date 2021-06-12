@@ -256,15 +256,16 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     {
+        // The GC thread has to grab the GC lock even though it is not mutating the containers.
         Locker locker { thisObject->m_gcLock };
 
-        for (auto& structure : thisObject->structures(locker).values())
+        for (auto& structure : thisObject->m_structures.values())
             visitor.append(structure);
 
-        for (auto& constructor : thisObject->constructors(locker).values())
+        for (auto& constructor : thisObject->m_constructors.values())
             visitor.append(constructor);
 
-        for (auto& guarded : thisObject->guardedObjects(locker))
+        for (auto& guarded : thisObject->m_guardedObjects)
             guarded->visitAggregate(visitor);
     }
 
@@ -300,9 +301,12 @@ void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlo
     reportException(jsGlobalObject, exception);
 }
 
-void JSDOMGlobalObject::clearDOMGuardedObjects()
+void JSDOMGlobalObject::clearDOMGuardedObjects() const
 {
-    auto guardedObjectsCopy = m_guardedObjects;
+    // No locking is necessary here since we are not directly modifying the returned container.
+    // Calling JSDOMGuardedObject::clear() will however modify the guarded objects container but
+    // it will grab the lock as needed.
+    auto guardedObjectsCopy = guardedObjects();
     for (auto& guarded : guardedObjectsCopy)
         guarded->clear();
 }
@@ -434,7 +438,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     auto body = inputResponse->consumeBody();
     WTF::switchOn(body, [&](Ref<FormData>& formData) {
         if (auto buffer = formData->asSharedBuffer()) {
-            compiler->addBytes(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+            compiler->addBytes(buffer->data(), buffer->size());
             compiler->finalize(globalObject);
             return;
         }
@@ -442,7 +446,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
         // https://bugs.webkit.org/show_bug.cgi?id=221248
         compiler->fail(globalObject, createDOMException(*globalObject, Exception { NotSupportedError, "Not implemented"_s  }));
     }, [&](Ref<SharedBuffer>& buffer) {
-        compiler->addBytes(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+        compiler->addBytes(buffer->data(), buffer->size());
         compiler->finalize(globalObject);
     }, [&](std::nullptr_t&) {
         compiler->finalize(globalObject);

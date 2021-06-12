@@ -30,7 +30,6 @@
 #include "WHLSLCodeLocation.h"
 #include "WHLSLConstantExpression.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

@@ -34,12 +34,14 @@ namespace Layout {
 
 class FlexFormattingContext;
 
+class FlexFormattingContext;
+
 // This class implements positioning and sizing for flex items.
 class FlexFormattingGeometry : public FormattingGeometry {
 public:
     FlexFormattingGeometry(const FlexFormattingContext&);
 
-    IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&);
+    IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&) const;
 
 private:
     const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingGeometry::formattingContext()); }
@@ -47,5 +49,7 @@ private:
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(FlexFormattingGeometry, isFlexFormattingGeometry())
 
 #endif

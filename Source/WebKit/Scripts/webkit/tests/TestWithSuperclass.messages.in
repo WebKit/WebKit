@@ -29,5 +29,5 @@ messages -> TestWithSuperclass : WebPageBase {
     TestAsyncMessageWithConnection(int value) -> (bool flag) Async WantsConnection
 #endif
     TestSyncMessage(uint32_t param) -> (uint8_t reply) Synchronous
-    TestSynchronousMessage(bool value) -> (Optional<WebKit::TestClassName> optionalReply) Synchronous
+    TestSynchronousMessage(bool value) -> (std::optional<WebKit::TestClassName> optionalReply) Synchronous
 }

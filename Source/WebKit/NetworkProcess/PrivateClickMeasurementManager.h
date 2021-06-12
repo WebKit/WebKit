@@ -82,8 +82,8 @@ private:
 
     WebCore::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
-    Optional<URL> m_tokenPublicKeyURLForTesting;
-    Optional<URL> m_tokenSignatureURLForTesting;
+    std::optional<URL> m_tokenPublicKeyURLForTesting;
+    std::optional<URL> m_tokenSignatureURLForTesting;
     WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
@@ -94,7 +94,7 @@ private:
         URL attributionReportAttributeOnURL;
     };
 
-    Optional<AttributionReportTestConfig> m_attributionReportTestConfig;
+    std::optional<AttributionReportTestConfig> m_attributionReportTestConfig;
 
     struct TestingFraudPreventionValues {
         String unlinkableToken;
@@ -103,7 +103,7 @@ private:
         String keyID;
     };
 
-    Optional<TestingFraudPreventionValues> m_fraudPreventionValuesForTesting;
+    std::optional<TestingFraudPreventionValues> m_fraudPreventionValuesForTesting;
 };
     
 } // namespace WebKit

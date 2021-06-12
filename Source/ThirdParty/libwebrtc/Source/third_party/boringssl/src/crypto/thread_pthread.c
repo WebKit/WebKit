@@ -127,34 +127,6 @@ static pthread_once_t g_thread_local_init_once = PTHREAD_ONCE_INIT;
 static pthread_key_t g_thread_local_key;
 static int g_thread_local_key_created = 0;
 
-// OPENSSL_DANGEROUS_RELEASE_PTHREAD_KEY can be defined to cause
-// |pthread_key_delete| to be called in a destructor function. This can be
-// useful for programs that dlclose BoringSSL.
-//
-// Note that dlclose()ing BoringSSL is not supported and will leak memory:
-// thread-local values will be leaked as well as anything initialised via a
-// once. The |pthread_key_t| is destroyed because they run out very quickly,
-// while the other leaks are slow, and this allows code that happens to use
-// dlclose() despite all the problems to continue functioning.
-//
-// This is marked "dangerous" because it can cause multi-threaded processes to
-// crash (even if they don't use dlclose): if the destructor runs while other
-// threads are still executing then they may end up using an invalid key to
-// access thread-local variables.
-//
-// This may be removed after February 2020.
-#if defined(OPENSSL_DANGEROUS_RELEASE_PTHREAD_KEY) && \
-    (defined(__GNUC__) || defined(__clang__))
-// thread_key_destructor is called when the library is unloaded with dlclose.
-static void thread_key_destructor(void) __attribute__((destructor, unused));
-static void thread_key_destructor(void) {
-  if (g_thread_local_key_created) {
-    g_thread_local_key_created = 0;
-    pthread_key_delete(g_thread_local_key);
-  }
-}
-#endif
-
 static void thread_local_init(void) {
   g_thread_local_key_created =
       pthread_key_create(&g_thread_local_key, thread_local_destructor) == 0;

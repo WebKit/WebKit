@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
@@ -119,8 +119,8 @@ private:
         static_assert(!((BufferSize - 1) & BufferSize), "BufferSize must be power of 2.");
     }
 
-    CheckedLock m_lock;
-    CheckedCondition m_condition;
+    Lock m_lock;
+    Condition m_condition;
 
     bool m_open WTF_GUARDED_BY_LOCK(m_lock) { true };
     Deque<T, BufferSize> m_queue WTF_GUARDED_BY_LOCK(m_lock);

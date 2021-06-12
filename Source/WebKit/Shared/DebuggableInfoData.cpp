@@ -51,32 +51,32 @@ void DebuggableInfoData::encode(IPC::Encoder& encoder) const
     encoder << targetIsSimulator;
 }
 
-Optional<DebuggableInfoData> DebuggableInfoData::decode(IPC::Decoder& decoder)
+std::optional<DebuggableInfoData> DebuggableInfoData::decode(IPC::Decoder& decoder)
 {
-    Optional<Inspector::DebuggableType> debuggableType;
+    std::optional<Inspector::DebuggableType> debuggableType;
     decoder >> debuggableType;
     if (!debuggableType)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> targetPlatformName;
+    std::optional<String> targetPlatformName;
     decoder >> targetPlatformName;
     if (!targetPlatformName)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> targetBuildVersion;
+    std::optional<String> targetBuildVersion;
     decoder >> targetBuildVersion;
     if (!targetBuildVersion)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> targetProductVersion;
+    std::optional<String> targetProductVersion;
     decoder >> targetProductVersion;
     if (!targetProductVersion)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> targetIsSimulator;
+    std::optional<bool> targetIsSimulator;
     decoder >> targetIsSimulator;
     if (!targetIsSimulator)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *debuggableType,

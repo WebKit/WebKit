@@ -80,11 +80,11 @@ private:
     CrossfadeSelection m_crossfadeSelection { CrossfadeSelection1 };
 
     // azimuth/elevation for CrossfadeSelection1.
-    Optional<int> m_azimuthIndex1;
+    std::optional<int> m_azimuthIndex1;
     double m_elevation1 { 0 };
 
     // azimuth/elevation for CrossfadeSelection2.
-    Optional<int> m_azimuthIndex2;
+    std::optional<int> m_azimuthIndex2;
     double m_elevation2 { 0 };
 
     // A crossfade value 0 <= m_crossfadeX <= 1.

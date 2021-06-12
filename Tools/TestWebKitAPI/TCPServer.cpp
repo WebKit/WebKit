@@ -29,7 +29,6 @@
 #include <netinet/in.h>
 #include <thread>
 #include <unistd.h>
-#include <wtf/Optional.h>
 #include <wtf/text/Base64.h>
 
 #if HAVE(SSL)
@@ -134,7 +133,7 @@ TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connecti
 }
 
 #if HAVE(SSL)
-void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate, Optional<uint16_t> maxTLSVersion)
+void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate, std::optional<uint16_t> maxTLSVersion)
 {
     SSL_library_init();
 
@@ -206,7 +205,7 @@ void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secu
     secureConnectionHandler(acceptResult > 0 ? ssl.get() : nullptr);
 };
 
-TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, Optional<uint16_t> maxTLSVersion, size_t connections)
+TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, std::optional<uint16_t> maxTLSVersion, size_t connections)
 {
     switch (protocol) {
     case Protocol::HTTPS:
@@ -259,11 +258,11 @@ TCPServer::~TCPServer()
         connectionThreads.join();
 }
 
-auto TCPServer::socketBindListen(size_t connections) -> Optional<Socket>
+auto TCPServer::socketBindListen(size_t connections) -> std::optional<Socket>
 {
     Socket listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
     if (listeningSocket == -1)
-        return WTF::nullopt;
+        return std::nullopt;
     
     // Ports 49152-65535 are unallocated ports. Try until we find one that's free.
     for (Port port = 49152; port; port++) {
@@ -279,7 +278,7 @@ auto TCPServer::socketBindListen(size_t connections) -> Optional<Socket>
         if (listen(listeningSocket, connections) == -1) {
             // Listening failed.
             close(listeningSocket);
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_port = port;
         return listeningSocket; // Successfully set up listening port.
@@ -287,7 +286,7 @@ auto TCPServer::socketBindListen(size_t connections) -> Optional<Socket>
     
     // Couldn't find an available port.
     close(listeningSocket);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> Vector<uint8_t> TCPServer::read(Socket socket)

@@ -39,9 +39,16 @@ public:
     TableFormattingQuirks(const TableFormattingContext&);
 
     static bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&);
+    LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const final;
+
+private:
+    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingQuirks::formattingContext()); }
+
 };
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_QUIRKS(TableFormattingQuirks, isTableFormattingQuirks())
 
 #endif

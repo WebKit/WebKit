@@ -90,44 +90,44 @@ public:
     }
 
     template <class Decoder>
-    static Optional<CaptureDevice> decode(Decoder& decoder)
+    static std::optional<CaptureDevice> decode(Decoder& decoder)
     {
-        Optional<String> persistentId;
+        std::optional<String> persistentId;
         decoder >> persistentId;
         if (!persistentId)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<String> label;
+        std::optional<String> label;
         decoder >> label;
         if (!label)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<String> groupId;
+        std::optional<String> groupId;
         decoder >> groupId;
         if (!groupId)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> enabled;
+        std::optional<bool> enabled;
         decoder >> enabled;
         if (!enabled)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isDefault;
+        std::optional<bool> isDefault;
         decoder >> isDefault;
         if (!isDefault)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<CaptureDevice::DeviceType> type;
+        std::optional<CaptureDevice::DeviceType> type;
         decoder >> type;
         if (!type)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> isMockDevice;
+        std::optional<bool> isMockDevice;
         decoder >> isMockDevice;
         if (!isMockDevice)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
+        std::optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
         device->setEnabled(*enabled);
         device->setIsDefault(*isDefault);
         device->setIsMockDevice(*isMockDevice);

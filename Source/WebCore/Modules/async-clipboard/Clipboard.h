@@ -27,7 +27,6 @@
 
 #include "EventTarget.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -95,12 +94,12 @@ private:
     private:
         ItemWriter(Clipboard&, Ref<DeferredPromise>&&);
 
-        void setData(Optional<PasteboardCustomData>&&, size_t index);
+        void setData(std::optional<PasteboardCustomData>&&, size_t index);
         void didSetAllData();
         void reject();
 
         WeakPtr<Clipboard> m_clipboard;
-        Vector<Optional<PasteboardCustomData>> m_dataToWrite;
+        Vector<std::optional<PasteboardCustomData>> m_dataToWrite;
         RefPtr<DeferredPromise> m_promise;
         unsigned m_pendingItemCount;
         std::unique_ptr<Pasteboard> m_pasteboard;
@@ -111,9 +110,9 @@ private:
 
     void didResolveOrReject(ItemWriter&);
 
-    Optional<Session> m_activeSession;
+    std::optional<Session> m_activeSession;
     WeakPtr<Navigator> m_navigator;
-    Vector<Optional<PasteboardCustomData>> m_dataToWrite;
+    Vector<std::optional<PasteboardCustomData>> m_dataToWrite;
     RefPtr<ItemWriter> m_activeItemWriter;
 };
 

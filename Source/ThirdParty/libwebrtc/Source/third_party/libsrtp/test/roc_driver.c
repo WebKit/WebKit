@@ -97,7 +97,7 @@ srtp_err_status_t roc_test(int num_trials)
 
     printf("\n\ttesting sequential insertion...");
     for (i = 0; i < 2048; i++) {
-        delta = srtp_index_guess(&local, &est, (uint16_t)ref);
+        srtp_index_guess(&local, &est, (uint16_t)ref);
 #if ROC_VERBOSE
         printf("%lld, %lld, %d\n", ref, est, i);
 #endif

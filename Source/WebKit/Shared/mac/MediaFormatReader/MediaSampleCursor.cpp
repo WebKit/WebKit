@@ -29,7 +29,6 @@
 #if ENABLE(WEBM_FORMAT_READER)
 
 #include "MediaTrackReader.h"
-#include <WebCore/Logging.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
@@ -139,12 +138,12 @@ MediaSampleCursor::MediaSampleCursor(Allocator&& allocator, const MediaSampleCur
 }
 
 template<typename OrderedMap>
-Optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(OrderedMap& samples, bool hasAllSamples) const
+std::optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(OrderedMap& samples, bool hasAllSamples) const
 {
     ASSERT(m_locatorLock.isLocked());
     using Iterator = typename OrderedMap::iterator;
     return WTF::switchOn(m_locator,
-        [&](const MediaTime& presentationTime) -> Optional<Iterator> {
+        [&](const MediaTime& presentationTime) -> std::optional<Iterator> {
             assertIsHeld(m_locatorLock);
             auto iterator = upperBound(samples, presentationTime);
             if (iterator == samples.begin())
@@ -152,7 +151,7 @@ Optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(Ordere
             else if (hasAllSamples || iterator != samples.end())
                 m_locator = std::prev(iterator);
             else
-                return WTF::nullopt;
+                return std::nullopt;
             return locateIterator(samples, hasAllSamples);
         },
         [&](const auto& otherIterator) {
@@ -380,8 +379,8 @@ OSStatus MediaSampleCursor::copySampleLocation(MTPluginSampleCursorStorageRange*
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sample.platformSample().type == PlatformSample::ByteRangeSampleType);
         auto byteRange = *sample.byteRange();
         *storageRange = {
-            .offset = CheckedInt64(byteRange.byteOffset).unsafeGet(),
-            .length = CheckedInt64(byteRange.byteLength).unsafeGet(),
+            .offset = CheckedInt64(byteRange.byteOffset),
+            .length = CheckedInt64(byteRange.byteLength),
         };
         *byteSource = retainPtr(sample.platformSample().sample.byteRangeSample.first).leakRef();
     });

@@ -30,7 +30,7 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
-#import "DFGWorklist.h"
+#import "JITWorklist.h"
 #import "JSManagedValueInternal.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSVirtualMachinePrivate.h"
@@ -38,12 +38,12 @@
 #import "SigillCrashAnalyzer.h"
 #import "SlotVisitorInlines.h"
 #import <mutex>
-#import <wtf/CheckedLock.h>
+#import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 
 static NSMapTable *globalWrapperCache = 0;
 
-static CheckedLock wrapperCacheMutex;
+static Lock wrapperCacheMutex;
 
 static void initWrapperCache()
 {
@@ -275,11 +275,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 + (NSUInteger)setNumberOfDFGCompilerThreads:(NSUInteger)numberOfThreads
 {
 #if ENABLE(DFG_JIT)
-    JSC::DFG::Worklist* worklist = JSC::DFG::existingGlobalDFGWorklistOrNull();
-    if (worklist)
-        return worklist->setNumberOfThreads(numberOfThreads, JSC::Options::priorityDeltaOfDFGCompilerThreads());
-    else
-        return JSC::DFG::setNumberOfDFGCompilerThreads(numberOfThreads);
+    return JSC::JITWorklist::ensureGlobalWorklist().setMaximumNumberOfConcurrentDFGCompilations(numberOfThreads);
 #else
     return 0;
 #endif // ENABLE(DFG_JIT)
@@ -288,11 +284,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 + (NSUInteger)setNumberOfFTLCompilerThreads:(NSUInteger)numberOfThreads
 {
 #if ENABLE(DFG_JIT)
-    JSC::DFG::Worklist* worklist = JSC::DFG::existingGlobalFTLWorklistOrNull();
-    if (worklist)
-        return worklist->setNumberOfThreads(numberOfThreads, JSC::Options::priorityDeltaOfFTLCompilerThreads());
-    else
-        return JSC::DFG::setNumberOfFTLCompilerThreads(numberOfThreads);
+    return JSC::JITWorklist::ensureGlobalWorklist().setMaximumNumberOfConcurrentFTLCompilations(numberOfThreads);
 #else
     return 0;
 #endif // ENABLE(DFG_JIT)

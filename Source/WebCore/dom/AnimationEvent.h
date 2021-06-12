@@ -32,7 +32,7 @@ namespace WebCore {
 class AnimationEvent final : public AnimationEventBase {
     WTF_MAKE_ISO_ALLOCATED(AnimationEvent);
 public:
-    static Ref<AnimationEvent> create(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement, Optional<Seconds> timelineTime, WebAnimation* animation)
+    static Ref<AnimationEvent> create(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement, std::optional<Seconds> timelineTime, WebAnimation* animation)
     {
         return adoptRef(*new AnimationEvent(type, animationName, elapsedTime, pseudoElement, timelineTime, animation));
     }
@@ -59,7 +59,7 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    AnimationEvent(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement, Optional<Seconds> timelineTime, WebAnimation*);
+    AnimationEvent(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement, std::optional<Seconds> timelineTime, WebAnimation*);
     AnimationEvent(const AtomString&, const Init&, IsTrusted);
 
     String m_animationName;

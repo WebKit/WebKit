@@ -40,7 +40,7 @@ void WebPasteboardProxy::getPasteboardTypes(CompletionHandler<void(Vector<String
     completionHandler(WTFMove(pasteboardTypes));
 }
 
-void WebPasteboardProxy::readStringFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardType, const String&, Optional<PageIdentifier>, CompletionHandler<void(String&&)>&& completionHandler)
+void WebPasteboardProxy::readStringFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardType, const String&, std::optional<PageIdentifier>, CompletionHandler<void(String&&)>&& completionHandler)
 {
     completionHandler(PlatformPasteboard().readString(index, pasteboardType));
 }

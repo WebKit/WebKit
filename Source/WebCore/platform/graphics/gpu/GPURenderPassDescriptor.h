@@ -31,7 +31,6 @@
 #include "GPULoadOp.h"
 #include "GPUStoreOp.h"
 #include "GPUTexture.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -64,7 +63,7 @@ struct GPURenderPassDepthStencilAttachmentDescriptor final : GPURenderPassDepthS
 
 struct GPURenderPassDescriptor {
     Vector<GPURenderPassColorAttachmentDescriptor> colorAttachments;
-    Optional<GPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
+    std::optional<GPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
 };
 
 } // namespace WebCore

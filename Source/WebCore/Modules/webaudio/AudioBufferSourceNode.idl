@@ -31,14 +31,14 @@
 ] interface AudioBufferSourceNode : AudioScheduledSourceNode {
     [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional AudioBufferSourceOptions options);
 
-    attribute AudioBuffer? buffer;
+    [ImplementedAs=bufferForBindings] attribute AudioBuffer? buffer;
 
     readonly attribute AudioParam playbackRate;
     readonly attribute AudioParam detune;
 
-    attribute boolean loop;
-    attribute double loopStart;
-    attribute double loopEnd;
+    [ImplementedAs=loopForBindings] attribute boolean loop;
+    [ImplementedAs=loopStartForBindings] attribute double loopStart;
+    [ImplementedAs=loopEndForBindings] attribute double loopEnd;
 
     [ImplementedAs=startLater] undefined start(optional double when = 0, optional double grainOffset = 0, optional double grainDuration);
 };

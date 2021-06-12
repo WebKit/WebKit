@@ -61,9 +61,9 @@ public:
 
     static DragOperation platformGenericDragOperation();
 
-    WEBCORE_EXPORT Optional<DragOperation> dragEntered(const DragData&);
+    WEBCORE_EXPORT std::optional<DragOperation> dragEntered(const DragData&);
     WEBCORE_EXPORT void dragExited(const DragData&);
-    WEBCORE_EXPORT Optional<DragOperation> dragUpdated(const DragData&);
+    WEBCORE_EXPORT std::optional<DragOperation> dragUpdated(const DragData&);
     WEBCORE_EXPORT bool performDragOperation(const DragData&);
     WEBCORE_EXPORT void dragCancelled();
 
@@ -91,7 +91,7 @@ public:
     WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
 
     const Vector<Ref<HTMLImageElement>>& droppedImagePlaceholders() const { return m_droppedImagePlaceholders; }
-    const Optional<SimpleRange>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
+    const std::optional<SimpleRange>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
 
     WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
@@ -110,11 +110,11 @@ private:
     bool dispatchTextInputEventFor(Frame*, const DragData&);
     bool canProcessDrag(const DragData&);
     bool concludeEditDrag(const DragData&);
-    Optional<DragOperation> dragEnteredOrUpdated(const DragData&);
-    Optional<DragOperation> operationForLoad(const DragData&);
-    DragHandlingMethod tryDocumentDrag(const DragData&, OptionSet<DragDestinationAction>, Optional<DragOperation>&);
-    bool tryDHTMLDrag(const DragData&, Optional<DragOperation>&);
-    Optional<DragOperation> dragOperation(const DragData&);
+    std::optional<DragOperation> dragEnteredOrUpdated(const DragData&);
+    std::optional<DragOperation> operationForLoad(const DragData&);
+    DragHandlingMethod tryDocumentDrag(const DragData&, OptionSet<DragDestinationAction>, std::optional<DragOperation>&);
+    bool tryDHTMLDrag(const DragData&, std::optional<DragOperation>&);
+    std::optional<DragOperation> dragOperation(const DragData&);
     void clearDragCaret();
     bool dragIsMove(FrameSelection&, const DragData&);
     bool isCopyKeyDown(const DragData&);
@@ -122,7 +122,7 @@ private:
     void mouseMovedIntoDocument(Document*);
     bool shouldUseCachedImageForDragImage(const Image&) const;
 
-    Optional<HitTestResult> hitTestResultForDragStart(Frame&, Element&, const IntPoint&) const;
+    std::optional<HitTestResult> hitTestResultForDragStart(Frame&, Element&, const IntPoint&) const;
 
     void doImageDrag(Element&, const IntPoint&, const IntRect&, Frame&, IntPoint&, const DragState&, PromisedAttachmentInfo&&);
     void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, Frame&, const DragState&, PromisedAttachmentInfo&&);
@@ -163,7 +163,7 @@ private:
     URL m_draggingImageURL;
     bool m_isPerformingDrop { false };
     Vector<Ref<HTMLImageElement>> m_droppedImagePlaceholders;
-    Optional<SimpleRange> m_droppedImagePlaceholderRange;
+    std::optional<SimpleRange> m_droppedImagePlaceholderRange;
 };
 
 WEBCORE_EXPORT bool isDraggableLink(const Element&);

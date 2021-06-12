@@ -540,7 +540,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncParseFloat, (JSGlobalObject* globalObject, Ca
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncDecodeURI, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static Bitmap<256> doNotUnescapeWhenDecodingURI = makeCharacterBitmap(
+    static const Bitmap<256> doNotUnescapeWhenDecodingURI = makeCharacterBitmap(
         "#$&+,/:;=?@"
     );
 
@@ -549,44 +549,42 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncDecodeURI, (JSGlobalObject* globalObject, Cal
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncDecodeURIComponent, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static Bitmap<256> emptyBitmap;
+    static const Bitmap<256> emptyBitmap;
     return JSValue::encode(decode(globalObject, callFrame->argument(0), emptyBitmap, true));
 }
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncEncodeURI, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static Bitmap<256> doNotEscapeWhenEncodingURI = makeCharacterBitmap(
+    static const Bitmap<256> doNotEscapeWhenEncodingURI = makeCharacterBitmap(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789"
         "!#$&'()*+,-./:;=?@_~"
     );
-
     return JSValue::encode(encode(globalObject, callFrame->argument(0), doNotEscapeWhenEncodingURI));
 }
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncEncodeURIComponent, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static Bitmap<256> doNotEscapeWhenEncodingURIComponent = makeCharacterBitmap(
+    static const Bitmap<256> doNotEscapeWhenEncodingURIComponent = makeCharacterBitmap(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789"
         "!'()*-._~"
     );
-
     return JSValue::encode(encode(globalObject, callFrame->argument(0), doNotEscapeWhenEncodingURIComponent));
 }
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncEscape, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static Bitmap<256> doNotEscape = makeCharacterBitmap(
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz"
-        "0123456789"
-        "*+-./@_"
-    );
-
     return JSValue::encode(toStringView(globalObject, callFrame->argument(0), [&] (StringView view) {
+        static const Bitmap<256> doNotEscape = makeCharacterBitmap(
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789"
+            "*+-./@_"
+        );
+
         VM& vm = globalObject->vm();
         StringBuilder builder;
         if (view.is8Bit()) {
@@ -595,10 +593,8 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEscape, (JSGlobalObject* globalObject, CallFr
                 int u = c[0];
                 if (doNotEscape.get(static_cast<LChar>(u)))
                     builder.append(*c);
-                else {
-                    builder.append('%');
-                    builder.append(hex(u, 2));
-                }
+                else
+                    builder.append('%', hex(u, 2));
             }
             return jsString(vm, builder.toString());
         }
@@ -606,16 +602,12 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEscape, (JSGlobalObject* globalObject, CallFr
         const UChar* c = view.characters16();
         for (unsigned k = 0; k < view.length(); k++, c++) {
             UChar u = c[0];
-            if (u >= doNotEscape.size()) {
-                builder.appendLiteral("%u");
-                builder.append(hex(static_cast<unsigned char>(u >> 8), 2));
-                builder.append(hex(static_cast<unsigned char>(u & 0xFF), 2));
-            } else if (doNotEscape.get(static_cast<LChar>(u)))
+            if (u >= doNotEscape.size())
+                builder.append("%u", hex(static_cast<uint8_t>(u >> 8), 2), hex(static_cast<uint8_t>(u), 2));
+            else if (doNotEscape.get(static_cast<LChar>(u)))
                 builder.append(*c);
-            else {
-                builder.append('%');
-                builder.append(hex(static_cast<unsigned char>(u), 2));
-            }
+            else
+                builder.append('%', hex(u, 2));
         }
 
         return jsString(vm, builder.toString());
@@ -875,7 +867,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
 
     UnlinkedCodeBlock* unlinkedCodeBlock = nullptr;
     const IdentifierSet* excludedSet = nullptr;
-    Optional<IdentifierSet> newlyCreatedSet;
+    std::optional<IdentifierSet> newlyCreatedSet;
     if (callFrame->argumentCount() > 1) {
         int32_t setIndex = callFrame->uncheckedArgument(1).asUInt32AsAnyInt();
         CodeBlock* codeBlock = getCallerCodeBlock(callFrame);

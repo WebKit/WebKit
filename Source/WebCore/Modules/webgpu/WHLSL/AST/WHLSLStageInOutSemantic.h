@@ -64,7 +64,7 @@ public:
     }
 
     bool isAcceptableType(const UnnamedType&, const Intrinsics&) const override;
-    bool isAcceptableForShaderItemDirection(ShaderItemDirection, const Optional<EntryPointType>&) const override;
+    bool isAcceptableForShaderItemDirection(ShaderItemDirection, const std::optional<EntryPointType>&) const override;
 
 private:
     unsigned m_index;

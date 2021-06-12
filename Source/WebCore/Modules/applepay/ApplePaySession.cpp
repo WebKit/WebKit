@@ -100,7 +100,7 @@ static ExceptionOr<ApplePayLineItem> convertAndValidate(ApplePayLineItem&& lineI
     return WTFMove(lineItem);
 }
 
-static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(Optional<Vector<ApplePayLineItem>>&& lineItems)
+static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(std::optional<Vector<ApplePayLineItem>>&& lineItems)
 {
     Vector<ApplePayLineItem> result;
     if (!lineItems)
@@ -197,7 +197,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 
     case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
         convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, WTF::nullopt, nullString()));
+        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, std::nullopt, nullString()));
         break;
 
     case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
@@ -207,7 +207,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 
     case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
         convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, WTF::nullopt, nullString()));
+        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, std::nullopt, nullString()));
         break;
 
     case ApplePaySession::STATUS_PIN_REQUIRED:
@@ -442,8 +442,6 @@ ExceptionOr<void> ApplePaySession::begin(Document& document)
 
     m_state = State::Active;
 
-    setPendingActivity(*this);
-
     return { };
 }
 
@@ -454,8 +452,6 @@ ExceptionOr<void> ApplePaySession::abort()
 
     m_state = State::Aborted;
     paymentCoordinator().abortPaymentSession();
-
-    didReachFinalState();
 
     return { };
 }
@@ -549,7 +545,6 @@ ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationR
     }
 
     m_state = State::Completed;
-    unsetPendingActivity(*this);
 
     return { };
 }
@@ -588,8 +583,8 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
 {
     ApplePayShippingContactUpdate update;
 
-    Optional<ApplePayErrorCode> errorCode;
-    Optional<ApplePayErrorContactField> contactField;
+    std::optional<ApplePayErrorCode> errorCode;
+    std::optional<ApplePayErrorContactField> contactField;
 
     switch (status) {
     case ApplePaySession::STATUS_SUCCESS:
@@ -747,8 +742,6 @@ void ApplePaySession::didCancelPaymentSession(PaymentSessionError&& error)
 
     auto event = ApplePayCancelEvent::create(eventNames().cancelEvent, WTFMove(error));
     dispatchEvent(event.get());
-
-    didReachFinalState();
 }
 
 const char* ApplePaySession::activeDOMObjectName() const
@@ -785,8 +778,6 @@ void ApplePaySession::stop()
 
     m_state = State::Aborted;
     paymentCoordinator().abortPaymentSession();
-
-    didReachFinalState();
 }
 
 void ApplePaySession::suspend(ReasonForSuspension reason)
@@ -797,11 +788,10 @@ void ApplePaySession::suspend(ReasonForSuspension reason)
     if (canSuspendWithoutCanceling())
         return;
 
+    auto jsWrapperProtector = makePendingActivity(*this);
     m_state = State::Canceled;
     paymentCoordinator().abortPaymentSession();
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, ApplePayCancelEvent::create(eventNames().cancelEvent, { }));
-
-    didReachFinalState();
 }
 
 PaymentCoordinator& ApplePaySession::paymentCoordinator() const
@@ -1020,10 +1010,9 @@ bool ApplePaySession::isFinalState() const
     }
 }
 
-void ApplePaySession::didReachFinalState()
+bool ApplePaySession::virtualHasPendingActivity() const
 {
-    ASSERT(isFinalState());
-    unsetPendingActivity(*this);
+    return m_state != State::Idle && !isFinalState();
 }
 
 #if defined(ApplePaySessionAdditions_definitions)

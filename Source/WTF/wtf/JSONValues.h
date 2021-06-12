@@ -93,9 +93,9 @@ public:
     Type type() const { return m_type; }
     bool isNull() const { return m_type == Type::Null; }
 
-    Optional<bool> asBoolean() const;
-    Optional<int> asInteger() const;
-    Optional<double> asDouble() const;
+    std::optional<bool> asBoolean() const;
+    std::optional<int> asInteger() const;
+    std::optional<double> asDouble() const;
     String asString() const;
     RefPtr<Value> asValue();
     virtual RefPtr<Object> asObject();
@@ -188,9 +188,9 @@ protected:
     iterator find(const String& name);
     const_iterator find(const String& name) const;
 
-    Optional<bool> getBoolean(const String& name) const;
-    Optional<double> getDouble(const String& name) const;
-    Optional<int> getInteger(const String& name) const;
+    std::optional<bool> getBoolean(const String& name) const;
+    std::optional<double> getDouble(const String& name) const;
+    std::optional<int> getInteger(const String& name) const;
     String getString(const String& name) const;
     RefPtr<Object> getObject(const String& name) const;
     RefPtr<Array> getArray(const String& name) const;

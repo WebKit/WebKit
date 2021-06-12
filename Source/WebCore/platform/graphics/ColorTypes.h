@@ -158,6 +158,9 @@ template<typename T, typename U> inline constexpr bool HasComponentType = HasCom
 template<typename T> inline constexpr bool IsColorType = IsConvertibleToColorComponents<T> && HasComponentTypeMember<T>;
 template<typename T, typename U> inline constexpr bool IsColorTypeWithComponentType = IsConvertibleToColorComponents<T> && HasComponentType<T, U>;
 
+template<template<typename> class ColorType, typename Replacement> struct ColorTypeReplacingComponentTypeHelper { using type = ColorType<Replacement>; };
+template<template<typename> class ColorType, typename Replacement> using ColorTypeReplacingComponentType = typename ColorTypeReplacingComponentTypeHelper<ColorType, Replacement>::type;
+
 template<typename Parent> struct ColorWithAlphaHelper {
     // Helper to allow convenient syntax for working with color types.
     // e.g. auto yellowWith50PercentAlpha = Color::yellow.colorWithAlphaByte(128);
@@ -221,27 +224,31 @@ template<typename T, typename D, typename ColorType, typename M, typename TF> co
 
 
 template<typename T, typename D>
-struct BoundedGammaEncoded : RGBAType<T, D, BoundedGammaEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>> {
-    using RGBAType<T, D, BoundedGammaEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>>::RGBAType;
+struct BoundedGammaEncoded : RGBAType<T, D, BoundedGammaEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Clamped>> {
+    using RGBAType<T, D, BoundedGammaEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Clamped>>::RGBAType;
 
     using LinearCounterpart = BoundedLinearEncoded<T, D>;
     using ExtendedCounterpart = ExtendedGammaEncoded<T, D>;
+    
+    template<typename Replacement> using SelfWithReplacementComponent = BoundedGammaEncoded<Replacement, D>;
 };
 
 template<typename T, typename D>
-struct BoundedLinearEncoded : RGBAType<T, D, BoundedLinearEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>> {
-    using RGBAType<T, D, BoundedLinearEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>>::RGBAType;
+struct BoundedLinearEncoded : RGBAType<T, D, BoundedLinearEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Clamped>> {
+    using RGBAType<T, D, BoundedLinearEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Clamped>>::RGBAType;
 
     static constexpr auto linearToXYZ = D::linearToXYZ;
     static constexpr auto xyzToLinear = D::xyzToLinear;
 
     using GammaEncodedCounterpart = BoundedGammaEncoded<T, D>;
     using ExtendedCounterpart = ExtendedLinearEncoded<T, D>;
+
+    template<typename Replacement> using SelfWithReplacementComponent = BoundedLinearEncoded<Replacement, D>;
 };
 
 template<typename T, typename D>
-struct ExtendedGammaEncoded : RGBAType<T, D, ExtendedGammaEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>> {
-    using RGBAType<T, D, ExtendedGammaEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>>::RGBAType;
+struct ExtendedGammaEncoded : RGBAType<T, D, ExtendedGammaEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Unclamped>> {
+    using RGBAType<T, D, ExtendedGammaEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Unclamped>>::RGBAType;
 
     using LinearCounterpart = ExtendedLinearEncoded<T, D>;
     using BoundedCounterpart = BoundedGammaEncoded<T, D>;
@@ -249,8 +256,8 @@ struct ExtendedGammaEncoded : RGBAType<T, D, ExtendedGammaEncoded<T, D>, Extende
 };
 
 template<typename T, typename D>
-struct ExtendedLinearEncoded : RGBAType<T, D, ExtendedLinearEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>> {
-    using RGBAType<T, D, ExtendedLinearEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>>::RGBAType;
+struct ExtendedLinearEncoded : RGBAType<T, D, ExtendedLinearEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Unclamped>> {
+    using RGBAType<T, D, ExtendedLinearEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<T, TransferFunctionMode::Unclamped>>::RGBAType;
 
     static constexpr auto linearToXYZ = D::linearToXYZ;
     static constexpr auto xyzToLinear = D::xyzToLinear;
@@ -275,6 +282,11 @@ template<typename ColorType> inline constexpr bool HasGammaEncodedCounterpartMem
 template<typename, typename = void> inline constexpr bool HasLinearCounterpartMember = false;
 template<typename ColorType> inline constexpr bool HasLinearCounterpartMember<ColorType, std::void_t<typename ColorType::LinearCounterpart>> = true;
 
+template<typename, typename = void> inline constexpr bool HasSelfWithReplacementComponentMember = false;
+template<typename ColorType> inline constexpr bool HasSelfWithReplacementComponentMember<ColorType, std::void_t<typename ColorType::SelfWithReplacementComponent>> = true;
+
+template<typename ColorType, typename Replacement> using ColorTypeWithReplacementComponent = typename ColorType::template SelfWithReplacementComponent<Replacement>;
+
 template<typename ColorType> inline constexpr bool IsRGBType = HasDescriptorMember<ColorType>;
 template<typename ColorType> inline constexpr bool IsRGBExtendedType = IsRGBType<ColorType> && HasBoundedCounterpartMember<ColorType>;
 template<typename ColorType> inline constexpr bool IsRGBBoundedType = IsRGBType<ColorType> && HasExtendedCounterpartMember<ColorType>;
@@ -285,8 +297,8 @@ template<typename ColorType1, typename ColorType2, bool enabled> inline constexp
 template<typename ColorType1, typename ColorType2> inline constexpr bool IsSameRGBTypeFamilyValue<ColorType1, ColorType2, true> = std::is_same_v<typename ColorType1::Descriptor, typename ColorType2::Descriptor>;
 template<typename ColorType1, typename ColorType2> inline constexpr bool IsSameRGBTypeFamily = IsSameRGBTypeFamilyValue<ColorType1, ColorType2, IsRGBType<ColorType1> && IsRGBType<ColorType2>>;
 
-template<typename T> struct SRGBADescriptor {
-    template<TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
+struct SRGBADescriptor {
+    template<typename T, TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
     static constexpr WhitePoint whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
@@ -302,14 +314,14 @@ template<typename T> struct SRGBADescriptor {
     };
 };
 
-template<typename T> using SRGBA = BoundedGammaEncoded<T, SRGBADescriptor<T>>;
-template<typename T> using LinearSRGBA = BoundedLinearEncoded<T, SRGBADescriptor<T>>;
-template<typename T> using ExtendedSRGBA = ExtendedGammaEncoded<T, SRGBADescriptor<T>>;
-template<typename T> using LinearExtendedSRGBA = ExtendedLinearEncoded<T, SRGBADescriptor<T>>;
+template<typename T> using SRGBA = BoundedGammaEncoded<T, SRGBADescriptor>;
+template<typename T> using LinearSRGBA = BoundedLinearEncoded<T, SRGBADescriptor>;
+template<typename T> using ExtendedSRGBA = ExtendedGammaEncoded<T, SRGBADescriptor>;
+template<typename T> using LinearExtendedSRGBA = ExtendedLinearEncoded<T, SRGBADescriptor>;
 
 
-template<typename T> struct A98RGBDescriptor {
-    template<TransferFunctionMode Mode> using TransferFunction = A98RGBTransferFunction<T, Mode>;
+struct A98RGBDescriptor {
+    template<typename T, TransferFunctionMode Mode> using TransferFunction = A98RGBTransferFunction<T, Mode>;
     static constexpr WhitePoint whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
@@ -325,12 +337,12 @@ template<typename T> struct A98RGBDescriptor {
     };
 };
 
-template<typename T> using A98RGB = BoundedGammaEncoded<T, A98RGBDescriptor<T>>;
-template<typename T> using LinearA98RGB = BoundedLinearEncoded<T, A98RGBDescriptor<T>>;
+template<typename T> using A98RGB = BoundedGammaEncoded<T, A98RGBDescriptor>;
+template<typename T> using LinearA98RGB = BoundedLinearEncoded<T, A98RGBDescriptor>;
 
 
-template<typename T> struct DisplayP3Descriptor {
-    template<TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
+struct DisplayP3Descriptor {
+    template<typename T, TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
     static constexpr WhitePoint whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
@@ -346,12 +358,12 @@ template<typename T> struct DisplayP3Descriptor {
     };
 };
 
-template<typename T> using DisplayP3 = BoundedGammaEncoded<T, DisplayP3Descriptor<T>>;
-template<typename T> using LinearDisplayP3 = BoundedLinearEncoded<T, DisplayP3Descriptor<T>>;
+template<typename T> using DisplayP3 = BoundedGammaEncoded<T, DisplayP3Descriptor>;
+template<typename T> using LinearDisplayP3 = BoundedLinearEncoded<T, DisplayP3Descriptor>;
 
 
-template<typename T> struct ProPhotoRGBDescriptor {
-    template<TransferFunctionMode Mode> using TransferFunction = ProPhotoRGBTransferFunction<T, Mode>;
+struct ProPhotoRGBDescriptor {
+    template<typename T, TransferFunctionMode Mode> using TransferFunction = ProPhotoRGBTransferFunction<T, Mode>;
     static constexpr WhitePoint whitePoint = WhitePoint::D50;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
@@ -367,12 +379,12 @@ template<typename T> struct ProPhotoRGBDescriptor {
     };
 };
 
-template<typename T> using ProPhotoRGB = BoundedGammaEncoded<T, ProPhotoRGBDescriptor<T>>;
-template<typename T> using LinearProPhotoRGB = BoundedLinearEncoded<T, ProPhotoRGBDescriptor<T>>;
+template<typename T> using ProPhotoRGB = BoundedGammaEncoded<T, ProPhotoRGBDescriptor>;
+template<typename T> using LinearProPhotoRGB = BoundedLinearEncoded<T, ProPhotoRGBDescriptor>;
 
 
-template<typename T> struct Rec2020Descriptor {
-    template<TransferFunctionMode Mode> using TransferFunction = Rec2020TransferFunction<T, Mode>;
+struct Rec2020Descriptor {
+    template<typename T, TransferFunctionMode Mode> using TransferFunction = Rec2020TransferFunction<T, Mode>;
     static constexpr WhitePoint whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
@@ -388,8 +400,8 @@ template<typename T> struct Rec2020Descriptor {
     };
 };
 
-template<typename T> using Rec2020 = BoundedGammaEncoded<T, Rec2020Descriptor<T>>;
-template<typename T> using LinearRec2020 = BoundedLinearEncoded<T, Rec2020Descriptor<T>>;
+template<typename T> using Rec2020 = BoundedGammaEncoded<T, Rec2020Descriptor>;
+template<typename T> using LinearRec2020 = BoundedLinearEncoded<T, Rec2020Descriptor>;
 
 
 // MARK: - Lab Color Type.

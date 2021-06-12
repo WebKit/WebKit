@@ -32,28 +32,25 @@ namespace WebCore {
 
 String DeprecatedCSSOMValueList::cssText() const
 {
-    StringBuilder result;
-    String separator;
+    const char* separator;
     switch (m_valueSeparator) {
     case CSSValue::SpaceSeparator:
-        separator = " "_s;
+        separator = " ";
         break;
     case CSSValue::CommaSeparator:
-        separator = ", "_s;
+        separator = ", ";
         break;
     case CSSValue::SlashSeparator:
-        separator = " / "_s;
+        separator = " / ";
         break;
     default:
         ASSERT_NOT_REACHED();
+        separator = "";
     }
     
-    for (auto& value : m_values) {
-        if (!result.isEmpty())
-            result.append(separator);
-        result.append(value.get().cssText());
-    }
-    
+    StringBuilder result;
+    for (auto& value : m_values)
+        result.append(result.isEmpty() ? "" : separator, value.get().cssText());
     return result.toString();
 }
 

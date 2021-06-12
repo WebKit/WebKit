@@ -27,12 +27,12 @@
 
 #include "AbortSignal.h"
 #include "EventListenerOptions.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
 struct AddEventListenerOptions : EventListenerOptions {
-    AddEventListenerOptions(bool capture = false, Optional<bool> passive = WTF::nullopt, bool once = false, RefPtr<AbortSignal>&& signal = nullptr)
+    AddEventListenerOptions(bool capture = false, std::optional<bool> passive = std::nullopt, bool once = false, RefPtr<AbortSignal>&& signal = nullptr)
         : EventListenerOptions(capture)
         , passive(passive)
         , once(once)
@@ -40,7 +40,7 @@ struct AddEventListenerOptions : EventListenerOptions {
     {
     }
 
-    Optional<bool> passive;
+    std::optional<bool> passive;
     bool once { false };
     RefPtr<AbortSignal> signal;
 };

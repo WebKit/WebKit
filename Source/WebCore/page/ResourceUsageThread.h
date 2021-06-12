@@ -30,8 +30,7 @@
 #include "ResourceUsageData.h"
 #include <array>
 #include <functional>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -80,8 +79,8 @@ private:
     void platformCollectMemoryData(JSC::VM*, ResourceUsageData&);
 
     RefPtr<Thread> m_thread;
-    CheckedLock m_observersLock;
-    CheckedCondition m_condition;
+    Lock m_observersLock;
+    Condition m_condition;
     HashMap<void*, std::pair<ResourceUsageCollectionMode, std::function<void(const ResourceUsageData&)>>> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
     ResourceUsageCollectionMode m_collectionMode { None };
 

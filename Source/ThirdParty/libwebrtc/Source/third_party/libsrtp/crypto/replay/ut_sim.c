@@ -49,10 +49,13 @@
 #endif
 
 #include "ut_sim.h"
+#include "cipher_priv.h"
 
 int ut_compar(const void *a, const void *b)
 {
-    return rand() > (RAND_MAX / 2) ? -1 : 1;
+    uint8_t r;
+    srtp_cipher_rand_for_tests(&r, sizeof(r));
+    return r > (UINT8_MAX / 2) ? -1 : 1;
 }
 
 void ut_init(ut_connection *utc)

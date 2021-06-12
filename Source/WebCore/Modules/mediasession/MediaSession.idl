@@ -28,14 +28,15 @@
     Conditional=MEDIA_SESSION,
     Exposed=Window,
     ExportMacro=WEBCORE_EXPORT,
-    JSGenerateToJSObject,
-] interface MediaSession : EventTarget
+] interface MediaSession
 {
     attribute MediaMetadata? metadata;
 
     attribute MediaSessionPlaybackState playbackState;
 
     undefined setActionHandler(MediaSessionAction action, MediaSessionActionHandler? handler);
+
+    Promise<undefined> callActionHandler(MediaSessionActionDetails actionDetails);
 
     undefined setPositionState(optional MediaPositionState? state = null);
 };

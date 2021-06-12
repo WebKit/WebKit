@@ -34,7 +34,6 @@
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
 #import <wtf/EnumTraits.h>
-#import <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -109,7 +108,7 @@ enum class ObjCType : uint8_t {
     WKTypeRefWrapper,
 };
 
-static Optional<ObjCType> typeFromObject(id object)
+static std::optional<ObjCType> typeFromObject(id object)
 {
     ASSERT(object);
 
@@ -133,7 +132,7 @@ static Optional<ObjCType> typeFromObject(id object)
         return ObjCType::WKTypeRefWrapper;
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
@@ -307,11 +306,11 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::WKBrowsingContextHandle: {
-        Optional<WebPageProxyIdentifier> pageProxyID;
+        std::optional<WebPageProxyIdentifier> pageProxyID;
         decoder >> pageProxyID;
         if (!pageProxyID)
             return false;
-        Optional<WebCore::PageIdentifier> webPageID;
+        std::optional<WebCore::PageIdentifier> webPageID;
         decoder >> webPageID;
         if (!webPageID)
             return false;

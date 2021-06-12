@@ -489,7 +489,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     // but it would premultiply the alpha channel as a side effect.
     // Prefer to mannually Convert 16bit per-component formats to RGBA8 formats instead.
     if (bitsPerComponent == 16) {
-        m_formalizedRGBA8Data = makeUniqueArray<uint8_t>((Checked<size_t>(m_imageWidth) * m_imageHeight * 4U).unsafeGet());
+        m_formalizedRGBA8Data = makeUniqueArray<uint8_t>(Checked<size_t>(m_imageWidth) * m_imageHeight * 4U);
         const uint16_t* source = reinterpret_cast<const uint16_t*>(m_imagePixelData);
         uint8_t* destination = m_formalizedRGBA8Data.get();
         const ptrdiff_t srcStrideInElements = bytesPerRow / sizeof(uint16_t);
@@ -532,7 +532,7 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
     }));
 
     auto imageSize = pixelBuffer.size();
-    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer.format().colorSpace), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
+    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer.format().colorSpace.platformColorSpace(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 
     // CSS styling may cause the canvas's content to be resized on
     // the page. Go back to the Canvas to figure out the correct

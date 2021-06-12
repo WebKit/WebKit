@@ -47,7 +47,7 @@ const String& fileExtension()
     return extension;
 }
 
-bool appendResumeData(const char* resumeBytes, uint32_t resumeLength, const String& bundlePath)
+bool appendResumeData(const uint8_t* resumeBytes, uint32_t resumeLength, const String& bundlePath)
 {
     if (!resumeBytes || !resumeLength) {
         LOG_ERROR("Invalid resume data to write to bundle path");
@@ -89,7 +89,7 @@ exit:
     return result;
 }
 
-bool extractResumeData(const String& bundlePath, Vector<char>& resumeData)
+bool extractResumeData(const String& bundlePath, Vector<uint8_t>& resumeData)
 {
     if (bundlePath.isEmpty()) {
         LOG_ERROR("Cannot create resume data from empty download bundle path");

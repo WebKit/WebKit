@@ -27,5 +27,7 @@
     Conditional=APPLE_PAY&PAYMENT_REQUEST,
 ] dictionary ApplePayModifier {
     ApplePayPaymentMethodType paymentMethodType;
-    sequence<ApplePayShippingMethod> additionalShippingOptions;
+    ApplePayLineItem total;
+    sequence<ApplePayLineItem> additionalLineItems;
+    sequence<ApplePayShippingMethod> additionalShippingMethods;
 };

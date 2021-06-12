@@ -51,18 +51,18 @@ AtomString AudioTrackPrivateWebM::id() const
     return m_trackID;
 }
 
-Optional<uint64_t> AudioTrackPrivateWebM::trackUID() const
+std::optional<uint64_t> AudioTrackPrivateWebM::trackUID() const
 {
     if (m_track.track_uid.is_present())
         return m_track.track_uid.value();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<bool> AudioTrackPrivateWebM::defaultEnabled() const
+std::optional<bool> AudioTrackPrivateWebM::defaultEnabled() const
 {
     if (m_track.is_enabled.is_present())
         return m_track.is_enabled.value();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 AtomString AudioTrackPrivateWebM::label() const

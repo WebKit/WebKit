@@ -58,7 +58,6 @@
 #include "VMTrapsInlines.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -3011,7 +3010,7 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
     m_TDZStack.append(TDZStackEntry { WTFMove(map), nullptr });
 }
 
-Optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNames()
+std::optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNames()
 {
     PrivateNameEnvironment result;
     HashSet<UniquedStringImpl*> excludedNames;
@@ -3025,7 +3024,7 @@ Optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNam
     }
 
     if (!result.size())
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -3266,7 +3265,7 @@ RegisterID* BytecodeGenerator::emitNewClassFieldInitializerFunction(RegisterID* 
     }
 
     auto variablesUnderTDZ = getVariablesUnderTDZ();
-    Optional<PrivateNameEnvironment> parentPrivateNameEnvironment = getAvailablePrivateAccessNames();
+    std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment = getAvailablePrivateAccessNames();
     SourceParseMode parseMode = SourceParseMode::ClassFieldInitializerMode;
     ConstructAbility constructAbility = ConstructAbility::CannotConstruct;
 
@@ -4460,7 +4459,7 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         ASSERT(string->raw());
         rawStrings.append(string->raw()->impl());
         if (!string->cooked())
-            cookedStrings.append(WTF::nullopt);
+            cookedStrings.append(std::nullopt);
         else
             cookedStrings.append(string->cooked()->impl());
     }
@@ -4698,7 +4697,7 @@ void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
     }
 }
 
-void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, Optional<Variable> baseVariable)
+void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, std::optional<Variable> baseVariable)
 {
     if (!localRegister)
         return;

@@ -32,7 +32,6 @@
 #include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <wtf/DataLog.h>
-#include <wtf/Optional.h>
 #include <wtf/StackCheck.h>
 #include <wtf/Vector.h>
 
@@ -582,7 +581,7 @@ public:
         m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
     }
 
-    void atomParenthesesSubpatternBegin(bool capture = true, Optional<String> optGroupName = WTF::nullopt)
+    void atomParenthesesSubpatternBegin(bool capture = true, std::optional<String> optGroupName = std::nullopt)
     {
         unsigned subpatternId = m_pattern.m_numSubpatterns + 1;
         if (capture) {
@@ -792,7 +791,7 @@ public:
 
         ErrorCode error = ErrorCode::NoError;
         alternative->m_hasFixedSize = true;
-        Checked<unsigned, RecordOverflow> currentInputPosition = initialInputPosition;
+        CheckedUint32 currentInputPosition = initialInputPosition;
 
         for (unsigned i = 0; i < alternative->m_terms.size(); ++i) {
             PatternTerm& term = alternative->m_terms[i];
@@ -801,11 +800,11 @@ public:
             case PatternTerm::TypeAssertionBOL:
             case PatternTerm::TypeAssertionEOL:
             case PatternTerm::TypeAssertionWordBoundary:
-                term.inputPosition = currentInputPosition.unsafeGet();
+                term.inputPosition = currentInputPosition;
                 break;
 
             case PatternTerm::TypeBackReference:
-                term.inputPosition = currentInputPosition.unsafeGet();
+                term.inputPosition = currentInputPosition;
                 term.frameLocation = currentCallFrameSize;
                 currentCallFrameSize += YarrStackSpaceForBackTrackInfoBackReference;
                 alternative->m_hasFixedSize = false;
@@ -815,13 +814,13 @@ public:
                 break;
 
             case PatternTerm::TypePatternCharacter:
-                term.inputPosition = currentInputPosition.unsafeGet();
+                term.inputPosition = currentInputPosition;
                 if (term.quantityType != QuantifierFixedCount) {
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoPatternCharacter;
                     alternative->m_hasFixedSize = false;
                 } else if (m_pattern.unicode()) {
-                    Checked<unsigned, RecordOverflow> tempCount = term.quantityMaxCount;
+                    CheckedUint32 tempCount = term.quantityMaxCount;
                     tempCount *= U16_LENGTH(term.patternCharacter);
                     if (tempCount.hasOverflowed())
                         return ErrorCode::OffsetTooLarge;
@@ -831,7 +830,7 @@ public:
                 break;
 
             case PatternTerm::TypeCharacterClass:
-                term.inputPosition = currentInputPosition.unsafeGet();
+                term.inputPosition = currentInputPosition;
                 if (term.quantityType != QuantifierFixedCount) {
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
@@ -840,7 +839,7 @@ public:
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
                     if (term.characterClass->hasOneCharacterSize() && !term.invert()) {
-                        Checked<unsigned, RecordOverflow> tempCount = term.quantityMaxCount;
+                        CheckedUint32 tempCount = term.quantityMaxCount;
                         tempCount *= term.characterClass->hasNonBMPCharacters() ? 2 : 1;
                         if (tempCount.hasOverflowed())
                             return ErrorCode::OffsetTooLarge;
@@ -858,23 +857,23 @@ public:
                 term.frameLocation = currentCallFrameSize;
                 if (term.quantityMaxCount == 1 && !term.parentheses.isCopy) {
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesOnce;
-                    error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
+                    error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition, currentCallFrameSize);
                     if (hasError(error))
                         return error;
                     // If quantity is fixed, then pre-check its minimum size.
                     if (term.quantityType == QuantifierFixedCount)
                         currentInputPosition += term.parentheses.disjunction->m_minimumSize;
-                    term.inputPosition = currentInputPosition.unsafeGet();
+                    term.inputPosition = currentInputPosition;
                 } else if (term.parentheses.isTerminal) {
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesTerminal;
-                    error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
+                    error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition, currentCallFrameSize);
                     if (hasError(error))
                         return error;
-                    term.inputPosition = currentInputPosition.unsafeGet();
+                    term.inputPosition = currentInputPosition;
                 } else {
-                    term.inputPosition = currentInputPosition.unsafeGet();
+                    term.inputPosition = currentInputPosition;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoParentheses;
-                    error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
+                    error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition, currentCallFrameSize);
                     if (hasError(error))
                         return error;
                 }
@@ -883,9 +882,9 @@ public:
                 break;
 
             case PatternTerm::TypeParentheticalAssertion:
-                term.inputPosition = currentInputPosition.unsafeGet();
+                term.inputPosition = currentInputPosition;
                 term.frameLocation = currentCallFrameSize;
-                error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + YarrStackSpaceForBackTrackInfoParentheticalAssertion, currentInputPosition.unsafeGet(), currentCallFrameSize);
+                error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + YarrStackSpaceForBackTrackInfoParentheticalAssertion, currentInputPosition, currentCallFrameSize);
                 if (hasError(error))
                     return error;
                 break;
@@ -903,7 +902,7 @@ public:
                 return ErrorCode::OffsetTooLarge;
         }
 
-        alternative->m_minimumSize = (currentInputPosition - initialInputPosition).unsafeGet();
+        alternative->m_minimumSize = currentInputPosition - initialInputPosition;
         newCallFrameSize = currentCallFrameSize;
         return error;
     }
@@ -1259,12 +1258,12 @@ void PatternTerm::dumpQuantifier(PrintStream& out)
 {
     if (quantityType == QuantifierFixedCount && quantityMinCount == 1 && quantityMaxCount == 1)
         return;
-    out.print(" {", quantityMinCount.unsafeGet());
+    out.print(" {", quantityMinCount.value());
     if (quantityMinCount != quantityMaxCount) {
         if (quantityMaxCount == UINT_MAX)
             out.print(",...");
         else
-            out.print(",", quantityMaxCount.unsafeGet());
+            out.print(",", quantityMaxCount.value());
     }
     out.print("}");
     if (quantityType == QuantifierGreedy)

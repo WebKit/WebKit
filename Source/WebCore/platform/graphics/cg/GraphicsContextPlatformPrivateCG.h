@@ -45,7 +45,6 @@ public:
         : m_cgContext(WTFMove(cgContext))
 #if PLATFORM(WIN)
         , m_hdc(0)
-        , m_shouldIncludeChildWindows(false)
 #endif
         , m_userToDeviceTransformKnownToBeIdentity(false)
         , m_contextFlags(flags)
@@ -80,7 +79,6 @@ public:
     void setCTM(const AffineTransform&);
 
     HDC m_hdc;
-    bool m_shouldIncludeChildWindows;
 #endif
 
     RetainPtr<CGContextRef> m_cgContext;

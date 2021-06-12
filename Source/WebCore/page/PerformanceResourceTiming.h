@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include "LoadTiming.h"
 #include "NetworkLoadMetrics.h"
 #include "PerformanceEntry.h"
 #include "ResourceTiming.h"
@@ -62,6 +61,9 @@ public:
     double requestStart() const;
     double responseStart() const;
     double responseEnd() const;
+    uint64_t transferSize() const;
+    uint64_t encodedBodySize() const;
+    uint64_t decodedBodySize() const;
 
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const { return m_serverTiming; }
 
@@ -71,8 +73,6 @@ public:
 protected:
     PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
     ~PerformanceResourceTiming();
-
-    double networkLoadTimeToDOMHighResTimeStamp(Seconds) const;
 
     MonotonicTime m_timeOrigin;
     const ResourceTiming m_resourceTiming;

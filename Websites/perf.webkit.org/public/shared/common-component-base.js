@@ -135,12 +135,12 @@ class CommonComponentBase {
             element.appendChild(CommonComponentBase._context.createTextNode(content));
     }
 
-    createLink(content, titleOrCallback, callback, isExternal, tabIndex=null)
+    createLink(content, titleOrCallback, callback, isExternal, tabIndex = null)
     {
         return CommonComponentBase.createLink(content, titleOrCallback, callback, isExternal, tabIndex);
     }
 
-    static createLink(content, titleOrCallback, callback, isExternal, tabIndex=null)
+    static createLink(content, titleOrCallback, callback, isExternal, tabIndex = null)
     {
         var title = titleOrCallback;
         if (callback === undefined) {

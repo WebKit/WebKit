@@ -120,7 +120,7 @@ private:
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
     Timer m_timer;
-    Optional<SimpleRange> m_rangeWithAlternative;
+    std::optional<SimpleRange> m_rangeWithAlternative;
     bool m_isActive { };
     bool m_isDismissedByEditing { };
     AlternativeTextType m_type;

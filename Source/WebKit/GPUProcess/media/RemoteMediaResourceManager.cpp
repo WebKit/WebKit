@@ -95,7 +95,7 @@ void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier iden
     if (!resource || !resource->ready())
         return;
 
-    resource->dataReceived(reinterpret_cast<const char*>(data.data()), data.size());
+    resource->dataReceived(data.data(), data.size());
 }
 
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)

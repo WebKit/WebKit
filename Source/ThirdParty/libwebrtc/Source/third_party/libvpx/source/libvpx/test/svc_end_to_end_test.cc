@@ -121,7 +121,8 @@ class SyncFrameOnePassCbrSvc : public OnePassCbrSvc,
         frame_to_start_decode_(0), frame_to_sync_(0),
         inter_layer_pred_mode_(GET_PARAM(1)), decode_to_layer_before_sync_(-1),
         decode_to_layer_after_sync_(-1), denoiser_on_(0),
-        intra_only_test_(false), mismatch_nframes_(0), num_nonref_frames_(0) {
+        intra_only_test_(false), loopfilter_off_(0), mismatch_nframes_(0),
+        num_nonref_frames_(0) {
     SetMode(::libvpx_test::kRealTime);
     memset(&svc_layer_sync_, 0, sizeof(svc_layer_sync_));
   }
@@ -154,6 +155,8 @@ class SyncFrameOnePassCbrSvc : public OnePassCbrSvc,
         // So set it here in these tess to avoid encoder-decoder
         // mismatch check on color space setting.
         encoder->Control(VP9E_SET_COLOR_SPACE, VPX_CS_BT_601);
+
+      encoder->Control(VP9E_SET_DISABLE_LOOPFILTER, loopfilter_off_);
     }
     if (video->frame() == frame_to_sync_) {
       encoder->Control(VP9E_SET_SVC_SPATIAL_LAYER_SYNC, &svc_layer_sync_);
@@ -214,7 +217,10 @@ class SyncFrameOnePassCbrSvc : public OnePassCbrSvc,
   int decode_to_layer_after_sync_;
   int denoiser_on_;
   bool intra_only_test_;
+  int loopfilter_off_;
   vpx_svc_spatial_layer_sync_t svc_layer_sync_;
+  unsigned int mismatch_nframes_;
+  unsigned int num_nonref_frames_;
 
  private:
   virtual void SetConfig(const int num_temporal_layer) {
@@ -243,9 +249,6 @@ class SyncFrameOnePassCbrSvc : public OnePassCbrSvc,
       cfg_.temporal_layering_mode = 1;
     }
   }
-
-  unsigned int mismatch_nframes_;
-  unsigned int num_nonref_frames_;
 };
 
 // Test for sync layer for 1 pass CBR SVC: 3 spatial layers and
@@ -470,9 +473,177 @@ TEST_P(SyncFrameOnePassCbrSvc, OnePassCbrSvc1SL3TLSyncFrameIntraOnlyQVGA) {
 #endif
 }
 
-VP9_INSTANTIATE_TEST_CASE(SyncFrameOnePassCbrSvc, ::testing::Range(0, 3));
+// Params: Loopfilter modes.
+class LoopfilterOnePassCbrSvc : public OnePassCbrSvc,
+                                public ::libvpx_test::CodecTestWithParam<int> {
+ public:
+  LoopfilterOnePassCbrSvc()
+      : OnePassCbrSvc(GET_PARAM(0)), loopfilter_off_(GET_PARAM(1)),
+        mismatch_nframes_(0), num_nonref_frames_(0) {
+    SetMode(::libvpx_test::kRealTime);
+  }
 
-INSTANTIATE_TEST_CASE_P(
+ protected:
+  virtual ~LoopfilterOnePassCbrSvc() {}
+
+  virtual void SetUp() {
+    InitializeConfig();
+    speed_setting_ = 7;
+  }
+
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
+    PreEncodeFrameHookSetup(video, encoder);
+    if (number_temporal_layers_ > 1 || number_spatial_layers_ > 1) {
+      // Consider 3 cases:
+      if (loopfilter_off_ == 0) {
+        // loopfilter is on for all spatial layers on every superrframe.
+        for (int i = 0; i < VPX_SS_MAX_LAYERS; ++i) {
+          svc_params_.loopfilter_ctrl[i] = 0;
+        }
+      } else if (loopfilter_off_ == 1) {
+        // loopfilter is off for non-reference frames for all spatial layers.
+        for (int i = 0; i < VPX_SS_MAX_LAYERS; ++i) {
+          svc_params_.loopfilter_ctrl[i] = 1;
+        }
+      } else {
+        // loopfilter is off for all SL0 frames, and off only for non-reference
+        // frames for SL > 0.
+        svc_params_.loopfilter_ctrl[0] = 2;
+        for (int i = 1; i < VPX_SS_MAX_LAYERS; ++i) {
+          svc_params_.loopfilter_ctrl[i] = 1;
+        }
+      }
+      encoder->Control(VP9E_SET_SVC_PARAMETERS, &svc_params_);
+    } else if (number_temporal_layers_ == 1 && number_spatial_layers_ == 1) {
+      // For non-SVC mode use the single layer control.
+      encoder->Control(VP9E_SET_DISABLE_LOOPFILTER, loopfilter_off_);
+    }
+  }
+
+  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
+    // Keep track of number of non-reference frames, needed for mismatch check.
+    // Non-reference frames are top spatial and temporal layer frames,
+    // for TL > 0.
+    if (temporal_layer_id_ == number_temporal_layers_ - 1 &&
+        temporal_layer_id_ > 0 &&
+        pkt->data.frame.spatial_layer_encoded[number_spatial_layers_ - 1])
+      num_nonref_frames_++;
+  }
+
+  virtual void MismatchHook(const vpx_image_t * /*img1*/,
+                            const vpx_image_t * /*img2*/) {
+    ++mismatch_nframes_;
+  }
+
+  virtual void SetConfig(const int /*num_temporal_layer*/) {}
+
+  int GetMismatchFrames() const { return mismatch_nframes_; }
+  int GetNonRefFrames() const { return num_nonref_frames_; }
+
+  int loopfilter_off_;
+
+ private:
+  int mismatch_nframes_;
+  int num_nonref_frames_;
+};
+
+TEST_P(LoopfilterOnePassCbrSvc, OnePassCbrSvc1SL1TLLoopfilterOff) {
+  SetSvcConfig(1, 1);
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.g_threads = 1;
+  cfg_.rc_dropframe_thresh = 0;
+  cfg_.rc_target_bitrate = 800;
+  cfg_.kf_max_dist = 9999;
+  cfg_.rc_end_usage = VPX_CBR;
+  cfg_.g_lag_in_frames = 0;
+  cfg_.g_error_resilient = 1;
+  cfg_.ts_rate_decimator[0] = 1;
+  cfg_.temporal_layering_mode = 0;
+  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, 400);
+  cfg_.rc_target_bitrate = 600;
+  AssignLayerBitrates();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+#if CONFIG_VP9_DECODER
+  if (loopfilter_off_ == 0)
+    EXPECT_EQ(GetNonRefFrames(), GetMismatchFrames());
+  else
+    EXPECT_EQ(GetMismatchFrames(), 0);
+#endif
+}
+
+TEST_P(LoopfilterOnePassCbrSvc, OnePassCbrSvc1SL3TLLoopfilterOff) {
+  SetSvcConfig(1, 3);
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.g_threads = 1;
+  cfg_.rc_dropframe_thresh = 0;
+  cfg_.rc_target_bitrate = 800;
+  cfg_.kf_max_dist = 9999;
+  cfg_.rc_end_usage = VPX_CBR;
+  cfg_.g_lag_in_frames = 0;
+  cfg_.g_error_resilient = 1;
+  cfg_.ts_rate_decimator[0] = 4;
+  cfg_.ts_rate_decimator[1] = 2;
+  cfg_.ts_rate_decimator[2] = 1;
+  cfg_.temporal_layering_mode = 3;
+  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, 400);
+  cfg_.rc_target_bitrate = 600;
+  AssignLayerBitrates();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+#if CONFIG_VP9_DECODER
+  if (loopfilter_off_ == 0)
+    EXPECT_EQ(GetNonRefFrames(), GetMismatchFrames());
+  else
+    EXPECT_EQ(GetMismatchFrames(), 0);
+#endif
+}
+
+TEST_P(LoopfilterOnePassCbrSvc, OnePassCbrSvc3SL3TLLoopfilterOff) {
+  SetSvcConfig(3, 3);
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.g_threads = 1;
+  cfg_.rc_dropframe_thresh = 0;
+  cfg_.rc_target_bitrate = 800;
+  cfg_.kf_max_dist = 9999;
+  cfg_.rc_end_usage = VPX_CBR;
+  cfg_.g_lag_in_frames = 0;
+  cfg_.g_error_resilient = 1;
+  cfg_.ts_rate_decimator[0] = 4;
+  cfg_.ts_rate_decimator[1] = 2;
+  cfg_.ts_rate_decimator[2] = 1;
+  cfg_.temporal_layering_mode = 3;
+  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, 400);
+  cfg_.rc_target_bitrate = 600;
+  AssignLayerBitrates();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+#if CONFIG_VP9_DECODER
+  if (loopfilter_off_ == 0)
+    EXPECT_EQ(GetNonRefFrames(), GetMismatchFrames());
+  else
+    EXPECT_EQ(GetMismatchFrames(), 0);
+#endif
+}
+
+VP9_INSTANTIATE_TEST_SUITE(SyncFrameOnePassCbrSvc, ::testing::Range(0, 3));
+
+VP9_INSTANTIATE_TEST_SUITE(LoopfilterOnePassCbrSvc, ::testing::Range(0, 3));
+
+INSTANTIATE_TEST_SUITE_P(
     VP9, ScalePartitionOnePassCbrSvc,
     ::testing::Values(
         static_cast<const libvpx_test::CodecFactory *>(&libvpx_test::kVP9)));

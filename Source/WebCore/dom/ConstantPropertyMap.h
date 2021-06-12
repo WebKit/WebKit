@@ -71,7 +71,7 @@ private:
     void updateConstantsForSafeAreaInsets();
     void updateConstantsForFullscreen();
 
-    Optional<Values> m_values;
+    std::optional<Values> m_values;
 
     Document& m_document;
 };

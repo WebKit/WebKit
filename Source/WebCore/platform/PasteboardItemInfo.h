@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,11 +37,11 @@ enum class PasteboardItemPresentationStyle {
 };
 
 struct PresentationSize {
-    Optional<double> width;
-    Optional<double> height;
+    std::optional<double> width;
+    std::optional<double> height;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PresentationSize> decode(Decoder&);
+    template<class Decoder> static std::optional<PresentationSize> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -52,14 +51,14 @@ void PresentationSize::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
+std::optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
 {
     PresentationSize result;
     if (!decoder.decode(result.width))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.height))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }
@@ -120,7 +119,7 @@ struct PasteboardItemInfo {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PasteboardItemInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<PasteboardItemInfo> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -131,35 +130,35 @@ void PasteboardItemInfo::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
+std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
 {
     PasteboardItemInfo result;
     if (!decoder.decode(result.pathsForFileUpload))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.platformTypesForFileUpload))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.platformTypesByFidelity))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.suggestedFileName))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.preferredPresentationSize))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.isNonTextType))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.containsFileURLAndFileUploadContent))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.webSafeTypesByFidelity))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.preferredPresentationStyle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

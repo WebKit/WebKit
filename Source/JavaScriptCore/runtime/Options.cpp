@@ -40,7 +40,6 @@
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
-#include <wtf/Optional.h>
 #include <wtf/OSLogPrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TranslatedProcess.h>
@@ -60,67 +59,67 @@
 namespace JSC {
 
 template<typename T>
-Optional<T> parse(const char* string);
+std::optional<T> parse(const char* string);
 
 template<>
-Optional<OptionsStorage::Bool> parse(const char* string)
+std::optional<OptionsStorage::Bool> parse(const char* string)
 {
     if (equalLettersIgnoringASCIICase(string, "true") || equalLettersIgnoringASCIICase(string, "yes") || !strcmp(string, "1"))
         return true;
     if (equalLettersIgnoringASCIICase(string, "false") || equalLettersIgnoringASCIICase(string, "no") || !strcmp(string, "0"))
         return false;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
-Optional<OptionsStorage::Int32> parse(const char* string)
+std::optional<OptionsStorage::Int32> parse(const char* string)
 {
     int32_t value;
     if (sscanf(string, "%d", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
-Optional<OptionsStorage::Unsigned> parse(const char* string)
+std::optional<OptionsStorage::Unsigned> parse(const char* string)
 {
     unsigned value;
     if (sscanf(string, "%u", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if CPU(ADDRESS64) || OS(DARWIN) || OS(HAIKU)
 template<>
-Optional<OptionsStorage::Size> parse(const char* string)
+std::optional<OptionsStorage::Size> parse(const char* string)
 {
     size_t value;
     if (sscanf(string, "%zu", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif // CPU(ADDRESS64) || OS(DARWIN) || OS(HAIKU)
 
 template<>
-Optional<OptionsStorage::Double> parse(const char* string)
+std::optional<OptionsStorage::Double> parse(const char* string)
 {
     double value;
     if (sscanf(string, "%lf", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
-Optional<OptionsStorage::OptionRange> parse(const char* string)
+std::optional<OptionsStorage::OptionRange> parse(const char* string)
 {
     OptionRange range;
     if (range.init(string))
         return range;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
-Optional<OptionsStorage::OptionString> parse(const char* string)
+std::optional<OptionsStorage::OptionString> parse(const char* string)
 {
     const char* value = nullptr;
     if (!strlen(string))
@@ -133,7 +132,7 @@ Optional<OptionsStorage::OptionString> parse(const char* string)
 }
 
 template<>
-Optional<OptionsStorage::GCLogLevel> parse(const char* string)
+std::optional<OptionsStorage::GCLogLevel> parse(const char* string)
 {
     if (equalLettersIgnoringASCIICase(string, "none") || equalLettersIgnoringASCIICase(string, "no") || equalLettersIgnoringASCIICase(string, "false") || !strcmp(string, "0"))
         return GCLogging::None;
@@ -144,7 +143,7 @@ Optional<OptionsStorage::GCLogLevel> parse(const char* string)
     if (equalLettersIgnoringASCIICase(string, "verbose") || !strcmp(string, "2"))
         return GCLogging::Verbose;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool Options::isAvailable(Options::ID id, Options::Availability availability)
@@ -184,7 +183,7 @@ bool overrideOptionWithHeuristic(T& variable, Options::ID id, const char* name, 
         return false;
     
     if (available) {
-        Optional<T> value = parse<T>(stringValue);
+        std::optional<T> value = parse<T>(stringValue);
         if (value) {
             variable = value.value();
             return true;
@@ -845,7 +844,7 @@ bool Options::setOptionWithoutAlias(const char* arg)
         if (Availability::availability_ != Availability::Normal    \
             && !isAvailable(name_##ID, Availability::availability_)) \
             return false;                                          \
-        Optional<OptionsStorage::type_> value;                     \
+        std::optional<OptionsStorage::type_> value;                     \
         value = parse<OptionsStorage::type_>(valueStr);            \
         if (value) {                                               \
             name_() = value.value();                               \
@@ -864,7 +863,7 @@ bool Options::setOptionWithoutAlias(const char* arg)
 
 static const char* invertBoolOptionValue(const char* valueStr)
 {
-    Optional<OptionsStorage::Bool> value = parse<OptionsStorage::Bool>(valueStr);
+    std::optional<OptionsStorage::Bool> value = parse<OptionsStorage::Bool>(valueStr);
     if (!value)
         return nullptr;
     return value.value() ? "false" : "true";
@@ -1010,9 +1009,9 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
 
     if (wasOverridden && (dumpDefaultsOption == DumpDefaults)) {
         auto defaultOption = OptionReader::defaultFor(id);
-        builder.appendLiteral(" (default: ");
+        builder.append(" (default: ");
         defaultOption.dump(builder);
-        builder.appendLiteral(")");
+        builder.append(")");
     }
 
     if (needsDescription)

@@ -193,7 +193,7 @@ private:
     bool m_initializationSegmentIsHandled { false };
     bool m_hasPendingAppendCompletedCallback { false };
     Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
-    GenericTaskQueue<Timer> m_mediaSampleTaskQueue;
+    MainThreadTaskQueue m_mediaSampleTaskQueue;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -220,7 +220,7 @@ private:
     Vector<Ref<SharedBuffer>> m_keyIDs;
 #endif
 
-    Optional<FloatSize> m_cachedSize;
+    std::optional<FloatSize> m_cachedSize;
     FloatSize m_currentSize;
     bool m_parsingSucceeded { true };
     bool m_waitingForKey { true };

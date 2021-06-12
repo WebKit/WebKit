@@ -71,9 +71,9 @@ void RemoteMediaResourceProxy::dataSent(WebCore::PlatformMediaResource&, unsigne
     m_connection->send(Messages::RemoteMediaResourceManager::DataSent(m_id, bytesSent, totalBytesToBeSent), 0);
 }
 
-void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, const char* data, int length)
+void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, const uint8_t* data, int length)
 {
-    m_connection->send(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::DataReference(reinterpret_cast<const uint8_t*>(data), length)), 0);
+    m_connection->send(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::DataReference(data, length)), 0);
 }
 
 void RemoteMediaResourceProxy::accessControlCheckFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError& error)

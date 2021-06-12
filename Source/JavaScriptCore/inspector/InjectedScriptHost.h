@@ -27,7 +27,6 @@
 
 #include "JSCJSValueInlines.h"
 #include "PerGlobalObjectWrapperWorld.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace Inspector {
@@ -44,12 +43,12 @@ public:
     JSC::JSValue wrapper(JSC::JSGlobalObject*);
     void clearAllWrappers();
 
-    void setSavedResultAlias(const Optional<String>& alias) { m_savedResultAlias = alias; }
-    const Optional<String>& savedResultAlias() const { return m_savedResultAlias; }
+    void setSavedResultAlias(const std::optional<String>& alias) { m_savedResultAlias = alias; }
+    const std::optional<String>& savedResultAlias() const { return m_savedResultAlias; }
 
 private:
     PerGlobalObjectWrapperWorld m_wrappers;
-    Optional<String> m_savedResultAlias;
+    std::optional<String> m_savedResultAlias;
 };
 
 } // namespace Inspector

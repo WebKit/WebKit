@@ -3,5 +3,5 @@ Description
 The tests that secureConnectionStart has a non-zero value.
 
 
-FAIL Test that secureConnectionStart is not zero assert_greater_than: secureConnectionStart is non-zero expected a number greater than 0 but got 0
+PASS Test that secureConnectionStart is not zero
 

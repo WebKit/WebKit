@@ -29,6 +29,7 @@
 #include "ContextDestructionObserver.h"
 #include "TaskSource.h"
 #include <wtf/Assertions.h>
+#include <wtf/CancellableTask.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
@@ -74,24 +75,6 @@ public:
     // It can, however, have a side effect of deleting an ActiveDOMObject.
     virtual void stop();
 
-    // FIXME: Drop this function.
-    // Call sites should be using makePendingActivity() or overriding virtualHasPendingActivity() instead.
-    template<typename T> void setPendingActivity(T& thisObject)
-    {
-        ASSERT(&thisObject == this);
-        thisObject.ref();
-        ++m_pendingActivityInstanceCount;
-    }
-
-    // FIXME: Drop this function.
-    // Call sites should be using makePendingActivity() or overriding virtualHasPendingActivity() instead.
-    template<typename T> void unsetPendingActivity(T& thisObject)
-    {
-        ASSERT(m_pendingActivityInstanceCount > 0);
-        --m_pendingActivityInstanceCount;
-        thisObject.deref();
-    }
-
     template<class T>
     class PendingActivity : public RefCounted<PendingActivity<T>> {
     public:
@@ -128,6 +111,17 @@ public:
         });
     }
 
+    template<typename T>
+    static CancellableTask::Handle queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, Function<void()>&& task)
+    {
+        CancellableTask cancellableTask(WTFMove(task));
+        auto taskHandle = cancellableTask.createHandle();
+        object.queueTaskInEventLoop(source, [protectedObject = makeRef(object), activity = object.ActiveDOMObject::makePendingActivity(object), cancellableTask = WTFMove(cancellableTask)]() mutable {
+            cancellableTask();
+        });
+        return taskHandle;
+    }
+
     template<typename EventTargetType, typename EventType>
     static void queueTaskToDispatchEvent(EventTargetType& target, TaskSource source, Ref<EventType>&& event)
     {
@@ -151,7 +145,7 @@ private:
     void queueTaskInEventLoop(TaskSource, Function<void ()>&&);
     void queueTaskToDispatchEventInternal(EventTarget&, TaskSource, Ref<Event>&&);
 
-    unsigned m_pendingActivityInstanceCount { 0 };
+    uint64_t m_pendingActivityInstanceCount { 0 };
 #if ASSERT_ENABLED
     bool m_suspendIfNeededWasCalled { false };
     Ref<Thread> m_creationThread { Thread::current() };

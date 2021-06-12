@@ -1,5 +1,5 @@
 
-FAIL @counter-style 'negative: "X"' is valid assert_not_equals: got disallowed value -1
-FAIL @counter-style 'negative: "X" "X"' is valid assert_not_equals: got disallowed value -1
+PASS @counter-style 'negative: "X"' is valid
+PASS @counter-style 'negative: "X" "X"' is valid
 PASS @counter-style 'negative: "X" "X" "X"' is invalid
 

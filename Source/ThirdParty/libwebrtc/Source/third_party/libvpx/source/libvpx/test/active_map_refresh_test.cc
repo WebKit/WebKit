@@ -80,7 +80,7 @@ class ActiveMapRefreshTest
     } else if (video->frame() >= 2 && video->img()) {
       vpx_image_t *current = video->img();
       vpx_image_t *previous = y4m_holder_->img();
-      ASSERT_TRUE(previous != NULL);
+      ASSERT_NE(previous, nullptr);
       vpx_active_map_t map = vpx_active_map_t();
       const int width = static_cast<int>(current->d_w);
       const int height = static_cast<int>(current->d_h);
@@ -122,7 +122,7 @@ TEST_P(ActiveMapRefreshTest, Test) {
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 }
 
-VP9_INSTANTIATE_TEST_CASE(ActiveMapRefreshTest,
-                          ::testing::Values(::libvpx_test::kRealTime),
-                          ::testing::Range(5, 6));
+VP9_INSTANTIATE_TEST_SUITE(ActiveMapRefreshTest,
+                           ::testing::Values(::libvpx_test::kRealTime),
+                           ::testing::Range(5, 6));
 }  // namespace

@@ -27,7 +27,7 @@
 
 #if USE(APPKIT)
 
-#include <wtf/Optional.h>
+#include <optional>
 
 enum NSScrollerStyle : long;
 
@@ -40,7 +40,7 @@ public:
     static void setUseOverlayScrollbars(bool);
     
 private:
-    static Optional<bool> m_useOverlayScrollbars;
+    static std::optional<bool> m_useOverlayScrollbars;
 };
 
 }

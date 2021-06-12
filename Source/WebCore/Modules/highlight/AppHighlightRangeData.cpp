@@ -41,10 +41,10 @@
 
 namespace WebCore {
 
-Optional<AppHighlightRangeData> AppHighlightRangeData::create(const SharedBuffer& buffer)
+std::optional<AppHighlightRangeData> AppHighlightRangeData::create(const SharedBuffer& buffer)
 {
     auto decoder = buffer.decoder();
-    Optional<AppHighlightRangeData> data;
+    std::optional<AppHighlightRangeData> data;
     decoder >> data;
     return data;
 }
@@ -64,27 +64,27 @@ template<class Encoder> void AppHighlightRangeData::NodePathComponent::encode(En
     encoder << pathIndex;
 }
 
-template<class Decoder> Optional<AppHighlightRangeData::NodePathComponent> AppHighlightRangeData::NodePathComponent::decode(Decoder& decoder)
+template<class Decoder> std::optional<AppHighlightRangeData::NodePathComponent> AppHighlightRangeData::NodePathComponent::decode(Decoder& decoder)
 {
-    Optional<String> identifier;
+    std::optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> nodeName;
+    std::optional<String> nodeName;
     decoder >> nodeName;
     if (!nodeName)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> textData;
+    std::optional<String> textData;
     decoder >> textData;
     if (!textData)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<unsigned> pathIndex;
+    std::optional<unsigned> pathIndex;
     decoder >> pathIndex;
     if (!pathIndex)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*identifier), WTFMove(*nodeName), WTFMove(*textData), *pathIndex }};
 }
@@ -98,32 +98,32 @@ template<class Encoder> void AppHighlightRangeData::encode(Encoder& encoder) con
     encoder << m_endOffset;
 }
 
-template<class Decoder> Optional<AppHighlightRangeData> AppHighlightRangeData::decode(Decoder& decoder)
+template<class Decoder> std::optional<AppHighlightRangeData> AppHighlightRangeData::decode(Decoder& decoder)
 {
-    Optional<String> text;
+    std::optional<String> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<NodePath> startContainer;
+    std::optional<NodePath> startContainer;
     decoder >> startContainer;
     if (!startContainer)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<unsigned> startOffset;
+    std::optional<unsigned> startOffset;
     decoder >> startOffset;
     if (!startOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<NodePath> endContainer;
+    std::optional<NodePath> endContainer;
     decoder >> endContainer;
     if (!endContainer)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<unsigned> endOffset;
+    std::optional<unsigned> endOffset;
     decoder >> endOffset;
     if (!endOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
 
     return {{ WTFMove(*text), WTFMove(*startContainer), *startOffset, WTFMove(*endContainer), *endOffset }};

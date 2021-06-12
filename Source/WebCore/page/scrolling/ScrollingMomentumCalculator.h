@@ -29,7 +29,6 @@
 
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
@@ -61,7 +60,7 @@ protected:
     FloatSize m_contentSize;
 
 private:
-    Optional<FloatSize> m_retargetedScrollOffset;
+    std::optional<FloatSize> m_retargetedScrollOffset;
 };
 
 class BasicScrollingMomentumCalculator final : public ScrollingMomentumCalculator {
@@ -82,7 +81,7 @@ private:
     FloatSize m_snapAnimationCurveCoefficients[4] { };
     bool m_forceLinearAnimationCurve { false };
     bool m_momentumCalculatorRequiresInitialization { true };
-    Optional<FloatSize> m_predictedDestinationOffset;
+    std::optional<FloatSize> m_predictedDestinationOffset;
 };
 
 } // namespace WebCore

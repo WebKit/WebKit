@@ -64,6 +64,6 @@ private:
     Ref<WebCore::Range> m_range;
 };
 
-RefPtr<InjectedBundleRangeHandle> createHandle(const Optional<WebCore::SimpleRange>&);
+RefPtr<InjectedBundleRangeHandle> createHandle(const std::optional<WebCore::SimpleRange>&);
 
 } // namespace WebKit

@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "CSSCalculationValue.h"
+#include "CSSCalcValue.h"
 #include "CSSFontFamily.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
@@ -1385,11 +1385,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(DisplayType e)
         m_value.valueID = CSSValueWebkitInlineBox;
         break;
     case DisplayType::Flex:
-    case DisplayType::WebKitFlex:
         m_value.valueID = CSSValueFlex;
         break;
     case DisplayType::InlineFlex:
-    case DisplayType::WebKitInlineFlex:
         m_value.valueID = CSSValueInlineFlex;
         break;
     case DisplayType::Grid:
@@ -1419,10 +1417,6 @@ template<> inline CSSPrimitiveValue::operator DisplayType() const
 
     DisplayType display = static_cast<DisplayType>(m_value.valueID - CSSValueInline);
     ASSERT(display >= DisplayType::Inline && display <= DisplayType::None);
-    if (display == DisplayType::WebKitFlex)
-        return DisplayType::Flex;
-    if (display == DisplayType::WebKitInlineFlex)
-        return DisplayType::InlineFlex;
     return display;
 }
 

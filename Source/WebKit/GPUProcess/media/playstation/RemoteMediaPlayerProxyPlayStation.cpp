@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool, WebCore::MediaPlayerEnums::Preload, bool, bool, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&&)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool, WebCore::MediaPlayerEnums::Preload, bool, bool, float, WebCore::DynamicRangeMode, CompletionHandler<void(std::optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&&)
 {
     notImplemented();
 }

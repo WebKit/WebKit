@@ -218,11 +218,11 @@ static float angleBetweenVectors(const FloatSize& u, const FloatSize& v)
     return magnitudes ? acos(clampTo<float>(dotProduct(u, v) / magnitudes, -1, 1)) : 0;
 }
 
-RotatedRect rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad& quad, Optional<float> minRotationInRadians)
+RotatedRect rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad& quad, std::optional<float> minRotationInRadians)
 {
     constexpr auto twoPiFloat = 2 * piFloat;
 
-    auto minRotationAmount = minRotationInRadians.valueOr(std::numeric_limits<float>::epsilon());
+    auto minRotationAmount = minRotationInRadians.value_or(std::numeric_limits<float>::epsilon());
 
     auto leftMidPoint = midPoint(quad.p1(), quad.p4());
     auto rightMidPoint = midPoint(quad.p2(), quad.p3());

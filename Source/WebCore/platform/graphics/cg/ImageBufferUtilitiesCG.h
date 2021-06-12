@@ -27,6 +27,7 @@
 
 #if USE(CG)
 
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -38,11 +39,11 @@ WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t b
 CFStringRef jpegUTI();
 RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String&);
 
-Vector<uint8_t> data(CGImageRef, CFStringRef destinationUTI, Optional<double> quality);
-Vector<uint8_t> data(const PixelBuffer&, const String& mimeType, Optional<double> quality);
+Vector<uint8_t> data(CGImageRef, CFStringRef destinationUTI, std::optional<double> quality);
+Vector<uint8_t> data(const PixelBuffer&, const String& mimeType, std::optional<double> quality);
 
-String dataURL(CGImageRef, CFStringRef destinationUTI, const String& mimeType, Optional<double> quality);
-String dataURL(const PixelBuffer&, const String& mimeType, Optional<double> quality);
+String dataURL(CGImageRef, CFStringRef destinationUTI, const String& mimeType, std::optional<double> quality);
+String dataURL(const PixelBuffer&, const String& mimeType, std::optional<double> quality);
 
 } // namespace WebCore
 

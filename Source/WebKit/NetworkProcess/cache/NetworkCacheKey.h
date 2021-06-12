@@ -83,7 +83,7 @@ public:
     String partitionHashAsString() const { return hashAsString(m_partitionHash); }
 
     void encode(WTF::Persistence::Encoder&) const;
-    static Optional<Key> decode(WTF::Persistence::Decoder&);
+    static std::optional<Key> decode(WTF::Persistence::Decoder&);
 
     bool operator==(const Key&) const;
     bool operator!=(const Key& other) const { return !(*this == other); }

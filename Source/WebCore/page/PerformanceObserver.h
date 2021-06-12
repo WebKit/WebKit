@@ -41,8 +41,8 @@ class ScriptExecutionContext;
 class PerformanceObserver : public RefCounted<PerformanceObserver> {
 public:
     struct Init {
-        Optional<Vector<String>> entryTypes;
-        Optional<String> type;
+        std::optional<Vector<String>> entryTypes;
+        std::optional<String> type;
         bool buffered;
     };
 

@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "Logging.h"
+#import "LogInitialization.h"
 
 #import <wtf/text/WTFString.h>
 

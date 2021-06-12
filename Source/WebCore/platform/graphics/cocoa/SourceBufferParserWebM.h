@@ -88,7 +88,7 @@ public:
 
     void setLogger(const WTF::Logger&, const void* identifier) final;
 
-    void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t, Optional<size_t> byteRangeOffset);
+    void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t, std::optional<size_t> byteRangeOffset);
 
     enum class ErrorCode : int32_t {
         SourceBufferParserWebMErrorCodeStart = 2000,
@@ -207,7 +207,7 @@ public:
         }
 
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-        void createSampleBuffer(Optional<size_t> latestByteRangeOffset = WTF::nullopt);
+        void createSampleBuffer(std::optional<size_t> latestByteRangeOffset = std::nullopt);
 
     private:
         const char* logClassName() const { return "AudioTrackData"; }
@@ -215,8 +215,8 @@ public:
         CMTime m_samplePresentationTime;
         CMTime m_packetDuration;
         Vector<uint8_t> m_packetData;
-        Optional<size_t> m_currentPacketByteOffset;
-        Optional<size_t> m_currentPacketSize;
+        std::optional<size_t> m_currentPacketByteOffset;
+        std::optional<size_t> m_currentPacketSize;
         size_t m_packetBytesRead { 0 };
         size_t m_byteOffset { 0 };
         size_t m_partialBytesRead { 0 };
@@ -269,8 +269,8 @@ private:
 
     Vector<UniqueRef<TrackData>> m_tracks;
     using BlockVariant = Variant<webm::Block, webm::SimpleBlock>;
-    Optional<BlockVariant> m_currentBlock;
-    Optional<uint64_t> m_rewindToPosition;
+    std::optional<BlockVariant> m_currentBlock;
+    std::optional<uint64_t> m_rewindToPosition;
     float m_minimumAudioSampleDuration { 2 };
 
     CallOnClientThreadCallback m_callOnClientThreadCallback;

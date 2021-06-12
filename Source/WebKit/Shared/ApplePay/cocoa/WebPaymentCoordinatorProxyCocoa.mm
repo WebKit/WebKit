@@ -272,7 +272,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     return result;
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>& result)
+void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
 {
     m_authorizationPresenter->completePaymentSession(result);
 }
@@ -282,24 +282,24 @@ void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCor
     m_authorizationPresenter->completeMerchantValidation(paymentMerchantSession);
 }
 
-void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&& update)
+void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&& update)
 {
     m_authorizationPresenter->completeShippingMethodSelection(WTFMove(update));
 }
 
-void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&& update)
+void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&& update)
 {
     m_authorizationPresenter->completeShippingContactSelection(WTFMove(update));
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
+void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
 {
     m_authorizationPresenter->completePaymentMethodSelection(WTFMove(update));
 }
 
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+void WebPaymentCoordinatorProxy::platformCompletePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
 {
     m_authorizationPresenter->completePaymentMethodModeChange(WTFMove(update));
 }

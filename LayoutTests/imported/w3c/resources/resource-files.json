@@ -76,6 +76,8 @@
         "csswg-test/WOFF2-UserAgent/Tests/xhtml1/support/available-001a.xht",
         "csswg-test/WOFF2-UserAgent/Tests/xhtml1/support/available-001b.xht",
         "csswg-test/WOFF2-UserAgent/Tests/xhtml1/testcaseindex.xht",
+        "html/rendering/the-details-element/empty-crash.html",
+        "html/rendering/the-details-element/single-summary.html",
         "shadow-dom/declarative/support/declarative-child-frame.html",
         "shadow-dom/event-on-pseudo-element-crash.html",
         "shadow-dom/imperative-slot-api-crash.html",

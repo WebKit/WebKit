@@ -39,7 +39,7 @@ protected:
 
     ValueType m_from;
     ValueType m_to;
-    Optional<ValueType> m_toAtEndOfDuration;
+    std::optional<ValueType> m_toAtEndOfDuration;
 };
 
 }

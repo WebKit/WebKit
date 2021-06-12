@@ -33,8 +33,8 @@ using namespace WebCore;
 
 size_t DisplayListWriterHandle::advance(size_t amount)
 {
-    m_writableOffset = (CheckedSize { m_writableOffset } + amount).unsafeGet();
-    return (CheckedSize { header().unreadBytes.exchangeAdd(amount) } + amount).unsafeGet();
+    m_writableOffset = CheckedSize { m_writableOffset } + amount;
+    return CheckedSize { header().unreadBytes.exchangeAdd(amount) } + amount;
 }
 
 size_t DisplayListWriterHandle::availableCapacity() const

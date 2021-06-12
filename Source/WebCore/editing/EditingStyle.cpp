@@ -59,7 +59,6 @@
 #include "StyleRule.h"
 #include "StyledElement.h"
 #include "VisibleUnits.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -560,20 +559,20 @@ Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() con
     return style;
 }
 
-Optional<WritingDirection> EditingStyle::textDirection() const
+std::optional<WritingDirection> EditingStyle::textDirection() const
 {
     if (!m_mutableStyle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     RefPtr<CSSValue> unicodeBidi = m_mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
     if (!is<CSSPrimitiveValue>(unicodeBidi))
-        return WTF::nullopt;
+        return std::nullopt;
 
     CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
     if (unicodeBidiValue == CSSValueEmbed) {
         RefPtr<CSSValue> direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
         if (!is<CSSPrimitiveValue>(direction))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return downcast<CSSPrimitiveValue>(*direction).valueID() == CSSValueLtr ? WritingDirection::LeftToRight : WritingDirection::RightToLeft;
     }
@@ -581,7 +580,7 @@ Optional<WritingDirection> EditingStyle::textDirection() const
     if (unicodeBidiValue == CSSValueNormal)
         return WritingDirection::Natural;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void EditingStyle::setStyle(RefPtr<MutableStyleProperties>&& style)
@@ -1608,10 +1607,10 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
     if (!m_mutableStyle || !renderer || !renderer->style().hasAppleColorFilter())
         return *this;
 
-    auto colorForPropertyIfInvertible = [&](CSSPropertyID id) -> Optional<Color> {
+    auto colorForPropertyIfInvertible = [&](CSSPropertyID id) -> std::optional<Color> {
         auto color = m_mutableStyle->propertyAsColor(id);
         if (!color || !color->isVisible() || color->isSemantic())
-            return WTF::nullopt;
+            return std::nullopt;
         return color;
     };
 

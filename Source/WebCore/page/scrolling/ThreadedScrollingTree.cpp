@@ -64,7 +64,7 @@ WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformW
     return ScrollingTree::handleWheelEvent(wheelEvent, processingSteps);
 }
 
-bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, Optional<WheelScrollGestureState> gestureState)
+bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
@@ -74,7 +74,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
 
     bool allowLatching = false;
     OptionSet<WheelEventProcessingSteps> processingSteps;
-    if (gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
+    if (gestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
         allowLatching = true;
         processingSteps = { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
     }
@@ -85,7 +85,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
     return result.wasHandled;
 }
 
-void ThreadedScrollingTree::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
+void ThreadedScrollingTree::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::wheelEventWasProcessedByMainThread - gestureState " << gestureState);
 
@@ -159,8 +159,11 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
     auto propagateStateToAncestors = [&](ScrollingTreeNode& node) {
         ASSERT(is<ScrollingTreeScrollingNode>(node) && !downcast<ScrollingTreeScrollingNode>(node).synchronousScrollingReasons().isEmpty());
 
+        if (is<ScrollingTreeFrameScrollingNode>(node))
+            return;
+
         auto currNode = node.parent();
-        
+
         while (currNode) {
             if (is<ScrollingTreeScrollingNode>(currNode))
                 downcast<ScrollingTreeScrollingNode>(*currNode).addSynchronousScrollingReason(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling);
@@ -169,7 +172,7 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
                 currNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*currNode).overflowScrollingNodeID());
                 continue;
             }
-            
+
             if (is<ScrollingTreeFrameScrollingNode>(currNode))
                 break;
 
@@ -202,7 +205,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (isHandlingProgrammaticScroll())
         return;
 
-    Optional<FloatPoint> layoutViewportOrigin;
+    std::optional<FloatPoint> layoutViewportOrigin;
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
@@ -296,7 +299,7 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
 Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
 {
     constexpr double allowableFrameFraction = 0.5;
-    auto displayFPS = nominalFramesPerSecond().valueOr(60);
+    auto displayFPS = nominalFramesPerSecond().value_or(60);
     Seconds frameDuration = 1_s / (double)displayFPS;
     return allowableFrameFraction * frameDuration;
 }

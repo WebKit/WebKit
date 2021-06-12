@@ -509,7 +509,7 @@ RefPtr<ArrayBufferView> WebGL2RenderingContext::sliceArrayBufferView(const char*
     Checked<GCGLuint, RecordOverflow> checkedSrcOffset(srcOffset);
     Checked<GCGLuint, RecordOverflow> checkedByteSrcOffset = checkedSrcOffset * checkedElementSize;
     Checked<GCGLuint, RecordOverflow> checkedLength(length);
-    if (!checkedLength.unsafeGet()) {
+    if (!checkedLength) {
         // Default to the remainder of the buffer.
         checkedLength = data.byteLength();
         checkedLength /= elementSize;
@@ -519,13 +519,13 @@ RefPtr<ArrayBufferView> WebGL2RenderingContext::sliceArrayBufferView(const char*
 
     if (checkedLength.hasOverflowed() || checkedByteSrcOffset.hasOverflowed()
         || checkedByteLength.hasOverflowed()
-        || checkedByteSrcOffset.unsafeGet() > data.byteLength()
-        || checkedByteLength.unsafeGet() > data.byteLength() - checkedByteSrcOffset.unsafeGet()) {
+        || checkedByteSrcOffset > data.byteLength()
+        || checkedByteLength > data.byteLength() - checkedByteSrcOffset.value()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "srcOffset or length is out of bounds");
         return nullptr;
     }
 
-    return arrayBufferViewSliceFactory(functionName, data, data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedLength.unsafeGet());
+    return arrayBufferViewSliceFactory(functionName, data, data.byteOffset() + checkedByteSrcOffset.value(), checkedLength);
 }
 
 void WebGL2RenderingContext::pixelStorei(GCGLenum pname, GCGLint param)
@@ -611,14 +611,14 @@ void WebGL2RenderingContext::copyBufferSubData(GCGLenum readTarget, GCGLenum wri
         return;
     }
 
-    if (!writeBuffer->associateCopyBufferSubData(*readBuffer, checkedReadOffset.unsafeGet(), checkedWriteOffset.unsafeGet(), checkedSize.unsafeGet())) {
+    if (!writeBuffer->associateCopyBufferSubData(*readBuffer, checkedReadOffset, checkedWriteOffset, checkedSize)) {
         this->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "copyBufferSubData", "offset out of range");
         return;
     }
 
     m_context->moveErrorsToSyntheticErrorList();
 #if PLATFORM(COCOA)
-    m_context->copyBufferSubData(readTarget, writeTarget, checkedReadOffset.unsafeGet(), checkedWriteOffset.unsafeGet(), checkedSize.unsafeGet());
+    m_context->copyBufferSubData(readTarget, writeTarget, checkedReadOffset, checkedWriteOffset, checkedSize);
 #endif
     if (m_context->moveErrorsToSyntheticErrorList()) {
         // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
@@ -666,7 +666,7 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
         return;
     }
 
-    if (checkedDestinationEnd.unsafeGet() > dstDataLength) {
+    if (checkedDestinationEnd > dstDataLength) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getBufferSubData", "end of written destination is past the end of the buffer");
         return;
     }
@@ -680,7 +680,7 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
     Checked<GCGLintptr, RecordOverflow> checkedCopyLengthPtr(copyLength);
     Checked<GCGLintptr, RecordOverflow> checkedElementSize(elementSize);
     auto checkedSourceEnd = checkedSrcByteOffset + checkedCopyLengthPtr * checkedElementSize;
-    if (checkedSourceEnd.hasOverflowed() || checkedSourceEnd.unsafeGet() > buffer->byteLength()) {
+    if (checkedSourceEnd.hasOverflowed() || checkedSourceEnd > buffer->byteLength()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getBufferSubData", "Parameters would read outside the bounds of the source buffer");
         return;
     }
@@ -1094,7 +1094,7 @@ void WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLenum
     WebGLRenderingContextBase::texImage2D(target, level, internalformat, width, height, border, format, type, WTFMove(data));
 }
 
-ExceptionOr<void> WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, Optional<TexImageSource> data)
+ExceptionOr<void> WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, std::optional<TexImageSource> data)
 {
     if (isContextLostOrPending())
         return { };
@@ -1224,7 +1224,7 @@ void WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLi
     WebGLRenderingContextBase::texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, WTFMove(srcData));
 }
 
-ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, Optional<TexImageSource>&& data)
+ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, std::optional<TexImageSource>&& data)
 {
     if (isContextLostOrPending())
         return { };
@@ -2516,10 +2516,10 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
     }
 }
 
-Optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<String>& names)
+std::optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<String>& names)
 {
     if (!validateWebGLProgramOrShader("getUniformIndices", &program))
-        return WTF::nullopt;
+        return std::nullopt;
     return m_context->getUniformIndices(program.object(), names);
 }
 
@@ -2633,9 +2633,8 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
 
     if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject) {
         // bindVertexArray grabs the lock internally.
-        locker.unlockEarly();
+        DropLockForScope noLockScope(locker);
         bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
-        locker = Locker { objectGraphLock() };
     }
 
     arrayObject->deleteObject(locker, graphicsContextGL());
@@ -2709,10 +2708,10 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     return nullptr;
 }
 
-Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
+std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
 {
     if (isContextLost())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<String> result;
 
@@ -3376,7 +3375,7 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GCGLenum type, unsig
     auto buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
 
-    Optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
+    std::optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
     if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {
@@ -3435,7 +3434,7 @@ bool WebGL2RenderingContext::validateCapability(const char* functionName, GCGLen
 }
 
 template<typename T, typename TypedArrayType>
-Optional<GCGLSpan<const T>> WebGL2RenderingContext::validateClearBuffer(const char* functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset)
+std::optional<GCGLSpan<const T>> WebGL2RenderingContext::validateClearBuffer(const char* functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset)
 {
     Checked<GCGLsizei, RecordOverflow> checkedSize(values.length());
     checkedSize -= srcOffset;
@@ -3445,14 +3444,14 @@ Optional<GCGLSpan<const T>> WebGL2RenderingContext::validateClearBuffer(const ch
     }
     switch (buffer) {
     case GraphicsContextGL::COLOR:
-        if (checkedSize.unsafeGet() < 4) {
+        if (checkedSize < 4) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid array size / srcOffset");
             return { };
         }
         return makeGCGLSpan(values.data() + srcOffset, 4);
     case GraphicsContextGL::DEPTH:
     case GraphicsContextGL::STENCIL:
-        if (checkedSize.unsafeGet() < 1) {
+        if (checkedSize < 1) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid array size / srcOffset");
             return { };
         }

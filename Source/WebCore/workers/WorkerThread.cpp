@@ -137,8 +137,8 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
         sourceProvider = makeWeakPtr(static_cast<ScriptBufferSourceProvider&>(sourceCode.provider()));
         MessageQueueWaitResult result = globalScope()->script()->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
         if (result != MessageQueueTerminated) {
-            if (Optional<LoadableScript::Error> error = scriptFetcher->error()) {
-                if (Optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
+            if (std::optional<LoadableScript::Error> error = scriptFetcher->error()) {
+                if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
                     exceptionMessage = message->message;
                 else
                     exceptionMessage = "Importing a module script failed."_s;

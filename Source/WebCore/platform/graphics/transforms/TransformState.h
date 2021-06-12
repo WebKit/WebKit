@@ -30,7 +30,7 @@
 #include "FloatQuad.h"
 #include "LayoutSize.h"
 #include "TransformationMatrix.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WTF {
 class TextStream;
@@ -82,14 +82,14 @@ public:
         m_lastPlanarQuad = quad;
     }
 
-    void setSecondaryQuad(const Optional<FloatQuad>& quad)
+    void setSecondaryQuad(const std::optional<FloatQuad>& quad)
     {
         // We must be in a flattened state (no accumulated offset) when setting this secondary quad.
         ASSERT(m_accumulatedOffset == LayoutSize());
         m_lastPlanarSecondaryQuad = quad;
     }
 
-    void setLastPlanarSecondaryQuad(const Optional<FloatQuad>&);
+    void setLastPlanarSecondaryQuad(const std::optional<FloatQuad>&);
 
     void move(LayoutUnit x, LayoutUnit y, TransformAccumulation accumulate = FlattenTransform)
     {
@@ -104,13 +104,13 @@ public:
     // Return the coords of the point or quad in the last flattened layer
     FloatPoint lastPlanarPoint() const { return m_lastPlanarPoint; }
     FloatQuad lastPlanarQuad() const { return m_lastPlanarQuad; }
-    Optional<FloatQuad> lastPlanarSecondaryQuad() const { return m_lastPlanarSecondaryQuad; }
-    bool isMappingSecondaryQuad() const { return m_lastPlanarSecondaryQuad.hasValue(); }
+    std::optional<FloatQuad> lastPlanarSecondaryQuad() const { return m_lastPlanarSecondaryQuad; }
+    bool isMappingSecondaryQuad() const { return m_lastPlanarSecondaryQuad.has_value(); }
 
     // Return the point or quad mapped through the current transform
     FloatPoint mappedPoint(bool* wasClamped = nullptr) const;
     FloatQuad mappedQuad(bool* wasClamped = nullptr) const;
-    Optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
+    std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
     TransformationMatrix* accumulatedTransform() const { return m_accumulatedTransform.get(); }
 
@@ -127,7 +127,7 @@ private:
     
     FloatPoint m_lastPlanarPoint;
     FloatQuad m_lastPlanarQuad;
-    Optional<FloatQuad> m_lastPlanarSecondaryQuad;
+    std::optional<FloatQuad> m_lastPlanarSecondaryQuad;
 
     // We only allocate the transform if we need to
     std::unique_ptr<TransformationMatrix> m_accumulatedTransform;

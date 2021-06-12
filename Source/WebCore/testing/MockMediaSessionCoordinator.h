@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
-#include "GenericEventQueue.h"
 #include "MediaSessionCoordinatorPrivate.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -49,15 +48,15 @@ private:
 
     String identifier() const final { return "Mock Coordinator"; }
 
-    void join(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void join(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
     void leave() final;
 
-    void seekTo(double, CompletionHandler<void(Optional<Exception>&&)>&&) final;
-    void play(CompletionHandler<void(Optional<Exception>&&)>&&) final;
-    void pause(CompletionHandler<void(Optional<Exception>&&)>&&) final;
-    void setTrack(const String&, CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void seekTo(double, CompletionHandler<void(std::optional<Exception>&&)>&&) final;
+    void play(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
+    void pause(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
+    void setTrack(const String&, CompletionHandler<void(std::optional<Exception>&&)>&&) final;
 
-    void positionStateChanged(const Optional<MediaPositionState>&) final;
+    void positionStateChanged(const std::optional<MediaPositionState>&) final;
     void readyStateChanged(MediaSessionReadyState) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
     void trackIdentifierChanged(const String&) final;
@@ -65,7 +64,7 @@ private:
     const char* logClassName() const { return "MockMediaSessionCoordinator"; }
     WTFLogChannel& logChannel() const;
 
-    Optional<Exception> result() const;
+    std::optional<Exception> result() const;
 
     Ref<ScriptExecutionContext> m_context;
     RefPtr<StringCallback> m_stateChangeListener;

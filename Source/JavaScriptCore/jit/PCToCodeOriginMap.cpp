@@ -31,7 +31,6 @@
 #include "B3PCToOriginMap.h"
 #include "DFGNode.h"
 #include "LinkBuffer.h"
-#include <wtf/Optional.h>
 
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/4wz07268.aspx
@@ -247,11 +246,11 @@ double PCToCodeOriginMap::memorySize()
     return size;
 }
 
-Optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
+std::optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
 {
     uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
     if (!(m_pcRangeStart <= pcAsInt && pcAsInt <= m_pcRangeEnd))
-        return WTF::nullopt;
+        return std::nullopt;
 
     uintptr_t currentPC = 0;
     BytecodeIndex currentBytecodeIndex = BytecodeIndex(0);
@@ -295,12 +294,12 @@ Optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
             // We subtract 1 because we generate end points inclusively in this table, even though we are interested in ranges of the form: [previousPC, currentPC)
             uintptr_t endOfRange = currentPC - 1;
             if (startOfRange <= pcAsInt && pcAsInt <= endOfRange)
-                return Optional<CodeOrigin>(previousOrigin); // We return previousOrigin here because CodeOrigin's are mapped to the startValue of the range.
+                return std::optional<CodeOrigin>(previousOrigin); // We return previousOrigin here because CodeOrigin's are mapped to the startValue of the range.
         }
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace JSC

@@ -29,7 +29,7 @@
 #import "WebNodeHighlightView.h"
 #import "WebNodeHighlight.h"
 
-#import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/InspectorController.h>
 #import <wtf/Assertions.h>
 
@@ -98,7 +98,7 @@ using namespace WebCore;
 
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-        GraphicsContext context([[NSGraphicsContext currentContext] CGContext]);
+        GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
         [_webNodeHighlight inspectorController]->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }

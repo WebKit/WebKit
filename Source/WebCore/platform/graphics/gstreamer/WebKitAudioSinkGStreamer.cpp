@@ -86,29 +86,29 @@ struct AudioPacketHolder {
             close(*fd);
     }
 
-    Optional<std::pair<uint32_t, size_t>> map()
+    std::optional<std::pair<uint32_t, size_t>> map()
     {
         fd = memfd_create("wpe-audio-buffer", MFD_CLOEXEC);
         if (*fd == -1)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (ftruncate(*fd, buffer->size()) == -1)
-            return WTF::nullopt;
+            return std::nullopt;
 
         ssize_t bytesWritten = write(*fd, buffer->data(), buffer->size());
         if (bytesWritten < 0)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (static_cast<size_t>(bytesWritten) != buffer->size())
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (lseek(*fd, 0, SEEK_SET) == -1)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return std::make_pair(static_cast<uint32_t>(*fd), buffer->size());
     }
 
-    Optional<int32_t> fd;
+    std::optional<int32_t> fd;
     RefPtr<GstMappedOwnedBuffer> buffer;
 };
 
@@ -150,8 +150,8 @@ static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
     if (is<PlatformDisplayLibWPE>(sharedDisplay)) {
         sink->priv->wpeAudioSource.reset(wpe_audio_source_create(downcast<PlatformDisplayLibWPE>(sharedDisplay).backend()));
         if (wpe_audio_source_has_receiver(sink->priv->wpeAudioSource.get())) {
-            sink->priv->volumeElement = gst_element_factory_make("volume", nullptr);
-            sink->priv->appsink = gst_element_factory_make("appsink", nullptr);
+            sink->priv->volumeElement = makeGStreamerElement("volume", nullptr);
+            sink->priv->appsink = makeGStreamerElement("appsink", nullptr);
             gst_app_sink_set_emit_signals(GST_APP_SINK(sink->priv->appsink.get()), TRUE);
 
             g_signal_connect(sink->priv->appsink.get(), "new-sample", G_CALLBACK(+[](GstElement* appsink, WebKitAudioSink* sink) -> GstFlowReturn {
@@ -189,7 +189,7 @@ static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
             return false;
         }
 
-        sink->priv->interAudioSink = gst_element_factory_make("interaudiosink", nullptr);
+        sink->priv->interAudioSink = makeGStreamerElement("interaudiosink", nullptr);
         RELEASE_ASSERT(sink->priv->interAudioSink);
 
         gst_bin_add(GST_BIN_CAST(sink), sink->priv->interAudioSink.get());

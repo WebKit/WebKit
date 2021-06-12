@@ -31,6 +31,6 @@
 ] interface ConvolverNode : AudioNode {
     [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional ConvolverOptions options);
 
-    attribute AudioBuffer? buffer;
-    attribute boolean normalize;
+    [ImplementedAs=bufferForBindings] attribute AudioBuffer? buffer;
+    [ImplementedAs=normalizeForBindings] attribute boolean normalize;
 };

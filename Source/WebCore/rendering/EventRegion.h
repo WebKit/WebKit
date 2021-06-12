@@ -88,13 +88,13 @@ public:
 
 #if ENABLE(EDITABLE_REGION)
     void ensureEditableRegion();
-    bool hasEditableRegion() const { return m_editableRegion.hasValue(); }
+    bool hasEditableRegion() const { return m_editableRegion.has_value(); }
     WEBCORE_EXPORT bool containsEditableElementsInRect(const IntRect&) const;
     Vector<IntRect, 1> rectsForEditableElements() const { return m_editableRegion ? m_editableRegion->rects() : Vector<IntRect, 1> { }; }
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<EventRegion> decode(Decoder&);
+    template<class Decoder> static std::optional<EventRegion> decode(Decoder&);
     // FIXME: Remove legacy decode.
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, EventRegion&);
 
@@ -115,7 +115,7 @@ private:
     Region m_nonPassiveWheelEventListenerRegion;
 #endif
 #if ENABLE(EDITABLE_REGION)
-    Optional<Region> m_editableRegion;
+    std::optional<Region> m_editableRegion;
 #endif
 };
 
@@ -138,46 +138,46 @@ void EventRegion::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<EventRegion> EventRegion::decode(Decoder& decoder)
+std::optional<EventRegion> EventRegion::decode(Decoder& decoder)
 {
-    Optional<Region> region;
+    std::optional<Region> region;
     decoder >> region;
     if (!region)
-        return WTF::nullopt;
+        return std::nullopt;
 
     EventRegion eventRegion;
     eventRegion.m_region = WTFMove(*region);
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    Optional<Region> wheelEventListenerRegion;
+    std::optional<Region> wheelEventListenerRegion;
     decoder >> wheelEventListenerRegion;
     if (!wheelEventListenerRegion)
-        return WTF::nullopt;
+        return std::nullopt;
 
     eventRegion.m_wheelEventListenerRegion = WTFMove(*wheelEventListenerRegion);
 
-    Optional<Region> nonPassiveWheelEventListenerRegion;
+    std::optional<Region> nonPassiveWheelEventListenerRegion;
     decoder >> nonPassiveWheelEventListenerRegion;
     if (!nonPassiveWheelEventListenerRegion)
-        return WTF::nullopt;
+        return std::nullopt;
 
     eventRegion.m_nonPassiveWheelEventListenerRegion = WTFMove(*nonPassiveWheelEventListenerRegion);
 #endif
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
-    Optional<Vector<Region>> touchActionRegions;
+    std::optional<Vector<Region>> touchActionRegions;
     decoder >> touchActionRegions;
     if (!touchActionRegions)
-        return WTF::nullopt;
+        return std::nullopt;
 
     eventRegion.m_touchActionRegions = WTFMove(*touchActionRegions);
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    Optional<Optional<Region>> editableRegion;
+    std::optional<std::optional<Region>> editableRegion;
     decoder >> editableRegion;
     if (!editableRegion)
-        return WTF::nullopt;
+        return std::nullopt;
     eventRegion.m_editableRegion = WTFMove(*editableRegion);
 #endif
 
@@ -187,7 +187,7 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
 template<class Decoder>
 bool EventRegion::decode(Decoder& decoder, EventRegion& eventRegion)
 {
-    Optional<EventRegion> decodedEventRegion;
+    std::optional<EventRegion> decodedEventRegion;
     decoder >> decodedEventRegion;
     if (!decodedEventRegion)
         return false;

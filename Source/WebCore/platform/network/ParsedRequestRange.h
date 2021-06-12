@@ -33,8 +33,8 @@ namespace WebCore {
 
 struct ParsedRequestRange {
 public:
-    WEBCORE_EXPORT static Optional<ParsedRequestRange> parse(StringView);
-    static Optional<ParsedRequestRange> parse(const String& string) { return parse(StringView(string)); }
+    WEBCORE_EXPORT static std::optional<ParsedRequestRange> parse(StringView);
+    static std::optional<ParsedRequestRange> parse(const String& string) { return parse(StringView(string)); }
 
     const size_t begin { 0 };
     const size_t end { 0 };

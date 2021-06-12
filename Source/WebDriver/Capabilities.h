@@ -34,9 +34,9 @@
 namespace WebDriver {
 
 struct Timeouts {
-    Optional<double> script;
-    Optional<double> pageLoad;
-    Optional<double> implicit;
+    std::optional<double> script;
+    std::optional<double> pageLoad;
+    std::optional<double> implicit;
 };
 
 enum class PageLoadStrategy {
@@ -55,37 +55,37 @@ enum class UnhandledPromptBehavior {
 
 struct Proxy {
     String type;
-    Optional<String> autoconfigURL;
-    Optional<URL> ftpURL;
-    Optional<URL> httpURL;
-    Optional<URL> httpsURL;
-    Optional<URL> socksURL;
-    Optional<uint8_t> socksVersion;
+    std::optional<String> autoconfigURL;
+    std::optional<URL> ftpURL;
+    std::optional<URL> httpURL;
+    std::optional<URL> httpsURL;
+    std::optional<URL> socksURL;
+    std::optional<uint8_t> socksVersion;
     Vector<String> ignoreAddressList;
 };
 
 struct Capabilities {
-    Optional<String> browserName;
-    Optional<String> browserVersion;
-    Optional<String> platformName;
-    Optional<bool> acceptInsecureCerts;
-    Optional<bool> strictFileInteractability;
-    Optional<bool> setWindowRect;
-    Optional<Timeouts> timeouts;
-    Optional<PageLoadStrategy> pageLoadStrategy;
-    Optional<UnhandledPromptBehavior> unhandledPromptBehavior;
-    Optional<Proxy> proxy;
+    std::optional<String> browserName;
+    std::optional<String> browserVersion;
+    std::optional<String> platformName;
+    std::optional<bool> acceptInsecureCerts;
+    std::optional<bool> strictFileInteractability;
+    std::optional<bool> setWindowRect;
+    std::optional<Timeouts> timeouts;
+    std::optional<PageLoadStrategy> pageLoadStrategy;
+    std::optional<UnhandledPromptBehavior> unhandledPromptBehavior;
+    std::optional<Proxy> proxy;
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    Optional<String> browserBinary;
-    Optional<Vector<String>> browserArguments;
-    Optional<Vector<std::pair<String, String>>> certificates;
+    std::optional<String> browserBinary;
+    std::optional<Vector<String>> browserArguments;
+    std::optional<Vector<std::pair<String, String>>> certificates;
 #endif
 #if PLATFORM(GTK)
-    Optional<bool> useOverlayScrollbars;
+    std::optional<bool> useOverlayScrollbars;
 #endif
 #if USE(INSPECTOR_SOCKET_SERVER)
-    Optional<String> targetAddr;
-    Optional<int> targetPort;
+    std::optional<String> targetAddr;
+    std::optional<int> targetPort;
 #endif
 };
 

@@ -56,7 +56,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer0) {
   const std::string filename = GET_PARAM(1);
   std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
-  ASSERT_TRUE(video.get() != NULL);
+  ASSERT_NE(video.get(), nullptr);
   video->Init();
   total_frames_ = 0;
   spatial_layer_ = 0;
@@ -73,7 +73,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer1) {
   const std::string filename = GET_PARAM(1);
   std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
-  ASSERT_TRUE(video.get() != NULL);
+  ASSERT_NE(video.get(), nullptr);
   video->Init();
   total_frames_ = 0;
   spatial_layer_ = 1;
@@ -90,7 +90,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer2) {
   const std::string filename = GET_PARAM(1);
   std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
-  ASSERT_TRUE(video.get() != NULL);
+  ASSERT_NE(video.get(), nullptr);
   video->Init();
   total_frames_ = 0;
   spatial_layer_ = 2;
@@ -108,7 +108,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer10) {
   const std::string filename = GET_PARAM(1);
   std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
-  ASSERT_TRUE(video.get() != NULL);
+  ASSERT_NE(video.get(), nullptr);
   video->Init();
   total_frames_ = 0;
   spatial_layer_ = 10;
@@ -118,7 +118,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer10) {
   ASSERT_EQ(total_frames_, kNumFrames);
 }
 
-VP9_INSTANTIATE_TEST_CASE(
+VP9_INSTANTIATE_TEST_SUITE(
     DecodeSvcTest, ::testing::ValuesIn(libvpx_test::kVP9TestVectorsSvc,
                                        libvpx_test::kVP9TestVectorsSvc +
                                            libvpx_test::kNumVP9TestVectorsSvc));

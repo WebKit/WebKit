@@ -345,9 +345,8 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(AppendPipeline& appendPipelin
     // at the sink in the playback pipeline, not in the append pipeline; but we still
     // want to report an initial size for HAVE_METADATA (first initialization segment).
     if (m_videoSize.isEmpty() && doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
-        Optional<FloatSize> size = getVideoResolutionFromCaps(caps);
-        if (size.hasValue()) {
-            m_videoSize = size.value();
+        if (auto size = getVideoResolutionFromCaps(caps)) {
+            m_videoSize = *size;
             GST_DEBUG("Setting initial video size: %gx%g", m_videoSize.width(), m_videoSize.height());
         }
     }

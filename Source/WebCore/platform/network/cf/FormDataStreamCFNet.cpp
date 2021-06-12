@@ -104,7 +104,7 @@ struct FormStreamFields {
     Vector<FormDataElement> remainingElements; // in reverse order
     RetainPtr<CFReadStreamRef> currentStream;
     long long currentStreamRangeLength { BlobDataItem::toEndOfFile };
-    MallocPtr<char, WTF::VectorMalloc> currentData;
+    MallocPtr<uint8_t, WTF::VectorMalloc> currentData;
     CFReadStreamRef formStream { nullptr };
     unsigned long long streamLength { 0 };
     unsigned long long bytesSent { 0 };
@@ -138,10 +138,10 @@ static bool advanceCurrentStream(FormStreamFields* form)
     FormDataElement& nextInput = form->remainingElements.last();
 
     bool success = switchOn(nextInput.data,
-        [form] (Vector<char>& bytes) {
+        [form] (Vector<uint8_t>& bytes) {
             size_t size = bytes.size();
-            MallocPtr<char, WTF::VectorMalloc> data = bytes.releaseBuffer();
-            form->currentStream = adoptCF(CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data.get()), size, kCFAllocatorNull));
+            MallocPtr<uint8_t, WTF::VectorMalloc> data = bytes.releaseBuffer();
+            form->currentStream = adoptCF(CFReadStreamCreateWithBytesNoCopy(0, data.get(), size, kCFAllocatorNull));
             form->currentData = WTFMove(data);
             return true;
         }, [form] (const FormDataElement::EncodedFileData& fileData) {
@@ -395,8 +395,8 @@ void setHTTPBody(CFMutableURLRequestRef request, FormData* formData)
     // Handle the common special case of one piece of form data, with no files.
     auto& elements = formData->elements();
     if (elements.size() == 1 && !formData->alwaysStream()) {
-        if (auto* vector = WTF::get_if<Vector<char>>(elements[0].data)) {
-            auto data = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8*>(vector->data()), vector->size()));
+        if (auto* vector = WTF::get_if<Vector<uint8_t>>(elements[0].data)) {
+            auto data = adoptCF(CFDataCreate(nullptr, vector->data(), vector->size()));
             CFURLRequestSetHTTPRequestBody(request, data.get());
             return;
         }

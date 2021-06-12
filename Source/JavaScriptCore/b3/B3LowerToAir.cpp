@@ -153,8 +153,6 @@ public:
             }
         }
 
-        for (B3::StackSlot* stack : m_procedure.stackSlots())
-            m_stackToStack.add(stack, m_code.addStackSlot(stack));
         for (Variable* variable : m_procedure.variables()) {
             auto addResult = m_variableToTmps.add(variable, Vector<Tmp, 1>(m_procedure.resultCount(variable->type())));
             ASSERT(addResult.isNewEntry);
@@ -501,12 +499,12 @@ private:
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    Optional<unsigned> scaleForShl(Value* shl, Int offset, Optional<Width> width = WTF::nullopt)
+    std::optional<unsigned> scaleForShl(Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
-            return WTF::nullopt;
+            return std::nullopt;
         if (!shl->child(1)->hasInt32())
-            return WTF::nullopt;
+            return std::nullopt;
         unsigned logScale = shl->child(1)->asInt32();
         if (shl->type() == Int32)
             logScale &= 31;
@@ -516,10 +514,10 @@ private:
         // to signed since that's what all of our APIs want.
         int64_t bigScale = static_cast<uint64_t>(1) << static_cast<uint64_t>(logScale);
         if (!isRepresentableAs<int32_t>(bigScale))
-            return WTF::nullopt;
+            return std::nullopt;
         unsigned scale = static_cast<int32_t>(bigScale);
         if (!Arg::isValidIndexForm(scale, offset, width))
-            return WTF::nullopt;
+            return std::nullopt;
         return scale;
     }
     
@@ -545,7 +543,7 @@ private:
             Value* right = address->child(1);
 
             auto tryIndex = [&] (Value* index, Value* base) -> Arg {
-                Optional<unsigned> scale = scaleForShl(index, offset, width);
+                std::optional<unsigned> scale = scaleForShl(index, offset, width);
                 if (!scale)
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
@@ -582,7 +580,7 @@ private:
             return Arg::addr(Tmp(GPRInfo::callFrameRegister), offset);
 
         case SlotBase:
-            return Arg::stack(m_stackToStack.get(address->as<SlotBaseValue>()->slot()), offset);
+            return Arg::stack(address->as<SlotBaseValue>()->slot(), offset);
 
         case WasmAddress: {
             WasmAddressValue* wasmAddress = address->as<WasmAddressValue>();
@@ -2104,7 +2102,7 @@ private:
         }
         
         auto tryShl = [&] (Value* shl, Value* other) -> bool {
-            Optional<unsigned> scale = scaleForShl(shl, offset);
+            std::optional<unsigned> scale = scaleForShl(shl, offset);
             if (!scale)
                 return false;
             if (!canBeInternal(shl))
@@ -3017,7 +3015,7 @@ private:
         case SlotBase: {
             append(
                 pointerType() == Int64 ? Lea64 : Lea32,
-                Arg::stack(m_stackToStack.get(m_value->as<SlotBaseValue>()->slot())),
+                Arg::stack(m_value->as<SlotBaseValue>()->slot()),
                 tmp(m_value));
             return;
         }
@@ -3712,7 +3710,6 @@ private:
     HashMap<Value*, Vector<Tmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
     HashMap<Value*, Vector<Tmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
     IndexMap<B3::BasicBlock*, Air::BasicBlock*> m_blockToBlock;
-    HashMap<B3::StackSlot*, Air::StackSlot*> m_stackToStack;
     HashMap<Variable*, Vector<Tmp>> m_variableToTmps;
 
     UseCounts m_useCounts;

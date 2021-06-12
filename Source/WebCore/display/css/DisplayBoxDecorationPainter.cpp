@@ -1000,7 +1000,7 @@ void BorderPainter::paintBorders(PaintingContext& paintingContext) const
     bool haveAllDoubleEdges = true;
     int numEdgesVisible = 4;
     bool allEdgesShareColor = true;
-    Optional<BoxSide> firstVisibleSide;
+    std::optional<BoxSide> firstVisibleSide;
     BoxSideSet edgesToDraw;
 
     for (auto side : allBoxSides) {
@@ -1298,10 +1298,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         auto shadowRectOrigin = fillRect.rect().location() + shadowOffset;
         auto adjustedShadowOffset = shadowRectOrigin - adjustedFillRect.rect().location();
 
-        if (shadow.isWebkitBoxShadow())
-            paintingContext.context.setLegacyShadow(adjustedShadowOffset, shadowRadius, shadow.color());
-        else
-            paintingContext.context.setShadow(adjustedShadowOffset, shadowRadius, shadow.color());
+        paintingContext.context.setShadow(adjustedShadowOffset, shadowRadius, shadow.color(), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
 
         if (hasBorderRadius) {
             // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
@@ -1412,11 +1409,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         paintingContext.context.translate(extraOffset);
         shadowOffset -= extraOffset;
 
-        if (shadow.isWebkitBoxShadow())
-            paintingContext.context.setLegacyShadow(shadowOffset, shadowRadius, shadow.color());
-        else
-            paintingContext.context.setShadow(shadowOffset, shadowRadius, shadow.color());
-
+        paintingContext.context.setShadow(shadowOffset, shadowRadius, shadow.color(), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
         paintingContext.context.fillRectWithRoundedHole(shadowCastingRect, roundedHoleRect, fillColor);
     };
 

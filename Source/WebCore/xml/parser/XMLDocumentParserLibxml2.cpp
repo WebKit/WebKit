@@ -359,9 +359,8 @@ static int matchFunc(const char*)
 class OffsetBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OffsetBuffer(Vector<char> buffer)
+    OffsetBuffer(Vector<uint8_t>&& buffer)
         : m_buffer(WTFMove(buffer))
-        , m_currentOffset(0)
     {
     }
 
@@ -377,8 +376,8 @@ public:
     }
 
 private:
-    Vector<char> m_buffer;
-    unsigned m_currentOffset;
+    Vector<uint8_t> m_buffer;
+    unsigned m_currentOffset { 0 };
 };
 
 static bool externalEntityMimeTypeAllowed(const ResourceResponse& response)
@@ -490,10 +489,7 @@ static void* openFunc(const char* uri)
         }
     }
 
-    Vector<char> buffer;
-    if (data)
-        buffer.append(data->data(), data->size());
-    return new OffsetBuffer(WTFMove(buffer));
+    return new OffsetBuffer({ data->data(), data->size() });
 }
 
 static int readFunc(void* context, char* buffer, int len)
@@ -1459,7 +1455,7 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
 
 // --------------------------------
 
-using AttributeParseState = Optional<HashMap<String, String>>;
+using AttributeParseState = std::optional<HashMap<String, String>>;
 
 static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLocalName, const xmlChar* /*xmlPrefix*/, const xmlChar* /*xmlURI*/, int /*numNamespaces*/, const xmlChar** /*namespaces*/, int numAttributes, int /*numDefaulted*/, const xmlChar** libxmlAttributes)
 {
@@ -1482,7 +1478,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
     }
 }
 
-Optional<HashMap<String, String>> parseAttributes(const String& string)
+std::optional<HashMap<String, String>> parseAttributes(const String& string)
 {
     String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
 

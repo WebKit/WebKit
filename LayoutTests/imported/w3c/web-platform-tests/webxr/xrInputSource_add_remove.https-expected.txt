@@ -1,3 +1,4 @@
 
-PASS XRInputSources can be properly added and removed from the session
+PASS XRInputSources can be properly added and removed from the session - webgl
+FAIL XRInputSources can be properly added and removed from the session - webgl2 assert_implements: webgl2 not supported. undefined
 

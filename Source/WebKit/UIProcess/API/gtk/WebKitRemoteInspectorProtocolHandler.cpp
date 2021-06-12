@@ -51,7 +51,7 @@ public:
             return;
 
         URL requestURL = URL({ }, page.pageLoadState().url());
-        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[0]).valueOr(0), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[1]).valueOr(0), tokens[2]);
+        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[0]).value_or(0), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[1]).value_or(0), tokens[2]);
     }
 
     bool supportsAsyncReply() override

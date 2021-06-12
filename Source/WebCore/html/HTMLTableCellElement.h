@@ -55,9 +55,9 @@ private:
     HTMLTableCellElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
-    const StyleProperties* additionalPresentationAttributeStyle() const override;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    const StyleProperties* additionalPresentationalHintStyle() const override;
 
     bool isURLAttribute(const Attribute&) const override;
 

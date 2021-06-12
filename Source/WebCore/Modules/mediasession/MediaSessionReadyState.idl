@@ -26,9 +26,9 @@
 [
     Conditional=MEDIA_SESSION_COORDINATOR,
 ] enum MediaSessionReadyState {
-    "haveNothing",
-    "haveMetadata",
-    "haveCurrentData",
-    "haveFutureData",
-    "haveEnoughData"
+    "havenothing",
+    "havemetadata",
+    "havecurrentdata",
+    "havefuturedata",
+    "haveenoughdata"
 };

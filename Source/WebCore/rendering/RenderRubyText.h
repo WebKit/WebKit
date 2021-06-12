@@ -54,7 +54,7 @@ private:
 
     bool avoidsFloats() const override;
 
-    Optional<TextAlignMode> overrideTextAlignmentForLine(bool endsWithSoftBreak) const override;
+    std::optional<TextAlignMode> overrideTextAlignmentForLine(bool endsWithSoftBreak) const override;
     void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
 };
 

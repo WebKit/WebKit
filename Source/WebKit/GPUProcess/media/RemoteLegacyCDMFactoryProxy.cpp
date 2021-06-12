@@ -58,7 +58,7 @@ RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy()
         m_gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), proxy.key.toUInt64());
 }
 
-void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, Optional<MediaPlayerIdentifier>&& optionalPlayerId, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&& completion)
+void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::optional<MediaPlayerIdentifier>&& optionalPlayerId, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&& completion)
 {
     auto privateCDM = LegacyCDM::create(keySystem);
     if (!privateCDM) {
@@ -76,7 +76,7 @@ void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, Optional<Me
     completion(WTFMove(identifier));
 }
 
-void RemoteLegacyCDMFactoryProxy::supportsKeySystem(const String& keySystem, Optional<String> mimeType, CompletionHandler<void(bool)>&& completion)
+void RemoteLegacyCDMFactoryProxy::supportsKeySystem(const String& keySystem, std::optional<String> mimeType, CompletionHandler<void(bool)>&& completion)
 {
     if (mimeType)
         completion(LegacyCDM::keySystemSupportsMimeType(keySystem, *mimeType));

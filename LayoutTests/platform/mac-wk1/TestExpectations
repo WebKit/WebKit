@@ -212,6 +212,7 @@ http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip 
 
 # Color well is turned off.
 accessibility/color-well.html [ Skip ]
+accessibility/mac/media-query-values-change.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input.html [ Skip ]
 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
@@ -580,6 +581,9 @@ accessibility/parent-delete.html [ Failure ]
 svg/hixie/text/003.html [ Failure ]
 
 webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Pass Failure ]
+
+# NSURLConnection doesn't have an API to give us good timing for redirects. We do what we can with MonotonicTime::now() but this still fails sometimes.
+imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_server.html [ Pass Failure ]
 
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
@@ -1274,3 +1278,11 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
 
 webkit.org/b/224144 storage/websql/alter-to-info-table.html [ Skip ]
+
+webkit.org/b/226229 [ Catalina ] imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/226360 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html [ Pass Failure ]
+
+webkit.org/b/226377 [ BigSur ] imported/w3c/web-platform-tests/css/css-contain/contain-paint-ignored-cases-ruby-stacking-and-clipping-001.html [ Pass Failure ]
+
+webkit.org/b/226517 [ BigSur ] media/media-event-listeners.html [ Pass Timeout ]

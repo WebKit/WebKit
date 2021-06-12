@@ -32,14 +32,14 @@
 namespace IPC {
 
 void encodeObject(Encoder&, id);
-Optional<RetainPtr<id>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
+std::optional<RetainPtr<id>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
 
 template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
 
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
 template<typename T, typename = IsObjCObject<T>> WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<T>&, NSArray<Class> *allowedClasses = @[ [T class] ]);
-template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
-template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
+template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
+template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
 
 #if ASSERT_ENABLED
 
@@ -72,17 +72,17 @@ bool decode(Decoder& decoder, RetainPtr<T>& result, NSArray<Class> *allowedClass
 }
 
 template<typename T, typename>
-Optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
+std::optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     auto result = decodeObject(decoder, allowedClasses);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
     ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
     return { *result };
 }
 
 template<typename T, typename>
-Optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
+std::optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
 {
     return decode<T>(decoder, allowedClass ? @[ allowedClass ] : @[ ]);
 }
@@ -103,7 +103,7 @@ template<typename T> struct ArgumentCoder<RetainPtr<T>> {
     }
 
     template<typename U = T, typename = IsObjCObject<U>>
-    static Optional<RetainPtr<U>> decode(Decoder& decoder)
+    static std::optional<RetainPtr<U>> decode(Decoder& decoder)
     {
         return IPC::decode<U>(decoder);
     }

@@ -138,7 +138,7 @@ void WebCoreAVCFResourceLoader::responseReceived(CachedResource& resource, const
     notImplemented();
 }
 
-void WebCoreAVCFResourceLoader::dataReceived(CachedResource& resource, const char*, int)
+void WebCoreAVCFResourceLoader::dataReceived(CachedResource& resource, const uint8_t*, int)
 {
     fulfillRequestWithResource(resource);
 }

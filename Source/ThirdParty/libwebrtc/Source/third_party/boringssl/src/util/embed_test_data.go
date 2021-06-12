@@ -28,9 +28,11 @@ import (
 var fileList = flag.String("file-list", "", "if not empty, the path to a file containing a newline-separated list of files, to work around Windows command-line limits")
 
 func quote(in []byte) string {
+	var lastWasHex bool
 	var buf bytes.Buffer
 	buf.WriteByte('"')
 	for _, b := range in {
+		var wasHex bool
 		switch b {
 		case '\a':
 			buf.WriteString(`\a`)
@@ -51,13 +53,20 @@ func quote(in []byte) string {
 		case '\\':
 			buf.WriteString(`\\`)
 		default:
-			// printable ascii code [32, 126]
-			if 32 <= b && b <= 126 {
+			// Emit printable ASCII characters, [32, 126], as-is to minimize
+			// file size. However, if the previous character used a hex escape
+			// sequence, do not emit 0-9 and a-f as-is. C++ interprets "\x123"
+			// as a single (overflowing) escape sequence, rather than '\x12'
+			// followed by '3'.
+			isHexDigit := ('0' <= b && b <= '9') || ('a' <= b && b <= 'f') || ('A' <= b && b <= 'F')
+			if 32 <= b && b <= 126 && !(lastWasHex && isHexDigit) {
 				buf.WriteByte(b)
 			} else {
 				fmt.Fprintf(&buf, "\\x%02x", b)
+				wasHex = true
 			}
 		}
+		lastWasHex = wasHex
 	}
 	buf.WriteByte('"')
 	return buf.String()

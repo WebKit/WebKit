@@ -72,7 +72,7 @@ GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
         8, w * sizeof(RGBQUAD), sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
     CGContextSaveGState(context.get());
 
-    GraphicsContext gc(context.get());
+    GraphicsContextCG gc(context.get());
 
     drawRectIntoContext(ir, frame->view(), gc);
 

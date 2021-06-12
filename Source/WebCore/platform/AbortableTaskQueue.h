@@ -20,10 +20,10 @@
 
 #pragma once
 
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 
@@ -138,16 +138,16 @@ public:
     // It is allowed for the main thread task handler to abort the AbortableTaskQueue. In that case, the return
     // value is discarded and the caller receives an empty optional.
     template<typename R>
-    Optional<R> enqueueTaskAndWait(WTF::Function<R()>&& mainThreadTaskHandler)
+    std::optional<R> enqueueTaskAndWait(WTF::Function<R()>&& mainThreadTaskHandler)
     {
         // Don't deadlock the main thread with itself.
         ASSERT(!isMainThread());
 
         Locker locker { m_lock };
         if (m_aborting)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<R> response = WTF::nullopt;
+        std::optional<R> response = std::nullopt;
         postTask([this, &response, &mainThreadTaskHandler]() {
             R responseValue = mainThreadTaskHandler();
             Locker locker { m_lock };
@@ -156,6 +156,7 @@ public:
             m_abortedOrResponseSet.notifyAll();
         });
         m_abortedOrResponseSet.wait(m_lock, [this, &response]() {
+            assertIsHeld(m_lock);
             return m_aborting || response;
         });
         return response;
@@ -232,8 +233,8 @@ private:
     }
 
     bool m_aborting WTF_GUARDED_BY_LOCK(m_lock) { false };
-    CheckedLock m_lock;
-    CheckedCondition m_abortedOrResponseSet;
+    Lock m_lock;
+    Condition m_abortedOrResponseSet;
     WTF::Deque<Ref<Task>> m_channel WTF_GUARDED_BY_LOCK(m_lock);
 };
 

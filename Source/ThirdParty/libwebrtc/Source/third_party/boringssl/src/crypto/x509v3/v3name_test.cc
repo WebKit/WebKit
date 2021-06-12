@@ -305,7 +305,7 @@ static X509 *make_cert(void)
     crt = X509_new();
     if (crt == NULL)
         goto out;
-    if (!X509_set_version(crt, 3))
+    if (!X509_set_version(crt, X509_VERSION_3))
         goto out;
     ret = crt;
     crt = NULL;

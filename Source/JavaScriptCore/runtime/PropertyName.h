@@ -28,7 +28,6 @@
 #include "Identifier.h"
 #include "JSGlobalObjectFunctions.h"
 #include "PrivateName.h"
-#include <wtf/Optional.h>
 #include <wtf/dtoa.h>
 
 namespace JSC {
@@ -122,13 +121,13 @@ inline bool operator!=(PropertyName a, PropertyName b)
     return a.uid() != b.uid();
 }
 
-ALWAYS_INLINE Optional<uint32_t> parseIndex(PropertyName propertyName)
+ALWAYS_INLINE std::optional<uint32_t> parseIndex(PropertyName propertyName)
 {
     auto uid = propertyName.uid();
     if (!uid)
-        return WTF::nullopt;
+        return std::nullopt;
     if (uid->isSymbol())
-        return WTF::nullopt;
+        return std::nullopt;
     return parseIndex(*uid);
 }
 

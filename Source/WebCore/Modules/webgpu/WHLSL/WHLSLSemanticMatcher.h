@@ -48,7 +48,7 @@ struct MatchedRenderSemantics {
     HashMap<AttachmentDescriptor*, size_t> matchedColorAttachments;
 };
 
-Optional<MatchedRenderSemantics> matchSemantics(Program&, RenderPipelineDescriptor&, bool distinctFragmentShader, bool fragmentShaderExists);
+std::optional<MatchedRenderSemantics> matchSemantics(Program&, RenderPipelineDescriptor&, bool distinctFragmentShader, bool fragmentShaderExists);
 
 struct MatchedComputeSemantics {
     AST::FunctionDefinition* shader;
@@ -56,7 +56,7 @@ struct MatchedComputeSemantics {
     HashMap<Binding*, size_t> resourceMap;
 };
 
-Optional<MatchedComputeSemantics> matchSemantics(Program&, ComputePipelineDescriptor&);
+std::optional<MatchedComputeSemantics> matchSemantics(Program&, ComputePipelineDescriptor&);
 
 } // namespace WHLSL
 

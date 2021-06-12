@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -75,20 +75,12 @@ enum FontSynthesisValues {
     FontSynthesisStyle = 0x2,
     FontSynthesisSmallCaps = 0x4
 };
+// FIXME: Use OptionSet.
 typedef unsigned FontSynthesis;
 const unsigned FontSynthesisWidth = 3;
 
-enum class FontVariantLigatures : uint8_t {
-    Normal,
-    Yes,
-    No
-};
-
-enum class FontVariantPosition : uint8_t {
-    Normal,
-    Subscript,
-    Superscript
-};
+enum class FontVariantLigatures : uint8_t { Normal, Yes, No };
+enum class FontVariantPosition : uint8_t { Normal, Subscript, Superscript };
 
 enum class FontVariantCaps : uint8_t {
     Normal,
@@ -118,20 +110,9 @@ enum class FontVariantNumericFraction : uint8_t {
     StackedFractions
 };
 
-enum class FontVariantNumericOrdinal : uint8_t {
-    Normal,
-    Yes
-};
-
-enum class FontVariantNumericSlashedZero : uint8_t {
-    Normal,
-    Yes
-};
-
-enum class FontVariantAlternates : uint8_t {
-    Normal,
-    HistoricalForms
-};
+enum class FontVariantNumericOrdinal : bool { Normal, Yes };
+enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
+enum class FontVariantAlternates : bool { Normal, HistoricalForms };
 
 enum class FontVariantEastAsianVariant : uint8_t {
     Normal,
@@ -268,7 +249,7 @@ struct FontVariantSettings {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FontVariantSettings> decode(Decoder&);
+    template<class Decoder> static std::optional<FontVariantSettings> decode(Decoder&);
 
     // FIXME: this would be much more compact with bitfields.
     FontVariantLigatures commonLigatures;
@@ -309,82 +290,82 @@ void FontVariantSettings::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<FontVariantSettings> FontVariantSettings::decode(Decoder& decoder)
+std::optional<FontVariantSettings> FontVariantSettings::decode(Decoder& decoder)
 {
-    Optional<FontVariantLigatures> commonLigatures;
+    std::optional<FontVariantLigatures> commonLigatures;
     decoder >> commonLigatures;
     if (!commonLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantLigatures> discretionaryLigatures;
+    std::optional<FontVariantLigatures> discretionaryLigatures;
     decoder >> discretionaryLigatures;
     if (!discretionaryLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantLigatures> historicalLigatures;
+    std::optional<FontVariantLigatures> historicalLigatures;
     decoder >> historicalLigatures;
     if (!historicalLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantLigatures> contextualAlternates;
+    std::optional<FontVariantLigatures> contextualAlternates;
     decoder >> contextualAlternates;
     if (!contextualAlternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantPosition> position;
+    std::optional<FontVariantPosition> position;
     decoder >> position;
     if (!position)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantCaps> caps;
+    std::optional<FontVariantCaps> caps;
     decoder >> caps;
     if (!caps)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericFigure> numericFigure;
+    std::optional<FontVariantNumericFigure> numericFigure;
     decoder >> numericFigure;
     if (!numericFigure)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericSpacing> numericSpacing;
+    std::optional<FontVariantNumericSpacing> numericSpacing;
     decoder >> numericSpacing;
     if (!numericSpacing)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericFraction> numericFraction;
+    std::optional<FontVariantNumericFraction> numericFraction;
     decoder >> numericFraction;
     if (!numericFraction)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericOrdinal> numericOrdinal;
+    std::optional<FontVariantNumericOrdinal> numericOrdinal;
     decoder >> numericOrdinal;
     if (!numericOrdinal)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericSlashedZero> numericSlashedZero;
+    std::optional<FontVariantNumericSlashedZero> numericSlashedZero;
     decoder >> numericSlashedZero;
     if (!numericSlashedZero)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantAlternates> alternates;
+    std::optional<FontVariantAlternates> alternates;
     decoder >> alternates;
     if (!alternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantEastAsianVariant> eastAsianVariant;
+    std::optional<FontVariantEastAsianVariant> eastAsianVariant;
     decoder >> eastAsianVariant;
     if (!eastAsianVariant)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantEastAsianWidth> eastAsianWidth;
+    std::optional<FontVariantEastAsianWidth> eastAsianWidth;
     decoder >> eastAsianWidth;
     if (!eastAsianWidth)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantEastAsianRuby> eastAsianRuby;
+    std::optional<FontVariantEastAsianRuby> eastAsianRuby;
     decoder >> eastAsianRuby;
     if (!eastAsianRuby)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *commonLigatures,
@@ -419,7 +400,7 @@ struct FontVariantLigaturesValues {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FontVariantLigaturesValues> decode(Decoder&);
+    template<class Decoder> static std::optional<FontVariantLigaturesValues> decode(Decoder&);
 
     FontVariantLigatures commonLigatures;
     FontVariantLigatures discretionaryLigatures;
@@ -437,27 +418,27 @@ void FontVariantLigaturesValues::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<FontVariantLigaturesValues> FontVariantLigaturesValues::decode(Decoder& decoder)
+std::optional<FontVariantLigaturesValues> FontVariantLigaturesValues::decode(Decoder& decoder)
 {
-    Optional<FontVariantLigatures> commonLigatures;
+    std::optional<FontVariantLigatures> commonLigatures;
     decoder >> commonLigatures;
     if (!commonLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantLigatures> discretionaryLigatures;
+    std::optional<FontVariantLigatures> discretionaryLigatures;
     decoder >> discretionaryLigatures;
     if (!discretionaryLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantLigatures> historicalLigatures;
+    std::optional<FontVariantLigatures> historicalLigatures;
     decoder >> historicalLigatures;
     if (!historicalLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantLigatures> contextualAlternates;
+    std::optional<FontVariantLigatures> contextualAlternates;
     decoder >> contextualAlternates;
     if (!contextualAlternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *commonLigatures, *discretionaryLigatures, *historicalLigatures, *contextualAlternates }};
 }
@@ -478,7 +459,7 @@ struct FontVariantNumericValues {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FontVariantNumericValues> decode(Decoder&);
+    template<class Decoder> static std::optional<FontVariantNumericValues> decode(Decoder&);
 
     FontVariantNumericFigure figure;
     FontVariantNumericSpacing spacing;
@@ -498,32 +479,32 @@ void FontVariantNumericValues::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<FontVariantNumericValues> FontVariantNumericValues::decode(Decoder& decoder)
+std::optional<FontVariantNumericValues> FontVariantNumericValues::decode(Decoder& decoder)
 {
-    Optional<FontVariantNumericFigure> figure;
+    std::optional<FontVariantNumericFigure> figure;
     decoder >> figure;
     if (!figure)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericSpacing> spacing;
+    std::optional<FontVariantNumericSpacing> spacing;
     decoder >> spacing;
     if (!spacing)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericFraction> fraction;
+    std::optional<FontVariantNumericFraction> fraction;
     decoder >> fraction;
     if (!fraction)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericOrdinal> ordinal;
+    std::optional<FontVariantNumericOrdinal> ordinal;
     decoder >> ordinal;
     if (!ordinal)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantNumericSlashedZero> slashedZero;
+    std::optional<FontVariantNumericSlashedZero> slashedZero;
     decoder >> slashedZero;
     if (!slashedZero)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *figure, *spacing, *fraction, *ordinal, *slashedZero }};
 }
@@ -540,7 +521,7 @@ struct FontVariantEastAsianValues {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FontVariantEastAsianValues> decode(Decoder&);
+    template<class Decoder> static std::optional<FontVariantEastAsianValues> decode(Decoder&);
 
     FontVariantEastAsianVariant variant;
     FontVariantEastAsianWidth width;
@@ -556,22 +537,22 @@ void FontVariantEastAsianValues::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<FontVariantEastAsianValues> FontVariantEastAsianValues::decode(Decoder& decoder)
+std::optional<FontVariantEastAsianValues> FontVariantEastAsianValues::decode(Decoder& decoder)
 {
-    Optional<FontVariantEastAsianVariant> variant;
+    std::optional<FontVariantEastAsianVariant> variant;
     decoder >> variant;
     if (!variant)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantEastAsianWidth> width;
+    std::optional<FontVariantEastAsianWidth> width;
     decoder >> width;
     if (!width)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<FontVariantEastAsianRuby> ruby;
+    std::optional<FontVariantEastAsianRuby> ruby;
     decoder >> ruby;
     if (!ruby)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *variant, *width, *ruby }};
 }

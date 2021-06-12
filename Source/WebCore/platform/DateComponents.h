@@ -87,31 +87,31 @@ public:
     String toString(SecondFormat = SecondFormat::None) const;
 
     // Sets year and month.
-    static Optional<DateComponents> fromParsingMonth(StringView);
+    static std::optional<DateComponents> fromParsingMonth(StringView);
     // Sets year, month and monthDay.
-    static Optional<DateComponents> fromParsingDate(StringView);
+    static std::optional<DateComponents> fromParsingDate(StringView);
     // Sets year and week.
-    static Optional<DateComponents> fromParsingWeek(StringView);
+    static std::optional<DateComponents> fromParsingWeek(StringView);
     // Sets hour, minute, second and millisecond.
-    static Optional<DateComponents> fromParsingTime(StringView);
+    static std::optional<DateComponents> fromParsingTime(StringView);
     // Sets year, month, monthDay, hour, minute, second and millisecond.
-    static Optional<DateComponents> fromParsingDateTimeLocal(StringView);
+    static std::optional<DateComponents> fromParsingDateTimeLocal(StringView);
 
 
     // For Date type. Updates m_year, m_month and m_monthDay.
-    static Optional<DateComponents> fromMillisecondsSinceEpochForDate(double ms);
+    static std::optional<DateComponents> fromMillisecondsSinceEpochForDate(double ms);
     // For DateTimeLocal type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
-    static Optional<DateComponents> fromMillisecondsSinceEpochForDateTimeLocal(double ms);
+    static std::optional<DateComponents> fromMillisecondsSinceEpochForDateTimeLocal(double ms);
     // For Month type. Updates m_year and m_month.
-    static Optional<DateComponents> fromMillisecondsSinceEpochForMonth(double ms);
+    static std::optional<DateComponents> fromMillisecondsSinceEpochForMonth(double ms);
     // For Week type. Updates m_year and m_week.
-    static Optional<DateComponents> fromMillisecondsSinceEpochForWeek(double ms);
+    static std::optional<DateComponents> fromMillisecondsSinceEpochForWeek(double ms);
 
     // For Time type. Updates m_hour, m_minute, m_second and m_millisecond.
-    static Optional<DateComponents> fromMillisecondsSinceMidnight(double ms);
+    static std::optional<DateComponents> fromMillisecondsSinceMidnight(double ms);
 
     // Another initializer for Month type. Updates m_year and m_month.
-    static Optional<DateComponents> fromMonthsSinceEpoch(double months);
+    static std::optional<DateComponents> fromMonthsSinceEpoch(double months);
 
     // Returns the number of milliseconds from 1970-01-01 00:00:00 UTC.
     // For a DateComponents initialized with parseDateTimeLocal(),

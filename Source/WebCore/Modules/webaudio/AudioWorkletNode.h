@@ -60,7 +60,7 @@ public:
     MessagePort& port() { return m_port.get(); }
 
     void setProcessor(RefPtr<AudioWorkletProcessor>&&);
-    void initializeAudioParameters(const Vector<AudioParamDescriptor>&, const Optional<Vector<WTF::KeyValuePair<String, double>>>& paramValues);
+    void initializeAudioParameters(const Vector<AudioParamDescriptor>&, const std::optional<Vector<WTF::KeyValuePair<String, double>>>& paramValues);
 
 private:
     AudioWorkletNode(BaseAudioContext&, const String& name, AudioWorkletNodeOptions&&, Ref<MessagePort>&&);

@@ -42,7 +42,7 @@ template <typename FloatType> static inline bool isValidRange(const FloatType& x
 // at a higher precision internally, without any unnecessary runtime cost or code
 // complexity.
 // FIXME: Can this be shared/replaced with number parsing in WTF?
-template <typename CharacterType, typename FloatType = float> static Optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
+template <typename CharacterType, typename FloatType = float> static std::optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
 {
     FloatType number = 0;
     FloatType integer = 0;
@@ -62,7 +62,7 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
     } 
     
     if (buffer.atEnd() || (!isASCIIDigit(*buffer) && *buffer != '.'))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // read the integer part, build right-to-left
     auto ptrStartIntPart = buffer.position();
@@ -79,7 +79,7 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
         }
         // Bail out early if this overflows.
         if (!isValidRange(integer))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     // read the decimals
@@ -88,7 +88,7 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
         
         // There must be a least one digit following the .
         if (buffer.atEnd() || !isASCIIDigit(*buffer))
-            return WTF::nullopt;
+            return std::nullopt;
         
         while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer))
             decimal += (*(buffer++) - '0') * (frac *= static_cast<FloatType>(0.1));
@@ -109,7 +109,7 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
         
         // There must be an exponent
         if (buffer.atEnd() || !isASCIIDigit(*buffer))
-            return WTF::nullopt;
+            return std::nullopt;
 
         while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer)) {
             exponent *= static_cast<FloatType>(10);
@@ -117,7 +117,7 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
         }
         // Make sure exponent is valid.
         if (!isValidRange(exponent) || exponent > std::numeric_limits<FloatType>::max_exponent)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     number = integer + decimal;
@@ -128,10 +128,10 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
 
     // Don't return Infinity() or NaN().
     if (!isValidRange(number))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (start == buffer.position())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (skip == SuffixSkippingPolicy::Skip)
         skipOptionalSVGSpacesOrDelimiter(buffer);
@@ -139,32 +139,32 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
     return number;
 }
 
-Optional<float> parseNumber(StringParsingBuffer<LChar>& buffer, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringParsingBuffer<LChar>& buffer, SuffixSkippingPolicy skip)
 {
     return genericParseNumber(buffer, skip);
 }
 
-Optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkippingPolicy skip)
 {
     return genericParseNumber(buffer, skip);
 }
 
-Optional<float> parseNumber(const StringView& string, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(const StringView& string, SuffixSkippingPolicy skip)
 {
-    return readCharactersForParsing(string, [skip](auto buffer) -> Optional<float> {
+    return readCharactersForParsing(string, [skip](auto buffer) -> std::optional<float> {
         auto result = genericParseNumber(buffer, skip);
         if (!buffer.atEnd())
-            return WTF::nullopt;
+            return std::nullopt;
         return result;
     });
 }
 
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
 // and might not have any whitespace/comma after it
-template <typename CharacterType> Optional<bool> genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
+template <typename CharacterType> std::optional<bool> genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     const CharacterType flagChar = *buffer;
     ++buffer;
@@ -175,59 +175,59 @@ template <typename CharacterType> Optional<bool> genericParseArcFlag(StringParsi
     else if (flagChar == '1')
         flag = true;
     else
-        return WTF::nullopt;
+        return std::nullopt;
 
     skipOptionalSVGSpacesOrDelimiter(buffer);
     
     return flag;
 }
 
-Optional<bool> parseArcFlag(StringParsingBuffer<LChar>& buffer)
+std::optional<bool> parseArcFlag(StringParsingBuffer<LChar>& buffer)
 {
     return genericParseArcFlag(buffer);
 }
 
-Optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
+std::optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
 {
     return genericParseArcFlag(buffer);
 }
 
-Optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& string)
+std::optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& string)
 {
     if (string.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
-    return readCharactersForParsing(string, [](auto buffer) -> Optional<std::pair<float, float>> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::pair<float, float>> {
         auto x = parseNumber(buffer);
         if (!x)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (buffer.atEnd())
             return std::make_pair(*x, *x);
 
         auto y = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
         if (!y)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (!buffer.atEnd())
-            return WTF::nullopt;
+            return std::nullopt;
 
         return std::make_pair(*x, *y);
     });
 }
 
-Optional<FloatPoint> parsePoint(const StringView& string)
+std::optional<FloatPoint> parsePoint(const StringView& string)
 {
     if (string.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
-    return readCharactersForParsing(string, [](auto buffer) -> Optional<FloatPoint> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<FloatPoint> {
         if (!skipOptionalSVGSpaces(buffer))
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto point = parseFloatPoint(buffer);
         if (!point)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Disallow anything except spaces at the end.
         skipOptionalSVGSpaces(buffer);
@@ -236,29 +236,29 @@ Optional<FloatPoint> parsePoint(const StringView& string)
     });
 }
 
-Optional<FloatRect> parseRect(const StringView& string)
+std::optional<FloatRect> parseRect(const StringView& string)
 {
-    return readCharactersForParsing(string, [](auto buffer) -> Optional<FloatRect> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<FloatRect> {
         skipOptionalSVGSpaces(buffer);
         
         auto x = parseNumber(buffer);
         if (!x)
-            return WTF::nullopt;
+            return std::nullopt;
         auto y = parseNumber(buffer);
         if (!y)
-            return WTF::nullopt;
+            return std::nullopt;
         auto width = parseNumber(buffer);
         if (!width)
-            return WTF::nullopt;
+            return std::nullopt;
         auto height = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
         if (!height)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return FloatRect { *x, *y, *width, *height };
     });
 }
 
-Optional<HashSet<String>> parseGlyphName(const StringView& string)
+std::optional<HashSet<String>> parseGlyphName(const StringView& string)
 {
     // FIXME: Parsing error detection is missing.
 
@@ -289,11 +289,11 @@ Optional<HashSet<String>> parseGlyphName(const StringView& string)
 
 }
 
-template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> static std::optional<UnicodeRange> parseUnicodeRange(StringParsingBuffer<CharacterType> buffer)
 {
     unsigned length = buffer.lengthRemaining();
     if (length < 2 || buffer[0] != 'U' || buffer[1] != '+')
-        return WTF::nullopt;
+        return std::nullopt;
 
     buffer += 2;
 
@@ -306,7 +306,7 @@ template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange
             break;
         ++startLength;
         if (startLength > 6)
-            return WTF::nullopt;
+            return std::nullopt;
         startRange = (startRange << 4) | toASCIIHexValue(*buffer);
         ++buffer;
     }
@@ -314,7 +314,7 @@ template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange
     // Handle the case of ranges separated by "-" sign.
     if (2 + startLength < length && *buffer == '-') {
         if (!startLength)
-            return WTF::nullopt;
+            return std::nullopt;
         
         // Parse the ending hex number (or its prefix).
         unsigned endRange = 0;
@@ -325,13 +325,13 @@ template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange
                 break;
             ++endLength;
             if (endLength > 6)
-                return WTF::nullopt;
+                return std::nullopt;
             endRange = (endRange << 4) | toASCIIHexValue(*buffer);
             ++buffer;
         }
         
         if (!endLength)
-            return WTF::nullopt;
+            return std::nullopt;
         
         UnicodeRange range;
         range.first = startRange;
@@ -346,14 +346,14 @@ template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange
             break;
         ++startLength;
         if (startLength > 6)
-            return WTF::nullopt;
+            return std::nullopt;
         startRange <<= 4;
         endRange = (endRange << 4) | 0xF;
         ++buffer;
     }
     
     if (!startLength)
-        return WTF::nullopt;
+        return std::nullopt;
     
     UnicodeRange range;
     range.first = startRange;
@@ -361,7 +361,7 @@ template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange
     return range;
 }
 
-Optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(const StringView& string)
+std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(const StringView& string)
 {
     // FIXME: Parsing error detection is missing.
 
@@ -393,25 +393,25 @@ Optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(co
     });
 }
 
-template <typename CharacterType> static Optional<FloatPoint> genericParseFloatPoint(StringParsingBuffer<CharacterType>& buffer)
+template <typename CharacterType> static std::optional<FloatPoint> genericParseFloatPoint(StringParsingBuffer<CharacterType>& buffer)
 {
     auto x = parseNumber(buffer);
     if (!x)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto y = parseNumber(buffer);
     if (!y)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return FloatPoint { *x, *y };
 }
 
-Optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>& buffer)
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>& buffer)
 {
     return genericParseFloatPoint(buffer);
 }
 
-Optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>& buffer)
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>& buffer)
 {
     return genericParseFloatPoint(buffer);
 }

@@ -101,73 +101,73 @@ void ArgumentCoder<SelectionData>::encode(Encoder& encoder, const SelectionData&
     encoder << canSmartReplace;
 }
 
-Optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decoder)
+std::optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decoder)
 {
     SelectionData selection;
 
     bool hasText;
     if (!decoder.decode(hasText))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasText) {
         String text;
         if (!decoder.decode(text))
-            return WTF::nullopt;
+            return std::nullopt;
         selection.setText(text);
     }
 
     bool hasMarkup;
     if (!decoder.decode(hasMarkup))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasMarkup) {
         String markup;
         if (!decoder.decode(markup))
-            return WTF::nullopt;
+            return std::nullopt;
         selection.setMarkup(markup);
     }
 
     bool hasURL;
     if (!decoder.decode(hasURL))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasURL) {
         String url;
         if (!decoder.decode(url))
-            return WTF::nullopt;
+            return std::nullopt;
         selection.setURL(URL(URL(), url), String());
     }
 
     bool hasURIList;
     if (!decoder.decode(hasURIList))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasURIList) {
         String uriList;
         if (!decoder.decode(uriList))
-            return WTF::nullopt;
+            return std::nullopt;
         selection.setURIList(uriList);
     }
 
     bool hasImage;
     if (!decoder.decode(hasImage))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasImage) {
         RefPtr<Image> image;
         if (!decodeImage(decoder, image))
-            return WTF::nullopt;
+            return std::nullopt;
         selection.setImage(image.get());
     }
 
     bool hasCustomData;
     if (!decoder.decode(hasCustomData))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasCustomData) {
         RefPtr<SharedBuffer> buffer;
         if (!decoder.decode(buffer))
-            return WTF::nullopt;
+            return std::nullopt;
         selection.setCustomData(Ref<SharedBuffer>(*buffer));
     }
 
     bool canSmartReplace;
     if (!decoder.decode(canSmartReplace))
-        return WTF::nullopt;
+        return std::nullopt;
     selection.setCanSmartReplace(canSmartReplace);
 
     return selection;

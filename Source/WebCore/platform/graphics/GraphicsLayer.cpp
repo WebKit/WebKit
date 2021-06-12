@@ -150,7 +150,11 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& layerClient)
     , m_userInteractionEnabled(true)
     , m_canDetachBackingStore(true)
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    , m_separated(false)
+    , m_isSeparated(false)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    , m_isSeparatedPortal(false)
+    , m_isDescendentOfSeparatedPortal(false)
+#endif
 #endif
 {
 #ifndef NDEBUG

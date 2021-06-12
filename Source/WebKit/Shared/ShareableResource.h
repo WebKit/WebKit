@@ -75,7 +75,7 @@ public:
 
     ~ShareableResource();
 
-    const char* data() const;
+    const uint8_t* data() const;
     unsigned size() const;
     
 private:

@@ -81,7 +81,7 @@ void clearAllLogChannelsToAccumulate()
     logChannelsNeedInitialization = true;
 }
 
-void initializeLogChannelsIfNecessary(Optional<String> logChannelString)
+void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
 {
     if (!logChannelsNeedInitialization && !logChannelString)
         return;

@@ -298,7 +298,7 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
 #if HAVE(UI_POINTER_INTERACTION)
     RetainPtr<UIPointerInteraction> _pointerInteraction;
     BOOL _hasOutstandingPointerInteractionRequest;
-    Optional<std::pair<WebKit::InteractionInformationRequest, BlockPtr<void(UIPointerRegion *)>>> _deferredPointerInteractionRequest;
+    std::optional<std::pair<WebKit::InteractionInformationRequest, BlockPtr<void(UIPointerRegion *)>>> _deferredPointerInteractionRequest;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
@@ -309,6 +309,8 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
     RetainPtr<UIView> _contextMenuHintContainerView;
+    WeakObjCPtr<UIScrollView> _scrollViewForTargetedPreview;
+    CGPoint _scrollViewForTargetedPreviewInitialOffset;
     RetainPtr<UIView> _dragPreviewContainerView;
     RetainPtr<UIView> _dropPreviewContainerView;
     RetainPtr<NSString> _markedText;
@@ -380,10 +382,10 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
     RetainPtr<WKTextRange> _cachedSelectedTextRange;
 
-    Optional<WebKit::InteractionInformationRequest> _lastOutstandingPositionInformationRequest;
+    std::optional<WebKit::InteractionInformationRequest> _lastOutstandingPositionInformationRequest;
 
     uint64_t _positionInformationCallbackDepth;
-    Vector<Optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;
+    Vector<std::optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;
     
     std::unique_ptr<WebKit::InputViewUpdateDeferrer> _inputViewUpdateDeferrer;
 
@@ -449,7 +451,7 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
 
     RetainPtr<NSDictionary> _additionalContextForStrongPasswordAssistance;
 
-    Optional<UChar32> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
+    std::optional<UChar32> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
 
 #if ENABLE(DRAG_SUPPORT)
     WebKit::DragDropInteractionState _dragDropInteractionState;
@@ -484,8 +486,8 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
 #if ENABLE(IMAGE_EXTRACTION)
     RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _imageExtractionTimeoutGestureRecognizer;
-    Optional<WebKit::ImageExtractionRequestIdentifier> _pendingImageExtractionRequestIdentifier;
-    Optional<WebCore::ElementContext> _elementPendingImageExtraction;
+    std::optional<WebKit::ImageExtractionRequestIdentifier> _pendingImageExtractionRequestIdentifier;
+    std::optional<WebCore::ElementContext> _elementPendingImageExtraction;
     Vector<BlockPtr<void(WebKit::ProceedWithImageExtraction)>> _actionsToPerformAfterPendingImageExtraction;
 #if USE(UICONTEXTMENU)
     RetainPtr<UIMenu> _imageExtractionContextMenu;
@@ -558,7 +560,7 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
 - (void)_zoomToRevealFocusedElement;
 
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
-- (WTF::Optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
+- (std::optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 
 #define DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_action) \
     - (void)_action ## ForWebView:(id)sender;
@@ -604,8 +606,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_scrollingNodeScrollingDidEnd;
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect routeSharingPolicy:(WebCore::RouteSharingPolicy)policy routingContextUID:(NSString *)contextUID;
 - (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters frameInfo:(const WebKit::FrameInfoData&)frameInfo resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
-- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)shareData inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
-- (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
+- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)shareData inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
+- (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
 - (NSArray<NSString *> *)filePickerAcceptedTypeIdentifiers;
 - (void)dismissFilePicker;
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled;
@@ -663,7 +665,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didHandleAdditionalDragItemsRequest:(BOOL)added;
 - (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item;
 - (void)_willReceiveEditDragSnapshot;
-- (void)_didReceiveEditDragSnapshot:(Optional<WebCore::TextIndicatorData>)data;
+- (void)_didReceiveEditDragSnapshot:(std::optional<WebCore::TextIndicatorData>)data;
 - (void)_didChangeDragCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;
 #endif
 

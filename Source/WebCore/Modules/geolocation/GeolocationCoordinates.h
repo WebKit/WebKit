@@ -26,7 +26,6 @@
 #pragma once
 
 #include "GeolocationPositionData.h"
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -46,12 +45,12 @@ public:
 
     double latitude() const { return m_position.latitude; }
     double longitude() const { return m_position.longitude; }
-    Optional<double> altitude() const { return m_position.altitude; }
+    std::optional<double> altitude() const { return m_position.altitude; }
     double accuracy() const { return m_position.accuracy; }
-    Optional<double> altitudeAccuracy() const { return m_position.altitudeAccuracy; }
-    Optional<double> heading() const { return m_position.heading; }
-    Optional<double> speed() const { return m_position.speed; }
-    Optional<double> floorLevel() const { return m_position.floorLevel; }
+    std::optional<double> altitudeAccuracy() const { return m_position.altitudeAccuracy; }
+    std::optional<double> heading() const { return m_position.heading; }
+    std::optional<double> speed() const { return m_position.speed; }
+    std::optional<double> floorLevel() const { return m_position.floorLevel; }
     
 private:
     explicit GeolocationCoordinates(GeolocationPositionData&&);

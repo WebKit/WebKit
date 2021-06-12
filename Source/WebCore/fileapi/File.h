@@ -27,7 +27,6 @@
 
 #include "Blob.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +37,7 @@ class File final : public Blob {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(File, WEBCORE_EXPORT);
 public:
     struct PropertyBag : BlobPropertyBag {
-        Optional<int64_t> lastModified;
+        std::optional<int64_t> lastModified;
     };
 
     // Create a file with an optional name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
@@ -52,7 +51,7 @@ public:
         return file;
     }
 
-    static Ref<File> deserialize(ScriptExecutionContext* context, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified = WTF::nullopt)
+    static Ref<File> deserialize(ScriptExecutionContext* context, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified = std::nullopt)
     {
         auto file = adoptRef(*new File(deserializationContructor, context, path, srcURL, type, name, lastModified));
         file->suspendIfNeeded();
@@ -82,7 +81,7 @@ public:
     void setRelativePath(const String& relativePath) { m_relativePath = relativePath; }
     const String& name() const { return m_name; }
     WEBCORE_EXPORT int64_t lastModified() const; // Number of milliseconds since Epoch.
-    const Optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
+    const std::optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
 
     static String contentTypeForFile(const String& path);
 
@@ -99,7 +98,7 @@ private:
     File(ScriptExecutionContext*, const Blob&, const String& name);
     File(ScriptExecutionContext*, const File&, const String& name);
 
-    File(DeserializationContructor, ScriptExecutionContext*, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified);
+    File(DeserializationContructor, ScriptExecutionContext*, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified);
 
     static void computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
 #if ENABLE(FILE_REPLACEMENT)
@@ -113,8 +112,8 @@ private:
     String m_relativePath;
     String m_name;
 
-    Optional<int64_t> m_lastModifiedDateOverride;
-    mutable Optional<bool> m_isDirectory;
+    std::optional<int64_t> m_lastModifiedDateOverride;
+    mutable std::optional<bool> m_isDirectory;
 };
 
 } // namespace WebCore

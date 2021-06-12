@@ -43,7 +43,6 @@
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
 #include "DFGJITCode.h"
-#include "DFGWorklist.h"
 #include "EvalCodeBlock.h"
 #include "FullCodeOrigin.h"
 #include "FunctionCodeBlock.h"
@@ -55,6 +54,7 @@
 #include "IsoCellSetInlines.h"
 #include "JIT.h"
 #include "JITMathIC.h"
+#include "JITWorklist.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSLexicalEnvironment.h"
@@ -404,7 +404,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         if (shouldUpdateFunctionHasExecutedCache)
             vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        m_functionDecls[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), WTF::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
+        m_functionDecls[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), std::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     }
 
     m_functionExprs = FixedVector<WriteBarrier<FunctionExecutable>>(unlinkedCodeBlock->numberOfFunctionExprs());
@@ -412,7 +412,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         if (shouldUpdateFunctionHasExecutedCache)
             vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), WTF::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
+        m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), std::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     }
 
     if (unlinkedCodeBlock->numberOfExceptionHandlers()) {
@@ -984,14 +984,6 @@ void CodeBlock::visitChildren(Visitor& visitor)
         extraMemory += m_metadata->sizeInBytes();
     if (m_jitCode && !m_jitCode->isShared())
         extraMemory += m_jitCode->size();
-#if ENABLE(JIT)
-    if (m_jitData)
-        extraMemory += m_jitData->size(locker);
-#endif
-    extraMemory += m_argumentValueProfiles.size() * sizeof(ValueProfile);
-    extraMemory += m_functionDecls.size() * sizeof(decltype(*m_functionDecls.data()));
-    extraMemory += m_functionExprs.size() * sizeof(decltype(*m_functionExprs.data()));
-
     visitor.reportExtraMemoryVisited(extraMemory);
 
     stronglyVisitStrongReferences(locker, visitor);
@@ -1028,28 +1020,6 @@ bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker& locker, Visitor& v
 
 template bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker&, AbstractSlotVisitor&);
 template bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker&, SlotVisitor&);
-
-#if ENABLE(JIT)
-size_t CodeBlock::JITData::size(const ConcurrentJSLocker&) const
-{
-    size_t size = sizeof(JITData);
-    size += m_stubInfos.estimatedAllocationSizeInBytes();
-    size += m_addICs.estimatedAllocationSizeInBytes();
-    size += m_mulICs.estimatedAllocationSizeInBytes();
-    size += m_negICs.estimatedAllocationSizeInBytes();
-    size += m_subICs.estimatedAllocationSizeInBytes();
-    size += m_byValInfos.estimatedAllocationSizeInBytes();
-    size += m_callLinkInfos.estimatedAllocationSizeInBytes();
-    size += m_switchJumpTables.size() * sizeof(decltype(*m_switchJumpTables.data()));
-    size += m_stringSwitchJumpTables.size() * sizeof(decltype(*m_stringSwitchJumpTables.data()));
-    // FIXME: account for m_calleeSaveRegisters but it's not a big deal since it's a fixed size and small.
-    if (m_pcToCodeOriginMap)
-        size += m_pcToCodeOriginMap->memorySize();
-    if (m_jitCodeMap)
-        size += m_jitCodeMap.memorySize();
-    return size;
-}
-#endif
 
 bool CodeBlock::shouldJettisonDueToWeakReference(VM& vm)
 {
@@ -2088,7 +2058,7 @@ void CodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, int
     line += ownerExecutable()->firstLine();
 }
 
-bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, Optional<unsigned> column)
+bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned> column)
 {
     const InstructionStream& instructionStream = instructions();
     for (const auto& it : instructionStream) {
@@ -2628,9 +2598,8 @@ int32_t CodeBlock::adjustedCounterValue(int32_t desiredThreshold)
 bool CodeBlock::checkIfOptimizationThresholdReached()
 {
 #if ENABLE(DFG_JIT)
-    if (DFG::Worklist* worklist = DFG::existingGlobalDFGWorklistOrNull()) {
-        if (worklist->compilationState(DFG::CompilationKey(this, DFG::DFGMode))
-            == DFG::Worklist::Compiled) {
+    if (JITWorklist* worklist = JITWorklist::existingGlobalWorklistOrNull()) {
+        if (worklist->compilationState(JITCompilationKey(this, JITCompilationMode::DFG)) == JITWorklist::Compiled) {
             optimizeNextInvocation();
             return true;
         }
@@ -3476,33 +3445,33 @@ void CodeBlock::setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&& map)
     ensureJITData(locker).m_pcToCodeOriginMap = WTFMove(map);
 }
 
-Optional<CodeOrigin> CodeBlock::findPC(void* pc)
+std::optional<CodeOrigin> CodeBlock::findPC(void* pc)
 {
     {
         ConcurrentJSLocker locker(m_lock);
         if (auto* jitData = m_jitData.get()) {
             if (jitData->m_pcToCodeOriginMap) {
-                if (Optional<CodeOrigin> codeOrigin = jitData->m_pcToCodeOriginMap->findPC(pc))
+                if (std::optional<CodeOrigin> codeOrigin = jitData->m_pcToCodeOriginMap->findPC(pc))
                     return codeOrigin;
             }
 
             for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
                 if (stubInfo->containsPC(pc))
-                    return Optional<CodeOrigin>(stubInfo->codeOrigin);
+                    return std::optional<CodeOrigin>(stubInfo->codeOrigin);
             }
         }
     }
 
-    if (Optional<CodeOrigin> codeOrigin = m_jitCode->findPC(this, pc))
+    if (std::optional<CodeOrigin> codeOrigin = m_jitCode->findPC(this, pc))
         return codeOrigin;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif // ENABLE(JIT)
 
-Optional<BytecodeIndex> CodeBlock::bytecodeIndexFromCallSiteIndex(CallSiteIndex callSiteIndex)
+std::optional<BytecodeIndex> CodeBlock::bytecodeIndexFromCallSiteIndex(CallSiteIndex callSiteIndex)
 {
-    Optional<BytecodeIndex> bytecodeIndex;
+    std::optional<BytecodeIndex> bytecodeIndex;
     JITType jitType = this->jitType();
     if (jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT)
         bytecodeIndex = callSiteIndex.bytecodeIndex();

@@ -43,7 +43,7 @@ class ImageQualityController {
 public:
     explicit ImageQualityController(const RenderView&);
 
-    static Optional<InterpolationQuality> interpolationQualityFromStyle(const RenderStyle&);
+    static std::optional<InterpolationQuality> interpolationQualityFromStyle(const RenderStyle&);
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
 
     void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }

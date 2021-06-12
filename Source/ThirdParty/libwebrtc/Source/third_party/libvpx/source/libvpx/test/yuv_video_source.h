@@ -84,6 +84,7 @@ class YUVVideoSource : public VideoSource {
       height_ = height;
       format_ = format;
       switch (format) {
+        case VPX_IMG_FMT_NV12:
         case VPX_IMG_FMT_I420: raw_size_ = width * height * 3 / 2; break;
         case VPX_IMG_FMT_I422: raw_size_ = width * height * 2; break;
         case VPX_IMG_FMT_I440: raw_size_ = width * height * 2; break;

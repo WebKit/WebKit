@@ -102,6 +102,10 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+#import "AccessibilitySupportSPI.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -112,7 +116,6 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import "AccessibilitySupportSPI.h"
 #import "RunningBoardServicesSPI.h"
 #import "UserInterfaceIdiom.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -132,6 +135,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "AppKitSPI.h"
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WebSwitchingGPUClient.h"
 #import <WebCore/GraphicsContextGLOpenGLManager.h>
@@ -169,7 +173,7 @@ SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CFPREFS_DIRECT_MODE)
 SOFT_LINK_LIBRARY(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
 #endif
@@ -703,7 +707,7 @@ RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection())
         return nullptr;
-    Optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
+    std::optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
     if (!auditToken)
         return nullptr;
     return adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
@@ -810,7 +814,7 @@ void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<S
 void WebProcess::updateCPULimit()
 {
 #if PLATFORM(MAC)
-    Optional<double> cpuLimit;
+    std::optional<double> cpuLimit;
     if (m_processType == ProcessType::ServiceWorker)
         cpuLimit = serviceWorkerCPULimit;
     else {
@@ -818,7 +822,7 @@ void WebProcess::updateCPULimit()
         for (auto& page : m_pageMap.values()) {
             auto pageCPULimit = page->cpuLimit();
             if (!pageCPULimit) {
-                cpuLimit = WTF::nullopt;
+                cpuLimit = std::nullopt;
                 break;
             }
             if (!cpuLimit || pageCPULimit > cpuLimit.value())
@@ -839,7 +843,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
 #if PLATFORM(MAC)
     if (!m_cpuLimit) {
         if (m_cpuMonitor)
-            m_cpuMonitor->setCPULimit(WTF::nullopt);
+            m_cpuMonitor->setCPULimit(std::nullopt);
         return;
     }
 
@@ -854,7 +858,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
     } else if (reason == CPUMonitorUpdateReason::VisibilityHasChanged) {
         // If the visibility has changed, stop the CPU monitor before setting its limit. This is needed because the CPU usage can vary wildly based on visibility and we would
         // not want to report that a process has exceeded its background CPU limit even though most of the CPU time was used while the process was visible.
-        m_cpuMonitor->setCPULimit(WTF::nullopt);
+        m_cpuMonitor->setCPULimit(std::nullopt);
     }
     m_cpuMonitor->setCPULimit(m_cpuLimit);
 #else
@@ -1067,9 +1071,9 @@ static const WTF::String& userHighlightColorPreferenceKey()
     return userHighlightColorPreferenceKey;
 }
 
-static const WTF::String& reduceMotionPreferenceKey()
+static const WTF::String& invertColorsPreferenceKey()
 {
-    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("reduceMotion"));
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("whiteOnBlack"));
     return key;
 }
 #endif
@@ -1096,9 +1100,6 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
         auto notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
         [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
-    } else if (key == reduceMotionPreferenceKey()) {
-        auto notificationCenter = CFNotificationCenterGetDistributedCenter();
-        CFNotificationCenterPostNotification(notificationCenter, kAXInterfaceReduceMotionStatusDidChangeNotification, nullptr, nullptr, true);
     }
 #endif
     if (key == captionProfilePreferenceKey()) {
@@ -1128,17 +1129,21 @@ static void setPreferenceValue(const String& domain, const String& key, id value
         WTF::languageDidChange();
     }
 
-#if PLATFORM(IOS_FAMILY)
     if (domain == String(kAXSAccessibilityPreferenceDomain)) {
         if (_AXSUpdateWebAccessibilitySettingsPtr())
             _AXSUpdateWebAccessibilitySettingsPtr()();
     }
+    
+#if USE(APPKIT)
+    auto cfKey = key.createCFString();
+    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey())
+        [NSWorkspace _invalidateAccessibilityDisplayValues];
 #endif
 }
 
-void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
+void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
-    if (!encodedValue.hasValue()) {
+    if (!encodedValue) {
         setPreferenceValue(domain, key, nil);
         dispatchSimulatedNotificationsForPreferenceChange(key);
         return;

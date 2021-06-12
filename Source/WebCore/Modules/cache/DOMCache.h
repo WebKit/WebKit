@@ -47,13 +47,13 @@ public:
     void match(RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
 
     using MatchAllPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<FetchResponse>>>;
-    void matchAll(Optional<RequestInfo>&&, CacheQueryOptions&&, MatchAllPromise&&);
+    void matchAll(std::optional<RequestInfo>&&, CacheQueryOptions&&, MatchAllPromise&&);
     void add(RequestInfo&&, DOMPromiseDeferred<void>&&);
 
     void addAll(Vector<RequestInfo>&&, DOMPromiseDeferred<void>&&);
     void put(RequestInfo&&, Ref<FetchResponse>&&, DOMPromiseDeferred<void>&&);
     void remove(RequestInfo&&, CacheQueryOptions&&, DOMPromiseDeferred<IDLBoolean>&&);
-    void keys(Optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
+    void keys(std::optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
 
     const String& name() const { return m_name; }
     uint64_t identifier() const { return m_identifier; }

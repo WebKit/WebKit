@@ -128,7 +128,6 @@ private:
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <tuple>
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -222,7 +221,6 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -233,7 +231,7 @@ class DatabaseFrontendDispatcher {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     DatabaseFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
-    void didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>>&& opt_columnNames, const String& opt_notes, Optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, RefPtr<Protocol::Database::Error>&& opt_sqlError, const String& opt_screenColor, RefPtr<Protocol::Database::ColorList>&& opt_alternateColors, const String& opt_printColor);
+    void didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>>&& opt_columnNames, const String& opt_notes, std::optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, RefPtr<Protocol::Database::Error>&& opt_sqlError, const String& opt_screenColor, RefPtr<Protocol::Database::ColorList>&& opt_alternateColors, const String& opt_printColor);
     void didExecuteNoOptionalParameters(Ref<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, Ref<JSON::Object>&& values, Ref<JSON::Value>&& payload, Ref<Protocol::Database::Error>&& sqlError, const String& screenColor, Ref<Protocol::Database::ColorList>&& alternateColors, const String& printColor);
 private:
     FrontendRouter& m_frontendRouter;
@@ -279,7 +277,7 @@ private:
 
 namespace Inspector {
 
-void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>>&& opt_columnNames, const String& opt_notes, Optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, RefPtr<Protocol::Database::Error>&& opt_sqlError, const String& opt_screenColor, RefPtr<Protocol::Database::ColorList>&& opt_alternateColors, const String& opt_printColor)
+void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>>&& opt_columnNames, const String& opt_notes, std::optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, RefPtr<Protocol::Database::Error>&& opt_sqlError, const String& opt_screenColor, RefPtr<Protocol::Database::ColorList>&& opt_alternateColors, const String& opt_printColor)
 {
     auto protocol_jsonMessage = JSON::Object::create();
     protocol_jsonMessage->setString("method"_s, "Database.didExecuteOptionalParameters"_s);
@@ -364,7 +362,6 @@ void DatabaseFrontendDispatcher::didExecuteNoOptionalParameters(Ref<JSON::ArrayO
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -972,7 +969,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-Optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 
 

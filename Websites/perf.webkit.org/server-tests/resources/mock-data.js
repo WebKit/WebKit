@@ -64,12 +64,14 @@ MockData = {
             db.insert('test_runs', {id: 801, config: 301, build: 901, mean_cache: 100}),
         ]);
     },
-    addMockData: function (db, statusList, needsNotification=true, urlList=[])
+    addMockData: function (db, statusList, needsNotification = true, urlList = null, commitSetList = null, repetitionType = 'alternating', mayNeedMoreRequests = false)
     {
         if (!statusList)
             statusList = ['pending', 'pending', 'pending', 'pending'];
         if (!urlList)
             urlList = [null, null, null, null];
+        if (!commitSetList)
+            commitSetList = [401, 402, 401, 402];
         return Promise.all([
             this.addMockConfiguration(db),
             db.insert('commit_sets', {id: 401}),
@@ -81,14 +83,15 @@ MockData = {
             db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task',
                 start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
                 end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
-            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', initial_repetition_count: 4, needs_notification: needsNotification}),
-            db.insert('build_requests', {id: 700, status: statusList[0], url: urlList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: 401}),
-            db.insert('build_requests', {id: 701, status: statusList[1], url: urlList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: 402}),
-            db.insert('build_requests', {id: 702, status: statusList[2], url: urlList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: 401}),
-            db.insert('build_requests', {id: 703, status: statusList[3], url: urlList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 3, commit_set: 402}),
+            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', initial_repetition_count: 2,
+                needs_notification: needsNotification, repetition_type: repetitionType, may_need_more_requests: mayNeedMoreRequests}),
+            db.insert('build_requests', {id: 700, status: statusList[0], url: urlList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: commitSetList[0]}),
+            db.insert('build_requests', {id: 701, status: statusList[1], url: urlList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: commitSetList[1]}),
+            db.insert('build_requests', {id: 702, status: statusList[2], url: urlList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: commitSetList[2]}),
+            db.insert('build_requests', {id: 703, status: statusList[3], url: urlList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 3, commit_set: commitSetList[3]}),
         ]);
     },
-    addMockBuildRequestsWithRoots(db, statusList, needsNotification=true, addMockConfiguration=true)
+    addMockBuildRequestsWithRoots(db, statusList, needsNotification = true, addMockConfiguration = true)
     {
         const setupSteps = addMockConfiguration ? [this.addMockConfiguration(db)] : [];
         if (!statusList)
@@ -201,10 +204,10 @@ MockData = {
         const repository_group = 2001;
         return Promise.all([
             db.insert('analysis_test_groups', {id: 601, task: 500, name: 'another test group', author, initial_repetition_count: 4}),
-            db.insert('build_requests', {id: 713, status: statusList[3], triggerable, repository_group, platform, test, group: 601, order: 3, commit_set: 402}),
             db.insert('build_requests', {id: 710, status: statusList[0], triggerable, repository_group, platform, test, group: 601, order: 0, commit_set: 401}),
-            db.insert('build_requests', {id: 712, status: statusList[2], triggerable, repository_group, platform, test, group: 601, order: 2, commit_set: 401}),
             db.insert('build_requests', {id: 711, status: statusList[1], triggerable, repository_group, platform, test, group: 601, order: 1, commit_set: 402}),
+            db.insert('build_requests', {id: 712, status: statusList[2], triggerable, repository_group, platform, test, group: 601, order: 2, commit_set: 401}),
+            db.insert('build_requests', {id: 713, status: statusList[3], triggerable, repository_group, platform, test, group: 601, order: 3, commit_set: 402}),
         ]);
     },
     addTestGroupWithOwnedCommits(db, statusList)
@@ -484,7 +487,6 @@ MockData = {
                 "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
                 "wk": [options.webkitRevision || '191622', "Unknown"],
                 "os": [options.osxRevision || '10.11 15A284', "Unknown"],
-                "workername": [options.workerName || "bot202", "Worker (deprecated)"],
                 "workername": [options.workerName || "bot202", "Worker"]
             }
         };
@@ -519,7 +521,6 @@ MockData = {
                 "project": ['', "Unknown"],
                 "repository": ['', "Unknown"],
                 "revision": ['', "Unknown"],
-                "workername": [options.workerName || "bot202", "Worker (deprecated)"],
                 "workername": [options.workerName || "bot202", "Worker"]
             }
         };   

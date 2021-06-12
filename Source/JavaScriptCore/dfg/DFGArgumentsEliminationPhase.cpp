@@ -404,7 +404,7 @@ private:
                 case FilterGetByStatus:
                 case FilterPutByIdStatus:
                 case FilterCallLinkStatus:
-                case FilterInByIdStatus:
+                case FilterInByStatus:
                 case FilterDeleteByStatus:
                 case FilterCheckPrivateBrandStatus:
                 case FilterSetPrivateBrandStatus:
@@ -1267,7 +1267,7 @@ private:
                 case FilterGetByStatus:
                 case FilterPutByIdStatus:
                 case FilterCallLinkStatus:
-                case FilterInByIdStatus:
+                case FilterInByStatus:
                 case FilterDeleteByStatus:
                 case FilterCheckPrivateBrandStatus:
                 case FilterSetPrivateBrandStatus: {

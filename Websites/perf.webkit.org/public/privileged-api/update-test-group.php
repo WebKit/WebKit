@@ -20,6 +20,9 @@ function main() {
         $values['may_need_more_requests'] = FALSE;
     }
 
+    if (array_key_exists('cancel', $data))
+        $values['may_need_more_requests'] = FALSE;
+
     if (array_key_exists('mayNeedMoreRequests', $data))
          $values['may_need_more_requests'] = $data['mayNeedMoreRequests'];
 
@@ -44,7 +47,7 @@ function main() {
         exit_with_error('FailedToUpdateTestGroup', array('id' => $test_group_id, 'values' => $values));
     }
 
-    if (array_get($data, 'hidden')) {
+    if (array_get($data, 'hidden') || array_get($data, 'cancel')) {
         $db->query_and_get_affected_rows('UPDATE build_requests SET request_status = $1
             WHERE request_group = $2 AND request_status = $3', array('canceled', $test_group_id, 'pending'));
     }

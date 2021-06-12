@@ -37,7 +37,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineTextBox);
 
 InlineTextBox::InlineTextBox(String content, bool canUseSimplifiedContentMeasuring, RenderStyle&& style)
-    : Box({ }, WTFMove(style), Box::InlineTextBoxFlag)
+    : Box({ }, WTFMove(style), Box::LegacyInlineTextBoxFlag)
     , m_content(content)
     , m_canUseSimplifiedContentMeasuring(canUseSimplifiedContentMeasuring)
 {

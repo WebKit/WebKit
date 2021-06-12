@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextWin.h"
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {
@@ -59,7 +60,7 @@ GDIObject<HBITMAP> imageFromRect(Frame* frame, IntRect& ir)
     HGDIOBJ hbmpOld = ::SelectObject(bmpDC.get(), hBmp.get());
 
     {
-        GraphicsContext gc(bmpDC.get());
+        GraphicsContextWin gc(bmpDC.get());
         view->paint(&gc, ir);
     }
 

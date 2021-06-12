@@ -92,12 +92,12 @@ StepRange TimeInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, timeStepDescription);
 }
 
-Optional<DateComponents> TimeInputType::parseToDateComponents(const StringView& source) const
+std::optional<DateComponents> TimeInputType::parseToDateComponents(const StringView& source) const
 {
     return DateComponents::fromParsingTime(source);
 }
 
-Optional<DateComponents> TimeInputType::setMillisecondToDateComponents(double value) const
+std::optional<DateComponents> TimeInputType::setMillisecondToDateComponents(double value) const
 {
     return DateComponents::fromMillisecondsSinceMidnight(value);
 }

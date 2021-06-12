@@ -39,12 +39,12 @@ enum class HighlightRequestOriginatedInApp : bool { No, Yes };
 
 struct AppHighlight {
     Ref<WebCore::SharedBuffer> highlight;
-    Optional<String> text;
+    std::optional<String> text;
     CreateNewGroupForHighlight isNewGroup;
     HighlightRequestOriginatedInApp requestOriginatedInApp;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<AppHighlight> decode(Decoder&);
+    template<class Decoder> static std::optional<AppHighlight> decode(Decoder&);
 };
 
 
@@ -52,7 +52,7 @@ template<class Encoder>
 void AppHighlight::encode(Encoder& encoder) const
 {
     encoder << static_cast<size_t>(highlight->size());
-    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(highlight->dataAsUInt8Ptr()), highlight->size(), 1);
+    encoder.encodeFixedLengthData(highlight->data(), highlight->size(), 1);
 
     encoder << text;
 
@@ -62,34 +62,34 @@ void AppHighlight::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
+std::optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
 {
 
-    Optional<size_t> length;
+    std::optional<size_t> length;
     decoder >> length;
     if (!length)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(length.value()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<uint8_t> highlight;
     highlight.grow(*length);
     if (!decoder.decodeFixedLengthData(highlight.data(), highlight.size(), 1))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<String>> text;
+    std::optional<std::optional<String>> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CreateNewGroupForHighlight isNewGroup;
     if (!decoder.decode(isNewGroup))
-        return WTF::nullopt;
+        return std::nullopt;
 
     HighlightRequestOriginatedInApp requestOriginatedInApp;
     if (!decoder.decode(requestOriginatedInApp))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ SharedBuffer::create(WTFMove(highlight)), WTFMove(*text), isNewGroup, requestOriginatedInApp }};
 }

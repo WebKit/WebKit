@@ -70,7 +70,7 @@ public:
     // stack. Currently, it also has the restriction that the values must be in their
     // bytecode-designated stack slots.
     void reconstruct(
-        CallFrame*, CodeBlock*, CodeOrigin, unsigned streamIndex, Operands<Optional<JSValue>>& result);
+        CallFrame*, CodeBlock*, CodeOrigin, unsigned streamIndex, Operands<std::optional<JSValue>>& result);
 
 #if ENABLE(FTL_JIT)
     // NB. All of these methods take CodeBlock* because they may want to use
@@ -98,7 +98,7 @@ public:
 
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
 
-    Optional<CodeOrigin> findPC(CodeBlock*, void* pc) final;
+    std::optional<CodeOrigin> findPC(CodeBlock*, void* pc) final;
 
     using DirectJITCode::initializeCodeRefForDFG;
     

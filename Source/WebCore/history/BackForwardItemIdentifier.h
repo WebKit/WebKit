@@ -41,7 +41,7 @@ struct BackForwardItemIdentifier {
     explicit operator bool() const { return processIdentifier && itemIdentifier; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<BackForwardItemIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<BackForwardItemIdentifier> decode(Decoder&);
 
     String string() const { return makeString(processIdentifier.toUInt64(), '-', itemIdentifier.toUInt64()); }
 
@@ -78,21 +78,21 @@ void BackForwardItemIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decoder& decoder)
+std::optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decoder& decoder)
 {
-    Optional<ProcessIdentifier> processIdentifier;
+    std::optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<ObjectIdentifier<ItemIdentifierType>> itemIdentifier;
+    std::optional<ObjectIdentifier<ItemIdentifierType>> itemIdentifier;
     decoder >> itemIdentifier;
     if (!itemIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     BackForwardItemIdentifier result = { WTFMove(*processIdentifier), WTFMove(*itemIdentifier) };
     if (!result.isValid())
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

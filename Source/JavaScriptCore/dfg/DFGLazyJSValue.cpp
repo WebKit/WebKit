@@ -249,8 +249,9 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result) const
 
     CodeBlock* codeBlock = jit.codeBlock();
     
-    jit.addLinkTask(
-        [codeBlock, label, thisValue] (LinkBuffer& linkBuffer) {
+    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+        auto patchLocation = linkBuffer.locationOf<JITCompilationPtrTag>(label);
+        linkBuffer.addMainThreadFinalizationTask([=] {
             JSValue realValue = thisValue.getValue(codeBlock->vm());
             RELEASE_ASSERT(realValue.isCell());
 
@@ -259,8 +260,9 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result) const
             if (thisValue.m_kind == NewStringImpl)
                 thisValue.u.stringImpl->deref();
 
-            linkBuffer.patch(label, realValue.asCell());
+            MacroAssembler::repatchPointer(patchLocation, realValue.asCell());
         });
+    });
 }
 
 void LazyJSValue::dumpInContext(PrintStream& out, DumpContext* context) const

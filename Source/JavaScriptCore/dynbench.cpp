@@ -69,7 +69,8 @@ NEVER_INLINE void benchmarkImpl(const char* name, unsigned iterationCount, const
 
 } // anonymous namespace
 
-int main(int argc, char** argv)
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because the function keeps holding crashLock when returning.
+int main(int argc, char** argv) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (argc >= 2) {
         if (argv[1][0] == '-') {

@@ -289,8 +289,8 @@ static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBo
         encoder << false;
 
         encoder << element.fileStart;
-        encoder << element.fileLength.valueOr(-1);
-        encoder << element.expectedFileModificationTime.valueOr(WallTime::nan()).secondsSinceEpoch().value();
+        encoder << element.fileLength.value_or(-1);
+        encoder << element.expectedFileModificationTime.value_or(WallTime::nan()).secondsSinceEpoch().value();
         break;
 
     case HTTPBody::Element::Type::Blob:
@@ -712,13 +712,13 @@ public:
 #endif
 
     template<typename T>
-    auto operator>>(Optional<T>& value) -> typename std::enable_if<std::is_enum<T>::value, HistoryEntryDataDecoder&>::type
+    auto operator>>(std::optional<T>& value) -> typename std::enable_if<std::is_enum<T>::value, HistoryEntryDataDecoder&>::type
     {
         uint32_t underlyingEnumValue;
         *this >> underlyingEnumValue;
 
         if (!isValid() || !isValidEnum(static_cast<T>(underlyingEnumValue)))
-            value = WTF::nullopt;
+            value = std::nullopt;
         else
             value = static_cast<T>(underlyingEnumValue);
 
@@ -798,7 +798,7 @@ private:
 
 static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::Element& formDataElement)
 {
-    Optional<FormDataElementType> elementType;
+    std::optional<FormDataElementType> elementType;
     decoder >> elementType;
     if (!elementType)
         return;
@@ -1077,7 +1077,7 @@ static WARN_UNUSED_RETURN bool decodeV1SessionHistory(CFDictionaryRef sessionHis
     auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
     if (!currentIndexNumber) {
         // No current index means the dictionary represents an empty session.
-        backForwardListState.currentIndex = WTF::nullopt;
+        backForwardListState.currentIndex = std::nullopt;
         backForwardListState.items = { };
         return true;
     }

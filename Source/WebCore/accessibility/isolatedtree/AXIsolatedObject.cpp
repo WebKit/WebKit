@@ -966,11 +966,11 @@ void AXIsolatedObject::updateBackingStore()
         tree->applyPendingChanges();
 }
 
-Optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
+std::optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->rangeForPlainTextRange(axRange) : WTF::nullopt;
+    return axObject ? axObject->rangeForPlainTextRange(axRange) : std::nullopt;
 }
 
 String AXIsolatedObject::stringForRange(const SimpleRange& range) const
@@ -1142,11 +1142,11 @@ String AXIsolatedObject::textUnderElement(AccessibilityTextUnderElementMode) con
     return { };
 }
 
-Optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange& range, AccessibilitySearchDirection direction) const
+std::optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange& range, AccessibilitySearchDirection direction) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->misspellingRange(range, direction) : WTF::nullopt;
+    return axObject ? axObject->misspellingRange(range, direction) : std::nullopt;
 }
 
 FloatRect AXIsolatedObject::relativeFrame() const
@@ -1438,11 +1438,11 @@ void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRang
         object->setSelectedVisiblePositionRange(visiblePositionRange);
 }
 
-Optional<SimpleRange> AXIsolatedObject::elementRange() const
+std::optional<SimpleRange> AXIsolatedObject::elementRange() const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->elementRange() : WTF::nullopt;
+    return axObject ? axObject->elementRange() : std::nullopt;
 }
 
 String AXIsolatedObject::selectedText() const
@@ -2020,10 +2020,10 @@ Element* AXIsolatedObject::actionElement() const
     return nullptr;
 }
 
-TextIteratorBehavior AXIsolatedObject::textIteratorBehaviorForTextRange() const
+TextIteratorBehaviors AXIsolatedObject::textIteratorBehaviorForTextRange() const
 {
     ASSERT_NOT_REACHED();
-    return false;
+    return { };
 }
 
 Widget* AXIsolatedObject::widget() const

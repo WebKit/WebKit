@@ -58,7 +58,7 @@ public:
 private:
     // ThreadableLoaderClient API.
     void didReceiveResponse(unsigned long, const ResourceResponse&) final;
-    void didReceiveData(const char*, int) final;
+    void didReceiveData(const uint8_t*, int) final;
     void didFinishLoading(unsigned long) final;
     void didFail(const ResourceError&) final;
 

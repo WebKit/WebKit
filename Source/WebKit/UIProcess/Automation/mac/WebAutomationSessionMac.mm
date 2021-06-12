@@ -44,7 +44,7 @@ using namespace WebCore;
 
 #pragma mark Commands for 'PLATFORM(MAC)'
 
-void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, Optional<bool>&& enableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
+void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<bool>&& enableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
@@ -633,8 +633,8 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     bool isStickyModifier = false;
     NSEventModifierFlags changedModifiers = 0;
     int keyCode = 0;
-    Optional<unichar> charCode;
-    Optional<unichar> charCodeIgnoringModifiers;
+    std::optional<unichar> charCode;
+    std::optional<unichar> charCodeIgnoringModifiers;
 
     WTF::switchOn(key,
         [&] (VirtualKey virtualKey) {

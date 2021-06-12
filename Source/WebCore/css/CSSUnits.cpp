@@ -129,6 +129,7 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_STRING: ts << "string"; break;
     case CSSUnitType::CSS_URI: ts << "uri"; break;
     case CSSUnitType::CSS_IDENT: ts << "ident"; break;
+    case CSSUnitType::CustomIdent: ts << "custom-ident"; break;
     case CSSUnitType::CSS_ATTR: ts << "attr"; break;
     case CSSUnitType::CSS_COUNTER: ts << "counter"; break;
     case CSSUnitType::CSS_RECT: ts << "rect"; break;

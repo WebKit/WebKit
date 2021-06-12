@@ -434,7 +434,7 @@ void PageClientImpl::sendMessageToWebView(UserMessage&& message, CompletionHandl
     m_view.didReceiveUserMessage(WTFMove(message), WTFMove(completionHandler));
 }
 
-void PageClientImpl::setInputMethodState(Optional<InputMethodState>&& state)
+void PageClientImpl::setInputMethodState(std::optional<InputMethodState>&& state)
 {
     m_view.setInputMethodState(WTFMove(state));
 }

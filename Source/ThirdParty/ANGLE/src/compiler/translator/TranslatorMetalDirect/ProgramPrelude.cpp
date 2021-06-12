@@ -82,7 +82,8 @@ class ProgramPrelude : public TIntermTraverser
     void visitOperator(TOperator op,
                        const TFunction *func,
                        const TType *argType0,
-                       const TType *argType1 = nullptr);
+                       const TType *argType1 = nullptr,
+                       const TType *argType2 = nullptr);
     void visitVariable(const Name &name, const TType &type);
     void visitVariable(const TVariable &var);
     void visitStructure(const TStructure &s);
@@ -123,6 +124,7 @@ class ProgramPrelude : public TIntermTraverser
     void degrees();
     void radians();
     void mod();
+    void mixBool();
     void postIncrementMatrix();
     void preIncrementMatrix();
     void postDecrementMatrix();
@@ -723,6 +725,18 @@ ANGLE_ALWAYS_INLINE X ANGLE_mod(X x, Y y)
 }
 )",
                         include_metal_math())
+
+PROGRAM_PRELUDE_DECLARE(mixBool,
+                        R"(
+                        
+template <typename T, int N>
+ANGLE_ALWAYS_INLINE metal::vec<T,N> ANGLE_mix_bool(metal::vec<T, N> a, metal::vec<T, N> b, metal::vec<bool, N> c)
+{
+    return metal::mix(a, b, static_cast<metal::vec<T,N>>(c));
+}
+)",
+                        include_metal_common())
+
 
 PROGRAM_PRELUDE_DECLARE(pack_half_2x16,
                         R"(
@@ -3385,7 +3399,8 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
 void ProgramPrelude::visitOperator(TOperator op,
                                    const TFunction *func,
                                    const TType *argType0,
-                                   const TType *argType1)
+                                   const TType *argType1,
+                                   const TType *argType2)
 {
     switch (op)
     {
@@ -3510,10 +3525,16 @@ void ProgramPrelude::visitOperator(TOperator op,
         case TOperator::EOpClamp:
         case TOperator::EOpMin:
         case TOperator::EOpMax:
-        case TOperator::EOpMix:
         case TOperator::EOpStep:
         case TOperator::EOpSmoothstep:
             include_metal_common();
+            break;
+        case TOperator::EOpMix:
+            include_metal_common();
+            if(argType2->getBasicType() == TBasicType::EbtBool)
+            {
+                mixBool();
+            }
             break;
 
         case TOperator::EOpAll:
@@ -3884,6 +3905,15 @@ bool ProgramPrelude::visitAggregate(Visit visit, TIntermAggregate *node)
             const TType &argType0 = getArgType(0);
             const TType &argType1 = getArgType(1);
             visitOperator(node->getOp(), func, &argType0, &argType1);
+        }
+        break;
+            
+        case 3:
+        {
+            const TType &argType0 = getArgType(0);
+            const TType &argType1 = getArgType(1);
+            const TType &argType2 = getArgType(2);
+            visitOperator(node->getOp(), func, &argType0, &argType1, &argType2);
         }
         break;
 

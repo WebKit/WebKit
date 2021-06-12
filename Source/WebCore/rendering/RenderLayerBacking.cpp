@@ -51,6 +51,7 @@
 #include "LayerAncestorClippingStack.h"
 #include "Logging.h"
 #include "Model.h"
+#include "NullGraphicsContext.h"
 #include "Page.h"
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
@@ -915,7 +916,7 @@ void RenderLayerBacking::updateAfterLayout(bool needsClippingUpdate, bool needsF
     RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::updateAfterLayout(): m_owningLayer is null (55699292)");
 #endif
 
-    LOG(Compositing, "RenderLayerBacking %p updateAfterLayout (layer %p)", this, &m_owningLayer);
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerBacking::updateAfterLayout (layer " << &m_owningLayer << " needsClippingUpdate " << needsClippingUpdate << " needsFullRepaint " << needsFullRepaint);
 
     // This is the main trigger for layout changing layer geometry, but we have to do the work again in updateBackingAndHierarchy()
     // when we know the final compositing hierarchy. We can't just set dirty bits from RenderLayer::setSize() because that doesn't
@@ -1195,9 +1196,9 @@ private:
         return m_fromAncestorGraphicsLayer.value();
     }
 
-    Optional<LayoutSize> m_fromAncestorGraphicsLayer;
-    Optional<LayoutSize> m_fromParentGraphicsLayer;
-    Optional<LayoutSize> m_fromPrimaryGraphicsLayer;
+    std::optional<LayoutSize> m_fromAncestorGraphicsLayer;
+    std::optional<LayoutSize> m_fromParentGraphicsLayer;
+    std::optional<LayoutSize> m_fromPrimaryGraphicsLayer;
     
     const RenderLayer& m_renderLayer;
     const RenderLayer* m_compositingAncestor;
@@ -1304,7 +1305,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         m_contentsContainmentLayer->setSize(primaryGraphicsLayerRect.size());
     }
 
-    auto computeAnimationExtent = [&] () -> Optional<FloatRect> {
+    auto computeAnimationExtent = [&] () -> std::optional<FloatRect> {
         LayoutRect animatedBounds;
         if (isRunningAcceleratedTransformAnimation && m_owningLayer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(animatedBounds, RenderLayer::IncludeCompositedDescendants))
             return FloatRect(animatedBounds);
@@ -1319,7 +1320,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
     // FIXME: Take ancestry into account and remove unnecessary structural layers.
-    m_graphicsLayer->setSeparated(style.transformStyle3D() == TransformStyle3D::Optimized3D);
+    m_graphicsLayer->setIsSeparated(style.transformStyle3D() == TransformStyle3D::Optimized3D);
 #endif
 
     // Compute renderer offset from primary graphics layer. Note that primaryGraphicsLayerRect is in parentGraphicsLayer's coordinate system which is not necessarily
@@ -1789,7 +1790,7 @@ void RenderLayerBacking::updateEventRegion()
     };
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
-        GraphicsContext nullContext(nullptr);
+        NullGraphicsContext nullContext(NullGraphicsContext::PaintInvalidationReasons::None);
         EventRegion eventRegion;
 #if ENABLE(EDITABLE_REGION)
         if (renderer().page().shouldBuildEditableRegion())
@@ -3267,7 +3268,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
 {
     const FloatSize tileSize { 32, 18 };
 
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(tileSize, DestinationColorSpace::SRGB, destContext);
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(tileSize, DestinationColorSpace::SRGB(), destContext);
     if (!imageBuffer)
         return nullptr;
 
@@ -3470,15 +3471,19 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             paintDebugOverlays(graphicsLayer, context);
 
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
-        auto* scrollableArea = m_owningLayer.scrollableArea();
-        ASSERT(scrollableArea);
+        if (m_owningLayer.hasVisibleContent()) {
+            auto* scrollableArea = m_owningLayer.scrollableArea();
+            ASSERT(scrollableArea);
 
-        paintScrollbar(scrollableArea->horizontalScrollbar(), context, dirtyRect);
+            paintScrollbar(scrollableArea->horizontalScrollbar(), context, dirtyRect);
+        }
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
-        auto* scrollableArea = m_owningLayer.scrollableArea();
-        ASSERT(scrollableArea);
+        if (m_owningLayer.hasVisibleContent()) {
+            auto* scrollableArea = m_owningLayer.scrollableArea();
+            ASSERT(scrollableArea);
 
-        paintScrollbar(scrollableArea->verticalScrollbar(), context, dirtyRect);
+            paintScrollbar(scrollableArea->verticalScrollbar(), context, dirtyRect);
+        }
     } else if (graphicsLayer == layerForScrollCorner()) {
         auto* scrollableArea = m_owningLayer.scrollableArea();
         ASSERT(scrollableArea);

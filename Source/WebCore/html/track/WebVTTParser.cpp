@@ -119,7 +119,7 @@ void WebVTTParser::parseFileHeader(String&& data)
     parse();
 }
 
-void WebVTTParser::parseBytes(const char* data, unsigned length)
+void WebVTTParser::parseBytes(const uint8_t* data, unsigned length)
 {
     m_lineReader.append(m_decoder->decode(data, length));
     parse();
@@ -225,7 +225,8 @@ void WebVTTParser::parse()
 void WebVTTParser::fileFinished()
 {
     ASSERT(m_state != Finished);
-    parseBytes("\n\n", 2);
+    constexpr uint8_t endLines[] = { '\n', '\n' };
+    parseBytes(endLines, 2);
     m_state = Finished;
 }
 

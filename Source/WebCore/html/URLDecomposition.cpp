@@ -168,16 +168,16 @@ String URLDecomposition::port() const
 }
 
 // Outer optional is whether we could parse at all. Inner optional is "no port specified".
-static Optional<Optional<uint16_t>> parsePort(StringView string, StringView protocol)
+static std::optional<std::optional<uint16_t>> parsePort(StringView string, StringView protocol)
 {
     auto digitsOnly = string.left(countASCIIDigits(string));
     if (digitsOnly.isEmpty())
-        return Optional<uint16_t> { WTF::nullopt };
+        return std::optional<uint16_t> { std::nullopt };
     auto port = parseInteger<uint16_t>(digitsOnly);
     if (!port)
-        return WTF::nullopt;
+        return std::nullopt;
     if (WTF::isDefaultPortForProtocol(*port, protocol))
-        return Optional<uint16_t> { WTF::nullopt };
+        return std::optional<uint16_t> { std::nullopt };
     return { { *port } };
 }
 

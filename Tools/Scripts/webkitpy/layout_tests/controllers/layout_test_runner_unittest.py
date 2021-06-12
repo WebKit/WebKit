@@ -130,23 +130,23 @@ class LayoutTestRunnerTests(unittest.TestCase):
         expectations.parse_all_expectations()
         runner._expectations = expectations
 
-        run_results = TestRunResults(expectations, 1)
+        runner._current_run_results = TestRunResults(expectations, 1)
         result = TestResult(test, failures=[test_failures.FailureReftestMismatchDidNotOccur()], reftest_type=['!='])
-        runner._update_summary_with_result(run_results, result)
-        self.assertEqual(1, run_results.expected)
-        self.assertEqual(0, run_results.unexpected)
+        runner.update_summary_with_result(result)
+        self.assertEqual(1, runner._current_run_results.expected)
+        self.assertEqual(0, runner._current_run_results.unexpected)
 
-        run_results = TestRunResults(expectations, 1)
+        runner._current_run_results = TestRunResults(expectations, 1)
         result = TestResult(test, failures=[], reftest_type=['=='])
-        runner._update_summary_with_result(run_results, result)
-        self.assertEqual(0, run_results.expected)
-        self.assertEqual(1, run_results.unexpected)
+        runner.update_summary_with_result(result)
+        self.assertEqual(0, runner._current_run_results.expected)
+        self.assertEqual(1, runner._current_run_results.unexpected)
 
-        run_results = TestRunResults(expectations, 1)
+        runner._current_run_results = TestRunResults(expectations, 1)
         result = TestResult(leak_test, failures=[])
-        runner._update_summary_with_result(run_results, result)
-        self.assertEqual(1, run_results.expected)
-        self.assertEqual(0, run_results.unexpected)
+        runner.update_summary_with_result(result)
+        self.assertEqual(1, runner._current_run_results.expected)
+        self.assertEqual(0, runner._current_run_results.unexpected)
 
     def test_servers_started(self):
 

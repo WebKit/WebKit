@@ -52,7 +52,7 @@ public:
     struct LineContent {
         InlineItemRange inlineItemRange;
         size_t partialTrailingContentLength { 0 };
-        Optional<InlineLayoutUnit> overflowLogicalWidth;
+        std::optional<InlineLayoutUnit> overflowLogicalWidth;
         const FloatList& floats;
         bool hasIntrusiveFloat { false };
         InlineLayoutPoint logicalTopLeft;
@@ -62,7 +62,7 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> leadingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> leadingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -72,7 +72,7 @@ public:
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth);
 
 private:
-    void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, size_t overflowLength, Optional<InlineLayoutUnit> leadingLogicalWidth, InlineLayoutUnit currentLogicalRight);
+    void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, size_t overflowLength, std::optional<InlineLayoutUnit> leadingLogicalWidth, InlineLayoutUnit currentLogicalRight);
     size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
 
     struct Result {
@@ -83,14 +83,14 @@ private:
         };
         CommittedContentCount committedCount { };
         size_t partialTrailingContentLength { 0 };
-        Optional<InlineLayoutUnit> overflowLogicalWidth { };
+        std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     struct UsedConstraints {
         InlineRect logicalRect;
         bool isConstrainedByFloat { false };
     };
     UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const;
-    Optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
+    std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
 
     void handleFloatContent(const InlineItem&);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
@@ -101,9 +101,9 @@ private:
     struct CommittedContent {
         size_t inlineItemCount { 0 };
         size_t partialTrailingContentLength { 0 };
-        Optional<InlineLayoutUnit> overflowLogicalWidth { };
+        std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    CommittedContent placeInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> overflowLogicalWidth);
+    CommittedContent placeInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowLogicalWidth);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
@@ -119,13 +119,13 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
     FloatingState* m_floatingState { nullptr };
-    Optional<HorizontalConstraints> m_rootHorizontalConstraints;
+    std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
     InlineRect m_lineLogicalRect;
     const InlineItems& m_inlineItems;
     FloatList m_floats;
-    Optional<InlineTextItem> m_partialLeadingTextItem;
+    std::optional<InlineTextItem> m_partialLeadingTextItem;
     Vector<const InlineItem*> m_wrapOpportunityList;
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_contentIsConstrainedByFloat { false };

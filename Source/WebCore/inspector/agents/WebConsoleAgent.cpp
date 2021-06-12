@@ -68,7 +68,7 @@ void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
 void WebConsoleAgent::didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse& response)
 {
     if (response.httpStatusCode() >= 400) {
-        String message = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", ScriptArguments::truncateStringForConsoleMessage(response.httpStatusText()), ')');
+        auto message = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", ScriptArguments::truncateStringForConsoleMessage(response.httpStatusText()), ')');
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, response.url().string(), 0, 0, nullptr, requestIdentifier));
     }
 }
@@ -79,14 +79,8 @@ void WebConsoleAgent::didFailLoading(unsigned long requestIdentifier, const Reso
     if (error.isCancellation())
         return;
 
-    StringBuilder message;
-    message.appendLiteral("Failed to load resource");
-    if (!error.localizedDescription().isEmpty()) {
-        message.appendLiteral(": ");
-        message.append(error.localizedDescription());
-    }
-
-    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message.toString(), error.failingURL().string(), 0, 0, nullptr, requestIdentifier));
+    auto message = makeString("Failed to load resource", error.localizedDescription().isEmpty() ? "" : ": ", error.localizedDescription());
+    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, error.failingURL().string(), 0, 0, nullptr, requestIdentifier));
 }
 
 } // namespace WebCore

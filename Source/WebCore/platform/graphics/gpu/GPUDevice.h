@@ -33,7 +33,6 @@
 #include "GPUQueue.h"
 #include "GPUSwapChain.h"
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -69,7 +68,7 @@ enum class GPUBufferMappedOption;
 
 class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice> {
 public:
-    static RefPtr<GPUDevice> tryCreate(const Optional<GPURequestAdapterOptions>&);
+    static RefPtr<GPUDevice> tryCreate(const std::optional<GPURequestAdapterOptions>&);
     static void prewarm();
 
     RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, GPUBufferMappedOption, GPUErrorScopes&);

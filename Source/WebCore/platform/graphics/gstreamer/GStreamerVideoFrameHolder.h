@@ -30,7 +30,7 @@ namespace WebCore {
 
 class GstVideoFrameHolder : public TextureMapperPlatformLayerBuffer::UnmanagedBufferDataHolder {
 public:
-    explicit GstVideoFrameHolder(GstSample*, Optional<GstVideoDecoderPlatform>, TextureMapperGL::Flags, bool gstGLEnabled);
+    explicit GstVideoFrameHolder(GstSample*, std::optional<GstVideoDecoderPlatform>, TextureMapperGL::Flags, bool gstGLEnabled);
     virtual ~GstVideoFrameHolder();
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
@@ -63,7 +63,7 @@ private:
     GstVideoFrame m_videoFrame { };
     IntSize m_size;
     bool m_hasAlphaChannel;
-    Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
+    std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     TextureMapperGL::Flags m_flags { };
     GLuint m_textureID { 0 };
 #if USE(GSTREAMER_GL)

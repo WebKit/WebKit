@@ -44,7 +44,6 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "InlineElementBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Page.h"
@@ -267,7 +266,7 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(ShouldComputePreferred shoul
     return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
 }
 
-LayoutUnit RenderImage::computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth) const
+LayoutUnit RenderImage::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
 {
     if (shouldCollapseToEmpty())
         return { };
@@ -692,7 +691,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     return drawResult;
 }
 
-bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const
+bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, LegacyInlineFlowBox*) const
 {
     if (!RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(paintOffset, bleedAvoidance))
         return false;
@@ -842,12 +841,6 @@ void RenderImage::layoutShadowContent(const LayoutSize& oldSize)
     clearChildNeedsLayout();
 }
 
-bool RenderImage::canMapWidthHeightToAspectRatio() const
-{
-    // The aspectRatioOfImgFromWidthAndHeight only applies to <img>.
-    return is<HTMLImageElement>(element()) && !isShowingAltText();
-}
-
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment(*this));
@@ -865,11 +858,11 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, dou
 
     // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
     if (shouldDisplayBrokenImageIcon()) {
-        if (!style().hasAspectRatio()) {
-            intrinsicRatio = intrinsicAspectRatioFromWidthHeight().valueOr(1);
-            return;
-        }
-        intrinsicRatio = 1;
+        if (settings().aspectRatioOfImgFromWidthAndHeightEnabled()
+            && style().aspectRatioType() == AspectRatioType::AutoAndRatio && !isShowingAltText())
+            intrinsicRatio = style().logicalAspectRatio();
+        else
+            intrinsicRatio = 1;
         return;
     }
 }

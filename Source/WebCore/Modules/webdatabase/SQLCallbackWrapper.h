@@ -29,7 +29,7 @@
 #pragma once
 
 #include "ScriptExecutionContext.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -94,7 +94,7 @@ public:
     bool hasCallback() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { return m_callback; }
 
 private:
-    CheckedLock m_lock;
+    Lock m_lock;
     RefPtr<T> m_callback WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext WTF_GUARDED_BY_LOCK(m_lock);
 };

@@ -22,6 +22,7 @@ my $dotinlocallabels=($flavour=~/linux/)?1:0;
 ################################################################
 my $arch = sub {
     if ($flavour =~ /linux/)	{ ".arch\t".join(',',@_); }
+    elsif ($flavour =~ /win64/) { ".arch\t".join(',',@_); }
     else			{ ""; }
 };
 my $fpu = sub {
@@ -30,6 +31,7 @@ my $fpu = sub {
 };
 my $hidden = sub {
     if ($flavour =~ /ios/)	{ ".private_extern\t".join(',',@_); }
+    elsif ($flavour =~ /win64/) { ""; }
     else			{ ".hidden\t".join(',',@_); }
 };
 my $comm = sub {
@@ -80,6 +82,15 @@ my $type = sub {
 					"#endif";
 				  }
 			        }
+    elsif ($flavour =~ /win64/) { if (join(',',@_) =~ /(\w+),%function/) {
+                # See https://sourceware.org/binutils/docs/as/Pseudo-Ops.html
+                # Per https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#coff-symbol-table,
+                # the type for functions is 0x20, or 32.
+                ".def $1\n".
+                "   .type 32\n".
+                ".endef";
+            }
+        }
     else			{ ""; }
 };
 my $size = sub {
@@ -155,7 +166,7 @@ print <<___;
 ___
 
 print "#if defined(__arm__)\n" if ($flavour eq "linux32");
-print "#if defined(__aarch64__)\n" if ($flavour eq "linux64");
+print "#if defined(__aarch64__)\n" if ($flavour eq "linux64" || $flavour eq "win64");
 
 print "#if defined(BORINGSSL_PREFIX)\n";
 print "#include <boringssl_prefix_symbols_asm.h>\n";
@@ -228,7 +239,7 @@ while(my $line=<>) {
     print "\n";
 }
 
-print "#endif\n" if ($flavour eq "linux32" || $flavour eq "linux64");
+print "#endif\n" if ($flavour eq "linux32" || $flavour eq "linux64" || $flavour eq "win64");
 print "#endif  // !OPENSSL_NO_ASM\n";
 
 # See https://www.airs.com/blog/archives/518.

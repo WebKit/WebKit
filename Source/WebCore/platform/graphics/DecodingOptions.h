@@ -26,8 +26,8 @@
 #pragma once
 
 #include "IntSize.h"
+#include <optional>
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -45,7 +45,7 @@ public:
     {
     }
 
-    DecodingOptions(const Optional<IntSize>& sizeForDrawing)
+    DecodingOptions(const std::optional<IntSize>& sizeForDrawing)
         : m_decodingModeOrSize(sizeForDrawing)
     {
     }
@@ -108,10 +108,10 @@ public:
         return hasSize() && sizeForDrawing();
     }
 
-    Optional<IntSize> sizeForDrawing() const
+    std::optional<IntSize> sizeForDrawing() const
     {
         ASSERT(hasSize());
-        return WTF::get<Optional<IntSize>>(m_decodingModeOrSize);
+        return WTF::get<std::optional<IntSize>>(m_decodingModeOrSize);
     }
 
     static int maxDimension(const IntSize& size)
@@ -133,15 +133,15 @@ private:
 
     bool hasSize() const
     {
-        return has<Optional<IntSize>>();
+        return has<std::optional<IntSize>>();
     }
 
     // Four states of the decoding:
     // - Synchronous: DecodingMode::Synchronous
     // - Asynchronous + anySize: DecodingMode::Asynchronous
-    // - Asynchronous + intrinsicSize: an empty Optional<IntSize>>
-    // - Asynchronous + sizeForDrawing: a none empty Optional<IntSize>>
-    using DecodingModeOrSize = Variant<DecodingMode, Optional<IntSize>>;
+    // - Asynchronous + intrinsicSize: an empty std::optional<IntSize>>
+    // - Asynchronous + sizeForDrawing: a none empty std::optional<IntSize>>
+    using DecodingModeOrSize = Variant<DecodingMode, std::optional<IntSize>>;
     DecodingModeOrSize m_decodingModeOrSize;
 };
 

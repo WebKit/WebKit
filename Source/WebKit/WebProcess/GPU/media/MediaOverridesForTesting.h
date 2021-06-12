@@ -32,11 +32,11 @@
 namespace WebKit {
 
 struct MediaOverridesForTesting {
-    Optional<bool> systemHasAC;
-    Optional<bool> systemHasBattery;
+    std::optional<bool> systemHasAC;
+    std::optional<bool> systemHasBattery;
 
-    Optional<bool> vp9HardwareDecoderDisabled;
-    Optional<WebCore::ScreenDataOverrides> vp9ScreenSizeAndScale;
+    std::optional<bool> vp9HardwareDecoderDisabled;
+    std::optional<WebCore::ScreenDataOverrides> vp9ScreenSizeAndScale;
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -48,27 +48,27 @@ struct MediaOverridesForTesting {
     }
 
     template <class Decoder>
-    static Optional<MediaOverridesForTesting> decode(Decoder& decoder)
+    static std::optional<MediaOverridesForTesting> decode(Decoder& decoder)
     {
-        Optional<Optional<bool>> systemHasAC;
+        std::optional<std::optional<bool>> systemHasAC;
         decoder >> systemHasAC;
         if (!systemHasAC)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Optional<bool>> systemHasBattery;
+        std::optional<std::optional<bool>> systemHasBattery;
         decoder >> systemHasBattery;
         if (!systemHasBattery)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Optional<bool>> vp9HardwareDecoderDisabled;
+        std::optional<std::optional<bool>> vp9HardwareDecoderDisabled;
         decoder >> vp9HardwareDecoderDisabled;
         if (!vp9HardwareDecoderDisabled)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<Optional<WebCore::ScreenDataOverrides>> vp9ScreenSizeAndScale;
+        std::optional<std::optional<WebCore::ScreenDataOverrides>> vp9ScreenSizeAndScale;
         decoder >> vp9ScreenSizeAndScale;
         if (!vp9ScreenSizeAndScale)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             *systemHasAC,

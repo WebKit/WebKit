@@ -65,6 +65,9 @@ public:
     bool acceptEncoding() const { return m_acceptEncoding; }
     void setAcceptEncoding(bool acceptEncoding) { m_acceptEncoding = acceptEncoding; }
 
+    void incrementRedirectCount() { m_redirectCount++; }
+    uint16_t redirectCount() const { return m_redirectCount; }
+
     void updateSoupMessageBody(SoupMessage*, BlobRegistryImpl&) const;
     void updateSoupMessageHeaders(SoupMessageHeaders*) const;
     void updateFromSoupMessageHeaders(SoupMessageHeaders*);
@@ -89,6 +92,7 @@ private:
     void doPlatformSetAsIsolatedCopy(const ResourceRequest&) { }
 
     bool m_acceptEncoding { true };
+    uint16_t m_redirectCount { 0 };
 };
 
 template<class Encoder>
@@ -104,6 +108,7 @@ void ResourceRequest::encodeWithPlatformData(Encoder& encoder) const
         encoder << m_httpBody->flattenToString();
 
     encoder << static_cast<bool>(m_acceptEncoding);
+    encoder << m_redirectCount;
 }
 
 template<class Decoder>
@@ -126,6 +131,11 @@ bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
     if (!decoder.decode(acceptEncoding))
         return false;
     m_acceptEncoding = acceptEncoding;
+
+    uint16_t redirectCount;
+    if (!decoder.decode(redirectCount))
+        return false;
+    m_redirectCount = redirectCount;
 
     return true;
 }

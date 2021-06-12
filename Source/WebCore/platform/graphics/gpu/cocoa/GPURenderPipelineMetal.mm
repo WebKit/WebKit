@@ -43,7 +43,6 @@
 #import <wtf/HashSet.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/OptionSet.h>
-#import <wtf/Optional.h>
 #import <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
@@ -100,7 +99,7 @@ static WHLSL::VertexFormat convertVertexFormat(GPUVertexFormat vertexFormat)
     }
 }
 
-static Optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat format)
+static std::optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat format)
 {
     switch (format) {
     case GPUTextureFormat::Rgba8unorm:
@@ -108,13 +107,13 @@ static Optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat form
     case GPUTextureFormat::Bgra8unorm:
         return WHLSL::TextureFormat::BGRA8Unorm;
     case GPUTextureFormat::Depth32floatStencil8:
-        return WTF::nullopt; // FIXME: Figure out what to do with this.
+        return std::nullopt; // FIXME: Figure out what to do with this.
     case GPUTextureFormat::Bgra8unormSRGB:
         return WHLSL::TextureFormat::BGRA8UnormSrgb;
     case GPUTextureFormat::Rgba16float:
         return WHLSL::TextureFormat::RGBA16Float;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
@@ -149,7 +148,7 @@ static MTLVertexStepFunction mtlStepFunctionForGPUInputStepMode(GPUInputStepMode
 // FIXME: Move this into GPULimits when that is implemented properly.
 constexpr unsigned maxVertexAttributes = 16;
 
-static bool trySetVertexInput(const GPUVertexInputDescriptor& descriptor, MTLRenderPipelineDescriptor *mtlDescriptor, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
+static bool trySetVertexInput(const GPUVertexInputDescriptor& descriptor, MTLRenderPipelineDescriptor *mtlDescriptor, std::optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
 {
     const auto& buffers = descriptor.vertexBuffers;
 
@@ -295,7 +294,7 @@ static MTLBlendFactor mtlBlendFactorForGPUBlendFactor(GPUBlendFactor factor)
     ASSERT_NOT_REACHED();
 }
 
-static bool trySetColorStates(const Vector<GPUColorStateDescriptor>& colorStates, MTLRenderPipelineColorAttachmentDescriptorArray* array, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
+static bool trySetColorStates(const Vector<GPUColorStateDescriptor>& colorStates, MTLRenderPipelineColorAttachmentDescriptorArray* array, std::optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
 {
     // FIXME: Replace with maximum number of color attachments per render pass from GPULimits.
     if (colorStates.size() > 4) {
@@ -378,7 +377,7 @@ static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fra
     return false;
 }
 
-static bool trySetFunctions(const GPUProgrammableStageDescriptor& vertexStage, const Optional<GPUProgrammableStageDescriptor>& fragmentStage, const GPUDevice& device, MTLRenderPipelineDescriptor* mtlDescriptor, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
+static bool trySetFunctions(const GPUProgrammableStageDescriptor& vertexStage, const std::optional<GPUProgrammableStageDescriptor>& fragmentStage, const GPUDevice& device, MTLRenderPipelineDescriptor* mtlDescriptor, std::optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
 {
     RetainPtr<MTLLibrary> vertexLibrary, fragmentLibrary;
     String vertexEntryPoint, fragmentEntryPoint;
@@ -459,7 +458,7 @@ static RetainPtr<MTLRenderPipelineDescriptor> convertRenderPipelineDescriptor(co
     bool isWhlsl = vertexStage.module->whlslModule();
 
     // Set data for the Metal pipeline descriptor (and WHLSL's, if needed).
-    Optional<WHLSL::RenderPipelineDescriptor> whlslDescriptor;
+    std::optional<WHLSL::RenderPipelineDescriptor> whlslDescriptor;
     if (isWhlsl)
         whlslDescriptor = WHLSL::RenderPipelineDescriptor();
 
@@ -530,7 +529,7 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::tryCreate(const GPUDevice& device, 
     return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), descriptor.primitiveTopology, descriptor.vertexInput.indexFormat, descriptor.layout, descriptor));
 }
 
-GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPUPrimitiveTopology topology, Optional<GPUIndexFormat> format, const RefPtr<GPUPipelineLayout>& layout, const GPURenderPipelineDescriptorBase& renderDescriptorBase)
+GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPUPrimitiveTopology topology, std::optional<GPUIndexFormat> format, const RefPtr<GPUPipelineLayout>& layout, const GPURenderPipelineDescriptorBase& renderDescriptorBase)
     : GPUPipeline()
     , m_depthStencilState(WTFMove(depthStencil))
     , m_platformRenderPipeline(WTFMove(pipeline))
@@ -543,7 +542,7 @@ GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthSten
 
 GPURenderPipeline::~GPURenderPipeline() = default;
 
-bool GPURenderPipeline::recompile(const GPUDevice& device, GPUProgrammableStageDescriptor&& vertexStage, Optional<GPUProgrammableStageDescriptor>&& fragmentStage)
+bool GPURenderPipeline::recompile(const GPUDevice& device, GPUProgrammableStageDescriptor&& vertexStage, std::optional<GPUProgrammableStageDescriptor>&& fragmentStage)
 {
     GPURenderPipelineDescriptor descriptor(makeRefPtr(m_layout.get()), WTFMove(vertexStage), WTFMove(fragmentStage), m_renderDescriptorBase);
     auto errorScopes = GPUErrorScopes::create([] (GPUError&&) { });

@@ -49,8 +49,8 @@ private:
     // RealtimeMediaSource
     void startProducingData() final;
     void stopProducingData() final;
-    bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate) final;
-    void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate) final;
+    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate) final;
+    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate) final;
     Ref<RealtimeMediaSource> clone() final;
     void requestToEnd(RealtimeMediaSource::Observer& callingObserver) final;
     void stopBeingObserved() final;

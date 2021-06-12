@@ -213,7 +213,7 @@ public:
         fail(URLFilterParser::AtomCharacter);
     }
 
-    void atomParenthesesSubpatternBegin(bool = true, Optional<String> = WTF::nullopt)
+    void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt)
     {
         if (hasError())
             return;

@@ -222,10 +222,10 @@ bool PluginInfoStore::isSupportedPlugin(const String& mimeType, const URL& plugi
     }) != notFound;
 }
 
-Optional<Vector<SupportedPluginIdentifier>> PluginInfoStore::supportedPluginIdentifiers()
+std::optional<Vector<SupportedPluginIdentifier>> PluginInfoStore::supportedPluginIdentifiers()
 {
     if (!m_supportedPlugins)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WTF::map(*m_supportedPlugins, [] (auto&& item) {
         return SupportedPluginIdentifier { item.matchingDomain, item.identifier };

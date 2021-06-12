@@ -30,7 +30,6 @@
 
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
-#include <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -61,12 +60,12 @@ rtc::Network RTCNetwork::value() const
     return network;
 }
 
-auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> Optional<IPAddress>
+auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> std::optional<IPAddress>
 {
     IPAddress result;
     int family;
     if (!decoder.decode(family))
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
 
@@ -75,17 +74,17 @@ auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> Optional<IPAddress>
 
     IPC::DataReference data;
     if (!decoder.decode(data))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (family == AF_INET) {
         if (data.size() != sizeof(in_addr))
-            return WTF::nullopt;
+            return std::nullopt;
         result.value = rtc::IPAddress(*reinterpret_cast<const in_addr*>(data.data()));
         return result;
     }
 
     if (data.size() != sizeof(in6_addr))
-        return WTF::nullopt;
+        return std::nullopt;
     result.value = rtc::IPAddress(*reinterpret_cast<const in6_addr*>(data.data()));
     return result;
 }
@@ -120,33 +119,33 @@ rtc::SocketAddress RTCNetwork::isolatedCopy(const rtc::SocketAddress& value)
     return rtc::SocketAddress(copy);
 }
 
-auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> Optional<SocketAddress>
+auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> std::optional<SocketAddress>
 {
     SocketAddress result;
     uint16_t port;
     if (!decoder.decode(port))
-        return WTF::nullopt;
+        return std::nullopt;
     int scopeId;
     if (!decoder.decode(scopeId))
-        return WTF::nullopt;
+        return std::nullopt;
     result.value.SetPort(port);
     result.value.SetScopeID(scopeId);
 
     IPC::DataReference hostname;
     if (!decoder.decode(hostname))
-        return WTF::nullopt;
+        return std::nullopt;
     result.value.SetIP(std::string(reinterpret_cast<const char*>(hostname.data()), hostname.size()));
 
     bool isUnresolved;
     if (!decoder.decode(isUnresolved))
-        return WTF::nullopt;
+        return std::nullopt;
     if (isUnresolved)
         return result;
 
-    Optional<IPAddress> ipAddress;
+    std::optional<IPAddress> ipAddress;
     decoder >> ipAddress;
     if (!ipAddress)
-        return WTF::nullopt;
+        return std::nullopt;
     result.value.SetResolvedIP(ipAddress->value);
     return result;
 }
@@ -167,48 +166,48 @@ void RTCNetwork::SocketAddress::encode(IPC::Encoder& encoder) const
     encoder << RTCNetwork::IPAddress(value.ipaddr());
 }
 
-Optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
+std::optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
 {
     RTCNetwork result;
     IPC::DataReference name, description;
     if (!decoder.decode(name))
-        return WTF::nullopt;
+        return std::nullopt;
     result.name = std::string(reinterpret_cast<const char*>(name.data()), name.size());
     if (!decoder.decode(description))
-        return WTF::nullopt;
+        return std::nullopt;
     result.description = std::string(reinterpret_cast<const char*>(description.data()), description.size());
-    Optional<IPAddress> prefix;
+    std::optional<IPAddress> prefix;
     decoder >> prefix;
     if (!prefix)
-        return WTF::nullopt;
+        return std::nullopt;
     result.prefix = WTFMove(*prefix);
     if (!decoder.decode(result.prefixLength))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.id))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.preference))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.active))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.ignored))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.scopeID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint64_t length;
     if (!decoder.decode(length))
-        return WTF::nullopt;
+        return std::nullopt;
     result.ips.reserve(length);
     for (size_t index = 0; index < length; ++index) {
-        Optional<IPAddress> address;
+        std::optional<IPAddress> address;
         decoder >> address;
         if (!address)
-            return WTF::nullopt;
+            return std::nullopt;
         int flags;
         if (!decoder.decode(flags))
-            return WTF::nullopt;
+            return std::nullopt;
         result.ips.push_back({ address->value, flags });
     }
     return result;

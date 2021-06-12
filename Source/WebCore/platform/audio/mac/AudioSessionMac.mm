@@ -63,7 +63,7 @@ static AudioDeviceID defaultDevice()
 }
 
 #if ENABLE(ROUTING_ARBITRATION)
-static Optional<bool> isPlayingToBluetoothOverride;
+static std::optional<bool> isPlayingToBluetoothOverride;
 
 static float defaultDeviceTransportIsBluetooth()
 {
@@ -172,11 +172,11 @@ void AudioSessionMac::audioOutputDeviceChanged()
     if (!m_playingToBluetooth || *m_playingToBluetooth == defaultDeviceTransportIsBluetooth())
         return;
 
-    m_playingToBluetooth = WTF::nullopt;
+    m_playingToBluetooth = std::nullopt;
 #endif
 }
 
-void AudioSessionMac::setIsPlayingToBluetoothOverride(Optional<bool> value)
+void AudioSessionMac::setIsPlayingToBluetoothOverride(std::optional<bool> value)
 {
 #if ENABLE(ROUTING_ARBITRATION)
     isPlayingToBluetoothOverride = value;

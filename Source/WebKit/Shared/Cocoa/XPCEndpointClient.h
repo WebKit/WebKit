@@ -26,7 +26,7 @@
 #pragma once
 
 #include "WKDeclarationSpecifiers.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
@@ -45,7 +45,7 @@ private:
     virtual void handleEvent(xpc_object_t) = 0;
     virtual void didConnect() = 0;
 
-    CheckedLock m_connectionLock;
+    Lock m_connectionLock;
     OSObjectPtr<xpc_connection_t> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
 };
 

@@ -102,8 +102,7 @@ RSA *RSA_parse_public_key(CBS *cbs) {
     return NULL;
   }
 
-  if (!BN_is_odd(ret->e) ||
-      BN_num_bits(ret->e) < 2) {
+  if (!RSA_check_key(ret)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_BAD_RSA_PARAMETERS);
     RSA_free(ret);
     return NULL;

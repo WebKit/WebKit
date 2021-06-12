@@ -65,6 +65,7 @@
 #include <WebCore/KeyboardEvent.h>
 #endif
 #include <WebCore/PluginData.h>
+#include <optional>
 #include <utility>
 #include <wtf/HashMap.h>
 #if PLATFORM(COCOA)
@@ -73,14 +74,13 @@
 #if PLATFORM(MAC)
 #include <wtf/OptionSet.h>
 #endif
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
 
-Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
+std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
 {
     switch (name) {
     case MessageName::TestWithSuperclass_LoadURL:
@@ -252,10 +252,10 @@ Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, Me
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
+std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
 {
     switch (name) {
 #if ENABLE(TEST_FEATURE)
@@ -287,10 +287,10 @@ Optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* globalObjec
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName name)
+std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName name)
 {
     switch (name) {
     case MessageName::TestWithSuperclass_LoadURL:
@@ -589,10 +589,10 @@ Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName na
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName name)
+std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName name)
 {
     switch (name) {
 #if ENABLE(TEST_FEATURE)
@@ -618,7 +618,7 @@ Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return Vector<ArgumentDescription> {
-            {"optionalReply", "WebKit::TestClassName", nullptr, true},
+            {"optionalReply", "onal<WebKit::TestClassName", nullptr, true},
         };
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
@@ -639,7 +639,7 @@ Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageNa
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebKit

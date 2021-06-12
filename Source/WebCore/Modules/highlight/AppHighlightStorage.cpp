@@ -112,25 +112,25 @@ static RefPtr<Node> findNode(const AppHighlightRangeData::NodePath& path, Docume
     return nullptr;
 }
 
-static Optional<SimpleRange> findRangeByIdentifyingStartAndEndPositions(const AppHighlightRangeData& range, Document& document)
+static std::optional<SimpleRange> findRangeByIdentifyingStartAndEndPositions(const AppHighlightRangeData& range, Document& document)
 {
     auto startContainer = findNode(range.startContainer(), document);
     if (!startContainer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto endContainer = findNode(range.endContainer(), document);
     if (!endContainer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto start = makeContainerOffsetPosition(startContainer.get(), range.startOffset());
     auto end = makeContainerOffsetPosition(endContainer.get(), range.endOffset());
     if (start.isOrphan() || end.isOrphan())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return makeSimpleRange(start, end);
 }
 
-static Optional<SimpleRange> findRangeBySearchingText(const AppHighlightRangeData& range, Document& document)
+static std::optional<SimpleRange> findRangeBySearchingText(const AppHighlightRangeData& range, Document& document)
 {
     HashSet<String> identifiersInStartPath;
     for (auto& component : range.startContainer()) {
@@ -150,17 +150,17 @@ static Optional<SimpleRange> findRangeBySearchingText(const AppHighlightRangeDat
     }
 
     if (!foundElement)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto foundElementRange = makeRangeSelectingNodeContents(*foundElement);
     auto foundText = plainText(foundElementRange);
     if (auto index = foundText.find(range.text()); index != notFound && index == foundText.reverseFind(range.text()))
         return resolveCharacterRange(foundElementRange, { index, range.text().length() });
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-static Optional<SimpleRange> findRange(const AppHighlightRangeData& range, Document& document)
+static std::optional<SimpleRange> findRange(const AppHighlightRangeData& range, Document& document)
 {
     if (auto foundRange = findRangeByIdentifyingStartAndEndPositions(range, document))
         return foundRange;
@@ -222,7 +222,7 @@ AppHighlightStorage::~AppHighlightStorage() = default;
 void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range)
 {
     auto data = createAppHighlightRangeData(range);
-    Optional<String> text;
+    std::optional<String> text;
 
     if (!data.text().isEmpty())
         text = data.text();

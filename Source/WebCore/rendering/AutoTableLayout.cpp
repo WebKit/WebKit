@@ -532,7 +532,7 @@ void AutoTableLayout::layout()
     float totalRelative = 0;
     int numFixed = 0;
     size_t numberOfNonEmptyAuto = 0;
-    Optional<float> totalAuto;
+    std::optional<float> totalAuto;
     float totalFixed = 0;
     float totalPercent = 0;
     float allocAuto = 0;
@@ -561,7 +561,7 @@ void AutoTableLayout::layout()
                 numAutoEmptyCellsOnly++;
             else {
                 ++numberOfNonEmptyAuto;
-                totalAuto = totalAuto.valueOr(0.f) + m_layoutStruct[i].effectiveMaxLogicalWidth;
+                totalAuto = totalAuto.value_or(0.f) + m_layoutStruct[i].effectiveMaxLogicalWidth;
                 allocAuto += cellLogicalWidth;
             }
             break;
@@ -626,7 +626,7 @@ void AutoTableLayout::layout()
     if (available > 0 && numberOfNonEmptyAuto) {
         ASSERT(totalAuto);
         available += allocAuto; // this gets redistributed.
-        auto equalWidthForZeroLengthColumns = Optional<float> { };
+        auto equalWidthForZeroLengthColumns = std::optional<float> { };
         if (!*totalAuto) {
             // All columns in this table are (non-empty)zero length with 'width: auto'.
             equalWidthForZeroLengthColumns = available / numberOfNonEmptyAuto;

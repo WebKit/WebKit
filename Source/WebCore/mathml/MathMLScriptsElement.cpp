@@ -80,9 +80,9 @@ const MathMLElement::Length& MathMLScriptsElement::superscriptShift()
 void MathMLScriptsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == subscriptshiftAttr)
-        m_subscriptShift = WTF::nullopt;
+        m_subscriptShift = std::nullopt;
     else if (name == superscriptshiftAttr)
-        m_superscriptShift = WTF::nullopt;
+        m_superscriptShift = std::nullopt;
 
     MathMLElement::parseAttribute(name, value);
 }

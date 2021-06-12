@@ -280,6 +280,16 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         if (properties.isSeparated)
             configureSeparatedLayer(layer);
     }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    if (properties.changedProperties & RemoteLayerTreeTransaction::SeparatedPortalChanged) {
+        // FIXME: Implement SeparatedPortalChanged.
+    }
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::DescendentOfSeparatedPortalChanged) {
+        // FIXME: Implement DescendentOfSeparatedPortalChanged.
+    }
+#endif
 #endif
 }
 

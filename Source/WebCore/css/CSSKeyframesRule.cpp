@@ -105,17 +105,17 @@ void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)
     m_keyframes.remove(index);
 }
 
-Optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
+std::optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 {
     parseDeferredRulesIfNeeded();
     auto keys = CSSParser::parseKeyframeKeyList(key);
     if (keys.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     for (auto i = m_keyframes.size(); i--; ) {
         if (m_keyframes[i]->keys() == keys)
             return i;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void StyleRuleKeyframes::shrinkToFit()
@@ -198,16 +198,9 @@ CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
 String CSSKeyframesRule::cssText() const
 {
     StringBuilder result;
-    result.appendLiteral("@-webkit-keyframes ");
-    result.append(name());
-    result.appendLiteral(" { \n");
-
-    unsigned size = length();
-    for (unsigned i = 0; i < size; ++i) {
-        result.appendLiteral("  ");
-        result.append(m_keyframesRule->keyframes()[i]->cssText());
-        result.append('\n');
-    }
+    result.append("@-webkit-keyframes ", name(), " { \n");
+    for (unsigned i = 0, size = length(); i < size; ++i)
+        result.append("  ", m_keyframesRule->keyframes()[i]->cssText(), '\n');
     result.append('}');
     return result.toString();
 }

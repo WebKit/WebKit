@@ -36,6 +36,7 @@
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCreationParameters.h"
+#import "WebPageNetworkParameters.h"
 #import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/Credential.h>
@@ -66,7 +67,7 @@
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
 #define NETWORK_SESSION_COCOA_ADDITIONS_2
 #define NETWORK_SESSION_COCOA_ADDITIONS_3
-void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(Optional<WallTime>, Optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
 #import "DeviceManagementSoftLink.h"
@@ -510,7 +511,7 @@ static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
 static void setIgnoreHSTS(RetainPtr<NSURLRequest>& request, bool shouldIgnoreHSTS)
 {
     auto mutableRequest = adoptNS([request mutableCopy]);
-    setIgnoreHSTS(mutableRequest.get(), false);
+    setIgnoreHSTS(mutableRequest.get(), shouldIgnoreHSTS);
     request = mutableRequest;
 }
 
@@ -774,31 +775,31 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 {
     LOG(NetworkSession, "%llu didFinishCollectingMetrics", task.taskIdentifier);
     if (auto* networkDataTask = [self existingTask:task]) {
-        NSURLSessionTaskTransactionMetrics *m = metrics.transactionMetrics.lastObject;
-        NSDate *fetchStartDate = m.fetchStartDate;
-        NSTimeInterval domainLookupStartInterval = m.domainLookupStartDate ? [m.domainLookupStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval domainLookupEndInterval = m.domainLookupEndDate ? [m.domainLookupEndDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval connectStartInterval = m.connectStartDate ? [m.connectStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval secureConnectionStartInterval = m.secureConnectionStartDate ? [m.secureConnectionStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval connectEndInterval = m.connectEndDate ? [m.connectEndDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval requestStartInterval = [m.requestStartDate timeIntervalSinceDate:fetchStartDate];
-        NSTimeInterval responseStartInterval = [m.responseStartDate timeIntervalSinceDate:fetchStartDate];
-        NSTimeInterval responseEndInterval = [m.responseEndDate timeIntervalSinceDate:fetchStartDate];
+        NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics = metrics.transactionMetrics;
+        NSURLSessionTaskTransactionMetrics *m = transactionMetrics.lastObject;
+
+        auto dateToMonotonicTime = [] (NSDate *date) {
+            if (auto interval = date.timeIntervalSince1970)
+                return WallTime::fromRawSeconds(interval).approximateMonotonicTime();
+            return MonotonicTime { };
+        };
 
         auto& networkLoadMetrics = networkDataTask->networkLoadMetrics();
-        networkLoadMetrics.fetchStart = Seconds(fetchStartDate.timeIntervalSince1970);
-        networkLoadMetrics.domainLookupStart = Seconds(domainLookupStartInterval);
-        networkLoadMetrics.domainLookupEnd = Seconds(domainLookupEndInterval);
-        networkLoadMetrics.connectStart = Seconds(connectStartInterval);
+        networkLoadMetrics.redirectStart = dateToMonotonicTime(transactionMetrics.firstObject.fetchStartDate);
+        networkLoadMetrics.fetchStart = dateToMonotonicTime(m.fetchStartDate);
+        networkLoadMetrics.domainLookupStart = dateToMonotonicTime(m.domainLookupStartDate);
+        networkLoadMetrics.domainLookupEnd = dateToMonotonicTime(m.domainLookupEndDate);
+        networkLoadMetrics.connectStart = dateToMonotonicTime(m.connectStartDate);
         if (m.reusedConnection && [m.response.URL.scheme isEqualToString:@"https"])
             networkLoadMetrics.secureConnectionStart = WebCore::reusedTLSConnectionSentinel;
         else
-            networkLoadMetrics.secureConnectionStart = Seconds(secureConnectionStartInterval);
-        networkLoadMetrics.connectEnd = Seconds(connectEndInterval);
-        networkLoadMetrics.requestStart = Seconds(requestStartInterval);
-        networkLoadMetrics.responseStart = Seconds(responseStartInterval);
-        networkLoadMetrics.responseEnd = Seconds(responseEndInterval);
+            networkLoadMetrics.secureConnectionStart = dateToMonotonicTime(m.secureConnectionStartDate);
+        networkLoadMetrics.connectEnd = dateToMonotonicTime(m.connectEndDate);
+        networkLoadMetrics.requestStart = dateToMonotonicTime(m.requestStartDate);
+        networkLoadMetrics.responseStart = dateToMonotonicTime(m.responseStartDate);
+        networkLoadMetrics.responseEnd = dateToMonotonicTime(m.responseEndDate);
         networkLoadMetrics.markComplete();
+        networkLoadMetrics.redirectCount = metrics.redirectCount;
         networkLoadMetrics.protocol = String(m.networkProtocolName);
 #if HAVE(CFNETWORK_METRICS_CONNECTION_PROPERTIES)
         networkLoadMetrics.cellular = m.cellular;
@@ -845,21 +846,15 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
-            uint64_t responseBodyBytesReceived = 0;
-            uint64_t responseBodyDecodedSize = 0;
 
             for (NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
                 requestHeaderBytesSent += transactionMetrics.countOfRequestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics.countOfResponseHeaderBytesReceived;
-                responseBodyBytesReceived += transactionMetrics.countOfResponseBodyBytesReceived;
-                responseBodyDecodedSize += transactionMetrics.countOfResponseBodyBytesAfterDecoding ? transactionMetrics.countOfResponseBodyBytesAfterDecoding : transactionMetrics.countOfResponseBodyBytesReceived;
 #else
                 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 requestHeaderBytesSent += transactionMetrics._requestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics._responseHeaderBytesReceived;
-                responseBodyBytesReceived += transactionMetrics._responseBodyBytesReceived;
-                responseBodyDecodedSize += transactionMetrics._responseBodyBytesDecoded ? transactionMetrics._responseBodyBytesDecoded : transactionMetrics._responseBodyBytesReceived;
                 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             }
@@ -867,9 +862,20 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
             networkLoadMetrics.requestHeaderBytesSent = requestHeaderBytesSent;
             networkLoadMetrics.requestBodyBytesSent = task.countOfBytesSent;
             networkLoadMetrics.responseHeaderBytesReceived = responseHeaderBytesReceived;
-            networkLoadMetrics.responseBodyBytesReceived = responseBodyBytesReceived;
-            networkLoadMetrics.responseBodyDecodedSize = responseBodyDecodedSize;
         }
+#if HAVE(CFNETWORK_METRICS_APIS_V4)
+        networkLoadMetrics.responseBodyBytesReceived = m.countOfResponseBodyBytesReceived;
+        networkLoadMetrics.responseBodyDecodedSize = m.countOfResponseBodyBytesAfterDecoding;
+#else
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        networkLoadMetrics.responseBodyBytesReceived = m._responseBodyBytesReceived;
+        networkLoadMetrics.responseBodyDecodedSize = m._responseBodyBytesDecoded;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+        // Sometimes the encoded body bytes received contains a few (3 or so) bytes from the header when there is no body.
+        // When this happens, trim our metrics to make more sense.
+        if (!networkLoadMetrics.responseBodyDecodedSize)
+            networkLoadMetrics.responseBodyBytesReceived = 0;
     }
 }
 
@@ -881,12 +887,12 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         ASSERT(RunLoop::isMain());
 
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
-        NSURLSessionTaskTransactionMetrics *metrics = dataTask._incompleteTaskMetrics.transactionMetrics.lastObject;
+        NSURLSessionTaskMetrics *taskMetrics = dataTask._incompleteTaskMetrics;
 #if HAVE(TLS_PROTOCOL_VERSION_T)
+        NSURLSessionTaskTransactionMetrics *metrics = taskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
-        UNUSED_PARAM(metrics);
 #else // We do not need to check _TLSNegotiatedProtocolVersion if we have metrics.negotiatedTLSProtocolVersion because it works at response time even before rdar://problem/56522601
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([dataTask respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
@@ -909,7 +915,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
 
-        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(metrics));
+        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(taskMetrics, networkDataTask->networkLoadMetrics().hasCrossOriginRedirect));
 
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier](WebCore::PolicyAction policyAction) {
 #if !LOG_DISABLED
@@ -1099,11 +1105,6 @@ const String& NetworkSessionCocoa::sourceApplicationSecondaryIdentifier() const
     return m_sourceApplicationSecondaryIdentifier;
 }
 
-const String& NetworkSessionCocoa::attributedBundleIdentifier() const
-{
-    return m_attributedBundleIdentifier;
-}
-
 #if PLATFORM(IOS_FAMILY)
 const String& NetworkSessionCocoa::dataConnectionServiceType() const
 {
@@ -1176,7 +1177,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
     , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
     , m_sourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier)
-    , m_attributedBundleIdentifier(parameters.attributedBundleIdentifier)
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
     , m_fastServerTrustEvaluationEnabled(parameters.fastServerTrustEvaluationEnabled)
@@ -1228,13 +1228,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     if (!m_sourceApplicationSecondaryIdentifier.isEmpty())
         configuration._sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
 
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
-    if (!m_attributedBundleIdentifier.isEmpty()) {
-        if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
-            configuration._attributedBundleIdentifier = m_attributedBundleIdentifier;
-    }
-#endif
-
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     if (!parameters.alternativeServiceDirectory.isEmpty()) {
         SandboxExtension::consumePermanently(parameters.alternativeServiceDirectoryExtensionHandle);
@@ -1284,7 +1277,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
         cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
 #endif
 
-    initializeStandardSessionsInSet(m_defaultSessionSet.get(), configuration);
+    initializeNSURLSessionsInSet(m_defaultSessionSet.get(), configuration);
 
     m_deviceManagementRestrictionsEnabled = parameters.deviceManagementRestrictionsEnabled;
     m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = parameters.allLoadsBlockedByDeviceManagementRestrictionsForTesting;
@@ -1301,7 +1294,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
 NetworkSessionCocoa::~NetworkSessionCocoa() = default;
 
-void NetworkSessionCocoa::initializeStandardSessionsInSet(SessionSet& sessionSet, NSURLSessionConfiguration *configuration)
+void NetworkSessionCocoa::initializeNSURLSessionsInSet(SessionSet& sessionSet, NSURLSessionConfiguration *configuration)
 {
     sessionSet.sessionWithCredentialStorage.initialize(configuration, *this, WebCore::StoredCredentialsPolicy::Use, NavigatingToAppBoundDomain::No);
     LOG(NetworkSession, "Created NetworkSession with cookieAcceptPolicy %lu", configuration.HTTPCookieStorage.cookieAcceptPolicy);
@@ -1347,17 +1340,13 @@ SessionWrapper& NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSes
 #if PLATFORM(IOS_FAMILY)
     configuration._CTDataConnectionServiceType = existingConfiguration._CTDataConnectionServiceType;
 #endif
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
-    if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
-        configuration._attributedBundleIdentifier = existingConfiguration._attributedBundleIdentifier;
-#endif
 
     ephemeralStatelessSession.initialize(configuration, session, WebCore::StoredCredentialsPolicy::EphemeralStateless, isNavigatingToAppBoundDomain);
 
     return ephemeralStatelessSession;
 }
 
-SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifier webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifier webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
     if (isParentProcessAFullWebBrowser(networkProcess()))
@@ -1676,6 +1665,38 @@ void NetworkSessionCocoa::removeWebSocketTask(WebPageProxyIdentifier webPageProx
 }
 
 #endif // HAVE(NSURLSESSION_WEBSOCKET)
+
+void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
+{
+    auto addResult1 = m_perParametersSessionSets.add(parameters, nullptr);
+    if (auto set = addResult1.iterator->value) {
+        m_perPageSessionSets.add(pageID, *set);
+        return;
+    }
+
+    auto addResult2 = m_perPageSessionSets.add(pageID, SessionSet::create());
+    ASSERT(addResult2.isNewEntry);
+    RetainPtr<NSURLSessionConfiguration> configuration = adoptNS([m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration copy]);
+#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
+    if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
+        configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
+#endif
+    initializeNSURLSessionsInSet(addResult2.iterator->value.get(), configuration.get());
+    addResult1.iterator->value = makeWeakPtr(addResult2.iterator->value.get());
+}
+
+void NetworkSessionCocoa::removeWebPageNetworkParameters(WebPageProxyIdentifier pageID)
+{
+    m_perPageSessionSets.remove(pageID);
+}
+
+size_t NetworkSessionCocoa::countNonDefaultSessionSets() const
+{
+    HashSet<Ref<SessionSet>> uniqueSets;
+    for (auto& set : m_perPageSessionSets.values())
+        uniqueSets.add(set);
+    return uniqueSets.size();
+}
 
 Vector<WebCore::SecurityOriginData> NetworkSessionCocoa::hostNamesWithAlternativeServices() const
 {

@@ -27,7 +27,6 @@
 #include "MessageNames.h"
 #include "TestClassName.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 
 namespace Messages {
@@ -51,7 +50,7 @@ using TestAsyncMessageWithConnectionAsyncReply = CompletionHandler<void(bool fla
 
 using TestSyncMessageDelayedReply = CompletionHandler<void(uint8_t reply)>;
 
-using TestSynchronousMessageDelayedReply = CompletionHandler<void(const Optional<WebKit::TestClassName>& optionalReply)>;
+using TestSynchronousMessageDelayedReply = CompletionHandler<void(const std::optional<WebKit::TestClassName>& optionalReply)>;
 
 } // namespace TestWithSuperclass
 } // namespace Messages

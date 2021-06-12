@@ -312,7 +312,7 @@ DOMRange *kit(WebCore::Range* value)
     return wrapper.autorelease();
 }
 
-DOMRange *kit(const Optional<WebCore::SimpleRange>& value)
+DOMRange *kit(const std::optional<WebCore::SimpleRange>& value)
 {
     return kit(createLiveRange(value).get());
 }

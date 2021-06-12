@@ -47,7 +47,7 @@ struct ElementContext {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ElementContext> decode(Decoder&);
+    template<class Decoder> static std::optional<ElementContext> decode(Decoder&);
 };
 
 inline bool operator==(const ElementContext& a, const ElementContext& b)
@@ -65,26 +65,26 @@ void ElementContext::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ElementContext> ElementContext::decode(Decoder& decoder)
+std::optional<ElementContext> ElementContext::decode(Decoder& decoder)
 {
     ElementContext context;
 
     if (!decoder.decode(context.boundingRect))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto pageIdentifier = PageIdentifier::decode(decoder);
     if (!pageIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     context.webPageIdentifier = *pageIdentifier;
 
     auto documentIdentifier = DocumentIdentifier::decode(decoder);
     if (!documentIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     context.documentIdentifier = *documentIdentifier;
 
     auto elementIdentifier = ElementIdentifier::decode(decoder);
     if (!elementIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     context.elementIdentifier = *elementIdentifier;
 
     return context;

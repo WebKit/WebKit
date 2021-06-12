@@ -126,11 +126,11 @@ bool getVideoSizeAndFormatFromCaps(const GstCaps* caps, WebCore::IntSize& size, 
     return true;
 }
 
-Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
+std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
 {
     if (!doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
         GST_WARNING("Failed to get the video resolution, these are not a video caps");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     int width = 0, height = 0;
@@ -145,7 +145,7 @@ Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         GstVideoInfo info;
         gst_video_info_init(&info);
         if (!gst_video_info_from_caps(&info, caps))
-            return WTF::nullopt;
+            return std::nullopt;
 
         width = GST_VIDEO_INFO_WIDTH(&info);
         height = GST_VIDEO_INFO_HEIGHT(&info);
@@ -153,7 +153,7 @@ Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
     }
 
-    return makeOptional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
+    return std::make_optional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
 }
 
 bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
@@ -215,7 +215,7 @@ bool areEncryptedCaps(const GstCaps* caps)
 #endif
 }
 
-static Optional<Vector<String>> s_UIProcessCommandLineOptions;
+static std::optional<Vector<String>> s_UIProcessCommandLineOptions;
 void setGStreamerOptionsFromUIProcess(Vector<String>&& options)
 {
     s_UIProcessCommandLineOptions = WTFMove(options);
@@ -253,7 +253,7 @@ bool ensureGStreamerInitialized()
             WTFLogAlways("The USE_PLAYBIN3 variable was detected in the environment. Expect playback issues or please unset it.");
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-        Vector<String> parameters = s_UIProcessCommandLineOptions.valueOr(extractGStreamerOptionsFromCommandLine());
+        Vector<String> parameters = s_UIProcessCommandLineOptions.value_or(extractGStreamerOptionsFromCommandLine());
         s_UIProcessCommandLineOptions.reset();
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
@@ -419,9 +419,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline)
 
 Vector<uint8_t> GstMappedBuffer::createVector() const
 {
-    Vector<uint8_t> vector;
-    vector.append(data(), size());
-    return vector;
+    return { data(), size() };
 }
 
 Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
@@ -452,11 +450,7 @@ GstElement* createPlatformAudioSink()
         //   runtime requirements are not fullfilled.
         // - the sink was created for the WPE port, audio mixing was not requested and no
         //   WPEBackend-FDO audio receiver has been registered at runtime.
-        audioSink = gst_element_factory_make("autoaudiosink", nullptr);
-    }
-    if (!audioSink) {
-        GST_WARNING("GStreamer's autoaudiosink not found. Please check your gst-plugins-good installation");
-        return nullptr;
+        audioSink = makeGStreamerElement("autoaudiosink", nullptr);
     }
 
     return audioSink;
@@ -506,6 +500,21 @@ bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState target
 GstBuffer* gstBufferNewWrappedFast(void* data, size_t length)
 {
     return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), data, length, 0, length, data, fastFree);
+}
+
+GstElement* makeGStreamerElement(const char* factoryName, const char* name)
+{
+    auto* element = gst_element_factory_make(factoryName, name);
+    RELEASE_ASSERT_WITH_MESSAGE(element, "GStreamer element %s not found. Please install it", factoryName);
+    return element;
+}
+
+GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads)
+{
+    GUniqueOutPtr<GError> error;
+    auto* bin = gst_parse_bin_from_description(description, ghostUnlinkedPads, &error.outPtr());
+    RELEASE_ASSERT_WITH_MESSAGE(bin, "Unable to create bin for description: \"%s\". Error: %s", description, error->message);
+    return bin;
 }
 
 }

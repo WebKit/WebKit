@@ -26,10 +26,9 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include "PixelFormat.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -39,7 +38,7 @@ struct PixelBufferFormat {
     DestinationColorSpace colorSpace;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PixelBufferFormat> decode(Decoder&);
+    template<class Decoder> static std::optional<PixelBufferFormat> decode(Decoder&);
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PixelBufferFormat&);
@@ -49,21 +48,24 @@ template<class Encoder> void PixelBufferFormat::encode(Encoder& encoder) const
     encoder << alphaFormat << pixelFormat << colorSpace;
 }
 
-template<class Decoder> Optional<PixelBufferFormat> PixelBufferFormat::decode(Decoder& decoder)
+template<class Decoder> std::optional<PixelBufferFormat> PixelBufferFormat::decode(Decoder& decoder)
 {
-    AlphaPremultiplication alphaFormat;
-    if (!decoder.decode(alphaFormat))
-        return WTF::nullopt;
+    std::optional<AlphaPremultiplication> alphaFormat;
+    decoder >> alphaFormat;
+    if (!alphaFormat)
+        return std::nullopt;
 
-    PixelFormat pixelFormat;
-    if (!decoder.decode(pixelFormat))
-        return WTF::nullopt;
+    std::optional<PixelFormat> pixelFormat;
+    decoder >> pixelFormat;
+    if (!pixelFormat)
+        return std::nullopt;
 
-    DestinationColorSpace colorSpace;
-    if (!decoder.decode(colorSpace))
-        return WTF::nullopt;
+    std::optional<DestinationColorSpace> colorSpace;
+    decoder >> colorSpace;
+    if (!colorSpace)
+        return std::nullopt;
 
-    return { { alphaFormat, pixelFormat, colorSpace } };
+    return { { WTFMove(*alphaFormat), WTFMove(*pixelFormat), WTFMove(*colorSpace) } };
 }
 
 }

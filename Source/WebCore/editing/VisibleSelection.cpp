@@ -106,7 +106,7 @@ Position VisibleSelection::uncanonicalizedEnd() const
     return m_anchorIsFirst ? m_focus : m_anchor;
 }
 
-Optional<SimpleRange> VisibleSelection::range() const
+std::optional<SimpleRange> VisibleSelection::range() const
 {
     return makeSimpleRange(uncanonicalizedStart().parentAnchoredEquivalent(), uncanonicalizedEnd().parentAnchoredEquivalent());
 }
@@ -159,18 +159,18 @@ RefPtr<Document> VisibleSelection::document() const
     return baseDocument;
 }
 
-Optional<SimpleRange> VisibleSelection::firstRange() const
+std::optional<SimpleRange> VisibleSelection::firstRange() const
 {
     if (isNoneOrOrphaned())
-        return WTF::nullopt;
+        return std::nullopt;
     // FIXME: Seems likely we don't need to call parentAnchoredEquivalent here.
     return makeSimpleRange(m_start.parentAnchoredEquivalent(), m_end.parentAnchoredEquivalent());
 }
 
-Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
+std::optional<SimpleRange> VisibleSelection::toNormalizedRange() const
 {
     if (isNoneOrOrphaned())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Make sure we have an updated layout since this function is called
     // in the course of running edit commands which modify the DOM.
@@ -180,7 +180,7 @@ Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
 
     // Check again, because updating layout can clear the selection.
     if (isNoneOrOrphaned())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Position s, e;
     if (isCaret()) {
@@ -233,7 +233,7 @@ void VisibleSelection::appendTrailingWhitespace()
     if (!scope)
         return;
 
-    CharacterIterator charIt(*makeSimpleRange(m_end, makeBoundaryPointAfterNodeContents(*scope)), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    CharacterIterator charIt(*makeSimpleRange(m_end, makeBoundaryPointAfterNodeContents(*scope)), TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
     for (; !charIt.atEnd() && charIt.text().length(); charIt.advance(1)) {
         UChar c = charIt.text()[0];
         if ((!isSpaceOrNewline(c) && c != noBreakSpace) || c == '\n')

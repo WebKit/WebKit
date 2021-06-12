@@ -55,21 +55,21 @@ private:
 
     // MessageReceivers.
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&);
-    void playSession(Optional<double>, Optional<double>, CompletionHandler<void(bool)>&&);
+    void playSession(std::optional<double>, std::optional<double>, CompletionHandler<void(bool)>&&);
     void pauseSession(CompletionHandler<void(bool)>&&);
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&);
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);
 
     // MediaSessionCoordinatorPrivate overrides.
     String identifier() const final { return m_identifier; }
-    void join(CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
+    void join(CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
     void leave() final;
-    void seekTo(double, CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
-    void play(CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
-    void pause(CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
-    void setTrack(const String&, CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
+    void seekTo(double, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
+    void play(CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
+    void pause(CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
+    void setTrack(const String&, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
 
-    void positionStateChanged(const Optional<WebCore::MediaPositionState>&) final;
+    void positionStateChanged(const std::optional<WebCore::MediaPositionState>&) final;
     void readyStateChanged(WebCore::MediaSessionReadyState) final;
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
     void trackIdentifierChanged(const String&) final;

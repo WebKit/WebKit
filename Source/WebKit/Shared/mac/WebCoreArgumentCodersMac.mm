@@ -280,17 +280,17 @@ void ArgumentCoder<WebCore::KeypressCommand>::encode(Encoder& encoder, const Web
     encoder << keypressCommand.commandName << keypressCommand.text;
 }
     
-Optional<WebCore::KeypressCommand> ArgumentCoder<WebCore::KeypressCommand>::decode(Decoder& decoder)
+std::optional<WebCore::KeypressCommand> ArgumentCoder<WebCore::KeypressCommand>::decode(Decoder& decoder)
 {
-    Optional<String> commandName;
+    std::optional<String> commandName;
     decoder >> commandName;
     if (!commandName)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<String> text;
+    std::optional<String> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebCore::KeypressCommand command;
     command.commandName = WTFMove(*commandName);
@@ -303,14 +303,14 @@ void ArgumentCoder<CGRect>::encode(Encoder& encoder, CGRect rect)
     encoder << rect.origin << rect.size;
 }
 
-Optional<CGRect> ArgumentCoder<CGRect>::decode(Decoder& decoder)
+std::optional<CGRect> ArgumentCoder<CGRect>::decode(Decoder& decoder)
 {
-    Optional<CGPoint> origin;
+    std::optional<CGPoint> origin;
     decoder >> origin;
     if (!origin)
         return { };
 
-    Optional<CGSize> size;
+    std::optional<CGSize> size;
     decoder >> size;
     if (!size)
         return { };
@@ -323,7 +323,7 @@ void ArgumentCoder<CGSize>::encode(Encoder& encoder, CGSize size)
     encoder << size.width << size.height;
 }
 
-Optional<CGSize> ArgumentCoder<CGSize>::decode(Decoder& decoder)
+std::optional<CGSize> ArgumentCoder<CGSize>::decode(Decoder& decoder)
 {
     CGSize size;
     if (!decoder.decode(size.width))
@@ -338,7 +338,7 @@ void ArgumentCoder<CGPoint>::encode(Encoder& encoder, CGPoint point)
     encoder << point.x << point.y;
 }
 
-Optional<CGPoint> ArgumentCoder<CGPoint>::decode(Decoder& decoder)
+std::optional<CGPoint> ArgumentCoder<CGPoint>::decode(Decoder& decoder)
 {
     CGPoint point;
     if (!decoder.decode(point.x))
@@ -353,7 +353,7 @@ void ArgumentCoder<CGAffineTransform>::encode(Encoder& encoder, CGAffineTransfor
     encoder << transform.a << transform.b << transform.c << transform.d << transform.tx << transform.ty;
 }
 
-Optional<CGAffineTransform> ArgumentCoder<CGAffineTransform>::decode(Decoder& decoder)
+std::optional<CGAffineTransform> ArgumentCoder<CGAffineTransform>::decode(Decoder& decoder)
 {
     CGAffineTransform transform;
     if (!decoder.decode(transform.a))
@@ -405,16 +405,16 @@ void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encodePlatformData(
         encodeObject(encoder, value.nativeValue().get());
 }
 
-Optional<WebCore::SerializedPlatformDataCueValue>  ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
+std::optional<WebCore::SerializedPlatformDataCueValue>  ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
 {
     ASSERT(platformType == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC);
 
     if (platformType != WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto object = decodeObject(decoder, WebCore::SerializedPlatformDataCueMac::allowedClassesForNativeValues());
     if (!object)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WebCore::SerializedPlatformDataCueValue { platformType, object.value().get() };
 }

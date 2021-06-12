@@ -366,7 +366,7 @@ static inline RTCIceComponent toRTCIceComponent(int component)
     return component == cricket::ICE_CANDIDATE_COMPONENT_RTP ? RTCIceComponent::Rtp : RTCIceComponent::Rtcp;
 }
 
-static inline Optional<RTCIceProtocol> toRTCIceProtocol(const std::string& protocol)
+static inline std::optional<RTCIceProtocol> toRTCIceProtocol(const std::string& protocol)
 {
     if (protocol == "")
         return { };
@@ -376,7 +376,7 @@ static inline Optional<RTCIceProtocol> toRTCIceProtocol(const std::string& proto
     return RTCIceProtocol::Tcp;
 }
 
-static inline Optional<RTCIceTcpCandidateType> toRTCIceTcpCandidateType(const std::string& type)
+static inline std::optional<RTCIceTcpCandidateType> toRTCIceTcpCandidateType(const std::string& type)
 {
     if (type == "")
         return { };
@@ -388,7 +388,7 @@ static inline Optional<RTCIceTcpCandidateType> toRTCIceTcpCandidateType(const st
     return RTCIceTcpCandidateType::So;
 }
 
-static inline Optional<RTCIceCandidateType> toRTCIceCandidateType(const std::string& type)
+static inline std::optional<RTCIceCandidateType> toRTCIceCandidateType(const std::string& type)
 {
     if (type == "")
         return { };
@@ -402,7 +402,7 @@ static inline Optional<RTCIceCandidateType> toRTCIceCandidateType(const std::str
     return RTCIceCandidateType::Relay;
 }
 
-Optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
+std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
 {
     cricket::Candidate candidate;
     if (!webrtc::ParseCandidate(sdp.utf8().data(), &candidate, nullptr, true))

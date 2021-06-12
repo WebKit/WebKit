@@ -28,7 +28,6 @@
 #include "DeferGC.h"
 #include "DisallowVMEntry.h"
 #include "VM.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -50,8 +49,8 @@ private:
     void verifyPropertiesAreInitialized(JSObject*);
 
     VM& m_vm;
-    Optional<DisallowGC> m_disallowGC;
-    Optional<DisallowVMEntry> m_disallowVMEntry;
+    std::optional<DisallowGC> m_disallowGC;
+    std::optional<DisallowVMEntry> m_disallowVMEntry;
     JSObject* m_object { nullptr };
 };
 

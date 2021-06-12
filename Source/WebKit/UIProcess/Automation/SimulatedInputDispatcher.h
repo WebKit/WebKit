@@ -32,7 +32,6 @@
 #include <WebCore/IntSize.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
@@ -50,7 +49,7 @@ enum class VirtualKey;
 namespace WebKit {
 
 class AutomationCommandError;
-using AutomationCompletionHandler = WTF::CompletionHandler<void(Optional<AutomationCommandError>)>;
+using AutomationCompletionHandler = WTF::CompletionHandler<void(std::optional<AutomationCommandError>)>;
 
 class WebPageProxy;
 
@@ -81,12 +80,12 @@ enum class TouchInteraction {
 struct SimulatedInputSourceState {
     CharKeySet pressedCharKeys;
     VirtualKeyMap pressedVirtualKeys;
-    Optional<MouseButton> pressedMouseButton;
-    Optional<MouseMoveOrigin> origin;
-    Optional<String> nodeHandle;
-    Optional<WebCore::IntPoint> location;
-    Optional<WebCore::IntSize> scrollDelta;
-    Optional<Seconds> duration;
+    std::optional<MouseButton> pressedMouseButton;
+    std::optional<MouseMoveOrigin> origin;
+    std::optional<String> nodeHandle;
+    std::optional<WebCore::IntPoint> location;
+    std::optional<WebCore::IntSize> scrollDelta;
+    std::optional<Seconds> duration;
 
     static SimulatedInputSourceState emptyStateForSourceType(SimulatedInputSourceType);
 };
@@ -133,7 +132,7 @@ public:
         virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, const String& pointerType, AutomationCompletionHandler&&) = 0;
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
-        virtual void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, Optional<Seconds> duration, AutomationCompletionHandler&&) = 0;
+        virtual void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, std::optional<Seconds> duration, AutomationCompletionHandler&&) = 0;
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         virtual void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&) = 0;
@@ -141,7 +140,7 @@ public:
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         virtual void simulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta, AutomationCompletionHandler&&) = 0;
 #endif
-        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, Optional<WebCore::FrameIdentifier>, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) = 0;
+        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) = 0;
     };
 
     static Ref<SimulatedInputDispatcher> create(WebPageProxy& page, SimulatedInputDispatcher::Client& client)
@@ -151,7 +150,7 @@ public:
 
     ~SimulatedInputDispatcher();
 
-    void run(Optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
+    void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
     void cancel();
 
     bool isActive() const;
@@ -164,17 +163,17 @@ private:
 
     void transitionToNextInputSourceState();
     void transitionInputSourceToState(SimulatedInputSource&, SimulatedInputSourceState& newState, AutomationCompletionHandler&&);
-    void finishDispatching(Optional<AutomationCommandError>);
+    void finishDispatching(std::optional<AutomationCommandError>);
 
     void keyFrameTransitionDurationTimerFired();
     bool isKeyFrameTransitionComplete() const;
 
-    void resolveLocation(const WebCore::IntPoint& currentLocation, Optional<WebCore::IntPoint> location, MouseMoveOrigin, Optional<String> nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&);
+    void resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&);
 
     WebPageProxy& m_page;
     SimulatedInputDispatcher::Client& m_client;
 
-    Optional<WebCore::FrameIdentifier> m_frameID;
+    std::optional<WebCore::FrameIdentifier> m_frameID;
     AutomationCompletionHandler m_runCompletionHandler;
     AutomationCompletionHandler m_keyFrameTransitionCompletionHandler;
     RunLoop::Timer<SimulatedInputDispatcher> m_keyFrameTransitionDurationTimer;

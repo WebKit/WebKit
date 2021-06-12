@@ -32,7 +32,6 @@
 #include "config.h"
 #include "LocaleToScriptMapping.h"
 
-#include <wtf/Optional.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/WTFString.h>
 

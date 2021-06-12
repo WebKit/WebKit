@@ -111,6 +111,7 @@ private:
     const char* activeDOMObjectName() const override;
     void stop() override;
     void suspend(ReasonForSuspension) override;
+    bool virtualHasPendingActivity() const final;
 
     // EventTargetWithInlineData.
     EventTargetInterface eventTargetInterface() const override { return ApplePaySessionEventTargetInterfaceType; }
@@ -146,7 +147,6 @@ private:
     bool canSuspendWithoutCanceling() const;
 
     bool isFinalState() const;
-    void didReachFinalState();
 
     enum class State {
         Idle,

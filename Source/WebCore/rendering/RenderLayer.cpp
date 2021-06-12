@@ -813,13 +813,9 @@ void RenderLayer::updateLayerListsIfNeeded()
 
 String RenderLayer::name() const
 {
-    StringBuilder name;
-    name.append(renderer().description());
-
-    if (isReflection())
-        name.appendLiteral(" (reflection)");
-
-    return name.toString();
+    if (!isReflection())
+        return renderer().debugDescription();
+    return makeString(renderer().debugDescription(), " (reflection)");
 }
 
 RenderLayerCompositor& RenderLayer::compositor() const
@@ -967,7 +963,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
                 } else if (shouldRepaintAfterLayout()) {
                     // FIXME: We will convert this to just take the old and new RepaintLayoutRects once
                     // we change other callers to use RepaintLayoutRects.
-                    auto resolvedOldRects = oldRects.valueOr(LayerRepaintRects { });
+                    auto resolvedOldRects = oldRects.value_or(LayerRepaintRects { });
                     renderer().repaintAfterLayoutIfNeeded(repaintContainer, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect,
                         &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
                 }
@@ -1943,7 +1939,7 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
     return nullptr;
 }
 
-// FIXME: This neeeds a better name.
+// FIXME: This needs a better name.
 void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
 {
     ASSERT(requiresFullLayerImageForFilters());
@@ -2753,32 +2749,21 @@ RenderLayer::OverflowControlRects RenderLayer::overflowControlsRects() const
 
 String RenderLayer::debugDescription() const
 {
-    StringBuilder builder;
-    builder.append("RenderLayer 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', size().width(), 'x', size().height());
-
-    if (transform())
-        builder.append(" has transform"_s);
-
-    if (hasFilter())
-        builder.append(" has filter"_s);
-
-    if (hasBackdropFilter())
-        builder.append(" has backdrop filter"_s);
-
-    if (hasBlendMode())
-        builder.append(" has blend mode"_s);
-
-    if (isolatesBlending())
-        builder.append(" isolates blending"_s);
-
+    String compositedDescription;
     if (isComposited()) {
-        // Oh for better StringBuilder/TextStream integration.
         TextStream stream;
         stream << " " << *backing();
-        builder.append(stream.release());
+        compositedDescription = stream.release();
     }
 
-    return builder.toString();
+    return makeString("RenderLayer 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase),
+        ' ', size().width(), 'x', size().height(),
+        transform() ? " has transform" : "",
+        hasFilter() ? " has filter" : "",
+        hasBackdropFilter() ? " has backdrop filter" : "",
+        hasBlendMode() ? " has blend mode" : "",
+        isolatesBlending() ? " isolates blending" : "",
+        compositedDescription);
 }
 
 IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& localPoint) const
@@ -3479,7 +3464,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     LayoutSize adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(devicePixelSnappedOffsetForThisLayer);
     LayerPaintingInfo transformedPaintingInfo(paintingInfo);
     transformedPaintingInfo.rootLayer = this;
-    transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(transform.inverse().valueOr(AffineTransform()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
+    transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(transform.inverse().value_or(AffineTransform()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
     transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
 
@@ -4088,7 +4073,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // Check for hit test on backface if backface-visibility is 'hidden'
     if (localTransformState && renderer().style().backfaceVisibility() == BackfaceVisibility::Hidden) {
-        Optional<TransformationMatrix> invertedMatrix = localTransformState->m_accumulatedTransform.inverse();
+        std::optional<TransformationMatrix> invertedMatrix = localTransformState->m_accumulatedTransform.inverse();
         // If the z-vector of the matrix is negative, the back is facing towards the viewer.
         if (invertedMatrix && invertedMatrix.value().m33() < 0)
             return nullptr;
@@ -4125,6 +4110,9 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 #if ASSERT_ENABLED
     LayerListMutationDetector mutationChecker(*this);
 #endif
+
+    if (renderer().hasClipPath() && !downcast<RenderBox>(renderer()).hitTestClipPath(hitTestLocation, toLayoutPoint(location() - renderBoxLocation())))
+        return nullptr;
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
     auto* hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
@@ -4343,7 +4331,7 @@ RenderLayer* RenderLayer::hitTestList(LayerList layerIterator, RenderLayer* root
         auto* hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
 
         // If it is a list-based test, we can safely append the temporary result since it might had hit
-        // nodes but not necesserily had hitLayer set.
+        // nodes but not necessarily had hitLayer set.
         ASSERT(!result.isRectBasedTest() || request.resultIsElementList());
         if (request.resultIsElementList())
             result.append(tempResult, request);
@@ -4687,7 +4675,7 @@ void RenderLayer::repaintBlockSelectionGaps()
         renderer().repaintRectangle(rect);
 }
 
-bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const Optional<LayoutRect>& cachedBoundingBox) const
+bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const std::optional<LayoutRect>& cachedBoundingBox) const
 {
     // Always examine the canvas and the root.
     // FIXME: Could eliminate the isDocumentElementRenderer() check if we fix background painting so that the RenderView

@@ -194,12 +194,11 @@ void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, 
 
     if (!url.isEmpty()) {
         appendURLAndPosition(builder, url, lineNumber, columnNumber);
-        builder.appendLiteral(": ");
+        builder.append(": ");
     }
 
     appendMessagePrefix(builder, source, type, level);
-    builder.append(' ');
-    builder.append(message);
+    builder.append(' ', message);
 
     WTFLogAlways("%s", builder.toString().utf8().data());
 }
@@ -215,7 +214,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
 
     if (!lastCaller.sourceURL().isEmpty()) {
         appendURLAndPosition(builder, lastCaller.sourceURL(), lastCaller.lineNumber(), lastCaller.columnNumber());
-        builder.appendLiteral(": ");
+        builder.append(": ");
     }
 
     appendMessagePrefix(builder, source, type, level);

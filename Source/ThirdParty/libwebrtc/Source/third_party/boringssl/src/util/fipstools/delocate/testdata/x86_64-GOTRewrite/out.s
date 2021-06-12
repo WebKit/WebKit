@@ -5,6 +5,8 @@ BORINGSSL_bcm_text_start:
 	.text
 .Lfoo_local_target:
 foo:
+.Lbar_local_target:
+bar:
 	# leaq of OPENSSL_ia32cap_P is supported.
 # WAS leaq OPENSSL_ia32cap_P(%rip), %r11
 	leaq -128(%rsp), %rsp
@@ -172,6 +174,85 @@ foo:
 	leaq 128(%rsp), %rsp
 	vpbroadcastq %xmm0, %xmm0
 
+	# GCC sometimes loads a pair of pointers into an XMM register and
+	# writes them together.
+# WAS movq gcm_gmult_clmul@GOTPCREL(%rip), %xmm0
+	leaq -128(%rsp), %rsp
+	pushq %rax
+	pushf
+	leaq gcm_gmult_clmul_GOTPCREL_external(%rip), %rax
+	addq (%rax), %rax
+	movq (%rax), %rax
+	popf
+	movq %rax, %xmm0
+	popq %rax
+	leaq 128(%rsp), %rsp
+# WAS movhps gcm_ghash_clmul@GOTPCREL(%rip), %xmm0
+	leaq -128(%rsp), %rsp
+	pushq %rax
+	pushf
+	leaq gcm_ghash_clmul_GOTPCREL_external(%rip), %rax
+	addq (%rax), %rax
+	movq (%rax), %rax
+	popf
+	pushq %rax
+	movhps (%rsp), %xmm0
+	leaq 8(%rsp), %rsp
+	popq %rax
+	leaq 128(%rsp), %rsp
+	movaps %xmm0, (%rsp)
+
+	# We've yet to observe this, but the above could also have been written
+	# with movlps.
+# WAS movhps gcm_ghash_clmul@GOTPCREL(%rip), %xmm0
+	leaq -128(%rsp), %rsp
+	pushq %rax
+	pushf
+	leaq gcm_ghash_clmul_GOTPCREL_external(%rip), %rax
+	addq (%rax), %rax
+	movq (%rax), %rax
+	popf
+	pushq %rax
+	movhps (%rsp), %xmm0
+	leaq 8(%rsp), %rsp
+	popq %rax
+	leaq 128(%rsp), %rsp
+# WAS movlps gcm_gmult_clmul@GOTPCREL(%rip), %xmm0
+	leaq -128(%rsp), %rsp
+	pushq %rax
+	pushf
+	leaq gcm_gmult_clmul_GOTPCREL_external(%rip), %rax
+	addq (%rax), %rax
+	movq (%rax), %rax
+	popf
+	pushq %rax
+	movlps (%rsp), %xmm0
+	leaq 8(%rsp), %rsp
+	popq %rax
+	leaq 128(%rsp), %rsp
+	movaps %xmm0, (%rsp)
+
+	# Same as above, but with a local symbol.
+# WAS movhps foo@GOTPCREL(%rip), %xmm0
+	leaq -128(%rsp), %rsp
+	pushq %rax
+	leaq	.Lfoo_local_target(%rip), %rax
+	pushq %rax
+	movhps (%rsp), %xmm0
+	leaq 8(%rsp), %rsp
+	popq %rax
+	leaq 128(%rsp), %rsp
+# WAS movlps bar@GOTPCREL(%rip), %xmm0
+	leaq -128(%rsp), %rsp
+	pushq %rax
+	leaq	.Lbar_local_target(%rip), %rax
+	pushq %rax
+	movlps (%rsp), %xmm0
+	leaq 8(%rsp), %rsp
+	popq %rax
+	leaq 128(%rsp), %rsp
+	movaps %xmm0, (%rsp)
+
 # WAS cmpq foo@GOTPCREL(%rip), %rax
 	leaq -128(%rsp), %rsp
 	pushq %rbx
@@ -195,6 +276,16 @@ BORINGSSL_bcm_text_end:
 foobar_bss_get:
 	leaq	foobar(%rip), %rax
 	ret
+.type gcm_ghash_clmul_GOTPCREL_external, @object
+.size gcm_ghash_clmul_GOTPCREL_external, 8
+gcm_ghash_clmul_GOTPCREL_external:
+	.long gcm_ghash_clmul@GOTPCREL
+	.long 0
+.type gcm_gmult_clmul_GOTPCREL_external, @object
+.size gcm_gmult_clmul_GOTPCREL_external, 8
+gcm_gmult_clmul_GOTPCREL_external:
+	.long gcm_gmult_clmul@GOTPCREL
+	.long 0
 .type stderr_GOTPCREL_external, @object
 .size stderr_GOTPCREL_external, 8
 stderr_GOTPCREL_external:

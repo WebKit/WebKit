@@ -79,6 +79,7 @@ void FunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_unlinkedExecutable);
     if (RareData* rareData = thisObject->m_rareData.get()) {
         visitor.append(rareData->m_cachedPolyProtoStructure);
+        visitor.append(rareData->m_asString);
         if (TemplateObjectMap* map = rareData->m_templateObjectMap.get()) {
             Locker locker { thisObject->cellLock() };
             for (auto& entry : *map)
@@ -91,7 +92,7 @@ DEFINE_VISIT_CHILDREN(FunctionExecutable);
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
     const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, 
-    JSObject*& exception, int overrideLineNumber, Optional<int> functionConstructorParametersEndPosition)
+    JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition)
 {
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
@@ -114,6 +115,81 @@ FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()
     WTF::storeStoreFence();
     m_rareData = WTFMove(rareData);
     return *m_rareData;
+}
+
+JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
+{
+    VM& vm = getVM(globalObject);
+    ASSERT(m_rareData && !m_rareData->m_asString);
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    const auto& cache = [&](JSString* asString) {
+        WTF::storeStoreFence();
+        m_rareData->m_asString.set(vm, this, asString);
+        return asString;
+    };
+
+    const auto& cacheIfNoException = [&](JSValue value) -> JSString* {
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
+        return cache(::JSC::asString(value));
+    };
+
+    if (isBuiltinFunction())
+        return cacheIfNoException(jsMakeNontrivialString(globalObject, "function ", name().string(), "() {\n    [native code]\n}"));
+
+    if (isClass())
+        return cache(jsString(vm, classSource().view().toString()));
+
+    String functionHeader;
+    switch (parseMode()) {
+    case SourceParseMode::GeneratorWrapperFunctionMode:
+    case SourceParseMode::GeneratorWrapperMethodMode:
+        functionHeader = "function* ";
+        break;
+
+    case SourceParseMode::NormalFunctionMode:
+    case SourceParseMode::GetterMode:
+    case SourceParseMode::SetterMode:
+    case SourceParseMode::MethodMode:
+    case SourceParseMode::ProgramMode:
+    case SourceParseMode::ModuleAnalyzeMode:
+    case SourceParseMode::ModuleEvaluateMode:
+    case SourceParseMode::GeneratorBodyMode:
+    case SourceParseMode::AsyncGeneratorBodyMode:
+    case SourceParseMode::AsyncFunctionBodyMode:
+    case SourceParseMode::AsyncArrowFunctionBodyMode:
+        functionHeader = "function ";
+        break;
+
+    case SourceParseMode::ArrowFunctionMode:
+    case SourceParseMode::ClassFieldInitializerMode:
+        functionHeader = "";
+        break;
+
+    case SourceParseMode::AsyncFunctionMode:
+    case SourceParseMode::AsyncMethodMode:
+        functionHeader = "async function ";
+        break;
+
+    case SourceParseMode::AsyncArrowFunctionMode:
+        functionHeader = "async ";
+        break;
+
+    case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
+    case SourceParseMode::AsyncGeneratorWrapperMethodMode:
+        functionHeader = "async function* ";
+        break;
+    }
+
+    StringView src = source().provider()->getRange(
+        parametersStartOffset(),
+        parametersStartOffset() + source().length());
+
+    String name = this->name().string();
+    if (name == vm.propertyNames->starDefaultPrivateName.string())
+        name = emptyString();
+    return cacheIfNoException(jsMakeNontrivialString(globalObject, functionHeader, name, src));
 }
 
 void FunctionExecutable::overrideInfo(const FunctionOverrideInfo& overrideInfo)

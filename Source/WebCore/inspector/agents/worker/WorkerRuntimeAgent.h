@@ -46,7 +46,7 @@ public:
     ~WorkerRuntimeAgent();
 
 private:
-    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
+    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
     // We don't need to mute console for workers.
     void muteConsole() { }

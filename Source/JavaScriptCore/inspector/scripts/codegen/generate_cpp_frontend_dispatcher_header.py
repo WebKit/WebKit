@@ -73,7 +73,6 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
         header_includes = [
             (["JavaScriptCore", "WebKit"], (self.model().framework.name, "%sProtocolObjects.h" % self.protocol_name())),
             (["JavaScriptCore", "WebKit"], ("WTF", "wtf/JSONValues.h")),
-            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Optional.h")),
             (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h")),
         ]
         return '\n'.join(self.generate_includes_from_entries(header_includes))

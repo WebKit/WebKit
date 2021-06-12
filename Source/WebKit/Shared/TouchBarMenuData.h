@@ -27,9 +27,8 @@
 
 #if HAVE(TOUCH_BAR)
 
-#include "ArgumentCoders.h"
 #include "TouchBarMenuItemData.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/Vector.h>
 
 namespace IPC {
 class Decoder;
@@ -44,9 +43,8 @@ namespace WebKit {
 
 class TouchBarMenuData {
 public:
-    explicit TouchBarMenuData() = default;
+    TouchBarMenuData() = default;
     explicit TouchBarMenuData(const WebCore::HTMLMenuElement&);
-    explicit TouchBarMenuData(const TouchBarMenuData&) = default;
 
     void addMenuItem(const TouchBarMenuItemData&);
     void removeMenuItem(const TouchBarMenuItemData&);

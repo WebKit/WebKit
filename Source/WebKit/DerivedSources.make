@@ -39,6 +39,7 @@ VPATH = \
     $(WebKit2)/NetworkProcess/WebStorage \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/PluginProcess/mac \
+    $(WebKit2)/Resources/SandboxProfiles/ios \
     $(WebKit2)/Shared/Plugins \
     $(WebKit2)/Shared \
     $(WebKit2)/Shared/API/Cocoa \
@@ -320,8 +321,13 @@ SANDBOX_PROFILES = \
 	com.apple.WebKit.NetworkProcess.sb \
 	com.apple.WebKit.GPUProcess.sb \
 	com.apple.WebKit.WebAuthnProcess.sb
+	
+SANDBOX_PROFILES_IOS = \
+	com.apple.WebKit.WebContent.sb \
 
-all : $(SANDBOX_PROFILES)
+sandbox-profiles-ios : $(SANDBOX_PROFILES_IOS)
+
+all : $(SANDBOX_PROFILES) $(SANDBOX_PROFILES_IOS)
 
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...

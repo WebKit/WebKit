@@ -28,17 +28,17 @@
 
 namespace WTR {
 
-Optional<bool> toOptionalBool(JSContextRef context, JSValueRef value)
+std::optional<bool> toOptionalBool(JSContextRef context, JSValueRef value)
 {
-    return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? WTF::nullopt : makeOptional(JSValueToBoolean(context, value));
+    return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? std::nullopt : std::make_optional(JSValueToBoolean(context, value));
 }
 
-Optional<double> toOptionalDouble(JSContextRef context, JSValueRef value)
+std::optional<double> toOptionalDouble(JSContextRef context, JSValueRef value)
 {
-    return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? WTF::nullopt : makeOptional(JSValueToNumber(context, value, nullptr));
+    return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? std::nullopt : std::make_optional(JSValueToNumber(context, value, nullptr));
 }
 
-JSValueRef makeValue(JSContextRef context, Optional<bool> value)
+JSValueRef makeValue(JSContextRef context, std::optional<bool> value)
 {
     return value ? JSValueMakeBoolean(context, value.value()) : JSValueMakeNull(context);
 }

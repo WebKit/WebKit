@@ -48,7 +48,7 @@ SpellCheckRequest::SpellCheckRequest(const SimpleRange& checkingRange, const Sim
     , m_automaticReplacementRange(automaticReplacementRange)
     , m_paragraphRange(paragraphRange)
     , m_rootEditableElement(m_checkingRange.start.container->rootEditableElement())
-    , m_requestData(WTF::nullopt, text, options, type)
+    , m_requestData(std::nullopt, text, options, type)
 {
 }
 

@@ -67,7 +67,7 @@ public:
 private:
     RemoteCommandListenerClient& m_client;
     RemoteCommandsSet m_supportedCommands;
-    DeferrableTask<Timer> m_updateCommandsTask;
+    MainThreadDeferrableTask m_updateCommandsTask;
     bool m_supportsSeeking { false };
 };
 

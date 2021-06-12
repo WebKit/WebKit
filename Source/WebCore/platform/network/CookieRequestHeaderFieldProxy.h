@@ -37,12 +37,12 @@ struct CookieRequestHeaderFieldProxy {
     URL firstParty;
     SameSiteInfo sameSiteInfo;
     URL url;
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
+    std::optional<FrameIdentifier> frameID;
+    std::optional<PageIdentifier> pageID;
     IncludeSecureCookies includeSecureCookies { IncludeSecureCookies::No };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<CookieRequestHeaderFieldProxy> decode(Decoder&);
+    template<class Decoder> static std::optional<CookieRequestHeaderFieldProxy> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -57,33 +57,33 @@ void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
+std::optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
 {
     URL firstParty;
     if (!decoder.decode(firstParty))
-        return WTF::nullopt;
+        return std::nullopt;
 
     SameSiteInfo sameSiteInfo;
     if (!decoder.decode(sameSiteInfo))
-        return WTF::nullopt;
+        return std::nullopt;
 
     URL url;
     if (!decoder.decode(url))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<FrameIdentifier>> frameID;
+    std::optional<std::optional<FrameIdentifier>> frameID;
     decoder >> frameID;
     if (!frameID)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<PageIdentifier>> pageID;
+    std::optional<std::optional<PageIdentifier>> pageID;
     decoder >> pageID;
     if (!pageID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     IncludeSecureCookies includeSecureCookies;
     if (!decoder.decode(includeSecureCookies))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return CookieRequestHeaderFieldProxy { WTFMove(firstParty), WTFMove(sameSiteInfo), WTFMove(url), *frameID, *pageID, includeSecureCookies };
 }

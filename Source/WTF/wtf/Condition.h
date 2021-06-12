@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ParkingLot.h>
 #include <wtf/TimeWithDynamicClockType.h>
@@ -68,44 +69,38 @@ public:
     template<typename LockType>
     bool waitUntil(LockType& lock, const TimeWithDynamicClockType& timeout)
     {
-        bool result;
-        if (timeout < timeout.nowWithSameClock()) {
-            lock.unlock();
-            result = false;
-        } else {
-            result = ParkingLot::parkConditionally(
-                &m_hasWaiters,
-                [this] () -> bool {
-                    // Let everyone know that we will be waiting. Do this while we hold the queue lock,
-                    // to prevent races with notifyOne().
-                    m_hasWaiters.store(true);
-                    return true;
-                },
-                [&lock] () { lock.unlock(); },
-                timeout).wasUnparked;
-        }
-        lock.lock();
-        return result;
+        return waitUntilUnchecked(lock, timeout);
     }
 
-    // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
-    // May return early due to timeout.
-    template<typename LockType, typename Functor>
-    bool waitUntil(
-        LockType& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate)
+    bool waitUntil(Lock& lock, const TimeWithDynamicClockType& timeout) WTF_REQUIRES_LOCK(lock)
     {
-        while (!predicate()) {
-            if (!waitUntil(lock, timeout))
-                return predicate();
-        }
-        return true;
+        return waitUntilUnchecked(lock, timeout);
     }
 
     // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
     // May return early due to timeout.
     template<typename LockType, typename Functor>
-    bool waitFor(
-        LockType& lock, Seconds relativeTimeout, const Functor& predicate)
+    bool waitUntil(LockType& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate)
+    {
+        return waitUntilUnchecked(lock, timeout, predicate);
+    }
+
+    template<typename Functor>
+    bool waitUntil(Lock& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
+    {
+        return waitUntilUnchecked(lock, timeout, predicate);
+    }
+
+    // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
+    // May return early due to timeout.
+    template<typename LockType, typename Functor>
+    bool waitFor(LockType& lock, Seconds relativeTimeout, const Functor& predicate)
+    {
+        return waitUntil(lock, MonotonicTime::now() + relativeTimeout, predicate);
+    }
+
+    template<typename Functor>
+    bool waitFor(Lock& lock, Seconds relativeTimeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
     {
         return waitUntil(lock, MonotonicTime::now() + relativeTimeout, predicate);
     }
@@ -116,14 +111,31 @@ public:
         return waitUntil(lock, MonotonicTime::now() + relativeTimeout);
     }
 
+    bool waitFor(Lock& lock, Seconds relativeTimeout) WTF_REQUIRES_LOCK(lock)
+    {
+        return waitUntil(lock, MonotonicTime::now() + relativeTimeout);
+    }
+
     template<typename LockType>
     void wait(LockType& lock)
     {
         waitUntil(lock, Time::infinity());
     }
 
+    void wait(Lock& lock) WTF_REQUIRES_LOCK(lock)
+    {
+        waitUntil(lock, Time::infinity());
+    }
+
     template<typename LockType, typename Functor>
     void wait(LockType& lock, const Functor& predicate)
+    {
+        while (!predicate())
+            wait(lock);
+    }
+
+    template<typename Functor>
+    void wait(Lock& lock, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
     {
         while (!predicate())
             wait(lock);
@@ -169,6 +181,41 @@ public:
     }
     
 private:
+    template<typename LockType>
+    bool waitUntilUnchecked(LockType& lock, const TimeWithDynamicClockType& timeout) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+    {
+        bool result;
+        if (timeout < timeout.nowWithSameClock()) {
+            lock.unlock();
+            result = false;
+        } else {
+            result = ParkingLot::parkConditionally(
+                &m_hasWaiters,
+                [this] () -> bool {
+                    // Let everyone know that we will be waiting. Do this while we hold the queue lock,
+                    // to prevent races with notifyOne().
+                    m_hasWaiters.store(true);
+                    return true;
+                },
+                [&lock] () WTF_IGNORES_THREAD_SAFETY_ANALYSIS {
+                    lock.unlock();
+                },
+                timeout).wasUnparked;
+        }
+        lock.lock();
+        return result;
+    }
+
+    template<typename LockType, typename Functor>
+    bool waitUntilUnchecked(LockType& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+    {
+        while (!predicate()) {
+            if (!waitUntil(lock, timeout))
+                return predicate();
+        }
+        return true;
+    }
+
     Atomic<bool> m_hasWaiters { false };
 };
 

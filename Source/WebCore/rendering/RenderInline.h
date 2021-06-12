@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "InlineFlowBox.h"
+#include "LegacyInlineFlowBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderLineBoxList.h"
 
@@ -60,7 +60,7 @@ public:
     LayoutRect linesVisualOverflowBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBoxInFragment(const RenderFragmentContainer*) const;
 
-    InlineFlowBox* createAndAppendInlineFlowBox();
+    LegacyInlineFlowBox* createAndAppendInlineFlowBox();
 
     void dirtyLineBoxes(bool fullLayout);
     void deleteLines();
@@ -68,10 +68,10 @@ public:
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
 
-    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
-    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
-    InlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
-    InlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
+    LegacyInlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
+    LegacyInlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+    LegacyInlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
+    LegacyInlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
 
 #if PLATFORM(IOS_FAMILY)
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
@@ -105,8 +105,8 @@ private:
     bool canHaveChildren() const final { return true; }
 
     LayoutRect culledInlineVisualOverflowBoundingBox() const;
-    InlineBox* culledInlineFirstLineBox() const;
-    InlineBox* culledInlineLastLineBox() const;
+    LegacyInlineBox* culledInlineFirstLineBox() const;
+    LegacyInlineBox* culledInlineLastLineBox() const;
 
     void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* wasFixed) const override;
 
@@ -129,7 +129,7 @@ private:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
     LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const final;
 
-    Optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
+    std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
     LayoutRect computeVisibleRectUsingPaintOffset(const LayoutRect&) const;
 
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
@@ -139,7 +139,7 @@ private:
 
     LayoutRect frameRectForStickyPositioning() const final { return linesBoundingBox(); }
 
-    virtual std::unique_ptr<InlineFlowBox> createInlineFlowBox(); // Subclassed by RenderSVGInline
+    virtual std::unique_ptr<LegacyInlineFlowBox> createInlineFlowBox(); // Subclassed by RenderSVGInline
 
     void dirtyLinesFromChangedChild(RenderObject& child) final { m_lineBoxes.dirtyLinesFromChangedChild(*this, child); }
 

@@ -45,20 +45,20 @@ struct SimpleRange {
 };
 
 SimpleRange makeSimpleRangeHelper(BoundaryPoint&&, BoundaryPoint&&);
-Optional<SimpleRange> makeSimpleRangeHelper(Optional<BoundaryPoint>&&, Optional<BoundaryPoint>&&);
+std::optional<SimpleRange> makeSimpleRangeHelper(std::optional<BoundaryPoint>&&, std::optional<BoundaryPoint>&&);
 SimpleRange makeSimpleRangeHelper(BoundaryPoint&&);
-Optional<SimpleRange> makeSimpleRangeHelper(Optional<BoundaryPoint>&&);
+std::optional<SimpleRange> makeSimpleRangeHelper(std::optional<BoundaryPoint>&&);
 
 inline BoundaryPoint makeBoundaryPointHelper(const BoundaryPoint& point) { return point; }
 inline BoundaryPoint makeBoundaryPointHelper(BoundaryPoint&& point) { return WTFMove(point); }
-inline Optional<BoundaryPoint> makeBoundaryPointHelper(const Optional<BoundaryPoint>& point) { return point; }
-inline Optional<BoundaryPoint> makeBoundaryPointHelper(Optional<BoundaryPoint>&& point) { return WTFMove(point); }
+inline std::optional<BoundaryPoint> makeBoundaryPointHelper(const std::optional<BoundaryPoint>& point) { return point; }
+inline std::optional<BoundaryPoint> makeBoundaryPointHelper(std::optional<BoundaryPoint>&& point) { return WTFMove(point); }
 template<typename T> auto makeBoundaryPointHelper(T&& argument) -> decltype(makeBoundaryPoint(std::forward<T>(argument))) { return makeBoundaryPoint(std::forward<T>(argument)); }
 
 template<typename ...T> auto makeSimpleRange(T&& ...arguments) -> decltype(makeSimpleRangeHelper(makeBoundaryPointHelper(std::forward<T>(arguments))...)) { return makeSimpleRangeHelper(makeBoundaryPointHelper(std::forward<T>(arguments))...); }
 
 // FIXME: Would like these two functions to have shorter names; another option is to change prefix to makeSimpleRange.
-WEBCORE_EXPORT Optional<SimpleRange> makeRangeSelectingNode(Node&);
+WEBCORE_EXPORT std::optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 
 bool operator==(const SimpleRange&, const SimpleRange&);
@@ -66,7 +66,7 @@ bool operator==(const SimpleRange&, const SimpleRange&);
 template<TreeType = Tree> Node* commonInclusiveAncestor(const SimpleRange&);
 
 template<TreeType = Tree> bool contains(const SimpleRange&, const BoundaryPoint&);
-template<TreeType = Tree> bool contains(const SimpleRange&, const Optional<BoundaryPoint>&);
+template<TreeType = Tree> bool contains(const SimpleRange&, const std::optional<BoundaryPoint>&);
 template<TreeType = Tree> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 template<TreeType = Tree> bool contains(const SimpleRange&, const Node&);
 
@@ -93,7 +93,7 @@ OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 // FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
 
 WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
-WEBCORE_EXPORT Optional<SimpleRange> intersection(const Optional<SimpleRange>&, const Optional<SimpleRange>&);
+WEBCORE_EXPORT std::optional<SimpleRange> intersection(const std::optional<SimpleRange>&, const std::optional<SimpleRange>&);
 
 class IntersectingNodeRange;
 IntersectingNodeRange intersectingNodes(const SimpleRange&);
@@ -177,10 +177,10 @@ inline SimpleRange makeSimpleRangeHelper(BoundaryPoint&& start, BoundaryPoint&& 
     return { WTFMove(start), WTFMove(end) };
 }
 
-inline Optional<SimpleRange> makeSimpleRangeHelper(Optional<BoundaryPoint>&& start, Optional<BoundaryPoint>&& end)
+inline std::optional<SimpleRange> makeSimpleRangeHelper(std::optional<BoundaryPoint>&& start, std::optional<BoundaryPoint>&& end)
 {
     if (!start || !end)
-        return WTF::nullopt;
+        return std::nullopt;
     return makeSimpleRangeHelper(WTFMove(*start), WTFMove(*end));
 }
 
@@ -190,10 +190,10 @@ inline SimpleRange makeSimpleRangeHelper(BoundaryPoint&& point)
     return makeSimpleRangeHelper(WTFMove(point), WTFMove(end));
 }
 
-inline Optional<SimpleRange> makeSimpleRangeHelper(Optional<BoundaryPoint>&& point)
+inline std::optional<SimpleRange> makeSimpleRangeHelper(std::optional<BoundaryPoint>&& point)
 {
     if (!point)
-        return WTF::nullopt;
+        return std::nullopt;
     return makeSimpleRangeHelper(WTFMove(*point));
 }
 

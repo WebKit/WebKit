@@ -124,23 +124,23 @@ bool SocketConnection::readMessage()
     memcpy(&flags, messageData, sizeof(MessageFlags));
     messageData += sizeof(MessageFlags);
     auto messageSize = sizeof(uint32_t) + sizeof(MessageFlags) + bodySize;
-    if (m_readBuffer.size() < messageSize.unsafeGet())
+    if (m_readBuffer.size() < messageSize)
         return false;
 
     Checked<size_t> messageNameLength = strlen(messageData);
     messageNameLength++;
-    if (m_readBuffer.size() < messageNameLength.unsafeGet()) {
+    if (m_readBuffer.size() < messageNameLength) {
         ASSERT_NOT_REACHED();
         return false;
     }
 
     const auto it = m_messageHandlers.find(messageData);
     if (it != m_messageHandlers.end()) {
-        messageData += messageNameLength.unsafeGet();
+        messageData += messageNameLength.value();
         GRefPtr<GVariant> parameters;
         if (!it->value.first.isNull()) {
             GUniquePtr<GVariantType> variantType(g_variant_type_new(it->value.first.data()));
-            size_t parametersSize = bodySize.unsafeGet() - messageNameLength.unsafeGet();
+            size_t parametersSize = bodySize.value() - messageNameLength.value();
             // g_variant_new_from_data() requires the memory to be properly aligned for the type being loaded,
             // but it's not possible to know the alignment because g_variant_type_info_query() is not public API.
             // Since GLib 2.60 g_variant_new_from_data() already checks the alignment and reallocates the buffer
@@ -163,9 +163,9 @@ bool SocketConnection::readMessage()
             return false;
     }
 
-    if (m_readBuffer.size() > messageSize.unsafeGet()) {
-        std::memmove(m_readBuffer.data(), m_readBuffer.data() + messageSize.unsafeGet(), m_readBuffer.size() - messageSize.unsafeGet());
-        m_readBuffer.shrink(m_readBuffer.size() - messageSize.unsafeGet());
+    if (m_readBuffer.size() > messageSize) {
+        std::memmove(m_readBuffer.data(), m_readBuffer.data() + messageSize.value(), m_readBuffer.size() - messageSize.value());
+        m_readBuffer.shrink(m_readBuffer.size() - messageSize.value());
     } else
         m_readBuffer.shrink(0);
 
@@ -185,16 +185,16 @@ void SocketConnection::sendMessage(const char* messageName, GVariant* parameters
         g_warning("Trying to send message with invalid too long name");
         return;
     }
-    Checked<uint32_t, RecordOverflow> bodySize = messageNameLength + parametersSize;
+    CheckedUint32 bodySize = messageNameLength + parametersSize;
     if (UNLIKELY(bodySize.hasOverflowed())) {
         g_warning("Trying to send message '%s' with invalid too long body", messageName);
         return;
     }
     size_t previousBufferSize = m_writeBuffer.size();
-    m_writeBuffer.grow(previousBufferSize + sizeof(uint32_t) + sizeof(MessageFlags) + bodySize.unsafeGet());
+    m_writeBuffer.grow(previousBufferSize + sizeof(uint32_t) + sizeof(MessageFlags) + bodySize.value());
 
     auto* messageData = m_writeBuffer.data() + previousBufferSize;
-    uint32_t bodySizeHeader = htonl(bodySize.unsafeGet());
+    uint32_t bodySizeHeader = htonl(bodySize.value());
     memcpy(messageData, &bodySizeHeader, sizeof(uint32_t));
     messageData += sizeof(uint32_t);
     MessageFlags flags = 0;
@@ -203,8 +203,8 @@ void SocketConnection::sendMessage(const char* messageName, GVariant* parameters
 #endif
     memcpy(messageData, &flags, sizeof(MessageFlags));
     messageData += sizeof(MessageFlags);
-    memcpy(messageData, messageName, messageNameLength.unsafeGet());
-    messageData += messageNameLength.unsafeGet();
+    memcpy(messageData, messageName, messageNameLength);
+    messageData += messageNameLength.value();
     if (parameters)
         memcpy(messageData, g_variant_get_data(parameters), parametersSize);
 

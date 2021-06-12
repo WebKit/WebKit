@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

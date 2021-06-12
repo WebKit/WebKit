@@ -51,15 +51,15 @@ public:
     void run()
     {
         hoistConstants(
-            [&] (const ValueKey& key) -> bool {
-                return key.opcode() == ConstFloat || key.opcode() == ConstDouble;
+            [&] (const Value* value) -> bool {
+                return value->opcode() == ConstFloat || value->opcode() == ConstDouble;
             });
 
         lowerFPConstants();
         
         hoistConstants(
-            [&] (const ValueKey& key) -> bool {
-                return key.opcode() == Const32 || key.opcode() == Const64 || key.opcode() == ArgumentReg;
+            [&] (const Value* value) -> bool {
+                return value->opcode() == Const32 || value->opcode() == Const64 || value->opcode() == ArgumentReg;
             });
     }
 
@@ -75,10 +75,10 @@ private:
         for (BasicBlock* block : m_proc) {
             for (Value* value : *block) {
                 for (Value*& child : value->children()) {
-                    ValueKey key = child->key();
-                    if (!filter(key))
+                    if (!filter(child))
                         continue;
 
+                    ValueKey key = child->key();
                     auto result = valueForConstant.add(key, child);
                     if (result.isNewEntry) {
                         // Assume that this block is where we want to materialize the value.
@@ -115,10 +115,10 @@ private:
         // ones from the CFG, since we're going to reinsert them elsewhere.
         for (BasicBlock* block : m_proc) {
             for (Value*& value : *block) {
-                ValueKey key = value->key();
-                if (!filter(key))
+                if (!filter(value))
                     continue;
 
+                ValueKey key = value->key();
                 if (valueForConstant.get(key) == value)
                     value = m_proc.add<Value>(Nop, value->origin());
                 else
@@ -153,13 +153,12 @@ private:
                 // we have computed that the constant should be materialized in this block, but we
                 // haven't inserted it yet. This inserts the constant if necessary.
                 auto materialize = [&] (Value* child) {
-                    ValueKey key = child->key();
-                    if (!filter(key))
+                    if (!filter(child))
                         return;
 
                     // If we encounter a fast constant, then it must be canonical, since we already
                     // got rid of the non-canonical ones.
-                    ASSERT(valueForConstant.get(key) == child);
+                    ASSERT(valueForConstant.get(child->key()) == child);
 
                     if (child->owner != block) {
                         // This constant isn't our problem. It's going to be materialized in another
@@ -175,7 +174,7 @@ private:
                 
                 if (MemoryValue* memoryValue = value->as<MemoryValue>()) {
                     Value* pointer = memoryValue->lastChild();
-                    if (pointer->hasIntPtr() && filter(pointer->key())) {
+                    if (pointer->hasIntPtr() && filter(pointer)) {
                         auto desiredOffset = [&] (Value* otherPointer) -> intptr_t {
                             // We would turn this:
                             //
@@ -213,7 +212,7 @@ private:
                     case Add:
                     case Sub: {
                         Value* addend = value->child(1);
-                        if (!addend->hasInt() || !filter(addend->key()))
+                        if (!addend->hasInt() || !filter(addend))
                             break;
                         int64_t addendConst = addend->asInt();
                         Value* bestAddend = findBestConstant(
@@ -261,9 +260,10 @@ private:
     void lowerFPConstants()
     {
         for (Value* value : m_proc.values()) {
+            if (!goesInTable(value))
+                continue;
             ValueKey key = value->key();
-            if (goesInTable(key))
-                m_constTable.add(key, m_constTable.size());
+            m_constTable.add(key, m_constTable.size());
         }
         
         m_dataSection = static_cast<int64_t*>(m_proc.addDataSection(m_constTable.size() * sizeof(int64_t)));
@@ -282,10 +282,10 @@ private:
                         continue;
                     
                     Value*& child = value->child(childIndex);
-                    ValueKey key = child->key();
-                    if (!goesInTable(key))
+                    if (!goesInTable(child))
                         continue;
 
+                    ValueKey key = child->key();
                     child = m_insertionSet.insertValue(
                         valueIndex, key.materialize(m_proc, value->origin()));
                     offLimits.add(child);
@@ -298,12 +298,12 @@ private:
         for (BasicBlock* block : m_proc) {
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
                 Value* value = block->at(valueIndex);
-                ValueKey key = value->key();
-                if (!goesInTable(key))
+                if (!goesInTable(value))
                     continue;
                 if (offLimits.contains(value))
                     continue;
 
+                ValueKey key = value->key();
                 auto offset = sizeof(int64_t) * m_constTable.get(key);
                 if (!isRepresentableAs<Value::OffsetType>(offset))
                     continue;
@@ -321,20 +321,21 @@ private:
         }
     }
 
-    bool goesInTable(const ValueKey& key)
+    bool goesInTable(const Value* value)
     {
-        return (key.opcode() == ConstDouble && key != doubleZero())
-            || (key.opcode() == ConstFloat && key != floatZero());
-    }
-
-    static ValueKey doubleZero()
-    {
-        return ValueKey(ConstDouble, Double, 0.0);
-    }
-
-    static ValueKey floatZero()
-    {
-        return ValueKey(ConstFloat, Float, 0.0);
+        switch (value->opcode()) {
+        case ConstDouble: {
+            double doubleZero = 0.0;
+            return bitwise_cast<uint64_t>(value->asDouble()) != bitwise_cast<uint64_t>(doubleZero);
+        }
+        case ConstFloat: {
+            float floatZero = 0.0;
+            return bitwise_cast<uint32_t>(value->asFloat()) != bitwise_cast<uint32_t>(floatZero);
+        }
+        default:
+            break;
+        }
+        return false;
     }
 
     Procedure& m_proc;

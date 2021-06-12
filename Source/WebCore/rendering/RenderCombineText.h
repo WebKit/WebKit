@@ -34,7 +34,7 @@ public:
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
     void combineTextIfNeeded();
-    Optional<FloatPoint> computeTextOrigin(const FloatRect& boxRect) const;
+    std::optional<FloatPoint> computeTextOrigin(const FloatRect& boxRect) const;
     String combinedStringForRendering() const;
     bool isCombined() const { return m_isCombined; }
     float combinedTextWidth(const FontCascade& font) const { return font.size(); }

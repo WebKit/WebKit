@@ -153,7 +153,7 @@ Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackL
     return page->group().captionPreferences().sortedTrackListForMenu(&trackList);
 }
 
-String MediaControlsHost::displayNameForTrack(const Optional<TextOrAudioTrack>& track)
+String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTrack>& track)
 {
     if (!m_mediaElement || !track)
         return emptyString();
@@ -540,14 +540,14 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     Vector<MenuItem> items;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (optionsJSONObject->getBoolean("includePictureInPicture"_s).valueOr(false)) {
+    if (optionsJSONObject->getBoolean("includePictureInPicture"_s).value_or(false)) {
         ASSERT(is<HTMLVideoElement>(mediaElement));
         ASSERT(downcast<HTMLVideoElement>(mediaElement).webkitSupportsPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture));
         items.append(createMenuItem(PictureInPictureTag::IncludePictureInPicture, WEB_UI_STRING_KEY("Picture in Picture", "Picture in Picture (Media Controls Menu)", "Picture in Picture media controls context menu title"), false, "pip.enter"_s));
     }
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
-    if (optionsJSONObject->getBoolean("includeLanguages"_s).valueOr(false)) {
+    if (optionsJSONObject->getBoolean("includeLanguages"_s).value_or(false)) {
         if (auto* audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
             Vector<MenuItem> languageMenuItems;
 
@@ -560,7 +560,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         }
     }
 
-    if (optionsJSONObject->getBoolean("includeSubtitles"_s).valueOr(false)) {
+    if (optionsJSONObject->getBoolean("includeSubtitles"_s).value_or(false)) {
         if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
             Vector<MenuItem> subtitleMenuItems;
 
@@ -591,7 +591,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #endif
 
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    if ((items.size() == 1 && items[0].type() == SubmenuType) || optionsJSONObject->getBoolean("promoteSubMenus"_s).valueOr(false)) {
+    if ((items.size() == 1 && items[0].type() == SubmenuType) || optionsJSONObject->getBoolean("promoteSubMenus"_s).value_or(false)) {
         for (auto&& item : std::exchange(items, { })) {
             if (!items.isEmpty())
                 items.append({ SeparatorType, invalidMenuItemIdentifier, /* title */ nullString() });
@@ -654,7 +654,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #if USE(UICONTEXTMENU)
     page->chrome().client().showMediaControlsContextMenu(bounds, WTFMove(items), WTFMove(handleItemSelected));
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(WTFMove(items), WTFMove(handleItemSelected))), { /*capture */ true, /* passive */ WTF::nullopt, /* once */ true });
+    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(WTFMove(items), WTFMove(handleItemSelected))), { /*capture */ true, /* passive */ std::nullopt, /* once */ true });
     page->contextMenuController().showContextMenuAt(*target.document().frame(), bounds.center());
 #endif
 

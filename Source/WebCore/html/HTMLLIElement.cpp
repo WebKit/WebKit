@@ -57,30 +57,30 @@ Ref<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document&
     return adoptRef(*new HTMLLIElement(tagName, document));
 }
 
-bool HTMLLIElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLLIElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == typeAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLLIElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == typeAttr) {
         if (value == "a")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueLowerAlpha);
         else if (value == "A")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueUpperAlpha);
         else if (value == "i")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueLowerRoman);
         else if (value == "I")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
         else if (value == "1")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
         else
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, value);
     } else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -118,7 +118,7 @@ void HTMLLIElement::didAttachRenderers()
 inline void HTMLLIElement::parseValue(const AtomString& value)
 {
     ASSERT(renderer());
-    Optional<int> explicitValue;
+    std::optional<int> explicitValue;
     if (auto parsedValue = parseHTMLInteger(value))
         explicitValue = *parsedValue;
     downcast<RenderListItem>(*renderer()).setExplicitValue(explicitValue);

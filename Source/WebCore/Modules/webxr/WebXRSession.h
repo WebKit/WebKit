@@ -131,7 +131,7 @@ private:
     XRVisibilityState m_visibilityState;
     UniqueRef<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
-    Optional<EndPromise> m_endPromise;
+    std::optional<EndPromise> m_endPromise;
 
     WebXRSystem& m_xrSystem;
     XRSessionMode m_mode;

@@ -28,7 +28,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -195,7 +194,7 @@ TextStream& operator<<(TextStream& ts, ValueOrNull<T> item)
 }
 
 template<typename Item>
-TextStream& operator<<(TextStream& ts, const Optional<Item>& item)
+TextStream& operator<<(TextStream& ts, const std::optional<Item>& item)
 {
     if (item)
         return ts << item.value();

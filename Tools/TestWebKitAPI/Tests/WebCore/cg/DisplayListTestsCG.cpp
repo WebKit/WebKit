@@ -27,10 +27,12 @@
 
 #if USE(CG)
 
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/Gradient.h>
+#include <WebCore/GraphicsContextCG.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -46,9 +48,9 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 {
     FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
 
-    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    GraphicsContext context { cgContext.get() };
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+    GraphicsContextCG context { cgContext.get() };
 
     auto imageBufferIdentifier = RenderingResourceIdentifier::generate();
 
@@ -69,7 +71,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     }
 
     {
-        auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+        auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, 1, colorSpace, PixelFormat::BGRA8);
         ImageBufferHashMap imageBufferMap;
         imageBufferMap.set(imageBufferIdentifier, imageBuffer.releaseNonNull());
 
@@ -77,7 +79,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
         auto result = replayer.replay();
         EXPECT_EQ(result.numberOfBytesRead, list.sizeInBytes());
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);
-        EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+        EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
     }
 }
 
@@ -85,10 +87,10 @@ static ItemBufferIdentifier globalBufferIdentifier = ItemBufferIdentifier::gener
 
 class ReadingClient : public ItemBufferReadingClient {
 private:
-    Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
+    std::optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
     {
         EXPECT_EQ(type, ItemType::FillPath);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 
@@ -112,7 +114,7 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    GraphicsContext context { cgContext.get() };
+    GraphicsContextCG context { cgContext.get() };
 
     DisplayList originalList;
     WritingClient writer;
@@ -132,8 +134,8 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
     Replayer replayer { context, shallowCopy };
     auto result = replayer.replay();
     EXPECT_GT(result.numberOfBytesRead, 0U);
-    EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
-    EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+    EXPECT_EQ(result.nextDestinationImageBuffer, std::nullopt);
+    EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
     EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
 }
 
@@ -143,7 +145,7 @@ TEST(DisplayListTests, InlineItemValidationFailure)
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    GraphicsContext context { cgContext.get() };
+    GraphicsContextCG context { cgContext.get() };
 
     auto runTestWithInvalidIdentifier = [&](FlushIdentifier identifier) {
         EXPECT_FALSE(identifier.isValid());
@@ -156,8 +158,8 @@ TEST(DisplayListTests, InlineItemValidationFailure)
         Replayer replayer { context, list };
         auto result = replayer.replay();
         EXPECT_EQ(result.numberOfBytesRead, 0U);
-        EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
-        EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+        EXPECT_EQ(result.nextDestinationImageBuffer, std::nullopt);
+        EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
     };
 

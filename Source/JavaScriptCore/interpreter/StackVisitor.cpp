@@ -251,19 +251,19 @@ StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
 }
 
 #if ENABLE(ASSEMBLER)
-Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwinding()
+std::optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwinding()
 {
     if (!NUMBER_OF_CALLEE_SAVES_REGISTERS)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (isInlinedFrame())
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if ENABLE(WEBASSEMBLY)
     if (isWasmFrame()) {
         if (callee().isCell()) {
             RELEASE_ASSERT(isWebAssemblyModule(callee().asCell()));
-            return WTF::nullopt;
+            return std::nullopt;
         }
         Wasm::Callee* wasmCallee = callee().asWasmCallee();
         return *wasmCallee->calleeSaveRegisters();
@@ -278,7 +278,7 @@ Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwind
     if (CodeBlock* codeBlock = this->codeBlock())
         return *codeBlock->calleeSaveRegisters();
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif // ENABLE(ASSEMBLER)
 
@@ -405,7 +405,7 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
     line = divotLine + codeBlock->ownerExecutable()->firstLine();
     column = divotColumn + (divotLine ? 1 : codeBlock->firstLineColumnOffset());
 
-    if (Optional<int> overrideLineNumber = codeBlock->ownerExecutable()->overrideLineNumber(codeBlock->vm()))
+    if (std::optional<int> overrideLineNumber = codeBlock->ownerExecutable()->overrideLineNumber(codeBlock->vm()))
         line = overrideLineNumber.value();
 }
 

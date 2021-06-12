@@ -37,7 +37,7 @@
 #include "FFTFrame.h"
 
 #include "VectorMath.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -46,7 +46,7 @@ namespace WebCore {
 constexpr unsigned kMinFFTPow2Size = 2;
 constexpr unsigned kMaxFFTPow2Size = 24;
 
-static CheckedLock fftSetupsLock;
+static Lock fftSetupsLock;
 
 static Vector<FFTSetup>& fftSetups() WTF_REQUIRES_LOCK(fftSetupsLock)
 {

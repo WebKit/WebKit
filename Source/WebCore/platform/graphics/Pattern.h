@@ -67,7 +67,7 @@ public:
         {
         }
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<Parameters> decode(Decoder&);
+        template<class Decoder> static std::optional<Parameters> decode(Decoder&);
         AffineTransform patternSpaceTransform;
         bool repeatX;
         bool repeatY;
@@ -106,22 +106,22 @@ void Pattern::Parameters::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Pattern::Parameters> Pattern::Parameters::decode(Decoder& decoder)
+std::optional<Pattern::Parameters> Pattern::Parameters::decode(Decoder& decoder)
 {
-    Optional<AffineTransform> patternSpaceTransform;
+    std::optional<AffineTransform> patternSpaceTransform;
     decoder >> patternSpaceTransform;
     if (!patternSpaceTransform)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> repeatX;
+    std::optional<bool> repeatX;
     decoder >> repeatX;
     if (!repeatX)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> repeatY;
+    std::optional<bool> repeatY;
     decoder >> repeatY;
     if (!repeatY)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *repeatX, *repeatY, *patternSpaceTransform }};
 }

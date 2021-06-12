@@ -37,7 +37,6 @@
 #include "SecurityOrigin.h"
 #include "UserGestureIndicator.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -76,7 +75,7 @@ public:
         RefPtr<SecurityOrigin> m_origin;
         GlobalFrameIdentifier m_globalFrameIdentifier;
     };
-    const Optional<Requester>& requester() const { return m_requester; }
+    const std::optional<Requester>& requester() const { return m_requester; }
 
     struct UIEventWithKeyStateData {
         UIEventWithKeyStateData(const UIEventWithKeyState&);
@@ -96,8 +95,8 @@ public:
         unsigned short syntheticClickType;
         bool buttonDown;
     };
-    const Optional<UIEventWithKeyStateData>& keyStateEventData() const { return m_keyStateEventData; }
-    const Optional<MouseEventData>& mouseEventData() const { return m_mouseEventData; }
+    const std::optional<UIEventWithKeyStateData>& keyStateEventData() const { return m_keyStateEventData; }
+    const std::optional<MouseEventData>& mouseEventData() const { return m_mouseEventData; }
 
     NavigationAction copyWithShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy) const;
 
@@ -126,10 +125,10 @@ public:
     void setOpenedByDOMWithOpener() { m_openedByDOMWithOpener = true; }
 
     void setTargetBackForwardItem(HistoryItem&);
-    const Optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
+    const std::optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
 
     void setSourceBackForwardItem(HistoryItem*);
-    const Optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const { return m_sourceBackForwardItemIdentifier; }
+    const std::optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const { return m_sourceBackForwardItemIdentifier; }
 
     LockHistory lockHistory() const { return m_lockHistory; }
     void setLockHistory(LockHistory lockHistory) { m_lockHistory = lockHistory; }
@@ -137,29 +136,29 @@ public:
     LockBackForwardList lockBackForwardList() const { return m_lockBackForwardList; }
     void setLockBackForwardList(LockBackForwardList lockBackForwardList) { m_lockBackForwardList = lockBackForwardList; }
 
-    const Optional<PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; };
+    const std::optional<PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; };
     void setPrivateClickMeasurement(PrivateClickMeasurement&& privateClickMeasurement) { m_privateClickMeasurement = privateClickMeasurement; };
 
 private:
     // Do not add a strong reference to the originating document or a subobject that holds the
     // originating document. See comment above the class for more details.
-    Optional<Requester> m_requester;
+    std::optional<Requester> m_requester;
     ResourceRequest m_resourceRequest;
     NavigationType m_type;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy;
     InitiatedByMainFrame m_initiatedByMainFrame;
-    Optional<UIEventWithKeyStateData> m_keyStateEventData;
-    Optional<MouseEventData> m_mouseEventData;
+    std::optional<UIEventWithKeyStateData> m_keyStateEventData;
+    std::optional<MouseEventData> m_mouseEventData;
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
     AtomString m_downloadAttribute;
     bool m_treatAsSameOriginNavigation;
     bool m_hasOpenedFrames { false };
     bool m_openedByDOMWithOpener { false };
-    Optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
-    Optional<BackForwardItemIdentifier> m_sourceBackForwardItemIdentifier;
+    std::optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
+    std::optional<BackForwardItemIdentifier> m_sourceBackForwardItemIdentifier;
     LockHistory m_lockHistory { LockHistory::No };
     LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
-    Optional<PrivateClickMeasurement> m_privateClickMeasurement;
+    std::optional<PrivateClickMeasurement> m_privateClickMeasurement;
 };
 
 } // namespace WebCore

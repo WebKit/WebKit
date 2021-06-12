@@ -45,11 +45,11 @@ IntSize ImageBufferCGBitmapBackend::calculateSafeBackendSize(const Parameters& p
     if (backendSize.isEmpty())
         return backendSize;
     
-    Checked<unsigned, RecordOverflow> bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(backendSize.width());
+    auto bytesPerRow = 4 * CheckedUint32(backendSize.width());
     if (bytesPerRow.hasOverflowed())
         return { };
 
-    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
+    CheckedSize numBytes = CheckedUint32(backendSize.height()) * bytesPerRow;
     if (numBytes.hasOverflowed())
         return { };
 
@@ -62,7 +62,7 @@ size_t ImageBufferCGBitmapBackend::calculateMemoryCost(const Parameters& paramet
     return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
 }
 
-std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, CGColorSpaceRef cgColorSpace, const HostWindow*)
+std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const HostWindow*)
 {
     ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
 
@@ -81,11 +81,11 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
     size_t numBytes = backendSize.height() * bytesPerRow;
     verifyImageBufferIsBigEnough(data, numBytes);
 
-    auto cgContext = adoptCF(CGBitmapContextCreate(data, backendSize.width(), backendSize.height(), 8, bytesPerRow, cgColorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    auto cgContext = adoptCF(CGBitmapContextCreate(data, backendSize.width(), backendSize.height(), 8, bytesPerRow, parameters.colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
     if (!cgContext)
         return nullptr;
 
-    auto context = makeUnique<GraphicsContext>(cgContext.get());
+    auto context = makeUnique<GraphicsContextCG>(cgContext.get());
 
     auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, numBytes, [] (void*, const void* data, size_t) {
         fastFree(const_cast<void*>(data));
@@ -96,15 +96,14 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
 
 std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const GraphicsContext& context)
 {
-    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr)
-        return ImageBufferCGBitmapBackend::create(parameters, cgColorSpace.get(), nullptr);
+    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr) {
+        auto overrideParameters = parameters;
+        overrideParameters.colorSpace = DestinationColorSpace { cgColorSpace };
+
+        return ImageBufferCGBitmapBackend::create(overrideParameters, nullptr);
+    }
 
     return ImageBufferCGBitmapBackend::create(parameters, nullptr);
-}
-
-std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const HostWindow* hostWindow)
-{
-    return ImageBufferCGBitmapBackend::create(parameters, cachedCGColorSpace(parameters.colorSpace), hostWindow);
 }
 
 ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, void* data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContext>&& context)
@@ -146,7 +145,7 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
         auto backendSize = this->backendSize();
         return NativeImage::create(adoptCF(CGImageCreate(
             backendSize.width(), backendSize.height(), 8, 32, bytesPerRow(),
-            cachedCGColorSpace(colorSpace()), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, m_dataProvider.get(),
+            colorSpace().platformColorSpace(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, m_dataProvider.get(),
             0, true, kCGRenderingIntentDefault)));
     }
 
@@ -154,7 +153,7 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
     return nullptr;
 }
 
-Optional<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
+std::optional<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data);
 }

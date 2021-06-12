@@ -31,7 +31,7 @@
 #include "CairoUniquePtr.h"
 #include "CairoUtilities.h"
 #include "FloatRect.h"
-#include "GraphicsContextImplCairo.h"
+#include "GraphicsContextCairo.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
@@ -238,7 +238,7 @@ void Path::addBezierCurveToSlowCase(const FloatPoint& controlPoint1, const Float
 
 void Path::addArcSlowCase(const FloatPoint& p, float r, float startAngle, float endAngle, bool anticlockwise)
 {
-    m_elements = WTF::nullopt;
+    m_elements = std::nullopt;
     cairo_t* cr = ensureCairoPath();
     float sweep = endAngle - startAngle;
     const float twoPI = 2 * piFloat;
@@ -306,7 +306,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
         return;
     }
 
-    m_elements = WTF::nullopt;
+    m_elements = std::nullopt;
     float tangent = radius / tan(acos(cos_phi) / 2);
     float factor_p1p0 = tangent / p1p0_length;
     FloatPoint t_p1p0((p1.x() + factor_p1p0 * p1p0.x()), (p1.y() + factor_p1p0 * p1p0.y()));
@@ -350,7 +350,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
 void Path::addEllipse(FloatPoint point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise)
 {
-    m_elements = WTF::nullopt;
+    m_elements = std::nullopt;
     cairo_t* cr = ensureCairoPath();
     cairo_save(cr);
     cairo_translate(cr, point.x(), point.y());
@@ -367,7 +367,7 @@ void Path::addEllipse(FloatPoint point, float radiusX, float radiusY, float rota
 
 void Path::addEllipse(const FloatRect& rect)
 {
-    m_elements = WTF::nullopt;
+    m_elements = std::nullopt;
     cairo_t* cr = ensureCairoPath();
     cairo_save(cr);
     float yRadius = .5 * rect.height();
@@ -387,7 +387,7 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     if (cairo_matrix_invert(&matrix) != CAIRO_STATUS_SUCCESS)
         return;
 
-    m_elements = WTF::nullopt;
+    m_elements = std::nullopt;
 
     cairo_t* cr = path.cairoPath();
     cairo_save(cr);
@@ -421,7 +421,7 @@ FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strok
         return FloatRect();
 
     if (strokeStyleApplier) {
-        GraphicsContext gc(GraphicsContextImplCairo::createFactory(m_path.get()));
+        GraphicsContextCairo gc(m_path.get());
         strokeStyleApplier(gc);
     }
 
@@ -450,7 +450,7 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
         return false;
 
     {
-        GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(m_path.get()));
+        GraphicsContextCairo graphicsContext(m_path.get());
         strokeStyleApplier(graphicsContext);
     }
 

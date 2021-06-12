@@ -65,7 +65,7 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& 
     return enclosingLayoutRect(renderer.computeFloatRectForRepaint(repaintRect, repaintContainer));
 }
 
-Optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const RenderElement& renderer, const FloatRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context)
+std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const RenderElement& renderer, const FloatRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context)
 {
     // Ensure our parent is an SVG object.
     ASSERT(renderer.parent());
@@ -401,7 +401,7 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
         referenceBox = localToParentTransform.mapRect(referenceBox);
 
         auto path = clipPath.pathForReferenceRect(referenceBox);
-        path.transform(localToParentTransform.inverse().valueOr(AffineTransform()));
+        path.transform(localToParentTransform.inverse().value_or(AffineTransform()));
 
         context.clipPath(path, clipPath.windRule());
     }

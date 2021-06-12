@@ -29,7 +29,6 @@
 #include "GPRInfo.h"
 #include "LLIntPCRanges.h"
 #include "MacroAssemblerCodeRef.h"
-#include <wtf/Optional.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
@@ -45,7 +44,7 @@ template<typename T = void*> T framePointer(const PlatformRegisters&);
 template<typename T = void*> void setFramePointer(PlatformRegisters&, T);
 inline MacroAssemblerCodePtr<PlatformRegistersLRPtrTag> linkRegister(const PlatformRegisters&);
 inline void setLinkRegister(PlatformRegisters&, MacroAssemblerCodePtr<CFunctionPtrTag>);
-inline Optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters&);
+inline std::optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters&);
 inline void setInstructionPointer(PlatformRegisters&, MacroAssemblerCodePtr<CFunctionPtrTag>);
 
 template<size_t N> void*& argumentPointer(PlatformRegisters&);
@@ -460,7 +459,7 @@ static inline void*& instructionPointerImpl(PlatformRegisters& regs)
 }
 #endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
-inline Optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters& regs)
+inline std::optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters& regs)
 {
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     void* value = WTF_READ_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs);
@@ -470,12 +469,12 @@ inline Optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPoi
     void* value = instructionPointerImpl(const_cast<PlatformRegisters&>(regs));
 #endif
     if (!value)
-        return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(nullptr));
+        return std::make_optional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(nullptr));
     if (!usesPointerTagging())
-        return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
+        return std::make_optional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
     if (isTaggedWith<PlatformRegistersPCPtrTag>(value))
-        return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
-    return WTF::nullopt;
+        return std::make_optional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
+    return std::nullopt;
 }
 
 inline void setInstructionPointer(PlatformRegisters& regs, MacroAssemblerCodePtr<CFunctionPtrTag> value)

@@ -38,6 +38,7 @@ OBJC_CLASS _NSHSTSStorage;
 #include "DownloadID.h"
 #include "NetworkDataTaskCocoa.h"
 #include "NetworkSession.h"
+#include "WebPageNetworkParameters.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebSocketTask.h"
 #include <WebCore/NetworkLoadMetrics.h>
@@ -75,7 +76,6 @@ public:
     const String& boundInterfaceIdentifier() const;
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
-    const String& attributedBundleIdentifier() const;
 #if PLATFORM(IOS_FAMILY)
     const String& dataConnectionServiceType() const;
 #endif
@@ -101,12 +101,12 @@ public:
     void clearAppBoundSession() override;
 #endif
 
-    SessionWrapper& sessionWrapperForTask(WebPageProxyIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, Optional<NavigatingToAppBoundDomain>);
+    SessionWrapper& sessionWrapperForTask(WebPageProxyIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
     
     _NSHSTSStorage *hstsStorage() const;
 
-    void removeNetworkWebsiteData(Optional<WallTime>, Optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&&) override;
+    void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&&) override;
 
 private:
     void invalidateAndCancel() override;
@@ -128,6 +128,10 @@ private:
     void removeWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) final;
 #endif
 
+    void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) final;
+    void removeWebPageNetworkParameters(WebPageProxyIdentifier) final;
+    size_t countNonDefaultSessionSets() const final;
+
     struct IsolatedSession {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -136,7 +140,7 @@ private:
         WallTime lastUsed;
     };
 
-    struct SessionSet : public RefCounted<SessionSet> {
+    struct SessionSet : public RefCounted<SessionSet>, public CanMakeWeakPtr<SessionSet> {
     public:
         static Ref<SessionSet> create()
         {
@@ -159,8 +163,9 @@ private:
 
     Ref<SessionSet> m_defaultSessionSet;
     HashMap<WebPageProxyIdentifier, Ref<SessionSet>> m_perPageSessionSets;
+    HashMap<WebPageNetworkParameters, WeakPtr<SessionSet>> m_perParametersSessionSets;
 
-    void initializeStandardSessionsInSet(SessionSet&, NSURLSessionConfiguration *);
+    void initializeNSURLSessionsInSet(SessionSet&, NSURLSessionConfiguration *);
     SessionSet& sessionSetForPage(WebPageProxyIdentifier);
     const SessionSet& sessionSetForPage(WebPageProxyIdentifier) const;
     void invalidateAndCancelSessionSet(SessionSet&);
@@ -168,7 +173,6 @@ private:
     String m_boundInterfaceIdentifier;
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
-    String m_attributedBundleIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
     RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };

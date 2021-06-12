@@ -80,7 +80,8 @@ void BBQPlan::work(CompilationEffort effort)
             parseAndValidateModule();
             if (!hasWork()) {
                 ASSERT(m_state == State::Validated);
-                complete(Locker { m_lock });
+                Locker locker { m_lock };
+                complete();
                 break;
             }
             FALLTHROUGH;
@@ -103,7 +104,8 @@ void BBQPlan::work(CompilationEffort effort)
 
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-        Base::fail(Locker { m_lock }, makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
+        Locker locker { m_lock };
+        Base::fail(makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
         return;
     }
 
@@ -153,7 +155,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     Locker locker { m_lock };
     moveToState(State::Completed);
-    runCompletionTasks(locker);
+    runCompletionTasks();
 }
 
 void BBQPlan::compileFunction(uint32_t functionIndex)
@@ -202,7 +204,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
         Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
-            fail(locker, makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
+            fail(makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
         }
         m_currentIndex = m_moduleInformation->functions.size();
         return nullptr;
@@ -211,7 +213,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     return WTFMove(*parseAndCompileResult);
 }
 
-void BBQPlan::didCompleteCompilation(const AbstractLocker& locker)
+void BBQPlan::didCompleteCompilation()
 {
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         CompilationContext& context = m_compilationContexts[functionIndex];
@@ -222,7 +224,7 @@ void BBQPlan::didCompleteCompilation(const AbstractLocker& locker)
         {
             LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-                Base::fail(locker, makeString("Out of executable memory in function at index ", String::number(functionIndex)));
+                Base::fail(makeString("Out of executable memory in function at index ", String::number(functionIndex)));
                 return;
             }
 
@@ -234,7 +236,7 @@ void BBQPlan::didCompleteCompilation(const AbstractLocker& locker)
         if (const auto& embedderToWasmInternalFunction = m_embedderToWasmInternalFunctions.get(functionIndex)) {
             LinkBuffer linkBuffer(*context.embedderEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-                Base::fail(locker, makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
+                Base::fail(makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
                 return;
             }
 

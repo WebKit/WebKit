@@ -189,7 +189,7 @@ void SVGAnimateElementBase::stopAnimation(SVGElement* targetElement)
         animator->stop(targetElement);
 }
 
-Optional<float> SVGAnimateElementBase::calculateDistance(const String& fromString, const String& toString)
+std::optional<float> SVGAnimateElementBase::calculateDistance(const String& fromString, const String& toString)
 {
     // FIXME: A return value of float is not enough to support paced animations on lists.
     if (!targetElement())

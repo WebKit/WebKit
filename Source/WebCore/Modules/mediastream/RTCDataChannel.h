@@ -57,11 +57,11 @@ public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);
 
     bool ordered() const { return *m_options.ordered; }
-    Optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
-    Optional<unsigned short> maxRetransmits() const { return m_options.maxRetransmits; }
+    std::optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
+    std::optional<unsigned short> maxRetransmits() const { return m_options.maxRetransmits; }
     String protocol() const { return m_options.protocol; }
     bool negotiated() const { return *m_options.negotiated; };
-    Optional<unsigned short> id() const { return m_options.id; };
+    std::optional<unsigned short> id() const { return m_options.id; };
     RTCPriorityType priority() const { return m_options.priority; };
     const RTCDataChannelInit& options() const { return m_options; }
 
@@ -107,11 +107,12 @@ private:
     // ActiveDOMObject API
     void stop() final;
     const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
+    bool virtualHasPendingActivity() const final;
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;
     void didReceiveStringData(const String&) final;
-    void didReceiveRawData(const char*, size_t) final;
+    void didReceiveRawData(const uint8_t*, size_t) final;
     void didDetectError() final;
     void bufferedAmountIsDecreasing(size_t) final;
 

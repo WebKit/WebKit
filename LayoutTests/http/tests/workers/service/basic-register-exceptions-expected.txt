@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Registration failed with error: TypeError: Script http://127.0.0.1:8000/workers/service/image-mime-type.php load failed
+CONSOLE MESSAGE: Registration failed with error: TypeError: Script http://127.0.0.1:8000/workers/service/image-mime-type.py load failed
 CONSOLE MESSAGE: Registration failed with error: TypeError: serviceWorker.register() cannot be called with an empty script URL
 CONSOLE MESSAGE: Registration failed with error: TypeError: serviceWorker.register() must be called with a valid relative script URL
 CONSOLE MESSAGE: Registration failed with error: TypeError: serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS

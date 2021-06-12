@@ -32,7 +32,6 @@
 #include "AudioArray.h"
 #include "AudioSourceProvider.h"
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

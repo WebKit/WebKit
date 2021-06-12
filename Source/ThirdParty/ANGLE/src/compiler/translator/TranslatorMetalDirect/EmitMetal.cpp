@@ -258,7 +258,8 @@ void GenMetalTraverser::emitClosingPointerParen()
 static const char *GetOperatorString(TOperator op,
                                      const TType &resultType,
                                      const TType *argType0,
-                                     const TType *argType1 = nullptr)
+                                     const TType *argType1 = nullptr,
+                                     const TType *argType2 = nullptr)
 {
     switch (op)
     {
@@ -513,6 +514,8 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpClamp:
             return "metal::clamp";  // TODO fast vs precise namespace
         case TOperator::EOpMix:
+            if(argType2 && argType2->getBasicType() == EbtBool)
+                return "ANGLE_mix_bool";
             return "metal::mix";
         case TOperator::EOpStep:
             return "metal::step";
@@ -2166,9 +2169,10 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
                 ASSERT(!args.empty());
                 const TType *argType0 = getArgType(0);
                 const TType *argType1 = getArgType(1);
+                const TType *argType2 = getArgType(2);
                 ASSERT(argType0);
 
-                const char *opName = GetOperatorString(op, retType, argType0, argType1);
+                const char *opName = GetOperatorString(op, retType, argType0, argType1, argType2);
 
                 if (IsSymbolicOperator(op, retType, argType0, argType1))
                 {

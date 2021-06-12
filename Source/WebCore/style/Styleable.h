@@ -31,7 +31,6 @@
 #include "RenderElement.h"
 #include "RenderStyleConstants.h"
 #include "WebAnimationTypes.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -57,11 +56,11 @@ struct Styleable {
         return Styleable(element, element.pseudoId());
     }
 
-    static const Optional<const Styleable> fromRenderer(const RenderElement& renderer)
+    static const std::optional<const Styleable> fromRenderer(const RenderElement& renderer)
     {
         if (auto* element = renderer.element())
             return fromElement(*element);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     bool operator==(const Styleable& other) const

@@ -211,7 +211,7 @@ void DragController::dragEnded()
     client().dragEnded();
 }
 
-Optional<DragOperation> DragController::dragEntered(const DragData& dragData)
+std::optional<DragOperation> DragController::dragEntered(const DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
@@ -227,7 +227,7 @@ void DragController::dragExited(const DragData& dragData)
     m_fileInputElementUnderMouse = nullptr;
 }
 
-Optional<DragOperation> DragController::dragUpdated(const DragData& dragData)
+std::optional<DragOperation> DragController::dragUpdated(const DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
@@ -241,7 +241,7 @@ bool DragController::performDragOperation(const DragData& dragData)
 {
     if (!m_droppedImagePlaceholders.isEmpty() && m_droppedImagePlaceholderRange && tryToUpdateDroppedImagePlaceholders(dragData)) {
         m_droppedImagePlaceholders.clear();
-        m_droppedImagePlaceholderRange = WTF::nullopt;
+        m_droppedImagePlaceholderRange = std::nullopt;
         m_documentUnderMouse = nullptr;
         clearDragCaret();
         return true;
@@ -307,17 +307,17 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
     m_documentUnderMouse = newDocument;
 }
 
-Optional<DragOperation> DragController::dragEnteredOrUpdated(const DragData& dragData)
+std::optional<DragOperation> DragController::dragEnteredOrUpdated(const DragData& dragData)
 {
     mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
 
     m_dragDestinationActionMask = dragData.dragDestinationActionMask();
     if (m_dragDestinationActionMask.isEmpty()) {
         clearDragCaret(); // FIXME: Why not call mouseMovedIntoDocument(nullptr)?
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
-    Optional<DragOperation> dragOperation;
+    std::optional<DragOperation> dragOperation;
     m_dragHandlingMethod = tryDocumentDrag(dragData, m_dragDestinationActionMask, dragOperation);
     if (m_dragHandlingMethod == DragHandlingMethod::None && (m_dragDestinationActionMask.contains(DragDestinationAction::Load))) {
         dragOperation = operationForLoad(dragData);
@@ -391,7 +391,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
 
 #endif
 
-DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, OptionSet<DragDestinationAction> destinationActionMask, Optional<DragOperation>& dragOperation)
+DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, OptionSet<DragDestinationAction> destinationActionMask, std::optional<DragOperation>& dragOperation)
 {
     if (!m_documentUnderMouse)
         return DragHandlingMethod::None;
@@ -461,7 +461,7 @@ DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, Opt
                 m_numberOfItemsToBeAccepted = 1;
             
             if (!m_numberOfItemsToBeAccepted)
-                dragOperation = WTF::nullopt;
+                dragOperation = std::nullopt;
             m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(m_numberOfItemsToBeAccepted);
         } else {
             // We are not over a file input element. The dragged item(s) will loaded into the view,
@@ -492,7 +492,7 @@ OptionSet<DragSourceAction> DragController::delegateDragSourceAction(const IntPo
     return m_dragSourceAction;
 }
 
-Optional<DragOperation> DragController::operationForLoad(const DragData& dragData)
+std::optional<DragOperation> DragController::operationForLoad(const DragData& dragData)
 {
     Document* document = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 
@@ -507,7 +507,7 @@ Optional<DragOperation> DragController::operationForLoad(const DragData& dragDat
     }
 
     if (document && (m_didInitiateDrag || (is<PluginDocument>(*document) && !pluginDocumentAcceptsDrags) || document->hasEditableStyle()))
-        return WTF::nullopt;
+        return std::nullopt;
     return dragOperation(dragData);
 }
 
@@ -693,14 +693,14 @@ bool DragController::canProcessDrag(const DragData& dragData)
     return true;
 }
 
-static Optional<DragOperation> defaultOperationForDrag(OptionSet<DragOperation> sourceOperationMask)
+static std::optional<DragOperation> defaultOperationForDrag(OptionSet<DragOperation> sourceOperationMask)
 {
     // This is designed to match IE's operation fallback for the case where
     // the page calls preventDefault() in a drag event but doesn't set dropEffect.
     if (sourceOperationMask.containsAll({ DragOperation::Copy, DragOperation::Link, DragOperation::Generic, DragOperation::Private, DragOperation::Move, DragOperation::Delete }))
         return DragOperation::Copy;
     if (sourceOperationMask.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     if (sourceOperationMask.contains(DragOperation::Move))
         return DragOperation::Move;
     if (sourceOperationMask.contains(DragOperation::Generic))
@@ -714,7 +714,7 @@ static Optional<DragOperation> defaultOperationForDrag(OptionSet<DragOperation> 
     return DragOperation::Generic;
 }
 
-bool DragController::tryDHTMLDrag(const DragData& dragData, Optional<DragOperation>& operation)
+bool DragController::tryDHTMLDrag(const DragData& dragData, std::optional<DragOperation>& operation)
 {
     ASSERT(m_documentUnderMouse);
     Ref<Frame> mainFrame(m_page.mainFrame());
@@ -732,7 +732,7 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, Optional<DragOperati
     if (!targetResponse.operationMask)
         operation = defaultOperationForDrag(sourceOperationMask);
     else if (!sourceOperationMask.containsAny(targetResponse.operationMask.value())) // The element picked an operation which is not supported by the source.
-        operation = WTF::nullopt;
+        operation = std::nullopt;
     else
         operation = defaultOperationForDrag(targetResponse.operationMask.value());
 
@@ -937,10 +937,10 @@ void DragController::prepareForDragStart(Frame& source, OptionSet<DragSourceActi
 #endif
 }
 
-Optional<HitTestResult> DragController::hitTestResultForDragStart(Frame& source, Element& element, const IntPoint& location) const
+std::optional<HitTestResult> DragController::hitTestResultForDragStart(Frame& source, Element& element, const IntPoint& location) const
 {
     if (!source.view() || !source.contentRenderer())
-        return WTF::nullopt;
+        return std::nullopt;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     auto hitTestResult = source.eventHandler().hitTestResultAtPoint(location, hitType);
@@ -950,7 +950,7 @@ Optional<HitTestResult> DragController::hitTestResultForDragStart(Frame& source,
         // The original node being dragged isn't under the drag origin anymore... maybe it was
         // hidden or moved out from under the cursor. Regardless, we don't want to start a drag on
         // something that's not actually under the drag origin.
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return { hitTestResult };
@@ -1374,7 +1374,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
 
 void DragController::removeAllDroppedImagePlaceholders()
 {
-    m_droppedImagePlaceholderRange = WTF::nullopt;
+    m_droppedImagePlaceholderRange = std::nullopt;
     for (auto& placeholder : std::exchange(m_droppedImagePlaceholders, { })) {
         if (placeholder->isConnected())
             placeholder->remove();

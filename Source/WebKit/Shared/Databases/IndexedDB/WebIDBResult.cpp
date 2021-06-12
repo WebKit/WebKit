@@ -38,13 +38,13 @@ void WebIDBResult::encode(IPC::Encoder& encoder) const
 
 bool WebIDBResult::decode(IPC::Decoder& decoder, WebIDBResult& result)
 {
-    Optional<WebCore::IDBResultData> resultData;
+    std::optional<WebCore::IDBResultData> resultData;
     decoder >> resultData;
     if (!resultData)
         return false;
     result.m_resultData = WTFMove(*resultData);
 
-    Optional<SandboxExtension::HandleArray> handles;
+    std::optional<SandboxExtension::HandleArray> handles;
     decoder >> handles;
     if (!handles)
         return false;

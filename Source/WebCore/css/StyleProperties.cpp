@@ -304,11 +304,11 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     }
 }
 
-Optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) const
+std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) const
 {
     auto colorValue = getPropertyCSSValue(property);
     if (!is<CSSPrimitiveValue>(colorValue))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
     return primitiveColor.isRGBColor() ? primitiveColor.color() : CSSParser::parseColor(colorValue->cssText());
@@ -593,7 +593,7 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                 if (property == CSSPropertyBackgroundSize || property == CSSPropertyWebkitMaskSize) {
                     if (!foundPositionYCSSProperty)
                         continue;
-                    layerResult.appendLiteral("/ ");
+                    layerResult.append("/ ");
                 }
 
                 if (useRepeatXShorthand) {

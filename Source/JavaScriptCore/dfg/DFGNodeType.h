@@ -428,6 +428,7 @@ namespace JSC { namespace DFG {
     macro(CallNumberConstructor, NodeResultJS | NodeMustGenerate) \
     macro(NumberToStringWithRadix, NodeResultJS | NodeMustGenerate) \
     macro(NumberToStringWithValidRadixConstant, NodeResultJS) \
+    macro(FunctionToString, NodeResultJS) \
     macro(MakeRope, NodeResultJS) \
     macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(InById, NodeResultBoolean | NodeMustGenerate) \
@@ -546,7 +547,7 @@ namespace JSC { namespace DFG {
     /* Used to provide feedback to the IC profiler. */ \
     macro(FilterCallLinkStatus, NodeMustGenerate) \
     macro(FilterGetByStatus, NodeMustGenerate) \
-    macro(FilterInByIdStatus, NodeMustGenerate) \
+    macro(FilterInByStatus, NodeMustGenerate) \
     macro(FilterPutByIdStatus, NodeMustGenerate) \
     macro(FilterDeleteByStatus, NodeMustGenerate) \
     macro(FilterCheckPrivateBrandStatus, NodeMustGenerate) \

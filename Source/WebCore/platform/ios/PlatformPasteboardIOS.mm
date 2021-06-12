@@ -199,13 +199,13 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
 
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
-Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t index, int64_t changeCount)
+std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t index, int64_t changeCount)
 {
     if (index >= static_cast<NSUInteger>([m_pasteboard numberOfItems]))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (this->changeCount() != changeCount)
-        return WTF::nullopt;
+        return std::nullopt;
 
     PasteboardItemInfo info;
     NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
@@ -235,7 +235,7 @@ Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_
     info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
 #endif
     if (!CGSizeEqualToSize(itemProvider.preferredPresentationSize, CGSizeZero)) {
-        auto adjustedPreferredPresentationHeight = [](auto height) -> Optional<double> {
+        auto adjustedPreferredPresentationHeight = [](auto height) -> std::optional<double> {
             if (!IOSApplication::isMobileMail() && !IOSApplication::isMailCompositionService())
                 return { height };
             // Mail's max-width: 100%; default style is in conflict with the preferred presentation size and can lead to unexpectedly stretched images. Not setting the height forces layout to preserve the aspect ratio.
@@ -281,9 +281,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #else
 
-Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t, int64_t)
+std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t, int64_t)
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #endif

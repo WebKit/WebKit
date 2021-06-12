@@ -20,22 +20,15 @@
 
 int BN_parse_asn1_unsigned(CBS *cbs, BIGNUM *ret) {
   CBS child;
+  int is_negative;
   if (!CBS_get_asn1(cbs, &child, CBS_ASN1_INTEGER) ||
-      CBS_len(&child) == 0) {
+      !CBS_is_valid_asn1_integer(&child, &is_negative)) {
     OPENSSL_PUT_ERROR(BN, BN_R_BAD_ENCODING);
     return 0;
   }
 
-  if (CBS_data(&child)[0] & 0x80) {
+  if (is_negative) {
     OPENSSL_PUT_ERROR(BN, BN_R_NEGATIVE_NUMBER);
-    return 0;
-  }
-
-  // INTEGERs must be minimal.
-  if (CBS_data(&child)[0] == 0x00 &&
-      CBS_len(&child) > 1 &&
-      !(CBS_data(&child)[1] & 0x80)) {
-    OPENSSL_PUT_ERROR(BN, BN_R_BAD_ENCODING);
     return 0;
   }
 

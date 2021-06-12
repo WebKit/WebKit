@@ -77,7 +77,7 @@ public:
     bool enabled() const { return value(); }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FontTaggedSetting<T>> decode(Decoder&);
+    template<class Decoder> static std::optional<FontTaggedSetting<T>> decode(Decoder&);
 
 private:
     FontTag m_tag;
@@ -116,32 +116,32 @@ void FontTaggedSetting<T>::encode(Encoder& encoder) const
 
 template <typename T>
 template <class Decoder>
-Optional<FontTaggedSetting<T>> FontTaggedSetting<T>::decode(Decoder& decoder)
+std::optional<FontTaggedSetting<T>> FontTaggedSetting<T>::decode(Decoder& decoder)
 {
-    Optional<uint8_t> char0;
+    std::optional<uint8_t> char0;
     decoder >> char0;
     if (!char0)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint8_t> char1;
+    std::optional<uint8_t> char1;
     decoder >> char1;
     if (!char1)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint8_t> char2;
+    std::optional<uint8_t> char2;
     decoder >> char2;
     if (!char2)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<uint8_t> char3;
+    std::optional<uint8_t> char3;
     decoder >> char3;
     if (!char3)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<T> value;
+    std::optional<T> value;
     decoder >> value;
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return FontTaggedSetting<T>({{
         static_cast<char>(*char0),
@@ -174,7 +174,7 @@ public:
     unsigned hash() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FontTaggedSettings<T>> decode(Decoder&);
+    template<class Decoder> static std::optional<FontTaggedSettings<T>> decode(Decoder&);
 
 private:
     Vector<FontTaggedSetting<T>> m_list;
@@ -203,12 +203,12 @@ void FontTaggedSettings<T>::encode(Encoder& encoder) const
 
 template <typename T>
 template <class Decoder>
-Optional<FontTaggedSettings<T>> FontTaggedSettings<T>::decode(Decoder& decoder)
+std::optional<FontTaggedSettings<T>> FontTaggedSettings<T>::decode(Decoder& decoder)
 {
-    Optional<Vector<FontTaggedSetting<T>>> list;
+    std::optional<Vector<FontTaggedSetting<T>>> list;
     decoder >> list;
     if (!list)
-        return WTF::nullopt;
+        return std::nullopt;
 
     FontTaggedSettings result;
     result.m_list = WTFMove(*list);

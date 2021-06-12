@@ -152,22 +152,15 @@ vpx_codec_err_t vpx_codec_enc_config_default(vpx_codec_iface_t *iface,
                                              vpx_codec_enc_cfg_t *cfg,
                                              unsigned int usage) {
   vpx_codec_err_t res;
-  vpx_codec_enc_cfg_map_t *map;
-  int i;
 
   if (!iface || !cfg || usage != 0)
     res = VPX_CODEC_INVALID_PARAM;
   else if (!(iface->caps & VPX_CODEC_CAP_ENCODER))
     res = VPX_CODEC_INCAPABLE;
   else {
-    res = VPX_CODEC_INVALID_PARAM;
-
-    for (i = 0; i < iface->enc.cfg_map_count; ++i) {
-      map = iface->enc.cfg_maps + i;
-      *cfg = map->cfg;
-      res = VPX_CODEC_OK;
-      break;
-    }
+    assert(iface->enc.cfg_map_count == 1);
+    *cfg = iface->enc.cfg_maps->cfg;
+    res = VPX_CODEC_OK;
   }
 
   return res;

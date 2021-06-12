@@ -58,28 +58,17 @@ MediaList& CSSImportRule::media() const
 
 String CSSImportRule::cssText() const
 {
-    StringBuilder result;
-    result.appendLiteral("@import url(\"");
-    result.append(m_importRule.get().href());
-    result.appendLiteral("\")");
-
-    if (m_importRule.get().mediaQueries()) {
-        String mediaText = m_importRule.get().mediaQueries()->mediaText();
-        if (!mediaText.isEmpty()) {
-            result.append(' ');
-            result.append(mediaText);
-        }
+    if (auto queries = m_importRule.get().mediaQueries()) {
+        if (auto mediaText = queries->mediaText(); !mediaText.isEmpty())
+            return makeString("@import url(\"", m_importRule.get().href(), "\") ", mediaText, ';');
     }
-    result.append(';');
-    
-    return result.toString();
+    return makeString("@import url(\"", m_importRule.get().href(), "\");");
 }
 
 CSSStyleSheet* CSSImportRule::styleSheet() const
 { 
     if (!m_importRule.get().styleSheet())
-        return 0;
-
+        return nullptr;
     if (!m_styleSheetCSSOMWrapper)
         m_styleSheetCSSOMWrapper = CSSStyleSheet::create(*m_importRule.get().styleSheet(), const_cast<CSSImportRule*>(this));
     return m_styleSheetCSSOMWrapper.get(); 

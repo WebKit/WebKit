@@ -27,6 +27,8 @@ class TextStream;
 
 namespace WebCore {
 
+// FIXME: No need to hard-code the numbers here any more, so we should remove them.
+// FIXME: No need to use all capitals and a CSS prefix on all these names. Should fix that.
 enum class CSSUnitType : uint8_t {
     CSS_UNKNOWN = 0,
     CSS_NUMBER = 1,
@@ -65,18 +67,19 @@ enum class CSSUnitType : uint8_t {
     CSS_Q = 34,
     CSS_LHS = 35,
     CSS_RLHS = 36,
-    CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
+
+    CustomIdent,
+
+    CSS_PAIR = 100,
     CSS_UNICODE_RANGE = 102,
     CSS_TURN = 107,
     CSS_REMS = 108,
     CSS_CHS = 109,
 
-    // This is used internally for counter names (as opposed to counter values)
     CSS_COUNTER_NAME = 110,
 
     CSS_SHAPE = 111,
 
-    // Used by border images.
     CSS_QUAD = 112,
 
     CSS_CALC = 113,
@@ -93,7 +96,7 @@ enum class CSSUnitType : uint8_t {
     // When the quirky value is used, if you're in quirks mode, the margin will collapse away
     // inside a table cell. This quirk is specified in the HTML spec but our impl is different.
     CSS_QUIRKY_EMS = 120
-    
+
     // Note that CSSValue allocates 7 bits for m_primitiveUnitType, so there can be no value here > 127.
 };
 

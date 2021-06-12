@@ -30,7 +30,6 @@
 
 #import "APIHitTestResult.h"
 #import "AppKitSPI.h"
-#import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
 #import "DrawingAreaProxy.h"
@@ -66,6 +65,7 @@
 #import <WebCore/BitmapImage.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Cursor.h>
+#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/FloatRect.h>
@@ -244,7 +244,7 @@ void PageClientImpl::viewWillMoveToAnotherWindow()
     clearAllEditCommands();
 }
 
-ColorSpaceData PageClientImpl::colorSpace()
+WebCore::DestinationColorSpace PageClientImpl::colorSpace()
 {
     return m_impl->colorSpace();
 }
@@ -444,9 +444,7 @@ void PageClientImpl::pinnedStateDidChange()
     
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSPoint windowCoord = [[m_view window] convertScreenToBase:point];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSPoint windowCoord = [m_view.window convertPointFromScreen:point];
     return IntPoint([m_view convertPoint:windowCoord fromView:nil]);
 }
     
@@ -454,9 +452,7 @@ IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     NSRect tempRect = rect;
     tempRect = [m_view convertRect:tempRect toView:nil];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    tempRect.origin = [[m_view window] convertBaseToScreen:tempRect.origin];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    tempRect.origin = [m_view.window convertPointToScreen:tempRect.origin];
     return enclosingIntRect(tempRect);
 }
 
@@ -629,7 +625,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
     return m_impl->acceleratedCompositingRootLayer();
 }
 
-RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(Optional<WebCore::IntRect>&&)
+RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&)
 {
     return m_impl->takeViewSnapshot();
 }
@@ -1034,6 +1030,15 @@ void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuIn
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+#if ENABLE(DATA_DETECTION)
+
+void PageClientImpl::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+    m_impl->handleClickForDataDetectionResult(info, clickLocation);
+}
+
+#endif
 
 } // namespace WebKit
 

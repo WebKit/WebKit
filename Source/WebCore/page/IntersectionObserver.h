@@ -45,7 +45,7 @@ class ContainerNode;
 
 struct IntersectionObserverRegistration {
     WeakPtr<IntersectionObserver> observer;
-    Optional<size_t> previousThresholdIndex;
+    std::optional<size_t> previousThresholdIndex;
 };
 
 struct IntersectionObserverData {
@@ -63,7 +63,7 @@ struct IntersectionObserverData {
 class IntersectionObserver : public RefCounted<IntersectionObserver>, public ActiveDOMObject, public CanMakeWeakPtr<IntersectionObserver> {
 public:
     struct Init {
-        Optional<Variant<RefPtr<Element>, RefPtr<Document>>> root;
+        std::optional<Variant<RefPtr<Element>, RefPtr<Document>>> root;
         String rootMargin;
         Variant<double, Vector<double>> threshold;
     };
@@ -94,7 +94,7 @@ public:
     bool hasObservationTargets() const { return m_observationTargets.size(); }
     void rootDestroyed();
 
-    Optional<ReducedResolutionSeconds> nowTimestamp() const;
+    std::optional<ReducedResolutionSeconds> nowTimestamp() const;
 
     void appendQueuedEntry(Ref<IntersectionObserverEntry>&&);
     void notify();

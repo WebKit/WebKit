@@ -41,7 +41,7 @@ FileBasedFuzzerAgent::FileBasedFuzzerAgent(VM& vm)
 SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock, PredictionTarget& target, SpeculatedType original)
 {
     FuzzerPredictions& fuzzerPredictions = ensureGlobalFuzzerPredictions();
-    Optional<SpeculatedType> generated = fuzzerPredictions.predictionFor(target.lookupKey);
+    std::optional<SpeculatedType> generated = fuzzerPredictions.predictionFor(target.lookupKey);
 
     SourceProvider* provider = codeBlock->source().provider();
     auto sourceUpToDivot = provider->source().substring(target.divot - target.startOffset, target.startOffset);

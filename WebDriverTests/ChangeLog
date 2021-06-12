@@ -1,3 +1,14 @@
+2021-05-23  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] Gardening local GTK and WPE failures
+
+        Unreviewed test gardening.
+
+        With these, no failures should happen running locally. Still a few
+        bits on the bots to check.
+
+        * TestExpectations.json:
+
 2021-05-22  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Gardening more failures

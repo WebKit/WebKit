@@ -142,11 +142,11 @@ template<> void getData(const WebKit::NetworkCache::Data& data, const Function<b
 }
 template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(const uint8_t*, size_t)>& function)
 {
-    function(reinterpret_cast<const uint8_t*>(data.data()), data.size());
+    function(data.data(), data.size());
 }
 
 template<typename T>
-static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& fileData)
+static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& fileData)
 {
     bool success = false;
     ContentRuleListMetaData metaData;
@@ -158,43 +158,43 @@ static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& 
 
         WTF::Persistence::Decoder decoder(data, size);
         
-        Optional<uint32_t> version;
+        std::optional<uint32_t> version;
         decoder >> version;
         if (!version)
             return false;
         metaData.version = WTFMove(*version);
 
-        Optional<uint64_t> sourceSize;
+        std::optional<uint64_t> sourceSize;
         decoder >> sourceSize;
         if (!sourceSize)
             return false;
         metaData.sourceSize = WTFMove(*sourceSize);
 
-        Optional<uint64_t> actionsSize;
+        std::optional<uint64_t> actionsSize;
         decoder >> actionsSize;
         if (!actionsSize)
             return false;
         metaData.actionsSize = WTFMove(*actionsSize);
 
-        Optional<uint64_t> filtersWithoutConditionsBytecodeSize;
+        std::optional<uint64_t> filtersWithoutConditionsBytecodeSize;
         decoder >> filtersWithoutConditionsBytecodeSize;
         if (!filtersWithoutConditionsBytecodeSize)
             return false;
         metaData.filtersWithoutConditionsBytecodeSize = WTFMove(*filtersWithoutConditionsBytecodeSize);
 
-        Optional<uint64_t> filtersWithConditionsBytecodeSize;
+        std::optional<uint64_t> filtersWithConditionsBytecodeSize;
         decoder >> filtersWithConditionsBytecodeSize;
         if (!filtersWithConditionsBytecodeSize)
             return false;
         metaData.filtersWithConditionsBytecodeSize = WTFMove(*filtersWithConditionsBytecodeSize);
 
-        Optional<uint64_t> conditionedFiltersBytecodeSize;
+        std::optional<uint64_t> conditionedFiltersBytecodeSize;
         decoder >> conditionedFiltersBytecodeSize;
         if (!conditionedFiltersBytecodeSize)
             return false;
         metaData.conditionedFiltersBytecodeSize = WTFMove(*conditionedFiltersBytecodeSize);
 
-        Optional<uint32_t> conditionsApplyOnlyToDomain;
+        std::optional<uint32_t> conditionsApplyOnlyToDomain;
         decoder >> conditionsApplyOnlyToDomain;
         if (!conditionsApplyOnlyToDomain)
             return false;
@@ -204,7 +204,7 @@ static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& 
         return false;
     });
     if (!success)
-        return WTF::nullopt;
+        return std::nullopt;
     return metaData;
 }
 
@@ -213,15 +213,15 @@ struct MappedData {
     WebKit::NetworkCache::Data data;
 };
 
-static Optional<MappedData> openAndMapContentRuleList(const WTF::String& path)
+static std::optional<MappedData> openAndMapContentRuleList(const WTF::String& path)
 {
     FileSystem::makeSafeToUseMemoryMapForPath(path);
     WebKit::NetworkCache::Data fileData = mapFile(fileSystemRepresentation(path).data());
     if (fileData.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
     auto metaData = decodeContentRuleListMetaData(fileData);
     if (!metaData)
-        return WTF::nullopt;
+        return std::nullopt;
     return {{ WTFMove(*metaData), { WTFMove(fileData) }}};
 }
 
@@ -229,7 +229,7 @@ static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, Platform
 {
     bool success = true;
     fileData.apply([fd, &success](const uint8_t* data, size_t size) {
-        if (writeToFile(fd, (const char*)data, size) == -1) {
+        if (writeToFile(fd, data, size) == -1) {
             success = false;
             return false;
         }
@@ -574,7 +574,7 @@ void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& i
     if (file == invalidPlatformFileHandle)
         return;
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
-    auto bytesWritten = writeToFile(file, reinterpret_cast<const char*>(&invalidHeader), sizeof(invalidHeader));
+    auto bytesWritten = writeToFile(file, &invalidHeader, sizeof(invalidHeader));
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
     closeFile(file);
 }

@@ -73,15 +73,14 @@ cc_library(
         "internal/create_thread_identity.cc",
         "internal/per_thread_sem.cc",
         "internal/waiter.cc",
+        "mutex.cc",
         "notification.cc",
-    ] + select({
-        "//conditions:default": ["mutex.cc"],
-    }),
+    ],
     hdrs = [
         "barrier.h",
         "blocking_counter.h",
         "internal/create_thread_identity.h",
-        "internal/mutex_nonprod.inc",
+        "internal/futex.h",
         "internal/per_thread_sem.h",
         "internal/waiter.h",
         "mutex.h",
@@ -89,7 +88,8 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = select({
-        "//absl:windows": [],
+        "//absl:msvc_compiler": [],
+        "//absl:clang-cl_compiler": [],
         "//absl:wasm": [],
         "//conditions:default": ["-pthread"],
     }) + ABSL_DEFAULT_LINKOPTS,
@@ -133,6 +133,21 @@ cc_test(
         ":synchronization",
         "//absl/time",
         "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_binary(
+    name = "blocking_counter_benchmark",
+    testonly = 1,
+    srcs = ["blocking_counter_benchmark.cc"],
+    copts = ABSL_TEST_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    tags = ["benchmark"],
+    visibility = ["//visibility:private"],
+    deps = [
+        ":synchronization",
+        ":thread_pool",
+        "@com_github_google_benchmark//:benchmark_main",
     ],
 )
 

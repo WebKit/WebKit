@@ -90,14 +90,24 @@ static RetainPtr<TestWKWebView> createWebViewWithSampledPageTopColorMaxDifferenc
     return adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 }
 
-static void waitForSampledPageTopColorToChangeForHTML(TestWKWebView *webView, String&& html)
+static void waitForSampledPageTopColorToChange(TestWKWebView *webView, Function<void()>&& trigger = nullptr)
 {
     bool done = false;
     auto sampledPageTopColorObserver = adoptNS([[TestKVOWrapper alloc] initWithObservable:webView keyPath:@"_sampledPageTopColor" callback:[&] {
         done = true;
     }]);
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:WTFMove(html)];
+
+    if (trigger)
+        trigger();
+
     TestWebKitAPI::Util::run(&done);
+}
+
+static void waitForSampledPageTopColorToChangeForHTML(TestWKWebView *webView, String&& html)
+{
+    waitForSampledPageTopColorToChange(webView, [webView, html = WTFMove(html)] () mutable {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:WTFMove(html)];
+    });
 }
 
 static String createHTMLGradientWithColorStops(String&& direction, Vector<String>&& colorStops)
@@ -312,13 +322,84 @@ TEST(SampledPageTopColor, HitTestCSSBackgroundImage)
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
-TEST(SampledPageTopColor, HitTestCSSAnimation)
+TEST(SampledPageTopColor, HitTestBeforeCSSTransition)
 {
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style>@keyframes fadeIn { from { opacity: 0; } }</style><body style='animation: fadeIn 1s infinite alternate'>Test"];
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), @"<body style='margin: 0; transition: background-color 1s'>Test");
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
+}
+
+TEST(SampledPageTopColor, HitTestDuringCSSTransition)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0; transition: background-color 1000s'>"];
+    [webView objectByEvaluatingJavaScript:@"document.body.style.setProperty('background-color', 'red')"];
+
+    TestWebKitAPI::Util::sleep(1);
+
+    // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
+    [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+}
+
+TEST(SampledPageTopColor, HitTestAfterCSSTransition)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0; transition: background-color 0.1s'>"];
+    [webView objectByEvaluatingJavaScript:@"document.body.style.setProperty('background-color', 'red')"];
+
+    TestWebKitAPI::Util::sleep(1);
+
+    // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
+    [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
+    waitForSampledPageTopColorToChange(webView.get());
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::red);
+}
+
+TEST(SampledPageTopColor, HitTestBeforeCSSAnimation)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), @"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 1s forwards paused'>Test");
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
+}
+
+TEST(SampledPageTopColor, HitTestDuringCSSAnimation)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 1000s forwards'>"];
+
+    TestWebKitAPI::Util::sleep(1);
+
+    // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
+    [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+}
+
+TEST(SampledPageTopColor, HitTestAfterCSSAnimation)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 0.1s forwards'>"];
+
+    TestWebKitAPI::Util::sleep(1);
+
+    // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
+    [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
+    waitForSampledPageTopColorToChange(webView.get());
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::red);
 }
 
 TEST(SampledPageTopColor, HitTestCSSPointerEventsNone)

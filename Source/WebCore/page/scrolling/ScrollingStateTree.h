@@ -36,7 +36,7 @@ namespace WebCore {
 class AsyncScrollingCoordinator;
 class ScrollingStateFrameScrollingNode;
 
-// The ScrollingStateTree is a tree that managed ScrollingStateNodes. The nodes keep track of the current
+// The ScrollingStateTree is a tree that manages ScrollingStateNodes. The nodes keep track of the current
 // state of scrolling related properties. Whenever any properties change, the scrolling coordinator
 // will be informed and will schedule a timer that will clone the new state tree and send it over to
 // the scrolling thread, avoiding locking. 

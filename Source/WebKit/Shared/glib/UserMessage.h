@@ -56,7 +56,7 @@ struct UserMessage {
     }
 
     void encode(IPC::Encoder&) const;
-    static Optional<UserMessage> decode(IPC::Decoder&);
+    static std::optional<UserMessage> decode(IPC::Decoder&);
 
     Type type { Type::Null };
     CString name;

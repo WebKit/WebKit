@@ -85,7 +85,7 @@ public:
     static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, float resolutionScale = 1);
 
     static Ref<ImageBitmap> create(ScriptExecutionContext&, const IntSize&);
-    static Ref<ImageBitmap> create(Optional<ImageBitmapBacking>&&);
+    static Ref<ImageBitmap> create(std::optional<ImageBitmapBacking>&&);
 
     ~ImageBitmap();
 
@@ -102,36 +102,36 @@ public:
     bool premultiplyAlpha() const { return m_backingStore && m_backingStore->premultiplyAlpha(); }
     bool forciblyPremultiplyAlpha() const { return m_backingStore && m_backingStore->forciblyPremultiplyAlpha(); }
 
-    Optional<ImageBitmapBacking> takeImageBitmapBacking();
-    bool isDetached() const { return !m_backingStore.hasValue(); }
+    std::optional<ImageBitmapBacking> takeImageBitmapBacking();
+    bool isDetached() const { return !m_backingStore; }
     void close() { takeImageBitmapBacking(); }
 
-    static Vector<Optional<ImageBitmapBacking>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
+    static Vector<std::optional<ImageBitmapBacking>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
 
 private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
 
-    ImageBitmap(Optional<ImageBitmapBacking>&&);
+    ImageBitmap(std::optional<ImageBitmapBacking>&&);
 
     static void resolveWithBlankImageBuffer(ScriptExecutionContext&, bool originClean, Promise&&);
 
-    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 #if ENABLE(VIDEO)
-    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 #endif
-    static void createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
-    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 #if ENABLE(OFFSCREEN_CANVAS)
-    static void createPromise(ScriptExecutionContext&, RefPtr<OffscreenCanvas>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<OffscreenCanvas>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 #endif
-    static void createPromise(ScriptExecutionContext&, CanvasBase&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
-    static void createPromise(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
-    static void createPromise(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
-    static void createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
-    static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, CanvasBase&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 
-    Optional<ImageBitmapBacking> m_backingStore;
+    std::optional<ImageBitmapBacking> m_backingStore;
 };
 
 }

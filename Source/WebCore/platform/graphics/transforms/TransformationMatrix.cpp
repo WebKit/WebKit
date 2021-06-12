@@ -35,7 +35,6 @@
 #include <cmath>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 
 #if CPU(X86_64)
@@ -1567,7 +1566,7 @@ bool TransformationMatrix::isInvertible() const
     return fabs(type == Type::Affine ? (m11() * m22() - m12() * m21()) : WebCore::determinant4x4(m_matrix)) >= SMALL_NUMBER;
 }
 
-Optional<TransformationMatrix> TransformationMatrix::inverse() const
+std::optional<TransformationMatrix> TransformationMatrix::inverse() const
 {
     auto type = this->type();
     if (type == Type::IdentityOrTranslation) {
@@ -1591,7 +1590,7 @@ Optional<TransformationMatrix> TransformationMatrix::inverse() const
         double f = m42();
         double determinant = a * d - b * c;
         if (fabs(determinant) < SMALL_NUMBER)
-            return WTF::nullopt;
+            return std::nullopt;
 
         double inverseDeterminant = 1 / determinant;
         return {{
@@ -1608,7 +1607,7 @@ Optional<TransformationMatrix> TransformationMatrix::inverse() const
     // FIXME: Use LU decomposition to apply the inverse instead of calculating the inverse explicitly.
     // Calculating the inverse of a 4x4 matrix using cofactors is numerically unstable and unnecessary to apply the inverse transformation to a point.
     if (!WebCore::inverse(m_matrix, invMat.m_matrix))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return invMat;
 }

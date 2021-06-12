@@ -48,7 +48,7 @@ Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, const Ani
 
 CSSAnimation::CSSAnimation(const Styleable& element, const Animation& backingAnimation)
     : DeclarativeAnimation(element, backingAnimation)
-    , m_animationName(backingAnimation.name())
+    , m_animationName(backingAnimation.name().string)
 {
 }
 
@@ -170,7 +170,7 @@ void CSSAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
     }
 }
 
-void CSSAnimation::setBindingsStartTime(Optional<double> startTime)
+void CSSAnimation::setBindingsStartTime(std::optional<double> startTime)
 {
     // https://drafts.csswg.org/css-animations-2/#animations
 
@@ -240,7 +240,7 @@ void CSSAnimation::effectKeyframesWereSetUsingBindings()
     m_overriddenProperties.add(Property::TimingFunction);
 }
 
-Ref<AnimationEventBase> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime)
+Ref<AnimationEventBase> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime)
 {
     return AnimationEvent::create(eventType, m_animationName, elapsedTime, pseudoId, timelineTime, this);
 }

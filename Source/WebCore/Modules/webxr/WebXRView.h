@@ -53,8 +53,8 @@ public:
     const Float32Array& projectionMatrix() const { return m_projection.get(); }
     const WebXRRigidTransform& transform() const { return m_transform.get(); }
 
-    Optional<double> recommendedViewportScale() const;
-    void requestViewportScale(Optional<double>);
+    std::optional<double> recommendedViewportScale() const;
+    void requestViewportScale(std::optional<double>);
 
     double requestedViewportScale() const { return m_requestedViewportScale; }
     bool isViewportModifiable() const { return m_viewportModifiable; }

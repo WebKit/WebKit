@@ -32,7 +32,6 @@
 #include "XRSessionMode.h"
 #include "XRSimulateUserActivationFunction.h"
 #include <JavaScriptCore/JSCJSValue.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -43,15 +42,15 @@ class WebXRTest final : public RefCounted<WebXRTest> {
 public:
     struct FakeXRDeviceInit {
         bool supportsImmersive { false };
-        Optional<Vector<XRSessionMode>> supportedModes;
+        std::optional<Vector<XRSessionMode>> supportedModes;
         Vector<FakeXRViewInit> views;
 
-        Optional<Vector<JSC::JSValue>> supportedFeatures;
+        std::optional<Vector<JSC::JSValue>> supportedFeatures;
 
-        Optional<Vector<FakeXRBoundsPoint>> boundsCoordinates;
+        std::optional<Vector<FakeXRBoundsPoint>> boundsCoordinates;
 
-        Optional<FakeXRRigidTransformInit> floorOrigin;
-        Optional<FakeXRRigidTransformInit> viewerOrigin;
+        std::optional<FakeXRRigidTransformInit> floorOrigin;
+        std::optional<FakeXRRigidTransformInit> viewerOrigin;
     };
 
     static Ref<WebXRTest> create(WeakPtr<WebXRSystem>&& system) { return adoptRef(*new WebXRTest(WTFMove(system))); }

@@ -90,6 +90,9 @@ public:
     JS_EXPORT_PRIVATE String name(VM&);
     JS_EXPORT_PRIVATE String displayName(VM&);
     JS_EXPORT_PRIVATE const String calculatedDisplayName(VM&);
+    JS_EXPORT_PRIVATE JSString* toString(JSGlobalObject*);
+
+    JSString* asStringConcurrently(VM&) const;
 
     ExecutableBase* executable() const
     {

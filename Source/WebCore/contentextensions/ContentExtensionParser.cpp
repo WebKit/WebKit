@@ -95,7 +95,7 @@ static Expected<Vector<String>, std::error_code> getDomainList(JSGlobalObject& l
 }
 
 template<typename T>
-static std::error_code getTypeFlags(JSGlobalObject& lexicalGlobalObject, const JSValue& typeValue, ResourceFlags& flags, Optional<OptionSet<T>> (*stringToType)(StringView))
+static std::error_code getTypeFlags(JSGlobalObject& lexicalGlobalObject, const JSValue& typeValue, ResourceFlags& flags, std::optional<OptionSet<T>> (*stringToType)(StringView))
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -247,7 +247,7 @@ bool isValidCSSSelector(const String& selector)
     return !!parser.parseSelector(selector);
 }
 
-static Expected<Optional<Action>, std::error_code> loadAction(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)
+static Expected<std::optional<Action>, std::error_code> loadAction(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -276,7 +276,7 @@ static Expected<Optional<Action>, std::error_code> loadAction(JSGlobalObject& le
         String selectorString = asString(selector)->value(&lexicalGlobalObject);
         if (!isValidCSSSelector(selectorString)) {
             // Skip rules with invalid selectors to be backwards-compatible.
-            return { WTF::nullopt };
+            return { std::nullopt };
         }
         return { Action(ActionType::CSSDisplayNoneSelector, selectorString) };
     }
@@ -291,7 +291,7 @@ static Expected<Optional<Action>, std::error_code> loadAction(JSGlobalObject& le
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
 
-static Expected<Optional<ContentExtensionRule>, std::error_code> loadRule(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)
+static Expected<std::optional<ContentExtensionRule>, std::error_code> loadRule(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)
 {
     auto trigger = loadTrigger(lexicalGlobalObject, ruleObject);
     if (!trigger.has_value())
@@ -304,7 +304,7 @@ static Expected<Optional<ContentExtensionRule>, std::error_code> loadRule(JSGlob
     if (action.value())
         return {{{ WTFMove(trigger.value()), WTFMove(action.value().value()) }}};
 
-    return { WTF::nullopt };
+    return { std::nullopt };
 }
 
 static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(JSGlobalObject& lexicalGlobalObject, const String& ruleJSON)

@@ -28,12 +28,12 @@
 #pragma once
 
 #include <functional>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
@@ -224,7 +224,7 @@ private:
 
     Deque<Function<void()>> m_currentIteration;
 
-    CheckedLock m_nextIterationLock;
+    Lock m_nextIterationLock;
     Deque<Function<void()>> m_nextIteration WTF_GUARDED_BY_LOCK(m_nextIterationLock);
 
     bool m_isFunctionDispatchSuspended { false };
@@ -235,7 +235,7 @@ private:
     LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     HWND m_runLoopMessageWindow;
 
-    CheckedLock m_loopLock;
+    Lock m_loopLock;
 #elif USE(COCOA_EVENT_LOOP)
     static void performWork(void*);
     RetainPtr<CFRunLoopRef> m_runLoop;
@@ -270,9 +270,9 @@ private:
 
     friend class TimerBase;
 
-    CheckedLock m_loopLock;
+    Lock m_loopLock;
     Condition m_readyToRun;
-    CheckedCondition m_stopCondition;
+    Condition m_stopCondition;
     Vector<RefPtr<TimerBase::ScheduledTask>> m_schedules;
     Vector<Status*> m_mainLoops;
     bool m_shutdown { false };

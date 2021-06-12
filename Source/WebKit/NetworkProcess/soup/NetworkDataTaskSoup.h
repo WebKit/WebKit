@@ -59,6 +59,8 @@ private:
     void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
     String suggestedFilename() const override;
 
+    void setPriority(WebCore::ResourceLoadPriority) override;
+
     void timeoutFired();
     void startTimeout();
     void stopTimeout();
@@ -173,7 +175,7 @@ private:
     static void enumerateFileChildrenCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
     void didReadFile(GRefPtr<GInputStream>&&);
 
-    void didReadDataURL(Optional<WebCore::DataURLDecoder::Result>&&);
+    void didReadDataURL(std::optional<WebCore::DataURLDecoder::Result>&&);
 
     WebCore::FrameIdentifier m_frameID;
     WebCore::PageIdentifier m_pageID;
@@ -186,14 +188,13 @@ private:
     GRefPtr<SoupMultipartInputStream> m_multipartInputStream;
     GRefPtr<GCancellable> m_cancellable;
     GRefPtr<GAsyncResult> m_pendingResult;
-    Optional<WebCore::DataURLDecoder::Result> m_pendingDataURLResult;
+    std::optional<WebCore::DataURLDecoder::Result> m_pendingDataURLResult;
     WebCore::ProtectionSpace m_protectionSpaceForPersistentStorage;
     WebCore::Credential m_credentialForPersistentStorage;
     WebCore::ResourceRequest m_currentRequest;
     WebCore::ResourceResponse m_response;
     CString m_sniffedContentType;
-    Vector<char> m_readBuffer;
-    unsigned m_redirectCount { 0 };
+    Vector<uint8_t> m_readBuffer;
     uint64_t m_bodyDataTotalBytesSent { 0 };
     GRefPtr<GFile> m_downloadDestinationFile;
     GRefPtr<GFile> m_downloadIntermediateFile;

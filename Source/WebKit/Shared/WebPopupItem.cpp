@@ -76,43 +76,43 @@ void WebPopupItem::encode(IPC::Encoder& encoder) const
     encoder << m_isSelected;
 }
 
-Optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
+std::optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
 {
     Type type;
     if (!decoder.decode(type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String text;
     if (!decoder.decode(text))
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebCore::TextDirection textDirection;
     if (!decoder.decode(textDirection))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool hasTextDirectionOverride;
     if (!decoder.decode(hasTextDirectionOverride))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String toolTip;
     if (!decoder.decode(toolTip))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String accessibilityText;
     if (!decoder.decode(accessibilityText))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool isEnabled;
     if (!decoder.decode(isEnabled))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool isLabel;
     if (!decoder.decode(isLabel))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool isSelected;
     if (!decoder.decode(isSelected))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ type, text, textDirection, hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel, isSelected }};
 }

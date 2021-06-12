@@ -47,7 +47,7 @@ GPUBindGroupAllocator::GPUBindGroupAllocator(GPUErrorScopes& errors)
 
 #if USE(METAL)
 
-Optional<GPUBindGroupAllocator::ArgumentBufferOffsets> GPUBindGroupAllocator::allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute)
+std::optional<GPUBindGroupAllocator::ArgumentBufferOffsets> GPUBindGroupAllocator::allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute)
 {
     id<MTLDevice> device = nil;
     auto checkedOffset = Checked<NSUInteger>(m_lastOffset);
@@ -74,7 +74,7 @@ Optional<GPUBindGroupAllocator::ArgumentBufferOffsets> GPUBindGroupAllocator::al
         return { };
     }
 
-    auto newOffset = checkedOffset.unsafeGet();
+    auto newOffset = checkedOffset.value();
 
     if (m_argumentBuffer && newOffset > m_argumentBuffer.get().length) {
         if (!reallocate(newOffset))
@@ -140,7 +140,7 @@ bool GPUBindGroupAllocator::reallocate(NSUInteger newOffset)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    newBuffer = [m_argumentBuffer.get().device newBufferWithLength:newLength.unsafeGet() options:0];
+    newBuffer = [m_argumentBuffer.get().device newBufferWithLength:newLength.value() options:0];
     memcpy(newBuffer.contents, m_argumentBuffer.get().contents, m_argumentBuffer.get().length);
 
     END_BLOCK_OBJC_EXCEPTIONS

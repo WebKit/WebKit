@@ -46,8 +46,7 @@ public:
 
     explicit FetchBodyConsumer(Type type) : m_type(type) { }
 
-    void append(const char* data, unsigned);
-    void append(const unsigned char* data, unsigned);
+    void append(const uint8_t* data, unsigned);
 
     bool hasData() const { return !!m_buffer; }
     const SharedBuffer* data() const { return m_buffer.get(); }

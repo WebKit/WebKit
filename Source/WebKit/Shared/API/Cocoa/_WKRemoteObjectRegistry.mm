@@ -276,13 +276,13 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
         if (expectedBlockSignature.isNull()) {
             NSLog(@"_invokeMethod: Failed to validate reply block signature: could not find local signature");
             ASSERT_NOT_REACHED();
-            continue;
+            return;
         }
 
         if (!blockSignaturesAreCompatible(wireBlockSignature, expectedBlockSignature)) {
             NSLog(@"_invokeMethod: Failed to validate reply block signature: %s != %s", wireBlockSignature.utf8().data(), expectedBlockSignature.utf8().data());
             ASSERT_NOT_REACHED();
-            continue;
+            return;
         }
 
         RetainPtr<_WKRemoteObjectRegistry> remoteObjectRegistry = self;

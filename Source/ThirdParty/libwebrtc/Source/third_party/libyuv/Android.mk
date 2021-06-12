@@ -13,6 +13,7 @@ LOCAL_SRC_FILES := \
     source/compare_msa.cc       \
     source/compare_neon.cc      \
     source/compare_neon64.cc    \
+    source/compare_win.cc       \
     source/convert.cc           \
     source/convert_argb.cc      \
     source/convert_from.cc      \
@@ -30,6 +31,7 @@ LOCAL_SRC_FILES := \
     source/rotate_msa.cc        \
     source/rotate_neon.cc       \
     source/rotate_neon64.cc     \
+    source/rotate_win.cc        \
     source/row_any.cc           \
     source/row_common.cc        \
     source/row_gcc.cc           \
@@ -37,6 +39,7 @@ LOCAL_SRC_FILES := \
     source/row_msa.cc           \
     source/row_neon.cc          \
     source/row_neon64.cc        \
+    source/row_win.cc           \
     source/scale.cc             \
     source/scale_any.cc         \
     source/scale_argb.cc        \
@@ -46,6 +49,8 @@ LOCAL_SRC_FILES := \
     source/scale_msa.cc         \
     source/scale_neon.cc        \
     source/scale_neon64.cc      \
+    source/scale_uv.cc          \
+    source/scale_win.cc         \
     source/video_common.cc
 
 common_CFLAGS := -Wall -fexceptions
@@ -85,7 +90,6 @@ LOCAL_MODULE_TAGS := tests
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
 LOCAL_SRC_FILES := \
-    unit_test/unit_test.cc        \
     unit_test/basictypes_test.cc  \
     unit_test/color_test.cc       \
     unit_test/compare_test.cc     \
@@ -98,6 +102,8 @@ LOCAL_SRC_FILES := \
     unit_test/rotate_test.cc      \
     unit_test/scale_argb_test.cc  \
     unit_test/scale_test.cc       \
+    unit_test/scale_uv_test.cc    \
+    unit_test/unit_test.cc        \
     unit_test/video_common_test.cc
 
 LOCAL_MODULE := libyuv_unittest

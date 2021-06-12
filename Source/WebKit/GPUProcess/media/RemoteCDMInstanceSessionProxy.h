@@ -60,10 +60,10 @@ private:
     using Message = WebCore::CDMInstanceSession::Message;
     using SessionLoadFailure = WebCore::CDMInstanceSession::SessionLoadFailure;
     using LicenseCallback = CompletionHandler<void(IPC::SharedBufferCopy&&, const String& sessionId, bool, bool)>;
-    using LicenseUpdateCallback = CompletionHandler<void(bool, Optional<KeyStatusVector>&&, Optional<double>&&, Optional<Message>&&, bool)>;
-    using LoadSessionCallback = CompletionHandler<void(Optional<KeyStatusVector>&&, Optional<double>&&, Optional<Message>&&, bool, SessionLoadFailure)>;
+    using LicenseUpdateCallback = CompletionHandler<void(bool, std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, bool)>;
+    using LoadSessionCallback = CompletionHandler<void(std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, bool, SessionLoadFailure)>;
     using CloseSessionCallback = CompletionHandler<void()>;
-    using RemoveSessionDataCallback = CompletionHandler<void(KeyStatusVector&&, Optional<IPC::SharedBufferCopy>&&, bool)>;
+    using RemoveSessionDataCallback = CompletionHandler<void(KeyStatusVector&&, std::optional<IPC::SharedBufferCopy>&&, bool)>;
     using StoreRecordCallback = CompletionHandler<void()>;
 
     // Messages

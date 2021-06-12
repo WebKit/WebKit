@@ -35,7 +35,6 @@
 #include "LoaderStrategy.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -192,27 +191,15 @@ Ref<JSON::ArrayOf<Protocol::ApplicationCache::ApplicationCacheResource>> Inspect
 
 Ref<Protocol::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
 {
-    StringBuilder types;
-
-    if (resourceInfo.isMaster)
-        types.appendLiteral("Master ");
-
-    if (resourceInfo.isManifest)
-        types.appendLiteral("Manifest ");
-
-    if (resourceInfo.isFallback)
-        types.appendLiteral("Fallback ");
-
-    if (resourceInfo.isForeign)
-        types.appendLiteral("Foreign ");
-
-    if (resourceInfo.isExplicit)
-        types.appendLiteral("Explicit ");
-
+    auto types = makeString(resourceInfo.isMaster ? "Master " : "",
+        resourceInfo.isManifest ? "Manifest " : "",
+        resourceInfo.isFallback ? "Fallback " : "",
+        resourceInfo.isForeign ? "Foreign " : "",
+        resourceInfo.isExplicit ? "Explicit " : "");
     return Protocol::ApplicationCache::ApplicationCacheResource::create()
         .setUrl(resourceInfo.resource.string())
         .setSize(static_cast<int>(resourceInfo.size))
-        .setType(types.toString())
+        .setType(types)
         .release();
 }
 

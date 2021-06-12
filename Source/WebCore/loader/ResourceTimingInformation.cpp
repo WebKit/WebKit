@@ -32,7 +32,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
-#include "LoadTiming.h"
 #include "Performance.h"
 #include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
@@ -84,6 +83,11 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     initiatorWindow->performance().addResourceTiming(WTFMove(resourceTiming));
 
     info.added = Added;
+}
+
+void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
+{
+    m_initiatorMap.remove(&resource);
 }
 
 void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorName, Frame* frame)

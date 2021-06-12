@@ -17,6 +17,7 @@
 
 #include <openssl/base.h>
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -48,6 +49,8 @@ struct TestState {
   bool handshake_done = false;
   // private_key is the underlying private key used when testing custom keys.
   bssl::UniquePtr<EVP_PKEY> private_key;
+  // When private key methods are used, whether the private key was used.
+  bool used_private_key = false;
   std::vector<uint8_t> private_key_result;
   // private_key_retries is the number of times an asynchronous private key
   // operation has been retried.
@@ -56,7 +59,6 @@ struct TestState {
   bssl::UniquePtr<SSL_SESSION> new_session;
   bool ticket_decrypt_done = false;
   bool alpn_select_done = false;
-  bool is_resume = false;
   bool early_callback_ready = false;
   bool custom_verify_ready = false;
   std::string msg_callback_text;
@@ -65,6 +67,8 @@ struct TestState {
   // completion. This tests that the callback is not called again after this.
   bool cert_verified = false;
   int explicit_renegotiates = 0;
+  std::function<bool(const SSL_CLIENT_HELLO*)> get_handshake_hints_cb;
+  int last_message_received = -1;
 };
 
 bool SetTestState(SSL *ssl, std::unique_ptr<TestState> state);

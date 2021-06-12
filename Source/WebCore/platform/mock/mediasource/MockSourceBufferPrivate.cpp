@@ -62,7 +62,7 @@ private:
     size_t sizeInBytes() const override { return sizeof(m_box); }
     SampleFlags flags() const override;
     PlatformSample platformSample() override;
-    Optional<ByteRange> byteRange() const override { return WTF::nullopt; }
+    std::optional<ByteRange> byteRange() const override { return std::nullopt; }
     FloatSize presentationSize() const override { return FloatSize(); }
     void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
@@ -136,7 +136,7 @@ MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate* parent)
 
 MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
 
-void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
+void MockSourceBufferPrivate::append(Vector<uint8_t>&& data)
 {
     m_inputBuffer.appendVector(data);
     SourceBufferPrivateClient::AppendResult result = SourceBufferPrivateClient::AppendResult::AppendSucceeded;

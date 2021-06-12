@@ -393,9 +393,6 @@ class TestPort(Port):
     def default_child_processes(self, **kwargs):
         return 1
 
-    def worker_startup_delay_secs(self):
-        return 0
-
     def check_build(self):
         return True
 

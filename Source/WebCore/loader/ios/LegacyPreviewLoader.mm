@@ -244,7 +244,7 @@ LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceR
     LOG(Network, "LegacyPreviewLoader created with preview file name \"%s\".", m_converter->previewFileName().utf8().data());
 }
 
-bool LegacyPreviewLoader::didReceiveData(const char* data, unsigned length)
+bool LegacyPreviewLoader::didReceiveData(const uint8_t* data, unsigned length)
 {
     return didReceiveBuffer(SharedBuffer::create(data, length).get());
 }

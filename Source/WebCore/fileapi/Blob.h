@@ -141,7 +141,7 @@ protected:
     Blob(UninitializedContructor, ScriptExecutionContext*, URL&&, String&& type);
 
     enum DeserializationContructor { deserializationContructor };
-    Blob(DeserializationContructor, ScriptExecutionContext*, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath);
+    Blob(DeserializationContructor, ScriptExecutionContext*, const URL& srcURL, const String& type, std::optional<unsigned long long> size, const String& fileBackedPath);
 
     // For slicing.
     Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, const String& contentType);
@@ -159,7 +159,7 @@ private:
 
     String m_type;
 
-    mutable Optional<unsigned long long> m_size;
+    mutable std::optional<unsigned long long> m_size;
     HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };
 

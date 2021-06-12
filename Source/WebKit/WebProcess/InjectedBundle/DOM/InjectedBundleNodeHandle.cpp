@@ -146,7 +146,7 @@ IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced)
     return m_node->pixelSnappedRenderRect(isReplaced);
 }
 
-static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& paintingRect, const Optional<float>& bitmapWidth, SnapshotOptions options)
+static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& paintingRect, const std::optional<float>& bitmapWidth, SnapshotOptions options)
 {
     if (paintingRect.isEmpty())
         return nullptr;
@@ -198,7 +198,7 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
     return snapshot;
 }
 
-RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options, bool shouldExcludeOverflow, const Optional<float>& bitmapWidth)
+RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options, bool shouldExcludeOverflow, const std::optional<float>& bitmapWidth)
 {
     if (!m_node)
         return nullptr;

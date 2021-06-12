@@ -106,12 +106,12 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     }
 
     if (name == SVGNames::targetXAttr) {
-        m_targetX->setBaseValInternal(parseInteger<unsigned>(value).valueOr(0));
+        m_targetX->setBaseValInternal(parseInteger<unsigned>(value).value_or(0));
         return;
     }
 
     if (name == SVGNames::targetYAttr) {
-        m_targetY->setBaseValInternal(parseInteger<unsigned>(value).valueOr(0));
+        m_targetY->setBaseValInternal(parseInteger<unsigned>(value).value_or(0));
         return;
     }
 

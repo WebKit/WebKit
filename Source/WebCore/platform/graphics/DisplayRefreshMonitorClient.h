@@ -27,13 +27,13 @@
 
 #include "AnimationFrameRate.h"
 #include "PlatformScreen.h"
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
 class DisplayRefreshMonitor;
 class DisplayRefreshMonitorFactory;
+
 struct DisplayUpdate;
 
 class DisplayRefreshMonitorClient {
@@ -59,7 +59,7 @@ public:
     void fireDisplayRefreshIfNeeded(const DisplayUpdate&);
 
 private:
-    Optional<PlatformDisplayID> m_displayID;
+    std::optional<PlatformDisplayID> m_displayID;
     FramesPerSecond m_preferredFramesPerSecond { FullSpeedFramesPerSecond };
     bool m_scheduled { false };
 };

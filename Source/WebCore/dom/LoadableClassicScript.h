@@ -43,7 +43,7 @@ public:
 
     static Ref<LoadableClassicScript> create(const String& nonce, const String& integrity, ReferrerPolicy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
     bool isLoaded() const final;
-    Optional<Error> error() const final;
+    std::optional<Error> error() const final;
     bool wasCanceled() const final;
 
     CachedScript& cachedScript() { return *m_cachedScript; }
@@ -66,7 +66,7 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     CachedResourceHandle<CachedScript> m_cachedScript { };
-    Optional<Error> m_error { WTF::nullopt };
+    std::optional<Error> m_error { std::nullopt };
     String m_integrity;
     bool m_isAsync { false };
 };

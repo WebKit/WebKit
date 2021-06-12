@@ -26,13 +26,12 @@
 #pragma once
 
 #include <JavaScriptCore/JSCJSValue.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
 struct PerformanceMarkOptions {
     JSC::JSValue detail;
-    Optional<double> startTime;
+    std::optional<double> startTime;
 };
 
 }

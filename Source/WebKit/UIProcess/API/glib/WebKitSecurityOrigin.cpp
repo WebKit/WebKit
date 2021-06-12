@@ -87,7 +87,7 @@ WebKitSecurityOrigin* webkit_security_origin_new(const gchar* protocol, const gc
     g_return_val_if_fail(protocol, nullptr);
     g_return_val_if_fail(host, nullptr);
 
-    Optional<uint16_t> optionalPort;
+    std::optional<uint16_t> optionalPort;
     if (port && !WTF::isDefaultPortForProtocol(port, protocol))
         optionalPort = port;
 
@@ -216,7 +216,7 @@ guint16 webkit_security_origin_get_port(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, 0);
 
-    return origin->securityOriginData.port.valueOr(0);
+    return origin->securityOriginData.port.value_or(0);
 }
 
 /**

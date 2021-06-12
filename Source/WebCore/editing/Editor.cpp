@@ -220,7 +220,7 @@ void ClearTextCommand::CreateAndApply(Document& document)
 using namespace HTMLNames;
 using namespace WTF::Unicode;
 
-TemporarySelectionChange::TemporarySelectionChange(Document& document, Optional<VisibleSelection> temporarySelection, OptionSet<TemporarySelectionOption> options)
+TemporarySelectionChange::TemporarySelectionChange(Document& document, std::optional<VisibleSelection> temporarySelection, OptionSet<TemporarySelectionOption> options)
     : m_document(RefPtr(&document))
     , m_options(options)
     , m_wasIgnoringSelectionChanges(document.editor().ignoreSelectionChanges())
@@ -662,7 +662,7 @@ bool Editor::canSmartReplaceWithPasteboard(Pasteboard& pasteboard)
     return client() && client()->smartInsertDeleteEnabled() && pasteboard.canSmartReplace();
 }
 
-bool Editor::shouldInsertFragment(DocumentFragment& fragment, const Optional<SimpleRange>& replacingDOMRange, EditorInsertAction givenAction)
+bool Editor::shouldInsertFragment(DocumentFragment& fragment, const std::optional<SimpleRange>& replacingDOMRange, EditorInsertAction givenAction)
 {
     if (!client())
         return false;
@@ -741,12 +741,12 @@ void Editor::replaceSelectionWithText(const String& text, SelectReplacement sele
     replaceSelectionWithFragment(createFragmentFromText(*range, text), selectReplacement, smartReplace, MatchStyle::Yes, editingAction);
 }
 
-Optional<SimpleRange> Editor::selectedRange()
+std::optional<SimpleRange> Editor::selectedRange()
 {
     return m_document.selection().selection().toNormalizedRange();
 }
 
-bool Editor::shouldDeleteRange(const Optional<SimpleRange>& range) const
+bool Editor::shouldDeleteRange(const std::optional<SimpleRange>& range) const
 {
     return range && !range->collapsed() && canDeleteRange(*range) && client() && client()->shouldDeleteRange(*range);
 }
@@ -767,7 +767,7 @@ bool Editor::tryDHTMLCut()
     return !dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Cut);
 }
 
-bool Editor::shouldInsertText(const String& text, const Optional<SimpleRange>& range, EditorInsertAction action) const
+bool Editor::shouldInsertText(const String& text, const std::optional<SimpleRange>& range, EditorInsertAction action) const
 {
     if (m_document.frame()->mainFrame().loader().shouldSuppressTextInputFromEditing() && action == EditorInsertAction::Typed)
         return false;
@@ -1853,7 +1853,7 @@ void Editor::didEndEditing()
         client()->didEndEditing();
 }
 
-void Editor::willWriteSelectionToPasteboard(const Optional<SimpleRange>& range)
+void Editor::willWriteSelectionToPasteboard(const std::optional<SimpleRange>& range)
 {
     if (client())
         client()->willWriteSelectionToPasteboard(range);
@@ -2424,7 +2424,7 @@ Vector<String> Editor::guessesForMisspelledWord(const String& word) const
 TextCheckingGuesses Editor::guessesForMisspelledOrUngrammatical()
 {
     if (unifiedTextCheckerEnabled()) {
-        Optional<SimpleRange> range;
+        std::optional<SimpleRange> range;
         auto selection = m_document.selection().selection();
         if (selection.isCaret() && behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
             auto wordSelection = VisibleSelection(selection.base());
@@ -2624,7 +2624,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
 #endif
 }
     
-Optional<SimpleRange> Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, bool checkSpelling)
+std::optional<SimpleRange> Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, bool checkSpelling)
 {
 #if !PLATFORM(IOS_FAMILY)
     // This function is called with a selection already expanded to word boundaries.
@@ -2633,34 +2633,34 @@ Optional<SimpleRange> Editor::markMisspellingsOrBadGrammar(const VisibleSelectio
     // This function is used only for as-you-type checking, so if that's off we do nothing. Note that
     // grammar checking can only be on if spell checking is also on.
     if (!isContinuousSpellCheckingEnabled())
-        return WTF::nullopt;
+        return std::nullopt;
     
     auto searchRange = selection.toNormalizedRange();
     if (!searchRange)
-        return WTF::nullopt;
+        return std::nullopt;
     
     // If we're not in an editable node, bail.
     Node& editableNode = searchRange->startContainer();
     if (!editableNode.hasEditableStyle())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!isSpellCheckingEnabledFor(&editableNode))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Get the spell checker if it is available
     if (!client())
-        return WTF::nullopt;
+        return std::nullopt;
     
     TextCheckingHelper checker(*client(), *searchRange);
     if (checkSpelling)
         return checker.markAllMisspelledWords();
     if (isGrammarCheckingEnabled())
         checker.markAllUngrammaticalPhrases();
-    return WTF::nullopt;
+    return std::nullopt;
 #else
     UNUSED_PARAM(selection);
     UNUSED_PARAM(checkSpelling);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
@@ -2683,7 +2683,7 @@ bool Editor::isSpellCheckingEnabledInFocusedNode() const
     return isSpellCheckingEnabledFor(m_document.selection().selection().start().deprecatedNode());
 }
 
-Optional<SimpleRange> Editor::markMisspellings(const VisibleSelection& selection)
+std::optional<SimpleRange> Editor::markMisspellings(const VisibleSelection& selection)
 {
     return markMisspellingsOrBadGrammar(selection, true);
 }
@@ -2693,7 +2693,7 @@ void Editor::markBadGrammar(const VisibleSelection& selection)
     markMisspellingsOrBadGrammar(selection, false);
 }
 
-void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType> textCheckingOptions, const Optional<SimpleRange>& spellingRange, const Optional<SimpleRange>& automaticReplacementRange, const Optional<SimpleRange>& grammarRange)
+void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType> textCheckingOptions, const std::optional<SimpleRange>& spellingRange, const std::optional<SimpleRange>& automaticReplacementRange, const std::optional<SimpleRange>& grammarRange)
 {
     if (platformDrivenTextCheckerEnabled())
         return;
@@ -3091,17 +3091,17 @@ void Editor::deletedAutocorrectionAtPosition(const Position& position, const Str
     m_alternativeTextController->deletedAutocorrectionAtPosition(position, originalString);
 }
 
-Optional<SimpleRange> Editor::rangeForPoint(const IntPoint& windowPoint)
+std::optional<SimpleRange> Editor::rangeForPoint(const IntPoint& windowPoint)
 {
     auto document = m_document.frame()->documentAtPoint(windowPoint);
     if (!document)
-        return WTF::nullopt;
+        return std::nullopt;
     auto frame = document->frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
     auto frameView = frame->view();
     if (!frameView)
-        return WTF::nullopt;
+        return std::nullopt;
     return VisibleSelection { frame->visiblePositionForPoint(frameView->windowToContents(windowPoint)) }.toNormalizedRange();
 }
 
@@ -3129,15 +3129,15 @@ void Editor::setIgnoreSelectionChanges(bool ignore, RevealSelection shouldReveal
         revealSelectionAfterEditingOperation(ScrollAlignment::alignToEdgeIfNeeded, RevealExtent);
 }
 
-Optional<SimpleRange> Editor::compositionRange() const
+std::optional<SimpleRange> Editor::compositionRange() const
 {
     if (!m_compositionNode)
-        return WTF::nullopt;
+        return std::nullopt;
     unsigned length = m_compositionNode->length();
     unsigned start = std::min(m_compositionStart, length);
     unsigned end = std::clamp(m_compositionEnd, start, length);
     if (start >= end)
-        return WTF::nullopt;
+        return std::nullopt;
     return { { { *m_compositionNode, start }, { *m_compositionNode, end } } };
 }
 
@@ -3280,25 +3280,25 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
 
 String Editor::selectedText() const
 {
-    TextIteratorBehavior behavior = TextIteratorDefaultBehavior;
+    TextIteratorBehaviors behaviors;
     if (m_document.settings().selectionAcrossShadowBoundariesEnabled())
-        behavior |= TextIteratorTraversesFlatTree;
-    return selectedText(behavior);
+        behaviors.add(TextIteratorBehavior::TraversesFlatTree);
+    return selectedText(behaviors);
 }
 
 String Editor::selectedTextForDataTransfer() const
 {
-    TextIteratorBehavior behavior = TextIteratorEmitsImageAltText;
+    TextIteratorBehaviors behaviors { TextIteratorBehavior::EmitsImageAltText };
     if (m_document.settings().selectionAcrossShadowBoundariesEnabled())
-        behavior |= TextIteratorTraversesFlatTree;
-    return selectedText(behavior);
+        behaviors.add(TextIteratorBehavior::TraversesFlatTree);
+    return selectedText(behaviors);
 }
 
-String Editor::selectedText(TextIteratorBehavior behavior) const
+String Editor::selectedText(TextIteratorBehaviors behaviors) const
 {
     // We remove '\0' characters because they are not visibly rendered to the user.
     auto range = m_document.selection().selection().firstRange();
-    return range ? plainText(*range, behavior).replaceWithLiteral('\0', "") : emptyString();
+    return range ? plainText(*range, behaviors).replaceWithLiteral('\0', "") : emptyString();
 }
 
 RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size)
@@ -3467,7 +3467,7 @@ void Editor::applyEditingStyleToBodyElement() const
 bool Editor::findString(const String& target, FindOptions options)
 {
     Ref<Document> protectedDocument(m_document);
-    Optional<SimpleRange> resultRange;
+    std::optional<SimpleRange> resultRange;
     {
         m_document.updateLayoutIgnorePendingStylesheets();
         Style::PostResolutionCallbackDisabler disabler(m_document);
@@ -3501,7 +3501,7 @@ static BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node, FindOptions 
     return options.contains(Backwards) ? makeBoundaryPointBeforeNodeContents(node) : makeBoundaryPointAfterNodeContents(node);
 }
 
-static Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node, FindOptions options)
+static std::optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node, FindOptions options)
 {
     return options.contains(Backwards) ? makeBoundaryPointBeforeNode(node) : makeBoundaryPointAfterNode(node);
 }
@@ -3513,10 +3513,10 @@ static SimpleRange collapseIfRootsDiffer(SimpleRange&& range)
         ? WTFMove(range) : SimpleRange { range.start, range.start };
 }
 
-Optional<SimpleRange> Editor::rangeOfString(const String& target, const Optional<SimpleRange>& referenceRange, FindOptions options)
+std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std::optional<SimpleRange>& referenceRange, FindOptions options)
 {
     if (target.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Start from an edge of the reference range, if there's a reference range that's not in shadow content. Which edge
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
@@ -3559,7 +3559,7 @@ Optional<SimpleRange> Editor::rangeOfString(const String& target, const Optional
         // this should be a success case instead, so we'll just fall through in that case.
     }
 
-    return resultRange.collapsed() ? WTF::nullopt : makeOptional(resultRange);
+    return resultRange.collapsed() ? std::nullopt : std::make_optional(resultRange);
 }
 
 static bool isFrameInRange(Frame& frame, const SimpleRange& range)
@@ -3571,12 +3571,12 @@ static bool isFrameInRange(Frame& frame, const SimpleRange& range)
     return false;
 }
 
-unsigned Editor::countMatchesForText(const String& target, const Optional<SimpleRange>& range, FindOptions options, unsigned limit, bool markMatches, Vector<SimpleRange>* matches)
+unsigned Editor::countMatchesForText(const String& target, const std::optional<SimpleRange>& range, FindOptions options, unsigned limit, bool markMatches, Vector<SimpleRange>* matches)
 {
     if (target.isEmpty())
         return 0;
 
-    Optional<SimpleRange> searchRange;
+    std::optional<SimpleRange> searchRange;
     if (range) {
         if (&range->start.document() == &document())
             searchRange = *range;
@@ -3679,6 +3679,10 @@ static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
     // Don't scan for phone numbers inside editable regions.
     if (auto startNode = makeRef(range.startContainer()); startNode->hasEditableStyle())
         return { };
+
+    if (HTMLElement::isInsideImageOverlay(range))
+        return { };
+
     auto text = plainText(range);
     Vector<SimpleRange> result;
     unsigned length = text.length();
@@ -3694,7 +3698,7 @@ static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
     return result;
 }
 
-static Optional<SimpleRange> extendSelection(const SimpleRange& range, unsigned charactersToExtend)
+static std::optional<SimpleRange> extendSelection(const SimpleRange& range, unsigned charactersToExtend)
 {
     auto start = makeDeprecatedLegacyPosition(range.start);
     auto end = makeDeprecatedLegacyPosition(range.end);
@@ -3936,19 +3940,19 @@ String Editor::stringForCandidateRequest() const
     return plainText(*range);
 }
 
-Optional<SimpleRange> Editor::contextRangeForCandidateRequest() const
+std::optional<SimpleRange> Editor::contextRangeForCandidateRequest() const
 {
     auto& selection = m_document.selection().selection();
     return makeSimpleRange(startOfParagraph(selection.visibleStart()), endOfParagraph(selection.visibleEnd()));
 }
 
-Optional<SimpleRange> Editor::rangeForTextCheckingResult(const TextCheckingResult& result) const
+std::optional<SimpleRange> Editor::rangeForTextCheckingResult(const TextCheckingResult& result) const
 {
     if (!result.range.length)
-        return WTF::nullopt;
+        return std::nullopt;
     auto contextRange = contextRangeForCandidateRequest();
     if (!contextRange)
-        return WTF::nullopt;
+        return std::nullopt;
     return resolveCharacterRange(*contextRange, result.range);
 }
 
@@ -4199,7 +4203,7 @@ void Editor::notifyClientOfAttachmentUpdates()
     }
 }
 
-void Editor::insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType)
+void Editor::insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType)
 {
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
     attachment->setUniqueIdentifier(identifier);
@@ -4252,7 +4256,7 @@ void Editor::toggleOverwriteModeEnabled()
     m_document.selection().setShouldShowBlockCursor(m_overwriteModeEnabled);
 }
 
-Optional<SimpleRange> Editor::adjustedSelectionRange()
+std::optional<SimpleRange> Editor::adjustedSelectionRange()
 {
     // FIXME: Why do we need to adjust the selection to include the anchor tag it's in? Whoever wrote this code originally forgot to leave us a comment explaining the rationale.
     auto range = selectedRange();

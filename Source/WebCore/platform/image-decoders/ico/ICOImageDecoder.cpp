@@ -109,7 +109,7 @@ bool ICOImageDecoder::setFailed()
     return ScalableImageDecoder::setFailed();
 }
 
-Optional<IntPoint> ICOImageDecoder::hotSpot() const
+std::optional<IntPoint> ICOImageDecoder::hotSpot() const
 {
     // When unspecified, the default frame is always frame 0. This is consistent with
     // BitmapImage where currentFrame() starts at 0 and only increases when animation is
@@ -117,10 +117,10 @@ Optional<IntPoint> ICOImageDecoder::hotSpot() const
     return hotSpotAtIndex(0);
 }
 
-Optional<IntPoint> ICOImageDecoder::hotSpotAtIndex(size_t index) const
+std::optional<IntPoint> ICOImageDecoder::hotSpotAtIndex(size_t index) const
 {
     if (index >= m_dirEntries.size() || m_fileType != CURSOR)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return m_dirEntries[index].m_hotSpot;
 }
@@ -315,7 +315,7 @@ ICOImageDecoder::ImageType ICOImageDecoder::imageTypeAtIndex(size_t index)
     const uint32_t imageOffset = m_dirEntries[index].m_imageOffset;
     if ((imageOffset > m_data->size()) || ((m_data->size() - imageOffset) < 4))
         return Unknown;
-    return strncmp(&m_data->data()[imageOffset], "\x89PNG", 4) ? BMP : PNG;
+    return memcmp(&m_data->data()[imageOffset], "\x89PNG", 4) ? BMP : PNG;
 }
 
 }

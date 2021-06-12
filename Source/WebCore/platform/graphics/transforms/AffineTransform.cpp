@@ -34,7 +34,6 @@
 #include "Region.h"
 #include "TransformationMatrix.h"
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -105,11 +104,11 @@ bool AffineTransform::isInvertible() const
     return std::isfinite(determinant) && determinant != 0;
 }
 
-Optional<AffineTransform> AffineTransform::inverse() const
+std::optional<AffineTransform> AffineTransform::inverse() const
 {
     double determinant = det(m_transform);
     if (!std::isfinite(determinant) || determinant == 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     AffineTransform result;
     if (isIdentityOrTranslation()) {

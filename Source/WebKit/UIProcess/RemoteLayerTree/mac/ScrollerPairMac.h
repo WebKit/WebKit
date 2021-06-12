@@ -79,7 +79,7 @@ private:
     WebCore::FloatRect m_visibleContentRect;
 
     WebCore::IntPoint m_lastKnownMousePosition;
-    Optional<WebCore::FloatPoint> m_lastScrollPosition;
+    std::optional<WebCore::FloatPoint> m_lastScrollPosition;
 
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
     RetainPtr<WKScrollerImpPairDelegate> m_scrollerImpPairDelegate;

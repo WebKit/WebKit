@@ -132,7 +132,7 @@ void WebPaymentCoordinatorProxy::completeMerchantValidation(const WebCore::Payme
     m_merchantValidationState = MerchantValidationState::ValidationComplete;
 }
 
-void WebPaymentCoordinatorProxy::completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&& update)
+void WebPaymentCoordinatorProxy::completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
@@ -144,7 +144,7 @@ void WebPaymentCoordinatorProxy::completeShippingMethodSelection(Optional<WebCor
     m_state = State::Active;
 }
 
-void WebPaymentCoordinatorProxy::completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&& update)
+void WebPaymentCoordinatorProxy::completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
@@ -156,7 +156,7 @@ void WebPaymentCoordinatorProxy::completeShippingContactSelection(Optional<WebCo
     m_state = State::Active;
 }
 
-void WebPaymentCoordinatorProxy::completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
+void WebPaymentCoordinatorProxy::completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
@@ -170,7 +170,7 @@ void WebPaymentCoordinatorProxy::completePaymentMethodSelection(Optional<WebCore
 
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void WebPaymentCoordinatorProxy::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+void WebPaymentCoordinatorProxy::completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
@@ -184,7 +184,7 @@ void WebPaymentCoordinatorProxy::completePaymentMethodModeChange(Optional<WebCor
 
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void WebPaymentCoordinatorProxy::completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>& result)
+void WebPaymentCoordinatorProxy::completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
 {
     // It's possible that the payment has been canceled already.
     if (!canCompletePayment())
@@ -364,7 +364,7 @@ void WebPaymentCoordinatorProxy::didReachFinalState(WebCore::PaymentSessionError
     platformHidePaymentUI();
 
     m_authorizationPresenter = nullptr;
-    m_destinationID = WTF::nullopt;
+    m_destinationID = std::nullopt;
     m_merchantValidationState = MerchantValidationState::Idle;
     m_state = State::Idle;
 

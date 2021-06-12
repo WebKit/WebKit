@@ -57,14 +57,14 @@ WebXRView::WebXRView(Ref<WebXRFrame>&& frame, XREye eye, Ref<WebXRRigidTransform
 WebXRView::~WebXRView() = default;
 
 // https://immersive-web.github.io/webxr/#dom-xrview-recommendedviewportscale
-Optional<double> WebXRView::recommendedViewportScale() const
+std::optional<double> WebXRView::recommendedViewportScale() const
 {
     // Return null if the system does not implement a heuristic or method for determining a recommended scale.
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrview-requestviewportscale
-void WebXRView::requestViewportScale(Optional<double> value)
+void WebXRView::requestViewportScale(std::optional<double> value)
 {
     if (!value || *value <= 0.0)
         return;

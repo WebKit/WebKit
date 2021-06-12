@@ -55,8 +55,8 @@ private:
     void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) final;
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) final;
 
-    void lockLayersForHitTesting() final;
-    void unlockLayersForHitTesting() final;
+    void lockLayersForHitTesting() final WTF_ACQUIRES_LOCK(m_layerHitTestMutex);
+    void unlockLayersForHitTesting() final WTF_RELEASES_LOCK(m_layerHitTestMutex);
 
     // This lock protects the CALayer/PlatformCALayer tree.
     mutable Lock m_layerHitTestMutex;

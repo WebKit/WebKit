@@ -93,7 +93,7 @@ public:
 
     void updatePercentageOfPagedOutPages(WTF::SimpleStats&);
     
-    Lock& bitvectorLock() { return m_bitvectorLock; }
+    Lock& bitvectorLock() WTF_RETURNS_LOCK(m_bitvectorLock) { return m_bitvectorLock; }
 
 #define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
     bool is ## capitalBitName(const AbstractLocker&, size_t index) const { return m_bits.is ## capitalBitName(index); } \

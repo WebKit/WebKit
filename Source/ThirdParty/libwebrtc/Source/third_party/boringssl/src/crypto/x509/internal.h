@@ -24,6 +24,33 @@ extern "C" {
 #endif
 
 
+/* Internal structures. */
+
+struct X509_val_st {
+  ASN1_TIME *notBefore;
+  ASN1_TIME *notAfter;
+} /* X509_VAL */;
+
+struct X509_pubkey_st {
+  X509_ALGOR *algor;
+  ASN1_BIT_STRING *public_key;
+  EVP_PKEY *pkey;
+} /* X509_PUBKEY */;
+
+struct x509_attributes_st {
+  ASN1_OBJECT *object;
+  STACK_OF(ASN1_TYPE) *set;
+} /* X509_ATTRIBUTE */;
+
+struct x509_cert_aux_st {
+  STACK_OF(ASN1_OBJECT) *trust;   // trusted uses
+  STACK_OF(ASN1_OBJECT) *reject;  // rejected uses
+  ASN1_UTF8STRING *alias;         // "friendly name"
+  ASN1_OCTET_STRING *keyid;       // key id of private key
+  STACK_OF(X509_ALGOR) *other;    // other unspecified info
+} /* X509_CERT_AUX */;
+
+
 /* RSA-PSS functions. */
 
 /* x509_rsa_pss_to_ctx configures |ctx| for an RSA-PSS operation based on

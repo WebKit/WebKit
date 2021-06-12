@@ -315,7 +315,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     LayoutIntegration::RunIterator previouslyVisitedRun;
     VisiblePosition current = visiblePosition;
-    Optional<VisiblePosition> previousPosition;
+    std::optional<VisiblePosition> previousPosition;
     UBreakIterator* iter = nullptr;
 
     Vector<UChar, 1024> string;
@@ -601,14 +601,14 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     if (!searchRange)
         return { };
 
-    TextIterator it(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    TextIterator it(*searchRange, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())
         pos = makeDeprecatedLegacyPosition(searchRange->end);
     else if (next > prefixLength) {
         // Use the character iterator to translate the next value into a DOM position.
-        CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+        CharacterIterator charIt(*searchRange, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
         if (charIt.atEnd())
             return { };
@@ -963,7 +963,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
         line = run.line().previous();
         // We want to skip zero height boxes.
-        // This could happen in case it is a TrailingFloatsRootInlineBox.
+        // This could happen in case it is a LegacyRootInlineBox with trailing floats.
         if (!line || !line->logicalHeight() || !line.firstRun())
             line = { };
     }
@@ -1013,7 +1013,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
         line = run.line().next();
         // We want to skip zero height boxes.
-        // This could happen in case it is a TrailingFloatsRootInlineBox.
+        // This could happen in case it is a LegacyRootInlineBox with trailing floats.
         if (!line || !line->logicalHeight() || !line.firstRun())
             line = { };
     }
@@ -1738,11 +1738,11 @@ VisiblePosition positionOfNextBoundaryOfGranularity(const VisiblePosition& vp, T
     }
 }
 
-Optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity granularity, SelectionDirection direction)
+std::optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity granularity, SelectionDirection direction)
 {
     // This is particularly inefficient.  We could easily obtain the answer with the boundaries computed below.
     if (!withinTextUnitOfGranularity(vp, granularity, direction))
-        return WTF::nullopt;
+        return std::nullopt;
 
     VisiblePosition prevBoundary;
     VisiblePosition nextBoundary;
@@ -1794,14 +1794,14 @@ Optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition& vp, 
 
         default:
             ASSERT_NOT_REACHED();
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     if (prevBoundary.isNull() || nextBoundary.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (vp < prevBoundary || vp > nextBoundary)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return makeSimpleRange(prevBoundary, nextBoundary);
 }
@@ -1849,10 +1849,10 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
     twoBefore = characters[2];
 }
 
-Optional<SimpleRange> wordRangeFromPosition(const VisiblePosition& position)
+std::optional<SimpleRange> wordRangeFromPosition(const VisiblePosition& position)
 {
     if (position.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto range = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Backward))
         return range;
@@ -1896,7 +1896,7 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
     return result;
 }
 
-Optional<SimpleRange> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition& position, int numberOfCharactersToExpand, SelectionDirection direction)
+std::optional<SimpleRange> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition& position, int numberOfCharactersToExpand, SelectionDirection direction)
 {
     Position start = position.deepEquivalent();
     Position end = position.deepEquivalent();
@@ -1915,7 +1915,7 @@ Optional<SimpleRange> rangeExpandedByCharactersInDirectionAtWordBoundary(const V
     return makeSimpleRange(start, end);
 }    
 
-Optional<SimpleRange> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
+std::optional<SimpleRange> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
 {
     Position start = position.deepEquivalent();
     Position end = position.deepEquivalent();

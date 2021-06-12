@@ -460,7 +460,7 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
 
     String path = fullPathForDatabase(origin, name, false);
     if (path.isEmpty())
-        return DatabaseDetails(name, displayName, expectedUsage, 0, WTF::nullopt, WTF::nullopt);
+        return DatabaseDetails(name, displayName, expectedUsage, 0, std::nullopt, std::nullopt);
     return DatabaseDetails(name, displayName, expectedUsage, SQLiteFileSystem::databaseFileSize(path), SQLiteFileSystem::databaseCreationTime(path), SQLiteFileSystem::databaseModificationTime(path));
 }
 
@@ -1291,14 +1291,16 @@ Lock& DatabaseTracker::openDatabaseMutex()
     return openDatabaseLock;
 }
 
-void DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled()
+// We are not using WTF_ACQUIRES_LOCK(openDatabaseLock) because the call sites are ObjC functions and cannot be annotated.
+void DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     // Lock the database from opening any database until we are done with scanning the file system for
     // zero byte database files to remove.
     openDatabaseLock.lock();
 }
 
-void DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish()
+// We are not using WTF_RELEASES_LOCK(openDatabaseLock) because the call sites are ObjC functions and cannot be annotated.
+void DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     openDatabaseLock.unlock();
 }

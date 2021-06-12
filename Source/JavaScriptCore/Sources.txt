@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+// Copyright (C) 2017-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -166,7 +166,6 @@ b3/B3SlotBaseValue.cpp
 b3/B3StackmapGenerationParams.cpp
 b3/B3StackmapSpecial.cpp
 b3/B3StackmapValue.cpp
-b3/B3StackSlot.cpp
 b3/B3SwitchCase.cpp
 b3/B3SwitchValue.cpp
 b3/B3Type.cpp
@@ -240,7 +239,7 @@ bytecode/GetByIdVariant.cpp
 bytecode/GetterSetterAccessCase.cpp
 bytecode/ICStatusMap.cpp
 bytecode/ICStatusUtils.cpp
-bytecode/InByIdStatus.cpp
+bytecode/InByStatus.cpp
 bytecode/InByIdVariant.cpp
 bytecode/InlineAccess.cpp
 bytecode/InlineCallFrame.cpp
@@ -341,8 +340,6 @@ dfg/DFGCodeOriginPool.cpp
 dfg/DFGCombinedLiveness.cpp
 dfg/DFGCommon.cpp
 dfg/DFGCommonData.cpp
-dfg/DFGCompilationKey.cpp
-dfg/DFGCompilationMode.cpp
 dfg/DFGConstantFoldingPhase.cpp
 dfg/DFGConstantHoistingPhase.cpp
 dfg/DFGCriticalEdgeBreakingPhase.cpp
@@ -416,7 +413,6 @@ dfg/DFGRegisteredStructureSet.cpp
 dfg/DFGSSACalculator.cpp
 dfg/DFGSSAConversionPhase.cpp
 dfg/DFGSSALoweringPhase.cpp
-dfg/DFGSafepoint.cpp
 dfg/DFGSnippetParams.cpp
 // These files take a long time to compile so we do them individually.
 dfg/DFGSpeculativeJIT.cpp @no-unify
@@ -428,7 +424,6 @@ dfg/DFGStoreBarrierClusteringPhase.cpp
 dfg/DFGStoreBarrierInsertionPhase.cpp
 dfg/DFGStrengthReductionPhase.cpp
 dfg/DFGStructureAbstractValue.cpp
-dfg/DFGThreadData.cpp
 dfg/DFGThunks.cpp
 dfg/DFGTierUpCheckInjectionPhase.cpp
 dfg/DFGToFTLDeferredCompilationCallback.cpp
@@ -448,7 +443,6 @@ dfg/DFGVariableEvent.cpp
 dfg/DFGVariableEventStream.cpp
 dfg/DFGVirtualRegisterAllocationPhase.cpp
 dfg/DFGWatchpointCollectionPhase.cpp
-dfg/DFGWorklist.cpp
 
 disassembler/ARM64Disassembler.cpp
 disassembler/CapstoneDisassembler.cpp
@@ -624,6 +618,7 @@ interpreter/ShadowChicken.cpp
 interpreter/StackVisitor.cpp
 
 jit/AssemblyHelpers.cpp
+jit/BaselineJITPlan.cpp
 jit/BinarySwitch.cpp
 jit/CCallHelpers.cpp
 jit/CachedRecovery.cpp
@@ -648,6 +643,8 @@ jit/JITCall.cpp
 jit/JITCall32_64.cpp
 jit/JITCode.cpp
 jit/JITCompilation.cpp
+jit/JITCompilationKey.cpp
+jit/JITCompilationMode.cpp
 jit/JITDisassembler.cpp
 jit/JITDivGenerator.cpp
 jit/JITExceptions.cpp
@@ -659,14 +656,18 @@ jit/JITOpaqueByproducts.cpp
 jit/JITOpcodes.cpp
 jit/JITOpcodes32_64.cpp
 jit/JITOperations.cpp
+jit/JITPlan.cpp
 jit/JITPropertyAccess.cpp
 jit/JITPropertyAccess32_64.cpp
 jit/JITRightShiftGenerator.cpp
+jit/JITSafepoint.cpp
+jit/JITSizeStatistics.cpp
 jit/JITStubRoutine.cpp
 jit/JITSubGenerator.cpp
 jit/JITThunks.cpp
 jit/JITToDFGDeferredCompilationCallback.cpp
 jit/JITWorklist.cpp
+jit/JITWorklistThread.cpp
 jit/PCToCodeOriginMap.cpp
 jit/PolymorphicCallStubRoutine.cpp
 jit/Reg.cpp

@@ -221,19 +221,19 @@ void FileReader::fireEvent(const AtomString& type)
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }
 
-Optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() const
+std::optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() const
 {
     if (!m_loader || m_error || m_state != DONE)
-        return WTF::nullopt;
+        return std::nullopt;
     if (m_readType == FileReaderLoader::ReadAsArrayBuffer) {
         auto result = m_loader->arrayBufferResult();
         if (!result)
-            return WTF::nullopt;
+            return std::nullopt;
         return { result };
     }
     String result = m_loader->stringResult();
     if (result.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
     return { WTFMove(result) };
 }
 

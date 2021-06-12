@@ -52,7 +52,7 @@ JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalO
     RETURN_IF_EXCEPTION(throwScope, jsUndefined());
 
     EnsureStillAliveScope argument1 = callFrame.argument(1);
-    Optional<uint64_t> keyID;
+    std::optional<uint64_t> keyID;
     if (!argument1.value().isUndefined()) {
         if (argument1.value().isBigInt()) {
             if (argument1.value().asHeapBigInt()->length() > 1) {
@@ -61,7 +61,7 @@ JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalO
             }
             keyID = JSBigInt::toBigUInt64(argument1.value());
         } else
-            keyID = Optional<Converter<IDLUnsignedLongLong>::ReturnType>(convert<IDLUnsignedLongLong>(lexicalGlobalObject, argument1.value()));
+            keyID = std::optional<Converter<IDLUnsignedLongLong>::ReturnType>(convert<IDLUnsignedLongLong>(lexicalGlobalObject, argument1.value()));
     }
     RETURN_IF_EXCEPTION(throwScope, jsUndefined());
     throwScope.release();

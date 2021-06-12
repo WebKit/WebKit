@@ -136,7 +136,7 @@ void VideoTextureCopierGStreamer::updateTransformationMatrix()
         -1, 1, -(farValue + nearValue) / (farValue - nearValue), 1);
 }
 
-bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMapperPlatformLayerBuffer& inputTexture, IntSize& frameSize, GLuint outputTexture, GLenum outputTarget, GLint level, GLenum internalFormat, GLenum format, GLenum type, bool flipY, ImageOrientation sourceOrientation)
+bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMapperPlatformLayerBuffer& inputTexture, IntSize& frameSize, GLuint outputTexture, GLenum outputTarget, GLint level, GLenum internalFormat, GLenum format, GLenum type, bool flipY, ImageOrientation sourceOrientation, bool premultiplyAlpha)
 {
     if (!m_framebuffer || !m_vbo || frameSize.isEmpty())
         return false;
@@ -161,7 +161,7 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMappe
     using Buffer = TextureMapperPlatformLayerBuffer;
     TextureMapperShaderProgram::Options options;
     WTF::switchOn(inputTexture.textureVariant(),
-        [&](const Buffer::RGBTexture&) { options = TextureMapperShaderProgram::TextureRGB; },
+        [&](const Buffer::RGBTexture&) { options = TextureMapperShaderProgram::TextureRGB | (premultiplyAlpha ? TextureMapperShaderProgram::Premultiply : 0); },
         [&](const Buffer::YUVTexture& texture) {
             switch (texture.numberOfPlanes) {
             case 1:

@@ -34,7 +34,7 @@ struct CSSValueKey {
     unsigned hash() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<CSSValueKey> decode(Decoder&);
+    template<class Decoder> static std::optional<CSSValueKey> decode(Decoder&);
 
     unsigned cssValueID;
     bool useDarkAppearance;
@@ -55,20 +55,20 @@ void CSSValueKey::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<CSSValueKey> CSSValueKey::decode(Decoder& decoder)
+std::optional<CSSValueKey> CSSValueKey::decode(Decoder& decoder)
 {
-    Optional<unsigned> cssValueID;
+    std::optional<unsigned> cssValueID;
     decoder >> cssValueID;
     if (!cssValueID)
-        return WTF::nullopt;
-    Optional<bool> useDarkAppearance;
+        return std::nullopt;
+    std::optional<bool> useDarkAppearance;
     decoder >> useDarkAppearance;
     if (!useDarkAppearance)
-        return WTF::nullopt;
-    Optional<bool> useElevatedUserInterfaceLevel;
+        return std::nullopt;
+    std::optional<bool> useElevatedUserInterfaceLevel;
     decoder >> useElevatedUserInterfaceLevel;
     if (!useElevatedUserInterfaceLevel)
-        return WTF::nullopt;
+        return std::nullopt;
     return { { WTFMove(*cssValueID), WTFMove(*useDarkAppearance), WTFMove(*useElevatedUserInterfaceLevel) } };
 }
 

@@ -29,9 +29,9 @@ class CQTest : public ::libvpx_test::EncoderTest,
   // maps the cqlevel to the bitrate produced.
   typedef std::map<int, uint32_t> BitrateMap;
 
-  static void SetUpTestCase() { bitrates_.clear(); }
+  static void SetUpTestSuite() { bitrates_.clear(); }
 
-  static void TearDownTestCase() {
+  static void TearDownTestSuite() {
     ASSERT_TRUE(!HasFailure())
         << "skipping bitrate validation due to earlier failure.";
     uint32_t prev_actual_bitrate = kCQTargetBitrate;
@@ -126,6 +126,6 @@ TEST_P(CQTest, LinearPSNRIsHigherForCQLevel) {
   EXPECT_GE(cq_psnr_lin, vbr_psnr_lin);
 }
 
-VP8_INSTANTIATE_TEST_CASE(CQTest, ::testing::Range(kCQLevelMin, kCQLevelMax,
-                                                   kCQLevelStep));
+VP8_INSTANTIATE_TEST_SUITE(CQTest, ::testing::Range(kCQLevelMin, kCQLevelMax,
+                                                    kCQLevelStep));
 }  // namespace

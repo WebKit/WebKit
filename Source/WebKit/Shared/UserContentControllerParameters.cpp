@@ -44,38 +44,38 @@ void UserContentControllerParameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-Optional<UserContentControllerParameters> UserContentControllerParameters::decode(IPC::Decoder& decoder)
+std::optional<UserContentControllerParameters> UserContentControllerParameters::decode(IPC::Decoder& decoder)
 {
-    Optional<UserContentControllerIdentifier> identifier;
+    std::optional<UserContentControllerIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<std::pair<ContentWorldIdentifier, String>>> userContentWorlds;
+    std::optional<Vector<std::pair<ContentWorldIdentifier, String>>> userContentWorlds;
     decoder >> userContentWorlds;
     if (!userContentWorlds)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Vector<WebUserScriptData>> userScripts;
+    std::optional<Vector<WebUserScriptData>> userScripts;
     decoder >> userScripts;
     if (!userScripts)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<WebUserStyleSheetData>> userStyleSheets;
+    std::optional<Vector<WebUserStyleSheetData>> userStyleSheets;
     decoder >> userStyleSheets;
     if (!userStyleSheets)
-        return WTF::nullopt;
+        return std::nullopt;
     
-    Optional<Vector<WebScriptMessageHandlerData>> messageHandlers;
+    std::optional<Vector<WebScriptMessageHandlerData>> messageHandlers;
     decoder >> messageHandlers;
     if (!messageHandlers)
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if ENABLE(CONTENT_EXTENSIONS)
-    Optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
+    std::optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
     decoder >> contentRuleLists;
     if (!contentRuleLists)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     return {{

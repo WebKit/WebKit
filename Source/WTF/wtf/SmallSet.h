@@ -67,7 +67,7 @@ public:
 
     SmallSet(SmallSet&& other)
     {
-        memcpy(this, &other, sizeof(SmallSet));
+        memcpy(static_cast<void*>(this), static_cast<void*>(&other), sizeof(SmallSet));
         other.initialize();
     }
 
@@ -225,7 +225,7 @@ private:
     {
         m_size = 0;
         m_capacity = SmallArraySize;
-        memset(m_inline.smallStorage, -1, sizeof(T) * SmallArraySize);
+        memset(static_cast<void*>(m_inline.smallStorage), -1, sizeof(T) * SmallArraySize);
         ASSERT(isSmall());
     }
 
@@ -252,7 +252,7 @@ private:
         T* oldBuffer = wasSmall ? m_inline.smallStorage : m_inline.buffer;
         unsigned oldCapacity = m_capacity;
         T* newBuffer = static_cast<T*>(SmallSetMalloc::malloc(allocationSize));
-        memset(newBuffer, -1, allocationSize);
+        memset(static_cast<void*>(newBuffer), -1, allocationSize);
         m_capacity = size;
 
         for (unsigned i = 0; i < oldCapacity; i++) {

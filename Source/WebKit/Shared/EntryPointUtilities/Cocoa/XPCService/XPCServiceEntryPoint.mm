@@ -84,17 +84,17 @@ bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBund
 bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersion)
 {
     auto version = parseInteger<uint32_t>(xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version"));
-    clientSDKVersion = version.valueOr(0);
-    return version.hasValue();
+    clientSDKVersion = version.value_or(0);
+    return version.has_value();
 }
 
-bool XPCServiceInitializerDelegate::getProcessIdentifier(ProcessIdentifier& identifier)
+bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentifier& identifier)
 {
     auto parsedIdentifier = parseInteger<uint64_t>(xpc_dictionary_get_string(m_initializerMessage, "process-identifier"));
     if (!parsedIdentifier)
         return false;
 
-    identifier = makeObjectIdentifier<ProcessIdentifierType>(*parsedIdentifier);
+    identifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(*parsedIdentifier);
     return true;
 }
 

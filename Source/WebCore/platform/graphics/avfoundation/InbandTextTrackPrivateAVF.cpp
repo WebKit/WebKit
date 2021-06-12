@@ -64,16 +64,16 @@ InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF()
     disconnect();
 }
 
-static Optional<SRGBA<uint8_t>> makeSimpleColorFromARGBCFArray(CFArrayRef colorArray)
+static std::optional<SRGBA<uint8_t>> makeSimpleColorFromARGBCFArray(CFArrayRef colorArray)
 {
     if (CFArrayGetCount(colorArray) < 4)
-        return WTF::nullopt;
+        return std::nullopt;
 
     float componentArray[4];
     for (int i = 0; i < 4; i++) {
         CFNumberRef value = static_cast<CFNumberRef>(CFArrayGetValueAtIndex(colorArray, i));
         if (CFGetTypeID(value) != CFNumberGetTypeID())
-            return WTF::nullopt;
+            return std::nullopt;
 
         float component;
         CFNumberGetValue(value, kCFNumberFloatType, &component);
@@ -151,7 +151,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
                     continue;
 
-                tagStart.appendLiteral("<b>");
+                tagStart.append("<b>");
                 tagEnd = "</b>" + tagEnd;
                 continue;
             }
@@ -160,7 +160,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
                     continue;
 
-                tagStart.appendLiteral("<i>");
+                tagStart.append("<i>");
                 tagEnd = "</i>" + tagEnd;
                 continue;
             }
@@ -169,7 +169,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
                     continue;
 
-                tagStart.appendLiteral("<u>");
+                tagStart.append("<u>");
                 tagEnd = "</u>" + tagEnd;
                 continue;
             }

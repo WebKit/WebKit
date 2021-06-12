@@ -68,6 +68,7 @@
 #include <openssl/thread.h>
 
 #include "../internal.h"
+#include "internal.h"
 
 /* Minor tweak to operation: free up EVP_PKEY */
 static int pubkey_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
@@ -180,35 +181,37 @@ EVP_PKEY *X509_PUBKEY_get(X509_PUBKEY *key)
     return NULL;
 }
 
-int X509_PUBKEY_set0_param(X509_PUBKEY *pub, const ASN1_OBJECT *aobj,
-                           int ptype, void *pval,
-                           unsigned char *penc, int penclen)
+int X509_PUBKEY_set0_param(X509_PUBKEY *pub, ASN1_OBJECT *obj, int param_type,
+                           void *param_value, uint8_t *key, int key_len)
 {
-    if (!X509_ALGOR_set0(pub->algor, aobj, ptype, pval))
+    if (!X509_ALGOR_set0(pub->algor, obj, param_type, param_value)) {
         return 0;
-    if (penc) {
-        if (pub->public_key->data)
-            OPENSSL_free(pub->public_key->data);
-        pub->public_key->data = penc;
-        pub->public_key->length = penclen;
-        /* Set number of unused bits to zero */
-        pub->public_key->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);
-        pub->public_key->flags |= ASN1_STRING_FLAG_BITS_LEFT;
+    }
+
+    ASN1_STRING_set0(pub->public_key, key, key_len);
+    /* Set the number of unused bits to zero. */
+    pub->public_key->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);
+    pub->public_key->flags |= ASN1_STRING_FLAG_BITS_LEFT;
+    return 1;
+}
+
+int X509_PUBKEY_get0_param(ASN1_OBJECT **out_obj, const uint8_t **out_key,
+                           int *out_key_len, X509_ALGOR **out_alg,
+                           X509_PUBKEY *pub)
+{
+    if (out_obj != NULL) {
+        *out_obj = pub->algor->algorithm;
+    }
+    if (out_key != NULL) {
+        *out_key = pub->public_key->data;
+        *out_key_len = pub->public_key->length;
+    }
+    if (out_alg != NULL) {
+        *out_alg = pub->algor;
     }
     return 1;
 }
 
-int X509_PUBKEY_get0_param(ASN1_OBJECT **ppkalg,
-                           const unsigned char **pk, int *ppklen,
-                           X509_ALGOR **pa, X509_PUBKEY *pub)
-{
-    if (ppkalg)
-        *ppkalg = pub->algor->algorithm;
-    if (pk) {
-        *pk = pub->public_key->data;
-        *ppklen = pub->public_key->length;
-    }
-    if (pa)
-        *pa = pub->algor;
-    return 1;
+const ASN1_BIT_STRING *X509_PUBKEY_get0_public_key(const X509_PUBKEY *pub) {
+    return pub->public_key;
 }

@@ -57,9 +57,9 @@ public:
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy, WebCore::PreserveResolution) const override;
     void draw(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) override;
     void drawPattern(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&) override;
-    String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution) const override;
-    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
-    Optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const override;
+    String toDataURL(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution) const override;
+    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const override;
+    std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const override;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;

@@ -46,7 +46,7 @@ class StringBuffer {
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)
-        , m_data(m_length ? static_cast<CharType*>(StringBufferMalloc::malloc((Checked<size_t>(m_length) * sizeof(CharType)).unsafeGet())) : nullptr)
+        , m_data(m_length ? static_cast<CharType*>(StringBufferMalloc::malloc(Checked<size_t>(m_length) * sizeof(CharType))) : nullptr)
     {
     }
 

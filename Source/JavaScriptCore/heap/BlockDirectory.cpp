@@ -31,8 +31,8 @@
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
 
-#include <wtf/CheckedLock.h>
 #include <wtf/FunctionTraits.h>
+#include <wtf/Lock.h>
 #include <wtf/SimpleStats.h>
 
 namespace JSC {
@@ -346,7 +346,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlock
     private:
         BlockDirectory& m_directory WTF_GUARDED_BY_LOCK(m_lock);
         size_t m_index WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-        CheckedLock m_lock;
+        Lock m_lock;
         bool m_done { false };
     };
     

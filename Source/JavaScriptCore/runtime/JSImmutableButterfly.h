@@ -53,7 +53,7 @@ public:
             return nullptr;
 
         // Because of the above maximumLength requirement, allocationSize can never overflow.
-        void* buffer = tryAllocateCell<JSImmutableButterfly>(vm.heap, allocationSize(length).unsafeGet());
+        void* buffer = tryAllocateCell<JSImmutableButterfly>(vm.heap, allocationSize(length));
         if (UNLIKELY(!buffer))
             return nullptr;
         JSImmutableButterfly* result = new (NotNull, buffer) JSImmutableButterfly(vm, structure, length);

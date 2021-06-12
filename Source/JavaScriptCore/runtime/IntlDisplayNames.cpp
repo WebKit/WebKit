@@ -69,7 +69,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
     auto requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    Optional<JSObject&> options = intlGetOptionsObject(globalObject, optionsValue);
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, void());
 
     // Does not set either of "ca" or "nu".
@@ -95,7 +95,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "narrow"_s, Style::Narrow }, { "short"_s, Style::Short }, { "long"_s, Style::Long } }, "style must be either \"narrow\", \"short\", or \"long\""_s, Style::Long);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto type = intlOption<Optional<Type>>(globalObject, options, vm.propertyNames->type, { { "language"_s, Type::Language }, { "region"_s, Type::Region }, { "script"_s, Type::Script }, { "currency"_s, Type::Currency } }, "type must be either \"language\", \"region\", \"script\", or \"currency\""_s, WTF::nullopt);
+    auto type = intlOption<std::optional<Type>>(globalObject, options, vm.propertyNames->type, { { "language"_s, Type::Language }, { "region"_s, Type::Region }, { "script"_s, Type::Script }, { "currency"_s, Type::Currency } }, "type must be either \"language\", \"region\", \"script\", or \"currency\""_s, std::nullopt);
     RETURN_IF_EXCEPTION(scope, void());
     if (!type) {
         throwTypeError(globalObject, scope, "type must not be undefined"_s);

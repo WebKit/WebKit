@@ -53,6 +53,7 @@ DocumentTimelinesController::DocumentTimelinesController(Document& document)
 
 DocumentTimelinesController::~DocumentTimelinesController()
 {
+    m_currentTimeClearingTask.cancel();
 }
 
 void DocumentTimelinesController::addTimeline(DocumentTimeline& timeline)
@@ -72,7 +73,7 @@ void DocumentTimelinesController::removeTimeline(DocumentTimeline& timeline)
 
 void DocumentTimelinesController::detachFromDocument()
 {
-    m_currentTimeClearingTaskQueue.close();
+    m_currentTimeClearingTask.cancel();
 
     while (!m_timelines.computesEmpty())
         m_timelines.begin()->detachFromDocument();
@@ -196,7 +197,7 @@ void DocumentTimelinesController::resumeAnimations()
     if (!m_isSuspended)
         return;
 
-    m_cachedCurrentTime = WTF::nullopt;
+    m_cachedCurrentTime = std::nullopt;
 
     m_isSuspended = false;
 
@@ -214,10 +215,10 @@ ReducedResolutionSeconds DocumentTimelinesController::liveCurrentTime() const
     return m_document.domWindow()->nowTimestamp();
 }
 
-Optional<Seconds> DocumentTimelinesController::currentTime()
+std::optional<Seconds> DocumentTimelinesController::currentTime()
 {
     if (!m_document.domWindow())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!m_cachedCurrentTime)
         cacheCurrentTime(liveCurrentTime());
@@ -232,8 +233,11 @@ void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newC
     // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
     // fire syncronously if no JS is running.
     m_waitingOnVMIdle = true;
-    if (!m_currentTimeClearingTaskQueue.hasPendingTasks())
-        m_currentTimeClearingTaskQueue.enqueueTask(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
+    if (!m_currentTimeClearingTask.isPending()) {
+        CancellableTask task(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
+        m_currentTimeClearingTask = task.createHandle();
+        m_document.eventLoop().queueTask(TaskSource::InternalAsyncTask, WTFMove(task));
+    }
     // We extent the associated Document's lifecycle until the VM became idle since the DocumentTimelinesController
     // is owned by the Document.
     m_document.vm().whenIdle([this, protectedDocument = makeRefPtr(m_document)]() {
@@ -248,8 +252,8 @@ void DocumentTimelinesController::maybeClearCachedCurrentTime()
     // JS or waiting on all current animation updating code to have completed. This is so that
     // we're guaranteed to have a consistent current time reported for all work happening in a given
     // JS frame or throughout updating animations in WebCore.
-    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
-        m_cachedCurrentTime = WTF::nullopt;
+    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTask.isPending())
+        m_cachedCurrentTime = std::nullopt;
 }
 
 } // namespace WebCore

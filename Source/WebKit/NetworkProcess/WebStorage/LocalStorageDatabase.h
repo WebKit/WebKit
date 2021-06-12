@@ -68,7 +68,7 @@ private:
     mutable WebCore::SQLiteDatabase m_database;
     const unsigned m_quotaInBytes { 0 };
     bool m_isClosed { false };
-    Optional<uint64_t> m_databaseSize;
+    std::optional<uint64_t> m_databaseSize;
 
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_clearStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_insertStatement;

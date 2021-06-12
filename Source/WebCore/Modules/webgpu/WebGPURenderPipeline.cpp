@@ -36,7 +36,6 @@
 #include "GPUShaderModuleDescriptor.h"
 #include "WebGPUDevice.h"
 #include "WebGPUShaderModule.h"
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -83,7 +82,7 @@ bool WebGPURenderPipeline::recompile(const WebGPUDevice& device)
     if (m_renderPipeline && m_vertexShader.module) {
         if (auto* gpuVertexShaderModule = m_vertexShader.module->module()) {
             GPUProgrammableStageDescriptor vertexStage(makeRef(*gpuVertexShaderModule), { m_vertexShader.entryPoint });
-            Optional<GPUProgrammableStageDescriptor> fragmentStage;
+            std::optional<GPUProgrammableStageDescriptor> fragmentStage;
             if (m_fragmentShader.module) {
                 if (auto* gpuFragmentShaderModule = m_fragmentShader.module->module())
                     fragmentStage = GPUProgrammableStageDescriptor(makeRef(*gpuFragmentShaderModule), { m_fragmentShader.entryPoint });

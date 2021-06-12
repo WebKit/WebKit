@@ -33,7 +33,7 @@ class LayerFragment {
 public:
     LayerFragment() = default;
     
-    void setRects(const LayoutRect& bounds, const ClipRect& background, const ClipRect& foreground, const Optional<LayoutRect>& bbox)
+    void setRects(const LayoutRect& bounds, const ClipRect& background, const ClipRect& foreground, const std::optional<LayoutRect>& bbox)
     {
         layerBounds = bounds;
         backgroundRect = background;
@@ -66,7 +66,7 @@ public:
     }
 
     bool shouldPaintContent = false;
-    Optional<LayoutRect> boundingBox;
+    std::optional<LayoutRect> boundingBox;
 
     LayoutRect layerBounds;
     ClipRect backgroundRect;

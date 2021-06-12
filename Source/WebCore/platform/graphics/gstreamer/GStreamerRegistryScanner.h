@@ -85,7 +85,7 @@ protected:
         GList* factory(Type) const;
 
         enum class CheckHardwareClassifier { No, Yes };
-        RegistryLookupResult hasElementForMediaType(Type, const char* capsString, CheckHardwareClassifier = CheckHardwareClassifier::No, Optional<Vector<String>> disallowedList = WTF::nullopt) const;
+        RegistryLookupResult hasElementForMediaType(Type, const char* capsString, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<String>> disallowedList = std::nullopt) const;
 
         GList* audioDecoderFactories { nullptr };
         GList* audioParserFactories { nullptr };

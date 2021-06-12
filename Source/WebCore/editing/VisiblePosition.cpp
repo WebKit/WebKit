@@ -36,7 +36,6 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "InlineRunAndOffset.h"
-#include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
@@ -751,7 +750,7 @@ bool VisiblePosition::equals(const VisiblePosition& other) const
     return m_affinity == other.m_affinity && m_deepPosition.equals(other.m_deepPosition);
 }
 
-Optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition& position)
+std::optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition& position)
 {
     return makeBoundaryPoint(position.deepEquivalent());
 }
@@ -785,12 +784,12 @@ TextStream& operator<<(TextStream& stream, const VisiblePosition& visiblePositio
     return stream;
 }
 
-Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange& range)
+std::optional<SimpleRange> makeSimpleRange(const VisiblePositionRange& range)
 {
     return makeSimpleRange(range.start, range.end);
 }
 
-VisiblePositionRange makeVisiblePositionRange(const Optional<SimpleRange>& range)
+VisiblePositionRange makeVisiblePositionRange(const std::optional<SimpleRange>& range)
 {
     if (!range)
         return { };

@@ -96,7 +96,7 @@ struct WebXRFrame::PopulatedPose {
 };
 
 // https://immersive-web.github.io/webxr/#populate-the-pose
-ExceptionOr<Optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(const Document& document, const WebXRSpace& space, const WebXRSpace& baseSpace)
+ExceptionOr<std::optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(const Document& document, const WebXRSpace& space, const WebXRSpace& baseSpace)
 {
     // 1. If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_active)
@@ -123,12 +123,12 @@ ExceptionOr<Optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(const 
         // FIXME: check if space’s pose relative to baseSpace has been determined in the past.
         // Anyway this emulation is usually provided by the system in the pose (e.g. OpenXR)
         // so we shouldn't hit this path in most XRPlatform ports.
-        return { WTF::nullopt };
+        return { std::nullopt };
     }
 
     auto baseTransform = baseSpace.effectiveOrigin();
     if (!baseTransform.isInvertible())
-        return { WTF::nullopt };
+        return { std::nullopt };
 
     auto transform =  *baseTransform.inverse() * space.effectiveOrigin();
     bool emulatedPosition = space.isPositionEmulated() || baseSpace.isPositionEmulated();
@@ -159,7 +159,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
 
     // 6. If pose is null return null.
     auto populateValue = populatePoseResult.releaseReturnValue();
-    if (!populateValue.hasValue())
+    if (!populateValue)
         return nullptr;
 
     RefPtr<WebXRViewerPose> pose = WebXRViewerPose::create(WebXRRigidTransform::create(populateValue->transform), populateValue->emulatedPosition);
@@ -192,7 +192,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
             return matrix;
         }, [&](const std::nullptr_t&) {
             // Use aspect projection for inline sessions
-            double fov =  m_session->renderState().inlineVerticalFieldOfView().valueOr(piOverTwoDouble);
+            double fov =  m_session->renderState().inlineVerticalFieldOfView().value_or(piOverTwoDouble);
             float aspect = 1;
             auto layer = m_session->renderState().baseLayer();
             if (layer)
@@ -227,7 +227,7 @@ ExceptionOr<RefPtr<WebXRPose>> WebXRFrame::getPose(const Document& document, con
         return populatePoseResult.releaseException();
 
     auto populateValue = populatePoseResult.releaseReturnValue();
-    if (!populateValue.hasValue())
+    if (!populateValue)
         return nullptr;
 
     // 4. Return pose.

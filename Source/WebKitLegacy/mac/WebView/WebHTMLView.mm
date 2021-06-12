@@ -251,7 +251,7 @@ const auto WebEventMouseDown = NSEventTypeLeftMouseDown;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
-static Optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
+static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
 {
     using namespace WebCore;
     if (tag >= ContextMenuItemBaseCustomTag && tag <= ContextMenuItemLastCustomTag) {
@@ -429,15 +429,15 @@ static Optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
     case WebMenuItemTagTranslate:
         return ContextMenuItemTagTranslate;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
+static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
 {
     using namespace WebCore;
     switch (action) {
     case ContextMenuItemTagNoAction:
-        return WTF::nullopt;
+        return std::nullopt;
 
     case ContextMenuItemTagOpenLinkInNewWindow:
         return WebMenuItemTagOpenLinkInNewWindow;
@@ -609,7 +609,7 @@ static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagToggleVideoFullscreen;
     case ContextMenuItemTagAddHighlightToCurrentGroup:
     case ContextMenuItemTagAddHighlightToNewGroup:
-        return WTF::nullopt;
+        return std::nullopt;
     case ContextMenuItemTagShareMenu:
         return WebMenuItemTagShareMenu;
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
@@ -617,7 +617,7 @@ static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
     case ContextMenuItemTagRevealImage:
-        return WTF::nullopt;
+        return std::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
         // We just pass these through.
@@ -627,7 +627,7 @@ static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         ASSERT_NOT_REACHED();
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 @implementation WebMenuTarget

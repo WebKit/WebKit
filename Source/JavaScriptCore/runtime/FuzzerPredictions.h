@@ -35,7 +35,7 @@ class FuzzerPredictions {
 public:
     JS_EXPORT_PRIVATE FuzzerPredictions(const char*);
 
-    Optional<SpeculatedType> predictionFor(const String&);
+    std::optional<SpeculatedType> predictionFor(const String&);
 
 private:
     HashMap<String, SpeculatedType> m_predictions;

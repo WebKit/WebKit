@@ -77,7 +77,7 @@ public:
 
     static size_t committedByteCount() { return 0; }
 
-    Lock& getLock() const
+    Lock& getLock() const WTF_RETURNS_LOCK(m_lock)
     {
         return m_lock;
     }

@@ -52,7 +52,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/Optional.h>
 #import <wtf/Vector.h>
 
 #import "CoreVideoSoftLink.h"
@@ -252,12 +251,12 @@ public:
         m_hasAlpha = alphaInfo != kCGImageAlphaNone && alphaInfo != kCGImageAlphaNoneSkipLast && alphaInfo != kCGImageAlphaNoneSkipFirst;
     }
 
-    Optional<ByteRange> byteRange() const final
+    std::optional<ByteRange> byteRange() const final
     {
         if (PAL::CMSampleBufferGetDataBuffer(m_sample.get())
             || PAL::CMSampleBufferGetImageBuffer(m_sample.get())
             || !PAL::CMSampleBufferDataIsReady(m_sample.get()))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return byteRangeForAttachment(PAL::kCMSampleBufferAttachmentKey_SampleReferenceByteOffset);
     }
@@ -556,7 +555,7 @@ unsigned ImageDecoderAVFObjC::frameBytesAtIndex(size_t index, SubsamplingLevel s
         return 0;
 
     IntSize frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return (frameSize.area() * 4).unsafeGet();
+    return frameSize.area() * 4;
 }
 
 PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)

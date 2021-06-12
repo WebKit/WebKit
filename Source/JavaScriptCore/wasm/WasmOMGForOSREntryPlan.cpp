@@ -78,14 +78,16 @@ void OMGForOSREntryPlan::work(CompilationEffort)
     auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_loopIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
-        fail(Locker { m_lock }, makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));
+        Locker locker { m_lock };
+        fail(makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));
         return;
     }
 
     Entrypoint omgEntrypoint;
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-        Base::fail(Locker { m_lock }, makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
+        Locker locker { m_lock };
+        Base::fail(makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
         return;
     }
 
@@ -137,7 +139,8 @@ void OMGForOSREntryPlan::work(CompilationEffort)
         }
     }
     dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Finished OMGForOSREntry ", m_functionIndex);
-    complete(Locker { m_lock });
+    Locker locker { m_lock };
+    complete();
 }
 
 } } // namespace JSC::Wasm

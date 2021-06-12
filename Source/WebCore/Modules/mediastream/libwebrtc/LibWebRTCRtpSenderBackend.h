@@ -76,7 +76,7 @@ private:
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;
     Source m_source;
     RefPtr<RTCRtpTransformBackend> m_transformBackend;
-    mutable Optional<webrtc::RtpParameters> m_currentParameters;
+    mutable std::optional<webrtc::RtpParameters> m_currentParameters;
 };
 
 } // namespace WebCore

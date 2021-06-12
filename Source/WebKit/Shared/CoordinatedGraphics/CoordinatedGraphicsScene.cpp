@@ -68,12 +68,12 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     if (!currentRootLayer)
         return;
 
+    if (currentRootLayer->transform() != matrix)
+        currentRootLayer->setTransform(matrix);
+
     bool sceneHasRunningAnimations = currentRootLayer->applyAnimationsRecursively(MonotonicTime::now());
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
-
-    if (currentRootLayer->transform() != matrix)
-        currentRootLayer->setTransform(matrix);
 
     currentRootLayer->paint(*m_textureMapper);
     m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location(), matrix);

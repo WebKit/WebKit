@@ -51,6 +51,11 @@ ScrollingTreeFrameScrollingNodeRemoteIOS::~ScrollingTreeFrameScrollingNodeRemote
 {
 }
 
+UIScrollView *ScrollingTreeFrameScrollingNodeRemoteIOS::scrollView() const
+{
+    return m_scrollingNodeDelegate ? m_scrollingNodeDelegate->scrollView() : nil;
+}
+
 void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);

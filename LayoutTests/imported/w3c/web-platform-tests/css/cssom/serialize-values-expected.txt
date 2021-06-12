@@ -315,8 +315,8 @@ PASS color: rgba(5, 7, 10, 0.5)
 PASS color: inherit
 PASS content: normal
 PASS content: none
-FAIL content: "string" assert_equals: content raw inline style declaration expected "\"string\"" but got "string"
-FAIL content: 'string' assert_equals: content raw inline style declaration expected "\"string\"" but got "string"
+PASS content: "string"
+PASS content: 'string'
 PASS content: url("http://localhost/")
 PASS content: url(http://localhost/)
 FAIL content: counter(par-num) assert_equals: content raw inline style declaration expected "counter(par-num)" but got "counter(par-num, decimal)"

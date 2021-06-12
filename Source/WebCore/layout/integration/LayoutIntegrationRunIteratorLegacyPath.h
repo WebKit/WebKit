@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
+#include "LegacyRootInlineBox.h"
 #include "RenderText.h"
-#include "RootInlineBox.h"
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
@@ -36,14 +36,14 @@ namespace LayoutIntegration {
 
 class RunIteratorLegacyPath {
 public:
-    RunIteratorLegacyPath(const InlineBox* inlineBox, Vector<const InlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
+    RunIteratorLegacyPath(const LegacyInlineBox* inlineBox, Vector<const LegacyInlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
         : m_inlineBox(inlineBox)
         , m_logicalOrderCache(WTFMove(sortedInlineBoxes))
         , m_logicalOrderCacheIndex(sortedInlineBoxIndex)
     { }
 
     enum class LogicalOrder { Start, End };
-    RunIteratorLegacyPath(const RootInlineBox& root, LogicalOrder order)
+    RunIteratorLegacyPath(const LegacyRootInlineBox& root, LogicalOrder order)
         : m_logicalOrderCache(inlineBoxesInLogicalOrder(root))
     {
         if (!m_logicalOrderCache.isEmpty()) {
@@ -74,7 +74,7 @@ public:
     unsigned offsetForPosition(float x) const { return inlineTextBox()->offsetForPosition(x); }
     float positionForOffset(unsigned offset) const { return inlineTextBox()->positionForOffset(offset); }
 
-    bool isSelectable(unsigned start, unsigned end) const { return inlineTextBox()->isSelected(start, end); }
+    bool isSelectable(unsigned start, unsigned end) const { return inlineTextBox()->isSelectable(start, end); }
     LayoutRect selectionRect(unsigned start, unsigned end) const { return inlineTextBox()->localSelectionRect(start, end); }
 
     const RenderObject& renderer() const
@@ -87,7 +87,7 @@ public:
     {
         if (!m_logicalOrderCache.isEmpty()) {
             traverseNextInlineBoxInCacheOrder();
-            ASSERT(!m_inlineBox || is<InlineTextBox>(m_inlineBox));
+            ASSERT(!m_inlineBox || is<LegacyInlineTextBox>(m_inlineBox));
             return;
         }
         traverseNextTextRun();
@@ -119,17 +119,17 @@ public:
 
     bool atEnd() const { return !m_inlineBox; }
 
-    InlineBox* legacyInlineBox() const { return const_cast<InlineBox*>(m_inlineBox); }
-    const RootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
+    LegacyInlineBox* legacyInlineBox() const { return const_cast<LegacyInlineBox*>(m_inlineBox); }
+    const LegacyRootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
 
 private:
-    const InlineTextBox* inlineTextBox() const { return downcast<InlineTextBox>(m_inlineBox); }
+    const LegacyInlineTextBox* inlineTextBox() const { return downcast<LegacyInlineTextBox>(m_inlineBox); }
 
-    static Vector<const InlineBox*> inlineBoxesInLogicalOrder(const RootInlineBox& root)
+    static Vector<const LegacyInlineBox*> inlineBoxesInLogicalOrder(const LegacyRootInlineBox& root)
     {
-        Vector<InlineBox*> inlineBoxes;
+        Vector<LegacyInlineBox*> inlineBoxes;
         root.collectLeafBoxesInLogicalOrder(inlineBoxes);
-        return reinterpret_cast<Vector<const InlineBox*>&>(inlineBoxes);
+        return reinterpret_cast<Vector<const LegacyInlineBox*>&>(inlineBoxes);
     }
     void initializeLogicalOrderCacheForLine()
     {
@@ -146,8 +146,8 @@ private:
     void traverseNextInlineBoxInCacheOrder();
     void traversePreviousInlineBoxInCacheOrder();
 
-    const InlineBox* m_inlineBox { nullptr };
-    RefCountedArray<const InlineBox*> m_logicalOrderCache;
+    const LegacyInlineBox* m_inlineBox { nullptr };
+    RefCountedArray<const LegacyInlineBox*> m_logicalOrderCache;
     size_t m_logicalOrderCacheIndex { 0 };
 };
 

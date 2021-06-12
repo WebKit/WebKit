@@ -65,13 +65,13 @@ unsigned long long BlobDataFileReference::size()
     return m_size;
 }
 
-Optional<WallTime> BlobDataFileReference::expectedModificationTime()
+std::optional<WallTime> BlobDataFileReference::expectedModificationTime()
 {
 #if ENABLE(FILE_REPLACEMENT)
     // We do not currently track modifications for generated files, because we have a snapshot.
     // Unfortunately, this is inconsistent with regular file handling - File objects should be invalidated when underlying files change.
     if (m_replacementShouldBeGenerated || !m_replacementPath.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
     return m_expectedModificationTime;
 }

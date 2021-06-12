@@ -22,8 +22,8 @@
         document.body.appendChild(fixed);
         document.body.offsetHeight;
         fixed.className = "fixed";
-        var mainThreadScrollingReasons = internals.mainThreadScrollingReasons();
-        document.getElementById("result").innerText = !mainThreadScrollingReasons ? "PASS" : "FAIL: " + mainThreadScrollingReasons;
+        var synchronousScrollingReasons = internals.synchronousScrollingReasons();
+        document.getElementById("result").innerText = !synchronousScrollingReasons ? "PASS" : "FAIL: " + synchronousScrollingReasons;
       }, false);
     }
   </script>

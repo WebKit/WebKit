@@ -368,7 +368,7 @@ void LibWebRTCProvider::prepareCertificateGenerator(Function<void(rtc::RTCCertif
     });
 }
 
-static inline Optional<cricket::MediaType> typeFromKind(const String& kind)
+static inline std::optional<cricket::MediaType> typeFromKind(const String& kind)
 {
     if (kind == "audio"_s)
         return cricket::MediaType::MEDIA_TYPE_AUDIO;
@@ -382,7 +382,7 @@ static inline String fromStdString(const std::string& value)
     return String::fromUTF8(value.data(), value.length());
 }
 
-static inline Optional<uint16_t> toChannels(absl::optional<int> numChannels)
+static inline std::optional<uint16_t> toChannels(absl::optional<int> numChannels)
 {
     if (!numChannels)
         return { };
@@ -414,7 +414,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
     return capabilities;
 }
 
-Optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const String& kind)
+std::optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const String& kind)
 {
     auto mediaType = typeFromKind(kind);
     if (!mediaType)
@@ -427,7 +427,7 @@ Optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const Strin
     return toRTCRtpCapabilities(factory->GetRtpReceiverCapabilities(*mediaType));
 }
 
-Optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const String& kind)
+std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const String& kind)
 {
     auto mediaType = typeFromKind(kind);
     if (!mediaType)

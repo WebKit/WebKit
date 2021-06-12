@@ -76,7 +76,7 @@ private:
     bool m_runTasks { true };
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
-    Deque<std::tuple<Ticket, Task>> m_tasks;
+    Deque<std::tuple<Ticket, Task>> m_tasks WTF_GUARDED_BY_LOCK(m_taskLock);
     HashMap<Ticket, TicketData> m_pendingTickets;
 };
 

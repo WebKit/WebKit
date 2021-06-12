@@ -166,7 +166,7 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     struct DragTargetResponse {
         bool accept { false };
-        Optional<OptionSet<DragOperation>> operationMask;
+        std::optional<OptionSet<DragOperation>> operationMask;
     };
     DragTargetResponse updateDragAndDrop(const PlatformMouseEvent&, const std::function<std::unique_ptr<Pasteboard>()>&, OptionSet<DragOperation>, bool draggingFiles);
     void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
@@ -342,10 +342,10 @@ public:
     WEBCORE_EXPORT void cancelSelectionAutoscroll();
 #endif
 
-    WEBCORE_EXPORT Optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
+    WEBCORE_EXPORT std::optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
 
 #if ENABLE(KINETIC_SCROLLING)
-    Optional<WheelScrollGestureState> wheelScrollGestureState() const { return m_wheelScrollGestureState; }
+    std::optional<WheelScrollGestureState> wheelScrollGestureState() const { return m_wheelScrollGestureState; }
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -470,7 +470,7 @@ private:
     bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent&, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling>);
 
     bool handleWheelEventInScrollableArea(const PlatformWheelEvent&, ScrollableArea&, OptionSet<EventHandling>);
-    Optional<WheelScrollGestureState> updateWheelGestureState(const PlatformWheelEvent&, OptionSet<EventHandling>);
+    std::optional<WheelScrollGestureState> updateWheelGestureState(const PlatformWheelEvent&, OptionSet<EventHandling>);
 
     bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, const WeakPtr<ScrollableArea>&);
 
@@ -519,6 +519,7 @@ private:
 #endif
 
     void clearLatchedState();
+    void clearElementUnderMouse();
 
     bool shouldSendMouseEventsToInactiveWindows() const;
 
@@ -567,9 +568,8 @@ private:
     LayoutSize m_offsetFromResizeCorner; // In the coords of m_resizeLayer.
     
     int m_clickCount { 0 };
-    bool m_mousePositionIsUnknown { true }; // FIXME: Use Optional<> instead.
 
-    IntPoint m_lastKnownMousePosition; // Same coordinates as PlatformMouseEvent::position().
+    std::optional<IntPoint> m_lastKnownMousePosition; // Same coordinates as PlatformMouseEvent::position().
     IntPoint m_lastKnownMouseGlobalPosition;
     IntPoint m_mouseDownContentsPosition;
     WallTime m_mouseDownTimestamp;
@@ -597,7 +597,7 @@ private:
 #endif
 
 #if ENABLE(KINETIC_SCROLLING)
-    Optional<WheelScrollGestureState> m_wheelScrollGestureState;
+    std::optional<WheelScrollGestureState> m_wheelScrollGestureState;
 #endif
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
@@ -641,7 +641,7 @@ private:
     bool m_shouldAllowMouseDownToStartDrag { false };
     bool m_isAutoscrolling { false };
     IntPoint m_targetAutoscrollPositionInUnscrolledRootViewCoordinates;
-    Optional<IntPoint> m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates;
+    std::optional<IntPoint> m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates;
 #endif
 };
 

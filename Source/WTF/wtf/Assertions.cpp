@@ -31,8 +31,8 @@
 #include <mutex>
 #include <stdio.h>
 #include <string.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/Compiler.h>
+#include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/PrintStream.h>
@@ -277,6 +277,17 @@ public:
     }
 };
 
+void WTFReportBacktraceWithPrefix(const char* prefix)
+{
+    static constexpr int framesToShow = 31;
+    static constexpr int framesToSkip = 2;
+    void* samples[framesToShow + framesToSkip];
+    int frames = framesToShow + framesToSkip;
+
+    WTFGetBacktrace(samples, &frames);
+    WTFPrintBacktraceWithPrefix(samples + framesToSkip, frames - framesToSkip, prefix);
+}
+
 void WTFReportBacktrace()
 {
     static constexpr int framesToShow = 31;
@@ -288,11 +299,16 @@ void WTFReportBacktrace()
     WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
 }
 
-void WTFPrintBacktrace(void** stack, int size)
+void WTFPrintBacktraceWithPrefix(void** stack, int size, const char* prefix)
 {
     CrashLogPrintStream out;
-    StackTrace stackTrace(stack, size);
+    StackTrace stackTrace(stack, size, prefix);
     out.print(stackTrace);
+}
+
+void WTFPrintBacktrace(void** stack, int size)
+{
+    WTFPrintBacktraceWithPrefix(stack, size, "");
 }
 
 #if !defined(NDEBUG) || !(OS(DARWIN) || PLATFORM(PLAYSTATION))
@@ -368,7 +384,7 @@ public:
     String getAndResetAccumulatedLogs();
 
 private:
-    CheckedLock accumulatorLock;
+    Lock accumulatorLock;
     StringBuilder loggingAccumulator WTF_GUARDED_BY_LOCK(accumulatorLock);
 };
 

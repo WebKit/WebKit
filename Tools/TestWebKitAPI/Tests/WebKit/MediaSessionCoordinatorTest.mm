@@ -174,6 +174,11 @@
     }];
 }
 
+- (void)sessionStateChanged:(_WKMediaSessionCoordinatorState)state
+{
+    [self.delegate coordinatorStateChanged:state];
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -212,14 +217,14 @@ public:
         }];
         TestWebKitAPI::Util::run(&done);
 
-        listenForEventMessages({ "coordinatorchange"_s });
+        listenForEventMessages({ "coordinatorstatechange"_s });
 
         EXPECT_TRUE(result);
         if (!result)
             NSLog(@"-[_createMediaSessionCoordinatorForTesting:completionHandler:] failed!");
 
-        waitForEventListenerToBeCalled("coordinatorchange"_s);
-        ASSERT_TRUE(eventListenerWasCalled("coordinatorchange"_s));
+        waitForEventListenerToBeCalled("coordinatorstatechange"_s);
+        ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_s));
     }
 
     TestWKWebView* webView() const { return _webView.get(); }
@@ -435,7 +440,7 @@ TEST_F(MediaSessionCoordinatorTest, StateChanges)
     });
     EXPECT_STREQ("positionStateChanged", lastStateChange.utf8().data());
 
-    for (NSString *state in @[ @"haveMetadata", @"haveCurrentData", @"haveFutureData", @"haveEnoughData", @"haveNothing" ]) {
+    for (NSString *state in @[ @"havemetadata", @"havecurrentdata", @"havefuturedata", @"haveenoughdata", @"havenothing" ]) {
         [webView() objectByEvaluatingJavaScript:[NSString stringWithFormat:@"navigator.mediaSession.readyState = '%@'", state]];
         executeUntil([&] {
             lastStateChange = coordinator().lastStateChange;
@@ -462,10 +467,13 @@ TEST_F(MediaSessionCoordinatorTest, StateChanges)
     [webView() objectByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.leave()"];
     String lastMethodCalled;
     executeUntil([&] {
-        lastStateChange = coordinator().lastStateChange;
-        return lastStateChange == "coordinatorStateChanged";
+        lastMethodCalled = coordinator().lastMethodCalled;
+        return lastMethodCalled == "leave";
     });
-    EXPECT_STREQ("coordinatorStateChanged", lastStateChange.utf8().data());
+    EXPECT_STREQ("leave", lastMethodCalled.utf8().data());
+
+    RetainPtr<NSString> state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("closed", [state UTF8String]);
 }
 
 TEST_F(MediaSessionCoordinatorTest, CoordinatorMethodCallbacks)
@@ -541,6 +549,36 @@ TEST_F(MediaSessionCoordinatorTest, CallSessionMethods)
         return lastMethodCalled == "setSessionTrack";
     });
     EXPECT_STREQ("setSessionTrack", lastMethodCalled.utf8().data());
+}
+
+TEST_F(MediaSessionCoordinatorTest, JoinAndPrivateLeave)
+{
+    loadPageAndBecomeReady("media-remote"_s);
+    listenForPromiseMessages({ "join"_s });
+
+    createCoordinator();
+
+    // Check that when a coordinator is created, its original state is 'waiting'.
+    // createCoordinator has already waited for the 'coordinatorstatechange' event
+    // to be fired.
+    RetainPtr<NSString> state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("waiting", [state UTF8String]);
+
+    // Check that when we join a session; the 'coordinatorstatechange' event will be
+    // fired and the coordinator state changes to 'waiting'.
+    [webView() objectByEvaluatingJavaScript:@"joinSession()"];
+    waitForEventListenerToBeCalled("coordinatorstatechange"_s);
+    ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_s));
+    state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("joined", [state UTF8String]);
+
+    // Check that when the MediaSessionCoordinatorPrivate changes its state to 'closed'
+    // in the UI process, the 'coordinatorstatechange' event will be fired in JS (in web
+    // process) and that the coordinator state will change to 'closed'.
+    [coordinator() sessionStateChanged:WKMediaSessionCoordinatorStateClosed];
+    waitForEventListenerToBeCalled("coordinatorstatechange"_s);
+    state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("closed", [state UTF8String]);
 }
 
 } // namespace TestWebKitAPI

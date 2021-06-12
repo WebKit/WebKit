@@ -131,6 +131,15 @@ static NSString *overrideBundleIdentifier(id, SEL)
     return success;
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+- (UIView <UITextInputPrivate, UITextInputMultiDocument> *)textInputContentView
+{
+    return (UIView <UITextInputPrivate, UITextInputMultiDocument> *)[self valueForKey:@"_currentContentView"];
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 - (NSString *)contentsAsString
 {
     __block bool done = false;
@@ -683,11 +692,6 @@ static UICalloutBar *suppressUICalloutBar()
         NSLog(@"Warning: expecting input session change count to differ from %lu", static_cast<unsigned long>(initialChangeCount));
         hasEmittedWarning = YES;
     }
-}
-
-- (UIView <UITextInputPrivate, UITextInputMultiDocument> *)textInputContentView
-{
-    return (UIView <UITextInputPrivate, UITextInputMultiDocument> *)[self valueForKey:@"_currentContentView"];
 }
 
 - (RetainPtr<NSArray>)selectionRectsAfterPresentationUpdate

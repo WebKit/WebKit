@@ -162,7 +162,7 @@ void IntersectionObserver::observe(Element& target)
     if (!trackingDocument() || !m_callback || m_observationTargets.contains(&target))
         return;
 
-    target.ensureIntersectionObserverData().registrations.append({ makeWeakPtr(this), WTF::nullopt });
+    target.ensureIntersectionObserverData().registrations.append({ makeWeakPtr(this), std::nullopt });
     bool hadObservationTargets = hasObservationTargets();
     m_observationTargets.append(&target);
     auto* document = trackingDocument();
@@ -237,21 +237,21 @@ void IntersectionObserver::rootDestroyed()
     m_root = nullptr;
 }
 
-Optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() const
+std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() const
 {
     if (!m_callback)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto* context = m_callback->scriptExecutionContext();
     if (!context)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
     if (auto* window = document.domWindow())
         return window->frozenNowTimestamp();
     
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)

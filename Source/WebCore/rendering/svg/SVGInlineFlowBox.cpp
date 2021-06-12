@@ -39,7 +39,7 @@ void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
     ASSERT(!paintInfo.context().paintingDisabled());
 
     PaintInfo childPaintInfo(paintInfo);
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (is<SVGInlineTextBox>(*child))
             downcast<SVGInlineTextBox>(*child).paintSelectionBackground(childPaintInfo);
         else if (is<SVGInlineFlowBox>(*child))
@@ -54,7 +54,7 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     SVGRenderingContext renderingContext(renderer(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
-        for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+        for (auto* child = firstChild(); child; child = child->nextOnLine())
             child->paint(paintInfo, paintOffset, 0, 0);
     }
 }

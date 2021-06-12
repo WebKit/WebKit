@@ -44,7 +44,7 @@ public:
 private:
     explicit RTCEncodedAudioFrame(Ref<RTCRtpTransformableFrame>&&);
 
-    mutable Optional<Metadata> m_metadata;
+    mutable std::optional<Metadata> m_metadata;
 };
 
 } // namespace WebCore

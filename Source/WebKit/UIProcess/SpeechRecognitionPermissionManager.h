@@ -48,7 +48,7 @@ private:
     void startNextRequest();
     void startProcessingRequest();
     void continueProcessingRequest();
-    void completeCurrentRequest(Optional<WebCore::SpeechRecognitionError>&& = WTF::nullopt);
+    void completeCurrentRequest(std::optional<WebCore::SpeechRecognitionError>&& = std::nullopt);
     void requestMicrophoneAccess();
     void requestSpeechRecognitionServiceAccess();
     void requestUserPermission(WebCore::SpeechRecognitionRequest& request);

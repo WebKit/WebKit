@@ -53,7 +53,7 @@ LegacyTileLayerPool* LegacyTileLayerPool::sharedPool()
 
 unsigned LegacyTileLayerPool::bytesBackingLayerWithPixelSize(const IntSize& size)
 {
-    return (size.area() * 4).unsafeGet();
+    return size.area() * 4;
 }
 
 LegacyTileLayerPool::LayerList& LegacyTileLayerPool::listOfLayersWithSize(const IntSize& size, AccessType accessType)

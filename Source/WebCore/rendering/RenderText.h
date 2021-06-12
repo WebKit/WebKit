@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class Font;
-class InlineTextBox;
+class LegacyInlineTextBox;
 struct GlyphOverflow;
 
 namespace LayoutIntegration {
@@ -61,14 +61,14 @@ public:
 
     virtual String originalText() const;
 
-    void extractTextBox(InlineTextBox& box) { m_lineBoxes.extract(box); }
-    void attachTextBox(InlineTextBox& box) { m_lineBoxes.attach(box); }
-    void removeTextBox(InlineTextBox& box) { m_lineBoxes.remove(box); }
+    void extractTextBox(LegacyInlineTextBox& box) { m_lineBoxes.extract(box); }
+    void attachTextBox(LegacyInlineTextBox& box) { m_lineBoxes.attach(box); }
+    void removeTextBox(LegacyInlineTextBox& box) { m_lineBoxes.remove(box); }
 
     StringImpl& text() const { return *m_text.impl(); } // Since m_text can never be null, returning this type means callers won't null check.
     String textWithoutConvertingBackslashToYenSymbol() const;
 
-    InlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
+    LegacyInlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
     void dirtyLineBoxes(bool fullLayout);
     void deleteLineBoxes();
 
@@ -88,7 +88,7 @@ public:
     UChar characterAt(unsigned) const;
     unsigned length() const final { return text().length(); }
 
-    void positionLineBox(InlineTextBox&);
+    void positionLineBox(LegacyInlineTextBox&);
 
     virtual float width(unsigned from, unsigned length, const FontCascade&, float xPos, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     virtual float width(unsigned from, unsigned length, float xPos, bool firstLine = false, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
@@ -131,8 +131,8 @@ public:
     LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
     LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
-    InlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
-    InlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
+    LegacyInlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
+    LegacyInlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
 
     int caretMinOffset() const final;
     int caretMaxOffset() const final;
@@ -150,7 +150,7 @@ public:
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
-    InlineTextBox* findNextInlineTextBox(int offset, int& pos) const { return m_lineBoxes.findNext(offset, pos); }
+    LegacyInlineTextBox* findNextInlineTextBox(int offset, int& pos) const { return m_lineBoxes.findNext(offset, pos); }
 
     bool isAllCollapsibleWhitespace() const;
 
@@ -160,16 +160,16 @@ public:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual std::unique_ptr<InlineTextBox> createTextBox();
+    virtual std::unique_ptr<LegacyInlineTextBox> createTextBox();
 
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
     void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 #endif
 
-    bool usesComplexLineLayoutPath() const;
+    bool usesLegacyLineLayoutPath() const;
 
-    StringView stringView(unsigned start = 0, Optional<unsigned> stop = WTF::nullopt) const;
+    StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
     bool containsOnlyHTMLWhitespace(unsigned from, unsigned length) const;
     

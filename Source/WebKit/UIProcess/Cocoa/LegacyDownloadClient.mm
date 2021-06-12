@@ -282,7 +282,7 @@ void LegacyDownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
 {
 #if PLATFORM(IOS_FAMILY)
     if (auto* webPage = downloadProxy.originatingPage()) {
-        RELEASE_LOG_IF(webPage->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
+        RELEASE_LOG(ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
         ASSERT(!m_activity);
         m_activity = webPage->process().throttler().backgroundActivity("System preview download"_s).moveToUniquePtr();
     }
@@ -295,7 +295,7 @@ void LegacyDownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downlo
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_activity) {
-        RELEASE_LOG_IF(downloadProxy.originatingPage()->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
+        RELEASE_LOG(ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
         m_activity = nullptr;
     }
 #else

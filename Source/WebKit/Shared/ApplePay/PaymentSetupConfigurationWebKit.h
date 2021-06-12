@@ -49,7 +49,7 @@ public:
     PaymentSetupConfiguration(const WebCore::ApplePaySetupConfiguration&, const URL&);
 
     void encode(IPC::Encoder&) const;
-    static Optional<PaymentSetupConfiguration> decode(IPC::Decoder&);
+    static std::optional<PaymentSetupConfiguration> decode(IPC::Decoder&);
 
     PKPaymentSetupConfiguration *platformConfiguration() const { return m_configuration.get(); }
 

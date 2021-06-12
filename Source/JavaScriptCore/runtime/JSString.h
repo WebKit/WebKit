@@ -395,9 +395,9 @@ public:
                 this->overflowed();
                 return false;
             }
-            ASSERT(static_cast<unsigned>(sum.unsafeGet()) <= MaxLength);
+            ASSERT(static_cast<unsigned>(sum) <= MaxLength);
             m_strings.append(jsString);
-            m_length = static_cast<unsigned>(sum.unsafeGet());
+            m_length = static_cast<unsigned>(sum);
             return true;
         }
 
@@ -946,7 +946,7 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(JSGlobalObject* globalObject,
         return true;
     }
 
-    Optional<uint32_t> index = parseIndex(propertyName);
+    std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < length()) {
         JSValue value = getIndex(globalObject, index.value());
         RETURN_IF_EXCEPTION(scope, false);

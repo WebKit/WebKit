@@ -53,7 +53,7 @@ void SessionHost::sendWebInspectorEvent(const String& event)
     send(m_clientID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
 }
 
-void SessionHost::connectToBrowser(Function<void (Optional<String> error)>&& completionHandler)
+void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
 {
     String targetIp;
     uint16_t targetPort = 0;
@@ -75,26 +75,26 @@ void SessionHost::connectToBrowser(Function<void (Optional<String> error)>&& com
     if (!m_clientID)
         completionHandler(makeString(targetIp.utf8().data(), ":", String::number(targetPort), " is not reachable."));
     else
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
 }
 
 bool SessionHost::isConnected() const
 {
-    return m_clientID.hasValue();
+    return m_clientID.has_value();
 }
 
 void SessionHost::didClose(Inspector::RemoteInspectorSocketEndpoint&, Inspector::ConnectionID)
 {
     inspectorDisconnected();
 
-    m_clientID = WTF::nullopt;
+    m_clientID = std::nullopt;
 }
 
-Optional<Vector<SessionHost::Target>> SessionHost::parseTargetList(const struct Event& event)
+std::optional<Vector<SessionHost::Target>> SessionHost::parseTargetList(const struct Event& event)
 {
     auto result = parseTargetListJSON(*event.message);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<SessionHost::Target> targetList;
     for (const auto& itemObject : *result) {
@@ -146,7 +146,7 @@ void SessionHost::receivedStartAutomationSessionReturn(const struct Event&)
     m_capabilities.browserVersion = String::fromUTF8("TODO/browserVersion");
 }
 
-void SessionHost::startAutomationSession(Function<void (bool, Optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
 {
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTFMove(completionHandler);
@@ -168,7 +168,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     ASSERT(targetList.size() <= 1);
     if (targetList.isEmpty()) {
         // Disconnected from backend
-        m_clientID = WTF::nullopt;
+        m_clientID = std::nullopt;
         inspectorDisconnected();
         return;
     }
@@ -193,7 +193,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     sendWebInspectorEvent(sendEvent->toJSONString());
 
     auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    startSessionCompletionHandler(true, WTF::nullopt);
+    startSessionCompletionHandler(true, std::nullopt);
 }
 
 void SessionHost::sendMessageToBackend(const String& message)

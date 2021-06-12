@@ -51,7 +51,7 @@ WorkerScriptLoader::WorkerScriptLoader()
 
 WorkerScriptLoader::~WorkerScriptLoader() = default;
 
-Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
+std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
 {
     ASSERT(scriptExecutionContext);
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
@@ -67,14 +67,14 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
             m_script = scriptResource->script;
             m_responseURL = scriptResource->responseURL;
             m_responseMIMEType = scriptResource->mimeType;
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 #endif
 
     std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
     if (!request)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(scriptExecutionContext));
 
@@ -108,7 +108,7 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
         downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
     }
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode)
@@ -162,16 +162,16 @@ std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const
 ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse& response, FetchOptions::Destination destination)
 {
     if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode())
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response is not 2xx"_s, ResourceError::Type::General };
+        return { errorDomainWebKitInternal, 0, response.url(), "Response is not 2xx"_s, ResourceError::Type::General };
 
     if (!isScriptAllowedByNosniff(response)) {
-        String message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type.");
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
+        auto message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type.");
+        return { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
     }
 
     if (shouldBlockResponseDueToMIMEType(response, destination)) {
-        String message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because ", response.mimeType(), " is not a script MIME type.");
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
+        auto message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because ", response.mimeType(), " is not a script MIME type.");
+        return { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
     }
 
     return { };
@@ -197,7 +197,7 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
         m_client->didReceiveResponse(identifier, response);
 }
 
-void WorkerScriptLoader::didReceiveData(const char* data, int len)
+void WorkerScriptLoader::didReceiveData(const uint8_t* data, int len)
 {
     if (m_failed)
         return;
@@ -213,7 +213,7 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
         return;
     
     if (len == -1)
-        len = strlen(data);
+        len = strlen(reinterpret_cast<const char*>(data));
 
     m_script.append(m_decoder->decode(data, len));
 }
@@ -242,7 +242,7 @@ void WorkerScriptLoader::notifyError()
 {
     m_failed = true;
     if (m_error.isNull())
-        m_error = ResourceError { errorDomainWebKitInternal, 0, url(), "Failed to load script", ResourceError::Type::General };
+        m_error = { errorDomainWebKitInternal, 0, url(), "Failed to load script", ResourceError::Type::General };
     notifyFinished();
 }
 

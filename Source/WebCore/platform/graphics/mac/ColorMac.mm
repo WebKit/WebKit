@@ -28,6 +28,7 @@
 
 #if USE(APPKIT)
 
+#import "GraphicsContextCG.h"
 #import "LocalCurrentGraphicsContext.h"
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Lock.h>
@@ -63,12 +64,12 @@ bool usesTestModeFocusRingColor()
     return useOldAquaFocusRingColor;
 }
 
-static Optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
+static std::optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
 
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CGFloat redComponent;
     CGFloat greenComponent;
@@ -85,7 +86,7 @@ static Optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
         RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
             bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);
 
-        GraphicsContext bitmapContext([NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext);
+        GraphicsContextCG bitmapContext([NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext);
         LocalCurrentGraphicsContext localContext(bitmapContext);
 
         [color drawSwatchInRect:NSMakeRect(0, 0, 1, 1)];

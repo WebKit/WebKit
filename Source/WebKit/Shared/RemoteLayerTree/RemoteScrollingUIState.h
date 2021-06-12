@@ -48,7 +48,7 @@ public:
     };
 
     void encode(IPC::Encoder&) const;
-    static Optional<RemoteScrollingUIState> decode(IPC::Decoder&);
+    static std::optional<RemoteScrollingUIState> decode(IPC::Decoder&);
 
     OptionSet<Changes> changes() const { return m_changes; }
     void clearChanges() { m_changes = { }; }

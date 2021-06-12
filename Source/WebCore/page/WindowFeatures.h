@@ -31,7 +31,6 @@
 #include "DisabledAdaptations.h"
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,10 +39,10 @@ namespace WebCore {
 class FloatRect;
 
 struct WindowFeatures {
-    Optional<float> x;
-    Optional<float> y;
-    Optional<float> width;
-    Optional<float> height;
+    std::optional<float> x;
+    std::optional<float> y;
+    std::optional<float> width;
+    std::optional<float> height;
 
     bool menuBarVisible { true };
     bool statusBarVisible { true };

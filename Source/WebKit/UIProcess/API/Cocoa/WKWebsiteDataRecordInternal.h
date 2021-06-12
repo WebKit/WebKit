@@ -28,7 +28,6 @@
 #import "APIWebsiteDataRecord.h"
 #import "WKObject.h"
 #import <wtf/OptionSet.h>
-#import <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -36,7 +35,7 @@ template<> struct WrapperTraits<API::WebsiteDataRecord> {
     using WrapperClass = WKWebsiteDataRecord;
 };
 
-static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataType)
+static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataType)
 {
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeCookies])
         return WebsiteDataType::Cookies;
@@ -82,7 +81,7 @@ static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataT
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeAlternativeServices])
         return WebsiteDataType::AlternativeServices;
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static inline OptionSet<WebKit::WebsiteDataType> toWebsiteDataTypes(NSSet *websiteDataTypes)

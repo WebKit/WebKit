@@ -108,6 +108,10 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(DATA_DETECTION)
+#include "DataDetectionResultsStorage.h"
+#endif
+
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
@@ -377,28 +381,19 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w");
     StringBuilder pattern;
     pattern.append('(');
-    unsigned int numLabels = labels.size();
-    unsigned int i;
-    for (i = 0; i < numLabels; i++) {
-        String label = labels[i];
+    for (unsigned i = 0, numLabels = labels.size(); i < numLabels; i++) {
+        auto& label = labels[i];
 
-        bool startsWithWordChar = false;
-        bool endsWithWordChar = false;
+        bool startsWithWordCharacter = false;
+        bool endsWithWordCharacter = false;
         if (label.length()) {
-            startsWithWordChar = wordRegExp.get().match(label.substring(0, 1)) >= 0;
-            endsWithWordChar = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
+            startsWithWordCharacter = wordRegExp.get().match(label.substring(0, 1)) >= 0;
+            endsWithWordCharacter = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
         }
 
-        if (i)
-            pattern.append('|');
         // Search for word boundaries only if label starts/ends with "word characters".
-        // If we always searched for word boundaries, this wouldn't work for languages
-        // such as Japanese.
-        if (startsWithWordChar)
-            pattern.appendLiteral("\\b");
-        pattern.append(label);
-        if (endsWithWordChar)
-            pattern.appendLiteral("\\b");
+        // If we always searched for word boundaries, this wouldn't work for languages such as Japanese.
+        pattern.append(i ? "|" : "", startsWithWordCharacter ? "\\b" : "", label, endsWithWordCharacter ? "\\b" : "");
     }
     pattern.append(')');
     return JSC::Yarr::RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);
@@ -717,12 +712,12 @@ void Frame::injectUserScriptsAwaitingNotification()
         injectUserScriptImmediately(world, script.get());
 }
 
-Optional<PageIdentifier> Frame::pageID() const
+std::optional<PageIdentifier> Frame::pageID() const
 {
     return loader().pageID();
 }
 
-Optional<FrameIdentifier> Frame::frameID() const
+std::optional<FrameIdentifier> Frame::frameID() const
 {
     return loader().frameID();
 }
@@ -850,13 +845,13 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? &result.innerNode()->document() : 0;
 }
 
-Optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
+std::optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
 {
     auto position = visiblePositionForPoint(framePoint);
 
     auto containerText = position.deepEquivalent().containerText();
     if (!containerText || !containerText->renderer() || containerText->renderer()->style().userSelect() == UserSelect::None)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto previousCharacterRange = makeSimpleRange(position.previous(), position)) {
         if (editor().firstRectForRange(*previousCharacterRange).contains(framePoint))
@@ -868,10 +863,10 @@ Optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
             return *nextCharacterRange;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-void Frame::createView(const IntSize& viewportSize, const Optional<Color>& backgroundColor,
+void Frame::createView(const IntSize& viewportSize, const std::optional<Color>& backgroundColor,
     const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
     bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
     ScrollbarMode verticalScrollbarMode, bool verticalLock)
@@ -961,7 +956,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (is<SVGDocument>(*document) && !downcast<SVGDocument>(*document).zoomAndPanEnabled())
         return;
 
-    Optional<ScrollPosition> scrollPositionAfterZoomed;
+    std::optional<ScrollPosition> scrollPositionAfterZoomed;
     if (m_pageZoomFactor != pageZoomFactor) {
         // Compute the scroll position with scale after zooming to stay the same position in the content.
         if (FrameView* view = this->view()) {
@@ -1137,6 +1132,17 @@ bool Frame::arePluginsEnabled()
 {
     return settings().arePluginsEnabled();
 }
+
+#if ENABLE(DATA_DETECTION)
+
+DataDetectionResultsStorage& Frame::dataDetectionResults()
+{
+    if (!m_dataDetectionResults)
+        m_dataDetectionResults = makeUnique<DataDetectionResultsStorage>();
+    return *m_dataDetectionResults;
+}
+
+#endif
 
 } // namespace WebCore
 

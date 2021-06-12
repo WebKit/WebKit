@@ -74,12 +74,12 @@ public:
     static size_t offsetOfVariable(ScopeOffset offset)
     {
         Checked<size_t> scopeOffset = offset.offset();
-        return (offsetOfVariables() + scopeOffset * sizeof(WriteBarrier<Unknown>)).unsafeGet();
+        return offsetOfVariables() + scopeOffset * sizeof(WriteBarrier<Unknown>);
     }
 
     static size_t allocationSizeForScopeSize(Checked<size_t> scopeSize)
     {
-        return (offsetOfVariables() + scopeSize * sizeof(WriteBarrier<Unknown>)).unsafeGet();
+        return offsetOfVariables() + scopeSize * sizeof(WriteBarrier<Unknown>);
     }
 
     static size_t allocationSize(SymbolTable* symbolTable)

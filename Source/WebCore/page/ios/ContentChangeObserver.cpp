@@ -659,7 +659,7 @@ ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, co
 ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
 {
     // Do we track this element?
-    if (!m_wasHidden.hasValue())
+    if (!m_wasHidden.has_value())
         return;
 
     if (!m_contentChangeObserver.isConsideredActionableContent(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))

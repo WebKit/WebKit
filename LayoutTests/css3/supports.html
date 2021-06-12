@@ -239,7 +239,7 @@
         div.id = "t" + i;
         div.className = "test";
         container.appendChild(div);
-        shouldBeEqualToString("getComputedStyle(document.getElementById('t"+i+"')).content", untouchedTests.indexOf(i) >= 0 ? "UNTOUCHED" : "APPLIED");
+        shouldBeEqualToString("getComputedStyle(document.getElementById('t"+i+"')).content", untouchedTests.indexOf(i) >= 0 ? '"UNTOUCHED"' : '"APPLIED"');
     }
 
     test_container.parentNode.removeChild(test_container);

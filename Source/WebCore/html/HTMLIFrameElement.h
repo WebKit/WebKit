@@ -59,8 +59,8 @@ private:
 
     int defaultTabIndex() const final;
     void parseAttribute(const QualifiedName&, const AtomString&) final;
-    bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     bool isInteractiveContent() const final { return true; }
 
@@ -71,7 +71,7 @@ private:
     bool isLazyLoadObserverActive() const final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
-    mutable Optional<FeaturePolicy> m_featurePolicy;
+    mutable std::optional<FeaturePolicy> m_featurePolicy;
     std::unique_ptr<LazyLoadFrameObserver> m_lazyLoadFrameObserver;
 };
 

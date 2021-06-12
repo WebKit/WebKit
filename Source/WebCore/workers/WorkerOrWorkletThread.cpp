@@ -40,9 +40,9 @@
 
 namespace WebCore {
 
-CheckedLock WorkerOrWorkletThread::s_workerOrWorkletThreadsLock;
+Lock WorkerOrWorkletThread::s_workerOrWorkletThreadsLock;
 
-CheckedLock& WorkerOrWorkletThread::workerOrWorkletThreadsLock()
+Lock& WorkerOrWorkletThread::workerOrWorkletThreadsLock()
 {
     return s_workerOrWorkletThreadsLock;
 }

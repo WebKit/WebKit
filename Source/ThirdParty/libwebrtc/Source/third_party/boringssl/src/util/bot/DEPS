@@ -19,43 +19,87 @@ vars = {
   'checkout_sde': False,
   'checkout_nasm': False,
   'checkout_libcxx': False,
+  'vs_version': '2015',
 
+  # Run the following command to see the latest builds in CIPD:
+  #  cipd describe PACKAGE_NAME -version latest
+
+  # infra/3pp/tools/cmake/linux-amd64
+  #
+  # TODO(https://crbug.com/1176531): Update to a newer CMake when available
+  # from CIPD. This is currently blocked on the linked bug.
+  'cmake_version': 'version:3.13.5',
+  # infra/3pp/tools/go/linux-amd64
+  'go_version': 'version:1.16',
+
+  # Update the following from
+  # https://chromium.googlesource.com/chromium/src/+/master/DEPS
   'android_sdk_platform-tools_version': 'Jxtur3_L9RzY4q79K-AwIahwFW4oi5uYVD5URx9h62wC',
+  # TODO(davidben): Before updating this, update the builders to specify
+  # ANDROID_ARM_NEON=0. The NDK now defaults armeabi-v7a to assuming NEON, but
+  # we wish to retain test coverage for non-NEON code. (Perhaps worth having
+  # both configurations.)
+  'android_ndk_revision': '27c0a8d090c666a50e40fceb4ee5b40b1a2d3f87',
+  'libfuzzer_revision': 'debe7d2d1982e540fbd6bd78604bf001753f9e74',
+
+  # Update the following from
+  # https://chromium.googlesource.com/chromium/src/+/master/buildtools/DEPS
+  'libcxx_revision': 'd9040c75cfea5928c804ab7c235fed06a63f743a',
+  'libcxxabi_revision': '196ba1aaa8ac285d94f4ea8d9836390a45360533',
 }
 
 deps = {
   'boringssl/util/bot/android_ndk': {
-    'url': Var('chromium_git') + '/android_ndk.git' + '@' + '27c0a8d090c666a50e40fceb4ee5b40b1a2d3f87',
+    'url': Var('chromium_git') + '/android_ndk.git' + '@' + Var('android_ndk_revision'),
     'condition': 'checkout_android',
   },
 
   'boringssl/util/bot/android_sdk/public': {
-      'packages': [
-          {
-              'package': 'chromium/third_party/android_sdk/public/platform-tools',
-              'version': Var('android_sdk_platform-tools_version'),
-          },
-      ],
-      'condition': 'checkout_android',
-      'dep_type': 'cipd',
+    'packages': [{
+      'package': 'chromium/third_party/android_sdk/public/platform-tools',
+      'version': Var('android_sdk_platform-tools_version'),
+    }],
+    'condition': 'checkout_android',
+    'dep_type': 'cipd',
   },
 
-  'boringssl/util/bot/gyp':
-    Var('chromium_git') + '/external/gyp.git' + '@' + 'd61a9397e668fa9843c4aa7da9e79460fe590bfb',
+  'boringssl/util/bot/cmake-linux64': {
+    'packages': [{
+      'package': 'infra/3pp/tools/cmake/linux-amd64',
+      'version': Var('cmake_version'),
+    }],
+    'condition': 'host_os == "linux"',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/cmake-mac': {
+    'packages': [{
+      'package': 'infra/3pp/tools/cmake/mac-amd64',
+      'version': Var('cmake_version'),
+    }],
+    'condition': 'host_os == "mac"',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/golang': {
+    'packages': [{
+      'package': 'infra/3pp/tools/go/${{platform}}',
+      'version': Var('go_version'),
+    }],
+    'dep_type': 'cipd',
+  },
 
   'boringssl/util/bot/libFuzzer': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + 'debe7d2d1982e540fbd6bd78604bf001753f9e74',
+    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + Var('libfuzzer_revision'),
     'condition': 'checkout_fuzzer',
   },
 
-  # Update the following revisions from
-  # https://chromium.googlesource.com/chromium/src/+/master/buildtools/DEPS
   'boringssl/util/bot/libcxx': {
-    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxx.git' + '@' + 'd9040c75cfea5928c804ab7c235fed06a63f743a',
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxx.git' + '@' + Var('libcxx_revision'),
     'condition': 'checkout_libcxx',
   },
   'boringssl/util/bot/libcxxabi': {
-    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxxabi.git' + '@' + '196ba1aaa8ac285d94f4ea8d9836390a45360533',
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxxabi.git' + '@' + Var('libcxxabi_revision'),
     'condition': 'checkout_libcxx',
   },
 }
@@ -66,50 +110,7 @@ recursedeps = [
 ]
 
 hooks = [
-  {
-    'name': 'cmake_linux64',
-    'pattern': '.',
-    'condition': 'host_os == "linux"',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=linux*',
-                '--no_auth',
-                '--bucket', 'chromium-tools',
-                '-s', 'boringssl/util/bot/cmake-linux64.tar.gz.sha1',
-    ],
-  },
-  {
-    'name': 'cmake_linux64_extract',
-    'pattern': '.',
-    'condition': 'host_os == "linux"',
-    'action': [ 'python',
-                'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/cmake-linux64.tar.gz',
-                'boringssl/util/bot/cmake-linux64/',
-    ],
-  },
-  {
-    'name': 'cmake_mac',
-    'pattern': '.',
-    'condition': 'host_os == "mac"',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=darwin',
-                '--no_auth',
-                '--bucket', 'chromium-tools',
-                '-s', 'boringssl/util/bot/cmake-mac.tar.gz.sha1',
-    ],
-  },
-  {
-    'name': 'cmake_mac_extract',
-    'pattern': '.',
-    'condition': 'host_os == "mac"',
-    'action': [ 'python',
-                'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/cmake-mac.tar.gz',
-                'boringssl/util/bot/cmake-mac/',
-    ],
-  },
+  # TODO(https://crbug.com/1180257): Use CIPD for CMake on Windows.
   {
     'name': 'cmake_win32',
     'pattern': '.',
@@ -156,18 +157,6 @@ hooks = [
     ],
   },
   {
-    'name': 'yasm_win32',
-    'pattern': '.',
-    'condition': 'host_os == "win" and not checkout_nasm',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=win32',
-                '--no_auth',
-                '--bucket', 'chromium-tools',
-                '-s', 'boringssl/util/bot/yasm-win32.exe.sha1',
-    ],
-  },
-  {
     'name': 'nasm_win32',
     'pattern': '.',
     'condition': 'host_os == "win" and checkout_nasm',
@@ -186,6 +175,7 @@ hooks = [
     'action': [ 'python',
                 'boringssl/util/bot/vs_toolchain.py',
                 'update',
+                Var('vs_version'),
     ],
   },
   {

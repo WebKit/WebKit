@@ -107,14 +107,11 @@ func (ka *rsaKeyAgreement) processClientKeyExchange(config *Config, cert *Certif
 		return nil, errClientKeyExchange
 	}
 
-	ciphertext := ckx.ciphertext
-	if version != VersionSSL30 {
-		ciphertextLen := int(ckx.ciphertext[0])<<8 | int(ckx.ciphertext[1])
-		if ciphertextLen != len(ckx.ciphertext)-2 {
-			return nil, errClientKeyExchange
-		}
-		ciphertext = ckx.ciphertext[2:]
+	ciphertextLen := int(ckx.ciphertext[0])<<8 | int(ckx.ciphertext[1])
+	if ciphertextLen != len(ckx.ciphertext)-2 {
+		return nil, errClientKeyExchange
 	}
+	ciphertext := ckx.ciphertext[2:]
 
 	key := cert.PrivateKey.(*rsa.PrivateKey)
 	if ka.exportKey != nil {
@@ -223,14 +220,10 @@ func (ka *rsaKeyAgreement) generateClientKeyExchange(config *Config, clientHello
 		encrypted[0] = 0
 	}
 	ckx := new(clientKeyExchangeMsg)
-	if ka.version != VersionSSL30 {
-		ckx.ciphertext = make([]byte, len(encrypted)+2)
-		ckx.ciphertext[0] = byte(len(encrypted) >> 8)
-		ckx.ciphertext[1] = byte(len(encrypted))
-		copy(ckx.ciphertext[2:], encrypted)
-	} else {
-		ckx.ciphertext = encrypted
-	}
+	ckx.ciphertext = make([]byte, len(encrypted)+2)
+	ckx.ciphertext[0] = byte(len(encrypted) >> 8)
+	ckx.ciphertext[1] = byte(len(encrypted))
+	copy(ckx.ciphertext[2:], encrypted)
 	return preMasterSecret, ckx, nil
 }
 

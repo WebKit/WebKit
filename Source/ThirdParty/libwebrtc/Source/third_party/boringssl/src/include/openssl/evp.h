@@ -59,6 +59,7 @@
 
 #include <openssl/base.h>
 
+#include <openssl/evp_errors.h>
 #include <openssl/thread.h>
 
 // OpenSSL included digest and cipher functions in this header so we include
@@ -544,14 +545,15 @@ OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_CTX_get0_pkey(EVP_PKEY_CTX *ctx);
 OPENSSL_EXPORT int EVP_PKEY_sign_init(EVP_PKEY_CTX *ctx);
 
 // EVP_PKEY_sign signs |digest_len| bytes from |digest| using |ctx|. If |sig| is
-// NULL, the maximum size of the signature is written to
-// |out_sig_len|. Otherwise, |*sig_len| must contain the number of bytes of
-// space available at |sig|. If sufficient, the signature will be written to
-// |sig| and |*sig_len| updated with the true length.
+// NULL, the maximum size of the signature is written to |out_sig_len|.
+// Otherwise, |*sig_len| must contain the number of bytes of space available at
+// |sig|. If sufficient, the signature will be written to |sig| and |*sig_len|
+// updated with the true length. This function will fail for signature
+// algorithms like Ed25519 that do not support signing pre-hashed inputs.
 //
-// This function expects a pre-hashed input and will fail for signature
-// algorithms which do not support this. Use |EVP_DigestSignInit| to sign an
-// unhashed input.
+// WARNING: |digest| must be the output of some hash function on the data to be
+// signed. Passing unhashed inputs will not result in a secure signature scheme.
+// Use |EVP_DigestSignInit| to sign an unhashed input.
 //
 // WARNING: Setting |sig| to NULL only gives the maximum size of the
 // signature. The actual signature may be smaller.
@@ -569,11 +571,13 @@ OPENSSL_EXPORT int EVP_PKEY_sign(EVP_PKEY_CTX *ctx, uint8_t *sig,
 OPENSSL_EXPORT int EVP_PKEY_verify_init(EVP_PKEY_CTX *ctx);
 
 // EVP_PKEY_verify verifies that |sig_len| bytes from |sig| are a valid
-// signature for |digest|.
+// signature for |digest|. This function will fail for signature
+// algorithms like Ed25519 that do not support signing pre-hashed inputs.
 //
-// This function expects a pre-hashed input and will fail for signature
-// algorithms which do not support this. Use |EVP_DigestVerifyInit| to verify a
-// signature given the unhashed input.
+// WARNING: |digest| must be the output of some hash function on the data to be
+// verified. Passing unhashed inputs will not result in a secure signature
+// scheme. Use |EVP_DigestVerifyInit| to verify a signature given the unhashed
+// input.
 //
 // It returns one on success or zero on error.
 OPENSSL_EXPORT int EVP_PKEY_verify(EVP_PKEY_CTX *ctx, const uint8_t *sig,
@@ -716,7 +720,8 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_get_signature_md(EVP_PKEY_CTX *ctx,
 // RSA specific control functions.
 
 // EVP_PKEY_CTX_set_rsa_padding sets the padding type to use. It should be one
-// of the |RSA_*_PADDING| values. Returns one on success or zero on error.
+// of the |RSA_*_PADDING| values. Returns one on success or zero on error. By
+// default, the padding is |RSA_PKCS1_PADDING|.
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_padding(EVP_PKEY_CTX *ctx, int padding);
 
 // EVP_PKEY_CTX_get_rsa_padding sets |*out_padding| to the current padding
@@ -734,6 +739,8 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_get_rsa_padding(EVP_PKEY_CTX *ctx,
 // If unsure, use -1.
 //
 // Returns one on success or zero on error.
+//
+// TODO(davidben): The default is currently -2. Switch it to -1.
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_pss_saltlen(EVP_PKEY_CTX *ctx,
                                                     int salt_len);
 
@@ -758,7 +765,10 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_keygen_pubexp(EVP_PKEY_CTX *ctx,
                                                       BIGNUM *e);
 
 // EVP_PKEY_CTX_set_rsa_oaep_md sets |md| as the digest used in OAEP padding.
-// Returns one on success or zero on error.
+// Returns one on success or zero on error. If unset, the default is SHA-1.
+// Callers are recommended to overwrite this default.
+//
+// TODO(davidben): Remove the default and require callers specify this.
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_oaep_md(EVP_PKEY_CTX *ctx,
                                                 const EVP_MD *md);
 
@@ -769,6 +779,10 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_get_rsa_oaep_md(EVP_PKEY_CTX *ctx,
 
 // EVP_PKEY_CTX_set_rsa_mgf1_md sets |md| as the digest used in MGF1. Returns
 // one on success or zero on error.
+//
+// If unset, the default is the signing hash for |RSA_PKCS1_PSS_PADDING| and the
+// OAEP hash for |RSA_PKCS1_OAEP_PADDING|. Callers are recommended to use this
+// default and not call this function.
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_mgf1_md(EVP_PKEY_CTX *ctx,
                                                 const EVP_MD *md);
 
@@ -1080,43 +1094,5 @@ BSSL_NAMESPACE_END
 }  // extern C++
 
 #endif
-
-#define EVP_R_BUFFER_TOO_SMALL 100
-#define EVP_R_COMMAND_NOT_SUPPORTED 101
-#define EVP_R_DECODE_ERROR 102
-#define EVP_R_DIFFERENT_KEY_TYPES 103
-#define EVP_R_DIFFERENT_PARAMETERS 104
-#define EVP_R_ENCODE_ERROR 105
-#define EVP_R_EXPECTING_AN_EC_KEY_KEY 106
-#define EVP_R_EXPECTING_AN_RSA_KEY 107
-#define EVP_R_EXPECTING_A_DSA_KEY 108
-#define EVP_R_ILLEGAL_OR_UNSUPPORTED_PADDING_MODE 109
-#define EVP_R_INVALID_DIGEST_LENGTH 110
-#define EVP_R_INVALID_DIGEST_TYPE 111
-#define EVP_R_INVALID_KEYBITS 112
-#define EVP_R_INVALID_MGF1_MD 113
-#define EVP_R_INVALID_OPERATION 114
-#define EVP_R_INVALID_PADDING_MODE 115
-#define EVP_R_INVALID_PSS_SALTLEN 116
-#define EVP_R_KEYS_NOT_SET 117
-#define EVP_R_MISSING_PARAMETERS 118
-#define EVP_R_NO_DEFAULT_DIGEST 119
-#define EVP_R_NO_KEY_SET 120
-#define EVP_R_NO_MDC2_SUPPORT 121
-#define EVP_R_NO_NID_FOR_CURVE 122
-#define EVP_R_NO_OPERATION_SET 123
-#define EVP_R_NO_PARAMETERS_SET 124
-#define EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE 125
-#define EVP_R_OPERATON_NOT_INITIALIZED 126
-#define EVP_R_UNKNOWN_PUBLIC_KEY_TYPE 127
-#define EVP_R_UNSUPPORTED_ALGORITHM 128
-#define EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE 129
-#define EVP_R_NOT_A_PRIVATE_KEY 130
-#define EVP_R_INVALID_SIGNATURE 131
-#define EVP_R_MEMORY_LIMIT_EXCEEDED 132
-#define EVP_R_INVALID_PARAMETERS 133
-#define EVP_R_INVALID_PEER_KEY 134
-#define EVP_R_NOT_XOF_OR_INVALID_LENGTH 135
-#define EVP_R_EMPTY_PSK 136
 
 #endif  // OPENSSL_HEADER_EVP_H

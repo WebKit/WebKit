@@ -1177,7 +1177,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
         {
           /* First try to use result.fe_size to find " -> " sequence.
              This can give proper result for cases like "aaa -> bbb -> ccc". */
-            auto fileSize = parseIntegerAllowingTrailingJunk<unsigned>(result.fileSize).valueOr(0);
+            auto fileSize = parseIntegerAllowingTrailingJunk<unsigned>(result.fileSize).value_or(0);
 
           if (result.filenameLength > (fileSize + 4) &&
               strncmp(result.filename + result.filenameLength - fileSize - 4, " -> ", 4) == 0)

@@ -30,8 +30,10 @@
 
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutState.h"
 #include "TableFormattingContext.h"
+#include "TableGrid.h"
 
 namespace WebCore {
 namespace Layout {
@@ -39,7 +41,6 @@ namespace Layout {
 TableFormattingQuirks::TableFormattingQuirks(const TableFormattingContext& tableFormattingContext)
     : FormattingQuirks(tableFormattingContext)
 {
-    ASSERT(layoutState().inQuirksMode());
 }
 
 bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const ContainerBox& cellBox)
@@ -54,6 +55,19 @@ bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const Contain
     if (!cellBox.hasInFlowChild())
         return false;
     return cellBox.firstInFlowChild()->style().hasMarginBeforeQuirk() || cellBox.lastInFlowChild()->style().hasMarginAfterQuirk();
+}
+
+LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox) const
+{
+    // The "let's find the nearest ancestor with fixed height to resolve percent height" quirk is limited to the table formatting
+    // context. If we can't resolve it within the table subtree, we default it to 0.
+    // e.g <div style="height: 100px"><table><tr><td style="height: 100%"></td></tr></table></div> is resolved to 0px.
+    for (auto& ancestor : containingBlockChainWithinFormattingContext(layoutBox)) {
+        auto height = ancestor.style().logicalHeight();
+        if (height.isFixed())
+            return LayoutUnit { height.value() };
+    }
+    return { };
 }
 
 }

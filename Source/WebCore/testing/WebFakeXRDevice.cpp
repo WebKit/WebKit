@@ -35,6 +35,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
 
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#include "IOSurface.h"
+#endif
+
 namespace WebCore {
 
 static constexpr Seconds FakeXRFrameTime = 15_ms;
@@ -73,7 +77,7 @@ void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&
         m_frameData.stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
 }
 
-void SimulatedXRDevice::setViewerOrigin(const Optional<FrameData::Pose>& origin)
+void SimulatedXRDevice::setViewerOrigin(const std::optional<FrameData::Pose>& origin)
 {
     if (origin) {
         m_frameData.origin = *origin;
@@ -144,8 +148,13 @@ void SimulatedXRDevice::frameTimerFired()
     FrameData data = m_frameData.copy();
     data.shouldRender = true;
 
-    for (auto& layer : m_layers)
+    for (auto& layer : m_layers) {
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+        data.layers.add(layer.key, FrameData::LayerData { .surface = IOSurface::create(recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB()) });
+#else
         data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
+#endif
+    }
 
     for (auto& input : m_inputConnections) {
         if (input->isConnected())
@@ -163,11 +172,11 @@ void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
         m_frameTimer.startOneShot(FakeXRFrameTime);
 }
 
-Optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
+std::optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
     using GL = GraphicsContextGL;
     if (!m_gl)
-        return WTF::nullopt;
+        return std::nullopt;
     PlatformXR::LayerHandle handle = ++m_layerIndex;
     auto texture = m_gl->createTexture();
     auto colorFormat = alpha ? GL::RGBA8 : GL::RGB8;
@@ -213,7 +222,7 @@ void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
             auto fakeView = parsedView.releaseReturnValue();
             PlatformXR::Device::FrameData::View view;
             view.offset = fakeView->offset();
-            if (fakeView->fieldOfView().hasValue())
+            if (fakeView->fieldOfView())
                 view.projection = { *fakeView->fieldOfView() };
             else
                 view.projection = { fakeView->projection() };

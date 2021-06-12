@@ -253,9 +253,9 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         return Exception { QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_s };
     }
 
-    m_mostRecentStateObjectUsage = payloadSize.unsafeGet();
+    m_mostRecentStateObjectUsage = payloadSize;
 
-    mainHistory.m_totalStateObjectUsage = newTotalUsage.unsafeGet();
+    mainHistory.m_totalStateObjectUsage = newTotalUsage;
     ++mainHistory.m_currentStateObjectTimeSpanObjectsAdded;
 
     if (!urlString.isEmpty())

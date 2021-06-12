@@ -45,7 +45,7 @@ WARN_UNUSED_RETURN bool decode(Decoder&, GRefPtr<GtkPageSetup>&);
 
 template<> struct ArgumentCoder<WebCore::SelectionData> {
     static void encode(Encoder&, const WebCore::SelectionData&);
-    static Optional<WebCore::SelectionData> decode(Decoder&);
+    static std::optional<WebCore::SelectionData> decode(Decoder&);
 };
 
 } // namespace IPC

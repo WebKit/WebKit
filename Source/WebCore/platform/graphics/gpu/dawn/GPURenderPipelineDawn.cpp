@@ -37,7 +37,7 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::tryCreate(const GPUDevice& device, 
 
 GPURenderPipeline::~GPURenderPipeline() = default;
 
-bool GPURenderPipeline::recompile(const GPUDevice& device, GPUProgrammableStageDescriptor&& vertexStage, Optional<GPUProgrammableStageDescriptor>&& fragmentStage)
+bool GPURenderPipeline::recompile(const GPUDevice& device, GPUProgrammableStageDescriptor&& vertexStage, std::optional<GPUProgrammableStageDescriptor>&& fragmentStage)
 {
     return false;
 }

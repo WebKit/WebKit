@@ -74,7 +74,7 @@ void RemoteLegacyCDMProxy::createSession(const String& keySystem, CreateSessionC
     callback(WTFMove(identifier));
 }
 
-void RemoteLegacyCDMProxy::setPlayerId(Optional<MediaPlayerIdentifier>&& playerId)
+void RemoteLegacyCDMProxy::setPlayerId(std::optional<MediaPlayerIdentifier>&& playerId)
 {
     if (!playerId)
         m_playerId = { };

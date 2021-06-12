@@ -115,7 +115,7 @@ private:
     Pitch m_pitch { UnknownPitch };
     bool m_isForPlatformFont { false };
 #if ASSERT_ENABLED
-    Optional<Ref<Thread>> m_thread;
+    std::optional<Ref<Thread>> m_thread;
 #endif
 };
 

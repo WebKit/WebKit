@@ -32,11 +32,6 @@
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/ProgressTrackerClient.h>
 
-namespace WebCore {
-    class PluginManualLoader;
-    class PluginView;
-}
-
 class WebFrame;
 class WebFramePolicyListener;
 class WebHistory;
@@ -49,10 +44,8 @@ public:
     void setWebFrame(WebFrame* webFrame) { m_webFrame = webFrame; }
     WebFrame* webFrame() const { return m_webFrame; }
 
-    void dispatchDidFailToStartPlugin(const WebCore::PluginView&) const;
-
-    Optional<WebCore::PageIdentifier> pageID() const final;
-    Optional<WebCore::FrameIdentifier> frameID() const final;
+    std::optional<WebCore::PageIdentifier> pageID() const final;
+    std::optional<WebCore::FrameIdentifier> frameID() const final;
 
     bool hasWebView() const override;
 
@@ -91,7 +84,7 @@ public:
     void dispatchWillClose() override;
     void dispatchDidStartProvisionalLoad() override;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) override;
-    void dispatchDidCommitLoad(Optional<WebCore::HasInsecureContent>, Optional<WebCore::UsedLegacyTLS>) override;
+    void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>, std::optional<WebCore::UsedLegacyTLS>) override;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&, WebCore::WillContinueLoading) override;
     void dispatchDidFailLoad(const WebCore::ResourceError&) override;
     void dispatchDidFinishDocumentLoad() override;
@@ -119,7 +112,7 @@ public:
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String()) override;
 
-    void committedLoad(WebCore::DocumentLoader*, const char*, int) override;
+    void committedLoad(WebCore::DocumentLoader*, const uint8_t*, int) override;
     void finishedLoading(WebCore::DocumentLoader*) override;
 
     void willChangeTitle(WebCore::DocumentLoader*) override;
@@ -199,9 +192,4 @@ private:
     std::unique_ptr<WebFramePolicyListenerPrivate> m_policyListenerPrivate;
 
     WebFrame* m_webFrame;
-
-    // Points to the manual loader that data should be redirected to.
-    WebCore::PluginManualLoader* m_manualLoader;
-
-    bool m_hasSentResponseToPlugin;
 };

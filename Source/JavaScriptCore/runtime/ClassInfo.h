@@ -186,7 +186,7 @@ struct ClassInfo {
     const ClassInfo* parentClass;
     const HashTable* staticPropHashTable;
     CheckJSCastSnippetFunctionPtr checkSubClassSnippet;
-    const Optional<JSTypeRange> inheritsJSTypeRange; // This is range of JSTypes for doing inheritance checking. Has the form: [firstJSType, lastJSType] (inclusive).
+    const std::optional<JSTypeRange> inheritsJSTypeRange; // This is range of JSTypes for doing inheritance checking. Has the form: [firstJSType, lastJSType] (inclusive).
     MethodTable methodTable;
     const TypedArrayType typedArrayStorageType;
     const unsigned staticClassSize;

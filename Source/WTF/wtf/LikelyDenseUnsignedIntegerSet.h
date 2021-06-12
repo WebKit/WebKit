@@ -53,7 +53,7 @@ public:
         , m_min(0)
         , m_max(0)
     {
-        new (&m_inline.bitVector) BitVector;
+        new (NotNull, &m_inline.bitVector) BitVector;
     }
 
     ~LikelyDenseUnsignedIntegerSet()
@@ -70,9 +70,21 @@ public:
         , m_max(other.m_max)
     {
         if (isBitVector())
-            new (&m_inline.bitVector) BitVector(WTFMove(other.m_inline.bitVector));
+            new (NotNull, &m_inline.bitVector) BitVector(WTFMove(other.m_inline.bitVector));
         else
-            new (&m_inline.hashSet) Set(WTFMove(other.m_inline.hashSet));
+            new (NotNull, &m_inline.hashSet) Set(WTFMove(other.m_inline.hashSet));
+    }
+
+    void clear()
+    {
+        if (isBitVector())
+            m_inline.bitVector.~BitVector();
+        else
+            m_inline.hashSet.~HashSet();
+        new (NotNull, &m_inline.bitVector) BitVector;
+        m_size = 0;
+        m_min = 0;
+        m_max = 0;
     }
 
     bool contains(IndexType value) const
@@ -131,9 +143,7 @@ public:
         IndexType newMin = std::min(m_min, value);
         IndexType newMax = std::max(m_max, value);
         unsigned bitVectorSize = (newMax - newMin) / 8;
-        unsigned hashSetEstimatedOccupancyOverhead = 3; // max occupancy for a large HashSet is 50%
-        unsigned wouldBeHashSetCapacity = std::max(8u, m_size) * hashSetEstimatedOccupancyOverhead;
-        unsigned wouldBeHashSetSize = wouldBeHashSetCapacity * sizeof(IndexType);
+        unsigned wouldBeHashSetSize = estimateHashSetSize(m_size);
         if (wouldBeHashSetSize * 2 < bitVectorSize) {
             transitionToHashSet();
             auto result = m_inline.hashSet.add(value);
@@ -269,6 +279,13 @@ private:
             && !UnsignedWithZeroKeyHashTraits<IndexType>::isDeletedValue(value);
     }
 
+    unsigned estimateHashSetSize(unsigned n)
+    {
+        unsigned hashSetEstimatedOccupancyOverhead = 3; // max occupancy for a large HashSet is 50%
+        unsigned wouldBeHashSetCapacity = std::max(8u, n) * hashSetEstimatedOccupancyOverhead;
+        return wouldBeHashSetCapacity * sizeof(IndexType);
+    }
+
     void transitionToHashSet()
     {
         ASSERT(isBitVector());
@@ -278,7 +295,7 @@ private:
         for (IndexType oldIndex : m_inline.bitVector)
             newSet.add(oldIndex + m_min);
         m_inline.bitVector.~BitVector();
-        new (&m_inline.hashSet) Set(WTFMove(newSet));
+        new (NotNull, &m_inline.hashSet) Set(WTFMove(newSet));
         m_size = std::numeric_limits<unsigned>::max();
 
         ASSERT(!isBitVector());
@@ -297,7 +314,7 @@ private:
         }
         ASSERT(newBitVector.quickGet(0));
         m_inline.hashSet.~Set();
-        new (&m_inline.bitVector) BitVector(WTFMove(newBitVector));
+        new (NotNull, &m_inline.bitVector) BitVector(WTFMove(newBitVector));
 
         ASSERT(isBitVector());
     }

@@ -154,16 +154,14 @@ void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
 
     if (m_waitingForCompletionHandler) {
         WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED("didReceiveData: Received data during response processing, queuing it.");
-        Vector<uint8_t> dataVector;
-        dataVector.append(data, size);
-        queueTask([this, protectedThis = makeRef(*this), dataVector = WTFMove(dataVector)] {
+        queueTask([this, protectedThis = makeRef(*this), dataVector = Vector { data, size }] {
             didReceiveData(dataVector.size(), dataVector.data());
         });
         return;
     }
 
     auto protectedThis = makeRef(*this);
-    m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data), size, 0, DataPayloadType::DataPayloadBytes);
+    m_coreLoader->didReceiveData(data, size, 0, DataPayloadType::DataPayloadBytes);
     processNextPendingTask();
 }
 

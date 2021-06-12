@@ -29,7 +29,6 @@
 
 #include "GPUBuffer.h"
 #include "GPUPlatformTypes.h"
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -42,13 +41,13 @@ public:
     static Ref<GPUBindGroupAllocator> create(GPUErrorScopes&);
 
     struct ArgumentBufferOffsets {
-        Optional<PlatformGPUBufferOffset> vertex;
-        Optional<PlatformGPUBufferOffset> fragment;
-        Optional<PlatformGPUBufferOffset> compute;
+        std::optional<PlatformGPUBufferOffset> vertex;
+        std::optional<PlatformGPUBufferOffset> fragment;
+        std::optional<PlatformGPUBufferOffset> compute;
     };
 
 #if USE(METAL)
-    Optional<ArgumentBufferOffsets> allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute);
+    std::optional<ArgumentBufferOffsets> allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute);
 #endif
 
     void tryReset();

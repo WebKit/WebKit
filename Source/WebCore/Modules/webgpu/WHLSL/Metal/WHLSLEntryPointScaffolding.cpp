@@ -38,7 +38,6 @@
 #include "WHLSLStructureDefinition.h"
 #include "WHLSLTypeNamer.h"
 #include <algorithm>
-#include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 

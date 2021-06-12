@@ -66,7 +66,7 @@ static bool canDecodeMedia(const MediaDecodingConfiguration& configuration)
             return false;
 
         // Can only support spatial rendering of tracks with multichannel audio:
-        if (audioConfig->spatialRendering.valueOr(false) && audioConfig->channels.toDouble() <= 2)
+        if (audioConfig->spatialRendering.value_or(false) && audioConfig->channels.toDouble() <= 2)
             return false;
     }
 

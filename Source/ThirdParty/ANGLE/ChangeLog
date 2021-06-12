@@ -1,3 +1,171 @@
+2021-06-02  Kyle Piddington  <kpiddington@apple.com>
+
+        Add 'mix' override with bool-vectors to MSL translator
+        https://bugs.webkit.org/show_bug.cgi?id=226366
+
+        Reviewed by Dean Jackson.
+
+        Add in 'mix' overrides, and logic for selecting mix with bool when necessary.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GetOperatorString):
+        (GenMetalTraverser::visitAggregate):
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+
+2021-06-01  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] transformFeedback samples on webglsamples.org do not render correctly
+        https://bugs.webkit.org/show_bug.cgi?id=226285
+        <rdar://78524773>
+
+        Reviewed by Dean Jackson.
+
+        Metal ANGLE does not render these samples correctly, for a number of reasons. 
+        For transform_feedback_interleaved and seperated, We need to start a new renderEncoder to get the results from the transform feedback. 
+        for transform_feedback-seperated_2, we need to invalidate the current render pass descriptor in order to switch to the rasterizer-enabled version of the shader.
+        Testing: Ran all transform feedback tests from deqp suite to ensure no regressions are present.
+
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::drawTriFanArraysWithBaseVertex):
+        (rx::ContextMtl::drawArraysImpl):
+        (rx::ContextMtl::drawTriFanElements):
+        (rx::ContextMtl::prepareForTransformFeedbackPassTwo):
+        (rx::ContextMtl::drawLineLoopElements):
+        (rx::ContextMtl::drawElementsImpl):
+        (rx::ContextMtl::onEndTransformFeedback):
+        * src/libANGLE/renderer/metal/TransformFeedbackMtl.mm:
+        (rx::TransformFeedbackMtl::end):
+
+2021-06-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal translator pre-rotation code is unused and it asserts when used
+        https://bugs.webkit.org/show_bug.cgi?id=226262
+
+        Reviewed by Dean Jackson.
+
+        Remove the pre-rotation code. It is Android specific and most likely it is useful
+        only when ANGLE is used as the drawing mechanism for the primary app window picture.
+        Thus most likely it is not useful in WebKit on Cocoa platforms where the window
+        server does the compositing.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect.h:
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::handleDirtyDriverUniforms):
+
+2021-05-31  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cherry-pick ANGLE: Add array bounds checks for WebGL shaders
+        https://bugs.webkit.org/show_bug.cgi?id=226397
+
+        Reviewed by Dean Jackson.
+
+        Cherry-pick ANGLE commit b0d39ba2aba218402ff2f32f6e16f18cf4975ff4
+        At the moment does not affect any WebKit client.
+        Makes the code consistent with OpenGL.
+        Makes it easier to understand same change in Metal backend.
+
+        Upstream description:
+        Add array bounds checks for WebGL shaders
+        WebGL shaders may contain OOB array accesses which in turn
+        cause undefined behavior, which may result in security
+        issues. This was detected as an UNKNOWN READ by UBSAN while
+        testing with SwANGLE.
+
+        * src/libANGLE/renderer/vulkan/ShaderVk.cpp:
+        (rx::ShaderVk::compile):
+
+2021-05-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal translator should always collect variables
+        https://bugs.webkit.org/show_bug.cgi?id=226261
+
+        Reviewed by Dean Jackson.
+
+        Always collect the variables when translating GLSL to Metal.
+        This way tests that invoke translation without SH_VARIABLES still
+        work.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect.h:
+
+2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE could be compiled with "aggressive uninitialised variable" setting
+        https://bugs.webkit.org/show_bug.cgi?id=226260
+
+        Reviewed by Alexey Proskuryakov.
+
+        Turn on compiler flag to warn about uninitialized variables that might be
+        conditionally uninitialized. This is the same flag as upstream ANGLE uses.
+        Fix a spurious warning produced by this flag.
+        This helps in scenarios where custom targets compile ANGLE sources and
+        this flag set, such as tests.
+
+        * Configurations/Base.xcconfig:
+        * src/compiler/translator/TranslatorMetalDirect/FixTypeConstructors.cpp:
+
+2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cherry-pick ANGLE: D3D11: Skip blits if there is no intersection of dest areas
+        https://bugs.webkit.org/show_bug.cgi?id=225190
+        <rdar://77084155>
+
+        Reviewed by David Kilzer.
+
+        Cherry-pick ANGLE commit b574643ef28c92fcea5122dd7a72acb42a514eed
+        Fixes a security issue on D3D11.
+        Potential a correctness issue on some OpenGL drivers.
+        No effect on Metal, but the nodiscard part is still useful.
+
+        Upstream description:
+        D3D11: Skip blits if there is no intersection of dest areas
+
+        Blit11 would clip the destination rectangle with the destination size
+        but ignore the result. gl::ClipRectangle returns false when the
+        rectangles do not intersect at all, indicating the blit can be skipped.
+
+        This could lead to an out-of-bounds write to the GPU memory for the
+        destination texture.
+
+        Mark ClipRectangle as nodiscard to prevent future issues.
+        * src/libANGLE/angletypes.h:
+        * src/libANGLE/renderer/d3d/d3d11/Blit11.cpp:
+        * src/libANGLE/renderer/gl/FramebufferGL.cpp:
+        (rx::FramebufferGL::clipSrcRegion):
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::updateScissor):
+        * src/libANGLE/renderer/vulkan/ContextVk.cpp:
+        (rx::ContextVk::updateScissor):
+        * src/tests/gl_tests/BlitFramebufferANGLETest.cpp:
+        (TEST_P):
+
+2021-05-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Support USE_ANGLE_EGL on additional platforms
+        https://bugs.webkit.org/show_bug.cgi?id=224888
+        <rdar://problem/77280211>
+
+        Reviewed by Ken Russell.
+
+        Support ANGLE using the OpenGL backend for GTK. Support ANGLE using Metal
+        backend for Mac. Add the generated sources for these two backends.
+
+        Clean up the CMake and introduce additional targets.
+
+        * CMakeLists.txt:
+        * Compiler.cmake:
+        * GL.cmake: Added.
+        * Metal.cmake: Added.
+        * PlatformFTW.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+
 2021-05-20  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE] Handle NAN constant folding correctly

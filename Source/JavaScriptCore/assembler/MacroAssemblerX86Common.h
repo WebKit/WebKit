@@ -30,7 +30,6 @@
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
 #include <array>
-#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -3108,7 +3107,7 @@ public:
         }
     }
 
-    static Optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
+    static std::optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
     {
         switch (cond) {
         case Equal:
@@ -3121,7 +3120,7 @@ public:
             return PositiveOrZero;
             break;
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 

@@ -18,5 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/resources/webxr_math_utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webxr/resources/webxr_test_asserts.js
 /LayoutTests/imported/w3c/web-platform-tests/webxr/resources/webxr_test_constants.js
+/LayoutTests/imported/w3c/web-platform-tests/webxr/resources/webxr_test_constants_fake_depth.js
 /LayoutTests/imported/w3c/web-platform-tests/webxr/resources/webxr_test_constants_fake_world.js
 /LayoutTests/imported/w3c/web-platform-tests/webxr/resources/webxr_util.js

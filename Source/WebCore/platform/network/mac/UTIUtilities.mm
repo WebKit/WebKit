@@ -26,7 +26,7 @@
 #import "config.h"
 #import "UTIUtilities.h"
 
-#import <wtf/CheckedLock.h>
+#import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/TinyLRUCache.h>
@@ -112,7 +112,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     static String createKeyForStorage(const String& key) { return key.isolatedCopy(); }
 };
 
-static CheckedLock cacheUTIFromMIMETypeLock;
+static Lock cacheUTIFromMIMETypeLock;
 static TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePolicy>& cacheUTIFromMIMEType() WTF_REQUIRES_LOCK(cacheUTIFromMIMETypeLock)
 {
     static NeverDestroyed<TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePolicy>> cache;

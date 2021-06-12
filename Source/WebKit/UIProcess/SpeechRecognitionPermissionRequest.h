@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-using SpeechRecognitionPermissionRequestCallback = CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>;
+using SpeechRecognitionPermissionRequestCallback = CompletionHandler<void(std::optional<WebCore::SpeechRecognitionError>&&)>;
 
 class SpeechRecognitionPermissionRequest : public RefCounted<SpeechRecognitionPermissionRequest> {
 public:
@@ -49,7 +49,7 @@ public:
             m_completionHandler(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::NotAllowed, "Request is cancelled"_s });
     }
 
-    void complete(Optional<WebCore::SpeechRecognitionError>&& error)
+    void complete(std::optional<WebCore::SpeechRecognitionError>&& error)
     {
         auto completionHandler = std::exchange(m_completionHandler, { });
         completionHandler(WTFMove(error));

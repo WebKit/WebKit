@@ -34,13 +34,13 @@
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static CheckedLock globalWebSocketStreamMapLock;
+static Lock globalWebSocketStreamMapLock;
 static HashMap<WebSocketIdentifier, WebSocketStream*>& globalWebSocketStreamMap() WTF_REQUIRES_LOCK(globalWebSocketStreamMapLock)
 {
     static NeverDestroyed<HashMap<WebSocketIdentifier, WebSocketStream*>> globalMap;
@@ -119,7 +119,7 @@ void WebSocketStream::platformSend(const uint8_t* data, size_t length, Function<
     m_sendDataCallbacks.add(dataIdentifier, WTFMove(completionHandler));
 }
 
-void WebSocketStream::platformSendHandshake(const uint8_t* data, size_t length, const Optional<CookieRequestHeaderFieldProxy>& headerFieldProxy, Function<void(bool, bool)>&& completionHandler)
+void WebSocketStream::platformSendHandshake(const uint8_t* data, size_t length, const std::optional<CookieRequestHeaderFieldProxy>& headerFieldProxy, Function<void(bool, bool)>&& completionHandler)
 {
     static uint64_t nextDataIdentifier = 1;
     uint64_t dataIdentifier = nextDataIdentifier++;
@@ -164,7 +164,7 @@ void WebSocketStream::didCloseSocketStream()
 
 void WebSocketStream::didReceiveSocketStreamData(const IPC::DataReference& data)
 {
-    m_client.didReceiveSocketStreamData(*this, reinterpret_cast<const char*>(data.data()), data.size());
+    m_client.didReceiveSocketStreamData(*this, data.data(), data.size());
 }
 
 void WebSocketStream::didFailToReceiveSocketStreamData()

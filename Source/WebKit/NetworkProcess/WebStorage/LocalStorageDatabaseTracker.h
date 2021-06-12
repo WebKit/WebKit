@@ -51,11 +51,11 @@ public:
 
     struct OriginDetails {
         String originIdentifier;
-        Optional<WallTime> creationTime;
-        Optional<WallTime> modificationTime;
+        std::optional<WallTime> creationTime;
+        std::optional<WallTime> modificationTime;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<OriginDetails> decode(Decoder&);
+        template<class Decoder> static std::optional<OriginDetails> decode(Decoder&);
 
         OriginDetails isolatedCopy() const { return { originIdentifier.isolatedCopy(), creationTime, modificationTime }; }
     };
@@ -89,17 +89,17 @@ void LocalStorageDatabaseTracker::OriginDetails::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::OriginDetails::decode(Decoder& decoder)
+std::optional<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::OriginDetails::decode(Decoder& decoder)
 {
     LocalStorageDatabaseTracker::OriginDetails result;
     if (!decoder.decode(result.originIdentifier))
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (!decoder.decode(result.creationTime))
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (!decoder.decode(result.modificationTime))
-        return WTF::nullopt;
+        return std::nullopt;
     
     return result;
 }

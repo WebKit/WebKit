@@ -132,13 +132,13 @@ TEST(RetainPtr, OptionalRetainPtrCF)
 {
     // Test assignment from adoptCF().
     float value = 3.1415926535;
-    Optional<RetainPtr<CFNumberRef>> optionalObject1 = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value));
+    std::optional<RetainPtr<CFNumberRef>> optionalObject1 = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value));
     EXPECT_EQ(1, CFGetRetainCount(optionalObject1.value().get()));
     RetainPtr<CFNumberRef> object1 = optionalObject1.value();
     EXPECT_EQ(optionalObject1.value(), object1);
 
     // Test assignment from retainPtr().
-    Optional<RetainPtr<CFNumberRef>> optionalObject2 = retainPtr(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value));
+    std::optional<RetainPtr<CFNumberRef>> optionalObject2 = retainPtr(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value));
     CFRelease(optionalObject2.value().get());
     EXPECT_EQ(1, CFGetRetainCount(optionalObject2.value().get()));
     RetainPtr<CFNumberRef> object2 = optionalObject2.value();
@@ -146,7 +146,7 @@ TEST(RetainPtr, OptionalRetainPtrCF)
 
     EXPECT_NE(object1, object2);
 
-    // Test assignment from Optional<RetainPtr<CFNumberRef>>.
+    // Test assignment from std::optional<RetainPtr<CFNumberRef>>.
     optionalObject1 = optionalObject2;
     EXPECT_TRUE(optionalObject1.value());
     EXPECT_TRUE(optionalObject1.value().get());
@@ -160,12 +160,13 @@ TEST(RetainPtr, OptionalRetainPtrCF)
     EXPECT_EQ(optionalObject1.value(), object1);
     EXPECT_EQ(optionalObject2.value(), object2);
 
-    // Test move from Optional<RetainPtr<CFNumberRef>>.
+    // Test move from std::optional<RetainPtr<CFNumberRef>>.
+    EXPECT_EQ(2, CFGetRetainCount(object2.get()));
     optionalObject1 = WTFMove(optionalObject2);
+    EXPECT_EQ(2, CFGetRetainCount(object2.get()));
     EXPECT_TRUE(optionalObject1.value());
     EXPECT_TRUE(optionalObject1.value().get());
     EXPECT_EQ(optionalObject1.value(), object2);
-    EXPECT_FALSE(optionalObject2);
 }
 
 TEST(RetainPtr, RetainPtrCF)

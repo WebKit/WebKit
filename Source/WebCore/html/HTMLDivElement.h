@@ -36,7 +36,7 @@ protected:
     HTMLDivElement(const QualifiedName&, Document&);
 
 private:
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 };
 
 } // namespace WebCore

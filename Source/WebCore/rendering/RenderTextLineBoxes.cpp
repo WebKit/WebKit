@@ -26,12 +26,12 @@
 #include "config.h"
 #include "RenderTextLineBoxes.h"
 
-#include "EllipsisBox.h"
-#include "InlineTextBox.h"
+#include "LegacyEllipsisBox.h"
+#include "LegacyInlineTextBox.h"
+#include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include "RootInlineBox.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {
@@ -42,7 +42,7 @@ RenderTextLineBoxes::RenderTextLineBoxes()
 {
 }
 
-InlineTextBox* RenderTextLineBoxes::createAndAppendLineBox(RenderText& renderText)
+LegacyInlineTextBox* RenderTextLineBoxes::createAndAppendLineBox(RenderText& renderText)
 {
     auto textBox = renderText.createTextBox();
     if (!m_first) {
@@ -56,7 +56,7 @@ InlineTextBox* RenderTextLineBoxes::createAndAppendLineBox(RenderText& renderTex
     return textBox.release();
 }
 
-void RenderTextLineBoxes::extract(InlineTextBox& box)
+void RenderTextLineBoxes::extract(LegacyInlineTextBox& box)
 {
     checkConsistency();
 
@@ -72,7 +72,7 @@ void RenderTextLineBoxes::extract(InlineTextBox& box)
     checkConsistency();
 }
 
-void RenderTextLineBoxes::attach(InlineTextBox& box)
+void RenderTextLineBoxes::attach(LegacyInlineTextBox& box)
 {
     checkConsistency();
 
@@ -81,7 +81,7 @@ void RenderTextLineBoxes::attach(InlineTextBox& box)
         box.setPreviousTextBox(m_last);
     } else
         m_first = &box;
-    InlineTextBox* last = nullptr;
+    LegacyInlineTextBox* last = nullptr;
     for (auto* current = &box; current; current = current->nextTextBox()) {
         current->setExtracted(false);
         last = current;
@@ -91,7 +91,7 @@ void RenderTextLineBoxes::attach(InlineTextBox& box)
     checkConsistency();
 }
 
-void RenderTextLineBoxes::remove(InlineTextBox& box)
+void RenderTextLineBoxes::remove(LegacyInlineTextBox& box)
 {
     checkConsistency();
 
@@ -122,7 +122,7 @@ void RenderTextLineBoxes::deleteAll()
 {
     if (!m_first)
         return;
-    InlineTextBox* next;
+    LegacyInlineTextBox* next;
     for (auto* current = m_first; current; current = next) {
         next = current->nextTextBox();
         delete current;
@@ -131,7 +131,7 @@ void RenderTextLineBoxes::deleteAll()
     m_last = nullptr;
 }
 
-InlineTextBox* RenderTextLineBoxes::findNext(int offset, int& position) const
+LegacyInlineTextBox* RenderTextLineBoxes::findNext(int offset, int& position) const
 {
     if (!m_first)
         return nullptr;
@@ -178,8 +178,8 @@ void RenderTextLineBoxes::dirtyAll()
 
 bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsigned end, int lengthDelta)
 {
-    RootInlineBox* firstRootBox = nullptr;
-    RootInlineBox* lastRootBox = nullptr;
+    LegacyRootInlineBox* firstRootBox = nullptr;
+    LegacyRootInlineBox* lastRootBox = nullptr;
 
     // Dirty all text boxes that include characters in between offset and offset+len.
     bool dirtiedLines = false;
@@ -256,7 +256,7 @@ inline void RenderTextLineBoxes::checkConsistency() const
 {
 #if ASSERT_ENABLED
 #ifdef CHECK_CONSISTENCY
-    const InlineTextBox* prev = nullptr;
+    const LegacyInlineTextBox* prev = nullptr;
     for (auto* child = m_first; child; child = child->nextTextBox()) {
         ASSERT(child->renderer() == this);
         ASSERT(child->prevTextBox() == prev);

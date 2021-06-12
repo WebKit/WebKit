@@ -146,7 +146,6 @@
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/UUID.h>
@@ -1099,7 +1098,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     THROW_IF_SUSPENDED;
     auto handler = adoptNS([completionHandler copy]);
 
-    Optional<WebCore::ArgumentWireBytesMap> argumentsMap;
+    std::optional<WebCore::ArgumentWireBytesMap> argumentsMap;
     if (asAsyncFunction)
         argumentsMap = WebCore::ArgumentWireBytesMap { };
     NSString *errorMessage = nil;
@@ -1130,7 +1129,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
     
-    Optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::FrameIdentifier> frameID;
     if (frame) {
         if (uint64_t identifier = frame._handle.frameID)
             frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(identifier);
@@ -1581,7 +1580,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     return handler ? handler->apiHandler() : nil;
 }
 
-- (Optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
+- (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
 {
     return _resolutionForShareSheetImmediateCompletionForTesting;
 }
@@ -1597,7 +1596,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
         return;
     }
 
-    Optional<WebCore::FloatRect> floatRect;
+    std::optional<WebCore::FloatRect> floatRect;
     if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
         floatRect = WebCore::FloatRect(pdfConfiguration.rect);
 
@@ -1976,7 +1975,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _textManipulationDelegate = delegate;
 }
 
-static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const Optional<WebCore::TextManipulationController::ManipulationTokenInfo>& info)
+static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optional<WebCore::TextManipulationController::ManipulationTokenInfo>& info)
 {
     if (!info)
         return { };
@@ -2070,7 +2069,7 @@ static WebCore::TextManipulationController::TokenIdentifier coreTextManipulation
 
     Vector<WebCore::TextManipulationController::ManipulationToken> tokens;
     for (_WKTextManipulationToken *wkToken in item.tokens)
-        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, WTF::nullopt });
+        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
 
     Vector<WebCore::TextManipulationController::ManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(1);
@@ -2130,7 +2129,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         Vector<WebCore::TextManipulationController::ManipulationToken> coreTokens;
         coreTokens.reserveInitialCapacity(wkItem.tokens.count);
         for (_WKTextManipulationToken *wkToken in wkItem.tokens)
-            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, WTF::nullopt });
+            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
         coreItems.uncheckedAppend(WebCore::TextManipulationController::ManipulationItem { coreTextManipulationItemIdentifierFromString(wkItem.identifier), WTFMove(coreTokens) });
     }
 
@@ -2241,7 +2240,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_closeAllMediaPresentations
 {
     THROW_IF_SUSPENDED;
-    [self closeAllMediaPresentationsWithCompletionHandler:nil];
+    [self closeAllMediaPresentationsWithCompletionHandler:^{ }];
 }
 
 - (void)_stopMediaCapture
@@ -2288,7 +2287,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     for (NSData *highlight in highlights)
         convertAndAddHighlight(buffers, highlight);
     
-    _page->restoreAppHighlightsAndScrollToIndex(buffers, WTF::nullopt);
+    _page->restoreAppHighlightsAndScrollToIndex(buffers, std::nullopt);
 #else
     UNUSED_PARAM(highlights);
 #endif
@@ -2310,8 +2309,14 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (void)_addAppHighlight
 {
     THROW_IF_SUSPENDED;
+    [self _addAppHighlightInNewGroup:NO originatedInApp:YES];
+}
+
+- (void)_addAppHighlightInNewGroup:(BOOL)newGroup originatedInApp:(BOOL)originatedInApp
+{
+    THROW_IF_SUSPENDED;
 #if ENABLE(APP_HIGHLIGHTS)
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::Yes);
+    _page->createAppHighlightInSelectedRange(newGroup ? WebCore::CreateNewGroupForHighlight::Yes : WebCore::CreateNewGroupForHighlight::No, originatedInApp ? WebCore::HighlightRequestOriginatedInApp::Yes : WebCore::HighlightRequestOriginatedInApp::No);
 #endif
 }
 
@@ -2950,7 +2955,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     THROW_IF_SUSPENDED;
 #if ENABLE(APPLICATION_MANIFEST)
-    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ApplicationManifest>& manifest) {
+    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ApplicationManifest>& manifest) {
         if (completionHandler) {
             if (manifest) {
                 auto apiManifest = API::ApplicationManifest::create(*manifest);

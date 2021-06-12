@@ -110,17 +110,17 @@ struct ImportedScriptAttributes {
         encoder << responseURL << mimeType;
     }
 
-    template<class Decoder> static Optional<ImportedScriptAttributes> decode(Decoder& decoder)
+    template<class Decoder> static std::optional<ImportedScriptAttributes> decode(Decoder& decoder)
     {
-        Optional<URL> responseURL;
+        std::optional<URL> responseURL;
         decoder >> responseURL;
         if (!responseURL)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<String> mimeType;
+        std::optional<String> mimeType;
         decoder >> mimeType;
         if (!mimeType)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*responseURL),
@@ -320,7 +320,7 @@ static String updateViaCacheToString(ServiceWorkerUpdateViaCache update)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Optional<ServiceWorkerUpdateViaCache> stringToUpdateViaCache(const String& update)
+static std::optional<ServiceWorkerUpdateViaCache> stringToUpdateViaCache(const String& update)
 {
     if (update == "Imports")
         return ServiceWorkerUpdateViaCache::Imports;
@@ -329,7 +329,7 @@ static Optional<ServiceWorkerUpdateViaCache> stringToUpdateViaCache(const String
     if (update == "None")
         return ServiceWorkerUpdateViaCache::None;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static String workerTypeToString(WorkerType workerType)
@@ -344,17 +344,17 @@ static String workerTypeToString(WorkerType workerType)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Optional<WorkerType> stringToWorkerType(const String& type)
+static std::optional<WorkerType> stringToWorkerType(const String& type)
 {
     if (type == "Classic")
         return WorkerType::Classic;
     if (type == "Module")
         return WorkerType::Module;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-void RegistrationDatabase::pushChanges(const HashMap<ServiceWorkerRegistrationKey, Optional<ServiceWorkerContextData>>& changedRegistrations, CompletionHandler<void()>&& completionHandler)
+void RegistrationDatabase::pushChanges(const HashMap<ServiceWorkerRegistrationKey, std::optional<ServiceWorkerContextData>>& changedRegistrations, CompletionHandler<void()>&& completionHandler)
 {
     Vector<ServiceWorkerContextData> updatedRegistrations;
     Vector<ServiceWorkerRegistrationKey> removedRegistrations;
@@ -514,7 +514,7 @@ String RegistrationDatabase::importRecords()
         auto scriptURL = URL { URL(), sql->columnText(6) };
         auto workerType = stringToWorkerType(sql->columnText(7));
 
-        Optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
+        std::optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
         auto contentSecurityPolicyDataView = sql->columnBlobView(8);
         if (contentSecurityPolicyDataView.size()) {
             WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataView.data(), contentSecurityPolicyDataView.size());
@@ -531,7 +531,7 @@ String RegistrationDatabase::importRecords()
         auto scriptResourceMapDataView = sql->columnBlobView(10);
         if (scriptResourceMapDataView.size()) {
             WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataView.data(), scriptResourceMapDataView.size());
-            Optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
+            std::optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
             scriptResourceMapDecoder >> scriptResourceMapWithoutScripts;
             if (!scriptResourceMapWithoutScripts) {
                 RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode scriptResourceMapWithoutScripts");
@@ -541,7 +541,7 @@ String RegistrationDatabase::importRecords()
         }
 
         auto certificateInfoDataView = sql->columnBlobView(11);
-        Optional<CertificateInfo> certificateInfo;
+        std::optional<CertificateInfo> certificateInfo;
 
         WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataView.data(), certificateInfoDataView.size());
         certificateInfoDecoder >> certificateInfo;
@@ -568,8 +568,8 @@ String RegistrationDatabase::importRecords()
         auto workerIdentifier = ServiceWorkerIdentifier::generate();
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
-        auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppBound::No, WTFMove(scriptResourceMap) };
+        auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppBound::No, WTFMove(scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));

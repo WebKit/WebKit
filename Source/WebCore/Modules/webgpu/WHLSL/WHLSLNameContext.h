@@ -78,7 +78,7 @@ public:
 private:
     AST::NamedType* searchTypes(String& name) const;
     AST::FunctionDeclaration* searchFunctions(String& name) const;
-    Optional<CodeLocation> topLevelExists(String& name) const;
+    std::optional<CodeLocation> topLevelExists(String& name) const;
     AST::VariableDeclaration* localExists(String& name) const;
 
     HashMap<String, Vector<std::reference_wrapper<AST::NamedType>, 1>> m_types[AST::nameSpaceCount];

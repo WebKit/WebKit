@@ -81,6 +81,8 @@ class Port(object):
     DEVICE_TYPE = None
     DEFAULT_DEVICE_TYPES = []
 
+    helper = None
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         """Return a fully-specified port name that can be used to construct objects."""
@@ -115,7 +117,6 @@ class Port(object):
         self._config = port_config.Config(self._executive, self._filesystem, self.port_name)
         self.pretty_patch = PrettyPatch(self._executive, self.path_from_webkit_base(), self._filesystem)
 
-        self._helper = None
         self._http_server = None
         self._websocket_server = None
         self._websocket_secure_server = None
@@ -181,13 +182,6 @@ class Port(object):
     def supported_device_types(self):
         # An empty list would indicate a port was incapable of running tests.
         return [None]
-
-    def worker_startup_delay_secs(self):
-        # FIXME: If we start workers up too quickly, DumpRenderTree appears
-        # to thrash on something and time out its first few tests. Until
-        # we can figure out what's going on, sleep a bit in between
-        # workers. See https://bugs.webkit.org/show_bug.cgi?id=79147 .
-        return 0.1
 
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines in for this port."""
@@ -958,9 +952,16 @@ class Port(object):
 
     def stop_helper(self):
         """Shut down the test helper if it is running. Do nothing if
-        it isn't, or it isn't available. If a port overrides start_helper()
-        it must override this routine as well."""
-        pass
+        it isn't, or it isn't available."""
+        if Port.helper:
+            _log.debug("Stopping LayoutTestHelper")
+            try:
+                Port.helper.stdin.write(b"x\n")
+                Port.helper.stdin.close()
+                Port.helper.wait()
+            except IOError as e:
+                _log.debug("IOError raised while stopping helper: %s" % str(e))
+            Port.helper = None
 
     def stop_http_server(self):
         """Shut down the http server if it is running. Do nothing if it isn't."""
@@ -1131,11 +1132,6 @@ class Port(object):
         _log.error("Could not find apache. Not installed or unknown path.")
         return None
 
-    def _is_darwin_php_version_7(self):
-        if self._filesystem.exists("/usr/libexec/apache2/libphp7.so"):
-            return True
-        return False
-
     # FIXME: This belongs on some platform abstraction instead of Port.
     def _is_redhat_based(self):
         return self._filesystem.exists('/etc/redhat-release')
@@ -1153,32 +1149,12 @@ class Port(object):
         config = self._executive.run_command([self._path_to_apache(), '-v'])
         return re.sub(r'(?:.|\n)*Server version: Apache/(\d+\.\d+)(?:.|\n)*', r'\1', config)
 
-    def _darwin_php_version(self):
-        if self._is_darwin_php_version_7():
-            return '-php7'
-        if self._filesystem.isdir('/usr/libexec/apache2'):
-            for file in self._filesystem.listdir('/usr/libexec/apache2'):
-                if 'php' in file:
-                    return ''
-            return '-x'
-        return ''
-
-    def _win_php_version(self):
-        root = os.environ.get('XAMPP_ROOT', 'C:\\xampp')
-        prefix = self._filesystem.join(root, 'php')
-        for version in ('5', '7'):
-            conf = self._filesystem.join(prefix, "php{}ts.dll".format(version))
-            if self._filesystem.exists(conf):
-                return "-php{}".format(version)
-        _log.error("No php?ts.dll found in {}".format(prefix))
-        return ""
-
     # We pass sys_platform into this method to make it easy to unit test.
     def _apache_config_file_name_for_platform(self, sys_platform):
         if sys_platform in ['cygwin', 'win32']:
-            return 'win-httpd-' + self._apache_version() + self._win_php_version() + '.conf'
+            return 'win-httpd-' + self._apache_version() + '.conf'
         if sys_platform == 'darwin':
-            return 'apache' + self._apache_version() + self._darwin_php_version() + '-httpd.conf'
+            return 'apache' + self._apache_version() + '-darwin-httpd.conf'
         if sys_platform.startswith('linux'):
             if self._is_redhat_based():
                 return 'fedora-httpd-' + self._apache_version() + '.conf'

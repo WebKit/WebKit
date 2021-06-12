@@ -67,7 +67,7 @@ void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState& n
     pageClient().selectionDidChange();
 }
 
-void WebPageProxy::setInputMethodState(Optional<InputMethodState>&& state)
+void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
 {
     webkitWebViewBaseSetInputMethodState(WEBKIT_WEB_VIEW_BASE(viewWidget()), WTFMove(state));
 }

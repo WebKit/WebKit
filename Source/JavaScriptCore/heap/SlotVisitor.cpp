@@ -415,7 +415,7 @@ inline void SlotVisitor::propagateExternalMemoryVisitedIfNecessary()
         if (m_extraMemorySize.hasOverflowed())
             heap()->reportExtraMemoryVisited(std::numeric_limits<size_t>::max());
         else if (m_extraMemorySize)
-            heap()->reportExtraMemoryVisited(m_extraMemorySize.unsafeGet());
+            heap()->reportExtraMemoryVisited(m_extraMemorySize);
         m_extraMemorySize = 0;
     }
 }
@@ -436,9 +436,9 @@ void SlotVisitor::donateKnownParallel(MarkStackArray& from, MarkStackArray& to)
 
     // If we're contending on the lock, be conservative and assume that another
     // thread is already donating.
-    std::unique_lock<Lock> lock(m_heap.m_markingMutex, std::try_to_lock);
-    if (!lock.owns_lock())
+    if (!m_heap.m_markingMutex.tryLock())
         return;
+    Locker locker { AdoptLock, m_heap.m_markingMutex };
 
     // Otherwise, assume that a thread will go idle soon, and donate.
     from.donateSomeCellsTo(to);

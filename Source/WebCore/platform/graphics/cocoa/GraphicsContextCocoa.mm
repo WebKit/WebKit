@@ -106,48 +106,33 @@ static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath
     drawFocusRing(context, color);
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Path& path, float, float, const Color& color)
 {
-    if (paintingDisabled() || path.isNull())
+    if (path.isNull())
         return;
-
-    if (m_impl) {
-        m_impl->drawFocusRing(path, width, offset, color);
-        return;
-    }
 
     drawFocusRingToContext(platformContext(), path.platformPath(), color);
 }
 
 #if PLATFORM(MAC)
 
-static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRingPath, double timeOffset, const Color& color)
+static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRingPath, double, const Color& color)
 {
-    UNUSED_PARAM(timeOffset);
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
     return drawFocusRingAtTime(context, std::numeric_limits<double>::max(), color);
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, double timeOffset, bool& needsRedraw, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Path& path, double timeOffset, bool& needsRedraw, const Color& color)
 {
-    if (paintingDisabled() || path.isNull())
-        return;
-
-    if (m_impl) // FIXME: implement animated focus ring drawing.
+    if (path.isNull())
         return;
 
     needsRedraw = drawFocusRingToContextAtTime(platformContext(), path.platformPath(), timeOffset, color);
 }
 
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeOffset, bool& needsRedraw, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, double timeOffset, bool& needsRedraw, const Color& color)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) // FIXME: implement animated focus ring drawing.
-        return;
-
     RetainPtr<CGMutablePathRef> focusRingPath = adoptCF(CGPathCreateMutable());
     for (const auto& rect : rects)
         CGPathAddRect(focusRingPath.get(), 0, CGRect(rect));
@@ -157,16 +142,8 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeO
 
 #endif // PLATFORM(MAC)
 
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float, float offset, const Color& color)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->drawFocusRing(rects, width, offset, color);
-        return;
-    }
-
     RetainPtr<CGMutablePathRef> focusRingPath = adoptCF(CGPathCreateMutable());
     for (auto& rect : rects)
         CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rect, -offset, -offset));
@@ -199,11 +176,8 @@ static CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle::Mode style, b
     }
 }
 
-void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    if (paintingDisabled())
-        return;
-
     // We want to find the number of full dots, so we're solving the equations:
     // dotDiameter = height
     // dotDiameter / dotGap = 13.247 / 9.457

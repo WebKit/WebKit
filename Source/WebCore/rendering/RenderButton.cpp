@@ -154,7 +154,7 @@ LayoutUnit RenderButton::baselinePosition(FontBaseline fontBaseline, bool firstL
         return RenderFlexibleBox::baselinePosition(fontBaseline, firstLine, direction, mode);
     // We cannot rely on RenderFlexibleBox::baselinePosition() because of flexboxes have some special behavior
     // regarding baselines that shouldn't apply to buttons.
-    LayoutUnit baseline = firstLineBaseline().valueOr(synthesizedBaselineFromContentBox(*this, direction));
+    LayoutUnit baseline = firstLineBaseline().value_or(synthesizedBaselineFromContentBox(*this, direction));
     LayoutUnit marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
     return baseline + marginAscent;
 }

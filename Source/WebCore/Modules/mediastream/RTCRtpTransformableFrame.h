@@ -37,12 +37,12 @@ struct RTCEncodedAudioFrameMetadata {
 };
 
 struct RTCEncodedVideoFrameMetadata {
-    Optional<int64_t> frameId;
+    std::optional<int64_t> frameId;
     Vector<int64_t> dependencies;
     uint16_t width;
     uint16_t height;
-    Optional<int32_t> spatialIndex;
-    Optional<int32_t> temporalIndex;
+    std::optional<int32_t> spatialIndex;
+    std::optional<int32_t> temporalIndex;
     uint32_t synchronizationSource;
 };
 

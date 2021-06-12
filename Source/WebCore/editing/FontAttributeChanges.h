@@ -28,7 +28,6 @@
 #include "Color.h"
 #include "FontShadow.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -63,10 +62,10 @@ private:
 
     String m_fontName;
     String m_fontFamily;
-    Optional<double> m_fontSize;
-    Optional<double> m_fontSizeDelta;
-    Optional<bool> m_bold;
-    Optional<bool> m_italic;
+    std::optional<double> m_fontSize;
+    std::optional<double> m_fontSizeDelta;
+    std::optional<bool> m_bold;
+    std::optional<bool> m_italic;
 };
 
 class FontAttributeChanges {
@@ -86,12 +85,12 @@ public:
     WEBCORE_EXPORT EditAction editAction() const;
 
 private:
-    Optional<VerticalAlignChange> m_verticalAlign;
-    Optional<Color> m_backgroundColor;
-    Optional<Color> m_foregroundColor;
-    Optional<FontShadow> m_shadow;
-    Optional<bool> m_strikeThrough;
-    Optional<bool> m_underline;
+    std::optional<VerticalAlignChange> m_verticalAlign;
+    std::optional<Color> m_backgroundColor;
+    std::optional<Color> m_foregroundColor;
+    std::optional<FontShadow> m_shadow;
+    std::optional<bool> m_strikeThrough;
+    std::optional<bool> m_underline;
     FontChanges m_fontChanges;
 };
 

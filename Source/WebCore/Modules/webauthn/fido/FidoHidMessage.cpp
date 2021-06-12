@@ -33,16 +33,15 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoParsingUtils.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace fido {
 
 // static
-Optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
+std::optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
 {
     if (data.size() > kHidMaxMessageSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (type) {
     case FidoHidDeviceCommand::kPing:
@@ -50,46 +49,46 @@ Optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDevic
     case FidoHidDeviceCommand::kMsg:
     case FidoHidDeviceCommand::kCbor: {
         if (data.isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
 
     case FidoHidDeviceCommand::kCancel:
     case FidoHidDeviceCommand::kWink: {
         if (!data.isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kLock: {
         if (data.size() != 1 || data[0] > kHidMaxLockSeconds)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kInit: {
         if (data.size() != 8)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kKeepAlive:
     case FidoHidDeviceCommand::kError:
         if (data.size() != 1)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return FidoHidMessage(channelId, type, data);
 }
 
 // static
-Optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vector<uint8_t>& serializedData)
+std::optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vector<uint8_t>& serializedData)
 {
     size_t remainingSize = 0;
     if (serializedData.size() > kHidPacketSize || serializedData.size() < kHidInitPacketHeaderSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto initPacket = FidoHidInitPacket::createFromSerializedData(serializedData, &remainingSize);
 
     if (!initPacket)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return FidoHidMessage(WTFMove(initPacket), remainingSize);
 }

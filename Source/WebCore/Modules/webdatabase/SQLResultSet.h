@@ -50,7 +50,7 @@ private:
     SQLResultSet();
 
     Ref<SQLResultSetRowList> m_rows;
-    Optional<int64_t> m_insertId;
+    std::optional<int64_t> m_insertId;
     int m_rowsAffected { 0 };
 };
 

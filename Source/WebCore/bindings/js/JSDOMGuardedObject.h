@@ -55,6 +55,9 @@ protected:
 
     JSC::Weak<JSC::JSCell> m_guarded;
     JSC::Weak<JSDOMGlobalObject> m_globalObject;
+
+private:
+    void removeFromGlobalObject();
 };
 
 template <typename T> class DOMGuarded : public DOMGuardedObject {

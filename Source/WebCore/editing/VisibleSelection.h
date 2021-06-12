@@ -65,7 +65,7 @@ public:
     Position uncanonicalizedEnd() const;
     Position anchor() const;
     Position focus() const;
-    WEBCORE_EXPORT Optional<SimpleRange> range() const;
+    WEBCORE_EXPORT std::optional<SimpleRange> range() const;
 
     // FIXME: Rename these to include the word "canonical" or remove.
     Position base() const { return m_base; }
@@ -101,11 +101,11 @@ public:
 
     // FIXME: Rename to include the word "canonical" and remove the word "first" or remove.
     // We don't yet support multi-range selections, so we only ever have one range to return.
-    WEBCORE_EXPORT Optional<SimpleRange> firstRange() const;
+    WEBCORE_EXPORT std::optional<SimpleRange> firstRange() const;
 
     // FIXME: Most callers probably don't want this function, and should use range instead.
     // This function contracts the range around text and moves the caret upstream before returning the range.
-    WEBCORE_EXPORT Optional<SimpleRange> toNormalizedRange() const;
+    WEBCORE_EXPORT std::optional<SimpleRange> toNormalizedRange() const;
 
     WEBCORE_EXPORT Element* rootEditableElement() const;
     WEBCORE_EXPORT bool isContentEditable() const;

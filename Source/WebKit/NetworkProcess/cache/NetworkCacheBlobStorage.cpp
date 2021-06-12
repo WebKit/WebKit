@@ -70,7 +70,7 @@ void BlobStorage::synchronize()
         if (linkCount && *linkCount == 1)
             FileSystem::deleteFile(path);
         else
-            m_approximateSize += FileSystem::fileSize(path).valueOr(0);
+            m_approximateSize += FileSystem::fileSize(path).value_or(0);
     });
 
     LOG(NetworkCacheStorage, "(NetworkProcess) blob synchronization completed approximateSize=%zu", approximateSize());

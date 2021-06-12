@@ -36,7 +36,7 @@
 #include <cairo.h>
 #include <wpe/wpe.h>
 
-static void drawPageBackground(cairo_t* ctx, const Optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
+static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
 {
     if (!backgroundColor || backgroundColor.value().isVisible())
         return;
@@ -71,8 +71,8 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     }
 
     NativeWebKeyboardEvent::HandledByInputMethod handledByInputMethod = NativeWebKeyboardEvent::HandledByInputMethod::No;
-    Optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
-    Optional<WebKit::EditingRange> preeditSelectionRange;
+    std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
+    std::optional<WebKit::EditingRange> preeditSelectionRange;
     WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent(&wpeEvent, "", handledByInputMethod, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange)));
 }
 
@@ -132,20 +132,25 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
     using WebKit::WebWheelEvent;
     using WebKit::NativeWebWheelEvent;
 
-    wpe_input_axis_2d_event wpeEvent;
-    wpeEvent.base.type = (wpe_input_axis_event_type)(wpe_input_axis_event_type_motion_smooth | wpe_input_axis_event_type_mask_2d);
-    wpeEvent.base.time = 0;
-    wpeEvent.base.x = event.position.x;
-    wpeEvent.base.y = event.position.y;
-    wpeEvent.base.axis = 0;
-    wpeEvent.base.value = 0;
-    wpeEvent.base.modifiers = 0; // TODO: Handle modifiers.
-    wpeEvent.x_axis = event.delta.width;
-    wpeEvent.x_axis = event.delta.height;
-
     const float deviceScaleFactor = 1;
+    int positionX = event.position.x;
+    int positionY = event.position.y;
 
-    WebKit::toImpl(pageRef)->handleWheelEvent(NativeWebWheelEvent(&wpeEvent.base, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+    struct wpe_input_axis_event xEvent = {
+        wpe_input_axis_event_type_motion,
+        0, positionX, positionY,
+        1, static_cast<int32_t>(event.delta.width), 0
+    };
+
+    WebKit::toImpl(pageRef)->handleWheelEvent(NativeWebWheelEvent(&xEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+
+    struct wpe_input_axis_event yEvent = {
+        wpe_input_axis_event_type_motion,
+        0, positionX, positionY,
+        0, static_cast<int32_t>(event.delta.height), 0
+    };
+
+    WebKit::toImpl(pageRef)->handleWheelEvent(NativeWebWheelEvent(&yEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
 }
 
 void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurfaceSize, WKRect wkPaintRect)

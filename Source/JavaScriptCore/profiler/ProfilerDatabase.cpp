@@ -89,7 +89,6 @@ void Database::notifyDestruction(CodeBlock* codeBlock)
 void Database::addCompilation(CodeBlock* codeBlock, Ref<Compilation>&& compilation)
 {
     Locker locker { m_lock };
-    ASSERT(!isCompilationThread());
 
     m_compilations.append(compilation.copyRef());
     m_compilationMap.set(codeBlock, WTFMove(compilation));

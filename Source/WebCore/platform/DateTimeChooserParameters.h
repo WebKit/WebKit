@@ -54,7 +54,7 @@ struct DateTimeChooserParameters {
     bool hasMillisecondField { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DateTimeChooserParameters> decode(Decoder&);
+    template<class Decoder> static std::optional<DateTimeChooserParameters> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -79,71 +79,71 @@ void DateTimeChooserParameters::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<DateTimeChooserParameters> DateTimeChooserParameters::decode(Decoder& decoder)
+std::optional<DateTimeChooserParameters> DateTimeChooserParameters::decode(Decoder& decoder)
 {
     AtomString type;
     if (!decoder.decode(type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     IntRect anchorRectInRootView;
     if (!decoder.decode(anchorRectInRootView))
-        return WTF::nullopt;
+        return std::nullopt;
 
     AtomString locale;
     if (!decoder.decode(locale))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String currentValue;
     if (!decoder.decode(currentValue))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<String> suggestionValues;
     if (!decoder.decode(suggestionValues))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<String> localizedSuggestionValues;
     if (!decoder.decode(localizedSuggestionValues))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<String> suggestionLabels;
     if (!decoder.decode(suggestionLabels))
-        return WTF::nullopt;
+        return std::nullopt;
 
     double minimum;
     if (!decoder.decode(minimum))
-        return WTF::nullopt;
+        return std::nullopt;
 
     double maximum;
     if (!decoder.decode(maximum))
-        return WTF::nullopt;
+        return std::nullopt;
 
     double step;
     if (!decoder.decode(step))
-        return WTF::nullopt;
+        return std::nullopt;
 
     double stepBase;
     if (!decoder.decode(stepBase))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool required;
     if (!decoder.decode(required))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool isAnchorElementRTL;
     if (!decoder.decode(isAnchorElementRTL))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool useDarkAppearance;
     if (!decoder.decode(useDarkAppearance))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool hasSecondField;
     if (!decoder.decode(hasSecondField))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool hasMillisecondField;
     if (!decoder.decode(hasMillisecondField))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(type), anchorRectInRootView, WTFMove(locale), WTFMove(currentValue), WTFMove(suggestionValues), WTFMove(localizedSuggestionValues), WTFMove(suggestionLabels), minimum, maximum, step, stepBase, required, isAnchorElementRTL, useDarkAppearance, hasSecondField, hasMillisecondField }};
 }

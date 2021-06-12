@@ -61,13 +61,23 @@ class TaskPoolUnittest(unittest.TestCase):
 
     def test_single(self):
         with OutputCapture(level=logging.WARNING) as captured:
-            with TaskPool(workers=1) as pool:
+            with TaskPool(workers=1, force_fork=True) as pool:
                 pool.do(action, 'a')
                 pool.do(log, logging.WARNING, '1')
                 pool.wait()
 
         self.assertEqual(captured.stdout.getvalue(), 'action(a)\n')
         self.assertEqual(captured.webkitcorepy.log.getvalue(), 'worker/0 1\n')
+
+    def test_single_no_fork(self):
+        with OutputCapture(level=logging.WARNING) as captured:
+            with TaskPool(workers=1, force_fork=False) as pool:
+                pool.do(action, 'a')
+                pool.do(log, logging.WARNING, '1')
+                pool.wait()
+
+        self.assertEqual(captured.stdout.getvalue(), 'action(a)\n')
+        self.assertEqual(captured.webkitcorepy.log.getvalue(), '1\n')
 
     def test_multiple(self):
         with OutputCapture(level=logging.INFO) as captured:
@@ -99,13 +109,21 @@ class TaskPoolUnittest(unittest.TestCase):
     def test_exception(self):
         with OutputCapture(level=logging.INFO) as captured:
             with self.assertRaises(RuntimeError):
-                with TaskPool(workers=1) as pool:
+                with TaskPool(workers=1, force_fork=True) as pool:
                     pool.do(exception, 'Testing exception')
                     pool.wait()
         self.assertEqual(
             captured.webkitcorepy.log.getvalue().splitlines(),
             ['worker/0 starting', 'worker/0 stopping'],
         )
+
+    def test_exception_no_fork(self):
+        with OutputCapture(level=logging.INFO) as captured:
+            with self.assertRaises(RuntimeError):
+                with TaskPool(workers=1, force_fork=False) as pool:
+                    pool.do(exception, 'Testing exception')
+                    pool.wait()
+        self.assertEqual(captured.webkitcorepy.log.getvalue(), '')
 
     def test_setup(self):
         with OutputCapture() as captured:
@@ -154,5 +172,5 @@ class TaskPoolUnittest(unittest.TestCase):
     def test_invalid_shutdown(self):
         with OutputCapture():
             with self.assertRaises(TaskPool.Exception):
-                with TaskPool(workers=1, teardown=teardown, grace_period=1) as pool:
+                with TaskPool(workers=1, teardown=teardown, grace_period=1, force_fork=True) as pool:
                     pool.do(wait, 2)

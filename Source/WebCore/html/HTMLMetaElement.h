@@ -56,7 +56,7 @@ private:
 
     RefPtr<MediaQuerySet> m_media;
 
-    Optional<Color> m_contentColor;
+    std::optional<Color> m_contentColor;
 };
 
 } // namespace WebCore

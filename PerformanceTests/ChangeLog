@@ -1,3 +1,28 @@
+2021-06-03  Said Abou-Hallawa  <said@apple.com>
+
+        [MotionMark] Controller.filterOutOutliers() sorts the frameLengths array incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=226605
+
+        Reviewed by Myles C. Maxfield.
+
+        Controller.filterOutOutliers must pass a compare function to Array.sort()
+        because it filters an array of numbers.
+
+        * MotionMark/tests/resources/main.js:
+        (filterOutOutliers):
+
+2021-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [MotionMark] Update version number of local development version of the benchmark to match the currently-being-released version
+        https://bugs.webkit.org/show_bug.cgi?id=226592
+
+        Reviewed by Darin Adler.
+
+        We are currently in the process of releasing MotionMark 1.2. http://browserbench.org/MotionMark1.2/
+
+        * MotionMark/about.html:
+        * MotionMark/resources/strings.js:
+
 2021-05-21  Sam Sneddon  <gsnedders@apple.com>
 
         Fix Python 3.6+ DeprecationWarnings about unknown escapes

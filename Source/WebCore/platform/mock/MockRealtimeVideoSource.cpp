@@ -93,7 +93,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& nam
     m_fillColor = properties.fillColor;
 }
 
-bool MockRealtimeVideoSource::supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> rate)
+bool MockRealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
 {
     // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
@@ -103,7 +103,7 @@ bool MockRealtimeVideoSource::supportsSizeAndFrameRate(Optional<int> width, Opti
     return RealtimeMediaSource::supportsSizeAndFrameRate(width, height, rate);
 }
 
-void MockRealtimeVideoSource::setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> rate)
+void MockRealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
 {
     // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
@@ -203,7 +203,7 @@ IntSize MockRealtimeVideoSource::captureSize() const
 
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    m_currentSettings = WTF::nullopt;
+    m_currentSettings = std::nullopt;
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
         m_baseFontSize = captureSize().height() * .08;
         m_bipBopFontSize = m_baseFontSize * 2.5;
@@ -351,7 +351,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     FloatPoint timeLocation(captureSize.width() * .05, captureSize.height() * .15);
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextDrawingMode::Fill);
-    String string = makeString(pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', 3, milliseconds % 1000));
+    auto string = makeString(pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', 3, milliseconds % 1000));
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 
     string = makeString(pad('0', 6, m_frameNumber++));
@@ -454,7 +454,7 @@ ImageBuffer* MockRealtimeVideoSource::imageBuffer() const
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = ImageBuffer::create(captureSize(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    m_imageBuffer = ImageBuffer::create(captureSize(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!m_imageBuffer)
         return nullptr;
 

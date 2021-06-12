@@ -85,24 +85,24 @@ bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomString
     return false;
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringView value)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringView value)
 {
     return readCharactersForParsing(value, [&](auto buffer) {
         return parseViewBoxGeneric(buffer);
     });
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<LChar>& buffer, bool validate)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<LChar>& buffer, bool validate)
 {
     return parseViewBoxGeneric(buffer, validate);
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<UChar>& buffer, bool validate)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<UChar>& buffer, bool validate)
 {
     return parseViewBoxGeneric(buffer, validate);
 }
 
-template<typename CharacterType> Optional<FloatRect> SVGFitToViewBox::parseViewBoxGeneric(StringParsingBuffer<CharacterType>& buffer, bool validate)
+template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parseViewBoxGeneric(StringParsingBuffer<CharacterType>& buffer, bool validate)
 {
     StringView stringToParse = buffer.stringViewOfCharactersRemaining();
 
@@ -118,30 +118,30 @@ template<typename CharacterType> Optional<FloatRect> SVGFitToViewBox::parseViewB
 
         if (!x || !y || !width || !height) {
             document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", stringToParse, "\""));
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         // Check that width is positive.
         if (*width < 0.0) {
             document.accessSVGExtensions().reportError("A negative value for ViewBox width is not allowed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         // Check that height is positive.
         if (*height < 0.0) {
             document.accessSVGExtensions().reportError("A negative value for ViewBox height is not allowed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         // Nothing should come after the last, fourth number.
         skipOptionalSVGSpaces(buffer);
         if (buffer.hasCharactersRemaining()) {
             document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", stringToParse, "\""));
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
-    return FloatRect { x.valueOr(0), y.valueOr(0), width.valueOr(0), height.valueOr(0) };
+    return FloatRect { x.value_or(0), y.value_or(0), width.value_or(0), height.value_or(0) };
 }
 
 AffineTransform SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue& preserveAspectRatio, float viewWidth, float viewHeight)

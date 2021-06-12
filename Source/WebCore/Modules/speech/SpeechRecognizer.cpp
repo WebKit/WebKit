@@ -42,7 +42,7 @@ SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, UniqueRe
 {
 }
 
-void SpeechRecognizer::abort(Optional<SpeechRecognitionError>&& error)
+void SpeechRecognizer::abort(std::optional<SpeechRecognitionError>&& error)
 {
     if (m_state == State::Aborting || m_state == State::Inactive)
         return;

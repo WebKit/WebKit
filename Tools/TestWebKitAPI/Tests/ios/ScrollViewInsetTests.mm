@@ -259,6 +259,22 @@ TEST(ScrollViewInsetTests, ChangeInsetWithoutAutomaticAdjustmentWhileWebProcessI
     EXPECT_EQ(0, [[webView stringByEvaluatingJavaScript:@"document.scrollingElement.scrollTop"] intValue]);
 }
 
+TEST(ScrollViewInsetTests, PreserveContentOffsetForRefreshControl)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, viewHeight)]);
+    [webView scrollView].refreshControl = adoptNS([[UIRefreshControl alloc] init]).get();
+    [webView synchronouslyLoadHTMLString:@""];
+
+    [webView scrollView].contentOffset = CGPointMake(0, -100);
+
+    [webView synchronouslyLoadHTMLString:@"<body bgcolor='red'>"];
+    [webView waitForNextPresentationUpdate];
+
+    CGPoint contentOffsetAfterNavigation = [webView scrollView].contentOffset;
+    EXPECT_EQ(0, contentOffsetAfterNavigation.x);
+    EXPECT_EQ(-100, contentOffsetAfterNavigation.y);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

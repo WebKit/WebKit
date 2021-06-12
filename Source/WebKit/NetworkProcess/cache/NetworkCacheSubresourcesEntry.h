@@ -38,7 +38,7 @@ class SubresourceInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void encode(WTF::Persistence::Encoder&) const;
-    static Optional<SubresourceInfo> decode(WTF::Persistence::Decoder&);
+    static std::optional<SubresourceInfo> decode(WTF::Persistence::Decoder&);
 
     SubresourceInfo() = default;
     SubresourceInfo(const Key&, const WebCore::ResourceRequest&, const SubresourceInfo* previousInfo);

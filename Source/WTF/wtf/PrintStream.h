@@ -26,12 +26,12 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <stdarg.h>
 #include <tuple>
 #include <wtf/Forward.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/RawPointer.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -326,7 +326,7 @@ FormatImpl<Types...> format(Types... values)
 }
 
 template<typename T>
-void printInternal(PrintStream& out, const Optional<T>& value)
+void printInternal(PrintStream& out, const std::optional<T>& value)
 {
     if (value)
         out.print(*value);

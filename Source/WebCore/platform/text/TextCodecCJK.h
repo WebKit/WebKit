@@ -26,7 +26,7 @@
 #pragma once
 
 #include "TextCodec.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
@@ -61,14 +61,14 @@ private:
     ISO2022JPDecoderState m_iso2022JPDecoderState { ISO2022JPDecoderState::ASCII };
     ISO2022JPDecoderState m_iso2022JPDecoderOutputState { ISO2022JPDecoderState::ASCII };
     bool m_iso2022JPOutput { false };
-    Optional<uint8_t> m_iso2022JPSecondPrependedByte;
+    std::optional<uint8_t> m_iso2022JPSecondPrependedByte;
 
     uint8_t m_gb18030First { 0x00 };
     uint8_t m_gb18030Second { 0x00 };
     uint8_t m_gb18030Third { 0x00 };
 
     uint8_t m_lead { 0x00 };
-    Optional<uint8_t> m_prependedByte;
+    std::optional<uint8_t> m_prependedByte;
 };
 
 } // namespace WebCore

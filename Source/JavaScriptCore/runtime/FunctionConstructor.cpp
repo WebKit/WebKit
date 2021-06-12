@@ -104,7 +104,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
     // How we stringify functions is sometimes important for web compatibility.
     // See https://bugs.webkit.org/show_bug.cgi?id=24350.
     String program;
-    Optional<int> functionConstructorParametersEndPosition = WTF::nullopt;
+    std::optional<int> functionConstructorParametersEndPosition = std::nullopt;
     if (args.isEmpty())
         program = makeString(prefix, functionName.string(), "() {\n\n}");
     else if (args.size() == 1) {

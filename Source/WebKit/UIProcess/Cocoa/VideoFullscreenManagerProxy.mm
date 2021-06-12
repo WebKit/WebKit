@@ -808,7 +808,7 @@ void VideoFullscreenManagerProxy::didExitFullscreen(PlaybackSessionContextIdenti
 
 void VideoFullscreenManagerProxy::didEnterFullscreen(PlaybackSessionContextIdentifier contextId, const WebCore::FloatSize& size)
 {
-    Optional<FloatSize> optionalSize;
+    std::optional<FloatSize> optionalSize;
     if (!size.isEmpty())
         optionalSize = size;
 

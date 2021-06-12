@@ -69,14 +69,14 @@ DOMTokenList& HTMLIFrameElement::sandbox()
     return *m_sandbox;
 }
 
-bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLIFrameElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr || name == frameborderAttr)
         return true;
-    return HTMLFrameElementBase::isPresentationAttribute(name);
+    return HTMLFrameElementBase::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -89,10 +89,10 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName
         // a presentational hint that the border should be off if set to zero.
         if (!parseHTMLInteger(value).value_or(0)) {
             // Add a rule that nulls out our border width.
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::CSS_PX);
         }
     } else
-        HTMLFrameElementBase::collectStyleForPresentationAttribute(name, value, style);
+        HTMLFrameElementBase::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -106,7 +106,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
         if (!invalidTokens.isNull())
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
     } else if (name == allowAttr || name == allowfullscreenAttr || name == webkitallowfullscreenAttr) {
-        m_featurePolicy = WTF::nullopt;
+        m_featurePolicy = std::nullopt;
     } else if (name == loadingAttr) {
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
         // do not allow the reverse situation since the eager load is already started.
@@ -143,7 +143,7 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
     if (m_lazyLoadFrameObserver)
         return m_lazyLoadFrameObserver->referrerPolicy();
     if (document().settings().referrerPolicyAttributeEnabled())
-        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
 }
 

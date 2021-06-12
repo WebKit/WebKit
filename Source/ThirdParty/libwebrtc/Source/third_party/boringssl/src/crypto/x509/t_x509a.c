@@ -60,6 +60,9 @@
 #include <openssl/obj.h>
 #include <openssl/x509.h>
 
+#include "internal.h"
+
+
 /* X509_CERT_AUX and string set routines */
 
 int X509_CERT_AUX_print(BIO *out, X509_CERT_AUX *aux, int indent)

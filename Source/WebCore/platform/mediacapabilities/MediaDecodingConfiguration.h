@@ -36,7 +36,7 @@ struct MediaDecodingConfiguration : MediaConfiguration {
     bool canExposeVP9 { true };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MediaDecodingConfiguration> decode(Decoder&);
+    template<class Decoder> static std::optional<MediaDecodingConfiguration> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -47,21 +47,21 @@ void MediaDecodingConfiguration::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<MediaDecodingConfiguration> MediaDecodingConfiguration::decode(Decoder& decoder)
+std::optional<MediaDecodingConfiguration> MediaDecodingConfiguration::decode(Decoder& decoder)
 {
     auto mediaConfiguration = MediaConfiguration::decode(decoder);
     if (!mediaConfiguration)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<MediaDecodingType> type;
+    std::optional<MediaDecodingType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> canExposeVP9;
+    std::optional<bool> canExposeVP9;
     decoder >> canExposeVP9;
     if (!canExposeVP9)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *mediaConfiguration,

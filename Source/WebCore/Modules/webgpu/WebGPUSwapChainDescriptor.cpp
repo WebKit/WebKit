@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-Optional<GPUSwapChainDescriptor> WebGPUSwapChainDescriptor::asGPUSwapChainDescriptor() const
+std::optional<GPUSwapChainDescriptor> WebGPUSwapChainDescriptor::asGPUSwapChainDescriptor() const
 {
     if (!device) {
         LOG(WebGPU, "GPUCanvasContext::configureSwapChain(): Invalid GPUDevice!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
     
     return GPUSwapChainDescriptor { makeRef(device->device()), *this };

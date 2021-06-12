@@ -34,14 +34,13 @@
 
 namespace JSC { namespace Wasm {
 
-Segment::Ptr Segment::create(Optional<I32InitExpr> offset, uint32_t sizeInBytes, Kind kind)
+Segment::Ptr Segment::create(std::optional<I32InitExpr> offset, uint32_t sizeInBytes, Kind kind)
 {
-    Checked<uint32_t, RecordOverflow> totalBytesChecked = sizeInBytes;
+    CheckedUint32 totalBytesChecked = sizeInBytes;
     totalBytesChecked += sizeof(Segment);
-    uint32_t totalBytes;
-    if (totalBytesChecked.safeGet(totalBytes) == CheckedState::DidOverflow)
+    if (totalBytesChecked.hasOverflowed())
         return Ptr(nullptr, &Segment::destroy);
-    auto allocated = tryFastCalloc(totalBytes, 1);
+    auto allocated = tryFastCalloc(totalBytesChecked, 1);
     Segment* segment;
     if (!allocated.getValue(segment))
         return Ptr(nullptr, &Segment::destroy);

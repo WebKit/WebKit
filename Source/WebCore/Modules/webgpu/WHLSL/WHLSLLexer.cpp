@@ -1685,11 +1685,11 @@ auto Lexer::lineAndColumnNumberFromOffset(const StringView& stringView, unsigned
     return { lineNumber, columnNumber };
 }
 
-static Optional<StringView> sourceFromNameSpace(AST::NameSpace nameSpace, const String& source1, const String* source2)
+static std::optional<StringView> sourceFromNameSpace(AST::NameSpace nameSpace, const String& source1, const String* source2)
 {
     switch (nameSpace) {
     case AST::NameSpace::StandardLibrary:
-        return WTF::nullopt;
+        return std::nullopt;
     case AST::NameSpace::NameSpace1:
         return StringView(source1);
     case AST::NameSpace::NameSpace2:

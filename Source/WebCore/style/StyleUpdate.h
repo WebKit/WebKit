@@ -60,7 +60,7 @@ struct ElementUpdates {
 struct TextUpdate {
     unsigned offset { 0 };
     unsigned length { std::numeric_limits<unsigned>::max() };
-    Optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
+    std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
 };
 
 class Update {

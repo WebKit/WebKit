@@ -149,7 +149,7 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
 
     InspectorInstrumentation::didEvaluateScript(m_frame);
 
-    Optional<ExceptionDetails> optionalDetails;
+    std::optional<ExceptionDetails> optionalDetails;
     if (evaluationException) {
         ExceptionDetails details;
         reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
@@ -321,7 +321,7 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
                 case ModuleFetchFailureKind::WasErrored:
                     moduleScript->notifyLoadFailed(LoadableScript::Error {
                         LoadableScript::ErrorType::CachedScript,
-                        WTF::nullopt
+                        std::nullopt
                     });
                     break;
                 case ModuleFetchFailureKind::WasCanceled:
@@ -575,7 +575,7 @@ JSC::JSValue ScriptController::executeScriptIgnoringException(const String& scri
 
 JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    auto result = executeScriptInWorld(world, { script, URL { }, false, WTF::nullopt, forceUserGesture });
+    auto result = executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture });
     return result ? result.value() : JSC::JSValue { };
 }
 
@@ -591,7 +591,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     m_frame.loader().client().notifyPageOfAppBoundBehavior();
 #endif
 
-    UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt, m_frame.document());
+    UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt, m_frame.document());
 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return makeUnexpected(ExceptionDetails { "Cannot execute JavaScript in this document"_s });
@@ -659,7 +659,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
     NakedPtr<JSC::Exception> evaluationException;
-    Optional<ExceptionDetails> optionalDetails;
+    std::optional<ExceptionDetails> optionalDetails;
     JSValue returnValue;
     do {
         JSValue functionObject = JSExecState::profiledEvaluate(&globalObject, JSC::ProfilingReason::Other, jsSourceCode, &proxy, evaluationException);
@@ -703,7 +703,7 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    return executeUserAgentScriptInWorldInternal(world, { script, URL { }, false, WTF::nullopt, forceUserGesture });
+    return executeUserAgentScriptInWorldInternal(world, { script, URL { }, false, std::nullopt, forceUserGesture });
 }
 
 ValueOrException ScriptController::executeUserAgentScriptInWorldInternal(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)

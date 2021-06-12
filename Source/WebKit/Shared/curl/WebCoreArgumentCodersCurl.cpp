@@ -191,22 +191,22 @@ void ArgumentCoder<CurlProxySettings>::encode(Encoder& encoder, const CurlProxyS
     encoder << settings.ignoreHosts();
 }
 
-Optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decoder& decoder)
+std::optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decoder& decoder)
 {
     CurlProxySettings::Mode mode;
     if (!decoder.decode(mode))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (mode != CurlProxySettings::Mode::Custom)
         return CurlProxySettings { mode };
 
     URL url;
     if (!decoder.decode(url))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String ignoreHosts;
     if (!decoder.decode(ignoreHosts))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return CurlProxySettings { WTFMove(url), WTFMove(ignoreHosts) };
 }
@@ -228,10 +228,10 @@ void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& 
     ASSERT_NOT_REACHED();
 }
 
-Optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
+std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif
 

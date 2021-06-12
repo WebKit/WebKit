@@ -161,6 +161,7 @@ class JSWebAssemblyInstance;
 class JSWebAssemblyMemory;
 class JSWebAssemblyModule;
 class JSWebAssemblyTable;
+class JITSizeStatistics;
 class JITThunks;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
@@ -258,7 +259,7 @@ struct ScratchBuffer {
         return result;
     }
 
-    static size_t allocationSize(Checked<size_t> bufferSize) { return (sizeof(ScratchBuffer) + bufferSize).unsafeGet(); }
+    static size_t allocationSize(Checked<size_t> bufferSize) { return sizeof(ScratchBuffer) + bufferSize; }
     void setActiveLength(size_t activeLength) { u.m_activeLength = activeLength; }
     size_t activeLength() const { return u.m_activeLength; };
     size_t* addressOfActiveLength() { return &u.m_activeLength; };
@@ -434,6 +435,10 @@ public:
     std::unique_ptr<IsoHeapCellType> webAssemblyModuleHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyTableHeapCellType;
+#endif
+
+#if ENABLE(JIT)
+    std::unique_ptr<JITSizeStatistics> jitSizeStatistics;
 #endif
     
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
@@ -851,7 +856,7 @@ public:
 
     NativeExecutable* getBoundFunction(bool isJSFunction, bool canConstruct);
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind, Optional<NoLockingNecessaryTag> = WTF::nullopt);
+    MacroAssemblerCodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
 
     static ptrdiff_t exceptionOffset()
     {
@@ -1005,8 +1010,8 @@ public:
     static constexpr size_t patternContextBufferSize = 8192; // Space allocated to save nested parenthesis context
     UniqueArray<char> m_regExpPatternContexBuffer;
     Lock m_regExpPatternContextLock;
-    char* acquireRegExpPatternContexBuffer();
-    void releaseRegExpPatternContexBuffer();
+    char* acquireRegExpPatternContexBuffer() WTF_ACQUIRES_LOCK(m_regExpPatternContextLock);
+    void releaseRegExpPatternContexBuffer() WTF_RELEASES_LOCK(m_regExpPatternContextLock);
 #else
     static constexpr size_t patternContextBufferSize = 0; // Space allocated to save nested parenthesis context
 #endif
@@ -1091,7 +1096,7 @@ public:
     template<typename Func>
     void logEvent(CodeBlock*, const char* summary, const Func& func);
 
-    Optional<RefPtr<Thread>> ownerThread() const { return m_apiLock->ownerThread(); }
+    std::optional<RefPtr<Thread>> ownerThread() const { return m_apiLock->ownerThread(); }
 
     VMTraps& traps() { return m_traps; }
 

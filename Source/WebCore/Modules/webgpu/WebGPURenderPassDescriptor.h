@@ -29,7 +29,6 @@
 
 #include "GPURenderPassDescriptor.h"
 #include "WebGPUTextureView.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -46,10 +45,10 @@ struct WebGPURenderPassDepthStencilAttachmentDescriptor : GPURenderPassDepthSten
 };
 
 struct WebGPURenderPassDescriptor {
-    Optional<GPURenderPassDescriptor> tryCreateGPURenderPassDescriptor() const;
+    std::optional<GPURenderPassDescriptor> tryCreateGPURenderPassDescriptor() const;
 
     Vector<WebGPURenderPassColorAttachmentDescriptor> colorAttachments;
-    Optional<WebGPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
+    std::optional<WebGPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
 };
 
 } // namespace WebCore

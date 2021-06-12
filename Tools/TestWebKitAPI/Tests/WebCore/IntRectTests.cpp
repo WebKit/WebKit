@@ -613,7 +613,7 @@ TEST(IntRect, AreaAndDistances)
 {
     WebCore::IntRect rect(10, 20, 100, 100);
 
-    EXPECT_EQ(10000U, rect.area().unsafeGet());
+    EXPECT_EQ(10000U, rect.area().value());
 }
 
 }

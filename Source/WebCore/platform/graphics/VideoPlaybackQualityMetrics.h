@@ -47,32 +47,32 @@ struct VideoPlaybackQualityMetrics {
     }
 
     template <class Decoder>
-    static Optional<VideoPlaybackQualityMetrics> decode(Decoder& decoder)
+    static std::optional<VideoPlaybackQualityMetrics> decode(Decoder& decoder)
     {
-        Optional<uint32_t> totalVideoFrames;
+        std::optional<uint32_t> totalVideoFrames;
         decoder >> totalVideoFrames;
         if (!totalVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<uint32_t> droppedVideoFrames;
+        std::optional<uint32_t> droppedVideoFrames;
         decoder >> droppedVideoFrames;
         if (!droppedVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<uint32_t> corruptedVideoFrames;
+        std::optional<uint32_t> corruptedVideoFrames;
         decoder >> corruptedVideoFrames;
         if (!corruptedVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<double> totalFrameDelay;
+        std::optional<double> totalFrameDelay;
         decoder >> totalFrameDelay;
         if (!totalFrameDelay)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<uint32_t> displayCompositedVideoFrames;
+        std::optional<uint32_t> displayCompositedVideoFrames;
         decoder >> displayCompositedVideoFrames;
         if (!displayCompositedVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ *totalVideoFrames, *droppedVideoFrames, *corruptedVideoFrames, *totalFrameDelay, *displayCompositedVideoFrames }};
     }

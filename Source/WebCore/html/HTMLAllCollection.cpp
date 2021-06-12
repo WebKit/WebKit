@@ -30,7 +30,6 @@
 #include "NodeRareData.h"
 #include <JavaScriptCore/Identifier.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -48,10 +47,10 @@ inline HTMLAllCollection::HTMLAllCollection(Document& document, CollectionType t
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#dom-htmlallcollection-item
-Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const
+std::optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const
 {
     if (nameOrIndex.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto index = JSC::parseIndex(*nameOrIndex.impl()))
         return Variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { item(index.value()) } };
@@ -60,12 +59,12 @@ Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::na
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#concept-get-all-named
-Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedItemOrItems(const AtomString& name) const
+std::optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedItemOrItems(const AtomString& name) const
 {
     auto namedItems = this->namedItems(name);
 
     if (namedItems.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     if (namedItems.size() == 1)
         return Variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
 

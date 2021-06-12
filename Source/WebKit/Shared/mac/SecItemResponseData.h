@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/RetainPtr.h>
 
 namespace IPC {
@@ -39,7 +40,7 @@ public:
     SecItemResponseData(OSStatus, RetainPtr<CFTypeRef>&& result);
 
     void encode(IPC::Encoder&) const;
-    static Optional<SecItemResponseData> decode(IPC::Decoder&);
+    static std::optional<SecItemResponseData> decode(IPC::Decoder&);
 
     RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }

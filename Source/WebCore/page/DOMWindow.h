@@ -176,7 +176,7 @@ public:
     Navigator* optionalNavigator() const { return m_navigator.get(); }
     Navigator& clientInformation() { return navigator(); }
 
-    WEBCORE_EXPORT static void overrideTransientActivationDurationForTesting(Optional<Seconds>&&);
+    WEBCORE_EXPORT static void overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     void setLastActivationTimestamp(MonotonicTime lastActivationTimestamp) { m_lastActivationTimestamp = lastActivationTimestamp; }
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
     void notifyActivated(MonotonicTime);
@@ -432,7 +432,7 @@ private:
     bool m_shouldPrintWhenFinishedLoading { false };
     bool m_suspendedForDocumentSuspension { false };
     bool m_isSuspendingObservers { false };
-    Optional<bool> m_canShowModalDialogOverride;
+    std::optional<bool> m_canShowModalDialogOverride;
 
     HashSet<Observer*> m_observers;
 
@@ -477,7 +477,7 @@ private:
 
     mutable RefPtr<Performance> m_performance;
 
-    Optional<ReducedResolutionSeconds> m_frozenNowTimestamp;
+    std::optional<ReducedResolutionSeconds> m_frozenNowTimestamp;
 
     // For the purpose of tracking user activation, each Window W has a last activation timestamp. This is a number indicating the last time W got
     // an activation notification. It corresponds to a DOMHighResTimeStamp value except for two cases: positive infinity indicates that W has never

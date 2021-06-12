@@ -44,16 +44,16 @@ void WebAutocorrectionData::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, font.get());
 }
 
-Optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
+std::optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
 {
-    Optional<Vector<FloatRect>> textRects;
+    std::optional<Vector<FloatRect>> textRects;
     decoder >> textRects;
     if (!textRects)
-        return WTF::nullopt;
+        return std::nullopt;
 
     RetainPtr<UIFont> font;
     if (!IPC::decode(decoder, font, @[ UIFont.class ]))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *textRects, font }};
 }

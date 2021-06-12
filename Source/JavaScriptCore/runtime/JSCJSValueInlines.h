@@ -107,7 +107,7 @@ inline double JSValue::asNumber() const
     return isInt32() ? asInt32() : asDouble();
 }
 
-inline Optional<uint32_t> JSValue::tryGetAsUint32Index()
+inline std::optional<uint32_t> JSValue::tryGetAsUint32Index()
 {
     if (isUInt32()) {
         ASSERT(isIndex(asUInt32()));
@@ -119,10 +119,10 @@ inline Optional<uint32_t> JSValue::tryGetAsUint32Index()
         if (static_cast<double>(asUint) == number && isIndex(asUint))
             return asUint;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-inline Optional<int32_t> JSValue::tryGetAsInt32()
+inline std::optional<int32_t> JSValue::tryGetAsInt32()
 {
     if (isInt32())
         return asInt32();
@@ -132,7 +132,7 @@ inline Optional<int32_t> JSValue::tryGetAsInt32()
         if (static_cast<double>(asInt) == number)
             return asInt;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline JSValue jsNaN()
@@ -849,7 +849,7 @@ ALWAYS_INLINE JSValue JSValue::toNumeric(JSGlobalObject* globalObject) const
     return jsNumber(value);
 }
 
-ALWAYS_INLINE Optional<uint32_t> JSValue::toUInt32AfterToNumeric(JSGlobalObject* globalObject) const
+ALWAYS_INLINE std::optional<uint32_t> JSValue::toUInt32AfterToNumeric(JSGlobalObject* globalObject) const
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -857,7 +857,7 @@ ALWAYS_INLINE Optional<uint32_t> JSValue::toUInt32AfterToNumeric(JSGlobalObject*
     RETURN_IF_EXCEPTION(scope, { });
     if (LIKELY(result.isInt32()))
         return static_cast<uint32_t>(result.asInt32());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) const

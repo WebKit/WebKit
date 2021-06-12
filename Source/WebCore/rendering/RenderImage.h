@@ -103,8 +103,6 @@ protected:
         imageChanged(imageResource().imagePtr());
     }
 
-    bool canMapWidthHeightToAspectRatio() const override;
-
 private:
     const char* renderName() const override { return "RenderImage"; }
 
@@ -123,7 +121,7 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
-    bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const final;
+    bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, LegacyInlineFlowBox*) const final;
 
     IntSize imageSizeForError(CachedImage*) const;
     void repaintOrMarkForLayout(ImageSizeChangeType, const IntRect* = nullptr);
@@ -138,7 +136,7 @@ private:
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
-    LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = WTF::nullopt) const override;
+    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
 
     bool shouldCollapseToEmpty() const;
 

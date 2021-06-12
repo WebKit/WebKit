@@ -28,13 +28,12 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLPipelineDescriptor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
 class GPUPipelineLayout;
 
-Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout&);
+std::optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout&);
 
 }
 

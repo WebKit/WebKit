@@ -62,15 +62,15 @@ public:
     struct Cookie {
         String name;
         String value;
-        Optional<String> path;
-        Optional<String> domain;
-        Optional<bool> secure;
-        Optional<bool> httpOnly;
-        Optional<uint64_t> expiry;
-        Optional<String> sameSite;
+        std::optional<String> path;
+        std::optional<String> domain;
+        std::optional<bool> secure;
+        std::optional<bool> httpOnly;
+        std::optional<uint64_t> expiry;
+        std::optional<String> sameSite;
     };
 
-    InputSource& getOrCreateInputSource(const String& id, InputSource::Type, Optional<PointerType>);
+    InputSource& getOrCreateInputSource(const String& id, InputSource::Type, std::optional<PointerType>);
 
     void waitForNavigationToComplete(Function<void (CommandResult&&)>&&);
     void createTopLevelBrowsingContext(Function<void (CommandResult&&)>&&);
@@ -88,11 +88,11 @@ public:
     void closeWindow(Function<void (CommandResult&&)>&&);
     void switchToWindow(const String& windowHandle, Function<void (CommandResult&&)>&&);
     void getWindowHandles(Function<void (CommandResult&&)>&&);
-    void newWindow(Optional<String> typeHint, Function<void (CommandResult&&)>&&);
+    void newWindow(std::optional<String> typeHint, Function<void (CommandResult&&)>&&);
     void switchToFrame(RefPtr<JSON::Value>&&, Function<void (CommandResult&&)>&&);
     void switchToParentFrame(Function<void (CommandResult&&)>&&);
     void getWindowRect(Function<void (CommandResult&&)>&&);
-    void setWindowRect(Optional<double> x, Optional<double> y, Optional<double> width, Optional<double> height, Function<void (CommandResult&&)>&&);
+    void setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&&);
     void maximizeWindow(Function<void (CommandResult&&)>&&);
     void minimizeWindow(Function<void (CommandResult&&)>&&);
     void fullscreenWindow(Function<void (CommandResult&&)>&&);
@@ -123,7 +123,7 @@ public:
     void acceptAlert(Function<void (CommandResult&&)>&&);
     void getAlertText(Function<void (CommandResult&&)>&&);
     void sendAlertText(const String&, Function<void (CommandResult&&)>&&);
-    void takeScreenshot(Optional<String> elementID, Optional<bool> scrollIntoView, Function<void (CommandResult&&)>&&);
+    void takeScreenshot(std::optional<String> elementID, std::optional<bool> scrollIntoView, Function<void (CommandResult&&)>&&);
 
 private:
     Session(std::unique_ptr<SessionHost>&&);
@@ -136,7 +136,7 @@ private:
 
     void getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&&);
 
-    Optional<String> pageLoadStrategyString() const;
+    std::optional<String> pageLoadStrategyString() const;
 
     void handleUserPrompts(Function<void (CommandResult&&)>&&);
     void handleUnexpectedAlertOpen(Function<void (CommandResult&&)>&&);
@@ -170,11 +170,11 @@ private:
         ScrollIntoViewIfNeeded = 1 << 0,
         UseViewportCoordinates = 1 << 1,
     };
-    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (Optional<Rect>&&, Optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&&);
+    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&&);
 
     void elementIsFileUpload(const String& elementID, Function<void (CommandResult&&)>&&);
     enum class FileUploadType { Single, Multiple };
-    Optional<FileUploadType> parseElementIsFileUploadResult(const RefPtr<JSON::Value>&);
+    std::optional<FileUploadType> parseElementIsFileUploadResult(const RefPtr<JSON::Value>&);
     void selectOptionElement(const String& elementID, Function<void (CommandResult&&)>&&);
     void setInputFileUploadFiles(const String& elementID, const String& text, bool multiple, Function<void (CommandResult&&)>&&);
     void didSetInputFileUploadFiles(bool wasCancelled);
@@ -185,8 +185,8 @@ private:
     enum class KeyboardInteractionType { KeyPress, KeyRelease, InsertByKey };
     struct KeyboardInteraction {
         KeyboardInteractionType type { KeyboardInteractionType::InsertByKey };
-        Optional<String> text;
-        Optional<String> key;
+        std::optional<String> text;
+        std::optional<String> key;
     };
     enum KeyModifier {
         None = 0,
@@ -203,8 +203,8 @@ private:
 
         Type type;
         String subtype;
-        Optional<MouseButton> pressedButton;
-        Optional<String> pressedKey;
+        std::optional<MouseButton> pressedButton;
+        std::optional<String> pressedKey;
         HashSet<String> pressedVirtualKeys;
     };
     InputSourceState& inputSourceState(const String& id);
@@ -213,9 +213,9 @@ private:
     double m_scriptTimeout;
     double m_pageLoadTimeout;
     double m_implicitWaitTimeout;
-    Optional<String> m_toplevelBrowsingContext;
-    Optional<String> m_currentBrowsingContext;
-    Optional<String> m_currentParentBrowsingContext;
+    std::optional<String> m_toplevelBrowsingContext;
+    std::optional<String> m_currentBrowsingContext;
+    std::optional<String> m_currentParentBrowsingContext;
     HashMap<String, InputSource> m_activeInputSources;
     HashMap<String, InputSourceState> m_inputStateTable;
 };

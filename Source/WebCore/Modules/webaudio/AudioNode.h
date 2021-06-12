@@ -99,7 +99,6 @@ public:
 
     // Can be called from main thread or context's audio thread.  It must be called while the context's graph lock is held.
     void decrementConnectionCountWithLock();
-    virtual void didBecomeMarkedForDeletion() { }
 
     // The AudioNodeInput(s) (if any) will already have their input data available when process() is called.
     // Subclasses will take this input data and put the results in the AudioBus(s) of its AudioNodeOutput(s) (if any).
@@ -191,6 +190,11 @@ public:
     bool isFinishedSourceNode() const { return m_isFinishedSourceNode; }
     void setIsFinishedSourceNode() { m_isFinishedSourceNode = true; }
 
+    // Flag indicating the node is in the context's m_tailProcessingNodes or m_finishTailProcessingNodes.
+    // We rely on this flag to avoid unnecessary linear searches in those vectors.
+    bool isTailProcessing() const { return m_isTailProcessing; }
+    void setIsTailProcessing(bool isTailProcessing) { m_isTailProcessing = isTailProcessing; }
+
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput();
@@ -253,6 +257,7 @@ private:
     bool m_isMarkedForDeletion { false };
     bool m_isDisabled { false };
     bool m_isFinishedSourceNode { false };
+    bool m_isTailProcessing { false };
 
 #if DEBUG_AUDIONODE_REFERENCES
     static bool s_isNodeCountInitialized;

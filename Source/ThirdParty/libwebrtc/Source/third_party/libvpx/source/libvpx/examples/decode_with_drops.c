@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
   printf("Using %s\n", vpx_codec_iface_name(decoder->codec_interface()));
 
   if (vpx_codec_dec_init(&codec, decoder->codec_interface(), NULL, 0))
-    die_codec(&codec, "Failed to initialize decoder.");
+    die("Failed to initialize decoder.");
 
   while (vpx_video_reader_read_frame(reader)) {
     vpx_codec_iter_t iter = NULL;

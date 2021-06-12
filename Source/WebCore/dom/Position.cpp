@@ -35,12 +35,11 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
-#include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineRunAndOffset.h"
-#include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
+#include "LegacyInlineTextBox.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
@@ -1602,11 +1601,11 @@ Position makeDeprecatedLegacyPosition(const BoundaryPoint& point)
     return makeDeprecatedLegacyPosition(point.container.ptr(), point.offset);
 }
 
-Optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
+std::optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
 {
     auto container = makeRefPtr(position.containerNode());
     if (!container)
-        return WTF::nullopt;
+        return std::nullopt;
     return BoundaryPoint { container.releaseNonNull(), static_cast<unsigned>(position.computeOffsetInContainerNode()) };
 }
 

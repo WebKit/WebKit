@@ -1,9 +1,8 @@
-CONSOLE MESSAGE: Error: assert_true: Expected startTime to be no greater than redirectStart. expected true got false
 Description
 
 This test validates the values of the window.performance.redirectCount and the window.performance.timing.redirectStart/End times for a same-origin server side redirect navigation.
 
 
 
-FAIL Navigation Timing 2 WPT Error: assert_true: Expected startTime to be no greater than redirectStart. expected true got false
+PASS Navigation Timing 2 WPT
 

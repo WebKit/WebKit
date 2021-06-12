@@ -23,7 +23,7 @@
 #import "config.h"
 #import "FontCascade.h"
 
-#import "GraphicsContext.h"
+#import "GraphicsContextCG.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
 #if PLATFORM(IOS_FAMILY)

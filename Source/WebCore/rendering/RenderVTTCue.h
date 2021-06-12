@@ -49,14 +49,14 @@ private:
     bool isOverlapping() const;
     RenderObject* overlappingObject() const;
     RenderObject* overlappingObjectForRect(const IntRect&) const;
-    bool shouldSwitchDirection(InlineFlowBox*, LayoutUnit) const;
+    bool shouldSwitchDirection(LegacyInlineFlowBox*, LayoutUnit) const;
 
     void moveBoxesByStep(LayoutUnit);
     bool switchDirection(bool&, LayoutUnit&);
     void moveIfNecessaryToKeepWithinContainer();
     bool findNonOverlappingPosition(int& x, int& y) const;
 
-    bool initializeLayoutParameters(InlineFlowBox*&, LayoutUnit&, LayoutUnit&);
+    bool initializeLayoutParameters(LegacyInlineFlowBox*&, LayoutUnit&, LayoutUnit&);
     void placeBoxInDefaultPosition(LayoutUnit, bool&);
     void repositionCueSnapToLinesSet();
     void repositionCueSnapToLinesNotSet();

@@ -74,7 +74,7 @@ TEST(VP9, TestBitIO) {
         GTEST_ASSERT_EQ(bw_buffer[0] & 0x80, 0);
 
         vpx_reader br;
-        vpx_reader_init(&br, bw_buffer, kBufferSize, NULL, NULL);
+        vpx_reader_init(&br, bw_buffer, kBufferSize, nullptr, nullptr);
         bit_rnd.Reset(random_seed);
         for (int i = 0; i < kBitsToTest; ++i) {
           if (bit_method == 2) {

@@ -31,10 +31,10 @@
 
 
 typedef int (*hash_t_func_t)(const EC_GROUP *group, EC_RAW_POINT *out,
-                             const uint8_t t[PMBTOKEN_NONCE_SIZE]);
+                             const uint8_t t[TRUST_TOKEN_NONCE_SIZE]);
 typedef int (*hash_s_func_t)(const EC_GROUP *group, EC_RAW_POINT *out,
                              const EC_AFFINE *t,
-                             const uint8_t s[PMBTOKEN_NONCE_SIZE]);
+                             const uint8_t s[TRUST_TOKEN_NONCE_SIZE]);
 typedef int (*hash_c_func_t)(const EC_GROUP *group, EC_SCALAR *out,
                              uint8_t *buf, size_t len);
 
@@ -165,10 +165,6 @@ static int mul_public_3(const EC_GROUP *group, EC_RAW_POINT *out,
                                           scalars, 3);
 }
 
-void PMBTOKEN_PRETOKEN_free(PMBTOKEN_PRETOKEN *pretoken) {
-  OPENSSL_free(pretoken);
-}
-
 static int pmbtoken_generate_key(const PMBTOKEN_METHOD *method,
                                  CBB *out_private, CBB *out_public) {
   const EC_GROUP *group = method->group;
@@ -211,7 +207,7 @@ static int pmbtoken_generate_key(const PMBTOKEN_METHOD *method,
 }
 
 static int pmbtoken_client_key_from_bytes(const PMBTOKEN_METHOD *method,
-                                          PMBTOKEN_CLIENT_KEY *key,
+                                          TRUST_TOKEN_CLIENT_KEY *key,
                                           const uint8_t *in, size_t len) {
   CBS cbs;
   CBS_init(&cbs, in, len);
@@ -230,7 +226,7 @@ static int pmbtoken_client_key_from_bytes(const PMBTOKEN_METHOD *method,
 }
 
 static int pmbtoken_issuer_key_from_bytes(const PMBTOKEN_METHOD *method,
-                                          PMBTOKEN_ISSUER_KEY *key,
+                                          TRUST_TOKEN_ISSUER_KEY *key,
                                           const uint8_t *in, size_t len) {
   const EC_GROUP *group = method->group;
   CBS cbs, tmp;
@@ -269,10 +265,10 @@ static int pmbtoken_issuer_key_from_bytes(const PMBTOKEN_METHOD *method,
   return 1;
 }
 
-static STACK_OF(PMBTOKEN_PRETOKEN) *
+static STACK_OF(TRUST_TOKEN_PRETOKEN) *
     pmbtoken_blind(const PMBTOKEN_METHOD *method, CBB *cbb, size_t count) {
   const EC_GROUP *group = method->group;
-  STACK_OF(PMBTOKEN_PRETOKEN) *pretokens = sk_PMBTOKEN_PRETOKEN_new_null();
+  STACK_OF(TRUST_TOKEN_PRETOKEN) *pretokens = sk_TRUST_TOKEN_PRETOKEN_new_null();
   if (pretokens == NULL) {
     OPENSSL_PUT_ERROR(TRUST_TOKEN, ERR_R_MALLOC_FAILURE);
     goto err;
@@ -280,11 +276,11 @@ static STACK_OF(PMBTOKEN_PRETOKEN) *
 
   for (size_t i = 0; i < count; i++) {
     // Insert |pretoken| into |pretokens| early to simplify error-handling.
-    PMBTOKEN_PRETOKEN *pretoken = OPENSSL_malloc(sizeof(PMBTOKEN_PRETOKEN));
+    TRUST_TOKEN_PRETOKEN *pretoken = OPENSSL_malloc(sizeof(TRUST_TOKEN_PRETOKEN));
     if (pretoken == NULL ||
-        !sk_PMBTOKEN_PRETOKEN_push(pretokens, pretoken)) {
+        !sk_TRUST_TOKEN_PRETOKEN_push(pretokens, pretoken)) {
       OPENSSL_PUT_ERROR(TRUST_TOKEN, ERR_R_MALLOC_FAILURE);
-      PMBTOKEN_PRETOKEN_free(pretoken);
+      TRUST_TOKEN_PRETOKEN_free(pretoken);
       goto err;
     }
 
@@ -319,7 +315,7 @@ static STACK_OF(PMBTOKEN_PRETOKEN) *
   return pretokens;
 
 err:
-  sk_PMBTOKEN_PRETOKEN_pop_free(pretokens, PMBTOKEN_PRETOKEN_free);
+  sk_TRUST_TOKEN_PRETOKEN_pop_free(pretokens, TRUST_TOKEN_PRETOKEN_free);
   return NULL;
 }
 
@@ -455,9 +451,10 @@ err:
 // DLEQOR2 with only one value (n=1).
 
 static int dleq_generate(const PMBTOKEN_METHOD *method, CBB *cbb,
-                         const PMBTOKEN_ISSUER_KEY *priv, const EC_RAW_POINT *T,
-                         const EC_RAW_POINT *S, const EC_RAW_POINT *W,
-                         const EC_RAW_POINT *Ws, uint8_t private_metadata) {
+                         const TRUST_TOKEN_ISSUER_KEY *priv,
+                         const EC_RAW_POINT *T, const EC_RAW_POINT *S,
+                         const EC_RAW_POINT *W, const EC_RAW_POINT *Ws,
+                         uint8_t private_metadata) {
   const EC_GROUP *group = method->group;
 
   // We generate a DLEQ proof for the validity token and a DLEQOR2 proof for the
@@ -616,7 +613,7 @@ static int dleq_generate(const PMBTOKEN_METHOD *method, CBB *cbb,
 }
 
 static int dleq_verify(const PMBTOKEN_METHOD *method, CBS *cbs,
-                       const PMBTOKEN_CLIENT_KEY *pub, const EC_RAW_POINT *T,
+                       const TRUST_TOKEN_CLIENT_KEY *pub, const EC_RAW_POINT *T,
                        const EC_RAW_POINT *S, const EC_RAW_POINT *W,
                        const EC_RAW_POINT *Ws) {
   const EC_GROUP *group = method->group;
@@ -735,7 +732,7 @@ static int dleq_verify(const PMBTOKEN_METHOD *method, CBS *cbs,
 }
 
 static int pmbtoken_sign(const PMBTOKEN_METHOD *method,
-                         const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
+                         const TRUST_TOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
                          size_t num_requested, size_t num_to_issue,
                          uint8_t private_metadata) {
   const EC_GROUP *group = method->group;
@@ -785,8 +782,8 @@ static int pmbtoken_sign(const PMBTOKEN_METHOD *method,
     ec_scalar_select(group, &xb, mask, &key->x1, &key->x0);
     ec_scalar_select(group, &yb, mask, &key->y1, &key->y0);
 
-    uint8_t s[PMBTOKEN_NONCE_SIZE];
-    RAND_bytes(s, PMBTOKEN_NONCE_SIZE);
+    uint8_t s[TRUST_TOKEN_NONCE_SIZE];
+    RAND_bytes(s, TRUST_TOKEN_NONCE_SIZE);
     // The |jacobians| and |affines| contain Sp, Wp, and Wsp.
     EC_RAW_POINT jacobians[3];
     EC_AFFINE affines[3];
@@ -796,9 +793,11 @@ static int pmbtoken_sign(const PMBTOKEN_METHOD *method,
         !ec_point_mul_scalar_batch(group, &jacobians[2], &Tp, &key->xs,
                                    &jacobians[0], &key->ys, NULL, NULL) ||
         !ec_jacobian_to_affine_batch(group, affines, jacobians, 3) ||
-        !CBB_add_bytes(cbb, s, PMBTOKEN_NONCE_SIZE) ||
-        !cbb_add_prefixed_point(cbb, group, &affines[1], method->prefix_point) ||
-        !cbb_add_prefixed_point(cbb, group, &affines[2], method->prefix_point)) {
+        !CBB_add_bytes(cbb, s, TRUST_TOKEN_NONCE_SIZE) ||
+        !cbb_add_prefixed_point(cbb, group, &affines[1],
+                                method->prefix_point) ||
+        !cbb_add_prefixed_point(cbb, group, &affines[2],
+                                method->prefix_point)) {
       goto err;
     }
 
@@ -877,11 +876,11 @@ err:
 
 static STACK_OF(TRUST_TOKEN) *
     pmbtoken_unblind(const PMBTOKEN_METHOD *method,
-                     const PMBTOKEN_CLIENT_KEY *key,
-                     const STACK_OF(PMBTOKEN_PRETOKEN) * pretokens, CBS *cbs,
+                     const TRUST_TOKEN_CLIENT_KEY *key,
+                     const STACK_OF(TRUST_TOKEN_PRETOKEN) * pretokens, CBS *cbs,
                      size_t count, uint32_t key_id) {
   const EC_GROUP *group = method->group;
-  if (count > sk_PMBTOKEN_PRETOKEN_num(pretokens)) {
+  if (count > sk_TRUST_TOKEN_PRETOKEN_num(pretokens)) {
     OPENSSL_PUT_ERROR(TRUST_TOKEN, TRUST_TOKEN_R_DECODE_FAILURE);
     return NULL;
   }
@@ -919,12 +918,12 @@ static STACK_OF(TRUST_TOKEN) *
   }
 
   for (size_t i = 0; i < count; i++) {
-    const PMBTOKEN_PRETOKEN *pretoken =
-        sk_PMBTOKEN_PRETOKEN_value(pretokens, i);
+    const TRUST_TOKEN_PRETOKEN *pretoken =
+        sk_TRUST_TOKEN_PRETOKEN_value(pretokens, i);
 
-    uint8_t s[PMBTOKEN_NONCE_SIZE];
+    uint8_t s[TRUST_TOKEN_NONCE_SIZE];
     EC_AFFINE Wp_affine, Wsp_affine;
-    if (!CBS_copy_bytes(cbs, s, PMBTOKEN_NONCE_SIZE) ||
+    if (!CBS_copy_bytes(cbs, s, TRUST_TOKEN_NONCE_SIZE) ||
         !cbs_get_prefixed_point(cbs, group, &Wp_affine, method->prefix_point) ||
         !cbs_get_prefixed_point(cbs, group, &Wsp_affine,
                                 method->prefix_point)) {
@@ -963,9 +962,10 @@ static STACK_OF(TRUST_TOKEN) *
     // above.
     CBB token_cbb;
     size_t point_len = 1 + 2 * BN_num_bytes(&group->field);
-    if (!CBB_init(&token_cbb, 4 + PMBTOKEN_NONCE_SIZE + 3 * (2 + point_len)) ||
+    if (!CBB_init(&token_cbb,
+                  4 + TRUST_TOKEN_NONCE_SIZE + 3 * (2 + point_len)) ||
         !CBB_add_u32(&token_cbb, key_id) ||
-        !CBB_add_bytes(&token_cbb, pretoken->t, PMBTOKEN_NONCE_SIZE) ||
+        !CBB_add_bytes(&token_cbb, pretoken->t, TRUST_TOKEN_NONCE_SIZE) ||
         !cbb_add_prefixed_point(&token_cbb, group, &affines[0],
                                 method->prefix_point) ||
         !cbb_add_prefixed_point(&token_cbb, group, &affines[1],
@@ -1034,15 +1034,15 @@ err:
 }
 
 static int pmbtoken_read(const PMBTOKEN_METHOD *method,
-                         const PMBTOKEN_ISSUER_KEY *key,
-                         uint8_t out_nonce[PMBTOKEN_NONCE_SIZE],
+                         const TRUST_TOKEN_ISSUER_KEY *key,
+                         uint8_t out_nonce[TRUST_TOKEN_NONCE_SIZE],
                          uint8_t *out_private_metadata, const uint8_t *token,
                          size_t token_len) {
   const EC_GROUP *group = method->group;
   CBS cbs;
   CBS_init(&cbs, token, token_len);
   EC_AFFINE S, W, Ws;
-  if (!CBS_copy_bytes(&cbs, out_nonce, PMBTOKEN_NONCE_SIZE) ||
+  if (!CBS_copy_bytes(&cbs, out_nonce, TRUST_TOKEN_NONCE_SIZE) ||
       !cbs_get_prefixed_point(&cbs, group, &S, method->prefix_point) ||
       !cbs_get_prefixed_point(&cbs, group, &W, method->prefix_point) ||
       !cbs_get_prefixed_point(&cbs, group, &Ws, method->prefix_point) ||
@@ -1101,15 +1101,15 @@ static int pmbtoken_read(const PMBTOKEN_METHOD *method,
 // PMBTokens experiment v1.
 
 static int pmbtoken_exp1_hash_t(const EC_GROUP *group, EC_RAW_POINT *out,
-                                const uint8_t t[PMBTOKEN_NONCE_SIZE]) {
+                                const uint8_t t[TRUST_TOKEN_NONCE_SIZE]) {
   const uint8_t kHashTLabel[] = "PMBTokens Experiment V1 HashT";
   return ec_hash_to_curve_p384_xmd_sha512_sswu_draft07(
-      group, out, kHashTLabel, sizeof(kHashTLabel), t, PMBTOKEN_NONCE_SIZE);
+      group, out, kHashTLabel, sizeof(kHashTLabel), t, TRUST_TOKEN_NONCE_SIZE);
 }
 
 static int pmbtoken_exp1_hash_s(const EC_GROUP *group, EC_RAW_POINT *out,
                                 const EC_AFFINE *t,
-                                const uint8_t s[PMBTOKEN_NONCE_SIZE]) {
+                                const uint8_t s[TRUST_TOKEN_NONCE_SIZE]) {
   const uint8_t kHashSLabel[] = "PMBTokens Experiment V1 HashS";
   int ret = 0;
   CBB cbb;
@@ -1117,7 +1117,7 @@ static int pmbtoken_exp1_hash_s(const EC_GROUP *group, EC_RAW_POINT *out,
   size_t len;
   if (!CBB_init(&cbb, 0) ||
       !point_to_cbb(&cbb, group, t) ||
-      !CBB_add_bytes(&cbb, s, PMBTOKEN_NONCE_SIZE) ||
+      !CBB_add_bytes(&cbb, s, TRUST_TOKEN_NONCE_SIZE) ||
       !CBB_finish(&cbb, &buf, &len) ||
       !ec_hash_to_curve_p384_xmd_sha512_sswu_draft07(
           group, out, kHashSLabel, sizeof(kHashSLabel), buf, len)) {
@@ -1182,7 +1182,7 @@ int pmbtoken_exp1_generate_key(CBB *out_private, CBB *out_public) {
   return pmbtoken_generate_key(&pmbtoken_exp1_method, out_private, out_public);
 }
 
-int pmbtoken_exp1_client_key_from_bytes(PMBTOKEN_CLIENT_KEY *key,
+int pmbtoken_exp1_client_key_from_bytes(TRUST_TOKEN_CLIENT_KEY *key,
                                         const uint8_t *in, size_t len) {
   if (!pmbtoken_exp1_init_method()) {
     return 0;
@@ -1190,7 +1190,7 @@ int pmbtoken_exp1_client_key_from_bytes(PMBTOKEN_CLIENT_KEY *key,
   return pmbtoken_client_key_from_bytes(&pmbtoken_exp1_method, key, in, len);
 }
 
-int pmbtoken_exp1_issuer_key_from_bytes(PMBTOKEN_ISSUER_KEY *key,
+int pmbtoken_exp1_issuer_key_from_bytes(TRUST_TOKEN_ISSUER_KEY *key,
                                         const uint8_t *in, size_t len) {
   if (!pmbtoken_exp1_init_method()) {
     return 0;
@@ -1198,14 +1198,14 @@ int pmbtoken_exp1_issuer_key_from_bytes(PMBTOKEN_ISSUER_KEY *key,
   return pmbtoken_issuer_key_from_bytes(&pmbtoken_exp1_method, key, in, len);
 }
 
-STACK_OF(PMBTOKEN_PRETOKEN) * pmbtoken_exp1_blind(CBB *cbb, size_t count) {
+STACK_OF(TRUST_TOKEN_PRETOKEN) * pmbtoken_exp1_blind(CBB *cbb, size_t count) {
   if (!pmbtoken_exp1_init_method()) {
     return NULL;
   }
   return pmbtoken_blind(&pmbtoken_exp1_method, cbb, count);
 }
 
-int pmbtoken_exp1_sign(const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
+int pmbtoken_exp1_sign(const TRUST_TOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
                        size_t num_requested, size_t num_to_issue,
                        uint8_t private_metadata) {
   if (!pmbtoken_exp1_init_method()) {
@@ -1216,8 +1216,8 @@ int pmbtoken_exp1_sign(const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
 }
 
 STACK_OF(TRUST_TOKEN) *
-    pmbtoken_exp1_unblind(const PMBTOKEN_CLIENT_KEY *key,
-                          const STACK_OF(PMBTOKEN_PRETOKEN) * pretokens,
+    pmbtoken_exp1_unblind(const TRUST_TOKEN_CLIENT_KEY *key,
+                          const STACK_OF(TRUST_TOKEN_PRETOKEN) * pretokens,
                           CBS *cbs, size_t count, uint32_t key_id) {
   if (!pmbtoken_exp1_init_method()) {
     return NULL;
@@ -1226,8 +1226,8 @@ STACK_OF(TRUST_TOKEN) *
                           key_id);
 }
 
-int pmbtoken_exp1_read(const PMBTOKEN_ISSUER_KEY *key,
-                       uint8_t out_nonce[PMBTOKEN_NONCE_SIZE],
+int pmbtoken_exp1_read(const TRUST_TOKEN_ISSUER_KEY *key,
+                       uint8_t out_nonce[TRUST_TOKEN_NONCE_SIZE],
                        uint8_t *out_private_metadata, const uint8_t *token,
                        size_t token_len) {
   if (!pmbtoken_exp1_init_method()) {
@@ -1251,15 +1251,15 @@ int pmbtoken_exp1_get_h_for_testing(uint8_t out[97]) {
 // PMBTokens experiment v2.
 
 static int pmbtoken_exp2_hash_t(const EC_GROUP *group, EC_RAW_POINT *out,
-                                const uint8_t t[PMBTOKEN_NONCE_SIZE]) {
+                                const uint8_t t[TRUST_TOKEN_NONCE_SIZE]) {
   const uint8_t kHashTLabel[] = "PMBTokens Experiment V2 HashT";
   return ec_hash_to_curve_p384_xmd_sha512_sswu_draft07(
-      group, out, kHashTLabel, sizeof(kHashTLabel), t, PMBTOKEN_NONCE_SIZE);
+      group, out, kHashTLabel, sizeof(kHashTLabel), t, TRUST_TOKEN_NONCE_SIZE);
 }
 
 static int pmbtoken_exp2_hash_s(const EC_GROUP *group, EC_RAW_POINT *out,
                                 const EC_AFFINE *t,
-                                const uint8_t s[PMBTOKEN_NONCE_SIZE]) {
+                                const uint8_t s[TRUST_TOKEN_NONCE_SIZE]) {
   const uint8_t kHashSLabel[] = "PMBTokens Experiment V2 HashS";
   int ret = 0;
   CBB cbb;
@@ -1267,7 +1267,7 @@ static int pmbtoken_exp2_hash_s(const EC_GROUP *group, EC_RAW_POINT *out,
   size_t len;
   if (!CBB_init(&cbb, 0) ||
       !point_to_cbb(&cbb, group, t) ||
-      !CBB_add_bytes(&cbb, s, PMBTOKEN_NONCE_SIZE) ||
+      !CBB_add_bytes(&cbb, s, TRUST_TOKEN_NONCE_SIZE) ||
       !CBB_finish(&cbb, &buf, &len) ||
       !ec_hash_to_curve_p384_xmd_sha512_sswu_draft07(
           group, out, kHashSLabel, sizeof(kHashSLabel), buf, len)) {
@@ -1332,7 +1332,7 @@ int pmbtoken_exp2_generate_key(CBB *out_private, CBB *out_public) {
   return pmbtoken_generate_key(&pmbtoken_exp2_method, out_private, out_public);
 }
 
-int pmbtoken_exp2_client_key_from_bytes(PMBTOKEN_CLIENT_KEY *key,
+int pmbtoken_exp2_client_key_from_bytes(TRUST_TOKEN_CLIENT_KEY *key,
                                         const uint8_t *in, size_t len) {
   if (!pmbtoken_exp2_init_method()) {
     return 0;
@@ -1340,7 +1340,7 @@ int pmbtoken_exp2_client_key_from_bytes(PMBTOKEN_CLIENT_KEY *key,
   return pmbtoken_client_key_from_bytes(&pmbtoken_exp2_method, key, in, len);
 }
 
-int pmbtoken_exp2_issuer_key_from_bytes(PMBTOKEN_ISSUER_KEY *key,
+int pmbtoken_exp2_issuer_key_from_bytes(TRUST_TOKEN_ISSUER_KEY *key,
                                         const uint8_t *in, size_t len) {
   if (!pmbtoken_exp2_init_method()) {
     return 0;
@@ -1348,14 +1348,14 @@ int pmbtoken_exp2_issuer_key_from_bytes(PMBTOKEN_ISSUER_KEY *key,
   return pmbtoken_issuer_key_from_bytes(&pmbtoken_exp2_method, key, in, len);
 }
 
-STACK_OF(PMBTOKEN_PRETOKEN) * pmbtoken_exp2_blind(CBB *cbb, size_t count) {
+STACK_OF(TRUST_TOKEN_PRETOKEN) * pmbtoken_exp2_blind(CBB *cbb, size_t count) {
   if (!pmbtoken_exp2_init_method()) {
     return NULL;
   }
   return pmbtoken_blind(&pmbtoken_exp2_method, cbb, count);
 }
 
-int pmbtoken_exp2_sign(const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
+int pmbtoken_exp2_sign(const TRUST_TOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
                        size_t num_requested, size_t num_to_issue,
                        uint8_t private_metadata) {
   if (!pmbtoken_exp2_init_method()) {
@@ -1366,8 +1366,8 @@ int pmbtoken_exp2_sign(const PMBTOKEN_ISSUER_KEY *key, CBB *cbb, CBS *cbs,
 }
 
 STACK_OF(TRUST_TOKEN) *
-    pmbtoken_exp2_unblind(const PMBTOKEN_CLIENT_KEY *key,
-                          const STACK_OF(PMBTOKEN_PRETOKEN) * pretokens,
+    pmbtoken_exp2_unblind(const TRUST_TOKEN_CLIENT_KEY *key,
+                          const STACK_OF(TRUST_TOKEN_PRETOKEN) * pretokens,
                           CBS *cbs, size_t count, uint32_t key_id) {
   if (!pmbtoken_exp2_init_method()) {
     return NULL;
@@ -1376,8 +1376,8 @@ STACK_OF(TRUST_TOKEN) *
                           key_id);
 }
 
-int pmbtoken_exp2_read(const PMBTOKEN_ISSUER_KEY *key,
-                       uint8_t out_nonce[PMBTOKEN_NONCE_SIZE],
+int pmbtoken_exp2_read(const TRUST_TOKEN_ISSUER_KEY *key,
+                       uint8_t out_nonce[TRUST_TOKEN_NONCE_SIZE],
                        uint8_t *out_private_metadata, const uint8_t *token,
                        size_t token_len) {
   if (!pmbtoken_exp2_init_method()) {

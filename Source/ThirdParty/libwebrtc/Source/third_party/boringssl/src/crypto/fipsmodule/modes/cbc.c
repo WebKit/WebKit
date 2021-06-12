@@ -52,20 +52,25 @@
 #include <openssl/type_check.h>
 
 #include "internal.h"
+#include "../../internal.h"
 
 
 void CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                            const AES_KEY *key, uint8_t ivec[16],
                            block128_f block) {
+  assert(key != NULL && ivec != NULL);
+  if (len == 0) {
+    // Avoid |ivec| == |iv| in the |memcpy| below, which is not legal in C.
+    return;
+  }
+
+  assert(in != NULL && out != NULL);
   size_t n;
   const uint8_t *iv = ivec;
-
-  assert(key != NULL && ivec != NULL);
-  assert(len == 0 || (in != NULL && out != NULL));
-
   while (len >= 16) {
-    for (n = 0; n < 16; n += sizeof(size_t)) {
-      store_word_le(out + n, load_word_le(in + n) ^ load_word_le(iv + n));
+    for (n = 0; n < 16; n += sizeof(crypto_word_t)) {
+      CRYPTO_store_word_le(
+          out + n, CRYPTO_load_word_le(in + n) ^ CRYPTO_load_word_le(iv + n));
     }
     (*block)(out, out, key);
     iv = out;
@@ -97,30 +102,36 @@ void CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
 void CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
                            const AES_KEY *key, uint8_t ivec[16],
                            block128_f block) {
-  size_t n;
-  union {
-    size_t t[16 / sizeof(size_t)];
-    uint8_t c[16];
-  } tmp;
-
   assert(key != NULL && ivec != NULL);
-  assert(len == 0 || (in != NULL && out != NULL));
+  if (len == 0) {
+    // Avoid |ivec| == |iv| in the |memcpy| below, which is not legal in C.
+    return;
+  }
+
+  assert(in != NULL && out != NULL);
 
   const uintptr_t inptr = (uintptr_t) in;
   const uintptr_t outptr = (uintptr_t) out;
   // If |in| and |out| alias, |in| must be ahead.
   assert(inptr >= outptr || inptr + len <= outptr);
 
+  size_t n;
+  union {
+    crypto_word_t t[16 / sizeof(crypto_word_t)];
+    uint8_t c[16];
+  } tmp;
+
   if ((inptr >= 32 && outptr <= inptr - 32) || inptr < outptr) {
     // If |out| is at least two blocks behind |in| or completely disjoint, there
     // is no need to decrypt to a temporary block.
-    OPENSSL_STATIC_ASSERT(16 % sizeof(size_t) == 0,
+    OPENSSL_STATIC_ASSERT(16 % sizeof(crypto_word_t) == 0,
                           "block cannot be evenly divided into words");
     const uint8_t *iv = ivec;
     while (len >= 16) {
       (*block)(in, out, key);
-      for (n = 0; n < 16; n += sizeof(size_t)) {
-        store_word_le(out + n, load_word_le(out + n) ^ load_word_le(iv + n));
+      for (n = 0; n < 16; n += sizeof(crypto_word_t)) {
+        CRYPTO_store_word_le(out + n, CRYPTO_load_word_le(out + n) ^
+                                          CRYPTO_load_word_le(iv + n));
       }
       iv = in;
       len -= 16;
@@ -129,16 +140,16 @@ void CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
     }
     OPENSSL_memcpy(ivec, iv, 16);
   } else {
-    OPENSSL_STATIC_ASSERT(16 % sizeof(size_t) == 0,
+    OPENSSL_STATIC_ASSERT(16 % sizeof(crypto_word_t) == 0,
                           "block cannot be evenly divided into words");
 
     while (len >= 16) {
       (*block)(in, tmp.c, key);
-      for (n = 0; n < 16; n += sizeof(size_t)) {
-        size_t c = load_word_le(in + n);
-        store_word_le(out + n,
-                      tmp.t[n / sizeof(size_t)] ^ load_word_le(ivec + n));
-        store_word_le(ivec + n, c);
+      for (n = 0; n < 16; n += sizeof(crypto_word_t)) {
+        crypto_word_t c = CRYPTO_load_word_le(in + n);
+        CRYPTO_store_word_le(out + n, tmp.t[n / sizeof(crypto_word_t)] ^
+                                          CRYPTO_load_word_le(ivec + n));
+        CRYPTO_store_word_le(ivec + n, c);
       }
       len -= 16;
       in += 16;

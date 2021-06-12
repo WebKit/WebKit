@@ -36,7 +36,7 @@ class TextStream;
 
 namespace WebCore {
 
-class InlineBox;
+class LegacyInlineBox;
 class RenderElement;
 class Text;
 
@@ -232,7 +232,7 @@ WEBCORE_EXPORT Position makeContainerOffsetPosition(const BoundaryPoint&);
 Position makeDeprecatedLegacyPosition(Node*, unsigned offset);
 WEBCORE_EXPORT Position makeDeprecatedLegacyPosition(const BoundaryPoint&);
 
-WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPoint(const Position&);
+WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPoint(const Position&);
 
 Position positionInParentBeforeNode(Node*);
 Position positionInParentAfterNode(Node*);
@@ -256,7 +256,7 @@ struct PositionRange {
     Position end;
 };
 
-Optional<SimpleRange> makeSimpleRange(const PositionRange&);
+std::optional<SimpleRange> makeSimpleRange(const PositionRange&);
 
 // inlines
 

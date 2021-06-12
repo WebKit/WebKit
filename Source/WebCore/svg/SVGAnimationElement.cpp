@@ -79,12 +79,12 @@ fail:
     result.clear();
 }
 
-static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
+static std::optional<Vector<UnitBezier>> parseKeySplines(StringView string)
 {
     if (string.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
-    return readCharactersForParsing(string, [&](auto buffer) -> Optional<Vector<UnitBezier>> {
+    return readCharactersForParsing(string, [&](auto buffer) -> std::optional<Vector<UnitBezier>> {
         skipOptionalSVGSpaces(buffer);
 
         Vector<UnitBezier> result;
@@ -93,20 +93,20 @@ static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
         while (buffer.hasCharactersRemaining()) {
             delimParsed = false;
             auto posA = parseNumber(buffer);
-            if (!posA)
-                return WTF::nullopt;
+            if (!posA || !isInRange<float>(*posA, 0, 1))
+                return std::nullopt;
 
             auto posB = parseNumber(buffer);
-            if (!posB)
-                return WTF::nullopt;
+            if (!posB || !isInRange<float>(*posB, 0, 1))
+                return std::nullopt;
 
             auto posC = parseNumber(buffer);
-            if (!posC)
-                return WTF::nullopt;
+            if (!posC || !isInRange<float>(*posC, 0, 1))
+                return std::nullopt;
 
             auto posD = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
-            if (!posD)
-                return WTF::nullopt;
+            if (!posD || !isInRange<float>(*posD, 0, 1))
+                return std::nullopt;
 
             skipOptionalSVGSpaces(buffer);
 
@@ -119,7 +119,7 @@ static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
         }
 
         if (!(buffer.atEnd() && !delimParsed))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return result;
     });

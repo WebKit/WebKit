@@ -27,64 +27,63 @@
 #include "YarrFlags.h"
 
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringView.h>
 
 namespace JSC { namespace Yarr {
 
-Optional<OptionSet<Flags>> parseFlags(StringView string)
+std::optional<OptionSet<Flags>> parseFlags(StringView string)
 {
     OptionSet<Flags> flags;
     for (auto character : string.codeUnits()) {
         switch (character) {
         case 'd':
             if (flags.contains(Flags::HasIndices))
-                return WTF::nullopt;
+                return std::nullopt;
             flags.add(Flags::HasIndices);
             break;
 
         case 'g':
             if (flags.contains(Flags::Global))
-                return WTF::nullopt;
+                return std::nullopt;
             flags.add(Flags::Global);
             break;
 
         case 'i':
             if (flags.contains(Flags::IgnoreCase))
-                return WTF::nullopt;
+                return std::nullopt;
             flags.add(Flags::IgnoreCase);
             break;
 
         case 'm':
             if (flags.contains(Flags::Multiline))
-                return WTF::nullopt;
+                return std::nullopt;
             flags.add(Flags::Multiline);
             break;
 
         case 's':
             if (flags.contains(Flags::DotAll))
-                return WTF::nullopt;
+                return std::nullopt;
             flags.add(Flags::DotAll);
             break;
             
         case 'u':
             if (flags.contains(Flags::Unicode))
-                return WTF::nullopt;
+                return std::nullopt;
             flags.add(Flags::Unicode);
             break;
                 
         case 'y':
             if (flags.contains(Flags::Sticky))
-                return WTF::nullopt;
+                return std::nullopt;
             flags.add(Flags::Sticky);
             break;
 
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
-    return makeOptional(flags);
+    return std::make_optional(flags);
 }
 
 } } // namespace JSC::Yarr

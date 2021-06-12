@@ -137,7 +137,7 @@ struct FontSizeAndCount {
     unsigned count;
 };
 
-Optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLegibilityScales(double& viewportMinimumScale, double& viewportMaximumScale)
+std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLegibilityScales(double& viewportMinimumScale, double& viewportMaximumScale)
 {
     static const unsigned fontSizeBinningInterval = 2;
     static const double maximumNumberOfTextRunsToConsider = 200;
@@ -152,7 +152,7 @@ Optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLeg
 
     auto document = makeRefPtr(m_webPage.mainFrame()->document());
     if (!document)
-        return WTF::nullopt;
+        return std::nullopt;
 
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -161,7 +161,7 @@ Optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLeg
     unsigned numberOfIterations = 0;
     unsigned totalSampledTextLength = 0;
 
-    for (TextIterator documentTextIterator { makeRangeSelectingNodeContents(*document), TextIteratorEntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
+    for (TextIterator documentTextIterator { makeRangeSelectingNodeContents(*document), TextIteratorBehavior::EntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
         if (++numberOfIterations >= maximumNumberOfTextRunsToConsider)
             break;
 

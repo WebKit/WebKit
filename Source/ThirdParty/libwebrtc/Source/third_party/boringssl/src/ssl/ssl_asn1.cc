@@ -105,7 +105,7 @@ BSSL_NAMESPACE_BEGIN
 //     sslVersion                  INTEGER,      -- protocol version number
 //     cipher                      OCTET STRING, -- two bytes long
 //     sessionID                   OCTET STRING,
-//     masterKey                   OCTET STRING,
+//     secret                      OCTET STRING,
 //     time                    [1] INTEGER, -- seconds since UNIX epoch
 //     timeout                 [2] INTEGER, -- in seconds
 //     peer                    [3] Certificate OPTIONAL,
@@ -131,6 +131,10 @@ BSSL_NAMESPACE_BEGIN
 //     earlyALPN               [26] OCTET STRING OPTIONAL,
 //     isQuic                  [27] BOOLEAN OPTIONAL,
 //     quicEarlyDataHash       [28] OCTET STRING OPTIONAL,
+//     localALPS               [29] OCTET STRING OPTIONAL,
+//     peerALPS                [30] OCTET STRING OPTIONAL,
+//     -- Either both or none of localALPS and peerALPS must be present. If both
+//     -- are present, earlyALPN must be present and non-empty.
 // }
 //
 // Note: historically this serialization has included other optional
@@ -194,6 +198,10 @@ static const unsigned kIsQuicTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 27;
 static const unsigned kQuicEarlyDataContextTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 28;
+static const unsigned kLocalALPSTag =
+    CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 29;
+static const unsigned kPeerALPSTag =
+    CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 30;
 
 static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
                                      int for_ticket) {
@@ -210,8 +218,7 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
       // The session ID is irrelevant for a session ticket.
       !CBB_add_asn1_octet_string(&session, in->session_id,
                                  for_ticket ? 0 : in->session_id_length) ||
-      !CBB_add_asn1_octet_string(&session, in->master_key,
-                                 in->master_key_length) ||
+      !CBB_add_asn1_octet_string(&session, in->secret, in->secret_length) ||
       !CBB_add_asn1(&session, &child, kTimeTag) ||
       !CBB_add_asn1_uint64(&child, in->time) ||
       !CBB_add_asn1(&session, &child, kTimeoutTag) ||
@@ -411,6 +418,19 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
     }
   }
 
+  if (in->has_application_settings) {
+    if (!CBB_add_asn1(&session, &child, kLocalALPSTag) ||
+        !CBB_add_asn1_octet_string(&child,
+                                   in->local_application_settings.data(),
+                                   in->local_application_settings.size()) ||
+        !CBB_add_asn1(&session, &child, kPeerALPSTag) ||
+        !CBB_add_asn1_octet_string(&child, in->peer_application_settings.data(),
+                                   in->peer_application_settings.size())) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return 0;
+    }
+  }
+
   return CBB_flush(cbb);
 }
 
@@ -572,18 +592,18 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
     return nullptr;
   }
 
-  CBS session_id, master_key;
+  CBS session_id, secret;
   if (!CBS_get_asn1(&session, &session_id, CBS_ASN1_OCTETSTRING) ||
       CBS_len(&session_id) > SSL3_MAX_SSL_SESSION_ID_LENGTH ||
-      !CBS_get_asn1(&session, &master_key, CBS_ASN1_OCTETSTRING) ||
-      CBS_len(&master_key) > SSL_MAX_MASTER_KEY_LENGTH) {
+      !CBS_get_asn1(&session, &secret, CBS_ASN1_OCTETSTRING) ||
+      CBS_len(&secret) > SSL_MAX_MASTER_KEY_LENGTH) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
   }
   OPENSSL_memcpy(ret->session_id, CBS_data(&session_id), CBS_len(&session_id));
   ret->session_id_length = CBS_len(&session_id);
-  OPENSSL_memcpy(ret->master_key, CBS_data(&master_key), CBS_len(&master_key));
-  ret->master_key_length = CBS_len(&master_key);
+  OPENSSL_memcpy(ret->secret, CBS_data(&secret), CBS_len(&secret));
+  ret->secret_length = CBS_len(&secret);
 
   CBS child;
   uint64_t timeout;
@@ -753,12 +773,32 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
       !CBS_get_optional_asn1_bool(&session, &is_quic, kIsQuicTag,
                                   /*default_value=*/false) ||
       !SSL_SESSION_parse_octet_string(&session, &ret->quic_early_data_context,
-                                      kQuicEarlyDataContextTag) ||
+                                      kQuicEarlyDataContextTag)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
+    return nullptr;
+  }
+
+  CBS settings;
+  int has_local_alps, has_peer_alps;
+  if (!CBS_get_optional_asn1_octet_string(&session, &settings, &has_local_alps,
+                                          kLocalALPSTag) ||
+      !ret->local_application_settings.CopyFrom(settings) ||
+      !CBS_get_optional_asn1_octet_string(&session, &settings, &has_peer_alps,
+                                          kPeerALPSTag) ||
+      !ret->peer_application_settings.CopyFrom(settings) ||
       CBS_len(&session) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
   }
   ret->is_quic = is_quic;
+
+  // The two ALPS values and ALPN must be consistent.
+  if (has_local_alps != has_peer_alps ||
+      (has_local_alps && ret->early_alpn.empty())) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
+    return nullptr;
+  }
+  ret->has_application_settings = has_local_alps;
 
   if (!x509_method->session_cache_objects(ret.get())) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);

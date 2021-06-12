@@ -145,5 +145,5 @@ TEST_P(KeyframeTest, TestAutoKeyframe) {
   }
 }
 
-VP8_INSTANTIATE_TEST_CASE(KeyframeTest, ALL_TEST_MODES);
+VP8_INSTANTIATE_TEST_SUITE(KeyframeTest, ALL_TEST_MODES);
 }  // namespace

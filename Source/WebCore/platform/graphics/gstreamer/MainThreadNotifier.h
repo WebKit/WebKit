@@ -68,8 +68,8 @@ public:
     template<typename F>
     void notifyAndWait(T notificationType, F&& callbackFunctor)
     {
-        CheckedLock lock;
-        CheckedCondition condition;
+        Lock lock;
+        Condition condition;
 
         notify(notificationType, [functor = WTFMove(callbackFunctor), &condition, &lock] {
             functor();
@@ -125,7 +125,7 @@ private:
     }
 
     Lock m_pendingNotificationsLock;
-    unsigned m_pendingNotifications { 0 };
+    unsigned m_pendingNotifications WTF_GUARDED_BY_LOCK(m_pendingNotificationsLock) { 0 };
     Atomic<bool> m_isValid;
 };
 

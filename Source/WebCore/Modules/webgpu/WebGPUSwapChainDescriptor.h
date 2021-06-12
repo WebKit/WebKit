@@ -29,13 +29,12 @@
 
 #include "GPUSwapChainDescriptor.h"
 #include "WebGPUDevice.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct WebGPUSwapChainDescriptor : GPUSwapChainDescriptorBase {
-    Optional<GPUSwapChainDescriptor> asGPUSwapChainDescriptor() const;
+    std::optional<GPUSwapChainDescriptor> asGPUSwapChainDescriptor() const;
 
     RefPtr<WebGPUDevice> device;
 };

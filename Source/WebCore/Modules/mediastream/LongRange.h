@@ -26,13 +26,13 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
 struct LongRange {
-    Optional<int> max;
-    Optional<int> min;
+    std::optional<int> max;
+    std::optional<int> min;
 };
 
 }

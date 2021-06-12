@@ -53,27 +53,27 @@ public:
 
     struct PositionWithClearance {
         LayoutUnit position;
-        Optional<LayoutUnit> clearance;
+        std::optional<LayoutUnit> clearance;
     };
-    Optional<PositionWithClearance> verticalPositionWithClearance(const Box&) const;
+    std::optional<PositionWithClearance> verticalPositionWithClearance(const Box&) const;
 
-    Optional<LayoutUnit> top() const;
-    Optional<LayoutUnit> leftBottom() const { return bottom(Clear::Left); }
-    Optional<LayoutUnit> rightBottom() const { return bottom(Clear::Right); }
-    Optional<LayoutUnit> bottom() const { return bottom(Clear::Both); }
+    std::optional<LayoutUnit> top() const;
+    std::optional<LayoutUnit> leftBottom() const { return bottom(Clear::Left); }
+    std::optional<LayoutUnit> rightBottom() const { return bottom(Clear::Right); }
+    std::optional<LayoutUnit> bottom() const { return bottom(Clear::Both); }
 
     bool isEmpty() const { return m_floatingState.floats().isEmpty(); }
 
     struct Constraints {
-        Optional<PointInContextRoot> left;
-        Optional<PointInContextRoot> right;
+        std::optional<PointInContextRoot> left;
+        std::optional<PointInContextRoot> right;
     };
-    Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateHeight) const;
+    Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom) const;
 
     FloatingState::FloatItem toFloatItem(const Box& floatBox) const;
 
 private:
-    Optional<LayoutUnit> bottom(Clear) const;
+    std::optional<LayoutUnit> bottom(Clear) const;
 
     const LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }

@@ -72,27 +72,27 @@ void DisplayCaptureManagerCocoa::updateWindowCaptureDevices()
 #endif
 }
 
-Optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
 #if PLATFORM(MAC)
     return ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID(deviceID);
 #else
     UNUSED_PARAM(deviceID);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
-Optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID(const String& deviceID)
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID(const String& deviceID)
 {
 #if PLATFORM(MAC)
     return WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID(deviceID);
 #else
     UNUSED_PARAM(deviceID);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
-Optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
 {
     switch (type) {
     case CaptureDevice::DeviceType::Screen:
@@ -111,7 +111,7 @@ Optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentI
         break;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebCore

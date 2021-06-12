@@ -51,11 +51,7 @@ GStreamerAudioCapturer::GStreamerAudioCapturer()
 
 GstElement* GStreamerAudioCapturer::createConverter()
 {
-    auto converter = gst_parse_bin_from_description("audioconvert ! audioresample", TRUE, nullptr);
-
-    ASSERT(converter);
-
-    return converter;
+    return makeGStreamerBin("audioconvert ! audioresample", true);
 }
 
 bool GStreamerAudioCapturer::setSampleRate(int sampleRate)

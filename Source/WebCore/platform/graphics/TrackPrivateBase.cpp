@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
-Optional<uint64_t> TrackPrivateBase::trackUID() const
+std::optional<uint64_t> TrackPrivateBase::trackUID() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-Optional<bool> TrackPrivateBase::defaultEnabled() const
+std::optional<bool> TrackPrivateBase::defaultEnabled() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if !RELEASE_LOG_DISABLED

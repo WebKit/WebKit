@@ -250,7 +250,7 @@ inline void Node::setTabIndexState(TabIndexState state)
     setRareDataBitfields(bitfields);
 }
 
-void Element::setTabIndexExplicitly(Optional<int> tabIndex)
+void Element::setTabIndexExplicitly(std::optional<int> tabIndex)
 {
     if (!tabIndex) {
         setTabIndexState(TabIndexState::NotSet);
@@ -269,11 +269,11 @@ void Element::setTabIndexExplicitly(Optional<int> tabIndex)
     }());
 }
 
-Optional<int> Element::tabIndexSetExplicitly() const
+std::optional<int> Element::tabIndexSetExplicitly() const
 {
     switch (tabIndexState()) {
     case TabIndexState::NotSet:
-        return WTF::nullopt;
+        return std::nullopt;
     case TabIndexState::Zero:
         return 0;
     case TabIndexState::NegativeOne:
@@ -283,7 +283,7 @@ Optional<int> Element::tabIndexSetExplicitly() const
         return elementRareData()->unusualTabIndex();
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 int Element::defaultTabIndex() const
@@ -313,7 +313,7 @@ void Element::setTabIndexForBindings(int value)
 
 bool Element::isKeyboardFocusable(KeyboardEvent*) const
 {
-    if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().valueOr(0) >= 0))
+    if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().value_or(0) >= 0))
         return false;
     if (auto* root = shadowRoot()) {
         if (root->delegatesFocus())
@@ -821,9 +821,9 @@ void Element::setBeingDragged(bool flag)
     document().userActionElements().setBeingDragged(*this, flag);
 }
 
-inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogicalPosition> position, WritingMode writingMode, bool isLTR)
+inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode, bool isLTR)
 {
-    switch (position.valueOr(ScrollLogicalPosition::Nearest)) {
+    switch (position.value_or(ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start: {
         switch (writingMode) {
         case WritingMode::TopToBottom:
@@ -864,9 +864,9 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogica
     }
 }
 
-inline ScrollAlignment toScrollAlignmentForBlockDirection(Optional<ScrollLogicalPosition> position, WritingMode writingMode)
+inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
 {
-    switch (position.valueOr(ScrollLogicalPosition::Start)) {
+    switch (position.value_or(ScrollLogicalPosition::Start)) {
     case ScrollLogicalPosition::Start: {
         switch (writingMode) {
         case WritingMode::TopToBottom:
@@ -907,7 +907,7 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(Optional<ScrollLogical
     }
 }
 
-void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& arg)
+void Element::scrollIntoView(std::optional<Variant<bool, ScrollIntoViewOptions>>&& arg)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -936,7 +936,7 @@ void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& ar
         isHorizontal ? alignX : alignY,
         isHorizontal ? alignY : alignX,
         ShouldAllowCrossOriginScrolling::No,
-        options.behavior.valueOr(ScrollBehavior::Auto),
+        options.behavior.value_or(ScrollBehavior::Auto),
         SmoothScrollFeatureEnablement::Default
     };
     renderer()->scrollRectToVisible(absoluteBounds, insideFixed, visibleOptions);
@@ -1039,7 +1039,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
         clampToInteger(scrollToOptions.top.value() * renderer->style().effectiveZoom())
     );
 
-    auto animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), this) ? AnimatedScroll::Yes : AnimatedScroll::No;
+    auto animated = useSmoothScrolling(scrollToOptions.behavior.value_or(ScrollBehavior::Auto), this) ? AnimatedScroll::Yes : AnimatedScroll::No;
     auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod);
     renderer->setScrollPosition(scrollPosition, scrollPositionChangeOptions);
 }
@@ -1583,7 +1583,7 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
-static Optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(Element& element)
+static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(Element& element)
 {
     HTMLSelectElement* selectElement;
     bool isGroup;
@@ -1594,13 +1594,13 @@ static Optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(
         selectElement = downcast<HTMLOptGroupElement>(element).ownerSelectElement();
         isGroup = true;
     } else
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!selectElement || !selectElement->renderer() || !is<RenderListBox>(selectElement->renderer()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& renderer = downcast<RenderListBox>(*selectElement->renderer());
-    Optional<LayoutRect> boundingBox;
+    std::optional<LayoutRect> boundingBox;
     int optionIndex = 0;
     for (auto* item : selectElement->listItems()) {
         if (item == &element) {
@@ -1618,7 +1618,7 @@ static Optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(
     }
 
     if (!boundingBox)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return std::pair<RenderObject*, LayoutRect> { &renderer, boundingBox.value() };
 }
@@ -1646,7 +1646,7 @@ Ref<DOMRectList> Element::getClientRects()
     return DOMRectList::create(quads);
 }
 
-Optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWithoutLayout()
+std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWithoutLayout()
 {
     RenderObject* renderer = this->renderer();
     Vector<FloatQuad> quads;
@@ -1662,7 +1662,7 @@ Optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWitho
         renderBoxModelObject->absoluteQuads(quads);
 
     if (quads.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return std::make_pair(renderer, unitedBoundingBoxes(quads));
 }
@@ -1715,7 +1715,7 @@ const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const 
 }
 
 // https://dom.spec.whatwg.org/#dom-element-toggleattribute
-ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, Optional<bool> force)
+ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force)
 {
     if (!Document::isValidName(qualifiedName))
         return Exception { InvalidCharacterError };
@@ -2729,7 +2729,7 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
         builder.append(" id=\'", element.getIdAttribute(), '\'');
 
     if (element.hasClass()) {
-        builder.appendLiteral(" class=\'");
+        builder.append(" class=\'");
         size_t classNamesToDump = element.classNames().size();
         constexpr size_t maxNumClassNames = 7;
         bool addEllipsis = false;
@@ -4351,10 +4351,10 @@ void Element::didDetachRenderers()
     ASSERT(hasCustomStyleResolveCallbacks());
 }
 
-Optional<Style::ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
+std::optional<Style::ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Element::cloneAttributesFromElement(const Element& other)
@@ -4387,7 +4387,7 @@ void Element::cloneAttributesFromElement(const Element& other)
     // If 'other' has a mutable ElementData, convert it to an immutable one so we can share it between both elements.
     // We can only do this if there is no CSSOM wrapper for other's inline style, and there are no presentation attributes.
     if (is<UniqueElementData>(*other.m_elementData)
-        && !other.m_elementData->presentationAttributeStyle()
+        && !other.m_elementData->presentationalHintStyle()
         && (!other.m_elementData->inlineStyle() || !other.m_elementData->inlineStyle()->hasCSSOMWrapper()))
         const_cast<Element&>(other).m_elementData = downcast<UniqueElementData>(*other.m_elementData).makeShareableCopy();
 
@@ -4564,10 +4564,10 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
     return nullptr;
 }
 
-ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Strong<JSC::JSObject>&& keyframes, Optional<Variant<double, KeyframeAnimationOptions>>&& options)
+ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Strong<JSC::JSObject>&& keyframes, std::optional<Variant<double, KeyframeAnimationOptions>>&& options)
 {
     String id = "";
-    Optional<Variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
+    std::optional<Variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
     if (options) {
         auto optionsValue = options.value();
         Variant<double, KeyframeEffectOptions> keyframeEffectOptionsVariant;
@@ -4595,7 +4595,7 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     return animation;
 }
 
-Vector<RefPtr<WebAnimation>> Element::getAnimations(Optional<GetAnimationsOptions> options)
+Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsOptions> options)
 {
     // If we are to return animations in the subtree, we can get all of the document's animations and filter
     // animations targeting that are not registered on this element, one of its pseudo elements or a child's

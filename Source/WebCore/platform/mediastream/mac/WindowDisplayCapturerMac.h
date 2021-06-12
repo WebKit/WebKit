@@ -45,7 +45,7 @@ public:
     explicit WindowDisplayCapturerMac(uint32_t);
     virtual ~WindowDisplayCapturerMac() = default;
 
-    static Optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
+    static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
     static void windowCaptureDevices(Vector<CaptureDevice>&);
 
 private:

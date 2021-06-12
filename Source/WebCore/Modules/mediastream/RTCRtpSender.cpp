@@ -191,7 +191,7 @@ bool RTCRtpSender::isCreatedBy(const RTCPeerConnection& connection) const
     return &connection == m_connection.get();
 }
 
-Optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionContext& context, const String& kind)
+std::optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionContext& context, const String& kind)
 {
     return PeerConnectionBackend::senderCapabilities(context, kind);
 }
@@ -204,7 +204,7 @@ RTCDTMFSender* RTCRtpSender::dtmf()
     return m_dtmfSender.get();
 }
 
-Optional<RTCRtpTransceiverDirection> RTCRtpSender::currentTransceiverDirection() const
+std::optional<RTCRtpTransceiverDirection> RTCRtpSender::currentTransceiverDirection() const
 {
     if (!m_connection)
         return { };
@@ -246,7 +246,7 @@ ExceptionOr<void> RTCRtpSender::setTransform(std::unique_ptr<RTCRtpTransform>&& 
     return { };
 }
 
-Optional<RTCRtpTransform::Internal> RTCRtpSender::transform()
+std::optional<RTCRtpTransform::Internal> RTCRtpSender::transform()
 {
     if (!m_transform)
         return { };

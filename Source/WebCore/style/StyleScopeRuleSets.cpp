@@ -153,9 +153,9 @@ bool ScopeRuleSets::hasViewportDependentMediaQueries() const
     return false;
 }
 
-Optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
-    Optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
+    std::optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
 
     auto evaluate = [&](auto* ruleSet) {
         if (!ruleSet)
@@ -214,7 +214,7 @@ void ScopeRuleSets::collectFeatures() const
     m_attributeInvalidationRuleSets.clear();
     m_pseudoClassInvalidationRuleSets.clear();
 
-    m_cachedHasComplexSelectorsForStyleAttribute = WTF::nullopt;
+    m_cachedHasComplexSelectorsForStyleAttribute = std::nullopt;
 
     m_features.shrinkToFit();
 }

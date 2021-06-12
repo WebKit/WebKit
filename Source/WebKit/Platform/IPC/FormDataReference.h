@@ -67,23 +67,23 @@ public:
         encoder << sandboxExtensionHandles;
     }
 
-    static Optional<FormDataReference> decode(Decoder& decoder)
+    static std::optional<FormDataReference> decode(Decoder& decoder)
     {
-        Optional<bool> hasFormData;
+        std::optional<bool> hasFormData;
         decoder >> hasFormData;
         if (!hasFormData)
-            return WTF::nullopt;
+            return std::nullopt;
         if (!hasFormData.value())
             return FormDataReference { };
 
         auto formData = WebCore::FormData::decode(decoder);
         if (!formData)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<WebKit::SandboxExtension::HandleArray> sandboxExtensionHandles;
+        std::optional<WebKit::SandboxExtension::HandleArray> sandboxExtensionHandles;
         decoder >> sandboxExtensionHandles;
         if (!sandboxExtensionHandles)
-            return WTF::nullopt;
+            return std::nullopt;
 
         WebKit::SandboxExtension::consumePermanently(*sandboxExtensionHandles);
 

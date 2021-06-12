@@ -28,11 +28,7 @@
 
 #import "ArgumentCodersCocoa.h"
 #import "WebCoreArgumentCoders.h"
-#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
-SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 
 namespace WebKit {
 
@@ -43,11 +39,11 @@ void DataDetectionResult::encode(IPC::Encoder& encoder) const
     encoder << results;
 }
 
-Optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
+std::optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
 {
-    auto results = IPC::decode<NSArray>(decoder, @[ [NSArray class], getDDScannerResultClass() ]);
+    auto results = IPC::decode<NSArray>(decoder, @[ NSArray.class, PAL::getDDScannerResultClass() ]);
     if (!results)
-        return WTF::nullopt;
+        return std::nullopt;
 
     DataDetectionResult result;
     result.results = WTFMove(*results);

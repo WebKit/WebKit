@@ -27,13 +27,12 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 
-static Optional<uint32_t>& applicationSDKVersionOverride()
+static std::optional<uint32_t>& applicationSDKVersionOverride()
 {
-    static NeverDestroyed<Optional<uint32_t>> version;
+    static NeverDestroyed<std::optional<uint32_t>> version;
     return version;
 }
 

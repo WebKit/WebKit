@@ -39,7 +39,7 @@ struct ApplePayDetailsUpdateData {
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayDetailsUpdateData> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayDetailsUpdateData> decode(Decoder&);
 
     template<class Decoder> WARN_UNUSED_RETURN bool decodeData(Decoder&);
 };
@@ -55,11 +55,11 @@ void ApplePayDetailsUpdateData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayDetailsUpdateData> ApplePayDetailsUpdateData::decode(Decoder& decoder)
+std::optional<ApplePayDetailsUpdateData> ApplePayDetailsUpdateData::decode(Decoder& decoder)
 {
     ApplePayDetailsUpdateData result;
     if (!result.decodeData(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -67,7 +67,7 @@ template<class Decoder>
 bool ApplePayDetailsUpdateData::decodeData(Decoder& decoder)
 {
 #define DECODE(name, type) \
-    Optional<type> name; \
+    std::optional<type> name; \
     decoder >> name; \
     if (!name) \
         return false; \

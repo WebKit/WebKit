@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,6 @@ namespace IDBServer {
 
 enum class IsSchemaUpgraded : bool { No, Yes };
 
-class IDBSerializationContext;
 class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore final : public IDBBackingStore {
@@ -82,8 +81,6 @@ public:
     IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) final;
     IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
 
-    IDBSerializationContext& serializationContext() final;
-
     IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) final;
     void deleteBackingStore() final;
 
@@ -100,7 +97,7 @@ public:
 
     String databaseDirectory() const { return m_databaseDirectory; };
     static String fullDatabasePathForDirectory(const String&);
-    static Optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
+    static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 
@@ -109,12 +106,12 @@ private:
     String fullDatabasePath() const;
     String fullDatabaseDirectoryWithUpgrade();
 
-    bool ensureValidRecordsTable();
-    bool ensureValidIndexRecordsTable();
-    bool ensureValidIndexRecordsIndex();
-    bool ensureValidIndexRecordsRecordIndex();
-    bool ensureValidBlobTables();
-    Optional<IsSchemaUpgraded> ensureValidObjectStoreInfoTable();
+    IDBError ensureValidRecordsTable();
+    IDBError ensureValidIndexRecordsTable();
+    IDBError ensureValidIndexRecordsIndex();
+    IDBError ensureValidIndexRecordsRecordIndex();
+    IDBError ensureValidBlobTables();
+    std::optional<IsSchemaUpgraded> ensureValidObjectStoreInfoTable();
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
 
@@ -221,8 +218,6 @@ private:
 
     String m_databaseRootDirectory;
     String m_databaseDirectory;
-
-    Ref<IDBSerializationContext> m_serializationContext;
 };
 
 } // namespace IDBServer

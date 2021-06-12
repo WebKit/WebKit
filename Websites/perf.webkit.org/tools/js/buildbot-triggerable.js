@@ -7,7 +7,7 @@ require('./v3-models.js');
 let BuildbotSyncer = require('./buildbot-syncer').BuildbotSyncer;
 
 class BuildbotTriggerable {
-    constructor(config, remote, buildbotRemote, workerInfo, logger)
+    constructor(config, remote, buildbotRemote, workerInfo, maxRetryFactor, logger)
     {
         this._name = config.triggerableName;
         assert(typeof(this._name) == 'string', 'triggerableName must be specified');
@@ -25,6 +25,7 @@ class BuildbotTriggerable {
 
         this._syncers = null;
         this._logger = logger || {log: () => { }, error: () => { }};
+        this._maxRetryFactor = maxRetryFactor;
     }
 
     getBuilderNameToIDMap()
@@ -85,13 +86,22 @@ class BuildbotTriggerable {
         const validRequests = this._validateRequests(buildRequests);
         const buildRequestsByGroup = BuildbotTriggerable._testGroupMapForBuildRequests(buildRequests);
         let updates = await this._pullBuildbotOnAllSyncers(buildRequestsByGroup);
-        let rootReuseUpdates = {}
+        let rootReuseUpdates = { };
         this._logger.log('Scheduling builds');
         const testGroupList = Array.from(buildRequestsByGroup.values()).sort(function (a, b) { return a.groupOrder - b.groupOrder; });
 
-        await Promise.all(testGroupList.map((group) => [group, this._nextRequestInGroup(group, updates)])
-            .filter(([group, request]) => validRequests.has(request))
-            .map(([group, request]) => this._scheduleRequest(group, request, rootReuseUpdates)));
+        await Promise.all(Array.from(buildRequestsByGroup.keys()).map(testGroupId => TestGroup.fetchById(testGroupId, /* ignoreCache */ true)));
+        for (const group of testGroupList) {
+            const request = this._nextRequestInGroup(group, updates);
+            if (!validRequests.has(request))
+                continue;
+
+            const shouldDefer = this._shouldDeferSequentialTestRequestForNewCommitSet(request);
+            if (shouldDefer)
+                this._logger.log(`Defer scheduling build request "${request.id()}" until completed build requests for previous configuration meet the expectation or exhaust retry.`);
+            else
+                await this._scheduleRequest(group, request, rootReuseUpdates);
+        }
 
         // Pull all buildbots for the second time since the previous step may have scheduled more builds
         updates = await this._pullBuildbotOnAllSyncers(buildRequestsByGroup);
@@ -123,9 +133,39 @@ class BuildbotTriggerable {
             return;
         }
 
-        return await this._scheduleRequestIfWorkerIsAvailable(buildRequest, testGroup.requests,
+        return this._scheduleRequestIfWorkerIsAvailable(buildRequest, testGroup.requests,
             buildRequest.isBuild() ? testGroup.buildSyncer : testGroup.testSyncer,
             buildRequest.isBuild() ? testGroup.buildWorkerName : testGroup.testWorkerName);
+    }
+
+    _shouldDeferSequentialTestRequestForNewCommitSet(buildRequest)
+    {
+        if (buildRequest.isBuild())
+            return false;
+
+        const testGroup = buildRequest.testGroup();
+        if (testGroup.repetitionType() != 'sequential')
+            return false;
+
+        if (testGroup.isFirstTestRequest(buildRequest))
+            return false;
+
+        const precedingBuildRequest = testGroup.precedingBuildRequest(buildRequest);
+        console.assert(precedingBuildRequest && !precedingBuildRequest.isBuild());
+
+        const previousCommitSet = precedingBuildRequest.commitSet()
+        if (previousCommitSet === buildRequest.commitSet())
+            return false;
+
+        const allRequestsFailedForPreviousCommitSet = testGroup.requestsForCommitSet(previousCommitSet).every(request => !request.isTest() || request.hasFailed());
+        if (allRequestsFailedForPreviousCommitSet)
+            return false;
+
+        const repetitionLimit = testGroup.initialRepetitionCount() * this._maxRetryFactor;
+        if (testGroup.repetitionCountForCommitSet(previousCommitSet) >= repetitionLimit)
+            return false;
+
+        return testGroup.initialRepetitionCount() > testGroup.successfulTestCount(previousCommitSet);
     }
 
     _validateRequests(buildRequests)

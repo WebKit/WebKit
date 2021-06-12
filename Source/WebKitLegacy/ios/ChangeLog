@@ -1,3 +1,13 @@
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove WTF::Optional synonym for std::optional, using that class template directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=226433
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebChromeClientIOS.h: Let the do-webcore-rename script rename
+        Optional<> to std::optional<>.
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Stop using holdLock() in WebKit/WebKitLegacy/Tools as it is not compatible with Clang thread safety analysis

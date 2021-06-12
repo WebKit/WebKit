@@ -34,7 +34,7 @@
 #import "Encoder.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/TextIndicator.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebKit {
 
@@ -64,9 +64,9 @@ bool WebHitTestResultData::platformDecode(IPC::Decoder& decoder, WebHitTestResul
 
     if (!hasActionContext)
         return true;
-    ASSERT(DataDetectorsLibrary());
+    ASSERT(PAL::isDataDetectorsFrameworkAvailable());
 
-    auto detectedDataActionContext = IPC::decode<DDActionContext>(decoder, getDDActionContextClass());
+    auto detectedDataActionContext = IPC::decode<DDActionContext>(decoder, PAL::getDDActionContextClass());
     if (!detectedDataActionContext)
         return false;
 
@@ -83,7 +83,7 @@ bool WebHitTestResultData::platformDecode(IPC::Decoder& decoder, WebHitTestResul
         return false;
 
     if (hasDetectedDataTextIndicator) {
-        Optional<WebCore::TextIndicatorData> indicatorData;
+        std::optional<WebCore::TextIndicatorData> indicatorData;
         decoder >> indicatorData;
         if (!indicatorData)
             return false;

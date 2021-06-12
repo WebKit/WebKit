@@ -149,7 +149,7 @@ IntSize IntRect::differenceToPoint(const IntPoint& point) const
 
 bool IntRect::isValid() const
 {
-    Checked<int, RecordOverflow> max = m_location.x();
+    CheckedInt32 max = m_location.x();
     max += m_size.width();
     if (max.hasOverflowed())
         return false;

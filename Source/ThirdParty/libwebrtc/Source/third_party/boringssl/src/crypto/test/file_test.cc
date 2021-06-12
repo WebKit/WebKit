@@ -179,7 +179,7 @@ FileTest::ReadResult FileTest::ReadNext() {
       kv = std::string(kv.begin() + 1, kv.end() - 1);
 
       for (;;) {
-        size_t idx = kv.find(",");
+        size_t idx = kv.find(',');
         if (idx == std::string::npos) {
           idx = kv.size();
         }
@@ -205,11 +205,10 @@ FileTest::ReadResult FileTest::ReadNext() {
 
       // Duplicate keys are rewritten to have “/2”, “/3”, … suffixes.
       std::string mapped_key = key;
-      for (unsigned i = 2; attributes_.count(mapped_key) != 0; i++) {
-        char suffix[32];
-        snprintf(suffix, sizeof(suffix), "/%u", i);
-        suffix[sizeof(suffix)-1] = 0;
-        mapped_key = key + suffix;
+      // If absent, the value will be zero-initialized.
+      const size_t num_occurrences = ++attribute_count_[key];
+      if (num_occurrences > 1) {
+        mapped_key += "/" + std::to_string(num_occurrences);
       }
 
       unused_attributes_.insert(mapped_key);
@@ -317,6 +316,7 @@ void FileTest::ClearTest() {
   start_line_ = 0;
   type_.clear();
   parameter_.clear();
+  attribute_count_.clear();
   attributes_.clear();
   unused_attributes_.clear();
   unused_instructions_.clear();

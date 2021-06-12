@@ -60,7 +60,7 @@ private:
         bool hasWildcard { false };
     };
     struct Port {
-        Optional<uint16_t> value;
+        std::optional<uint16_t> value;
         bool hasWildcard { false };
     };
     struct Source {
@@ -73,11 +73,11 @@ private:
     bool isProtocolAllowedByStar(const URL&) const;
 
     template<typename CharacterType> void parse(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> Optional<Source> parseSource(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> Optional<String> parseScheme(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> Optional<Host> parseHost(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> Optional<Port> parsePort(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> Optional<String> parsePath(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<Source> parseSource(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<String> parseScheme(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<Host> parseHost(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<Port> parsePort(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<String> parsePath(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> bool parseNonceSource(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> bool parseHashSource(StringParsingBuffer<CharacterType>);
 

@@ -103,7 +103,7 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
     unsigned internalName = 0;
     unsigned internalLengthBase = descriptor.bindings.size();
     for (const auto& binding : descriptor.bindings) {
-        Optional<unsigned> extraIndex;
+        std::optional<unsigned> extraIndex;
         auto internalDetails = ([&]() -> GPUBindGroupLayout::InternalBindingDetails {
             switch (binding.type) {
             case GPUBindingType::UniformBuffer:

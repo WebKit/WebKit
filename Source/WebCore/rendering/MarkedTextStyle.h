@@ -29,7 +29,6 @@
 #include "ShadowData.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -53,7 +52,7 @@ struct MarkedTextStyle {
     Color backgroundColor;
     TextPaintStyle textStyles;
     TextDecorationPainter::Styles textDecorationStyles;
-    Optional<ShadowData> textShadow;
+    std::optional<ShadowData> textShadow;
     float alpha;
 };
 

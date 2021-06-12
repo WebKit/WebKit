@@ -31,8 +31,8 @@
 #include "StorageManager.h"
 #include <WebCore/SecurityOriginData.h>
 #include <pal/SessionID.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/WeakPtr.h>
 
 using WebCore::SecurityOriginData;
@@ -41,7 +41,7 @@ namespace WebKit {
 
 class SandboxExtension;
 
-using ConnectToStorageAreaCallback = CompletionHandler<void(const Optional<StorageAreaIdentifier>&)>;
+using ConnectToStorageAreaCallback = CompletionHandler<void(const std::optional<StorageAreaIdentifier>&)>;
 using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
 using GetOriginsCallback = CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>;
 using GetOriginDetailsCallback = CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>;
@@ -104,8 +104,8 @@ private:
         Suspended
     };
     State m_state { State::Running };
-    CheckedLock m_stateLock;
-    CheckedCondition m_stateChangeCondition;
+    Lock m_stateLock;
+    Condition m_stateChangeCondition;
 };
 
 } // namespace WebKit

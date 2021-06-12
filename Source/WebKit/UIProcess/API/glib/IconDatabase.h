@@ -46,7 +46,7 @@ public:
     void checkIconURLAndSetPageURLIfNeeded(const String& iconURL, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool, bool)>&&);
     void loadIconForPageURL(const String&, AllowDatabaseWrite, CompletionHandler<void(WebCore::PlatformImagePtr&&)>&&);
     String iconURLForPageURL(const String&);
-    void setIconForPageURL(const String& iconURL, const unsigned char*, size_t, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
+    void setIconForPageURL(const String& iconURL, const uint8_t*, size_t, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
     void clear(CompletionHandler<void()>&&);
 
 private:
@@ -59,10 +59,10 @@ private:
     void clearStatements();
     void clearLoadedIconsTimerFired();
     void startClearLoadedIconsTimer();
-    Optional<int64_t> iconIDForIconURL(const String&, bool& expired);
+    std::optional<int64_t> iconIDForIconURL(const String&, bool& expired);
     bool setIconIDForPageURL(int64_t, const String&);
     Vector<uint8_t> iconData(int64_t);
-    Optional<int64_t> addIcon(const String&, const Vector<char>&);
+    std::optional<int64_t> addIcon(const String&, const Vector<uint8_t>&);
     void updateIconTimestamp(int64_t iconID, int64_t timestamp);
     void deleteIcon(int64_t);
 
@@ -71,7 +71,7 @@ private:
     WebCore::SQLiteDatabase m_db;
     HashMap<String, String> m_pageURLToIconURLMap;
     Lock m_pageURLToIconURLMapLock;
-    HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons;
+    HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);
     Lock m_loadedIconsLock;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_iconIDForIconURLStatement;

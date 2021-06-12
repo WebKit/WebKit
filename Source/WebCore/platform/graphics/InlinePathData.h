@@ -28,7 +28,6 @@
 #if ENABLE(INLINE_PATH_DATA)
 
 #include "FloatPoint.h"
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ struct LineData {
     FloatPoint end;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<LineData> decode(Decoder&);
+    template<class Decoder> static std::optional<LineData> decode(Decoder&);
 };
 
 struct ArcData {
@@ -57,14 +56,14 @@ struct ArcData {
     Type type { Type::ArcOnly };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ArcData> decode(Decoder&);
+    template<class Decoder> static std::optional<ArcData> decode(Decoder&);
 };
 
 struct MoveData {
     FloatPoint location;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MoveData> decode(Decoder&);
+    template<class Decoder> static std::optional<MoveData> decode(Decoder&);
 };
 
 struct QuadCurveData {
@@ -73,7 +72,7 @@ struct QuadCurveData {
     FloatPoint endPoint;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<QuadCurveData> decode(Decoder&);
+    template<class Decoder> static std::optional<QuadCurveData> decode(Decoder&);
 };
 
 struct BezierCurveData {
@@ -83,7 +82,7 @@ struct BezierCurveData {
     FloatPoint endPoint;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<BezierCurveData> decode(Decoder&);
+    template<class Decoder> static std::optional<BezierCurveData> decode(Decoder&);
 };
 
 template<class Encoder> void MoveData::encode(Encoder& encoder) const
@@ -91,11 +90,11 @@ template<class Encoder> void MoveData::encode(Encoder& encoder) const
     encoder << location;
 }
 
-template<class Decoder> Optional<MoveData> MoveData::decode(Decoder& decoder)
+template<class Decoder> std::optional<MoveData> MoveData::decode(Decoder& decoder)
 {
     MoveData data;
     if (!decoder.decode(data.location))
-        return WTF::nullopt;
+        return std::nullopt;
     return data;
 }
 
@@ -105,14 +104,14 @@ template<class Encoder> void LineData::encode(Encoder& encoder) const
     encoder << end;
 }
 
-template<class Decoder> Optional<LineData> LineData::decode(Decoder& decoder)
+template<class Decoder> std::optional<LineData> LineData::decode(Decoder& decoder)
 {
     LineData data;
     if (!decoder.decode(data.start))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.end))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -128,29 +127,29 @@ template<class Encoder> void ArcData::encode(Encoder& encoder) const
     encoder << type;
 }
 
-template<class Decoder> Optional<ArcData> ArcData::decode(Decoder& decoder)
+template<class Decoder> std::optional<ArcData> ArcData::decode(Decoder& decoder)
 {
     ArcData data;
     if (!decoder.decode(data.start))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.center))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.radius))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.startAngle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.endAngle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.clockwise))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -162,17 +161,17 @@ template<class Encoder> void QuadCurveData::encode(Encoder& encoder) const
     encoder << endPoint;
 }
 
-template<class Decoder> Optional<QuadCurveData> QuadCurveData::decode(Decoder& decoder)
+template<class Decoder> std::optional<QuadCurveData> QuadCurveData::decode(Decoder& decoder)
 {
     QuadCurveData data;
     if (!decoder.decode(data.startPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.controlPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.endPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -185,20 +184,20 @@ template<class Encoder> void BezierCurveData::encode(Encoder& encoder) const
     encoder << endPoint;
 }
 
-template<class Decoder> Optional<BezierCurveData> BezierCurveData::decode(Decoder& decoder)
+template<class Decoder> std::optional<BezierCurveData> BezierCurveData::decode(Decoder& decoder)
 {
     BezierCurveData data;
     if (!decoder.decode(data.startPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.controlPoint1))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.controlPoint2))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.endPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }

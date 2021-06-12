@@ -146,7 +146,7 @@ void CacheStorageEngineConnection::dereference(uint64_t cacheIdentifier)
     m_cachesLocks.remove(referenceResult);
 }
 
-void CacheStorageEngineConnection::clearMemoryRepresentation(WebCore::ClientOrigin&& origin, CompletionHandler<void(Optional<Error>&&)>&& completionHandler)
+void CacheStorageEngineConnection::clearMemoryRepresentation(WebCore::ClientOrigin&& origin, CompletionHandler<void(std::optional<Error>&&)>&& completionHandler)
 {
     Engine::clearMemoryRepresentation(m_connection.networkProcess(), sessionID(), WTFMove(origin), WTFMove(completionHandler));
 }

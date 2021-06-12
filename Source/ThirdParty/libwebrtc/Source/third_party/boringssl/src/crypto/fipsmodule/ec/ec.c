@@ -797,6 +797,12 @@ int EC_POINT_get_affine_coordinates_GFp(const EC_GROUP *group,
   return 1;
 }
 
+int EC_POINT_get_affine_coordinates(const EC_GROUP *group,
+                                    const EC_POINT *point, BIGNUM *x, BIGNUM *y,
+                                    BN_CTX *ctx) {
+  return EC_POINT_get_affine_coordinates_GFp(group, point, x, y, ctx);
+}
+
 void ec_affine_to_jacobian(const EC_GROUP *group, EC_RAW_POINT *out,
                            const EC_AFFINE *p) {
   out->X = p->X;
@@ -877,6 +883,12 @@ int EC_POINT_set_affine_coordinates_GFp(const EC_GROUP *group, EC_POINT *point,
 
   ec_affine_to_jacobian(group, &point->raw, &affine);
   return 1;
+}
+
+int EC_POINT_set_affine_coordinates(const EC_GROUP *group, EC_POINT *point,
+                                    const BIGNUM *x, const BIGNUM *y,
+                                    BN_CTX *ctx) {
+  return EC_POINT_set_affine_coordinates_GFp(group, point, x, y, ctx);
 }
 
 int EC_POINT_add(const EC_GROUP *group, EC_POINT *r, const EC_POINT *a,
@@ -1219,6 +1231,10 @@ void ec_set_to_safe_point(const EC_GROUP *group, EC_RAW_POINT *out) {
 }
 
 void EC_GROUP_set_asn1_flag(EC_GROUP *group, int flag) {}
+
+int EC_GROUP_get_asn1_flag(const EC_GROUP *group) {
+  return OPENSSL_EC_NAMED_CURVE;
+}
 
 const EC_METHOD *EC_GROUP_method_of(const EC_GROUP *group) {
   // This function exists purely to give callers a way to call

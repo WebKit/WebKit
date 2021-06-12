@@ -29,13 +29,13 @@
 #include "IDBDatabaseNameAndVersionRequest.h"
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -115,8 +115,8 @@ public:
     void ref();
     void deref();
 
-    void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(Optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
-    void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, Optional<Vector<IDBDatabaseNameAndVersion>>&&);
+    void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
+    void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, std::optional<Vector<IDBDatabaseNameAndVersion>>&&);
 
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);
@@ -156,12 +156,12 @@ private:
     IDBConnectionToServer& m_connectionToServer;
     IDBConnectionIdentifier m_serverConnectionIdentifier;
 
-    CheckedLock m_databaseConnectionMapLock;
-    CheckedLock m_openDBRequestMapLock;
-    CheckedLock m_transactionMapLock;
-    CheckedLock m_transactionOperationLock;
-    CheckedLock m_databaseInfoMapLock;
-    CheckedLock m_mainThreadTaskLock;
+    Lock m_databaseConnectionMapLock;
+    Lock m_openDBRequestMapLock;
+    Lock m_transactionMapLock;
+    Lock m_transactionOperationLock;
+    Lock m_databaseInfoMapLock;
+    Lock m_mainThreadTaskLock;
 
     HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap WTF_GUARDED_BY_LOCK(m_databaseConnectionMapLock);
     HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap WTF_GUARDED_BY_LOCK(m_openDBRequestMapLock);

@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingConstraints.h"
 #include "LayoutContainerBox.h"
 #include "LayoutUnit.h"
 #include "LayoutUnits.h"
@@ -42,9 +43,13 @@ namespace Layout {
 
 class BoxGeometry;
 class ContainerBox;
+struct ConstraintsForInFlowContent;
+struct ConstraintsForOutOfFlowContent;
+struct HorizontalConstraints;
 class FormattingGeometry;
 class FormattingState;
 class FormattingQuirks;
+struct IntrinsicWidthConstraints;
 class InvalidationState;
 class LayoutState;
 
@@ -61,6 +66,8 @@ public:
     const ContainerBox& root() const { return *m_root; }
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
+    virtual const FormattingGeometry& formattingGeometry() const = 0;
+    virtual const FormattingQuirks& formattingQuirks() const = 0;
 
     enum class EscapeReason {
         TableQuirkNeedsGeometryFromEstablishedFormattingContext,
@@ -71,7 +78,7 @@ public:
         BodyStretchesToViewportQuirk,
         TableNeedsAccessToTableWrapper
     };
-    const BoxGeometry& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;
+    const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
@@ -91,9 +98,6 @@ protected:
 
     using LayoutQueue = Vector<const Box*>;
 private:
-    FormattingGeometry geometry() const;
-    FormattingQuirks quirks() const;
-
     void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
     void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);

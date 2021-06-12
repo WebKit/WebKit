@@ -32,6 +32,7 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Observer.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -56,6 +57,10 @@ public:
     static UniqueRef<AudioSession> create();
     static void setSharedSession(UniqueRef<AudioSession>&&);
     static AudioSession& sharedSession();
+
+    using ChangedObserver = WTF::Observer<void(AudioSession&)>;
+    static void addAudioSessionChangedObserver(const ChangedObserver&);
+
     virtual ~AudioSession();
 
     enum class CategoryType : uint8_t {
@@ -97,7 +102,7 @@ public:
     virtual void removeMutedStateObserver(MutedStateObserver*) { }
 
     virtual void audioOutputDeviceChanged();
-    virtual void setIsPlayingToBluetoothOverride(Optional<bool>);
+    virtual void setIsPlayingToBluetoothOverride(std::optional<bool>);
 
     virtual bool isMuted() const { return false; }
     virtual void handleMutedStateChange() { }

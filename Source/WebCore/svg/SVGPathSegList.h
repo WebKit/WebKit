@@ -210,7 +210,7 @@ private:
     }
 
     void clearPathByteStream() { m_pathByteStream.clear(); }
-    void clearPath() { m_path = WTF::nullopt; }
+    void clearPath() { m_path = std::nullopt; }
 
     void pathByteStreamWillChange()
     {
@@ -225,7 +225,7 @@ private:
     }
 
     SVGPathByteStream m_pathByteStream;
-    mutable Optional<Path> m_path;
+    mutable std::optional<Path> m_path;
 };
 
 }

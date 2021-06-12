@@ -125,7 +125,7 @@ struct VPCodecConfigurationRecord {
     uint8_t matrixCoefficients { VPConfigurationMatrixCoefficients::BT_709_6 };
 };
 
-WEBCORE_EXPORT Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
+WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
 
 struct ScreenDataOverrides {
     double width { 0 };
@@ -141,17 +141,17 @@ struct ScreenDataOverrides {
     }
 
     template <class Decoder>
-    static Optional<ScreenDataOverrides> decode(Decoder& decoder)
+    static std::optional<ScreenDataOverrides> decode(Decoder& decoder)
     {
 #define DECODE(name, type) \
-    Optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return WTF::nullopt; \
+        std::optional<type> name; \
+        decoder >> name; \
+        if (!name) \
+            return std::nullopt; \
 
-    DECODE(width, double);
-    DECODE(height, double);
-    DECODE(scale, double);
+        DECODE(width, double);
+        DECODE(height, double);
+        DECODE(scale, double);
 #undef DECODE
 
     return {{ WTFMove(*width), WTFMove(*height), WTFMove(*scale) }};
@@ -163,5 +163,9 @@ inline bool operator==(const ScreenDataOverrides& a, const ScreenDataOverrides& 
     return a.width == b.width && a.height == b.height && a.scale == b.scale;
 }
 
+inline bool operator!=(const ScreenDataOverrides& a, const ScreenDataOverrides& b)
+{
+    return !(a == b);
+}
 
 }

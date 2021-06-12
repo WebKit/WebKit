@@ -47,17 +47,17 @@
 
 namespace WebCore {
 
-GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
+GraphicsContextDirect2D::GraphicsContextDirect2D(HDC hdc, bool hasAlpha)
 {
     platformInit(hdc, hasAlpha);
 }
 
-GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RECT rect, bool hasAlpha)
+GraphicsContextDirect2D::GraphicsContextDirect2D(HDC hdc, ID2D1DCRenderTarget** renderTarget, RECT rect, bool hasAlpha)
 {
     // Create a DC render target.
     auto targetProperties = Direct2D::renderTargetProperties();
 
-    HRESULT hr = GraphicsContext::systemFactory()->CreateDCRenderTarget(&targetProperties, renderTarget);
+    HRESULT hr = GraphicsContextDirect2D::systemFactory()->CreateDCRenderTarget(&targetProperties, renderTarget);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
     (*renderTarget)->BindDC(hdc, &rect);
@@ -67,12 +67,12 @@ GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RE
     m_data->m_hdc = hdc;
 }
 
-GraphicsContext::GraphicsContext(PlatformContextDirect2D* platformGraphicsContext, BitmapRenderingContextType rendererType)
+GraphicsContextDirect2D::GraphicsContextDirect2D(PlatformContextDirect2D* platformGraphicsContext, BitmapRenderingContextType rendererType)
 {
     platformInit(platformGraphicsContext, rendererType);
 }
 
-ID2D1Factory* GraphicsContext::systemFactory()
+ID2D1Factory* GraphicsContextDirect2D::systemFactory()
 {
     static ID2D1Factory* direct2DFactory = nullptr;
     if (!direct2DFactory) {
@@ -89,7 +89,7 @@ ID2D1Factory* GraphicsContext::systemFactory()
     return direct2DFactory;
 }
 
-ID2D1RenderTarget* GraphicsContext::defaultRenderTarget()
+ID2D1RenderTarget* GraphicsContextDirect2D::defaultRenderTarget()
 {
     static ID2D1RenderTarget* defaultRenderTarget = nullptr;
     if (!defaultRenderTarget) {
@@ -104,7 +104,7 @@ ID2D1RenderTarget* GraphicsContext::defaultRenderTarget()
     return defaultRenderTarget;
 }
 
-void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
+void GraphicsContextDirect2D::platformInit(HDC hdc, bool hasAlpha)
 {
     if (!hdc)
         return;
@@ -136,12 +136,12 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
     // FIXME: m_state.imageInterpolationQuality = convertInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
 }
 
-void GraphicsContext::platformInit(PlatformContextDirect2D* platformContext)
+void GraphicsContextDirect2D::platformInit(PlatformContextDirect2D* platformContext)
 {
     platformInit(platformContext, BitmapRenderingContextType::GPUMemory);
 }
 
-void GraphicsContext::platformInit(PlatformContextDirect2D* platformContext, BitmapRenderingContextType renderingType)
+void GraphicsContextDirect2D::platformInit(PlatformContextDirect2D* platformContext, BitmapRenderingContextType renderingType)
 {
     if (!platformContext)
         return;
@@ -155,16 +155,13 @@ void GraphicsContext::platformInit(PlatformContextDirect2D* platformContext, Bit
     // FIXME: m_state.imageInterpolationQuality = convertInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
 }
 
-void GraphicsContext::platformDestroy()
+GraphicsContextDirect2D::~GraphicsContextDirect2D()
 {
     delete m_data;
 }
 
-PlatformContextDirect2D* GraphicsContext::platformContext() const
+PlatformContextDirect2D* GraphicsContextDirect2D::platformContext() const
 {
-    if (m_impl)
-        return m_impl->platformContext();
-    ASSERT(!paintingDisabled());
     return &m_data->platformContext();
 }
 
@@ -195,33 +192,28 @@ float GraphicsContextPlatformPrivate::currentGlobalAlpha() const
     return m_alpha;
 }
 
-void GraphicsContext::savePlatformState()
+void GraphicsContextDirect2D::save()
 {
-    ASSERT(hasPlatformContext());
+    GraphicsContext::save();
     Direct2D::save(*platformContext());
 }
 
-void GraphicsContext::restorePlatformState()
+void GraphicsContextDirect2D::restore()
 {
-    ASSERT(hasPlatformContext());
+    GraphicsContext::restore();
     Direct2D::restore(*platformContext());
 }
 
-void GraphicsContext::drawPlatformImage(const COMPtr<ID2D1Bitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContextDirect2D::drawNativeImage(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    if (paintingDisabled())
-        return;
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
-    Direct2D::drawNativeImage(*platformContext(), image.get(), imageSize, destRect, srcRect, options, state.alpha, Direct2D::ShadowState(state));
+    Direct2D::drawNativeImage(*platformContext(), nativeImage.platformImage().get(), imageSize, destRect, srcRect, options, state.alpha, Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
+void GraphicsContextDirect2D::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
 {
-    bool createdBitmap = m_impl || !m_data->m_hdc || isInTransparencyLayer();
+    bool createdBitmap = !m_data->m_hdc || isInTransparencyLayer();
     if (!createdBitmap) {
-        ASSERT(hasPlatformContext());
         Direct2D::restore(*platformContext());
         return;
     }
@@ -262,34 +254,31 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     ::DeleteDC(hdc);
 }
 
-void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& point)
+void GraphicsContextDirect2D::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void GraphicsContextDirect2D::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
 }
 
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void GraphicsContextDirect2D::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
+    Direct2D::drawDotsForDocumentMarker(m_platformContext, rect, style);
 }
 
-void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
-{
-}
-
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(PlatformContextDirect2D& platformContext, GraphicsContext::BitmapRenderingContextType renderingType)
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(PlatformContextDirect2D& platformContext, GraphicsContextDirect2D::BitmapRenderingContextType renderingType)
     : m_platformContext(platformContext)
     , m_rendererType(renderingType)
 {
     if (!m_platformContext.renderTarget())
         return;
 
-    if (m_rendererType == GraphicsContext::BitmapRenderingContextType::GPUMemory)
+    if (m_rendererType == GraphicsContextDirect2D::BitmapRenderingContextType::GPUMemory)
         beginDraw();
 }
 
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(std::unique_ptr<PlatformContextDirect2D>&& ownedPlatformContext, GraphicsContext::BitmapRenderingContextType renderingType)
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(std::unique_ptr<PlatformContextDirect2D>&& ownedPlatformContext, GraphicsContextDirect2D::BitmapRenderingContextType renderingType)
     : m_ownedPlatformContext(WTFMove(ownedPlatformContext))
     , m_platformContext(*m_ownedPlatformContext)
     , m_rendererType(renderingType)
@@ -297,7 +286,7 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(std::unique_ptr<P
     if (!m_platformContext.renderTarget())
         return;
 
-    if (m_rendererType == GraphicsContext::BitmapRenderingContextType::GPUMemory)
+    if (m_rendererType == GraphicsContextDirect2D::BitmapRenderingContextType::GPUMemory)
         beginDraw();
 }
 
@@ -310,9 +299,8 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
         endDraw();
 }
 
-ID2D1SolidColorBrush* GraphicsContext::brushWithColor(const Color& color)
+ID2D1SolidColorBrush* GraphicsContextDirect2D::brushWithColor(const Color& color)
 {
-    ASSERT(hasPlatformContext());
     return platformContext()->brushWithColor(colorWithGlobalAlpha(color)).get();
 }
 
@@ -372,73 +360,60 @@ void GraphicsContextPlatformPrivate::rotate(float angle)
 {
 }
 
-D2D1_COLOR_F GraphicsContext::colorWithGlobalAlpha(const Color& color) const
+D2D1_COLOR_F GraphicsContextDirect2D::colorWithGlobalAlpha(const Color& color) const
 {
     auto [r, g, b, a] = color.toSRGBALossy<float>();
     return D2D1::ColorF(r, g, b, a * m_data->currentGlobalAlpha());
 }
 
-ID2D1Brush* GraphicsContext::solidStrokeBrush() const
+ID2D1Brush* GraphicsContextDirect2D::solidStrokeBrush() const
 {
     return platformContext()->m_solidStrokeBrush.get();
 }
 
-ID2D1Brush* GraphicsContext::solidFillBrush() const
+ID2D1Brush* GraphicsContextDirect2D::solidFillBrush() const
 {
     return platformContext()->m_solidFillBrush.get();
 }
 
-ID2D1Brush* GraphicsContext::patternStrokeBrush() const
+ID2D1Brush* GraphicsContextDirect2D::patternStrokeBrush() const
 {
     return platformContext()->m_patternStrokeBrush.get();
 }
 
-ID2D1Brush* GraphicsContext::patternFillBrush() const
+ID2D1Brush* GraphicsContextDirect2D::patternFillBrush() const
 {
     return platformContext()->m_patternFillBrush.get();
 }
 
-void GraphicsContext::beginDraw()
+void GraphicsContextDirect2D::beginDraw()
 {
-    ASSERT(hasPlatformContext());
     platformContext()->beginDraw();
 }
 
-void GraphicsContext::endDraw()
+void GraphicsContextDirect2D::endDraw()
 {
-    ASSERT(hasPlatformContext());
     platformContext()->endDraw();
 }
 
-void GraphicsContext::flush()
+void GraphicsContextDirect2D::flush()
 {
     ASSERT(hasPlatformContext());
     Direct2D::flush(*platformContext());
 }
 
-void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContextDirect2D::drawPattern(const PlatformImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    if (paintingDisabled() || !patternTransform.isInvertible())
+    if (!patternTransform.isInvertible())
         return;
-
-    ASSERT(hasPlatformContext());
     auto tileImage = image;
     Direct2D::drawPattern(*platformContext(), WTFMove(tileImage), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options.compositeOperator(), options.blendMode());
 }
 
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
+void GraphicsContextDirect2D::drawRect(const FloatRect& rect, float borderThickness)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->drawRect(rect, borderThickness);
-        return;
-    }
-
     ASSERT(!rect.isEmpty());
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     Direct2D::drawRect(*platformContext(), rect, borderThickness, state.fillColor, state.strokeStyle, state.strokeColor);
 }
@@ -490,52 +465,29 @@ D2D1_STROKE_STYLE_PROPERTIES GraphicsContextPlatformPrivate::strokeStyleProperti
     return D2D1::StrokeStyleProperties(m_platformContext.m_lineCap, m_platformContext.m_lineCap, m_platformContext.m_lineCap, m_platformContext.m_lineJoin, m_platformContext.m_miterLimit, D2D1_DASH_STYLE_SOLID, 0.0f);
 }
 
-ID2D1StrokeStyle* GraphicsContext::platformStrokeStyle() const
+ID2D1StrokeStyle* GraphicsContextDirect2D::strokeStyle() const
 {
     ASSERT(hasPlatformContext());
     return platformContext()->strokeStyle();
 }
 
 // This is only used to draw borders.
-void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point2)
+void GraphicsContextDirect2D::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
-    if (paintingDisabled())
-        return;
-
     if (strokeStyle() == NoStroke)
         return;
-
-    if (m_impl) {
-        m_impl->drawLine(point1, point2);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     Direct2D::drawLine(*platformContext(), point1, point2, state.strokeStyle, state.strokeColor, state.strokeThickness, state.shouldAntialias);
 }
 
-void GraphicsContext::drawEllipse(const FloatRect& rect)
+void GraphicsContextDirect2D::drawEllipse(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->drawEllipse(rect);
-        return;
-    }
-
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     Direct2D::fillEllipse(*platformContext(), rect, state.fillColor, state.strokeStyle, state.strokeColor, state.strokeThickness);
 }
 
-void GraphicsContext::applyStrokePattern()
+void GraphicsContextDirect2D::applyStrokePattern()
 {
-    if (paintingDisabled())
-        return;
-
     auto context = platformContext();
     AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
 
@@ -543,11 +495,8 @@ void GraphicsContext::applyStrokePattern()
     platformContext()->m_patternStrokeBrush = adoptCOM(m_state.strokePattern->createPlatformPattern(*this, patternAlpha, userToBaseCTM));
 }
 
-void GraphicsContext::applyFillPattern()
+void GraphicsContextDirect2D::applyFillPattern()
 {
-    if (paintingDisabled())
-        return;
-
     auto context = platformContext();
     AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
 
@@ -555,179 +504,104 @@ void GraphicsContext::applyFillPattern()
     platformContext()->m_patternFillBrush = adoptCOM(m_state.fillPattern->createPlatformPattern(*this, patternAlpha, userToBaseCTM));
 }
 
-void GraphicsContext::drawPath(const Path& path)
+void GraphicsContextDirect2D::drawPath(const Path& path)
 {
-    if (paintingDisabled() || path.isEmpty())
+    if (path.isEmpty())
         return;
 
-    if (m_impl) {
-        m_impl->drawPath(path);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
     Direct2D::drawPath(context, path, Direct2D::StrokeSource(state, *this), Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::fillPath(const Path& path)
+void GraphicsContextDirect2D::fillPath(const Path& path)
 {
-    if (paintingDisabled() || path.isEmpty())
+    if (path.isEmpty())
         return;
 
-    if (m_impl) {
-        m_impl->fillPath(path);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
     Direct2D::fillPath(context, path, Direct2D::FillSource(state, *this), Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::strokePath(const Path& path)
+void GraphicsContextDirect2D::strokePath(const Path& path)
 {
-    if (paintingDisabled() || path.isEmpty())
+    if (path.isEmpty())
         return;
 
-    if (m_impl) {
-        m_impl->strokePath(path);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
     Direct2D::strokePath(context, path, Direct2D::StrokeSource(state, *this), Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect)
+void GraphicsContextDirect2D::fillRect(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->fillRect(rect);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
     Direct2D::fillRect(context, rect, Direct2D::FillSource(state, *this), Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
+void GraphicsContextDirect2D::fillRect(const FloatRect& rect, const Color& color)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->fillRect(rect, color);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
     Direct2D::fillRect(context, rect, color, Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, const Color& color)
+void GraphicsContextDirect2D::fillRect(const FloatRect& rect, Gradient& gradient)
 {
-    if (paintingDisabled())
+    auto brush = gradient.createBrush(m_platformContext.renderTarget());
+    if (!brush)
         return;
 
-    ASSERT(!m_impl);
+    Direct2D::fillRectWithGradient(m_platformContext, rect, brush.get());
+}
 
-    ASSERT(hasPlatformContext());
+void GraphicsContextDirect2D::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
+{
+    auto& state = graphicsContext().state();
+    CompositeOperator previousOperator = state.compositeOperator;
+
+    Direct2D::State::setCompositeOperation(m_platformContext, compositeOperator, blendMode);
+    Direct2D::fillRect(m_platformContext, rect, color, Direct2D::ShadowState(state));
+    Direct2D::State::setCompositeOperation(m_platformContext, previousOperator, BlendMode::Normal);
+}
+
+void GraphicsContextDirect2D::fillRoundedRectImpl(const FloatRoundedRect& rect, const Color& color)
+{
     auto& state = this->state();
     Direct2D::fillRoundedRect(*platformContext(), rect, color, Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
+void GraphicsContextDirect2D::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->fillRectWithRoundedHole(rect, roundedHoleRect, color);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
     Direct2D::fillRectWithRoundedHole(context, rect, roundedHoleRect, Direct2D::FillSource(state, *this), Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::clip(const FloatRect& rect)
+void GraphicsContextDirect2D::clip(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->clip(rect);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::clip(*platformContext(), rect);
 }
 
-void GraphicsContext::clipOut(const FloatRect& rect)
+void GraphicsContextDirect2D::clipOut(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->clipOut(rect);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::clipOut(*platformContext(), rect);
 }
 
-void GraphicsContext::clipOut(const Path& path)
+void GraphicsContextDirect2D::clipOut(const Path& path)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->clipOut(path);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::clipOut(*platformContext(), path);
 }
 
-void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
+void GraphicsContextDirect2D::clipPath(const Path& path, WindRule clipRule)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->clipPath(path, clipRule);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::clipPath(*platformContext(), path, clipRule);
 }
 
-IntRect GraphicsContext::clipBounds() const
+IntRect GraphicsContextDirect2D::clipBounds() const
 {
-    if (paintingDisabled())
-        return IntRect();
-
-    if (m_impl)
-        return m_impl->clipBounds();
-
-    ASSERT(hasPlatformContext());
     return Direct2D::State::getClipBounds(*platformContext());
 }
 
@@ -735,18 +609,13 @@ void GraphicsContextPlatformPrivate::beginTransparencyLayer(float opacity)
 {
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
+void GraphicsContextDirect2D::beginTransparencyLayer(float opacity)
 {
-    if (paintingDisabled())
-        return;
-
-    ASSERT(!m_impl);
-
+    GraphicsContext::beginTransparencyLayer(opacity);
     save();
 
     m_state.alpha = opacity;
 
-    ASSERT(hasPlatformContext());
     Direct2D::beginTransparencyLayer(*platformContext(), opacity);
 }
 
@@ -754,119 +623,113 @@ void GraphicsContextPlatformPrivate::endTransparencyLayer()
 {
 }
 
-void GraphicsContext::endPlatformTransparencyLayer()
+void GraphicsContextDirect2D::endTransparencyLayer()
 {
-    if (paintingDisabled())
-        return;
-
-    ASSERT(hasPlatformContext());
+    GraphicsContext::endTransparencyLayer();
     Direct2D::endTransparencyLayer(*platformContext());
-
-    ASSERT(!m_impl);
 
     m_state.alpha = m_data->currentGlobalAlpha();
 
     restore();
 }
 
-bool GraphicsContext::supportsTransparencyLayers()
+bool GraphicsContextDirect2D::supportsTransparencyLayers()
 {
     return false;
 }
 
-void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, const Color& color)
+void GraphicsContextDirect2D::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
-    (void)offset;
-    (void)blur;
-    (void)color;
-    notImplemented();
-}
+    if (flags & GraphicsContextState::StrokeThicknessChange)
+        Direct2D::State::setStrokeThickness(m_platformContext, state.strokeThickness);
 
-void GraphicsContext::clearPlatformShadow()
-{
-    if (paintingDisabled())
-        return;
-    notImplemented();
-}
+    if (flags & GraphicsContextState::StrokeStyleChange)
+        Direct2D::State::setStrokeStyle(m_platformContext, state.strokeStyle);
 
-void GraphicsContext::setPlatformStrokeStyle(StrokeStyle style)
-{
-    if (paintingDisabled())
-        return;
-
-    ASSERT(hasPlatformContext());
-    Direct2D::State::setStrokeStyle(*platformContext(), style);
-}
-
-void GraphicsContext::setMiterLimit(float limit)
-{
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        // Maybe this should be part of the state.
-        m_impl->setMiterLimit(limit);
-        return;
+    if (flags & GraphicsContextState::ShadowChange) {
+        if (state.shadowsIgnoreTransforms) {
+            // Meaning that this graphics context is associated with a CanvasRenderingContext
+            // We flip the height since CG and HTML5 Canvas have opposite Y axis
+            auto& mutableState = const_cast<GraphicsContextState&>(graphicsContext().state());
+            auto& shadowOffset = state.shadowOffset;
+            mutableState.shadowOffset = { shadowOffset.width(), -shadowOffset.height() };
+        }
     }
 
-    ASSERT(hasPlatformContext());
+    if (flags & GraphicsContextState::CompositeOperationChange)
+        Direct2D::State::setCompositeOperation(m_platformContext, state.compositeOperator, state.blendMode);
+
+    if (flags & GraphicsContextState::ShouldAntialiasChange)
+        Direct2D::State::setShouldAntialias(m_platformContext, state.shouldAntialias);
+
+    if (flags.contains(GraphicsContextState::StrokeColorChange)) {
+        ASSERT(m_state.strokeColor == color);
+        platformContext()->m_solidStrokeBrush = brushWithColor(strokeColor());    
+    }
+    
+    if (flags.contains(GraphicsContextState::FillColorChange)) {
+        ASSERT(m_state.fillColor == color);
+        platformContext()->m_solidFillBrush = brushWithColor(fillColor());
+    }
+
+    if (flags.contains(GraphicsContextState::ShouldSmoothFontsChange)) {
+        auto fontSmoothingMode = enable ? D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE : D2D1_TEXT_ANTIALIAS_MODE_ALIASED;
+        platformContext()->renderTarget()->SetTextAntialiasMode(fontSmoothingMode);
+    }
+
+    if (flags.contains(GraphicsContextState::AlphaChange)) {
+        ASSERT(m_state.alpha == alpha);
+        m_data->setAlpha(alpha);
+    }
+
+    if (flags.contains(GraphicsContextState::ImageInterpolationQualityChange)) {
+        D2D1_INTERPOLATION_MODE quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+
+        switch (mode) {
+        case InterpolationQuality::Default:
+            quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+            break;
+        case InterpolationQuality::DoNotInterpolate:
+            quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+            break;
+        case InterpolationQuality::Low:
+            quality = D2D1_INTERPOLATION_MODE_LINEAR;
+            break;
+        case InterpolationQuality::Medium:
+            quality = D2D1_INTERPOLATION_MODE_CUBIC;
+            break;
+        case InterpolationQuality::High:
+            quality = D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC;
+            break;
+        }
+        // FIXME: SetInterpolationQuality(platformContext(), quality);
+    }
+}
+
+void GraphicsContextDirect2D::setMiterLimit(float limit)
+{
     Direct2D::setMiterLimit(*platformContext(), limit);
 }
 
-void GraphicsContext::clearRect(const FloatRect& rect)
+void GraphicsContextDirect2D::clearRect(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->clearRect(rect);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::clearRect(*platformContext(), rect);
 }
 
-void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
+void GraphicsContextDirect2D::strokeRect(const FloatRect& rect, float lineWidth)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->strokeRect(rect, lineWidth);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
     Direct2D::strokeRect(context, rect, lineWidth, Direct2D::StrokeSource(state, *this), Direct2D::ShadowState(state));
 }
 
-void GraphicsContext::setLineCap(LineCap cap)
+void GraphicsContextDirect2D::setLineCap(LineCap cap)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->setLineCap(cap);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::setLineCap(*platformContext(), cap);
 }
 
-void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
+void GraphicsContextDirect2D::setLineDash(const DashArray& dashes, float dashOffset)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->setLineDash(dashes, dashOffset);
-        return;
-    }
-
     if (dashOffset < 0) {
         float length = 0;
         for (size_t i = 0; i < dashes.size(); ++i)
@@ -875,341 +738,173 @@ void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
             dashOffset = fmod(dashOffset, length) + length;
     }
 
-    ASSERT(hasPlatformContext());
     Direct2D::setLineDash(*platformContext(), dashes, dashOffset);
 }
 
-void GraphicsContext::setLineJoin(LineJoin join)
+void GraphicsContextDirect2D::setLineJoin(LineJoin join)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->setLineJoin(join);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::setLineJoin(*platformContext(), join);
 }
 
-void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
+void GraphicsContextDirect2D::scale(const FloatSize& size)
 {
-    clipPath(path, fillRule);
-}
-
-void GraphicsContext::scale(const FloatSize& size)
-{
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->scale(size);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::scale(*platformContext(), size);
     // FIXME: m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::rotate(float angle)
+void GraphicsContextDirect2D::rotate(float angle)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->rotate(angle);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::rotate(*platformContext(), angle);
     // FIXME: m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::translate(float x, float y)
+void GraphicsContextDirect2D::translate(float x, float y)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->translate(x, y);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::translate(*platformContext(), x, y);
     // FIXME: m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& transform)
+void GraphicsContextDirect2D::concatCTM(const AffineTransform& transform)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->concatCTM(transform);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::concatCTM(*platformContext(), transform);
     // FIXME: m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::setCTM(const AffineTransform& transform)
+void GraphicsContextDirect2D::setCTM(const AffineTransform& transform)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->setCTM(transform);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::State::setCTM(*platformContext(), transform);
     // FIXME: m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-AffineTransform GraphicsContext::getCTM(IncludeDeviceScale includeScale) const
+AffineTransform GraphicsContextDirect2D::getCTM(IncludeDeviceScale includeScale) const
 {
-    if (paintingDisabled())
-        return AffineTransform();
-
-    if (m_impl)
-        return m_impl->getCTM(includeScale);
-
-    ASSERT(hasPlatformContext());
     return Direct2D::State::getCTM(*platformContext());
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
+FloatRect GraphicsContextDirect2D::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
 {
-    if (paintingDisabled())
-        return rect;
-
-    if (m_impl)
-        return m_impl->roundToDevicePixels(rect, roundingMode);
-
     return Direct2D::State::roundToDevicePixels(*platformContext(), rect);
 }
 
-void GraphicsContext::drawLineForText(const FloatRect& rect, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void GraphicsContextDirect2D::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines, StrokeStyle strokeStyle)
 {
-    DashArray widths;
-    widths.append(0);
-    widths.append(rect.width());
-    drawLinesForText(rect.location(), rect.height(), widths, printing, doubleLines, strokeStyle);
-}
-
-void GraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines, StrokeStyle strokeStyle)
-{
-    if (paintingDisabled())
-        return;
-
     if (!widths.size())
         return;
 
-    if (m_impl) {
-        m_impl->drawLinesForText(point, thickness, widths, printing, doubleUnderlines);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
     Direct2D::drawLinesForText(*platformContext(), point, thickness, widths, printing, doubleUnderlines, m_state.strokeColor);
 }
 
-void GraphicsContext::setURLForRect(const URL& link, const FloatRect& destRect)
+void GraphicsContextDirect2D::setURLForRect(const URL& link, const FloatRect& destRect)
 {
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        WTFLogAlways("GraphicsContext::setURLForRect() is not yet compatible with recording contexts.");
-        return; // FIXME for display lists.
-    }
-
     notImplemented();
 }
 
-void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality mode)
+void GraphicsContextDirect2D::setIsCALayerContext(bool isLayerContext)
 {
-    ASSERT(!paintingDisabled());
-
-    D2D1_INTERPOLATION_MODE quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-
-    switch (mode) {
-    case InterpolationQuality::Default:
-        quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-        break;
-    case InterpolationQuality::DoNotInterpolate:
-        quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-        break;
-    case InterpolationQuality::Low:
-        quality = D2D1_INTERPOLATION_MODE_LINEAR;
-        break;
-    case InterpolationQuality::Medium:
-        quality = D2D1_INTERPOLATION_MODE_CUBIC;
-        break;
-    case InterpolationQuality::High:
-        quality = D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC;
-        break;
-    }
-    // FIXME: SetInterpolationQuality(platformContext(), quality);
-}
-
-void GraphicsContext::setIsCALayerContext(bool isLayerContext)
-{
-    if (paintingDisabled())
-        return;
-
-    if (m_impl)
-        return;
-
     // This function is probabaly not needed.
     notImplemented();
 }
 
-bool GraphicsContext::isCALayerContext() const
+bool GraphicsContextDirect2D::isCALayerContext() const
 {
-    if (paintingDisabled())
-        return false;
-
-    // FIXME
-    if (m_impl)
-        return false;
-
     // This function is probabaly not needed.
     notImplemented();
     return false;
 }
 
-void GraphicsContext::setIsAcceleratedContext(bool isAccelerated)
+void GraphicsContextDirect2D::setIsAcceleratedContext(bool isAccelerated)
 {
-    if (paintingDisabled())
-        return;
-
-    // FIXME
-    if (m_impl)
-        return;
-
     notImplemented();
 }
 
-bool GraphicsContext::isAcceleratedContext() const
+bool GraphicsContextDirect2D::isAcceleratedContext() const
 {
-    if (!hasPlatformContext())
-        return false;
-
     return Direct2D::State::isAcceleratedContext(*platformContext());
 }
 
-void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
-{
-    (void)mode;
-    notImplemented();
-}
-
-void GraphicsContext::setPlatformStrokeColor(const Color& color)
-{
-    ASSERT(m_state.strokeColor == color);
-    ASSERT(hasPlatformContext());
-    platformContext()->m_solidStrokeBrush = brushWithColor(strokeColor());
-}
-
-void GraphicsContext::setPlatformStrokeThickness(float thickness)
-{
-    ASSERT(m_state.strokeThickness == thickness);
-    m_data->setStrokeThickness(thickness);
-}
-
-void GraphicsContext::setPlatformFillColor(const Color& color)
-{
-    ASSERT(m_state.fillColor == color);
-    ASSERT(hasPlatformContext());
-    platformContext()->m_solidFillBrush = brushWithColor(fillColor());
-}
-
-void GraphicsContext::setPlatformShouldAntialias(bool enable)
-{
-    if (paintingDisabled())
-        return;
-
-    ASSERT(!m_impl);
-    ASSERT(hasPlatformContext());
-    Direct2D::State::setShouldAntialias(*platformContext(), enable);
-}
-
-void GraphicsContext::setPlatformShouldSmoothFonts(bool enable)
-{
-    if (paintingDisabled())
-        return;
-
-    ASSERT(!m_impl);
-
-    auto fontSmoothingMode = enable ? D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE : D2D1_TEXT_ANTIALIAS_MODE_ALIASED;
-    platformContext()->renderTarget()->SetTextAntialiasMode(fontSmoothingMode);
-}
-
-void GraphicsContext::setPlatformAlpha(float alpha)
-{
-    if (paintingDisabled())
-        return;
-
-    ASSERT(m_state.alpha == alpha);
-    m_data->setAlpha(alpha);
-}
-
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator compositeOperator, BlendMode blendMode)
-{
-    if (paintingDisabled())
-        return;
-
-    ASSERT(!m_impl);
-
-    ASSERT(hasPlatformContext());
-    Direct2D::State::setCompositeOperation(*platformContext(), compositeOperator, blendMode);
-}
-
-void GraphicsContext::platformApplyDeviceScaleFactor(float deviceScaleFactor)
+void GraphicsContextDirect2D::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     // This is a no-op for Direct2D.
 }
 
-void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)
+void GraphicsContextDirect2D::fillEllipse(const FloatRect& ellipse)
 {
-    if (paintingDisabled())
-        return;
-
-    ASSERT(!m_impl);
-
     if (m_state.fillGradient || m_state.fillPattern) {
         // FIXME: We should be able to fill ellipses with pattern/gradient brushes in D2D.
         fillEllipseAsPath(ellipse);
         return;
     }
 
-    ASSERT(hasPlatformContext());
     Direct2D::fillEllipse(*platformContext(), ellipse, m_state.fillColor, m_state.strokeStyle, m_state.strokeColor, m_state.strokeThickness);
 }
 
-void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
+void GraphicsContextDirect2D::strokeEllipse(const FloatRect& ellipse)
 {
-    if (paintingDisabled())
-        return;
-
-    ASSERT(!m_impl);
-
     if (m_state.strokeGradient || m_state.strokePattern) {
         // FIXME: We should be able to stroke ellipses with pattern/gradient brushes in D2D.
         strokeEllipseAsPath(ellipse);
         return;
     }
 
-    ASSERT(hasPlatformContext());
     Direct2D::drawEllipse(*platformContext(), ellipse, m_state.strokeStyle, m_state.strokeColor, m_state.strokeThickness);
 }
+
+void GraphicsContextDirect2D::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothing)
+{
+    UNUSED_PARAM(fontSmoothing);
+    if (!font.platformData().size())
+        return;
+
+    auto xOffset = point.x();
+    Vector<unsigned short> glyphs(numGlyphs);
+    Vector<float> horizontalAdvances(numGlyphs);
+    Vector<DWRITE_GLYPH_OFFSET> glyphOffsets(numGlyphs);
+
+    for (unsigned i = 0; i < numGlyphs; ++i) {
+        if (i + from >= glyphBuffer.advancesCount())
+            break;
+
+        auto advance = glyphBuffer.advances(i + from);
+        if (!advance)
+            continue;
+
+        glyphs[i] = glyphBuffer.glyphAt(i + from);
+        horizontalAdvances[i] = advance->width();
+        glyphOffsets[i].advanceOffset = advance->width();
+        glyphOffsets[i].ascenderOffset = advance->height();
+    }
+
+    double syntheticBoldOffset = font.syntheticBoldOffset();
+
+    auto& state = graphicsContext().state();
+    Direct2D::drawGlyphs(m_platformContext, Direct2D::FillSource(state, graphicsContext()), Direct2D::StrokeSource(state, graphicsContext()),
+        Direct2D::ShadowState(state), point, font, syntheticBoldOffset, glyphs, horizontalAdvances, glyphOffsets, xOffset,
+        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor);
+}
+
+GraphicsContext::ClipToDrawingCommandsResult GraphicsContextDirect2D::clipToDrawingCommands(const FloatRect&, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&)
+{
+    // FIXME: Not implemented.
+    return ClipToDrawingCommandsResult::Success;
+}
+
+void GraphicsContextDirect2D::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+{
+    RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
+    if (!image)
+        return;
+
+    auto* context = &graphicsContext();
+    if (auto surface = image->nativeImageForCurrentFrame(context))
+        notImplemented();
+}
+
+#if ENABLE(VIDEO)
+void GraphicsContextDirect2D::paintFrameForMedia(MediaPlayer&, const FloatRect&)
+{
+    // FIXME: Not implemented.
+}
+#endif
+
 
 }

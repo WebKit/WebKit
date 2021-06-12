@@ -60,7 +60,7 @@ RenderRubyRun* RenderRubyBase::rubyRun() const
     return downcast<RenderRubyRun>(parent());
 }
 
-Optional<TextAlignMode> RenderRubyBase::overrideTextAlignmentForLine(bool /* endsWithSoftBreak */) const
+std::optional<TextAlignMode> RenderRubyBase::overrideTextAlignmentForLine(bool /* endsWithSoftBreak */) const
 {
     return TextAlignMode::Justify;
 }

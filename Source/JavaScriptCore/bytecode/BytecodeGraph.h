@@ -102,7 +102,7 @@ public:
 
 
     template <typename CodeBlockType>
-    void dump(CodeBlockType* codeBlock, const InstructionStream& instructions, Optional<Vector<Operands<SpeculatedType>>> speculationAtHead, PrintStream& printer = WTF::dataFile())
+    void dump(CodeBlockType* codeBlock, const InstructionStream& instructions, std::optional<Vector<Operands<SpeculatedType>>> speculationAtHead, PrintStream& printer = WTF::dataFile())
     {
         CodeBlockBytecodeDumper<CodeBlockType>::dumpGraph(codeBlock, instructions, *this, speculationAtHead, printer);
     }

@@ -59,7 +59,7 @@ inline Layout::InlineLineGeometry::EnclosingTopAndBottom operator+(const Layout:
 
 inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutUnit lineBoxLogicalWidth, InlineLayoutUnit lineContentLogicalWidth)
 {
-    // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from ComplexLineLayout::addOverflowFromInlineChildren.
+    // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
     auto endPadding = flow.hasOverflowClip() ? flow.paddingEnd() : 0_lu;
     if (!endPadding)
         endPadding = flow.endPaddingWidthForCaret();
@@ -182,7 +182,7 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
     LineLevelVisualAdjustmentsForRunsList lineLevelVisualAdjustmentsForRuns(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto lineNeedsLegacyIntegralVerticalPosition = [&] {
-            // InlineTree rounds y position to integral value for certain content (see InlineFlowBox::placeBoxesInBlockDirection).
+            // InlineTree rounds y position to integral value for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection).
             auto& nonRootInlineLevelBoxList = inlineFormattingState.lineBoxes()[lineIndex].nonRootInlineLevelBoxes();
             if (nonRootInlineLevelBoxList.isEmpty()) {
                 // This is text content only with root inline box.
@@ -333,7 +333,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
             if (!layoutBox.isReplacedBox())
                 continue;
 
-            // Similar to InlineFlowBox::addReplacedChildOverflow.
+            // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
             auto& box = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
             if (!box.hasSelfPaintingLayer()) {
                 auto childInkOverflow = box.logicalVisualOverflowRectForPropagation(&box.parent()->style());
@@ -367,7 +367,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
 void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingContext& inlineFormattingContext, InlineContent& inlineContent) const
 {
     auto& inlineFormattingState = inlineFormattingContext.formattingState();
-    auto inlineFormattingGeometry = Layout::InlineFormattingGeometry { inlineFormattingContext };
+    auto& inlineFormattingGeometry = downcast<Layout::InlineFormattingGeometry>(inlineFormattingContext.formattingGeometry());
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
         if (!lineBox.hasInlineBox())

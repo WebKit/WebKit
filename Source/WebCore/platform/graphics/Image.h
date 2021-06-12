@@ -37,7 +37,6 @@
 #include "NativeImage.h"
 #include "Timer.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -71,7 +70,6 @@ class AffineTransform;
 class FloatPoint;
 class FloatSize;
 class GraphicsContext;
-class GraphicsContextImpl;
 class SharedBuffer;
 struct Length;
 
@@ -80,7 +78,6 @@ class ImageObserver;
 
 class Image : public RefCounted<Image> {
     friend class GraphicsContext;
-    friend class GraphicsContextImpl;
 public:
     virtual ~Image();
     
@@ -121,7 +118,7 @@ public:
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }
-    virtual Optional<IntPoint> hotSpot() const { return WTF::nullopt; }
+    virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
     virtual ImageOrientation orientation() const { return ImageOrientation::FromImage; }
 
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<SharedBuffer>&& data, bool allDataReceived);

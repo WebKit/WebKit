@@ -77,7 +77,7 @@ WEBCORE_EXPORT bool isValidUserAgentHeaderValue(const String&);
 #endif
 bool isValidHTTPToken(const String&);
 bool isValidHTTPToken(StringView);
-Optional<WallTime> parseHTTPDate(const String&);
+std::optional<WallTime> parseHTTPDate(const String&);
 String filenameFromHTTPContentDisposition(const String&);
 WEBCORE_EXPORT String extractMIMETypeFromMediaType(const String&);
 String extractCharsetFromMediaType(const String&);
@@ -91,8 +91,8 @@ WEBCORE_EXPORT bool parseRange(const String&, long long& rangeOffset, long long&
 ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header);
 
 // Parsing Complete HTTP Messages.
-size_t parseHTTPHeader(const char* data, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict = true);
-size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body);
+size_t parseHTTPHeader(const uint8_t* data, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict = true);
+size_t parseHTTPRequestBody(const uint8_t* data, size_t length, Vector<uint8_t>& body);
 
 // HTTP Header routine as per https://fetch.spec.whatwg.org/#terminology-headers
 bool isForbiddenHeaderName(const String&);
@@ -154,7 +154,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
 }
 
 template<class HashType = DefaultHash<String>>
-Optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& string)
+std::optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& string)
 {
     HashSet<String, HashType> set;
     unsigned start = 0;

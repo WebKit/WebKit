@@ -26,7 +26,6 @@
 #include "CodeBlockSetInlines.h"
 #include "CollectingScope.h"
 #include "ConservativeRoots.h"
-#include "DFGWorklistInlines.h"
 #include "EdenGCActivityCallback.h"
 #include "Exception.h"
 #include "FullGCActivityCallback.h"
@@ -46,7 +45,7 @@
 #include "Interpreter.h"
 #include "IsoCellSetInlines.h"
 #include "JITStubRoutineSet.h"
-#include "JITWorklist.h"
+#include "JITWorklistInlines.h"
 #include "JSFinalizationRegistry.h"
 #include "JSVirtualMachineInternal.h"
 #include "JSWeakMap.h"
@@ -188,7 +187,7 @@ SimpleStats& timingStats(const char* name, CollectionScope scope)
 
 class TimingScope {
 public:
-    TimingScope(Optional<CollectionScope> scope, const char* name)
+    TimingScope(std::optional<CollectionScope> scope, const char* name)
         : m_scope(scope)
         , m_name(name)
     {
@@ -201,7 +200,7 @@ public:
     {
     }
     
-    void setScope(Optional<CollectionScope> scope)
+    void setScope(std::optional<CollectionScope> scope)
     {
         m_scope = scope;
     }
@@ -222,7 +221,7 @@ public:
         }
     }
 private:
-    Optional<CollectionScope> m_scope;
+    std::optional<CollectionScope> m_scope;
     MonotonicTime m_before;
     const char* m_name;
 };
@@ -518,7 +517,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
     // https://bugs.webkit.org/show_bug.cgi?id=170411
     CheckedSize checkedNewSize = m_deprecatedExtraMemorySize;
     checkedNewSize += size;
-    m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.unsafeGet();
+    m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
     reportExtraMemoryAllocatedSlowCase(size);
 }
 
@@ -639,17 +638,19 @@ void Heap::completeAllJITPlans()
     if (!Options::useJIT())
         return;
 #if ENABLE(JIT)
-    JITWorklist::ensureGlobalWorklist().completeAllForVM(m_vm);
+    JITWorklist::ensureGlobalWorklist().completeAllPlansForVM(m_vm);
 #endif // ENABLE(JIT)
-    DFG::completeAllPlansForVM(m_vm);
 }
 
-template<typename Func, typename Visitor>
-void Heap::iterateExecutingAndCompilingCodeBlocks(Visitor& visitor, const Func& func)
+template<typename Visitor>
+void Heap::iterateExecutingAndCompilingCodeBlocks(Visitor& visitor, const Function<void(CodeBlock*)>& func)
 {
     m_codeBlocks->iterateCurrentlyExecuting(func);
-    if (Options::useJIT())
-        DFG::iterateCodeBlocksForGC(visitor, m_vm, func);
+#if ENABLE(JIT)
+    JITWorklist::ensureGlobalWorklist().iterateCodeBlocksForGC(visitor, m_vm, func);
+#else
+    UNUSED_PARAM(visitor);
+#endif // ENABLE(JIT)
 }
 
 template<typename Func, typename Visitor>
@@ -726,12 +727,11 @@ void Heap::beginMarking()
 
 void Heap::removeDeadCompilerWorklistEntries()
 {
-#if ENABLE(DFG_JIT)
     if (!Options::useJIT())
         return;
-    for (unsigned i = DFG::numberOfWorklists(); i--;)
-        DFG::existingWorklistForIndex(i).removeDeadPlans(m_vm);
-#endif
+#if ENABLE(JIT)
+    JITWorklist::ensureGlobalWorklist().removeDeadPlans(m_vm);
+#endif // ENABLE(JIT)
 }
 
 struct GatherExtraHeapData : MarkedBlock::CountFunctor {
@@ -826,7 +826,7 @@ size_t Heap::extraMemorySize()
     CheckedSize checkedTotal = m_extraMemorySize;
     checkedTotal += m_deprecatedExtraMemorySize;
     checkedTotal += m_arrayBuffers.size();
-    size_t total = UNLIKELY(checkedTotal.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedTotal.unsafeGet();
+    size_t total = UNLIKELY(checkedTotal.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedTotal.value();
 
     ASSERT(m_objectSpace.capacity() >= m_objectSpace.size());
     return std::min(total, std::numeric_limits<size_t>::max() - m_objectSpace.capacity());
@@ -1653,14 +1653,6 @@ void Heap::stopThePeriphery(GCConductor conn)
             visitor.updateMutatorIsStopped(NoLockingNecessary);
         });
 
-#if ENABLE(JIT)
-    if (Options::useJIT()) {
-        DeferGCForAWhile awhile(*this);
-        if (JITWorklist::ensureGlobalWorklist().completeAllForVM(m_vm)
-            && conn == GCConductor::Collector)
-            setGCDidJIT();
-    }
-#endif // ENABLE(JIT)
     UNUSED_PARAM(conn);
     
     if (auto* shadowChicken = vm().shadowChicken())
@@ -1806,7 +1798,6 @@ void Heap::stopIfNecessarySlow()
     RELEASE_ASSERT(m_worldState.load() & hasAccessBit);
     RELEASE_ASSERT(!(m_worldState.load() & stoppedBit));
     
-    handleGCDidJIT();
     handleNeedFinalize();
     m_mutatorDidRun = true;
 }
@@ -1923,7 +1914,6 @@ void Heap::acquireAccessSlow()
         RELEASE_ASSERT(!(oldState & stoppedBit));
         unsigned newState = oldState | hasAccessBit;
         if (m_worldState.compareExchangeWeak(oldState, newState)) {
-            handleGCDidJIT();
             handleNeedFinalize();
             m_mutatorDidRun = true;
             stopIfNecessary();
@@ -2003,18 +1993,6 @@ void Heap::relinquishConn()
     while (relinquishConn(m_worldState.load())) { }
 }
 
-bool Heap::handleGCDidJIT(unsigned oldState)
-{
-    RELEASE_ASSERT(oldState & hasAccessBit);
-    if (!(oldState & gcDidJITBit))
-        return false;
-    if (m_worldState.compareExchangeWeak(oldState, oldState & ~gcDidJITBit)) {
-        WTF::crossModifyingCodeFence();
-        return true;
-    }
-    return true;
-}
-
 NEVER_INLINE bool Heap::handleNeedFinalize(unsigned oldState)
 {
     RELEASE_ASSERT(oldState & hasAccessBit);
@@ -2032,24 +2010,9 @@ NEVER_INLINE bool Heap::handleNeedFinalize(unsigned oldState)
     return true;
 }
 
-void Heap::handleGCDidJIT()
-{
-    while (handleGCDidJIT(m_worldState.load())) { }
-}
-
 void Heap::handleNeedFinalize()
 {
     while (handleNeedFinalize(m_worldState.load())) { }
-}
-
-void Heap::setGCDidJIT()
-{
-    m_worldState.transaction(
-        [&] (unsigned& state) -> bool {
-            RELEASE_ASSERT(state & stoppedBit);
-            state |= gcDidJITBit;
-            return true;
-        });
 }
 
 void Heap::setNeedFinalize()
@@ -2167,14 +2130,13 @@ void Heap::sweepInFinalize()
 
 void Heap::suspendCompilerThreads()
 {
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
     // We ensure the worklists so that it's not possible for the mutator to start a new worklist
     // after we have suspended the ones that he had started before. That's not very expensive since
     // the worklists use AutomaticThreads anyway.
     if (!Options::useJIT())
         return;
-    for (unsigned i = DFG::numberOfWorklists(); i--;)
-        DFG::ensureWorklistForIndex(i).suspendAllThreads();
+    JITWorklist::ensureGlobalWorklist().suspendAllThreads();
 #endif
 }
 
@@ -2293,7 +2255,7 @@ void Heap::updateAllocationLimits()
     if (ASSERT_ENABLED) {
         CheckedSize checkedCurrentHeapSize = m_totalBytesVisited;
         checkedCurrentHeapSize += extraMemorySize();
-        ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize.unsafeGet() == currentHeapSize);
+        ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize == currentHeapSize);
     }
 
     if (verbose)
@@ -2378,7 +2340,7 @@ void Heap::didFinishCollection()
 
     RELEASE_ASSERT(m_collectionScope);
     m_lastCollectionScope = m_collectionScope;
-    m_collectionScope = WTF::nullopt;
+    m_collectionScope = std::nullopt;
 
     for (auto* observer : m_observers)
         observer->didGarbageCollect(scope);
@@ -2386,11 +2348,10 @@ void Heap::didFinishCollection()
 
 void Heap::resumeCompilerThreads()
 {
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
     if (!Options::useJIT())
         return;
-    for (unsigned i = DFG::numberOfWorklists(); i--;)
-        DFG::existingWorklistForIndex(i).resumeAllThreads();
+    JITWorklist::ensureGlobalWorklist().resumeAllThreads();
 #endif
 }
 
@@ -2597,7 +2558,7 @@ void Heap::reportExtraMemoryVisited(size_t size)
         // https://bugs.webkit.org/show_bug.cgi?id=170411
         CheckedSize checkedNewSize = oldSize;
         checkedNewSize += size;
-        size_t newSize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.unsafeGet();
+        size_t newSize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
         if (WTF::atomicCompareExchangeWeakRelaxed(counter, oldSize, newSize))
             return;
     }
@@ -2732,7 +2693,7 @@ static ALWAYS_INLINE void visitSamplingProfiler(VM& vm, Visitor& visitor)
     SamplingProfiler* samplingProfiler = vm.samplingProfiler();
     if (UNLIKELY(samplingProfiler)) {
         Locker locker { samplingProfiler->getLock() };
-        samplingProfiler->processUnverifiedStackTraces(locker);
+        samplingProfiler->processUnverifiedStackTraces();
         samplingProfiler->visit(visitor);
         if (Options::logGC() == GCLogging::Verbose)
             dataLog("Sampling Profiler data:\n", visitor);
@@ -2902,26 +2863,25 @@ void Heap::addCoreConstraints()
         ConstraintVolatility::GreyedByMarking,
         ConstraintParallelism::Parallel);
     
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
     if (Options::useJIT()) {
         m_constraintSet->add(
-            "Dw", "DFG Worklists",
+            "Jw", "JIT Worklist",
             MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
-                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::DFGWorkLists);
+                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::JITWorkList);
 
-                for (unsigned i = DFG::numberOfWorklists(); i--;)
-                    DFG::existingWorklistForIndex(i).visitWeakReferences(visitor);
+                JITWorklist::ensureGlobalWorklist().visitWeakReferences(visitor);
                 
                 // FIXME: This is almost certainly unnecessary.
                 // https://bugs.webkit.org/show_bug.cgi?id=166829
-                DFG::iterateCodeBlocksForGC(visitor,
+                JITWorklist::ensureGlobalWorklist().iterateCodeBlocksForGC(visitor,
                     m_vm,
                     [&] (CodeBlock* codeBlock) {
                         visitor.appendUnbarriered(codeBlock);
                     });
                 
                 if (Options::logGC() == GCLogging::Verbose)
-                    dataLog("DFG Worklists:\n", visitor);
+                    dataLog("JIT Worklists:\n", visitor);
             })),
             ConstraintVolatility::GreyedByMarking);
     }
@@ -2973,7 +2933,7 @@ void Heap::notifyIsSafeToCollect()
                     {
                         Locker locker { *m_threadLock };
                         if (m_requests.isEmpty()) {
-                            m_requests.append(WTF::nullopt);
+                            m_requests.append(std::nullopt);
                             m_lastGrantedTicket++;
                             m_threadCondition->notifyOne(locker);
                         }
@@ -2996,7 +2956,9 @@ void Heap::notifyIsSafeToCollect()
     dataLogIf(Options::logGC(), (MonotonicTime::now() - before).milliseconds(), "ms]\n");
 }
 
-void Heap::preventCollection()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function conditionally locks m_collectContinuouslyLock,
+// which is not supported by analysis.
+void Heap::preventCollection() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (!m_isSafeToCollect)
         return;
@@ -3015,7 +2977,9 @@ void Heap::preventCollection()
     RELEASE_ASSERT(!m_collectionScope);
 }
 
-void Heap::allowCollection()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function conditionally unlocks m_collectContinuouslyLock,
+// which is not supported by analysis.
+void Heap::allowCollection() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (!m_isSafeToCollect)
         return;

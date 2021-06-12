@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hit testing of position: absolute iframe with clip-path on a parent element</title>
+<script src="../../resources/js-test.js"></script>
+<script type="text/javascript">
+
+function runTest() {
+    description("Test clip-path is accounted for during hit-testing on a position: absolute iframe's parent.");
+    shouldBeEqualToString("document.elementFromPoint(50, 50).localName", "body");
+}
+
+</script>
+<style>
+
+#container, iframe {
+    position: absolute;
+    top: 0;
+    left: 0px;
+    width: 400px;
+    height: 300px;
+}
+
+#container {
+    clip-path: inset(100px 0 0 0);
+}
+
+iframe {
+    border: 0;
+}
+
+p {
+    pointer-events: none;
+}
+
+</style>
+</head>
+<body>
+<div id="container"><iframe srcdoc="<body style='margin: 0; background: transparent'></body>" onload="runTest()"></iframe></div>
+</body>
+</html>

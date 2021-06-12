@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-std::unique_ptr<RTCRtpTransform> RTCRtpTransform::from(Optional<Internal>&& internal)
+std::unique_ptr<RTCRtpTransform> RTCRtpTransform::from(std::optional<Internal>&& internal)
 {
     if (!internal)
         return nullptr;

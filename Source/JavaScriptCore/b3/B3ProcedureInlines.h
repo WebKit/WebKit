@@ -27,6 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCode.h"
 #include "B3BasicBlock.h"
 #include "B3Procedure.h"
 #include "B3Value.h"
@@ -45,6 +46,9 @@ inline Type Procedure::extractFromTuple(Type tuple, unsigned index) const
     ASSERT(index < m_tuples[tuple.tupleIndex()].size());
     return m_tuples[tuple.tupleIndex()][index];
 }
+
+inline SparseCollection<Air::StackSlot>& Procedure::stackSlots() { return m_code->stackSlots(); }
+inline const SparseCollection<Air::StackSlot>& Procedure::stackSlots() const { return m_code->stackSlots(); }
 
 } } // namespace JSC::B3
 

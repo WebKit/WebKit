@@ -34,7 +34,7 @@
 #include <WebCore/DIBPixelData.h>
 #include <WebCore/Direct2DOperations.h>
 #include <WebCore/Direct2DUtilities.h>
-#include <WebCore/GraphicsContextImplDirect2D.h>
+#include <WebCore/GraphicsContextDirect2D.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextDirect2D.h>
 #include <d2d1_1.h>
@@ -53,12 +53,12 @@ static unsigned strideForWidth(unsigned width)
     return bitsPerPixel * width / 8;
 }
 
-Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
+CheckedUint32 ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
 {
     return calculateBytesPerPixel(configuration) * size.width();
 }
 
-Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerPixel(const Configuration&)
+CheckedUint32 ShareableBitmap::calculateBytesPerPixel(const Configuration&)
 {
     return 4;
 }
@@ -104,7 +104,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     if (!surfaceContext)
         return nullptr;
 
-    return makeUnique<GraphicsContext>(GraphicsContextImplDirect2D::createFactory(surfaceContext.get()));
+    return makeUnique<GraphicsContextDirect2D>(surfaceContext.get());
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

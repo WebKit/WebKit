@@ -167,6 +167,27 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 Horizontal
             };
 
+            // We treat an axis motion event with a value of zero to be equivalent
+            // to a 'stop' event. Motion events with zero motion don't exist naturally,
+            // so this allows a backend to express 'stop' events without changing API.
+            // The wheel event phase is adjusted accordingly.
+            WebWheelEvent::Phase phase = WebWheelEvent::Phase::PhaseChanged;
+            WebWheelEvent::Phase momentumPhase = WebWheelEvent::Phase::PhaseNone;
+
+#if WPE_CHECK_VERSION(1, 5, 0)
+            if (event->type & wpe_input_axis_event_type_mask_2d) {
+                auto* event2D = reinterpret_cast<struct wpe_input_axis_2d_event*>(event);
+                view.m_horizontalScrollActive = !!event2D->x_axis;
+                view.m_verticalScrollActive = !!event2D->y_axis;
+                if (!view.m_horizontalScrollActive && !view.m_verticalScrollActive)
+                    phase = WebWheelEvent::Phase::PhaseEnded;
+
+                auto& page = view.page();
+                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+                return;
+            }
+#endif
+
             switch (event->axis) {
             case Vertical:
                 view.m_horizontalScrollActive = !!event->value;
@@ -176,14 +197,16 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 break;
             }
 
-            // We treat an axis motion event with a value of zero to be equivalent
-            // to a 'stop' event. Motion events with zero motion don't exist naturally,
-            // so this allows a backend to express 'stop' events without changing API.
-            auto& page = view.page();
-            if (event->value)
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseChanged, WebWheelEvent::Phase::PhaseNone));
-            else if (!view.m_horizontalScrollActive && !view.m_verticalScrollActive)
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseEnded, WebWheelEvent::Phase::PhaseNone));
+            bool shouldDispatch = !!event->value;
+            if (!view.m_horizontalScrollActive && !view.m_verticalScrollActive) {
+                shouldDispatch = true;
+                phase = WebWheelEvent::Phase::PhaseEnded;
+            }
+
+            if (shouldDispatch) {
+                auto& page = view.page();
+                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+            }
         },
         // handle_touch_event
         [](void* data, struct wpe_input_touch_event* event)
@@ -268,7 +291,7 @@ WebKitInputMethodContext* View::inputMethodContext() const
     return m_inputMethodFilter.context();
 }
 
-void View::setInputMethodState(Optional<InputMethodState>&& state)
+void View::setInputMethodState(std::optional<InputMethodState>&& state)
 {
     m_inputMethodFilter.setState(WTFMove(state));
 }
@@ -312,10 +335,10 @@ void View::handleKeyboardEvent(struct wpe_input_keyboard_event* event)
     if (filterResult.handled)
         return;
 
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
 }
 
-void View::synthesizeCompositionKeyPress(const String& text, Optional<Vector<WebCore::CompositionUnderline>>&& underlines, Optional<EditingRange>&& selectionRange)
+void View::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
     // The Windows composition key event code is 299 or VK_PROCESSKEY. We need to
     // emit this code for web compatibility reasons when key events trigger

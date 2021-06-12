@@ -388,8 +388,8 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
         bool hasSentAttribution = false;
 
         for (auto& attribution : attributions) {
-            Optional<WallTime> earliestTimeToSend = attribution.timesToSend().earliestTimeToSend();
-            Optional<WebCore::PrivateClickMeasurement::AttributionReportEndpoint> attributionReportEndpoint = attribution.timesToSend().attributionReportEndpoint();
+            std::optional<WallTime> earliestTimeToSend = attribution.timesToSend().earliestTimeToSend();
+            std::optional<WebCore::PrivateClickMeasurement::AttributionReportEndpoint> attributionReportEndpoint = attribution.timesToSend().attributionReportEndpoint();
 
             if (!earliestTimeToSend || !attributionReportEndpoint) {
                 ASSERT_NOT_REACHED();
@@ -503,7 +503,7 @@ void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testUR
 void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL)
 {
     if (sourceURL.isEmpty() || destinationURL.isEmpty())
-        m_attributionReportTestConfig = WTF::nullopt;
+        m_attributionReportTestConfig = std::nullopt;
     else
         m_attributionReportTestConfig = AttributionReportTestConfig { WTFMove(sourceURL), WTFMove(destinationURL) };
 }

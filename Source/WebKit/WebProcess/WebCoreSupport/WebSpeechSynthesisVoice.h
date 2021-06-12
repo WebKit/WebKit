@@ -37,7 +37,7 @@ struct WebSpeechSynthesisVoice {
     bool defaultLang { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<WebSpeechSynthesisVoice> decode(Decoder&);
+    template<class Decoder> static std::optional<WebSpeechSynthesisVoice> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -51,32 +51,32 @@ void WebSpeechSynthesisVoice::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<WebSpeechSynthesisVoice> WebSpeechSynthesisVoice::decode(Decoder& decoder)
+std::optional<WebSpeechSynthesisVoice> WebSpeechSynthesisVoice::decode(Decoder& decoder)
 {
-    Optional<String> voiceURI;
+    std::optional<String> voiceURI;
     decoder >> voiceURI;
     if (!voiceURI)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> name;
+    std::optional<String> name;
     decoder >> name;
     if (!name)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<String> lang;
+    std::optional<String> lang;
     decoder >> lang;
     if (!lang)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> localService;
+    std::optional<bool> localService;
     decoder >> localService;
     if (!localService)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<bool> defaultLang;
+    std::optional<bool> defaultLang;
     decoder >> defaultLang;
     if (!defaultLang)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*voiceURI), WTFMove(*name), WTFMove(*lang), WTFMove(*localService), WTFMove(*defaultLang) }};}
 

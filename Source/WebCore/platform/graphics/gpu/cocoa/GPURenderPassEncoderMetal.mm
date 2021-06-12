@@ -375,7 +375,7 @@ void GPURenderPassEncoder::drawIndexed(unsigned indexCount, unsigned instanceCou
         indexCount:indexCount
         indexType:mtlIndexTypeForGPUIndexFormat(*m_pipeline->indexFormat())
         indexBuffer:m_indexBuffer->platformBuffer()
-        indexBufferOffset:totalOffset.unsafeGet()
+        indexBufferOffset:totalOffset.value()
         instanceCount:instanceCount
         baseVertex:baseVertex
         baseInstance:firstInstance];

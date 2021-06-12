@@ -49,7 +49,7 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // ScriptProfilerBackendDispatcherHandler
-    Protocol::ErrorStringOr<void> startTracking(Optional<bool>&& includeSamples) final;
+    Protocol::ErrorStringOr<void> startTracking(std::optional<bool>&& includeSamples) final;
     Protocol::ErrorStringOr<void> stopTracking() final;
 
     // JSC::Debugger::ProfilingClient

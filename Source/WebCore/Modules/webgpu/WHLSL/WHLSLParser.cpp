@@ -202,21 +202,21 @@ bool Parser::peekTypes()
     return Types<types...>::includes(token.type);
 }
 
-Optional<Token> Parser::tryType(Token::Type type)
+std::optional<Token> Parser::tryType(Token::Type type)
 {
     auto token = m_lexer.peek();
     if (token.type == type)
         return { m_lexer.consumeToken() };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template <Token::Type... types>
-Optional<Token> Parser::tryTypes()
+std::optional<Token> Parser::tryTypes()
 {
     auto token = m_lexer.peek();
     if (Types<types...>::includes(token.type))
         return { m_lexer.consumeToken() };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 auto Parser::consumeType(Token::Type type) -> Expected<Token, Error>
@@ -343,11 +343,11 @@ auto Parser::consumeNonNegativeIntegralLiteral() -> Expected<unsigned, Error>
     auto integralLiteral = consumeIntegralLiteral();
     if (!integralLiteral)
         return makeUnexpected(integralLiteral.error());
-    auto result = WTF::visit(WTF::makeVisitor([](int x) -> Optional<unsigned> {
+    auto result = WTF::visit(WTF::makeVisitor([](int x) -> std::optional<unsigned> {
         if (x < 0)
-            return WTF::nullopt;
+            return std::nullopt;
         return x;
-    }, [](unsigned x) -> Optional<unsigned> {
+    }, [](unsigned x) -> std::optional<unsigned> {
         return x;
     }), *integralLiteral);
     if (result)
@@ -471,7 +471,7 @@ auto Parser::parseTypeSuffixAbbreviated() -> Expected<TypeSuffixAbbreviated, Err
         CONSUME_TYPE(rightSquareBracket, RightSquareBracket);
         return {{ { *token, *rightSquareBracket }, *token, *numElements }};
     }
-    return {{ { *token }, *token, WTF::nullopt }};
+    return {{ { *token }, *token, std::nullopt }};
 }
 
 auto Parser::parseTypeSuffixNonAbbreviated() -> Expected<TypeSuffixNonAbbreviated, Error>
@@ -487,7 +487,7 @@ auto Parser::parseTypeSuffixNonAbbreviated() -> Expected<TypeSuffixNonAbbreviate
         if (!numElements)
             return makeUnexpected(numElements.error());
         CONSUME_TYPE(rightSquareBracket, RightSquareBracket);
-        return {{ { *token, *rightSquareBracket }, *token, WTF::nullopt, *numElements }};
+        return {{ { *token, *rightSquareBracket }, *token, std::nullopt, *numElements }};
     }
     auto addressSpaceToken = consumeTypes<
         Token::Type::Constant,
@@ -512,7 +512,7 @@ auto Parser::parseTypeSuffixNonAbbreviated() -> Expected<TypeSuffixNonAbbreviate
         addressSpace = AST::AddressSpace::Thread;
         break;
     }
-    return {{ { *token }, *token, { addressSpace }, WTF::nullopt }};
+    return {{ { *token }, *token, { addressSpace }, std::nullopt }};
 }
 
 auto Parser::parseType() -> Expected<Ref<AST::UnnamedType>, Error>
@@ -869,7 +869,7 @@ auto Parser::parseEnumerationMember(int64_t defaultValue) -> Expected<AST::Enume
     if (tryType(Token::Type::EqualsSign)) {
         PARSE(constantExpression, ConstantExpression);
 
-        Optional<int64_t> value;
+        std::optional<int64_t> value;
         constantExpression->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
             value = integerLiteral.value();
         }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
@@ -1035,7 +1035,7 @@ auto Parser::parseRegularFunctionDeclaration() -> Expected<AST::FunctionDeclarat
 
     auto endOffset = m_lexer.peek().startOffset();
 
-    return AST::FunctionDeclaration({ origin->startOffset(), endOffset, m_lexer.nameSpace() }, { }, WTF::nullopt, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
+    return AST::FunctionDeclaration({ origin->startOffset(), endOffset, m_lexer.nameSpace() }, { }, std::nullopt, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
 }
 
 auto Parser::parseOperatorFunctionDeclaration() -> Expected<AST::FunctionDeclaration, Error>
@@ -1048,7 +1048,7 @@ auto Parser::parseOperatorFunctionDeclaration() -> Expected<AST::FunctionDeclara
     auto endOffset = m_lexer.peek().startOffset();
 
     bool isOperator = true;
-    return AST::FunctionDeclaration({ origin->startOffset(), endOffset, m_lexer.nameSpace() }, { }, WTF::nullopt, WTFMove(*type), "operator cast"_str, WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
+    return AST::FunctionDeclaration({ origin->startOffset(), endOffset, m_lexer.nameSpace() }, { }, std::nullopt, WTFMove(*type), "operator cast"_str, WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
 }
 
 auto Parser::parseFunctionDeclaration() -> Expected<AST::FunctionDeclaration, Error>
@@ -1165,7 +1165,7 @@ auto Parser::parseSwitchCase() -> Expected<AST::SwitchCase, Error>
 
         PARSE(block, BlockBody);
 
-        return AST::SwitchCase({ origin->codeLocation,  block->codeLocation()}, WTF::nullopt, WTFMove(*block));
+        return AST::SwitchCase({ origin->codeLocation,  block->codeLocation()}, std::nullopt, WTFMove(*block));
     }
     }
 }

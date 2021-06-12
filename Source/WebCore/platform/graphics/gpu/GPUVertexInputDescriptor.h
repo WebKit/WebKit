@@ -39,7 +39,7 @@ enum class GPUIndexFormat {
 
 struct GPUVertexInputDescriptor {
     GPUIndexFormat indexFormat;
-    Vector<Optional<GPUVertexBufferDescriptor>> vertexBuffers;
+    Vector<std::optional<GPUVertexBufferDescriptor>> vertexBuffers;
 };
 
 } // namespace WebCore

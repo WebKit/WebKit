@@ -51,11 +51,11 @@ bool operator==(const SimpleRange& a, const SimpleRange& b)
     return a.start == b.start && a.end == b.end;
 }
 
-Optional<SimpleRange> makeRangeSelectingNode(Node& node)
+std::optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
     auto parent = node.parentNode();
     if (!parent)
-        return WTF::nullopt;
+        return std::nullopt;
     unsigned offset = node.computeNodeIndex();
     return SimpleRange { { *parent, offset }, { *parent, offset + 1 } };
 }
@@ -150,12 +150,12 @@ template<TreeType treeType> bool contains(const SimpleRange& range, const Bounda
 
 template bool contains<Tree>(const SimpleRange&, const BoundaryPoint&);
 
-template<TreeType treeType> bool contains(const SimpleRange& range, const Optional<BoundaryPoint>& point)
+template<TreeType treeType> bool contains(const SimpleRange& range, const std::optional<BoundaryPoint>& point)
 {
     return point && contains<treeType>(range, *point);
 }
 
-template bool contains<ComposedTree>(const SimpleRange&, const Optional<BoundaryPoint>&);
+template bool contains<ComposedTree>(const SimpleRange&, const std::optional<BoundaryPoint>&);
 
 bool containsForTesting(TreeType type, const SimpleRange& range, const BoundaryPoint& point)
 {
@@ -246,11 +246,11 @@ SimpleRange unionRange(const SimpleRange& a, const SimpleRange& b)
     return { std::min(a.start, b.start, compareByComposedTreeOrder), std::max(a.end, b.end, compareByComposedTreeOrder) };
 }
 
-Optional<SimpleRange> intersection(const Optional<SimpleRange>& a, const Optional<SimpleRange>& b)
+std::optional<SimpleRange> intersection(const std::optional<SimpleRange>& a, const std::optional<SimpleRange>& b)
 {
     // FIXME: Can this be done more efficiently, with fewer calls to treeOrder?
     if (!a || !b || !intersects<ComposedTree>(*a, *b))
-        return WTF::nullopt;
+        return std::nullopt;
     return { { std::max(a->start, b->start, compareByComposedTreeOrder), std::min(a->end, b->end, compareByComposedTreeOrder) } };
 }
 

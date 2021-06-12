@@ -50,7 +50,7 @@ public:
     using DataCallback = Function<void(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
     using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
     SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier, DataCallback&&, StateUpdateCallback&&, Ref<RealtimeMediaSource>&&);
-    WEBCORE_EXPORT static Optional<WebCore::CaptureDevice> findCaptureDevice();
+    WEBCORE_EXPORT static std::optional<WebCore::CaptureDevice> findCaptureDevice();
     WEBCORE_EXPORT static CaptureSourceOrError createRealtimeMediaSource(const CaptureDevice&);
 #endif
 

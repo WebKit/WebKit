@@ -40,7 +40,7 @@ namespace Layout {
 class ReplacedBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(ReplacedBox);
 public:
-    ReplacedBox(Optional<ElementAttributes>, RenderStyle&&);
+    ReplacedBox(std::optional<ElementAttributes>, RenderStyle&&);
     virtual ~ReplacedBox() = default;
 
     void setCachedImage(CachedImage& cachedImage) { m_cachedImage = &cachedImage; }
@@ -58,14 +58,14 @@ public:
     LayoutUnit intrinsicRatio() const;
 
     void setBaseline(LayoutUnit baseline) { m_baseline = baseline; }
-    Optional<LayoutUnit> baseline() const { return m_baseline; }
+    std::optional<LayoutUnit> baseline() const { return m_baseline; }
 
 private:
     bool hasAspectRatio() const;
 
-    Optional<LayoutSize> m_intrinsicSize;
-    Optional<LayoutUnit> m_intrinsicRatio;
-    Optional<LayoutUnit> m_baseline;
+    std::optional<LayoutSize> m_intrinsicSize;
+    std::optional<LayoutUnit> m_intrinsicRatio;
+    std::optional<LayoutUnit> m_baseline;
     CachedImage* m_cachedImage { nullptr };
 };
 

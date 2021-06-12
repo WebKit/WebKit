@@ -119,7 +119,7 @@ protected:
 
     static void destroy(JSC::JSCell*);
 
-    Optional<typename DOMWrapped::Iterator> m_iterator;
+    std::optional<typename DOMWrapped::Iterator> m_iterator;
     IterationKind m_kind;
 };
 
@@ -242,7 +242,7 @@ JSC::JSValue JSDOMIteratorBase<JSWrapper, IteratorTraits>::next(JSC::JSGlobalObj
         auto iteratorValue = m_iterator->next();
         if (iteratorValue)
             return createIteratorResultObject(&lexicalGlobalObject, asJS(lexicalGlobalObject, iteratorValue), false);
-        m_iterator = WTF::nullopt;
+        m_iterator = std::nullopt;
     }
     return createIteratorResultObject(&lexicalGlobalObject, JSC::jsUndefined(), true);
 }

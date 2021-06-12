@@ -47,8 +47,7 @@
 #import "PageOverlayController.h"
 #import "Settings.h"
 #import <QuartzCore/QuartzCore.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
-#import <wtf/SoftLinking.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebCore {
 
@@ -268,11 +267,11 @@ void ServicesOverlayController::buildPotentialHighlightsIfNeeded()
 
 bool ServicesOverlayController::mouseIsOverHighlight(DataDetectorHighlight& highlight, bool& mouseIsOverButton) const
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return false;
 
     Boolean onButton;
-    bool hovered = DDHighlightPointIsOnHighlight(highlight.highlight(), (CGPoint)m_mousePosition, &onButton);
+    bool hovered = PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(highlight.highlight(), (CGPoint)m_mousePosition, &onButton);
     mouseIsOverButton = onButton;
     return hovered;
 }
@@ -345,7 +344,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
         return;
     }
 
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
@@ -368,9 +367,9 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
         CGRect cgRect = rect;
 #if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
-        auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES, 0));
+        auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES, 0));
 #else
-        auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
+        auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
 #endif
         auto highlight = DataDetectorHighlight::createForTelephoneNumber(m_page, *this, WTFMove(ddHighlight), WTFMove(range));
         m_highlights.add(highlight.get());
@@ -387,7 +386,7 @@ void ServicesOverlayController::buildSelectionHighlight()
         return;
     }
 
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
@@ -413,9 +412,9 @@ void ServicesOverlayController::buildSelectionHighlight()
         if (!cgRects.isEmpty()) {
             CGRect visibleRect = mainFrameView->visibleContentRect();
 #if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
-            auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES, 0));
+            auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES, 0));
 #else
-            auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
+            auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
 #endif
             auto highlight = DataDetectorHighlight::createForSelection(m_page, *this, WTFMove(ddHighlight), WTFMove(*selectionRange));
             m_highlights.add(highlight.get());

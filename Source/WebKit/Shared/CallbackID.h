@@ -81,12 +81,12 @@ public:
         encoder << m_id;
     }
 
-    template<class Decoder> static Optional<CallbackID> decode(Decoder& decoder)
+    template<class Decoder> static std::optional<CallbackID> decode(Decoder& decoder)
     {
-        Optional<uint64_t> identifier;
+        std::optional<uint64_t> identifier;
         decoder >> identifier;
         if (!identifier)
-            return WTF::nullopt;
+            return std::nullopt;
         RELEASE_ASSERT(isValidCallbackID(*identifier));
         return fromInteger(*identifier);
     }

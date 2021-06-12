@@ -64,27 +64,6 @@ extern "C" {
 #endif
 
 
-static inline uint32_t GETU32(const void *in) {
-  uint32_t v;
-  OPENSSL_memcpy(&v, in, sizeof(v));
-  return CRYPTO_bswap4(v);
-}
-
-static inline void PUTU32(void *out, uint32_t v) {
-  v = CRYPTO_bswap4(v);
-  OPENSSL_memcpy(out, &v, sizeof(v));
-}
-
-static inline size_t load_word_le(const void *in) {
-  size_t v;
-  OPENSSL_memcpy(&v, in, sizeof(v));
-  return v;
-}
-
-static inline void store_word_le(void *out, size_t v) {
-  OPENSSL_memcpy(out, &v, sizeof(v));
-}
-
 // block128_f is the type of an AES block cipher implementation.
 //
 // Unlike upstream OpenSSL, it and the other functions in this file hard-code
@@ -171,7 +150,7 @@ typedef struct {
     uint64_t u[2];
     uint32_t d[4];
     uint8_t c[16];
-    size_t t[16 / sizeof(size_t)];
+    crypto_word_t t[16 / sizeof(crypto_word_t)];
   } Yi, EKi, EK0, len, Xi;
 
   // Note that the order of |Xi| and |gcm_key| is fixed by the MOVBE-based,

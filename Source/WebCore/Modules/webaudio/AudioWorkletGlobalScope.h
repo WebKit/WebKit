@@ -80,7 +80,7 @@ private:
     const float m_sampleRate;
     HashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
     std::unique_ptr<AudioWorkletProcessorConstructionData> m_pendingProcessorConstructionData;
-    Optional<JSC::JSLockHolder> m_lockDuringRendering;
+    std::optional<JSC::JSLockHolder> m_lockDuringRendering;
 };
 
 } // namespace WebCore

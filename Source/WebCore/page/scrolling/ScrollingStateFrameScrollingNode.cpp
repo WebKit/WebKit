@@ -174,7 +174,7 @@ void ScrollingStateFrameScrollingNode::setMaxLayoutViewportOrigin(const FloatPoi
     setPropertyChanged(Property::MaxLayoutViewportOrigin);
 }
 
-void ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize(Optional<FloatSize> viewportSize)
+void ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize(std::optional<FloatSize> viewportSize)
 {
     if (viewportSize == m_overrideVisualViewportSize)
         return;
@@ -344,9 +344,6 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
     
     if (m_overrideVisualViewportSize)
         ts.dumpProperty("override visual viewport size", m_overrideVisualViewportSize.value());
-
-    if (m_behaviorForFixed == StickToViewportBounds)
-        ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
 
     if (!m_eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {
         TextStream::GroupScope scope(ts);

@@ -65,17 +65,17 @@ public:
     }
 
     template<class Decoder>
-    static Optional<LayoutRect> decode(Decoder& decoder)
+    static std::optional<LayoutRect> decode(Decoder& decoder)
     {
-        Optional<LayoutPoint> layoutPoint;
+        std::optional<LayoutPoint> layoutPoint;
         decoder >> layoutPoint;
         if (!layoutPoint)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<LayoutSize> layoutSize;
+        std::optional<LayoutSize> layoutSize;
         decoder >> layoutSize;
         if (!layoutSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ *layoutPoint, *layoutSize }};
     }

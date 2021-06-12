@@ -72,7 +72,7 @@ private:
     bool mustPosesBeLimited(const WebXRSpace&, const WebXRSpace&) const;
 
     struct PopulatedPose;
-    ExceptionOr<Optional<PopulatedPose>> populatePose(const Document&, const WebXRSpace&, const WebXRSpace&);
+    ExceptionOr<std::optional<PopulatedPose>> populatePose(const Document&, const WebXRSpace&, const WebXRSpace&);
 
     bool m_active { false };
     bool m_isAnimationFrame { false };

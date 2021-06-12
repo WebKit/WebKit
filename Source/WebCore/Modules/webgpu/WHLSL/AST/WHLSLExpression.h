@@ -32,7 +32,6 @@
 #include "WHLSLDefaultDelete.h"
 #include "WHLSLUnnamedType.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -150,7 +149,7 @@ public:
 private:
     CodeLocation m_codeLocation;
     RefPtr<UnnamedType> m_type;
-    Optional<TypeAnnotation> m_typeAnnotation;
+    std::optional<TypeAnnotation> m_typeAnnotation;
     Kind m_kind;
 };
 

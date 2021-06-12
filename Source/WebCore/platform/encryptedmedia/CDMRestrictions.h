@@ -46,22 +46,22 @@ struct CDMRestrictions {
     }
 
     template <class Decoder>
-    static Optional<CDMRestrictions> decode(Decoder& decoder)
+    static std::optional<CDMRestrictions> decode(Decoder& decoder)
     {
-        Optional<bool> distinctiveIdentifierDenied;
+        std::optional<bool> distinctiveIdentifierDenied;
         decoder >> distinctiveIdentifierDenied;
         if (!distinctiveIdentifierDenied)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> persistentStateDenied;
+        std::optional<bool> persistentStateDenied;
         decoder >> persistentStateDenied;
         if (!persistentStateDenied)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<HashSet<CDMSessionType, WTF::IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>>> deniedSessionTypes;
+        std::optional<HashSet<CDMSessionType, WTF::IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>>> deniedSessionTypes;
         decoder >> deniedSessionTypes;
         if (!deniedSessionTypes)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             *distinctiveIdentifierDenied,

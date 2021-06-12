@@ -91,22 +91,22 @@ static decltype(auto) visibleNamedPropertyItemAccessorFunctor(InnerItemAccessor&
     if constexpr (IsExceptionOr<std::invoke_result_t<InnerItemAccessor, JSClass&, JSC::PropertyName>>) {
         using ReturnType = ExceptionOr<typename IDLType::ImplementationType>;
 
-        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> Optional<ReturnType> {
+        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
             auto result = innerItemAccessor(thisObject, propertyName);
             if (result.hasException())
                 return ReturnType { result.releaseException() };
             if (!IDLType::isNullValue(result.returnValue()))
                 return ReturnType { IDLType::extractValueFromNullable(result.releaseReturnValue()) };
-            return WTF::nullopt;
+            return std::nullopt;
         };
     } else {
         using ReturnType = typename IDLType::ImplementationType;
 
-        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> Optional<ReturnType> {
+        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
             auto result = innerItemAccessor(thisObject, propertyName);
             if (!IDLType::isNullValue(result))
                 return ReturnType { IDLType::extractValueFromNullable(result) };
-            return WTF::nullopt;
+            return std::nullopt;
         };
     }
 }
@@ -122,17 +122,17 @@ static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject,
     // NOTE: While it is not specified, a Symbol can never be a 'supported property
     // name' so we check that first.
     if (propertyName.isSymbol())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // 1. If P is not a supported property name of O, then return false.
     auto result = itemAccessor(thisObject, propertyName);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // 2. If O has an own property named P, then return false.
     JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject.vm() };
     if (JSC::JSObject::getOwnPropertySlot(&thisObject, &lexicalGlobalObject, propertyName, slot))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // 3. If O implements an interface that has the [LegacyOverrideBuiltIns] extended attribute, then return true.
     if (overrideBuiltins == LegacyOverrideBuiltIns::Yes && !worldForDOMObject(thisObject).shouldDisableLegacyOverrideBuiltInsBehavior())
@@ -145,7 +145,7 @@ static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject,
     //    2. Set prototype to be the value of the internal [[Prototype]] property of prototype.
     auto prototype = thisObject.getPrototypeDirect(JSC::getVM(&lexicalGlobalObject));
     if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&lexicalGlobalObject, propertyName, slot))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // 6. Return true.
     return result;

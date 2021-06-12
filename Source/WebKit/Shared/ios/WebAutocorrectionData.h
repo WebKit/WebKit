@@ -27,7 +27,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -49,7 +48,7 @@ struct WebAutocorrectionData {
     RetainPtr<UIFont> font;
 
     void encode(IPC::Encoder&) const;
-    static Optional<WebAutocorrectionData> decode(IPC::Decoder&);
+    static std::optional<WebAutocorrectionData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

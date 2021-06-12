@@ -38,7 +38,7 @@ class BlockFormattingQuirks : public FormattingQuirks {
 public:
     BlockFormattingQuirks(const BlockFormattingContext&);
 
-    Optional<LayoutUnit> stretchedInFlowHeightIfApplicable(const Box&, ContentHeightAndMargin) const;
+    std::optional<LayoutUnit> stretchedInFlowHeightIfApplicable(const Box&, ContentHeightAndMargin) const;
     static bool shouldIgnoreCollapsedQuirkMargin(const Box&);
     static bool shouldCollapseMarginBeforeWithParentMarginBefore(const Box&);
     static bool shouldCollapseMarginAfterWithParentMarginAfter(const Box&);
@@ -46,5 +46,7 @@ public:
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_QUIRKS(BlockFormattingQuirks, isBlockFormattingQuirks())
 
 #endif

@@ -34,7 +34,7 @@
 #include "CairoOperations.h"
 #include "Color.h"
 #include "GraphicsContext.h"
-#include "GraphicsContextImplCairo.h"
+#include "GraphicsContextCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
 #include "PixelBuffer.h"
 #include <cairo.h>
@@ -51,7 +51,7 @@ ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend(const Parameters&
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(m_surface.get()));
     m_platformContext.setCr(cr.get());
-    m_context = makeUnique<GraphicsContext>(GraphicsContextImplCairo::createFactory(m_platformContext));
+    m_context = makeUnique<GraphicsContextCairo>(m_platformContext);
 }
 
 GraphicsContext& ImageBufferCairoSurfaceBackend::context() const
@@ -103,7 +103,7 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::cairoSurfaceCoerceToImage() 
     return copyNativeImage(copyBehavior);
 }
 
-Optional<PixelBuffer> ImageBufferCairoSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
+std::optional<PixelBuffer> ImageBufferCairoSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, cairo_image_surface_get_data(m_surface.get()));
 }

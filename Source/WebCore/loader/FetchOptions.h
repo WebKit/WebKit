@@ -49,7 +49,7 @@ struct FetchOptions {
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FetchOptions> decode(Decoder&);
+    template<class Decoder> static std::optional<FetchOptions> decode(Decoder&);
 
     Destination destination { Destination::EmptyString };
     Mode mode { Mode::NoCors };
@@ -189,42 +189,42 @@ inline void FetchOptions::encodePersistent(Encoder& encoder) const
 template<class Decoder>
 inline bool FetchOptions::decodePersistent(Decoder& decoder, FetchOptions& options)
 {
-    Optional<FetchOptions::Destination> destination;
+    std::optional<FetchOptions::Destination> destination;
     decoder >> destination;
     if (!destination)
         return false;
 
-    Optional<FetchOptions::Mode> mode;
+    std::optional<FetchOptions::Mode> mode;
     decoder >> mode;
     if (!mode)
         return false;
 
-    Optional<FetchOptions::Credentials> credentials;
+    std::optional<FetchOptions::Credentials> credentials;
     decoder >> credentials;
     if (!credentials)
         return false;
 
-    Optional<FetchOptions::Cache> cache;
+    std::optional<FetchOptions::Cache> cache;
     decoder >> cache;
     if (!cache)
         return false;
 
-    Optional<FetchOptions::Redirect> redirect;
+    std::optional<FetchOptions::Redirect> redirect;
     decoder >> redirect;
     if (!redirect)
         return false;
 
-    Optional<ReferrerPolicy> referrerPolicy;
+    std::optional<ReferrerPolicy> referrerPolicy;
     decoder >> referrerPolicy;
     if (!referrerPolicy)
         return false;
 
-    Optional<String> integrity;
+    std::optional<String> integrity;
     decoder >> integrity;
     if (!integrity)
         return false;
 
-    Optional<bool> keepAlive;
+    std::optional<bool> keepAlive;
     decoder >> keepAlive;
     if (!keepAlive)
         return false;
@@ -249,16 +249,16 @@ inline void FetchOptions::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-inline Optional<FetchOptions> FetchOptions::decode(Decoder& decoder)
+inline std::optional<FetchOptions> FetchOptions::decode(Decoder& decoder)
 {
     FetchOptions options;
     if (!decodePersistent(decoder, options))
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Optional<DocumentIdentifier>> clientIdentifier;
+    std::optional<std::optional<DocumentIdentifier>> clientIdentifier;
     decoder >> clientIdentifier;
     if (!clientIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     options.clientIdentifier = WTFMove(clientIdentifier.value());
 
     return options;

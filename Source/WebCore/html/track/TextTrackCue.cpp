@@ -509,22 +509,13 @@ void TextTrackCue::rebuildDisplayTree()
     m_cueNode->cloneChildNodes(clonedFragment);
     m_displayTree->appendChild(clonedFragment);
 
-    if (m_fontSize && ownerDocument().page()) {
-        StringBuilder builder;
-        builder.append(ownerDocument().page()->captionUserPreferencesStyleSheet());
-        builder.appendLiteral(" ::");
-        builder.append(TextTrackCue::cueShadowPseudoId());
-        builder.append('{');
-        builder.append(getPropertyNameString(CSSPropertyFontSize));
-        builder.append(':');
-        builder.append(makeString(m_fontSize, "px"));
-        if (m_fontSizeIsImportant)
-            builder.appendLiteral(" !important");
-        builder.appendLiteral("; }");
-
-        auto style = HTMLStyleElement::create(HTMLNames::styleTag, ownerDocument(), false);
-        style->setTextContent(builder.toString());
-        m_displayTree->appendChild(style);
+    if (m_fontSize) {
+        if (auto page = ownerDocument().page()) {
+            auto style = HTMLStyleElement::create(HTMLNames::styleTag, ownerDocument(), false);
+            style->setTextContent(makeString(page->captionUserPreferencesStyleSheet(),
+                " ::", TextTrackCue::cueShadowPseudoId(), "{font-size:", m_fontSize, m_fontSizeIsImportant ? "px !important}" : "px}"));
+            m_displayTree->appendChild(style);
+        }
     }
 
     if (track()) {

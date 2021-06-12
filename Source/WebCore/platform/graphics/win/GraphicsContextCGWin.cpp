@@ -29,7 +29,7 @@
 #if USE(CG)
 
 #include "AffineTransform.h"
-#include "GraphicsContextImpl.h"
+#include "GraphicsContext.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "Path.h"
 
@@ -67,32 +67,17 @@ static RetainPtr<CGContextRef> CGContextWithHDC(HDC hdc, bool hasAlpha)
     return context;
 }
 
-GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
+GraphicsContextCG::GraphicsContextCG(HDC hdc, bool hasAlpha)
+    : GraphicsContextCG(CGContextWithHDC(hdc, hasAlpha).get())
 {
-    platformInit(hdc, hasAlpha);
-}
-
-void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
-{
-    if (!hdc)
-        return;
-
-    m_data = new GraphicsContextPlatformPrivate(CGContextWithHDC(hdc, hasAlpha));
     m_data->m_hdc = hdc;
-    if (m_data->m_cgContext) {
-        // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor());
-        setPlatformStrokeColor(strokeColor());
-    }
 }
 
-// FIXME: Is it possible to merge getWindowsContext and createWindowsBitmap into a single API
-// suitable for all clients?
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
 {
-    bool createdBitmap = m_impl || !m_data->m_hdc || isInTransparencyLayer();
+    bool createdBitmap = !deprecatedPrivateContext()->m_hdc || isInTransparencyLayer();
     if (!createdBitmap) {
-        m_data->restore();
+        deprecatedPrivateContext()->restore();
         return;
     }
 
@@ -110,35 +95,21 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
                                                        (supportAlphaBlend ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst)));
 
     auto image = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
-    CGContextDrawImage(m_data->m_cgContext.get(), dstRect, image.get());
+    CGContextDrawImage(deprecatedPrivateContext()->m_cgContext.get(), dstRect, image.get());
     
     // Delete all our junk.
     ::DeleteDC(hdc);
 }
 
-void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& point)
-{
-    // FIXME: Creating CFData is non-optimal, but needed to avoid crashing when printing.  Ideally we should 
-    // make a custom CGDataProvider that controls the WindowsBitmap lifetime.  see <rdar://6394455>
-    RetainPtr<CFDataRef> imageData = adoptCF(CFDataCreate(kCFAllocatorDefault, image->buffer(), image->bufferLength()));
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(imageData.get()));
-    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(image->size().width(), image->size().height(), 8, 32, image->bytesPerRow(), sRGBColorSpaceRef(),
-                                                         kCGBitmapByteOrder32Little | kCGImageAlphaFirst, dataProvider.get(), 0, true, kCGRenderingIntentDefault));
-    CGContextDrawImage(m_data->m_cgContext.get(), CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
-}
-
-void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
     // FIXME: implement
 }
 
 // FIXME: This is nearly identical to the GraphicsContext::drawFocusRing function in GraphicsContextMac.mm.
 // The code could move to GraphicsContextCG.cpp and be shared.
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
-    if (paintingDisabled())
-        return;
-
     float radius = (width - 1) / 2.0f;
     offset += radius;
     CGColorRef colorRef = color.isValid() ? cachedCGColor(color) : nullptr;
@@ -164,11 +135,8 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     CGContextRestoreGState(context);
 }
 
-void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    if (paintingDisabled())
-        return;
-
     if (style.mode != DocumentMarkerLineStyle::Mode::Spelling && style.mode != DocumentMarkerLineStyle::Mode::Grammar)
         return;
 
@@ -242,6 +210,11 @@ void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentM
 void GraphicsContextPlatformPrivate::flush()
 {
     CGContextFlush(m_cgContext.get());
+}
+
+GraphicsContextPlatformPrivate* GraphicsContextCG::deprecatedPrivateContext() const
+{
+    return m_data;
 }
 
 }

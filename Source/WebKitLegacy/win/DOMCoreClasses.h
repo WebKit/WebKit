@@ -823,7 +823,7 @@ protected:
 
 public:
     static IDOMRange* createInstance(WebCore::Range*);
-    static IDOMRange* createInstance(const Optional<WebCore::SimpleRange>&);
+    static IDOMRange* createInstance(const std::optional<WebCore::SimpleRange>&);
 
 public:
     // IUnknown

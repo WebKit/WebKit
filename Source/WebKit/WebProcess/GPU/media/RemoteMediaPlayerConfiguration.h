@@ -57,47 +57,47 @@ struct RemoteMediaPlayerConfiguration {
     }
 
     template <class Decoder>
-    static Optional<RemoteMediaPlayerConfiguration> decode(Decoder& decoder)
+    static std::optional<RemoteMediaPlayerConfiguration> decode(Decoder& decoder)
     {
-        Optional<String> engineDescription;
+        std::optional<String> engineDescription;
         decoder >> engineDescription;
         if (!engineDescription)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<double> maximumDurationToCacheMediaTime;
+        std::optional<double> maximumDurationToCacheMediaTime;
         decoder >> maximumDurationToCacheMediaTime;
         if (!maximumDurationToCacheMediaTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> supportsScanning;
+        std::optional<bool> supportsScanning;
         decoder >> supportsScanning;
         if (!supportsScanning)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> supportsFullscreen;
+        std::optional<bool> supportsFullscreen;
         decoder >> supportsFullscreen;
         if (!supportsFullscreen)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> supportsPictureInPicture;
+        std::optional<bool> supportsPictureInPicture;
         decoder >> supportsPictureInPicture;
         if (!supportsPictureInPicture)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> supportsAcceleratedRendering;
+        std::optional<bool> supportsAcceleratedRendering;
         decoder >> supportsAcceleratedRendering;
         if (!supportsAcceleratedRendering)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> canPlayToWirelessPlaybackTarget;
+        std::optional<bool> canPlayToWirelessPlaybackTarget;
         decoder >> canPlayToWirelessPlaybackTarget;
         if (!canPlayToWirelessPlaybackTarget)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        Optional<bool> shouldIgnoreIntrinsicSize;
+        std::optional<bool> shouldIgnoreIntrinsicSize;
         decoder >> shouldIgnoreIntrinsicSize;
         if (!shouldIgnoreIntrinsicSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*engineDescription),

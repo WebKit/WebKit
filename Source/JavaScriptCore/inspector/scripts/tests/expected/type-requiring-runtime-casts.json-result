@@ -127,7 +127,6 @@ private:
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <tuple>
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -221,7 +220,6 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -306,7 +304,6 @@ namespace Inspector {
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -578,13 +575,13 @@ static void assertValueHasExpectedType(JSON::Value*);
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Test' Domain
 template<>
-Optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String&);
+std::optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String&);
 template<>
-Optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String&);
+std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String&);
 
 } // namespace TestHelpers
 
@@ -662,8 +659,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Test' Domain
 
-template<>
-Optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String& protocolString)
+template<> std::optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Test::UncastedAnimals::Pigs,
@@ -675,11 +671,10 @@ Optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Tes
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Test::UncastedAnimals)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
-template<>
-Optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String& protocolString)
+template<> std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Test::CastedAnimals::Ducks,
@@ -691,7 +686,7 @@ Optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test:
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Test::CastedAnimals)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -1190,7 +1185,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-Optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 {
@@ -1207,7 +1202,7 @@ inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 }
 
 template<>
-inline Optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
 {
     if (value == "Pigs")
         return TestProtocolTestUncastedAnimalsPigs;
@@ -1217,7 +1212,7 @@ inline Optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String
         return TestProtocolTestUncastedAnimalsCats;
     if (value == "Hens")
         return TestProtocolTestUncastedAnimalsHens;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolTestCastedAnimals value)
@@ -1235,7 +1230,7 @@ inline String toProtocolString(TestProtocolTestCastedAnimals value)
 }
 
 template<>
-inline Optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
 {
     if (value == "Ducks")
         return TestProtocolTestCastedAnimalsDucks;
@@ -1245,7 +1240,7 @@ inline Optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& 
         return TestProtocolTestCastedAnimalsCrows;
     if (value == "Flamingos")
         return TestProtocolTestCastedAnimalsFlamingos;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1325,7 +1320,7 @@ using namespace Inspector;
 + (void)_parseUncastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolTestUncastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"UncastedAnimals");
     *outValue = @(result.value());
 }
@@ -1333,7 +1328,7 @@ using namespace Inspector;
 + (void)_parseCastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolTestCastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"CastedAnimals");
     *outValue = @(result.value());
 }
@@ -1408,9 +1403,9 @@ using namespace Inspector;
     self.number = [payload[@"number"] integerValue];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"animals"], @"animals");
-    Optional<TestProtocolTestCastedAnimals> animals = fromProtocolString<TestProtocolTestCastedAnimals>(payload[@"animals"]);
+    auto animals = fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)payload[@"animals"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(animals, @"animals");
-    self.animals = animals.value();
+    self.animals = *animals;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"id"], @"id");
     self.identifier = [payload[@"id"] integerValue];
@@ -1472,7 +1467,7 @@ using namespace Inspector;
 
 - (TestProtocolTestCastedAnimals)animals
 {
-    return fromProtocolString<TestProtocolTestCastedAnimals>([super stringForKey:@"animals"]).value();
+    return fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)[super stringForKey:@"animals"]).value();
 }
 
 - (void)setIdentifier:(int)identifier

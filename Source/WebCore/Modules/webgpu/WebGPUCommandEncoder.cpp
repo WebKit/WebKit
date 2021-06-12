@@ -37,15 +37,14 @@
 #include "WebGPURenderPassDescriptor.h"
 #include "WebGPURenderPassEncoder.h"
 #include "WebGPUTexture.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
-Optional<GPUBufferCopyView> WebGPUBufferCopyView::tryCreateGPUBufferCopyView() const
+std::optional<GPUBufferCopyView> WebGPUBufferCopyView::tryCreateGPUBufferCopyView() const
 {
     if (!buffer || !buffer->buffer()) {
         LOG(WebGPU, "WebGPUCommandEncoder: Invalid buffer for copy!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // FIXME: Add Web GPU validation.
@@ -53,11 +52,11 @@ Optional<GPUBufferCopyView> WebGPUBufferCopyView::tryCreateGPUBufferCopyView() c
     return GPUBufferCopyView { makeRef(*buffer->buffer()), *this };
 }
 
-Optional<GPUTextureCopyView> WebGPUTextureCopyView::tryCreateGPUTextureCopyView() const
+std::optional<GPUTextureCopyView> WebGPUTextureCopyView::tryCreateGPUTextureCopyView() const
 {
     if (!texture || !texture->texture()) {
         LOG(WebGPU, "WebGPUCommandEncoder: Invalid texture for copy!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // FIXME: Add Web GPU validation.

@@ -151,7 +151,7 @@ srtp_err_status_t srtp_ekt_stream_init_from_policy(
 
 void aes_decrypt_with_raw_key(void *ciphertext, const void *key, int key_len)
 {
-#ifndef OPENSSL
+#ifndef GCM
     // FIXME: need to get this working through the crypto module interface
     srtp_aes_expanded_key_t expanded_key;
 
@@ -218,7 +218,7 @@ void srtp_ekt_write_data(srtp_ekt_stream_t ekt,
 
     /* if the pointer ekt is NULL, then EKT is not in effect */
     if (!ekt) {
-        debug_print(mod_srtp, "EKT not in use", NULL);
+        debug_print0(mod_srtp, "EKT not in use");
         return;
     }
 

@@ -235,6 +235,7 @@ describe('MeasurementSetAnalyzer', () => {
                 repetitionCount: 4,
                 testGroupName: 'Confirm',
                 needsNotification: true,
+                repetitionType: 'alternating',
                 revisionSets: [{'11': {revision: 35, ownerRevision: null, patch: null}},
                     {'11': {revision: 44, ownerRevision: null, patch: null}}]
             });
@@ -294,6 +295,7 @@ describe('MeasurementSetAnalyzer', () => {
                 repetitionCount: 4,
                 testGroupName: 'Confirm',
                 needsNotification: true,
+                repetitionType: 'alternating',
                 revisionSets: [{'11': {revision: 35, ownerRevision: null, patch: null}},
                     {'11': {revision: 44, ownerRevision: null, patch: null}}]
             });
@@ -526,6 +528,7 @@ describe('MeasurementSetAnalyzer', () => {
                 repetitionCount: 4,
                 testGroupName: 'Confirm',
                 needsNotification: true,
+                repetitionType: 'alternating',
                 revisionSets: [{'11': {revision: 40, ownerRevision: null, patch: null}},
                     {'11': {revision: 49, ownerRevision: null, patch: null}}]
             });
@@ -618,6 +621,7 @@ describe('MeasurementSetAnalyzer', () => {
                 repetitionCount: 4,
                 testGroupName: 'Confirm',
                 needsNotification: true,
+                repetitionType: 'alternating',
                 revisionSets: [{'11': {revision: 3, ownerRevision: null, patch: null}},
                     {'11': {revision: 8, ownerRevision: null, patch: null}}]
             });

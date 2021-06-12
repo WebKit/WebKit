@@ -35,7 +35,6 @@
 #include "CSSBorderImageSliceValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCursorImageValue.h"
-#include "CSSCustomIdentValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
@@ -404,8 +403,6 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
         // Prefixed values
         CSSValueWebkitInlineBox,
         CSSValueWebkitBox,
-        CSSValueWebkitInlineFlex,
-        CSSValueWebkitFlex,
         // No layout support for the full <display-listitem> syntax, so treat it as <display-legacy>
         CSSValueListItem
     >(range);
@@ -417,9 +414,17 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
     if (range.atEnd())
         return nullptr;
 
+    // Convert -webkit-flex/-webkit-inline-flex to flex/inline-flex
+    CSSValueID nextValueID = range.peek().id();
+    if (nextValueID == CSSValueWebkitInlineFlex || nextValueID == CSSValueWebkitFlex) {
+        consumeIdent(range);
+        return CSSValuePool::singleton().createValue(
+            nextValueID == CSSValueWebkitInlineFlex ? CSSValueInlineFlex : CSSValueFlex);
+    }
+
     // Parse [ <display-outside> || <display-inside> ]
-    Optional<CSSValueID> parsedDisplayOutside;
-    Optional<CSSValueID> parsedDisplayInside;
+    std::optional<CSSValueID> parsedDisplayOutside;
+    std::optional<CSSValueID> parsedDisplayInside;
     while (!range.atEnd()) {
         auto nextValueID = range.peek().id();
         switch (nextValueID) {
@@ -447,8 +452,8 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
     }
 
     // Set defaults when one of the two values are unspecified
-    CSSValueID displayOutside = parsedDisplayOutside.valueOr(CSSValueBlock);
-    CSSValueID displayInside = parsedDisplayInside.valueOr(CSSValueFlow);
+    CSSValueID displayOutside = parsedDisplayOutside.value_or(CSSValueBlock);
+    CSSValueID displayInside = parsedDisplayInside.value_or(CSSValueFlow);
 
     auto selectShortValue = [&]() -> CSSValueID {
         if (displayOutside == CSSValueBlock) {
@@ -494,7 +499,6 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
             // Need to return nullptr when currentValue is CSSPropertyAll.
             if (propertyID == CSSPropertyWillChange || propertyID == CSSPropertyAll)
                 return nullptr;
-            // FIXME-NEWPARSER: Use CSSCustomIdentValue someday.
             values->append(CSSValuePool::singleton().createIdentifierValue(propertyID));
             range.consumeIncludingWhitespace();
         } else {
@@ -1252,7 +1256,7 @@ static RefPtr<CSSValue> consumeColumnWidth(CSSParserTokenRange& range)
     // Always parse lengths in strict mode here, since it would be ambiguous otherwise when used in
     // the 'columns' shorthand property.
     RefPtr<CSSPrimitiveValue> columnWidth = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative);
-    if (!columnWidth || columnWidth->isZero().valueOr(false))
+    if (!columnWidth || columnWidth->isZero().value_or(false))
         return nullptr;
 
     return columnWidth;
@@ -1307,7 +1311,6 @@ static RefPtr<CSSValue> consumeAnimationName(CSSParserTokenRange& range)
         const CSSParserToken& token = range.consumeIncludingWhitespace();
         if (equalIgnoringASCIICase(token.value(), "none"))
             return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-        // FIXME-NEWPARSER: Want to use a CSSCustomIdentValue here eventually.
         return CSSValuePool::singleton().createValue(token.value().toString(), CSSUnitType::CSS_STRING);
     }
 
@@ -1324,14 +1327,6 @@ static RefPtr<CSSValue> consumeTransitionProperty(CSSParserTokenRange& range)
 
     if (CSSPropertyID property = token.parseAsCSSPropertyID()) {
         range.consumeIncludingWhitespace();
-        
-        // FIXME-NEWPARSER: No reason why we can't use the "all" property now that it exists.
-        // The old parser used a value keyword for "all", though, since it predated support for
-        // the property.
-        if (property == CSSPropertyAll)
-            return CSSValuePool::singleton().createIdentifierValue(CSSValueAll);
-
-        // FIXME-NEWPARSER: Want to use a CSSCustomIdentValue here eventually.
         return CSSValuePool::singleton().createIdentifierValue(property);
     }
     return consumeCustomIdent(range);
@@ -1350,7 +1345,7 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
     if (!stepsValue)
         return nullptr;
     
-    Optional<StepsTimingFunction::StepPosition> stepPosition;
+    std::optional<StepsTimingFunction::StepPosition> stepPosition;
     if (consumeCommaIncludingWhitespace(args)) {
         switch (args.consumeIncludingWhitespace().id()) {
         case CSSValueJumpStart:
@@ -2315,9 +2310,7 @@ static RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, CSSParserContext c
     if (!args.atEnd())
         return nullptr;
 
-    // FIXME-NEWPARSER: We want to use a CSSCustomIdentValue here eventually for the attrName.
-    // FIXME-NEWPARSER: We want to use a CSSFunctionValue rather than relying on a custom
-    // attr() primitive value.
+    // FIXME: Consider moving to a CSSFunctionValue with a custom-ident rather than a special CSS_ATTR primitive value.
     return CSSValuePool::singleton().createValue(attrName, CSSUnitType::CSS_ATTR);
 }
 
@@ -2387,7 +2380,7 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
         return consumeIdent(range);
 
     if (auto parsedValue = consumeLength(range, cssParserMode, ValueRange::All)) {
-        if (!parsedValue->isNegative().valueOr(false))
+        if (!parsedValue->isNegative().value_or(false))
             return parsedValue;
         return nullptr;
     }
@@ -5532,12 +5525,9 @@ bool CSSPropertyParser::consumeOverflowShorthand(bool important)
     return true;
 }
 
-// FIXME-NEWPARSER: Hack to work around the fact that we aren't using CSSCustomIdentValue
-// for stuff yet. This can be replaced by CSSValue::isCustomIdentValue() once we switch
-// to using CSSCustomIdentValue everywhere.
 static bool isCustomIdentValue(const CSSValue& value)
 {
-    return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isString();
+    return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isCustomIdent();
 }
 
 bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthandId, bool important)

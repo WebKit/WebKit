@@ -1,3 +1,542 @@
+2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Use 3D points to map the WebXRBoundedReferenceSpace bounds transform
+        https://bugs.webkit.org/show_bug.cgi?id=224365
+        <rdar://problem/76754927>
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXR test expectations.
+
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt:
+
+2021-06-06  Darin Adler  <darin@apple.com>
+
+        Handle custom identifiers and strings separately, so we can quote strings correctly consistently
+        https://bugs.webkit.org/show_bug.cgi?id=226694
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-animations/parsing/animation-name-valid-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-negative-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-pad-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-symbols-syntax-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-area-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-area-shorthand-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-area-valid-expected.txt:
+        * web-platform-tests/css/css-lists/parsing/content-invalid-expected.txt:
+        * web-platform-tests/css/css-transitions/transition-property-002-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-pseudo-expected.txt:
+        * web-platform-tests/css/cssom/serialize-values-expected.txt:
+        Rebased to reflect progressions. In some cases the entire test passes, in other cases we still
+        have failures, but the string serialization part of the test has progressed.
+
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Worker.constructor throws an exception when the url param is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=226637
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that it is passing.
+
+        * web-platform-tests/workers/constructors/Worker/Worker-constructor-expected.txt:
+
+2021-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Implement off-by-default experimental feature for PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize
+        https://bugs.webkit.org/show_bug.cgi?id=226629
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/navigation-timing/nav2_test_attributes_exist-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_attributes_values-expected.txt:
+        * web-platform-tests/navigation-timing/secure_connection_start_non_zero.https-expected.txt:
+        * web-platform-tests/navigation-timing/test_document_onload-expected.txt:
+        * web-platform-tests/resource-timing/TAO-case-insensitive-null-opaque-origin.sub-expected.txt:
+        * web-platform-tests/resource-timing/TAO-crossorigin-port.sub-expected.txt:
+        * web-platform-tests/resource-timing/TAO-null-opaque-origin.sub-expected.txt:
+        This apparent regression is actually just uncovering an existing failure.
+        The test expects the sum of many values to not be equal to zero.
+        It used to be adding undefined to many 0 values, which returned undefined, which is not equal to zero.
+        Now it's adding 0's and getting 0 which correctly indicates that we are not exposing timing values where we should.
+        * web-platform-tests/resource-timing/cors-preflight.any-expected.txt:
+        * web-platform-tests/resource-timing/cors-preflight.any.worker-expected.txt:
+        * web-platform-tests/resource-timing/idlharness.any-expected.txt:
+        * web-platform-tests/resource-timing/idlharness.any.worker-expected.txt:
+        * web-platform-tests/resource-timing/resource-timing-level1.sub-expected.txt:
+        * web-platform-tests/resource-timing/resource_connection_reuse-expected.txt:
+        * web-platform-tests/resource-timing/resource_connection_reuse.https-expected.txt:
+        * web-platform-tests/resource-timing/single-entry-per-resource-expected.txt:
+        * web-platform-tests/resource-timing/test_resource_timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resource-timing-cross-origin.https-expected.txt:
+
+2021-06-03  Youenn Fablet  <youenn@apple.com>
+
+        Cherry-pick webrtc fix to correctly handle audio track state in case of renegotiation
+        https://bugs.webkit.org/show_bug.cgi?id=226577
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/receiver-track-live.https-expected.txt:
+
+2021-06-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WPT test resource-timing/cross-origin-redirects.html
+        https://bugs.webkit.org/show_bug.cgi?id=190523
+        <rdar://45227788>
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server.html:
+        Sometimes, with our use of Performance::reduceTimeResolution, the event times are equal to each other.
+        Allow this.
+        * web-platform-tests/resource-timing/cross-origin-redirects-expected.txt: Added.
+        * web-platform-tests/resource-timing/cross-origin-redirects.html: Added.
+        * web-platform-tests/resource-timing/resources/entry-invariants.js: Added.
+        (const.assert_all_equal_):
+        (const.assert_ordered_):
+        (const.assert_zeroed_):
+        (const.assert_not_negative_):
+        (const.assert_positive_):
+        (const.attribute_test_internal):
+        (async const):
+        (const.attribute_test_with_validator):
+        * web-platform-tests/resource-timing/resources/resource-loaders.js: Added.
+        (const.load.font.path.return.document.fonts.ready.then):
+        (const.load.stylesheet.async path):
+        (const.load.iframe.async path):
+        (const.load.script.async path):
+        (const.load.xhr_sync.async path):
+
+2021-06-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Scroll snap is broken with non-horizontal writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=226010
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element-expected.txt: Update expectations to mark tests as passing.
+        * web-platform-tests/css/css-scroll-snap/snap-inline-block-expected.txt: Ditto.
+
+2021-06-01  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaSession.coordinator should not be optional, relying on coordinator state change instead
+        https://bugs.webkit.org/show_bug.cgi?id=226328
+        rdar://77461335
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediasession/idlharness.window-expected.txt:
+
+2021-06-01  Cathie Chen  <cathiechen@igalia.com>
+
+        Update tests of mapping width and height attributes to aspect-ratio from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=226472
+
+        Reviewed by Rob Buis.
+
+        Base commit: https://github.com/web-platform-tests/wpt/commit/da6406b38dae07a8a69c384b72ddd89b48d5194a
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/aspect-ratio.js:
+        (test_computed_style_aspect_ratio):
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html:
+
+2021-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html after r278233.
+
+        The test progressed slightly even though it still isn't fully passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+
+2021-04-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        Enable <summary> to be a flex container
+        https://bugs.webkit.org/show_bug.cgi?id=190065
+
+        Reviewed by Antti Koivisto.
+
+        Imported several WPT tests adding coverage for <summary> as grid/flex.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/rendering/the-details-element/details-blockification-expected.txt: Added.
+        * web-platform-tests/html/rendering/the-details-element/details-blockification.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-flex-expected.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-flex.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-grid-expected.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-grid.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-inline-flex-expected.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-inline-flex.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-inline-grid-expected.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-inline-grid.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-in-ol-expected.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-in-ol.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/w3c-import.log:
+
+2021-05-28  Rob Buis  <rbuis@igalia.com>
+
+        Webkit doesn't calculate padding-top/-bottom in % correctly when parent has padding
+        https://bugs.webkit.org/show_bug.cgi?id=221202
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Add test for this.
+
+        * web-platform-tests/css/css-position/position-absolute-padding-percentage-expected.txt: Added.
+        * web-platform-tests/css/css-position/position-absolute-padding-percentage.html: Added.
+
+2021-05-28  Martin Robinson  <mrobinson@webkit.org>
+
+        More readily layout when scroll-snap properties change
+        https://bugs.webkit.org/show_bug.cgi?id=225950
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-change-expected.txt: Updated expectation
+        for newly passing test.
+
+2021-05-27  Said Abou-Hallawa  <said@apple.com>
+
+        Values of keySplines control points must all be in the range 0 to 1
+        https://bugs.webkit.org/show_bug.cgi?id=226336
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/svg/animations/keysplines-x-limits-expected.txt:
+        * web-platform-tests/svg/animations/keysplines-y-limits-expected.txt: Added.
+        * web-platform-tests/svg/animations/keysplines-y-limits.html: Added.
+
+2021-05-27  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Add discrete animation support for grid-template-columns|rows
+        https://bugs.webkit.org/show_bug.cgi?id=226174
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-grid/animation/grid-template-columns-interpolation-expected.txt:
+        * web-platform-tests/css/css-grid/animation/grid-template-rows-interpolation-expected.txt:
+
+2021-05-26  Alex Christensen  <achristensen@webkit.org>
+
+        URL path setter messes up UTF-8 encoding after ?
+        https://bugs.webkit.org/show_bug.cgi?id=226136
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop SecurityPolicyViolationEvent's blockedURL & documentURL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=226270
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test due to change.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window-expected.txt:
+
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        CSP does not apply to AudioWorklets
+        https://bugs.webkit.org/show_bug.cgi?id=225862
+        <rdar://problem/78098440>
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/worklets/audio-worklet-csp.https-expected.txt:
+
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        SecurityPolicyViolationEvent.constructor do not throw any exception as expected when eventInitDict param do not include all the members required
+        https://bugs.webkit.org/show_bug.cgi?id=226215
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/constructor-required-fields-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window-expected.txt:
+
+2021-05-25  Tim Nguyen  <ntim@apple.com>
+
+        Add basic <dialog> element UA styles
+        https://bugs.webkit.org/show_bug.cgi?id=226169
+
+        Reviewed by Antti Koivisto.
+
+        Basic styles from https://html.spec.whatwg.org/#flow-content-3
+
+        * web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/dialog-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-unfocusable-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/remove-dialog-should-unblock-document-expected.txt:
+
+2021-05-24  Cathie Chen  <cathiechen@igalia.com>
+
+        Use the parsed width and height attributes as a presentational hint for aspect-ratio CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=217529
+
+        Reviewed by Antti Koivisto.
+
+        Update the expected results of test_computed_style which are passed now.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+
+2021-05-24  Cameron McCormack  <heycam@apple.com>
+
+        Add missing operators.woff that a few WPTs reference.
+        https://bugs.webkit.org/show_bug.cgi?id=225586
+        <rdar://77527890>
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/fonts/math/operators.woff: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt:
+
+2021-05-24  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Update WebXR WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=224935
+        <rdar://problem/77323099>
+
+        Reviewed by Sergio Villar Senin.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webxr/META.yml:
+        * web-platform-tests/webxr/anchors/META.yml: Added.
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_create_move.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_delay_creation.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_failure.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_pause_resume_stop.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_states.https.html:
+        * web-platform-tests/webxr/anchors/w3c-import.log:
+        * web-platform-tests/webxr/ar-module/META.yml: Added.
+        * web-platform-tests/webxr/ar-module/w3c-import.log:
+        * web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https-expected.txt:
+        * web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html:
+        * web-platform-tests/webxr/ar-module/xrSession_environmentBlendMode.https.html:
+        * web-platform-tests/webxr/ar-module/xrSession_interactionMode.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_dataUnavailable.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_inactiveFrame.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_incorrectUsage.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_luminance_alpha_dataValid.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_staleView.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/w3c-import.log: Added.
+        * web-platform-tests/webxr/depth-sensing/dataUnavailableTests.js: Added.
+        (return.session.requestReferenceSpace.then):
+        (const.dataUnavailableTestFunctionGenerator):
+        * web-platform-tests/webxr/depth-sensing/depth_sensing_notEnabled.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_dataUnavailable.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_inactiveFrame.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_incorrectUsage.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_staleView.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/ar-module/w3c-import.log.
+        * web-platform-tests/webxr/depth-sensing/inactiveFrameTests.js: Added.
+        (return.session.requestReferenceSpace.then):
+        (const.inactiveFrameTestFunctionGenerator):
+        * web-platform-tests/webxr/depth-sensing/staleViewsTests.js: Added.
+        (return.session.requestReferenceSpace.then):
+        (const.staleViewsTestFunctionGenerator):
+        * web-platform-tests/webxr/depth-sensing/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/w3c-import.log.
+        * web-platform-tests/webxr/dom-overlay/META.yml: Added.
+        * web-platform-tests/webxr/dom-overlay/ar_dom_overlay.https.html:
+        * web-platform-tests/webxr/dom-overlay/idlharness.https.window.js:
+        (async idl_array):
+        * web-platform-tests/webxr/dom-overlay/nested_fullscreen.https.html: Added.
+        * web-platform-tests/webxr/dom-overlay/w3c-import.log:
+        * web-platform-tests/webxr/events_input_source_recreation.https-expected.txt:
+        * web-platform-tests/webxr/events_input_source_recreation.https.html:
+        * web-platform-tests/webxr/events_input_sources_change.https-expected.txt:
+        * web-platform-tests/webxr/events_input_sources_change.https.html:
+        * web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html:
+        * web-platform-tests/webxr/events_referenceSpace_reset_inline.https.html:
+        * web-platform-tests/webxr/events_session_select.https-expected.txt:
+        * web-platform-tests/webxr/events_session_select.https.html:
+        * web-platform-tests/webxr/events_session_select_subframe.https-expected.txt:
+        * web-platform-tests/webxr/events_session_select_subframe.https.html:
+        * web-platform-tests/webxr/events_session_squeeze.https-expected.txt:
+        * web-platform-tests/webxr/events_session_squeeze.https.html:
+        * web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html:
+        * web-platform-tests/webxr/gamepads-module/META.yml: Added.
+        * web-platform-tests/webxr/gamepads-module/w3c-import.log:
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_disconnect.https.html:
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_input_registered.https.html:
+        * web-platform-tests/webxr/getInputPose_handedness.https-expected.txt:
+        * web-platform-tests/webxr/getInputPose_handedness.https.html:
+        * web-platform-tests/webxr/getInputPose_pointer.https.html:
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html:
+        * web-platform-tests/webxr/hand-input/META.yml: Added.
+        * web-platform-tests/webxr/hand-input/idlharness.https.window.html: Added.
+        * web-platform-tests/webxr/hand-input/idlharness.https.window.js: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/idlharness.https.window.js.
+        (async idl_array):
+        * web-platform-tests/webxr/hand-input/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/w3c-import.log.
+        * web-platform-tests/webxr/hit-test/META.yml: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_source_cancel.https.html: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_inputSources.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_refSpaces.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_regular.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_transient.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_transientInputSources.https.html:
+        * web-platform-tests/webxr/hit-test/w3c-import.log:
+        * web-platform-tests/webxr/layers/META.yml: Added.
+        * web-platform-tests/webxr/layers/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/w3c-import.log.
+        * web-platform-tests/webxr/layers/xrWebGLBinding_constructor.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/w3c-import.log: Added.
+        * web-platform-tests/webxr/light-estimation/xrFrame_getLightEstimate_oldSession.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrFrame_getLightEstimate_staleFrame.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrFrame_getLightEstimate_valid.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrSession_getLightProbe_ended.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrSession_getLightProbe_notEnabled.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrSession_getLightProbe_valid.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrWebGLBinding_getReflectionCubeMap.https.html: Added.
+        * web-platform-tests/webxr/navigator_xr_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/navigator_xr_sameObject.https.html:
+        * web-platform-tests/webxr/render_state_update.https-expected.txt:
+        * web-platform-tests/webxr/render_state_update.https.html:
+        * web-platform-tests/webxr/render_state_vertical_fov_immersive.https-expected.txt:
+        * web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html:
+        * web-platform-tests/webxr/render_state_vertical_fov_inline.https.html:
+        * web-platform-tests/webxr/resources/w3c-import.log:
+        * web-platform-tests/webxr/resources/webxr_math_utils.js:
+        (let.flip_quaternion):
+        * web-platform-tests/webxr/resources/webxr_test_asserts.js:
+        (const.get_mismatched_component):
+        (const.assert_point_approx_equals):
+        (const.assert_orientation_approx_equals):
+        (const.assert_point_significantly_not_equals):
+        (const.assert_transform_approx_equals):
+        * web-platform-tests/webxr/resources/webxr_test_constants.js:
+        * web-platform-tests/webxr/resources/webxr_test_constants_fake_depth.js: Added.
+        (const.convertDepthBufferToArrayBuffer):
+        (const.createDepthSensingData):
+        (const.getExpectedValueAt):
+        * web-platform-tests/webxr/resources/webxr_util.js:
+        (async return):
+        (async loadChromiumResources):
+        * web-platform-tests/webxr/w3c-import.log:
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https.html:
+        * web-platform-tests/webxr/webxr_feature_policy.https.html:
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt:
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html:
+        * web-platform-tests/webxr/xrDevice_disconnect_ends.https.html:
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html:
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html:
+        * web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getPose.https.html:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https.html:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html: Added.
+        * web-platform-tests/webxr/xrFrame_lifetime.https.html:
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https.html:
+        * web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_add_remove.https.html:
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https.html:
+        * web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_profiles.https.html:
+        * web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_sameObject.https.html:
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https.html:
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https.html:
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https.html:
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https.html:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html:
+        * web-platform-tests/webxr/xrSession_end.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_end.https.html:
+        * web-platform-tests/webxr/xrSession_input_events_end.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html:
+        * web-platform-tests/webxr/xrSession_requestSessionDuringEnd.https.html: Added.
+        * web-platform-tests/webxr/xrSession_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_sameObject.https.html:
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html:
+        * web-platform-tests/webxr/xrSession_visibilityState.https.html:
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https.html:
+        * web-platform-tests/webxr/xrView_eyes.https-expected.txt:
+        * web-platform-tests/webxr/xrView_eyes.https.html:
+        * web-platform-tests/webxr/xrView_match.https-expected.txt:
+        * web-platform-tests/webxr/xrView_match.https.html:
+        * web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt:
+        * web-platform-tests/webxr/xrView_oneframeupdate.https.html:
+        * web-platform-tests/webxr/xrView_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrView_sameObject.https.html:
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https.html:
+        * web-platform-tests/webxr/xrViewport_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrViewport_valid.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https.html:
+        * web-platform-tests/webxr/xr_viewport_scale.https.html: Added.
+
 2021-05-21  Rob Buis  <rbuis@igalia.com>
 
         grid track size should reject unitless length

@@ -35,7 +35,6 @@
 typedef struct _GSubprocess GSubprocess;
 #elif USE(INSPECTOR_SOCKET_SERVER)
 #include <JavaScriptCore/RemoteInspectorConnectionClient.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #endif
@@ -65,8 +64,8 @@ public:
     const String& sessionID() const { return m_sessionID; }
     const Capabilities& capabilities() const { return m_capabilities; }
 
-    void connectToBrowser(Function<void (Optional<String> error)>&&);
-    void startAutomationSession(Function<void (bool, Optional<String>)>&&);
+    void connectToBrowser(Function<void (std::optional<String> error)>&&);
+    void startAutomationSession(Function<void (bool, std::optional<String>)>&&);
 
     struct CommandResponse {
         RefPtr<JSON::Object> responseObject;
@@ -88,7 +87,7 @@ private:
 #if USE(GLIB)
     static const SocketConnection::MessageHandlers& messageHandlers();
     void connectionDidClose();
-    void launchBrowser(Function<void (Optional<String> error)>&&);
+    void launchBrowser(Function<void (std::optional<String> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
     bool matchCapabilities(GVariant*);
     bool buildSessionCapabilities(GVariantBuilder*) const;
@@ -105,7 +104,7 @@ private:
     void receivedSendMessageToFrontend(const struct Event&);
     void receivedStartAutomationSessionReturn(const struct Event&);
 
-    Optional<Vector<Target>> parseTargetList(const struct Event&);
+    std::optional<Vector<Target>> parseTargetList(const struct Event&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
 #endif
 
@@ -118,15 +117,15 @@ private:
     HashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
 
 #if USE(GLIB)
-    Function<void (bool, Optional<String>)> m_startSessionCompletionHandler;
+    Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
 #elif USE(INSPECTOR_SOCKET_SERVER)
     String m_targetIp;
     uint16_t m_targetPort { 0 };
-    Function<void(bool, Optional<String>)> m_startSessionCompletionHandler;
-    Optional<Inspector::ConnectionID> m_clientID;
+    Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
+    std::optional<Inspector::ConnectionID> m_clientID;
 #endif
 };
 

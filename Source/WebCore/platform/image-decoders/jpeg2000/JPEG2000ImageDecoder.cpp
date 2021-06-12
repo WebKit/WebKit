@@ -60,12 +60,12 @@ static void syccToRGB(int offset, int upb, int y, int cb, int cr, int* r, int* g
 static void sycc444ToRGB(opj_image_t* img)
 {
     Checked<int> upb = static_cast<int>(img->comps[0].prec);
-    int offset = 1 << (upb.unsafeGet() - 1);
-    upb = (1 << upb.unsafeGet()) - 1;
+    int offset = 1 << (upb.value() - 1);
+    upb = (1 << upb.value()) - 1;
 
     Checked<size_t> maxw = static_cast<size_t>(img->comps[0].w);
     Checked<size_t> maxh = static_cast<size_t>(img->comps[0].h);
-    size_t max = (maxw * maxh).unsafeGet();
+    size_t max = (maxw * maxh).value();
 
     const int* y = img->comps[0].data;
     const int* cb = img->comps[1].data;
@@ -86,7 +86,7 @@ static void sycc444ToRGB(opj_image_t* img)
     }
 
     for (size_t i = 0; i < max; ++i) {
-        syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+        syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
         ++y;
         ++cb;
         ++cr;
@@ -107,12 +107,12 @@ static void sycc444ToRGB(opj_image_t* img)
 static void sycc422ToRGB(opj_image_t* img)
 {
     Checked<int> upb = static_cast<int>(img->comps[0].prec);
-    int offset = 1 << (upb.unsafeGet() - 1);
-    upb = (1 << upb.unsafeGet()) - 1;
+    int offset = 1 << (upb.value() - 1);
+    upb = (1 << upb.value()) - 1;
 
     Checked<size_t> maxw = static_cast<size_t>(img->comps[0].w);
     Checked<size_t> maxh = static_cast<size_t>(img->comps[0].h);
-    size_t max = (maxw * maxh).unsafeGet();
+    size_t max = (maxw * maxh).value();
 
     const int* y = img->comps[0].data;
     const int* cb = img->comps[1].data;
@@ -134,13 +134,13 @@ static void sycc422ToRGB(opj_image_t* img)
 
     // if img->x0 is odd, then first column shall use Cb/Cr = 0.
     size_t offx = img->x0 & 1U;
-    size_t loopmaxw = maxw.unsafeGet() - offx;
+    size_t loopmaxw = maxw.value() - offx;
 
-    for (size_t i = 0; i < maxh.unsafeGet(); ++i) {
+    for (size_t i = 0; i < maxh.value(); ++i) {
         size_t j;
 
         if (offx > 0) {
-            syccToRGB(offset, upb.unsafeGet(), *y, 0, 0, r, g, b);
+            syccToRGB(offset, upb.value(), *y, 0, 0, r, g, b);
             ++y;
             ++r;
             ++g;
@@ -148,12 +148,12 @@ static void sycc422ToRGB(opj_image_t* img)
         }
 
         for (j = 0; j < (loopmaxw & ~static_cast<size_t>(1U)); j += 2U) {
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
             ++y;
             ++r;
             ++g;
             ++b;
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
             ++y;
             ++r;
             ++g;
@@ -162,7 +162,7 @@ static void sycc422ToRGB(opj_image_t* img)
             ++cr;
         }
         if (j < loopmaxw) {
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
             ++y;
             ++r;
             ++g;
@@ -189,12 +189,12 @@ static void sycc422ToRGB(opj_image_t* img)
 static void sycc420ToRGB(opj_image_t* img)
 {
     Checked<int> upb = static_cast<int>(img->comps[0].prec);
-    int offset = 1 << (upb.unsafeGet() - 1);
-    upb = (1 << upb.unsafeGet()) - 1;
+    int offset = 1 << (upb.value() - 1);
+    upb = (1 << upb.value()) - 1;
 
     Checked<size_t> maxw = static_cast<size_t>(img->comps[0].w);
     Checked<size_t> maxh = static_cast<size_t>(img->comps[0].h);
-    size_t max = (maxw * maxh).unsafeGet();
+    size_t max = (maxw * maxh).value();
 
     const int* y = img->comps[0].data;
     const int* cb = img->comps[1].data;
@@ -216,15 +216,15 @@ static void sycc420ToRGB(opj_image_t* img)
 
     // if img->x0 is odd, then first column shall use Cb/Cr = 0.
     size_t offx = img->x0 & 1U;
-    size_t loopmaxw = maxw.unsafeGet() - offx;
+    size_t loopmaxw = maxw.value() - offx;
     // if img->y0 is odd, then first line shall use Cb/Cr = 0.
     size_t offy = img->y0 & 1U;
-    size_t loopmaxh = maxh.unsafeGet() - offy;
+    size_t loopmaxh = maxh.value() - offy;
 
     if (offy > 0) {
         size_t j;
-        for (j = 0; j < maxw.unsafeGet(); ++j) {
-            syccToRGB(offset, upb.unsafeGet(), *y, 0, 0, r, g, b);
+        for (j = 0; j < maxw.value(); ++j) {
+            syccToRGB(offset, upb.value(), *y, 0, 0, r, g, b);
             ++y;
             ++r;
             ++g;
@@ -234,18 +234,18 @@ static void sycc420ToRGB(opj_image_t* img)
 
     size_t i;
     for (i = 0; i < (loopmaxh & ~static_cast<size_t>(1U)); i += 2U) {
-        const int* ny = y + maxw.unsafeGet();
-        int* nr = r + maxw.unsafeGet();
-        int* ng = g + maxw.unsafeGet();
-        int* nb = b + maxw.unsafeGet();
+        const int* ny = y + maxw.value();
+        int* nr = r + maxw.value();
+        int* ng = g + maxw.value();
+        int* nb = b + maxw.value();
 
         if (offx > 0) {
-            syccToRGB(offset, upb.unsafeGet(), *y, 0, 0, r, g, b);
+            syccToRGB(offset, upb.value(), *y, 0, 0, r, g, b);
             ++y;
             ++r;
             ++g;
             ++b;
-            syccToRGB(offset, upb.unsafeGet(), *ny, *cb, *cr, nr, ng, nb);
+            syccToRGB(offset, upb.value(), *ny, *cb, *cr, nr, ng, nb);
             ++ny;
             ++nr;
             ++ng;
@@ -254,23 +254,23 @@ static void sycc420ToRGB(opj_image_t* img)
 
         size_t j;
         for (j = 0; j < (loopmaxw & ~static_cast<size_t>(1U)); j += 2U) {
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
             ++y;
             ++r;
             ++g;
             ++b;
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
             ++y;
             ++r;
             ++g;
             ++b;
 
-            syccToRGB(offset, upb.unsafeGet(), *ny, *cb, *cr, nr, ng, nb);
+            syccToRGB(offset, upb.value(), *ny, *cb, *cr, nr, ng, nb);
             ++ny;
             ++nr;
             ++ng;
             ++nb;
-            syccToRGB(offset, upb.unsafeGet(), *ny, *cb, *cr, nr, ng, nb);
+            syccToRGB(offset, upb.value(), *ny, *cb, *cr, nr, ng, nb);
             ++ny;
             ++nr;
             ++ng;
@@ -279,13 +279,13 @@ static void sycc420ToRGB(opj_image_t* img)
             ++cr;
         }
         if (j < loopmaxw) {
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
             ++y;
             ++r;
             ++g;
             ++b;
 
-            syccToRGB(offset, upb.unsafeGet(), *ny, *cb, *cr, nr, ng, nb);
+            syccToRGB(offset, upb.value(), *ny, *cb, *cr, nr, ng, nb);
             ++ny;
             ++nr;
             ++ng;
@@ -293,22 +293,22 @@ static void sycc420ToRGB(opj_image_t* img)
             ++cb;
             ++cr;
         }
-        y += maxw.unsafeGet();
-        r += maxw.unsafeGet();
-        g += maxw.unsafeGet();
-        b += maxw.unsafeGet();
+        y += maxw.value();
+        r += maxw.value();
+        g += maxw.value();
+        b += maxw.value();
     }
     if (i < loopmaxh) {
         size_t j;
-        for (j = 0; j < (maxw.unsafeGet() & ~static_cast<size_t>(1U)); j += 2U) {
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+        for (j = 0; j < (maxw.value() & ~static_cast<size_t>(1U)); j += 2U) {
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
 
             ++y;
             ++r;
             ++g;
             ++b;
 
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
 
             ++y;
             ++r;
@@ -317,8 +317,8 @@ static void sycc420ToRGB(opj_image_t* img)
             ++cb;
             ++cr;
         }
-        if (j < maxw.unsafeGet())
-            syccToRGB(offset, upb.unsafeGet(), *y, *cb, *cr, r, g, b);
+        if (j < maxw.value())
+            syccToRGB(offset, upb.value(), *y, *cb, *cr, r, g, b);
     }
 
     opj_image_data_free(img->comps[0].data);

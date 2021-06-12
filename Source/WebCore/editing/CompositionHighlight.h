@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Color.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -50,7 +49,7 @@ struct CompositionHighlight {
     Color color { defaultCompositionFillColor };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<CompositionHighlight> decode(Decoder&);
+    template<class Decoder> static std::optional<CompositionHighlight> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -62,22 +61,22 @@ void CompositionHighlight::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<CompositionHighlight> CompositionHighlight::decode(Decoder& decoder)
+std::optional<CompositionHighlight> CompositionHighlight::decode(Decoder& decoder)
 {
-    Optional<unsigned> startOffset;
+    std::optional<unsigned> startOffset;
     decoder >> startOffset;
     if (!startOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<unsigned> endOffset;
+    std::optional<unsigned> endOffset;
     decoder >> endOffset;
     if (!endOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    Optional<Color> color;
+    std::optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *startOffset, *endOffset, *color }};
 }

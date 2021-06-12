@@ -51,9 +51,12 @@ class RemoteAudioSource::AudioDataProxy : public AudioSinkInterface {
   const rtc::scoped_refptr<RemoteAudioSource> source_;
 };
 
-RemoteAudioSource::RemoteAudioSource(rtc::Thread* worker_thread)
+RemoteAudioSource::RemoteAudioSource(
+    rtc::Thread* worker_thread,
+    OnAudioChannelGoneAction on_audio_channel_gone_action)
     : main_thread_(rtc::Thread::Current()),
       worker_thread_(worker_thread),
+      on_audio_channel_gone_action_(on_audio_channel_gone_action),
       state_(MediaSourceInterface::kLive) {
   RTC_DCHECK(main_thread_);
   RTC_DCHECK(worker_thread_);
@@ -90,6 +93,13 @@ void RemoteAudioSource::Stop(cricket::VoiceMediaChannel* media_channel,
     ssrc ? media_channel->SetRawAudioSink(*ssrc, nullptr)
          : media_channel->SetDefaultRawAudioSink(nullptr);
   });
+}
+
+void RemoteAudioSource::SetState(SourceState new_state) {
+  if (state_ != new_state) {
+    state_ = new_state;
+    FireOnChanged();
+  }
 }
 
 MediaSourceInterface::SourceState RemoteAudioSource::state() const {
@@ -158,6 +168,9 @@ void RemoteAudioSource::OnData(const AudioSinkInterface::Data& audio) {
 }
 
 void RemoteAudioSource::OnAudioChannelGone() {
+  if (on_audio_channel_gone_action_ != OnAudioChannelGoneAction::kEnd) {
+    return;
+  }
   // Called when the audio channel is deleted.  It may be the worker thread
   // in libjingle or may be a different worker thread.
   // This object needs to live long enough for the cleanup logic in OnMessage to
@@ -172,8 +185,7 @@ void RemoteAudioSource::OnAudioChannelGone() {
 void RemoteAudioSource::OnMessage(rtc::Message* msg) {
   RTC_DCHECK(main_thread_->IsCurrent());
   sinks_.clear();
-  state_ = MediaSourceInterface::kEnded;
-  FireOnChanged();
+  SetState(MediaSourceInterface::kEnded);
   // Will possibly delete this RemoteAudioSource since it is reference counted
   // in the message.
   delete msg->pdata;

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static Optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry_sexp_t publicKeySexp, size_t keySizeInBytes)
+static std::optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry_sexp_t publicKeySexp, size_t keySizeInBytes)
 {
     // First, retrieve private key data, which is roughly of the following form:
     // (private-key
@@ -48,15 +48,15 @@ static Optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry_sexp
     {
         PAL::GCrypt::Handle<gcry_sexp_t> dSexp(gcry_sexp_find_token(baseKeySexp, "d", 0));
         if (!dSexp)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto data = mpiData(dSexp);
         if (!data)
-            return WTF::nullopt;
+            return std::nullopt;
 
         gcry_sexp_build(&dataSexp, nullptr, "(data(flags raw)(value %b))", data->size(), data->data());
         if (!dataSexp)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     // Encrypt the data s-expression with the public key.
@@ -64,7 +64,7 @@ static Optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry_sexp
     gcry_error_t error = gcry_pk_encrypt(&cipherSexp, dataSexp, publicKeySexp);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Retrieve the shared point value from the generated s-expression, which is of the following form:
@@ -74,24 +74,24 @@ static Optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry_sexp
     //     (e ...)))
     PAL::GCrypt::Handle<gcry_mpi_t> xMPI(gcry_mpi_new(0));
     if (!xMPI)
-        return WTF::nullopt;
+        return std::nullopt;
 
     {
         PAL::GCrypt::Handle<gcry_sexp_t> sSexp(gcry_sexp_find_token(cipherSexp, "s", 0));
         if (!sSexp)
-            return WTF::nullopt;
+            return std::nullopt;
 
         PAL::GCrypt::Handle<gcry_mpi_t> sMPI(gcry_sexp_nth_mpi(sSexp, 1, GCRYMPI_FMT_USG));
         if (!sMPI)
-            return WTF::nullopt;
+            return std::nullopt;
 
         PAL::GCrypt::Handle<gcry_mpi_point_t> point(gcry_mpi_point_new(0));
         if (!point)
-            return WTF::nullopt;
+            return std::nullopt;
 
         error = gcry_mpi_ec_decode_point(point, sMPI, nullptr);
         if (error != GPG_ERR_NO_ERROR)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // We're only interested in the x-coordinate.
         gcry_mpi_point_snatch_get(xMPI, nullptr, nullptr, point.release());
@@ -100,7 +100,7 @@ static Optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry_sexp
     return mpiZeroPrefixedData(xMPI, keySizeInBytes);
 }
 
-Optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
+std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
     return gcryptDerive(baseKey.platformKey(), publicKey.platformKey(), (baseKey.keySizeInBits() + 7) / 8);
 }

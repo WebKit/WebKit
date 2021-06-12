@@ -33,12 +33,12 @@ PASS SecurityPolicyViolationEvent interface: attribute effectiveDirective
 PASS SecurityPolicyViolationEvent interface: attribute violatedDirective
 PASS SecurityPolicyViolationEvent interface: attribute originalPolicy
 PASS SecurityPolicyViolationEvent interface: attribute sourceFile
-FAIL SecurityPolicyViolationEvent interface: attribute sample assert_true: The prototype object must have a property "sample" expected true got false
-FAIL SecurityPolicyViolationEvent interface: attribute disposition assert_true: The prototype object must have a property "disposition" expected true got false
+PASS SecurityPolicyViolationEvent interface: attribute sample
+PASS SecurityPolicyViolationEvent interface: attribute disposition
 PASS SecurityPolicyViolationEvent interface: attribute statusCode
-FAIL SecurityPolicyViolationEvent interface: attribute lineno assert_true: The prototype object must have a property "lineno" expected true got false
+PASS SecurityPolicyViolationEvent interface: attribute lineno
 PASS SecurityPolicyViolationEvent interface: attribute lineNumber
-FAIL SecurityPolicyViolationEvent interface: attribute colno assert_true: The prototype object must have a property "colno" expected true got false
+PASS SecurityPolicyViolationEvent interface: attribute colno
 PASS SecurityPolicyViolationEvent interface: attribute columnNumber
 PASS SecurityPolicyViolationEvent must be primary interface of new SecurityPolicyViolationEvent("securitypolicyviolation")
 PASS Stringification of new SecurityPolicyViolationEvent("securitypolicyviolation")
@@ -51,11 +51,11 @@ PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("s
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "violatedDirective" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "originalPolicy" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "sourceFile" with the proper type
-FAIL SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "sample" with the proper type assert_inherits: property "sample" not found in prototype chain
-FAIL SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "disposition" with the proper type assert_inherits: property "disposition" not found in prototype chain
+PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "sample" with the proper type
+PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "disposition" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "statusCode" with the proper type
-FAIL SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "lineno" with the proper type assert_inherits: property "lineno" not found in prototype chain
+PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "lineno" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "lineNumber" with the proper type
-FAIL SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "colno" with the proper type assert_inherits: property "colno" not found in prototype chain
+PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "colno" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "columnNumber" with the proper type
 

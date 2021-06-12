@@ -49,8 +49,7 @@
 #endif
 
 #include <openssl/evp.h>
-#include "aes_icm_ossl.h"
-#include "aes_gcm_ossl.h"
+#include "aes_gcm.h"
 #include "alloc.h"
 #include "err.h" /* for srtp_debug */
 #include "crypto_types.h"
@@ -124,13 +123,13 @@ static srtp_err_status_t srtp_aes_gcm_openssl_alloc(srtp_cipher_t **c,
     /* setup cipher attributes */
     switch (key_len) {
     case SRTP_AES_GCM_128_KEY_LEN_WSALT:
-        (*c)->type = &srtp_aes_gcm_128_openssl;
+        (*c)->type = &srtp_aes_gcm_128;
         (*c)->algorithm = SRTP_AES_GCM_128;
         gcm->key_size = SRTP_AES_128_KEY_LEN;
         gcm->tag_len = tlen;
         break;
     case SRTP_AES_GCM_256_KEY_LEN_WSALT:
-        (*c)->type = &srtp_aes_gcm_256_openssl;
+        (*c)->type = &srtp_aes_gcm_256;
         (*c)->algorithm = SRTP_AES_GCM_256;
         gcm->key_size = SRTP_AES_256_KEY_LEN;
         gcm->tag_len = tlen;
@@ -193,6 +192,7 @@ static srtp_err_status_t srtp_aes_gcm_openssl_context_init(void *cv,
         break;
     }
 
+    EVP_CIPHER_CTX_cleanup(c->ctx);
     if (!EVP_CipherInit_ex(c->ctx, evp, NULL, key, NULL, 0)) {
         return (srtp_err_status_init_fail);
     }
@@ -218,7 +218,7 @@ static srtp_err_status_t srtp_aes_gcm_openssl_set_iv(
     c->dir = direction;
 
     debug_print(srtp_mod_aes_gcm, "setting iv: %s",
-                v128_hex_string((v128_t *)iv));
+                srtp_octet_string_hex_string(iv, 12));
 
     if (!EVP_CIPHER_CTX_ctrl(c->ctx, EVP_CTRL_GCM_SET_IVLEN, 12, 0)) {
         return (srtp_err_status_init_fail);
@@ -247,20 +247,31 @@ static srtp_err_status_t srtp_aes_gcm_openssl_set_aad(void *cv,
     srtp_aes_gcm_ctx_t *c = (srtp_aes_gcm_ctx_t *)cv;
     int rv;
 
-    /*
-     * Set dummy tag, OpenSSL requires the Tag to be set before
-     * processing AAD
-     */
+    debug_print(srtp_mod_aes_gcm, "setting AAD: %s",
+                srtp_octet_string_hex_string(aad, aad_len));
 
     /*
-     * OpenSSL never write to address pointed by the last parameter of
-     * EVP_CIPHER_CTX_ctrl while EVP_CTRL_GCM_SET_TAG (in reality,
-     * OpenSSL copy its content to the context), so we can make
-     * aad read-only in this function and all its wrappers.
+     * EVP_CTRL_GCM_SET_TAG can only be used when decrypting
      */
-    unsigned char dummy_tag[GCM_AUTH_TAG_LEN];
-    memset(dummy_tag, 0x0, GCM_AUTH_TAG_LEN);
-    EVP_CIPHER_CTX_ctrl(c->ctx, EVP_CTRL_GCM_SET_TAG, c->tag_len, &dummy_tag);
+    if (c->dir == srtp_direction_decrypt) {
+        /*
+         * Set dummy tag, OpenSSL requires the Tag to be set before
+         * processing AAD
+         */
+
+        /*
+         * OpenSSL never write to address pointed by the last parameter of
+         * EVP_CIPHER_CTX_ctrl while EVP_CTRL_GCM_SET_TAG (in reality,
+         * OpenSSL copy its content to the context), so we can make
+         * aad read-only in this function and all its wrappers.
+         */
+        unsigned char dummy_tag[GCM_AUTH_TAG_LEN];
+        memset(dummy_tag, 0x0, GCM_AUTH_TAG_LEN);
+        if (!EVP_CIPHER_CTX_ctrl(c->ctx, EVP_CTRL_GCM_SET_TAG, c->tag_len,
+                                 &dummy_tag)) {
+            return (srtp_err_status_algo_fail);
+        }
+    }
 
     rv = EVP_Cipher(c->ctx, NULL, aad, aad_len);
     if (rv != aad_len) {
@@ -319,7 +330,9 @@ static srtp_err_status_t srtp_aes_gcm_openssl_get_tag(void *cv,
     /*
      * Retreive the tag
      */
-    EVP_CIPHER_CTX_ctrl(c->ctx, EVP_CTRL_GCM_GET_TAG, c->tag_len, buf);
+    if (!EVP_CIPHER_CTX_ctrl(c->ctx, EVP_CTRL_GCM_GET_TAG, c->tag_len, buf)) {
+        return (srtp_err_status_algo_fail);
+    }
 
     /*
      * Increase encryption length by desired tag size
@@ -349,8 +362,10 @@ static srtp_err_status_t srtp_aes_gcm_openssl_decrypt(void *cv,
     /*
      * Set the tag before decrypting
      */
-    EVP_CIPHER_CTX_ctrl(c->ctx, EVP_CTRL_GCM_SET_TAG, c->tag_len,
-                        buf + (*enc_len - c->tag_len));
+    if (!EVP_CIPHER_CTX_ctrl(c->ctx, EVP_CTRL_GCM_SET_TAG, c->tag_len,
+                             buf + (*enc_len - c->tag_len))) {
+        return (srtp_err_status_auth_fail);
+    }
     EVP_Cipher(c->ctx, buf, buf, *enc_len - c->tag_len);
 
     /*
@@ -548,7 +563,7 @@ static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_1 = {
 /*
  * This is the vector function table for this crypto engine.
  */
-const srtp_cipher_type_t srtp_aes_gcm_128_openssl = {
+const srtp_cipher_type_t srtp_aes_gcm_128 = {
     srtp_aes_gcm_openssl_alloc,
     srtp_aes_gcm_openssl_dealloc,
     srtp_aes_gcm_openssl_context_init,
@@ -565,7 +580,7 @@ const srtp_cipher_type_t srtp_aes_gcm_128_openssl = {
 /*
  * This is the vector function table for this crypto engine.
  */
-const srtp_cipher_type_t srtp_aes_gcm_256_openssl = {
+const srtp_cipher_type_t srtp_aes_gcm_256 = {
     srtp_aes_gcm_openssl_alloc,
     srtp_aes_gcm_openssl_dealloc,
     srtp_aes_gcm_openssl_context_init,

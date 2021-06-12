@@ -24,7 +24,7 @@
  */
 
 #import "DOMRange.h"
-#import <wtf/Forward.h>
+#import <optional>
 
 namespace WebCore {
 class Range;
@@ -33,4 +33,4 @@ struct SimpleRange;
 
 WebCore::Range* core(DOMRange *);
 DOMRange *kit(WebCore::Range*);
-DOMRange *kit(const Optional<WebCore::SimpleRange>&);
+DOMRange *kit(const std::optional<WebCore::SimpleRange>&);

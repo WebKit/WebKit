@@ -1,3 +1,18 @@
+2021-05-29  Sam Weinig  <weinig@apple.com>
+
+        Remove selective compilation of libwebrtc as TestWebKitAPI depends on it for boringssl, so it is always needed
+        https://bugs.webkit.org/show_bug.cgi?id=226430
+
+        Reviewed by Tim Horton.
+
+        r244568 made TestWebKitAPI require linking the built boringssl from 
+        the libwebrtc, so it really can't be selectively compiled. Over time,
+        we have re-enabled essentially all the platforms, when the intent of
+        disabling it at all originally was to avoid double building it for
+        Mac Catalyst, which we retain.
+
+        * Makefile:
+
 2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         gtest.a exports symbols, causing link-time warning: direct access in function ... means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.

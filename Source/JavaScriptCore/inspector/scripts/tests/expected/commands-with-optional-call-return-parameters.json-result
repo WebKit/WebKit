@@ -88,7 +88,7 @@ private:
 class AlternateDatabaseBackendDispatcher : public AlternateBackendDispatcher {
 public:
     virtual ~AlternateDatabaseBackendDispatcher() { }
-    virtual void executeAllOptionalParameters(long protocol_requestId, RefPtr<JSON::Array>&& opt_columnNames, const String& opt_notes, Optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, Optional<int>&& opt_databaseId, RefPtr<JSON::Object>&& opt_sqlError, const String& opt_screenColor, RefPtr<JSON::Array>&& opt_alternateColors, const String& opt_printColor) = 0;
+    virtual void executeAllOptionalParameters(long protocol_requestId, RefPtr<JSON::Array>&& opt_columnNames, const String& opt_notes, std::optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, std::optional<int>&& opt_databaseId, RefPtr<JSON::Object>&& opt_sqlError, const String& opt_screenColor, RefPtr<JSON::Array>&& opt_alternateColors, const String& opt_printColor) = 0;
     virtual void executeNoOptionalParameters(long protocol_requestId, Ref<JSON::Array>&& columnNames, const String& notes, double timestamp, Ref<JSON::Object>&& values, Ref<JSON::Value>&& payload, int databaseId, Ref<JSON::Object>&& sqlError, const String& screenColor, Ref<JSON::Array>&& alternateColors, const String& printColor) = 0;
 };
 
@@ -133,7 +133,6 @@ public:
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <tuple>
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -146,7 +145,7 @@ class AlternateDatabaseBackendDispatcher;
 
 class DatabaseBackendDispatcherHandler {
 public:
-    virtual Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<String>> /* opt_columnNames */, String /* opt_notes */, Optional<double> /* opt_timestamp */, RefPtr<JSON::Object> /* opt_values */, RefPtr<JSON::Value> /* opt_payload */, Optional<int> /* opt_databaseId */, RefPtr<Protocol::Database::Error> /* opt_sqlError */, Optional<Protocol::Database::PrimaryColors> /* opt_screenColor */, RefPtr<Protocol::Database::ColorList> /* opt_alternateColors */, String /* opt_printColor */>> executeAllOptionalParameters(RefPtr<JSON::Array>&& opt_columnNames, const String& opt_notes, Optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, Optional<int>&& opt_databaseId, RefPtr<JSON::Object>&& opt_sqlError, Optional<Protocol::Database::PrimaryColors>&& opt_screenColor, RefPtr<JSON::Array>&& opt_alternateColors, const String& opt_printColor) = 0;
+    virtual Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<String>> /* opt_columnNames */, String /* opt_notes */, std::optional<double> /* opt_timestamp */, RefPtr<JSON::Object> /* opt_values */, RefPtr<JSON::Value> /* opt_payload */, std::optional<int> /* opt_databaseId */, RefPtr<Protocol::Database::Error> /* opt_sqlError */, std::optional<Protocol::Database::PrimaryColors> /* opt_screenColor */, RefPtr<Protocol::Database::ColorList> /* opt_alternateColors */, String /* opt_printColor */>> executeAllOptionalParameters(RefPtr<JSON::Array>&& opt_columnNames, const String& opt_notes, std::optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, std::optional<int>&& opt_databaseId, RefPtr<JSON::Object>&& opt_sqlError, std::optional<Protocol::Database::PrimaryColors>&& opt_screenColor, RefPtr<JSON::Array>&& opt_alternateColors, const String& opt_printColor) = 0;
     virtual Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<String>> /* columnNames */, String /* notes */, double /* timestamp */, Ref<JSON::Object> /* values */, Ref<JSON::Value> /* payload */, int /* databaseId */, Ref<Protocol::Database::Error> /* sqlError */, Protocol::Database::PrimaryColors /* screenColor */, Ref<Protocol::Database::ColorList> /* alternateColors */, String /* printColor */>> executeNoOptionalParameters(Ref<JSON::Array>&& columnNames, const String& notes, double timestamp, Ref<JSON::Object>&& values, Ref<JSON::Value>&& payload, int databaseId, Ref<JSON::Object>&& sqlError, Protocol::Database::PrimaryColors screenColor, Ref<JSON::Array>&& alternateColors, const String& printColor) = 0;
 protected:
     virtual ~DatabaseBackendDispatcherHandler();
@@ -397,7 +396,6 @@ void DatabaseBackendDispatcher::executeNoOptionalParameters(long protocol_reques
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -482,7 +480,6 @@ namespace Inspector {
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -601,11 +598,11 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Database' Domain
 template<>
-Optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::Database::PrimaryColors>(const String&);
+std::optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::Database::PrimaryColors>(const String&);
 
 } // namespace TestHelpers
 
@@ -681,8 +678,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Database' Domain
 
-template<>
-Optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::Database::PrimaryColors>(const String& protocolString)
+template<> std::optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::Database::PrimaryColors>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Database::PrimaryColors::Red,
@@ -693,7 +689,7 @@ Optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::D
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Database::PrimaryColors)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -748,7 +744,7 @@ class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBac
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
-    void executeAllOptionalParameters(long protocol_requestId, RefPtr<JSON::Array>&& opt_columnNames, const String& opt_notes, Optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, Optional<int>&& opt_databaseId, RefPtr<JSON::Object>&& opt_sqlError, const String& opt_screenColor, RefPtr<JSON::Array>&& opt_alternateColors, const String& opt_printColor) final;
+    void executeAllOptionalParameters(long protocol_requestId, RefPtr<JSON::Array>&& opt_columnNames, const String& opt_notes, std::optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, std::optional<int>&& opt_databaseId, RefPtr<JSON::Object>&& opt_sqlError, const String& opt_screenColor, RefPtr<JSON::Array>&& opt_alternateColors, const String& opt_printColor) final;
     void executeNoOptionalParameters(long protocol_requestId, Ref<JSON::Array>&& columnNames, const String& notes, double timestamp, Ref<JSON::Object>&& values, Ref<JSON::Value>&& payload, int databaseId, Ref<JSON::Object>&& sqlError, const String& screenColor, Ref<JSON::Array>&& alternateColors, const String& printColor) final;
 private:
     RetainPtr<id<TestProtocolDatabaseDomainHandler>> m_delegate;
@@ -797,7 +793,7 @@ private:
 
 namespace Inspector {
 
-void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long protocol_requestId, RefPtr<JSON::Array>&& in_opt_columnNames, const String& in_opt_notes, Optional<double>&& in_opt_timestamp, RefPtr<JSON::Object>&& in_opt_values, RefPtr<JSON::Value>&& in_opt_payload, Optional<int>&& in_opt_databaseId, RefPtr<JSON::Object>&& in_opt_sqlError, const String& in_opt_screenColor, RefPtr<JSON::Array>&& in_opt_alternateColors, const String& in_opt_printColor)
+void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long protocol_requestId, RefPtr<JSON::Array>&& in_opt_columnNames, const String& in_opt_notes, std::optional<double>&& in_opt_timestamp, RefPtr<JSON::Object>&& in_opt_values, RefPtr<JSON::Value>&& in_opt_payload, std::optional<int>&& in_opt_databaseId, RefPtr<JSON::Object>&& in_opt_sqlError, const String& in_opt_screenColor, RefPtr<JSON::Array>&& in_opt_alternateColors, const String& in_opt_printColor)
 {
     if (![m_delegate respondsToSelector:@selector(executeAllOptionalParametersWithErrorCallback:successCallback:columnNames:notes:timestamp:values:payload:databaseId:sqlError:screenColor:alternateColors:printColor:)]) {
         backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Database.executeAllOptionalParameters' was not found"_s);
@@ -862,13 +858,13 @@ void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long p
     TestProtocolDatabaseError *o_in_opt_sqlError;
     if (!!in_opt_sqlError)
         o_in_opt_sqlError = adoptNS([[TestProtocolDatabaseError alloc] initWithJSONObject:in_opt_sqlError.releaseNonNull()]).autorelease();
-    Optional<TestProtocolDatabasePrimaryColors> o_in_opt_screenColor;
+    std::optional<TestProtocolDatabasePrimaryColors> o_in_opt_screenColor;
     if (!!in_opt_screenColor)
         o_in_opt_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(in_opt_screenColor);
     NSArray/*<NSString>*/ *o_in_opt_alternateColors;
     if (!!in_opt_alternateColors)
         o_in_opt_alternateColors = toObjCStringArray(in_opt_alternateColors.releaseNonNull());
-    Optional<TestProtocolDatabase(anonymous)> o_in_opt_printColor;
+    std::optional<TestProtocolDatabase(anonymous)> o_in_opt_printColor;
     if (!!in_opt_printColor)
         o_in_opt_printColor = fromProtocolString<TestProtocolDatabase(anonymous)>(in_opt_printColor);
     [m_delegate executeAllOptionalParametersWithErrorCallback:errorCallback successCallback:successCallback columnNames:(!!in_opt_columnNames ? &o_in_opt_columnNames : nil) notes:(!!in_opt_notes ? &o_in_opt_notes : nil) timestamp:(!!in_opt_timestamp ? &o_in_opt_timestamp : nil) values:(!!in_opt_values ? &o_in_opt_values : nil) payload:(!!in_opt_payload ? &o_in_opt_payload : nil) databaseId:(!!in_opt_databaseId ? &o_in_opt_databaseId : nil) sqlError:(!!in_opt_sqlError ? &o_in_opt_sqlError : nil) screenColor:(!!in_opt_screenColor ? &o_in_opt_screenColor.value() : nil) alternateColors:(!!in_opt_alternateColors ? &o_in_opt_alternateColors : nil) printColor:(!!in_opt_printColor ? &o_in_opt_printColor.value() : nil)];
@@ -915,13 +911,13 @@ void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long pr
     RWIProtocolJSONObject *o_in_payload = adoptNS([[RWIProtocolJSONObject alloc] initWithJSONObject:WTFMove(in_payload)]).autorelease();
     int o_in_databaseId = in_databaseId;
     TestProtocolDatabaseError *o_in_sqlError = adoptNS([[TestProtocolDatabaseError alloc] initWithJSONObject:WTFMove(in_sqlError)]).autorelease();
-    Optional<TestProtocolDatabasePrimaryColors> o_in_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(in_screenColor);
+    std::optional<TestProtocolDatabasePrimaryColors> o_in_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(in_screenColor);
     if (!o_in_screenColor) {
         backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'screenColor' of method 'Database.executeNoOptionalParameters' cannot be processed"_s);
         return;
     }
     NSArray/*<NSString>*/ *o_in_alternateColors = toObjCStringArray(WTFMove(in_alternateColors));
-    Optional<TestProtocolDatabase(anonymous)> o_in_printColor = fromProtocolString<TestProtocolDatabase(anonymous)>(in_printColor);
+    std::optional<TestProtocolDatabase(anonymous)> o_in_printColor = fromProtocolString<TestProtocolDatabase(anonymous)>(in_printColor);
     if (!o_in_printColor) {
         backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'printColor' of method 'Database.executeNoOptionalParameters' cannot be processed"_s);
         return;
@@ -1265,7 +1261,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-Optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolDatabasePrimaryColors value)
 {
@@ -1280,7 +1276,7 @@ inline String toProtocolString(TestProtocolDatabasePrimaryColors value)
 }
 
 template<>
-inline Optional<TestProtocolDatabasePrimaryColors> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabasePrimaryColors> fromProtocolString(const String& value)
 {
     if (value == "red")
         return TestProtocolDatabasePrimaryColorsRed;
@@ -1288,7 +1284,7 @@ inline Optional<TestProtocolDatabasePrimaryColors> fromProtocolString(const Stri
         return TestProtocolDatabasePrimaryColorsGreen;
     if (value == "blue")
         return TestProtocolDatabasePrimaryColorsBlue;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolDatabaseExecuteAllOptionalParametersPrintColor value)
@@ -1306,7 +1302,7 @@ inline String toProtocolString(TestProtocolDatabaseExecuteAllOptionalParametersP
 }
 
 template<>
-inline Optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorCyan;
@@ -1316,7 +1312,7 @@ inline Optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> from
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 
@@ -1336,7 +1332,7 @@ inline String toProtocolString(TestProtocolDatabaseExecuteAllOptionalParametersP
 }
 
 template<>
-inline Optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorCyan;
@@ -1346,7 +1342,7 @@ inline Optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> from
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolDatabaseExecuteNoOptionalParametersPrintColor value)
@@ -1364,7 +1360,7 @@ inline String toProtocolString(TestProtocolDatabaseExecuteNoOptionalParametersPr
 }
 
 template<>
-inline Optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorCyan;
@@ -1374,7 +1370,7 @@ inline Optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromP
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 
@@ -1394,7 +1390,7 @@ inline String toProtocolString(TestProtocolDatabaseExecuteNoOptionalParametersPr
 }
 
 template<>
-inline Optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorCyan;
@@ -1404,7 +1400,7 @@ inline Optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromP
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1469,7 +1465,7 @@ using namespace Inspector;
 + (void)_parsePrimaryColors:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolDatabasePrimaryColors> result = Inspector::fromProtocolString<TestProtocolDatabasePrimaryColors>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolDatabasePrimaryColors>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"PrimaryColors");
     *outValue = @(result.value());
 }

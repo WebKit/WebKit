@@ -34,7 +34,6 @@
 #import "Logging.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -53,7 +52,7 @@ static MTLTextureType mtlTextureTypeForGPUTextureDescriptor(const GPUTextureDesc
     }
 }
 
-static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSet<GPUTextureUsage::Flags> flags, const char* const functionName)
+static std::optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSet<GPUTextureUsage::Flags> flags, const char* const functionName)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
@@ -61,7 +60,7 @@ static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSe
 
     if (flags.containsAny({ GPUTextureUsage::Flags::CopySource, GPUTextureUsage::Flags::Sampled }) && (flags & GPUTextureUsage::Flags::Storage)) {
         LOG(WebGPU, "%s: Texture cannot have both STORAGE and a read-only usage!", functionName);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     MTLTextureUsage result = 0;
