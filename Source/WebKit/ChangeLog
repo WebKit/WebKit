@@ -1,3 +1,25 @@
+2021-06-12  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r278374): [Big Sur] ASSERTION FAILED: !isInRoutingArbitrationForToken(token) in WebCore::SharedRoutingArbitrator::beginRoutingArbitrationForToken()
+        https://bugs.webkit.org/show_bug.cgi?id=226787
+
+        Reviewed by Eric Carlson.
+
+        A WebContent process will resume a video element playback after the GPU process crashes
+        and restarts. During that process, the WebContent process will set category of the audio
+        session, and the UI process will be asked to begin routing arbitration with the new
+        category. However, the `SharedRoutingArbitrator` at the UI process will have stale
+        routing arbitrator tokens, which lead to the assertion failure.
+
+        To fix this issue, this patch cleans up the `SharedRoutingArbitrator` when the GPU
+        process crashes.
+
+        No new tests. Fix an API test:
+        - TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::gpuProcessExited):
+
 2021-06-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r278754.

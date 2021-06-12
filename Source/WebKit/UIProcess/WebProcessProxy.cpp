@@ -790,6 +790,10 @@ void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 {
     for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->gpuProcessExited(reason);
+
+#if ENABLE(ROUTING_ARBITRATION)
+    m_routingArbitrator->processDidTerminate();
+#endif
 }
 #endif
 
