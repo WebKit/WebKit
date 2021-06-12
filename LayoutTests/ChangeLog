@@ -1,3 +1,15 @@
+2021-06-12  Devin Rousso  <drousso@apple.com>
+
+        (r278618) media/modern-media-controls/overflow-support/chapters.html is timing out since introduction
+        https://bugs.webkit.org/show_bug.cgi?id=226828
+        <rdar://problem/79084756>
+
+        Unreviewed followup for flaky test.
+
+        * media/modern-media-controls/overflow-support/chapters.html:
+        * media/modern-media-controls/overflow-support/chapters-expected.txt:
+        It may take a moment for the `currentTime` to updating after selecting a chapter.
+
 2021-06-11  Robert Jenner  <jenner@apple.com>
 
         [LayoutTests] Delete unused LayoutTests/html5lib resources

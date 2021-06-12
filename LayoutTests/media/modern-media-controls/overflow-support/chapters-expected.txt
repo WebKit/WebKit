@@ -8,7 +8,7 @@ PASS shadowRoot.querySelector('button.overflow').getBoundingClientRect().width b
 PASS media.textTracks[0].mode became different from 'disabled'
 Tapping overflow button...
 Selecting first chapter cue...
-PASS media.currentTime is >= 5
+PASS media.currentTime >= 5 became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
