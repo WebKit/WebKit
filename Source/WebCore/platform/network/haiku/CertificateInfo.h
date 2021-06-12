@@ -48,7 +48,7 @@ public:
         : m_certificate(&certificate)
     { }
 
-    Optional<CertificateSummary> summary() const { notImplemented(); return WTF::nullopt; }
+    std::optional<CertificateSummary> summary() const { notImplemented(); return std::nullopt; }
 
     bool isEmpty() const { return m_certificate == NULL; }
 

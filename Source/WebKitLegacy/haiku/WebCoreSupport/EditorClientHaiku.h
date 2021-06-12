@@ -52,7 +52,7 @@ class EditorClientHaiku : public EditorClient, public TextCheckerClient {
 public:
     EditorClientHaiku(BWebPage* page);
 
-    bool shouldDeleteRange(const Optional<SimpleRange>&) override;
+    bool shouldDeleteRange(const std::optional<SimpleRange>&) override;
     bool smartInsertDeleteEnabled() override;
     bool isContinuousSpellCheckingEnabled() override;
     void toggleContinuousSpellChecking() override;
@@ -62,12 +62,12 @@ public:
 
     bool shouldBeginEditing(const SimpleRange&) override;
     bool shouldEndEditing(const SimpleRange&) override;
-    bool shouldInsertNode(Node&, const Optional<SimpleRange>&, EditorInsertAction) override;
-    bool shouldInsertText(const String&, const Optional <SimpleRange>&, EditorInsertAction) override;
-    bool shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange,
+    bool shouldInsertNode(Node&, const std::optional<SimpleRange>&, EditorInsertAction) override;
+    bool shouldInsertText(const String&, const std::optional <SimpleRange>&, EditorInsertAction) override;
+    bool shouldChangeSelectedRange(const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange,
                                            Affinity, bool stillSelecting) override;
 
-    bool shouldApplyStyle(const StyleProperties&, const Optional<SimpleRange>&) override;
+    bool shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) override;
     bool shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) override;
 
     void didBeginEditing() override;
@@ -75,9 +75,9 @@ public:
     void didApplyStyle() override {};
 
     bool isSelectTrailingWhitespaceEnabled() const override;
-    void willWriteSelectionToPasteboard(const Optional<SimpleRange>&) override;
+    void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) override;
     void didWriteSelectionToPasteboard() override;
-    void getClientPasteboardData(const Optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData) override;
+    void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData) override;
 
     void respondToChangedContents() override;
     void respondToChangedSelection(Frame*) override;

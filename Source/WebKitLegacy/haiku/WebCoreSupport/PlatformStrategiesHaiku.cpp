@@ -90,7 +90,7 @@ bool PlatformStrategiesHaiku::cookiesEnabled(const NetworkStorageSession& sessio
 
 
 bool PlatformStrategiesHaiku::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const WebCore::SameSiteInfo& sameSite, const URL& url,
-	WTF::Optional<FrameIdentifier> frameID, WTF::Optional<PageIdentifier> pageID,
+	std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID,
 	Vector<Cookie>& rawCookies)
 {
     return session.getRawCookies(firstParty, sameSite, url, frameID, pageID, ShouldAskITP::No, ShouldRelaxThirdPartyCookieBlocking::Yes, rawCookies);

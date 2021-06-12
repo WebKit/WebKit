@@ -123,12 +123,12 @@ BWebPage* FrameLoaderClientHaiku::page() const
     return m_webPage;
 }
 
-WTF::Optional<WebCore::PageIdentifier> FrameLoaderClientHaiku::pageID() const
+std::optional<WebCore::PageIdentifier> FrameLoaderClientHaiku::pageID() const
 {
     return {};
 }
 
-WTF::Optional<FrameIdentifier> FrameLoaderClientHaiku::frameID() const
+std::optional<FrameIdentifier> FrameLoaderClientHaiku::frameID() const
 {
     return {};
 }
@@ -387,8 +387,8 @@ void FrameLoaderClientHaiku::dispatchDidReceiveTitle(const StringWithDirection& 
 }
 
 void FrameLoaderClientHaiku::dispatchDidCommitLoad(
-	WTF::Optional<WebCore::HasInsecureContent>,
-	Optional<WebCore::UsedLegacyTLS>)
+	std::optional<WebCore::HasInsecureContent>,
+	std::optional<WebCore::UsedLegacyTLS>)
 {
     CALLED();
     if (m_loadingErrorPage) {
@@ -549,7 +549,7 @@ void FrameLoaderClientHaiku::dispatchDecidePolicyForNewWindowAction(
     bool switchTab = false;
 
     // Switch to the new tab, when shift is pressed.
-    if (action.mouseEventData().hasValue()) {
+    if (action.mouseEventData().has_value()) {
         switchTab = action.mouseEventData()->shiftKey;
     }
 
@@ -630,7 +630,7 @@ void FrameLoaderClientHaiku::didChangeTitle(DocumentLoader* docLoader)
     setTitle(docLoader->title(), docLoader->url());
 }
 
-void FrameLoaderClientHaiku::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
+void FrameLoaderClientHaiku::committedLoad(WebCore::DocumentLoader* loader, const uint8_t* data, int length)
 {
     CALLED();
 
@@ -870,7 +870,7 @@ void FrameLoaderClientHaiku::transitionToCommittedForNewPage()
     BRect bounds = m_webPage->viewBounds();
     IntSize size = IntSize(bounds.IntegerWidth() + 1, bounds.IntegerHeight() + 1);
 
-    Optional<Color> backgroundColor;
+    std::optional<Color> backgroundColor;
     if (m_webFrame->IsTransparent())
         backgroundColor = Color(Color::transparentBlack);
     frame->createView(size, backgroundColor, {}, {});
@@ -1003,7 +1003,7 @@ Ref<FrameNetworkingContext> FrameLoaderClientHaiku::createNetworkingContext()
 
 bool FrameLoaderClientHaiku::isTertiaryMouseButton(const NavigationAction& action) const
 {
-    if (action.mouseEventData().hasValue()) {
+    if (action.mouseEventData().has_value()) {
         return (action.mouseEventData()->button == 1);
     }
     return false;

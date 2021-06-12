@@ -66,7 +66,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     stopThread();
 }
 
-Optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
+std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
     ASSERT(isMainThread());
@@ -167,7 +167,7 @@ void SocketStreamHandleImpl::threadEntryPoint()
 
             callOnMainThread([this, protectedThis = makeRef(*this), buffer = WTFMove(readBuffer), size = bytesRead ] {
                 if (m_state == Open)
-                    m_client.didReceiveSocketStreamData(*this, reinterpret_cast<const char*>(buffer.get()), size);
+                    m_client.didReceiveSocketStreamData(*this, buffer.get(), size);
             });
         }
     }

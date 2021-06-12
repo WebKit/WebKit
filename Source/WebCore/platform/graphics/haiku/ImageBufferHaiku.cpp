@@ -176,7 +176,7 @@ void ImageBufferHaikuSurfaceBackend::drawPattern(GraphicsContext& destContext,
 }
 
 
-WTF::Optional<PixelBuffer> ImageBufferHaikuSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
+std::optional<PixelBuffer> ImageBufferHaikuSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data.m_image->platformImage()->Bits());
 }
@@ -192,7 +192,7 @@ unsigned ImageBufferHaikuSurfaceBackend::bytesPerRow() const
 }
 
 // TODO: PreserveResolution
-String ImageBufferHaikuSurfaceBackend::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const
+String ImageBufferHaikuSurfaceBackend::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const
 {
     if (!MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
         return "data:,";
@@ -210,7 +210,7 @@ String ImageBufferHaikuSurfaceBackend::toDataURL(const String& mimeType, Optiona
 
 
 // TODO: quality
-Vector<uint8_t> ImageBufferHaikuSurfaceBackend::toData(const String& mimeType, Optional<double> /*quality*/) const
+Vector<uint8_t> ImageBufferHaikuSurfaceBackend::toData(const String& mimeType, std::optional<double> /*quality*/) const
 {
     BString mimeTypeString(mimeType);
 

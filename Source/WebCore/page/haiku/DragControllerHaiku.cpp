@@ -53,13 +53,13 @@ bool DragController::isCopyKeyDown(const DragData& /* dragData */)
     return false;
 }
 
-WTF::Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
+std::optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
     // FIXME: This logic is incomplete
     if (dragData.containsURL())
         return DragOperation::Copy;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 const IntSize& DragController::maxDragImageSize()

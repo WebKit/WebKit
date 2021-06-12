@@ -57,8 +57,8 @@ public:
     virtual void setMinimumEffectiveWidth(double) { notImplemented(); }
     virtual void setAllowsViewportShrinkToFit(bool) { notImplemented(); }
 
-    virtual Optional<bool> stableStateOverride() const { notImplemented(); return WTF::nullopt; }
-    virtual void setStableStateOverride(Optional<bool>) { notImplemented(); }
+    virtual std::optional<bool> stableStateOverride() const { notImplemented(); return std::nullopt; }
+    virtual void setStableStateOverride(std::optional<bool>) { notImplemented(); }
 
     virtual JSObjectRef contentVisibleRect() const { notImplemented(); return nullptr; }
     

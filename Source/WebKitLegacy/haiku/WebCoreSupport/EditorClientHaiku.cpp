@@ -57,7 +57,7 @@ EditorClientHaiku::EditorClientHaiku(BWebPage* page)
 {
 }
 
-bool EditorClientHaiku::shouldDeleteRange(const Optional<SimpleRange>& range)
+bool EditorClientHaiku::shouldDeleteRange(const std::optional<SimpleRange>& range)
 {
     BMessage message(EDITOR_DELETE_RANGE);
     if (range)
@@ -116,7 +116,7 @@ bool EditorClientHaiku::shouldEndEditing(const SimpleRange& range)
     return true;
 }
 
-bool EditorClientHaiku::shouldInsertNode(Node& node, const Optional<SimpleRange>& range, EditorInsertAction action)
+bool EditorClientHaiku::shouldInsertNode(Node& node, const std::optional<SimpleRange>& range, EditorInsertAction action)
 {
     BMessage message(EDITOR_INSERT_NODE);
     message.AddPointer("node", &node);
@@ -127,7 +127,7 @@ bool EditorClientHaiku::shouldInsertNode(Node& node, const Optional<SimpleRange>
     return true;
 }
 
-bool EditorClientHaiku::shouldInsertText(const String& text, const Optional<SimpleRange>& range, EditorInsertAction action)
+bool EditorClientHaiku::shouldInsertText(const String& text, const std::optional<SimpleRange>& range, EditorInsertAction action)
 {
     BMessage message(EDITOR_INSERT_TEXT);
     message.AddString("text", text);
@@ -138,7 +138,7 @@ bool EditorClientHaiku::shouldInsertText(const String& text, const Optional<Simp
     return true;
 }
 
-bool EditorClientHaiku::shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange,
+bool EditorClientHaiku::shouldChangeSelectedRange(const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange,
     Affinity affinity, bool stillSelecting)
 {
     BMessage message(EDITOR_CHANGE_SELECTED_RANGE);
@@ -153,7 +153,7 @@ bool EditorClientHaiku::shouldChangeSelectedRange(const Optional<SimpleRange>& f
 }
 
 bool EditorClientHaiku::shouldApplyStyle(const WebCore::StyleProperties& style,
-                                      const Optional<SimpleRange>& range)
+                                      const std::optional<SimpleRange>& range)
 {
     BMessage message(EDITOR_APPLY_STYLE);
     message.AddPointer("style", &style);
@@ -207,11 +207,11 @@ bool EditorClientHaiku::isSelectTrailingWhitespaceEnabled() const
 	return false;
 }
 
-void EditorClientHaiku::willWriteSelectionToPasteboard(const Optional<SimpleRange>&)
+void EditorClientHaiku::willWriteSelectionToPasteboard(const std::optional<SimpleRange>&)
 {
 }
 
-void EditorClientHaiku::getClientPasteboardData(const Optional<SimpleRange>&, Vector<String>&, Vector<RefPtr<WebCore::SharedBuffer> >&)
+void EditorClientHaiku::getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>&, Vector<RefPtr<WebCore::SharedBuffer> >&)
 {
 }
 

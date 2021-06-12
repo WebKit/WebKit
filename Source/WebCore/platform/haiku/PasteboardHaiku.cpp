@@ -241,13 +241,13 @@ bool Pasteboard::canSmartReplace()
 }
 
 
-void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, WTF::Optional<long unsigned int>)
+void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, std::optional<long unsigned int>)
 {
     notImplemented();
 }
 
 
-void Pasteboard::read(PasteboardPlainText& text, WebCore::PlainTextURLReadingPolicy, WTF::Optional<long unsigned int>)
+void Pasteboard::read(PasteboardPlainText& text, WebCore::PlainTextURLReadingPolicy, std::optional<long unsigned int>)
 {
     AutoClipboardLocker locker(be_clipboard);
     if (!locker.isLocked())
@@ -418,7 +418,7 @@ void Pasteboard::writeCustomData(const WTF::Vector<PasteboardCustomData>&)
 	notImplemented();
 }
 
-void Pasteboard::read(WebCore::PasteboardFileReader&, WTF::Optional<unsigned long>)
+void Pasteboard::read(WebCore::PasteboardFileReader&, std::optional<unsigned long>)
 {
 	notImplemented();
 }

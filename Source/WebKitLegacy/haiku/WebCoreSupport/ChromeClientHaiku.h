@@ -129,7 +129,7 @@ namespace WebCore {
 
         bool hoverSupportedByPrimaryPointingDevice() const override { return true; }
         bool hoverSupportedByAnyAvailablePointingDevice() const override { return true; }
-        Optional<PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const override { return WebCore::PointerCharacteristics::Fine; }
+        std::optional<PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const override { return WebCore::PointerCharacteristics::Fine; }
         OptionSet<PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const override { return WebCore::PointerCharacteristics::Fine; }
         void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned int, const WTF::String&, WebCore::TextDirection) override;
 

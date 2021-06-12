@@ -58,15 +58,15 @@ struct LoadErrorResetToken;
 class FrameLoaderClientHaiku : public FrameLoaderClient {
  public:
     explicit FrameLoaderClientHaiku(BWebPage*);
-	~FrameLoaderClientHaiku();
+    ~FrameLoaderClientHaiku();
 
     void setFrame(BWebFrame* frame) {m_webFrame = frame;}
     BWebFrame* webFrame() { return m_webFrame; }
     void setDispatchTarget(const BMessenger& messenger);
     BWebPage* page() const;
 
-	WTF::Optional<PageIdentifier> pageID() const final;
-	WTF::Optional<FrameIdentifier> frameID() const final;
+    std::optional<PageIdentifier> pageID() const final;
+    std::optional<FrameIdentifier> frameID() const final;
 
     bool hasWebView() const override;
 
@@ -89,8 +89,8 @@ class FrameLoaderClientHaiku : public FrameLoaderClient {
     bool dispatchDidReceiveInvalidCertificate(DocumentLoader*,
         const CertificateInfo& certificate, const char* message) override;
 
-    void dispatchDidCommitLoad(WTF::Optional<WebCore::HasInsecureContent>,
-		Optional<WebCore::UsedLegacyTLS>) override;
+    void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>,
+        std::optional<WebCore::UsedLegacyTLS>) override;
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long,
         const ResourceResponse&) override;
     void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int) override;
@@ -150,7 +150,7 @@ class FrameLoaderClientHaiku : public FrameLoaderClient {
     virtual void willReplaceMultipartContent() override { }
     virtual void didReplaceMultipartContent() override { }
 
-    void committedLoad(DocumentLoader*, const char*, int) override;
+    void committedLoad(DocumentLoader*, const uint8_t*, int) override;
     void finishedLoading(DocumentLoader*) override;
     void updateGlobalHistory() override;
     void updateGlobalHistoryRedirectLinks() override;

@@ -64,7 +64,7 @@ static std::unique_ptr<NetworkStorageSession>& defaultSession()
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty,
         const SameSiteInfo& sameSiteInfo, const URL& url,
-        WTF::Optional<FrameIdentifier> frameID, WTF::Optional<PageIdentifier> pageID,
+        std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID,
         ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
 {
     BPrivate::Network::BNetworkCookie* heapCookie
@@ -85,7 +85,7 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 
 std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty,
         const SameSiteInfo& sameSiteInfo, const URL& url,
-        WTF::Optional<FrameIdentifier> frameID, WTF::Optional<PageIdentifier> pageID,
+        std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID,
         IncludeSecureCookies includeSecureCookies, ShouldAskITP,
         ShouldRelaxThirdPartyCookieBlocking) const
 {
@@ -177,8 +177,8 @@ Vector<Cookie> NetworkStorageSession::getCookies(const URL&)
 }
 
 bool NetworkStorageSession::getRawCookies(const URL& firstParty,
-	const SameSiteInfo& sameSiteInfo, const URL& url, WTF::Optional<FrameIdentifier> frameID,
-	WTF::Optional<PageIdentifier> pageID, ShouldAskITP, ShouldRelaxThirdPartyCookieBlocking, Vector<Cookie>& rawCookies) const
+	const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID,
+	std::optional<PageIdentifier> pageID, ShouldAskITP, ShouldRelaxThirdPartyCookieBlocking, Vector<Cookie>& rawCookies) const
 {
 #if TRACE_COOKIE_JAR
 	printf("CookieJar: get raw cookies for %s (NOT IMPLEMENTED)\n", url.string().utf8().data());
@@ -195,8 +195,8 @@ void NetworkStorageSession::flushCookieStore()
 }
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty,
-	const SameSiteInfo& sameSiteInfo, const URL& url, WTF::Optional<FrameIdentifier> frameID,
-	WTF::Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ShouldAskITP,
+	const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID,
+	std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ShouldAskITP,
 	ShouldRelaxThirdPartyCookieBlocking) const
 {
 #if TRACE_COOKIE_JAR

@@ -94,7 +94,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     findMatchingFontFamily(familyName, fontFamily);
 
     font_style fontStyle;
-    findMatchingFontStyle(fontFamily, fontDescription.weight() == boldWeightValue(), fontDescription.italic() != WTF::nullopt, &fontStyle);
+    findMatchingFontStyle(fontFamily, fontDescription.weight() == boldWeightValue(), fontDescription.italic() != std::nullopt, &fontStyle);
 
     m_font->SetFamilyAndStyle(fontFamily, fontStyle);
 

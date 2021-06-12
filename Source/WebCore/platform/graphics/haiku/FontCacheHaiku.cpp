@@ -110,7 +110,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 
     for (int index = 0; index < count; index++)
     {
-	get_font_style(familyName, index, &nativeStyle);
+        get_font_style(familyName, index, &nativeStyle);
         result.uncheckedAppend(nativeStyle);
     }
 #endif
@@ -118,9 +118,9 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 }
 
 
-Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
+std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
 {
-    return Optional<ASCIILiteral>();
+    return std::nullopt;
 }
 
 

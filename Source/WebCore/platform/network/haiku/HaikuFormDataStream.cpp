@@ -73,8 +73,8 @@ BFormDataIO::Read(void* buffer, size_t size)
         size_t bufferSize = size - totalReadBytes;
         char* bufferPosition = (char*)buffer + totalReadBytes;
 
-		WTF::Optional<size_t> readBytes = switchOn(element.data,
-            [&] (const Vector<char>& bytes) {
+		std::optional<size_t> readBytes = switchOn(element.data,
+            [&] (const Vector<uint8_t>& bytes) {
                 return readFromData(bytes, bufferPosition, bufferSize);
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
                 return readFromFile(fileData, bufferPosition, bufferSize);
@@ -114,7 +114,7 @@ void BFormDataIO::computeContentLength()
 }
 
 
-WTF::Optional<size_t> BFormDataIO::readFromFile(const FormDataElement::EncodedFileData& fileData, char* buffer, size_t size)
+std::optional<size_t> BFormDataIO::readFromFile(const FormDataElement::EncodedFileData& fileData, char* buffer, size_t size)
 {
     if (m_fileHandle == FileSystem::invalidPlatformFileHandle)
         m_fileHandle = FileSystem::openFile(fileData.filename, FileSystem::FileOpenMode::Read);
@@ -122,7 +122,7 @@ WTF::Optional<size_t> BFormDataIO::readFromFile(const FormDataElement::EncodedFi
     if (!FileSystem::isHandleValid(m_fileHandle)) {
         LOG(Network, "Haiku - Failed while trying to open %s for upload\n", fileData.filename.utf8().data());
         m_fileHandle = FileSystem::invalidPlatformFileHandle;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
 	// Note: there is no management of a file offset, we just keep the file
@@ -132,7 +132,7 @@ WTF::Optional<size_t> BFormDataIO::readFromFile(const FormDataElement::EncodedFi
         LOG(Network, "Haiku - Failed while trying to read %s for upload\n", fileData.filename.utf8().data());
         FileSystem::closeFile(m_fileHandle);
         m_fileHandle = FileSystem::invalidPlatformFileHandle;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (!readBytes) {
@@ -144,10 +144,10 @@ WTF::Optional<size_t> BFormDataIO::readFromFile(const FormDataElement::EncodedFi
     return readBytes;
 }
 
-WTF::Optional<size_t> BFormDataIO::readFromData(const Vector<char>& data, char* buffer, size_t size)
+std::optional<size_t> BFormDataIO::readFromData(const Vector<uint8_t>& data, char* buffer, size_t size)
 {
     size_t elementSize = data.size() - m_dataOffset;
-    const char* elementBuffer = data.data() + m_dataOffset;
+    const uint8_t* elementBuffer = data.data() + m_dataOffset;
 
     size_t readBytes = elementSize > size ? size : elementSize;
     memcpy(buffer, elementBuffer, readBytes);
@@ -163,12 +163,12 @@ WTF::Optional<size_t> BFormDataIO::readFromData(const Vector<char>& data, char* 
 }
 
 
-WTF::Optional<size_t> BFormDataIO::readFromBlob(const FormDataElement::EncodedBlobData& blob, char* buffer, size_t size)
+std::optional<size_t> BFormDataIO::readFromBlob(const FormDataElement::EncodedBlobData& blob, char* buffer, size_t size)
 {
     BlobData* blobData = blobRegistry().blobRegistryImpl()->getBlobDataFromURL(blob.url);
 
 	if (!blobData)
-		return WTF::nullopt;
+		return std::nullopt;
 
 	auto& blobItem = blobData->items().at(m_blobItemIndex);
 	off_t readBytes;
@@ -194,7 +194,7 @@ WTF::Optional<size_t> BFormDataIO::readFromBlob(const FormDataElement::EncodedBl
 		// Open the file if not done yet
 		if (m_fileHandle == FileSystem::invalidPlatformFileHandle)
 		{
-			WTF::Optional<WallTime> fileModificationTime = FileSystem::fileModificationTime(blobItem.file()->path());
+			std::optional<WallTime> fileModificationTime = FileSystem::fileModificationTime(blobItem.file()->path());
 			if (fileModificationTime
 					&& fileModificationTime == blobItem.file()->expectedModificationTime())
 				m_fileHandle = FileSystem::openFile(blobItem.file()->path(), FileSystem::FileOpenMode::Read);
@@ -234,7 +234,7 @@ WTF::Optional<size_t> BFormDataIO::readFromBlob(const FormDataElement::EncodedBl
 	}
 
 	if (readBytes < 0)
-		return WTF::nullopt;
+		return std::nullopt;
     return readBytes;
 }
 
