@@ -1,3 +1,31 @@
+2021-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Relax "parent must be an HTMLElement" restriction in outerHTML setter
+        https://bugs.webkit.org/show_bug.cgi?id=226808
+
+        Reviewed by Ryosuke Niwa.
+
+        Made the following change to our outerHTML setter for better compatibility and to better
+        match the specification [1]:
+        - Stop throwing an exception when the parent is not an HTML element. This new behavior matches
+          the specification, Blink and Gecko behavior.
+
+        I did not fully align us with the specification because we are mostly aligned with Blink at
+        the moment. In particular:
+        - The specification says the outerHTML setter should be a no-op when the parent is null.
+          Firefox matches the specification but WebKit & Blink throw a NoModificationAllowedError.
+        - The specification says we should allow setting outerHTML if the parent is a DocumentFragment.
+          Firefox allows this but WebKit & Blink throw a NoModificationAllowedError.
+        - WebKit & Blink have some Text node merging logic that is not present in the specification
+          and which Gecko doesn't implement.
+
+        [1] https://w3c.github.io/DOM-Parsing/#dom-element-outerhtml
+
+        Test: fast/dom/set-outer-html-special-cases.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setOuterHTML):
+
 2021-06-13  Sam Weinig  <weinig@apple.com>
 
         SimulatedXRDevice::shutDownTrackingAndRendering() should clear it's GraphicsContextGL to ensure the resource is cleaned up quickly

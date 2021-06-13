@@ -1,3 +1,22 @@
+2021-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Relax "parent must be an HTMLElement" restriction in outerHTML setter
+        https://bugs.webkit.org/show_bug.cgi?id=226808
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/set-outer-html-special-cases-expected.txt: Added.
+        * fast/dom/set-outer-html-special-cases.html: Added.
+        Add layout test coverage
+
+        * fast/dynamic/outerHTML-no-element-expected.txt:
+        Rebaseline test due to different exception message.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003-expected.txt:
+        Rebaseline WPT test. This is actually a progression because we're no longer throwing. However, the test is still failing
+        later on.
+
 2021-06-13  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for over-constrained cases for available space distribution
