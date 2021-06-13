@@ -1,3 +1,18 @@
+2021-06-13  Sam Weinig  <weinig@apple.com>
+
+        SimulatedXRDevice::shutDownTrackingAndRendering() should clear it's GraphicsContextGL to ensure the resource is cleaned up quickly
+        https://bugs.webkit.org/show_bug.cgi?id=226947
+
+        Reviewed by Dean Jackson.
+
+        SimulatedXRDevice::shutDownTrackingAndRendering() needs to clear its GraphicsContextGL
+        to ensure the resource is cleaned up quickly, and doesn't wait for GC to be reclaimed. 
+        Without this, we can run out of GraphicsContextGLs and fail tests if GC happens to be
+        running a bit behind.
+
+        * testing/WebFakeXRDevice.cpp:
+        (WebCore::SimulatedXRDevice::shutDownTrackingAndRendering):
+
 2021-06-13  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for over-constrained cases for available space distribution

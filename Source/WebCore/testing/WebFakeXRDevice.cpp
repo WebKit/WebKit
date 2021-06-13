@@ -133,6 +133,7 @@ void SimulatedXRDevice::shutDownTrackingAndRendering()
     if (m_gl) {
         for (auto layer : m_layers)
             m_gl->deleteTexture(layer.value);
+        m_gl = nullptr;
     }
     m_layers.clear();
 }
