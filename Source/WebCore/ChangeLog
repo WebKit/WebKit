@@ -1,3 +1,25 @@
+2021-06-13  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for over-constrained cases for available space distribution
+        https://bugs.webkit.org/show_bug.cgi?id=226957
+
+        Reviewed by Antti Koivisto.
+
+        This patch cleans up the code for the available space distribution. It also enables
+        cases when the final column width is less than the preferred width (available space is negative).
+        See further explanation inline in the source.
+
+        Test: fast/layoutformattingcontext/table-space-distribution-simple.html
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::GridSpace::isEmpty const):
+        (WebCore::Layout::max):
+        (WebCore::Layout::operator-):
+        (WebCore::Layout::operator+=):
+        (WebCore::Layout::operator/):
+        (WebCore::Layout::distributeAvailableSpace):
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace):
+
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
         Lazily compute SecurityOrigin::m_isPotentiallyTrustworthy for performance

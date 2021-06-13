@@ -1,3 +1,13 @@
+2021-06-13  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for over-constrained cases for available space distribution
+        https://bugs.webkit.org/show_bug.cgi?id=226957
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-space-distribution-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-space-distribution-simple.html: Added.
+
 2021-06-12  Sam Weinig  <weinig@apple.com>
 
         Disable WebXR tests on Windows
