@@ -4638,3 +4638,6 @@ fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 fast/canvas/canvas-color-space-display-p3.html [ Skip ]
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
+
+# WebXR is not enabled on windows.
+webxr [ Skip ]
