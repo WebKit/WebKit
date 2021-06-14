@@ -1,3 +1,12 @@
+2021-06-14  Per Arne  <pvollan@apple.com>
+
+        [AppleWin] Update test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=226970
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-06-14  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for flexing columns when the content is also flexing
