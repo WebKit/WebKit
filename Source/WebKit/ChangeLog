@@ -1,3 +1,16 @@
+2021-06-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Tighten the WebAuthn Sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=226944
+        <rdar://problem/74721792>
+
+        Reviewed by Per Arne Vollan.
+
+        Revise the WebAuthn process sandbox to remove the many things originally copied from
+        the WebContent sandbox that are not needed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+
 2021-06-14  Per Arne  <pvollan@apple.com>
 
         [iOS] Sync Accessibility preferences
