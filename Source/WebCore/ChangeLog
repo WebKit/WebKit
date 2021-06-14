@@ -1,3 +1,36 @@
+2021-06-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        AcceleratedImageBuffer not instantiated but objects are punned to the type
+        https://bugs.webkit.org/show_bug.cgi?id=226917
+
+        Reviewed by Said Abou-Hallawa.
+
+        AcceleratedImageBuffer::create would create instance
+        of ConcreteImageBuffer, not AcceleratedImageBuffer.
+
+        Fix by adding a correct create static function.
+
+        Tested by new test:
+        TestWebKitAPI.ImageBufferTests.ImageBufferSubTypeCreateCreatesSubtypes
+
+        * platform/graphics/PlatformImageBuffer.h:
+        (WebCore::IOSurfaceImageBuffer::create):
+        (WebCore::IOSurfaceImageBuffer::IOSurfaceImageBuffer):
+        Add the correct factory functions and public constructors.
+
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+        Add export statements that are needed for the added test.
+
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.mm:
+        (WebCore::FilterEffectRendererCoreImage::imageForSourceGraphic):
+        (WebCore::FilterEffectRendererCoreImage::renderToImageBuffer):
+        Change the image creation site to create the explicit IOSurfaceImageBuffer
+        since that's what it's trying to create.
+        Change the type-punning call sites to use explicit
+        IOSurfaceImageBuffer name, as that's what the call site
+        is intending to use.
+
+
 2021-06-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for flexing columns when the content is also flexing

@@ -57,23 +57,35 @@ using AcceleratedImageBufferBackend = UnacceleratedImageBufferBackend;
 #endif
 
 using UnacceleratedImageBuffer = ConcreteImageBuffer<UnacceleratedImageBufferBackend>;
-
-#if HAVE(IOSURFACE)
-class AcceleratedImageBuffer : public ConcreteImageBuffer<ImageBufferIOSurfaceBackend> {
-    using Base = ConcreteImageBuffer<AcceleratedImageBufferBackend>;
-    using Base::Base;
-public:
-    IOSurface& surface() { return *m_backend->surface(); }
-};
-#else
-using AcceleratedImageBuffer = ConcreteImageBuffer<AcceleratedImageBufferBackend>;
-#endif
-
 using DisplayListUnacceleratedImageBuffer = DisplayList::ImageBuffer<UnacceleratedImageBufferBackend>;
 using DisplayListAcceleratedImageBuffer = DisplayList::ImageBuffer<AcceleratedImageBufferBackend>;
 
+#if HAVE(IOSURFACE)
+class IOSurfaceImageBuffer final : public ConcreteImageBuffer<ImageBufferIOSurfaceBackend> {
+    using Base = ConcreteImageBuffer<ImageBufferIOSurfaceBackend>;
+public:
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, const HostWindow* hostWindow = nullptr)
+    {
+        return Base::create<IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
+    }
+    static auto create(const FloatSize& size, const GraphicsContext& context)
+    {
+        return Base::create<IOSurfaceImageBuffer>(size, context);
+    }
+    using Base::Base;
+
+    IOSurface& surface() { return *m_backend->surface(); }
+};
+using AcceleratedImageBuffer = IOSurfaceImageBuffer;
+#else
+using AcceleratedImageBuffer = ConcreteImageBuffer<UnacceleratedImageBufferBackend>;
+#endif
+
+
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AcceleratedImageBuffer)
+#if HAVE(IOSURFACE)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IOSurfaceImageBuffer)
     static bool isType(const WebCore::ImageBuffer& buffer) { return buffer.renderingMode() == WebCore::RenderingMode::Accelerated; }
 SPECIALIZE_TYPE_TRAITS_END()
+#endif

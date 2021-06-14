@@ -37,7 +37,6 @@
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
 #import "Logging.h"
-#import "PlatformImageBuffer.h"
 #import "SourceGraphic.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CIFilter.h>
@@ -175,8 +174,8 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::imageForSourceGraphic(SourceGr
     if (!sourceImage)
         return nullptr;
     
-    if (is<AcceleratedImageBuffer>(*sourceImage))
-        return [CIImage imageWithIOSurface:downcast<AcceleratedImageBuffer>(*sourceImage).surface().surface()];
+    if (is<IOSurfaceImageBuffer>(*sourceImage))
+        return [CIImage imageWithIOSurface:downcast<IOSurfaceImageBuffer>(*sourceImage).surface().surface()];
     
     return [CIImage imageWithCGImage:sourceImage->copyNativeImage()->platformImage().get()];
 }
@@ -276,20 +275,13 @@ ImageBuffer* FilterEffectRendererCoreImage::output() const
 void FilterEffectRendererCoreImage::renderToImageBuffer(FilterEffect& lastEffect)
 {
     FloatSize clampedSize = ImageBuffer::clampedSize(lastEffect.absolutePaintRect().size());
-    m_outputImageBuffer = ImageBuffer::create(clampedSize, RenderingMode::Accelerated, lastEffect.filter().filterScale(), lastEffect.resultColorSpace(), PixelFormat::BGRA8);
-    
+    m_outputImageBuffer = IOSurfaceImageBuffer::create(clampedSize, lastEffect.filter().filterScale(), lastEffect.resultColorSpace(), PixelFormat::BGRA8);
     if (!m_outputImageBuffer) {
         clearResult();
         return;
     }
-    
-    // FIXME: In the situation where the Image is too large, an UnacceleratedImageBuffer will be created
-    // in this case, special handling is needed to render to ImageBufferCGBackend instead
-    if (!is<AcceleratedImageBuffer>(*m_outputImageBuffer))
-        return;
-    
-    auto& surface = downcast<AcceleratedImageBuffer>(*m_outputImageBuffer).surface();
-    [sharedCIContext().get() render: m_outputImage.get() toIOSurface: surface.surface() bounds:destRect(lastEffect) colorSpace:lastEffect.resultColorSpace().platformColorSpace()];
+
+    [sharedCIContext().get() render: m_outputImage.get() toIOSurface: m_outputImageBuffer->surface().surface() bounds:destRect(lastEffect) colorSpace:lastEffect.resultColorSpace().platformColorSpace()];
 }
     
 FloatRect FilterEffectRendererCoreImage::destRect(const FilterEffect& lastEffect) const
