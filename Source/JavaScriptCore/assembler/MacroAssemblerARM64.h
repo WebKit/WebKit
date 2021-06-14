@@ -893,17 +893,24 @@ public:
 
     void sub32(TrustedImm32 imm, RegisterID dest)
     {
-        if (isUInt12(imm.m_value)) {
-            m_assembler.sub<32>(dest, dest, UInt12(imm.m_value));
+        sub32(dest, imm, dest);
+    }
+
+    void sub32(RegisterID left, TrustedImm32 imm, RegisterID dest)
+    {
+        intptr_t immediate = imm.m_value;
+
+        if (isUInt12(immediate)) {
+            m_assembler.sub<32>(dest, left, UInt12(immediate));
             return;
         }
-        if (isUInt12(-imm.m_value)) {
-            m_assembler.add<32>(dest, dest, UInt12(-imm.m_value));
+        if (isUInt12(-immediate)) {
+            m_assembler.add<32>(dest, left, UInt12(-immediate));
             return;
         }
 
         move(imm, getCachedDataTempRegisterIDAndInvalidate());
-        m_assembler.sub<32>(dest, dest, dataTempRegister);
+        m_assembler.sub<32>(dest, left, dataTempRegister);
     }
 
     void sub32(TrustedImm32 imm, Address address)
@@ -954,41 +961,53 @@ public:
         m_assembler.sub<64>(dest, dest, src);
     }
 
-    void sub64(RegisterID a, RegisterID b, RegisterID dest)
+    void sub64(RegisterID left, RegisterID right, RegisterID dest)
     {
-        m_assembler.sub<64>(dest, a, b);
+        m_assembler.sub<64>(dest, left, right);
     }
-    
+
     void sub64(TrustedImm32 imm, RegisterID dest)
     {
-        if (isUInt12(imm.m_value)) {
-            m_assembler.sub<64>(dest, dest, UInt12(imm.m_value));
-            return;
-        }
-        if (isUInt12(-imm.m_value)) {
-            m_assembler.add<64>(dest, dest, UInt12(-imm.m_value));
-            return;
-        }
-
-        signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
-        m_assembler.sub<64>(dest, dest, dataTempRegister);
+        sub64(dest, imm, dest);
     }
-    
-    void sub64(TrustedImm64 imm, RegisterID dest)
+
+    void sub64(RegisterID left, TrustedImm32 imm, RegisterID dest)
     {
         intptr_t immediate = imm.m_value;
 
         if (isUInt12(immediate)) {
-            m_assembler.sub<64>(dest, dest, UInt12(static_cast<int32_t>(immediate)));
+            m_assembler.sub<64>(dest, left, UInt12(immediate));
             return;
         }
         if (isUInt12(-immediate)) {
-            m_assembler.add<64>(dest, dest, UInt12(static_cast<int32_t>(-immediate)));
+            m_assembler.add<64>(dest, left, UInt12(-immediate));
+            return;
+        }
+
+        signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.sub<64>(dest, left, dataTempRegister);
+    }
+
+    void sub64(TrustedImm64 imm, RegisterID dest)
+    {
+        sub64(dest, imm, dest);
+    }
+
+    void sub64(RegisterID left, TrustedImm64 imm, RegisterID dest)
+    {
+        intptr_t immediate = imm.m_value;
+
+        if (isUInt12(immediate)) {
+            m_assembler.sub<64>(dest, left, UInt12(static_cast<int32_t>(immediate)));
+            return;
+        }
+        if (isUInt12(-immediate)) {
+            m_assembler.add<64>(dest, left, UInt12(static_cast<int32_t>(-immediate)));
             return;
         }
 
         move(imm, getCachedDataTempRegisterIDAndInvalidate());
-        m_assembler.sub<64>(dest, dest, dataTempRegister);
+        m_assembler.sub<64>(dest, left, dataTempRegister);
     }
 
     void urshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)

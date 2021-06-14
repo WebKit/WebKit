@@ -2092,6 +2092,28 @@ void testSubArgs32(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == a - b);
 }
 
+void testSubArgs32ZeroExtend(int a, int b)
+{
+    Procedure proc;
+    if (proc.optLevel() < 1)
+        return;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Sub, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)))));
+
+    CHECK(compileAndRun<uint64_t>(proc, a, b) == static_cast<uint64_t>(static_cast<uint32_t>(a - b)));
+}
+
 void testSubArgImm32(int a, int b)
 {
     Procedure proc;

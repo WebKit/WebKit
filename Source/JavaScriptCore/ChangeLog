@@ -1,3 +1,60 @@
+2021-06-14  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Air opcode sub32/64(Reg, Imm, Reg) form for ARM64 and select this instruction in Air
+        https://bugs.webkit.org/show_bug.cgi?id=226937
+
+        Reviewed by Saam Barati.
+
+        Previously, Air arm64 sub32/64 utilize sub(Imm, Tmp) at optlevel = 0 and 
+        add(Tmp, -Imm) at optlevel > 0 to perform and optimize sub(Tmp, Imm, Tmp).
+        The issue with this is that we were not eliding redundant operations. 
+
+        For example:
+        // B3 IR
+        @0 = Trunc(ArgumentReg(0))
+        @1 = Const
+        @2 = Sub(@0, @1)
+        @3 = Return(@2)
+
+        // Old optimized Air IR
+        // OptLevel = 0
+        Move    %x0, %tmp1, @0
+        Move $Const, %tmp2, @1
+        Move  %tmp1, %tmp0, @2 // Redundant
+        Sub  $Const, %tmp0, @2
+        Move  %tmp0,   %x0, @3
+        Ret32   %x0,        @3
+
+        To remove those redundant instructions, Air arm64 sub32/64 opcode should 
+        indicate a new form sub(Tmp, Imm, Tmp).
+
+        // New optimized Air IR
+        // OptLevel = 0
+        Move    %x0,  %tmp1,        @0
+        Move $Const,  %tmp2,        @1
+        Sub   %tmp1, $Const, %tmp0, @2
+        Move  %tmp0,    %x0,        @3
+        Ret32   %x0,                @3
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::sub32):
+        (JSC::MacroAssemblerARM64::sub64):
+        * assembler/testmasm.cpp:
+        (JSC::testSub32Args):
+        (JSC::testSub32Imm):
+        (JSC::testSub32ArgImm):
+        (JSC::testSub64Imm32):
+        (JSC::testSub64ArgImm32):
+        (JSC::testSub64Imm64):
+        (JSC::testSub64ArgImm64):
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testSubArgs32ZeroExtend):
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
 2021-06-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278734.

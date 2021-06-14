@@ -3301,6 +3301,10 @@ void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testSubArgs32(1, 2));
     RUN(testSubArgs32(13, -42));
     RUN(testSubArgs32(-13, 42));
+    RUN(testSubArgs32ZeroExtend(1, 1));
+    RUN(testSubArgs32ZeroExtend(1, 2));
+    RUN(testSubArgs32ZeroExtend(13, -42));
+    RUN(testSubArgs32ZeroExtend(-13, 42));
     RUN(testSubArgImm32(1, 1));
     RUN(testSubArgImm32(1, 2));
     RUN(testSubArgImm32(13, -42));

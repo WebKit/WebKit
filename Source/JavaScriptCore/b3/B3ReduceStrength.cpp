@@ -633,7 +633,7 @@ private:
                         Add, m_value->origin(), m_value->child(0), negatedConstant);
                     break;
                 }
-                
+
                 // Turn this: Sub(0, value)
                 // Into this: Neg(value)
                 if (m_value->child(0)->isInt(0)) {
