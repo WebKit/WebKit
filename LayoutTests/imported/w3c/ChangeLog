@@ -1,3 +1,14 @@
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Move Transferable RTCDataChannel tests to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=226967
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-expected.txt: Renamed from LayoutTests/http/wpt/webrtc/datachannel-worker-expected.txt.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-worker.js: Renamed from LayoutTests/http/wpt/webrtc/datachannel-worker.js.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel.html: Renamed from LayoutTests/http/wpt/webrtc/datachannel-worker.html.
+
 2021-06-11  Cathie Chen  <cathiechen@igalia.com>
 
         Use HTMLDimension to parse different HTML attribute length values
