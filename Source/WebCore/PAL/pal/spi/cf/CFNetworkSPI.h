@@ -122,6 +122,16 @@ CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
     CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
 
+#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
+typedef enum {
+    nw_connection_privacy_stance_unknown = 0,
+    nw_connection_privacy_stance_not_eligible = 1,
+    nw_connection_privacy_stance_proxied = 2,
+    nw_connection_privacy_stance_failed = 3,
+    nw_connection_privacy_stance_direct = 4,
+} nw_connection_privacy_stance_t;
+#endif
+
 #if defined(__OBJC__)
 
 @interface NSURLSessionTask ()

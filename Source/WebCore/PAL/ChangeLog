@@ -1,3 +1,14 @@
+2021-06-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [Monterey] Support building WebKit (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=226846
+        <rdar://problem/79095148>
+
+        Reviewed by Chris Dumez.
+
+        * pal/spi/cf/CFNetworkSPI.h: Add nw_connection_privacy_stance_t.
+        * pal/spi/cocoa/PassKitSPI.h: Add PKPaymentCoupon.
+
 2021-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Clean up some VisionKitCore soft linking code in WebKit

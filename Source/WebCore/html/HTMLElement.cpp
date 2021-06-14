@@ -1374,7 +1374,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
                 continue;
 
             if (lineOrDataDetector.classList().contains(imageOverlayLineClass)) {
-                TextRecognitionLineElements lineElements { lineOrDataDetector };
+                TextRecognitionLineElements lineElements { lineOrDataDetector, { } };
                 for (auto& text : childrenOfType<HTMLDivElement>(lineOrDataDetector))
                     lineElements.children.append(text);
                 textRecognitionElements.lines.append(WTFMove(lineElements));
@@ -1427,7 +1427,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
             auto lineContainer = HTMLDivElement::create(document());
             lineContainer->classList().add(imageOverlayLineClass);
             rootContainer->appendChild(lineContainer);
-            TextRecognitionLineElements lineElements { lineContainer };
+            TextRecognitionLineElements lineElements { lineContainer, { } };
             lineElements.children.reserveInitialCapacity(line.children.size());
             for (size_t childIndex = 0; childIndex < line.children.size(); ++childIndex) {
                 auto& child = line.children[childIndex];
