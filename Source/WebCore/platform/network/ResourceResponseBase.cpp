@@ -452,37 +452,23 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
 {
     switch (m_tainting) {
     case ResourceResponse::Tainting::Basic:
-        return;
+        break;
     case ResourceResponse::Tainting::Cors: {
         auto corsSafeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)).value_or(HashSet<String, ASCIICaseInsensitiveHash> { });
-        if (corsSafeHeaderSet.contains("*"))
+        if (corsSafeHeaderSet.contains("*"_str))
             return;
 
-        HTTPHeaderMap filteredHeaders;
-        for (auto& header : m_httpHeaderFields.commonHeaders()) {
-            if (isSafeCrossOriginResponseHeader(header.key))
-                filteredHeaders.add(header.key, WTFMove(header.value));
-        }
-        for (auto& headerName : corsSafeHeaderSet) {
-            if (!filteredHeaders.contains(headerName)) {
-                auto value = m_httpHeaderFields.get(headerName);
-                if (!value.isNull())
-                    filteredHeaders.add(headerName, value);
-            }
-        }
-        m_httpHeaderFields = WTFMove(filteredHeaders);
-        return;
+        m_httpHeaderFields.commonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) {
+            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains(httpHeaderNameString(header.key).toStringWithoutCopying());
+        });
+        m_httpHeaderFields.uncommonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) { return !corsSafeHeaderSet.contains(header.key); });
+        break;
     }
     case ResourceResponse::Tainting::Opaque:
-    case ResourceResponse::Tainting::Opaqueredirect: {
-        HTTPHeaderMap filteredHeaders;
-        for (auto& header : m_httpHeaderFields.commonHeaders()) {
-            if (isSafeCrossOriginResponseHeader(header.key))
-                filteredHeaders.add(header.key, WTFMove(header.value));
-        }
-        m_httpHeaderFields = WTFMove(filteredHeaders);
-        return;
-    }
+    case ResourceResponse::Tainting::Opaqueredirect:
+        m_httpHeaderFields.commonHeaders().removeAllMatching([](auto& header) { return !isSafeCrossOriginResponseHeader(header.key); });
+        m_httpHeaderFields.uncommonHeaders().clear();
+        break;
     }
 }
 
@@ -497,11 +483,7 @@ void ResourceResponseBase::sanitizeHTTPHeaderFields(SanitizationType type)
     case SanitizationType::RemoveCookies:
         return;
     case SanitizationType::Redirection: {
-        auto commonHeaders = WTFMove(m_httpHeaderFields.commonHeaders());
-        for (auto& header : commonHeaders) {
-            if (isSafeRedirectionResponseHeader(header.key))
-                m_httpHeaderFields.add(header.key, WTFMove(header.value));
-        }
+        m_httpHeaderFields.commonHeaders().removeAllMatching([](auto& header) { return !isSafeRedirectionResponseHeader(header.key); });
         m_httpHeaderFields.uncommonHeaders().clear();
         return;
     }
