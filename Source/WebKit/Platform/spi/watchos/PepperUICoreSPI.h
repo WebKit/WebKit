@@ -219,6 +219,7 @@ extern UIButtonType const PUICButtonTypePill;
 @property (nonatomic, readonly) PUICTableView *listView;
 @property (strong, nonatomic, readonly) PUICQuickboardListViewSpecs *specs;
 @property (nonatomic, copy) UITextContentType textContentType;
+- (instancetype)initWithDelegate:(id <PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_DESIGNATED_INITIALIZER;
 - (void)reloadListItems;
 - (void)reloadHeaderContentView;
 @end
@@ -246,12 +247,6 @@ typedef NS_ENUM(NSInteger, PUICPickerViewStyle) {
 - (instancetype)initWithStyle:(PUICPickerViewStyle)style NS_DESIGNATED_INITIALIZER;
 - (UIView *)dequeueReusableItemView;
 - (void)reloadData;
-@end
-
-@protocol PUICDictationViewControllerDelegate <NSObject>
-@end
-@interface PUICDictationViewController : PUICQuickboardViewController
-- (instancetype)initWithDelegate:(id<PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_DESIGNATED_INITIALIZER;
 @end
 
 @interface PUICQuickboardViewController (ExposeHeader)

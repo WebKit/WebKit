@@ -1,3 +1,46 @@
+2021-06-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Quickboard UI for focused select elements should not allow the user to change the input language
+        https://bugs.webkit.org/show_bug.cgi?id=226958
+
+        Reviewed by Tim Horton.
+
+        Fix a couple of bugs around focused select element UI that were introduced in watchOS 7, due to changes in
+        PepperUICore. See below for details.
+
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm:
+        (-[WKQuickboardListViewController initWithDelegate:]):
+
+        Drive-by fix: remove a `USE(APPLE_INTERNAL_SDK)` guard that was (seemingly) unintentionally added in r262854.
+
+        (-[WKQuickboardListViewController viewDidLoad]): Deleted.
+
+        Avoid hiding the list view controller's `-headerView` when focusing select elements. In watchOS 7, the accept
+        and cancel buttons are positioned inside the `-headerView`, so having this logic in the base class
+        (WKQuickboardListViewController) means that the Done button in select menus does not show up. In turn, this
+        means that currently, users who focus select elements must know to use the crown button to dismiss the select
+        menu.
+
+        For now, we move logic to the only other subclass of WKQuickboardListViewController,
+        WKTextInputListViewController. However, note that this too is going away in an upcoming patch that refactors
+        WKTextInputListViewController so that it directly subclasses PUICQuickboardMessageViewController
+        instead of PUICQuickboardListViewController.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h:
+
+        Move a declaration of `-initWithDelegate:dictationMode:` from PUICDictationViewController to
+        PUICQuickboardListViewController (see the change in `-[WKQuickboardListViewController initWithDelegate:]` above).
+
+        * UIProcess/ios/forms/WKSelectMenuListViewController.mm:
+        (-[WKSelectMenuListViewController shouldShowLanguageButton]):
+
+        Since watchOS 7, the language button is now always shown by default in PUICQuickboardListViewController, with a
+        new subclassing hook to avoid showing it. It doesn't make sense to allow the user to change input languages when
+        choosing options in a select menu, so we implement this and always return `NO` here.
+
+        * UIProcess/ios/forms/WKTextInputListViewController.mm:
+        (-[WKTextInputListViewController viewDidLoad]):
+
 2021-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Number pad button is missing its image when tapping on <input type=tel> in watchOS 8

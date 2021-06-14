@@ -230,6 +230,11 @@ typedef NS_ENUM(NSInteger, PUICQuickboardListSection) {
     return selectMenuCellReuseIdentifier;
 }
 
+- (BOOL)shouldShowLanguageButton
+{
+    return NO;
+}
+
 #if HAVE(QUICKBOARD_COLLECTION_VIEWS)
 
 - (Class)listItemCellClass

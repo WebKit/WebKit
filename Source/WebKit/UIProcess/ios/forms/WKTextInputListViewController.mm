@@ -50,6 +50,13 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
     return self;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    self.headerView.hidden = YES;
+}
+
 - (void)willPresentArouetViewController:(PUICQuickboardArouetViewController *)quickboard
 {
     NSString *initialText = [self.delegate initialValueForViewController:self];

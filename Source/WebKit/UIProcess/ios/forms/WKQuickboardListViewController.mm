@@ -78,13 +78,8 @@ static const CGFloat itemCellBaselineToBottom = 8;
 
 - (instancetype)initWithDelegate:(id <WKQuickboardViewControllerDelegate>)delegate
 {
-#if USE(APPLE_INTERNAL_SDK)
     if (self = [super initWithDelegate:delegate dictationMode:PUICDictationModeText])
         _contextViewNeedsUpdate = YES;
-#else
-    if (self = [super initWithDelegate:delegate])
-        _contextViewNeedsUpdate = YES;
-#endif
 
     return self;
 }
@@ -106,13 +101,6 @@ static const CGFloat itemCellBaselineToBottom = 8;
 - (BOOL)prefersStatusBarHidden
 {
     return NO;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    self.headerView.hidden = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
