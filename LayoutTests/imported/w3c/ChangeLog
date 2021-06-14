@@ -1,3 +1,15 @@
+2021-06-14  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r278842.
+
+        introduced a failing test
+
+        Reverted changeset:
+
+        "Fix RTCDataChannelInit::decode"
+        https://bugs.webkit.org/show_bug.cgi?id=226968
+        https://commits.webkit.org/r278842
+
 2021-06-14  Youenn Fablet  <youenn@apple.com>
 
         Fix RTCDataChannelInit::decode

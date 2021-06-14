@@ -1,3 +1,0 @@
-
-PASS offerer data channel in service worker
-

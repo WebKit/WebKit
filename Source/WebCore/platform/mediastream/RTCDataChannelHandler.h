@@ -62,17 +62,17 @@ template<class Encoder> void RTCDataChannelInit::encode(Encoder& encoder) const
 
 template<class Decoder> std::optional<RTCDataChannelInit> RTCDataChannelInit::decode(Decoder& decoder)
 {
-    std::optional<std::optional<bool>> ordered;
+    std::optional<bool> ordered;
     decoder >> ordered;
     if (!ordered)
         return { };
 
-    std::optional<std::optional<unsigned short>> maxPacketLifeTime;
+    std::optional<unsigned short> maxPacketLifeTime;
     decoder >> maxPacketLifeTime;
     if (!maxPacketLifeTime)
         return { };
 
-    std::optional<std::optional<unsigned short>> maxRetransmits;
+    std::optional<unsigned short> maxRetransmits;
     decoder >> maxRetransmits;
     if (!maxRetransmits)
         return { };
@@ -81,12 +81,12 @@ template<class Decoder> std::optional<RTCDataChannelInit> RTCDataChannelInit::de
     if (!decoder.decode(protocol))
         return { };
 
-    std::optional<std::optional<bool>> negotiated;
+    std::optional<bool> negotiated;
     decoder >> negotiated;
     if (!negotiated)
         return { };
 
-    std::optional<std::optional<unsigned short>> id;
+    std::optional<unsigned short> id;
     decoder >> id;
     if (!id)
         return { };
