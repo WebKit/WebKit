@@ -1,5 +1,17 @@
 2021-06-14  Youenn Fablet  <youenn@apple.com>
 
+        Fix RTCDataChannelInit::decode
+        https://bugs.webkit.org/show_bug.cgi?id=226968
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https-expected.txt: Added.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html: Added.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.js: Added.
+        (onmessage):
+
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
         Move Transferable RTCDataChannel tests to WPT
         https://bugs.webkit.org/show_bug.cgi?id=226967
 

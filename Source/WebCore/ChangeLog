@@ -1,3 +1,16 @@
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Fix RTCDataChannelInit::decode
+        https://bugs.webkit.org/show_bug.cgi?id=226968
+
+        Reviewed by Eric Carlson.
+
+        Test: imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html
+
+        * platform/mediastream/RTCDataChannelHandler.h:
+        (WebCore::RTCDataChannelInit::decode):
+        Make sure to use optionals of optionals.
+
 2021-06-14  Per Arne  <pvollan@apple.com>
 
         [AppleWin] Fix build failure
