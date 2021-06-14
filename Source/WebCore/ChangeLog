@@ -1,3 +1,21 @@
+2021-06-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for flexing columns when the content is also flexing
+        https://bugs.webkit.org/show_bug.cgi?id=226959
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds support for (the very common) cases when the minimum content width < maximum content width
+        (e.g. text content wraps across multiple lines) and the parent column does not have fixed width either.
+        Note that in some cases now table layout agrees with Chrome/Firefox and not with trunk WebKit
+        (see table-space-distribution-simple-mismatching.htnl).
+
+        Tests: fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html
+               fast/layoutformattingcontext/table-space-distribution-simple2.html
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace):
+
 2021-06-13  Chris Dumez  <cdumez@apple.com>
 
         Relax "parent must be an HTMLElement" restriction in outerHTML setter

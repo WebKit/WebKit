@@ -242,6 +242,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             columnWidth = *percent * availableHorizontalSpace / 100.0f;
 
         float minimumContentWidth = slot.widthConstraints().minimum;
+        float maximumContentWidth = slot.widthConstraints().maximum;
         if (!hasEnoughAvailableSpaceForMaximumWidth) {
             // maximum width > available horizontal space
             // preferred width: it's always at least as wide as the minimum content width and if column fixed width is set then the greater of the two.
@@ -261,7 +262,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             // total adjustable space: 120px - 80px - 50px = -10px <- Note the negative available space with over-constrained values.
             // columns extra widths: -10px / (30px + 0px) * 30px = -10px and -10px / (30px + 0px) * 0px = 0px
             // columns final widths: 70px and 50px (first column is narrower than its preferred width and the second is as wide as the minimum content width)
-            auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(minimumContentWidth));
+            auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(maximumContentWidth));
             return GridSpace { preferredWidth, preferredWidth - minimumContentWidth };
         }
 
@@ -282,7 +283,6 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         // total adjustable space: 2600px - 500px = 2100px
         // columns extra widths: 2100px / 500px * 200px = 840px and 2100px / 500px * 300px = 1260px
         // columns final widths: 1040px and 1560px
-        float maximumContentWidth = slot.widthConstraints().maximum;
         auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(maximumContentWidth));
         return GridSpace { preferredWidth, preferredWidth };
     });

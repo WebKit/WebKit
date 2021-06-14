@@ -1,3 +1,16 @@
+2021-06-14  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for flexing columns when the content is also flexing
+        https://bugs.webkit.org/show_bug.cgi?id=226959
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: LFC matches Chrome and Firefox.
+        * fast/layoutformattingcontext/table-space-distribution-simple-mismatching-expected.txt: Added.
+        * fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html: Added.
+        * fast/layoutformattingcontext/table-space-distribution-simple2-expected.html: Added.
+        * fast/layoutformattingcontext/table-space-distribution-simple2.html: Added.
+
 2021-06-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
