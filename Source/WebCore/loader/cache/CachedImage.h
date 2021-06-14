@@ -47,10 +47,10 @@ class CachedImage final : public CachedResource {
     friend class MemoryCache;
 
 public:
-    CachedImage(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*);
-    CachedImage(Image*, const PAL::SessionID&, const CookieJar*);
+    CachedImage(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
+    CachedImage(Image*, PAL::SessionID, const CookieJar*);
     // Constructor to use for manually cached images.
-    CachedImage(const URL&, Image*, const PAL::SessionID&, const CookieJar*, const String& domainForCachePartition);
+    CachedImage(const URL&, Image*, PAL::SessionID, const CookieJar*, const String& domainForCachePartition);
     virtual ~CachedImage();
 
     WEBCORE_EXPORT Image* image(); // Returns the nullImage() if the image is not available yet.

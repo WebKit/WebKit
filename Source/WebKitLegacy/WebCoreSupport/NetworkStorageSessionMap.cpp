@@ -46,7 +46,7 @@ static HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>&
     return map;
 }
 
-WebCore::NetworkStorageSession* NetworkStorageSessionMap::storageSession(const PAL::SessionID& sessionID)
+WebCore::NetworkStorageSession* NetworkStorageSessionMap::storageSession(PAL::SessionID sessionID)
 {
     if (sessionID == PAL::SessionID::defaultSessionID())
         return &defaultStorageSession();
@@ -77,7 +77,7 @@ void NetworkStorageSessionMap::switchToNewTestingSession()
 #endif
 }
 
-void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, const String& identifierBase)
+void NetworkStorageSessionMap::ensureSession(PAL::SessionID sessionID, const String& identifierBase)
 {
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     auto addResult = globalSessionMap().add(sessionID, nullptr);
@@ -108,7 +108,7 @@ void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, co
 #endif
 }
 
-void NetworkStorageSessionMap::destroySession(const PAL::SessionID& sessionID)
+void NetworkStorageSessionMap::destroySession(PAL::SessionID sessionID)
 {
     globalSessionMap().remove(sessionID);
 }

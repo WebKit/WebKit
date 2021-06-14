@@ -1262,7 +1262,7 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     }
 }
 
-void NetworkProcessProxy::flushCookies(const PAL::SessionID& sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::flushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::NetworkProcess::FlushCookies(sessionID), WTFMove(completionHandler));
 }

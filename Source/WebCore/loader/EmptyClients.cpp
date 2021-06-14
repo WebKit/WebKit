@@ -202,7 +202,7 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         ~EmptyIDBConnectionToServerDeletegate() { }
     };
 
-    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) final
+    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID) final
     {
         static NeverDestroyed<EmptyIDBConnectionToServerDeletegate> emptyDelegate;
         static auto& emptyConnection = IDBClient::IDBConnectionToServer::create(emptyDelegate.get()).leakRef();

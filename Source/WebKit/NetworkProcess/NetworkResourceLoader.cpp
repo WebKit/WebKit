@@ -1284,7 +1284,7 @@ bool NetworkResourceLoader::crossOriginAccessControlCheckEnabled() const
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-bool NetworkResourceLoader::shouldLogCookieInformation(NetworkConnectionToWebProcess& connection, const PAL::SessionID& sessionID)
+bool NetworkResourceLoader::shouldLogCookieInformation(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID)
 {
     if (auto* session = connection.networkProcess().networkSession(sessionID))
         return session->shouldLogCookieInformation();

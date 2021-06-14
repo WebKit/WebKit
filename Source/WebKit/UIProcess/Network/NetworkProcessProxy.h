@@ -210,7 +210,7 @@ public:
 
     void setIsHoldingLockedFiles(bool);
 
-    void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
+    void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
     void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);

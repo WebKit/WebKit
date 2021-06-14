@@ -257,7 +257,7 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
     return { };
 }
 
-Expected<void, String> validatePreflightResponse(const PAL::SessionID& sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
+Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
     if (!response.isSuccessful())
         return makeUnexpected("Preflight response is not successful"_s);

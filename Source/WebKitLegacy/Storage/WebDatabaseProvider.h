@@ -37,7 +37,7 @@ public:
     static WebDatabaseProvider& singleton();
     virtual ~WebDatabaseProvider();
 
-    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) override;
+    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID) override;
 
     void deleteAllDatabases();
 

@@ -34,7 +34,7 @@ class Settings;
 
 class CachedSVGFont final : public CachedFont {
 public:
-    CachedSVGFont(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*, const Settings&);
+    CachedSVGFont(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, const Settings&);
     CachedSVGFont(CachedResourceRequest&&, CachedSVGFont&);
 
     bool ensureCustomFontData(const AtomString& remoteURI) override;

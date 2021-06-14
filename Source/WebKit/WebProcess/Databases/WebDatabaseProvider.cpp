@@ -66,7 +66,7 @@ WebDatabaseProvider::~WebDatabaseProvider()
     databaseProviders().remove(m_identifier);
 }
 
-WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const PAL::SessionID&)
+WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(PAL::SessionID)
 {
     return WebProcess::singleton().ensureNetworkProcessConnection().idbConnectionToServer().coreConnectionToServer();
 }

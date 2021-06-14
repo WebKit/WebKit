@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-CachedFont::CachedFont(CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar, Type type)
+CachedFont::CachedFont(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, Type type)
     : CachedResource(WTFMove(request), type, sessionID, cookieJar)
     , m_loadInitiated(false)
     , m_hasCreatedFontDataWrappingResource(false)

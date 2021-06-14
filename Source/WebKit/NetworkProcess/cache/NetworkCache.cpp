@@ -220,7 +220,7 @@ static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, con
     return responseNeedsRevalidation(networkSession, response, timestamp, requestDirectives.maxStale);
 }
 
-static UseDecision makeUseDecision(NetworkProcess& networkProcess, const PAL::SessionID& sessionID, const Entry& entry, const WebCore::ResourceRequest& request)
+static UseDecision makeUseDecision(NetworkProcess& networkProcess, PAL::SessionID sessionID, const Entry& entry, const WebCore::ResourceRequest& request)
 {
     // The request is conditional so we force revalidation from the network. We merely check the disk cache
     // so we can update the cache entry.

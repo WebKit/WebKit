@@ -36,7 +36,7 @@
 
 namespace WTF {
 
-CrossThreadCopierBase<false, false, PAL::SessionID>::Type CrossThreadCopierBase<false, false, PAL::SessionID>::copy(const PAL::SessionID& sessionID)
+CrossThreadCopierBase<false, false, PAL::SessionID>::Type CrossThreadCopierBase<false, false, PAL::SessionID>::copy(PAL::SessionID sessionID)
 {
     return sessionID;
 }

@@ -1,3 +1,19 @@
+2021-06-14  Alex Christensen  <achristensen@webkit.org>
+
+        Pass PAL::SessionID by value instead of reference
+        https://bugs.webkit.org/show_bug.cgi?id=226983
+
+        Reviewed by Geoffrey Garen.
+
+        * Storage/WebDatabaseProvider.cpp:
+        (WebDatabaseProvider::idbConnectionToServerForSession):
+        * Storage/WebDatabaseProvider.h:
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::storageSession):
+        (NetworkStorageSessionMap::ensureSession):
+        (NetworkStorageSessionMap::destroySession):
+        * WebCoreSupport/NetworkStorageSessionMap.h:
+
 2021-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Move Timing-Allow-Origin checks to the network process

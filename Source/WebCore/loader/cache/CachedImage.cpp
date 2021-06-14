@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-CachedImage::CachedImage(CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+CachedImage::CachedImage(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTFMove(request), Type::ImageResource, sessionID, cookieJar)
     , m_updateImageDataCount(0)
     , m_isManuallyCached(false)
@@ -65,7 +65,7 @@ CachedImage::CachedImage(CachedResourceRequest&& request, const PAL::SessionID& 
     setStatus(Unknown);
 }
 
-CachedImage::CachedImage(Image* image, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+CachedImage::CachedImage(Image* image, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(URL(), Type::ImageResource, sessionID, cookieJar)
     , m_image(image)
     , m_updateImageDataCount(0)
@@ -75,7 +75,7 @@ CachedImage::CachedImage(Image* image, const PAL::SessionID& sessionID, const Co
 {
 }
 
-CachedImage::CachedImage(const URL& url, Image* image, const PAL::SessionID& sessionID, const CookieJar* cookieJar, const String& domainForCachePartition)
+CachedImage::CachedImage(const URL& url, Image* image, PAL::SessionID sessionID, const CookieJar* cookieJar, const String& domainForCachePartition)
     : CachedResource(url, Type::ImageResource, sessionID, cookieJar)
     , m_image(image)
     , m_updateImageDataCount(0)

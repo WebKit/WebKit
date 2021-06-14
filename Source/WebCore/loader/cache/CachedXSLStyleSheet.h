@@ -35,7 +35,7 @@ class TextResourceDecoder;
 
 class CachedXSLStyleSheet final : public CachedResource {
 public:
-    CachedXSLStyleSheet(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*);
+    CachedXSLStyleSheet(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
     virtual ~CachedXSLStyleSheet();
 
     const String& sheet() const { return m_sheet; }

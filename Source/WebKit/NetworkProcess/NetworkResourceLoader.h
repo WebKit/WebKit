@@ -128,7 +128,7 @@ public:
     bool isAlwaysOnLoggingAllowed() const;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    static bool shouldLogCookieInformation(NetworkConnectionToWebProcess&, const PAL::SessionID&);
+    static bool shouldLogCookieInformation(NetworkConnectionToWebProcess&, PAL::SessionID);
     static void logCookieInformation(NetworkConnectionToWebProcess&, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<uint64_t> identifier);
 #endif
 

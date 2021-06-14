@@ -103,7 +103,7 @@ public:
     static constexpr unsigned bitWidthOfStatus = 3;
     static_assert(static_cast<unsigned>(DecodeError) <= ((1ULL << bitWidthOfStatus) - 1));
 
-    CachedResource(CachedResourceRequest&&, Type, const PAL::SessionID&, const CookieJar*);
+    CachedResource(CachedResourceRequest&&, Type, PAL::SessionID, const CookieJar*);
     virtual ~CachedResource();
 
     virtual void load(CachedResourceLoader&);
@@ -296,7 +296,7 @@ public:
 
 protected:
     // CachedResource constructor that may be used when the CachedResource can already be filled with response data.
-    CachedResource(const URL&, Type, const PAL::SessionID&, const CookieJar*);
+    CachedResource(const URL&, Type, PAL::SessionID, const CookieJar*);
 
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);

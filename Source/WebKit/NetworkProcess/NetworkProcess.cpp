@@ -451,7 +451,7 @@ void NetworkProcess::forEachNetworkSession(const Function<void(NetworkSession&)>
         functor(*session);
 }
 
-std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSession(const PAL::SessionID& sessionID)
+std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSession(PAL::SessionID sessionID)
 {
 #if PLATFORM(COCOA)
     // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
@@ -469,9 +469,9 @@ std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSessio
 }
 
 #if PLATFORM(COCOA)
-void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldUseTestingNetworkSession, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
+void NetworkProcess::ensureSession(PAL::SessionID sessionID, bool shouldUseTestingNetworkSession, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
 #else
-void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldUseTestingNetworkSession, const String& identifierBase)
+void NetworkProcess::ensureSession(PAL::SessionID sessionID, bool shouldUseTestingNetworkSession, const String& identifierBase)
 #endif
 {
     auto addResult = m_networkStorageSessions.add(sessionID, nullptr);
@@ -509,7 +509,7 @@ void NetworkProcess::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
         connection->cookieAcceptPolicyChanged(newPolicy);
 }
 
-WebCore::NetworkStorageSession* NetworkProcess::storageSession(const PAL::SessionID& sessionID) const
+WebCore::NetworkStorageSession* NetworkProcess::storageSession(PAL::SessionID sessionID) const
 {
     return m_networkStorageSessions.get(sessionID);
 }
@@ -2073,17 +2073,17 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-CacheStorage::Engine* NetworkProcess::findCacheEngine(const PAL::SessionID& sessionID)
+CacheStorage::Engine* NetworkProcess::findCacheEngine(PAL::SessionID sessionID)
 {
     return m_cacheEngines.get(sessionID);
 }
 
-CacheStorage::Engine& NetworkProcess::ensureCacheEngine(const PAL::SessionID& sessionID, Function<Ref<CacheStorage::Engine>()>&& functor)
+CacheStorage::Engine& NetworkProcess::ensureCacheEngine(PAL::SessionID sessionID, Function<Ref<CacheStorage::Engine>()>&& functor)
 {
     return m_cacheEngines.ensure(sessionID, WTFMove(functor)).iterator->value;
 }
 
-void NetworkProcess::removeCacheEngine(const PAL::SessionID& sessionID)
+void NetworkProcess::removeCacheEngine(PAL::SessionID sessionID)
 {
     m_cacheEngines.remove(sessionID);
 }
@@ -2528,12 +2528,12 @@ void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParam
 {
 }
 
-void NetworkProcess::flushCookies(const PAL::SessionID&, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::flushCookies(PAL::SessionID, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }
 
-void NetworkProcess::platformFlushCookies(const PAL::SessionID&, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::platformFlushCookies(PAL::SessionID, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }
@@ -2794,7 +2794,7 @@ RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy()
 }
 #endif
 
-void NetworkProcess::addWebPageNetworkParameters(const PAL::SessionID& sessionID, WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
+void NetworkProcess::addWebPageNetworkParameters(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
 {
     auto session = networkSession(sessionID);
     if (!session)
@@ -2803,7 +2803,7 @@ void NetworkProcess::addWebPageNetworkParameters(const PAL::SessionID& sessionID
     session->addWebPageNetworkParameters(pageID, WTFMove(parameters));
 }
 
-void NetworkProcess::removeWebPageNetworkParameters(const PAL::SessionID& sessionID, WebPageProxyIdentifier pageID)
+void NetworkProcess::removeWebPageNetworkParameters(PAL::SessionID sessionID, WebPageProxyIdentifier pageID)
 {
     auto session = networkSession(sessionID);
     if (!session)
@@ -2812,7 +2812,7 @@ void NetworkProcess::removeWebPageNetworkParameters(const PAL::SessionID& sessio
     session->removeWebPageNetworkParameters(pageID);
 }
 
-void NetworkProcess::countNonDefaultSessionSets(const PAL::SessionID& sessionID, CompletionHandler<void(size_t)>&& completionHandler)
+void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, CompletionHandler<void(size_t)>&& completionHandler)
 {
     auto session = networkSession(sessionID);
     if (!session)
