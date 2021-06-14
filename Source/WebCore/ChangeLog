@@ -1,3 +1,21 @@
+2021-06-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove Storage Access API quirk on live.com
+        https://bugs.webkit.org/show_bug.cgi?id=226990
+        <rdar://problem/79218986>
+
+        Reviewed by Brent Fulgham.
+
+        The quirk on live.com is unnecessary, and we should remove it.
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccessQuirk):
+        * page/Quirks.cpp:
+        (WebCore::isStorageAccessQuirkDomainAndElement):
+        (WebCore::Quirks::requestStorageAccessAndHandleClick const):
+        (WebCore::Quirks::mapToTopDomain): Deleted.
+        * page/Quirks.h:
+
 2021-06-14  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r278842.

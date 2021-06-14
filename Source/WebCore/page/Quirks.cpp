@@ -1050,13 +1050,11 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
 {
     // Microsoft Teams login case.
     // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
-    if (url.host() == "www.microsoft.com"_s || url.host() == "login.live.com"_s) {
+    if (url.host() == "www.microsoft.com"_s) {
         return element.hasClass()
         && (element.classNames().contains("glyph_signIn_circle")
         || element.classNames().contains("mectrl_headertext")
-        || element.classNames().contains("mectrl_header")
-        || element.classNames().contains("ext-button primary")
-        || element.classNames().contains("ext-primary"));
+        || element.classNames().contains("mectrl_header"));
     }
     // Skype case.
     // FIXME(220105): Remove this quirk once Skype under outlook.live.com completes their login flow redesign.
@@ -1123,7 +1121,7 @@ static bool isBBCPopUpPlayerElement(const Element& element)
 
 Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
 {
-    auto firstPartyDomain = mapToTopDomain(m_document->topDocument().url());
+    auto firstPartyDomain = RegistrableDomain(m_document->topDocument().url());
     auto domainsInNeedOfStorageAccess = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
     if (!domainsInNeedOfStorageAccess || domainsInNeedOfStorageAccess.value().isEmpty()) {
         completionHandler(ShouldDispatchClick::No);
@@ -1155,14 +1153,6 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
         });
     });
     return Quirks::StorageAccessResult::ShouldCancelEvent;
-}
-
-RegistrableDomain Quirks::mapToTopDomain(const URL& urlToMap)
-{
-    if (urlToMap.host() == "login.live.com"_s)
-        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s);
-
-    return RegistrableDomain(urlToMap);
 }
 #endif
 

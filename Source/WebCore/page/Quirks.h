@@ -143,7 +143,6 @@ public:
     static const String& BBCRadioPlayerURLString();
     WEBCORE_EXPORT static const String& staticRadioPlayerURLString();
     StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
-    static RegistrableDomain mapToTopDomain(const URL&);
 #endif
 
 #if ENABLE(WEB_AUTHN)
