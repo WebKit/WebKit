@@ -1,3 +1,14 @@
+2021-06-14  Robert Jenner  <jenner@apple.com>
+
+        [LayoutTests] Delete unused LayoutTests/plugins resources
+        https://bugs.webkit.org/show_bug.cgi?id=226837
+
+        Reviewed by Jonathan Bedard.
+
+        * plugins/resources/frame-with-plugin-subframe.html: Removed.
+        * plugins/resources/lines.swf: Removed.
+        * plugins/resources/plugin-page.html: Removed.
+
 2021-06-14  Per Arne  <pvollan@apple.com>
 
         [AppleWin] Update test expectations
