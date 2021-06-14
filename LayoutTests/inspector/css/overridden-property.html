@@ -152,6 +152,22 @@ function test() {
         }
     });
 
+    suite.addTestCase({
+        name: "OverriddenProperty.MixedCaseVariablesNotOverridden",
+        test(resolve, reject) {
+            getStyleDeclaration(".mixed-case-variables-not-overridden", (style) => {
+                const dontCreateIfMissing = true;
+                let lowercaseVariableProperty = style.propertyForName("--foo", dontCreateIfMissing);
+                InspectorTest.expectFalse(lowercaseVariableProperty.overridden, "`--foo` is NOT overridden.");
+
+                let uppercaseVariableProperty = style.propertyForName("--FOO", dontCreateIfMissing);
+                InspectorTest.expectFalse(uppercaseVariableProperty.overridden, "`--FOO` is NOT overridden.");
+
+                resolve();
+            }, reject);
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
@@ -182,11 +198,17 @@ function test() {
         border-color: green;
         border-top-color: red;
     }
+
+    .mixed-case-variables-not-overridden {
+        --foo: green;
+        --FOO: red;
+    }
     </style>
     <div id="x" style="color: green"></div>
     <div class="longhand-overridden-by-shorthand"></div>
     <div class="longhand-overridden-by-important-shorthand"></div>
     <div class="shorthand-overridden-by-important-longhand"></div>
     <div class="shorthand-not-overridden-by-longhand"></div>
+    <div class="mixed-case-variables-not-overridden"></div>
 </body>
 </html>

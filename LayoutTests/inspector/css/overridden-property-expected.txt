@@ -27,3 +27,7 @@ PASS: border-color is NOT overridden.
 PASS: border-color is NOT overridden.
 PASS: border-top-color is NOT overridden.
 
+-- Running test case: OverriddenProperty.MixedCaseVariablesNotOverridden
+PASS: `--foo` is NOT overridden.
+PASS: `--FOO` is NOT overridden.
+

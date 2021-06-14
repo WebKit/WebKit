@@ -1,3 +1,18 @@
+2021-06-14  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: CSS variables not handled as case sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=226875
+
+        Reviewed by Devin Rousso.
+
+        Test: inspector/css/overridden-property.html
+
+        CSS variables support distinct declarations with only differences in cases. Previously, we naively converted all
+        property names to lowercase, instead of properly providing variable names in their original case.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties const):
+
 2021-06-14  Youenn Fablet  <youenn@apple.com>
 
         Fix RTCDataChannelInit::decode
