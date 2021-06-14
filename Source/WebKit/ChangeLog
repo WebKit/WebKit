@@ -1,3 +1,18 @@
+2021-06-14  Per Arne  <pvollan@apple.com>
+
+        [iOS] Sync Accessibility preferences
+        https://bugs.webkit.org/show_bug.cgi?id=226738
+        <rdar://77922839>
+
+        Reviewed by Brent Fulgham.
+
+        Only attempt to modify Accessibility preferences if they have changed.
+
+        * Shared/AccessibilityPreferences.cpp: Replaced.
+        * Shared/AccessibilityPreferences.h: Replaced.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::accessibilityPreferencesDidChange):
+
 2021-06-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] Quickboard UI for focused select elements should not allow the user to change the input language

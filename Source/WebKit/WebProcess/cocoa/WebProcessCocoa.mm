@@ -1043,11 +1043,21 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
 {
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     auto appID = CFSTR("com.apple.WebKit.WebContent");
-    _AXSSetReduceMotionEnabledApp(preferences.reduceMotionEnabled ? AXValueStateOn : AXValueStateOff, appID);
-    _AXSSetIncreaseButtonLegibilityApp(preferences.increaseButtonLegibility ? AXValueStateOn : AXValueStateOff, appID);
-    _AXSSetEnhanceTextLegibilityEnabledApp(preferences.enhanceTextLegibility ? AXValueStateOn : AXValueStateOff, appID);
-    _AXSSetDarkenSystemColorsApp(preferences.darkenSystemColors ? AXValueStateOn : AXValueStateOff, appID);
-    _AXSInvertColorsSetEnabledApp(preferences.invertColorsEnabled ? AXValueStateOn : AXValueStateOff, appID);
+    auto reduceMotionEnabled = preferences.reduceMotionEnabled ? AXValueStateOn : AXValueStateOff;
+    if (_AXSReduceMotionEnabledApp(appID) != reduceMotionEnabled)
+        _AXSSetReduceMotionEnabledApp(reduceMotionEnabled, appID);
+    auto increaseButtonLegibility = preferences.increaseButtonLegibility ? AXValueStateOn : AXValueStateOff;
+    if (_AXSIncreaseButtonLegibilityApp(appID) != increaseButtonLegibility)
+        _AXSSetIncreaseButtonLegibilityApp(increaseButtonLegibility, appID);
+    auto enhanceTextLegibility = preferences.enhanceTextLegibility ? AXValueStateOn : AXValueStateOff;
+    if (_AXSEnhanceTextLegibilityEnabledApp(appID) != enhanceTextLegibility)
+        _AXSSetEnhanceTextLegibilityEnabledApp(enhanceTextLegibility, appID);
+    auto darkenSystemColors = preferences.darkenSystemColors ? AXValueStateOn : AXValueStateOff;
+    if (_AXDarkenSystemColorsApp(appID) != darkenSystemColors)
+        _AXSSetDarkenSystemColorsApp(darkenSystemColors, appID);
+    auto invertColorsEnabled = preferences.invertColorsEnabled ? AXValueStateOn : AXValueStateOff;
+    if (_AXSInvertColorsEnabledApp(appID) != invertColorsEnabled)
+        _AXSInvertColorsSetEnabledApp(invertColorsEnabled, appID);
 #endif
 }
 
