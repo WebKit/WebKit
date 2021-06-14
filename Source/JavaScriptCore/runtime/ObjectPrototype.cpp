@@ -29,7 +29,7 @@
 #include "PropertySlot.h"
 
 #if PLATFORM(IOS)
-#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#include <wtf/spi/darwin/dyldSPI.h>
 #endif
 
 namespace JSC {
@@ -322,7 +322,7 @@ inline static bool isPokerBros()
     auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
     return bundleID
         && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
-        && applicationSDKVersion() < DYLD_IOS_VERSION_14_0;
+        && dyld_get_program_sdk_version() < DYLD_IOS_VERSION_14_0;
 }
 #endif
 

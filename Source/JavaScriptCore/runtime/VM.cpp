@@ -1368,15 +1368,13 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
 
 void VM::didExhaustMicrotaskQueue()
 {
-    do {
-        auto unhandledRejections = WTFMove(m_aboutToBeNotifiedRejectedPromises);
-        for (auto& promise : unhandledRejections) {
-            if (promise->isHandled(*this))
-                continue;
+    auto unhandledRejections = WTFMove(m_aboutToBeNotifiedRejectedPromises);
+    for (auto& promise : unhandledRejections) {
+        if (promise->isHandled(*this))
+            continue;
 
-            callPromiseRejectionCallback(promise);
-        }
-    } while (!m_aboutToBeNotifiedRejectedPromises.isEmpty());
+        callPromiseRejectionCallback(promise);
+    }
 }
 
 void VM::promiseRejected(JSPromise* promise)
