@@ -1,3 +1,26 @@
+2021-06-14  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/77619702
+
+    2021-06-14  Chris Dumez  <cdumez@apple.com>
+
+            Crash under IPC::Connection::dispatchMessageToWorkQueueReceiver()
+            <rdar://77576143>
+
+            Reviewed by Alex Christensen.
+
+            When r274565 was merged to the safari-611-branch branch, its `ASSERT(connection.m_incomingMessagesMutex.isHeld())`
+            did not hold there. Unlike trunk, the call-site (Connection::processIncomingMessage(std::unique_ptr<Decoder>)) does
+            not hold the m_incomingMessagesMutex lock on the safari-611-branch branch. This leads to crashes due to lack of
+            synchronization when accessing / modifying the m_incomingMessages Dequeue on the main thread and IPC thread in
+            parallel. To address the issue on the safari-611-branch branch, we now grab the m_incomingMessagesMutex lock before
+            modifying the m_incomingMessages Dequeue in Connection::SyncMessageState::processIncomingMessage().
+
+            No new tests, existing tests were crashing in debug already.
+
+            * Platform/IPC/Connection.cpp:
+            (IPC::Connection::SyncMessageState::processIncomingMessage):
+
 2021-05-25  Alan Coon  <alancoon@apple.com>
 
 Cherry-pick r277881. rdar://problem/78467158
