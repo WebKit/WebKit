@@ -289,6 +289,7 @@ inline bool FloatRect::isInfinite() const
     return *this == infiniteRect();
 }
 
+FloatRect normalizeRect(const FloatRect&);
 WEBCORE_EXPORT FloatRect encloseRectToDevicePixels(const FloatRect&, float deviceScaleFactor);
 WEBCORE_EXPORT IntRect enclosingIntRect(const FloatRect&);
 WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);

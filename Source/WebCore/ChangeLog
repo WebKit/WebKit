@@ -1,3 +1,50 @@
+2021-06-15  Said Abou-Hallawa  <said@apple.com>
+
+        [CG] Create a sub-image when drawing an image only if the destination image will be enlarged, rotated or sheared
+        https://bugs.webkit.org/show_bug.cgi?id=226916
+        <rdar://71712144>
+
+        Reviewed by Simon Fraser.
+
+        When drawing only part of the image, we may want to create a sub-image 
+        first and draw this sub-image. But creating the sub-image is expensive.
+        So we use SubimageCacheWithTimer to avoid recreating them very often.
+        If the same part of the image is drawn multiple times, creating the sub-
+        image is a win. But if the part of the image is drawn only once, drawing
+        the  whole image to a clipped context will be faster. In some cases, we
+        must to draw the part of the image through a sub-image. For example, if
+        the destination rectangle stretches only a part of an image, interpolating
+        the sub-image will give the correct display.
+
+        In this patch GraphicsContextCG::drawNativeImage() is re-factored to do
+        the following:
+        1) Normalize the srcRect and destRect
+        2) Simplify calculation of adjustDestRect and subimageRect using FloatRect
+           and FloatSize math
+        3) Move the heuristic which decides whether to use a sub-image or not to
+           a separate function.
+
+        A sub-image will be created if:
+        1) An interpolation will be performed when drawing the sub-image
+        2) and one of the following:
+            a) If the context is rotated or sheared
+            b) If destRect.size() / srcRect.size() is non-uniformly scaled
+            c) If destRect.size() / srcRect.size() is uniformly enlarging in
+               both direction
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::normalizeRect): Deleted.
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::normalizeRect):
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::shouldUseSubimage):
+        (WebCore::getSubimage):
+        (WebCore::imageLogicalSize):
+        (WebCore::GraphicsContextCG::drawNativeImage):
+        * platform/graphics/transforms/AffineTransform.h:
+        (WebCore::AffineTransform::isRotateOrShear const):
+
 2021-06-15  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] New snap containers always snap to the first scroll position
