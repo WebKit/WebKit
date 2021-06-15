@@ -119,7 +119,7 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
     if (!m_producerQueue) {
         CMBufferQueueRef outQueue { nullptr };
 #pragma pack(push, 4)
-        struct { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
+        struct BufferCallbacks { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
             0,
             nullptr,
             &getDecodeTime,
@@ -131,6 +131,9 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
             nullptr,
         } };
 #pragma pack(pop)
+        static_assert(sizeof(callbacks.callbacks.version) == sizeof(uint32_t), "Version field must be 4 bytes");
+        static_assert(alignof(BufferCallbacks) == 4, "CMBufferCallbacks struct must have 4 byte alignment");
+
         CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
         m_producerQueue = adoptCF(outQueue);
     }
@@ -138,7 +141,7 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
     if (!m_consumerQueue) {
         CMBufferQueueRef outQueue { nullptr };
 #pragma pack(push, 4)
-        struct { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
+        struct BufferCallbacks { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
             0,
             nullptr,
             &getDecodeTime,
@@ -150,6 +153,9 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
             nullptr,
         } };
 #pragma pack(pop)
+        static_assert(sizeof(callbacks.callbacks.version) == sizeof(uint32_t), "Version field must be 4 bytes");
+        static_assert(alignof(BufferCallbacks) == 4, "CMBufferCallbacks struct alignment must be 4");
+
         CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
         m_consumerQueue = adoptCF(outQueue);
     }

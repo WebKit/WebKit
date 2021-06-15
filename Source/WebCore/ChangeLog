@@ -1,3 +1,15 @@
+2021-06-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] CoreMedia WrapperClass does not need alignment fixup
+        https://bugs.webkit.org/show_bug.cgi?id=226978
+        rdar://78864290
+
+        Reviewed by Geoffrey Garen and Dan Bernstein.
+
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::enqueueSample): static_assert CMBufferQueueRef
+        callback struct alignment and version size.
+
 2021-06-15  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for preferred width computation when mixed width types are present
