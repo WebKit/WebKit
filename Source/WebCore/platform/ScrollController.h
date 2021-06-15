@@ -111,14 +111,7 @@ public:
     virtual void immediateScrollOnAxis(ScrollEventAxis, float delta) = 0;
     virtual void willStartScrollSnapAnimation() { }
     virtual void didStopScrollSnapAnimation() { }
-
     virtual float pageScaleFactor() const = 0;
-
-    virtual unsigned activeScrollOffsetIndex(ScrollEventAxis) const
-    {
-        return 0;
-    }
-
     virtual LayoutSize scrollExtent() const = 0;
     virtual FloatSize viewportSize() const = 0;
 #endif
@@ -142,7 +135,8 @@ public:
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
-    void setActiveScrollSnapIndicesForOffset(ScrollOffset);
+    void updateActiveScrollSnapIndexForClientOffset();
+    void resnapAfterLayout();
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
     void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;

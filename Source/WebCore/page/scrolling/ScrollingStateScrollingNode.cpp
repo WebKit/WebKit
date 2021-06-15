@@ -313,10 +313,10 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateT
     if (m_snapOffsetsInfo.verticalSnapOffsets.size())
         ts.dumpProperty("vertical snap offsets", m_snapOffsetsInfo.verticalSnapOffsets);
 
-    if (m_currentHorizontalSnapPointIndex)
+    if (m_currentHorizontalSnapPointIndex != invalidSnapOffsetIndex)
         ts.dumpProperty("current horizontal snap point index", m_currentHorizontalSnapPointIndex);
 
-    if (m_currentVerticalSnapPointIndex)
+    if (m_currentVerticalSnapPointIndex != invalidSnapOffsetIndex)
         ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);
 #endif
 

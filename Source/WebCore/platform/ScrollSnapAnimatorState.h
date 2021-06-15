@@ -92,8 +92,8 @@ private:
 
     LayoutScrollSnapOffsetsInfo m_snapOffsetsInfo;
 
-    unsigned m_activeSnapIndexX { 0 };
-    unsigned m_activeSnapIndexY { 0 };
+    unsigned m_activeSnapIndexX { invalidSnapOffsetIndex };
+    unsigned m_activeSnapIndexY { invalidSnapOffsetIndex };
 
     MonotonicTime m_startTime;
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;

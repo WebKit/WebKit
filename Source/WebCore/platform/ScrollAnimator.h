@@ -161,6 +161,7 @@ public:
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned index);
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
+    void resnapAfterLayout();
 #endif
 
     // ScrollControllerClient.

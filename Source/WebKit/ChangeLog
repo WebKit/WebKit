@@ -1,3 +1,13 @@
+2021-06-15  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] New snap containers always snap to the first scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=226630
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h: Use invalidSnapOffsetIndex
+        instead of 0 to initialize the snap position.
+
 2021-06-14  Alex Christensen  <achristensen@webkit.org>
 
         Pass PAL::SessionID by value instead of reference

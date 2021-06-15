@@ -32,6 +32,7 @@
 #include "RemoteScrollingTree.h"
 #include "RemoteScrollingUIState.h"
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
@@ -131,8 +132,8 @@ private:
     RequestedScrollInfo* m_requestedScrollInfo { nullptr };
     RemoteScrollingUIState m_uiState;
 #if ENABLE(CSS_SCROLL_SNAP)
-    unsigned m_currentHorizontalSnapPointIndex { 0 };
-    unsigned m_currentVerticalSnapPointIndex { 0 };
+    unsigned m_currentHorizontalSnapPointIndex { WebCore::invalidSnapOffsetIndex };
+    unsigned m_currentVerticalSnapPointIndex { WebCore::invalidSnapOffsetIndex };
 #endif
     bool m_propagatesMainFrameScrolls { true };
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithScrollingRelations;

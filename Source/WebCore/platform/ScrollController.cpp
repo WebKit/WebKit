@@ -113,7 +113,7 @@ void ScrollController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& sna
     m_scrollSnapState->setSnapOffsetInfo(snapOffsetInfo);
 
     if (shouldComputeCurrentSnapIndices)
-        setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
+        updateActiveScrollSnapIndexForClientOffset();
 
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " setSnapOffsetsInfo new state: " << ValueOrNull(m_scrollSnapState.get()));
 }
@@ -126,7 +126,7 @@ const LayoutScrollSnapOffsetsInfo* ScrollController::snapOffsetsInfo() const
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
 {
     if (!usesScrollSnap())
-        return 0;
+        return invalidSnapOffsetIndex;
 
     return m_scrollSnapState->activeSnapIndexForAxis(axis);
 }
@@ -151,10 +151,8 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     if (!snapOffsets.size())
         return;
 
-    LayoutUnit clampedOffset = std::min(std::max(LayoutUnit(offset / scaleFactor), snapOffsets.first().offset), snapOffsets.last().offset);
-
     LayoutSize viewportSize(m_client.viewportSize().width(), m_client.viewportSize().height());
-    unsigned activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, clampedOffset, 0).second;
+    unsigned activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, LayoutUnit(offset / scaleFactor), 0).second;
     if (activeIndex == activeScrollSnapIndexForAxis(axis))
         return;
 
@@ -181,13 +179,30 @@ float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float dest
 }
 
 
-void ScrollController::setActiveScrollSnapIndicesForOffset(ScrollOffset offset)
+void ScrollController::updateActiveScrollSnapIndexForClientOffset()
 {
     if (!usesScrollSnap())
         return;
 
+    ScrollOffset offset = roundedIntPoint(m_client.scrollOffset());
     setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset.x());
     setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset.y());
+}
+
+void ScrollController::resnapAfterLayout()
+{
+    if (!usesScrollSnap())
+        return;
+
+    // If we are already snapped in a particular axis, maintain that. Otherwise, snap to the nearest eligible snap point.
+    ScrollOffset offset = roundedIntPoint(m_client.scrollOffset());
+    size_t activeHorizontalIndex = m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
+    if (activeHorizontalIndex == invalidSnapOffsetIndex)
+        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset.x());
+    size_t activeVerticalIndex = m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Vertical);
+    if (activeVerticalIndex == invalidSnapOffsetIndex)
+        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset.y());
+
 }
 #endif
 

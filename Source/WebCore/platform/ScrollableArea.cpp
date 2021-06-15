@@ -494,14 +494,14 @@ unsigned ScrollableArea::currentHorizontalSnapPointIndex() const
 {
     if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal);
-    return 0; // FIXME: This should really be invalidSnapOffsetIndex.
+    return invalidSnapOffsetIndex;
 }
 
 unsigned ScrollableArea::currentVerticalSnapPointIndex() const
 {
     if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical);
-    return 0; // FIXME: This should really be invalidSnapOffsetIndex.
+    return invalidSnapOffsetIndex;
 }
 
 void ScrollableArea::setCurrentHorizontalSnapPointIndex(unsigned index)
@@ -518,8 +518,11 @@ void ScrollableArea::resnapAfterLayout()
 {
     LOG_WITH_STREAM(ScrollSnap, stream << *this << " updateScrollSnapState: isScrollSnapInProgress " << isScrollSnapInProgress() << " isUserScrollInProgress " << isUserScrollInProgress());
 
-    if (!existingScrollAnimator() || isScrollSnapInProgress() || isUserScrollInProgress())
+    ScrollAnimator* scrollAnimator = existingScrollAnimator();
+    if (!scrollAnimator || isScrollSnapInProgress() || isUserScrollInProgress())
         return;
+
+    scrollAnimator->resnapAfterLayout();
 
     const auto* info = snapOffsetsInfo();
     if (!info)

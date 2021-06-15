@@ -160,8 +160,8 @@ private:
     IntPoint m_scrollOrigin;
 #if ENABLE(CSS_SCROLL_SNAP)
     FloatScrollSnapOffsetsInfo m_snapOffsetsInfo;
-    unsigned m_currentHorizontalSnapPointIndex { 0 };
-    unsigned m_currentVerticalSnapPointIndex { 0 };
+    unsigned m_currentHorizontalSnapPointIndex { invalidSnapOffsetIndex };
+    unsigned m_currentVerticalSnapPointIndex { invalidSnapOffsetIndex };
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
 #if ENABLE(SCROLLING_THREAD)

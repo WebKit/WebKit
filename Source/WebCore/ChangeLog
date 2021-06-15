@@ -1,3 +1,62 @@
+2021-06-15  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] New snap containers always snap to the first scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=226630
+
+        Reviewed by Simon Fraser.
+
+        There are two situations where we should not immediately snap to the first snap position
+        of a scroller after initial layout:
+            1. If that scroll is right-to-left. In this case the last snap position is closest to
+               the origin.
+            2. If the scroller uses proximity snapping and the first snap position is far enough
+               away from the origin that it isn't yet active.
+        Previously, WebKit was always snapping to the first position. The change fixes that by
+        not snapping to the 0 index snap point immediately after initial layout and only snapping
+        to an eligible snap positions after running a snap point search.
+
+        No new tests. This change fixes two existing WPT tests:
+            - imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.htm
+            - imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000.htm
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::closestSnapOffsetWithInfoAndAxis): Pull in isNearEnoughToOffsetForProximity as
+        an anonymous function and use it to avoid snapping to the first and last position if
+        they are too far for proximity snapping.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::dumpProperties const): Use invalidSnapOffsetIndex as
+        the default for the snap index property. Interpret 0 as a valid snap position.
+        * page/scrolling/ScrollingStateScrollingNode.h: Ditto.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties const): Ditto.
+        * page/scrolling/ScrollingTreeScrollingNode.h: Ditto.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::resnapAfterLayout): Added this method that passes through to ScrollController.
+        (WebCore::ScrollAnimator::updateActiveScrollSnapIndexForOffset): Simplified setActiveScrollSnapIndicesForOffset
+        into updateActiveScrollSnapIndexForClientOffset.
+        * platform/ScrollAnimator.h: Added method definition.
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::setSnapOffsetsInfo): Use updateActiveScrollSnapIndexForClientOffset now.
+        (WebCore::ScrollController::activeScrollSnapIndexForAxis const): Return invalidSnapOffsetIndex 
+        when snapping is disabled.
+        (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset): No longer clamp the scroll
+        position to the first and last snap points. We might be scrolling to a position before or after
+        them that isn't subject to proximity snapping.
+        (WebCore::ScrollController::updateActiveScrollSnapIndexForClientOffset): Renamed from setActiveScrollSnapIndicesForOffset
+        because it always just took the client's current offset.
+        (WebCore::ScrollController::resnapAfterLayout): Added this helper which snaps in axes that aren't currently
+        snapped to a snap position after a layout.
+        * platform/ScrollController.h: Removed unused method that used 0 incorrectly as an invalid snap position.
+        Update method definitions.
+        * platform/ScrollSnapAnimatorState.h: Use invalidSnapOffsetIndex to signify no snapping.
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset const): No longer clamp offsets to first and
+        last scroll snap offsets.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::currentHorizontalSnapPointIndex const): Ditto.
+        (WebCore::ScrollableArea::currentVerticalSnapPointIndex const): Ditto.
+        (WebCore::ScrollableArea::resnapAfterLayout): Call into ScrollController::resnapAfterLayout.
+
 2021-06-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font::applyTransforms() can redirect GlyphBuffer's internal pointers

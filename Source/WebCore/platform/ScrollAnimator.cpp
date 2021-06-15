@@ -193,6 +193,11 @@ void ScrollAnimator::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, unsig
 {
     return m_scrollController.setActiveScrollSnapIndexForAxis(axis, index);
 }
+
+void ScrollAnimator::resnapAfterLayout()
+{
+    m_scrollController.resnapAfterLayout();
+}
 #endif
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
@@ -273,8 +278,7 @@ void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 {
 #if ENABLE(CSS_SCROLL_SNAP)
-    auto scrollOffset = m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition()));
-    m_scrollController.setActiveScrollSnapIndicesForOffset(scrollOffset);
+    m_scrollController.updateActiveScrollSnapIndexForClientOffset();
 #endif
 }
 

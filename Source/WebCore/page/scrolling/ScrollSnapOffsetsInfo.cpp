@@ -42,18 +42,6 @@
 
 namespace WebCore {
 
-template <typename UnitType>
-static bool isNearEnoughToOffsetForProximity(ScrollSnapStrictness strictness, UnitType scrollDestination, UnitType candidateSnapOffset, UnitType viewportLength)
-{
-    if (strictness != ScrollSnapStrictness::Proximity)
-        return true;
-
-    // This is an arbitrary choice for what it means to be "in proximity" of a snap offset. We should play around with
-    // this and see what feels best.
-    static const float ratioOfScrollPortAxisLengthToBeConsideredForProximity = 0.3;
-    return std::abs(float {candidateSnapOffset - scrollDestination}) <= (viewportLength * ratioOfScrollPortAxisLengthToBeConsideredForProximity);
-}
-
 template <typename LayoutType>
 static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<SnapOffset<LayoutType>>& snapOffsets, unsigned& lowerIndex, unsigned& upperIndex)
 {
@@ -110,19 +98,33 @@ template <typename InfoType, typename SizeType, typename LayoutType>
 static std::pair<LayoutType, unsigned> closestSnapOffsetWithInfoAndAxis(const InfoType& info, ScrollEventAxis axis, const SizeType& viewportSize, LayoutType scrollDestinationOffset, float velocity, std::optional<LayoutType> originalOffsetForDirectionalSnapping)
 {
     const auto& snapOffsets = info.offsetsForAxis(axis);
+    auto pairForNoSnapping = std::make_pair(scrollDestinationOffset, invalidSnapOffsetIndex);
     if (snapOffsets.isEmpty())
-        return std::make_pair(scrollDestinationOffset, invalidSnapOffsetIndex);
+        return pairForNoSnapping;
 
     if (originalOffsetForDirectionalSnapping) {
         if (auto firstSnapStopOffsetIndex = findFirstSnapStopOffsetBetweenOriginAndDestination(snapOffsets, *originalOffsetForDirectionalSnapping, scrollDestinationOffset))
             return std::make_pair(snapOffsets[*firstSnapStopOffsetIndex].offset, *firstSnapStopOffsetIndex);
     }
 
-    if (scrollDestinationOffset <= snapOffsets.first().offset)
-        return std::make_pair(snapOffsets.first().offset, 0u);
+    auto viewportLength = axis == ScrollEventAxis::Horizontal ? viewportSize.width() : viewportSize.height();
+    auto isNearEnoughToOffsetForProximity = [&](LayoutType candidateSnapOffset) {
+        if (info.strictness != ScrollSnapStrictness::Proximity)
+            return true;
 
-    if (scrollDestinationOffset >= snapOffsets.last().offset)
-        return std::make_pair(snapOffsets.last().offset, snapOffsets.size() - 1);
+        // This is an arbitrary choice for what it means to be "in proximity" of a snap offset. We should play around with
+        // this and see what feels best.
+        static const float ratioOfScrollPortAxisLengthToBeConsideredForProximity = 0.3;
+        return std::abs(float {candidateSnapOffset - scrollDestinationOffset}) <= (viewportLength * ratioOfScrollPortAxisLengthToBeConsideredForProximity);
+    };
+
+    if (scrollDestinationOffset <= snapOffsets.first().offset)
+        return isNearEnoughToOffsetForProximity(snapOffsets.first().offset) ? std::make_pair(snapOffsets.first().offset, 0u) : pairForNoSnapping;
+
+    if (scrollDestinationOffset >= snapOffsets.last().offset) {
+        unsigned lastIndex = static_cast<unsigned>(snapOffsets.size() - 1);
+        return isNearEnoughToOffsetForProximity(snapOffsets.last().offset) ? std::make_pair(snapOffsets.last().offset, lastIndex) : pairForNoSnapping;
+    }
 
     unsigned lowerIndex;
     unsigned upperIndex;
@@ -130,16 +132,16 @@ static std::pair<LayoutType, unsigned> closestSnapOffsetWithInfoAndAxis(const In
     LayoutType lowerSnapPosition = snapOffsets[lowerIndex].offset;
     LayoutType upperSnapPosition = snapOffsets[upperIndex].offset;
 
-    auto viewportLength = axis == ScrollEventAxis::Horizontal ? viewportSize.width() : viewportSize.height();
-    if (!isNearEnoughToOffsetForProximity<LayoutType>(info.strictness, scrollDestinationOffset, lowerSnapPosition, viewportLength)) {
+    if (!isNearEnoughToOffsetForProximity(lowerSnapPosition)) {
         lowerSnapPosition = scrollDestinationOffset;
         lowerIndex = invalidSnapOffsetIndex;
     }
 
-    if (!isNearEnoughToOffsetForProximity<LayoutType>(info.strictness, scrollDestinationOffset, upperSnapPosition, viewportLength)) {
+    if (!isNearEnoughToOffsetForProximity(upperSnapPosition)) {
         upperSnapPosition = scrollDestinationOffset;
         upperIndex = invalidSnapOffsetIndex;
     }
+
     if (!std::abs(velocity)) {
         bool isCloserToLowerSnapPosition = (upperIndex == invalidSnapOffsetIndex)
             || (lowerIndex != invalidSnapOffsetIndex && scrollDestinationOffset - lowerSnapPosition <= upperSnapPosition - scrollDestinationOffset);
