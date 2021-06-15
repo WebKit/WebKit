@@ -88,9 +88,11 @@ class TaskQueueStdlib final : public TaskQueueBase {
   // Signaled whenever a new task is pending.
   rtc::Event flag_notify_;
 
+#if !defined(WEBRTC_WEBKIT_BUILD)
   // Contains the active worker thread assigned to processing
   // tasks (including delayed tasks).
   rtc::PlatformThread thread_;
+#endif
 
   Mutex pending_lock_;
 
@@ -114,6 +116,12 @@ class TaskQueueStdlib final : public TaskQueueBase {
   // std::unique_ptr out of the queue without the presence of a hack.
   std::map<DelayedEntryTimeout, std::unique_ptr<QueuedTask>> delayed_queue_
       RTC_GUARDED_BY(pending_lock_);
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+  // Contains the active worker thread assigned to processing
+  // tasks (including delayed tasks).
+  rtc::PlatformThread thread_;
+#endif
 };
 
 TaskQueueStdlib::TaskQueueStdlib(absl::string_view queue_name,
