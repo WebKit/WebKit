@@ -34,7 +34,21 @@ namespace webrtc {
 class RemoteAudioSource : public Notifier<AudioSourceInterface>,
                           rtc::MessageHandler {
  public:
-  explicit RemoteAudioSource(rtc::Thread* worker_thread);
+  // In Unified Plan, receivers map to m= sections and their tracks and sources
+  // survive SSRCs being reconfigured. The life cycle of the remote audio source
+  // is associated with the life cycle of the m= section, and thus even if an
+  // audio channel is destroyed the RemoteAudioSource should kSurvive.
+  //
+  // In Plan B however, remote audio sources map 1:1 with an SSRCs and if an
+  // audio channel is destroyed, the RemoteAudioSource should kEnd.
+  enum class OnAudioChannelGoneAction {
+    kSurvive,
+    kEnd,
+  };
+
+  explicit RemoteAudioSource(
+      rtc::Thread* worker_thread,
+      OnAudioChannelGoneAction on_audio_channel_gone_action);
 
   // Register and unregister remote audio source with the underlying media
   // engine.
@@ -42,6 +56,7 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface>,
              absl::optional<uint32_t> ssrc);
   void Stop(cricket::VoiceMediaChannel* media_channel,
             absl::optional<uint32_t> ssrc);
+  void SetState(SourceState new_state);
 
   // MediaSourceInterface implementation.
   MediaSourceInterface::SourceState state() const override;
@@ -68,6 +83,7 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface>,
 
   rtc::Thread* const main_thread_;
   rtc::Thread* const worker_thread_;
+  const OnAudioChannelGoneAction on_audio_channel_gone_action_;
   std::list<AudioObserver*> audio_observers_;
   Mutex sink_lock_;
   std::list<AudioTrackSinkInterface*> sinks_;

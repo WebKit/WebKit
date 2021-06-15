@@ -46,8 +46,7 @@
         await pc2.setLocalDescription(answer);
         await pc1.setRemoteDescription(answer);
 
-        // FIXME: The track should be live but is ended due to a bug in our backend.
-        assert_equals(remoteTrack.readyState, "ended");
+        assert_equals(remoteTrack.readyState, "live");
     }, "Inactivate the audio transceiver");
 
     promise_test(async (test) => {
@@ -59,8 +58,7 @@
         await pc2.setLocalDescription(answer);
         await pc1.setRemoteDescription(answer);
 
-        // FIXME: The track should be live but is ended due to a bug in our backend.
-        assert_equals(remoteTrack.readyState, "ended");
+        assert_equals(remoteTrack.readyState, "live");
     }, "Reactivate the audio transceiver");
     </script>
 </body>

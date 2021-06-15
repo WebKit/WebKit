@@ -1,3 +1,48 @@
+2021-06-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r278410. rdar://problem/79355285
+
+    Cherry-pick webrtc fix to correctly handle audio track state in case of renegotiation
+    https://bugs.webkit.org/show_bug.cgi?id=226577
+    
+    Reviewed by Eric Carlson.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/webrtc/receiver-track-live.https-expected.txt:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    Cherry-pick https://webrtc.googlesource.com/src/+/c335b0e63bff56ca0fbfa617dee6a644c85df164%5E%21/.
+    We need to do small changes to peer_connection.cc given the upstream fix is based on a newer version
+    which has some code moved from peer_connection.cc to rtp_transmission_manager.cc.
+    
+    * Source/webrtc/pc/audio_rtp_receiver.cc:
+    * Source/webrtc/pc/audio_rtp_receiver.h:
+    * Source/webrtc/pc/peer_connection.cc:
+    * Source/webrtc/pc/peer_connection_rtp_unittest.cc:
+    * Source/webrtc/pc/remote_audio_source.cc:
+    * Source/webrtc/pc/remote_audio_source.h:
+    * Source/webrtc/pc/rtp_sender_receiver_unittest.cc:
+    
+    LayoutTests:
+    
+    Update test now that we have the correct behavior.
+    
+    * webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278410 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-03  Youenn Fablet  <youenn@apple.com>
+
+            Cherry-pick webrtc fix to correctly handle audio track state in case of renegotiation
+            https://bugs.webkit.org/show_bug.cgi?id=226577
+
+            Reviewed by Eric Carlson.
+
+            * web-platform-tests/webrtc/receiver-track-live.https-expected.txt:
+
 2021-05-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276627. rdar://problem/77580982
