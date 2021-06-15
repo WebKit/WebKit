@@ -1,3 +1,28 @@
+2021-06-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Workaround ICU uloc_addLikelySubtags / uloc_minimizeSubtags bugs
+        https://bugs.webkit.org/show_bug.cgi?id=226996
+        rdar://79250513
+
+        Reviewed by Ross Kirsling.
+
+        ICU has bugs that uloc_addLikelySubtags / uloc_minimizeSubtags cannot handle very long locale ID that exceeds ULOC_FULLNAME_CAPACITY,
+        while these functions can take arbitrary sized buffer for output. This can be achieved simply by (1) attaching many unicode extensions,
+        or (2) having many variants.
+
+        In this patch, we add a workaround: if uloc_addLikelySubtags / uloc_minimizeSubtags failed, we perform them without having locale ID
+        keywords part. After performing the operations, we append these keywords back.
+
+        This is workaround, and still this workaround is not complete since we could have many variants. In that case, uloc_addLikelySubtags / uloc_minimizeSubtags
+        still fails, and in that case, for now, we give up performing uloc_addLikelySubtags / uloc_minimizeSubtags. Fixing this needs to be
+        done in ICU side: https://unicode-org.atlassian.net/browse/ICU-21639
+
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::keywordValue const):
+        (JSC::IntlLocale::maximal):
+        (JSC::IntlLocale::minimal):
+        (JSC::IntlLocale::baseName):
+
 2021-06-14  Mark Lam  <mark.lam@apple.com>
 
         Add ldp and stp support for FP registers, plus some bug fixes.
