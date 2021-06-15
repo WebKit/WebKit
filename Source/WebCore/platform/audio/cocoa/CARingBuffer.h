@@ -119,7 +119,7 @@ public:
 
 private:
     void updateFrameBounds();
-    size_t frameOffset(uint64_t frameNumber) { return (frameNumber & m_frameCountMask) * m_bytesPerFrame; }
+    size_t frameOffset(uint64_t frameNumber) const { return (frameNumber % m_frameCount) * m_bytesPerFrame; }
 
     void clipTimeBounds(uint64_t& startRead, uint64_t& endRead);
     void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame);
@@ -135,7 +135,6 @@ private:
     uint32_t m_channelCount { 0 };
     size_t m_bytesPerFrame { 0 };
     uint32_t m_frameCount { 0 };
-    uint32_t m_frameCountMask { 0 };
     size_t m_capacityBytes { 0 };
 
     CAAudioStreamDescription m_description;
