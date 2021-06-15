@@ -1,3 +1,13 @@
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Import WPT webrtc-extensions
+        https://bugs.webkit.org/show_bug.cgi?id=226961
+
+        Reviewed by Eric Carlson.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webrtc-extensions/: Added.
+
 2021-06-14  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r278842.

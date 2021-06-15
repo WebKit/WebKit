@@ -1,0 +1,18 @@
+
+FAIL audio playoutDelayHint is null by default assert_equals: expected (object) null but got (undefined) undefined
+PASS audio playoutDelayHint accepts posititve values
+PASS audio playoutDelayHint accepts large positive values
+FAIL audio playoutDelayHint returns last valid value on throw assert_throws_js: audio playoutDelayHint doesn't accept negative values function "() => {
+    receiver.playoutDelayHint = -0.5;
+  }" did not throw
+PASS audio playoutDelayHint allows zero value
+PASS audio playoutDelayHint allows to reset value to null
+FAIL video playoutDelayHint is null by default assert_equals: expected (object) null but got (undefined) undefined
+PASS video playoutDelayHint accepts posititve values
+PASS video playoutDelayHint accepts large posititve values
+FAIL video playoutDelayHint returns last valid value assert_throws_js: video playoutDelayHint doesn't accept negative values function "() => {
+    receiver.playoutDelayHint = -0.5;
+  }" did not throw
+PASS video playoutDelayHint allows zero value
+PASS video playoutDelayHint allows to reset value to null
+
