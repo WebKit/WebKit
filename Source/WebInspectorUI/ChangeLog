@@ -1,3 +1,17 @@
+2021-06-14  Patrick Angle  <pangle@apple.com>
+
+        [REGRESSION: r276616] Uncaught Exception: TypeError: undefined is not an object (evaluating 'this._setupCodeMirror.getValue')
+        https://bugs.webkit.org/show_bug.cgi?id=226995
+
+        Reviewed by Devin Rousso.
+
+        Audit test groups share a single setup editor for all their test cases, leaving individual test cases without
+        their own setup editor. In this case, we should not attempt to save the setup script for every test, and instead
+        allow the instance of `AuditTestGroupContentView` that does have a setup editor to save the script.
+
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView.prototype.saveEditedData):
+
 2021-06-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Add instrumentation to node destruction for InspectorDOMAgent
