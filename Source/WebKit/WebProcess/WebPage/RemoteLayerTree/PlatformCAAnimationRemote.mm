@@ -98,6 +98,61 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 namespace WebKit {
 using namespace WebCore;
 
+void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::Encoder& encoder) const
+{
+    encoder << keyType;
+
+    switch (keyType) {
+    case NumberKeyType:
+        encoder << number;
+        break;
+    case ColorKeyType:
+        encoder << color;
+        break;
+    case PointKeyType:
+        encoder << point;
+        break;
+    case TransformKeyType:
+        encoder << transform;
+        break;
+    case FilterKeyType:
+        encoder << *filter.get();
+        break;
+    }
+}
+
+Optional<PlatformCAAnimationRemote::KeyframeValue> PlatformCAAnimationRemote::KeyframeValue::decode(IPC::Decoder& decoder)
+{
+    PlatformCAAnimationRemote::KeyframeValue value;
+    if (!decoder.decode(value.keyType))
+        return WTF::nullopt;
+
+    switch (value.keyType) {
+    case NumberKeyType:
+        if (!decoder.decode(value.number))
+            return WTF::nullopt;
+        break;
+    case ColorKeyType:
+        if (!decoder.decode(value.color))
+            return WTF::nullopt;
+        break;
+    case PointKeyType:
+        if (!decoder.decode(value.point))
+            return WTF::nullopt;
+        break;
+    case TransformKeyType:
+        if (!decoder.decode(value.transform))
+            return WTF::nullopt;
+        break;
+    case FilterKeyType:
+        if (!decodeFilterOperation(decoder, value.filter))
+            return WTF::nullopt;
+        break;
+    }
+
+    return WTFMove(value);
+}
+
 static void encodeTimingFunction(IPC::Encoder& encoder, TimingFunction* timingFunction)
 {
     switch (timingFunction->type()) {
@@ -678,22 +733,25 @@ void PlatformCAAnimationRemote::copyAnimationsFrom(const PlatformCAAnimation& va
 
 static NSObject* animationValueFromKeyframeValue(const PlatformCAAnimationRemote::KeyframeValue& keyframeValue)
 {
-    return WTF::switchOn(keyframeValue,
-        [&](const float number) -> RetainPtr<NSObject> { return @(number); },
-        [&](const WebCore::Color color) -> RetainPtr<NSObject> {
-            auto [r, g, b, a] =  color.toSRGBALossy<uint8_t>();
-            return @[ @(r), @(g), @(b), @(a) ];
-        },
-        [&](const WebCore::FloatPoint3D point) -> RetainPtr<NSObject> {
-            return @[ @(point.x()), @(point.y()), @(point.z()) ];
-        },
-        [&](const WebCore::TransformationMatrix matrix) -> RetainPtr<NSObject> {
-            return [NSValue valueWithCATransform3D:matrix];
-        },
-        [&](const RefPtr<WebCore::FilterOperation> filter) -> RetainPtr<NSObject> {
-            return PlatformCAFilters::filterValueForOperation(filter.get(), 0 /* unused */);
-        }
-    );
+    switch (keyframeValue.keyframeType()) {
+    case PlatformCAAnimationRemote::KeyframeValue::NumberKeyType:
+        return @(keyframeValue.numberValue());
+            
+    case PlatformCAAnimationRemote::KeyframeValue::ColorKeyType: {
+        auto [r, g, b, a] = keyframeValue.colorValue().toSRGBALossy<uint8_t>();
+        return @[ @(r), @(g), @(b), @(a) ];
+    }
+
+    case PlatformCAAnimationRemote::KeyframeValue::PointKeyType: {
+        FloatPoint3D point = keyframeValue.pointValue();
+        return @[ @(point.x()), @(point.y()), @(point.z()) ];
+    }
+    case PlatformCAAnimationRemote::KeyframeValue::TransformKeyType:
+        return [NSValue valueWithCATransform3D:keyframeValue.transformValue()];
+            
+    case PlatformCAAnimationRemote::KeyframeValue::FilterKeyType:
+        return PlatformCAFilters::filterValueForOperation(keyframeValue.filterValue(), 0 /* unused */).autorelease();
+    }
 }
 
 static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const PlatformCAAnimationRemote::Properties& properties)
@@ -827,6 +885,35 @@ void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLaye
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+TextStream& operator<<(TextStream&ts, const PlatformCAAnimationRemote::KeyframeValue& value)
+{
+    switch (value.keyframeType()) {
+    case PlatformCAAnimationRemote::KeyframeValue::NumberKeyType:
+        ts << "number=" << value.numberValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::ColorKeyType:
+        ts << "color=";
+        ts << value.colorValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::PointKeyType:
+        ts << "point=";
+        ts << value.pointValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::TransformKeyType:
+        ts << "transform=";
+        ts << value.transformValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::FilterKeyType:
+        ts << "filter=";
+        if (value.filterValue())
+            ts << *value.filterValue();
+        else
+            ts << "null";
+        break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properties& animation)
 {
     ts << "type=";
@@ -886,18 +973,9 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
         if (i < animation.timingFunctions.size() && animation.timingFunctions[i])
             ts.dumpProperty<const TimingFunction&>("timing function", *animation.timingFunctions[i]);
 
-        if (i < animation.keyValues.size()) {
-            ts.startGroup();
-            ts << "value ";
-            WTF::switchOn(animation.keyValues[i],
-                [&](const float number) { ts << "number=" << number; },
-                [&](const WebCore::Color color) { ts << "color=" << color; },
-                [&](const WebCore::FloatPoint3D point) { ts << "point=" << point; },
-                [&](const WebCore::TransformationMatrix matrix) { ts << "transform=" << matrix; },
-                [&](const RefPtr<WebCore::FilterOperation> filter) { ts << "filter=" << ValueOrNull(filter.get()); }
-            );
-            ts.endGroup();
-        }
+        if (i < animation.keyValues.size())
+            ts.dumpProperty("value", animation.keyValues[i]);
+
         ts << ")";
     }
 
