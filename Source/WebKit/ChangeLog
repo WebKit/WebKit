@@ -1,3 +1,18 @@
+2021-06-15  Youenn Fablet  <youenn@apple.com>
+
+        Caches::removeCacheEntry should check for m_storage
+        https://bugs.webkit.org/show_bug.cgi?id=227022
+        <rdar://79225216>
+
+        Reviewed by Antti Koivisto.
+
+        removeCacheEntry can be called asynchronoulsy in Cache::open for badly formatted content.
+        In that case, given this is done asynchronously, m_storage might be nullified.
+        Add a nullptr check to cope with this.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::removeCacheEntry):
+
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 15] Support building WebKit
