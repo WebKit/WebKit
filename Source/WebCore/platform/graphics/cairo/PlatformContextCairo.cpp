@@ -55,6 +55,9 @@ PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
 
 void PlatformContextCairo::restore()
 {
+    if (m_stateStack.isEmpty())
+        return;
+
     if (m_state->m_mask.pattern) {
         cairo_pop_group_to_source(m_cr.get());
 

@@ -218,6 +218,9 @@ void GraphicsContextCG::save()
 
 void GraphicsContextCG::restore()
 {
+    if (!stackSize())
+        return;
+
     GraphicsContext::restore();
 
     // Note: Do not use this function within this class implementation, since we want to avoid the extra

@@ -734,6 +734,9 @@ void CairoOperationRecorder::save()
 
 void CairoOperationRecorder::restore()
 {
+    if (!stackSize())
+        return;
+
     struct Restore final : PaintingOperation, OperationData<> {
         virtual ~Restore() = default;
 

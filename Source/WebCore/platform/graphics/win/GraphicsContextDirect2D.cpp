@@ -200,6 +200,9 @@ void GraphicsContextDirect2D::save()
 
 void GraphicsContextDirect2D::restore()
 {
+    if (!stackSize())
+        return;
+
     GraphicsContext::restore();
     Direct2D::restore(*platformContext());
 }
