@@ -1,3 +1,16 @@
+2021-06-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font::applyTransforms() can redirect GlyphBuffer's internal pointers
+        https://bugs.webkit.org/show_bug.cgi?id=226997
+        <rdar://problem/78704666>
+
+        Reviewed by Ryosuke Niwa.
+
+        After calling Font::applyTransforms(), we need to update any pointers which point into the GlyphBuffer.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+
 2021-06-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove Storage Access API quirk on live.com

@@ -107,6 +107,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
 
     font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_font.fontDescription().computedLocale(), m_run.text(), m_run.direction());
     glyphBufferSize = glyphBuffer.size();
+    advances = glyphBuffer.advances(0);
 
     GlyphBufferOrigin* origins = glyphBuffer.origins(0);
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i) {
