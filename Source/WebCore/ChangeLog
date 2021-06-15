@@ -1,3 +1,17 @@
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Allow legacy SecurityOrigin behavior for x-apple-ql-id2 scheme
+        https://bugs.webkit.org/show_bug.cgi?id=226993
+        <rdar://76474042>
+
+        Reviewed by Tim Horton.
+
+        Why have one x-apple-ql-id scheme when you can have 2?
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin):
+        Also move the linked-on-or-before check to after the hasSpecialScheme check which will be true for most URLs (http, https, file, etc.)
+
 2021-06-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Another crash under gst_element_add_pad
