@@ -491,6 +491,9 @@ void GraphicsContextDirect2D::drawEllipse(const FloatRect& rect)
 
 void GraphicsContextDirect2D::applyStrokePattern()
 {
+    if (!m_state.strokePattern)
+        return;
+
     auto context = platformContext();
     AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
 
@@ -500,6 +503,9 @@ void GraphicsContextDirect2D::applyStrokePattern()
 
 void GraphicsContextDirect2D::applyFillPattern()
 {
+    if (!m_state.fillPattern)
+        return;
+
     auto context = platformContext();
     AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
 

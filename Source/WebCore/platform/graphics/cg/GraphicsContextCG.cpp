@@ -555,6 +555,9 @@ void GraphicsContextCG::drawEllipse(const FloatRect& rect)
 
 void GraphicsContextCG::applyStrokePattern()
 {
+    if (!m_state.strokePattern)
+        return;
+
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
@@ -571,6 +574,9 @@ void GraphicsContextCG::applyStrokePattern()
 
 void GraphicsContextCG::applyFillPattern()
 {
+    if (!m_state.fillPattern)
+        return;
+
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
