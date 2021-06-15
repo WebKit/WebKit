@@ -9167,27 +9167,12 @@ void SpeculativeJIT::compileNewArray(Node* node)
 
     flushRegisters();
 
-    if (scratchSize) {
-        GPRTemporary scratch(this);
-
-        // Tell GC mark phase how much of the scratch buffer is active during call.
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratch.gpr());
-        m_jit.storePtr(TrustedImmPtr(scratchSize), scratch.gpr());
-    }
-
     GPRFlushedCallResult result(this);
 
     callOperation(
         operationNewArray, result.gpr(), TrustedImmPtr::weakPointer(m_graph, globalObject), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())),
         static_cast<void*>(buffer), size_t(node->numChildren()));
     m_jit.exceptionCheck();
-
-    if (scratchSize) {
-        GPRTemporary scratch(this);
-
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratch.gpr());
-        m_jit.storePtr(TrustedImmPtr(nullptr), scratch.gpr());
-    }
 
     cellResult(result.gpr(), node, UseChildrenCalledExplicitly);
 }
@@ -9339,12 +9324,6 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
         }
     }
 
-    {
-        GPRTemporary scratch(this);
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratch.gpr());
-        m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(scratch.gpr()));
-    }
-
     flushRegisters();
 
     GPRFlushedCallResult result(this);
@@ -9352,11 +9331,6 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
 
     callOperation(operationNewArrayWithSpreadSlow, resultGPR, TrustedImmPtr::weakPointer(m_graph, globalObject), buffer, node->numChildren());
     m_jit.exceptionCheck();
-    {
-        GPRTemporary scratch(this);
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratch.gpr());
-        m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(scratch.gpr()));
-    }
 
     cellResult(resultGPR, node);
 }
@@ -9875,8 +9849,6 @@ void SpeculativeJIT::compileArrayPush(Node* node)
         size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
         ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
         m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), storageLengthGPR);
-        m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(storageLengthGPR));
 
         storageDone.link(&m_jit);
         for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
@@ -9891,9 +9863,6 @@ void SpeculativeJIT::compileArrayPush(Node* node)
         MacroAssembler::Jump fastPath = m_jit.branchPtr(MacroAssembler::NotEqual, bufferGPR, TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
 
         addSlowPathGenerator(slowPathCall(m_jit.jump(), this, operationArrayPushMultiple, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, bufferGPR, TrustedImm32(elementCount)));
-
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), bufferGPR);
-        m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(bufferGPR));
 
         base.use();
         storage.use();
@@ -9949,8 +9918,6 @@ void SpeculativeJIT::compileArrayPush(Node* node)
         size_t scratchSize = sizeof(double) * elementCount;
         ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
         m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), storageLengthGPR);
-        m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(storageLengthGPR));
 
         storageDone.link(&m_jit);
         for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
@@ -9965,9 +9932,6 @@ void SpeculativeJIT::compileArrayPush(Node* node)
         MacroAssembler::Jump fastPath = m_jit.branchPtr(MacroAssembler::NotEqual, bufferGPR, TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
 
         addSlowPathGenerator(slowPathCall(m_jit.jump(), this, operationArrayPushDoubleMultiple, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, bufferGPR, TrustedImm32(elementCount)));
-
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), bufferGPR);
-        m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(bufferGPR));
 
         base.use();
         storage.use();
@@ -10030,8 +9994,6 @@ void SpeculativeJIT::compileArrayPush(Node* node)
         size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
         ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
         m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), storageLengthGPR);
-        m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(storageLengthGPR));
 
         storageDone.link(&m_jit);
         for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
@@ -10047,9 +10009,6 @@ void SpeculativeJIT::compileArrayPush(Node* node)
 
         addSlowPathGenerator(
             slowPathCall(m_jit.jump(), this, operationArrayPushMultiple, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, bufferGPR, TrustedImm32(elementCount)));
-
-        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), bufferGPR);
-        m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(bufferGPR));
 
         base.use();
         storage.use();

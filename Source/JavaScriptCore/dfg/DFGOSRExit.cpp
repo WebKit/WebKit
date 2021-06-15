@@ -41,6 +41,7 @@
 #include "JSCJSValueInlines.h"
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
+#include "VMInlines.h"
 
 #include <wtf/Scope.h>
 
@@ -144,6 +145,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame))
 {
     VM& vm = callFrame->deprecatedVM();
     auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(vm, GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
 
     if constexpr (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized
@@ -890,6 +892,7 @@ JSC_DEFINE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (CallFrame
 {
     VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
+    ActiveScratchBufferScope activeScratchBufferScope(vm, GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
 
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;

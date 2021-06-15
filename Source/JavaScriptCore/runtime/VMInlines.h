@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,22 @@
 #include "Watchdog.h"
 
 namespace JSC {
-    
+
+inline ActiveScratchBufferScope::ActiveScratchBufferScope(VM& vm, size_t activeScratchBufferSizeInJSValues)
+    : m_scratchBuffer(vm.scratchBufferForSize(activeScratchBufferSizeInJSValues * sizeof(EncodedJSValue)))
+{
+    // Tell GC mark phase how much of the scratch buffer is active during the call operation this scope is used in.
+    if (m_scratchBuffer)
+        m_scratchBuffer->u.m_activeLength = activeScratchBufferSizeInJSValues * sizeof(EncodedJSValue);
+}
+
+inline ActiveScratchBufferScope::~ActiveScratchBufferScope()
+{
+    // Tell the GC that we're not using the scratch buffer anymore.
+    if (m_scratchBuffer)
+        m_scratchBuffer->u.m_activeLength = 0;
+}
+
 bool VM::ensureStackCapacityFor(Register* newTopOfStack)
 {
 #if !ENABLE(C_LOOP)

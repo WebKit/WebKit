@@ -1,3 +1,143 @@
+2021-06-15  Mark Lam  <mark.lam@apple.com>
+
+        Move setting of scratch buffer active lengths to the runtime functions.
+        https://bugs.webkit.org/show_bug.cgi?id=227013
+        rdar://79325068
+
+        Reviewed by Keith Miller.
+
+        We previously emit JIT'ed code to set and unset the ScratchBuffer active length
+        around calls into C++ runtime functions.  This was needed because the runtime
+        functions may allow GC to run, and GC needs to be able to scan the values stored
+        in the ScratchBuffer.
+
+        In this patch, we change it so that the runtime functions that need it will
+        declare an ActiveScratchBufferScope RAII object that will set the ScratchBuffer
+        active length, and unset it on exit.  This allows us to:
+
+        1. Emit less JIT code.  The runtime function can take care of it.
+        2. Elide setting the ScratchBuffer active length if not needed.  The runtime
+           functions know whether they can GC or not.  They only need to set the active
+           length if they can GC.
+
+        Note that scanning of the active ScratchBuffer is done synchronously on the
+        mutator thread via Heap::gatherScratchBufferRoots(), which is called as part of
+        the GC conservative root scan.  This means there is no urgency / sequencing that
+        requires that the active length be set before calling into the runtime function.
+        Setting it in the runtime function itself is fine as long as it is done before
+        the function executes any operations that can GC.
+
+        This patch also made the following changes:
+
+        1. Introduce ActiveScratchBufferScope RAII object used to set/unset the
+           ScratchBuffer length in the runtime functions.  ActiveScratchBufferScope takes
+           the active length in units of number of stack slots / Registers / JSValues
+           instead of bytes.
+
+        2. Deleted ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall()
+           and ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall().
+           These functions are unused.
+
+        The reasoning behind what values to pass to ActiveScratchBufferScope, is any:
+
+        1. AssemblyHelpers::debugCall() in AssemblyHelpers.cpp:
+           The ScratchBuffer is only used for operationDebugPrintSpeculationFailure(),
+           which now declares an ActiveScratchBufferScope.
+
+           The active length is GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters.
+           See scratchSize in AssemblyHelpers::debugCall().
+
+        2. genericGenerationThunkGenerator() in FTLThunks.cpp:
+           The scratch buffer size for determining the active length is
+           requiredScratchMemorySizeInBytes().  
+
+           However, genericGenerationThunkGenerator() generates code to call either
+           operationCompileFTLOSRExit() or operationCompileFTLLazySlowPath().  Both of
+           these functions will DeferGCForAWhile.  Hence, GC cannot run, and we don't need
+           to set the active length here.
+
+        3. compileArrayPush() in FTLLowerDFGToB3.cpp:
+
+           Cases Array::Int32, Array::Contiguous, or Array::Double calls
+           operationArrayPushMultiple() or operationArrayPushDoubleMultiple().
+
+           For operationArrayPushMultiple(), the active length is elementCount.  See
+           computation of scratchSize.
+
+           For operationArrayPushDoubleMultiple(), we don't need to set the active length
+           because the ScratchBuffer only contains double values.  The GC does not need
+           to scan those.
+
+           Case Array::ArrayStorage calls operationArrayPushMultiple().
+           The active length is elementCount.  See computation of scratchSize.
+
+           compileNewArray() in FTLLowerDFGToB3.cpp:
+
+           Calls operationNewArray().  Active length is m_node->numChildren(), which is
+           passed to operationNewArray() as the size parameter.  See computation of
+           scratchSize.
+
+           compileNewArrayWithSpread() in FTLLowerDFGToB3.cpp:
+
+           Calls operationNewArrayWithSpreadSlow().  Active length is m_node->numChildren(),
+           which is passes to operationNewArrayWithSpreadSlow() as the numItems parameter.
+           See computation of scratchSize.
+
+        4. osrExitGenerationThunkGenerator() in DFGThunks.cpp:
+
+           Calls operationCompileOSRExit().  Active length is GPRInfo::numberOfRegisters +
+           FPRInfo::numberOfRegisters.  See computation of scratchSize.
+
+        5. compileNewArray() in DFGSpeculativeJIT.cpp:
+
+           Calls operationNewArray().  Active length is node->numChildren(), which is
+           passed in as the size parameter.
+
+           compileNewArrayWithSpread() in DFGSpeculativeJIT.cpp:
+
+           Calls operationNewArrayWithSpreadSlow().  Active length is node->numChildren(),
+           which is passed in as the numItems parameter.
+
+           compileArrayPush() in DFGSpeculativeJIT.cpp:
+
+           Calls operationArrayPushMultiple().  Active length is elementCount, which is
+           passed in as the elementCount parameter.
+
+           Calls operationArrayPushDoubleMultiple().  Active length is elementCount, but
+           we don't need to set it because the ScratchBuffer only contains double values.
+
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+        (JSC::DFG::SpeculativeJIT::compileArrayPush):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall): Deleted.
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall): Deleted.
+        * jit/ScratchRegisterAllocator.h:
+        * runtime/VM.h:
+        * runtime/VMInlines.h:
+        (JSC::ActiveScratchBufferScope::ActiveScratchBufferScope):
+        (JSC::ActiveScratchBufferScope::~ActiveScratchBufferScope):
+
 2021-06-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Workaround ICU uloc_addLikelySubtags / uloc_minimizeSubtags bugs

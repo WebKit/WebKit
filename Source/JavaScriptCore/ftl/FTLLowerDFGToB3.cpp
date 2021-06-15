@@ -6162,7 +6162,6 @@ private:
             static_assert(sizeof(EncodedJSValue) == sizeof(double), "");
             ASSERT(scratchSize);
             ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
-            m_out.storePtr(m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->addressOfActiveLength()));
             ValueFromBlock slowBufferResult = m_out.anchor(m_out.constIntPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
             m_out.jump(setup);
 
@@ -6192,7 +6191,6 @@ private:
             if (m_node->arrayMode().type() == Array::Double)
                 operation = &operationArrayPushDoubleMultiple;
             ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operation, weakPointer(globalObject), base, buffer, m_out.constInt32(elementCount)));
-            m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -6268,7 +6266,6 @@ private:
             size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
             ASSERT(scratchSize);
             ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
-            m_out.storePtr(m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->addressOfActiveLength()));
             ValueFromBlock slowBufferResult = m_out.anchor(m_out.constIntPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
             m_out.jump(setup);
 
@@ -6286,7 +6283,6 @@ private:
 
             m_out.appendTo(slowCallPath, continuation);
             ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationArrayPushMultiple, weakPointer(globalObject), base, buffer, m_out.constInt32(elementCount)));
-            m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -7278,17 +7274,12 @@ private:
             }
             m_out.store64(valueToStore, m_out.absolute(buffer + operandIndex));
         }
-        
-        m_out.storePtr(
-            m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->addressOfActiveLength()));
-        
+
         LValue result = vmCall(
             Int64, operationNewArray, weakPointer(globalObject),
             weakStructure(structure), m_out.constIntPtr(buffer),
             m_out.constIntPtr(m_node->numChildren()));
-        
-        m_out.storePtr(m_out.intPtrZero, m_out.absolute(scratchBuffer->addressOfActiveLength()));
-        
+
         setJSValue(result);
     }
 
@@ -7524,9 +7515,7 @@ private:
             m_out.store64(value, m_out.absolute(&buffer[i]));
         }
 
-        m_out.storePtr(m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->addressOfActiveLength()));
         LValue result = vmCall(Int64, operationNewArrayWithSpreadSlow, weakPointer(globalObject), m_out.constIntPtr(buffer), m_out.constInt32(m_node->numChildren()));
-        m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
 
         setJSValue(result);
     }

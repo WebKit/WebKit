@@ -523,6 +523,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame* callFram
         dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
 
     VM& vm = callFrame->deprecatedVM();
+    // Don't need an ActiveScratchBufferScope here because we DeferGCForAWhile below.
 
     if constexpr (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized
