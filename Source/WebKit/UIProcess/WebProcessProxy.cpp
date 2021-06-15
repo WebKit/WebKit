@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,6 +100,7 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 
 namespace WebKit {
 using namespace WebCore;
@@ -800,6 +801,7 @@ void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 #if ENABLE(WEB_AUTHN)
 void WebProcessProxy::getWebAuthnProcessConnection(Messages::WebProcessProxy::GetWebAuthnProcessConnection::DelayedReply&& reply)
 {
+    MESSAGE_CHECK_COMPLETION(hasCorrectPACEntitlement(), reply({ }));
     m_processPool->getWebAuthnProcessConnection(*this, WTFMove(reply));
 }
 #endif
@@ -1998,3 +2000,4 @@ void WebProcessProxy::systemBeep()
 
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_URL
+#undef MESSAGE_CHECK_COMPLETION

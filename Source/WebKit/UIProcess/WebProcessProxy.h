@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -525,6 +525,10 @@ private:
     
 #if PLATFORM(MAC)
     void isAXAuthenticated(audit_token_t, CompletionHandler<void(bool)>&&);
+#endif
+
+#if PLATFORM(COCOA)
+    bool hasCorrectPACEntitlement();
 #endif
 
     enum class IsWeak { No, Yes };

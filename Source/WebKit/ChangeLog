@@ -1,3 +1,37 @@
+2021-06-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Harden WebAuthn process by restricting to browser-entitled processes
+        https://bugs.webkit.org/show_bug.cgi?id=226772
+        <rdar://problem/74721877>
+
+        Reviewed by Darin Adler.
+
+        We should ensure that any process attempting to launch the WebAuthn XPC service is entitled as a full web browser. We
+        should also ensure that the process requesting WebAuthn operations over WebKit CoreIPC is the WebContent process.
+
+        Tested by existing WebAuthn tests.
+
+        * Platform/Logging.h: Add WebAuthn category.
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::isInWebKitChildProcess): Recognize 'com.apple.WebKit.WebAuthn' as a WebKit sub-process.
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::hasCorrectPACEntitlement): Added.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getWebAuthnProcessConnection): Add a new MESSAGE_CHECK that the process requesting a WebAuthn
+        process connection is a WebContent process.
+        * UIProcess/WebProcessProxy.h:
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::platformInitializeWebAuthnProcess): Add some logging.
+        * WebAuthnProcess/WebAuthnProcess.h:
+        * WebAuthnProcess/ios/WebAuthnProcessIOS.mm:
+        (WebKit::WebAuthnProcess::platformInitializeWebAuthnProcess): Ensure that the application invoking the WebAuthn XPC service
+        is entitled as a default web browser.
+        * WebAuthnProcess/mac/WebAuthnProcessMac.mm:
+        (WebKit::WebAuthnProcess::platformInitializeWebAuthnProcess): Stub.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getWebAuthnProcessConnection):
+        (WebKit::WebProcess::ensureWebAuthnProcessConnection):
+
 2021-06-15  Youenn Fablet  <youenn@apple.com>
 
         Caches::removeCacheEntry should check for m_storage

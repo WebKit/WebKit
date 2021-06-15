@@ -41,6 +41,7 @@
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
@@ -296,6 +297,33 @@ void WebProcessProxy::sendAudioComponentRegistrations()
             protectedThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
         });
     });
+}
+
+bool WebProcessProxy::hasCorrectPACEntitlement()
+{
+    if (!hasConnection()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+#if HAVE(PAC_SHARED_REGION_ID)
+    auto auditToken = connection()->getAuditToken();
+    if (!auditToken) {
+        ASSERT_NOT_REACHED();
+        RELEASE_LOG_ERROR(Process, "Unable to get parent web process audit token");
+        return false;
+    }
+
+#if USE(APPLE_INTERNAL_SDK)
+    // Confirm that the connection is from a WebContent process:
+    if (!WTF::hasEntitlementValue(auditToken.value(), "com.apple.pac.shared_region_id", "WebContent")) {
+        RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process. Process shared_region_id is incorrect.");
+        return false;
+    }
+#endif
+#endif
+
+    return true;
 }
 
 }

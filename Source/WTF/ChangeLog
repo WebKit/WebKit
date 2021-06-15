@@ -1,3 +1,19 @@
+2021-06-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Harden WebAuthn process by restricting to browser-entitled processes
+        https://bugs.webkit.org/show_bug.cgi?id=226772
+        <rdar://problem/74721877>
+
+        Reviewed by Darin Adler.
+
+        Add a new entitlement utility that returns the String value of a given entitlement for
+        the process with the provided audit token.
+
+        * wtf/cocoa/Entitlements.h:
+        * wtf/cocoa/Entitlements.mm:
+        (WTF::hasEntitlementValue):
+        * wtf/PlatformHave.h: Add item for PAC shared region feature.
+
 2021-06-14  Per Arne  <pvollan@apple.com>
 
         [iOS] Sync Accessibility preferences

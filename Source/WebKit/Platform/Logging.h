@@ -101,6 +101,7 @@ extern "C" {
     M(ViewportSizing) \
     M(VirtualMemory) \
     M(VisibleRects) \
+    M(WebAuthn) \
     M(WebGL) \
     M(WebRTC) \
     M(WheelEvents) \

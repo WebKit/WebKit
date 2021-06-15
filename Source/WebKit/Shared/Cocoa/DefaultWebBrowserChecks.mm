@@ -76,7 +76,8 @@ static bool isInWebKitChildProcess()
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         isInSubProcess = [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebContent"]
             || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Networking"]
-            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"];
+            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"]
+            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebAuthn"];
     });
 
     return isInSubProcess;
