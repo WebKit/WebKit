@@ -67,14 +67,14 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
             username = (input if sys.version_info > (3, 0) else raw_input)()
             username_prompted = True
 
-    if not key and required:
+    if not key:
         try:
             if keyring:
                 key = keyring.get_password(url, username)
         except RuntimeError:
             pass
 
-        if not key:
+        if not key and required:
             if not sys.stderr.isatty() or not sys.stdin.isatty():
                 raise OSError('No tty to prompt user for username')
             key = getpass.getpass('{}: '.format(key_name.capitalize()))
