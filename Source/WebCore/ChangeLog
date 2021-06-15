@@ -1,3 +1,18 @@
+2021-06-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for preferred width computation when mixed width types are present
+        https://bugs.webkit.org/show_bug.cgi?id=227010
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting available space distribution with mixed width types (e.g. percent and fixed).
+        While this patch only addresses the preferred width computation for the table, certain values already work with the existing distribution code. 
+
+        Test: fast/layoutformattingcontext/table-space-distribution-mixed-width-type-simple.html
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+
 2021-06-15  Martin Robinson  <mrobinson@igalia.com>
 
         [css-scroll-snap] Scroll snap offsets are interpreted as scroll positions in ScrollableArea
