@@ -47,9 +47,16 @@ function testAttribute(uri, type, attribute, values)
     function canplaythrough()
     {
         consoleWrite("<br><i>** Check in-band kind attributes</i>");
-        testExpected("video." + type +"Tracks.length", values.length);
-        for (var i = 0; i < values.length; ++i)
-            testExpected("video." + type +"Tracks[" + i + "]." + attribute, values[i]);
+
+        if (values instanceof Array) {
+            testExpected(`video.${type}Tracks.length`, values.length);
+            for (let i = 0; i < values.length; ++i)
+                testExpected(`video.${type}Tracks[${i}].${attribute}`, values[i]);
+        } else {
+            testExpected(`video.${type}Tracks.length`, Object.keys(values).length);
+            for (let id in values)
+                testExpected(`video.${type}Tracks.getTrackById('${id}').${attribute}`, values[id]);
+        }
 
         consoleWrite("");
         endTest();

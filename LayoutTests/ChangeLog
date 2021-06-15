@@ -1,3 +1,26 @@
+2021-06-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GStreamer] media/track/audio/audio-track-mkv-vorbis-language.html and media/track/video/video-track-mkv-theora-language.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=226864
+
+        Reviewed by Eric Carlson.
+
+        These tests were failing due to an apparently incorrect order of
+        languages in audio and video tracks.
+
+        Examining the video container with tools like mediasource or VLC shows
+        that the order expected by GStreamer ports is correct. To make these
+        tests pass I changed the tests to make them language order independent
+        by fetching audio or video tracks by id.
+
+        * media/in-band-tracks.js:
+        (canplaythrough):
+        (testAttribute): values' can be also an Object. In that case, fetch tracks by 'id'.
+        * media/track/audio/audio-track-mkv-vorbis-language-expected.txt: Updated.
+        * media/track/audio/audio-track-mkv-vorbis-language.html: Pass language expected results as a map indexed by track id.
+        * media/track/video/video-track-mkv-theora-language-expected.txt: Updated.
+        * media/track/video/video-track-mkv-theora-language.html: Pass language expected results as a map indexed by track id.
+
 2021-06-14  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r278842.
