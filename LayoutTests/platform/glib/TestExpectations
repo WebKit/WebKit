@@ -2321,6 +2321,9 @@ webkit.org/b/225466 imported/w3c/web-platform-tests/css/css-color-adjust/renderi
 # Failing since r277091.
 webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
 
+webkit.org/b/227053 fast/canvas/canvas-imageSmoothingEnabled.html [ Failure ]
+webkit.org/b/227053 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

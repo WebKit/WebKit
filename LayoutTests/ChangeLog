@@ -1,3 +1,14 @@
+2021-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Updated test expectations after r277896.
+
+        Two tests are now failing:
+          - fast/canvas/canvas-imageSmoothingEnabled.html.
+          - fast/canvas/canvas-imageSmoothingQuality.html.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/fast/canvas/canvas-imageSmoothingQuality-expected.txt: Removed.
+
 2021-06-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
