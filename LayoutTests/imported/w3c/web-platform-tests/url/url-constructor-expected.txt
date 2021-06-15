@@ -272,6 +272,12 @@ PASS Parsing: <http://%ef%b7%90zyx.com> against <http://other.com/>
 PASS Parsing: <https://�> against <about:blank>
 PASS Parsing: <https://%EF%BF%BD> against <about:blank>
 PASS Parsing: <https://x/�?�#�> against <about:blank>
+PASS Parsing: <http://a.b.c.xn--pokxncvks> against <about:blank>
+PASS Parsing: <http://a.b.x.xn--pokxncvks> against <about:blank>
+PASS Parsing: <http://a.b.xn.xn--pokxncvks> against <about:blank>
+PASS Parsing: <http://a.b.xn-.xn--pokxncvks> against <about:blank>
+PASS Parsing: <http://a.b.xn--.xn--pokxncvks> against <about:blank>
+PASS Parsing: <http://10.0.0.xn--pokxncvks> against <about:blank>
 PASS Parsing: <http://Ｇｏ.com> against <http://other.com/>
 PASS Parsing: <http://％４１.com> against <http://other.com/>
 PASS Parsing: <http://%ef%bc%85%ef%bc%94%ef%bc%91.com> against <http://other.com/>

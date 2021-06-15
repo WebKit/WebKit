@@ -39,9 +39,6 @@
 namespace WTF {
 namespace URLHelpers {
 
-// Needs to be big enough to hold an IDN-encoded name.
-// For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
-constexpr unsigned hostNameBufferLength = 2048;
 constexpr unsigned urlBytesBufferLength = 2048;
 
 // This needs to be higher than the UScriptCode for any of the scripts on the IDN allowed list.
@@ -575,7 +572,9 @@ static bool allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
 // Return value of null means no mapping is necessary.
 std::optional<String> mapHostName(const String& hostName, URLDecodeFunction decodeFunction)
 {
-    if (hostName.length() > hostNameBufferLength)
+    // destinationBuffer needs to be big enough to hold an IDN-encoded name.
+    // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
+    if (hostName.length() > URLParser::hostnameBufferLength)
         return String();
     
     if (!hostName.length())
@@ -591,11 +590,11 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
 
     auto sourceBuffer = string.charactersWithNullTermination();
     
-    UChar destinationBuffer[hostNameBufferLength];
+    UChar destinationBuffer[URLParser::hostnameBufferLength];
     UErrorCode uerror = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
-    int32_t numCharactersConverted = (decodeFunction ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer.data(), length, destinationBuffer, hostNameBufferLength, &processingDetails, &uerror);
-    int allowedErrors = decodeFunction ? 0 : UIDNA_ERROR_EMPTY_LABEL | UIDNA_ERROR_LEADING_HYPHEN | UIDNA_ERROR_TRAILING_HYPHEN | UIDNA_ERROR_HYPHEN_3_4;
+    int32_t numCharactersConverted = (decodeFunction ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer.data(), length, destinationBuffer, URLParser::hostnameBufferLength, &processingDetails, &uerror);
+    int allowedErrors = decodeFunction ? 0 : URLParser::allowedNameToASCIIErrors;
     if (length && (U_FAILURE(uerror) || processingDetails.errors & ~allowedErrors))
         return std::nullopt;
     

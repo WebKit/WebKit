@@ -130,6 +130,42 @@ PASS XHR: https://%EF%BF%BD should throw
 PASS sendBeacon(): https://%EF%BF%BD should throw
 FAIL Location's href: https://%EF%BF%BD should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 PASS window.open(): https://%EF%BF%BD should throw
+PASS URL's constructor's base argument: http://a.b.c.xn--pokxncvks should throw
+PASS URL's href: http://a.b.c.xn--pokxncvks should throw
+PASS XHR: http://a.b.c.xn--pokxncvks should throw
+PASS sendBeacon(): http://a.b.c.xn--pokxncvks should throw
+FAIL Location's href: http://a.b.c.xn--pokxncvks should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
+PASS window.open(): http://a.b.c.xn--pokxncvks should throw
+PASS URL's constructor's base argument: http://a.b.x.xn--pokxncvks should throw
+PASS URL's href: http://a.b.x.xn--pokxncvks should throw
+PASS XHR: http://a.b.x.xn--pokxncvks should throw
+PASS sendBeacon(): http://a.b.x.xn--pokxncvks should throw
+FAIL Location's href: http://a.b.x.xn--pokxncvks should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
+PASS window.open(): http://a.b.x.xn--pokxncvks should throw
+PASS URL's constructor's base argument: http://a.b.xn.xn--pokxncvks should throw
+PASS URL's href: http://a.b.xn.xn--pokxncvks should throw
+PASS XHR: http://a.b.xn.xn--pokxncvks should throw
+PASS sendBeacon(): http://a.b.xn.xn--pokxncvks should throw
+FAIL Location's href: http://a.b.xn.xn--pokxncvks should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
+PASS window.open(): http://a.b.xn.xn--pokxncvks should throw
+PASS URL's constructor's base argument: http://a.b.xn-.xn--pokxncvks should throw
+PASS URL's href: http://a.b.xn-.xn--pokxncvks should throw
+PASS XHR: http://a.b.xn-.xn--pokxncvks should throw
+PASS sendBeacon(): http://a.b.xn-.xn--pokxncvks should throw
+FAIL Location's href: http://a.b.xn-.xn--pokxncvks should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
+PASS window.open(): http://a.b.xn-.xn--pokxncvks should throw
+PASS URL's constructor's base argument: http://a.b.xn--.xn--pokxncvks should throw
+PASS URL's href: http://a.b.xn--.xn--pokxncvks should throw
+PASS XHR: http://a.b.xn--.xn--pokxncvks should throw
+PASS sendBeacon(): http://a.b.xn--.xn--pokxncvks should throw
+FAIL Location's href: http://a.b.xn--.xn--pokxncvks should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
+PASS window.open(): http://a.b.xn--.xn--pokxncvks should throw
+PASS URL's constructor's base argument: http://10.0.0.xn--pokxncvks should throw
+PASS URL's href: http://10.0.0.xn--pokxncvks should throw
+PASS XHR: http://10.0.0.xn--pokxncvks should throw
+PASS sendBeacon(): http://10.0.0.xn--pokxncvks should throw
+FAIL Location's href: http://10.0.0.xn--pokxncvks should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
+PASS window.open(): http://10.0.0.xn--pokxncvks should throw
 PASS URL's constructor's base argument: https://x x:12 should throw
 PASS URL's href: https://x x:12 should throw
 PASS XHR: https://x x:12 should throw

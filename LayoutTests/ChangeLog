@@ -1,3 +1,15 @@
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Check for "xn--" in any subdomain when parsing URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=226912
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/DOMURL/parsing-expected.txt:
+        * fast/dom/DOMURL/parsing.html:
+        Update the test I added in r236527 to reflect this relaxation.
+        This matches the behavior of Chrome Canary.
+
 2021-06-15  Youenn Fablet  <youenn@apple.com>
 
         (r278359) fast/mediastream/mediaElement-gc.html is a flaky failure

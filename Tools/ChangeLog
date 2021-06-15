@@ -1,3 +1,20 @@
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Check for "xn--" in any subdomain when parsing URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=226912
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        These tests used to hit UIDNA_ERROR_LABEL_TOO_LONG which is allowed now.
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+        This test, from r262171, needs to verify that non-ASCII characters are not truncated to ASCII values when converting to NSURL.
+        It used to use an invalid URL that had a host that ended in U+FE63 (SMALL HYPHEN-MINUS) which would fail because of UIDNA_ERROR_TRAILING_HYPHEN.
+        Now that trailing hyphens are allowed, we end in U+0661 and U+06F1 which fail because of UIDNA_ERROR_BIDI which makes this test still verify
+        the non-truncated values of an invalid host converted to an NSURL.
+
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 15] Support building WebKit

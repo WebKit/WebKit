@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <unicode/uidna.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
@@ -38,6 +39,18 @@ template<typename CharacterType> class CodePointIterator;
 class URLParser {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    constexpr static int allowedNameToASCIIErrors =
+        UIDNA_ERROR_EMPTY_LABEL
+        | UIDNA_ERROR_LABEL_TOO_LONG
+        | UIDNA_ERROR_DOMAIN_NAME_TOO_LONG
+        | UIDNA_ERROR_LEADING_HYPHEN
+        | UIDNA_ERROR_TRAILING_HYPHEN
+        | UIDNA_ERROR_HYPHEN_3_4;
+
+    // Needs to be big enough to hold an IDN-encoded name.
+    // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
+    constexpr static size_t hostnameBufferLength = 2048;
+
     WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
     WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);
     
@@ -113,7 +126,8 @@ private:
     bool copyBaseWindowsDriveLetter(const URL&);
     StringView parsedDataView(size_t start, size_t length);
     UChar parsedDataView(size_t position);
-    template<typename CharacterType> bool startsWithXNDashDash(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool subdomainStartsWithXNDashDash(CodePointIterator<CharacterType>);
+    bool subdomainStartsWithXNDashDash(StringImpl&);
 
     bool needsNonSpecialDotSlash() const;
     void addNonSpecialDotSlash();
