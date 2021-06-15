@@ -1428,6 +1428,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         m_overflowControlsContainer->setPosition(snappedBoxInfo.m_snappedRect.location());
         m_overflowControlsContainer->setSize(snappedBoxInfo.m_snappedRect.size());
+        m_overflowControlsContainer->setMasksToBounds(true);
     }
 
     if (m_foregroundLayer) {
@@ -1507,6 +1508,7 @@ void RenderLayerBacking::adjustOverflowControlsPositionRelativeToAncestor(const 
     SnappedRectInfo snappedBoxInfo = snappedGraphicsLayer(boxOffsetFromGraphicsLayer, overflowControlsRect.size(), deviceScaleFactor());
 
     m_overflowControlsContainer->setPosition(snappedBoxInfo.m_snappedRect.location());
+    m_overflowControlsContainer->setSize(snappedBoxInfo.m_snappedRect.size());
 }
 
 void RenderLayerBacking::setLocationOfScrolledContents(ScrollOffset scrollOffset, ScrollingLayerPositionAction setOrSync)

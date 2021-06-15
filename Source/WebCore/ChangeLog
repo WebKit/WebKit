@@ -1,3 +1,18 @@
+2021-06-15  Chris Lord  <clord@igalia.com>
+
+        Scrollbars are not clipped to layer bounds in RenderLayerBacking
+        https://bugs.webkit.org/show_bug.cgi?id=226823
+
+        Reviewed by Simon Fraser.
+
+        Mask contents to bounds of overflow controls containers in RenderLayerBacking.
+
+        Test: compositing/scrolling/async-overflow-scrolling/overflow-controls-container-clips-scrollbars.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::adjustOverflowControlsPositionRelativeToAncestor):
+
 2021-06-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] CoreMedia WrapperClass does not need alignment fixup

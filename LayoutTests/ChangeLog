@@ -1,3 +1,37 @@
+2021-06-15  Chris Lord  <clord@igalia.com>
+
+        Scrollbars are not clipped to layer bounds in RenderLayerBacking
+        https://bugs.webkit.org/show_bug.cgi?id=226823
+
+        Reviewed by Simon Fraser.
+
+        Adjust test expectations due to clipping on overflow controls container.
+
+        * compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt:
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/nested-scrollers-backing-attachment-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/overflow-controls-container-clips-scrollbars-expected.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/overflow-controls-container-clips-scrollbars.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/visibility-hidden-scrollers-expected.txt:
+        * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+        * compositing/tiling/perspective-on-scroller-tile-coverage-expected.txt:
+        * platform/mac-wk1/compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-tile-coverage-expected.txt:
+
 2021-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Check for "xn--" in any subdomain when parsing URL hosts
