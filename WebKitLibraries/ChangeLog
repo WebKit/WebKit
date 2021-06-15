@@ -1,5 +1,15 @@
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
+        [iOS 15] Support building WebKit (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Alex Christensen.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
         [watchOS 8] Support building WebKit
         https://bugs.webkit.org/show_bug.cgi?id=227050
         <rdar://problem/79365320>
