@@ -1,3 +1,15 @@
+2021-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Gardened three API GTK test failures.
+
+        These tests were constant failures in EWS and were slowing down the
+        bot. The tests are the following:
+          - /WebKit2Gtk/TestContextMenu:/webkit/WebKitWebPage/context-menu.
+          - /WebKit2Gtk/TestContextMenu:/webkit/WebKitWebPage/context-menu-node.
+          - /TestWTF:WTF_DataMutex.DoubleLockDeathTest.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-06-14  Keith Miller  <keith_miller@apple.com>
 
         run-javascriptcore-tests should print output when a test binary fails by default
