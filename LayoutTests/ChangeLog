@@ -1,3 +1,9 @@
+2021-06-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2021-06-15  Chris Lord  <clord@igalia.com>
 
         Scrollbars are not clipped to layer bounds in RenderLayerBacking
