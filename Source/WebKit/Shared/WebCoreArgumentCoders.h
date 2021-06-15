@@ -627,6 +627,11 @@ template<> struct ArgumentCoder<WebCore::FilterOperation> {
     static void encode(Encoder&, const WebCore::FilterOperation&);
 };
 WARN_UNUSED_RETURN bool decodeFilterOperation(Decoder&, RefPtr<WebCore::FilterOperation>&);
+
+template<> struct ArgumentCoder<RefPtr<WebCore::FilterOperation>> {
+    static void encode(Encoder&, const RefPtr<WebCore::FilterOperation>&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RefPtr<WebCore::FilterOperation>&);
+};
 #endif
 
 template<> struct ArgumentCoder<WebCore::BlobPart> {

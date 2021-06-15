@@ -2346,6 +2346,28 @@ bool ArgumentCoder<FilterOperations>::decode(Decoder& decoder, FilterOperations&
 
     return true;
 }
+
+void ArgumentCoder<RefPtr<WebCore::FilterOperation>>::encode(Encoder& encoder, const RefPtr<WebCore::FilterOperation>& operation)
+{
+    encoder << !!operation;
+    if (operation)
+        encoder << *operation;
+}
+
+WARN_UNUSED_RETURN bool ArgumentCoder<RefPtr<WebCore::FilterOperation>>::decode(Decoder& decoder, RefPtr<WebCore::FilterOperation>& value)
+{
+    Optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull)
+        return false;
+    
+    if (!decodeFilterOperation(decoder, value)) {
+        value = nullptr;
+        return false;
+    }
+    return true;
+}
+
 #endif // !USE(COORDINATED_GRAPHICS)
 
 void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
