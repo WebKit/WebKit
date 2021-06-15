@@ -173,6 +173,12 @@ extern UIButtonType const PUICButtonTypePill;
 @property (nonatomic, assign) UIReturnKeyType returnKeyType;
 @property (nonatomic, strong) NSAttributedString *attributedHeaderText;
 
+#if HAVE(QUICKBOARD_CONTROLLER)
+@property (nonatomic, copy, nullable) NSArray<NSString *> *suggestions;
+@property (nonatomic, readwrite) BOOL acceptsEmoji;
+@property (nonatomic, readwrite) BOOL shouldPresentModernTextInputUI;
+#endif
+
 @end
 
 @class PUICQuickboardController;
@@ -184,6 +190,13 @@ extern UIButtonType const PUICButtonTypePill;
 @property (nonatomic, weak) id<PUICQuickboardControllerDelegate> delegate;
 @property (nonatomic, strong) PUICTextInputContext *textInputContext;
 @property (nonatomic, weak) UIViewController *quickboardPresentingViewController;
+
+#if HAVE(QUICKBOARD_CONTROLLER)
+- (void)dismissWithCompletion:(void (^ _Nullable)(void))completion;
+- (void)present;
+@property (nonatomic, assign) BOOL excludedFromScreenCapture;
+#endif
+
 @end
 
 @protocol PUICQuickboardController <NSObject>
@@ -307,6 +320,18 @@ typedef NS_ENUM(NSInteger, PUICActionStyle) {
 @interface PUICActionController : NSObject
 - (instancetype)initWithActionGroup:(PUICActionGroup *)actionGroup NS_DESIGNATED_INITIALIZER;
 @end
+
+#if HAVE(QUICKBOARD_CONTROLLER)
+@interface _UIRemoteViewController : UIViewController
+@end
+
+@protocol PUICQuickboardRemoteInterface <NSObject>
+@end
+
+@class PUICQuickboardRemoteViewController;
+@interface PUICQuickboardRemoteViewController : _UIRemoteViewController <PUICQuickboardRemoteInterface>
+@end
+#endif
 
 NS_ASSUME_NONNULL_END
 

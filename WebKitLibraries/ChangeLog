@@ -1,5 +1,23 @@
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
+        [watchOS 8] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227050
+        <rdar://problem/79365320>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/watchos/8/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/PepperUICore.framework/PepperUICore.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/URLFormatting.framework/URLFormatting.tbd: Added.
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
        [iOS 15] Support building WebKit
         https://bugs.webkit.org/show_bug.cgi?id=227002
         <rdar://problem/79316598>

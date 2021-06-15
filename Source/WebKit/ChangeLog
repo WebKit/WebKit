@@ -1,3 +1,15 @@
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [watchOS 8] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227050
+        <rdar://problem/79365320>
+
+        Reviewed by Tim Horton.
+
+        Covered by existing tests.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h: Add QuickboardController SPI.
+
 2021-06-15  Chris Dumez  <cdumez@apple.com>
 
         Add basic detection of unresponsive Network / GPU Processes
