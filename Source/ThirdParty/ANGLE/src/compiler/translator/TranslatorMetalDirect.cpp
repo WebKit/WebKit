@@ -906,7 +906,7 @@ static std::set<ImmutableString> GetMslKeywords()
     keywords.emplace("virtual");
     keywords.emplace("volatile");
     keywords.emplace("wchar_t");
-
+    keywords.emplace("NAN");
     return keywords;
 }
 

@@ -1,3 +1,17 @@
+2021-06-15  Kyle Piddington  <kpiddington@apple.com>
+
+        Tensorflow.js Broken in Safari 15
+        https://bugs.webkit.org/show_bug.cgi?id=226953
+
+        Tensorflow shaders use a 'NAN' uniform. This is a reserved keyword
+        in metal. Add NAN to the reserved list.
+
+        'inf' constants need to be replaced with INFINITY, much like nan constants need to be replaced with NAN
+        Reviewed by Kenneth Russell.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::GetMslKeywords):
+
 2021-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix typo in r276318

@@ -1498,6 +1498,17 @@ void GenMetalTraverser::emitSingleConstant(const TConstantUnion *const constUnio
             {
                 mOut << "NAN";
             }
+            if (ANGLE_UNLIKELY(isinf(constUnion->getFConst())))
+            {
+                if(constUnion->getFConst() < 0)
+                {
+                    mOut << "-INFINITY";
+                }
+                else
+                {
+                    mOut << "INFINITY";
+                }
+            }
             else
             {
                 mOut << constUnion->getFConst() << "f";
