@@ -60,6 +60,8 @@ public:
 protected:
     void receivedNewAudioSamples(const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
+    void setPollSamplesCount(size_t);
+
 private:
     virtual void hasNewClient(AudioSourceProviderClient*) = 0;
 #if !RELEASE_LOG_DISABLED
@@ -80,9 +82,15 @@ private:
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
     RefPtr<AudioSampleDataSource> m_dataSource;
 
+    size_t m_pollSamplesCount { 3 };
     uint64_t m_writeCount { 0 };
     uint64_t m_readCount { 0 };
 };
+
+inline void WebAudioSourceProviderCocoa::setPollSamplesCount(size_t count)
+{
+    m_pollSamplesCount = count;
+}
 
 }
 
