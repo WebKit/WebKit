@@ -174,10 +174,10 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     case DisplayType::ListItem:
         // <summary> elements with display:list-item should not be rendered as list items because
         // they'd end up with two markers before the text (one from summary element and the other as
-        // a list item). Let them fallthrough in that case so they will create a RenderFlexibleBox.
-        if (creationType == CreateAllRenderers)
-            return createRenderer<RenderListItem>(element, WTFMove(style));
-        FALLTHROUGH;
+        // a list item).
+        if (creationType == OnlyCreateBlockAndFlexboxRenderers)
+            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+        return createRenderer<RenderListItem>(element, WTFMove(style));
     case DisplayType::Flex:
     case DisplayType::InlineFlex:
         return createRenderer<RenderFlexibleBox>(element, WTFMove(style));

@@ -1,3 +1,20 @@
+2021-06-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        logged in GitHub issue pages have bad layout for "Notifications Customize" link
+        https://bugs.webkit.org/show_bug.cgi?id=226859
+
+        Reviewed by Alan Bujtas.
+
+        Test: imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002.html
+
+        In r278280 we made display:list-item on <summary> elements to fallback to display:flexbox in order not to
+        show two markers. However there is no reason why it should be a flexible box instead of a block container,
+        actually is causing issues in some sites. We better fallback to block instead of flexbox renderer.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor): create a RenderBlockFlow when OnlyCreateBlockAndFlexboxRenderers is
+        specified (right now only by summary elements).
+
 2021-06-15  Said Abou-Hallawa  <said@apple.com>
 
         [CG] Create a sub-image when drawing an image only if the destination image will be enlarged, rotated or sheared

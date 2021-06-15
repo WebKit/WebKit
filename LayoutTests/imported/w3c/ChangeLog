@@ -1,3 +1,13 @@
+2021-06-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        logged in GitHub issue pages have bad layout for "Notifications Customize" link
+        https://bugs.webkit.org/show_bug.cgi?id=226859
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002-expected.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002.html: Added.
+
 2021-06-14  Youenn Fablet  <youenn@apple.com>
 
         Import WPT webrtc-extensions
