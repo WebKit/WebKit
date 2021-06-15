@@ -1,3 +1,17 @@
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix typo in r276318
+        https://bugs.webkit.org/show_bug.cgi?id=227041
+        <rdar://76284889>
+
+        Reviewed by Chris Dumez.
+
+        @ uses the string @(DYLIB_INSTALL_NAME_BASE)
+        $ uses the value of the environment variable.
+        This turns out to be an important difference.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2021-06-11  Eleni Maria Stea  <estea@igalia.com>
 
         ANGLE EGL and GLES libraries should link with lib dl.
