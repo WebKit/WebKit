@@ -487,8 +487,6 @@ public:
     void addChild(AXCoreObject*) override;
     void insertChild(AXCoreObject*, unsigned) override;
 
-    bool shouldIgnoreAttributeRole() const override { return false; }
-
     bool canHaveChildren() const override { return true; }
     bool hasChildren() const override { return m_haveChildren; }
     void updateChildrenIfNecessary() override;
@@ -777,6 +775,7 @@ protected:
     ScrollableArea* scrollableAreaAncestor() const;
     void scrollAreaAndAncestor(std::pair<ScrollableArea*, AccessibilityObject*>&) const;
 
+    virtual bool shouldIgnoreAttributeRole() const { return false; }
     virtual AccessibilityRole buttonRoleType() const;
     String rolePlatformDescription() const;
     bool isOnScreen() const override;

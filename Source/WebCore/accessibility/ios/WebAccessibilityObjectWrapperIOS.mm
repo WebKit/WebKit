@@ -760,14 +760,24 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_accessibilityTextEntryTraits
 {
     uint64_t traits = [self _axTextEntryTrait];
-    if (self.axBackingObject->isFocused())
+
+    auto* backingObject = self.axBackingObject;
+    if (backingObject->isFocused())
         traits |= ([self _axHasTextCursorTrait] | [self _axTextOperationsAvailableTrait]);
-    if (self.axBackingObject->isPasswordField())
+    if (backingObject->isPasswordField())
         traits |= [self _axSecureTextFieldTrait];
-    if (self.axBackingObject->roleValue() == AccessibilityRole::SearchField)
+
+    switch (backingObject->roleValue()) {
+    case AccessibilityRole::SearchField:
         traits |= [self _axSearchFieldTrait];
-    if (self.axBackingObject->roleValue() == AccessibilityRole::TextArea)
+        break;
+    case AccessibilityRole::TextArea:
         traits |= [self _axTextAreaTrait];
+        break;
+    default:
+        break;
+    }
+
     return traits;
 }
 

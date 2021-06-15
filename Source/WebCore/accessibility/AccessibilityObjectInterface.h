@@ -1229,8 +1229,6 @@ public:
     virtual void insertChild(AXCoreObject*, unsigned) = 0;
     Vector<AXID> childrenIDs();
 
-    virtual bool shouldIgnoreAttributeRole() const = 0;
-
     virtual bool canHaveChildren() const = 0;
     virtual bool hasChildren() const = 0;
     virtual void updateChildrenIfNecessary() = 0;

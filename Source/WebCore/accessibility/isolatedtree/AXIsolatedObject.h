@@ -590,7 +590,6 @@ private:
     void addChildren() override;
     void addChild(AXCoreObject*) override;
     void insertChild(AXCoreObject*, unsigned) override;
-    bool shouldIgnoreAttributeRole() const override;
     bool canHaveChildren() const override;
     bool hasChildren() const override { return boolAttributeValue(AXPropertyName::HasChildren); }
     void setNeedsToUpdateChildren() override;

@@ -1,3 +1,33 @@
+2021-06-15  Andres Gonzalez  <andresg_22@apple.com>
+
+        iOS - VoiceOver reads incorrectly in content editable element if role="document".
+        https://bugs.webkit.org/show_bug.cgi?id=227035
+        rdar://78776169
+
+        Reviewed by Chris Fleizach.
+
+        On iOS, VoiceOver was announcing <div contenteditable="true" role="document">
+        as a landmark and not as editable text. Furthermore, VoiceOver wasn't
+        echoing keyboard input once the element became interactive.
+        The solution is to return AccessibilityRole::TextArea for an element
+        with these attributes instead of Document.
+        Used shouldIgnoreRoleAttribute to special case this scenario.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::shouldIgnoreAttributeRole const):
+        * accessibility/AccessibilityObjectInterface.h:
+        Removed shouldIgnoreRoleAttribute from the AXObject interface since it
+        doesn't need to be exposed outside the AXObject class hierarchy.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::shouldIgnoreAttributeRole const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityTreeItem.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityTextEntryTraits]): Code cleanup.
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::shouldIgnoreAttributeRole const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2021-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Allow legacy SecurityOrigin behavior for x-apple-ql-id2 scheme
