@@ -1,3 +1,33 @@
+2021-05-31  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Do not compute the min-max sizes of flex items twice
+        https://bugs.webkit.org/show_bug.cgi?id=226463
+
+        Reviewed by Simon Fraser.
+
+        When determining the flex base size, the item’s min and max main sizes are ignored (no clamping occurs).
+        Those limits are used to compute the item's hypothetical main size and also later when the flexible
+        lengths are resolved. The thing is that we were running the code that clamps the flex item size twice instead
+        of computing those limits once and apply them twice.
+
+        From now one, we just compute them once and store the limits in a std::pair in the FlexItem class. This means
+        that the FlexItem is able to compute the hypothetical main size on its own and does not need it to be passed
+        as an argument.
+
+        No new tests as this is already being tested by dozens of tests.
+
+        * rendering/FlexibleBoxAlgorithm.cpp:
+        (WebCore::FlexItem::FlexItem):
+        (WebCore::FlexItem::constrainSizeByMinMax const): Clamp the passed in size by the stored min & max sizes.
+        * rendering/FlexibleBoxAlgorithm.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeFlexItemMinMaxSizes): Renamed from adjustChildSizeForMinAndMax and
+        without the childSize argument which is no longer needed.
+        (WebCore::RenderFlexibleBox::constructFlexItem): Use constrainSizeByMinMax.
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths): Ditto.
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax): Deleted.
+        * rendering/RenderFlexibleBox.h:
+
 2021-06-11  Sergio Villar Senin  <svillar@igalia.com>
 
         logged in GitHub issue pages have bad layout for "Notifications Customize" link

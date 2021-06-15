@@ -35,12 +35,14 @@
 
 namespace WebCore {
 
-FlexItem::FlexItem(RenderBox& box, LayoutUnit flexBaseContentSize, LayoutUnit hypotheticalMainContentSize, LayoutUnit mainAxisBorderAndPadding, LayoutUnit mainAxisMargin, bool everHadLayout)
+FlexItem::FlexItem(RenderBox& box, LayoutUnit flexBaseContentSize, LayoutUnit mainAxisBorderAndPadding, LayoutUnit mainAxisMargin, std::pair<LayoutUnit, LayoutUnit> minMaxSizes, bool everHadLayout)
     : box(box)
     , flexBaseContentSize(flexBaseContentSize)
-    , hypotheticalMainContentSize(hypotheticalMainContentSize)
     , mainAxisBorderAndPadding(mainAxisBorderAndPadding)
     , mainAxisMargin(mainAxisMargin)
+    , minMaxSizes(minMaxSizes)
+    , hypotheticalMainContentSize(constrainSizeByMinMax(flexBaseContentSize))
+    , frozen(false)
     , everHadLayout(everHadLayout)
 {
     ASSERT(!box.isOutOfFlowPositioned());
@@ -84,6 +86,11 @@ bool FlexLayoutAlgorithm::computeNextFlexLine(size_t& nextIndex, Vector<FlexItem
 
     ASSERT(lineItems.size() > 0 || nextIndex == m_allItems.size());
     return lineItems.size() > 0;
+}
+
+LayoutUnit FlexItem::constrainSizeByMinMax(const LayoutUnit size) const
+{
+    return std::max(minMaxSizes.first, std::min(size, minMaxSizes.second));
 }
 
 } // namespace WebCore
