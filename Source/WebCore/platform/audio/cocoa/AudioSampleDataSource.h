@@ -47,7 +47,7 @@ class AudioSampleDataSource : public ThreadSafeRefCounted<AudioSampleDataSource,
 #endif
     {
 public:
-    static Ref<AudioSampleDataSource> create(size_t, WTF::LoggerHelper&);
+    static Ref<AudioSampleDataSource> create(size_t, WTF::LoggerHelper&, size_t waitToStartForPushCount = 2);
 
     ~AudioSampleDataSource();
 
@@ -80,7 +80,7 @@ public:
     static constexpr float EquivalentToMaxVolume = 0.95;
 
 private:
-    AudioSampleDataSource(size_t, LoggerHelper&);
+    AudioSampleDataSource(size_t, LoggerHelper&, size_t waitToStartForPushCount);
 
     OSStatus setupConverter();
     bool pullSamplesInternal(AudioBufferList&, size_t, uint64_t, double, PullMode);
@@ -98,7 +98,9 @@ private:
 #endif
 
     uint64_t m_lastPushedSampleCount { 0 };
+    size_t m_waitToStartForPushCount { 2 };
     MediaTime m_expectedNextPushedSampleTime { MediaTime::invalidTime() };
+    bool m_isFirstPull { true };
 
     MediaTime m_inputSampleOffset;
     int64_t m_outputSampleOffset { 0 };

@@ -28,6 +28,8 @@
 
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
 
+#import "LibWebRTCAudioModule.h"
+
 namespace WebCore {
 
 Ref<MediaStreamTrackAudioSourceProviderCocoa> MediaStreamTrackAudioSourceProviderCocoa::create(MediaStreamTrackPrivate& source)
@@ -39,6 +41,10 @@ MediaStreamTrackAudioSourceProviderCocoa::MediaStreamTrackAudioSourceProviderCoc
     : m_captureSource(makeWeakPtr(source))
     , m_source(source.source())
 {
+#if USE(LIBWEBRTC)
+    if (m_source->isIncomingAudioSource())
+        setPollSamplesCount(LibWebRTCAudioModule::PollSamplesCount + 1);
+#endif
 }
 
 MediaStreamTrackAudioSourceProviderCocoa::~MediaStreamTrackAudioSourceProviderCocoa()

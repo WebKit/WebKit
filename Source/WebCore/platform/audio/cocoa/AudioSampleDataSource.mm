@@ -44,13 +44,14 @@ namespace WebCore {
 using namespace PAL;
 using namespace JSC;
 
-Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCount, LoggerHelper& loggerHelper)
+Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCount, LoggerHelper& loggerHelper, size_t waitToStartForPushCount)
 {
-    return adoptRef(*new AudioSampleDataSource(maximumSampleCount, loggerHelper));
+    return adoptRef(*new AudioSampleDataSource(maximumSampleCount, loggerHelper, waitToStartForPushCount));
 }
 
-AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount, LoggerHelper& loggerHelper)
-    : m_inputSampleOffset(MediaTime::invalidTime())
+AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount, LoggerHelper& loggerHelper, size_t waitToStartForPushCount)
+    : m_waitToStartForPushCount(waitToStartForPushCount)
+    , m_inputSampleOffset(MediaTime::invalidTime())
     , m_maximumSampleCount(maximumSampleCount)
 #if !RELEASE_LOG_DISABLED
     , m_logger(loggerHelper.logger())
@@ -230,20 +231,33 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
     if (m_shouldComputeOutputSampleOffset) {
         uint64_t buffered = endFrame - startFrame;
-        if (buffered < sampleCount * 2 || (m_endFrameWhenNotEnoughData && m_endFrameWhenNotEnoughData == endFrame)) {
-            if (mode != AudioSampleDataSource::Mix)
-                AudioSampleBufferList::zeroABL(buffer, byteCount);
-            return false;
+        if (m_isFirstPull) {
+            if (buffered >= m_waitToStartForPushCount * m_lastPushedSampleCount) {
+                m_outputSampleOffset = startFrame - timeStamp;
+                m_shouldComputeOutputSampleOffset = false;
+                m_endFrameWhenNotEnoughData = 0;
+            } else {
+                // We wait for one chunk of value before starting to play.
+                if (mode != AudioSampleDataSource::Mix)
+                    AudioSampleBufferList::zeroABL(buffer, byteCount);
+                return false;
+            }
+        } else {
+            if (buffered < sampleCount * 2 || (m_endFrameWhenNotEnoughData && m_endFrameWhenNotEnoughData == endFrame)) {
+                if (mode != AudioSampleDataSource::Mix)
+                    AudioSampleBufferList::zeroABL(buffer, byteCount);
+                return false;
+            }
+
+            m_shouldComputeOutputSampleOffset = false;
+            m_endFrameWhenNotEnoughData = 0;
+
+            m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
+            m_outputSampleOffset -= computeOffsetDelay(m_outputDescription->sampleRate(), m_lastPushedSampleCount);
+            dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+                ALWAYS_LOG(logIdentifier, "setting new offset to ", outputSampleOffset);
+            });
         }
-
-        m_shouldComputeOutputSampleOffset = false;
-        m_endFrameWhenNotEnoughData = 0;
-
-        m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
-        m_outputSampleOffset -= computeOffsetDelay(m_outputDescription->sampleRate(), m_lastPushedSampleCount);
-        dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
-            ALWAYS_LOG(logIdentifier, "setting new offset to ", outputSampleOffset);
-        });
     }
 
     timeStamp += m_outputSampleOffset;
@@ -270,6 +284,8 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
             AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
+
+    m_isFirstPull = false;
 
     if (mode == Copy) {
         m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, CARingBuffer::Copy);

@@ -31,6 +31,7 @@
 #include "AudioMediaStreamTrackRendererUnit.h"
 #include "AudioSampleDataSource.h"
 #include "CAAudioStreamDescription.h"
+#include "LibWebRTCAudioModule.h"
 
 namespace WebCore {
 
@@ -74,12 +75,23 @@ void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& devi
     m_shouldReset = true;
 }
 
+static unsigned pollSamplesCount()
+{
+#if USE(LIBWEBRTC)
+    return LibWebRTCAudioModule::PollSamplesCount + 1;
+#else
+    return 2;
+#endif
+}
+
 void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
     ASSERT(!isMainThread());
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     if (!m_dataSource || m_shouldReset || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
-        auto dataSource = AudioSampleDataSource::create(description.sampleRate() * 2, *this);
+        // FIXME: For non libwebrtc sources, we can probably reduce poll samples count to 2.
+        
+        auto dataSource = AudioSampleDataSource::create(description.sampleRate() * 0.5, *this, pollSamplesCount());
 
         if (dataSource->setInputFormat(toCAAudioStreamDescription(description))) {
             ERROR_LOG(LOGIDENTIFIER, "Unable to set the input format of data source");
