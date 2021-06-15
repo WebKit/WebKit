@@ -660,4 +660,33 @@ bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDir
     return true;
 }
 
+void ViewGestureController::setMagnification(double scale, FloatPoint origin)
+{
+    ASSERT(m_activeGestureType == ViewGestureType::None || m_activeGestureType == ViewGestureType::Magnification);
+
+    if (m_activeGestureType == ViewGestureType::None) {
+        prepareMagnificationGesture(origin);
+
+        return;
+    }
+
+    // We're still waiting for the DidCollectGeometry callback.
+    if (!m_visibleContentRectIsValid)
+        return;
+
+    willBeginGesture(ViewGestureType::Magnification);
+
+    double absoluteScale = scale * m_initialMagnification;
+    m_magnification = clampTo<double>(absoluteScale, minMagnification, maxMagnification);
+
+    m_magnificationOrigin = origin;
+
+    applyMagnification();
+}
+
+void ViewGestureController::endMagnification()
+{
+    endMagnificationGesture();
+}
+
 } // namespace WebKit

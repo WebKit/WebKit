@@ -886,10 +886,6 @@ public:
     void setInputMethodState(std::optional<InputMethodState>&&);
 #endif
 
-#if PLATFORM(GTK)
-    void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& center);
-#endif
-
 #if PLATFORM(COCOA)
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);

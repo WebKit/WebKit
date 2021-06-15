@@ -34,12 +34,14 @@ messages -> DrawingArea NotRefCounted {
     SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 
-    AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
-    CommitTransientZoom(double scale, WebCore::FloatPoint origin)
-    
     AcceleratedAnimationDidStart(uint64_t layerID, String key, MonotonicTime startTime)
     AcceleratedAnimationDidEnd(uint64_t layerID, String key)
     
     AddTransactionCallbackID(WebKit::CallbackID callbackID)
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+    AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
+    CommitTransientZoom(double scale, WebCore::FloatPoint origin)
 #endif
 }

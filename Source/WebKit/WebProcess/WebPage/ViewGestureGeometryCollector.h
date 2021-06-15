@@ -56,10 +56,9 @@ private:
     // Message handlers.
     void collectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin);
 
-#if PLATFORM(MAC)
-    void collectGeometryForMagnificationGesture();
-#endif
 #if !PLATFORM(IOS_FAMILY)
+    void collectGeometryForMagnificationGesture();
+
     void setRenderTreeSizeNotificationThreshold(uint64_t);
     void sendDidHitRenderTreeSizeThresholdIfNeeded();
 #endif

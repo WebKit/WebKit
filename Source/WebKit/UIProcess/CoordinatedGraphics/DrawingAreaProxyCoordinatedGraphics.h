@@ -57,6 +57,11 @@ private:
     void waitForBackingStoreUpdateOnNextPaint() override;
     void setBackingStoreIsDiscardable(bool) override;
 
+#if PLATFORM(GTK)
+    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+#endif
+
     // IPC message handlers
     void update(uint64_t backingStoreStateID, const UpdateInfo&) override;
     void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&) override;

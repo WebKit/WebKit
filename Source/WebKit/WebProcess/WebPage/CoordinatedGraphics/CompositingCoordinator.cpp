@@ -115,7 +115,7 @@ void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
     notifyFlushRequired(m_rootLayer.get());
 }
 
-bool CompositingCoordinator::flushPendingLayerChanges()
+bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
     SetForScope<bool> protector(m_isFlushingLayerChanges, true);
 
@@ -130,7 +130,7 @@ bool CompositingCoordinator::flushPendingLayerChanges()
     if (m_overlayCompositingLayer)
         m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
-    m_page.finalizeRenderingUpdate({ FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions });
+    m_page.finalizeRenderingUpdate(flags);
 
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     coordinatedLayer.updateContentBuffersIncludingSubLayers();

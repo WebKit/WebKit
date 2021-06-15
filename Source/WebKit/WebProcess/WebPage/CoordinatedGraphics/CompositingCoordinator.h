@@ -83,7 +83,7 @@ public:
 
     void forceFrameSync() { m_shouldSyncFrame = true; }
 
-    bool flushPendingLayerChanges();
+    bool flushPendingLayerChanges(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
     WebCore::CoordinatedGraphicsState& state() { return m_state; }
 
     void syncDisplayState();

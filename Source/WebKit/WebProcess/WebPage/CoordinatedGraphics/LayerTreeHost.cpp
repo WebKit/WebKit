@@ -39,6 +39,8 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/PageOverlayController.h>
 
+#include <WebCore/RenderLayerBacking.h>
+
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
@@ -144,7 +146,22 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_forceRepaintAsync.callback)
         m_coordinator.forceFrameSync();
 
-    bool didSync = m_coordinator.flushPendingLayerChanges();
+    OptionSet<FinalizeRenderingUpdateFlags> flags;
+#if PLATFORM(GTK)
+    if (!m_transientZoom)
+        flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
+#else
+    flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
+#endif
+
+    bool didSync = m_coordinator.flushPendingLayerChanges(flags);
+
+#if PLATFORM(GTK)
+    // If we have an active transient zoom, we want the zoom to win over any changes
+    // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
+    if (m_transientZoom)
+        applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
+#endif
 
     if (m_notifyAfterScheduledLayerFlush && didSync) {
         m_webPage.drawingArea()->layerHostDidFlushLayers();
@@ -185,8 +202,18 @@ void LayerTreeHost::forceRepaint()
     // We need to schedule another flush, otherwise the forced paint might cancel a later expected flush.
     scheduleLayerFlush();
 
-    if (!m_isWaitingForRenderer)
-        m_coordinator.flushPendingLayerChanges();
+    if (!m_isWaitingForRenderer) {
+        OptionSet<FinalizeRenderingUpdateFlags> flags;
+#if PLATFORM(GTK)
+        if (!m_transientZoom)
+            flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
+#else
+        flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
+#endif
+
+        m_coordinator.flushPendingLayerChanges(flags);
+    }
+
     m_compositor->forceRepaint();
 }
 
@@ -425,6 +452,81 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
         layerFlushTimerFired();
     }
 }
+
+#if PLATFORM(GTK)
+FloatPoint LayerTreeHost::constrainTransientZoomOrigin(double scale, FloatPoint origin) const
+{
+    FrameView& frameView = *m_webPage.mainFrameView();
+    FloatRect visibleContentRect = frameView.visibleContentRectIncludingScrollbars();
+
+    FloatPoint constrainedOrigin = visibleContentRect.location();
+    constrainedOrigin.moveBy(-origin);
+
+    IntSize scaledTotalContentsSize = frameView.totalContentsSize();
+    scaledTotalContentsSize.scale(scale * m_webPage.viewScaleFactor() / m_webPage.totalScaleFactor());
+
+    // Scaling may have exposed the overhang area, so we need to constrain the final
+    // layer position exactly like scrolling will once it's committed, to ensure that
+    // scrolling doesn't make the view jump.
+    constrainedOrigin = ScrollableArea::constrainScrollPositionForOverhang(roundedIntRect(visibleContentRect),
+        scaledTotalContentsSize, roundedIntPoint(constrainedOrigin), frameView.scrollOrigin(),
+        frameView.headerHeight(), frameView.footerHeight());
+    constrainedOrigin.moveBy(-visibleContentRect.location());
+    constrainedOrigin = -constrainedOrigin;
+
+    return constrainedOrigin;
+}
+
+CoordinatedGraphicsLayer* LayerTreeHost::layerForTransientZoom() const
+{
+    RenderLayerBacking* renderViewBacking = m_webPage.mainFrameView()->renderView()->layer()->backing();
+
+    if (GraphicsLayer* contentsContainmentLayer = renderViewBacking->contentsContainmentLayer())
+        return &downcast<CoordinatedGraphicsLayer>(*contentsContainmentLayer);
+
+    return &downcast<CoordinatedGraphicsLayer>(*renderViewBacking->graphicsLayer());
+}
+
+void LayerTreeHost::applyTransientZoomToLayers(double scale, FloatPoint origin)
+{
+    // FIXME: Scrollbars should stay in-place and change height while zooming.
+    FloatPoint constrainedOrigin = constrainTransientZoomOrigin(scale, origin);
+    auto* zoomLayer = layerForTransientZoom();
+
+    TransformationMatrix transform;
+    transform.translate(constrainedOrigin.x(), constrainedOrigin.y());
+    transform.scale(scale);
+
+    zoomLayer->setTransform(transform);
+    zoomLayer->setAnchorPoint(FloatPoint3D());
+    zoomLayer->setPosition(FloatPoint());
+}
+
+void LayerTreeHost::adjustTransientZoom(double scale, FloatPoint origin)
+{
+    m_transientZoom = true;
+    m_transientZoomScale = scale;
+    m_transientZoomOrigin = origin;
+
+    applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
+}
+
+void LayerTreeHost::commitTransientZoom(double scale, FloatPoint origin)
+{
+    if (m_transientZoomScale == scale) {
+        // If the page scale is already the target scale, setPageScaleFactor() will short-circuit
+        // and not apply the transform, so we can't depend on it to do so.
+        TransformationMatrix finalTransform;
+        finalTransform.scale(scale);
+
+        layerForTransientZoom()->setTransform(finalTransform);
+    }
+
+    m_transientZoom = false;
+    m_transientZoomScale = 1;
+    m_transientZoomOrigin = FloatPoint();
+}
+#endif
 
 } // namespace WebKit
 

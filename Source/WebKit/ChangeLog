@@ -1,3 +1,110 @@
+2021-06-15  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Support transient zoom
+        https://bugs.webkit.org/show_bug.cgi?id=197002
+
+        Reviewed by Michael Catanzaro.
+
+        Speed up pinch zoom for AC mode. Reuse the same infrastructure as the
+        macOS implementation. Move the shared code to ViewGestureController.cpp
+        where possible.
+
+        Slightly adjust the shared code to support changing the gesture origin
+        during the gesture since we support it on both touchscreen and touchpad.
+
+        There's not much we can do for non-AC mode so just keep the current
+        behavior there, wrapping real-time zoom into transient zoom API so that
+        it's confined to the web process.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseZoomChanged):
+        (webkitWebViewBaseZoomEnd):
+        (webkitWebViewBaseConstructed):
+        (webkitWebViewBaseZoomBegin): Deleted.
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::adjustTransientZoom):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::commitTransientZoom):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.h:
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::scaledMagnificationOrigin):
+
+        Support changing origin during the gesture, cache the page scale factor
+        to accommodate non-AC mode doing real-time zooming instead of transient
+        zooming.
+
+        (WebKit::ViewGestureController::didCollectGeometryForMagnificationGesture):
+        (WebKit::ViewGestureController::prepareMagnificationGesture):
+        (WebKit::ViewGestureController::applyMagnification):
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        (WebKit::ViewGestureController::magnification const):
+
+        Moved from ViewGestureControllerMac.mm.
+
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/ViewGestureController.messages.in:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::setMagnification):
+        (WebKit::ViewGestureController::endMagnification):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::getCenterForZoomGesture): Deleted.
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::resistanceForDelta):
+
+        Make it a static private method instead of a function so that we can
+        keep using minMagnification and maxMagnification in it.
+
+        (WebKit::ViewGestureController::handleMagnificationGestureEvent):
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+
+        Set the initial scale and origin before calling scaledMagnificationOrigin().
+
+        (WebKit::resistanceForDelta): Deleted.
+        (WebKit::ViewGestureController::scaledMagnificationOrigin):
+        (WebKit::ViewGestureController::didCollectGeometryForMagnificationGesture):
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        (WebKit::ViewGestureController::magnification const):
+
+        Moved to ViewGestureController.cpp.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+
+        We only need to set the ApplyScrollingTreeLayerPositions flag when not
+        zooming, so add a parameter to do that.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::adjustTransientZoom):
+        (WebKit::DrawingAreaCoordinatedGraphics::commitTransientZoom):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+        (WebKit::LayerTreeHost::forceRepaint):
+        Don't pass ApplyScrollingTreeLayerPositions when transient zoom is active.
+
+        (WebKit::LayerTreeHost::constrainTransientZoomOrigin const):
+        (WebKit::LayerTreeHost::layerForTransientZoom const):
+        (WebKit::LayerTreeHost::applyTransientZoomToLayers):
+        (WebKit::LayerTreeHost::adjustTransientZoom):
+        (WebKit::LayerTreeHost::commitTransientZoom):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::addTransactionCallbackID):
+        (WebKit::DrawingArea::commitTransientZoom):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForMagnificationGesture):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.messages.in:
+
+        Build CollectGeometryForMagnificationGesture for GTK as well.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::getCenterForZoomGesture): Deleted.
+
 2021-06-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Harden WebAuthn process by restricting to browser-entitled processes

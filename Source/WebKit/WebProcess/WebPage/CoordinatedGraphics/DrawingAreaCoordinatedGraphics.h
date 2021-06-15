@@ -84,6 +84,11 @@ private:
     void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
     void didUpdate() override;
 
+#if PLATFORM(GTK)
+    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+#endif
+
     void sendDidUpdateBackingStoreState();
 
     void exitAcceleratedCompositingModeSoon();
@@ -150,6 +155,11 @@ private:
     bool m_forceRepaintAfterBackingStoreStateUpdate { false };
 
     RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_displayTimer;
+
+#if PLATFORM(GTK)
+    bool m_transientZoom { false };
+    WebCore::FloatPoint m_transientZoomInitialOrigin;
+#endif
 };
 
 } // namespace WebKit
