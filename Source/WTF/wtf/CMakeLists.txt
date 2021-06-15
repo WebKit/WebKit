@@ -162,7 +162,6 @@ set(WTF_PUBLIC_HEADERS
     Observer.h
     OptionSet.h
     OptionSetHash.h
-    Optional.h
     OrderMaker.h
     Packed.h
     PackedRef.h
