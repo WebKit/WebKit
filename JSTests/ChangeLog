@@ -1,3 +1,46 @@
+2021-06-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r278578. rdar://problem/79355258
+
+    Short circuit read modify write nodes emit byte code that uses the wrong locals
+    https://bugs.webkit.org/show_bug.cgi?id=226576
+    <rdar://problem/78810362>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/short-circuit-read-modify-should-use-the-write-virtual-registers.js: Added.
+    (eval):
+    
+    Source/JavaScriptCore:
+    
+    It's never a good idea to use the wrong local :-)
+    
+    This patch also adds support for dumping predecessors of basic blocks
+    in the bytecode dump.
+    
+    * bytecode/BytecodeDumper.cpp:
+    (JSC::CodeBlockBytecodeDumper<Block>::dumpGraph):
+    * bytecompiler/NodesCodegen.cpp:
+    (JSC::ShortCircuitReadModifyResolveNode::emitBytecode):
+    (JSC::ShortCircuitReadModifyDotNode::emitBytecode):
+    (JSC::ShortCircuitReadModifyBracketNode::emitBytecode):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278578 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-07  Saam Barati  <sbarati@apple.com>
+
+            Short circuit read modify write nodes emit byte code that uses the wrong locals
+            https://bugs.webkit.org/show_bug.cgi?id=226576
+            <rdar://problem/78810362>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/short-circuit-read-modify-should-use-the-write-virtual-registers.js: Added.
+            (eval):
+
 2021-05-20  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r277613. rdar://problem/78264256
