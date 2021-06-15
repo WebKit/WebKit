@@ -1,3 +1,17 @@
+2021-06-15  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/78875336
+
+    2021-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Build fix for safari-611-branch after r277536.
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+            (WebKit::animationValueFromKeyframeValue):
+            (WebKit::createAnimation):
+
 2021-06-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r277536. rdar://problem/78875336

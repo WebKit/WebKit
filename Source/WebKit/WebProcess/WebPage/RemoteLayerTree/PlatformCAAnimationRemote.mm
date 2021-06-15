@@ -676,7 +676,7 @@ void PlatformCAAnimationRemote::copyAnimationsFrom(const PlatformCAAnimation& va
     m_properties.animations = other.m_properties.animations;
 }
 
-static NSObject* animationValueFromKeyframeValue(const PlatformCAAnimationRemote::KeyframeValue& keyframeValue)
+static RetainPtr<NSObject> animationValueFromKeyframeValue(const PlatformCAAnimationRemote::KeyframeValue& keyframeValue)
 {
     return WTF::switchOn(keyframeValue,
         [&](const float number) -> RetainPtr<NSObject> { return @(number); },
@@ -704,8 +704,8 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         auto basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath];
 
         if (properties.keyValues.size() > 1) {
-            [basicAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0])];
-            [basicAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1])];
+            [basicAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0]).get()];
+            [basicAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1]).get()];
         }
 
         if (properties.timingFunctions.size())
@@ -757,8 +757,8 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         auto springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath];
 
         if (properties.keyValues.size() > 1) {
-            [springAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0])];
-            [springAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1])];
+            [springAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0]).get()];
+            [springAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1]).get()];
         }
 
         if (properties.timingFunctions.size()) {
