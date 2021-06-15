@@ -1,3 +1,20 @@
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+       [iOS 15] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/BackBoardServices.framework/BackBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/URLFormatting.framework/URLFormatting.tbd: Added.
+
 2021-01-04  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2021

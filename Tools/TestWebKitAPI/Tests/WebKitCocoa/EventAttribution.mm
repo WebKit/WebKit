@@ -39,7 +39,6 @@
 
 #include "CoreCryptoSPI.h"
 
-#include <Security/SecKeyPriv.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 

@@ -385,6 +385,11 @@ typedef enum {
 - (void)_wheelChangedWithEvent:(UIEvent *)event;
 - (void)_beginPinningInputViews;
 - (void)_endPinningInputViews;
+
+#if HAVE(VK_IMAGE_ANALYSIS)
+- (void)_insertTextFromCamera:(id)sender;
+#endif
+
 @end
 
 @class FBSDisplayConfiguration;

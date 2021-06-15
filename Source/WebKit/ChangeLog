@@ -1,3 +1,15 @@
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Tim Horton.
+
+        Covered by existing tests.
+
+        * Platform/spi/ios/UIKitSPI.h: Add _insertTextFromCamera.
+
 2021-06-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] CoreMedia WrapperClass does not need alignment fixup
