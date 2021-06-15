@@ -118,6 +118,9 @@ private:
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
 
+    // ResponsivenessTimer::Client
+    void didBecomeUnresponsive() final;
+
     void terminateWebProcess(WebCore::ProcessIdentifier);
     void processIsReadyToExit();
 

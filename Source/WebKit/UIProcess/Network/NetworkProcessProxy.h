@@ -286,6 +286,9 @@ private:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
     bool didReceiveSyncNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
+    // ResponsivenessTimer::Client
+    void didBecomeUnresponsive() final;
+
     // Message handlers
     void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const std::optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, uint64_t challengeID);

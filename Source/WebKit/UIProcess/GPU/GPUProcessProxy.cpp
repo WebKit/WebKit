@@ -327,12 +327,14 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
     addSession(webProcessProxy.websiteDataStore());
 
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
+    startResponsivenessTimer(UseLazyStop::No);
     sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "GPUProcessProxy::getGPUProcessConnection: GPUProcessProxy deallocated during connection establishment");
             return reply({ });
         }
 
+        stopResponsivenessTimer();
         if (!identifier) {
             RELEASE_LOG_ERROR(Process, "GPUProcessProxy::getGPUProcessConnection: connection identifier is empty");
             return reply({ });
@@ -360,6 +362,9 @@ void GPUProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
         break;
     case GPUProcessTerminationReason::IdleExit:
         RELEASE_LOG(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=idle-exit", this);
+        break;
+    case GPUProcessTerminationReason::Unresponsive:
+        RELEASE_LOG(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=unresponsive", this);
         break;
     }
 
@@ -590,6 +595,13 @@ void GPUProcessProxy::updatePreferences()
 #if ENABLE(VORBIS)
     send(Messages::GPUProcess::SetVorbisDecoderEnabled(hasEnabledVorbis), 0);
 #endif
+}
+
+void GPUProcessProxy::didBecomeUnresponsive()
+{
+    RELEASE_LOG_ERROR(Process, "GPUProcessProxy::didBecomeUnresponsive: GPUProcess with PID %d became unresponsive, terminating it", processIdentifier());
+    terminate();
+    gpuProcessExited(GPUProcessTerminationReason::Unresponsive);
 }
 
 } // namespace WebKit

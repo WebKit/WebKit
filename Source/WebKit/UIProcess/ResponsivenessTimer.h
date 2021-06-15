@@ -77,6 +77,8 @@ public:
 private:
     void timerFired();
 
+    bool mayBecomeUnresponsive() const;
+
     ResponsivenessTimer::Client& m_client;
 
     RunLoop::Timer<ResponsivenessTimer> m_timer;

@@ -28,7 +28,7 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
-
+#include "ResponsivenessTimer.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
@@ -39,7 +39,7 @@ namespace WebKit {
 
 class ProcessThrottler;
 
-class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, private ProcessLauncher::Client, public IPC::Connection::Client {
+class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, public ResponsivenessTimer::Client, private ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:
@@ -126,6 +126,17 @@ public:
     WebCore::ProcessIdentifier coreProcessIdentifier() const { return m_processIdentifier; }
 
     void setProcessSuppressionEnabled(bool);
+    bool platformIsBeingDebugged() const;
+
+    enum class UseLazyStop : bool { No, Yes };
+    void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);
+    void stopResponsivenessTimer();
+
+    ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
+    const ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer; }
+
+    void ref() final { ThreadSafeRefCounted::ref(); }
+    void deref() final { ThreadSafeRefCounted::deref(); }
 
 protected:
     // ProcessLauncher::Client
@@ -148,16 +159,25 @@ protected:
 
     virtual bool shouldSendPendingMessage(const PendingMessage&) { return true; }
 
+    // ResponsivenessTimer::Client.
+    void didBecomeUnresponsive() override;
+    void didBecomeResponsive() override { }
+    void willChangeIsResponsive() override { }
+    void didChangeIsResponsive() override { }
+    bool mayBecomeUnresponsive() override;
+
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
 
+    ResponsivenessTimer m_responsivenessTimer;
     Vector<PendingMessage> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
+    std::optional<UseLazyStop> m_shouldStartResponsivenessTimerWhenLaunched;
 };
 
 template<typename T>

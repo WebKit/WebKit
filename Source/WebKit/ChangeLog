@@ -1,3 +1,70 @@
+2021-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Add basic detection of unresponsive Network / GPU Processes
+        https://bugs.webkit.org/show_bug.cgi?id=226994
+
+        Reviewed by Geoffrey Garen.
+
+        If a WebProcess A attempts to connect to the GPUProcess / NetworkProcess B and process B
+        fails to respond within 3 seconds, we consider process B as unresponsive and terminate
+        it. As a result, it will re-attempt to launch process B and connect to it again.
+
+        This helps in the following scenario:
+        1. User is in a tab and something looks broken due to the GPUProcess or NetworkProcess
+           becoming unresponsive
+        2. The user tries to reload the page in a new tab
+
+        Before this patch, the tab would be similarly broken / hung because the GPUProcess or
+        NetworkProcess would be unresponsive. After this patch, we would detect the process is
+        hung and kill it. As a result, the page would load correctly in a new tab (with a delay).
+
+        In a follow-up, I think we should consider doing the same thing when the user requests
+        a reload, so that we don't require opening a new tab to recover. However, this keeps
+        the patch small and is a decent first step.
+
+        * Shared/ProcessTerminationReason.h:
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::AuxiliaryProcessProxy):
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        (WebKit::AuxiliaryProcessProxy::shutDownProcess):
+        (WebKit::AuxiliaryProcessProxy::platformIsBeingDebugged const):
+        (WebKit::AuxiliaryProcessProxy::stopResponsivenessTimer):
+        (WebKit::AuxiliaryProcessProxy::startResponsivenessTimer):
+        (WebKit::AuxiliaryProcessProxy::mayBecomeUnresponsive):
+        (WebKit::AuxiliaryProcessProxy::didBecomeUnresponsive):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::responsivenessTimer):
+        (WebKit::AuxiliaryProcessProxy::responsivenessTimer const):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformIsBeingDebugged const): Deleted.
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        (WebKit::GPUProcessProxy::gpuProcessExited):
+        (WebKit::GPUProcessProxy::didBecomeUnresponsive):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didBecomeUnresponsive):
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::timerFired):
+        (WebKit::ResponsivenessTimer::mayBecomeUnresponsive const):
+        * UIProcess/ResponsivenessTimer.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gpuProcessExited):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::isResponsive const):
+        (WebKit::WebProcessProxy::processTerminated):
+        (WebKit::WebProcessProxy::platformIsBeingDebugged const): Deleted.
+        (WebKit::WebProcessProxy::mayBecomeUnresponsive): Deleted.
+        (WebKit::WebProcessProxy::stopResponsivenessTimer): Deleted.
+        (WebKit::WebProcessProxy::startResponsivenessTimer): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::responsivenessTimer): Deleted.
+
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         [Monterey] Support building WebKit (Follow-up)

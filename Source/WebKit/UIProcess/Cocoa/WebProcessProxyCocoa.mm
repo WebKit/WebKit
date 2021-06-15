@@ -145,21 +145,6 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
     return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
 }
 
-bool WebProcessProxy::platformIsBeingDebugged() const
-{
-    // If the UI process is sandboxed and lacks 'process-info-pidinfo', it cannot find out whether other processes are being debugged.
-    if (currentProcessIsSandboxed() && !!sandbox_check(getpid(), "process-info-pidinfo", SANDBOX_CHECK_NO_REPORT))
-        return false;
-
-    struct kinfo_proc info;
-    int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processIdentifier() };
-    size_t size = sizeof(info);
-    if (sysctl(mib, WTF_ARRAY_LENGTH(mib), &info, &size, nullptr, 0) == -1)
-        return false;
-
-    return info.kp_proc.p_flag & P_TRACED;
-}
-
 static Vector<String>& mediaTypeCache()
 {
     ASSERT(RunLoop::isMain());

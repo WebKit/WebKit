@@ -193,7 +193,6 @@ private:
 
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
-    , m_responsivenessTimer(*this)
     , m_backgroundResponsivenessTimer(*this)
     , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
@@ -461,7 +460,6 @@ void WebProcessProxy::shutDown()
         m_webConnection = nullptr;
     }
 
-    m_responsivenessTimer.invalidate();
     m_backgroundResponsivenessTimer.invalidate();
     m_activityForHoldingLockedFiles = nullptr;
     m_audibleMediaActivity = std::nullopt;
@@ -806,13 +804,6 @@ void WebProcessProxy::getWebAuthnProcessConnection(Messages::WebProcessProxy::Ge
 }
 #endif
 
-#if !PLATFORM(COCOA)
-bool WebProcessProxy::platformIsBeingDebugged() const
-{
-    return false;
-}
-#endif
-
 #if !PLATFORM(MAC)
 bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 {
@@ -980,30 +971,6 @@ void WebProcessProxy::didChangeIsResponsive()
         page->didChangeProcessIsResponsive();
 }
 
-bool WebProcessProxy::mayBecomeUnresponsive()
-{
-#if !defined(NDEBUG) || ASAN_ENABLED
-    // Disable responsiveness checks in slow builds to avoid false positives.
-    return false;
-#else
-    if (platformIsBeingDebugged())
-        return false;
-
-    static bool isLibgmallocEnabled = [] {
-        char* variable = getenv("DYLD_INSERT_LIBRARIES");
-        if (!variable)
-            return false;
-        if (!strstr(variable, "libgmalloc"))
-            return false;
-        return true;
-    }();
-    if (isLibgmallocEnabled)
-        return false;
-
-    return true;
-#endif
-}
-
 #if ENABLE(IPC_TESTING_API)
 void WebProcessProxy::setIgnoreInvalidMessageForTesting()
 {
@@ -1055,11 +1022,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     enableRemoteInspectorIfNeeded();
 #endif
 #endif
-
-    if (m_shouldStartResponsivenessTimerWhenLaunched) {
-        auto useLazyStop = *std::exchange(m_shouldStartResponsivenessTimerWhenLaunched, std::nullopt);
-        startResponsivenessTimer(useLazyStop);
-    }
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(FrameIdentifier frameID) const
@@ -1131,7 +1093,7 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t
 
 bool WebProcessProxy::isResponsive() const
 {
-    return m_responsivenessTimer.isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
+    return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
 }
 
 void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
@@ -1285,24 +1247,6 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
     AuxiliaryProcessProxy::terminate();
 
     processDidTerminateOrFailedToLaunch(reason);
-}
-
-void WebProcessProxy::stopResponsivenessTimer()
-{
-    responsivenessTimer().stop();
-}
-
-void WebProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
-{
-    if (isLaunching()) {
-        m_shouldStartResponsivenessTimerWhenLaunched = useLazyStop;
-        return;
-    }
-
-    if (useLazyStop == UseLazyStop::Yes)
-        responsivenessTimer().startWithLazyStop();
-    else
-        responsivenessTimer().start();
 }
 
 void WebProcessProxy::enableSuddenTermination()
@@ -1577,7 +1521,6 @@ void WebProcessProxy::didReceiveBackgroundResponsivenessPing()
 
 void WebProcessProxy::processTerminated()
 {
-    m_responsivenessTimer.processTerminated();
     m_backgroundResponsivenessTimer.processTerminated();
 }
 

@@ -502,14 +502,14 @@ void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminatio
     WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%u", identifier, static_cast<unsigned>(reason));
     m_gpuProcess = nullptr;
 
-    if (reason == GPUProcessTerminationReason::Crash)
+    if (reason == GPUProcessTerminationReason::Crash || reason == GPUProcessTerminationReason::Unresponsive)
         m_client.gpuProcessDidCrash(this, identifier);
 
     Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)
         process->gpuProcessExited(reason);
 
-    if (reason == GPUProcessTerminationReason::Crash) {
+    if (reason == GPUProcessTerminationReason::Crash || reason == GPUProcessTerminationReason::Unresponsive) {
         if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessDidExit: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
             m_resetGPUProcessCrashCountTimer.stop();
