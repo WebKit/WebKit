@@ -1,3 +1,18 @@
+2021-06-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Warray-bounds warning in Packed.h
+        https://bugs.webkit.org/show_bug.cgi?id=226557
+        <rdar://problem/79103658>
+
+        Reviewed by Darin Adler.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::clear): Use the newly-introduced IGNORE_ARRAY_BOUNDS_WARNINGS macros
+        instead of vanilla IGNORE_WARNINGS.
+        * wtf/Compiler.h: Add new IGNORE_ARRAY_BOUNDS_WARNINGS_[BEGIN,END] macros, since this
+        warning is now suppressed in several different places.
+        * wtf/Packed.h: Suppress the warning. Also, add a static_assert for safety.
+
 2021-06-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Harden WebAuthn process by restricting to browser-entitled processes

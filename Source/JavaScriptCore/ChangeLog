@@ -1,3 +1,15 @@
+2021-06-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Warray-bounds warning in Packed.h
+        https://bugs.webkit.org/show_bug.cgi?id=226557
+        <rdar://problem/79103658>
+
+        Reviewed by Darin Adler.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+
 2021-06-15  Mark Lam  <mark.lam@apple.com>
 
         Move setting of scratch buffer active lengths to the runtime functions.
