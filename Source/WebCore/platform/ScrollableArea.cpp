@@ -528,21 +528,21 @@ void ScrollableArea::resnapAfterLayout()
     if (!info)
         return;
 
-    IntPoint currentPosition = scrollPosition();
-    IntPoint correctedPosition = currentPosition;
+    auto currentOffset = scrollOffset();
+    auto correctedOffset = currentOffset;
     const auto& horizontal = info->horizontalSnapOffsets;
     auto activeHorizontalIndex = currentHorizontalSnapPointIndex();
     if (activeHorizontalIndex < horizontal.size())
-        correctedPosition.setX(horizontal[activeHorizontalIndex].offset.toInt());
+        correctedOffset.setX(horizontal[activeHorizontalIndex].offset.toInt());
 
     const auto& vertical = info->verticalSnapOffsets;
     auto activeVerticalIndex = currentVerticalSnapPointIndex();
     if (activeVerticalIndex < vertical.size())
-        correctedPosition.setY(vertical[activeVerticalIndex].offset.toInt());
+        correctedOffset.setY(vertical[activeVerticalIndex].offset.toInt());
 
-    if (correctedPosition != currentPosition) {
-        LOG_WITH_STREAM(ScrollSnap, stream << " adjusting position from " << currentPosition << " to " << correctedPosition);
-        scrollToPositionWithoutAnimation(correctedPosition);
+    if (correctedOffset != currentOffset) {
+        LOG_WITH_STREAM(ScrollSnap, stream << " adjusting offset from " << currentOffset << " to " << correctedOffset);
+        scrollToOffsetWithoutAnimation(correctedOffset);
     }
 }
 

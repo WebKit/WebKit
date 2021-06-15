@@ -1,3 +1,19 @@
+2021-06-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Scroll snap offsets are interpreted as scroll positions in ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=226572
+
+        Reviewed by Simon Fraser.
+
+        Test: css3/scroll-snap/scroll-snap-right-to-left-initial-snapping.html
+
+        This is also covered by existing WPT tests, but these tests are composite reference
+        tests where there are still some failing elements.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::nearestActiveSnapPoint): Use scroll offsets instead of positions.
+        (WebCore::ScrollableArea::updateScrollSnapState): Ditto.
+
 2021-05-31  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Do not compute the min-max sizes of flex items twice
