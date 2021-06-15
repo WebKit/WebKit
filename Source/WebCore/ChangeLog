@@ -1,3 +1,17 @@
+2021-06-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Another crash under gst_element_add_pad
+        https://bugs.webkit.org/show_bug.cgi?id=225765
+
+        Reviewed by Adrian Perez de Castro.
+
+        Decodebin3 in GStreamer <= 1.16 does not respect user-supplied select-stream events. So we
+        need to relax the release assert for these versions. This bug was fixed in:
+        https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/-/commit/b41b87522f59355bb21c001e9e2df96dc6956928
+
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::connectDecoderPad):
+
 2021-06-06  Darin Adler  <darin@apple.com>
 
         Delete some recently-obsoleted files
