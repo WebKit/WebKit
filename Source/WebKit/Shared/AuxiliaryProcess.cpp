@@ -165,6 +165,11 @@ void AuxiliaryProcess::enableTermination()
     m_terminationTimer.startOneShot(m_terminationTimeout);
 }
 
+void AuxiliaryProcess::mainThreadPing(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 IPC::Connection* AuxiliaryProcess::messageSenderConnection() const
 {
     return m_connection.get();

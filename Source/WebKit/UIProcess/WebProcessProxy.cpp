@@ -1477,8 +1477,13 @@ void WebProcessProxy::isResponsive(CompletionHandler<void(bool isWebProcessRespo
     if (callback)
         m_isResponsiveCallbacks.append(WTFMove(callback));
 
-    startResponsivenessTimer();
-    send(Messages::WebProcess::MainThreadPing(), 0);
+    checkForResponsiveness([weakThis = makeWeakPtr(*this)]() mutable {
+        if (!weakThis)
+            return;
+
+        for (auto& isResponsive : std::exchange(weakThis->m_isResponsiveCallbacks, { }))
+            isResponsive(true);
+    });
 }
 
 void WebProcessProxy::isResponsiveWithLazyStop()
@@ -1489,8 +1494,13 @@ void WebProcessProxy::isResponsiveWithLazyStop()
     if (!responsivenessTimer().hasActiveTimer()) {
         // We do not send a ping if we are already waiting for the WebProcess.
         // Spamming pings on a slow web process is not helpful.
-        responsivenessTimer().startWithLazyStop();
-        send(Messages::WebProcess::MainThreadPing(), 0);
+        checkForResponsiveness([weakThis = makeWeakPtr(*this)]() mutable {
+            if (!weakThis)
+                return;
+
+            for (auto& isResponsive : std::exchange(weakThis->m_isResponsiveCallbacks, { }))
+                isResponsive(true);
+        }, UseLazyStop::Yes);
     }
 }
 
@@ -1502,16 +1512,6 @@ bool WebProcessProxy::shouldConfigureJSCForTesting() const
 bool WebProcessProxy::isJITEnabled() const
 {
     return processPool().configuration().isJITEnabled();
-}
-
-void WebProcessProxy::didReceiveMainThreadPing()
-{
-    responsivenessTimer().stop();
-
-    auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
-    bool isWebProcessResponsive = true;
-    for (auto& callback : isResponsiveCallbacks)
-        callback(isWebProcessResponsive);
 }
 
 void WebProcessProxy::didReceiveBackgroundResponsivenessPing()

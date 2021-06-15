@@ -375,4 +375,20 @@ void AuxiliaryProcessProxy::didBecomeUnresponsive()
     RELEASE_LOG_ERROR(Process, "AuxiliaryProcessProxy::didBecomeUnresponsive: %" PUBLIC_LOG_STRING " process with PID %d became unresponsive", processName().characters(), processIdentifier());
 }
 
+void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& responsivenessHandler, UseLazyStop useLazyStop)
+{
+    startResponsivenessTimer(useLazyStop);
+    sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), [weakThis = makeWeakPtr(*this), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+        // Schedule an asynchronous task because our completion handler may have been called as a result of the AuxiliaryProcessProxy
+        // being in the middle of destruction.
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+            if (weakThis)
+                weakThis->stopResponsivenessTimer();
+
+            if (responsivenessHandler)
+                responsivenessHandler();
+        });
+    });
+}
+
 } // namespace WebKit

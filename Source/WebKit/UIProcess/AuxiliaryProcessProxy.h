@@ -132,6 +132,8 @@ public:
     void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);
     void stopResponsivenessTimer();
 
+    void checkForResponsiveness(CompletionHandler<void()>&& = nullptr, UseLazyStop = UseLazyStop::No);
+
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     const ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer; }
 

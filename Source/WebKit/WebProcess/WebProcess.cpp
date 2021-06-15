@@ -970,11 +970,6 @@ void WebProcess::garbageCollectJavaScriptObjects()
     GCController::singleton().garbageCollectNow();
 }
 
-void WebProcess::mainThreadPing()
-{
-    parentProcessConnection()->send(Messages::WebProcessProxy::DidReceiveMainThreadPing(), 0);
-}
-
 void WebProcess::backgroundResponsivenessPing()
 {
     parentProcessConnection()->send(Messages::WebProcessProxy::DidReceiveBackgroundResponsivenessPing(), 0);

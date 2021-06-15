@@ -1,3 +1,42 @@
+2021-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Reloading the view should be able to recover if the GPUProcess or NetworkProcess are hung
+        https://bugs.webkit.org/show_bug.cgi?id=227051
+
+        Reviewed by Geoffrey Garen.
+
+        Reloading the view should be able to get us out of bad state if the GPUProcess or NetworkProcess are hung.
+        This is useful as the first instinct of the user may be to reload the page if the page appears hung.
+
+        Before the change, if the page is in a bad state due to a hung GPUProcess or NetworkProcess and you'd
+        reload, the reload would hang indefinitely. After the change, we'll make sure that both processes
+        are still responsive when triggering the reload. If they are unresponsive, we kill them and the reload
+        is able to proceed.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::didReceiveMessage):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::mainThreadPing):
+        * Shared/AuxiliaryProcess.h:
+        * Shared/AuxiliaryProcess.messages.in:
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::checkForResponsiveness):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reload):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::isResponsive):
+        (WebKit::WebProcessProxy::isResponsiveWithLazyStop):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         [watchOS 8] Support building WebKit
