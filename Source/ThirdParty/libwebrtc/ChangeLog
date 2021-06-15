@@ -1,5 +1,20 @@
 2021-06-15  Youenn Fablet  <youenn@apple.com>
 
+        Enable kVTVideoEncoderSpecification_RequiredLowLatency in case of MacOS software encoder
+        https://bugs.webkit.org/show_bug.cgi?id=226873
+
+        Reviewed by Eric Carlson.
+
+        In case software encoder is being created for baseline, we can use kVTVideoEncoderSpecification_RequiredLowLatency
+        which provides better bitrate management than the regular SW encoder while still generating baseline content.
+        We check whether SW encoder is created based on kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder.
+        If property is unsupported or if its value is false, it means the encoder is software.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
+2021-06-15  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION: [ BigSur iOS wk1 Debug ] imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html is flaky crashing
         https://bugs.webkit.org/show_bug.cgi?id=226928
         <rdar://problem/79205526>
