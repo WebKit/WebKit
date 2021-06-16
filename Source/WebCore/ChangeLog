@@ -1,3 +1,17 @@
+2021-06-16  Frederic Wang  <fwang@igalia.com>
+
+        Nullptr crash in positionInParentBeforeNode via InsertTextCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=226870
+
+        Reviewed by Ryosuke Niwa.
+
+        deleteSelection call In InsertTextCommand::doApply() can make the endingSelection() orphan.
+        If that happens, exit early to avoid dereferencing a nullptr pointer later.
+        Test: fast/editing/insert-text-orphaned-summary-crash.html
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::doApply):
+
 2021-06-16  Per Arne  <pvollan@apple.com>
 
         Update Media Accessibility preferences in the WebContent process from the UI process
