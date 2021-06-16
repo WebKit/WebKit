@@ -95,7 +95,7 @@ GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink
 
     bool shouldStart = !m_mixer->numsinkpads;
 
-    auto mixerPad = adoptGRef(gst_element_get_request_pad(m_mixer.get(), "sink_%u"));
+    auto mixerPad = adoptGRef(gst_element_request_pad_simple(m_mixer.get(), "sink_%u"));
     auto srcPad = adoptGRef(gst_element_get_static_pad(audioResample, "src"));
     gst_pad_link(srcPad.get(), mixerPad.get());
 

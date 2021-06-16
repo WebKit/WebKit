@@ -1,3 +1,17 @@
+2021-06-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] gst_element_get_request_pad deprecated in 1.20
+        https://bugs.webkit.org/show_bug.cgi?id=226974
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In GStreamer 1.20 gst_element_get_request_pad() was renamed to gst_element_request_pad_simple(),
+        so create an alias for older versions.
+
+        * platform/graphics/gstreamer/GStreamerAudioMixer.cpp:
+        (WebCore::GStreamerAudioMixer::registerProducer):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+
 2021-06-16  Tim Nguyen  <ntim@apple.com>
 
         Make CSS.supports() return false for internal CSS properties
