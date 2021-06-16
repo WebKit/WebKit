@@ -1,3 +1,34 @@
+2021-06-16  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r278886. rdar://problem/79405770
+
+    REGRESSION: [ BigSur iOS wk1 Debug ] imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html is flaky crashing
+    https://bugs.webkit.org/show_bug.cgi?id=226928
+    <rdar://problem/79205526>
+    
+    Reviewed by Eric Carlson.
+    
+    * Source/webrtc/rtc_base/task_queue_stdlib.cc:
+    thread_ is created in TaskQueueStdlib constructor before other members pending_queue_ or delayed_queue_.
+    It might happen that thread_ will start executing its callback which will read delayed_queue_ before it is initialized by TaskQueueStdlib constructor.
+    Update to create thread_ before all other members.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278886 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-15  Youenn Fablet  <youenn@apple.com>
+
+            REGRESSION: [ BigSur iOS wk1 Debug ] imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html is flaky crashing
+            https://bugs.webkit.org/show_bug.cgi?id=226928
+            <rdar://problem/79205526>
+
+            Reviewed by Eric Carlson.
+
+            * Source/webrtc/rtc_base/task_queue_stdlib.cc:
+            thread_ is created in TaskQueueStdlib constructor before other members pending_queue_ or delayed_queue_.
+            It might happen that thread_ will start executing its callback which will read delayed_queue_ before it is initialized by TaskQueueStdlib constructor.
+            Update to create thread_ before all other members.
+
 2021-06-10  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
 
         Update libwebrtc to M92
