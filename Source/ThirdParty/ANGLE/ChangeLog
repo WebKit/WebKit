@@ -1,3 +1,20 @@
+2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal AutoObjCPtr == nullptr comparison is inverted
+        https://bugs.webkit.org/show_bug.cgi?id=227026
+
+        Reviewed by Anders Carlsson.
+
+        Make it more correct and add != nullptr variant for
+        consistency.
+
+        Use std::nullptr_t instead of const std::nullptr_t &
+        in all functions for consistency.
+
+        * src/libANGLE/renderer/metal/mtl_common.h:
+        (rx::mtl::AutoObjCPtr::operator== const):
+        (rx::mtl::AutoObjCPtr::operator!= const):
+
 2021-06-15  Kyle Piddington  <kpiddington@apple.com>
 
         Tensorflow.js Broken in Safari 15
