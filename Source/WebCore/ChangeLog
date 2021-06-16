@@ -1,3 +1,17 @@
+2021-06-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Add lock for static cursorMap in MemoryCursor
+        https://bugs.webkit.org/show_bug.cgi?id=226806
+
+        Reviewed by Chris Dumez.
+
+        As cursorMap can be accessed from multiple WorkQueues.
+
+        * Modules/indexeddb/server/MemoryCursor.cpp:
+        (WebCore::IDBServer::MemoryCursor::MemoryCursor):
+        (WebCore::IDBServer::MemoryCursor::~MemoryCursor):
+        (WebCore::IDBServer::MemoryCursor::cursorForIdentifier):
+
 2021-06-16  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION (r273329): Logging of most errors like CSP and promise rejections fail logging to the system console
