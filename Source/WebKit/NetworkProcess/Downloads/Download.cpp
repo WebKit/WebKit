@@ -44,7 +44,7 @@
 #include "NetworkDataTaskCocoa.h"
 #endif
 
-#define DOWNLOAD_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - Download::" fmt, this, ##__VA_ARGS__)
+#define DOWNLOAD_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - Download::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -98,7 +98,7 @@ void Download::cancel(CompletionHandler<void(const IPC::DataReference&)>&& compl
         completionHandler(resumeData);
         if (!weakThis || m_ignoreDidFailCallback == IgnoreDidFailCallback::No)
             return;
-        DOWNLOAD_RELEASE_LOG_IF_ALLOWED("didCancel: (id = %" PRIu64 ")", downloadID().toUInt64());
+        DOWNLOAD_RELEASE_LOG("didCancel: (id = %" PRIu64 ")", downloadID().toUInt64());
         if (auto extension = std::exchange(m_sandboxExtension, nullptr))
             extension->revoke();
         m_downloadManager.downloadFinished(*this);
@@ -130,7 +130,7 @@ void Download::didCreateDestination(const String& path)
 void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
     if (!m_hasReceivedData) {
-        DOWNLOAD_RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().toUInt64());
+        DOWNLOAD_RELEASE_LOG("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().toUInt64());
         m_hasReceivedData = true;
     }
     
@@ -141,7 +141,7 @@ void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten,
 
 void Download::didFinish()
 {
-    DOWNLOAD_RELEASE_LOG_IF_ALLOWED("didFinish: (id = %" PRIu64 ")", downloadID().toUInt64());
+    DOWNLOAD_RELEASE_LOG("didFinish: (id = %" PRIu64 ")", downloadID().toUInt64());
 
     send(Messages::DownloadProxy::DidFinish());
 
@@ -158,7 +158,7 @@ void Download::didFail(const ResourceError& error, const IPC::DataReference& res
     if (m_ignoreDidFailCallback == IgnoreDidFailCallback::Yes)
         return;
 
-    DOWNLOAD_RELEASE_LOG_IF_ALLOWED("didFail: (id = %" PRIu64 ", isTimeout = %d, isCancellation = %d, errCode = %d)",
+    DOWNLOAD_RELEASE_LOG("didFail: (id = %" PRIu64 ", isTimeout = %d, isCancellation = %d, errCode = %d)",
         downloadID().toUInt64(), error.isTimeout(), error.isCancellation(), error.errorCode());
 
     send(Messages::DownloadProxy::DidFail(error, resumeData));
@@ -180,15 +180,6 @@ uint64_t Download::messageSenderDestinationID() const
     return m_downloadID.toUInt64();
 }
 
-bool Download::isAlwaysOnLoggingAllowed() const
-{
-#if PLATFORM(COCOA)
-    return m_sessionID.isAlwaysOnLoggingAllowed();
-#else
-    return false;
-#endif
-}
-
 #if !PLATFORM(COCOA)
 void Download::platformCancelNetworkLoad(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
 {
@@ -202,4 +193,4 @@ void Download::platformDestroyDownload()
 
 } // namespace WebKit
 
-#undef DOWNLOAD_RELEASE_LOG_IF_ALLOWED
+#undef DOWNLOAD_RELEASE_LOG

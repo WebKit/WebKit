@@ -90,8 +90,6 @@ public:
     void didFinish();
     void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
 
-    bool isAlwaysOnLoggingAllowed() const;
-
     void applicationDidEnterBackground() { m_monitor.applicationDidEnterBackground(); }
     void applicationWillEnterForeground() { m_monitor.applicationWillEnterForeground(); }
     DownloadManager& manager() const { return m_downloadManager; }

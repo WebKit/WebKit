@@ -34,7 +34,7 @@
 #include "NetworkProcess.h"
 #include "WebErrors.h"
 
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - PingLoad::" fmt, this, ##__VA_ARGS__)
+#define PING_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - PingLoad::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -118,7 +118,7 @@ void PingLoad::didFinish(const ResourceError& error, const ResourceResponse& res
 
 void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& request)
 {
-    RELEASE_LOG_IF_ALLOWED("startNetworkLoad");
+    PING_RELEASE_LOG("startNetworkLoad");
     if (auto* networkSession = networkProcess.networkSession(m_sessionID)) {
         auto loadParameters = m_parameters;
         loadParameters.request = WTFMove(request);
@@ -148,7 +148,7 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
 
 void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
+    PING_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
         m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
         return;
@@ -162,7 +162,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negotiat
 
 void PingLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse - httpStatusCode=%d", response.httpStatusCode());
+    PING_RELEASE_LOG("didReceiveResponse - httpStatusCode=%d", response.httpStatusCode());
     auto weakThis = makeWeakPtr(*this);
     completionHandler(PolicyAction::Ignore);
     if (!weakThis)
@@ -172,16 +172,16 @@ void PingLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyT
 
 void PingLoad::didReceiveData(Ref<SharedBuffer>&&)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveData");
+    PING_RELEASE_LOG("didReceiveData");
     ASSERT_NOT_REACHED();
 }
 
 void PingLoad::didCompleteWithError(const ResourceError& error, const NetworkLoadMetrics&)
 {
     if (error.isNull())
-        RELEASE_LOG_IF_ALLOWED("didComplete");
+        PING_RELEASE_LOG("didComplete");
     else
-        RELEASE_LOG_IF_ALLOWED("didCompleteWithError, error_code=%d", error.errorCode());
+        PING_RELEASE_LOG("didCompleteWithError, error_code=%d", error.errorCode());
 
     didFinish(error);
 }
@@ -192,25 +192,25 @@ void PingLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedT
 
 void PingLoad::wasBlocked()
 {
-    RELEASE_LOG_IF_ALLOWED("wasBlocked");
+    PING_RELEASE_LOG("wasBlocked");
     didFinish(blockedError(ResourceRequest { currentURL() }));
 }
 
 void PingLoad::cannotShowURL()
 {
-    RELEASE_LOG_IF_ALLOWED("cannotShowURL");
+    PING_RELEASE_LOG("cannotShowURL");
     didFinish(cannotShowURLError(ResourceRequest { currentURL() }));
 }
 
 void PingLoad::wasBlockedByRestrictions()
 {
-    RELEASE_LOG_IF_ALLOWED("wasBlockedByRestrictions");
+    PING_RELEASE_LOG("wasBlockedByRestrictions");
     didFinish(wasBlockedByRestrictionsError(ResourceRequest { currentURL() }));
 }
 
 void PingLoad::timeoutTimerFired()
 {
-    RELEASE_LOG_IF_ALLOWED("timeoutTimerFired");
+    PING_RELEASE_LOG("timeoutTimerFired");
     didFinish(ResourceError { String(), 0, currentURL(), "Load timed out"_s, ResourceError::Type::Timeout });
 }
 
@@ -221,4 +221,4 @@ const URL& PingLoad::currentURL() const
 
 } // namespace WebKit
 
-#undef RELEASE_LOG_IF_ALLOWED
+#undef PING_RELEASE_LOG

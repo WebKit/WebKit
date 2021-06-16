@@ -36,15 +36,14 @@ namespace WebKit {
 using namespace WebCore::DOMCacheEngine;
 using namespace CacheStorage;
 
-#undef RELEASE_LOG_IF_ALLOWED
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(sessionID().isAlwaysOnLoggingAllowed(), CacheStorage, "%p - CacheStorageEngineConnection::" fmt, &m_connection.connection(), ##__VA_ARGS__)
-#define RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK(functionName, fmt, resultGetter) \
+#define CACHE_STORAGE_RELEASE_LOG(fmt, ...) RELEASE_LOG(CacheStorage, "%p - CacheStorageEngineConnection::" fmt, &m_connection.connection(), ##__VA_ARGS__)
+#define CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK(functionName, fmt, resultGetter) \
     if (!result.has_value())\
-        RELEASE_LOG_ERROR_IF(sessionID.isAlwaysOnLoggingAllowed(), CacheStorage, "CacheStorageEngineConnection::%s - failed - error %d", functionName, (int)result.error()); \
+        RELEASE_LOG_ERROR(CacheStorage, "CacheStorageEngineConnection::%s - failed - error %d", functionName, (int)result.error()); \
     else {\
         auto value = resultGetter(result.value()); \
         UNUSED_PARAM(value); \
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), CacheStorage, "CacheStorageEngineConnection::%s - succeeded - " fmt, functionName, value); \
+        RELEASE_LOG(CacheStorage, "CacheStorageEngineConnection::%s - succeeded - " fmt, functionName, value); \
     }
 CacheStorageEngineConnection::CacheStorageEngineConnection(NetworkConnectionToWebProcess& connection)
     : m_connection(connection)
@@ -61,61 +60,61 @@ CacheStorageEngineConnection::~CacheStorageEngineConnection()
 
 void CacheStorageEngineConnection::open(WebCore::ClientOrigin&& origin, String&& cacheName, CacheIdentifierCallback&& callback)
 {
-    RELEASE_LOG_IF_ALLOWED("open cache");
+    CACHE_STORAGE_RELEASE_LOG("open cache");
     Engine::open(m_connection.networkProcess(), sessionID(), WTFMove(origin), WTFMove(cacheName), [callback = WTFMove(callback), sessionID = this->sessionID()](auto& result) mutable {
-        RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK("open", "cache identifier is %" PRIu64, [](const auto& value) { return value.identifier; });
+        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("open", "cache identifier is %" PRIu64, [](const auto& value) { return value.identifier; });
         callback(result);
     });
 }
 
 void CacheStorageEngineConnection::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback)
 {
-    RELEASE_LOG_IF_ALLOWED("remove cache %" PRIu64, cacheIdentifier);
+    CACHE_STORAGE_RELEASE_LOG("remove cache %" PRIu64, cacheIdentifier);
     Engine::remove(m_connection.networkProcess(), sessionID(), cacheIdentifier, [callback = WTFMove(callback), sessionID = this->sessionID()](auto& result) mutable {
-        RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK("remove", "removed cache %" PRIu64, [](const auto& value) { return value.identifier; });
+        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("remove", "removed cache %" PRIu64, [](const auto& value) { return value.identifier; });
         callback(result);
     });
 }
 
 void CacheStorageEngineConnection::caches(WebCore::ClientOrigin&& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
 {
-    RELEASE_LOG_IF_ALLOWED("caches");
+    CACHE_STORAGE_RELEASE_LOG("caches");
     Engine::retrieveCaches(m_connection.networkProcess(), sessionID(), WTFMove(origin), updateCounter, [callback = WTFMove(callback), origin, sessionID = this->sessionID()](auto&& result) mutable {
-        RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK("caches", "caches size is %lu", [](const auto& value) { return value.infos.size(); });
+        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("caches", "caches size is %lu", [](const auto& value) { return value.infos.size(); });
         callback(WTFMove(result));
     });
 }
 
 void CacheStorageEngineConnection::retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, RecordsCallback&& callback)
 {
-    RELEASE_LOG_IF_ALLOWED("retrieveRecords in cache %" PRIu64, cacheIdentifier);
+    CACHE_STORAGE_RELEASE_LOG("retrieveRecords in cache %" PRIu64, cacheIdentifier);
     Engine::retrieveRecords(m_connection.networkProcess(), sessionID(), cacheIdentifier, WTFMove(options), [callback = WTFMove(callback), sessionID = this->sessionID()](auto&& result) mutable {
-        RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK("retrieveRecords", "records size is %lu", [](const auto& value) { return value.size(); });
+        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("retrieveRecords", "records size is %lu", [](const auto& value) { return value.size(); });
         callback(WTFMove(result));
     });
 }
 
 void CacheStorageEngineConnection::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
-    RELEASE_LOG_IF_ALLOWED("deleteMatchingRecords in cache %" PRIu64, cacheIdentifier);
+    CACHE_STORAGE_RELEASE_LOG("deleteMatchingRecords in cache %" PRIu64, cacheIdentifier);
     Engine::deleteMatchingRecords(m_connection.networkProcess(), sessionID(), cacheIdentifier, WTFMove(request), WTFMove(options), [callback = WTFMove(callback), sessionID = this->sessionID()](auto&& result) mutable {
-        RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK("deleteMatchingRecords", "deleted %lu records",  [](const auto& value) { return value.size(); });
+        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("deleteMatchingRecords", "deleted %lu records",  [](const auto& value) { return value.size(); });
         callback(WTFMove(result));
     });
 }
 
 void CacheStorageEngineConnection::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
-    RELEASE_LOG_IF_ALLOWED("putRecords in cache %" PRIu64 ", %lu records", cacheIdentifier, records.size());
+    CACHE_STORAGE_RELEASE_LOG("putRecords in cache %" PRIu64 ", %lu records", cacheIdentifier, records.size());
     Engine::putRecords(m_connection.networkProcess(), sessionID(), cacheIdentifier, WTFMove(records), [callback = WTFMove(callback), sessionID = this->sessionID()](auto&& result) mutable {
-        RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK("putRecords", "put %lu records",  [](const auto& value) { return value.size(); });
+        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("putRecords", "put %lu records",  [](const auto& value) { return value.size(); });
         callback(WTFMove(result));
     });
 }
 
 void CacheStorageEngineConnection::reference(uint64_t cacheIdentifier)
 {
-    RELEASE_LOG_IF_ALLOWED("reference cache %" PRIu64, cacheIdentifier);
+    CACHE_STORAGE_RELEASE_LOG("reference cache %" PRIu64, cacheIdentifier);
     ASSERT(m_cachesLocks.isValidKey(cacheIdentifier));
     if (!m_cachesLocks.isValidKey(cacheIdentifier))
         return;
@@ -129,7 +128,7 @@ void CacheStorageEngineConnection::reference(uint64_t cacheIdentifier)
 
 void CacheStorageEngineConnection::dereference(uint64_t cacheIdentifier)
 {
-    RELEASE_LOG_IF_ALLOWED("dereference cache %" PRIu64, cacheIdentifier);
+    CACHE_STORAGE_RELEASE_LOG("dereference cache %" PRIu64, cacheIdentifier);
     ASSERT(m_cachesLocks.isValidKey(cacheIdentifier));
     if (!m_cachesLocks.isValidKey(cacheIdentifier))
         return;
@@ -163,5 +162,5 @@ PAL::SessionID CacheStorageEngineConnection::sessionID() const
 
 }
 
-#undef RELEASE_LOG_IF_ALLOWED
-#undef RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK
+#undef CACHE_STORAGE_RELEASE_LOG
+#undef CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK

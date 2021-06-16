@@ -38,9 +38,7 @@
 
 namespace WebKit {
 
-#undef RELEASE_LOG_IF_ALLOWED
-
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_rtcProvider.canLog(), Network, "%p - NetworkRTCMonitor::" fmt, this, ##__VA_ARGS__)
+#define RTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkRTCMonitor::" fmt, this, ##__VA_ARGS__)
 
 class NetworkManagerWrapper final : public sigslot::has_slots<> {
 public:
@@ -145,23 +143,25 @@ NetworkRTCMonitor::~NetworkRTCMonitor()
 
 void NetworkRTCMonitor::startUpdatingIfNeeded(bool enableEnumeratingAllNetworkInterfaces)
 {
-    RELEASE_LOG_IF_ALLOWED("startUpdatingIfNeeded %d", m_isStarted);
+    RTC_RELEASE_LOG("startUpdatingIfNeeded m_isStarted=%d", m_isStarted);
     m_enableEnumeratingAllNetworkInterfaces = enableEnumeratingAllNetworkInterfaces;
     networkManager().addListener(*this);
 }
 
 void NetworkRTCMonitor::stopUpdating()
 {
-    RELEASE_LOG_IF_ALLOWED("stopUpdating");
+    RTC_RELEASE_LOG("stopUpdating");
     networkManager().removeListener(*this);
 }
 
 void NetworkRTCMonitor::onNetworksChanged(const Vector<RTCNetwork>& networkList, const Vector<RTCNetwork>& filteredNetworkList, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6)
 {
-    RELEASE_LOG_IF_ALLOWED("onNetworksChanged sent");
+    RTC_RELEASE_LOG("onNetworksChanged sent");
     m_rtcProvider.connection().send(Messages::WebRTCMonitor::NetworksChanged(m_enableEnumeratingAllNetworkInterfaces ? networkList : filteredNetworkList, ipv4, ipv6), 0);
 }
 
 } // namespace WebKit
+
+#undef RTC_RELEASE_LOG
 
 #endif // USE(LIBWEBRTC)
