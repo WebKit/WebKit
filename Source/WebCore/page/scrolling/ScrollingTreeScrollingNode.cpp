@@ -318,10 +318,10 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
     if (m_snapOffsetsInfo.verticalSnapOffsets.size())
         ts.dumpProperty("vertical snap offsets", m_snapOffsetsInfo.verticalSnapOffsets);
 
-    if (m_currentHorizontalSnapPointIndex != invalidSnapOffsetIndex)
+    if (m_currentHorizontalSnapPointIndex)
         ts.dumpProperty("current horizontal snap point index", m_currentHorizontalSnapPointIndex);
 
-    if (m_currentVerticalSnapPointIndex != invalidSnapOffsetIndex)
+    if (m_currentVerticalSnapPointIndex)
         ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);
     
 #endif
@@ -338,6 +338,26 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
 const FloatScrollSnapOffsetsInfo& ScrollingTreeScrollingNode::snapOffsetsInfo() const
 {
     return m_snapOffsetsInfo;
+}
+
+std::optional<unsigned> ScrollingTreeScrollingNode::currentHorizontalSnapPointIndex() const
+{
+    return m_currentHorizontalSnapPointIndex;
+}
+
+std::optional<unsigned> ScrollingTreeScrollingNode::currentVerticalSnapPointIndex() const
+{
+    return m_currentVerticalSnapPointIndex;
+}
+
+void ScrollingTreeScrollingNode::setCurrentHorizontalSnapPointIndex(std::optional<unsigned> index)
+{
+    m_currentHorizontalSnapPointIndex = index;
+}
+
+void ScrollingTreeScrollingNode::setCurrentVerticalSnapPointIndex(std::optional<unsigned> index)
+{
+    m_currentVerticalSnapPointIndex = index;
 }
 #endif
 

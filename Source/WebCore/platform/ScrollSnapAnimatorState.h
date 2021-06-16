@@ -62,12 +62,12 @@ public:
 
     ScrollSnapState currentState() const { return m_currentState; }
 
-    unsigned activeSnapIndexForAxis(ScrollEventAxis axis) const
+    std::optional<unsigned> activeSnapIndexForAxis(ScrollEventAxis axis) const
     {
         return axis == ScrollEventAxis::Horizontal ? m_activeSnapIndexX : m_activeSnapIndexY;
     }
 
-    void setActiveSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
+    void setActiveSnapIndexForAxis(ScrollEventAxis axis, std::optional<unsigned> index)
     {
         if (axis == ScrollEventAxis::Horizontal)
             m_activeSnapIndexX = index;
@@ -84,7 +84,7 @@ public:
     void transitionToDestinationReachedState();
 
 private:
-    float targetOffsetForStartOffset(ScrollEventAxis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta, unsigned& outActiveSnapIndex) const;
+    std::pair<float, std::optional<unsigned>> targetOffsetForStartOffset(ScrollEventAxis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta) const;
     void teardownAnimationForState(ScrollSnapState);
     void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
 
@@ -92,8 +92,8 @@ private:
 
     LayoutScrollSnapOffsetsInfo m_snapOffsetsInfo;
 
-    unsigned m_activeSnapIndexX { invalidSnapOffsetIndex };
-    unsigned m_activeSnapIndexY { invalidSnapOffsetIndex };
+    std::optional<unsigned> m_activeSnapIndexX;
+    std::optional<unsigned> m_activeSnapIndexY;
 
     MonotonicTime m_startTime;
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;

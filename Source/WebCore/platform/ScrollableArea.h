@@ -93,10 +93,10 @@ public:
     WEBCORE_EXPORT const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void setScrollSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo&);
     void clearSnapOffsets();
-    WEBCORE_EXPORT unsigned currentHorizontalSnapPointIndex() const;
-    WEBCORE_EXPORT unsigned currentVerticalSnapPointIndex() const;
-    WEBCORE_EXPORT void setCurrentHorizontalSnapPointIndex(unsigned);
-    WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(unsigned);
+    WEBCORE_EXPORT std::optional<unsigned> currentHorizontalSnapPointIndex() const;
+    WEBCORE_EXPORT std::optional<unsigned> currentVerticalSnapPointIndex() const;
+    WEBCORE_EXPORT void setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
+    WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
 #endif
 
     void resnapAfterLayout();

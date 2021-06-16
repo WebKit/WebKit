@@ -166,7 +166,7 @@ void ScrollingStateScrollingNode::setSnapOffsetsInfo(const FloatScrollSnapOffset
     setPropertyChanged(Property::SnapOffsetsInfo);
 }
 
-void ScrollingStateScrollingNode::setCurrentHorizontalSnapPointIndex(unsigned index)
+void ScrollingStateScrollingNode::setCurrentHorizontalSnapPointIndex(std::optional<unsigned> index)
 {
     if (m_currentHorizontalSnapPointIndex == index)
         return;
@@ -175,7 +175,7 @@ void ScrollingStateScrollingNode::setCurrentHorizontalSnapPointIndex(unsigned in
     setPropertyChanged(Property::CurrentHorizontalSnapOffsetIndex);
 }
 
-void ScrollingStateScrollingNode::setCurrentVerticalSnapPointIndex(unsigned index)
+void ScrollingStateScrollingNode::setCurrentVerticalSnapPointIndex(std::optional<unsigned> index)
 {
     if (m_currentVerticalSnapPointIndex == index)
         return;
@@ -313,10 +313,10 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateT
     if (m_snapOffsetsInfo.verticalSnapOffsets.size())
         ts.dumpProperty("vertical snap offsets", m_snapOffsetsInfo.verticalSnapOffsets);
 
-    if (m_currentHorizontalSnapPointIndex != invalidSnapOffsetIndex)
+    if (m_currentHorizontalSnapPointIndex)
         ts.dumpProperty("current horizontal snap point index", m_currentHorizontalSnapPointIndex);
 
-    if (m_currentVerticalSnapPointIndex != invalidSnapOffsetIndex)
+    if (m_currentVerticalSnapPointIndex)
         ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);
 #endif
 

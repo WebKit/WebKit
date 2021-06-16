@@ -134,12 +134,12 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
-    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
+    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned>);
     void updateActiveScrollSnapIndexForClientOffset();
     void resnapAfterLayout();
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
     void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
-    unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void updateScrollSnapState(const ScrollableArea&);
     void updateGestureInProgressState(const PlatformWheelEvent&);
     float adjustScrollDestination(ScrollEventAxis, float destinationOffset, float velocity, std::optional<float> originalOffset);

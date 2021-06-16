@@ -24,7 +24,7 @@
 
 messages -> RemoteScrollingCoordinator {
     ScrollPositionChangedForNode(uint64_t nodeID, WebCore::FloatPoint scrollPosition, bool syncLayerPosition);
-    CurrentSnapPointIndicesChangedForNode(uint64_t nodeID, unsigned horizontal, unsigned vertical);
+    CurrentSnapPointIndicesChangedForNode(uint64_t nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
     ScrollingStateInUIProcessChanged(WebKit::RemoteScrollingUIState uiState);
 }
 

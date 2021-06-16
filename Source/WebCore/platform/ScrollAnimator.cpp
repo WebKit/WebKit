@@ -184,12 +184,12 @@ bool ScrollAnimator::activeScrollSnapIndexDidChange() const
     return m_scrollController.activeScrollSnapIndexDidChange();
 }
 
-unsigned ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
+std::optional<unsigned> ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
 {
     return m_scrollController.activeScrollSnapIndexForAxis(axis);
 }
 
-void ScrollAnimator::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
+void ScrollAnimator::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, std::optional<unsigned> index)
 {
     return m_scrollController.setActiveScrollSnapIndexForAxis(axis, index);
 }

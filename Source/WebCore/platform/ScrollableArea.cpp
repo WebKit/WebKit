@@ -490,26 +490,26 @@ void ScrollableArea::clearSnapOffsets()
         return scrollAnimator->setSnapOffsetsInfo(LayoutScrollSnapOffsetsInfo());
 }
 
-unsigned ScrollableArea::currentHorizontalSnapPointIndex() const
+std::optional<unsigned> ScrollableArea::currentHorizontalSnapPointIndex() const
 {
     if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal);
-    return invalidSnapOffsetIndex;
+    return std::nullopt;
 }
 
-unsigned ScrollableArea::currentVerticalSnapPointIndex() const
+std::optional<unsigned> ScrollableArea::currentVerticalSnapPointIndex() const
 {
     if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical);
-    return invalidSnapOffsetIndex;
+    return std::nullopt;
 }
 
-void ScrollableArea::setCurrentHorizontalSnapPointIndex(unsigned index)
+void ScrollableArea::setCurrentHorizontalSnapPointIndex(std::optional<unsigned> index)
 {
     scrollAnimator().setActiveScrollSnapIndexForAxis(ScrollEventAxis::Horizontal, index);
 }
 
-void ScrollableArea::setCurrentVerticalSnapPointIndex(unsigned index)
+void ScrollableArea::setCurrentVerticalSnapPointIndex(std::optional<unsigned> index)
 {
     scrollAnimator().setActiveScrollSnapIndexForAxis(ScrollEventAxis::Vertical, index);
 }
@@ -532,13 +532,13 @@ void ScrollableArea::resnapAfterLayout()
     auto correctedOffset = currentOffset;
     const auto& horizontal = info->horizontalSnapOffsets;
     auto activeHorizontalIndex = currentHorizontalSnapPointIndex();
-    if (activeHorizontalIndex < horizontal.size())
-        correctedOffset.setX(horizontal[activeHorizontalIndex].offset.toInt());
+    if (activeHorizontalIndex)
+        correctedOffset.setX(horizontal[*activeHorizontalIndex].offset.toInt());
 
     const auto& vertical = info->verticalSnapOffsets;
     auto activeVerticalIndex = currentVerticalSnapPointIndex();
-    if (activeVerticalIndex < vertical.size())
-        correctedOffset.setY(vertical[activeVerticalIndex].offset.toInt());
+    if (activeVerticalIndex)
+        correctedOffset.setY(vertical[*activeVerticalIndex].offset.toInt());
 
     if (correctedOffset != currentOffset) {
         LOG_WITH_STREAM(ScrollSnap, stream << " adjusting offset from " << currentOffset << " to " << correctedOffset);

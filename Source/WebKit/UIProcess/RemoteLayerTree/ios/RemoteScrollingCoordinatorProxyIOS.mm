@@ -200,14 +200,16 @@ void RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping(CGSiz
 {
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
     if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal)) {
-        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal, targetContentOffset->x, velocity.x, m_currentHorizontalSnapPointIndex);
+        float potentialSnapPosition;
+        std::tie(potentialSnapPosition, m_currentHorizontalSnapPointIndex) = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal, targetContentOffset->x, velocity.x);
         if (targetContentOffset->x > 0 && targetContentOffset->x < maxScrollOffsets.width)
             targetContentOffset->x = std::min<float>(maxScrollOffsets.width, potentialSnapPosition);
     }
 
     if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical)) {
-        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, targetContentOffset->y, velocity.y, m_currentVerticalSnapPointIndex);
-        if (m_currentVerticalSnapPointIndex != invalidSnapOffsetIndex)
+        float potentialSnapPosition;
+        std::tie(potentialSnapPosition, m_currentVerticalSnapPointIndex) = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, targetContentOffset->y, velocity.y);
+        if (m_currentVerticalSnapPointIndex)
             potentialSnapPosition -= topInset;
 
         if (targetContentOffset->y > 0 && targetContentOffset->y < maxScrollOffsets.height)
@@ -225,14 +227,12 @@ bool RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling(ScrollEven
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
     if (root && root->isFrameScrollingNode()) {
         ScrollingTreeFrameScrollingNode* rootScrollingNode = static_cast<ScrollingTreeFrameScrollingNode*>(root);
-        const auto& snapOffsets = rootScrollingNode->snapOffsetsInfo().offsetsForAxis(axis);
-        unsigned currentIndex = axis == ScrollEventAxis::Horizontal ? m_currentHorizontalSnapPointIndex : m_currentVerticalSnapPointIndex;
-        return snapOffsets.size() && (currentIndex < snapOffsets.size() || currentIndex == invalidSnapOffsetIndex);
+        return rootScrollingNode->snapOffsetsInfo().offsetsForAxis(axis).size();
     }
     return false;
 }
 
-float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(ScrollEventAxis axis, float scrollDestination, float velocity, unsigned& currentIndex) const
+std::pair<float, std::optional<unsigned>> RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(ScrollEventAxis axis, float scrollDestination, float velocity) const
 {
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
     ASSERT(root && root->isFrameScrollingNode());
@@ -240,9 +240,8 @@ float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(Sc
     const auto& snapOffsetsInfo = rootScrollingNode->snapOffsetsInfo();
 
     float scaledScrollDestination = scrollDestination / m_webPageProxy.displayedContentScale();
-    float rawClosestSnapOffset;
-    std::tie(rawClosestSnapOffset, currentIndex) = snapOffsetsInfo.closestSnapOffset(axis, rootScrollingNode->layoutViewport().size(), scaledScrollDestination, velocity);
-    return rawClosestSnapOffset * m_webPageProxy.displayedContentScale();
+    auto [rawClosestSnapOffset, newIndex] = snapOffsetsInfo.closestSnapOffset(axis, rootScrollingNode->layoutViewport().size(), scaledScrollDestination, velocity);
+    return std::make_pair(rawClosestSnapOffset * m_webPageProxy.displayedContentScale(), newIndex);
 }
 
 bool RemoteScrollingCoordinatorProxy::hasActiveSnapPoint() const
@@ -280,11 +279,11 @@ CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOf
     const auto& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
 
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
-    if (!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex < horizontal.size())
-        activePoint.x = horizontal[m_currentHorizontalSnapPointIndex].offset * m_webPageProxy.displayedContentScale();
+    if (!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex && *m_currentHorizontalSnapPointIndex < horizontal.size())
+        activePoint.x = horizontal[*m_currentHorizontalSnapPointIndex].offset * m_webPageProxy.displayedContentScale();
 
-    if (!vertical.isEmpty() && m_currentVerticalSnapPointIndex < vertical.size()) {
-        float potentialSnapPosition = vertical[m_currentVerticalSnapPointIndex].offset * m_webPageProxy.displayedContentScale();
+    if (!vertical.isEmpty() && m_currentVerticalSnapPointIndex && *m_currentVerticalSnapPointIndex < vertical.size()) {
+        float potentialSnapPosition = vertical[*m_currentVerticalSnapPointIndex].offset * m_webPageProxy.displayedContentScale();
         potentialSnapPosition -= topInset;
         activePoint.y = potentialSnapPosition;
     }

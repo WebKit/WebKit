@@ -1,3 +1,75 @@
+2021-06-16  Martin Robinson  <mrobinson@webkit.org>
+
+        Replace invalidSnapOffsetIndex with std::optional<unsigned>
+        https://bugs.webkit.org/show_bug.cgi?id=226654
+
+        Reviewed by Simon Fraser.
+
+        Use std::optional<unsigned> in order to represent the situation
+        where we do not have a snap point selected rather than UINT_MAX.
+
+        No new tests. This should not change behavior.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setActiveScrollSnapIndices):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::indicesOfNearestSnapOffsets): Return a std::pair instead of splitting the
+        return values into the argument list.
+        (WebCore::closestSnapOffsetWithInfoAndAxis):
+        (WebCore::LayoutScrollSnapOffsetsInfo::closestSnapOffset const):
+        (WebCore::FloatScrollSnapOffsetsInfo::closestSnapOffset const):
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::setCurrentHorizontalSnapPointIndex):
+        (WebCore::ScrollingStateScrollingNode::setCurrentVerticalSnapPointIndex):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::currentHorizontalSnapPointIndex const):
+        (WebCore::ScrollingStateScrollingNode::currentVerticalSnapPointIndex const):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::setActiveScrollSnapIndices):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingTreeScrollingNode.h: Move some methods into the
+        source file to satisfy the style checker. WEBCORE_EXPORT is applied to the
+        entire class declaration.
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::currentSnapPointIndicesDidChange):
+        (WebCore::ThreadedScrollingTree::setActiveScrollSnapIndices):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexForAxis const):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::activeScrollSnapIndexForAxis const):
+        (WebCore::ScrollAnimator::setActiveScrollSnapIndexForAxis):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::activeScrollSnapIndexForAxis const):
+        (WebCore::ScrollController::setActiveScrollSnapIndexForAxis): When there is no new
+        snap index, we need to actively change the value to std::nullopt. This wasn't
+        necessary because ScrollableArea was covering up this case in the past as a side-effect.
+        (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset):
+        (WebCore::ScrollController::resnapAfterLayout): Also resnap if the snapped index is
+        greater than the current one. This case was being covered up by a side-effect in
+        ScrollableArea.
+        * platform/ScrollController.h:
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset const): Return a std::pair
+        instead of splitting the output values into the argument list.
+        * platform/ScrollSnapAnimatorState.h:
+        (WebCore::ScrollSnapAnimatorState::activeSnapIndexForAxis const):
+        (WebCore::ScrollSnapAnimatorState::setActiveSnapIndexForAxis):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::currentHorizontalSnapPointIndex const):
+        (WebCore::ScrollableArea::currentVerticalSnapPointIndex const):
+        (WebCore::ScrollableArea::setCurrentHorizontalSnapPointIndex):
+        (WebCore::ScrollableArea::setCurrentVerticalSnapPointIndex):
+        (WebCore::ScrollableArea::resnapAfterLayout):
+        * platform/ScrollableArea.h:
+
 2021-06-15  Peng Liu  <peng.liu6@apple.com>
 
         some http/tests/ are crashing with ASSERTION FAILED: isInRoutingArbitrationForToken(token) || m_setupArbitrationOngoing

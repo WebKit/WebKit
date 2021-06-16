@@ -68,7 +68,7 @@ public:
 
     void applyScrollingTreeLayerPositionsAfterCommit();
 
-    void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical);
+    void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
     // FIXME: expose the tree and pass this to that?
     bool handleWheelEvent(const WebCore::PlatformWheelEvent&);
@@ -121,7 +121,7 @@ private:
 
 #if ENABLE(CSS_SCROLL_SNAP)
     bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
-    float closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float scrollDestination, float velocity, unsigned& closestIndex) const;
+    std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float scrollDestination, float velocity) const;
 #endif
 
     void sendUIStateChangedIfNecessary();
@@ -132,8 +132,8 @@ private:
     RequestedScrollInfo* m_requestedScrollInfo { nullptr };
     RemoteScrollingUIState m_uiState;
 #if ENABLE(CSS_SCROLL_SNAP)
-    unsigned m_currentHorizontalSnapPointIndex { WebCore::invalidSnapOffsetIndex };
-    unsigned m_currentVerticalSnapPointIndex { WebCore::invalidSnapOffsetIndex };
+    std::optional<unsigned> m_currentHorizontalSnapPointIndex;
+    std::optional<unsigned> m_currentVerticalSnapPointIndex;
 #endif
     bool m_propagatesMainFrameScrolls { true };
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithScrollingRelations;

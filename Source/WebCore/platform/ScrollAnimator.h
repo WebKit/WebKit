@@ -157,8 +157,8 @@ public:
     virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }
     void updateScrollSnapState();
     bool activeScrollSnapIndexDidChange() const;
-    unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
-    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned index);
+    std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned> index);
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void resnapAfterLayout();
