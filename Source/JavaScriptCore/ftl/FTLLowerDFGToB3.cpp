@@ -2384,6 +2384,7 @@ private:
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         State* state = &m_ftlState;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2414,12 +2415,12 @@ private:
 #endif
 
                         if (mathICGenerationState->shouldSlowPathRepatch) {
-                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
-                                repatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(node->origin.semantic), params[1].gpr(), CCallHelpers::TrustedImmPtr(mathIC));
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, semanticNodeOrigin, exceptions.get(),
+                                repatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(semanticNodeOrigin), params[1].gpr(), CCallHelpers::TrustedImmPtr(mathIC));
                             mathICGenerationState->slowPathCall = call.call();
                         } else {
-                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic,
-                                exceptions.get(), nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(node->origin.semantic), params[1].gpr());
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, semanticNodeOrigin,
+                                exceptions.get(), nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(semanticNodeOrigin), params[1].gpr());
                             mathICGenerationState->slowPathCall = call.call();
                         }
                         jit.jump().linkTo(done, &jit);
@@ -2438,8 +2439,8 @@ private:
                     });
                 } else {
                     callOperation(
-                        *state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
-                        nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(node->origin.semantic), params[1].gpr());
+                        *state, params.unavailableRegisters(), jit, semanticNodeOrigin, exceptions.get(),
+                        nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(semanticNodeOrigin), params[1].gpr());
                 }
 
 #if ENABLE(MATH_IC_STATS)
@@ -2491,6 +2492,7 @@ private:
         patchpoint->numFPScratchRegisters = 2;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         State* state = &m_ftlState;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2524,12 +2526,12 @@ private:
 #endif
 
                         if (mathICGenerationState->shouldSlowPathRepatch) {
-                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
-                                repatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(node->origin.semantic), params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(mathIC));
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, semanticNodeOrigin, exceptions.get(),
+                                repatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(semanticNodeOrigin), params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(mathIC));
                             mathICGenerationState->slowPathCall = call.call();
                         } else {
-                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic,
-                                exceptions.get(), nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(node->origin.semantic), params[1].gpr(), params[2].gpr());
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, semanticNodeOrigin,
+                                exceptions.get(), nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(semanticNodeOrigin), params[1].gpr(), params[2].gpr());
                             mathICGenerationState->slowPathCall = call.call();
                         }
                         jit.jump().linkTo(done, &jit);
@@ -2548,8 +2550,8 @@ private:
                     });
                 } else {
                     callOperation(
-                        *state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
-                        nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(node->origin.semantic), params[1].gpr(), params[2].gpr());
+                        *state, params.unavailableRegisters(), jit, semanticNodeOrigin, exceptions.get(),
+                        nonRepatchingFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(semanticNodeOrigin), params[1].gpr(), params[2].gpr());
                 }
 
 #if ENABLE(MATH_IC_STATS)
@@ -3994,10 +3996,11 @@ private:
 
         State* state = &m_ftlState;
         bool baseIsCell = abstractValue(node->child1()).isType(SpecCell);
+        CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
 
                 // This is the direct exit target for operation calls.
                 Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
@@ -4013,7 +4016,7 @@ private:
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByValGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex, AccessType::GetPrivateName,
+                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetPrivateName,
                     params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), stubInfoGPR);
 
                 CCallHelpers::Jump notCell;
@@ -4036,15 +4039,15 @@ private:
                         jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                         generator->stubInfo()->m_slowOperation = operationGetPrivateNameOptimize;
                         slowPathCall = callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), resultGPR,
-                            jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                            jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                             stubInfoGPR, baseGPR, propertyGPR).call();
                     } else {
                         slowPathCall = callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), operationGetPrivateNameOptimize, resultGPR,
-                            jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                            jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), baseGPR, propertyGPR).call();
                     }
                     jit.jump().linkTo(done, &jit);
@@ -4140,10 +4143,11 @@ private:
 
         State* state = &m_ftlState;
         bool baseIsCell = abstractValue(m_node->child1()).isType(SpecCell);
+        CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
-            CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+            CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
 
             // This is the direct exit target for operation calls.
             Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
@@ -4158,7 +4162,7 @@ private:
             GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
             auto generator = Box<JITPrivateBrandAccessGenerator>::create(
-                jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex, accessType,
+                jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, accessType,
                 params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(brandGPR), stubInfoGPR);
 
             CCallHelpers::Jump notCell;
@@ -4193,15 +4197,15 @@ private:
                     jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                     generator->stubInfo()->m_slowOperation = appropriatePrivateAccessFunction(accessType);
                     slowPathCall = callOperation(
-                        *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                        *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
-                        jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                        jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                         stubInfoGPR, baseGPR, brandGPR).call();
                 } else {
                     slowPathCall = callOperation(
-                        *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                        *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), appropriatePrivateAccessFunction(accessType), InvalidGPRReg,
-                        jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                        jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                         CCallHelpers::TrustedImmPtr(generator->stubInfo()), baseGPR, brandGPR).call();
                 }
                 jit.jump().linkTo(done, &jit);
@@ -4563,13 +4567,14 @@ private:
             preparePatchpointForExceptions(patchpoint);
 
         State* state = &m_ftlState;
-        
+
+        CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =
-                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
 
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
@@ -4580,7 +4585,7 @@ private:
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITPutByIdGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), stubInfoGPR, GPRInfo::patchpointScratchRegister, ecmaMode,
                     putKind);
@@ -4599,16 +4604,16 @@ private:
                             jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                             generator->stubInfo()->m_slowOperation = generator->slowPathFunction();
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                                 stubInfoGPR, params[1].gpr(),
                                 params[0].gpr(), identifier.rawBits()).call();
                         } else {
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                 exceptions.get(), generator->slowPathFunction(), InvalidGPRReg,
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                                 CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                                 params[0].gpr(), identifier.rawBits()).call();
                         }
@@ -5297,10 +5302,11 @@ private:
             RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
             State* state = &m_ftlState;
+            CodeOrigin nodeSemanticOrigin = node->origin.semantic;
             patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
 
                 // This is the direct exit target for operation calls.
                 Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
@@ -5316,7 +5322,7 @@ private:
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByValGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex, AccessType::GetByVal,
+                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetByVal,
                     params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), stubInfoGPR);
 
                 generator->stubInfo()->propertyIsString = propertyIsString;
@@ -5343,15 +5349,15 @@ private:
                         jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                         generator->stubInfo()->m_slowOperation = operationGetByValOptimize;
                         slowPathCall = callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), resultGPR,
-                            jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                            jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                             stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr), baseGPR, propertyGPR).call();
                     } else {
                         slowPathCall = callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), operationGetByValOptimize, resultGPR,
-                            jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                            jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr), baseGPR, propertyGPR).call();
                     }
                     jit.jump().linkTo(done, &jit);
@@ -5910,12 +5916,16 @@ private:
 
         State* state = &m_ftlState;
         Node* node = m_node;
+        CodeOrigin nodeSemanticOrigin = node->origin.semantic;
+        auto child1UseKind = node->child1().useKind();
+        auto child2UseKind = node->child2().useKind();
+        auto ecmaMode = node->ecmaMode().value();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =
-                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
 
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
@@ -5929,7 +5939,7 @@ private:
                 ASSERT(base.gpr() != scratchGPR);
                 ASSERT(returnGPR != scratchGPR);
 
-                if (node->child1().useKind() == UntypedUse)
+                if (child1UseKind)
                     slowCases.append(jit.branchIfNotCell(base));
 
                 constexpr auto optimizationFunction = [&] () {
@@ -5944,7 +5954,7 @@ private:
                         return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
                     else {
                         ASSERT(scratchGPR != params[2].gpr());
-                        if (node->child2().useKind() == UntypedUse)
+                        if (child2UseKind == UntypedUse)
                             slowCases.append(jit.branchIfNotCell(JSValueRegs(params[2].gpr())));
                         return JSValueRegs(params[2].gpr());
                     }
@@ -5953,12 +5963,12 @@ private:
                 const auto generator = [&] {
                     if constexpr (kind == DelByKind::ById) {
                         return Box<JITDelByIdGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                            jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
                             JSValueRegs(returnGPR), stubInfoGPR, scratchGPR);
                     } else {
                         return Box<JITDelByValGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                            jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                             params.unavailableRegisters(), base,
                             subscript, JSValueRegs(returnGPR), stubInfoGPR, scratchGPR);
                     }
@@ -5980,18 +5990,18 @@ private:
                             jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                             generator->stubInfo()->m_slowOperation = optimizationFunction;
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                                 stubInfoGPR, base,
-                                subscript, CCallHelpers::TrustedImm32(node->ecmaMode().value())).call();
+                                subscript, CCallHelpers::TrustedImm32(ecmaMode)).call();
                         } else {
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                 exceptions.get(), optimizationFunction, returnGPR,
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
                                 CCallHelpers::TrustedImmPtr(generator->stubInfo()), base,
-                                subscript, CCallHelpers::TrustedImm32(node->ecmaMode().value())).call();
+                                subscript, CCallHelpers::TrustedImm32(ecmaMode)).call();
                         }
                         jit.jump().linkTo(done, &jit);
 
@@ -9837,6 +9847,8 @@ private:
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
         VM* vm = &this->vm();
+        CodeOrigin nodeSemanticOrigin = node->origin.semantic;
+        auto nodeOp = node->op();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -9848,16 +9860,16 @@ private:
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(nodeSemanticOrigin);
                 callLinkInfo->setUpCall(
-                    node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, GPRInfo::regT0);
+                    nodeOp == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, GPRInfo::regT0);
 
                 auto slowPath = callLinkInfo->emitFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
                 CCallHelpers::Jump done = jit.jump();
 
                 slowPath.link(&jit);
                 auto slowPathStart = jit.label();
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), GPRInfo::regT3);
                 callLinkInfo->emitSlowPath(*vm, jit);
 
                 done.link(&jit);
@@ -9947,6 +9959,7 @@ private:
         }
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -9980,7 +9993,7 @@ private:
                     shuffleData.numPassedArgs = numPassedArgs;
                     shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
                     
-                    CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+                    CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
                     callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall, InvalidGPRReg);
                     
                     CCallHelpers::Label mainPath = jit.label();
@@ -9997,7 +10010,7 @@ private:
                     CCallHelpers::Label slowPath = jit.label();
                     callOperation(
                         *state, toSave, jit,
-                        node->origin.semantic, exceptions.get(), operationLinkDirectCall,
+                        semanticNodeOrigin, exceptions.get(), operationLinkDirectCall,
                         InvalidGPRReg, CCallHelpers::TrustedImmPtr(callLinkInfo), calleeGPR).call();
                     jit.jump().linkTo(mainPath, &jit);
                     callLinkInfo->setExecutableDuringCompilation(executable);
@@ -10012,7 +10025,7 @@ private:
                     return;
                 }
                 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
                 callLinkInfo->setUpCall(
                     isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall, InvalidGPRReg);
 
@@ -10039,7 +10052,7 @@ private:
                         
                         callOperation(
                             *state, params.unavailableRegisters(), jit,
-                            node->origin.semantic, exceptions.get(), operationLinkDirectCall,
+                            semanticNodeOrigin, exceptions.get(), operationLinkDirectCall,
                             InvalidGPRReg, CCallHelpers::TrustedImmPtr(callLinkInfo),
                             calleeGPR).call();
                         jit.jump().linkTo(mainPath, &jit);
@@ -10115,6 +10128,7 @@ private:
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
         VM* vm = &this->vm();
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -10152,7 +10166,7 @@ private:
                 slowPathShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
                 slowPathShuffler.prepareForSlowPath();
 
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
                 callLinkInfo->emitSlowPath(*vm, jit);
 
                 auto doneLocation = jit.label();
@@ -10166,7 +10180,60 @@ private:
                     });
             });
     }
-    
+
+    struct CapturedForPhantomNewArrayWithSpreadCase {
+        unsigned parameterOffset;
+    };
+    struct CapturedForPhantomNewArrayBufferCase {
+        int64_t value;
+        int32_t currentStoreOffset;
+    };
+    struct CapturedForPhantomNewArrayBufferEnd {
+        unsigned arrayLength;
+    };
+    struct CapturedForPhantomCreateRest {
+        InlineCallFrame* inlineCallFrame;
+        unsigned numberOfArgumentsToSkip;
+        unsigned parameterOffset;
+    };
+    struct VarargsSpreadArgumentToEmit {
+        enum Type {
+            PhantomNewArrayWithSpreadCase,
+            PhantomNewArrayBufferCase,
+            PhantomNewArrayBufferEnd,
+            PhantomCreateRest
+        } m_type;
+        union {
+            CapturedForPhantomNewArrayWithSpreadCase m_phantomNewArrayWithSpreadCase;
+            CapturedForPhantomNewArrayBufferCase m_phantomNewArrayBufferCase;
+            CapturedForPhantomNewArrayBufferEnd m_phantomNewArrayBufferEnd;
+            CapturedForPhantomCreateRest m_phantomCreateRest;
+        };
+
+        VarargsSpreadArgumentToEmit(VarargsSpreadArgumentToEmit::Type t, unsigned arg)
+            : m_type(t)
+        {
+            if (m_type == PhantomNewArrayWithSpreadCase)
+                m_phantomNewArrayWithSpreadCase = { arg };
+            else {
+                ASSERT(t == PhantomNewArrayBufferEnd);
+                m_phantomNewArrayBufferEnd = { arg };
+            }
+        }
+        VarargsSpreadArgumentToEmit(VarargsSpreadArgumentToEmit::Type t, int64_t value, int32_t currentStoreOffset)
+            : m_type(t)
+            , m_phantomNewArrayBufferCase({ value, currentStoreOffset })
+        {
+            ASSERT(t == PhantomNewArrayBufferCase);
+        }
+        VarargsSpreadArgumentToEmit(VarargsSpreadArgumentToEmit::Type t, InlineCallFrame* inlineCallFrame, unsigned numberOfArgumentsToSkip, unsigned parameterOffset)
+            : m_type(t)
+            , m_phantomCreateRest({ inlineCallFrame, numberOfArgumentsToSkip, parameterOffset })
+        {
+            ASSERT(t == PhantomCreateRest);
+        }
+    };
+
     void compileCallOrConstructVarargsSpread()
     {
         Node* node = m_node;
@@ -10181,13 +10248,20 @@ private:
         Vector<LValue, 2> spreadLengths;
         Vector<LValue, 8> patchpointArguments;
         HashMap<InlineCallFrame*, LValue, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>> cachedSpreadLengths;
+        // Because the patchpoint generator runs late in Air, the dfg graph will be long gone.
+        // So we must load everything relevant right now, and make sure that they are captured by value by the lambda that acts as the generator
+        // One particularly tricky point is that the generator would like to walk over the tree rooted at this node, exploring through PhantomNewArrayWithSpread and PhantomNewArrayBuffer, emitting code along the way.
+        // Instead, we do that walk here, and record just enough information in the following vector to emit the right code at the end of Air.
+        Vector<VarargsSpreadArgumentToEmit> argumentsToEmitFromRightToLeft;
+        int storeOffset = CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register));
+        unsigned paramsOffset = 4;
+        unsigned index = 0;
         auto pushAndCountArgumentsFromRightToLeft = recursableLambda([&](auto self, Node* target) -> void {
-            if (target->op() == PhantomSpread) {
+            switch (target->op()) {
+            case PhantomSpread:
                 self(target->child1().node());
                 return;
-            }
-
-            if (target->op() == PhantomNewArrayWithSpread) {
+            case PhantomNewArrayWithSpread: {
                 BitVector* bitVector = target->bitVector();
                 for (unsigned i = target->numChildren(); i--; ) {
                     if (bitVector->get(i))
@@ -10196,27 +10270,45 @@ private:
                         ++staticArgumentCount;
                         LValue argument = this->lowJSValue(m_graph.varArgChild(target, i));
                         patchpointArguments.append(argument);
+                        argumentsToEmitFromRightToLeft.append({ VarargsSpreadArgumentToEmit::Type::PhantomNewArrayWithSpreadCase, paramsOffset + (index++)});
                     }
                 }
                 return;
             }
-
-            if (target->op() == PhantomNewArrayBuffer) {
-                staticArgumentCount += target->castOperand<JSImmutableButterfly*>()->length();
+            case PhantomNewArrayBuffer: {
+                auto* array = target->castOperand<JSImmutableButterfly*>();
+                unsigned arrayLength = array->length();
+                staticArgumentCount += arrayLength;
+                Checked<int32_t> offsetCount { 1 };
+                for (unsigned i = arrayLength; i--; ++offsetCount) {
+                    Checked<int32_t> currentStoreOffset { storeOffset };
+                    currentStoreOffset -= (offsetCount * static_cast<int32_t>(sizeof(Register)));
+                    // Because varargs values are drained as JSValue, we should not generate value
+                    // in Double form even if PhantomNewArrayBuffer's indexingType is ArrayWithDouble.
+                    int64_t value = JSValue::encode(array->get(i));
+                    argumentsToEmitFromRightToLeft.append({ VarargsSpreadArgumentToEmit::Type::PhantomNewArrayBufferCase, value, currentStoreOffset.value() });
+                }
+                argumentsToEmitFromRightToLeft.append({ VarargsSpreadArgumentToEmit::Type::PhantomNewArrayBufferEnd, arrayLength });
                 return;
             }
-
-            RELEASE_ASSERT(target->op() == PhantomCreateRest);
-            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
-            unsigned numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
-            LValue length = cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
-                return m_out.zeroExtPtr(this->getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
-            }).iterator->value;
-            patchpointArguments.append(length);
-            spreadLengths.append(length);
+            case PhantomCreateRest: {
+                InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
+                unsigned numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
+                unsigned parameterOffset = paramsOffset + (index++);
+                LValue length = cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
+                    return m_out.zeroExtPtr(this->getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
+                }).iterator->value;
+                patchpointArguments.append(length);
+                spreadLengths.append(length);
+                argumentsToEmitFromRightToLeft.append({ VarargsSpreadArgumentToEmit::Type::PhantomCreateRest, inlineCallFrame, numberOfArgumentsToSkip, parameterOffset });
+                return;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
         });
-
         pushAndCountArgumentsFromRightToLeft(arguments);
+
         LValue argumentCountIncludingThis = m_out.constIntPtr(staticArgumentCount + 1);
         for (LValue length : spreadLengths)
             argumentCountIncludingThis = m_out.add(length, argumentCountIncludingThis);
@@ -10244,12 +10336,14 @@ private:
             WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(EncodedJSValue));
 
         m_proc.requestCallArgAreaSizeInBytes(minimumJSCallAreaSize);
-        
+
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
         VM* vm = &this->vm();
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
+        auto nodeOp = node->op();
         patchpoint->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            [=, argumentsToEmit = WTFMove(argumentsToEmitFromRightToLeft)] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex =
                     state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
@@ -10263,7 +10357,7 @@ private:
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
 
                 RegisterSet usedRegisters = RegisterSet::allRegisters();
                 usedRegisters.exclude(RegisterSet::volatileRegistersForJSCall());
@@ -10327,74 +10421,54 @@ private:
 
                     jit.store32(scratchGPR2, CCallHelpers::Address(scratchGPR1, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset));
 
-                    int storeOffset = CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register));
-
-                    unsigned paramsOffset = 4;
-                    unsigned index = 0;
-                    auto emitArgumentsFromRightToLeft = recursableLambda([&](auto self, Node* target) -> void {
-                        if (target->op() == PhantomSpread) {
-                            self(target->child1().node());
-                            return;
+                    for (const auto& argumentToEmit : argumentsToEmit) {
+                        switch (argumentToEmit.m_type) {
+                        case VarargsSpreadArgumentToEmit::PhantomNewArrayWithSpreadCase: {
+                            unsigned parameterOffset = argumentToEmit.m_phantomNewArrayWithSpreadCase.parameterOffset;
+                            jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
+                            getValueFromRep(params[parameterOffset], scratchGPR3);
+                            jit.store64(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
+                            continue;
                         }
-
-                        if (target->op() == PhantomNewArrayWithSpread) {
-                            BitVector* bitVector = target->bitVector();
-                            for (unsigned i = target->numChildren(); i--; ) {
-                                if (bitVector->get(i))
-                                    self(state->graph.varArgChild(target, i).node());
-                                else {
-                                    jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
-                                    getValueFromRep(params[paramsOffset + (index++)], scratchGPR3);
-                                    jit.store64(scratchGPR3,
-                                        CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
-                                }
-                            }
-                            return;
+                        case VarargsSpreadArgumentToEmit::PhantomNewArrayBufferCase: {
+                            int64_t value = argumentToEmit.m_phantomNewArrayBufferCase.value;
+                            int32_t currentStoreOffset = argumentToEmit.m_phantomNewArrayBufferCase.currentStoreOffset;
+                            jit.move(CCallHelpers::TrustedImm64(value), scratchGPR3);
+                            jit.store64(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, currentStoreOffset));
+                            continue;
                         }
-
-                        if (target->op() == PhantomNewArrayBuffer) {
-                            auto* array = target->castOperand<JSImmutableButterfly*>();
-                            Checked<int32_t> offsetCount { 1 };
-                            for (unsigned i = array->length(); i--; ++offsetCount) {
-                                // Because varargs values are drained as JSValue, we should not generate value
-                                // in Double form even if PhantomNewArrayBuffer's indexingType is ArrayWithDouble.
-                                int64_t value = JSValue::encode(array->get(i));
-                                jit.move(CCallHelpers::TrustedImm64(value), scratchGPR3);
-                                Checked<int32_t> currentStoreOffset { storeOffset };
-                                currentStoreOffset -= (offsetCount * static_cast<int32_t>(sizeof(Register)));
-                                jit.store64(scratchGPR3,
-                                    CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, currentStoreOffset));
-                            }
-                            jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(array->length())), scratchGPR2);
-                            return;
+                        case VarargsSpreadArgumentToEmit::PhantomNewArrayBufferEnd: {
+                            size_t arrayLength = static_cast<size_t>(argumentToEmit.m_phantomNewArrayBufferEnd.arrayLength);
+                            jit.subPtr(CCallHelpers::TrustedImmPtr(arrayLength), scratchGPR2);
+                            continue;
                         }
+                        case VarargsSpreadArgumentToEmit::PhantomCreateRest: {
+                            InlineCallFrame* inlineCallFrame = argumentToEmit.m_phantomCreateRest.inlineCallFrame;
+                            unsigned numberOfArgumentsToSkip = argumentToEmit.m_phantomCreateRest.numberOfArgumentsToSkip;
+                            unsigned parameterOffset = argumentToEmit.m_phantomCreateRest.parameterOffset;
 
-                        RELEASE_ASSERT(target->op() == PhantomCreateRest);
-                        InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
+                            B3::ValueRep numArgumentsToCopy = params[parameterOffset];
+                            getValueFromRep(numArgumentsToCopy, scratchGPR3);
+                            int loadOffset = (AssemblyHelpers::argumentsStart(inlineCallFrame).offset() + numberOfArgumentsToSkip) * static_cast<int>(sizeof(Register));
 
-                        unsigned numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
-
-                        B3::ValueRep numArgumentsToCopy = params[paramsOffset + (index++)];
-                        getValueFromRep(numArgumentsToCopy, scratchGPR3);
-                        int loadOffset = (AssemblyHelpers::argumentsStart(inlineCallFrame).offset() + numberOfArgumentsToSkip) * static_cast<int>(sizeof(Register));
-
-                        auto done = jit.branchTestPtr(MacroAssembler::Zero, scratchGPR3);
-                        auto loopStart = jit.label();
-                        jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR3);
-                        jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
-                        jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR3, CCallHelpers::TimesEight, loadOffset), scratchGPR4);
-                        jit.store64(scratchGPR4,
-                            CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
-                        jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR3).linkTo(loopStart, &jit);
-                        done.link(&jit);
-                    });
-                    emitArgumentsFromRightToLeft(arguments);
+                            auto done = jit.branchTestPtr(MacroAssembler::Zero, scratchGPR3);
+                            auto loopStart = jit.label();
+                            jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR3);
+                            jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
+                            jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR3, CCallHelpers::TimesEight, loadOffset), scratchGPR4);
+                            jit.store64(scratchGPR4,
+                                CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
+                            jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR3).linkTo(loopStart, &jit);
+                            done.link(&jit);
+                        }
+                        }
+                    }
                 }
 
                 {
                     CCallHelpers::Jump dontThrow = jit.jump();
                     slowCase.link(&jit);
-                    jit.setupArguments<decltype(operationThrowStackOverflowForVarargs)>(jit.codeBlock()->globalObjectFor(node->origin.semantic));
+                    jit.setupArguments<decltype(operationThrowStackOverflowForVarargs)>(jit.codeBlock()->globalObjectFor(semanticNodeOrigin));
                     jit.prepareCallOperation(jit.vm());
                     callWithExceptionCheck(operationThrowStackOverflowForVarargs);
                     jit.abortWithReason(DFGVarargsThrowingPathDidNotThrow);
@@ -10408,9 +10482,9 @@ private:
                 jit.store64(scratchGPR3, CCallHelpers::calleeArgumentSlot(0));
                 
                 CallLinkInfo::CallType callType;
-                if (node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs)
+                if (nodeOp == ConstructVarargs || nodeOp == ConstructForwardVarargs)
                     callType = CallLinkInfo::ConstructVarargs;
-                else if (node->op() == TailCallVarargs || node->op() == TailCallForwardVarargs)
+                else if (nodeOp == TailCallVarargs || nodeOp == TailCallForwardVarargs)
                     callType = CallLinkInfo::TailCallVarargs;
                 else
                     callType = CallLinkInfo::CallVarargs;
@@ -10438,7 +10512,7 @@ private:
 
                 if (isTailCall)
                     jit.emitRestoreCalleeSaves();
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
                 callLinkInfo->emitSlowPath(*vm, jit);
                 
                 if (isTailCall)
@@ -10544,6 +10618,14 @@ private:
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
         VM* vm = &this->vm();
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
+        InlineCallFrame* inlineCallFrame;
+        if (node->child3())
+            inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame();
+        else
+            inlineCallFrame = semanticNodeOrigin.inlineCallFrame();
+        CallVarargsData* data = node->callVarargsData();
+        auto nodeOp = node->op();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -10559,8 +10641,7 @@ private:
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
-                CallVarargsData* data = node->callVarargsData();
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
 
                 unsigned argIndex = 1;
                 GPRReg calleeGPR = params[argIndex++].gpr();
@@ -10644,18 +10725,13 @@ private:
                     jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR2);
                     
                     CCallHelpers::JumpList slowCase;
-                    InlineCallFrame* inlineCallFrame;
-                    if (node->child3())
-                        inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame();
-                    else
-                        inlineCallFrame = node->origin.semantic.inlineCallFrame();
 
                     // emitSetupVarargsFrameFastCase modifies the stack pointer if it succeeds.
                     emitSetupVarargsFrameFastCase(*vm, jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
 
                     CCallHelpers::Jump done = jit.jump();
                     slowCase.link(&jit);
-                    jit.setupArguments<decltype(operationThrowStackOverflowForVarargs)>(jit.codeBlock()->globalObjectFor(node->origin.semantic));
+                    jit.setupArguments<decltype(operationThrowStackOverflowForVarargs)>(jit.codeBlock()->globalObjectFor(semanticNodeOrigin));
                     jit.prepareCallOperation(jit.vm());
                     callWithExceptionCheck(bitwise_cast<void(*)()>(operationThrowStackOverflowForVarargs));
                     jit.abortWithReason(DFGVarargsThrowingPathDidNotThrow);
@@ -10663,7 +10739,7 @@ private:
                     done.link(&jit);
                 } else {
                     jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
-                    jit.setupArguments<decltype(operationSizeFrameForVarargs)>(jit.codeBlock()->globalObjectFor(node->origin.semantic), argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
+                    jit.setupArguments<decltype(operationSizeFrameForVarargs)>(jit.codeBlock()->globalObjectFor(semanticNodeOrigin), argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
                     jit.prepareCallOperation(jit.vm());
                     callWithExceptionCheck(bitwise_cast<void(*)()>(operationSizeFrameForVarargs));
 
@@ -10672,7 +10748,7 @@ private:
                     argumentsLateRep.emitRestore(jit, argumentsGPR);
                     emitSetVarargsFrame(jit, scratchGPR1, false, scratchGPR2, scratchGPR2);
                     jit.addPtr(CCallHelpers::TrustedImm32(-minimumJSCallAreaSize), scratchGPR2, CCallHelpers::stackPointerRegister);
-                    jit.setupArguments<decltype(operationSetupVarargsFrame)>(jit.codeBlock()->globalObjectFor(node->origin.semantic), scratchGPR2, argumentsGPR, CCallHelpers::TrustedImm32(data->firstVarArgOffset), scratchGPR1);
+                    jit.setupArguments<decltype(operationSetupVarargsFrame)>(jit.codeBlock()->globalObjectFor(semanticNodeOrigin), scratchGPR2, argumentsGPR, CCallHelpers::TrustedImm32(data->firstVarArgOffset), scratchGPR1);
                     jit.prepareCallOperation(jit.vm());
                     callWithExceptionCheck(bitwise_cast<void(*)()>(operationSetupVarargsFrame));
                     
@@ -10689,9 +10765,9 @@ private:
                 jit.store64(thisGPR, CCallHelpers::calleeArgumentSlot(0));
                 
                 CallLinkInfo::CallType callType;
-                if (node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs)
+                if (nodeOp == ConstructVarargs || nodeOp == ConstructForwardVarargs)
                     callType = CallLinkInfo::ConstructVarargs;
-                else if (node->op() == TailCallVarargs || node->op() == TailCallForwardVarargs)
+                else if (nodeOp == TailCallVarargs || nodeOp == TailCallForwardVarargs)
                     callType = CallLinkInfo::TailCallVarargs;
                 else
                     callType = CallLinkInfo::CallVarargs;
@@ -10717,7 +10793,7 @@ private:
 
                 if (isTailCall)
                     jit.emitRestoreCalleeSaves();
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
                 callLinkInfo->emitSlowPath(*vm, jit);
                 
                 if (isTailCall)
@@ -10791,6 +10867,8 @@ private:
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
         VM& vm = this->vm();
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
+        auto ecmaMode = node->ecmaMode().value();
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         patchpoint->setGenerator(
             [=, &vm] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -10805,7 +10883,7 @@ private:
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
                 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
                 callLinkInfo->setUpCall(CallLinkInfo::Call, GPRInfo::regT0);
                 
                 jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), CCallHelpers::stackPointerRegister, GPRInfo::regT1);
@@ -10817,7 +10895,7 @@ private:
                 unsigned requiredBytes = sizeof(CallerFrameAndPC) + sizeof(CallFrame*) * 2;
                 requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
                 jit.subPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
-                jit.move(CCallHelpers::TrustedImm32(node->ecmaMode().value()), GPRInfo::regT2);
+                jit.move(CCallHelpers::TrustedImm32(ecmaMode), GPRInfo::regT2);
                 jit.setupArguments<decltype(operationCallEval)>(globalObject, GPRInfo::regT1, GPRInfo::regT2);
                 jit.prepareCallOperation(vm);
                 jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationCallEval)), GPRInfo::nonPreservedNonArgumentGPR0);
@@ -12368,11 +12446,12 @@ private:
 
         State* state = &m_ftlState;
         Node* node = m_node;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(semanticNodeOrigin);
 
                 // This is the direct exit target for operation calls.
                 Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
@@ -12391,12 +12470,12 @@ private:
                 const auto generator = [&] {
                     if constexpr (kind == InByKind::ById) {
                         return Box<JITInByIdGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                            jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
                             JSValueRegs(returnGPR), stubInfoGPR);
                     } else {
                         return Box<JITInByValGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                            jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                             params.unavailableRegisters(), base, subscript,
                             JSValueRegs(returnGPR), stubInfoGPR);
                     }
@@ -12424,15 +12503,15 @@ private:
                                 jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                                 generator->stubInfo()->m_slowOperation = operationInByIdOptimize;
                                 slowPathCall = callOperation(
-                                    *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                    *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                    jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                    jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                     stubInfoGPR, base, subscript).call();
                             } else {
                                 slowPathCall = callOperation(
-                                    *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                    *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), operationInByIdOptimize, returnGPR,
-                                    jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                    jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                     CCallHelpers::TrustedImmPtr(generator->stubInfo()), base, subscript).call();
                             }
                         } else {
@@ -12440,16 +12519,16 @@ private:
                                 jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                                 generator->stubInfo()->m_slowOperation = operationInByValOptimize;
                                 slowPathCall = callOperation(
-                                    *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                    *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                    jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                    jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                     stubInfoGPR,
                                     CCallHelpers::TrustedImmPtr(nullptr), base, subscript).call();
                             } else {
                                 slowPathCall = callOperation(
-                                    *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                    *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), operationInByValOptimize, returnGPR,
-                                    jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                    jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                     CCallHelpers::TrustedImmPtr(generator->stubInfo()),
                                     CCallHelpers::TrustedImmPtr(nullptr), base, subscript).call();
                             }
@@ -12677,6 +12756,7 @@ private:
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
 
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -12701,14 +12781,14 @@ private:
                     slowCases.append(jit.branchIfNotCell(prototypeGPR));
                 
                 CallSiteIndex callSiteIndex =
-                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(semanticNodeOrigin);
                 
                 // This is the direct exit target for operation calls.
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
                 
                 auto generator = Box<JITInstanceOfGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                    jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), resultGPR, valueGPR, prototypeGPR, stubInfoGPR, scratchGPR,
                     scratch2GPR, prototypeIsObject);
                 generator->generateFastPath(jit);
@@ -12729,16 +12809,16 @@ private:
                             jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                             generator->stubInfo()->m_slowOperation = optimizationFunction;
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), resultGPR,
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                 stubInfoGPR, valueGPR,
                                 prototypeGPR).call();
                         } else {
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), optimizationFunction, resultGPR,
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                 CCallHelpers::TrustedImmPtr(generator->stubInfo()), valueGPR,
                                 prototypeGPR).call();
                         }
@@ -14198,12 +14278,13 @@ private:
             preparePatchpointForExceptions(patchpoint);
 
         State* state = &m_ftlState;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =
-                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(semanticNodeOrigin);
 
                 // This is the direct exit target for operation calls.
                 Box<CCallHelpers::JumpList> exceptions =
@@ -14217,7 +14298,7 @@ private:
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByIdGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                    jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[1].gpr()),
                     JSValueRegs(params[0].gpr()), stubInfoGPR, type);
 
@@ -14237,16 +14318,16 @@ private:
                             jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                             generator->stubInfo()->m_slowOperation = optimizationFunction;
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), params[0].gpr(),
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                 stubInfoGPR, params[1].gpr(),
                                 CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
                         } else {
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), optimizationFunction, params[0].gpr(),
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                 CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                                 CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
                         }
@@ -14281,12 +14362,13 @@ private:
             preparePatchpointForExceptions(patchpoint);
 
         State* state = &m_ftlState;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =
-                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+                    state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(semanticNodeOrigin);
 
                 // This is the direct exit target for operation calls.
                 Box<CCallHelpers::JumpList> exceptions =
@@ -14300,7 +14382,7 @@ private:
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByIdWithThisGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
+                    jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), stubInfoGPR);
 
@@ -14320,16 +14402,16 @@ private:
                             jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                             generator->stubInfo()->m_slowOperation = optimizationFunction;
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), params[0].gpr(),
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                 stubInfoGPR, params[1].gpr(),
                                 params[2].gpr(), CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
                         } else {
                             slowPathCall = callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), optimizationFunction, params[0].gpr(),
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                 CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                                 params[2].gpr(), CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
                         }
@@ -14725,6 +14807,7 @@ private:
         State* state = &m_ftlState;
         Node* node = m_node;
         NodeType op = m_node->op();
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         JSValue child1Constant = m_state.forNode(m_node->child1()).value();
 
         auto nodeIndex = m_nodeIndexInGraph;
@@ -14746,7 +14829,7 @@ private:
 
                 RefPtr<OSRExitHandle> handle = exitDescriptor->emitOSRExitLater(*state, BadType, origin, params, nodeIndex, osrExitArgumentOffset);
 
-                SnippetParams domJITParams(*state, params, node, nullptr, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+                SnippetParams domJITParams(*state, params, semanticNodeOrigin, nullptr, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
                 CCallHelpers::JumpList failureCases = domJIT->generator()->run(jit, domJITParams);
                 CCallHelpers::JumpList notJSCastFailureCases;
                 if (op == CheckNotJSCast) {
@@ -14866,6 +14949,7 @@ private:
 
         State* state = &m_ftlState;
         Node* node = m_node;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -14887,7 +14971,7 @@ private:
 
                 Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
-                SnippetParams domJITParams(*state, params, node, exceptions, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+                SnippetParams domJITParams(*state, params, semanticNodeOrigin, exceptions, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
                 domJIT->generator()->run(jit, domJITParams);
             });
         patchpoint->effects = Effects::forCall();
@@ -15644,6 +15728,7 @@ private:
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -15669,16 +15754,16 @@ private:
                             
                             generator->slowPathJumpList().link(&jit);
                             callOperation(
-                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), slowPathFunction, params[0].gpr(),
-                                jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                                jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                 params[1].gpr(), params[2].gpr());
                             jit.jump().linkTo(done, &jit);
                         });
                 } else {
                     callOperation(
-                        *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                        exceptions.get(), slowPathFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(node->origin.semantic), params[1].gpr(),
+                        *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
+                        exceptions.get(), slowPathFunction, params[0].gpr(), jit.codeBlock()->globalObjectFor(semanticNodeOrigin), params[1].gpr(),
                         params[2].gpr());
                 }
             });
@@ -15711,6 +15796,7 @@ private:
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -15732,9 +15818,9 @@ private:
                             
                         generator->slowPathJumpList().link(&jit);
                         callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                             exceptions.get(), slowPathFunction, params[0].gpr(),
-                            jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                            jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                             params[1].gpr(), params[2].gpr());
                         jit.jump().linkTo(done, &jit);
                     });
@@ -15768,6 +15854,7 @@ private:
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -15795,9 +15882,9 @@ private:
                             ? operationValueBitRShift : operationValueBitURShift;
                         
                         callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                             exceptions.get(), slowPathFunction, params[0].gpr(),
-                            jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                            jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                             params[1].gpr(), params[2].gpr());
                         jit.jump().linkTo(done, &jit);
                     });
@@ -20140,6 +20227,7 @@ private:
         BlockIndex blockIndex = block->index;
         unsigned nodeIndex = node ? node->index() : UINT_MAX;
 #if !ASSERT_ENABLED
+        auto nodeOp = node ? node->op() : LastNodeType;
         m_out.patchpoint(Void)->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -20147,7 +20235,7 @@ private:
                 jit.move(CCallHelpers::TrustedImm32(blockIndex), GPRInfo::regT0);
                 jit.move(CCallHelpers::TrustedImm32(nodeIndex), GPRInfo::regT1);
                 if (node)
-                    jit.move(CCallHelpers::TrustedImm32(node->op()), GPRInfo::regT2);
+                    jit.move(CCallHelpers::TrustedImm32(nodeOp), GPRInfo::regT2);
                 jit.abortWithReason(FTLCrash);
             });
 #else // ASSERT_ENABLED
