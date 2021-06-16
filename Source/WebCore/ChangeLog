@@ -1,3 +1,20 @@
+2021-06-16  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] Crash when getting audioTracks, videoTracks, textTracks of sourceBuffer after executing MediaSource::removeSourceBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=227018
+
+        Reviewed by Eric Carlson.
+
+        Fixed not to refer to m_source when isRemoved() is true in SourceBuffer::videoTracks(),
+        SourceBuffer::audioTracks(), SourceBuffer::textTracks().
+
+        Test: media/media-source/media-source-get-tracks-crash.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::videoTracks):
+        (WebCore::SourceBuffer::audioTracks):
+        (WebCore::SourceBuffer::textTracks):
+
 2021-06-16  Alan Bujtas  <zalan@apple.com>
 
         Content moves up when hovering over a link on Hacker News
