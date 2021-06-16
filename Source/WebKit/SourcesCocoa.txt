@@ -453,7 +453,6 @@ UIProcess/ios/forms/WKFormSelectPicker.mm
 UIProcess/ios/forms/WKFormSelectPopover.mm
 UIProcess/ios/forms/WKNumberPadView.mm
 UIProcess/ios/forms/WKNumberPadViewController.mm
-UIProcess/ios/forms/WKQuickboardListViewController.mm
 UIProcess/ios/forms/WKSelectMenuListViewController.mm
 UIProcess/ios/forms/WKTextInputListViewController.mm
 UIProcess/ios/forms/WKTimePickerViewController.mm

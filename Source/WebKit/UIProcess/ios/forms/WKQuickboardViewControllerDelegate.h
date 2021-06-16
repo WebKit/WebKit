@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,39 +27,11 @@
 
 #import "PepperUICoreSPI.h"
 
-@interface WKQuickboardListItemCell : PUICQuickboardListItemCell
-@end
-
-#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
-@interface WKQuickboardListCollectionViewItemCell : PUICQuickboardListCollectionViewItemCell
-@end
-#endif
-
-@class WKQuickboardListViewController;
-
 @protocol WKQuickboardViewControllerDelegate <PUICQuickboardViewControllerDelegate>
 
-- (CGFloat)viewController:(PUICQuickboardViewController *)controller inputContextViewHeightForSize:(CGSize)size;
-- (UIView *)inputContextViewForViewController:(PUICQuickboardViewController *)controller;
 - (NSString *)inputLabelTextForViewController:(PUICQuickboardViewController *)controller;
 - (NSString *)initialValueForViewController:(PUICQuickboardViewController *)controller;
-- (BOOL)shouldDisplayInputContextViewForListViewController:(PUICQuickboardViewController *)controller;
-- (BOOL)allowsLanguageSelectionMenuForListViewController:(PUICQuickboardViewController *)controller;
 
 @end
-
-@interface WKQuickboardListViewController : PUICQuickboardListViewController
-
-- (instancetype)initWithDelegate:(id <WKQuickboardViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
-- (instancetype)initWithDelegate:(id<PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_UNAVAILABLE;
-
-- (void)reloadContextView;
-
-@property (nonatomic, weak) id <WKQuickboardViewControllerDelegate> delegate;
-
-@end
-
-void configureStatusBarForController(PUICQuickboardViewController *, id <WKQuickboardViewControllerDelegate>);
 
 #endif // HAVE(PEPPER_UI_CORE)

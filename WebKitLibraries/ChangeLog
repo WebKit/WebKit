@@ -1,3 +1,14 @@
+2021-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Reenable modern text input UI for non-numeric text input types
+        https://bugs.webkit.org/show_bug.cgi?id=226988
+        rdar://78102953
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/watchos/7/PepperUICore.framework/PepperUICore.tbd:
+        * WebKitPrivateFrameworkStubs/watchos/8/PepperUICore.framework/PepperUICore.tbd:
+
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         [tvOS 15] Support building WebKit

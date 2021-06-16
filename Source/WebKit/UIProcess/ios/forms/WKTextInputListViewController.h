@@ -27,7 +27,7 @@
 
 #if HAVE(PEPPER_UI_CORE)
 
-#import "WKQuickboardListViewController.h"
+#import "WKQuickboardViewControllerDelegate.h"
 
 typedef NS_ENUM(NSInteger, WKNumberPadInputMode) {
     WKNumberPadInputModeNone,
@@ -41,17 +41,21 @@ typedef NS_ENUM(NSInteger, WKNumberPadInputMode) {
 @protocol WKTextInputListViewControllerDelegate <WKQuickboardViewControllerDelegate>
 
 - (WKNumberPadInputMode)numericInputModeForListViewController:(WKTextInputListViewController *)controller;
-- (NSString *)textContentTypeForListViewController:(WKTextInputListViewController *)controller;
-- (NSArray<UITextSuggestion *> *)textSuggestionsForListViewController:(WKTextInputListViewController *)controller;
-- (void)listViewController:(WKTextInputListViewController *)controller didSelectTextSuggestion:(UITextSuggestion *)suggestion;
-- (BOOL)allowsDictationInputForListViewController:(PUICQuickboardViewController *)controller;
+- (PUICTextInputContext *)textInputContextForListViewController:(WKTextInputListViewController *)controller;
+- (UIView *)inputContextViewForViewController:(PUICQuickboardViewController *)controller;
+- (BOOL)allowsDictationInputForListViewController:(WKTextInputListViewController *)controller;
+- (BOOL)allowsLanguageSelectionForListViewController:(WKTextInputListViewController *)controller;
+- (BOOL)shouldDisplayInputContextViewForListViewController:(PUICQuickboardViewController *)controller;
 
 @end
 
-@interface WKTextInputListViewController : WKQuickboardListViewController
+@interface WKTextInputListViewController : PUICQuickboardMessageViewController
 
 - (instancetype)initWithDelegate:(id <WKTextInputListViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
-- (void)reloadTextSuggestions;
+- (instancetype)initWithDelegate:(id <PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+- (void)updateTextSuggestions:(NSArray<UITextSuggestion *> *)suggestions;
+- (void)reloadContextView;
 
 @property (nonatomic, weak) id <WKTextInputListViewControllerDelegate> delegate;
 

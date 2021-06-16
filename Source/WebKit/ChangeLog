@@ -1,3 +1,145 @@
+2021-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Reenable modern text input UI for non-numeric text input types
+        https://bugs.webkit.org/show_bug.cgi?id=226988
+        rdar://78102953
+
+        Reviewed by Tim Horton.
+
+        Refactor text input logic on watchOS such that we're able to present the new ("modern") UI for scribble text
+        input on watchOS 8, rather than legacy (in-process) scribble UI. Overall, this patch removes
+        WKQuickboardListViewController altogether. This had two subclasses: WKSelectMenuListViewController (used for
+        focused single and multiple select elements) and WKTextInputListViewController (used for text input types).
+        WKSelectMenuListViewController now inherits directly from PUICQuickboardListViewController, and
+        WKTextInputListViewController now inherits from PUICQuickboardMessageViewController; this inheritance from
+        PUICQuickboardMessageViewController instead of PUICQuickboardListViewController allows the
+        WKTextInputListViewController to show text suggestions using `-setMessages:` on
+        PUICQuickboardMessageViewController, instead of relying on custom WebKit code to insert text suggestions.
+
+        This means that we move the following pieces of functionality out of WKQuickboardListViewController, and into
+        either WKSelectMenuListViewController or WKTextInputListViewController:
+
+        1. Support for inserting and updating context views (i.e. the domain name header view in Quickboard) =>
+        WKTextInputListViewController.
+
+        2. Logic for determining whether or not we should show language selection UI => WKTextInputListViewController.
+
+        3. Support for laying out custom collection view cells in Quickboard => WKSelectMenuListViewController.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h:
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView createQuickboardTextInputContext]):
+        (-[WKContentView _createQuickboardController:]):
+
+        Refactor logic to create a PUICTextInputContext from the current focused element information out into a separate
+        helper method, `-createQuickboardTextInputContext`, and use it when both directly launching into
+        PUICQuickboardController and WKTextInputListViewController.
+
+        (canUseQuickboardControllerFor):
+
+        Remove a comment, now that we intend to continue using WKTextInputListViewController for non-keychain-AutoFill-
+        compatible text fields moving forward.
+
+        (-[WKContentView focusedFormControllerDidUpdateSuggestions:]):
+        (-[WKContentView allowsLanguageSelectionForListViewController:]):
+        (-[WKContentView textInputContextForListViewController:]):
+        (-[WKContentView textContentTypeForTesting]):
+        (-[WKContentView viewController:inputContextViewHeightForSize:]): Deleted.
+
+        Remove this delegate method, which was (effectively) unused since we just ask for
+        `-inputContextViewForViewController:` from the input delegate anyways.
+
+        (-[WKContentView allowsLanguageSelectionMenuForListViewController:]): Deleted.
+
+        Rename this to `-allowsLanguageSelectionForListViewController:`.
+
+        (-[WKContentView textContentTypeForListViewController:]): Deleted.
+
+        Replace this with `-textInputContextForListViewController:`, which returns a whole PUICTextInputContext instead
+        of just a text content type.
+
+        (-[WKContentView textSuggestionsForListViewController:]): Deleted.
+        (-[WKContentView listViewController:didSelectTextSuggestion:]): Deleted.
+
+        Remove several delegate methods that are no longer needed.
+
+        * UIProcess/ios/forms/WKDatePickerViewController.h:
+        * UIProcess/ios/forms/WKDatePickerViewController.mm:
+        (-[WKDatePickerViewController viewWillAppear:]):
+
+        Remove some (defunct) logic for overriding the status bar when showing Quickboard input view controllers. This
+        status bar mechanism (which was previously used to show label text for form controls) hasn't worked since
+        watchOS 6, and we need to implement this in a way that doesn't use PUICStatusBarGlobalContextViewAssertion.
+
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm: Removed.
+        * UIProcess/ios/forms/WKQuickboardViewControllerDelegate.h: Renamed from Source/WebKit/UIProcess/ios/forms/WKQuickboardListViewController.h.
+        * UIProcess/ios/forms/WKSelectMenuListViewController.h:
+        * UIProcess/ios/forms/WKSelectMenuListViewController.mm:
+        (-[WKSelectMenuItemCell topToLabelBaselineSpecValue]):
+        (-[WKSelectMenuItemCell baselineToBottomSpecValue]):
+        (-[WKSelectMenuCollectionViewItemCell topToLabelBaselineSpecValue]):
+        (-[WKSelectMenuCollectionViewItemCell baselineToBottomSpecValue]):
+        (-[WKSelectMenuListViewController initWithDelegate:]):
+
+        See above comment for more details.
+
+        * UIProcess/ios/forms/WKTextInputListViewController.h:
+        * UIProcess/ios/forms/WKTextInputListViewController.mm:
+        (-[WKTextInputListViewController initWithDelegate:]):
+        (-[WKTextInputListViewController reloadContextView]):
+        (-[WKTextInputListViewController updateContextViewIfNeeded]):
+
+        Move logic for showing and updating the context view out of WKQuickboardListViewController, and into
+        WKTextInputListViewController. See comments above.
+
+        (-[WKTextInputListViewController requiresNumericInput]):
+        (-[WKTextInputListViewController additionalTrayButtons]):
+        (-[WKTextInputListViewController updateTextSuggestions:]):
+        (-[WKTextInputListViewController headerContentViewHeight]):
+        (-[WKTextInputListViewController headerContentView]):
+        (-[WKTextInputListViewController shouldShowLanguageButton]):
+        (-[WKTextInputListViewController supportsDictationInput]):
+        (-[WKTextInputListViewController shouldShowTrayView]):
+        (-[WKTextInputListViewController shouldShowTextField]):
+
+        Override this and return YES for text input types that don't require an additional numeric input tray button.
+        This allows PUICQuickboardMessageViewController to show a native text field containing the input text inside
+        quickboard, which (when tapped) presents modern text input UI.
+
+        Since showing the text field is apparently mutually exclusive to showing a tray view, we additionally override
+        `-shouldShowTrayView` and return NO for non-numeric text inputs.
+
+        (-[WKTextInputListViewController supportsArouetInput]):
+        (-[WKTextInputListViewController viewDidLoad]): Deleted.
+        (-[WKTextInputListViewController willPresentArouetViewController:]): Deleted.
+
+        There's no need to override this delegate method anymore, since the PUICTextInputContext's `-initialText` is
+        sufficient to ensure that the scribble text input UI is prepopulated with the focused text field's initial text
+        content.
+
+        (-[WKTextInputListViewController reloadTextSuggestions]): Deleted.
+
+        Rename this to `-updateTextSuggestions:`, and make it take a list of UITextSuggestions. This makes the code a
+        bit easier to follow and allows us to remove the `-textSuggestionsForListViewController:` delegate method.
+
+        (-[WKTextInputListViewController didSelectListItemAtIndexPath:]): Deleted.
+        (-[WKTextInputListViewController didSelectListItem:]): Deleted.
+        (-[WKTextInputListViewController _didSelectListItem:]): Deleted.
+        (-[WKTextInputListViewController numberOfListItems]): Deleted.
+        (-[WKTextInputListViewController heightForListItem:width:]): Deleted.
+        (-[WKTextInputListViewController cellForListItem:]): Deleted.
+        (-[WKTextInputListViewController listItemCellReuseIdentifier]): Deleted.
+        (-[WKTextInputListViewController listItemCellClass]): Deleted.
+        (-[WKTextInputListViewController itemCellForListItem:forIndexPath:]): Deleted.
+
+        Remove all this code for showing text suggestions in Quickboard UI. Since WKTextInputListViewController is now a
+        subclass of PUICQuickboardMessageViewController, we can now simply use the `-messages` property of to populate
+        quickboard with text suggestions.
+
+        * UIProcess/ios/forms/WKTimePickerViewController.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
         Enable release logging in the network process for ephemeral sessions

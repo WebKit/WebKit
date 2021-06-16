@@ -8,5 +8,5 @@ exports:
     objc-classes:    [ PUICQuickboardListTrayButton, PUICActionGroup, PUICQuickboardListItemCell, PUICActionController,
                        PUICCrownInputSequencer, PUICPickerView, PUICQuickboardListItemCell, PUICQuickboardListViewController,
                        PUICApplication, PUICResources, PUICQuickboardViewController, PUICQuickboardListViewController,
-                       PUICQuickboardViewController, PUICPickerView ]
+                       PUICQuickboardViewController, PUICPickerView, PUICTextInputContext, PUICQuickboardMessageViewController ]
 ...

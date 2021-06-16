@@ -25,7 +25,7 @@
 
 #if HAVE(PEPPER_UI_CORE)
 
-#import "WKQuickboardListViewController.h"
+#import "WKQuickboardViewControllerDelegate.h"
 
 @interface WKDatePickerViewController : PUICQuickboardViewController
 

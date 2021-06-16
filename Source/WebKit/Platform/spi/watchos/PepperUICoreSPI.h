@@ -39,9 +39,9 @@
 #import <PepperUICore/PUICPickerView_Private.h>
 #import <PepperUICore/PUICQuickboardArouetViewController.h>
 #import <PepperUICore/PUICQuickboardLanguageController.h>
-#import <PepperUICore/PUICQuickboardListViewController.h>
 #import <PepperUICore/PUICQuickboardListViewControllerSubclass.h>
 #import <PepperUICore/PUICQuickboardListViewSpecs.h>
+#import <PepperUICore/PUICQuickboardMessageViewController.h>
 #import <PepperUICore/PUICQuickboardViewController.h>
 #import <PepperUICore/PUICQuickboardViewController_Private.h>
 #import <PepperUICore/PUICResources.h>
@@ -232,9 +232,14 @@ extern UIButtonType const PUICButtonTypePill;
 @property (nonatomic, readonly) PUICTableView *listView;
 @property (strong, nonatomic, readonly) PUICQuickboardListViewSpecs *specs;
 @property (nonatomic, copy) UITextContentType textContentType;
+@property (nonatomic, strong) PUICTextInputContext *textInputContext;
 - (instancetype)initWithDelegate:(id <PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_DESIGNATED_INITIALIZER;
 - (void)reloadListItems;
 - (void)reloadHeaderContentView;
+@end
+
+@interface PUICQuickboardMessageViewController : PUICQuickboardListViewController
+@property (nonatomic, copy) NSArray *messages;
 @end
 
 @interface PUICQuickboardArouetViewController : PUICQuickboardViewController

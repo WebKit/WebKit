@@ -64,7 +64,7 @@
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
-#import "WKQuickboardListViewController.h"
+#import "WKQuickboardViewControllerDelegate.h"
 #import "WKSelectMenuListViewController.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
 #import "WKTextInputListViewController.h"
@@ -6666,22 +6666,24 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [self setInputDelegate:nil];
 }
 
+- (RetainPtr<PUICTextInputContext>)createQuickboardTextInputContext
+{
+    auto context = adoptNS([[PUICTextInputContext alloc] init]);
+    [self _updateTextInputTraits:context.get()];
+    [context setInitialText:_focusedElementInformation.value];
+#if HAVE(QUICKBOARD_CONTROLLER)
+    [context setAcceptsEmoji:YES];
+    [context setShouldPresentModernTextInputUI:YES];
+#endif
+    return context;
+}
+
 #if HAVE(QUICKBOARD_CONTROLLER)
 
 - (RetainPtr<PUICQuickboardController>)_createQuickboardController:(UIViewController *)presentingViewController
 {
     auto quickboardController = adoptNS([[PUICQuickboardController alloc] init]);
-
-    auto suggestions = adoptNS([[NSMutableArray<NSString *> alloc] initWithCapacity:[_formInputSession suggestions].count]);
-    for (UITextSuggestion *suggestion in [_formInputSession suggestions])
-        [suggestions addObject:suggestion.inputText];
-
-    auto context = adoptNS([[PUICTextInputContext alloc] init]);
-    [self _updateTextInputTraits:context.get()];
-    [context setSuggestions:suggestions.get()];
-    [context setInitialText:_focusedElementInformation.value];
-    [context setAcceptsEmoji:YES];
-    [context setShouldPresentModernTextInputUI:YES];
+    auto context = self.createQuickboardTextInputContext;
     [quickboardController setQuickboardPresentingViewController:presentingViewController];
     [quickboardController setExcludedFromScreenCapture:[context isSecureTextEntry]];
     [quickboardController setTextInputContext:context.get()];
@@ -6692,7 +6694,6 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 static bool canUseQuickboardControllerFor(UITextContentType type)
 {
-    // We can remove this restriction once PUICQuickboardController supports displaying text suggestion strings that are not login credentials.
     return [type isEqualToString:UITextContentTypeUsername] || [type isEqualToString:UITextContentTypePassword] || [type isEqualToString:UITextContentTypeEmailAddress];
 }
 
@@ -6931,7 +6932,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     if (_isBlurringFocusedElement || ![_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         return;
 
-    [(WKTextInputListViewController *)_presentedFullScreenInputViewController reloadTextSuggestions];
+    [(WKTextInputListViewController *)_presentedFullScreenInputViewController updateTextSuggestions:[_focusedFormControlView suggestions]];
 }
 
 #pragma mark - WKSelectMenuListViewControllerDelegate
@@ -9196,16 +9197,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #pragma mark - WKQuickboardViewControllerDelegate
 
-- (CGFloat)viewController:(PUICQuickboardViewController *)controller inputContextViewHeightForSize:(CGSize)size
-{
-    id <_WKInputDelegate> delegate = self.webView._inputDelegate;
-    if (![delegate respondsToSelector:@selector(_webView:focusedElementContextViewHeightForFittingSize:inputSession:)])
-        return 0;
-
-    return [delegate _webView:self.webView focusedElementContextViewHeightForFittingSize:size inputSession:_formInputSession.get()];
-}
-
-- (BOOL)allowsLanguageSelectionMenuForListViewController:(PUICQuickboardViewController *)controller
+- (BOOL)allowsLanguageSelectionForListViewController:(PUICQuickboardViewController *)controller
 {
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::ContentEditable:
@@ -9272,20 +9264,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     }
 }
 
-- (NSString *)textContentTypeForListViewController:(WKTextInputListViewController *)controller
+- (PUICTextInputContext *)textInputContextForListViewController:(WKTextInputListViewController *)controller
 {
-    return self.textContentTypeForQuickboard;
-}
-
-- (NSArray<UITextSuggestion *> *)textSuggestionsForListViewController:(WKTextInputListViewController *)controller
-{
-    return [_focusedFormControlView suggestions];
-}
-
-- (void)listViewController:(WKTextInputListViewController *)controller didSelectTextSuggestion:(UITextSuggestion *)suggestion
-{
-    [self insertTextSuggestion:suggestion];
-    [self dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:controller];
+    return self.createQuickboardTextInputContext.autorelease();
 }
 
 - (BOOL)allowsDictationInputForListViewController:(PUICQuickboardViewController *)controller
@@ -9303,10 +9284,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 #endif
 
-
-
-
 #if ENABLE(APP_HIGHLIGHTS)
+
 - (void)setUpAppHighlightMenusIfNeeded
 {
     if (!_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
@@ -10363,7 +10342,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
 #if HAVE(PEPPER_UI_CORE)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
-        return [self textContentTypeForListViewController:(WKTextInputListViewController *)_presentedFullScreenInputViewController.get()];
+        return [(WKTextInputListViewController *)_presentedFullScreenInputViewController textInputContext].textContentType;
 #if HAVE(QUICKBOARD_CONTROLLER)
     if (_presentedQuickboardController)
         return [_presentedQuickboardController textInputContext].textContentType;

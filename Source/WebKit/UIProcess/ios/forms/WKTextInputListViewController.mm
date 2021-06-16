@@ -31,11 +31,9 @@
 #import "WKNumberPadViewController.h"
 #import <wtf/RetainPtr.h>
 
-static const CGFloat textSuggestionButtonHeight = 44;
-static const CGFloat textSuggestionLabelHorizontalMargin = 9;
-static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSuggestionCell";
-
 @implementation WKTextInputListViewController {
+    BOOL _contextViewNeedsUpdate;
+    RetainPtr<UIView> _contextView;
     RetainPtr<WKNumberPadViewController> _numberPadViewController;
 }
 
@@ -43,32 +41,42 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
 
 - (instancetype)initWithDelegate:(id <WKTextInputListViewControllerDelegate>)delegate
 {
-    if (!(self = [super initWithDelegate:delegate]))
+    if (!(self = [super initWithDelegate:delegate dictationMode:PUICDictationModeText]))
         return nil;
 
-    self.textContentType = [self.delegate textContentTypeForListViewController:self];
+    _contextViewNeedsUpdate = YES;
+    self.textInputContext = [self.delegate textInputContextForListViewController:self];
     return self;
 }
 
-- (void)viewDidLoad
+- (void)reloadContextView
 {
-    [super viewDidLoad];
-
-    self.headerView.hidden = YES;
+    _contextViewNeedsUpdate = YES;
+    [self reloadHeaderContentView];
 }
 
-- (void)willPresentArouetViewController:(PUICQuickboardArouetViewController *)quickboard
+- (void)updateContextViewIfNeeded
 {
-    NSString *initialText = [self.delegate initialValueForViewController:self];
-    if (initialText.length)
-        [quickboard setInputText:initialText selectionRange:NSMakeRange(initialText.length, 0)];
+    if (!_contextViewNeedsUpdate)
+        return;
 
-    quickboard.minTextLengthForEnablingAccept = 0;
+    auto previousContextView = _contextView;
+    if ([self.delegate shouldDisplayInputContextViewForListViewController:self])
+        _contextView = [self.delegate inputContextViewForViewController:self];
+    else
+        _contextView = nil;
+
+    _contextViewNeedsUpdate = NO;
+}
+
+- (BOOL)requiresNumericInput
+{
+    return [self.delegate numericInputModeForListViewController:self] != WKNumberPadInputModeNone;
 }
 
 - (NSArray *)additionalTrayButtons
 {
-    if ([self.delegate numericInputModeForListViewController:self] == WKNumberPadInputModeNone)
+    if (!self.requiresNumericInput)
         return @[ ];
 
 #if HAVE(PUIC_BUTTON_TYPE_PILL)
@@ -99,9 +107,14 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
     [self presentViewController:_numberPadViewController.get() animated:YES completion:nil];
 }
 
-- (void)reloadTextSuggestions
+- (void)updateTextSuggestions:(NSArray<UITextSuggestion *> *)suggestions
 {
-    [self reloadListItems];
+    auto messages = adoptNS([[NSMutableArray<NSAttributedString *> alloc] initWithCapacity:suggestions.count]);
+    for (UITextSuggestion *suggestion in suggestions) {
+        auto attributedString = adoptNS([[NSAttributedString alloc] initWithString:suggestion.displayText]);
+        [messages addObject:attributedString.get()];
+    }
+    self.messages = messages.get();
 }
 
 - (void)enterText:(NSString *)text
@@ -111,109 +124,46 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
 
 #pragma mark - Quickboard subclassing
 
+- (CGFloat)headerContentViewHeight
+{
+    [self updateContextViewIfNeeded];
+
+    return [_contextView sizeThatFits:self.contentView.bounds.size].height;
+}
+
+- (UIView *)headerContentView
+{
+    [self updateContextViewIfNeeded];
+
+    CGFloat viewWidth = CGRectGetWidth(self.contentView.bounds);
+    CGSize sizeThatFits = [_contextView sizeThatFits:self.contentView.bounds.size];
+    [_contextView setFrame:CGRectMake((viewWidth - sizeThatFits.width) / 2, 0, sizeThatFits.width, sizeThatFits.height)];
+    return _contextView.get();
+}
+
+- (BOOL)shouldShowLanguageButton
+{
+    return [self.delegate allowsLanguageSelectionForListViewController:self];
+}
+
 - (BOOL)supportsDictationInput
 {
     return [self.delegate allowsDictationInputForListViewController:self];
 }
 
-- (void)didSelectListItemAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)shouldShowTrayView
 {
-    [self _didSelectListItem:indexPath.row];
+    return self.requiresNumericInput;
 }
 
-// FIXME: This method can be removed when <rdar://problem/57807445> lands in a build.
-- (void)didSelectListItem:(NSInteger)itemNumber
+- (BOOL)shouldShowTextField
 {
-    [self _didSelectListItem:itemNumber];
+    return !self.requiresNumericInput;
 }
-
-- (void)_didSelectListItem:(NSInteger)itemNumber
-{
-    NSArray<UITextSuggestion *> *textSuggestions = [self.delegate textSuggestionsForListViewController:self];
-    if (textSuggestions.count <= static_cast<NSUInteger>(itemNumber)) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    [self.delegate listViewController:self didSelectTextSuggestion:[textSuggestions objectAtIndex:itemNumber]];
-}
-
-- (NSInteger)numberOfListItems
-{
-    return [self.delegate textSuggestionsForListViewController:self].count;
-}
-
-- (CGFloat)heightForListItem:(NSInteger)itemNumber width:(CGFloat)width
-{
-    return textSuggestionButtonHeight;
-}
-
-// FIXME: This method can be removed when <rdar://problem/57807445> lands in a build.
-- (PUICQuickboardListItemCell *)cellForListItem:(NSInteger)itemNumber
-{
-    NSArray<UITextSuggestion *> *textSuggestions = [self.delegate textSuggestionsForListViewController:self];
-    if (textSuggestions.count <= static_cast<NSUInteger>(itemNumber)) {
-        ASSERT_NOT_REACHED();
-        return nil;
-    }
-
-    UITextSuggestion *textSuggestion = [textSuggestions objectAtIndex:itemNumber];
-    auto reusableCell = retainPtr([self.listView dequeueReusableCellWithIdentifier:textSuggestionCellReuseIdentifier]);
-    if (!reusableCell) {
-        reusableCell = adoptNS([[WKQuickboardListItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:textSuggestionCellReuseIdentifier]);
-        [reusableCell itemLabel].numberOfLines = 1;
-        [reusableCell itemLabel].lineBreakMode = NSLineBreakByTruncatingTail;
-        [reusableCell itemLabel].allowsDefaultTighteningForTruncation = YES;
-    }
-
-    CGFloat viewWidth = CGRectGetWidth(self.listView.bounds);
-    [reusableCell configureForText:textSuggestion.displayText width:viewWidth];
-
-    // The default behavior of -configureForText:width: causes the text label to run off the end of the cell.
-    // Adjust for this by shrinking the label width to actually fit the bounds of the cell.
-    [reusableCell itemLabel].frame = UIRectInset([reusableCell contentView].bounds, 0, textSuggestionLabelHorizontalMargin, 0, textSuggestionLabelHorizontalMargin);
-    return reusableCell.autorelease();
-}
-
-- (NSString *)listItemCellReuseIdentifier
-{
-    return textSuggestionCellReuseIdentifier;
-}
-
-#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
-
-- (Class)listItemCellClass
-{
-    return [WKQuickboardListCollectionViewItemCell class];
-}
-
-- (PUICQuickboardListCollectionViewItemCell *)itemCellForListItem:(NSInteger)itemNumber forIndexPath:(NSIndexPath *)indexPath
-{
-    NSArray<UITextSuggestion *> *textSuggestions = [self.delegate textSuggestionsForListViewController:self];
-    if (textSuggestions.count <= static_cast<NSUInteger>(itemNumber)) {
-        ASSERT_NOT_REACHED();
-        return nil;
-    }
-
-    UITextSuggestion *textSuggestion = [textSuggestions objectAtIndex:itemNumber];
-    auto reusableCell = retainPtr([self.collectionView dequeueReusableCellWithReuseIdentifier:textSuggestionCellReuseIdentifier forIndexPath:indexPath]);
-
-    [reusableCell bodyLabel].numberOfLines = 1;
-    [reusableCell bodyLabel].lineBreakMode = NSLineBreakByTruncatingTail;
-    [reusableCell bodyLabel].allowsDefaultTighteningForTruncation = YES;
-    [reusableCell setText:textSuggestion.displayText];
-
-    // The default behavior of -configureForText:width: causes the text label to run off the end of the cell.
-    // Adjust for this by shrinking the label width to actually fit the bounds of the cell.
-    [reusableCell bodyLabel].frame = UIRectInset([reusableCell contentView].bounds, 0, textSuggestionLabelHorizontalMargin, 0, textSuggestionLabelHorizontalMargin);
-    return reusableCell.autorelease();
-}
-
-#endif // HAVE(QUICKBOARD_COLLECTION_VIEWS)
 
 - (BOOL)supportsArouetInput
 {
-    return [self.delegate numericInputModeForListViewController:self] == WKNumberPadInputModeNone;
+    return !self.requiresNumericInput;
 }
 
 @end

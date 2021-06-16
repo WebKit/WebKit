@@ -9,5 +9,5 @@ exports:
                        PUICCrownInputSequencer, PUICPickerView, PUICQuickboardListItemCell, PUICQuickboardListViewController,
                        PUICApplication, PUICResources, PUICQuickboardViewController, PUICQuickboardListViewController,
                        PUICQuickboardViewController, PUICPickerView, PUICTextInputContext, PUICQuickboardController,
-                       PUICQuickboardRemoteViewController ]
+                       PUICQuickboardRemoteViewController, PUICQuickboardMessageViewController ]
 ...
