@@ -63,6 +63,9 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
     if (parserContext.isPropertyRuntimeDisabled(propertyID))
         return false;
 
+    if (isInternalCSSProperty(propertyID))
+        return false;
+
     if (propertyID == CSSPropertyInvalid)
         return false;
 

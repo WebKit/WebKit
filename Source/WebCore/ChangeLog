@@ -1,3 +1,24 @@
+2021-06-16  Tim Nguyen  <ntim@apple.com>
+
+        Make CSS.supports() return false for internal CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=224930
+
+        Reviewed by Antti Koivisto.
+
+        Test: LayoutTests/fast/backgrounds/background-repeat-x-y-parse.html
+
+        Examples that are now rejected:
+
+        CSS.supports("background-repeat-x: inherit")
+        CSS.supports("background-repeat-x", "inherit")
+        CSS.supports("background-repeat-y: inherit")
+        CSS.supports("background-repeat-y", "inherit")
+
+        * css/DOMCSSNamespace.cpp:
+        (WebCore::DOMCSSNamespace::supports):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeDeclaration):
+
 2021-06-16  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
 
         [MSE] Crash when getting audioTracks, videoTracks, textTracks of sourceBuffer after executing MediaSource::removeSourceBuffer()
