@@ -1027,7 +1027,6 @@ void testSubMemArg(int64_t, int64_t);
 void testSubImmMem(int64_t, int64_t);
 void testSubMemImm(int64_t, int64_t);
 void testSubArgs32(int, int);
-void testSubArgs32ZeroExtend(int, int);
 void testSubArgImm32(int, int);
 void testSubImmArg32(int, int);
 void testSubMemArg32(int32_t, int32_t);

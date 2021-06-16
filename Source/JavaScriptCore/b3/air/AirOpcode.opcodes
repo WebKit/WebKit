@@ -179,7 +179,6 @@ Sub32 U:G:32, UZD:G:32
 
 arm64: Sub32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
-    Tmp, Imm, Tmp
 
 64: Sub64 U:G:64, UD:G:64
     Tmp, Tmp
@@ -193,7 +192,6 @@ arm64: Sub32 U:G:32, U:G:32, ZD:G:32
 
 arm64: Sub64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
-    Tmp, Imm, Tmp
 
 SubDouble U:F:64, U:F:64, D:F:64
     arm64: Tmp, Tmp, Tmp
