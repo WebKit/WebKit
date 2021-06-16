@@ -289,9 +289,6 @@
             },
             "WTF.WorkerPoolDecrease": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/214803"}}
-            },
-            "WTF_DataMutex.DoubleLockDeathTest": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/227021"}}
             }
         }
     },
