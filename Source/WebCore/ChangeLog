@@ -1,3 +1,19 @@
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Protect Element before calling dispatchMouseEvent() on it
+        https://bugs.webkit.org/show_bug.cgi?id=226767
+        <rdar://problem/79009112>
+
+        Reviewed by Ryosuke Niwa.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::dispatchLockedMouseEvent):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+
 2021-06-16  Peng Liu  <peng.liu6@apple.com>
 
         Some http/tests/ are crashing with ASSERTION FAILED: isInRoutingArbitrationForToken(token) || m_setupArbitrationOngoing
