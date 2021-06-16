@@ -373,7 +373,6 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
         {
             Locker locker { decoder.m_messageLock };
             decoder.m_messageDispatched = false;
-            decoder.m_messageCondition.notifyOne();
         }
         if (&decoder.m_runLoop == &RunLoop::current())
             decoder.handleMessage(message);
@@ -384,10 +383,11 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
                 if (weakThis)
                     weakThis->handleMessage(protectedMessage.get());
             });
-        }
-        if (!decoder.m_messageDispatched) {
-            Locker locker { decoder.m_messageLock };
-            decoder.m_messageCondition.wait(decoder.m_messageLock);
+            {
+                Locker locker { decoder.m_messageLock };
+                if (!decoder.m_messageDispatched)
+                    decoder.m_messageCondition.wait(decoder.m_messageLock);
+            }
         }
         gst_message_unref(message);
         return GST_BUS_DROP;
