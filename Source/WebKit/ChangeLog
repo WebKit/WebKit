@@ -1,3 +1,43 @@
+2021-06-15  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION: MSE: Netflix playback sometimes fails when going to "next episode" in series
+        https://bugs.webkit.org/show_bug.cgi?id=226952
+        rdar://77583769
+
+        Reviewed by Eric Carlson.
+
+        Following bug #225396, the remote/proxy MediaPlayer readyState became decoupled
+        from the currentTime. In the scenario where a time update was pushed from the
+        GPU to the WebContent process, followed by a change of readyState status; should
+        the HTMLMediaElement query the MediaPlayer's time in-between those two IPC calls,
+        it would be possible for the time to be incorrectly estimated as it assumed it
+        had progressed since it received the update.
+        Additionally, it was assumed that the only case where the time won't progress
+        was if the media element was explicitly paused. This was incorrect it could
+        have stalled due to the lack of data such as commonly happen with MSE.
+        We add in the time update IPC message a boolean indicating if the GPU's
+        MediaPlayer is either stalled or paused and that the time shouldn't advance.
+        While this new boolean appears redundant with the values of the cached
+        readyState/paused it differs in that timeIsProgressing is accurate at the
+        moment the time update is sent and received.
+
+        Test: media/media-source/media-source-seek-unbuffered.html
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerPausedOrStalled const): Add utility method.
+        (WebKit::RemoteMediaPlayerProxy::currentTimeChanged):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::currentMediaTime const):
+        (WebKit::MediaPlayerPrivateRemote::seek): Set the cached media time to the seek
+        value so that reading it back the time will provide accurate data.
+        (WebKit::MediaPlayerPrivateRemote::seekWithTolerance): same as with seek method.
+        (WebKit::MediaPlayerPrivateRemote::currentTimeChanged): Check if timeIsProgressing
+        is true and only estimate the time if we are certain playback has continued.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in: add timeIsProgressing
+        to method.
+
 2021-06-15  Chris Dumez  <cdumez@apple.com>
 
         Use more SQL transactions in ResourceLoadStatisticsDatabaseStore

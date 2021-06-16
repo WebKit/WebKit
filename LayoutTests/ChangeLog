@@ -1,3 +1,14 @@
+2021-06-15  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION: MSE: Netflix playback sometimes fails when going to "next episode" in series
+        https://bugs.webkit.org/show_bug.cgi?id=226952
+        rdar://77583769
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-seek-unbuffered-expected.txt: Added.
+        * media/media-source/media-source-seek-unbuffered.html: Added.
+
 2021-06-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Updated test expectations after r277896.

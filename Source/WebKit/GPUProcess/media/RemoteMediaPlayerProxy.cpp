@@ -841,9 +841,14 @@ void RemoteMediaPlayerProxy::timerFired()
     sendCachedState();
 }
 
+bool RemoteMediaPlayerProxy::mediaPlayerPausedOrStalled() const
+{
+    return m_player->paused() || m_player->readyState() < MediaPlayer::ReadyState::HaveFutureData;
+}
+
 void RemoteMediaPlayerProxy::currentTimeChanged(const MediaTime& mediaTime)
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CurrentTimeChanged(mediaTime, MonotonicTime::now()), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CurrentTimeChanged(mediaTime, MonotonicTime::now(), !mediaPlayerPausedOrStalled()), m_id);
 }
 
 void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)

@@ -265,7 +265,7 @@ MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 {
-    if (m_cachedState.paused || !m_cachedMediaTime)
+    if (!m_timeIsProgressing)
         return m_cachedMediaTime;
 
     return m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
@@ -274,12 +274,14 @@ MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 void MediaPlayerPrivateRemote::seek(const MediaTime& time)
 {
     m_seeking = true;
+    m_cachedMediaTime = time;
     connection().send(Messages::RemoteMediaPlayerProxy::Seek(time), m_id);
 }
 
 void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
 {
     m_seeking = true;
+    m_cachedMediaTime = time;
     connection().send(Messages::RemoteMediaPlayerProxy::SeekWithTolerance(time, negativeTolerance, positiveTolerance), m_id);
 }
 
@@ -404,8 +406,9 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
         player->sizeChanged();
 }
 
-void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime)
+void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime, bool timeIsProgressing)
 {
+    m_timeIsProgressing = timeIsProgressing;
     m_cachedMediaTime = mediaTime;
     m_cachedMediaTimeQueryTime = queryTime;
 }
