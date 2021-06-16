@@ -1,5 +1,20 @@
 2021-06-15  Jonathan Bedard  <jbedard@apple.com>
 
+        [tvOS 15] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227037
+        <rdar://problem/79354143>
+
+        Reviewed by Alex Christensen.
+
+        * WebKitPrivateFrameworkStubs/appletvos/15/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
         [iOS 15] Support building WebKit (Part 2)
         https://bugs.webkit.org/show_bug.cgi?id=227002
         <rdar://problem/79316598>
