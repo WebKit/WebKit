@@ -5917,8 +5917,10 @@ private:
         State* state = &m_ftlState;
         Node* node = m_node;
         CodeOrigin nodeSemanticOrigin = node->origin.semantic;
-        auto child1UseKind = node->child1().useKind();
-        auto child2UseKind = node->child2().useKind();
+        UseKind child1UseKind = node->child1().useKind();
+        UseKind child2UseKind = UntypedUse;
+        if constexpr (kind != DelByKind::ById)
+            child2UseKind = node->child2().useKind();
         auto ecmaMode = node->ecmaMode().value();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {

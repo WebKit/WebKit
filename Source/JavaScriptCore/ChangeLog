@@ -1,3 +1,16 @@
+2021-06-16  Robin Morisset  <rmorisset@apple.com>
+
+        Don't look at the (non-existent) child2 of DelById
+        https://bugs.webkit.org/show_bug.cgi?id=227095
+
+        Reviewed by Mark Lam.
+
+        Trivial fix to a broken rebase: while it is ok to share most code between DelById and DelByVal, only the latter has a child2(), so it should not be accessed if we are compiling the former.
+        No new test, as it was caught by one of our existing tests.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+
 2021-06-16  Yijia Huang  <yijia_huang@apple.com>
 
         Add Air opcode sub32/64(Reg, Imm, Reg) form for ARM64 and select this instruction in Air
