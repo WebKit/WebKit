@@ -62,7 +62,7 @@ public:
     std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const override;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
-    static constexpr bool isOriginAtUpperLeftCorner = true;
+    static constexpr bool isOriginAtBottomLeftCorner = true;
     static constexpr bool canMapBackingStore = false;
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 

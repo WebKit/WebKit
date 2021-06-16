@@ -1,3 +1,17 @@
+2021-06-15  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] ConcreteImageBuffer::baseTransform() returns incorrect transform for unaccelerated ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=227044
+        <rdar://78642742>
+
+        Reviewed by Simon Fraser.
+
+        The large size of the canvas in this layout test will force creating 
+        unaccelerated ImageBufferBackend.
+
+        * fast/canvas/canvas-large-dimensions-drawing-expected.html: Added.
+        * fast/canvas/canvas-large-dimensions-drawing.html: Added.
+
 2021-06-15  Jean-Yves Avenard  <jya@apple.com>
 
         REGRESSION: MSE: Netflix playback sometimes fails when going to "next episode" in series

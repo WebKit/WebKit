@@ -69,7 +69,6 @@ public:
     VolatilityState setVolatile(bool) override;
     void releaseBufferToPool() override;
 
-    static constexpr bool isOriginAtUpperLeftCorner = true;
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
 protected:

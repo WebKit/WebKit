@@ -120,7 +120,7 @@ public:
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 
-    static constexpr bool isOriginAtUpperLeftCorner = false;
+    static constexpr bool isOriginAtBottomLeftCorner = false;
     static constexpr bool canMapBackingStore = true;
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
