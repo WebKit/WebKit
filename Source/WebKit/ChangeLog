@@ -1,5 +1,26 @@
 2021-06-15  Chris Dumez  <cdumez@apple.com>
 
+        Use more SQL transactions in ResourceLoadStatisticsDatabaseStore
+        https://bugs.webkit.org/show_bug.cgi?id=227034
+
+        Reviewed by Kate Cheney.
+
+        Use more SQL transactions in ResourceLoadStatisticsDatabaseStore, for performance.
+
+        I updated the code so that we start a SQL transaction whenever we do more than one
+        consecutive "write" statement.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::reclassifyResources):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+
+2021-06-15  Chris Dumez  <cdumez@apple.com>
+
         Reloading the view should be able to recover if the GPUProcess or NetworkProcess are hung
         https://bugs.webkit.org/show_bug.cgi?id=227051
 
