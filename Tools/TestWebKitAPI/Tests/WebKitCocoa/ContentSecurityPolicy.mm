@@ -97,11 +97,9 @@ TEST(WKWebView, CheckViolationReportDocumentURIForDataProtocol)
         NSString *path = [NSBundle.mainBundle pathForResource:@"csp-document-uri-report" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"];
         NSString* content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
 
-        NSURLRequest *loadRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html"]];
         NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
-        auto response = adoptNS([[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"data:text/html"] MIMEType:@"text/HTML" expectedContentLength:[data length] textEncodingName:@"UTF-8"]);
 
-        [webView loadSimulatedRequest:loadRequest withResponse:response.get() responseData:data];
+        [webView loadData:data MIMEType:@"text/HTML" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"data:text/html"]];
         [webView waitForMessage:@"document-uri: data"];
     }
 }
