@@ -89,45 +89,33 @@ bool FileReader::virtualHasPendingActivity() const
     return m_state == LOADING;
 }
 
-ExceptionOr<void> FileReader::readAsArrayBuffer(Blob* blob)
+ExceptionOr<void> FileReader::readAsArrayBuffer(Blob& blob)
 {
-    if (!blob)
-        return { };
+    LOG(FileAPI, "FileReader: reading as array buffer: %s %s\n", blob.url().string().utf8().data(), is<File>(blob) ? downcast<File>(blob).path().utf8().data() : "");
 
-    LOG(FileAPI, "FileReader: reading as array buffer: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
-
-    return readInternal(*blob, FileReaderLoader::ReadAsArrayBuffer);
+    return readInternal(blob, FileReaderLoader::ReadAsArrayBuffer);
 }
 
-ExceptionOr<void> FileReader::readAsBinaryString(Blob* blob)
+ExceptionOr<void> FileReader::readAsBinaryString(Blob& blob)
 {
-    if (!blob)
-        return { };
+    LOG(FileAPI, "FileReader: reading as binary: %s %s\n", blob.url().string().utf8().data(), is<File>(blob) ? downcast<File>(blob).path().utf8().data() : "");
 
-    LOG(FileAPI, "FileReader: reading as binary: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
-
-    return readInternal(*blob, FileReaderLoader::ReadAsBinaryString);
+    return readInternal(blob, FileReaderLoader::ReadAsBinaryString);
 }
 
-ExceptionOr<void> FileReader::readAsText(Blob* blob, const String& encoding)
+ExceptionOr<void> FileReader::readAsText(Blob& blob, const String& encoding)
 {
-    if (!blob)
-        return { };
-
-    LOG(FileAPI, "FileReader: reading as text: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
+    LOG(FileAPI, "FileReader: reading as text: %s %s\n", blob.url().string().utf8().data(), is<File>(blob) ? downcast<File>(blob).path().utf8().data() : "");
 
     m_encoding = encoding;
-    return readInternal(*blob, FileReaderLoader::ReadAsText);
+    return readInternal(blob, FileReaderLoader::ReadAsText);
 }
 
-ExceptionOr<void> FileReader::readAsDataURL(Blob* blob)
+ExceptionOr<void> FileReader::readAsDataURL(Blob& blob)
 {
-    if (!blob)
-        return { };
+    LOG(FileAPI, "FileReader: reading as data URL: %s %s\n", blob.url().string().utf8().data(), is<File>(blob) ? downcast<File>(blob).path().utf8().data() : "");
 
-    LOG(FileAPI, "FileReader: reading as data URL: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
-
-    return readInternal(*blob, FileReaderLoader::ReadAsDataURL);
+    return readInternal(blob, FileReaderLoader::ReadAsDataURL);
 }
 
 ExceptionOr<void> FileReader::readInternal(Blob& blob, FileReaderLoader::ReadType type)

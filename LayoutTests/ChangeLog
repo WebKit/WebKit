@@ -1,3 +1,16 @@
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        FileReader.readAsArrayBuffer misses checking for the type of blob param
+        https://bugs.webkit.org/show_bug.cgi?id=226640
+        <rdar://problem/79193198>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage. I have verified that this test is passing in Firefox and Chrome as well.
+
+        * fast/files/filereader-invalid-blob-expected.txt: Added.
+        * fast/files/filereader-invalid-blob.html: Added.
+
 2021-06-16  Amir Mark Jr  <amir_mark@apple.com>
 
         [EWS MacOS WK1] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html is a flaky failure

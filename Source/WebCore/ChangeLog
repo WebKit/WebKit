@@ -1,3 +1,27 @@
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        FileReader.readAsArrayBuffer misses checking for the type of blob param
+        https://bugs.webkit.org/show_bug.cgi?id=226640
+        <rdar://problem/79193198>
+
+        Reviewed by Youenn Fablet.
+
+        The Blob parameter to FileReader.readAsArrayBuffer / readAsBinaryString / readAsText / readAsDataURL
+        should not be nullable as per the specification:
+        - https://w3c.github.io/FileAPI/#APIASynch
+
+        This patch aligns us with the specification and with the behavior of both Blink and Gecko.
+
+        Test: fast/files/filereader-invalid-blob.html
+
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readAsArrayBuffer):
+        (WebCore::FileReader::readAsBinaryString):
+        (WebCore::FileReader::readAsText):
+        (WebCore::FileReader::readAsDataURL):
+        * fileapi/FileReader.h:
+        * fileapi/FileReader.idl:
+
 2021-06-16  Sihui Liu  <sihui_liu@apple.com>
 
         Add lock for static cursorMap in MemoryCursor
