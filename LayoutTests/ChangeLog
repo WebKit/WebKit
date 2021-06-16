@@ -1,3 +1,12 @@
+2021-06-16  Amir Mark Jr  <amir_mark@apple.com>
+
+        Fix test expectations for plugin tests on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=226783
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-06-16  Tim Nguyen  <ntim@apple.com>
 
         Make CSS.supports() return false for internal CSS properties
