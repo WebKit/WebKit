@@ -1,3 +1,21 @@
+2021-06-15  Alan Bujtas  <zalan@apple.com>
+
+        Cleanup RenderElement::RendererCreationType
+        https://bugs.webkit.org/show_bug.cgi?id=227033
+
+        Reviewed by Simon Fraser.
+
+        Let the caller define the preferred type of renderer for certain display type values.
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::createElementRenderer):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createElementRenderer):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::createFor):
+
 2021-06-15  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] ConcreteImageBuffer::baseTransform() returns incorrect transform for unaccelerated ImageBuffer
