@@ -1,3 +1,20 @@
+2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL2 clientWaitSync does not flush when requested
+        https://bugs.webkit.org/show_bug.cgi?id=227064
+
+        Reviewed by Kenneth Russell.
+
+        Flush when clientWaitSync is called with SYNC_FLUSH_COMMANDS_BIT.
+        Theoretically the sync object might not be inserted to the command
+        buffer unless the wait flushes or client ensures flush by other
+        means.
+
+        No new tests, hard to observe externally.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::clientWaitSync):
+
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Better protect against overflows in the WebAudioBufferList constructor
