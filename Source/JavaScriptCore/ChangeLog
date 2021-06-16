@@ -1,3 +1,38 @@
+2021-06-16  Filip Pizlo  <fpizlo@apple.com>
+
+        RegisterSet should be smaller
+        https://bugs.webkit.org/show_bug.cgi?id=227078
+
+        Reviewed by Geoff Garen.
+
+        Previously, every RegisterSet would have an extra 64-bit word in it just to hold state
+        relevant to hashtable keys.
+
+        But RegisterSet is almost never used as a hashtable key.
+
+        This patch moves the hashtable key support into a subclass, HashableRegisterSet. That class
+        ends up only being used in one place.
+
+        On ARM64, this makes RegisterSet use 64 bits instead of 128 bits.
+
+        On X86_64, this makes RegisterSet use 32 bits instead of 64 bits.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLSlowPathCallKey.h:
+        (JSC::FTL::SlowPathCallKey::SlowPathCallKey):
+        * jit/HashableRegisterSet.h: Added.
+        (JSC::HashableRegisterSet::HashableRegisterSet):
+        (JSC::HashableRegisterSet::isEmptyValue const):
+        (JSC::HashableRegisterSet::isDeletedValue const):
+        (JSC::RegisterSetHash::hash):
+        (JSC::RegisterSetHash::equal):
+        * jit/RegisterSet.h:
+        (): Deleted.
+        (JSC::RegisterSet::isEmptyValue const): Deleted.
+        (JSC::RegisterSet::isDeletedValue const): Deleted.
+        (JSC::RegisterSetHash::hash): Deleted.
+        (JSC::RegisterSetHash::equal): Deleted.
+
 2021-06-16  Tadeu Zagallo  <tzagallo@apple.com>
 
         AssemblyHelpers should save/restore callee save FPRs
