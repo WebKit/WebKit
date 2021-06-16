@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
                   RenderInline {FONT} at (0,0) size 0x0
                 RenderInline {A} at (0,0) size 64x19 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 64x19
-                    RenderText {#text} at (360,-1) size 64x19
+                    RenderText {#text} at (360,-1) size 64x20
                       text run at (360,0) width 64: "Homework"
             RenderTableRow {TR} at (0,187) size 784x33
               RenderTableCell {TD} at (0,194) size 784x19 [r=5 c=0 rs=1 cs=1]
@@ -57,10 +57,10 @@ layer at (0,0) size 800x600
                   RenderInline {FONT} at (0,0) size 0x0
                 RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 68x19
-                    RenderText {#text} at (358,-1) size 22x19
+                    RenderText {#text} at (358,-1) size 22x20
                       text run at (358,0) width 22: "Lab"
                     RenderInline {U} at (0,0) size 47x19
-                      RenderText {#text} at (379,-1) size 47x19
+                      RenderText {#text} at (379,-1) size 47x20
                         text run at (379,0) width 47: "oratory"
             RenderTableRow {TR} at (0,283) size 784x33
               RenderTableCell {TD} at (0,290) size 784x19 [r=8 c=0 rs=1 cs=1]

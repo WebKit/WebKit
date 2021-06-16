@@ -1,3 +1,14 @@
+2021-06-16  Alan Bujtas  <zalan@apple.com>
+
+        Content moves up when hovering over a link on Hacker News
+        https://bugs.webkit.org/show_bug.cgi?id=226852
+        <rdar://78537231>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/hidpi-legacy-integral-rounding-on-inline-boxes-expected.html: Added.
+        * fast/inline/hidpi-legacy-integral-rounding-on-inline-boxes.html: Added.
+
 2021-06-16  Frederic Wang  <fwang@igalia.com>
 
         Nullptr crash in positionInParentBeforeNode via InsertTextCommand::doApply
