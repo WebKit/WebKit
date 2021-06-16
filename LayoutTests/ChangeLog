@@ -1,3 +1,10 @@
+2021-06-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Skip another WebGL 2 test.
+        https://bugs.webkit.org/show_bug.cgi?id=227093
+
+        * platform/glib/TestExpectations:
+
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
         Resync FileAPI tests from upstream WPT
