@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/adding-events.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-cancel-and-hold.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-close.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-connect-audioratesignal.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exceptional-values.html
@@ -22,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-large-endtime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-linearRampToValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-method-chaining.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-nominal-range.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setTargetAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions.html

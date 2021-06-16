@@ -1,3 +1,38 @@
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Resync webaudio tests from upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227091
+
+        Reviewed by Geoffrey Garen.
+
+        Resync webaudio tests from upstream WPT b5949c67c948bc452e3.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-cancel-and-hold-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-cancel-and-hold.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-nominal-range-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-nominal-range.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-throw-onmessage.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-throw-onmessage.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation.html:
+        * web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/test-constantsourcenode.html:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-setposition-throws-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-setposition-throws.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-periodicwave-interface/periodicWave.html:
+
 2021-06-16  Ada Chan  <ada.chan@apple.com>
 
         Allow WebXR tests to be run on Mac

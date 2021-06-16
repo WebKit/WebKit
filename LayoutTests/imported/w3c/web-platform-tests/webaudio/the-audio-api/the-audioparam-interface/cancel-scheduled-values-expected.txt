@@ -1,7 +1,13 @@
 
 PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "cancel-time"
 PASS Executing "cancel1"
 PASS Audit report
+PASS > [cancel-time] handle cancelTime values
+PASS   cancelScheduledValues(-1) threw RangeError: "cancelTime must be a positive value".
+PASS   cancelScheduledValues(NaN) threw TypeError: "The provided value is non-finite".
+PASS   cancelScheduledValues(Infinity) threw TypeError: "The provided value is non-finite".
+PASS < [cancel-time] All assertions passed. (total 3 assertions)
 PASS > [cancel1] cancel setValueCurve
 PASS   cancelTime is after curve start is greater than 0.25.
 PASS   cancelTime is before curve ends is less than 0.5.
@@ -15,5 +21,5 @@ PASS   output[0:1999] contains only the constant 0.5.
 PASS   output[2000:2999] contains only the constant 1.5.
 PASS   output[3000:] contains only the constant 3.
 PASS < [cancel1] All assertions passed. (total 11 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

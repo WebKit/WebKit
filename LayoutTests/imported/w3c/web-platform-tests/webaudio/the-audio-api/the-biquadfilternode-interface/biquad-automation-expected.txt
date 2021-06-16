@@ -11,7 +11,7 @@ PASS > [automate-freq]
 PASS   Output of bandpass filter with frequency automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000005,"relativeThreshold":0}.
 PASS < [automate-freq] All assertions passed. (total 1 assertions)
 PASS > [automate-q]
-PASS   Output of bandpass filter with Q automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":9.8348e-7,"relativeThreshold":0}.
+PASS   Output of bandpass filter with Q automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000001,"relativeThreshold":0}.
 PASS < [automate-q] All assertions passed. (total 1 assertions)
 PASS > [automate-gain]
 PASS   Output of lowshelf filter with gain automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000028,"relativeThreshold":0}.

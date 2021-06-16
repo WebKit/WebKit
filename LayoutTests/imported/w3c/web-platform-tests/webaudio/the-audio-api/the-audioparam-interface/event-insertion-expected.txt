@@ -47,7 +47,7 @@ PASS   Linear+SetTarget: setValueAtTime(100, 0.015625) did not throw an exceptio
 PASS   Linear+SetTarget: setTargetAtTime(0, 0.015625, 0.1) did not throw an exception.
 PASS   Linear+SetTarget: At time 0.015564 (frame 255) output is 2.992188 within an error of 0.
 PASS   Linear+SetTarget: At time 0.015625 (frame 256) output is equal to 100.
-PASS   Linear+SetTarget: At time 0.015625 (frame 256) and later equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.7807e-7}.
+PASS   Linear+SetTarget: At time 0.015625 (frame 256) and later equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":2.6694e-7}.
 PASS < [Linear + SetTarget] All assertions passed. (total 7 assertions)
 PASS > [Multiple linear ramps at the same time] Verify output
 PASS   Multiple linear ramps: setValueAtTime(1, 0) did not throw an exception.
