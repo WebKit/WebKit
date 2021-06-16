@@ -315,10 +315,11 @@
         (with-filter (system-attribute apple-internal)
             ;; <rdar://problem/8565035>
             ;; <rdar://problem/23857452>
+            ;; <rdar://problem/72317112>
             (allow file-read* file-map-executable
                    (subpath "/AppleInternal")
                    (subpath "/usr/local/lib")
-                   (subpath "/usr/appleinternal/lib/sanitizers")))
+                   (subpath "/usr/appleinternal/lib")))
             (with-elevated-precedence
                 (allow file-read* file-map-executable file-issue-extension
                    (front-user-home-subpath "/XcodeBuiltProducts")))
