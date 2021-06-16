@@ -1,3 +1,24 @@
+2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal gl sync objects do not work in case of listener being needed
+        https://bugs.webkit.org/show_bug.cgi?id=227024
+
+        Reviewed by Per Arne Vollan.
+
+        Make MTLSharedEventListener instantiatable by adding IOKit messages
+        39 and 40 to IOSurfaceRootUserClientMessageFilter.
+
+        The MTLSharedEventListener init would fail, and ANGLE would fail to
+        make the shared event signal the event listener. This would cause
+        all glClientWaitSync calls to wait the full timeout time.
+
+        No new tests, WebGL2 sync object implementation does not support
+        non-zero timeout values that would be needed to detect the failure.
+        Standalone test-cases would need the test runner being sandboxed,
+        which is not implemented currently.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-06-16  Per Arne  <pvollan@apple.com>
 
         Update Media Accessibility preferences in the WebContent process from the UI process

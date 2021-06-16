@@ -186,6 +186,7 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (iokit-method-number
                 17
+                40
             )
 #endif
         )
@@ -212,6 +213,7 @@
                 35
                 36
                 38
+                39
                 44
             )
 #endif
