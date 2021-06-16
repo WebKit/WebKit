@@ -1,3 +1,13 @@
+2021-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Adopt com.apple.security.cs.jit-write-allowlist on internal builds.
+        https://bugs.webkit.org/show_bug.cgi?id=222148
+        rdar://74284026
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/process-entitlements.sh:
+
 2021-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] Reenable modern text input UI for non-numeric text input types

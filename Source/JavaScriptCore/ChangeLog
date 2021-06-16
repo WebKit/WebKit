@@ -1,3 +1,18 @@
+2021-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Adopt com.apple.security.cs.jit-write-allowlist on internal builds.
+        https://bugs.webkit.org/show_bug.cgi?id=222148
+        rdar://74284026
+
+        Reviewed by Per Arne Vollan.
+
+        This will prevent various pthread permissions switching APIs from working.
+        We only want to adopt this for internal builds where we use the fast permission
+        switching macro instead.  We can't adopt it for open source builds, where we
+        still rely on the pthread API.
+
+        * Scripts/process-entitlements.sh:
+
 2021-06-16  Robin Morisset  <rmorisset@apple.com>
 
         Don't look at the (non-existent) child2 of DelById
