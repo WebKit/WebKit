@@ -43,7 +43,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     uint32_t bufferCount = format.numberOfChannelStreams();
 
     CheckedSize bufferListSize = offsetof(AudioBufferList, mBuffers);
-    bufferListSize += (sizeof(AudioBuffer) * std::max(1U, bufferCount));
+    bufferListSize += CheckedSize { sizeof(AudioBuffer) } * std::max(1U, bufferCount);
     m_listBufferSize = bufferListSize;
     m_canonicalList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
     memset(m_canonicalList.get(), 0, m_listBufferSize);

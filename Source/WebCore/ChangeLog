@@ -1,3 +1,16 @@
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        [Hardening] Better protect against overflows in the WebAudioBufferList constructor
+        https://bugs.webkit.org/show_bug.cgi?id=227077
+        <rdar://problem/78222665>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure `sizeof(AudioBuffer) * std::max(1U, bufferCount)` doesn't overflow.
+
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::WebAudioBufferList):
+
 2021-06-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] gst_element_get_request_pad deprecated in 1.20
