@@ -1,3 +1,63 @@
+2021-06-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize JSON.parse with small content by dropping single character Identifier pool
+        https://bugs.webkit.org/show_bug.cgi?id=227057
+
+        Reviewed by Sam Weinig.
+
+        Profiler results and investigation suggest interesting things.
+
+            1. Sampling profiler says Flight-TodoMVC is mostly JSON.parse benchmark.
+            2. Each JSON data of Flight-TodoMVC is small. And JSON.parse is super frequently called.
+            3. In the case of JSON.parse with small data, LiteralParser's construction / destruction costs much since
+               it has large Identifier pool with std::array<>.
+
+        As a simple first step, this patch removes single character Identifier pool from LiteralParser since
+        the exact same Identifier data can be retrieved from VM's SmallStrings.
+
+        We created a microbenchmark from Flight-TodoMVC's data, and the result is roughly 20% better.
+        And we observed 0.6% improvement in Speedometer2.
+
+                                            ToT                     Patched
+
+            flight-todomvc-json       81.0552+-0.8403     ^     67.5756+-0.6221        ^ definitely 1.1995x faster
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |128.991667   |128.450000   |0.995801  | 0.278228                                         |
+            | VueJS-TodoMVC                        |28.487500    |27.925000    |0.980254  | 0.139315                                         |
+            | EmberJS-TodoMVC                      |133.950000   |134.175000   |1.001680  | 0.685021                                         |
+            | BackboneJS-TodoMVC                   |51.670833    |51.537500    |0.997420  | 0.628993                                         |
+            | Preact-TodoMVC                       |21.783333    |21.754167    |0.998661  | 0.944237                                         |
+            | AngularJS-TodoMVC                    |143.820833   |143.770833   |0.999652  | 0.933953                                         |
+            | Vanilla-ES2015-TodoMVC               |71.608333    |71.416667    |0.997323  | 0.500591                                         |
+            | Inferno-TodoMVC                      |69.179167    |69.525000    |1.004999  | 0.412406                                         |
+            | Flight-TodoMVC                       |81.354167    |79.020833    |0.971319  | 0.000053 (significant)                           |
+            | Angular2-TypeScript-TodoMVC          |42.654167    |41.887500    |0.982026  | 0.086053                                         |
+            | VanillaJS-TodoMVC                    |57.054167    |56.633333    |0.992624  | 0.176804                                         |
+            | jQuery-TodoMVC                       |274.595833   |275.670833   |1.003915  | 0.148812                                         |
+            | EmberJS-Debug-TodoMVC                |358.387500   |357.595833   |0.997791  | 0.323387                                         |
+            | React-TodoMVC                        |93.804167    |93.329167    |0.994936  | 0.113410                                         |
+            | React-Redux-TodoMVC                  |157.954167   |157.266667   |0.995647  | 0.131298                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |68.687500    |68.054167    |0.990779  | 0.002155 (significant)                           |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 235.28964
+            b mean = 236.72163
+            pValue = 0.0121265559
+            (Bigger means are better.)
+            1.006 times better
+            Results ARE significant
+
+        * runtime/Identifier.h:
+        (JSC::Identifier::canUseSingleCharacterString):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::makeIdentifier):
+        * runtime/LiteralParser.h:
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::singleCharacterStringRep):
+        * runtime/SmallStrings.h:
+
 2021-06-15  Keith Miller  <keith_miller@apple.com>
 
         Shouldn't drain the micro task queue when calling out to ObjC

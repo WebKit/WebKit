@@ -131,45 +131,28 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
 }
     
 template <typename CharType>
-ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const LChar* characters, size_t length)
+template <typename LiteralCharType>
+ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(const LiteralCharType* characters, size_t length)
 {
     VM& vm = m_globalObject->vm();
     if (!length)
         return vm.propertyNames->emptyIdentifier;
-    if (characters[0] >= MaximumCachableCharacter)
-        return Identifier::fromString(vm, characters, length);
 
+    auto firstCharacter = characters[0];
     if (length == 1) {
-        if (!m_shortIdentifiers[characters[0]].isNull())
-            return m_shortIdentifiers[characters[0]];
-        m_shortIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-        return m_shortIdentifiers[characters[0]];
-    }
-    if (!m_recentIdentifiers[characters[0]].isNull() && Identifier::equal(m_recentIdentifiers[characters[0]].impl(), characters, length))
-        return m_recentIdentifiers[characters[0]];
-    m_recentIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-    return m_recentIdentifiers[characters[0]];
-}
-
-template <typename CharType>
-ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const UChar* characters, size_t length)
-{
-    VM& vm = m_globalObject->vm();
-    if (!length)
-        return vm.propertyNames->emptyIdentifier;
-    if (characters[0] >= MaximumCachableCharacter)
+        if constexpr (sizeof(LiteralCharType) == 1)
+            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter).ptr());
+        if (firstCharacter <= maxSingleCharacterString)
+            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter).ptr());
         return Identifier::fromString(vm, characters, length);
-
-    if (length == 1) {
-        if (!m_shortIdentifiers[characters[0]].isNull())
-            return m_shortIdentifiers[characters[0]];
-        m_shortIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-        return m_shortIdentifiers[characters[0]];
     }
-    if (!m_recentIdentifiers[characters[0]].isNull() && Identifier::equal(m_recentIdentifiers[characters[0]].impl(), characters, length))
-        return m_recentIdentifiers[characters[0]];
-    m_recentIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-    return m_recentIdentifiers[characters[0]];
+
+    if (firstCharacter >= maximumCachableCharacter)
+        return Identifier::fromString(vm, characters, length);
+    if (!m_recentIdentifiers[firstCharacter].isNull() && Identifier::equal(m_recentIdentifiers[firstCharacter].impl(), characters, length))
+        return m_recentIdentifiers[firstCharacter];
+    m_recentIdentifiers[firstCharacter] = Identifier::fromString(vm, characters, length);
+    return m_recentIdentifiers[firstCharacter];
 }
 
 // 256 Latin-1 codes

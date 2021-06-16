@@ -199,11 +199,10 @@ private:
     typename LiteralParser<CharType>::Lexer m_lexer;
     ParserMode m_mode;
     String m_parseErrorMessage;
-    static unsigned const MaximumCachableCharacter = 128;
-    std::array<Identifier, MaximumCachableCharacter> m_shortIdentifiers;
-    std::array<Identifier, MaximumCachableCharacter> m_recentIdentifiers;
-    ALWAYS_INLINE const Identifier makeIdentifier(const LChar* characters, size_t length);
-    ALWAYS_INLINE const Identifier makeIdentifier(const UChar* characters, size_t length);
+    static constexpr unsigned maximumCachableCharacter = 128;
+    std::array<Identifier, maximumCachableCharacter> m_recentIdentifiers;
+    template<typename LiteralCharType>
+    ALWAYS_INLINE Identifier makeIdentifier(const LiteralCharType* characters, size_t length);
 };
 
 } // namespace JSC

@@ -190,7 +190,7 @@ private:
 
     template <typename T> static Ref<StringImpl> add(VM&, const T*, int length);
     static Ref<StringImpl> add8(VM&, const UChar*, int length);
-    template <typename T> ALWAYS_INLINE static bool canUseSingleCharacterString(T);
+    template <typename T> ALWAYS_INLINE static constexpr bool canUseSingleCharacterString(T);
 
     static Ref<StringImpl> add(VM&, StringImpl*);
 
@@ -201,13 +201,13 @@ private:
 #endif
 };
 
-template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(LChar)
+template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString(LChar)
 {
-    ASSERT(maxSingleCharacterString == 0xff);
+    static_assert(maxSingleCharacterString == 0xff);
     return true;
 }
 
-template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(UChar c)
+template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString(UChar c)
 {
     return (c <= maxSingleCharacterString);
 }
