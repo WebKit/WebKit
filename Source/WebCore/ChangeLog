@@ -1,3 +1,15 @@
+2021-06-16  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r273329): Logging of most errors like CSP and promise rejections fail logging to the system console
+        https://bugs.webkit.org/show_bug.cgi?id=227080
+
+        Unreviewed, reverting r273329.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didLogMessage):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::addMessage):
+
 2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL2 clientWaitSync does not flush when requested

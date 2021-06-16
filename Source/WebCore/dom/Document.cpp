@@ -257,10 +257,8 @@
 #include "XPathExpression.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
-#include <JavaScriptCore/ConsoleClient.h>
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RegularExpression.h>
-#include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/VM.h>
 #include <ctime>
@@ -8503,20 +8501,13 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
     if (messageSource == MessageSource::Other)
         return;
 
-    auto messageLevel = messageLevelFromWTFLogLevel(level);
-    auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(frame()));
-
-    if (UNLIKELY(page->settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())) {
-        if (message->type() == MessageType::Image) {
-            ASSERT(message->arguments());
-            JSC::ConsoleClient::printConsoleMessageWithArguments(message->source(), message->type(), message->level(), message->arguments()->globalObject(), *message->arguments());
-        } else
-            JSC::ConsoleClient::printConsoleMessage(message->source(), message->type(), message->level(), message->toString(), message->url(), message->line(), message->column());
-    }
-
-    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this), message = WTFMove(message)]() mutable {
+    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this), level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
         if (!weakThis || !weakThis->page())
             return;
+
+        auto messageLevel = messageLevelFromWTFLogLevel(level);
+        auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(weakThis->frame()));
+
         weakThis->addConsoleMessage(WTFMove(message));
     });
 }
