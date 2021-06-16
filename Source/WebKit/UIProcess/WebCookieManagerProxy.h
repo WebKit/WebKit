@@ -52,7 +52,7 @@ namespace WebKit {
 class WebProcessPool;
 class WebProcessProxy;
 
-class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, private IPC::MessageReceiver {
+class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, public IPC::MessageReceiver {
 public:
     static Ref<WebCookieManagerProxy> create(NetworkProcessProxy& networkProcess) { return adoptRef(*new WebCookieManagerProxy(networkProcess)); }
     virtual ~WebCookieManagerProxy();
@@ -83,7 +83,6 @@ public:
     public:
         virtual ~Observer() { }
         virtual void cookiesDidChange() = 0;
-        virtual void managerDestroyed() = 0;
     };
 
     void registerObserver(PAL::SessionID, Observer&);

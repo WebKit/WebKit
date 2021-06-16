@@ -29,7 +29,8 @@
 #include <WebCore/Cookie.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 struct Cookie;
@@ -66,7 +67,7 @@ public:
     void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
     void flushCookies(CompletionHandler<void()>&&);
 
-    class Observer {
+    class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer() { }
         virtual void cookiesDidChange(HTTPCookieStore&) = 0;
@@ -76,7 +77,6 @@ public:
     void unregisterObserver(Observer&);
 
     void cookiesDidChange();
-    void cookieManagerDestroyed();
 
     void filterAppBoundCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
@@ -86,15 +86,9 @@ private:
     // FIXME: This is a reference cycle.
     Ref<WebKit::WebsiteDataStore> m_owningDataStore;
 
-    // FIXME: This should be a WeakHashSet.
-    HashSet<Observer*> m_observers;
-
-    // FIXME: This should be a WeakPtr.
-    WebKit::WebCookieManagerProxy* m_observedCookieManagerProxy { nullptr };
+    WeakHashSet<Observer> m_observers;
+    WeakPtr<WebKit::WebCookieManagerProxy> m_observedCookieManagerProxy;
     std::unique_ptr<APIWebCookieManagerProxyObserver> m_cookieManagerProxyObserver;
-
-    // FIXME: This is always 0. Remove it and the code that is called when it wasn't zero before r267763.
-    uint64_t m_processPoolCreationListenerIdentifier { 0 };
 };
 
 }

@@ -50,7 +50,7 @@ HTTPCookieStore::HTTPCookieStore(WebKit::WebsiteDataStore& websiteDataStore)
 
 HTTPCookieStore::~HTTPCookieStore()
 {
-    ASSERT(m_observers.isEmpty());
+    ASSERT(m_observers.computesEmpty());
     ASSERT(!m_observedCookieManagerProxy);
     ASSERT(!m_cookieManagerProxyObserver);
 }
@@ -138,11 +138,6 @@ private:
         m_cookieStore.cookiesDidChange();
     }
 
-    void managerDestroyed() final
-    {
-        m_cookieStore.cookieManagerDestroyed();
-    }
-
     API::HTTPCookieStore& m_cookieStore;
 };
 
@@ -157,39 +152,28 @@ void HTTPCookieStore::registerObserver(Observer& observer)
 
     m_cookieManagerProxyObserver = makeUnique<APIWebCookieManagerProxyObserver>(*this);
 
-    m_observedCookieManagerProxy = &m_owningDataStore->networkProcess().cookieManager();
+    m_observedCookieManagerProxy = makeWeakPtr(m_owningDataStore->networkProcess().cookieManager());
     m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
 }
 
 void HTTPCookieStore::unregisterObserver(Observer& observer)
 {
-    m_observers.remove(&observer);
+    m_observers.remove(observer);
 
-    if (!m_observers.isEmpty())
+    if (!m_observers.computesEmpty())
         return;
 
     if (m_observedCookieManagerProxy)
         m_observedCookieManagerProxy->unregisterObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
 
-    if (m_processPoolCreationListenerIdentifier)
-        WebProcessPool::unregisterProcessPoolCreationListener(m_processPoolCreationListenerIdentifier);
-
-    m_processPoolCreationListenerIdentifier = 0;
     m_observedCookieManagerProxy = nullptr;
     m_cookieManagerProxyObserver = nullptr;
 }
 
 void HTTPCookieStore::cookiesDidChange()
 {
-    for (auto* observer : m_observers)
-        observer->cookiesDidChange(*this);
-}
-
-void HTTPCookieStore::cookieManagerDestroyed()
-{
-    m_observedCookieManagerProxy->unregisterObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
-    m_observedCookieManagerProxy = &m_owningDataStore->networkProcess().cookieManager();
-    m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
+    for (auto& observer : m_observers)
+        observer.cookiesDidChange(*this);
 }
     
 } // namespace API

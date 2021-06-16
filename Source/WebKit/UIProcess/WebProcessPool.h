@@ -136,8 +136,6 @@ public:
     explicit WebProcessPool(API::ProcessPoolConfiguration&);        
     virtual ~WebProcessPool();
 
-    void notifyThisWebProcessPoolWasCreated();
-
     API::ProcessPoolConfiguration& configuration() { return m_configuration.get(); }
 
     static const Vector<WebProcessPool*>& allProcessPools();
@@ -440,9 +438,6 @@ public:
 
     void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
 #endif
-
-    static uint64_t registerProcessPoolCreationListener(Function<void(WebProcessPool&)>&&);
-    static void unregisterProcessPoolCreationListener(uint64_t identifier);
 
     ForegroundWebProcessToken foregroundWebProcessToken() const { return ForegroundWebProcessToken(m_foregroundWebProcessCounter.count()); }
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }

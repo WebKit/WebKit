@@ -1,3 +1,29 @@
+2021-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up API::HTTPCookieStore
+        https://bugs.webkit.org/show_bug.cgi?id=227058
+
+        Reviewed by Anders Carlsson.
+
+        This removes code that has been unused since r267763.
+        I also use smart pointers instead of raw pointers just to be on the safe side.
+
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::~HTTPCookieStore):
+        (API::HTTPCookieStore::registerObserver):
+        (API::HTTPCookieStore::unregisterObserver):
+        (API::HTTPCookieStore::cookiesDidChange):
+        (API::HTTPCookieStore::cookieManagerDestroyed): Deleted.
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::generateListenerIdentifier): Deleted.
+        (WebKit::processPoolCreationListenerFunctionMap): Deleted.
+        (WebKit::WebProcessPool::registerProcessPoolCreationListener): Deleted.
+        (WebKit::WebProcessPool::unregisterProcessPoolCreationListener): Deleted.
+        (WebKit::WebProcessPool::notifyThisWebProcessPoolWasCreated): Deleted.
+        * UIProcess/WebProcessPool.h:
+
 2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal gl sync objects do not work in case of listener being needed
