@@ -34,9 +34,6 @@
 
 namespace WebCore {
 struct Cookie;
-#if PLATFORM(COCOA)
-class CookieStorageObserver;
-#endif
 enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 

@@ -116,7 +116,6 @@ public:
         ContextMenuElementInfo,
 #endif
         ContextMenuListener,
-        CookieManager,
         CustomHeaderFields,
         InternalDebugFeature,
         DebuggableInfo,
@@ -367,7 +366,6 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::ContextMenuElementInfo,
 #endif
         API::Object::Type::ContextMenuListener,
-        API::Object::Type::CookieManager,
         API::Object::Type::CustomHeaderFields,
         API::Object::Type::InternalDebugFeature,
         API::Object::Type::DebuggableInfo,

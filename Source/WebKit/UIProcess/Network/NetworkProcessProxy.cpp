@@ -197,7 +197,7 @@ NetworkProcessProxy::NetworkProcessProxy()
     , m_customProtocolManagerClient(makeUniqueRef<API::CustomProtocolManagerClient>())
 #endif
     , m_throttler(*this, anyProcessPoolShouldTakeUIBackgroundAssertion())
-    , m_cookieManager(WebCookieManagerProxy::create(*this))
+    , m_cookieManager(makeUniqueRef<WebCookieManagerProxy>(*this))
 {
     connect();
     sendCreationParametersToNewProcess();

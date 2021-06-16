@@ -367,7 +367,7 @@ private:
 #endif
 
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
-    Ref<WebCookieManagerProxy> m_cookieManager;
+    UniqueRef<WebCookieManagerProxy> m_cookieManager;
 };
 
 } // namespace WebKit

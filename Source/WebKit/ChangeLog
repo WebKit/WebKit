@@ -1,5 +1,37 @@
 2021-06-16  Alex Christensen  <achristensen@webkit.org>
 
+        Clean up WebCookieManagerProxy
+        https://bugs.webkit.org/show_bug.cgi?id=227074
+
+        Reviewed by Brady Eidson.
+
+        Remove dead code.  WKCookieManagerSetClient is deprecated and doesn't do anything, so we don't need a client here.
+        Use smart pointers instead of raw pointers to be on the safe side.
+
+        * Shared/API/APIObject.h:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/APIInspectorExtension.cpp:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::registerObserver):
+        (WebKit::WebCookieManagerProxy::unregisterObserver):
+        (WebKit::WebCookieManagerProxy::cookiesDidChange):
+        (WebKit::WebCookieManagerProxy::initializeClient): Deleted.
+        (WebKit::WebCookieManagerProxy::setCookieObserverCallback): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebKit::WebCookieManagerProxy::create): Deleted.
+        * UIProcess/WebCookieManagerProxy.messages.in:
+        * UIProcess/WebCookieManagerProxyClient.cpp: Removed.
+        * UIProcess/WebCookieManagerProxyClient.h: Removed.
+        * UIProcess/mac/WebCookieManagerProxyMac.mm: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-06-16  Alex Christensen  <achristensen@webkit.org>
+
         Clean up API::HTTPCookieStore
         https://bugs.webkit.org/show_bug.cgi?id=227058
 
