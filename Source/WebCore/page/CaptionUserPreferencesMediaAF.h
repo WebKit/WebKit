@@ -43,6 +43,9 @@ public:
     CaptionDisplayMode captionDisplayMode() const override;
     void setCaptionDisplayMode(CaptionDisplayMode) override;
 
+    WEBCORE_EXPORT static CaptionDisplayMode platformCaptionDisplayMode();
+    WEBCORE_EXPORT static void setCachedCaptionDisplayMode(CaptionDisplayMode);
+
     bool userPrefersCaptions() const override;
     bool userPrefersSubtitles() const override;
 
@@ -53,6 +56,9 @@ public:
 
     void setPreferredLanguage(const String&) override;
     Vector<String> preferredLanguages() const override;
+
+    WEBCORE_EXPORT static Vector<String> platformPreferredLanguages();
+    WEBCORE_EXPORT static void setCachedPreferredLanguages(const Vector<String>&);
 
     void setPreferredAudioCharacteristic(const String&) override;
     Vector<String> preferredAudioCharacteristics() const override;

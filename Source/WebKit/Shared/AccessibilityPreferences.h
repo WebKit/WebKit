@@ -27,6 +27,10 @@
 
 #include "ArgumentCoders.h"
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include <WebCore/CaptionUserPreferences.h>
+#endif
+
 namespace WebKit {
 
 struct AccessibilityPreferences {
@@ -36,6 +40,10 @@ struct AccessibilityPreferences {
     bool enhanceTextLegibility { false };
     bool darkenSystemColors { false };
     bool invertColorsEnabled { false };
+#endif
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode;
+    Vector<String> preferredLanguages;
 #endif
 };
 

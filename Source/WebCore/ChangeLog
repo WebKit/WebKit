@@ -1,3 +1,28 @@
+2021-06-16  Per Arne  <pvollan@apple.com>
+
+        Update Media Accessibility preferences in the WebContent process from the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=227031
+        <rdar://78614882>
+
+        Reviewed by Eric Carlson.
+
+        Due to stricter sandboxing in the WebContent process, Media Accessibility preferences should be updated from the UI process.
+        The preferences for caption display mode and preferred caption languages are being cached, and the cached value will be used
+        if it has been set.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/CaptionUserPreferences.h:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::cachedCaptionDisplayMode):
+        (WebCore::cachedPreferredLanguages):
+        (WebCore::CaptionUserPreferencesMediaAF::captionDisplayMode const):
+        (WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode):
+        (WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode):
+        (WebCore::CaptionUserPreferencesMediaAF::preferredLanguages const):
+        (WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages):
+        (WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages):
+        * page/CaptionUserPreferencesMediaAF.h:
+
 2021-06-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] clang analysis: Unlocked access in ImageDecoderGStreamer.cpp

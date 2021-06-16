@@ -1,3 +1,26 @@
+2021-06-16  Per Arne  <pvollan@apple.com>
+
+        Update Media Accessibility preferences in the WebContent process from the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=227031
+        <rdar://78614882>
+
+        Reviewed by Eric Carlson.
+
+        Due to stricter sandboxing in the WebContent process, Media Accessibility preferences should be updated from the UI process.
+        The preferences for caption display mode and preferred caption languages will be sent to the WebContent process on process
+        startup and when the preference has been changed.
+
+        * Shared/AccessibilityPreferences.cpp:
+        (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::encode):
+        (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::decode):
+        * Shared/AccessibilityPreferences.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::accessibilityPreferences):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::accessibilityPreferencesDidChange):
+
 2021-06-16  Martin Robinson  <mrobinson@webkit.org>
 
         Replace invalidSnapOffsetIndex with std::optional<unsigned>

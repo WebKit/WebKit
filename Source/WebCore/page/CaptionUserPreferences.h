@@ -30,6 +30,7 @@
 #include "AudioTrack.h"
 #include "TextTrack.h"
 #include "Timer.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -123,4 +124,19 @@ private:
 };
     
 }
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode> {
+    using values = EnumValues<
+        WebCore::CaptionUserPreferences::CaptionDisplayMode,
+        WebCore::CaptionUserPreferences::CaptionDisplayMode::Automatic,
+        WebCore::CaptionUserPreferences::CaptionDisplayMode::ForcedOnly,
+        WebCore::CaptionUserPreferences::CaptionDisplayMode::AlwaysOn,
+        WebCore::CaptionUserPreferences::CaptionDisplayMode::Manual
+    >;
+};
+
+} // namespace WTF
+
 #endif
