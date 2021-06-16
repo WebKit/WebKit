@@ -1,3 +1,16 @@
+2021-06-16  Peng Liu  <peng.liu6@apple.com>
+
+        Some http/tests/ are crashing with ASSERTION FAILED: isInRoutingArbitrationForToken(token) || m_setupArbitrationOngoing
+        https://bugs.webkit.org/show_bug.cgi?id=226896
+
+        Reviewed by Darin Adler.
+
+        A follow-up patch to fix an issue in r278922. Remove the call to `contains()`
+        before `remove()` on a `WeakHashSet`.
+
+        * platform/audio/mac/SharedRoutingArbitrator.mm:
+        (WebCore::SharedRoutingArbitrator::endRoutingArbitrationForToken):
+
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
         FileReader.readAsArrayBuffer misses checking for the type of blob param
