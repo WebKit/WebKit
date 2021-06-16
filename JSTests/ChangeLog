@@ -1,3 +1,18 @@
+2021-06-16  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AssemblyHelpers should save/restore callee save FPRs
+        https://bugs.webkit.org/show_bug.cgi?id=227052
+        <rdar://77080162>
+
+        Reviewed by Mark Lam.
+
+        * stress/callee-save-fpr.js: Added.
+        (_f):
+        (_g):
+        (_h):
+        (_i):
+        (assertEqual):
+
 2021-06-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize JSON.parse with small content by dropping single character Identifier pool

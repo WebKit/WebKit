@@ -1,3 +1,29 @@
+2021-06-16  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AssemblyHelpers should save/restore callee save FPRs
+        https://bugs.webkit.org/show_bug.cgi?id=227052
+        <rdar://77080162>
+
+        Reviewed by Mark Lam.
+
+        We have 3 functions in AssemblyHelpers to save and restore callee save registers that were filtering
+        out any FPRs. This is an issue since we do have callee save FPRs in arm64 and these functions can be
+        called from the FTL, and FTL uses those callee saves. The test case shows how that's an issue with tail
+        calls on FTL: the callee saves are correctly stored in the prologue and restored in the epilogue, but
+        when emitting a tail call we use AssemblyHelpers::emitRestoreCalleeSaves to restore the callee saves,
+        which doesn't restore FPRs. This results in the callee save FPRs being trashed. To fix this we just need
+        to stop filtering out the FPRs, if they are listed as used by the code block they should be saved/restored
+        accordingly. I also changed DFGOSREntry to stop filtering out the callee save FPRs and instead assert
+        there aren't any, since they aren't currently used in the DFG, but it could help avoid the same issue in
+        the future.
+
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitSaveOrCopyCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor):
+
 2021-06-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278846.
