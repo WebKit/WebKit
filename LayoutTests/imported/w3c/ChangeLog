@@ -1,5 +1,16 @@
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
+        Resync FileAPI tests from upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227089
+
+        Reviewed by Darin Adler.
+
+        Resync FileAPI tests from upstream WPT b5949c67c948bc452e3.
+
+        * web-platform-tests/FileAPI/*: Updated.
+
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
         Resync webaudio tests from upstream WPT
         https://bugs.webkit.org/show_bug.cgi?id=227091
 

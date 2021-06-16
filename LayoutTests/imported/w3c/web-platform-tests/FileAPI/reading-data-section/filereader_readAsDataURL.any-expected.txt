@@ -1,0 +1,5 @@
+
+PASS FileReader readyState during readAsDataURL
+PASS readAsDataURL result for Blob with specified MIME type
+PASS readAsDataURL result for Blob with unspecified MIME type
+

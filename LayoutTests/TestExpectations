@@ -2638,8 +2638,6 @@ fast/forms/range/range-remove-on-drag.html [ Skip ]
 # FileAPI
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ Failure ]
-# Test output contains WebKitFormBoundary lines with randomly generated text.
-imported/w3c/web-platform-tests/FileAPI/file/send-file-formdata-controls.tentative.html [ Failure ]
 
 # Secure Contexts tests that timeout
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Skip ]
@@ -2931,7 +2929,6 @@ webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_get
 webkit.org/b/210731 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html [ Skip ]
 webkit.org/b/210731 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html [ Skip ]
 
-webkit.org/b/186848 imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.html [ Pass Failure ]
 webkit.org/b/179176 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
 
 webkit.org/b/172864 imported/blink/storage/indexeddb/blob-delete-objectstore-db.html [ Pass Timeout ]
@@ -2941,8 +2938,6 @@ webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Skip ]
 [ Debug ] fast/multicol/crash-in-vertical-writing-mode.html [ Skip ]
 
 webkit.org/b/202805 [ Debug ] fast/multicol/fragflow-gains-new-in-flow-descendant-crash.html [ Skip ]
-
-webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html [ Skip ]
 
 # This newly imported test crashes in debug and flakily times out.
 webkit.org/b/189917 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.html [ Skip ]
