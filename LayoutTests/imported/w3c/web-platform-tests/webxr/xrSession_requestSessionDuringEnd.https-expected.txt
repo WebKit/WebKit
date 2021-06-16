@@ -1,0 +1,6 @@
+
+FAIL Create new session in OnSessionEnded event - webgl assert_unreached: Session creation should not throw: SecurityError: The operation is insecure. Reached unreachable code
+FAIL Create new session in OnSessionEnded event - webgl2 assert_unreached: Session creation should not throw: SecurityError: The operation is insecure. Reached unreachable code
+FAIL Create mew session in end promise - webgl assert_unreached: Session creation should not throw: SecurityError: The operation is insecure. Reached unreachable code
+FAIL Create mew session in end promise - webgl2 assert_unreached: Session creation should not throw: SecurityError: The operation is insecure. Reached unreachable code
+

@@ -1,0 +1,6 @@
+
+PASS XRWebGLLayer reports a valid viewports for immersive sessions - webgl
+FAIL XRWebGLLayer reports a valid viewports for immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS XRWebGLLayer reports a valid viewports for inline sessions - webgl
+FAIL XRWebGLLayer reports a valid viewports for inline sessions - webgl2 assert_implements: webgl2 not supported. undefined
+

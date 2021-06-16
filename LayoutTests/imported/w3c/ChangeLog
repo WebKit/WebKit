@@ -1,3 +1,74 @@
+2021-06-16  Ada Chan  <ada.chan@apple.com>
+
+        Allow WebXR tests to be run on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=227054
+
+        Reviewed by Sam Weinig.
+
+        Updated expected results.
+
+        * web-platform-tests/webxr/events_input_source_recreation.https-expected.txt:
+        * web-platform-tests/webxr/events_input_sources_change.https-expected.txt:
+        * web-platform-tests/webxr/events_referenceSpace_reset_immersive.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_referenceSpace_reset_inline.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_select.https-expected.txt:
+        * web-platform-tests/webxr/events_session_select_subframe.https-expected.txt:
+        * web-platform-tests/webxr/events_session_squeeze.https-expected.txt:
+        * web-platform-tests/webxr/exclusive_requestFrame_nolayer.https-expected.txt:
+        * web-platform-tests/webxr/getInputPose_handedness.https-expected.txt:
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/navigator_xr_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/render_state_update.https-expected.txt:
+        * web-platform-tests/webxr/render_state_vertical_fov_immersive.https-expected.txt:
+        * web-platform-tests/webxr/render_state_vertical_fov_inline.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https-expected.txt:
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_disconnect_ends.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrFrame_lifetime.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_end.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_input_events_end.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestSessionDuringEnd.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https-expected.txt:
+        * web-platform-tests/webxr/xrView_eyes.https-expected.txt:
+        * web-platform-tests/webxr/xrView_match.https-expected.txt:
+        * web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt:
+        * web-platform-tests/webxr/xrView_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrViewport_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https-expected.txt:
+        * web-platform-tests/webxr/xr_viewport_scale.https-expected.txt: Added.
+
 2021-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Check for "xn--" in any subdomain when parsing URL hosts

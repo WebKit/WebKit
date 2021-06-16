@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Immersive session ends when device is disconnected - webgl Test timed out
+NOTRUN Immersive session ends when device is disconnected - webgl2
+

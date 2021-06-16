@@ -1,0 +1,4 @@
+
+PASS Ensures that an XRInputSources primary input being pressed and released in the space of a single frame properly fires off the right events - webgl
+FAIL Ensures that an XRInputSources primary input being pressed and released in the space of a single frame properly fires off the right events - webgl2 assert_implements: webgl2 not supported. undefined
+

@@ -1,0 +1,3 @@
+
+PASS Reject multiple calls to XRSession.end()
+

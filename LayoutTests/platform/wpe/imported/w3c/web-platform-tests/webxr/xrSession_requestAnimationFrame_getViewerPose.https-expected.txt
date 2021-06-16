@@ -1,0 +1,6 @@
+
+PASS XRFrame getViewerPose updates on the next frame for non-immersive sessions - webgl
+FAIL XRFrame getViewerPose updates on the next frame for non-immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS XRFrame getViewerPose updates on the next frame for immersive sessions - webgl
+FAIL XRFrame getViewerPose updates on the next frame for immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+

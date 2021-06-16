@@ -1,0 +1,4 @@
+
+PASS XRViewerPose.views meets [SameObject] requirement - webgl
+FAIL XRViewerPose.views meets [SameObject] requirement - webgl2 assert_implements: webgl2 not supported. undefined
+

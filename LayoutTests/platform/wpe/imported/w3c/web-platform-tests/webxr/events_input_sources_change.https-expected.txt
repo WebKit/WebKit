@@ -1,0 +1,4 @@
+
+PASS Transient input sources fire events in the right order - webgl
+FAIL Transient input sources fire events in the right order - webgl2 assert_implements: webgl2 not supported. undefined
+

@@ -1,0 +1,4 @@
+
+PASS XRFrame getViewerPose has emulatedPosition set properly. - webgl
+FAIL XRFrame getViewerPose has emulatedPosition set properly. - webgl2 assert_implements: webgl2 not supported. undefined
+

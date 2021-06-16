@@ -1,0 +1,4 @@
+
+PASS Ensure that XRWebGLLayer's constructor throws appropriate errors using webgl
+FAIL Ensure that XRWebGLLayer's constructor throws appropriate errors using webgl2 assert_implements: webgl2 not supported. undefined
+
