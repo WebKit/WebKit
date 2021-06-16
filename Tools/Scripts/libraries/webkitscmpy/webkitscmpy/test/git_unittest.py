@@ -26,7 +26,7 @@ import tempfile
 import unittest
 
 from datetime import datetime
-from webkitcorepy import LoggerCapture, OutputCapture
+from webkitcorepy import run, LoggerCapture, OutputCapture
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import Commit, local, mocks, remote
 
@@ -304,6 +304,78 @@ class TestGit(unittest.TestCase):
                     git.commit(hash='fff83bb2'),
                     git.commit(hash='9b8311f2'),
                 ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
+
+    def test_log(self):
+        with mocks.local.Git(self.path, git_svn=True):
+            self.assertEqual(
+                run([
+                    local.Git.executable(), 'log', '--format=fuller', 'remotes/origin/main...1abe25b4',
+                ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
+                '''commit d8bce26fa65c6fc8f39c17927abb77f69fab82fc
+Author:     Jonathan Bedard <jbedard@apple.com>
+AuthorDate: Sat Oct 03 03:46:40 2020 +0000
+Commit:     Jonathan Bedard <jbedard@apple.com>
+CommitDate: Sat Oct 03 03:46:40 2020 +0000
+
+    Patch Series
+    git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+commit bae5d1e90999d4f916a8a15810ccfa43f37a2fd6
+Author:     Jonathan Bedard <jbedard@apple.com>
+AuthorDate: Sat Oct 03 03:46:40 2020 +0000
+Commit:     Jonathan Bedard <jbedard@apple.com>
+CommitDate: Sat Oct 03 03:46:40 2020 +0000
+
+    8th commit
+    git-svn-id: https://svn.example.org/repository/repository/trunk@8 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+commit 1abe25b443e985f93b90d830e4a7e3731336af4d
+Author:     Jonathan Bedard <jbedard@apple.com>
+AuthorDate: Sat Oct 03 02:23:20 2020 +0000
+Commit:     Jonathan Bedard <jbedard@apple.com>
+CommitDate: Sat Oct 03 02:23:20 2020 +0000
+
+    4th commit
+    git-svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+'''
+            )
+
+    def test_branch_log(self):
+        with mocks.local.Git(self.path, git_svn=True):
+            self.assertEqual(
+                run([
+                    local.Git.executable(), 'log', '--format=fuller', 'branch-b...main',
+                ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
+                '''commit 790725a6d79e28db2ecdde29548d2262c0bd059d
+Author:     Jonathan Bedard <jbedard@apple.com>
+AuthorDate: Sat Oct 03 03:30:00 2020 +0000
+Commit:     Jonathan Bedard <jbedard@apple.com>
+CommitDate: Sat Oct 03 03:30:00 2020 +0000
+
+    7th commit
+    git-svn-id: https://svn.example.org/repository/repository/trunk@7 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+commit 3cd32e352410565bb543821fbf856a6d3caad1c4
+Author:     Jonathan Bedard <jbedard@apple.com>
+AuthorDate: Sat Oct 03 02:40:00 2020 +0000
+Commit:     Jonathan Bedard <jbedard@apple.com>
+CommitDate: Sat Oct 03 02:40:00 2020 +0000
+
+    5th commit
+        Cherry pick
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@6 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.example.org/repository/repository/trunk@5 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+commit a30ce8494bf1ac2807a69844f726be4a9843ca55
+Author:     Jonathan Bedard <jbedard@apple.com>
+AuthorDate: Sat Oct 03 02:06:40 2020 +0000
+Commit:     Jonathan Bedard <jbedard@apple.com>
+CommitDate: Sat Oct 03 02:06:40 2020 +0000
+
+    3rd commit
+    git-svn-id: https://svn.example.org/repository/repository/trunk@3 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+'''
+            )
 
 
 class TestGitHub(unittest.TestCase):

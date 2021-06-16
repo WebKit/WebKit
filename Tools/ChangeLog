@@ -1,5 +1,21 @@
 2021-06-16  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Support branch queries in mock git log
+        https://bugs.webkit.org/show_bug.cgi?id=225889
+        <rdar://problem/78122705>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Add support for branches in
+        `git log` commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_log):
+        (TestGit.test_branch_log):
+
+2021-06-16  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Cache more Git commands
         https://bugs.webkit.org/show_bug.cgi?id=227082
         <rdar://problem/79405244>
