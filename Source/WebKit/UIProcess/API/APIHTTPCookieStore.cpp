@@ -171,16 +171,12 @@ void HTTPCookieStore::unregisterObserver(Observer& observer)
     if (m_observedCookieManagerProxy)
         m_observedCookieManagerProxy->unregisterObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
 
-    if (m_observingUIProcessCookies)
-        stopObservingChangesToDefaultUIProcessCookieStore();
-
     if (m_processPoolCreationListenerIdentifier)
         WebProcessPool::unregisterProcessPoolCreationListener(m_processPoolCreationListenerIdentifier);
 
     m_processPoolCreationListenerIdentifier = 0;
     m_observedCookieManagerProxy = nullptr;
     m_cookieManagerProxyObserver = nullptr;
-    m_observingUIProcessCookies = false;
 }
 
 void HTTPCookieStore::cookiesDidChange()
@@ -195,16 +191,5 @@ void HTTPCookieStore::cookieManagerDestroyed()
     m_observedCookieManagerProxy = &m_owningDataStore->networkProcess().cookieManager();
     m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
 }
-
-#if !PLATFORM(COCOA)
-void HTTPCookieStore::flushDefaultUIProcessCookieStore() { }
-Vector<WebCore::Cookie> HTTPCookieStore::getAllDefaultUIProcessCookieStoreCookies() { return { }; }
-void HTTPCookieStore::setCookieInDefaultUIProcessCookieStore(const WebCore::Cookie&) { }
-void HTTPCookieStore::deleteCookieFromDefaultUIProcessCookieStore(const WebCore::Cookie&) { }
-void HTTPCookieStore::startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&) { }
-void HTTPCookieStore::stopObservingChangesToDefaultUIProcessCookieStore() { }
-void HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore() { }
-void HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebCore::HTTPCookieAcceptPolicy) { }
-#endif
     
 } // namespace API

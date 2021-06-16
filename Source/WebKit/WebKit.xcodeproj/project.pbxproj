@@ -4510,7 +4510,6 @@
 		5CA26D7F217ABBB600F97A35 /* WKSafeBrowsingWarning.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSafeBrowsingWarning.mm; sourceTree = "<group>"; };
 		5CA26D80217ABBB600F97A35 /* WKSafeBrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSafeBrowsingWarning.h; sourceTree = "<group>"; };
 		5CA2F7472350E15400BE5194 /* NetworkSchemeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeRegistry.h; sourceTree = "<group>"; };
-		5CA46E7A21F1A23900CE86B4 /* APIHTTPCookieStoreCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = APIHTTPCookieStoreCocoa.mm; path = UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm; sourceTree = SOURCE_ROOT; };
 		5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingWarning.h; sourceTree = "<group>"; };
 		5CA9854B210BEB730057EB6B /* SafeBrowsingWarningCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SafeBrowsingWarningCocoa.mm; sourceTree = "<group>"; };
 		5CABDC8322C40FA7001EDE8E /* APIMessageListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIMessageListener.h; sourceTree = "<group>"; };
@@ -7910,7 +7909,6 @@
 		3754D5411B3A2998003A4C7F /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */,
 				E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */,
 				572EBBDC25392181000552B3 /* AppAttestSPI.h */,
 				57FABB0E25817CF00059DC95 /* AuthenticationServicesCoreSPI.h */,
@@ -7924,6 +7922,7 @@
 				5CB6AE432609799C00B6ED5A /* ReasonSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
 				448AC24D267135A600B28921 /* SynapseSPI.h */,
+				3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -8117,7 +8116,6 @@
 				41C5378F21F1362D008B1FAD /* _WKWebsiteDataStoreDelegate.h */,
 				F41056612130699A0092281D /* APIAttachmentCocoa.mm */,
 				7CEFA9601AC0999300B910FD /* APIContentRuleListStoreCocoa.mm */,
-				5CA46E7A21F1A23900CE86B4 /* APIHTTPCookieStoreCocoa.mm */,
 				FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */,
 				1AFDE64319510B5500C48FFA /* LegacyBundleForClass.mm */,
 				1C20935E22318CB000026A39 /* NSAttributedString.h */,
@@ -12038,7 +12036,6 @@
 				93B2614E227D14B100B97A76 /* LocalStorageDatabase.h in Headers */,
 				93B2614F227D14B100B97A76 /* LocalStorageDatabaseTracker.h in Headers */,
 				46BEB6DB22FB9D4800269867 /* LocalStorageNamespace.h in Headers */,
-				3155EE0D2673F4F00085E59A /* VisionKitSPI.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
@@ -12378,6 +12375,7 @@
 				2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */,
 				2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */,
 				2DD5A7291EBF08D5009BA597 /* VisibleWebPageCounter.h in Headers */,
+				3155EE0D2673F4F00085E59A /* VisionKitSPI.h in Headers */,
 				1A0F29E4120B44420053D1B9 /* VisitedLinkStore.h in Headers */,
 				1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */,
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,

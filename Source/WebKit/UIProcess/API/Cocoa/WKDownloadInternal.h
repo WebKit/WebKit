@@ -26,6 +26,7 @@
 #import "DownloadProxy.h"
 #import "WKDownload.h"
 #import "WKObject.h"
+#import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 

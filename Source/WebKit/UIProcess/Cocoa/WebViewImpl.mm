@@ -5804,7 +5804,7 @@ void WebViewImpl::endPreviewPanelControl(QLPreviewPanel *panel)
 
 #if ENABLE(DATA_DETECTION)
 
-void WebViewImpl::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+void WebViewImpl::handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo& info, const WebCore::IntPoint& clickLocation)
 {
 #if ENABLE(REVEAL)
     m_revealItemPresenter = adoptNS([[WKRevealItemPresenter alloc] initWithWebViewImpl:*this item:adoptNS([PAL::allocRVItemInstance() initWithDDResult:info.result.get()]).get() frame:info.elementBounds menuLocation:clickLocation]);

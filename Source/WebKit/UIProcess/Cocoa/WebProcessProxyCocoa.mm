@@ -278,7 +278,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
             return;
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), registrations = adoptCF(registrations)] () mutable {
-            auto registrationData = SharedBuffer::create(registrations.get());
+            auto registrationData = WebCore::SharedBuffer::create(registrations.get());
             protectedThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
         });
     });

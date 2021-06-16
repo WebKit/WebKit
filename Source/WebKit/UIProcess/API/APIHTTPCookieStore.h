@@ -82,29 +82,19 @@ public:
 
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
-
-    void flushDefaultUIProcessCookieStore();
-    static Vector<WebCore::Cookie> getAllDefaultUIProcessCookieStoreCookies();
-    static void setCookieInDefaultUIProcessCookieStore(const WebCore::Cookie&);
-    static void deleteCookieFromDefaultUIProcessCookieStore(const WebCore::Cookie&);
-    void startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&);
-    void stopObservingChangesToDefaultUIProcessCookieStore();
-    void deleteCookiesInDefaultUIProcessCookieStore();
-    void setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebCore::HTTPCookieAcceptPolicy);
     
     // FIXME: This is a reference cycle.
     Ref<WebKit::WebsiteDataStore> m_owningDataStore;
+
+    // FIXME: This should be a WeakHashSet.
     HashSet<Observer*> m_observers;
 
+    // FIXME: This should be a WeakPtr.
     WebKit::WebCookieManagerProxy* m_observedCookieManagerProxy { nullptr };
     std::unique_ptr<APIWebCookieManagerProxyObserver> m_cookieManagerProxyObserver;
-    bool m_observingUIProcessCookies { false };
 
+    // FIXME: This is always 0. Remove it and the code that is called when it wasn't zero before r267763.
     uint64_t m_processPoolCreationListenerIdentifier { 0 };
-
-#if PLATFORM(COCOA)
-    std::unique_ptr<WebCore::CookieStorageObserver> m_defaultUIProcessObserver;
-#endif
 };
 
 }

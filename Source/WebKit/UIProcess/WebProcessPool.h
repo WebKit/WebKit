@@ -300,7 +300,6 @@ public:
     static Statistics& statistics();    
 
     void clearCachedCredentials(PAL::SessionID);
-    void terminateNetworkProcess();
     void terminateAllWebContentProcesses();
     void sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&&);
     void sendNetworkProcessWillSuspendImminentlyForTesting();

@@ -1,3 +1,36 @@
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused code on API::HTTPCookieStore
+        https://bugs.webkit.org/show_bug.cgi?id=227056
+
+        Reviewed by Brady Eidson.
+
+        The dust has settled a bit since r267763.
+        Let's clean up!
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::unregisterObserver):
+        (API::HTTPCookieStore::cookieManagerDestroyed):
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore): Deleted.
+        (API::HTTPCookieStore::getAllDefaultUIProcessCookieStoreCookies): Deleted.
+        (API::HTTPCookieStore::setCookieInDefaultUIProcessCookieStore): Deleted.
+        (API::HTTPCookieStore::deleteCookieFromDefaultUIProcessCookieStore): Deleted.
+        (API::HTTPCookieStore::startObservingChangesToDefaultUIProcessCookieStore): Deleted.
+        (API::HTTPCookieStore::stopObservingChangesToDefaultUIProcessCookieStore): Deleted.
+        (API::HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore): Deleted.
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore): Deleted.
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm: Removed.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        * UIProcess/API/Cocoa/WKDownloadInternal.h:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleClickForDataDetectionResult):
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-15  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] ConcreteImageBuffer::baseTransform() returns incorrect transform for unaccelerated ImageBuffer
