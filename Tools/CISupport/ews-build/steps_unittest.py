@@ -1915,6 +1915,24 @@ class TestReRunWebKitTests(TestRunWebKitTests):
         self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: test1, test2')
         return rc
 
+    def test_first_run_failed_unexpectedly(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', [])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), 'Passed layout tests')
+        return rc
+
 
 class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

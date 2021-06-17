@@ -2350,7 +2350,7 @@ class ReRunWebKitTests(RunWebKitTests):
             message = 'Passed layout tests'
             self.descriptionDone = message
             self.build.results = SUCCESS
-            if not first_results_did_exceed_test_failure_limit:
+            if (not first_results_did_exceed_test_failure_limit) and flaky_failures:
                 pluralSuffix = 's' if len(flaky_failures) > 1 else ''
                 message = 'Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
                 for flaky_failure in flaky_failures:
