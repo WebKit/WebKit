@@ -1726,7 +1726,7 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
             RunLoop::main().dispatch([weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
                 if (RefPtr<WebsiteDataStore> strongThis = weakThis.get(); strongThis && webProcessProxy) {
                     strongThis->terminateNetworkProcess();
-                    RELEASE_LOG_IF(strongThis->isPersistent(), Process, "getNetworkProcessConnection: Failed first attempt, retrying");
+                    RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed first attempt, retrying");
                     strongThis->networkProcess().getNetworkProcessConnection(*webProcessProxy, WTFMove(reply));
                 } else
                     reply({ });

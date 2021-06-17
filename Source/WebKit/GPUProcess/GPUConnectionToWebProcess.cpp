@@ -363,11 +363,6 @@ Logger& GPUConnectionToWebProcess::logger()
     return *m_logger;
 }
 
-bool GPUConnectionToWebProcess::isAlwaysOnLoggingAllowed() const
-{
-    return m_sessionID.isAlwaysOnLoggingAllowed();
-}
-
 void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
 #if ENABLE(IPC_TESTING_API)

@@ -100,8 +100,9 @@ public:
 
     RemoteMediaResourceManager& remoteMediaResourceManager();
 
+    PAL::SessionID sessionID() const { return m_sessionID; }
+
     Logger& logger();
-    bool isAlwaysOnLoggingAllowed() const;
 
     const String& mediaCacheDirectory() const;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

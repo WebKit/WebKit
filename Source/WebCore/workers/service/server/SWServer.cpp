@@ -330,7 +330,7 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminati
     , m_appBoundDomainsCallback(WTFMove(appBoundDomainsCallback))
     , m_hasServiceWorkerEntitlement(hasServiceWorkerEntitlement)
 {
-    RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty() && !m_sessionID.isEphemeral(), ServiceWorker, "No path to store the service worker registrations");
+    RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty(), ServiceWorker, "No path to store the service worker registrations");
     if (!m_sessionID.isEphemeral())
         m_registrationStore = makeUnique<RegistrationStore>(*this, WTFMove(registrationDatabaseDirectory));
     else

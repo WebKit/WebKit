@@ -174,7 +174,7 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 
-#define WKWEBVIEW_RELEASE_LOG(...) RELEASE_LOG_IF(ViewState, __VA_ARGS__)
+#define WKWEBVIEW_RELEASE_LOG(...) RELEASE_LOG(ViewState, __VA_ARGS__)
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)

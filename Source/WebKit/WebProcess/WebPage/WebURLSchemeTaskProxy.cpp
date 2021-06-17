@@ -41,7 +41,7 @@
 
 #define WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_TEMPLATE "[schemeHandler=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu] WebURLSchemeTaskProxy::"
 #define WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_PARAMETERS m_urlSchemeHandler.identifier(), pageIDFromWebFrame(m_frame), frameIDFromWebFrame(m_frame), m_identifier
-#define WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG(Network, WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_TEMPLATE fmt, WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_PARAMETERS, ##__VA_ARGS__)
+#define WEBURLSCHEMETASKPROXY_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_TEMPLATE fmt, WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_PARAMETERS, ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,14 +77,14 @@ void WebURLSchemeTaskProxy::startLoading()
 {
     ASSERT(m_coreLoader);
     ASSERT(m_frame);
-    WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED("startLoading");
+    WEBURLSCHEMETASKPROXY_RELEASE_LOG("startLoading");
     m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask(URLSchemeTaskParameters { m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request, m_frame->info() }));
 }
 
 void WebURLSchemeTaskProxy::stopLoading()
 {
     ASSERT(m_coreLoader);
-    WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED("stopLoading");
+    WEBURLSCHEMETASKPROXY_RELEASE_LOG("stopLoading");
     m_urlSchemeHandler.page().send(Messages::WebPageProxy::StopURLSchemeTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier()));
     m_coreLoader = nullptr;
     m_frame = nullptr;
@@ -101,7 +101,7 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
     }
 
     if (m_waitingForCompletionHandler) {
-        WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED("didPerformRedirection: Received redirect during previous redirect processing, queuing it.");
+        WEBURLSCHEMETASKPROXY_RELEASE_LOG("didPerformRedirection: Received redirect during previous redirect processing, queuing it.");
         queueTask([this, protectedThis = makeRef(*this), redirectResponse = WTFMove(redirectResponse), request = WTFMove(request), completionHandler = WTFMove(completionHandler)]() mutable {
             didPerformRedirection(WTFMove(redirectResponse), WTFMove(request), WTFMove(completionHandler));
         });
@@ -123,7 +123,7 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
 void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
 {
     if (m_waitingForCompletionHandler) {
-        WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Received response during redirect processing, queuing it.");
+        WEBURLSCHEMETASKPROXY_RELEASE_LOG("didReceiveResponse: Received response during redirect processing, queuing it.");
         queueTask([this, protectedThis = makeRef(*this), response] {
             didReceiveResponse(response);
         });
@@ -146,7 +146,7 @@ void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
         return;
 
     if (m_waitingForCompletionHandler) {
-        WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED("didReceiveData: Received data during response processing, queuing it.");
+        WEBURLSCHEMETASKPROXY_RELEASE_LOG("didReceiveData: Received data during response processing, queuing it.");
         queueTask([this, protectedThis = makeRef(*this), dataVector = Vector { data, size }] {
             didReceiveData(dataVector.size(), dataVector.data());
         });
@@ -160,7 +160,7 @@ void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
 
 void WebURLSchemeTaskProxy::didComplete(const ResourceError& error)
 {
-    WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED("didComplete");
+    WEBURLSCHEMETASKPROXY_RELEASE_LOG("didComplete");
     if (!hasLoader())
         return;
 
@@ -200,4 +200,4 @@ void WebURLSchemeTaskProxy::processNextPendingTask()
 
 #undef WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_TEMPLATE
 #undef WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_PARAMETERS
-#undef WEBURLSCHEMETASKPROXY_RELEASE_LOG_IF_ALLOWED
+#undef WEBURLSCHEMETASKPROXY_RELEASE_LOG
