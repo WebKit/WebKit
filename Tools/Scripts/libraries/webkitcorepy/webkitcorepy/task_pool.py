@@ -459,7 +459,10 @@ class TaskPool(object):
                 if sys.version_info >= (3, 7):
                     worker.kill()
                 elif hasattr(signal, 'SIGKILL'):
-                    os.kill(worker.pid, signal.SIGKILL)
+                    try:
+                        os.kill(worker.pid, signal.SIGKILL)
+                    except OSError as e:
+                        log.warn('Failed to terminate worker ' + str(worker.pid) + ' with error ' + str(e))
                 else:
                     worker.terminate()
 

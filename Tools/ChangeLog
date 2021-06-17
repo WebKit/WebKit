@@ -1,3 +1,15 @@
+2021-06-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Exception running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=227114
+
+        Reviewed by Jonathan Bedard.
+
+        Catch exception and print warning message.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (TaskPool.__exit__):
+
 2021-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Remove empty header WebTypesInternal.h
