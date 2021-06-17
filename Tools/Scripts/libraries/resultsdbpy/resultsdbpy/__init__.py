@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ def _maybe_add_webkit_python_library_paths():
 _maybe_add_webkit_python_library_paths()
 
 try:
-    from webkitcorepy.version import Version
+    from webkitcorepy import AutoInstall, Package, Version
 except ImportError:
     raise ImportError(
         "'webkitcorepy' could not be found on your Python path.\n" +
@@ -44,6 +44,34 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(2, 0, 5)
+version = Version(3, 0, 0)
+
+import webkitflaskpy
+
+AutoInstall.register(Package('aenum', Version(2, 2, 6)))
+AutoInstall.register(Package('attrs', Version(21, 2, 0)))
+AutoInstall.register(Package('aioredis', Version(1, 3, 1)))
+AutoInstall.register(Package('async-timeout', Version(3, 0, 1)))
+AutoInstall.register(Package('boto3', Version(1, 16, 63), wheel=True))
+AutoInstall.register(Package('botocore', Version(1, 19, 63), wheel=True))
+AutoInstall.register(Package('cassandra', Version(3, 25, 0), pypi_name='cassandra-driver', slow_install=True))
+AutoInstall.register(Package('click', Version(7, 1, 2)))
+AutoInstall.register(Package('Crypto', Version(3, 10, 1), pypi_name='pycryptodome'))
+AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
+AutoInstall.register(Package('geomet', Version(0, 2, 1)))
+AutoInstall.register(Package('gremlinpython', Version(3, 4, 6)))
+AutoInstall.register(Package('hiredis', Version(1, 1, 0)))
+AutoInstall.register(Package('isodate', Version(0, 6, 0)))
+AutoInstall.register(Package('jmespath', Version(0, 10, 0), wheel=True))
+AutoInstall.register(Package('lupa', Version(1, 9)))
+AutoInstall.register(Package('pyasn1_modules', Version(0, 2, 8), pypi_name='pyasn1-modules'))
+AutoInstall.register(Package('redis', Version(3, 5, 3)))
+AutoInstall.register(Package('selenium', Version(3, 141, 0)))
+AutoInstall.register(Package('service_identity', Version(21, 1, 0), pypi_name='service-identity'))
+AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))
+AutoInstall.register(Package('tornado', Version(4, 5, 3)))
+AutoInstall.register(Package('twisted', Version(21, 2, 0), pypi_name='Twisted', implicit_deps=[
+    Package('incremental', Version(21, 3, 0)),
+]))
 
 name = 'resultsdbpy'

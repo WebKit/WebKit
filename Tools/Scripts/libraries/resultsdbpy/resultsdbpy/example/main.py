@@ -23,7 +23,7 @@
 import hashlib
 import json
 
-from example.environment import Environment, ModelFromEnvironment
+from resultsdbpy.example.environment import Environment, ModelFromEnvironment
 from flask import abort, Flask, request
 from resultsdbpy.controller.api_routes import APIRoutes
 from resultsdbpy.view.view_routes import ViewRoutes

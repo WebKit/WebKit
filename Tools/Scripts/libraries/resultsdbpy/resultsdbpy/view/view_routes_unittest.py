@@ -22,9 +22,9 @@
 
 import time
 
-from controller.api_routes import APIRoutes
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
+from resultsdbpy.controller.api_routes import APIRoutes
 from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
