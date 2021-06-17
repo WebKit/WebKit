@@ -4111,7 +4111,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
-    if (renderer().hasClipPath() && !downcast<RenderBox>(renderer()).hitTestClipPath(hitTestLocation, toLayoutPoint(location() - renderBoxLocation())))
+    // FIXME: We need to correctly hit test the clip-path when we have a RenderInline too.
+    if (renderer().hasClipPath() && is<RenderBox>(renderer()) && !downcast<RenderBox>(renderer()).hitTestClipPath(hitTestLocation, toLayoutPoint(location() - renderBoxLocation())))
         return nullptr;
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.

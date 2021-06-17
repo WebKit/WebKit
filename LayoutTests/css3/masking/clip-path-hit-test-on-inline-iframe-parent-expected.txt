@@ -1,0 +1,11 @@
+Test clip-path is accounted for during hit-testing on an iframe's inline parent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL document.elementFromPoint(50, 50).localName should be body. Was iframe.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

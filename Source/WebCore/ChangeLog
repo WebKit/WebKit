@@ -1,3 +1,20 @@
+2021-06-16  Cameron McCormack  <heycam@apple.com>
+
+        Make RenderLayer::hitTestLayer not assume its renderer is a RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=227004
+        <rdar://79265788>
+
+        Reviewed by Simon Fraser.
+
+        An inline box might have a clip-path on it, so we can't assume that
+        the layer's renderer is a RenderBox. Avoid the assertion by hit testing
+        incorrectly for now.
+
+        Test: css3/masking/clip-path-hit-test-on-inline-iframe-parent.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
         Protect Element before calling dispatchMouseEvent() on it
