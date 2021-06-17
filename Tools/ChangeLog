@@ -1,3 +1,17 @@
+2021-06-17  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement logical property groups
+        https://bugs.webkit.org/show_bug.cgi?id=226878
+
+        Reviewed by Antti Koivisto.
+
+        Add validator for new codegen property "logical-property-group",
+        replacing the old "direction-aware-property".
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.validate_logical_property_group):
+        (JSONCSSPropertiesChecker.check_codegen_properties):
+
 2021-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Pass a GTlsCertificate to soup_server_new()

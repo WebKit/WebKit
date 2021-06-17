@@ -72,15 +72,15 @@ public:
     void setBottom(const T& bottom) { setAt(BoxSide::Bottom, bottom); }
     void setLeft(const T& left) { setAt(BoxSide::Left, left); }
 
-    T& before(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::Before)); }
-    T& after(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::After)); }
-    T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
-    T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
+    T& before(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockStart)); }
+    T& after(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockEnd)); }
+    T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineStart)); }
+    T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineEnd)); }
 
-    const T& before(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::Before)); }
-    const T& after(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::After)); }
-    const T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
-    const T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
+    const T& before(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockStart)); }
+    const T& after(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockEnd)); }
+    const T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineStart)); }
+    const T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineEnd)); }
 
     void setBefore(const T& before, WritingMode writingMode) { this->before(writingMode) = before; }
     void setAfter(const T& after, WritingMode writingMode) { this->after(writingMode) = after; }

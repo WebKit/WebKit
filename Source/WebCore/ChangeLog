@@ -1,3 +1,46 @@
+2021-06-17  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement logical property groups
+        https://bugs.webkit.org/show_bug.cgi?id=226878
+
+        Reviewed by Antti Koivisto.
+
+        In order to have proper CSSOM support for logical properties, we will
+        need to determine whether two properties belong to the same logical
+        property group but with a different mapping logic.
+
+        Before this patch, we only knew the physical properties belonging to the
+        same logical property group as a given logical property. But given a
+        physical property, we didn't know if there were logical properties that
+        could map to it.
+
+        Therefore this patch changes CSSProperties.json so that both logical and
+        physical properties specify their logical property group.
+
+        The code for resolving a logical property into its physical equivalent
+        is now automatically generated.
+
+        The CSSOM fix will be done in a follow-up (bug 226461).
+
+        This patch introduces no behavior changes.
+
+        * css/CSSProperties.json:
+        * css/CSSProperty.cpp:
+        * css/makeprop.pl:
+        (nameToId):
+        (addProperty):
+        * platform/RectEdges.h:
+        (WebCore::RectEdges::before):
+        (WebCore::RectEdges::after):
+        (WebCore::RectEdges::start):
+        (WebCore::RectEdges::end):
+        (WebCore::RectEdges::before const):
+        (WebCore::RectEdges::after const):
+        (WebCore::RectEdges::start const):
+        (WebCore::RectEdges::end const):
+        * platform/text/WritingMode.h:
+        (WebCore::mapLogicalAxisToPhysicalAxis):
+
 2021-06-17  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] Refactor MediaPlayerPrivateGStreamer::notifyPlayerOf*

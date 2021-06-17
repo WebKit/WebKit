@@ -115,10 +115,10 @@ constexpr inline bool isFlippedLinesWritingMode(WritingMode writingMode)
 }
 
 enum class LogicalBoxSide : uint8_t {
-    Before,
-    End,
-    After,
-    Start
+    BlockStart,
+    InlineEnd,
+    BlockEnd,
+    InlineStart
 };
 
 enum class BoxSide : uint8_t {
@@ -142,6 +142,16 @@ enum class BoxCorner : uint8_t {
     TopRight,
     BottomRight,
     BottomLeft
+};
+
+enum class LogicalBoxAxis : uint8_t {
+    Inline,
+    Block
+};
+
+enum class BoxAxis : uint8_t {
+    Horizontal,
+    Vertical
 };
 
 constexpr std::array<BoxSide, 4> allBoxSides = { BoxSide::Top, BoxSide::Right, BoxSide::Bottom, BoxSide::Left };
@@ -197,6 +207,13 @@ constexpr inline BoxCorner mapLogicalCornerToPhysicalCorner(TextFlow textflow, L
     if (isBlockStart == isFlippedLinesTextFlow(textflow))
         return BoxCorner::BottomLeft;
     return BoxCorner::TopRight;
+}
+
+constexpr inline BoxAxis mapLogicalAxisToPhysicalAxis(TextFlow textflow, LogicalBoxAxis logicalAxis)
+{
+    if (isVerticalTextFlow(textflow))
+        return logicalAxis == LogicalBoxAxis::Inline ? BoxAxis::Vertical : BoxAxis::Horizontal;
+    return logicalAxis == LogicalBoxAxis::Inline ? BoxAxis::Horizontal : BoxAxis::Vertical;
 }
 
 } // namespace WebCore
