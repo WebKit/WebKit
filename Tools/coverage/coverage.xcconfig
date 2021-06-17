@@ -1,4 +1,4 @@
-# Unexport weak external symbols from llvm coverage.
+// Unexport weak external symbols from llvm coverage.
 UNEXPORTED_SYMBOL_LDFLAGS_FOR_COVERAGE = -Wl,-unexported_symbol -Wl,___llvm_profile_filename -Wl,-unexported_symbol -Wl,___llvm_profile_raw_version -Wl,-unexported_symbol -Wl,_lprofDirMode;
 
 OTHER_CFLAGS = $(inherited) -fprofile-instr-generate -fcoverage-mapping;

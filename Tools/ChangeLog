@@ -1,3 +1,10 @@
+2021-06-17  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r278536): Wrong comment character used in coverage.xcconfig
+
+        * coverage/coverage.xcconfig:
+        - Change '#' to '//' to fix the comment.
+
 2021-06-17  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement logical property groups
