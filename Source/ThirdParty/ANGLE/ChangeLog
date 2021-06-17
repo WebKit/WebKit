@@ -1,3 +1,15 @@
+2021-06-17  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Shaders with reserved metal keywords do not translate, nor do shaders with struct and variable names that are the same except prefixed by an underscore
+        https://bugs.webkit.org/show_bug.cgi?id=226660
+
+        Fix keyword translation problem by correcting symbol space. This avoids renaming structs unnecessarily 
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/RewriteKeywords.cpp:
+        (sh::Rewriter::createRenamed):
+
 2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal gl sync objects do not work in case of listener being needed
