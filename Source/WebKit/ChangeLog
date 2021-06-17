@@ -1,3 +1,15 @@
+2021-06-17  Per Arne  <pvollan@apple.com>
+
+        [macOS] Close open connections
+        https://bugs.webkit.org/show_bug.cgi?id=227068
+
+        Reviewed by Brent Fulgham.
+
+        On macOS, close open connections in initializeSandboxParameters.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeSandboxParameters):
+
 2021-06-16  Garrett Davidson  <garrett_davidson@apple.com>
 
         Passkeys don't work in Simulator
