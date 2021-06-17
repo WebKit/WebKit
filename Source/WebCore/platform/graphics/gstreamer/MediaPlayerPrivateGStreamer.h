@@ -298,7 +298,9 @@ protected:
 
     void readyTimerFired();
 
-    template <typename TrackPrivateType> void notifyPlayerOfTrack();
+    void notifyPlayerOfVideo();
+    void notifyPlayerOfAudio();
+    void notifyPlayerOfText();
 
     void ensureAudioSourceProvider();
     void setAudioStreamProperties(GObject*);
@@ -456,6 +458,10 @@ private:
 
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*);
+
+    void purgeInvalidAudioTracks(Vector<String> validTrackIds);
+    void purgeInvalidVideoTracks(Vector<String> validTrackIds);
+    void purgeInvalidTextTracks(Vector<String> validTrackIds);
 
     String engineDescription() const override { return "GStreamer"; }
     bool didPassCORSAccessCheck() const override;
