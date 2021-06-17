@@ -36,7 +36,7 @@ for (let i = 0; i < 10000; ++i) {
 
 delete C.prototype.z
 
-for (let i = 0; i < 2000000; ++i) {
+for (let i = 0; i < 20000; ++i) {
     getZ({z: i})
     doTest(undefined)
 }
