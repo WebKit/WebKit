@@ -108,7 +108,7 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
             OptionSet<StyleColor::Options> options;
             if (page->useSystemAppearance())
                 options.add(StyleColor::Options::UseSystemAppearance);
-            paintStyle.fillColor = RenderTheme::singleton().systemColor(CSSValueActivebuttontext, options);
+            paintStyle.fillColor = RenderTheme::singleton().defaultButtonTextColor(options);
             return paintStyle;
         }
     }

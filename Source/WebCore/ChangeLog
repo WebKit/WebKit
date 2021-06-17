@@ -1,3 +1,36 @@
+2021-06-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r277067): Incorrect text color for default-button appearance
+        https://bugs.webkit.org/show_bug.cgi?id=227129
+        <rdar://problem/79032808>
+
+        Reviewed by Tim Horton.
+
+        Buttons styled with '-webkit-appearance: default-button' currently rely
+        on the CSS value 'activebuttontext' for their text color. r277067
+        updated the color to use system colors, for consistency with the rest
+        of the platform.
+
+        In macOS Monterey, the 'activebuttontext' color and the default button
+        text color are not equivalent. 'Active' buttons no longer use
+        NSBackgroundStyleEmphasized, while default buttons still do.
+        Consequently, default buttons are rendered with an incorrect text color.
+
+        To fix, use the correct system color for the text color of default
+        buttons. To avoid changing the behavior of platforms other than
+        macOS, the 'activebuttontext' color remains the default text color
+        specified in RenderTheme.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::defaultButtonTextColor const):
+        (WebCore::RenderTheme::platformDefaultButtonTextColor const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformDefaultButtonTextColor const):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+
 2021-06-17  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Unexpected timeout in http/tests/media/video-play-stall-seek.html
