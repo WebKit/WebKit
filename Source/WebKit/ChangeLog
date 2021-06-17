@@ -1,5 +1,26 @@
 2021-06-17  Alex Christensen  <achristensen@webkit.org>
 
+        Fix crashes in ContentRuleListStore::lookupContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=227100
+        <rdar://78816611>
+
+        Reviewed by Chris Dumez.
+
+        To be extra careful, instead of just assuming that moveFile will always succeed,
+        when moveFile fails, try to delete the legacy path (which has a ContentExtension- instead of ContentRuleList- prefix)
+        and fail the lookup.  This will only happen in Safari, which was the only client of _WKUserContentExtensionStore.
+        The legacy file is not useful to us because in r275078 I incremented CurrentContentRuleListFileVersion so the bytes on disk
+        need to be recompiled anyways.  Safari already has logic to recompile it.  This was just an attempt to use what we have and
+        not leave anything behind.
+
+        Also, to be extra careful, try deleting a file before moving a file on top of it.
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        compiledToFile:
+        (API::ContentRuleListStore::lookupContentRuleList):
+
+2021-06-17  Alex Christensen  <achristensen@webkit.org>
+
         WKScriptMessageHandlerWithReply should raise an exception if replyHandler is called twice
         https://bugs.webkit.org/show_bug.cgi?id=226863
 
