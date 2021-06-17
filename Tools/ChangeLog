@@ -1,5 +1,19 @@
 2021-06-17  W.D. Xiong  <w_xiong@apple.com>
 
+        [tvOS 15] Add tvOS 15 simulator/device to bot watchers' dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=226782
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS15.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS15Simulator.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js: Added references to tvOS 15 device + simulator
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css: Added references to tvOS 15 device + simulator
+        (table.queue-grid tr.platform.tvos-simulator-15 img.logo):
+        (table.queue-grid tr.platform.tvos-15 img.logo):
+
+2021-06-17  W.D. Xiong  <w_xiong@apple.com>
+
         [Monterey] Add Seed 1 to bot watchers' dashboard
         https://bugs.webkit.org/show_bug.cgi?id=226747
 

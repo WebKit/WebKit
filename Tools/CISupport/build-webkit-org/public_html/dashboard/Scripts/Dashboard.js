@@ -30,6 +30,8 @@ Dashboard = {
         macOSCatalina: { name: "macos-catalina", readableName: "macOS Catalina", order: 3 },
         iOS14Simulator: { name: "ios-simulator-14", readableName: "iOS 14 Simulator", order: 20 },
         iOS14Device: { name: "ios-14", readableName: "iOS 14", order: 25 },
+        tvOS15Simulator: { name: "tvos-simulator-15", readableName: "TvOS Simulator 15", order: 24 },
+        tvOS15Device: { name: "tvos-15", readableName: "TvOS 15", order: 25 },
         tvOS14Simulator: { name: "tvos-simulator-14", readableName: "TvOS Simulator 14", order: 26 },
         tvOS14Device: { name: "tvos-14", readableName: "TvOS 14", order: 27 },
         watchOS7Simulator: { name: "watchos-simulator-7", readableName: "WatchOS Simulator 7", order: 28 },
