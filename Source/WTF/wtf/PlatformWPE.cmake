@@ -30,12 +30,12 @@ list(APPEND WTF_SOURCES
 
     linux/CurrentProcessMemoryStatus.cpp
 
+    posix/CPUTimePOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
 
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 
-    unix/CPUTimeUnix.cpp
     unix/LanguageUnix.cpp
     unix/MemoryPressureHandlerUnix.cpp
     unix/UniStdExtrasUnix.cpp

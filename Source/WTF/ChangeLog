@@ -1,3 +1,23 @@
+2021-06-17  Ben Nham  <nham@apple.com>
+
+        Remove Mac-specific CPUTime functions
+        https://bugs.webkit.org/show_bug.cgi?id=227109
+
+        Reviewed by Yusuke Suzuki.
+
+        There's no reason for the Mac-specific CPU time functions to exist, since getrusage and
+        clock_gettime work fine on Mac. It's actually slightly more efficient to use the POSIX calls
+        since getrusage returns CPU time for both current and terminated threads in a single
+        syscall, while using task_info requires two syscalls to do the same thing.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/cocoa/CPUTimeCocoa.cpp: Removed.
+        * wtf/posix/CPUTimePOSIX.cpp: Renamed from Source/WTF/wtf/unix/CPUTimeUnix.cpp.
+
 2021-06-17  Tim Horton  <timothy_horton@apple.com>
 
         Adopt WKHoverGestureRecognizer
