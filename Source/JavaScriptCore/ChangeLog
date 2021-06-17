@@ -1,3 +1,34 @@
+2021-06-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Reimplement JSC::CachePayload without FileSystem::unmapViewOfFile and FileSystem::MappedFileData::leakHandle
+        https://bugs.webkit.org/show_bug.cgi?id=227014
+
+        Reviewed by Yusuke Suzuki.
+
+        r247542 (Bug 199759) added FileSystem::unmapViewOfFile and
+        FileSystem::MappedFileData::leakHandle for JSC::CachePayload to
+        get the mapped address and to free the address.
+
+        However, Bug 227011 is going to add a file mapping handle to
+        FileSystem::MappedFileData for Windows port to create a
+        SharedMemory from a MappedFileData. Destruction of MappedFileData
+        should be done only by MappedFileData dtor.
+
+        * runtime/CachePayload.cpp:
+        (JSC::CachePayload::makeMappedPayload):
+        (JSC::CachePayload::makeMallocPayload):
+        (JSC::CachePayload::makeEmptyPayload):
+        (JSC::CachePayload::CachePayload):
+        (JSC::CachePayload::data const):
+        (JSC::CachePayload::size const):
+        (JSC::CachePayload::~CachePayload): Deleted.
+        (JSC::CachePayload::operator=): Deleted.
+        (JSC::CachePayload::freeData): Deleted.
+        * runtime/CachePayload.h: Use Variant for data.
+        (JSC::CachePayload::data const): Deleted.
+        (JSC::CachePayload::size const): Deleted.
+        (JSC::CachePayload::CachePayload): Deleted.
+
 2021-06-17  Yijia Huang  <yijia_huang@apple.com>
 
         Add a new pattern to instruction selector to utilize UBFX supported by ARM64

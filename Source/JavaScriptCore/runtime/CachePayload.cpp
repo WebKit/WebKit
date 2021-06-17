@@ -30,49 +30,52 @@ namespace JSC {
 
 CachePayload CachePayload::makeMappedPayload(FileSystem::MappedFileData&& data)
 {
-    return CachePayload(true, data.leakHandle(), data.size());
+    return CachePayload(WTFMove(data));
 }
 
 CachePayload CachePayload::makeMallocPayload(MallocPtr<uint8_t, VMMalloc>&& data, size_t size)
 {
-    return CachePayload(false, data.leakPtr(), size);
+    return CachePayload(std::pair { WTFMove(data), size });
 }
 
 CachePayload CachePayload::makeEmptyPayload()
 {
-    return CachePayload(true, nullptr, 0);
+    return CachePayload(std::pair { nullptr, 0 });
 }
 
 CachePayload::CachePayload(CachePayload&& other)
 {
-    m_mapped = other.m_mapped;
-    m_size = other.m_size;
-    m_data = other.m_data;
-    other.m_mapped = false;
-    other.m_data = nullptr;
-    other.m_size = 0;
+    m_data = WTFMove(other.m_data);
+    other.m_data = std::pair { nullptr, 0 };
 }
 
-CachePayload::~CachePayload()
+CachePayload::CachePayload(Variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&& data)
+    : m_data(WTFMove(data))
 {
-    freeData();
 }
 
-CachePayload& CachePayload::operator=(CachePayload&& other)
+CachePayload::~CachePayload() = default;
+
+const uint8_t* CachePayload::data() const
 {
-    ASSERT(&other != this);
-    freeData();
-    return *new (this) CachePayload(WTFMove(other));
+    return WTF::switchOn(m_data,
+        [](const FileSystem::MappedFileData& data) {
+            return static_cast<const uint8_t*>(data.data());
+        },
+        [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) {
+            return data.first.get();
+        });
 }
 
-void CachePayload::freeData()
+size_t CachePayload::size() const
 {
-    if (!m_data)
-        return;
-    if (m_mapped) {
-        FileSystem::unmapViewOfFile(m_data, m_size);
-    } else
-        fastFree(m_data);
+    return WTF::switchOn(m_data,
+        [](const FileSystem::MappedFileData& data) {
+            return data.size();
+        },
+        [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) {
+            return data.second;
+        });
 }
 
 } // namespace JSC
