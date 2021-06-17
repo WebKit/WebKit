@@ -1,3 +1,18 @@
+2021-06-16  Said Abou-Hallawa  <said@apple.com>
+
+        takeSnapshotWithConfiguration() should wait for the next flush before it does callSnapshotRect()
+        https://bugs.webkit.org/show_bug.cgi?id=226257
+        <rdar://76411685>
+
+        Reviewed by Simon Fraser and Tim Horton.
+
+        This will ensure the latest IOSurfaces are pushed to backboardd before
+        taking the snapshot. Also we need create an implicit transaction to ensure
+        a commit will happen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+
 2021-06-16  Mark Lam  <mark.lam@apple.com>
 
         Adopt com.apple.security.cs.jit-write-allowlist on internal builds.
