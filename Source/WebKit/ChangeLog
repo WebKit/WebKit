@@ -1,3 +1,20 @@
+2021-06-16  Garrett Davidson  <garrett_davidson@apple.com>
+
+        Passkeys don't work in Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=227076
+        <rdar://79366832>
+
+        Reviewed by Brent Fulgham.
+
+        Simulator does not support LAAccessControlOperationUseKeySign, so
+        -evaluateAccessControl:... returns an error. However, this check isn't actually necessary in
+        the simulator when using passkeys, so just skip it.
+
+        Tested registration and assertion in an app in Simulator.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::verifyUser):
+
 2021-06-16  Said Abou-Hallawa  <said@apple.com>
 
         takeSnapshotWithConfiguration() should wait for the next flush before it does callSnapshotRect()
