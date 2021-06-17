@@ -1,3 +1,16 @@
+2021-06-17  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Work around apparent miscompilation on ARM/GCC >=8.4
+        https://bugs.webkit.org/show_bug.cgi?id=227125
+
+        Reviewed by Filip Pizlo.
+
+        This seems to be a GCC miscompilation, revealed by
+        https://bugs.webkit.org/show_bug.cgi?id=227078.  Introduce a
+        workaround for the GCC versions that seem to be affected.
+
+        * jit/RegisterSet.h:
+
 2021-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize JSON.parse with small data by changing Identifier pool mechanism

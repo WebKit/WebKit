@@ -32,10 +32,27 @@
 #include "Reg.h"
 #include "TempRegisterSet.h"
 #include <wtf/Bitmap.h>
+#include <wtf/Compiler.h>
 
 namespace JSC {
 
-typedef Bitmap<MacroAssembler::numGPRs + MacroAssembler::numFPRs> RegisterBitmap;
+#if CPU(ARM) && COMPILER(GCC)
+
+#if GCC_VERSION_AT_LEAST(8, 4, 0) && !GCC_VERSION_AT_LEAST(9, 0, 0)
+// GCC 8.4.0 and 8.5.0 seem to miscompile WTF:Bitmap::count code on
+// ARM, something that apparently was covered up by the extra
+// word. The issue seems to not manifest with GCC 8.3.0 and >9.
+// Temporarily cover up by adding back the + 1.
+#define REGISTERSET_BITMAP_SLACK 1
+#else
+#define REGISTERSET_BITMAP_SLACK 0
+#endif
+
+#else
+#define REGISTERSET_BITMAP_SLACK 0
+#endif
+
+typedef Bitmap<MacroAssembler::numGPRs + MacroAssembler::numFPRs + REGISTERSET_BITMAP_SLACK> RegisterBitmap;
 class RegisterAtOffsetList;
 
 class RegisterSet {
