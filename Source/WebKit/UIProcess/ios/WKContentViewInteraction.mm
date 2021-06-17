@@ -174,6 +174,10 @@
 #import "PepperUICoreSPI.h"
 #endif
 
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+#import <WebKitAdditions/WKHoverGestureRecognizer.h>
+#endif
+
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/ios/QuickLookSoftLink.h>
@@ -884,6 +888,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpMouseGestureRecognizer];
 #endif
 
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [self setUpHoverGestureRecognizer];
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
@@ -1066,6 +1074,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [_hoverGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [_lookupGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1211,6 +1224,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
@@ -1235,6 +1251,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
+#endif
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1703,6 +1722,11 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         return YES;
 #endif
 
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    if (gestureRecognizer == _hoverGestureRecognizer)
+        return NO;
+#endif
+
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
@@ -1734,6 +1758,10 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 {
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer == _mouseGestureRecognizer)
+        return NO;
+#endif
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    if (gestureRecognizer == _hoverGestureRecognizer)
         return NO;
 #endif
     return YES;
@@ -2351,6 +2379,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if ([gestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]])
+        return YES;
+#endif
+
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    if ([gestureRecognizer isKindOfClass:[WKHoverGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKHoverGestureRecognizer class]])
         return YES;
 #endif
 
@@ -9419,6 +9452,29 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 }
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+
+- (void)setUpHoverGestureRecognizer
+{
+    _hoverGestureRecognizer = adoptNS([[WKHoverGestureRecognizer alloc] initWithTarget:self action:@selector(hoverGestureRecognizerChanged:)]);
+    [_hoverGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
+}
+
+- (void)hoverGestureRecognizerChanged:(WKHoverGestureRecognizer *)gestureRecognizer
+{
+    if (!_page->hasRunningProcess())
+        return;
+
+    auto event = gestureRecognizer.lastMouseEvent;
+    if (!event)
+        return;
+
+    _page->handleMouseEvent(*event);
+}
+
+#endif // ENABLE(HOVER_GESTURE_RECOGNIZER)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 

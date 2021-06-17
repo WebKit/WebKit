@@ -117,6 +117,7 @@ class WebPageProxy;
 @class WKFormInputSession;
 @class WKFormSelectControl;
 @class WKHighlightLongPressGestureRecognizer;
+@class WKHoverGestureRecognizer;
 @class WKImageAnalysisGestureRecognizer;
 @class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
@@ -289,6 +290,10 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
     WebCore::MouseEventPolicy _mouseEventPolicy;
+#endif
+
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    RetainPtr<WKHoverGestureRecognizer> _hoverGestureRecognizer;
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
