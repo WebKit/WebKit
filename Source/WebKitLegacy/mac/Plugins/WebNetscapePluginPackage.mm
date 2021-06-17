@@ -29,7 +29,6 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "WebNetscapePluginPackage.h"
 
-#import "WebTypesInternal.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSFileManagerExtras.h"

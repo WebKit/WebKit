@@ -28,7 +28,6 @@
 
 #import "WebDefaultUIDelegate.h"
 
-#import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import <wtf/NeverDestroyed.h>

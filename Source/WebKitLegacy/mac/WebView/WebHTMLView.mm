@@ -69,7 +69,6 @@
 #import "WebResourcePrivate.h"
 #import "WebSharingServicePickerController.h"
 #import "WebTextCompletionController.h"
-#import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>

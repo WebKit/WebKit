@@ -32,7 +32,6 @@
 #import "WebHistoryItemInternal.h"
 #import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
-#import "WebTypesInternal.h"
 #import "WebVisitedLinkStore.h"
 #import <WebCore/HistoryItem.h>
 #import <pal/spi/cocoa/NSCalendarDateSPI.h>

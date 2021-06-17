@@ -40,7 +40,6 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebScriptObject.h>
-#import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>

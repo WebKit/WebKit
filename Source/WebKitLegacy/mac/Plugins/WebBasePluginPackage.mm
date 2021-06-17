@@ -32,7 +32,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebNetscapePluginPackage.h"
 #import "WebPluginPackage.h"
-#import "WebTypesInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <algorithm>

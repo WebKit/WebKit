@@ -27,7 +27,6 @@
 
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
-#import "WebTypesInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/Range.h>
 #import <WebCore/TextIterator.h>
