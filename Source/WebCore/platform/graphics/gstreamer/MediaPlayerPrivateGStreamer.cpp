@@ -969,7 +969,6 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         return;
 
     ASSERT(m_isLegacyPlaybin || isMediaSource());
-    ASSERT(typeName);
 
     enum TrackType { Audio = 0, Video = 1, Text = 2 };
     Variant<HashMap<AtomString, RefPtr<AudioTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<VideoTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(0);
