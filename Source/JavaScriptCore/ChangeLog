@@ -1,3 +1,77 @@
+2021-06-17  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to utilize UBFX supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=226984
+
+        Reviewed by Filip Pizlo.
+
+        UBFX, supported by ARM64, copies adjacent bits from the source register into 
+        the least significant bits of a destination register in zero extension. The 
+        instruction selector can utilize this to lowering certain patterns in B3 IR 
+        before further Air optimization.
+
+        ubfx dest, src, lsb, width
+           tmp, tmp, imm, imm
+
+        This is equivalent to "dest = (src >> lsb) & ((1 << width) - 1)". Since wasm 
+        introduces constant folding, then the pattern would be:
+
+        dest = (src >> lsb) & mask
+
+        where the mask should have a binary format in contiguous ones starting from 
+        the least significant bit. For example:
+
+        0b00111111
+
+        To make the pattern matching in instruction selection beneficial to JIT, these 
+        constraints should be introduced:
+
+        1. lsb >= 0 
+        2. width > 0
+        3. lsb + width <= bit field limit (32 or 64)
+
+        Given:
+        // B3 IR
+        Int @0 = ArgumentReg(%0)
+        Int @1 = lsb
+        Int @2 = 0b0011
+        Int @3 = ZShr(@0, @1)
+        Int @4 = BitAnd(@3, @2)  
+        Void@5 = Return(@4, Terminal)      
+
+        w/o UBFX Pattern:
+        // Old optimized AIR
+        Urshift %x0, lsb, %x0, @3
+        And  0b0011, %x0, %x0, @4
+        Ret     %x0,           @5
+
+        w/ UBFX Pattern:
+        // New optimized AIR
+        Ubfx %x0, lsb, 2, %x0, @4
+        Ret  %x0,              @5
+
+        Note:
+        Suppose a 32-bit version of (src >> 20) & 0x0FFF, it is equivalent to src >> 20. 
+        In this case, Logical Shift Right should be utilized instead when:
+
+        lsb + width == bit field limit (32 or 64)
+
+        This case/pattern should be added and upadated in the future patch.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::ubfx32):
+        (JSC::MacroAssemblerARM64::ubfx64):
+        * assembler/testmasm.cpp:
+        (JSC::testUbfx32):
+        (JSC::testUbfx64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testUbfx64PatternMatch):
+        (testUbfx32PatternMatch):
+        (addBitTests):
+
 2021-06-17  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Work around apparent miscompilation on ARM/GCC >=8.4

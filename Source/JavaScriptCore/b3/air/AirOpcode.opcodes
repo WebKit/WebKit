@@ -357,6 +357,12 @@ And32 U:G:32, UZD:G:32
     x86: Imm, Addr
     x86: Imm, Index
 
+arm64: Ubfx32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: Ubfx64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
+
 64: And64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
     arm64: BitImm64, Tmp, Tmp

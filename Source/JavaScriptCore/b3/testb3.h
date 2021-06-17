@@ -416,6 +416,10 @@ inline double modelLoad<double, double>(double value) { return value; }
 
 void run(const char* filter);
 void testBitAndSExt32(int32_t value, int64_t mask);
+void testUbfx32();
+void testUbfx32PatternMatch();
+void testUbfx64();
+void testUbfx64PatternMatch();
 void testBasicSelect();
 void testSelectTest();
 void testSelectCompareDouble();
