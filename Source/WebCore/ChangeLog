@@ -1,3 +1,30 @@
+2021-06-17  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Refactor MediaPlayerPrivateGStreamer::notifyPlayerOf*
+        https://bugs.webkit.org/show_bug.cgi?id=204686
+
+        Reviewed by Philippe Normand.
+
+        Refactored the notifyPlayerOf{Audio,Video,Text} family of methods into a single notifyPlayerOfTrack() one.
+        Some Variant variables are needed in order to make several incompatible types work together and to auto-detect the type of track as an enum.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        (WebCore::InbandTextTrackPrivateGStreamer::create): Added method with a signature similar to the ones used by {Audio,Video}TrackPrivateGStreamer, so that it fits into the notifyPlayerOfTrack() template code.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfTrack): Template method that unifies the old notifyPlayerOf{Audio,Video,Text}() implementations.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio): Deleted. Refactored into notifyPlayerOfTrack().
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::audioChangedCallback): Call the new notifyPlayerOfTrack() refactored implementation.
+        (WebCore::MediaPlayerPrivateGStreamer::textChangedCallback): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::videoChangedCallback): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidAudioTracks): Deleted. Now implemented directly inside notifyPlayerOfTrack().
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidVideoTracks): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidTextTracks): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Deleted notifyPlayerOf{Audio,Video,Text}(), added notifyPlayerOfTrack(), deleted purgeInvalid{Audio,Video,Text}Tracks().
+
 2021-06-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278978.
