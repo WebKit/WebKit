@@ -1170,6 +1170,18 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
     auto handler = makeBlockPtr(completionHandler);
 
+    if (CGRectIsEmpty(rectInViewCoordinates) || !snapshotWidth) {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+#if USE(APPKIT)
+            auto image = adoptNS([[NSImage alloc] initWithSize:NSMakeSize(0, 0)]);
+#else
+            auto image = adoptNS([[UIImage alloc] init]);
+#endif
+            completionHandler(image.get(), nil);
+        });
+        return;
+    }
+
 #if USE(APPKIT)
     CGFloat imageScale = snapshotWidth / rectInViewCoordinates.size.width;
     CGFloat imageHeight = imageScale * rectInViewCoordinates.size.height;
