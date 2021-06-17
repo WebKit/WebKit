@@ -202,6 +202,7 @@ fast/harness/uiscriptcontroller [ Skip ]
 
 # Only iOS has an implementation of UIScriptController::sendEventStream().
 imported/w3c/web-platform-tests/dom/events/scrolling [ Skip ]
+imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.tentative.html [ Skip ]
 
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
@@ -1024,7 +1025,6 @@ imported/w3c/web-platform-tests/web-share [ Skip ]
 fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
 
 # Only supported on iOS
-imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 pointerevents [ Skip ]
 

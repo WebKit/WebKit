@@ -1,0 +1,4 @@
+This is a manual test since there is no way to synthesize wheel events. Scroll by wheel in the middle of the page to run the test.
+
+FAIL Wheel events are non-cancelable since the event listener is treated as passive. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
+

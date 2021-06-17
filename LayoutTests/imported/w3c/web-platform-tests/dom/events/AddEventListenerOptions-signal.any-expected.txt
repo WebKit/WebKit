@@ -8,4 +8,5 @@ PASS Passing an AbortSignal to addEventListener works with the capture flag
 PASS Aborting from a listener does not call future listeners
 PASS Adding then aborting a listener in another listener does not call it
 PASS Aborting from a nested listener should remove it
+PASS Passing null as the signal should throw
 

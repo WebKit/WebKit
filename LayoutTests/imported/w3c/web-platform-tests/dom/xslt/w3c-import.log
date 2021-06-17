@@ -14,5 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/dom/abort/AbortSignal.any.js
-/LayoutTests/imported/w3c/web-platform-tests/dom/abort/event.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/README.md
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/externalScript.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/invalid-output-encoding-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/transformToFragment-on-node-from-inactive-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/transformToFragment.tentative.window.js

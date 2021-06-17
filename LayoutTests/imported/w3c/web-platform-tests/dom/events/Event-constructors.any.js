@@ -1,9 +1,5 @@
-<!doctype html>
-<title>Event constructors</title>
-<script src=/resources/testharness.js></script>
-<script src=/resources/testharnessreport.js></script>
-<div id=log></div>
-<script>
+// META: title=Event constructors
+
 test(function() {
   assert_throws_js(TypeError, function() {
     new Event()
@@ -116,4 +112,3 @@ test(function() {
   assert_equals(ev.sweet, undefined)
   assert_equals(ev.detail, 54)
 })
-</script>

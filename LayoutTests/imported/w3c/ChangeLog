@@ -1,3 +1,16 @@
+2021-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Resync DOM WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227144
+
+        Reviewed by Geoffrey Garen.
+
+        Resync DOM WPT tests from upstream ec5c1fc86b65142e7b.
+
+        * resources/resource-files.json:
+        * web-platform-tests/dom/*: Updated.
+        * web-platform-tests/interfaces/dom.idl:
+
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
         Resync FileAPI tests from upstream WPT

@@ -189,10 +189,12 @@ PASS AbortSignal interface object name
 PASS AbortSignal interface: existence and properties of interface prototype object
 PASS AbortSignal interface: existence and properties of interface prototype object's "constructor" property
 PASS AbortSignal interface: existence and properties of interface prototype object's @@unscopables property
+PASS AbortSignal interface: operation abort()
 PASS AbortSignal interface: attribute aborted
 PASS AbortSignal interface: attribute onabort
 PASS AbortSignal must be primary interface of new AbortController().signal
 PASS Stringification of new AbortController().signal
+PASS AbortSignal interface: new AbortController().signal must inherit property "abort()" with the proper type
 PASS AbortSignal interface: new AbortController().signal must inherit property "aborted" with the proper type
 PASS AbortSignal interface: new AbortController().signal must inherit property "onabort" with the proper type
 PASS EventTarget interface: new AbortController().signal must inherit property "addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))" with the proper type
@@ -864,6 +866,8 @@ PASS ShadowRoot interface: existence and properties of interface prototype objec
 PASS ShadowRoot interface: existence and properties of interface prototype object's "constructor" property
 PASS ShadowRoot interface: existence and properties of interface prototype object's @@unscopables property
 PASS ShadowRoot interface: attribute mode
+PASS ShadowRoot interface: attribute delegatesFocus
+FAIL ShadowRoot interface: attribute slotAssignment assert_true: The prototype object must have a property "slotAssignment" expected true got false
 PASS ShadowRoot interface: attribute host
 PASS ShadowRoot interface: attribute onslotchange
 PASS Element interface: existence and properties of interface object
@@ -1861,5 +1865,41 @@ PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "creat
 PASS XPathEvaluator interface: calling createNSResolver(Node) on new XPathEvaluator() with too few arguments must throw TypeError
 PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "evaluate(DOMString, Node, optional XPathNSResolver?, optional unsigned short, optional XPathResult?)" with the proper type
 PASS XPathEvaluator interface: calling evaluate(DOMString, Node, optional XPathNSResolver?, optional unsigned short, optional XPathResult?) on new XPathEvaluator() with too few arguments must throw TypeError
+PASS XSLTProcessor interface: existence and properties of interface object
+PASS XSLTProcessor interface object length
+PASS XSLTProcessor interface object name
+PASS XSLTProcessor interface: existence and properties of interface prototype object
+PASS XSLTProcessor interface: existence and properties of interface prototype object's "constructor" property
+PASS XSLTProcessor interface: existence and properties of interface prototype object's @@unscopables property
+FAIL XSLTProcessor interface: operation importStylesheet(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL XSLTProcessor interface: operation transformToFragment(Node, Document) assert_equals: property has wrong .length expected 2 but got 0
+FAIL XSLTProcessor interface: operation transformToDocument(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS XSLTProcessor interface: operation setParameter(DOMString, DOMString, any)
+PASS XSLTProcessor interface: operation getParameter(DOMString, DOMString)
+PASS XSLTProcessor interface: operation removeParameter(DOMString, DOMString)
+PASS XSLTProcessor interface: operation clearParameters()
+PASS XSLTProcessor interface: operation reset()
+PASS XSLTProcessor must be primary interface of new XSLTProcessor()
+PASS Stringification of new XSLTProcessor()
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "importStylesheet(Node)" with the proper type
+FAIL XSLTProcessor interface: calling importStylesheet(Node) on new XSLTProcessor() with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "transformToFragment(Node, Document)" with the proper type
+FAIL XSLTProcessor interface: calling transformToFragment(Node, Document) on new XSLTProcessor() with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "transformToDocument(Node)" with the proper type
+FAIL XSLTProcessor interface: calling transformToDocument(Node) on new XSLTProcessor() with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "setParameter(DOMString, DOMString, any)" with the proper type
+PASS XSLTProcessor interface: calling setParameter(DOMString, DOMString, any) on new XSLTProcessor() with too few arguments must throw TypeError
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "getParameter(DOMString, DOMString)" with the proper type
+PASS XSLTProcessor interface: calling getParameter(DOMString, DOMString) on new XSLTProcessor() with too few arguments must throw TypeError
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "removeParameter(DOMString, DOMString)" with the proper type
+PASS XSLTProcessor interface: calling removeParameter(DOMString, DOMString) on new XSLTProcessor() with too few arguments must throw TypeError
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "clearParameters()" with the proper type
+PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "reset()" with the proper type
 PASS Window interface: attribute event
 
