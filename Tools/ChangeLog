@@ -1,5 +1,19 @@
 2021-06-17  W.D. Xiong  <w_xiong@apple.com>
 
+        [watchOS 8] Add watchOS 8 simulator/device to bot watchers' dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=226781
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS8.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator8.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js: Added references for watchOS 8 device + simulator; shifted order down for Windows platforms to make room
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css: Added references for watchOS 8 device + simulator
+        (table.queue-grid tr.platform.watchos-simulator-8 img.logo):
+        (table.queue-grid tr.platform.watchos-8 img.logo):
+
+2021-06-17  W.D. Xiong  <w_xiong@apple.com>
+
         [tvOS 15] Add tvOS 15 simulator/device to bot watchers' dashboard
         https://bugs.webkit.org/show_bug.cgi?id=226782
 
