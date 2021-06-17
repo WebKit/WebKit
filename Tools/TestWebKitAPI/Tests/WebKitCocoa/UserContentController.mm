@@ -979,6 +979,13 @@ TEST(WKUserContentController, UserScriptNotification)
         }
         if ([message.body isEqualToString:@"Undefined"]) {
             replyHandler(nil, nil);
+            bool caught = false;
+            @try {
+                replyHandler(nil, nil);
+            } @catch (NSException *exception) {
+                caught = true;
+            }
+            EXPECT_TRUE(caught);
             return;
         }
         if ([message.body isEqualToString:@"Do nothing"]) {

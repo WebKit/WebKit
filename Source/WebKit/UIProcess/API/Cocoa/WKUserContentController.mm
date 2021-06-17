@@ -182,6 +182,9 @@ public:
             auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
 
             [(id<WKScriptMessageHandlerWithReply>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get() replyHandler:^(id result, NSString *errorMessage) {
+                if (!handler)
+                    [NSException raise:NSInternalInconsistencyException format:@"replyHandler passed to userContentController:didReceiveScriptMessage:replyHandler: should not be called twice"];
+
                 if (errorMessage) {
                     handler(nullptr, errorMessage);
                     return;
