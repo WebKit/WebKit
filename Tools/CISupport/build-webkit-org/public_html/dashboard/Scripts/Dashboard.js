@@ -25,8 +25,9 @@
 
 Dashboard = {
     Platform: {
-        macOSBigSur: { name: "macos-bigsur", readableName: "macOS Big Sur", order: 1 },
-        macOSCatalina: { name: "macos-catalina", readableName: "macOS Catalina", order: 2 },
+        macOSMonterey: { name: "macos-monterey", readableName: "macOS Monterey", order: 1 },
+        macOSBigSur: { name: "macos-bigsur", readableName: "macOS Big Sur", order: 2 },
+        macOSCatalina: { name: "macos-catalina", readableName: "macOS Catalina", order: 3 },
         iOS14Simulator: { name: "ios-simulator-14", readableName: "iOS 14 Simulator", order: 20 },
         iOS14Device: { name: "ios-14", readableName: "iOS 14", order: 25 },
         tvOS14Simulator: { name: "tvos-simulator-14", readableName: "TvOS Simulator 14", order: 26 },

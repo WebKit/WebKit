@@ -229,6 +229,10 @@ table.queue-grid tr.platform.macos-bigsur img.logo {
     content: url(../Images/BigSur.png);
 }
 
+table.queue-grid tr.platform.macos-monterey img.logo {
+    content: url(../Images/Monterey.png);
+}
+
 table.queue-grid tr.platform.wincairo-windows-10 img.logo {
     content: url(../Images/Windows10.png);
 }
