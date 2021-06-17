@@ -1,3 +1,33 @@
+2021-06-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Storage Access quirks should prompt up to twice if a user does not allow storage access
+        https://bugs.webkit.org/show_bug.cgi?id=227099
+        <rdar://problem/79409843>
+
+        Reviewed by John Wilander.
+
+        Remove hasDeniedCrossPageStorageAccess functions. They are not needed
+        now that we are aligning storage access quirks with non-quirks by
+        using maxNumberOfTimesExplicitlyDeniedStorageAccess. 
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccessQuickCheck):
+        (WebCore::DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk):
+        * dom/DocumentStorageAccess.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent):
+        * dom/Element.h:
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::hasHadUserInteraction const):
+        (WebCore::ResourceLoadObserver::setHasDeniedCrossPageStorageAccess): Deleted.
+        (WebCore::ResourceLoadObserver::hasDeniedCrossPageStorageAccess const): Deleted.
+        * page/Quirks.cpp:
+        (WebCore::isStorageAccessQuirkDomainAndElement):
+        (WebCore::Quirks::requestStorageAccessAndHandleClick const):
+        (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+        (WebCore::hasDeniedCrossPageStorageAccess): Deleted.
+        * page/Quirks.h:
+
 2021-06-17  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r277067): Incorrect text color for default-button appearance

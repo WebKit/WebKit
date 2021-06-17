@@ -1068,6 +1068,7 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
     if (url.host() == "www.playstation.com"_s || url.host() == "my.playstation.com"_s) {
         return element.hasClass()
         && (element.classNames().contains("web-toolbar__signin-button")
+        || element.classNames().contains("web-toolbar__signin-button-label")
         || element.classNames().contains("sb-signin-button"));
     }
 
@@ -1081,15 +1082,6 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
             return false;
     }
     return true;
-}
-
-static bool hasDeniedCrossPageStorageAccess(const HashSet<RegistrableDomain>& loginDomains, const RegistrableDomain& topFrameDomain)
-{
-    for (auto& loginDomain : loginDomains) {
-        if (ResourceLoadObserver::shared().hasDeniedCrossPageStorageAccess(loginDomain, topFrameDomain))
-            return true;
-    }
-    return false;
 }
 
 const String& Quirks::BBCRadioPlayerURLString()
@@ -1127,8 +1119,8 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
         completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
-    if (hasStorageAccessForAllLoginDomains(*domainsInNeedOfStorageAccess, firstPartyDomain)
-        || hasDeniedCrossPageStorageAccess(*domainsInNeedOfStorageAccess, firstPartyDomain)) {
+
+    if (hasStorageAccessForAllLoginDomains(*domainsInNeedOfStorageAccess, firstPartyDomain)) {
         completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
@@ -1142,9 +1134,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
 
     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
         if (storageAccessGranted == StorageAccessWasGranted::No) {
-            ResourceLoadObserver::shared().setHasDeniedCrossPageStorageAccess({{ firstPartyDomain, domainInNeedOfStorageAccess }}, [completionHandler = WTFMove(completionHandler)] () mutable {
-                completionHandler(ShouldDispatchClick::Yes);
-            });
+            completionHandler(ShouldDispatchClick::Yes);
             return;
         }
 
@@ -1156,7 +1146,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
 }
 #endif
 
-Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, bool isParentProcessAFullWebBrowser) const
+Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, bool isParentProcessAFullWebBrowser, IsSyntheticClick isSyntheticClick) const
 {
     if (!DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() || !isParentProcessAFullWebBrowser)
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
@@ -1232,14 +1222,15 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
             }
         }
 
-        if (isStorageAccessQuirkDomainAndElement(m_document->url(), element)) {
+        // If the click is synthetic, the user has already gone through the storage access flow and we should not request again.
+        if (isStorageAccessQuirkDomainAndElement(m_document->url(), element) && isSyntheticClick == IsSyntheticClick::No) {
             return requestStorageAccessAndHandleClick([element = makeWeakPtr(element), platformEvent, eventType, detail, relatedTarget] (ShouldDispatchClick shouldDispatchClick) mutable {
                 RefPtr protectedElement { element.get() };
                 if (!protectedElement)
                     return;
 
                 if (shouldDispatchClick == ShouldDispatchClick::Yes)
-                    protectedElement->dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget);
+                    protectedElement->dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget, IsSyntheticClick::Yes);
             });
         }
 

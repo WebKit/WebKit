@@ -1,3 +1,22 @@
+2021-06-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Storage Access quirks should prompt up to twice if a user does not allow storage access
+        https://bugs.webkit.org/show_bug.cgi?id=227099
+        <rdar://problem/79409843>
+
+        Reviewed by John Wilander.
+
+        We should allow storage access prompts twice per document for quirks
+        just like for non-quirk cases. Previously we were only presenting
+        the quirk prompt once per web content process if the user denied. This
+        patch removes this code and utilizes maxNumberOfTimesExplicitlyDeniedStorageAccess 
+        instead.
+
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::hasDeniedCrossPageStorageAccess const): Deleted.
+        (WebKit::WebResourceLoadObserver::setHasDeniedCrossPageStorageAccess): Deleted.
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+
 2021-06-17  Tim Horton  <timothy_horton@apple.com>
 
         Adopt WKHoverGestureRecognizer

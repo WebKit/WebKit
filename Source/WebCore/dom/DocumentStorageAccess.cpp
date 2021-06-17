@@ -153,7 +153,7 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
     if (frame && hasFrameSpecificStorageAccess())
         return StorageAccessQuickResult::Grant;
 
-    if (!frame || m_document.securityOrigin().isUnique() || !isAllowedToRequestFrameSpecificStorageAccess())
+    if (!frame || m_document.securityOrigin().isUnique() || !isAllowedToRequestStorageAccess())
         return StorageAccessQuickResult::Reject;
 
     if (frame->isMainFrame())
@@ -255,7 +255,7 @@ void DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(Document& ho
 
 void DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
-    if (!m_document.frame() || !m_document.frame()->page()) {
+    if (!m_document.frame() || !m_document.frame()->page() || !isAllowedToRequestStorageAccess()) {
         completionHandler(StorageAccessWasGranted::No);
         return;
     }

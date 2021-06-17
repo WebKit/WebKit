@@ -68,7 +68,7 @@ struct RequestStorageAccessResult {
     template<class Decoder> static std::optional<RequestStorageAccessResult> decode(Decoder&);
 };
 
-const unsigned maxNumberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 2;
+const unsigned maxNumberOfTimesExplicitlyDeniedStorageAccess = 2;
 
 class DocumentStorageAccess final : public Supplement<Document>, public CanMakeWeakPtr<DocumentStorageAccess> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -98,7 +98,7 @@ private:
     static const char* supplementName();
     bool hasFrameSpecificStorageAccess() const;
     void setWasExplicitlyDeniedFrameSpecificStorageAccess() { ++m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
-    bool isAllowedToRequestFrameSpecificStorageAccess() { return m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess < maxNumberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
+    bool isAllowedToRequestStorageAccess() { return m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess < maxNumberOfTimesExplicitlyDeniedStorageAccess; };
     void enableTemporaryTimeUserGesture();
     void consumeTemporaryTimeUserGesture();
 

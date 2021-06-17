@@ -71,9 +71,6 @@ public:
     virtual void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual bool hasCrossPageStorageAccess(const SubResourceDomain&, const TopFrameDomain&) const { return false; }
     virtual bool hasHadUserInteraction(const RegistrableDomain&) const { return false; }
-    
-    virtual void setHasDeniedCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
-    virtual bool hasDeniedCrossPageStorageAccess(const SubResourceDomain&, const TopFrameDomain&) const { return false; }
 };
     
 } // namespace WebCore

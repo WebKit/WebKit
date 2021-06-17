@@ -65,6 +65,7 @@ class WebAnimation;
 
 enum class AnimationImpact;
 enum class EventProcessing : uint8_t;
+enum class IsSyntheticClick : bool { No, Yes };
 enum class SelectionRestorationMode : uint8_t;
 
 struct GetAnimationsOptions;
@@ -533,7 +534,7 @@ public:
     IntPoint savedLayerScrollPosition() const;
     void setSavedLayerScrollPosition(const IntPoint&);
 
-    bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr);
+    bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick isSyntethicClick = IsSyntheticClick::No);
     bool dispatchWheelEvent(const PlatformWheelEvent&, OptionSet<EventHandling>&, Event::IsCancelable = Event::IsCancelable::Yes);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
