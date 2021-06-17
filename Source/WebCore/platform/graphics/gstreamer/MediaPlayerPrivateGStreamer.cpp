@@ -88,6 +88,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
@@ -450,6 +451,11 @@ bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, 
 
     if (!rate)
         rate = 1.0;
+
+    if (m_hasWebKitWebSrcSentEOS && m_downloadBuffer) {
+        GST_DEBUG_OBJECT(pipeline(), "Setting high-percent=0 on GstDownloadBuffer to force 100%% buffered reporting");
+        g_object_set(m_downloadBuffer.get(), "high-percent", 0, nullptr);
+    }
 
     GST_DEBUG_OBJECT(pipeline(), "[Seek] Performing actual seek to %" GST_TIME_FORMAT " (endTime: %" GST_TIME_FORMAT ") at rate %f", GST_TIME_ARGS(toGstClockTime(startTime)), GST_TIME_ARGS(toGstClockTime(endTime)), rate);
     return gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekFlags,
@@ -861,6 +867,8 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
         webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC_CAST(m_source.get()), m_player, m_referrer);
         g_signal_connect(GST_ELEMENT_PARENT(m_source.get()), "element-added", G_CALLBACK(uriDecodeBinElementAddedCallback), this);
+        // This will set the multiqueue size to the default value.
+        g_object_set(GST_ELEMENT_PARENT(m_source.get()), "buffer-size", 2 * MB, nullptr);
 #if ENABLE(MEDIA_STREAM)
     } else if (WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
         auto stream = m_streamPrivate.get();
@@ -1893,6 +1901,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             m_fillTimer.stop();
             m_bufferingPercentage = 100;
             updateStates();
+        } else if (gst_structure_has_name(structure, "webkit-web-src-has-eos")) {
+            GST_DEBUG_OBJECT(pipeline(), "WebKitWebSrc has EOS");
+            m_hasWebKitWebSrcSentEOS = true;
         } else
             GST_DEBUG_OBJECT(pipeline(), "Unhandled element message: %" GST_PTR_FORMAT, structure);
         break;
@@ -2099,6 +2110,9 @@ void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, 
     g_signal_handlers_disconnect_by_func(bin, reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), player);
     g_signal_connect_swapped(element, "notify::temp-location", G_CALLBACK(downloadBufferFileCreatedCallback), player);
 
+    // Set the GstDownloadBuffer size to our preferred value controls the thresholds for buffering events.
+    g_object_set(element, "max-size-bytes", 100 * KB, nullptr);
+
     GUniqueOutPtr<char> oldDownloadTemplate;
     g_object_get(element, "temp-template", &oldDownloadTemplate.outPtr(), nullptr);
 
@@ -2118,7 +2132,6 @@ void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerP
 
     GUniqueOutPtr<char> downloadFile;
     g_object_get(player->m_downloadBuffer.get(), "temp-location", &downloadFile.outPtr(), nullptr);
-    player->m_downloadBuffer = nullptr;
 
     if (UNLIKELY(!FileSystem::deleteFile(downloadFile.get()))) {
         GST_WARNING("Couldn't unlink media temporary file %s after creation", downloadFile.get());

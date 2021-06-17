@@ -1,3 +1,44 @@
+2021-06-17  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Unexpected timeout in http/tests/media/video-play-stall-seek.html
+        https://bugs.webkit.org/show_bug.cgi?id=196198
+
+        Reviewed by Philippe Normand.
+
+        Increased default GstDowloadBuffer size to prevent a race condition. To do that, we need
+        to set the buffer-size of GstUriDecodebin (that will set the GstMultiQueue size, so we use
+        the default value that would be used if no changes had been made, and also leaves
+        GstDownloadBuffer size untouched, which wouldn't happen if no buffer-size had been set)
+        and then set the desired max-size-bytes on GstDownloadBuffer.
+
+        The race condition was that some times the player private readyState went up to
+        HAVE_ENOUGH_DATA and then back to HAVE_CURRENT_DATA (triggering the expected waiting event),
+        and some others times went directly to HAVE_CURRENT_DATA (no waiting event, test stalled).
+        Increasing the buffer size gave more time for the double transition to happen.
+
+        Still, these changes weren't enough to get the test passing, as with these changes the
+        multiqueue sucked all the data, downloadbuffer fell to a low percentage and updateStates()
+        paused the pipeline for rebuffering. The pipeline won't ever be unpaused because at that
+        point WebKitWebSrc has reached EOS (no more file to download, a side effect of the current
+        libsoup behaviour) and the buffering won't ever go up again (and trigger the unpause).
+
+        This was solved by setting the downloadbuffer high-percent property to 0 when a seek
+        is done after EOS has been received by WebKitWebSrc. This effectively forces the
+        downloadbuffer to report 100% buffered, which unpauses the pipeline and lets the playback
+        continue after seek.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek): Set high-percent when seeking after WebKitWebSrc EOS.
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup): Manually set buffer-size to its default value.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Receive the custom EOS message from WebKitWebSrc and remember it.
+        (WebCore::MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback): Manully set max-size-bytes to a higher than default value.
+        (WebCore::MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback): Don't clean the reference to the downloadbuffer, as it'll be needed later.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Added m_hasWebKitWebSrcSentEOS to remember the EOS condition.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcCreate): Notify the EOS condition using the bus, so the player private can handle it.
+        (CachedResourceStreamingClient::loadFailed): Extra useful logs.
+        (CachedResourceStreamingClient::loadFinished): Ditto.
+
 2021-06-17  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement logical property groups

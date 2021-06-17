@@ -1,3 +1,19 @@
+2021-06-17  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Unexpected timeout in http/tests/media/video-play-stall-seek.html
+        https://bugs.webkit.org/show_bug.cgi?id=196198
+
+        Reviewed by Philippe Normand.
+
+        Make test more stable and don't expect NETWORK_LOADING, because some network implementations,
+        like libsoup, just report end-of-stream and finish the download.
+
+        * http/tests/media/video-play-stall-seek-expected.txt: Removed NETWORK_LOADING expectation.
+        * http/tests/media/video-play-stall-seek.html: Stabilize the test by not listening to waiting events once the relevant one has been handled, and by pausing the video after the test has finished. Also re
+move the NETWORK_LOADING check.
+        * platform/glib/TestExpectations: Unskipped test.
+        * platform/gtk-wayland/TestExpectations: Ditto.
+
 2021-06-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GStreamer mediastream gardening

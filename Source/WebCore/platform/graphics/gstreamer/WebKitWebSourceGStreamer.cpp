@@ -565,6 +565,10 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
     // If the queue is empty reached this point, the only other option is that we are in EOS.
     ASSERT(members->doesHaveEOS);
     GST_DEBUG_OBJECT(src, "Reached the end of the response, signalling EOS");
+
+    gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src),
+        gst_structure_new_empty("webkit-web-src-has-eos")));
+
     return GST_FLOW_EOS;
 }
 
@@ -1149,7 +1153,8 @@ void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const Res
     if (!error.isCancellation()) {
         GST_ERROR_OBJECT(src, "R%u: Have failure: %s", m_requestNumber, error.localizedDescription().utf8().data());
         GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().data()), (nullptr));
-    }
+    } else
+        GST_LOG_OBJECT(src, "R%u: Request cancelled: %s", m_requestNumber, error.localizedDescription().utf8().data());
 
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();
@@ -1162,6 +1167,8 @@ void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&, const N
     DataMutexLocker members { src->priv->dataMutex };
     if (members->requestNumber != m_requestNumber)
         return;
+
+    GST_LOG_OBJECT(src, "R%u: Load finished. Read position: %" G_GUINT64_FORMAT, m_requestNumber, members->readPosition);
 
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();
