@@ -93,7 +93,7 @@ FontFaceSet::Iterator::Iterator(FontFaceSet& set)
 
 RefPtr<FontFace> FontFaceSet::Iterator::next()
 {
-    if (m_index == m_target->size())
+    if (m_index >= m_target->size())
         return nullptr;
     return m_target->backing()[m_index++].wrapper(m_target->scriptExecutionContext());
 }

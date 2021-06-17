@@ -1,3 +1,16 @@
+2021-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make FontFaceSet::Iterator's bounds check more robust
+        https://bugs.webkit.org/show_bug.cgi?id=227048
+        <rdar://problem/78871890>
+
+        Reviewed by Simon Fraser.
+
+        We were checking for one specific bad value, when we should have been checking for all bad values.
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::Iterator::next):
+
 2021-06-16  Chris Dumez  <cdumez@apple.com>
 
         Document's execCommand() / queryCommand*() should throw an exception on non-HTML/XHTML documents
