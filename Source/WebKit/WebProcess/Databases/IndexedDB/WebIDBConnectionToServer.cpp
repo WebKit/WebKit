@@ -61,7 +61,6 @@ Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create()
 WebIDBConnectionToServer::WebIDBConnectionToServer()
     : m_connectionToServer(IDBClient::IDBConnectionToServer::create(*this))
 {
-    send(Messages::NetworkConnectionToWebProcess::AddIDBConnection());
 }
 
 WebIDBConnectionToServer::~WebIDBConnectionToServer()
