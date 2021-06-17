@@ -1,3 +1,38 @@
+2021-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize JSON.parse with small data by changing Identifier pool mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=227101
+
+        Reviewed by Mark Lam.
+
+        Found that std::array<Identifier, 128> pool in LiteralParser is too costly for construction and destruction
+        if JSON.parse is invoked for small data. This patch changes this pool mechanism so that we do not waste effort
+        allocating null Identifiers to pre-populate the recent identifiers pool. Instead, we now use a m_recentIdentifiersIndex
+        uint8_t array to indicate whether there's a cached recent identifier for each given first character.
+
+        We also use KeywordLookup.h's COMPARE_XCHARS to perform "true" / "false" / "null" lexing in JSON parser.
+        Roughly 20% improvement in microbenchmark. And roughly 2-3% improvement in Speedometer2/Flight-TodoMVC.
+
+                                            ToT                     Patched
+
+            flight-todomvc-json       67.8755+-1.1202     ^     56.7114+-0.5048        ^ definitely 1.1969x faster
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::add8):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        (JSC::Identifier::add):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::add):
+        (JSC::Identifier::fromString):
+        * runtime/LiteralParser.cpp:
+        (JSC::compare3Chars):
+        (JSC::compare4Chars):
+        (JSC::LiteralParser<CharType>::makeIdentifier):
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        * runtime/LiteralParser.h:
+
 2021-06-16  Mark Lam  <mark.lam@apple.com>
 
         Adopt com.apple.security.cs.jit-write-allowlist on internal builds.

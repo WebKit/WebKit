@@ -55,7 +55,7 @@ inline Identifier::Identifier(VM& vm, const AtomString& string)
 #endif
 }
 
-inline Ref<StringImpl> Identifier::add(VM& vm, StringImpl* r)
+inline Ref<AtomStringImpl> Identifier::add(VM& vm, StringImpl* r)
 {
 #ifndef NDEBUG
     checkCurrentAtomStringTable(vm);
@@ -109,6 +109,11 @@ inline Identifier Identifier::fromString(VM& vm, const String& string)
 inline Identifier Identifier::fromString(VM& vm, AtomStringImpl* atomStringImpl)
 {
     return Identifier(vm, atomStringImpl);
+}
+
+inline Identifier Identifier::fromString(VM& vm, Ref<AtomStringImpl>&& atomStringImpl)
+{
+    return Identifier(vm, WTFMove(atomStringImpl));
 }
 
 inline Identifier Identifier::fromString(VM& vm, const AtomString& atomString)
