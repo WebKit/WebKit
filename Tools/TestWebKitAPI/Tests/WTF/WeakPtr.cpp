@@ -56,6 +56,8 @@ class Base : public CanMakeWeakPtr<Base> {
 public:
     Base() { }
 
+    virtual ~Base() = default;
+
     int foo()
     {
         return 0;
@@ -68,7 +70,7 @@ class Derived : public Base {
 public:
     Derived() { }
 
-    virtual ~Derived() { } // Force a pointer fixup when casting Base <-> Derived
+    ~Derived() override { } // Force a pointer fixup when casting Base <-> Derived
 
     int foo()
     {

@@ -1,3 +1,17 @@
+2021-06-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] TestWTF.WTF_WeakPtr.WeakHashMapIterators is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=227102
+
+        Reviewed by Ryosuke Niwa.
+
+        A heap corruption was detected while a Derived class object was
+        destroyed as a Base class object.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::Base::~Base): Made Base class dtor virtual.
+        (TestWebKitAPI::Derived::~Derived):
+
 2021-06-16  Jonathan Bedard  <jbedard@apple.com>
 
         Clean up how platform images are handled in the bot watchers' dashboard
