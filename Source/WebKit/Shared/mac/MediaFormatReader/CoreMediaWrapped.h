@@ -152,13 +152,23 @@ const typename CoreMediaWrapped<Wrapped>::WrapperVTable& CoreMediaWrapped<Wrappe
 
 #pragma pack(push, 4)
     static constexpr struct { uint8_t pad[padSize]; CMBaseClass baseClass; } baseClass { { }, wrapperClass<sizeof(Wrapped)>() };
-    static constexpr struct { uint8_t pad[padSize]; WrapperClass derivedClass; } derivedClass { { }, Wrapped::wrapperClass() };
 #pragma pack(pop)
+    static constexpr WrapperClass derivedClass = Wrapped::wrapperClass();
+
+#if CPU(X86_64)
+    static_assert(sizeof(CMBaseClass::version) != sizeof(void*), "Fig struct fixup is required for CMBaseClass on X86_64");
+    static_assert(sizeof(WrapperClass::version) == sizeof(void*), "Fig struct fixup is not required for WrapperClass on X86_64");
+#else
+    static_assert(sizeof(CMBaseClass::version) == sizeof(void*), "Fig struct fixup only required for CMBaseClass on X86_64");
+    static_assert(sizeof(WrapperClass::version) == sizeof(void*), "Fig struct fixup only required for WrapperClass on X86_64");
+#endif
+    static_assert(alignof(CMBaseClass) == 4, "CMBaseClass must have 4 byte alignment");
+    static_assert(alignof(WrapperClass) == sizeof(void*), "WrapperClass must be natually aligned");
 
 IGNORE_WARNINGS_BEGIN("missing-field-initializers")
     static constexpr WrapperVTable vTable {
         { nullptr, &baseClass.baseClass },
-        &derivedClass.derivedClass,
+        &derivedClass
     };
 IGNORE_WARNINGS_END
     return vTable;
