@@ -1104,7 +1104,6 @@ webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-ou
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
-webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Failure ]
 webkit.org/b/79203 webkit.org/b/186678 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Failure Crash ]
 
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
@@ -1537,6 +1536,8 @@ fast/mediastream/screencapture-user-gesture.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
+webkit.org/b/210926 fast/mediastream/get-display-media-muted.html [ Skip ]
+webkit.org/b/210926 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
 webkit.org/b/191007 http/tests/media/media-stream/get-display-media-prompt.html [ Skip ]
 
 # Modern-media-controls support

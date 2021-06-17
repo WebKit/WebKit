@@ -2,6 +2,13 @@
 
         Unreviewed GStreamer mediastream gardening
 
+        * platform/glib/TestExpectations: Unflag fast/mediastream/media-stream-renders-first-frame.html
+        * platform/wpe/TestExpectations: Move getDisplayMedia expectations to glib file.
+
+2021-06-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GStreamer mediastream gardening
+
         * platform/glib/TestExpectations: Unflag 3 tests consistently passing.
 
 2021-06-17  Youenn Fablet  <youenn@apple.com>
