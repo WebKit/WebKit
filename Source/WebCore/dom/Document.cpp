@@ -5751,34 +5751,47 @@ static Editor::Command command(Document* document, const String& commandName, bo
         userInterface ? CommandFromDOMWithUserInterface : CommandFromDOM);
 }
 
-bool Document::execCommand(const String& commandName, bool userInterface, const String& value)
+ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const String& value)
 {
+    if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
+        return Exception { InvalidStateError, "execCommand is only supported on HTML documents." };
+
     EventQueueScope eventQueueScope;
     return command(this, commandName, userInterface).execute(value);
 }
 
-bool Document::queryCommandEnabled(const String& commandName)
+ExceptionOr<bool> Document::queryCommandEnabled(const String& commandName)
 {
+    if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
+        return Exception { InvalidStateError, "queryCommandEnabled is only supported on HTML documents." };
     return command(this, commandName).isEnabled();
 }
 
-bool Document::queryCommandIndeterm(const String& commandName)
+ExceptionOr<bool> Document::queryCommandIndeterm(const String& commandName)
 {
+    if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
+        return Exception { InvalidStateError, "queryCommandIndeterm is only supported on HTML documents." };
     return command(this, commandName).state() == TriState::Indeterminate;
 }
 
-bool Document::queryCommandState(const String& commandName)
+ExceptionOr<bool> Document::queryCommandState(const String& commandName)
 {
+    if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
+        return Exception { InvalidStateError, "queryCommandState is only supported on HTML documents." };
     return command(this, commandName).state() == TriState::True;
 }
 
-bool Document::queryCommandSupported(const String& commandName)
+ExceptionOr<bool> Document::queryCommandSupported(const String& commandName)
 {
+    if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
+        return Exception { InvalidStateError, "queryCommandSupported is only supported on HTML documents." };
     return command(this, commandName).isSupported();
 }
 
-String Document::queryCommandValue(const String& commandName)
+ExceptionOr<String> Document::queryCommandValue(const String& commandName)
 {
+    if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
+        return Exception { InvalidStateError, "queryCommandValue is only supported on HTML documents." };
     return command(this, commandName).value();
 }
 

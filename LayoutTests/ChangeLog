@@ -1,3 +1,47 @@
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Document's execCommand() / queryCommand*() should throw an exception on non-HTML/XHTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=227016
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Document/document-execcommand-expected.txt: Added.
+        * fast/dom/Document/document-execcommand.html: Added.
+        Add layout test coverage.
+
+        * editing/pasteboard/createMarkup-assert-expected.txt: Removed.
+        * editing/pasteboard/createMarkup-assert.xml: Removed.
+        * platform/mac/svg/text/foreignObject-repaint-expected.txt:
+        * platform/mac/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/mac/svg/text/text-align-01-b-expected.txt:
+        * platform/mac/svg/text/text-align-02-b-expected.txt:
+        * platform/mac/svg/text/text-align-03-b-expected.txt:
+        * platform/mac/svg/text/text-align-04-b-expected.txt:
+        * platform/mac/svg/text/text-align-05-b-expected.txt:
+        * platform/mac/svg/text/text-align-06-b-expected.txt:
+        * platform/mac/svg/text/text-deco-01-b-expected.txt:
+        * platform/mac/svg/text/text-fonts-01-t-expected.txt:
+        * platform/mac/svg/text/text-fonts-02-t-expected.txt:
+        * platform/mac/svg/text/text-intro-05-t-expected.txt:
+        * platform/mac/svg/text/text-path-01-b-expected.txt:
+        * platform/mac/svg/text/text-spacing-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-03-b-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-07-t-expected.txt:
+        * platform/mac/svg/text/text-text-08-b-expected.txt:
+        * platform/mac/svg/text/text-tref-01-b-expected.txt:
+        * platform/mac/svg/text/text-tselect-01-b-expected.txt:
+        * platform/mac/svg/text/text-tselect-02-f-expected.txt:
+        * platform/mac/svg/text/text-tspan-01-b-expected.txt:
+        * svg/custom/bug78838-expected.txt:
+        * svg/custom/bug79798-expected.txt:
+        * svg/custom/delete-modified-text-in-defs-crash.svg:
+        * svg/custom/layout-loop-expected.txt:
+        * svg/text/text-positioning-remove-child-crash.svg:
+        Rebaseline / update existing tests due to behavior change.
+
 2021-06-16  Cameron McCormack  <heycam@apple.com>
 
         Make RenderLayer::hitTestLayer not assume its renderer is a RenderBox

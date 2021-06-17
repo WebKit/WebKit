@@ -23,7 +23,6 @@
 <script><![CDATA[
 if (window.testRunner)
     testRunner.dumpAsText();
-document.execCommand("SelectAll");
 range = document.createRange();
 range.setStartBefore(document.getElementById("stop"));
 range.insertNode(document.getElementById("mask"));

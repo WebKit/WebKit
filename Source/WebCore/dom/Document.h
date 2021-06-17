@@ -1009,12 +1009,12 @@ public:
 
     DocumentMarkerController& markers() const { return *m_markers; }
 
-    WEBCORE_EXPORT bool execCommand(const String& command, bool userInterface = false, const String& value = String());
-    WEBCORE_EXPORT bool queryCommandEnabled(const String& command);
-    WEBCORE_EXPORT bool queryCommandIndeterm(const String& command);
-    WEBCORE_EXPORT bool queryCommandState(const String& command);
-    WEBCORE_EXPORT bool queryCommandSupported(const String& command);
-    WEBCORE_EXPORT String queryCommandValue(const String& command);
+    WEBCORE_EXPORT ExceptionOr<bool> execCommand(const String& command, bool userInterface = false, const String& value = String());
+    WEBCORE_EXPORT ExceptionOr<bool> queryCommandEnabled(const String& command);
+    WEBCORE_EXPORT ExceptionOr<bool> queryCommandIndeterm(const String& command);
+    WEBCORE_EXPORT ExceptionOr<bool> queryCommandState(const String& command);
+    WEBCORE_EXPORT ExceptionOr<bool> queryCommandSupported(const String& command);
+    WEBCORE_EXPORT ExceptionOr<String> queryCommandValue(const String& command);
 
     UndoManager& undoManager() const { return m_undoManager.get(); }
 

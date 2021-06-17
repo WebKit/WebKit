@@ -87,7 +87,6 @@
 <script>
 if (window.testRunner)
     window.testRunner.dumpSelectionRect();
-document.execCommand("SelectAll");
 </script>
 </svg>
 
