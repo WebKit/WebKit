@@ -1,3 +1,47 @@
+2021-06-18  Peng Liu  <peng.liu6@apple.com>
+
+        [iOS] Fullscreen video playback gets stuck after interacting with the playback controls
+        https://bugs.webkit.org/show_bug.cgi?id=227047
+
+        Reviewed by Eric Carlson.
+
+        When we scrub a playing video, the video element may enter a temporarily stalled
+        state - the player is still playing, but it does not have enough data. In WebKit,
+        the `rate` of the player will be 0. But we cannot set the rate of `WebAVPlayerController`
+        to 0 in this case, because AVKit will believe the video playback is paused when
+        its rate is 0. In r261587, we defined a magic rate (0.00000001f) for this case.
+
+        Unfortunately, with the changes in r275956, `WebAVPlayerController` will
+        align its `defaultPlaybackRate` with `rate` when `rate` is not 0. Under stress
+        tests, e.g., keep scrubbing a video, a video element will eventually enter a state
+        in which both `defaultPlaybackRate` and `rate` are the magic rate. And the video
+        appears to be stuck for users.
+
+        To fix the issue, this patch removes the magic rate and defines a new state: `stalled`.
+        A video will be in the stalled state when it is playing but does not have enough data.
+        WebKit will only change the rate of `WebAVPlayerController` when the video
+        is not stalled.
+
+        To avoid potential problems due to the conversions between "float" and "double"
+        back and forth, this patch updates the types of `playbackRate` and `defaultPlaybackRate`.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::setDefaultPlaybackRate):
+        (WebKit::PlaybackSessionModelContext::setPlaybackRate):
+        (WebKit::PlaybackSessionModelContext::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::setDefaultPlaybackRate):
+        (WebKit::PlaybackSessionManagerProxy::setPlaybackRate):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionInterfaceContext::rateChanged):
+        (WebKit::PlaybackSessionManager::rateChanged):
+
 2021-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Rework touch-based gesture controller

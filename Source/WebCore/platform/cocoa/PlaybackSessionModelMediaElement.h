@@ -68,8 +68,8 @@ public:
     WEBCORE_EXPORT void beginScanningForward() final;
     WEBCORE_EXPORT void beginScanningBackward() final;
     WEBCORE_EXPORT void endScanning() final;
-    WEBCORE_EXPORT void setDefaultPlaybackRate(float) final;
-    WEBCORE_EXPORT void setPlaybackRate(float) final;
+    WEBCORE_EXPORT void setDefaultPlaybackRate(double) final;
+    WEBCORE_EXPORT void setPlaybackRate(double) final;
     WEBCORE_EXPORT void selectAudioMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void togglePictureInPicture() final;
@@ -83,9 +83,10 @@ public:
     double currentTime() const final;
     double bufferedTime() const final;
     bool isPlaying() const final;
+    bool isStalled() const final;
     bool isScrubbing() const final { return false; }
-    float defaultPlaybackRate() const final;
-    float playbackRate() const final;
+    double defaultPlaybackRate() const final;
+    double playbackRate() const final;
     Ref<TimeRanges> seekableRanges() const final;
     double seekableTimeRangesLastModifiedTime() const final;
     double liveUpdateInterval() const final;
@@ -109,7 +110,6 @@ private:
     void progressEventTimerFired();
     static const Vector<WTF::AtomString>& observedEventNames();
     const WTF::AtomString& eventNameAll();
-    bool isStalled() const;
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };

@@ -1,3 +1,57 @@
+2021-06-18  Peng Liu  <peng.liu6@apple.com>
+
+        [iOS] Fullscreen video playback gets stuck after interacting with the playback controls
+        https://bugs.webkit.org/show_bug.cgi?id=227047
+
+        Reviewed by Eric Carlson.
+
+        When we scrub a playing video, the video element may enter a temporarily stalled
+        state - the player is still playing, but it does not have enough data. In WebKit,
+        the `rate` of the player will be 0. But we cannot set the rate of `WebAVPlayerController`
+        to 0 in this case, because AVKit will believe the video playback is paused when
+        its rate is 0. In r261587, we defined a magic rate (0.00000001f) for this case.
+
+        Unfortunately, with the changes in r275956, `WebAVPlayerController` will
+        align its `defaultPlaybackRate` with `rate` when `rate` is not 0. Under stress
+        tests, e.g., keep scrubbing a video, a video element will eventually enter a state
+        in which both `defaultPlaybackRate` and `rate` are the magic rate. And the video
+        appears to be stuck for users.
+
+        To fix the issue, this patch removes the magic rate and defines a new state: `stalled`.
+        A video will be in the stalled state when it is playing but does not have enough data.
+        WebKit will only change the rate of `WebAVPlayerController` when the video
+        is not stalled.
+
+        To avoid potential problems due to the conversions between "float" and "double"
+        back and forth, this patch updates the types of `playbackRate` and `defaultPlaybackRate`.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        (WebCore::PlaybackSessionModelClient::rateChanged):
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::PlaybackSessionModelMediaElement::setDefaultPlaybackRate):
+        (WebCore::PlaybackSessionModelMediaElement::setPlaybackRate):
+        (WebCore::PlaybackSessionModelMediaElement::defaultPlaybackRate const):
+        (WebCore::PlaybackSessionModelMediaElement::playbackRate const):
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit):
+        (WebCore::PlaybackSessionInterfaceAVKit::rateChanged):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::rateChanged):
+        (VideoFullscreenControllerContext::setDefaultPlaybackRate):
+        (VideoFullscreenControllerContext::setPlaybackRate):
+        (VideoFullscreenControllerContext::isStalled const):
+        (VideoFullscreenControllerContext::defaultPlaybackRate const):
+        (VideoFullscreenControllerContext::playbackRate const):
+        * platform/mac/PlaybackSessionInterfaceMac.h:
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        (WebCore::PlaybackSessionInterfaceMac::rateChanged):
+        * platform/mac/VideoFullscreenInterfaceMac.h:
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (WebCore::VideoFullscreenInterfaceMac::rateChanged):
+
 2021-06-18  Philippe Normand  <pnormand@igalia.com>
 
         [MSE][GStreamer] Soundcloud serves MP4 audio with empty tfdt boxes

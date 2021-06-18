@@ -75,7 +75,7 @@ public:
     void currentTimeChanged(double);
     void bufferedTimeChanged(double);
     void playbackStartedTimeChanged(double);
-    void rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate);
+    void rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate);
     void seekableRangesChanged(WebCore::TimeRanges&, double lastModifiedTime, double liveUpdateInterval);
     void canPlayFastReverseChanged(bool);
     void audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
@@ -111,8 +111,8 @@ private:
     void beginScanningForward() final;
     void beginScanningBackward() final;
     void endScanning() final;
-    void setDefaultPlaybackRate(float) final;
-    void setPlaybackRate(float) final;
+    void setDefaultPlaybackRate(double) final;
+    void setPlaybackRate(double) final;
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
     void togglePictureInPicture() final;
@@ -126,10 +126,11 @@ private:
     double duration() const final { return m_duration; }
     double currentTime() const final { return m_currentTime; }
     double bufferedTime() const final { return m_bufferedTime; }
-    bool isPlaying() const final { return m_isPlaying; }
+    bool isPlaying() const final { return m_playbackState.contains(PlaybackState::Playing); }
+    bool isStalled() const final { return m_playbackState.contains(PlaybackState::Stalled); }
     bool isScrubbing() const final { return m_isScrubbing; }
-    float defaultPlaybackRate() const final { return m_defaultPlaybackRate; }
-    float playbackRate() const final { return m_playbackRate; }
+    double defaultPlaybackRate() const final { return m_defaultPlaybackRate; }
+    double playbackRate() const final { return m_playbackRate; }
     Ref<WebCore::TimeRanges> seekableRanges() const final { return m_seekableRanges.copyRef(); }
     double seekableTimeRangesLastModifiedTime() const final { return m_seekableTimeRangesLastModifiedTime; }
     double liveUpdateInterval() const { return m_liveUpdateInterval; }
@@ -154,10 +155,10 @@ private:
     double m_duration { 0 };
     double m_currentTime { 0 };
     double m_bufferedTime { 0 };
-    bool m_isPlaying { false };
+    OptionSet<PlaybackSessionModel::PlaybackState> m_playbackState;
     bool m_isScrubbing { false };
-    float m_defaultPlaybackRate { 0 };
-    float m_playbackRate { 0 };
+    double m_defaultPlaybackRate { 0 };
+    double m_playbackRate { 0 };
     Ref<WebCore::TimeRanges> m_seekableRanges { WebCore::TimeRanges::create() };
     double m_seekableTimeRangesLastModifiedTime { 0 };
     double m_liveUpdateInterval { 0 };
@@ -221,7 +222,7 @@ private:
     void wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier, bool);
     void durationChanged(PlaybackSessionContextIdentifier, double duration);
     void playbackStartedTimeChanged(PlaybackSessionContextIdentifier, double playbackStartedTime);
-    void rateChanged(PlaybackSessionContextIdentifier, bool isPlaying, double rate, double defaultPlaybackRate);
+    void rateChanged(PlaybackSessionContextIdentifier, OptionSet<WebCore::PlaybackSessionModel::PlaybackState>, double rate, double defaultPlaybackRate);
     void handleControlledElementIDResponse(PlaybackSessionContextIdentifier, String) const;
     void mutedChanged(PlaybackSessionContextIdentifier, bool muted);
     void volumeChanged(PlaybackSessionContextIdentifier, double volume);
@@ -238,8 +239,8 @@ private:
     void beginScanningForward(PlaybackSessionContextIdentifier);
     void beginScanningBackward(PlaybackSessionContextIdentifier);
     void endScanning(PlaybackSessionContextIdentifier);
-    void setDefaultPlaybackRate(PlaybackSessionContextIdentifier, float);
-    void setPlaybackRate(PlaybackSessionContextIdentifier, float);
+    void setDefaultPlaybackRate(PlaybackSessionContextIdentifier, double);
+    void setPlaybackRate(PlaybackSessionContextIdentifier, double);
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
