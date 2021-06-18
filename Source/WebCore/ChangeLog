@@ -1,5 +1,21 @@
 2021-06-18  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html is failing since r273645
+        https://bugs.webkit.org/show_bug.cgi?id=223508
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Per spec, prevent seeks, playback rate changes and preload state updates on media elements backed by
+        the GStreamer MediaStream source element.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::updatePlaybackRate):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload):
+        (WebCore::MediaPlayerPrivateGStreamer::maxMediaTimeSeekable const):
+
+2021-06-18  Philippe Normand  <pnormand@igalia.com>
+
         [WebRTC][GStreamer] fast/mediastream/MediaStream-video-element-remove-track.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=191886
 

@@ -1132,7 +1132,6 @@ webkit.org/b/224074 webrtc/concurrentVideoPlayback.html [ Timeout Pass ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
-webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

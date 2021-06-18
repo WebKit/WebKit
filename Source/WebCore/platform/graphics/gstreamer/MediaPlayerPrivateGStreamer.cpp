@@ -467,6 +467,11 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
     if (!m_pipeline || m_didErrorOccur)
         return;
 
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return;
+#endif
+
     GST_INFO_OBJECT(pipeline(), "[Seek] seek attempt to %s", toString(mediaTime).utf8().data());
 
     // Avoid useless seeking.
@@ -520,6 +525,11 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
 
 void MediaPlayerPrivateGStreamer::updatePlaybackRate()
 {
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return;
+#endif
+
     if (!m_isChangingRate)
         return;
 
@@ -638,6 +648,11 @@ void MediaPlayerPrivateGStreamer::setPreservesPitch(bool preservesPitch)
 
 void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 {
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return;
+#endif
+
     GST_DEBUG_OBJECT(pipeline(), "Setting preload to %s", convertEnumerationToString(preload).utf8().data());
     if (preload == MediaPlayer::Preload::Auto && m_isLiveStream)
         return;
@@ -694,6 +709,11 @@ MediaTime MediaPlayerPrivateGStreamer::maxMediaTimeSeekable() const
 
     if (m_isLiveStream)
         return MediaTime::zeroTime();
+
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return MediaTime::zeroTime();
+#endif
 
     MediaTime duration = durationMediaTime();
     GST_DEBUG_OBJECT(pipeline(), "maxMediaTimeSeekable, duration: %s", toString(duration).utf8().data());
