@@ -1,5 +1,19 @@
 2021-06-17  Chris Dumez  <cdumez@apple.com>
 
+        Add support for IDBCursor.request
+        https://bugs.webkit.org/show_bug.cgi?id=227152
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline some WPT tests now that they are passing.
+
+        * web-platform-tests/IndexedDB/idbcursor-request.any-expected.txt:
+        * web-platform-tests/IndexedDB/idbcursor-request.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+
+2021-06-17  Chris Dumez  <cdumez@apple.com>
+
         Resync DOM WPT tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=227144
 
