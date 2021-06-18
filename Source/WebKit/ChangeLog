@@ -1,3 +1,21 @@
+2021-06-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Clear state after process crash so that we know to re-issue sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=227103
+        <rdar://problem/77588760>
+
+        Reviewed by Tim Horton.
+
+        Follow-up patch that corrects a problem when switching between processes (for example, when
+        a provisional load moves to a committed load.) The parameters for the new process would fail
+        to pass the necessary sandbox extensions for the <attachment> element if they had been vended
+        to the provisional load. Instead, we should be checking if the new process has been given
+        the necessary extensions.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters): Use the new process, not the process state we are
+        copying from when deciding whether we need to extend sandbox powers to the new process.
+
 2021-06-18  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] Fullscreen video playback gets stuck after interacting with the playback controls

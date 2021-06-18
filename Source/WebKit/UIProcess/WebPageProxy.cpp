@@ -8198,9 +8198,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
-    if (m_preferences->attachmentElementEnabled() && !m_process->hasIssuedAttachmentElementRelatedSandboxExtensions()) {
+    if (m_preferences->attachmentElementEnabled() && !process.hasIssuedAttachmentElementRelatedSandboxExtensions()) {
         parameters.attachmentElementExtensionHandles = SandboxExtension::createHandlesForMachLookup(attachmentElementServices(), std::nullopt);
-        m_process->setHasIssuedAttachmentElementRelatedSandboxExtensions();
+        process.setHasIssuedAttachmentElementRelatedSandboxExtensions();
     }
 #endif
 
