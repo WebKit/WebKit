@@ -1,3 +1,17 @@
+2021-06-17  Said Abou-Hallawa  <said@apple.com>
+
+        [Cocoa] Disable hardware decoding in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=226869
+        <rdar://77548905>
+
+        Reviewed by Per Arne Vollan and Simon Fraser.
+
+        Add have macros for using:
+        1. kCGImageSourceEnableRestrictedDecoding
+        2. VTRestrictVideoDecoders()
+
+        * wtf/PlatformHave.h:
+
 2021-06-17  Mark Lam  <mark.lam@apple.com>
 
         Rename numberOfPACBits to maxNumberOfAllowedPACBits.

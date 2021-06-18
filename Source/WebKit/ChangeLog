@@ -1,3 +1,36 @@
+2021-06-17  Said Abou-Hallawa  <said@apple.com>
+
+        [Cocoa] Disable hardware decoding in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=226869
+        <rdar://77548905>
+
+        Reviewed by Per Arne Vollan and Simon Fraser.
+
+        Restrict video decoders and disable hardware image decoders.
+
+        A temp extension is created for the service "com.apple.trustd.agent" to
+        allow temporarily calling FigPhotoSupportsHEVCHWDecode(). This function
+        needs access this service but we have recently closed access to it.
+
+        FigPhotoSupportsHEVCHWDecode() sets a local static variable by using the 
+        service "com.apple.trustd.agent" when it is called for the first time.
+        Our purpose of calling it in this context is to initialize the static
+        variable only. And this is why we do not use its return value.
+
+        This solution is fragile. If MediaToolbox is changed such that it needs
+        'com.apple.trustd.agent' while decoding an image, the decoding will fail.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::restrictImageAndVideoDecoders):
+        (WebKit::WebProcess::initializeSandbox):
+
 2021-06-17  Chris Dumez  <cdumez@apple.com>
 
         Enable some more release logging in for ephemeral sessions

@@ -454,6 +454,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.launchServicesExtensionHandle = WTFMove(launchServicesExtensionHandle);
 #endif
 
+#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
+    SandboxExtension::Handle trustdAgentExtensionHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt, trustdAgentExtensionHandle);
+    parameters.trustdAgentExtensionHandle = WTFMove(trustdAgentExtensionHandle);
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(CFPREFS_DIRECT_MODE)
     if ([UIApplication sharedApplication]) {
         auto state = [[UIApplication sharedApplication] applicationState];

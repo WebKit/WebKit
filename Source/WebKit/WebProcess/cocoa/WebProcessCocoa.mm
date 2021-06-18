@@ -92,6 +92,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/cocoa/VideoToolboxSPI.h>
 #import <pal/spi/cocoa/pthreadSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
@@ -157,6 +158,7 @@
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
+#import <pal/cf/VideoToolboxSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
@@ -368,6 +370,21 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (launchServicesExtension)
         launchServicesExtension->revoke();
+#endif
+
+#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
+    // Call FigPhotoSupportsHEVCHWDecode() while holding the trustd extension.
+    if (parameters.trustdAgentExtensionHandle) {
+        if (auto extension = SandboxExtension::create(WTFMove(*parameters.trustdAgentExtensionHandle))) {
+            bool ok = extension->consume();
+            // The purpose of calling this function is to initialize a static variable which needs
+            // the service com.apple.trustd.gent. And this is why we do not use its return value.
+            if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_FigPhotoSupportsHEVCHWDecode())
+                PAL::softLinkMediaToolboxFigPhotoSupportsHEVCHWDecode();
+            ok = extension->revoke();
+            ASSERT_UNUSED(ok, ok);
+        }
+    }
 #endif
 
 #if PLATFORM(MAC)
@@ -724,6 +741,29 @@ RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
 #endif
 }
 
+#if HAVE(VIDEO_RESTRICTED_DECODING)
+static inline void restrictImageAndVideoDecoders()
+{
+    if (!(PAL::isVideoToolboxFrameworkAvailable() && PAL::canLoad_VideoToolbox_VTRestrictVideoDecoders()))
+        return;
+
+    CMVideoCodecType allowedCodecTypeList[] = {
+        kCMVideoCodecType_H263,
+        kCMVideoCodecType_H264,
+        kCMVideoCodecType_MPEG4Video,
+        kCMVideoCodecType_HEVC,
+        kCMVideoCodecType_HEVCWithAlpha
+    };
+
+    PAL::softLinkVideoToolboxVTRestrictVideoDecoders(
+        kVTRestrictions_RunVideoDecodersInProcess |
+        kVTRestrictions_AvoidHardwareDecoders |
+        kVTRestrictions_AvoidHardwarePixelTransfer |
+        kVTRestrictions_AvoidIOSurfaceBackings,
+        allowedCodecTypeList, sizeof(allowedCodecTypeList) / sizeof(allowedCodecTypeList[0]));
+}
+#endif
+
 void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -739,6 +779,10 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
     sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
+#endif
+
+#if HAVE(VIDEO_RESTRICTED_DECODING)
+    restrictImageAndVideoDecoders();
 #endif
 }
 

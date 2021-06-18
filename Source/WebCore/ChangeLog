@@ -1,3 +1,19 @@
+2021-06-17  Said Abou-Hallawa  <said@apple.com>
+
+        [Cocoa] Disable hardware decoding in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=226869
+        <rdar://77548905>
+
+        Reviewed by Per Arne Vollan and Simon Fraser.
+
+        Pass kCGImageSourceEnableRestrictedDecoding : kCFBooleanTrue when decoding
+        an image frame.
+
+        Test: fast/images/heic-as-background-image.html
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::createImageSourceOptions):
+
 2021-06-17  Chris Dumez  <cdumez@apple.com>
 
         Add support for IDBCursor.request
