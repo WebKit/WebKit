@@ -1,3 +1,27 @@
+2021-06-18  Robin Morisset  <rmorisset@apple.com>
+
+        [DFG] Untyped branches should eliminate checks based on results from the AbstractInterpreter
+        https://bugs.webkit.org/show_bug.cgi?id=227159
+
+        Reviewed by Filip Pizlo.
+
+        We currently emit a ton of code for Untyped branches, as we use branchIfTruthy which does not know anything about the abstract interpreter.
+        Even worse: we call branchIfTruthy after emitting some fast paths, and branchIfTruthy replicates these fast paths (Int32 and Booleans).
+        While I plan to reduce the number of Untyped branches in some separate patches, there is a very long tail of predicted types visible in benchmarks, so I expect some of them to remain no matter what, justifying making the code emitted in that case more reasonable.
+
+        The implementation in this patch is fairly straightforward, as it follows very closely branchOnValue() from AssemblyHelpers (which was previously called through branchIfTruthy).
+
+        It was tested on the JSC stress tests, as well as on JetStream2.
+
+        On JetStream2, it reduced the average number of bytes emitted for Branch by the DFG from 30.1 to 27.5 (highly significant, it only changes by about 0.1 between runs).
+        Since only about 1.5k branches are untyped out of 34k in that benchmark, it means that this patch reduces the amount of code emitted for untyped branches by about 50 bytes on average.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::branchDoubleZeroOrNaN):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitUntypedBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+
 2021-06-17  Mark Lam  <mark.lam@apple.com>
 
         Rename numberOfPACBits to maxNumberOfAllowedPACBits.

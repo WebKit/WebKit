@@ -1110,6 +1110,11 @@ public:
     {
         return addBranch(m_jit.branchDoubleNonZero(value, scratch), destination);
     }
+
+    void branchDoubleZeroOrNaN(FPRReg value, FPRReg scratch, BasicBlock* destination)
+    {
+        return addBranch(m_jit.branchDoubleZeroOrNaN(value, scratch), destination);
+    }
     
     template<typename T, typename U>
     void branch32(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
@@ -1245,6 +1250,7 @@ public:
     void emitObjectOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitStringBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitStringOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
+    void emitUntypedBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitBranch(Node*);
     
     struct StringSwitchCase {
