@@ -1,3 +1,17 @@
+2021-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add assertion in RunLoop::dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=227154
+        <rdar://79243769>
+
+        Reviewed by Geoff Garen.
+
+        This should help us find what is scheduling null functions.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::dispatch):
+        (WTF::RunLoop::dispatchAfter):
+
 2021-06-17  Ben Nham  <nham@apple.com>
 
         Remove Mac-specific CPUTime functions

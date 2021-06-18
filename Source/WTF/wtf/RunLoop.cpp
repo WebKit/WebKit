@@ -141,8 +141,9 @@ void RunLoop::performWork()
         wakeUp();
 }
 
-void RunLoop::dispatch(Function<void ()>&& function)
+void RunLoop::dispatch(Function<void()>&& function)
 {
+    RELEASE_ASSERT(function);
     bool needsWakeup = false;
 
     {
@@ -157,6 +158,7 @@ void RunLoop::dispatch(Function<void ()>&& function)
 
 void RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
 {
+    RELEASE_ASSERT(function);
     auto timer = new DispatchTimer(*this);
     timer->setFunction([timer, function = WTFMove(function)] {
         function();
