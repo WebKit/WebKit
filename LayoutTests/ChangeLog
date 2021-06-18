@@ -1,3 +1,12 @@
+2021-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] fast/mediastream/MediaStream-video-element-remove-track.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191886
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag test now passing.
+
 2021-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add Timing-Allow-Origin checks to NetworkDataTaskSoup

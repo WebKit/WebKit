@@ -1,3 +1,15 @@
+2021-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] fast/mediastream/MediaStream-video-element-remove-track.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191886
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Trigger source pad removal in the mediastream source element when a track has been removed.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebKitMediaStreamObserver::didRemoveTrack):
+
 2021-06-17  Said Abou-Hallawa  <said@apple.com>
 
         [Cocoa] Disable hardware decoding in the WebProcess
