@@ -420,6 +420,8 @@ void testUbfx32();
 void testUbfx32PatternMatch();
 void testUbfx64();
 void testUbfx64PatternMatch();
+void testBitAndZeroShiftRightArgImmMask32();
+void testBitAndZeroShiftRightArgImmMask64();
 void testBasicSelect();
 void testSelectTest();
 void testSelectCompareDouble();

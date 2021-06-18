@@ -2688,6 +2688,78 @@ void testUbfx64PatternMatch()
     }
 }
 
+void testBitAndZeroShiftRightArgImmMask32()
+{
+    // Turn this: (tmp >> imm) & mask 
+    // Into this: tmp >> imm
+    uint32_t tmp = 0xffffffff;
+    Vector<uint32_t> imms = { 4, 28 };
+    Vector<uint32_t> masks = { 0x0fffffff, 0xf };
+
+    auto test = [&] (uint32_t imm, uint32_t mask) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* tmpValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* immValue = root->appendNew<Const32Value>(proc, Origin(), imm);
+        Value* leftValue = root->appendNew<Value>(proc, ZShr, Origin(), tmpValue, immValue);
+        Value* rightValue = root->appendNew<Const32Value>(proc, Origin(), mask);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitAnd, Origin(), leftValue, rightValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            checkUsesInstruction(*code, "lsr");
+            checkDoesNotUseInstruction(*code, "and");
+            checkDoesNotUseInstruction(*code, "ubfx");
+        }
+        uint32_t lhs = invoke<uint32_t>(*code, tmp);
+        uint32_t rhs = tmp >> imm;
+        CHECK(lhs == rhs);
+    };
+
+    for (size_t i = 0; i < imms.size(); ++i)
+        test(imms.at(i), masks.at(i));
+}
+
+void testBitAndZeroShiftRightArgImmMask64()
+{
+    // Turn this: (tmp >> imm) & mask 
+    // Into this: tmp >> imm
+    uint64_t tmp = 0xffffffffffffffff;
+    Vector<uint64_t> imms = { 4, 60 };
+    Vector<uint64_t> masks = { 0x0fffffffffffffff, 0xf };
+
+    auto test = [&] (uint64_t imm, uint64_t mask) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* tmpValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* immValue = root->appendNew<Const32Value>(proc, Origin(), imm);
+        Value* leftValue = root->appendNew<Value>(proc, ZShr, Origin(), tmpValue, immValue);
+        Value* rightValue = root->appendNew<Const64Value>(proc, Origin(), mask);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitAnd, Origin(), leftValue, rightValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            checkUsesInstruction(*code, "lsr");
+            checkDoesNotUseInstruction(*code, "and");
+            checkDoesNotUseInstruction(*code, "ubfx");
+        }
+        uint64_t lhs = invoke<uint64_t>(*code, tmp);
+        uint64_t rhs = tmp >> imm;
+        CHECK(lhs == rhs);
+    };
+
+    for (size_t i = 0; i < imms.size(); ++i)
+        test(imms.at(i), masks.at(i));
+}
+
 static void testBitAndArgs(int64_t a, int64_t b)
 {
     Procedure proc;
@@ -3506,7 +3578,8 @@ void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testUbfx32PatternMatch());
     RUN(testUbfx64());
     RUN(testUbfx64PatternMatch());
-
+    RUN(testBitAndZeroShiftRightArgImmMask32());
+    RUN(testBitAndZeroShiftRightArgImmMask64());
     RUN(testBitAndArgs(43, 43));
     RUN(testBitAndArgs(43, 0));
     RUN(testBitAndArgs(10, 3));

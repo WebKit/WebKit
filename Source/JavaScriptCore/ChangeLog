@@ -1,3 +1,57 @@
+2021-06-18  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to B3ReduceStrength based on Bug 226984
+        https://bugs.webkit.org/show_bug.cgi?id=227138
+
+        Reviewed by Filip Pizlo.
+
+        In the previous patch bug 226984, a new pattern could be introduced to 
+        B3ReduceStrength.cpp for further optimization, which is that:
+
+        dest = (src >> shiftAmount) & mask
+
+        is equivalent to
+
+        src >> shiftAmount
+
+        under these constraints:
+
+        1. shiftAmount >= 0 
+        2. mask has a binary format in contiguous ones starting from the 
+           least significant bit.
+        3. shiftAmount + bitCount(mask) == maxBitWidth
+
+        For instance (32-bit):
+
+        (src >> 12) & 0x000fffff == src >> 12
+
+        This reduction is more beneficial than UBFX in this case.  
+
+        // B3 IR
+        Int @0 = ArgumentReg(%0)
+        Int @1 = 12
+        Int @2 = ZShr(@0, @1)
+        Int @3 = 0x000fffff
+        Int @4 = BitAnd(@2, @3))
+        Void@5 = Return(@4, Terminal)    
+
+        w/o the pattern:
+        // Old optimized AIR
+        Ubfx %0, $12, $20, %0, @4
+        Ret  %0,               @5
+
+        w/ the pattern:
+        // New optimized AIR
+        Urshift %0, $12, %0, @3
+        Ret32   %0,          @6
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testBitAndZeroShiftRightImmMask32):
+        (testBitAndZeroShiftRightImmMask64):
+        (addBitTests):
+
 2021-06-18  Robin Morisset  <rmorisset@apple.com>
 
         [DFG] Untyped branches should eliminate checks based on results from the AbstractInterpreter
