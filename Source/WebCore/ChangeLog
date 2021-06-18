@@ -1,3 +1,41 @@
+2021-06-18  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Fix cssom "set a CSS declaration" for logical properties
+        https://bugs.webkit.org/show_bug.cgi?id=226461
+
+        Reviewed by Antti Koivisto.
+
+        Test: imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-logical.html
+
+        Before this patch, setting a value to a property already in the list of
+        declarations, would just update its value, without reordering.
+
+        The problem was that the order is important when there is a mix of
+        logical and physical properties:
+
+          el.style.paddingTop = "1px";
+          el.style.paddingBlockStart = "2px";
+          el.style.cssText; // "padding-top: 1px; padding-block-start: 2px"
+          el.style.paddingTop = "3px";
+          el.style.cssText; // "padding-top: 3px; padding-block-start: 2px"
+          getComputedStyle(el).paddingTop; // "2px" -- no effect!
+
+        Therefore, this patch implements this part of the spec:
+        > If there are CSS declarations in declarations whose property name is
+        > in the same logical property group as property, but has a different
+        > mapping logic, target declaration must be at an index after all of
+        > those CSS declarations.
+
+        This change is based on this Chromium CL:
+        https://chromium-review.googlesource.com/c/chromium/src/+/2575081/
+
+        * css/CSSProperty.h:
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::canUpdateInPlace const):
+        (WebCore::MutableStyleProperties::setProperty):
+        * css/StyleProperties.h:
+        * css/makeprop.pl:
+
 2021-06-18  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] Fullscreen video playback gets stuck after interacting with the playback controls

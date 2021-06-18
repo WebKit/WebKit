@@ -658,6 +658,58 @@ print GPERF << "EOF";
     }
 }
 
+bool CSSProperty::isInLogicalPropertyGroup(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    for my $kind ("logical", "physical") {
+        for my $name (values %{ $logicalPropertyGroup->{$kind} }) {
+            print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+        }
+    }
+}
+
+print GPERF << "EOF";
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID id1, CSSPropertyID id2)
+{
+    switch (id1) {
+EOF
+
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    my $logical = $logicalPropertyGroup->{"logical"};
+    my $physical = $logicalPropertyGroup->{"physical"};
+    for my $first ($logical, $physical) {
+        my $second = $first eq $logical ? $physical : $logical;
+        while (my ($resolver, $name) = each %{ $first }) {
+            print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+        }
+        print GPERF "        switch (id2) {\n";
+        while (my ($resolver, $name) = each %{ $second }) {
+            print GPERF "        case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+        }
+        print GPERF << "EOF";
+            return true;
+        default:
+            return false;
+        }
+EOF
+    }
+}
+
+print GPERF << "EOF";
+    default:
+        return false;
+    }
+}
+
 CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
 {
     const TextFlow& textflow = makeTextFlow(writingMode, direction);
