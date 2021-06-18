@@ -45,6 +45,7 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <WebCore/SoupVersioning.h>
 #include <WebCore/TextEncoding.h>
+#include <WebCore/TimingAllowOrigin.h>
 #include <wtf/MainThread.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -53,17 +54,18 @@ using namespace WebCore;
 
 static const size_t gDefaultReadBufferSize = 8192;
 
-NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, FrameIdentifier frameID, PageIdentifier pageID, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation)
-    : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
-    , m_frameID(frameID)
-    , m_pageID(pageID)
-    , m_shouldContentSniff(shouldContentSniff)
-    , m_shouldPreconnectOnly(shouldPreconnectOnly)
+NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
+    : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
+    , m_frameID(parameters.webFrameID)
+    , m_pageID(parameters.webPageID)
+    , m_shouldContentSniff(parameters.contentSniffingPolicy)
+    , m_shouldPreconnectOnly(parameters.shouldPreconnectOnly)
+    , m_sourceOrigin(parameters.sourceOrigin)
     , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
     m_session->registerNetworkDataTask(*this);
 
-    auto request = requestWithCredentials;
+    auto request = parameters.request;
     if (request.url().protocolIsInHTTPFamily()) {
 #if USE(SOUP2)
         m_networkLoadMetrics.fetchStart = MonotonicTime::now();
@@ -483,6 +485,12 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
     m_networkLoadMetrics.responseStart = MonotonicTime::now();
 #endif
 
+    if (!m_networkLoadMetrics.failsTAOCheck) {
+        RefPtr<SecurityOrigin> origin = isTopLevelNavigation() ? SecurityOrigin::create(firstRequest().url()) : m_sourceOrigin;
+        if (origin)
+            m_networkLoadMetrics.failsTAOCheck = !passesTimingAllowOriginCheck(m_response, *origin);
+    }
+
     dispatchDidReceiveResponse();
 }
 
@@ -865,8 +873,6 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
     request.setURL(redirectedURL);
 
     m_networkLoadMetrics.hasCrossOriginRedirect = m_networkLoadMetrics.hasCrossOriginRedirect || !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url());
-    // FIXME: Add TAO checks here and when receiving a response.
-    // This was done on Cocoa platforms in https://bugs.webkit.org/show_bug.cgi?id=226678
 
     // Clear the user agent to ensure a new one is computed.
     auto userAgent = request.httpUserAgent();

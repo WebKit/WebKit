@@ -881,22 +881,6 @@ webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Du
 webkit.org/b/179475 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
 webkit.org/b/179475 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
 
-# Related to moving to Timing-Allow-Origin checks into the network process
-webkit.org/b/227008 http/tests/misc/webtiming-cross-origin-and-back1.html [ Failure ]
-webkit.org/b/227008 http/tests/misc/webtiming-cross-origin-redirect.py [ Failure ]
-webkit.org/b/227008 http/wpt/resource-timing/rt-cors.html [ Failure ]
-webkit.org/b/227008 http/wpt/resource-timing/rt-cors.worker.html [ Failure ]
-webkit.org/b/227008 http/wpt/resource-timing/rt-revalidate-requests-2.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/resource-timing/TAO-case-insensitive-null-opaque-origin.sub.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/resource-timing/TAO-crossorigin-port.sub.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/resource-timing/cross-origin-redirects.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/resource-timing/redirects.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/resource-timing/resource_reuse.sub.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/resource-timing/resource_timing_content_length.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/resource-timing/same-origin-from-cross-origin-redirect.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/server-timing/cross_origin.html [ Failure ]
-webkit.org/b/227008 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing-cross-origin.https.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
