@@ -3353,6 +3353,8 @@ webkit.org/b/219105 platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ F
 
 webkit.org/b/219460 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Skip ]
 
+webkit.org/b/226906 editing/deleting/smart-delete-paragraph-004.html [ Pass Failure ]
+
 # The system font does not handle all the various width values on iOS.
 fast/text/system-font-width-4.html [ ImageOnlyFailure ]
 fast/text/system-font-width-6.html [ ImageOnlyFailure ]

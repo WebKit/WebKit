@@ -1,3 +1,12 @@
+2021-06-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS 14-Simulator WK2] editing/deleting/smart-delete-paragraph-004.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=226906
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+
 2021-06-18  Eleni Maria Stea  <estea@igalia.com>
 
         Unreviewed test gardening.
