@@ -1,3 +1,17 @@
+2021-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [MSE][GStreamer] Soundcloud serves MP4 audio with empty tfdt boxes
+        https://bugs.webkit.org/show_bug.cgi?id=191419
+
+        Reviewed by Michael Catanzaro.
+
+        When MSE is used the player receives broken audio fragments, perhaps because the server
+        expects the client to repair them. Not much we can do about this on GStreamer side though,
+        so behave as a Chrome UserAgent and then MSE is not used, the player receives an MP3 stream.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresChromeBrowser):
+
 2021-06-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [LFC][WPE] Build failure with GCC 8.x
