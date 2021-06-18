@@ -1,3 +1,113 @@
+2021-06-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening. Update baselines after r278974.
+
+        There are GTK and WPE tests that have the same text baseline but the
+        corresponding PNG image is different. In this case, I have preferred
+        to keep a specific text baseline for each port, instead of
+        promoting the text baseline to GLIB.
+
+        * platform/gtk/svg/text/foreignObject-repaint-expected.txt: Copied from LayoutTests/platform/glib/svg/text/foreignObject-repaint-expected.txt.
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.png:
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/gtk/svg/text/text-align-01-b-expected.png:
+        * platform/gtk/svg/text/text-align-01-b-expected.txt:
+        * platform/gtk/svg/text/text-align-02-b-expected.png:
+        * platform/gtk/svg/text/text-align-02-b-expected.txt:
+        * platform/gtk/svg/text/text-align-03-b-expected.png:
+        * platform/gtk/svg/text/text-align-03-b-expected.txt:
+        * platform/gtk/svg/text/text-align-04-b-expected.png:
+        * platform/gtk/svg/text/text-align-04-b-expected.txt:
+        * platform/gtk/svg/text/text-align-05-b-expected.png:
+        * platform/gtk/svg/text/text-align-05-b-expected.txt:
+        * platform/gtk/svg/text/text-align-06-b-expected.png:
+        * platform/gtk/svg/text/text-align-06-b-expected.txt:
+        * platform/gtk/svg/text/text-deco-01-b-expected.png:
+        * platform/gtk/svg/text/text-deco-01-b-expected.txt:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.png:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.txt:
+        * platform/gtk/svg/text/text-fonts-02-t-expected.png:
+        * platform/gtk/svg/text/text-fonts-02-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-fonts-02-t-expected.txt.
+        * platform/gtk/svg/text/text-intro-05-t-expected.png:
+        * platform/gtk/svg/text/text-intro-05-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-intro-05-t-expected.txt.
+        * platform/gtk/svg/text/text-path-01-b-expected.png:
+        * platform/gtk/svg/text/text-path-01-b-expected.txt:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.png:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.txt:
+        * platform/gtk/svg/text/text-text-01-b-expected.png:
+        * platform/gtk/svg/text/text-text-01-b-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-text-01-b-expected.txt.
+        * platform/gtk/svg/text/text-text-03-b-expected.png:
+        * platform/gtk/svg/text/text-text-03-b-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-text-03-b-expected.txt.
+        * platform/gtk/svg/text/text-text-05-t-expected.png:
+        * platform/gtk/svg/text/text-text-05-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-text-05-t-expected.txt.
+        * platform/gtk/svg/text/text-text-07-t-expected.png:
+        * platform/gtk/svg/text/text-text-07-t-expected.txt:
+        * platform/gtk/svg/text/text-text-08-b-expected.png:
+        * platform/gtk/svg/text/text-text-08-b-expected.txt:
+        * platform/gtk/svg/text/text-tref-01-b-expected.png:
+        * platform/gtk/svg/text/text-tref-01-b-expected.txt:
+        * platform/gtk/svg/text/text-tselect-01-b-expected.png:
+        * platform/gtk/svg/text/text-tselect-01-b-expected.txt:
+        * platform/gtk/svg/text/text-tspan-01-b-expected.png:
+        * platform/gtk/svg/text/text-tspan-01-b-expected.txt:
+        * platform/gtk/svg/text/text-ws-01-t-expected.png:
+        * platform/gtk/svg/text/text-ws-01-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-ws-01-t-expected.txt.
+        * platform/gtk/svg/text/text-ws-02-t-expected.png:
+        * platform/gtk/svg/text/text-ws-02-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-ws-02-t-expected.txt.
+        * platform/gtk/svg/text/textPathBoundsBug-expected.txt: Copied from LayoutTests/platform/glib/svg/text/textPathBoundsBug-expected.txt.
+        * platform/wpe/svg/text/foreignObject-repaint-expected.png: Added.
+        * platform/wpe/svg/text/foreignObject-repaint-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/foreignObject-repaint-expected.txt.
+        * platform/wpe/svg/text/foreignObject-text-clipping-bug-expected.png: Added.
+        * platform/wpe/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/wpe/svg/text/text-align-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-01-b-expected.txt:
+        * platform/wpe/svg/text/text-align-02-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-02-b-expected.txt:
+        * platform/wpe/svg/text/text-align-03-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-03-b-expected.txt:
+        * platform/wpe/svg/text/text-align-04-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-04-b-expected.txt:
+        * platform/wpe/svg/text/text-align-05-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-05-b-expected.txt:
+        * platform/wpe/svg/text/text-align-06-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-06-b-expected.txt:
+        * platform/wpe/svg/text/text-deco-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-deco-01-b-expected.txt:
+        * platform/wpe/svg/text/text-fonts-01-t-expected.png: Added.
+        * platform/wpe/svg/text/text-fonts-01-t-expected.txt:
+        * platform/wpe/svg/text/text-fonts-02-t-expected.png: Added.
+        * platform/wpe/svg/text/text-fonts-02-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-fonts-02-t-expected.txt.
+        * platform/wpe/svg/text/text-intro-05-t-expected.png: Added.
+        * platform/wpe/svg/text/text-intro-05-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-intro-05-t-expected.txt.
+        * platform/wpe/svg/text/text-path-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-path-01-b-expected.txt:
+        * platform/wpe/svg/text/text-spacing-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-spacing-01-b-expected.txt:
+        * platform/wpe/svg/text/text-text-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-text-01-b-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-text-01-b-expected.txt.
+        * platform/wpe/svg/text/text-text-03-b-expected.png: Added.
+        * platform/wpe/svg/text/text-text-03-b-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-text-03-b-expected.txt.
+        * platform/wpe/svg/text/text-text-05-t-expected.png: Added.
+        * platform/wpe/svg/text/text-text-05-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-text-05-t-expected.txt.
+        * platform/wpe/svg/text/text-text-07-t-expected.png: Added.
+        * platform/wpe/svg/text/text-text-07-t-expected.txt:
+        * platform/wpe/svg/text/text-text-08-b-expected.png: Added.
+        * platform/wpe/svg/text/text-text-08-b-expected.txt:
+        * platform/wpe/svg/text/text-tref-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-tref-01-b-expected.txt: Copied from LayoutTests/platform/gtk/svg/text/text-tref-01-b-expected.txt.
+        * platform/wpe/svg/text/text-tselect-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-tselect-01-b-expected.txt:
+        * platform/wpe/svg/text/text-tspan-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-tspan-01-b-expected.txt:
+        * platform/wpe/svg/text/text-ws-01-t-expected.png: Added.
+        * platform/wpe/svg/text/text-ws-01-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-ws-01-t-expected.txt.
+        * platform/wpe/svg/text/text-ws-02-t-expected.png: Added.
+        * platform/wpe/svg/text/text-ws-02-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-ws-02-t-expected.txt.
+        * platform/wpe/svg/text/textPathBoundsBug-expected.png: Added.
+        * platform/wpe/svg/text/textPathBoundsBug-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/textPathBoundsBug-expected.txt.
+        * platform/wpe/tables/mozilla/bugs/bug106795-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug82946-2-expected.png: Added.
+
 2021-06-17  Said Abou-Hallawa  <said@apple.com>
 
         [Cocoa] Disable hardware decoding in the WebProcess
