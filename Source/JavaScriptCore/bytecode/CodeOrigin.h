@@ -29,9 +29,14 @@
 
 #include <limits.h>
 #include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
 
 namespace JSC {
 

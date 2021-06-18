@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(ASSEMBLER) && CPU(ARM64E)
 
 #include "DisallowMacroScratchRegisterUsage.h"
+#include <wtf/MathExtras.h>
 
 // We need to include this before MacroAssemblerARM64.h because MacroAssemblerARM64
 // will be defined in terms of ARM64EAssembler for ARM64E.
@@ -38,14 +39,19 @@
 #include <WebKitAdditions/JITCageAdditions.h>
 #endif
 
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
+
 namespace JSC {
 
 using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerARM64E : public MacroAssemblerARM64 {
 public:
-    static constexpr unsigned numberOfPACBits = 25;
-    static constexpr uintptr_t nonPACBitsMask = (1ull << (64 - numberOfPACBits)) - 1;
+    static constexpr unsigned numberOfPointerBits = sizeof(void*) * CHAR_BIT;
+    static constexpr unsigned numberOfPACBits = numberOfPointerBits - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
+    static constexpr uintptr_t nonPACBitsMask = (1ull << (numberOfPointerBits - numberOfPACBits)) - 1;
 
     ALWAYS_INLINE void tagReturnAddress()
     {

@@ -34,7 +34,12 @@
 #include <array>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ForbidHeapAllocation.h>
+#include <wtf/MathExtras.h>
 #include <wtf/text/StringView.h>
+
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
 
 namespace JSC {
 

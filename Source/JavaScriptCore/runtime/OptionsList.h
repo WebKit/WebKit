@@ -26,6 +26,11 @@
 #pragma once
 
 #include "GCLogging.h"
+#include <wtf/MathExtras.h>
+
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
 
 using WTF::PrintStream;
 

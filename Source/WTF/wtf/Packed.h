@@ -33,6 +33,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnalignedAccess.h>
 
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
+
 namespace WTF {
 
 template<typename T>

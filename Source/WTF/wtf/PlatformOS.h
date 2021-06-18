@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -37,7 +37,6 @@
 #include <AvailabilityMacros.h>
 #include <TargetConditionals.h>
 #endif
-
 
 /* OS() - underlying operating system; only to be used for mandated low-level services like
    virtual memory, not to choose a GUI toolkit */
@@ -137,8 +136,8 @@
 
 
 #if CPU(ADDRESS64)
-#if (OS(IOS) || OS(TVOS) || OS(WATCHOS)) && CPU(ARM64)
-#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH 36
+#if OS(DARWIN)
+#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH (WTF::getMSBSetConstexpr(MACH_VM_MAX_ADDRESS) + 1)
 #else
 /* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
 #define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH 48
