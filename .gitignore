@@ -31,6 +31,7 @@ xcuserdata
 tags
 *~
 .*.sw[a-p]
+.cache
 .clangd
 compile_commands.json
 
