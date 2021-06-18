@@ -488,8 +488,8 @@ macro cagedPrimitive(ptr, length, scratch, scratch2)
     if GIGACAGE_ENABLED
         cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
         if ARM64E
-            const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
-            bfiq scratch2, 0, 64 - numberOfPACBits, ptr
+            const maxNumberOfAllowedPACBits = constexpr MacroAssembler::maxNumberOfAllowedPACBits
+            bfiq scratch2, 0, 64 - maxNumberOfAllowedPACBits, ptr
         end
     end
     if ARM64E
@@ -512,8 +512,8 @@ macro cagedPrimitiveMayBeNull(ptr, length, scratch, scratch2)
     if GIGACAGE_ENABLED
         cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
         if ARM64E
-            const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
-            bfiq scratch2, 0, 64 - numberOfPACBits, ptr
+            const maxNumberOfAllowedPACBits = constexpr MacroAssembler::maxNumberOfAllowedPACBits
+            bfiq scratch2, 0, 64 - maxNumberOfAllowedPACBits, ptr
         end
     end
     if ARM64E

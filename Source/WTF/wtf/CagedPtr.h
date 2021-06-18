@@ -45,8 +45,8 @@ class CagedPtr {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
     static constexpr unsigned numberOfPointerBits = sizeof(T*) * CHAR_BIT;
-    static constexpr unsigned numberOfPACBits = numberOfPointerBits - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
-    static constexpr uintptr_t nonPACBitsMask = (1ull << (numberOfPointerBits - numberOfPACBits)) - 1;
+    static constexpr unsigned maxNumberOfAllowedPACBits = numberOfPointerBits - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
+    static constexpr uintptr_t nonPACBitsMask = (1ull << (numberOfPointerBits - maxNumberOfAllowedPACBits)) - 1;
 
     CagedPtr() : CagedPtr(nullptr) { }
     CagedPtr(std::nullptr_t)
