@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ScrollGestureController.h"
+#include "TouchGestureController.h"
 
 #include "WebKitSettings.h"
 #include <WebCore/Scrollbar.h>
@@ -38,33 +38,47 @@ static constexpr uint32_t axisLockMovementThreshold { 8 };
 static constexpr uint32_t axisLockActivationThreshold { 15 };
 static constexpr uint32_t axisLockReleaseThreshold { 30 };
 
-bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw* touchPoint)
+TouchGestureController::EventVariant TouchGestureController::handleEvent(const struct wpe_input_touch_event_raw* touchPoint)
 {
     switch (touchPoint->type) {
     case wpe_input_touch_event_type_down:
-        m_start.active = true;
-        m_start.time = touchPoint->time;
-        m_start.x = touchPoint->x;
-        m_start.y = touchPoint->y;
-        m_offset.x = touchPoint->x;
-        m_offset.y = touchPoint->y;
-        m_xAxisLockBroken = false;
-        m_yAxisLockBroken = false;
-        return false;
+        // Start of the touch interaction, first possible event is a mouse click.
+        m_gesturedEvent = GesturedEvent::Click;
+        m_start = { true, touchPoint->time, touchPoint->x, touchPoint->y };
+        m_offset = { touchPoint->x, touchPoint->y };
+        m_xAxisLockBroken = m_yAxisLockBroken = false;
+        break;
     case wpe_input_touch_event_type_motion:
-        if (m_start.active && !m_handling) {
+    {
+        switch (m_gesturedEvent) {
+        case GesturedEvent::None:
+            break;
+        case GesturedEvent::Click:
+        {
+            // If currently only gesturing a click, determine if the touch has progressed
+            // so far that it should become a scrolling gesture.
             int32_t deltaX = touchPoint->x - m_start.x;
             int32_t deltaY = touchPoint->y - m_start.y;
             uint32_t deltaTime = touchPoint->time - m_start.time;
 
             int pixelsPerLineStep = WebCore::Scrollbar::pixelsPerLineStep();
-            m_handling = std::abs(deltaX) >= pixelsPerLineStep
+            bool overThreshold = std::abs(deltaX) >= pixelsPerLineStep
                 || std::abs(deltaY) >= pixelsPerLineStep
                 || deltaTime >= scrollCaptureThreshold;
+            if (!overThreshold)
+                break;
+
+            // Over threshold, bump the gestured event and directly fall through to handling it.
+            m_gesturedEvent = GesturedEvent::Axis;
+            FALLTHROUGH;
         }
-        if (m_handling) {
+        case GesturedEvent::Axis:
+        {
+            AxisEvent generatedEvent;
+            generatedEvent.phase = WebWheelEvent::Phase::PhaseChanged;
+
 #if WPE_CHECK_VERSION(1, 5, 0)
-            m_axisEvent.base = {
+            generatedEvent.event.base = {
                 static_cast<enum wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth),
                 touchPoint->time, m_start.x, m_start.y,
                 0, 0, 0,
@@ -83,10 +97,10 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
                 m_yAxisLockBroken = true;
             }
 
-            m_axisEvent.x_axis = (m_xAxisLockBroken || yOffset < axisLockActivationThreshold) ?  -(m_offset.x - touchPoint->x) : 0;
-            m_axisEvent.y_axis = (m_yAxisLockBroken || xOffset < axisLockActivationThreshold) ?  -(m_offset.y - touchPoint->y) : 0;
+            generatedEvent.event.x_axis = (m_xAxisLockBroken || yOffset < axisLockActivationThreshold) ?  -(m_offset.x - touchPoint->x) : 0;
+            generatedEvent.event.y_axis = (m_yAxisLockBroken || xOffset < axisLockActivationThreshold) ?  -(m_offset.y - touchPoint->y) : 0;
 #else
-            m_axisEvent = {
+            generatedEvent.event = {
                 wpe_input_axis_event_type_motion,
                 touchPoint->time, m_start.x, m_start.y,
                 2, (touchPoint->y - m_offset.y), 0
@@ -94,35 +108,59 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
 #endif
             m_offset.x = touchPoint->x;
             m_offset.y = touchPoint->y;
-            m_phase = WebWheelEvent::Phase::PhaseChanged;
-            return true;
+            return generatedEvent;
         }
-        return false;
+        }
+        break;
+    }
     case wpe_input_touch_event_type_up:
-        if (m_handling) {
-            m_start.active = false;
-            m_handling = false;
+    {
+        switch (m_gesturedEvent) {
+        case GesturedEvent::None:
+            break;
+        case GesturedEvent::Click:
+        {
+            m_gesturedEvent = GesturedEvent::None;
+
+            ClickEvent generatedEvent;
+            generatedEvent.event = {
+                wpe_input_pointer_event_type_null, touchPoint->time, touchPoint->x, touchPoint->y,
+                0, 0, 0,
+            };
+            return generatedEvent;
+        }
+        case GesturedEvent::Axis:
+        {
+            m_gesturedEvent = GesturedEvent::None;
+
+            AxisEvent generatedEvent;
+            generatedEvent.phase = WebWheelEvent::Phase::PhaseEnded;
+
 #if WPE_CHECK_VERSION(1, 5, 0)
-            m_axisEvent.base = {
-                m_axisEvent.base.type,
+            generatedEvent.event.base = {
+                static_cast<enum wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth),
                 touchPoint->time, m_start.x, m_start.y,
                 0, 0, 0
             };
-            m_axisEvent.x_axis = m_axisEvent.y_axis = 0;
+            generatedEvent.event.x_axis = generatedEvent.event.y_axis = 0;
 #else
-            m_axisEvent = {
-                m_axisEvent.type,
+            generatedEvent.event = {
+                wpe_input_axis_event_type_motion,
                 touchPoint->time, m_start.x, m_start.y,
                 0, 0, 0
             };
 #endif
             m_offset.x = m_offset.y = 0;
-            m_phase = WebWheelEvent::Phase::PhaseEnded;
+            return generatedEvent;
         }
-        return false;
-    default:
-        return false;
+        }
+        break;
     }
+    default:
+        break;
+    }
+
+    return NoEvent { };
 }
 
 } // namespace WebKit
