@@ -678,6 +678,7 @@ webkit.org/b/215217 [ Debug ] imported/w3c/web-platform-tests/mathml/presentatio
 webkit.org/b/215217 [ Debug ] imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006.html [ Crash ]
 
 webkit.org/b/216871 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/227122 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
 
 webkit.org/b/224111 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002.html [ ImageOnlyFailure Pass ]
 

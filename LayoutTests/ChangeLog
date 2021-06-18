@@ -1,3 +1,13 @@
+2021-06-18  Eleni Maria Stea  <estea@igalia.com>
+
+        Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=227168
+
+        Updated glib baseline/expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003-expected.txt: Removed.
+
 2021-06-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html is failing since r273645
