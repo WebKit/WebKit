@@ -1007,6 +1007,39 @@ PASS converter.testEnforceRangeUnsignedShort is 0
 PASS converter.testEnforceRangeUnsignedShort = undefined threw exception TypeError: Value NaN is outside the range [0, 65535].
 PASS converter.testEnforceRangeUnsignedShort = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
+PASS 'testFloat' in converter is true
+PASS typeof converter.testFloat === 'number' is true
+converter.testFloat = -0
+PASS converter.testFloat is -0
+converter.testFloat = -1.5
+PASS converter.testFloat is -1.5
+converter.testFloat = 1.5
+PASS converter.testFloat is 1.5
+PASS converter.testFloat = Infinity threw exception TypeError: The provided value is non-finite.
+PASS converter.testFloat = -Infinity threw exception TypeError: The provided value is non-finite.
+PASS converter.testFloat = NaN threw exception TypeError: The provided value is non-finite.
+PASS converter.testFloat = 2 * FLT_MAX threw exception TypeError: The provided value is outside the range of a float.
+PASS converter.testFloat = -2 * FLT_MAX threw exception TypeError: The provided value is outside the range of a float.
+
+PASS 'testUnrestrictedFloat' in converter is true
+PASS typeof converter.testUnrestrictedFloat === 'number' is true
+converter.testUnrestrictedFloat = -0
+PASS converter.testUnrestrictedFloat is -0
+converter.testUnrestrictedFloat = -1.5
+PASS converter.testUnrestrictedFloat is -1.5
+converter.testUnrestrictedFloat = 1.5
+PASS converter.testUnrestrictedFloat is 1.5
+converter.testUnrestrictedFloat = Infinity
+PASS converter.testUnrestrictedFloat is Infinity
+converter.testUnrestrictedFloat = -Infinity
+PASS converter.testUnrestrictedFloat is -Infinity
+converter.testUnrestrictedFloat = NaN
+PASS converter.testUnrestrictedFloat is NaN
+converter.testUnrestrictedFloat = 2 * FLT_MAX
+PASS converter.testUnrestrictedFloat is Infinity
+converter.testUnrestrictedFloat = -2 * FLT_MAX
+PASS converter.testUnrestrictedFloat is -Infinity
+
 converter.testUSVString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
 converter.testString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
 PASS converter.testUSVString is "!@#123ABCabc\u0000ÿ\r\n\t"

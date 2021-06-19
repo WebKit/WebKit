@@ -292,6 +292,8 @@ template<> struct Converter<IDLFloat> : DefaultConverter<IDLFloat> {
         auto scope = DECLARE_THROW_SCOPE(vm);
         double number = value.toNumber(&lexicalGlobalObject);
         RETURN_IF_EXCEPTION(scope, 0.0);
+        if (UNLIKELY(number < std::numeric_limits<float>::lowest() || number > std::numeric_limits<float>::max()))
+            throwTypeError(&lexicalGlobalObject, scope, "The provided value is outside the range of a float");
         if (UNLIKELY(!std::isfinite(number)))
             throwNonFiniteTypeError(lexicalGlobalObject, scope);
         return static_cast<float>(number);
@@ -318,7 +320,16 @@ template<> struct Converter<IDLUnrestrictedFloat> : DefaultConverter<IDLUnrestri
 
     static float convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return static_cast<float>(value.toNumber(&lexicalGlobalObject));
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        double number = value.toNumber(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, 0.0);
+
+        if (UNLIKELY(number < std::numeric_limits<float>::lowest()))
+            return -std::numeric_limits<float>::infinity();
+        if (UNLIKELY(number > std::numeric_limits<float>::max()))
+            return std::numeric_limits<float>::infinity();
+        return static_cast<float>(number);
     }
 };
 

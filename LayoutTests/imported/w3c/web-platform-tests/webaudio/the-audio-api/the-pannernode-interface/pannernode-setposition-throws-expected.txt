@@ -1,8 +1,8 @@
 
-FAIL setPosition x assert_throws_js: function "() => panner.setPosition(2 * FLT_MAX, 0, 0)" did not throw
-FAIL setPosition y assert_throws_js: function "() => panner.setPosition(0, -2 * FLT_MAX, 0)" did not throw
-FAIL setPosition z assert_throws_js: function "() => panner.setPosition(0, 0, 2 * FLT_MAX)" did not throw
-FAIL setOrientation x assert_throws_js: function "() => panner.setOrientation(-2 * FLT_MAX, 0, 0)" did not throw
-FAIL setOrientation y assert_throws_js: function "() => panner.setOrientation(0, 2 * FLT_MAX, 0)" did not throw
-FAIL setOrientation z assert_throws_js: function "() => panner.setOrientation(0, 0, -2 * FLT_MAX)" did not throw
+PASS setPosition x
+PASS setPosition y
+PASS setPosition z
+PASS setOrientation x
+PASS setOrientation y
+PASS setOrientation z
 

@@ -1,3 +1,32 @@
+2021-06-18  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Assigning a value outside the float range to a 'float' attribute should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=227146
+
+        Reviewed by Sam Weinig.
+
+        Assigning a value outside the float range to a 'float' attribute should throw a TypeError, as per:
+        - https://heycam.github.io/webidl/#es-float
+
+        Blink follows the specification but WebKit was just casting the double to a float. This patch
+        addresses this issue.
+
+        This patch also makes sure that values outside the float range properly get resolved to -Infinity
+        or Infinity if the attribute is of type 'unrestricted float', as per:
+        - https://heycam.github.io/webidl/#es-unrestricted-float
+
+        No new tests, updated existing tests.
+
+        * bindings/js/JSDOMConvertNumbers.h:
+        (WebCore::Converter<IDLFloat>::convert):
+        (WebCore::Converter<IDLUnrestrictedFloat>::convert):
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::testFloat const):
+        (WebCore::TypeConversions::setTestFloat):
+        (WebCore::TypeConversions::testUnrestrictedFloat const):
+        (WebCore::TypeConversions::setTestUnrestrictedFloat):
+        * testing/TypeConversions.idl:
+
 2021-06-18  Soujyu TANAKA  <soujyu.tanaka@access-company.com>
 
         [Curl] Add curl option CURLOPT_NOSIGNAL to omit numerous sigaction calls

@@ -555,6 +555,31 @@ testNonNumericToNumericEnforceRange(type);
 convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
 debug("");
 
+const FLT_MAX = 3.40282e+38;
+type = "testFloat";
+verifyAttribute(type);
+convert(type, "-0", "-0");
+convert(type, "-1.5", "-1.5");
+convert(type, "1.5", "1.5");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+convertThrows(type, "2 * FLT_MAX");
+convertThrows(type, "-2 * FLT_MAX");
+debug("");
+
+type = "testUnrestrictedFloat";
+verifyAttribute(type);
+convert(type, "-0", "-0");
+convert(type, "-1.5", "-1.5");
+convert(type, "1.5", "1.5");
+convert(type, "Infinity");
+convert(type, "-Infinity");
+convert(type, "NaN");
+convert(type, "2 * FLT_MAX", "Infinity");
+convert(type, "-2 * FLT_MAX", "-Infinity");
+debug("");
+
 evalAndLog("converter.testUSVString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
 evalAndLog("converter.testString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
 shouldBeEqualToString("converter.testUSVString", "!@#123ABCabc\x00\x80\xFF\r\n\t");

@@ -1,3 +1,15 @@
+2021-06-18  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Assigning a value outside the float range to a 'float' attribute should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=227146
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/dom/webidl-type-mapping.html:
+
 2021-06-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS 14-Simulator WK2] editing/deleting/smart-delete-paragraph-004.html is a flaky failure
