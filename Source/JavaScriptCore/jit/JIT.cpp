@@ -55,20 +55,6 @@ namespace JITInternal {
 static constexpr const bool verbose = false;
 }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
-// These are supported ports.
-#else
-// This is a courtesy reminder (and warning) that the implementation of EXTRA_CTI_THUNKS can
-// use up to 6 argument registers and/or 6/7 temp registers, and make use of ARM64 like
-// features. Hence, it may not work for many other ports without significant work. If you
-// plan on adding EXTRA_CTI_THUNKS support for your port, please remember to search the
-// EXTRA_CTI_THUNKS code for CPU(ARM64) and CPU(X86_64) conditional code, and add support
-// for your port there as well.
-#error "unsupported architecture"
-#endif
-#endif // ENABLE(EXTRA_CTI_THUNKS)
-
 Seconds totalBaselineCompileTime;
 Seconds totalDFGCompileTime;
 Seconds totalFTLCompileTime;
@@ -97,7 +83,7 @@ JIT::~JIT()
 {
 }
 
-#if ENABLE(DFG_JIT) && !ENABLE(EXTRA_CTI_THUNKS)
+#if ENABLE(DFG_JIT)
 void JIT::emitEnterOptimizationCheck()
 {
     if (!canBeOptimized())
@@ -115,7 +101,7 @@ void JIT::emitEnterOptimizationCheck()
     farJump(returnValueGPR, GPRInfo::callFrameRegister);
     skipOptimize.link(this);
 }
-#endif // ENABLE(DFG_JIT) && !ENABLE(EXTRA_CTI_THUNKS)(
+#endif
 
 void JIT::emitNotifyWrite(WatchpointSet* set)
 {
@@ -696,32 +682,6 @@ void JIT::privateCompileSlowCases()
 #endif
 }
 
-static inline unsigned prologueGeneratorSelector(bool doesProfiling, bool isConstructor, bool hasHugeFrame)
-{
-    return doesProfiling << 2 | isConstructor << 1 | hasHugeFrame << 0;
-}
-
-#define FOR_EACH_NON_PROFILING_PROLOGUE_GENERATOR(v) \
-    v(!doesProfiling, !isConstructor, !hasHugeFrame, prologueGenerator0, arityFixup_prologueGenerator0) \
-    v(!doesProfiling, !isConstructor,  hasHugeFrame, prologueGenerator1, arityFixup_prologueGenerator1) \
-    v(!doesProfiling,  isConstructor, !hasHugeFrame, prologueGenerator2, arityFixup_prologueGenerator2) \
-    v(!doesProfiling,  isConstructor,  hasHugeFrame, prologueGenerator3, arityFixup_prologueGenerator3)
-
-#if ENABLE(DFG_JIT)
-#define FOR_EACH_PROFILING_PROLOGUE_GENERATOR(v) \
-    v( doesProfiling, !isConstructor, !hasHugeFrame, prologueGenerator4, arityFixup_prologueGenerator4) \
-    v( doesProfiling, !isConstructor,  hasHugeFrame, prologueGenerator5, arityFixup_prologueGenerator5) \
-    v( doesProfiling,  isConstructor, !hasHugeFrame, prologueGenerator6, arityFixup_prologueGenerator6) \
-    v( doesProfiling,  isConstructor,  hasHugeFrame, prologueGenerator7, arityFixup_prologueGenerator7)
-
-#else // not ENABLE(DFG_JIT)
-#define FOR_EACH_PROFILING_PROLOGUE_GENERATOR(v)
-#endif // ENABLE(DFG_JIT)
-
-#define FOR_EACH_PROLOGUE_GENERATOR(v) \
-    FOR_EACH_NON_PROFILING_PROLOGUE_GENERATOR(v) \
-    FOR_EACH_PROFILING_PROLOGUE_GENERATOR(v)
-
 void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
@@ -790,8 +750,6 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         nop();
 
     emitFunctionPrologue();
-
-#if !ENABLE(EXTRA_CTI_THUNKS)
     emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
     Label beginLabel(this);
@@ -813,10 +771,11 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     if (m_codeBlock->codeType() == FunctionCode) {
         ASSERT(!m_bytecodeIndex);
         if (shouldEmitProfiling()) {
-            // If this is a constructor, then we want to put in a dummy profiling site (to
-            // keep things consistent) but we don't actually want to record the dummy value.
-            unsigned startArgument = m_codeBlock->isConstructor() ? 1 : 0;
-            for (unsigned argument = startArgument; argument < m_codeBlock->numParameters(); ++argument) {
+            for (unsigned argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
+                // If this is a constructor, then we want to put in a dummy profiling site (to
+                // keep things consistent) but we don't actually want to record the dummy value.
+                if (m_codeBlock->isConstructor() && !argument)
+                    continue;
                 int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
 #if USE(JSVALUE64)
                 JSValueRegs resultRegs = JSValueRegs(regT0);
@@ -830,34 +789,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
             }
         }
     }
-#else // ENABLE(EXTRA_CTI_THUNKS)
-    constexpr GPRReg codeBlockGPR = regT7;
-    ASSERT(!m_bytecodeIndex);
-
-    int frameTopOffset = stackPointerOffsetFor(m_codeBlock) * sizeof(Register);
-    unsigned maxFrameSize = -frameTopOffset;
-
-    bool doesProfiling = (m_codeBlock->codeType() == FunctionCode) && shouldEmitProfiling();
-    bool isConstructor = m_codeBlock->isConstructor();
-    bool hasHugeFrame = maxFrameSize > Options::reservedZoneSize();
-
-    static constexpr ThunkGenerator generators[] = {
-#define USE_PROLOGUE_GENERATOR(doesProfiling, isConstructor, hasHugeFrame, name, arityFixupName) name,
-        FOR_EACH_PROLOGUE_GENERATOR(USE_PROLOGUE_GENERATOR)
-#undef USE_PROLOGUE_GENERATOR
-    };
-    static constexpr unsigned numberOfGenerators = sizeof(generators) / sizeof(generators[0]);
-
-    move(TrustedImmPtr(m_codeBlock), codeBlockGPR);
-
-    unsigned generatorSelector = prologueGeneratorSelector(doesProfiling, isConstructor, hasHugeFrame);
-    RELEASE_ASSERT(generatorSelector < numberOfGenerators);
-    auto generator = generators[generatorSelector];
-    emitNakedNearCall(vm().getCTIStub(generator).retaggedCode<NoPtrTag>());
-
-    Label bodyLabel(this);
-#endif // !ENABLE(EXTRA_CTI_THUNKS)
-
+    
     RELEASE_ASSERT(!JITCode::isJIT(m_codeBlock->jitType()));
 
     if (UNLIKELY(sizeMarker))
@@ -871,19 +803,16 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         m_disassembler->setEndOfSlowPath(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
-#if !ENABLE(EXTRA_CTI_THUNKS)
     stackOverflow.link(this);
     m_bytecodeIndex = BytecodeIndex(0);
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
     callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
-#endif
 
     // If the number of parameters is 1, we never require arity fixup.
     bool requiresArityFixup = m_codeBlock->m_numParameters != 1;
     if (m_codeBlock->codeType() == FunctionCode && requiresArityFixup) {
         m_arityCheck = label();
-#if !ENABLE(EXTRA_CTI_THUNKS)
         store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         emitFunctionPrologue();
         emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
@@ -902,42 +831,17 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         move(returnValueGPR, GPRInfo::argumentGPR0);
         emitNakedNearCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
 
-        jump(beginLabel);
-
-#else // ENABLE(EXTRA_CTI_THUNKS)
-        emitFunctionPrologue();
-
-        static_assert(codeBlockGPR == regT7);
-        ASSERT(!m_bytecodeIndex);
-
-        static constexpr ThunkGenerator generators[] = {
-#define USE_PROLOGUE_GENERATOR(doesProfiling, isConstructor, hasHugeFrame, name, arityFixupName) arityFixupName,
-            FOR_EACH_PROLOGUE_GENERATOR(USE_PROLOGUE_GENERATOR)
-#undef USE_PROLOGUE_GENERATOR
-        };
-        static constexpr unsigned numberOfGenerators = sizeof(generators) / sizeof(generators[0]);
-
-        move(TrustedImmPtr(m_codeBlock), codeBlockGPR);
-
-        RELEASE_ASSERT(generatorSelector < numberOfGenerators);
-        auto generator = generators[generatorSelector];
-        RELEASE_ASSERT(generator);
-        emitNakedNearCall(vm().getCTIStub(generator).retaggedCode<NoPtrTag>());
-
-        jump(bodyLabel);
-#endif // !ENABLE(EXTRA_CTI_THUNKS)
-
 #if ASSERT_ENABLED
         m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
 #endif
+
+        jump(beginLabel);
     } else
         m_arityCheck = entryLabel; // Never require arity fixup.
 
     ASSERT(m_jmpTable.isEmpty());
     
-#if !ENABLE(EXTRA_CTI_THUNKS)
     privateCompileExceptionHandlers();
-#endif
     
     if (m_disassembler)
         m_disassembler->setEndOfCode(label());
@@ -946,241 +850,6 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_codeBlock, LinkBuffer::Profile::BaselineJIT, effort));
     link();
 }
-
-#if ENABLE(EXTRA_CTI_THUNKS)
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::prologueGenerator(VM& vm, bool doesProfiling, bool isConstructor, bool hasHugeFrame, const char* thunkName)
-{
-    // This function generates the Baseline JIT's prologue code. It is not useable by other tiers.
-    constexpr GPRReg codeBlockGPR = regT7; // incoming.
-
-    constexpr int virtualRegisterSize = static_cast<int>(sizeof(Register));
-    constexpr int virtualRegisterSizeShift = 3;
-    static_assert((1 << virtualRegisterSizeShift) == virtualRegisterSize);
-
-    tagReturnAddress();
-
-    storePtr(codeBlockGPR, addressFor(CallFrameSlot::codeBlock));
-
-    load32(Address(codeBlockGPR, CodeBlock::offsetOfNumCalleeLocals()), regT1);
-    if constexpr (maxFrameExtentForSlowPathCallInRegisters)
-        add32(TrustedImm32(maxFrameExtentForSlowPathCallInRegisters), regT1);
-    lshift32(TrustedImm32(virtualRegisterSizeShift), regT1);
-    neg64(regT1);
-#if ASSERT_ENABLED
-    Probe::Function probeFunction = [] (Probe::Context& context) {
-        CodeBlock* codeBlock = context.fp<CallFrame*>()->codeBlock();
-        int64_t frameTopOffset = stackPointerOffsetFor(codeBlock) * sizeof(Register);
-        RELEASE_ASSERT(context.gpr<intptr_t>(regT1) == frameTopOffset);
-    };
-    probe(tagCFunctionPtr<JITProbePtrTag>(probeFunction), nullptr);
-#endif
-
-    addPtr(callFrameRegister, regT1);
-
-    JumpList stackOverflow;
-    if (hasHugeFrame)
-        stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
-    stackOverflow.append(branchPtr(Above, AbsoluteAddress(vm.addressOfSoftStackLimit()), regT1));
-
-    // We'll be imminently returning with a `retab` (ARM64E's return with authentication
-    // using the B key) in the normal path (see MacroAssemblerARM64E's implementation of
-    // ret()), which will do validation. So, extra validation here is redundant and unnecessary.
-    untagReturnAddressWithoutExtraValidation();
-#if CPU(X86_64)
-    pop(regT2); // Save the return address.
-#endif
-    move(regT1, stackPointerRegister);
-    tagReturnAddress();
-    checkStackPointerAlignment();
-#if CPU(X86_64)
-    push(regT2); // Restore the return address.
-#endif
-
-    emitSaveCalleeSavesForBaselineJIT();
-    emitMaterializeTagCheckRegisters();
-
-    if (doesProfiling) {
-        constexpr GPRReg argumentValueProfileGPR = regT6;
-        constexpr GPRReg numParametersGPR = regT5;
-        constexpr GPRReg argumentGPR = regT4;
-
-        load32(Address(codeBlockGPR, CodeBlock::offsetOfNumParameters()), numParametersGPR);
-        loadPtr(Address(codeBlockGPR, CodeBlock::offsetOfArgumentValueProfiles()), argumentValueProfileGPR);
-        if (isConstructor)
-            addPtr(TrustedImm32(sizeof(ValueProfile)), argumentValueProfileGPR);
-
-        int startArgument = CallFrameSlot::thisArgument + (isConstructor ? 1 : 0);
-        int startArgumentOffset = startArgument * virtualRegisterSize;
-        move(TrustedImm64(startArgumentOffset), argumentGPR);
-
-        add32(TrustedImm32(static_cast<int>(CallFrameSlot::thisArgument)), numParametersGPR);
-        lshift32(TrustedImm32(virtualRegisterSizeShift), numParametersGPR);
-
-        addPtr(callFrameRegister, argumentGPR);
-        addPtr(callFrameRegister, numParametersGPR);
-
-        Label loopStart(this);
-        Jump done = branchPtr(AboveOrEqual, argumentGPR, numParametersGPR);
-        {
-            load64(Address(argumentGPR), regT0);
-            store64(regT0, Address(argumentValueProfileGPR, OBJECT_OFFSETOF(ValueProfile, m_buckets)));
-
-            // The argument ValueProfiles are stored in a FixedVector. Hence, the
-            // address of the next profile can be trivially computed with an increment.
-            addPtr(TrustedImm32(sizeof(ValueProfile)), argumentValueProfileGPR);
-            addPtr(TrustedImm32(virtualRegisterSize), argumentGPR);
-            jump().linkTo(loopStart, this);
-        }
-        done.link(this);
-    }
-    ret();
-
-    stackOverflow.link(this);
-#if CPU(X86_64)
-    addPtr(TrustedImm32(1 * sizeof(CPURegister)), stackPointerRegister); // discard return address.
-#endif
-
-    uint32_t locationBits = CallSiteIndex(0).bits();
-    store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCountIncludingThis));
-
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-
-    setupArguments<decltype(operationThrowStackOverflowError)>(codeBlockGPR);
-    prepareCallOperation(vm);
-    MacroAssembler::Call operationCall = call(OperationPtrTag);
-    Jump handleExceptionJump = jump();
-
-    auto handler = vm.getCTIStub(handleExceptionWithCallFrameRollbackGenerator);
-
-    LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(operationThrowStackOverflowError));
-    patchBuffer.link(handleExceptionJump, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, thunkName);
-}
-
-static constexpr bool doesProfiling = true;
-static constexpr bool isConstructor = true;
-static constexpr bool hasHugeFrame = true;
-
-#define DEFINE_PROGLOGUE_GENERATOR(doesProfiling, isConstructor, hasHugeFrame, name, arityFixupName) \
-    MacroAssemblerCodeRef<JITThunkPtrTag> JIT::name(VM& vm) \
-    { \
-        JIT jit(vm); \
-        return jit.prologueGenerator(vm, doesProfiling, isConstructor, hasHugeFrame, "Baseline: " #name); \
-    }
-
-FOR_EACH_PROLOGUE_GENERATOR(DEFINE_PROGLOGUE_GENERATOR)
-#undef DEFINE_PROGLOGUE_GENERATOR
-
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::arityFixupPrologueGenerator(VM& vm, bool isConstructor, ThunkGenerator normalPrologueGenerator, const char* thunkName)
-{
-    // This function generates the Baseline JIT's prologue code. It is not useable by other tiers.
-    constexpr GPRReg codeBlockGPR = regT7; // incoming.
-    constexpr GPRReg numParametersGPR = regT6;
-
-    tagReturnAddress();
-#if CPU(X86_64)
-    push(framePointerRegister);
-#elif CPU(ARM64)
-    pushPair(framePointerRegister, linkRegister);
-#endif
-
-    storePtr(codeBlockGPR, addressFor(CallFrameSlot::codeBlock));
-    store8(TrustedImm32(0), Address(codeBlockGPR, CodeBlock::offsetOfShouldAlwaysBeInlined()));
-
-    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT1);
-    load32(Address(codeBlockGPR, CodeBlock::offsetOfNumParameters()), numParametersGPR);
-    Jump noFixupNeeded = branch32(AboveOrEqual, regT1, numParametersGPR);
-
-    if constexpr (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-
-    loadPtr(Address(codeBlockGPR, CodeBlock::offsetOfGlobalObject()), argumentGPR0);
-
-    static_assert(std::is_same<decltype(operationConstructArityCheck), decltype(operationCallArityCheck)>::value);
-    setupArguments<decltype(operationCallArityCheck)>(argumentGPR0);
-    prepareCallOperation(vm);
-
-    MacroAssembler::Call arityCheckCall = call(OperationPtrTag);
-    Jump handleExceptionJump = emitNonPatchableExceptionCheck(vm);
-
-    if constexpr (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
-    Jump needFixup = branchTest32(NonZero, returnValueGPR);
-    noFixupNeeded.link(this);
-
-    // The normal prologue expects incoming codeBlockGPR.
-    load64(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
-
-#if CPU(X86_64)
-    pop(framePointerRegister);
-#elif CPU(ARM64)
-    popPair(framePointerRegister, linkRegister);
-#endif
-    untagReturnAddress();
-
-    JumpList normalPrologueJump;
-    normalPrologueJump.append(jump());
-
-    needFixup.link(this);
-
-    // Restore the stack for arity fixup, and preserve the return address.
-    // arityFixupGenerator will be shifting the stack. So, we can't use the stack to
-    // preserve the return address. We also can't use callee saved registers because
-    // they haven't been saved yet.
-    //
-    // arityFixupGenerator is carefully crafted to only use a0, a1, a2, t3, t4 and t5.
-    // So, the return address can be preserved in regT7.
-#if CPU(X86_64)
-    pop(argumentGPR2); // discard.
-    pop(regT7); // save return address.
-#elif CPU(ARM64)
-    popPair(framePointerRegister, linkRegister);
-    untagReturnAddress();
-    move(linkRegister, regT7);
-    auto randomReturnAddressTag = random();
-    move(TrustedImm32(randomReturnAddressTag), regT1);
-    tagPtr(regT1, regT7);
-#endif
-    move(returnValueGPR, GPRInfo::argumentGPR0);
-    Call arityFixupCall = nearCall();
-
-#if CPU(X86_64)
-    push(regT7); // restore return address.
-#elif CPU(ARM64)
-    move(TrustedImm32(randomReturnAddressTag), regT1);
-    untagPtr(regT1, regT7);
-    move(regT7, linkRegister);
-#endif
-
-    load64(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
-    normalPrologueJump.append(jump());
-
-    auto arityCheckOperation = isConstructor ? operationConstructArityCheck : operationCallArityCheck;
-    auto arityFixup = vm.getCTIStub(arityFixupGenerator);
-    auto normalPrologue = vm.getCTIStub(normalPrologueGenerator);
-    auto exceptionHandler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
-
-    LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(arityCheckCall, FunctionPtr<OperationPtrTag>(arityCheckOperation));
-    patchBuffer.link(arityFixupCall, FunctionPtr(arityFixup.retaggedCode<NoPtrTag>()));
-    patchBuffer.link(normalPrologueJump, CodeLocationLabel(normalPrologue.retaggedCode<NoPtrTag>()));
-    patchBuffer.link(handleExceptionJump, CodeLocationLabel(exceptionHandler.retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, thunkName);
-}
-
-#define DEFINE_ARITY_PROGLOGUE_GENERATOR(doesProfiling, isConstructor, hasHugeFrame, name, arityFixupName) \
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::arityFixupName(VM& vm) \
-    { \
-        JIT jit(vm); \
-        return jit.arityFixupPrologueGenerator(vm, isConstructor, name, "Baseline: " #arityFixupName); \
-    }
-
-FOR_EACH_PROLOGUE_GENERATOR(DEFINE_ARITY_PROGLOGUE_GENERATOR)
-#undef DEFINE_ARITY_PROGLOGUE_GENERATOR
-
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 void JIT::link()
 {
@@ -1382,9 +1051,9 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     return finalizeOnMainThread();
 }
 
-#if !ENABLE(EXTRA_CTI_THUNKS)
 void JIT::privateCompileExceptionHandlers()
 {
+#if !ENABLE(EXTRA_CTI_THUNKS)
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
@@ -1409,8 +1078,8 @@ void JIT::privateCompileExceptionHandlers()
         m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
         jumpToExceptionHandler(vm());
     }
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 }
-#endif // !ENABLE(EXTRA_CTI_THUNKS)
 
 void JIT::doMainThreadPreparationBeforeCompile()
 {

@@ -326,11 +326,6 @@ public:
         ASSERT(codeBlock);
 
         const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
-        emitSaveCalleeSavesFor(calleeSaves);
-    }
-
-    void emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
-    {
         RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
         unsigned registerCount = calleeSaves->size();
 
@@ -406,11 +401,6 @@ public:
         emitSaveCalleeSavesFor(codeBlock());
     }
 
-    void emitSaveCalleeSavesForBaselineJIT()
-    {
-        emitSaveCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
-    }
-
     void emitSaveThenMaterializeTagRegisters()
     {
 #if USE(JSVALUE64)
@@ -427,11 +417,6 @@ public:
     void emitRestoreCalleeSaves()
     {
         emitRestoreCalleeSavesFor(codeBlock());
-    }
-
-    void emitRestoreCalleeSavesForBaselineJIT()
-    {
-        emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
     }
 
     void emitRestoreSavedTagRegisters()

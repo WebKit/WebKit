@@ -1003,7 +1003,6 @@ public:
 
     ALWAYS_INLINE void tagReturnAddress() { }
     ALWAYS_INLINE void untagReturnAddress(RegisterID = RegisterID::InvalidGPRReg) { }
-    ALWAYS_INLINE void untagReturnAddressWithoutExtraValidation() { }
 
     ALWAYS_INLINE void tagPtr(PtrTag, RegisterID) { }
     ALWAYS_INLINE void tagPtr(RegisterID, RegisterID) { }

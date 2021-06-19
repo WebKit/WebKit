@@ -1,3 +1,56 @@
+2021-06-19  Mark Lam  <mark.lam@apple.com>
+
+        [Revert r278576] Put the Baseline JIT prologue and op_loop_hint code in JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=226375
+
+        Not reviewed.
+
+        Suspect regresses Speedometer2.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::untagReturnAddress):
+        (JSC::AbstractMacroAssembler::untagReturnAddressWithoutExtraValidation): Deleted.
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagReturnAddress):
+        (JSC::MacroAssemblerARM64E::untagReturnAddressWithoutExtraValidation): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addressOfNumParameters):
+        (JSC::CodeBlock::offsetOfNumParameters):
+        (JSC::CodeBlock::offsetOfInstructionsRawPointer):
+        (JSC::CodeBlock::offsetOfNumCalleeLocals): Deleted.
+        (JSC::CodeBlock::offsetOfNumVars): Deleted.
+        (JSC::CodeBlock::offsetOfArgumentValueProfiles): Deleted.
+        (JSC::CodeBlock::offsetOfShouldAlwaysBeInlined): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesForBaselineJIT): Deleted.
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesForBaselineJIT): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        (JSC::prologueGeneratorSelector): Deleted.
+        (JSC::JIT::prologueGenerator): Deleted.
+        (JSC::JIT::arityFixupPrologueGenerator): Deleted.
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::op_enter_Generator): Deleted.
+        (JSC::JIT::op_enter_canBeOptimized_Generator): Deleted.
+        (JSC::JIT::op_enter_cannotBeOptimized_Generator): Deleted.
+        (JSC::JIT::op_loop_hint_Generator): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/ThunkGenerators.cpp:
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+
 2021-06-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278699.
