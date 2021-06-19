@@ -157,9 +157,13 @@ public:
         return jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT;
     }
 
-    static bool useDataIC(JITType)
+    static bool useDataIC(JITType jitType)
     {
-        return Options::useDataIC();
+        if (!Options::useDataIC())
+            return false;
+        if (JITCode::isBaselineCode(jitType))
+            return true;
+        return Options::useDataICInOptimizingJIT();
     }
 
     virtual const DOMJIT::Signature* signature() const { return nullptr; }
