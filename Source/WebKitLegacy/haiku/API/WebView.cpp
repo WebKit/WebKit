@@ -31,7 +31,7 @@
 
 #include "WebCore/Frame.h"
 #include "WebCore/FrameView.h"
-#include "WebCore/GraphicsContext.h"
+#include "WebCore/GraphicsContextHaiku.h"
 #include "WebCore/InspectorController.h"
 #include "WebCore/NotImplemented.h"
 #include "WebCore/Page.h"
@@ -256,7 +256,7 @@ void BWebView::Draw(BRect rect)
 
     fOffscreenBitmap->Unlock();
 
-    GraphicsContext g(this);
+    GraphicsContextHaiku g(this);
 
     // Draw some stuff for the web inspector
 #if ENABLE(INSPECTOR)

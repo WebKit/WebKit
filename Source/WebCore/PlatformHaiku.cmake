@@ -1,4 +1,5 @@
 include(platform/GCrypt.cmake)
+include(platform/Haiku.cmake)
 include(platform/ImageDecoders.cmake)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES

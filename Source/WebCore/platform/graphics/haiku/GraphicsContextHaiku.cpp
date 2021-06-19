@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextHaiku.h"
 
 #include "AffineTransform.h"
 #include "Color.h"
@@ -37,7 +37,6 @@
 #include "ImageBuffer.h"
 #include "NotImplemented.h"
 #include "Path.h"
-#include "ShadowBlur.h"
 #include "TransformationMatrix.h"
 
 #include <wtf/text/CString.h>
@@ -46,92 +45,20 @@
 #include <Picture.h>
 #include <Region.h>
 #include <Shape.h>
-#include <View.h>
 #include <Window.h>
-#include <stack>
 #include <stdio.h>
 
 namespace WebCore {
 
-class GraphicsContextPlatformPrivate {
-public:
-    GraphicsContextPlatformPrivate(BView* view);
-    ~GraphicsContextPlatformPrivate();
 
-    struct CustomGraphicsState {
-        CustomGraphicsState()
-            : previous(0)
-            , imageInterpolationQuality(InterpolationQuality::Default)
-            , globalAlpha(1.0f)
-        {
-        }
-
-        CustomGraphicsState(CustomGraphicsState* previous)
-            : previous(previous)
-            , imageInterpolationQuality(previous->imageInterpolationQuality)
-            , globalAlpha(previous->globalAlpha)
-        {
-        }
-
-        CustomGraphicsState* previous;
-
-        InterpolationQuality imageInterpolationQuality;
-        float globalAlpha;
-    };
-
-    void pushState()
-    {
-    	transformStack.push(view()->Transform());
-    	m_graphicsState = new CustomGraphicsState(m_graphicsState);
-        view()->PushState();
-    }
-
-    void popState()
-    {
-        view()->PopState();
-
-    	ASSERT(m_graphicsState->previous);
-    	if (!m_graphicsState->previous)
-    	    return;
-
-    	CustomGraphicsState* oldTop = m_graphicsState;
-    	m_graphicsState = oldTop->previous;
-    	delete oldTop;
-
-		view()->SetTransform(transformStack.top());
-		transformStack.pop();
-    }
-
-    BView* view() const
-    {
-        return m_view;
-    }
-
-    CustomGraphicsState* state() const
-    {
-        return m_graphicsState;
-    }
-
-    ShadowBlur& shadowBlur()
-    {
-        return blur;
-    }
-
-    CustomGraphicsState* m_graphicsState;
-    BView* m_view;
-    ShadowBlur blur;
-    pattern m_strokeStyle;
-	std::stack<BAffineTransform> transformStack;
-};
-
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(BView* view)
+GraphicsContextHaiku::GraphicsContextHaiku(BView* view)
     : m_graphicsState(new CustomGraphicsState)
     , m_view(view)
     , m_strokeStyle(B_SOLID_HIGH)
 {
 }
 
-GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
+GraphicsContextHaiku::~GraphicsContextHaiku()
 {
     while (CustomGraphicsState* previous = m_graphicsState->previous) {
         delete m_graphicsState;
@@ -140,63 +67,32 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
     delete m_graphicsState;
 }
 
-void GraphicsContext::platformInit(PlatformGraphicsContext* context)
-{
-    m_data = new GraphicsContextPlatformPrivate(context);
-}
-
-void GraphicsContext::platformDestroy()
-{
-    delete m_data;
-}
-
-PlatformGraphicsContext* GraphicsContext::platformContext() const
-{
-    return m_data->view();
-}
-
-void GraphicsContext::savePlatformState()
-{
-	m_data->pushState();
-}
-
-void GraphicsContext::restorePlatformState()
-{
-	m_data->popState();
-}
-
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
+void GraphicsContextHaiku::drawRect(const FloatRect& rect, float borderThickness)
 {
-    if (paintingDisabled())
-        return;
-
     if (m_state.fillPattern)
         notImplemented();
     else if (m_state.fillGradient) {
         m_state.fillGradient->fill(*this, rect);
     } else
-        m_data->view()->FillRect(rect);
+        m_view->FillRect(rect);
 
     // TODO: Support gradients
     if (strokeStyle() != NoStroke && borderThickness > 0.0f && strokeColor().isVisible())
     {
-        m_data->view()->SetPenSize(borderThickness);
-        m_data->view()->StrokeRect(rect, m_data->m_strokeStyle);
+        m_view->SetPenSize(borderThickness);
+        m_view->StrokeRect(rect, m_strokeStyle);
     }
 }
 
-void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContextHaiku::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    if (paintingDisabled())
-        return;
-
     save();
     setCompositeOperation(options.compositeOperator());
 
     // Test using example site at
     // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    platformContext()->SetDrawingMode(B_OP_ALPHA);
+    m_view->SetDrawingMode(B_OP_ALPHA);
 
     uint32 flags = 0;
 
@@ -204,59 +100,53 @@ void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const Flo
     if (options.interpolationQuality() > InterpolationQuality::Low)
         flags |= B_FILTER_BITMAP_BILINEAR;
 
-    m_data->view()->DrawBitmapAsync(image.get(), BRect(srcRect), BRect(destRect), flags);
+    m_view->DrawBitmapAsync(image.platformImage().get(), BRect(srcRect), BRect(destRect), flags);
 
     restore();
 }
 
 // This is only used to draw borders.
-void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point2)
+void GraphicsContextHaiku::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
-    if (paintingDisabled() || strokeStyle() == NoStroke || !strokeColor().isVisible())
+    if (strokeStyle() == NoStroke || !strokeColor().isVisible())
         return;
-    m_data->view()->StrokeLine(point1, point2, m_data->m_strokeStyle);
+    m_view->StrokeLine(point1, point2, m_strokeStyle);
 }
 
 // This method is only used to draw the little circles used in lists.
-void GraphicsContext::drawEllipse(const FloatRect& rect)
+void GraphicsContextHaiku::drawEllipse(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
     if (m_state.fillPattern || m_state.fillGradient || fillColor().isVisible()) {
 //        TODO: What's this shadow business?
         if (m_state.fillPattern)
             notImplemented();
         else if (m_state.fillGradient) {
             const BGradient& gradient = m_state.fillGradient->getHaikuGradient();
-            m_data->view()->FillEllipse(rect, gradient);
+            m_view->FillEllipse(rect, gradient);
         } else
-            m_data->view()->FillEllipse(rect);
+            m_view->FillEllipse(rect);
     }
 
     // TODO: Support gradients
     if (strokeStyle() != NoStroke && strokeThickness() > 0.0f && strokeColor().isVisible())
-        m_data->view()->StrokeEllipse(rect, m_data->m_strokeStyle);
+        m_view->StrokeEllipse(rect, m_strokeStyle);
 }
 
-void GraphicsContext::strokeRect(const FloatRect& rect, float width)
+void GraphicsContextHaiku::strokeRect(const FloatRect& rect, float width)
 {
-    if (paintingDisabled() || strokeStyle() == NoStroke || width <= 0.0f || !strokeColor().isVisible())
+    if (strokeStyle() == NoStroke || width <= 0.0f || !strokeColor().isVisible())
         return;
 
-    float oldSize = m_data->view()->PenSize();
-    m_data->view()->SetPenSize(width);
+    float oldSize = m_view->PenSize();
+    m_view->SetPenSize(width);
     // TODO stroke the shadow
-    m_data->view()->StrokeRect(rect, m_data->m_strokeStyle);
-    m_data->view()->SetPenSize(oldSize);
+    m_view->StrokeRect(rect, m_strokeStyle);
+    m_view->SetPenSize(oldSize);
 }
 
-void GraphicsContext::strokePath(const Path& path)
+void GraphicsContextHaiku::strokePath(const Path& path)
 {
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->MovePenTo(B_ORIGIN);
+    m_view->MovePenTo(B_ORIGIN);
 
     // TODO: stroke the shadow (cf shadowAndStrokeCurrentCairoPath)
 
@@ -265,51 +155,44 @@ void GraphicsContext::strokePath(const Path& path)
     else if (m_state.strokeGradient) {
         notImplemented();
 //      BGradient* gradient = m_state.strokeGradient->platformGradient();
-//      m_data->view()->StrokeShape(m_data->shape(), *gradient);
+//      m_view->StrokeShape(shape(), *gradient);
     } else if (strokeColor().isVisible()) {
-        drawing_mode mode = m_data->view()->DrawingMode();
-        if (m_data->view()->HighColor().alpha < 255)
-            m_data->view()->SetDrawingMode(B_OP_ALPHA);
+        drawing_mode mode = m_view->DrawingMode();
+        if (m_view->HighColor().alpha < 255)
+            m_view->SetDrawingMode(B_OP_ALPHA);
 
-        m_data->view()->StrokeShape(path.platformPath(), m_data->m_strokeStyle);
-        m_data->view()->SetDrawingMode(mode);
+        m_view->StrokeShape(path.platformPath(), m_strokeStyle);
+        m_view->SetDrawingMode(mode);
     }
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
+void GraphicsContextHaiku::fillRect(const FloatRect& rect, const Color& color)
 {
-    if (paintingDisabled())
-        return;
-
-    BView* view = m_data->view();
-    rgb_color previousColor = view->HighColor();
+    rgb_color previousColor = m_view->HighColor();
 
 #if 0
     // FIXME needs support for Composite SourceIn.
     if (hasShadow()) {
-        m_data->shadowBlur().drawRectShadow(this, rect, RoundedRect::Radii());
+        shadowBlur().drawRectShadow(this, rect, RoundedRect::Radii());
     }
 #endif
 
     //setPlatformFillColor(color, ColorSpaceDeviceRGB);
-    view->SetHighColor(color);
-    view->FillRect(rect);
+    m_view->SetHighColor(color);
+    m_view->FillRect(rect);
 
-    view->SetHighColor(previousColor);
+    m_view->SetHighColor(previousColor);
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect)
+void GraphicsContextHaiku::fillRect(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
     // TODO fill the shadow
-    m_data->view()->FillRect(rect);
+    m_view->FillRect(rect);
 }
 
-void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& roundRect, const Color& color)
+void GraphicsContextHaiku::fillRoundedRectImpl(const FloatRoundedRect& roundRect, const Color& color)
 {
-    if (paintingDisabled() || !color.isVisible())
+    if (!color.isVisible())
         return;
 
     const FloatRect& rect = roundRect.rect();
@@ -321,7 +204,7 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& roundRect,
 #if 0
     // FIXME needs support for Composite SourceIn.
     if (hasShadow())
-        m_data->shadowBlur().drawRectShadow(this, rect, FloatRoundedRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
+        shadowBlur().drawRectShadow(this, rect, FloatRoundedRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
 #endif
 
     BPoint points[3];
@@ -363,106 +246,66 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& roundRect,
     shape.BezierTo(points);
     shape.Close();
 
-    rgb_color oldColor = m_data->view()->HighColor();
-    setPlatformFillColor(color);
-    m_data->view()->MovePenTo(B_ORIGIN);
-    m_data->view()->FillShape(&shape);
+    rgb_color oldColor = m_view->HighColor();
+    m_view->SetHighColor(color);
+    m_view->MovePenTo(B_ORIGIN);
+    m_view->FillShape(&shape);
 
-    m_data->view()->SetHighColor(oldColor);
+    m_view->SetHighColor(oldColor);
 }
 
-void GraphicsContext::fillPath(const Path& path)
+void GraphicsContextHaiku::fillPath(const Path& path)
 {
-    if (paintingDisabled())
-        return;
-
-    BView* view = m_data->view();
-
-    view->SetFillRule(fillRule() == WindRule::NonZero ? B_NONZERO : B_EVEN_ODD);
-    view->MovePenTo(B_ORIGIN);
+    m_view->SetFillRule(fillRule() == WindRule::NonZero ? B_NONZERO : B_EVEN_ODD);
+    m_view->MovePenTo(B_ORIGIN);
 
     // TODO: Render the shadow (cf shadowAndFillCurrentCairoPath)
-    drawing_mode mode = view->DrawingMode();
+    drawing_mode mode = m_view->DrawingMode();
 
     if (m_state.fillPattern)
         notImplemented();
     else if (m_state.fillGradient) {
-        view->SetDrawingMode(B_OP_ALPHA);
+        m_view->SetDrawingMode(B_OP_ALPHA);
         const BGradient& gradient = m_state.fillGradient->getHaikuGradient();
-        view->FillShape(path.platformPath(), gradient);
+        m_view->FillShape(path.platformPath(), gradient);
     } else {
-        if (view->HighColor().alpha < 255)
-            view->SetDrawingMode(B_OP_ALPHA);
+        if (m_view->HighColor().alpha < 255)
+            m_view->SetDrawingMode(B_OP_ALPHA);
 
-        view->FillShape(path.platformPath());
+        m_view->FillShape(path.platformPath());
     }
 
-    view->SetDrawingMode(mode);
+    m_view->SetDrawingMode(mode);
 }
 
-void GraphicsContext::clip(const FloatRect& rect)
+void GraphicsContextHaiku::clip(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-    m_data->view()->ClipToRect(rect);
+    m_view->ClipToRect(rect);
 }
 
-IntRect GraphicsContext::clipBounds() const
+void GraphicsContextHaiku::clipPath(const Path& path, WindRule windRule)
 {
-	// This can be used by drawing code to do some early clipping (for example
-	// the SVG code may skip complete parts of the image which are outside
-	// the bounds).
-	// So, we get the current clipping region, and convert it back to drawing
-	// space by applying the reverse of the view transform.
-	
-	BRegion region;
-	BAffineTransform t = m_data->view()->Transform();
-	m_data->view()->GetClippingRegion(&region);
-	BRect rect = region.Frame();
-
-	BPoint points[2];
-	points[0] = rect.LeftTop();
-	points[1] = rect.RightBottom();
-
-	t.ApplyInverse(points, 2);
-
-	rect.left   = std::min(points[0].x, points[1].x);
-	rect.right  = std::max(points[0].x, points[1].x);
-	rect.top    = std::min(points[0].y, points[1].y);
-	rect.bottom = std::max(points[0].y, points[1].y);
-
-	return IntRect(rect);
-}
-
-void GraphicsContext::clipPath(const Path& path, WindRule windRule)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->SetFillRule(windRule == WindRule::EvenOdd ? B_EVEN_ODD : B_NONZERO);
-    m_data->view()->ClipToShape(path.platformPath());
+    m_view->SetFillRule(windRule == WindRule::EvenOdd ? B_EVEN_ODD : B_NONZERO);
+    m_view->ClipToShape(path.platformPath());
     // TODO: reset wind rule
 }
 
 
-void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const WebCore::FloatSize& size, const FloatRect& destRect,
+void GraphicsContextHaiku::drawPattern(NativeImage& image, const WebCore::FloatSize& size, const FloatRect& destRect,
     const FloatRect& tileRect, const AffineTransform&,
     const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&)
 {
-    if (paintingDisabled())
-        return;
-
-    if (!image->IsValid()) // If the image hasn't fully loaded.
+    if (!image.platformImage()->IsValid()) // If the image hasn't fully loaded.
         return;
 
     // Figure out if the image has any alpha transparency, we can use faster drawing if not
     bool hasAlpha = false;
 
-    uint8* bits = reinterpret_cast<uint8*>(image->Bits());
-    uint32 width = image->Bounds().IntegerWidth() + 1;
-    uint32 height = image->Bounds().IntegerHeight() + 1;
+    uint8* bits = reinterpret_cast<uint8*>(image.platformImage()->Bits());
+    uint32 width = image.platformImage()->Bounds().IntegerWidth() + 1;
+    uint32 height = image.platformImage()->Bounds().IntegerHeight() + 1;
 
-    uint32 bytesPerRow = image->BytesPerRow();
+    uint32 bytesPerRow = image.platformImage()->BytesPerRow();
     for (uint32 y = 0; y < height && !hasAlpha; y++) {
         uint8* p = bits;
         for (uint32 x = 0; x < width && !hasAlpha; x++) {
@@ -474,9 +317,9 @@ void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const W
 
     save();
     if (hasAlpha)
-        platformContext()->SetDrawingMode(B_OP_ALPHA);
+        m_view->SetDrawingMode(B_OP_ALPHA);
     else
-        platformContext()->SetDrawingMode(B_OP_COPY);
+        m_view->SetDrawingMode(B_OP_COPY);
 
     clip(enclosingIntRect(destRect));
     float phaseOffsetX = destRect.x() - phase.x();
@@ -484,59 +327,51 @@ void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const W
     // x mod w, y mod h
     phaseOffsetX -= std::trunc(phaseOffsetX / tileRect.width()) * tileRect.width();
     phaseOffsetY -= std::trunc(phaseOffsetY / tileRect.height()) * tileRect.height();
-    platformContext()->DrawTiledBitmapAsync(
-        image.get(), destRect, BPoint(phaseOffsetX, phaseOffsetY));
+    m_view->DrawTiledBitmapAsync(
+        image.platformImage().get(), destRect, BPoint(phaseOffsetX, phaseOffsetY));
     restore();
 }
 
 
-void GraphicsContext::canvasClip(const Path& path, WindRule windRule)
+void GraphicsContextHaiku::clipOut(const Path& path)
 {
-    clipPath(path, windRule);
-}
-
-void GraphicsContext::clipOut(const Path& path)
-{
-    if (paintingDisabled() || path.isEmpty())
+    if (path.isEmpty())
         return;
 
-    m_data->view()->ClipToInverseShape(path.platformPath());
+    m_view->ClipToInverseShape(path.platformPath());
 }
 
-void GraphicsContext::clipOut(const FloatRect& rect)
+void GraphicsContextHaiku::clipOut(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->ClipToInverseRect(rect);
+    m_view->ClipToInverseRect(rect);
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, float width, float /*offset*/, const Color& color)
+void GraphicsContextHaiku::drawFocusRing(const Path& path, float width, float /*offset*/, const Color& color)
 {
-    if (paintingDisabled() || width <= 0 || !color.isVisible())
+    if (width <= 0 || !color.isVisible())
         return;
 
     // GTK forces this to 2, we use 1. A focus ring several pixels thick doesn't
     // look good.
     width = 1;
 
-    m_data->view()->PushState();
-    setPlatformFillColor(color);
-    m_data->view()->SetPenSize(width);
-    m_data->view()->StrokeShape(path.platformPath(), B_SOLID_HIGH);
-    m_data->view()->PopState();
+    m_view->PushState();
+    m_view->SetHighColor(color);
+    m_view->SetPenSize(width);
+    m_view->StrokeShape(path.platformPath(), B_SOLID_HIGH);
+    m_view->PopState();
 }
 
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float /* offset */, const Color& color)
+void GraphicsContextHaiku::drawFocusRing(const Vector<FloatRect>& rects, float width, float /* offset */, const Color& color)
 {
-    if (paintingDisabled() || width <= 0 || !color.isVisible())
+    if (width <= 0 || !color.isVisible())
         return;
 
     unsigned rectCount = rects.size();
     if (rectCount <= 0)
         return;
 
-    m_data->view()->PushState();
+    m_view->PushState();
 
     // GTK forces this to 2, we use 1. A focus ring several pixels thick doesn't
     // look good.
@@ -544,25 +379,17 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     // elements. Maybe we should disable that somewhere.
     width = 1;
 
-    setPlatformFillColor(color);
-    m_data->view()->SetPenSize(width);
+    m_view->SetHighColor(color);
+    m_view->SetPenSize(width);
     // FIXME: maybe we should implement this with BShape?
     for (unsigned i = 0; i < rectCount; ++i)
-        m_data->view()->StrokeRect(rects[i], B_SOLID_HIGH);
+        m_view->StrokeRect(rects[i], B_SOLID_HIGH);
 
-    m_data->view()->PopState();
+    m_view->PopState();
 }
 
-void GraphicsContext::drawLineForText(const FloatRect& rect, bool printing, bool doubleLines, WebCore::StrokeStyle)
+void GraphicsContextHaiku::drawLinesForText(const FloatPoint& point, float, const DashArray& widths, bool printing, bool doubleUnderlines, WebCore::StrokeStyle)
 {
-    drawLinesForText(rect.location(), rect.height(), DashArray { rect.width(), 0 }, printing, doubleLines);
-}
-
-void GraphicsContext::drawLinesForText(const FloatPoint& point, float, const DashArray& widths, bool printing, bool doubleUnderlines, WebCore::StrokeStyle)
-{
-    if (paintingDisabled())
-        return;
-
     if (widths.size() <= 0)
         return;
 
@@ -576,16 +403,13 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, float, const Das
     }
 }
 
-void GraphicsContext::drawDotsForDocumentMarker(WebCore::FloatRect const&,
+void GraphicsContextHaiku::drawDotsForDocumentMarker(WebCore::FloatRect const&,
 	WebCore::DocumentMarkerLineStyle)
 {
-    if (paintingDisabled())
-        return;
-
 	notImplemented();
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode /* mode */)
+FloatRect GraphicsContextHaiku::roundToDevicePixels(const FloatRect& rect, RoundingMode /* mode */)
 {
     FloatRect rounded(rect);
     rounded.setX(roundf(rect.x()));
@@ -595,45 +419,18 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return rounded;
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->BeginLayer(static_cast<uint8>(opacity * 255.0));
-}
-
-void GraphicsContext::endPlatformTransparencyLayer()
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->EndLayer();
-}
-
-bool GraphicsContext::supportsTransparencyLayers()
-{
-    return true;
-}
-
 /* Used by canvas.clearRect. Must clear the given rectangle with transparent black. */
-void GraphicsContext::clearRect(const FloatRect& rect)
+void GraphicsContextHaiku::clearRect(const FloatRect& rect)
 {
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->PushState();
-    m_data->view()->SetHighColor(0, 0, 0, 0);
-    m_data->view()->SetDrawingMode(B_OP_COPY);
-    m_data->view()->FillRect(rect);
-    m_data->view()->PopState();
+    m_view->PushState();
+    m_view->SetHighColor(0, 0, 0, 0);
+    m_view->SetDrawingMode(B_OP_COPY);
+    m_view->FillRect(rect);
+    m_view->PopState();
 }
 
-void GraphicsContext::setLineCap(LineCap lineCap)
+void GraphicsContextHaiku::setLineCap(LineCap lineCap)
 {
-    if (paintingDisabled())
-        return;
-
     cap_mode mode = B_BUTT_CAP;
     switch (lineCap) {
     case RoundCap:
@@ -647,20 +444,17 @@ void GraphicsContext::setLineCap(LineCap lineCap)
         break;
     }
 
-    m_data->view()->SetLineMode(mode, m_data->view()->LineJoinMode(), m_data->view()->LineMiterLimit());
+    m_view->SetLineMode(mode, m_view->LineJoinMode(), m_view->LineMiterLimit());
 }
 
-void GraphicsContext::setLineDash(const DashArray& /*dashes*/, float /*dashOffset*/)
+void GraphicsContextHaiku::setLineDash(const DashArray& /*dashes*/, float /*dashOffset*/)
 {
     // TODO this is used to draw dashed strokes in SVG, but we need app_server support
     notImplemented();
 }
 
-void GraphicsContext::setLineJoin(LineJoin lineJoin)
+void GraphicsContextHaiku::setLineJoin(LineJoin lineJoin)
 {
-    if (paintingDisabled())
-        return;
-
     join_mode mode = B_MITER_JOIN;
     switch (lineJoin) {
     case RoundJoin:
@@ -674,255 +468,126 @@ void GraphicsContext::setLineJoin(LineJoin lineJoin)
         break;
     }
 
-    m_data->view()->SetLineMode(m_data->view()->LineCapMode(), mode, m_data->view()->LineMiterLimit());
+    m_view->SetLineMode(m_view->LineCapMode(), mode, m_view->LineMiterLimit());
 }
 
-void GraphicsContext::setMiterLimit(float limit)
+void GraphicsContextHaiku::setMiterLimit(float limit)
 {
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->SetLineMode(m_data->view()->LineCapMode(), m_data->view()->LineJoinMode(), limit);
+    m_view->SetLineMode(m_view->LineCapMode(), m_view->LineJoinMode(), limit);
 }
 
-void GraphicsContext::setPlatformAlpha(float opacity)
+AffineTransform GraphicsContextHaiku::getCTM(IncludeDeviceScale) const
 {
-    if (paintingDisabled())
-        return;
-
-    // FIXME the alpha is only applied to plain colors, not bitmaps, gradients,
-    // or anything else. Support should be moved to app_server using the trick
-    // mentionned here: http://permalink.gmane.org/gmane.comp.graphics.agg/2241
-    m_data->state()->globalAlpha = opacity;
-}
-
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode blend)
-{
-    if (paintingDisabled())
-        return;
-
-    drawing_mode mode = B_OP_ALPHA;
-    alpha_function blending_mode = B_ALPHA_COMPOSITE;
-    switch (op) {
-    case CompositeOperator::SourceOver:
-        blending_mode = B_ALPHA_COMPOSITE_SOURCE_OVER;
-        break;
-    case CompositeOperator::PlusLighter:
-        blending_mode = B_ALPHA_COMPOSITE_LIGHTEN;
-        break;
-    case CompositeOperator::Difference:
-        blending_mode = B_ALPHA_COMPOSITE_DIFFERENCE;
-        break;
-    case CompositeOperator::PlusDarker:
-        blending_mode = B_ALPHA_COMPOSITE_DARKEN;
-        break;
-    case CompositeOperator::Clear:
-        blending_mode = B_ALPHA_COMPOSITE_CLEAR;
-        break;
-    case CompositeOperator::DestinationOut:
-        blending_mode = B_ALPHA_COMPOSITE_DESTINATION_OUT;
-        break;
-    case CompositeOperator::SourceAtop:
-        blending_mode = B_ALPHA_COMPOSITE_SOURCE_ATOP;
-        break;
-    case CompositeOperator::SourceIn:
-        blending_mode = B_ALPHA_COMPOSITE_SOURCE_IN;
-        break;
-    case CompositeOperator::SourceOut:
-        blending_mode = B_ALPHA_COMPOSITE_SOURCE_OUT;
-        break;
-    case CompositeOperator::DestinationOver:
-        blending_mode = B_ALPHA_COMPOSITE_DESTINATION_OVER;
-        break;
-    case CompositeOperator::DestinationAtop:
-        blending_mode = B_ALPHA_COMPOSITE_DESTINATION_ATOP;
-        break;
-    case CompositeOperator::DestinationIn:
-        blending_mode = B_ALPHA_COMPOSITE_DESTINATION_IN;
-        break;
-    case CompositeOperator::XOR:
-        blending_mode = B_ALPHA_COMPOSITE_XOR;
-        break;
-    case CompositeOperator::Copy:
-        mode = B_OP_COPY;
-        break;
-    default:
-        fprintf(stderr, "GraphicsContext::setCompositeOperation: Unsupported composite operation %s\n",
-                compositeOperatorName(op, blend).utf8().data());
-    }
-    m_data->view()->SetDrawingMode(mode);
-
-    if (mode == B_OP_ALPHA)
-        m_data->view()->SetBlendingMode(B_PIXEL_ALPHA, blending_mode);
-}
-
-AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
-{
-    if (paintingDisabled())
-        return AffineTransform();
-
-    BAffineTransform t = m_data->view()->Transform();
+    BAffineTransform t = m_view->Transform();
     	// TODO: we actually need to use the combined transform here?
     AffineTransform matrix(t.sx, t.shy, t.shx, t.sy, t.tx, t.ty);
     return matrix;
 }
 
-void GraphicsContext::translate(float x, float y)
+void GraphicsContextHaiku::translate(float x, float y)
 {
-    if (paintingDisabled() || (x == 0.f && y == 0.f))
+    if (x == 0.f && y == 0.f)
         return;
 
-    m_data->view()->TranslateBy(x, y);
+    m_view->TranslateBy(x, y);
 }
 
-void GraphicsContext::rotate(float radians)
+void GraphicsContextHaiku::rotate(float radians)
 {
-    if (paintingDisabled() || radians == 0.f)
+    if (radians == 0.f)
         return;
 
-    m_data->view()->RotateBy(radians);
+    m_view->RotateBy(radians);
 }
 
-void GraphicsContext::scale(const FloatSize& size)
+void GraphicsContextHaiku::scale(const FloatSize& size)
 {
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->ScaleBy(size.width(), size.height());
+    m_view->ScaleBy(size.width(), size.height());
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& transform)
+void GraphicsContextHaiku::concatCTM(const AffineTransform& transform)
 {
-    if (paintingDisabled())
-        return;
-
-    BAffineTransform current = m_data->view()->Transform();
+    BAffineTransform current = m_view->Transform();
     current.PreMultiply(transform);
-    m_data->view()->SetTransform(current);
+    m_view->SetTransform(current);
 }
 
-void GraphicsContext::setCTM(const AffineTransform& transform)
+void GraphicsContextHaiku::setCTM(const AffineTransform& transform)
 {
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->SetTransform(transform);
+    m_view->SetTransform(transform);
 }
 
-void GraphicsContext::setPlatformShouldAntialias(bool /*enable*/)
+void GraphicsContextHaiku::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
-    if (paintingDisabled())
-        return;
-
-    notImplemented();
-}
-
-void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality quality)
-{
-    m_data->state()->imageInterpolationQuality = quality;
-}
-
-void GraphicsContext::setURLForRect(const URL& /*link*/, const FloatRect& /*destRect*/)
-{
-    notImplemented();
-}
-
-void GraphicsContext::setPlatformStrokeColor(const Color& color)
-{
-    if (paintingDisabled())
-        return;
-
-    // NOTE: In theory, we should be able to use the low color and
-    // return B_SOLID_LOW for the SolidStroke case in setPlatformStrokeStyle()
-    // below. More stuff needs to be fixed, though, it will for example
-    // prevent the text caret from rendering.
-//    m_data->view()->SetLowColor(color);
-    setPlatformFillColor(color);
-}
-
-void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
-{
-    if (paintingDisabled())
-        return;
-
-    switch (strokeStyle) {
-    case SolidStroke:
-    case DoubleStroke:
-    case WavyStroke:
-        m_data->m_strokeStyle = B_SOLID_HIGH;
-        break;
-    case DottedStroke:
-        m_data->m_strokeStyle = B_MIXED_COLORS;
-        break;
-    case DashedStroke:
-        // FIXME: use a better dashed stroke!
-        notImplemented();
-        m_data->m_strokeStyle = B_MIXED_COLORS;
-        break;
-    case NoStroke:
-        m_data->m_strokeStyle = B_SOLID_LOW;
-        break;
+#if 0
+        StrokeGradientChange                    = 1 << 0,
+        StrokePatternChange                     = 1 << 1,
+        FillGradientChange // 
+        FillPatternChange                       = 1 << 3,
+#endif
+#if 0
+    if (flags & GraphicsContextState::StrokeThicknessChange)
+        m_view->SetStrokeWidth(state.strokeThickness);
+#endif
+    if (flags & GraphicsContextState::StrokeColorChange)
+        m_view->SetHighColor(state.strokeColor);
+#if 0
+    if (flags & GraphicsContextState::StrokeStyleChange) {
+        switch (strokeStyle) {
+            case DoubleStroke:
+            case WavyStroke:
+                notImplemented();
+                m_data->m_strokeStyle = B_SOLID_HIGH;
+                break;
+            case SolidStroke:
+                m_data->m_strokeStyle = B_SOLID_HIGH;
+                break;
+            case DottedStroke:
+                m_data->m_strokeStyle = B_MIXED_COLORS;
+                break;
+            case DashedStroke:
+                // FIXME: use a better dashed stroke!
+                notImplemented();
+                m_data->m_strokeStyle = B_MIXED_COLORS;
+                break;
+            case NoStroke:
+                m_data->m_strokeStyle = B_SOLID_LOW;
+                break;
+        }
     }
-}
-
-void GraphicsContext::setPlatformStrokeThickness(float thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->view()->SetPenSize(thickness);
-}
-
-void GraphicsContext::setPlatformFillColor(const Color& color)
-{
-    if (paintingDisabled())
-        return;
-
-    rgb_color fixed = color;
-    fixed.alpha *= m_data->state()->globalAlpha;
-    m_data->view()->SetHighColor(fixed);
-}
-
-void GraphicsContext::clearPlatformShadow()
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->shadowBlur().clear();
-}
-
-void GraphicsContext::setPlatformShadow(FloatSize const& size, float /*blur*/,
-    Color const& /*color*/)
-{
-    if (paintingDisabled())
-        return;
-
-    if (m_state.shadowsIgnoreTransforms) {
-        // Meaning that this graphics context is associated with a CanvasRenderingContext
-        // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        m_state.shadowOffset = FloatSize(size.width(), -size.height());
-    }
-
-    // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions using ShadowBlur.
-    m_data->shadowBlur().setShadowValues(FloatSize(m_state.shadowBlur, m_state.shadowBlur),
-                                                    m_state.shadowOffset,
-                                                    m_state.shadowColor,
-                                                    m_state.shadowsIgnoreTransforms);
+#endif
+    if (flags & GraphicsContextState::FillColorChange)
+        m_view->SetLowColor(state.fillColor);
+#if 0
+        FillRuleChange                          = 1 << 8,
+        ShadowChange                            = 1 << 9,
+        ShadowsIgnoreTransformsChange           = 1 << 10,
+        AlphaChange                             = 1 << 11,
+        CompositeOperationChange                = 1 << 12,
+        BlendModeChange                         = 1 << 13,
+        TextDrawingModeChange                   = 1 << 14,
+        ShouldAntialiasChange                   = 1 << 15,
+        ShouldSmoothFontsChange                 = 1 << 16,
+        ShouldSubpixelQuantizeFontsChange       = 1 << 17,
+        DrawLuminanceMaskChange                 = 1 << 18,
+        ImageInterpolationQualityChange         = 1 << 19,
+        UseDarkAppearanceChange                 = 1 << 20,
+#endif
 }
 
 #if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
-TransformationMatrix GraphicsContext::get3DTransform() const
+TransformationMatrix GraphicsContextHaiku::get3DTransform() const
 {
     // FIXME: Can we approximate the transformation better than this?
     return getCTM().toTransformationMatrix();
 }
 
-void GraphicsContext::concat3DTransform(const TransformationMatrix& transform)
+void GraphicsContextHaiku::concat3DTransform(const TransformationMatrix& transform)
 {
     concatCTM(transform.toAffineTransform());
 }
 
-void GraphicsContext::set3DTransform(const TransformationMatrix& transform)
+void GraphicsContextHaiku::set3DTransform(const TransformationMatrix& transform)
 {
     setCTM(transform.toAffineTransform());
 }

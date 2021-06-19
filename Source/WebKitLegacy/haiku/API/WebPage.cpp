@@ -62,7 +62,7 @@
 #include "WebCore/Frame.h"
 #include "WebCore/FrameLoader.h"
 #include "WebCore/FrameView.h"
-#include "WebCore/GraphicsContext.h"
+#include "WebCore/GraphicsContextHaiku.h"
 #include "WebCore/LibWebRTCProvider.h"
 #include "WebCore/LogInitialization.h"
 #include "WebCore/MediaRecorderProvider.h"
@@ -804,7 +804,7 @@ void BWebPage::internalPaint(BView* offscreenView,
 
     // TODO do not recreate a context everytime this is called, we can preserve
     // it alongside the offscreen view in BWebView?
-    WebCore::GraphicsContext context(offscreenView);
+    WebCore::GraphicsContextHaiku context(offscreenView);
     frameView->paint(context, IntRect(dirty->Frame()));
 
     offscreenView->PopState();

@@ -33,7 +33,7 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextHaiku.h"
 #include "NotImplemented.h"
 #include "TransformationMatrix.h"
 #include <Bitmap.h>
@@ -135,7 +135,7 @@ public:
     {
         prepareHitTest(x, y);
 
-        GraphicsContext context(m_view);
+        GraphicsContextHaiku context(m_view);
         applier(context);
         m_view->StrokeShape(shape);
 

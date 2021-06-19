@@ -28,7 +28,7 @@
 
 #include "BitmapImage.h"
 #include "ColorUtilities.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextHaiku.h"
 #include "ImageData.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
@@ -74,7 +74,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     m_view->SetLineMode(B_BUTT_CAP, B_MITER_JOIN, 10);
     m_view->SetDrawingMode(B_OP_ALPHA);
     m_view->SetBlendingMode(B_PIXEL_ALPHA, B_ALPHA_COMPOSITE);
-    m_context = new GraphicsContext(m_view);
+    m_context = new GraphicsContextHaiku(m_view);
 }
 
 
