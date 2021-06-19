@@ -61,7 +61,7 @@ public:
 
     // ResourceHandleClient implementation
     virtual void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, WTF::CompletionHandler<void()>&&) override;
-    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int) override;
+    virtual void didReceiveData(ResourceHandle*, const uint8_t*, unsigned, int) override;
     virtual void didFail(ResourceHandle*, const ResourceError&) override;
     virtual void wasBlocked(ResourceHandle*) override;
     virtual void cannotShowURL(ResourceHandle*) override;

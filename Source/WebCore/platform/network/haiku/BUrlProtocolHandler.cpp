@@ -138,20 +138,19 @@ void BUrlRequestWrapper::abort()
 {
     ASSERT(isMainThread());
 
-    {
-        // Lock if we have already unblocked the receive thread to
-        // synchronize cancellation status.
-        Locker locker { m_didUnblockReceive ? &m_receiveMutex : nullptr };
+    // Lock if we have already unblocked the receive thread to
+    // synchronize cancellation status.
+    if (m_didUnblockReceive)
+        m_receiveMutex.lock();
 
-        m_handler = nullptr;
-    }
+    m_handler = nullptr;
 
     // If the receive thread is still blocked, unblock it so that it
     // become aware of the state change.
     if (!m_didUnblockReceive) {
         m_didUnblockReceive = true;
-        m_receiveMutex.unlock();
     }
+    m_receiveMutex.unlock();
 
     if (m_request)
         m_request->Stop();

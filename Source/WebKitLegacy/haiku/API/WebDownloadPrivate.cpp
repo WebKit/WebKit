@@ -97,7 +97,7 @@ void WebDownloadPrivate::didReceiveResponseAsync(ResourceHandle*, ResourceRespon
     m_url = response.url().string();
 }
 
-void WebDownloadPrivate::didReceiveData(ResourceHandle*, const char* data, unsigned length, int /*lengthReceived*/)
+void WebDownloadPrivate::didReceiveData(ResourceHandle*, const uint8_t* data, unsigned length, int /*lengthReceived*/)
 {
 	if (m_file.InitCheck() != B_OK)
 		createFile();
