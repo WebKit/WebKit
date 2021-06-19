@@ -9,14 +9,14 @@ Rules from the stylesheet:
 #c { content: url("e"); }
 #d { content: url("f"); }
 #f { content: url("c"); }
-#g { content: url("d"); }
-#h { content: url("e"); }
-#i { content: url("f"); }
+#g { content: url(" d"); }
+#h { content: url("e "); }
+#i { content: url(" f "); }
 #j { content: url("url(g)"); }
 #l { content: url("c"); }
-#m { content: url("d"); }
-#n { content: url("e"); }
-#o { content: url("f"); }
+#m { content: url(" d"); }
+#n { content: url("e "); }
+#o { content: url(" f "); }
 #p { content: url("url(g)"); }
 #q { cursor: url("url(q)"), default; }
 #r { list-style-image: url("url(r)"); }
@@ -24,9 +24,9 @@ Rules from the stylesheet:
 #t { -webkit-mask-image: url("url(t)"); }
 #u { -webkit-border-image: url("url(u)") 1 2 3 4 fill stretch round; }
 #v { -webkit-mask-box-image: url("url(v)") 1 2 3 4 fill stretch round; }
-#w { content: url("ww"); }
-#x { content: url("x%20xx"); }
-#y { content: url("y%20yy"); }
+#w { content: url("w\d w"); }
+#x { content: url(" x x\9 x "); }
+#y { content: url("y y\9 y"); }
 Expected result:
 
 #a { content: url("c"); }
@@ -34,14 +34,14 @@ Expected result:
 #c { content: url("e"); }
 #d { content: url("f"); }
 #f { content: url("c"); }
-#g { content: url("d"); }
-#h { content: url("e"); }
-#i { content: url("f"); }
+#g { content: url(" d"); }
+#h { content: url("e "); }
+#i { content: url(" f "); }
 #j { content: url("url(g)"); }
 #l { content: url("c"); }
-#m { content: url("d"); }
-#n { content: url("e"); }
-#o { content: url("f"); }
+#m { content: url(" d"); }
+#n { content: url("e "); }
+#o { content: url(" f "); }
 #p { content: url("url(g)"); }
 #q { cursor: url("url(q)"), default; }
 #r { list-style-image: url("url(r)"); }
@@ -49,7 +49,7 @@ Expected result:
 #t { -webkit-mask-image: url("url(t)"); }
 #u { -webkit-border-image: url("url(u)") 1 2 3 4 fill stretch round; }
 #v { -webkit-mask-box-image: url("url(v)") 1 2 3 4 fill stretch round; }
-#w { content: url("ww"); }
-#x { content: url("x%20xx"); }
-#y { content: url("y%20yy"); }
+#w { content: url("w\d w"); }
+#x { content: url(" x x\9 x "); }
+#y { content: url("y y\9 y"); }
 

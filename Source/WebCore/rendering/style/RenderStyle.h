@@ -1071,7 +1071,7 @@ public:
     void setPaddingRight(Length&& length) { SET_VAR(m_surroundData, padding.right(), WTFMove(length)); }
 
     void setCursor(CursorType c) { m_inheritedFlags.cursor = static_cast<unsigned>(c); }
-    void addCursor(RefPtr<StyleImage>&&, const IntPoint& hotSpot = IntPoint());
+    void addCursor(RefPtr<StyleImage>&&, const std::optional<IntPoint>& hotSpot);
     void setCursorList(RefPtr<CursorList>&&);
     void clearCursorList();
 

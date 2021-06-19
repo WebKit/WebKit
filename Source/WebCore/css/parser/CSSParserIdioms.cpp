@@ -45,9 +45,4 @@ bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
     }
 }
 
-URL completeURL(const CSSParserContext& context, const String& url)
-{
-    return context.completeURL(url);
-}
-
 } // namespace WebCore

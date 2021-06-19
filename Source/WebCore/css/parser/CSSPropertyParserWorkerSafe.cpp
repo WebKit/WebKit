@@ -198,28 +198,28 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(const String&
 
 namespace CSSPropertyParserHelpersWorkerSafe {
 
-static RefPtr<CSSValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSFontFaceSrcValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    String url = CSSPropertyParserHelpers::consumeUrlAsStringView(range).toString();
-    if (url.isNull())
+    auto location = context.completeURL(CSSPropertyParserHelpers::consumeUrlAsStringView(range).toString()).resolvedURL.string();
+    if (location.isNull())
         return nullptr;
 
-    RefPtr<CSSFontFaceSrcValue> uriValue = CSSFontFaceSrcValue::create(context.completeURL(url).string(), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    String format;
+    if (range.peek().functionId() == CSSValueFormat) {
+        // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
+        // FIXME: The format should be a comma-separated list; at this time we support only one.
+        // FIXME: We allow any identifier here and convert all to strings; specification calls for only certain identifiers.
+        auto args = CSSPropertyParserHelpers::consumeFunction(range);
+        auto& arg = args.consumeIncludingWhitespace();
+        if ((arg.type() != StringToken && arg.type() != IdentToken) || !args.atEnd())
+            return nullptr;
+        format = arg.value().toString();
+    }
 
-    if (range.peek().functionId() != CSSValueFormat)
-        return uriValue;
-
-    // FIXME: https://drafts.csswg.org/css-fonts says that format() contains a comma-separated list of strings,
-    // but CSSFontFaceSrcValue stores only one format. Allowing one format for now.
-    // FIXME: We're allowing the format to be an identifier as well as a string, because the old
-    // parser did. It's not clear if we need to continue to support this behavior, but we have lots of
-    // layout tests that rely on it.
-    CSSParserTokenRange args = CSSPropertyParserHelpers::consumeFunction(range);
-    const CSSParserToken& arg = args.consumeIncludingWhitespace();
-    if ((arg.type() != StringToken && arg.type() != IdentToken) || !args.atEnd())
-        return nullptr;
-    uriValue->setFormat(arg.value().toString());
-    return uriValue;
+    // FIXME: Change CSSFontFaceSrcValue::create to take format so we don't need a separate setFormat call.
+    auto srcValue = CSSFontFaceSrcValue::create(location, context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    srcValue->setFormat(format);
+    return WTFMove(srcValue);
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)

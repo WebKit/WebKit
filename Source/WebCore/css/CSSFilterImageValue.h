@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +36,8 @@
 
 namespace WebCore {
 
-class CachedImage;
 class FilterSubimageObserverProxy;
 class RenderElement;
-class Document;
 
 namespace Style {
 class BuilderState;
@@ -71,14 +70,11 @@ public:
 
     bool equalInputImages(const CSSFilterImageValue&) const;
 
-    void createFilterOperations(Style::BuilderState&);
-
     const FilterOperations& filterOperations() const { return m_filterOperations; }
-    void setFilterOperations(const FilterOperations& filterOperations)
-    {
-        m_filterOperations = filterOperations;
-    }
+    void setFilterOperations(const FilterOperations& filterOperations) { m_filterOperations = filterOperations; }
     CachedImage* cachedImage() const { return m_cachedImage.get(); }
+
+    Ref<CSSFilterImageValue> valueWithStylesResolved(Style::BuilderState&);
 
 private:
     CSSFilterImageValue(Ref<CSSValue>&& imageValue, Ref<CSSValue>&& filterValue)
@@ -106,6 +102,7 @@ private:
     };
 
     void filterImageChanged(const IntRect&);
+    void createFilterOperations(Style::BuilderState&);
 
     Ref<CSSValue> m_imageValue;
     Ref<CSSValue> m_filterValue;

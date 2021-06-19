@@ -1,3 +1,148 @@
+2021-06-19  Darin Adler  <darin@apple.com>
+
+        Fix CSS serialization issues affecting css-counter-styles tests
+        https://bugs.webkit.org/show_bug.cgi?id=226708
+
+        Reviewed by Antti Koivisto.
+
+        Fix two serialization isssues affecting css-counter-styles tests:
+
+        1) URLs were serializing the full resolved URL, rather than the
+           partial URL string from the style sheet.
+        2) Items in additive-symbols that had both an integer and a string
+           would incorrectly serialize with a comma within the item.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::valueWithStylesResolved): Added.
+        Calls resolveImageStyles on the image values.
+        * css/CSSCrossfadeValue.h: Updated for the above.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue): Changed the hot spot
+        to use std::optional instead of a separate boolean.
+        (WebCore::CSSCursorImageValue::create): Moved this out of the header
+        because it's not better for inlining to have it there.
+        (WebCore::CSSCursorImageValue::customCSSText const): Updated for the
+        m_hotSpot changes.
+        (WebCore::CSSCursorImageValue::updateCursorElement): Removed unneeded
+        check of hasFragmentIdentifier, which is already done by the
+        SVGURIReference::targetElementFromIRIString function. Updated to use
+        m_originalSpecifiedURLString, and added a FIXME about the strange way
+        this just keeps accumulating more and more clients in a set, but did
+        not change that behavior.
+        (WebCore::CSSCursorImageValue::cursorElementRemoved): Added a FIXME.
+        (WebCore::CSSCursorImageValue::cursorElementChanged): Updated for the
+        change to m_hotSpot and addded some FIXME.
+        (WebCore::CSSCursorImageValue::equals const): Updated for the m_hotSpot
+        change; much simpler since std::optional does the right thing.
+        (WebCore::CSSCursorImageValue::valueWithStylesResolved): Added.
+        Calls resolveImageStyles on the image value.
+        * css/CSSCursorImageValue.h: Updated for the above changes.
+
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::valueWithStylesResolved): Added.
+        Calls resolveImageStyles on the image value and also calls
+        createFilterOperations.
+        * css/CSSFilterImageValue.h: Updated for the above.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::valueWithStylesResolved): Renamed from
+        gradientWithStylesResolved.
+        * css/CSSGradientValue.h: Updated for the above.
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::valueWithStylesResolved): Renamed from
+        imageSetWithStylesResolved. Optimized the case where the resolved
+        version is not different to re-use the original CSSImageSetValue.
+        * css/CSSImageSetValue.h: Updated for the above.
+
+        * css/CSSImageValue.cpp:
+        (WebCore::operator==): Added. Check if two ResolvedURL are equal.
+        (WebCore::makeResolvedURL): Added. Make a ResolvedURL from an
+        existing URL without the original specified string.
+        (WebCore::CSSImageValue::CSSImageValue): Take ResolvedURL instead
+        of a URL. Also updated to use std::optional instead of a separate
+        m_accessedImage boolean.
+        (WebCore::CSSImageValue::create): Added an overload that takes
+        ResolvedURL argument and also moved here from the header since we
+        don't get any benefit from inlining.
+        (WebCore::CSSImageValue::isPending const): Updates since m_cachedImage
+        is now a std::optional, and the std::nullopt case is used for this.
+        (WebCore::CSSImageValue::reresolvedURL const): Added. Used so we can
+        share code between the following functions.
+        (WebCore::CSSImageValue::valueWithStylesResolved): Added. Computes
+        the fully resolved URL and makes a new image value if needed that
+        always uses it. Also points the new value at the old one so we can
+        update m_cachedImage in both.
+        (WebCore::CSSImageValue::loadImage): Use the new reresolvedURL function.
+        Also update m_cachedImage in any underlying objects.
+        (WebCore::CSSImageValue::traverseSubresources): Updated for change
+        to m_cachedImage.
+        (WebCore::CSSImageValue::equals const): Updated for change to use
+        ResolvedURL.
+        (WebCore::CSSImageValue::customCSSText const): Ditto. This is the
+        only place where we use specifiedURLString.
+        (WebCore::CSSImageValue::createDeprecatedCSSOMWrapper const): Updated
+        for change from m_url.
+        (WebCore::CSSImageValue::knownToBeOpaque const): Updated for change
+        to m_cachedImage.
+        * css/CSSImageValue.h: Added ResolvedURL, new create
+        overloads. Replaced url() function with location() function, which
+        returns a string. Note that this always returns the resolved string,
+        only customCSSText returns the original string. Replaced m_url with
+        m_location, eliminated m_accessedImage and made m_cachedImage use
+        std::optional instead. Added m_unresolvedValue.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::completeURL const): Deleted unused function.
+        * css/StyleSheetContents.h: Ditto.
+
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::completeURL const): Updated to return
+        ResolvedURL instead of a URL.
+        * css/parser/CSSParserContext.h: Ditto.
+
+        * css/parser/CSSParserIdioms.cpp:
+        (WebCore::completeURL): Deleted unused function.
+        * css/parser/CSSParserIdioms.h: Ditto.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeCursor): Use std::optional for the hot spot.
+        (WebCore::consumeCounterStyleAdditiveSymbols): Put the integer/symbol
+        pair into a separate space-separated list instead of appending both
+        to the top level command-separated list. Also removed support for
+        non-standard "image without symbol" and "symbol without image".
+        Neither the specification nor the web platform tests currently call
+        for that.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeImage): Call the new
+        overload of CSSImageValue::create, passing a ResolvedURL.
+
+        * css/parser/CSSPropertyParserWorkerSafe.cpp:
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceSrcURI):
+        Update for the change to completeURL and refactor a bit. Later we could
+        make the same kind of fix for CSSFontFaceSrcValue that we did in this
+        patch for CSSImageValue, but did not try that for now.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCursor): Updated to take a std::optional for
+        the hot spot.
+        * rendering/style/RenderStyle.h: Ditto.
+
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::imageURL): Updated for CSSImageValue::imageURL.
+
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueContent): Call
+        resolveImageStyles consistently.
+
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::resolveImageStyles): Call the new
+        valueWithStylesResolved function on all the different image value
+        types. This unifies the approach across all 6 classes.
+        (WebCore::Style::BuilderState::createStyleImage): Tweaked style.
+
 2021-06-18  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Assigning a value outside the float range to a 'float' attribute should throw a TypeError

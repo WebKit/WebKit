@@ -66,7 +66,7 @@ bool StyleCachedImage::operator==(const StyleImage& other) const
 
 URL StyleCachedImage::imageURL()
 {
-    return m_cssValue->url();
+    return m_cssValue->imageURL();
 }
 
 void StyleCachedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)

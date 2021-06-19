@@ -1,3 +1,32 @@
+2021-06-19  Darin Adler  <darin@apple.com>
+
+        Fix CSS serialization issues affecting css-counter-styles tests
+        https://bugs.webkit.org/show_bug.cgi?id=226708
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/parse-border-image-repeat-null-crash-expected.txt: Update to reflect correct
+        path; the path is not really relevant to what was being tested here either way.
+
+        * fast/css/uri-token-parsing-expected.txt: Updated to expect behavior that is sensible
+        and also matches Firefox.
+        * fast/css/uri-token-parsing.html: Ditto.
+
+        * fast/fast/css/url-with-multi-byte-unicode-escape-expected.txt: Updated to expect that
+        URL is still encoded as UTF-8, not yet re-URL-encoded as it will be for loading. The
+        one that will be used for loading can still be seen in computed style. The test still
+        covers correclty parsig this URL.
+        * fast/fast/css/url-with-multi-byte-unicode-escape.html: Ditto.
+
+        * fast/filter-image/parse-filter-image-expected.txt: Updated to no longer test addition
+        of trailing slashes to peculiar URLs that are made by using filenames as host names.
+        Now this checks URLs that just contain filenames, which makes more logical sense, and
+        no trailing slash addition is expected.
+        * fast/filter-image/parse-filter-image.html: Ditto.
+
+        * fast/innerHTML/innerHTML-uri-resolution.html: Updated test to use computed style so
+        it no longer depends on WebKit-only behavior to run correctly.
+
 2021-06-18  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Assigning a value outside the float range to a 'float' attribute should throw a TypeError

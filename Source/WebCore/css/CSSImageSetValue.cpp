@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,16 +113,14 @@ void CSSImageSetValue::updateDeviceScaleFactor(const Document& document)
     m_selectedImageValue = nullptr;
 }
 
-Ref<CSSImageSetValue> CSSImageSetValue::imageSetWithStylesResolved(Style::BuilderState& builderState)
+Ref<CSSImageSetValue> CSSImageSetValue::valueWithStylesResolved(Style::BuilderState& builderState)
 {
-    Ref<CSSImageSetValue> result = CSSImageSetValue::create();
-    size_t length = this->length();
-    for (size_t i = 0; i + 1 < length; i += 2) {
+    auto result = create();
+    for (size_t i = 0, length = this->length(); i + 1 < length; i += 2) {
         result->append(builderState.resolveImageStyles(*itemWithoutBoundsCheck(i)));
         result->append(*itemWithoutBoundsCheck(i + 1));
     }
-
-    return result;
+    return equals(result) ? Ref { *this } : result;
 }
 
 String CSSImageSetValue::customCSSText() const

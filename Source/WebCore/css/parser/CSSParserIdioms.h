@@ -59,6 +59,4 @@ bool isNameCodePoint(CharacterType c)
 
 bool isValueAllowedInMode(unsigned short, CSSParserMode);
 
-URL completeURL(const CSSParserContext&, const String& url);
-
 } // namespace WebCore

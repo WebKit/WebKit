@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -9,7 +9,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public License
@@ -34,17 +34,27 @@ class DeprecatedCSSOMValue;
 class CSSStyleDeclaration;
 class RenderElement;
 
+namespace Style {
+class BuilderState;
+}
+
+struct ResolvedURL {
+    String specifiedURLString;
+    URL resolvedURL;
+};
+
 class CSSImageValue final : public CSSValue {
 public:
-    static Ref<CSSImageValue> create(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource) { return adoptRef(*new CSSImageValue(WTFMove(url), loadedFromOpaqueSource)); }
-    static Ref<CSSImageValue> create(CachedImage& image) { return adoptRef(*new CSSImageValue(image)); }
+    static Ref<CSSImageValue> create(ResolvedURL&&, LoadedFromOpaqueSource);
+    static Ref<CSSImageValue> create(URL&&, LoadedFromOpaqueSource);
+    static Ref<CSSImageValue> create(CachedImage&);
     ~CSSImageValue();
 
     bool isPending() const;
     CachedImage* loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-    CachedImage* cachedImage() const { return m_cachedImage.get(); }
+    CachedImage* cachedImage() const { return m_cachedImage ? m_cachedImage.value().get() : nullptr; }
 
-    const URL& url() const { return m_url; }
+    const URL& imageURL() const { return m_location.resolvedURL; }
 
     String customCSSText() const;
 
@@ -58,15 +68,19 @@ public:
 
     void setInitiator(const AtomString& name) { m_initiatorName = name; }
 
+    Ref<CSSImageValue> valueWithStylesResolved(Style::BuilderState&);
+
 private:
-    CSSImageValue(URL&&, LoadedFromOpaqueSource);
+    CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource);
     explicit CSSImageValue(CachedImage&);
 
-    URL m_url;
-    CachedResourceHandle<CachedImage> m_cachedImage;
-    bool m_accessedImage;
+    URL reresolvedURL(const Document&) const;
+
+    ResolvedURL m_location;
+    std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
     AtomString m_initiatorName;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
+    RefPtr<CSSImageValue> m_unresolvedValue;
 };
 
 } // namespace WebCore
