@@ -1,3 +1,67 @@
+2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Skip shadow-root creation for input element if it is not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=227189
+
+        Reviewed by Maciej Stachowiak.
+
+        Test: fast/forms/checkbox-child-hidden.html
+
+        Cherry-pick Chromium optimizations[1,2] for input element and extend the coverage for more types.
+
+        Some of input element (e.g. checkbox) do not need to create a shadow-root since they do not have shadow-subtree.
+        This patch optimizes input element creation by skipping creation of shadow-root for these input types.
+
+        Since HTMLTextFormControlElement::childShouldCreateRenderer creates renderer only for children under shadow-root,
+        we do not need to consider about the case appending an element to checkbox etc. They will not get renderers.
+
+        We also replace HTMLInputElement related class' override with final if they are final to make class-hierarchy more explicit
+        and not to miss the change that needs to be done in the derived classes.
+
+        On M1 MBP, this patch improves Speedometer2 by 0.8%.
+
+        [1]: https://chromium-review.googlesource.com/c/chromium/src/+/773180
+        [2]: https://chromium-review.googlesource.com/c/chromium/src/+/826426 (but this is not necessary in WebKit since HTMLTextFormControlElement::childShouldCreateRenderer does the right thing elegantly)
+
+        * dom/Element.cpp:
+        (WebCore::Element::ensureUserAgentShadowRoot):
+        (WebCore::Element::createUserAgentShadowRoot):
+        * dom/Element.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/BaseDateAndTimeInputType.h:
+        (WebCore::BaseDateAndTimeInputType::BaseDateAndTimeInputType):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/ColorInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::FileInputType):
+        (WebCore::FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::create):
+        (WebCore::HTMLInputElement::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        (WebCore::HTMLInputElement::updateType): It is possible that shadow root is already created for the previous InputType.
+        So we should use ensureUserAgentShadowRoot.
+        (WebCore::HTMLInputElement::initializeInputType): Since this is called at initialization time, we can use createUserAgentShadowRoot
+        instead of ensureUserAgentShadowRoot.
+        (WebCore::HTMLInputElement::didAddUserAgentShadowRoot): Deleted. Clean up the logic instead of relying on this callback.
+        Since HTMLInputElement can replace InputType, while we need to create shadow-subtree when InputType is replaced,
+        this callback could not be called since shadow-root is already created for the previous InputType. Not relying on this
+        callback makes the logic much simpler: explicitly create shadow-root and shadow-subtree.
+        * html/HTMLInputElement.h:
+        * html/InputType.h:
+        (WebCore::InputType::needsShadowSubtree const): Since this is in the critical path, we need this super optimized implementation.
+        Button, checkbox, hidden, image, radio, reset, and submit do not require shadow root.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::RangeInputType):
+        (WebCore::RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType):
+        (WebCore::SearchInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::TextFieldInputType):
+        (WebCore::TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+
 2021-06-19  Darin Adler  <darin@apple.com>
 
         Fix CSS serialization issues affecting css-counter-styles tests

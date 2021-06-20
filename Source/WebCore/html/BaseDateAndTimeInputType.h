@@ -60,7 +60,12 @@ protected:
         HasMeridiem = 1 << 7,
     };
 
-    BaseDateAndTimeInputType(Type type, HTMLInputElement& element) : InputType(type, element) { }
+    BaseDateAndTimeInputType(Type type, HTMLInputElement& element)
+        : InputType(type, element)
+    {
+        ASSERT(needsShadowSubtree());
+    }
+
     ~BaseDateAndTimeInputType();
 
     Decimal parseToNumber(const String&, const Decimal&) const override;

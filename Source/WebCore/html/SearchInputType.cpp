@@ -48,6 +48,7 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
     : BaseTextInputType(Type::Search, element)
     , m_searchEventTimer(*this, &SearchInputType::searchEventTimerFired)
 {
+    ASSERT(needsShadowSubtree());
 }
 
 void SearchInputType::addSearchResult()
@@ -104,6 +105,7 @@ bool SearchInputType::needsContainer() const
 
 void SearchInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool isInnerTextElementEditable)
 {
+    ASSERT(needsShadowSubtree());
     ASSERT(!m_resultsButton);
     ASSERT(!m_cancelButton);
 

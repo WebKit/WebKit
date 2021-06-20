@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -144,6 +144,16 @@ public:
         Type::Reset,
     };
 
+    static constexpr OptionSet<Type> nonShadowRootTypes = {
+        Type::Button,
+        Type::Checkbox,
+        Type::Hidden,
+        Type::Image,
+        Type::Radio,
+        Type::Reset,
+        Type::Submit,
+    };
+
     static Ref<InputType> create(HTMLInputElement&, const AtomString&);
     static Ref<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
@@ -195,6 +205,7 @@ public:
     bool isInteractiveContent() const;
     bool supportLabels() const;
     bool isEnumeratable() const;
+    bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type); }
 
     // Form value functions.
 

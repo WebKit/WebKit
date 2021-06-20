@@ -306,6 +306,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
 
 void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
+    ASSERT(needsShadowSubtree());
     ASSERT(element());
 
     auto& element = *this->element();

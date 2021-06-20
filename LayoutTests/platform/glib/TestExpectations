@@ -2319,6 +2319,9 @@ webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-r
 webkit.org/b/227053 fast/canvas/canvas-imageSmoothingEnabled.html [ Failure ]
 webkit.org/b/227053 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
 
+# Require expect file for dumped render tree.
+webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

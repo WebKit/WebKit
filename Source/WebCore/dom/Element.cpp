@@ -2462,6 +2462,12 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
 {
     if (auto shadow = userAgentShadowRoot())
         return *shadow;
+    return createUserAgentShadowRoot();
+}
+
+ShadowRoot& Element::createUserAgentShadowRoot()
+{
+    ASSERT(!userAgentShadowRoot());
     auto newShadow = ShadowRoot::create(document(), ShadowRootMode::UserAgent);
     ShadowRoot& shadow = newShadow;
     addShadowRoot(WTFMove(newShadow));
