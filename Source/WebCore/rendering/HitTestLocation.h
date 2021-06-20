@@ -29,7 +29,6 @@ class HitTestLocation {
 public:
     WEBCORE_EXPORT HitTestLocation();
     HitTestLocation(const LayoutPoint&);
-    WEBCORE_EXPORT HitTestLocation(const FloatPoint&);
     HitTestLocation(const FloatPoint&, const FloatQuad&);
 
     HitTestLocation(const LayoutRect&);

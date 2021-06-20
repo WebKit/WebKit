@@ -34,11 +34,6 @@ HitTestLocation::HitTestLocation(const LayoutPoint& point)
 {
 }
 
-HitTestLocation::HitTestLocation(const FloatPoint& point)
-    : HitTestLocation::HitTestLocation { flooredLayoutPoint(point) }
-{
-}
-
 HitTestLocation::HitTestLocation(const FloatPoint& point, const FloatQuad& quad)
     : m_point { flooredLayoutPoint(point) }
     , m_boundingBox { quad.enclosingBoundingBox() }

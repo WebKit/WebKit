@@ -4277,7 +4277,7 @@ RenderLayer* RenderLayer::hitTestLayerByApplyingTransform(RenderLayer* rootLayer
     if (hitTestLocation.isRectBasedTest())
         newHitTestLocation = HitTestLocation(localPoint, localPointQuad);
     else
-        newHitTestLocation = HitTestLocation(localPoint);
+        newHitTestLocation = HitTestLocation(flooredLayoutPoint(localPoint));
 
     // Now do a hit test with the root layer shifted to be us.
     return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestLocation, true, newTransformState.ptr(), zOffset);

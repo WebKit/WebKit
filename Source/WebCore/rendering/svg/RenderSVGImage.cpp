@@ -231,7 +231,7 @@ bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
         if (hitRules.canHitFill) {
             if (m_objectBoundingBox.contains(localPoint)) {
                 updateHitTestResult(result, LayoutPoint(localPoint));
-                if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, localPoint) == HitTestProgress::Stop)
+                if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
                     return true;
             }
         }
