@@ -33,8 +33,6 @@
 
 #include "GraphicsContext.h"
 
-#include "ShadowBlur.h"
-
 #include <View.h>
 
 #include <stack>
@@ -45,6 +43,9 @@ class GraphicsContextHaiku: public GraphicsContext {
 public:
     GraphicsContextHaiku(BView* view);
     ~GraphicsContextHaiku();
+
+    bool hasPlatformContext() const { return m_view != nullptr; }
+    PlatformGraphicsContext* platformContext() const { return m_view; }
 
     void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) override;
     FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) override;
@@ -79,65 +80,8 @@ public:
     void setCTM(const AffineTransform&) override;
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
 
-    struct CustomGraphicsState {
-        CustomGraphicsState()
-            : previous(0)
-            , imageInterpolationQuality(InterpolationQuality::Default)
-            , globalAlpha(1.0f)
-        {
-        }
-
-        CustomGraphicsState(CustomGraphicsState* previous)
-            : previous(previous)
-            , imageInterpolationQuality(previous->imageInterpolationQuality)
-            , globalAlpha(previous->globalAlpha)
-        {
-        }
-
-        CustomGraphicsState* previous;
-
-        InterpolationQuality imageInterpolationQuality;
-        float globalAlpha;
-    };
-
-    void save() override
-    {
-        transformStack.push(m_view->Transform());
-        m_graphicsState = new CustomGraphicsState(m_graphicsState);
-        m_view->PushState();
-    }
-
-    void restore() override
-    {
-        m_view->PopState();
-
-        ASSERT(m_graphicsState->previous);
-        if (!m_graphicsState->previous)
-            return;
-
-        CustomGraphicsState* oldTop = m_graphicsState;
-        m_graphicsState = oldTop->previous;
-        delete oldTop;
-
-        m_view->SetTransform(transformStack.top());
-        transformStack.pop();
-    }
-
-    CustomGraphicsState* state() const
-    {
-        return m_graphicsState;
-    }
-
-    ShadowBlur& shadowBlur()
-    {
-        return blur;
-    }
-
-    CustomGraphicsState* m_graphicsState;
     BView* m_view;
-    ShadowBlur blur;
     pattern m_strokeStyle;
-    std::stack<BAffineTransform> transformStack;
 };
 
 };

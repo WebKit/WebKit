@@ -52,19 +52,13 @@ namespace WebCore {
 
 
 GraphicsContextHaiku::GraphicsContextHaiku(BView* view)
-    : m_graphicsState(new CustomGraphicsState)
-    , m_view(view)
+    : m_view(view)
     , m_strokeStyle(B_SOLID_HIGH)
 {
 }
 
 GraphicsContextHaiku::~GraphicsContextHaiku()
 {
-    while (CustomGraphicsState* previous = m_graphicsState->previous) {
-        delete m_graphicsState;
-        m_graphicsState = previous;
-    }
-    delete m_graphicsState;
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -87,7 +81,7 @@ void GraphicsContextHaiku::drawRect(const FloatRect& rect, float borderThickness
 
 void GraphicsContextHaiku::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    save();
+    m_view->PushState();
     setCompositeOperation(options.compositeOperator());
 
     // Test using example site at
@@ -102,7 +96,7 @@ void GraphicsContextHaiku::drawNativeImage(NativeImage& image, const FloatSize& 
 
     m_view->DrawBitmapAsync(image.platformImage().get(), BRect(srcRect), BRect(destRect), flags);
 
-    restore();
+    m_view->PopState();
 }
 
 // This is only used to draw borders.
@@ -315,7 +309,7 @@ void GraphicsContextHaiku::drawPattern(NativeImage& image, const WebCore::FloatS
         bits += bytesPerRow;
     }
 
-    save();
+    m_view->PushState();
     if (hasAlpha)
         m_view->SetDrawingMode(B_OP_ALPHA);
     else
@@ -329,7 +323,7 @@ void GraphicsContextHaiku::drawPattern(NativeImage& image, const WebCore::FloatS
     phaseOffsetY -= std::trunc(phaseOffsetY / tileRect.height()) * tileRect.height();
     m_view->DrawTiledBitmapAsync(
         image.platformImage().get(), destRect, BPoint(phaseOffsetX, phaseOffsetY));
-    restore();
+    m_view->PopState();
 }
 
 
@@ -525,45 +519,98 @@ void GraphicsContextHaiku::updateState(const GraphicsContextState& state, Graphi
         FillGradientChange // 
         FillPatternChange                       = 1 << 3,
 #endif
-#if 0
     if (flags & GraphicsContextState::StrokeThicknessChange)
-        m_view->SetStrokeWidth(state.strokeThickness);
-#endif
+        m_view->SetPenSize(state.strokeThickness);
     if (flags & GraphicsContextState::StrokeColorChange)
         m_view->SetHighColor(state.strokeColor);
-#if 0
     if (flags & GraphicsContextState::StrokeStyleChange) {
-        switch (strokeStyle) {
+        switch (strokeStyle()) {
             case DoubleStroke:
             case WavyStroke:
                 notImplemented();
-                m_data->m_strokeStyle = B_SOLID_HIGH;
+                m_strokeStyle = B_SOLID_HIGH;
                 break;
             case SolidStroke:
-                m_data->m_strokeStyle = B_SOLID_HIGH;
+                m_strokeStyle = B_SOLID_HIGH;
                 break;
             case DottedStroke:
-                m_data->m_strokeStyle = B_MIXED_COLORS;
+                m_strokeStyle = B_MIXED_COLORS;
                 break;
             case DashedStroke:
                 // FIXME: use a better dashed stroke!
                 notImplemented();
-                m_data->m_strokeStyle = B_MIXED_COLORS;
+                m_strokeStyle = B_MIXED_COLORS;
                 break;
             case NoStroke:
-                m_data->m_strokeStyle = B_SOLID_LOW;
+                m_strokeStyle = B_SOLID_LOW;
                 break;
         }
     }
-#endif
     if (flags & GraphicsContextState::FillColorChange)
         m_view->SetLowColor(state.fillColor);
+    if (flags & GraphicsContextState::FillRuleChange)
+        m_view->SetFillRule(fillRule() == WindRule::NonZero ? B_NONZERO : B_EVEN_ODD);
 #if 0
-        FillRuleChange                          = 1 << 8,
         ShadowChange                            = 1 << 9,
         ShadowsIgnoreTransformsChange           = 1 << 10,
         AlphaChange                             = 1 << 11,
-        CompositeOperationChange                = 1 << 12,
+#endif
+    if (flags & GraphicsContextState::CompositeOperationChange) {
+        drawing_mode mode = B_OP_ALPHA;
+        alpha_function blending_mode = B_ALPHA_COMPOSITE;
+        switch (compositeOperation()) {
+            case CompositeOperator::SourceOver:
+                blending_mode = B_ALPHA_COMPOSITE_SOURCE_OVER;
+                break;
+            case CompositeOperator::PlusLighter:
+                blending_mode = B_ALPHA_COMPOSITE_LIGHTEN;
+                break;
+            case CompositeOperator::Difference:
+                blending_mode = B_ALPHA_COMPOSITE_DIFFERENCE;
+                break;
+            case CompositeOperator::PlusDarker:
+                blending_mode = B_ALPHA_COMPOSITE_DARKEN;
+                break;
+            case CompositeOperator::Clear:
+                blending_mode = B_ALPHA_COMPOSITE_CLEAR;
+                break;
+            case CompositeOperator::DestinationOut:
+                blending_mode = B_ALPHA_COMPOSITE_DESTINATION_OUT;
+                break;
+            case CompositeOperator::SourceAtop:
+                blending_mode = B_ALPHA_COMPOSITE_SOURCE_ATOP;
+                break;
+            case CompositeOperator::SourceIn:
+                blending_mode = B_ALPHA_COMPOSITE_SOURCE_IN;
+                break;
+            case CompositeOperator::SourceOut:
+                blending_mode = B_ALPHA_COMPOSITE_SOURCE_OUT;
+                break;
+            case CompositeOperator::DestinationOver:
+                blending_mode = B_ALPHA_COMPOSITE_DESTINATION_OVER;
+                break;
+            case CompositeOperator::DestinationAtop:
+                blending_mode = B_ALPHA_COMPOSITE_DESTINATION_ATOP;
+                break;
+            case CompositeOperator::DestinationIn:
+                blending_mode = B_ALPHA_COMPOSITE_DESTINATION_IN;
+                break;
+            case CompositeOperator::XOR:
+                blending_mode = B_ALPHA_COMPOSITE_XOR;
+                break;
+            case CompositeOperator::Copy:
+                mode = B_OP_COPY;
+                break;
+            default:
+                fprintf(stderr, "GraphicsContext::setCompositeOperation: Unsupported composite operation %s\n",
+                        compositeOperatorName(compositeOperation(), blendModeOperation()).utf8().data());
+        }
+        m_view->SetDrawingMode(mode);
+
+        if (mode == B_OP_ALPHA)
+            m_view->SetBlendingMode(B_PIXEL_ALPHA, blending_mode);
+    }
+#if 0
         BlendModeChange                         = 1 << 13,
         TextDrawingModeChange                   = 1 << 14,
         ShouldAntialiasChange                   = 1 << 15,
