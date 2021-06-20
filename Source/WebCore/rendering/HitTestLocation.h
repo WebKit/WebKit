@@ -48,13 +48,12 @@ public:
     bool isRectilinear() const { return m_isRectilinear; }
     IntRect boundingBox() const { return m_boundingBox; }
     
-    WEBCORE_EXPORT static IntRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     int topPadding() const { return roundedPoint().y() - m_boundingBox.y(); }
     int rightPadding() const { return m_boundingBox.maxX() - roundedPoint().x() - 1; }
     int bottomPadding() const { return m_boundingBox.maxY() - roundedPoint().y() - 1; }
     int leftPadding() const { return roundedPoint().x() - m_boundingBox.x(); }
 
-    bool intersects(const LayoutRect&) const;
+    WEBCORE_EXPORT bool intersects(const LayoutRect&) const;
     bool intersects(const FloatRect&) const;
     bool intersects(const RoundedRect&) const;
 

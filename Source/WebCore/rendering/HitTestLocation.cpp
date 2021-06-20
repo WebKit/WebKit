@@ -24,6 +24,19 @@
 
 namespace WebCore {
 
+static IntRect rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+{
+    IntPoint actualPoint(flooredIntPoint(point));
+    actualPoint -= IntSize(leftPadding, topPadding);
+
+    IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);
+    // As IntRect is left inclusive and right exclusive (seeing IntRect::contains(x, y)), adding "1".
+    // FIXME: Remove this once non-rect based hit-detection stops using IntRect:intersects.
+    actualPadding += IntSize(1, 1);
+
+    return IntRect(actualPoint, actualPadding);
+}
+
 HitTestLocation::HitTestLocation() = default;
 
 HitTestLocation::HitTestLocation(const LayoutPoint& point)
@@ -140,19 +153,6 @@ bool HitTestLocation::intersects(const FloatRect& rect) const
 bool HitTestLocation::intersects(const RoundedRect& rect) const
 {
     return rect.intersectsQuad(m_transformedRect);
-}
-
-IntRect HitTestLocation::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
-{
-    IntPoint actualPoint(flooredIntPoint(point));
-    actualPoint -= IntSize(leftPadding, topPadding);
-
-    IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);
-    // As IntRect is left inclusive and right exclusive (seeing IntRect::contains(x, y)), adding "1".
-    // FIXME: Remove this once non-rect based hit-detection stops using IntRect:intersects.
-    actualPadding += IntSize(1, 1);
-
-    return IntRect(actualPoint, actualPadding);
 }
 
 } // namespace WebCore

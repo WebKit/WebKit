@@ -1,5 +1,25 @@
 2021-06-20  Alan Bujtas  <zalan@apple.com>
 
+        Move rectForPoint() static function out from the HitTestLocation class
+        https://bugs.webkit.org/show_bug.cgi?id=227182
+
+        Reviewed by Sam Weinig.
+
+        This function implicitly enlarges the hit test area which may trigger unexpected behavior.
+        It's better to not have it on the class's public interface.
+
+        * rendering/HitTestLocation.cpp:
+        (WebCore::rectForPoint):
+        (WebCore::HitTestLocation::rectForPoint): Deleted.
+        * rendering/HitTestLocation.h:
+        * rendering/LegacyEllipsisBox.cpp:
+        (WebCore::LegacyEllipsisBox::nodeAtPoint): While this may be a functionality change where we
+        replace the previously set area padding with 0 (actually 1px), I don't think that's what this is about.
+        * testing/Internals.cpp:
+        (WebCore::Internals::nodesFromRect const):
+
+2021-06-20  Alan Bujtas  <zalan@apple.com>
+
         Remove HitTestLocation(FloatPoint) c'tor
         https://bugs.webkit.org/show_bug.cgi?id=227179
 
