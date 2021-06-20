@@ -938,7 +938,7 @@ void IconDatabase::iconDatabaseSyncThread()
 static int databaseVersionNumber(SQLiteDatabase& db)
 {
     auto versionStatement = db.prepareStatement("SELECT value FROM IconDatabaseInfo WHERE key = 'Version';"_s);
-    return versionStatement->columnInt(0);
+    return versionStatement ? versionStatement->columnInt(0) : 0;
 }
 
 static bool isValidDatabase(SQLiteDatabase& db)
@@ -1003,7 +1003,6 @@ static void createDatabaseTables(SQLiteDatabase& db)
 void IconDatabase::performOpenInitialization()
 {
     ASSERT_ICON_SYNC_THREAD();
-
     if (!isOpen())
         return;
 
