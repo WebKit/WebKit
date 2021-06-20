@@ -728,9 +728,7 @@ public:
         m_button = mouseButtonForEvent(event);
         m_buttons = currentlyPressedMouseButtons();
         m_clickCount = clickCountForEvent(event);
-#if ENABLE(POINTER_LOCK)
         m_movementDelta = IntPoint(event.deltaX, event.deltaY);
-#endif
 
         m_force = 0;
         int stage = eventIsPressureEvent ? event.stage : correspondingPressureEvent.stage;

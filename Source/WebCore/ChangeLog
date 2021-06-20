@@ -1,3 +1,36 @@
+2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Mouse events should only trigger text recognition if the cursor is moving
+        https://bugs.webkit.org/show_bug.cgi?id=227181
+        rdar://79469827
+
+        Reviewed by Tim Horton.
+
+        Make a slight adjustment to how we trigger the text recognition timer when hovering over images; instead of
+        allowing any non-synthetic mouse event to kick off the timer, limit it to only mouse events with horizontal or
+        vertical movement deltas.
+
+        To implement this, we remove some `ENABLE(POINTER_LOCK)` guards around PlatformMouseEvent's movement delta, and
+        check whether the movement delta is nonzero in EventHandler when determining whether to start the text
+        recognition timer.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
+        Check for a nonzero movement delta in place of the synthetic click type; since all synthetic mouse events are
+        created with no horizontal or vertical delta, since new movement delta check obviates the need for checking the
+        synthetic click type.
+
+        Additionally, we invert the conditional here so that if any mouse events are detected over content that is not
+        an image, we'll immediately stop the timer; however, if the mouse event is over an image, we'll only kick off
+        the timer if the movement delta is additionally nonzero.
+
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::globalPosition const):
+        (WebCore::PlatformMouseEvent::movementDelta const):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+
 2021-06-20  Alan Bujtas  <zalan@apple.com>
 
         Move rectForPoint() static function out from the HitTestLocation class

@@ -2540,12 +2540,10 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
     m_elementUnderMouse = targetElement;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (platformMouseEvent.syntheticClickType() == NoTap) {
-        if (m_elementUnderMouse && is<RenderImage>(m_elementUnderMouse->renderer()))
-            m_textRecognitionHoverTimer.restart();
-        else
-            m_textRecognitionHoverTimer.stop();
-    }
+    if (!m_elementUnderMouse || !is<RenderImage>(m_elementUnderMouse->renderer()))
+        m_textRecognitionHoverTimer.stop();
+    else if (!platformMouseEvent.movementDelta().isZero())
+        m_textRecognitionHoverTimer.restart();
 #endif // ENABLE(IMAGE_ANALYSIS)
 
     if (auto* page = m_frame.page())

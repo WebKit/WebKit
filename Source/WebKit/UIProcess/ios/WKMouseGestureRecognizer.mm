@@ -120,10 +120,10 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     }();
 
     WebCore::IntPoint point { [self locationInView:self.view] };
-
+    auto delta = point - WebCore::IntPoint { [_currentTouch previousLocationInView:self.view] };
     // UITouch's timestamp uses mach_absolute_time as its timebase, same as MonotonicTime.
     auto timestamp = MonotonicTime::fromRawSeconds([_currentTouch timestamp]).approximateWallTime();
-    return WTF::makeUnique<WebKit::NativeWebMouseEvent>(type, button, buttons, point, point, 0, 0, 0, [_currentTouch tapCount], modifiers, timestamp, 0, cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No);
+    return WTF::makeUnique<WebKit::NativeWebMouseEvent>(type, button, buttons, point, point, delta.width(), delta.height(), 0, [_currentTouch tapCount], modifiers, timestamp, 0, cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No);
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
