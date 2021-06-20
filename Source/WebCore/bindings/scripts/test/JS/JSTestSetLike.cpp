@@ -29,6 +29,7 @@
 #include "JSDOMConvertAny.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMSetLike.h"
 #include "JSDOMWrapperCache.h"
@@ -168,7 +169,7 @@ JSObject* JSTestSetLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestSetLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestSetLikeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestSetLikeDOMConstructor, DOMConstructorID::TestSetLike>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestSetLike::destroy(JSC::JSCell* cell)

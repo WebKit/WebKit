@@ -68,7 +68,7 @@ template<typename CharacterType> static constexpr CharacterType transformSpec[] 
 template<typename CharacterType> static constexpr CharacterType zoomAndPanSpec[] = {'z', 'o', 'o', 'm', 'A', 'n', 'd', 'P', 'a', 'n'};
 template<typename CharacterType> static constexpr CharacterType viewTargetSpec[] =  {'v', 'i', 'e', 'w', 'T', 'a', 'r', 'g', 'e', 't'};
 
-bool SVGViewSpec::parseViewSpec(const StringView& string)
+bool SVGViewSpec::parseViewSpec(StringView string)
 {
     return readCharactersForParsing(string, [&](auto buffer) -> bool {
         using CharacterType = typename decltype(buffer)::CharacterType;

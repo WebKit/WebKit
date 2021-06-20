@@ -1,3 +1,5 @@
 
-PASS Test that entries added and event firing happened in the right sequence
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test that adding entries and firing the buffer full event happen in the right order. Test timed out
 

@@ -18,6 +18,7 @@
 
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/test/time_controller.h"
+#include "api/units/data_rate.h"
 #include "call/call.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "modules/congestion_controller/goog_cc/test/goog_cc_printer.h"
@@ -75,6 +76,7 @@ class LoggingNetworkControllerFactory
   TimeDelta GetProcessInterval() const override;
   // TODO(srte): Consider using the Columnprinter interface for this.
   void LogCongestionControllerStats(Timestamp at_time);
+  void SetRemoteBitrateEstimate(RemoteBitrateReport msg);
 
   NetworkControlUpdate GetUpdate() const;
 
@@ -109,6 +111,8 @@ class CallClient : public EmulatedNetworkReceiverInterface {
   DataRate target_rate() const;
   DataRate stable_target_rate() const;
   DataRate padding_rate() const;
+  void UpdateBitrateConstraints(const BitrateConstraints& constraints);
+  void SetRemoteBitrate(DataRate bitrate);
 
   void OnPacketReceived(EmulatedIpPacket packet) override;
   std::unique_ptr<RtcEventLogOutput> GetLogWriter(std::string name);

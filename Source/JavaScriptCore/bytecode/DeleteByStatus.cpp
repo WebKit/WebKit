@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-bool DeleteByStatus::appendVariant(const DeleteByIdVariant& variant)
+bool DeleteByStatus::appendVariant(const DeleteByVariant& variant)
 {
     return appendICStatusVariant(m_variants, variant);
 }
@@ -111,7 +111,7 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(
             switch (access.type()) {
             case AccessCase::DeleteMiss:
             case AccessCase::DeleteNonConfigurable: {
-                DeleteByIdVariant variant(access.identifier(), access.type() == AccessCase::DeleteMiss ? true : false, structure, nullptr, invalidOffset);
+                DeleteByVariant variant(access.identifier(), access.type() == AccessCase::DeleteMiss ? true : false, structure, nullptr, invalidOffset);
                 if (!result.appendVariant(variant))
                     return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
                 break;
@@ -122,7 +122,7 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(
                 if (!newStructure)
                     return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
                 ASSERT_UNUSED(offset, offset == access.offset());                
-                DeleteByIdVariant variant(access.identifier(), true, structure, newStructure, access.offset());
+                DeleteByVariant variant(access.identifier(), true, structure, newStructure, access.offset());
 
                 if (!result.appendVariant(variant))
                     return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
@@ -251,7 +251,7 @@ CacheableIdentifier DeleteByStatus::singleIdentifier() const
 template<typename Visitor>
 void DeleteByStatus::visitAggregateImpl(Visitor& visitor)
 {
-    for (DeleteByIdVariant& variant : m_variants)
+    for (DeleteByVariant& variant : m_variants)
         variant.visitAggregate(visitor);
 }
 
@@ -260,7 +260,7 @@ DEFINE_VISIT_AGGREGATE(DeleteByStatus);
 template<typename Visitor>
 void DeleteByStatus::markIfCheap(Visitor& visitor)
 {
-    for (DeleteByIdVariant& variant : m_variants)
+    for (DeleteByVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
 

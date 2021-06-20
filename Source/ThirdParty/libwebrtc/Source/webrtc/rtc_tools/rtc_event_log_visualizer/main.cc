@@ -229,8 +229,7 @@ int main(int argc, char* argv[]) {
       {"simulated_neteq_stats",
        {"simulated_neteq_jitter_buffer_delay",
         "simulated_neteq_preferred_buffer_size",
-        "simulated_neteq_concealment_events",
-        "simulated_neteq_packet_loss_rate", "simulated_neteq_preemptive_rate",
+        "simulated_neteq_concealment_events", "simulated_neteq_preemptive_rate",
         "simulated_neteq_accelerate_rate", "simulated_neteq_speech_expand_rate",
         "simulated_neteq_expand_rate"}}};
 

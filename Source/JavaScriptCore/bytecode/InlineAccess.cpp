@@ -216,6 +216,8 @@ ALWAYS_INLINE static GPRReg getScratchRegister(StructureStubInfo& stubInfo)
     allocator.lock(stubInfo.baseTagGPR);
     allocator.lock(stubInfo.valueTagGPR);
 #endif
+    if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
+        allocator.lock(stubInfo.m_stubInfoGPR);
     GPRReg scratch = allocator.allocateScratchGPR();
     if (allocator.didReuseRegisters())
         return InvalidGPRReg;
@@ -379,19 +381,70 @@ bool InlineAccess::generateSelfInAccess(StructureStubInfo& stubInfo, Structure* 
     return linkedCodeInline;
 }
 
-void InlineAccess::rewireStubAsJump(StructureStubInfo& stubInfo, CodeLocationLabel<JITStubRoutinePtrTag> target)
+void InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, CodeLocationLabel<JITStubRoutinePtrTag> target)
 {
-    CCallHelpers jit;
+    if (codeBlock->useDataIC()) {
+        stubInfo.m_codePtr = target;
+        return;
+    }
 
-    auto jump = jit.jump();
+    CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+        // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
+        auto jump = jit.jump();
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(jump, target);
+        });
+    }), "InlineAccess: linking constant jump");
+}
 
-    // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
-    bool needsBranchCompaction = false;
-    LinkBuffer linkBuffer(jit, stubInfo.start, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
-    RELEASE_ASSERT(linkBuffer.isValid());
-    linkBuffer.link(jump, target);
+void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, CodeLocationLabel<JITStubRoutinePtrTag> target)
+{
+    if (codeBlock->useDataIC()) {
+        // If it is not GetById-like-thing, we do not emit nop sled (e.g. GetByVal).
+        // The code is already an indirect jump, and only thing we should do is replacing m_codePtr.
+        if (stubInfo.hasConstantIdentifier) {
+            // If m_codePtr is pointing to stubInfo.slowPathStartLocation, this means that InlineAccess code is not a stub one.
+            // We rewrite this with the stub-based dispatching code once, and continue using it until we reset the code.
+            if (stubInfo.m_codePtr.executableAddress() == stubInfo.slowPathStartLocation.executableAddress()) {
+                CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+                    jit.move(CCallHelpers::TrustedImmPtr(&stubInfo), stubInfo.m_stubInfoGPR);
+                    jit.call(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+                    auto jump = jit.jump();
+                    auto doneLocation = stubInfo.doneLocation;
+                    jit.addLinkTask([=](LinkBuffer& linkBuffer) {
+                        linkBuffer.link(jump, doneLocation);
+                    });
+                }), "InlineAccess: linking stub call");
+            }
+        }
+        stubInfo.m_codePtr = target;
+        return;
+    }
 
-    FINALIZE_CODE(linkBuffer, NoPtrTag, "InlineAccess: linking constant jump");
+    CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+        // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
+        auto jump = jit.jump();
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(jump, target);
+        });
+    }), "InlineAccess: linking constant jump");
+}
+
+void InlineAccess::resetStubAsJumpInAccess(CodeBlock*, StructureStubInfo& stubInfo)
+{
+    CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+        // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
+        auto jump = jit.jump();
+        auto slowPathStartLocation = stubInfo.slowPathStartLocation;
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(jump, slowPathStartLocation);
+        });
+    }), "InlineAccess: linking constant jump");
+}
+
+void InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+{
+    rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, stubInfo.slowPathStartLocation);
 }
 
 } // namespace JSC

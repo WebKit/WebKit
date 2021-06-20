@@ -34,6 +34,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMStringList.h"
 #include "JSTestNode.h"
 #include "JSTestObj.h"
@@ -170,7 +171,7 @@ template<> void JSTestCallbackInterfaceDOMConstructor::initializeProperties(VM& 
 
 JSValue JSTestCallbackInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCallbackInterfaceDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCallbackInterfaceDOMConstructor, DOMConstructorID::TestCallbackInterface>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterface::callbackWithNoParam()

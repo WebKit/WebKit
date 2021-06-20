@@ -208,7 +208,7 @@ public:
     // https://html.spec.whatwg.org/multipage/origin.html#is-a-registrable-domain-suffix-of-or-is-equal-to
     WEBCORE_EXPORT bool isMatchingRegistrableDomainSuffix(const String&, bool treatIPAddressAsDomain = false) const;
 
-    bool isPotentiallyTrustworthy() const { return m_isPotentiallyTrustworthy; }
+    WEBCORE_EXPORT bool isPotentiallyTrustworthy() const;
     void setIsPotentiallyTrustworthy(bool value) { m_isPotentiallyTrustworthy = value; }
 
     WEBCORE_EXPORT static bool isLocalHostOrLoopbackIPAddress(StringView);
@@ -219,7 +219,7 @@ public:
     template<class Decoder> static RefPtr<SecurityOrigin> decode(Decoder&);
 
 private:
-    SecurityOrigin();
+    WEBCORE_EXPORT SecurityOrigin();
     explicit SecurityOrigin(const URL&);
     explicit SecurityOrigin(const SecurityOrigin*);
 
@@ -243,7 +243,7 @@ private:
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
     bool m_enforcesFilePathSeparation { false };
     bool m_needsStorageAccessFromFileURLsQuirk { false };
-    bool m_isPotentiallyTrustworthy { false };
+    mutable std::optional<bool> m_isPotentiallyTrustworthy;
     bool m_isLocal { false };
 };
 
@@ -276,7 +276,8 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
     if (!data)
         return nullptr;
 
-    auto origin = SecurityOrigin::create(data->protocol, data->host, data->port);
+    auto origin = adoptRef(*new SecurityOrigin);
+    origin->m_data = WTFMove(*data);
 
     if (!decoder.decode(origin->m_domain))
         return nullptr;

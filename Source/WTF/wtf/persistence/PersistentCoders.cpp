@@ -57,7 +57,7 @@ void Coder<CString>::encode(Encoder& encoder, const CString& string)
 
     uint32_t length = string.length();
     encoder << length;
-    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length);
+    encoder.encodeFixedLengthData(string.dataAsUInt8Ptr(), length);
 }
 
 std::optional<CString> Coder<CString>::decode(Decoder& decoder)
@@ -98,7 +98,7 @@ void Coder<String>::encode(Encoder& encoder, const String& string)
     encoder << length << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar));
+        encoder.encodeFixedLengthData(string.characters8(), length);
     else
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar));
 }

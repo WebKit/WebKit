@@ -122,7 +122,7 @@ static String collectHTTPQuotedString(StringView input, unsigned& startIndex)
 static bool containsNonTokenCharacters(StringView input, Mode mode)
 {
     if (mode == Mode::MimeSniff)
-        return !isValidHTTPToken(input.toStringWithoutCopying());
+        return !isValidHTTPToken(input);
     for (unsigned index = 0; index < input.length(); ++index) {
         if (!isTokenCharacter(input[index]))
             return true;

@@ -26,7 +26,7 @@ PASS PerformanceEntry has correct protocol attribute (script)
 PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (xmlhttprequest)
 PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (xmlhttprequest)
 PASS PerformanceEntry has correct order of timing attributes (xmlhttprequest)
-FAIL PerformanceEntry has correct network transfer attributes (xmlhttprequest) assert_equals: encodedBodySize size expected 112 but got 120
+PASS PerformanceEntry has correct network transfer attributes (xmlhttprequest)
 PASS PerformanceEntry has correct protocol attribute (xmlhttprequest)
 PASS window.performance Resource Timing Entries exist
 PASS window.performance Resource Timing Entries exist 1

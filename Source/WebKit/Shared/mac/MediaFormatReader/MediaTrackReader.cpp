@@ -39,6 +39,7 @@
 #include <WebCore/VideoTrackPrivate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/WorkQueue.h>
 
 #include <pal/cocoa/MediaToolboxSoftLink.h>
 

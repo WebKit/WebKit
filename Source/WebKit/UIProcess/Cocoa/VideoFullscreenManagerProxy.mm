@@ -625,6 +625,9 @@ void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifie
 #if !PLATFORM(IOS_FAMILY)
     IntRect finalWindowRect;
     m_page->rootViewToWindow(enclosingIntRect(finalRect), finalWindowRect);
+#else
+    if (hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard))
+        m_page->fullscreenMayReturnToInline();
 #endif
 
     if (m_mockVideoPresentationModeEnabled) {

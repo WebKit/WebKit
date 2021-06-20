@@ -42,6 +42,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "SoupNetworkSession.h"
 #include "TextEncoding.h"
@@ -127,7 +128,7 @@ void ResourceHandle::platformSetDefersLoading(bool)
     ASSERT_NOT_REACHED();
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, ResourceError&, ResourceResponse&, Vector<uint8_t>&)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, SecurityOrigin*, ResourceError&, ResourceResponse&, Vector<uint8_t>&)
 {
     ASSERT_NOT_REACHED();
 }

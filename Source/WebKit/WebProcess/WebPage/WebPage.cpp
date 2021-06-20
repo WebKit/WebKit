@@ -40,7 +40,6 @@
 #include "FormDataReference.h"
 #include "FrameTreeNodeData.h"
 #include "GeolocationPermissionRequestManager.h"
-#include "ImageExtractionUpdateResult.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleScriptWorld.h"
@@ -67,6 +66,7 @@
 #include "ShareableBitmap.h"
 #include "ShareableBitmapUtilities.h"
 #include "SharedBufferDataReference.h"
+#include "TextRecognitionUpdateResult.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "ViewGestureGeometryCollector.h"
 #include "VisitedLinkTableController.h"
@@ -360,8 +360,8 @@
 #endif
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-#include <WebCore/ImageExtractionResult.h>
+#if ENABLE(IMAGE_ANALYSIS)
+#include <WebCore/TextRecognitionResult.h>
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -387,9 +387,8 @@ static const Seconds pageScrollHysteresisDuration { 300_ms };
 static const Seconds initialLayerVolatilityTimerInterval { 20_ms };
 static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
-#undef RELEASE_LOG_IF_ALLOWED
-#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
+#define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
+#define WEBPAGE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
 class SendStopResponsivenessTimer {
 public:
@@ -857,7 +856,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({
         m_canShowWhileLocked
     });
-    RELEASE_LOG_IF_ALLOWED(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
+    WEBPAGE_RELEASE_LOG(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
     send(Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
@@ -1481,7 +1480,7 @@ void WebPage::close()
     if (m_isClosed)
         return;
 
-    RELEASE_LOG_IF_ALLOWED(Loading, "close:");
+    WEBPAGE_RELEASE_LOG(Loading, "close:");
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificData(m_identifier), 0);
 
@@ -1734,7 +1733,16 @@ void WebPage::loadData(LoadParameters&& loadParameters)
     platformDidReceiveLoadParameters(loadParameters);
 
     auto sharedBuffer = SharedBuffer::create(loadParameters.data.data(), loadParameters.data.size());
-    URL baseURL = loadParameters.baseURLString.isEmpty() ? aboutBlankURL() : URL(URL(), loadParameters.baseURLString);
+
+    URL baseURL;
+    if (loadParameters.baseURLString.isEmpty())
+        baseURL = aboutBlankURL();
+    else {
+        baseURL = URL(URL(), loadParameters.baseURLString);
+        if (!baseURL.protocolIsInHTTPFamily())
+            LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(baseURL.protocol().toString());
+    }
+
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, loadParameters.shouldOpenExternalURLsPolicy);
 }
 
@@ -2744,7 +2752,7 @@ void WebPage::freezeLayerTree(LayerTreeFreezeReason reason)
     auto oldReasons = m_layerTreeFreezeReasons.toRaw();
     UNUSED_PARAM(oldReasons);
     m_layerTreeFreezeReasons.add(reason);
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "freezeLayerTree: Adding a reason to freeze layer tree (reason=%d, new=%d, old=%d)", static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
+    WEBPAGE_RELEASE_LOG(ProcessSuspension, "freezeLayerTree: Adding a reason to freeze layer tree (reason=%d, new=%d, old=%d)", static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
     updateDrawingAreaLayerTreeFreezeState();
 }
 
@@ -2753,7 +2761,7 @@ void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
     auto oldReasons = m_layerTreeFreezeReasons.toRaw();
     UNUSED_PARAM(oldReasons);
     m_layerTreeFreezeReasons.remove(reason);
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "unfreezeLayerTree: Removing a reason to freeze layer tree (reason=%d, new=%d, old=%d)", static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
+    WEBPAGE_RELEASE_LOG(ProcessSuspension, "unfreezeLayerTree: Removing a reason to freeze layer tree (reason=%d, new=%d, old=%d)", static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
     updateDrawingAreaLayerTreeFreezeState();
 }
 
@@ -2788,14 +2796,14 @@ void WebPage::layerVolatilityTimerFired()
     if (didSucceed || newInterval > maximumLayerVolatilityTimerInterval) {
         m_layerVolatilityTimer.stop();
         if (didSucceed)
-            RELEASE_LOG_IF_ALLOWED(Layers, "layerVolatilityTimerFired: Succeeded in marking layers as volatile");
+            WEBPAGE_RELEASE_LOG(Layers, "layerVolatilityTimerFired: Succeeded in marking layers as volatile");
         else
-            RELEASE_LOG_IF_ALLOWED(Layers, "layerVolatilityTimerFired: Failed to mark layers as volatile within %gms", maximumLayerVolatilityTimerInterval.milliseconds());
+            WEBPAGE_RELEASE_LOG(Layers, "layerVolatilityTimerFired: Failed to mark layers as volatile within %gms", maximumLayerVolatilityTimerInterval.milliseconds());
         callVolatilityCompletionHandlers(didSucceed);
         return;
     }
 
-    RELEASE_LOG_ERROR_IF_ALLOWED(Layers, "layerVolatilityTimerFired: Failed to mark all layers as volatile, will retry in %g ms", newInterval.milliseconds());
+    WEBPAGE_RELEASE_LOG_ERROR(Layers, "layerVolatilityTimerFired: Failed to mark all layers as volatile, will retry in %g ms", newInterval.milliseconds());
     m_layerVolatilityTimer.startRepeating(newInterval);
 }
 
@@ -2806,7 +2814,7 @@ bool WebPage::markLayersVolatileImmediatelyIfPossible()
 
 void WebPage::markLayersVolatile(CompletionHandler<void(bool)>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile:");
+    WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile:");
 
     if (m_layerVolatilityTimer.isActive())
         m_layerVolatilityTimer.stop();
@@ -2817,22 +2825,22 @@ void WebPage::markLayersVolatile(CompletionHandler<void(bool)>&& completionHandl
     bool didSucceed = markLayersVolatileImmediatelyIfPossible();
     if (didSucceed || m_isSuspendedUnderLock) {
         if (didSucceed)
-            RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile: Successfully marked layers as volatile");
+            WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Successfully marked layers as volatile");
         else {
             // If we get suspended when locking the screen, it is expected that some IOSurfaces cannot be marked as purgeable so we do not keep retrying.
-            RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile: Did what we could to mark IOSurfaces as purgeable after locking the screen");
+            WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Did what we could to mark IOSurfaces as purgeable after locking the screen");
         }
         callVolatilityCompletionHandlers(didSucceed);
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", initialLayerVolatilityTimerInterval.milliseconds());
+    WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", initialLayerVolatilityTimerInterval.milliseconds());
     m_layerVolatilityTimer.startRepeating(initialLayerVolatilityTimerInterval);
 }
 
 void WebPage::cancelMarkLayersVolatile()
 {
-    RELEASE_LOG_IF_ALLOWED(Layers, "cancelMarkLayersVolatile:");
+    WEBPAGE_RELEASE_LOG(Layers, "cancelMarkLayersVolatile:");
     m_layerVolatilityTimer.stop();
     callVolatilityCompletionHandlers(false);
 }
@@ -3182,7 +3190,7 @@ void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<
 {
     // Avoid UIProcess hangs when the WebContent process is stuck on a sync IPC.
     if (IPC::UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC()) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "touchEventSync: Not processing because the process is stuck on unbounded sync IPC");
+        WEBPAGE_RELEASE_LOG_ERROR(Process, "touchEventSync: Not processing because the process is stuck on unbounded sync IPC");
         return reply(true);
     }
 
@@ -3497,7 +3505,7 @@ void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listene
     consumeNetworkExtensionSandboxExtensions(networkExtensionsHandles);
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    RELEASE_LOG_IF_ALLOWED(Loading, "didReceivePolicyDecision: policyAction=%u - frameID=%llu - webFrame=%p - mainFrame=%d", (unsigned)policyDecision.policyAction, frameID.toUInt64(), frame, frame ? frame->isMainFrame() : 0);
+    WEBPAGE_RELEASE_LOG(Loading, "didReceivePolicyDecision: policyAction=%u - frameID=%llu - webFrame=%p - mainFrame=%d", (unsigned)policyDecision.policyAction, frameID.toUInt64(), frame, frame ? frame->isMainFrame() : 0);
 
     if (!frame)
         return;
@@ -3561,7 +3569,7 @@ void WebPage::show()
 
 void WebPage::setIsTakingSnapshotsForApplicationSuspension(bool isTakingSnapshotsForApplicationSuspension)
 {
-    RELEASE_LOG_IF_ALLOWED(Resize, "setIsTakingSnapshotsForApplicationSuspension(%d)", isTakingSnapshotsForApplicationSuspension);
+    WEBPAGE_RELEASE_LOG(Resize, "setIsTakingSnapshotsForApplicationSuspension(%d)", isTakingSnapshotsForApplicationSuspension);
 
     if (m_page)
         m_page->setIsTakingSnapshotsForApplicationSuspension(isTakingSnapshotsForApplicationSuspension);
@@ -3607,7 +3615,7 @@ void WebPage::resumeActiveDOMObjectsAndAnimations()
 
 void WebPage::suspend(CompletionHandler<void(bool)>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(Loading, "suspend: m_page=%p", m_page.get());
+    WEBPAGE_RELEASE_LOG(Loading, "suspend: m_page=%p", m_page.get());
     if (!m_page)
         return completionHandler(false);
 
@@ -3622,7 +3630,7 @@ void WebPage::suspend(CompletionHandler<void(bool)>&& completionHandler)
 
 void WebPage::resume(CompletionHandler<void(bool)>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(Loading, "resume: m_page=%p", m_page.get());
+    WEBPAGE_RELEASE_LOG(Loading, "resume: m_page=%p", m_page.get());
     if (!m_page)
         return completionHandler(false);
 
@@ -3691,7 +3699,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
         completionHandler({ }, ExceptionDetails { "Unable to execute JavaScript in a frame that is not in an app-bound domain"_s, 0, 0, ExceptionDetails::Type::AppBoundDomain });
         if (auto* document = m_page->mainFrame().document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain.");
-        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "runJavaScript: Ignoring user script injection for non app-bound domain");
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "runJavaScript: Ignoring user script injection for non app-bound domain");
         return;
     }
 #endif
@@ -3719,7 +3727,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, std::optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: frameID=%" PRIu64, frameID.value_or(WebCore::FrameIdentifier { }).toUInt64());
+    WEBPAGE_RELEASE_LOG(Process, "runJavaScriptInFrameInScriptWorld: frameID=%" PRIu64, frameID.value_or(WebCore::FrameIdentifier { }).toUInt64());
     auto webFrame = makeRefPtr(frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame());
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
@@ -3730,9 +3738,9 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
 
     runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](const IPC::DataReference& result, const std::optional<WebCore::ExceptionDetails>& exception) mutable {
         if (exception)
-            RELEASE_LOG_ERROR_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript failed with error %{private}s", exception->message.utf8().data());
+            WEBPAGE_RELEASE_LOG_ERROR(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript failed with error %{private}s", exception->message.utf8().data());
         else
-            RELEASE_LOG_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript succeeded");
+            WEBPAGE_RELEASE_LOG(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript succeeded");
         completionHandler(result, exception);
     });
 }
@@ -3905,7 +3913,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION)
     if (!settings.acceleratedCompositingEnabled()) {
-        RELEASE_LOG_IF_ALLOWED(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
+        WEBPAGE_RELEASE_LOG(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
         settings.setAcceleratedCompositingEnabled(true);
     }
 #endif
@@ -4435,11 +4443,6 @@ void WebPage::removeWebEditCommand(WebUndoStepID stepID)
 {
     if (auto undoStep = m_undoStepMap.take(stepID))
         undoStep->didRemoveFromUndoManager();
-}
-
-bool WebPage::isAlwaysOnLoggingAllowed() const
-{
-    return corePage() && corePage()->isAlwaysOnLoggingAllowed();
 }
 
 void WebPage::unapplyEditCommand(WebUndoStepID stepID)
@@ -6281,13 +6284,12 @@ void WebPage::didCommitLoad(WebFrame* frame)
     ASSERT(!frame->coreFrame()->loader().stateMachine().creatingInitialEmptyDocument());
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
-#if ENABLE(IMAGE_EXTRACTION)
-    for (auto& [element, completionHandlers] : m_elementsPendingImageExtraction) {
+#if ENABLE(IMAGE_ANALYSIS)
+    for (auto& [element, completionHandlers] : m_elementsPendingTextRecognition) {
         for (auto& completionHandler : completionHandlers)
             completionHandler({ });
     }
-    m_elementsPendingImageExtraction.clear();
-    m_elementsWithExtractedImages.clear();
+    m_elementsPendingTextRecognition.clear();
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -6861,7 +6863,7 @@ void WebPage::stopAllURLSchemeTasks()
 
 void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String& scheme)
 {
-    RELEASE_LOG_IF_ALLOWED(Process, "registerURLSchemeHandler: Registered handler %" PRIu64 " for the '%s' scheme", handlerIdentifier, scheme.utf8().data());
+    WEBPAGE_RELEASE_LOG(Process, "registerURLSchemeHandler: Registered handler %" PRIu64 " for the '%s' scheme", handlerIdentifier, scheme.utf8().data());
     WebCore::LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(scheme);
     WebCore::LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
     auto schemeResult = m_schemeToURLSchemeHandlerProxyMap.add(scheme, WebURLSchemeHandlerProxy::create(*this, handlerIdentifier));
@@ -7383,9 +7385,9 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 }
 #endif // ENABLE(MEDIA_USAGE)
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& completion)
+void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& completion)
 {
     if (!is<HTMLElement>(element)) {
         if (completion)
@@ -7393,24 +7395,24 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
         return;
     }
 
-    if (m_elementsWithExtractedImages.contains(element)) {
+    auto htmlElement = makeRef(downcast<HTMLElement>(element));
+    if (corePage()->hasCachedTextRecognitionResult(htmlElement.get())) {
         if (completion) {
-            ASSERT(is<HTMLElement>(element));
             RefPtr<Element> imageOverlayHost;
-            if (is<HTMLElement>(element) && downcast<HTMLElement>(element).hasImageOverlay())
+            if (htmlElement->hasImageOverlay())
                 imageOverlayHost = makeRefPtr(element);
             completion(WTFMove(imageOverlayHost));
         }
         return;
     }
 
-    auto matchIndex = m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+    auto matchIndex = m_elementsPendingTextRecognition.findMatching([&] (auto& elementAndCompletionHandlers) {
         return elementAndCompletionHandlers.first == &element;
     });
 
     if (matchIndex != notFound) {
         if (completion)
-            m_elementsPendingImageExtraction[matchIndex].second.append(WTFMove(completion));
+            m_elementsPendingTextRecognition[matchIndex].second.append(WTFMove(completion));
         return;
     }
 
@@ -7440,15 +7442,15 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
     Vector<CompletionHandler<void(RefPtr<Element>&&)>> completionHandlers;
     if (completion)
         completionHandlers.append(WTFMove(completion));
-    m_elementsPendingImageExtraction.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
+    m_elementsPendingTextRecognition.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
 
     auto imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
-    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
+    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
         auto protectedPage = makeRefPtr(webPage.get());
         if (!protectedPage)
             return;
 
-        protectedPage->m_elementsPendingImageExtraction.removeAllMatching([&] (auto& elementAndCompletionHandlers) {
+        protectedPage->m_elementsPendingTextRecognition.removeAllMatching([&] (auto& elementAndCompletionHandlers) {
             auto& [element, completionHandlers] = elementAndCompletionHandlers;
             if (element)
                 return false;
@@ -7463,10 +7465,9 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
             return;
 
         auto& htmlElement = downcast<HTMLElement>(*protectedElement);
-        htmlElement.updateWithImageExtractionResult(WTFMove(result));
-        protectedPage->m_elementsWithExtractedImages.add(htmlElement);
+        htmlElement.updateWithTextRecognitionResult(result);
 
-        auto matchIndex = protectedPage->m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+        auto matchIndex = protectedPage->m_elementsPendingTextRecognition.findMatching([&] (auto& elementAndCompletionHandlers) {
             return elementAndCompletionHandlers.first == &htmlElement;
         });
 
@@ -7474,22 +7475,22 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
             return;
 
         auto imageOverlayHost = htmlElement.hasImageOverlay() ? makeRefPtr(htmlElement) : nullptr;
-        for (auto& completionHandler : protectedPage->m_elementsPendingImageExtraction[matchIndex].second)
+        for (auto& completionHandler : protectedPage->m_elementsPendingTextRecognition[matchIndex].second)
             completionHandler(imageOverlayHost.copyRef());
 
-        protectedPage->m_elementsPendingImageExtraction.remove(matchIndex);
+        protectedPage->m_elementsPendingTextRecognition.remove(matchIndex);
     });
 }
 
-void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&& completionHandler)
+void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
 {
     auto elementToUpdate = elementForContext(context);
     if (!is<HTMLElement>(elementToUpdate)) {
-        completionHandler(ImageExtractionUpdateResult::NoText);
+        completionHandler(TextRecognitionUpdateResult::NoText);
         return;
     }
 
-    downcast<HTMLElement>(*elementToUpdate).updateWithImageExtractionResult(WTFMove(result));
+    downcast<HTMLElement>(*elementToUpdate).updateWithTextRecognitionResult(result);
     auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
@@ -7499,23 +7500,23 @@ void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, co
     auto nodeAtLocation = makeRefPtr(hitTestResult.innerNonSharedNode());
     auto updateResult = ([&] {
         if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate || !HTMLElement::isInsideImageOverlay(*nodeAtLocation))
-            return ImageExtractionUpdateResult::NoText;
+            return TextRecognitionUpdateResult::NoText;
 
 #if ENABLE(DATA_DETECTION)
         if (findDataDetectionResultElementInImageOverlay(location, downcast<HTMLElement>(*elementToUpdate)))
-            return ImageExtractionUpdateResult::DataDetector;
+            return TextRecognitionUpdateResult::DataDetector;
 #endif
 
         if (HTMLElement::isImageOverlayText(*nodeAtLocation))
-            return ImageExtractionUpdateResult::Text;
+            return TextRecognitionUpdateResult::Text;
 
-        return ImageExtractionUpdateResult::NoText;
+        return TextRecognitionUpdateResult::NoText;
     })();
 
     completionHandler(updateResult);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 void WebPage::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
@@ -7665,5 +7666,5 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 
 } // namespace WebKit
 
-#undef RELEASE_LOG_IF_ALLOWED
-#undef RELEASE_LOG_ERROR_IF_ALLOWED
+#undef WEBPAGE_RELEASE_LOG
+#undef WEBPAGE_RELEASE_LOG_ERROR

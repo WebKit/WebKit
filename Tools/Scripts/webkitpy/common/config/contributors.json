@@ -1257,6 +1257,7 @@
    },
    "Chris Gambrell" : {
       "emails" : [
+         "christopher@gambrell.info",
          "cgambrell@apple.com"
       ],
       "expertise" : "CGI, PHP, and Python",
@@ -2551,6 +2552,12 @@
          "vollick"
       ]
    },
+   "Igalia Layout Team" : {
+      "emails" : [
+         "webkit-layout-noreply@igalia.com"
+      ],
+      "expertise" : "Flexbox, CSS Grid Layout, CSS Scroll Snap, CSS Containment"
+   },
    "Igor Trindade Oliveira" : {
       "emails" : [
          "igor.oliveira@webkit.org",
@@ -2818,6 +2825,7 @@
    },
    "Jean-Yves Avenard" : {
       "emails" : [
+         "jean-yves.avenard@apple.com",
          "jya@apple.com"
       ],
       "nicks" : [

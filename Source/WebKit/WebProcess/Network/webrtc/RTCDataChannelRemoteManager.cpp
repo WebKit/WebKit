@@ -123,7 +123,7 @@ void RTCDataChannelRemoteManager::sendData(WebCore::RTCDataChannelIdentifier sou
         if (isRaw)
             source->sendRawData(data.data(), data.size());
         else
-            source->sendStringData(CString(reinterpret_cast<const char*>(data.data()), data.size()));
+            source->sendStringData(CString(data.data(), data.size()));
     }
 }
 
@@ -227,7 +227,7 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didChangeReadyState(We
 void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveStringData(WebCore::RTCDataChannelIdentifier identifier, const String& string)
 {
     auto text = string.utf8();
-    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, false, IPC::DataReference { reinterpret_cast<const unsigned char*>(text.data()), text.length() } }, 0);
+    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, false, IPC::DataReference { text.dataAsUInt8Ptr(), text.length() } }, 0);
 }
 
 void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebCore::RTCDataChannelIdentifier identifier, const uint8_t* data, size_t size)

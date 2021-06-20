@@ -1,3 +1,65 @@
+2021-06-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add instrumentation to node destruction for InspectorDOMAgent
+        https://bugs.webkit.org/show_bug.cgi?id=226624
+
+        Reviewed by Devin Rousso.
+
+        Listen for the new `DOM.willDestroyDOMNode` event in order to cleanup and remaining references to that Node.
+        This work serves as a prelude to <https://webkit.org/b/189687> (Web Inspector: preserve DOM.NodeId if a node is
+        removed and re-added) to eventually only forget about nodes upon destruction, instead of removal from the DOM
+        tree.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.willDestroyDOMNode):
+        * UserInterface/Protocol/DOMObserver.js:
+        (WI.DOMObserver.prototype.willDestroyDOMNode):
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WI.DOMTreeUpdater.prototype._nodeRemoved):
+
+2021-06-08  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles panel slow to render when inspecting node with many inherited CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=225972
+        <rdar://problem/78211185>
+
+        Reviewed by Devin Rousso.
+
+        Do not show unused inherited CSS variables in the Styles details sidebar.
+
+        When aggregating styles for the selected node in `WI.DOMNodeStyles`, collect a list of names of CSS variables used in CSS property values.
+        In the Styles details sidebar, skip rendering declarations of inherited CSS variables that are not found in this list.
+
+        Always show inherited variables that are used, either directly inherited or via reference (variables using other variables in their value).
+        Always show inherited variables used as values of inheritable properties like color, font-size, etc.
+
+        When a CSS rule contains hidden inherited variables, offer a button to request disclosing them for that rule.
+        Option-click to show unused inherited variables in all matching rules.
+
+        Clicking the "Go to variable" button automatically renders all the unused variables in the CSS rule where the target variable is declared.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.findVariableNames):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles):
+        (WI.DOMNodeStyles.prototype.get usedCSSVariables):
+        (WI.DOMNodeStyles.prototype._updateStyleCascade):
+        (WI.DOMNodeStyles.prototype._collectUsedCSSVariables):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property):
+        (.spreadsheet-style-declaration-editor > .hidden-variables-button):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get propertiesToRender):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.highlightProperty):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.set propertyVisibilityMode):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorSetAllPropertyVisibilityMode):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.spreadsheetCSSStyleDeclarationSectionSetAllPropertyVisibilityMode):
+
 2021-06-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: cannot see experimental settings when inspecting `ServiceWorker`

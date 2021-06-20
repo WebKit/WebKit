@@ -36,6 +36,7 @@
 #include "IDLTypes.h"
 #include "JSWebXRSession.h"
 #include "JSXRReferenceSpaceType.h"
+#include "Navigator.h"
 #include "Page.h"
 #include "PlatformXR.h"
 #include "RequestAnimationFrameCallback.h"
@@ -53,20 +54,26 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSystem);
 
-Ref<WebXRSystem> WebXRSystem::create(ScriptExecutionContext& scriptExecutionContext)
+Ref<WebXRSystem> WebXRSystem::create(Navigator& navigator)
 {
-    return adoptRef(*new WebXRSystem(scriptExecutionContext));
+    return adoptRef(*new WebXRSystem(navigator));
 }
 
-WebXRSystem::WebXRSystem(ScriptExecutionContext& scriptExecutionContext)
-    : ActiveDOMObject(&scriptExecutionContext)
-    , m_defaultInlineDevice(scriptExecutionContext)
+WebXRSystem::WebXRSystem(Navigator& navigator)
+    : ActiveDOMObject(navigator.scriptExecutionContext())
+    , m_navigator(makeWeakPtr(navigator))
+    , m_defaultInlineDevice(*navigator.scriptExecutionContext())
 {
     m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
     suspendIfNeeded();
 }
 
 WebXRSystem::~WebXRSystem() = default;
+
+Navigator* WebXRSystem::navigator()
+{
+    return m_navigator.get();
+}
 
 // https://immersive-web.github.io/webxr/#ensures-an-immersive-xr-device-is-selected
 void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& callback)

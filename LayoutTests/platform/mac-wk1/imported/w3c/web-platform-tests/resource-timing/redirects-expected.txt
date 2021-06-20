@@ -1,0 +1,12 @@
+Description
+
+This test validates that, when a fetching resources that encounter same-origin redirects, attributes of the PerformanceResourceTiming entry conform to the specification.
+
+
+PASS Verify attributes of a redirected stylesheet's PerformanceResourceTiming
+PASS Verify attributes of a redirected image's PerformanceResourceTiming
+PASS Verify attributes of a redirected iframe's PerformanceResourceTiming
+PASS Verify attributes of a redirected script's PerformanceResourceTiming
+FAIL Verify attributes of a redirected synchronous XMLHttpRequest's PerformanceResourceTiming assert_greater_than: redirectStart should be greater than 0 expected a number greater than 0 but got 0
+FAIL Verify attributes of a synchronous XMLHttpRequest's PerformanceResourceTiming where the initial HTTP request is redirected to a cross-origin HTTPS resource. promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
+

@@ -16,7 +16,8 @@
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/synchronization/rw_lock_wrapper.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -26,8 +27,8 @@ namespace webrtc {
 // ScreenCapturer that owns it.
 class ScreenCapturerHelper {
  public:
-  ScreenCapturerHelper();
-  ~ScreenCapturerHelper();
+  ScreenCapturerHelper() = default;
+  ~ScreenCapturerHelper() = default;
 
   // Clear out the invalid region.
   void ClearInvalidRegion();
@@ -69,10 +70,10 @@ class ScreenCapturerHelper {
   // A region that has been manually invalidated (through InvalidateRegion).
   // These will be returned as dirty_region in the capture data during the next
   // capture.
-  DesktopRegion invalid_region_;
+  DesktopRegion invalid_region_ RTC_GUARDED_BY(invalid_region_mutex_);
 
   // A lock protecting |invalid_region_| across threads.
-  std::unique_ptr<RWLockWrapper> invalid_region_lock_;
+  Mutex invalid_region_mutex_;
 
   // The size of the most recently captured screen.
   DesktopSize size_most_recent_;
@@ -80,7 +81,7 @@ class ScreenCapturerHelper {
   // The log (base 2) of the size of the grid to which the invalid region is
   // expanded.
   // If the value is <= 0, then the invalid region is not expanded to a grid.
-  int log_grid_size_;
+  int log_grid_size_ = 0;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(ScreenCapturerHelper);
 };

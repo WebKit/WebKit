@@ -64,7 +64,7 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
 
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
 {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     return base64EncodedPNGData(snapshot.surface());
 #else
     return std::nullopt;

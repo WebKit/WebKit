@@ -24,10 +24,12 @@
  */
 
 #import "config.h"
-#import <WebKit/WKFoundation.h>
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import <WebKit/WKFoundation.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -151,4 +153,25 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorReload)
 
     WKBackForwardList *list = [webView backForwardList];
     EXPECT_EQ((NSUInteger)0, list.backList.count);
+}
+
+TEST(WKWebView, LoadHTMLStringOrigin)
+{
+    using namespace TestWebKitAPI;
+    bool done = false;
+    HTTPServer server([&](Connection connection) {
+        connection.receiveHTTPRequest([&](Vector<char>&& request) {
+            EXPECT_TRUE(strnstr(request.data(), "Origin: custom-scheme://\r\n", request.size()));
+            done = true;
+        });
+    });
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^completionHandler)(WKNavigationActionPolicy)) {
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    webView.get().navigationDelegate = delegate.get();
+    NSString *html = @"<script>var xhr = new XMLHttpRequest(); xhr.open('GET', 'http://127.0.0.1:%d/', true); xhr.send();</script>";
+    [webView loadHTMLString:[NSString stringWithFormat:html, server.port()] baseURL:[NSURL URLWithString:@"custom-scheme://"]];
+    Util::run(&done);
 }

@@ -28,6 +28,7 @@
 #include "ObjectPropertyCondition.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/FixedVector.h>
+#include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -88,6 +89,32 @@ public:
         if (!m_data)
             return nullptr;
         return m_data->m_vector.end();
+    }
+
+    unsigned hash() const
+    {
+        Hasher hasher;
+        for (auto& condition : *this)
+            add(hasher, condition.hash());
+        return hasher.hash();
+    }
+
+    friend bool operator==(const ObjectPropertyConditionSet& lhs, const ObjectPropertyConditionSet& rhs)
+    {
+        if (lhs.size() != rhs.size())
+            return false;
+        auto liter = lhs.begin();
+        auto riter = rhs.begin();
+        for (; liter != lhs.end(); ++liter, ++riter) {
+            if (!(*liter == *riter))
+                return false;
+        }
+        return true;
+    }
+
+    friend bool operator!=(const ObjectPropertyConditionSet& lhs, const ObjectPropertyConditionSet& rhs)
+    {
+        return !(lhs == rhs);
     }
     
     ObjectPropertyCondition forObject(JSObject*) const;

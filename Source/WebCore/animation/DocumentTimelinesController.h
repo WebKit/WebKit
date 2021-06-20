@@ -67,7 +67,7 @@ private:
     void maybeClearCachedCurrentTime();
 
     WeakHashSet<DocumentTimeline> m_timelines;
-    CancellableTask::Handle m_currentTimeClearingTask;
+    TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
     Document& m_document;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     bool m_isSuspended { false };

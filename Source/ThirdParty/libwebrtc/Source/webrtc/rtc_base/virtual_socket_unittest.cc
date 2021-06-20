@@ -1117,10 +1117,10 @@ TEST_F(VirtualSocketServerTest, CreatesStandardDistribution) {
         ASSERT_LT(0u, kTestSamples[sidx]);
         const uint32_t kStdDev =
             static_cast<uint32_t>(kTestDev[didx] * kTestMean[midx]);
-        VirtualSocketServer::Function* f =
+        std::unique_ptr<VirtualSocketServer::Function> f =
             VirtualSocketServer::CreateDistribution(kTestMean[midx], kStdDev,
                                                     kTestSamples[sidx]);
-        ASSERT_TRUE(nullptr != f);
+        ASSERT_TRUE(nullptr != f.get());
         ASSERT_EQ(kTestSamples[sidx], f->size());
         double sum = 0;
         for (uint32_t i = 0; i < f->size(); ++i) {
@@ -1139,7 +1139,6 @@ TEST_F(VirtualSocketServerTest, CreatesStandardDistribution) {
         EXPECT_NEAR(kStdDev, stddev, 0.1 * kStdDev)
             << "M=" << kTestMean[midx] << " SD=" << kStdDev
             << " N=" << kTestSamples[sidx];
-        delete f;
       }
     }
   }

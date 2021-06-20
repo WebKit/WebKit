@@ -17,8 +17,8 @@
 #include <map>
 #include <memory>
 
+#include "api/sequence_checker.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
-#include "rtc_base/thread_checker.h"
 #include "sdk/objc/helpers/scoped_cftyperef.h"
 
 namespace webrtc {
@@ -44,7 +44,7 @@ class DesktopFrameProvider {
   void Release();
 
  private:
-  rtc::ThreadChecker thread_checker_;
+  SequenceChecker thread_checker_;
   const bool allow_iosurface_;
 
   // Most recent IOSurface that contains a capture of matching display.

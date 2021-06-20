@@ -69,7 +69,6 @@ private:
     void finalProgressComplete();
 
     void progressHeartbeatTimerFired();
-    bool isAlwaysOnLoggingAllowed() const;
 
     static unsigned long s_uniqueIdentifier;
 

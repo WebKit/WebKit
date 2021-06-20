@@ -119,6 +119,7 @@ public:
     void clear() { m_impl = nullptr; }
 
 private:
+    template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename> friend class WeakHashSet;
     template<typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakPtrFactory;
@@ -185,12 +186,15 @@ public:
         m_impl = nullptr;
     }
 
+    unsigned weakPtrCount() const { return m_impl ? m_impl->refCount() - 1 : 0; }
+
 #if ASSERT_ENABLED
     bool isInitialized() const { return m_impl; }
 #endif
 
 private:
     template<typename, typename> friend class WeakHashSet;
+    template<typename, typename, typename> friend class WeakHashMap;
 
     mutable RefPtr<WeakPtrImpl<Counter>> m_impl;
 #if ASSERT_ENABLED

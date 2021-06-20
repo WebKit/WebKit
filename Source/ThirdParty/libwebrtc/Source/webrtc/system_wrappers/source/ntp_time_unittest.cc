@@ -56,7 +56,6 @@ TEST(NtpTimeTest, ToMsMeansToNtpMilliseconds) {
   SimulatedClock clock(0x123456789abc);
 
   NtpTime ntp = clock.CurrentNtpTime();
-  EXPECT_EQ(ntp.ToMs(), Clock::NtpToMs(ntp.seconds(), ntp.fractions()));
   EXPECT_EQ(ntp.ToMs(), clock.CurrentNtpInMilliseconds());
 }
 

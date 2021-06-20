@@ -410,6 +410,10 @@ void Path::closeSubpath()
 FloatRect Path::boundingRectSlowCase() const
 {
     double x0, x1, y0, y1;
+    if (m_elements && m_elements.value().size() == 1 && m_elements.value()[0].type == PathElement::Type::MoveToPoint) {
+        FloatPoint p = m_elements.value()[0].points[0];
+        return FloatRect(p.x(), p.y(), 0, 0);
+    }
     cairo_path_extents(m_path.get(), &x0, &y0, &x1, &y1);
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }

@@ -26,6 +26,7 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #import <QuartzCore/CALayer.h>
+#import <WebCore/MediaPlayerEnums.h>
 
 namespace WebKit {
 class MediaPlayerPrivateRemote;
@@ -34,6 +35,7 @@ class MediaPlayerPrivateRemote;
 @interface WKVideoLayerRemote : CALayer
 @property (nonatomic) WebKit::MediaPlayerPrivateRemote* mediaPlayerPrivateRemote;
 @property (nonatomic) CGRect videoLayerFrame;
+@property (nonatomic) WebCore::MediaPlayerEnums::VideoGravity videoGravity;
 @end
 
 #endif

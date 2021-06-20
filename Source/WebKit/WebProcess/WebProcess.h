@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AccessibilityPreferences.h"
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
 #include "PluginProcessConnectionManager.h"
@@ -566,6 +567,8 @@ private:
     void backlightLevelDidChange(float backlightLevel);
 #endif
 
+    void accessibilityPreferencesDidChange(const AccessibilityPreferences&);
+
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void colorPreferencesDidChange();
 #endif
@@ -596,8 +599,6 @@ private:
 #if PLATFORM(GTK) && !USE(GTK4)
     void setUseSystemAppearanceForScrollbars(bool);
 #endif
-
-    bool isAlwaysOnLoggingAllowed() { return m_sessionID ? m_sessionID->isAlwaysOnLoggingAllowed() : true; }
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

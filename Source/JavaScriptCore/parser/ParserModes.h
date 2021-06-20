@@ -306,6 +306,14 @@ inline bool functionNameScopeIsDynamic(bool usesEval, bool isStrictMode)
     return true;
 }
 
+typedef uint8_t LexicalScopeFeatures;
+
+const LexicalScopeFeatures NoLexicalFeatures                           = 0;
+const LexicalScopeFeatures StrictModeLexicalFeature               = 1 << 0;
+
+const LexicalScopeFeatures AllLexicalFeatures = NoLexicalFeatures | StrictModeLexicalFeature;
+static_assert(AllLexicalFeatures <= 0b1111, "LexicalScopeFeatures must be 4bits");
+
 typedef uint16_t CodeFeatures;
 
 const CodeFeatures NoFeatures =                         0;
@@ -313,18 +321,17 @@ const CodeFeatures EvalFeature =                   1 << 0;
 const CodeFeatures ArgumentsFeature =              1 << 1;
 const CodeFeatures WithFeature =                   1 << 2;
 const CodeFeatures ThisFeature =                   1 << 3;
-const CodeFeatures StrictModeFeature =             1 << 4;
+const CodeFeatures NonSimpleParameterListFeature = 1 << 4;
 const CodeFeatures ShadowsArgumentsFeature =       1 << 5;
 const CodeFeatures ArrowFunctionFeature =          1 << 6;
-const CodeFeatures ArrowFunctionContextFeature =   1 << 7;
+const CodeFeatures AwaitFeature =                  1 << 7;
 const CodeFeatures SuperCallFeature =              1 << 8;
 const CodeFeatures SuperPropertyFeature =          1 << 9;
 const CodeFeatures NewTargetFeature =              1 << 10;
 const CodeFeatures NoEvalCacheFeature =            1 << 11;
-const CodeFeatures NonSimpleParameterListFeature = 1 << 12;
-const CodeFeatures AwaitFeature =                  1 << 13;
 
-const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ArrowFunctionFeature | ArrowFunctionContextFeature | SuperCallFeature | SuperPropertyFeature | NewTargetFeature | NoEvalCacheFeature | NonSimpleParameterListFeature | AwaitFeature;
+const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | NonSimpleParameterListFeature | ShadowsArgumentsFeature | ArrowFunctionFeature | AwaitFeature | SuperCallFeature | SuperPropertyFeature | NewTargetFeature | NoEvalCacheFeature;
+static_assert(AllFeatures < (1 << 14), "CodeFeatures must be 14bits");
 
 typedef uint8_t InnerArrowFunctionCodeFeatures;
     

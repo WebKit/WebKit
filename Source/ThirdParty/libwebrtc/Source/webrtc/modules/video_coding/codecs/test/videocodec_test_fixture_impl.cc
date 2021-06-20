@@ -20,16 +20,17 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/str_replace.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/transport/field_trial_based_config.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "api/video_codecs/h264_profile_level_id.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_encoder_config.h"
 #include "common_video/h264/h264_common.h"
-#include "media/base/h264_profile_level_id.h"
 #include "media/base/media_constants.h"
 #include "media/engine/internal_decoder_factory.h"
 #include "media/engine/internal_encoder_factory.h"
@@ -58,7 +59,7 @@ using VideoStatistics = VideoCodecTestStats::VideoStatistics;
 namespace {
 const int kBaseKeyFrameInterval = 3000;
 const double kBitratePriority = 1.0;
-const int kMaxFramerateFps = 30;
+const int kDefaultMaxFramerateFps = 30;
 const int kMaxQp = 56;
 
 void ConfigureSimulcast(VideoCodec* codec_settings) {
@@ -86,7 +87,7 @@ void ConfigureSvc(VideoCodec* codec_settings) {
   RTC_CHECK_EQ(kVideoCodecVP9, codec_settings->codecType);
 
   const std::vector<SpatialLayer> layers = GetSvcConfig(
-      codec_settings->width, codec_settings->height, kMaxFramerateFps,
+      codec_settings->width, codec_settings->height, kDefaultMaxFramerateFps,
       /*first_active_layer=*/0, codec_settings->VP9()->numberOfSpatialLayers,
       codec_settings->VP9()->numberOfTemporalLayers,
       /* is_screen_sharing = */ false);
@@ -301,11 +302,11 @@ std::string VideoCodecTestFixtureImpl::Config::CodecName() const {
     name = CodecTypeToPayloadString(codec_settings.codecType);
   }
   if (codec_settings.codecType == kVideoCodecH264) {
-    if (h264_codec_settings.profile == H264::kProfileConstrainedHigh) {
+    if (h264_codec_settings.profile == H264Profile::kProfileConstrainedHigh) {
       return name + "-CHP";
     } else {
       RTC_DCHECK_EQ(h264_codec_settings.profile,
-                    H264::kProfileConstrainedBaseline);
+                    H264Profile::kProfileConstrainedBaseline);
       return name + "-CBP";
     }
   }
@@ -408,8 +409,14 @@ void VideoCodecTestFixtureImpl::RunTest(
   // codecs on a task queue.
   TaskQueueForTest task_queue("VidProc TQ");
 
-  SetUpAndInitObjects(&task_queue, rate_profiles[0].target_kbps,
-                      rate_profiles[0].input_fps);
+  bool is_setup_succeeded = SetUpAndInitObjects(
+      &task_queue, rate_profiles[0].target_kbps, rate_profiles[0].input_fps);
+  EXPECT_TRUE(is_setup_succeeded);
+  if (!is_setup_succeeded) {
+    ReleaseAndCloseObjects(&task_queue);
+    return;
+  }
+
   PrintSettings(&task_queue);
   ProcessAllFrames(&task_queue, rate_profiles);
   ReleaseAndCloseObjects(&task_queue);
@@ -449,6 +456,8 @@ void VideoCodecTestFixtureImpl::ProcessAllFrames(
       SleepMs(frame_duration_ms);
     }
   }
+
+  task_queue->PostTask([this] { processor_->Finalize(); });
 
   // Wait until we know that the last frame has been sent for encode.
   task_queue->SendTask([] {}, RTC_FROM_HERE);
@@ -595,7 +604,7 @@ void VideoCodecTestFixtureImpl::VerifyVideoStatistic(
   }
 }
 
-void VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
+bool VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
   SdpVideoFormat::Parameters params;
   if (config_.codec_settings.codecType == kVideoCodecH264) {
     const char* packetization_mode =
@@ -604,8 +613,8 @@ void VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
             ? "1"
             : "0";
     params = {{cricket::kH264FmtpProfileLevelId,
-               *H264::ProfileLevelIdToString(H264::ProfileLevelId(
-                   config_.h264_codec_settings.profile, H264::kLevel3_1))},
+               *H264ProfileLevelIdToString(H264ProfileLevelId(
+                   config_.h264_codec_settings.profile, H264Level::kLevel3_1))},
               {cricket::kH264FmtpPacketizationMode, packetization_mode}};
   } else {
     params = {};
@@ -614,6 +623,9 @@ void VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
 
   encoder_ = encoder_factory_->CreateVideoEncoder(format);
   EXPECT_TRUE(encoder_) << "Encoder not successfully created.";
+  if (encoder_ == nullptr) {
+    return false;
+  }
 
   const size_t num_simulcast_or_spatial_layers = std::max(
       config_.NumberOfSimulcastStreams(), config_.NumberOfSpatialLayers());
@@ -624,7 +636,12 @@ void VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
 
   for (const auto& decoder : decoders_) {
     EXPECT_TRUE(decoder) << "Decoder not successfully created.";
+    if (decoder == nullptr) {
+      return false;
+    }
   }
+
+  return true;
 }
 
 void VideoCodecTestFixtureImpl::DestroyEncoderAndDecoder() {
@@ -636,7 +653,7 @@ VideoCodecTestStats& VideoCodecTestFixtureImpl::GetStats() {
   return stats_;
 }
 
-void VideoCodecTestFixtureImpl::SetUpAndInitObjects(
+bool VideoCodecTestFixtureImpl::SetUpAndInitObjects(
     TaskQueueForTest* task_queue,
     size_t initial_bitrate_kbps,
     double initial_framerate_fps) {
@@ -644,26 +661,60 @@ void VideoCodecTestFixtureImpl::SetUpAndInitObjects(
   config_.codec_settings.startBitrate = static_cast<int>(initial_bitrate_kbps);
   config_.codec_settings.maxFramerate = std::ceil(initial_framerate_fps);
 
+  int clip_width = config_.clip_width.value_or(config_.codec_settings.width);
+  int clip_height = config_.clip_height.value_or(config_.codec_settings.height);
+
   // Create file objects for quality analysis.
-  source_frame_reader_.reset(
-      new YuvFrameReaderImpl(config_.filepath, config_.codec_settings.width,
-                             config_.codec_settings.height));
+  source_frame_reader_.reset(new YuvFrameReaderImpl(
+      config_.filepath, clip_width, clip_height,
+      config_.reference_width.value_or(clip_width),
+      config_.reference_height.value_or(clip_height),
+      YuvFrameReaderImpl::RepeatMode::kPingPong, config_.clip_fps,
+      config_.codec_settings.maxFramerate));
   EXPECT_TRUE(source_frame_reader_->Init());
 
   RTC_DCHECK(encoded_frame_writers_.empty());
   RTC_DCHECK(decoded_frame_writers_.empty());
 
+  stats_.Clear();
+
+  cpu_process_time_.reset(new CpuProcessTime(config_));
+
+  bool is_codec_created = false;
+  task_queue->SendTask(
+      [this, &is_codec_created]() {
+        is_codec_created = CreateEncoderAndDecoder();
+      },
+      RTC_FROM_HERE);
+
+  if (!is_codec_created) {
+    return false;
+  }
+
+  task_queue->SendTask(
+      [this]() {
+        processor_ = std::make_unique<VideoProcessor>(
+            encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
+            &stats_, &encoded_frame_writers_,
+            decoded_frame_writers_.empty() ? nullptr : &decoded_frame_writers_);
+      },
+      RTC_FROM_HERE);
+
   if (config_.visualization_params.save_encoded_ivf ||
       config_.visualization_params.save_decoded_y4m) {
+    std::string encoder_name = GetCodecName(task_queue, /*is_encoder=*/true);
+    encoder_name = absl::StrReplaceAll(encoder_name, {{":", ""}, {" ", "-"}});
+
     const size_t num_simulcast_or_spatial_layers = std::max(
         config_.NumberOfSimulcastStreams(), config_.NumberOfSpatialLayers());
     const size_t num_temporal_layers = config_.NumberOfTemporalLayers();
     for (size_t simulcast_svc_idx = 0;
          simulcast_svc_idx < num_simulcast_or_spatial_layers;
          ++simulcast_svc_idx) {
-      const std::string output_filename_base = JoinFilename(
-          config_.output_path, FilenameWithParams(config_) + "_sl" +
-                                   std::to_string(simulcast_svc_idx));
+      const std::string output_filename_base =
+          JoinFilename(config_.output_path,
+                       FilenameWithParams(config_) + "_" + encoder_name +
+                           "_sl" + std::to_string(simulcast_svc_idx));
 
       if (config_.visualization_params.save_encoded_ivf) {
         for (size_t temporal_idx = 0; temporal_idx < num_temporal_layers;
@@ -691,19 +742,7 @@ void VideoCodecTestFixtureImpl::SetUpAndInitObjects(
     }
   }
 
-  stats_.Clear();
-
-  cpu_process_time_.reset(new CpuProcessTime(config_));
-
-  task_queue->SendTask(
-      [this]() {
-        CreateEncoderAndDecoder();
-        processor_ = std::make_unique<VideoProcessor>(
-            encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
-            &stats_, &encoded_frame_writers_,
-            decoded_frame_writers_.empty() ? nullptr : &decoded_frame_writers_);
-      },
-      RTC_FROM_HERE);
+  return true;
 }
 
 void VideoCodecTestFixtureImpl::ReleaseAndCloseObjects(
@@ -729,22 +768,32 @@ void VideoCodecTestFixtureImpl::ReleaseAndCloseObjects(
   decoded_frame_writers_.clear();
 }
 
+std::string VideoCodecTestFixtureImpl::GetCodecName(
+    TaskQueueForTest* task_queue,
+    bool is_encoder) const {
+  std::string codec_name;
+  task_queue->SendTask(
+      [this, is_encoder, &codec_name] {
+        if (is_encoder) {
+          codec_name = encoder_->GetEncoderInfo().implementation_name;
+        } else {
+          codec_name = decoders_.at(0)->ImplementationName();
+        }
+      },
+      RTC_FROM_HERE);
+  return codec_name;
+}
+
 void VideoCodecTestFixtureImpl::PrintSettings(
     TaskQueueForTest* task_queue) const {
   RTC_LOG(LS_INFO) << "==> Config";
   RTC_LOG(LS_INFO) << config_.ToString();
 
   RTC_LOG(LS_INFO) << "==> Codec names";
-  std::string encoder_name;
-  std::string decoder_name;
-  task_queue->SendTask(
-      [this, &encoder_name, &decoder_name] {
-        encoder_name = encoder_->GetEncoderInfo().implementation_name;
-        decoder_name = decoders_.at(0)->ImplementationName();
-      },
-      RTC_FROM_HERE);
-  RTC_LOG(LS_INFO) << "enc_impl_name: " << encoder_name;
-  RTC_LOG(LS_INFO) << "dec_impl_name: " << decoder_name;
+  RTC_LOG(LS_INFO) << "enc_impl_name: "
+                   << GetCodecName(task_queue, /*is_encoder=*/true);
+  RTC_LOG(LS_INFO) << "dec_impl_name: "
+                   << GetCodecName(task_queue, /*is_encoder=*/false);
 }
 
 }  // namespace test

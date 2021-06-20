@@ -151,7 +151,7 @@ static gssize webkitDirectoryInputStreamRead(GInputStream* input, void* buffer, 
         gsize bufferSize;
         auto* bufferData = g_bytes_get_data(stream->priv->buffer.get(), &bufferSize);
         gsize bytesRead = std::min(bufferSize, count - totalBytesRead);
-        memcpy(reinterpret_cast<char*>(buffer) + totalBytesRead, bufferData, bytesRead);
+        memcpy(static_cast<char*>(buffer) + totalBytesRead, bufferData, bytesRead);
         if (bytesRead == bufferSize)
             stream->priv->buffer = nullptr;
         else

@@ -303,7 +303,7 @@ std::string GetWindowOwnerName(CFDictionaryRef window) {
 std::string GetWindowOwnerName(CGWindowID id) {
   std::string owner_name;
   if (GetWindowRef(id, [&owner_name](CFDictionaryRef window) {
-        owner_name = GetWindowOwnerPid(window);
+        owner_name = GetWindowOwnerName(window);
       })) {
     return owner_name;
   }

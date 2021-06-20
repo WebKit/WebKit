@@ -242,9 +242,10 @@ public:
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned lineCount, unsigned endColumn)
+    void recordParse(CodeFeatures features, LexicalScopeFeatures lexicalScopeFeatures, bool hasCapturedVariables, unsigned lineCount, unsigned endColumn)
     {
         m_features = features;
+        m_lexicalScopeFeatures = lexicalScopeFeatures;
         m_hasCapturedVariables = hasCapturedVariables;
         m_lineCount = lineCount;
         // For the UnlinkedCodeBlock, startColumn is always 0.
@@ -257,6 +258,7 @@ public:
     void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL.impl(); }
 
     CodeFeatures codeFeatures() const { return m_features; }
+    LexicalScopeFeatures lexicalScopeFeatures() const { return static_cast<LexicalScopeFeatures>(m_lexicalScopeFeatures); }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
     unsigned lineCount() const { return m_lineCount; }
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
@@ -368,9 +370,13 @@ private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
 
+    unsigned m_numVars : 31;
     unsigned m_usesCallEval : 1;
+    unsigned m_numCalleeLocals : 31;
     unsigned m_isConstructor : 1;
+    unsigned m_numParameters : 31;
     unsigned m_hasCapturedVariables : 1;
+
     unsigned m_isBuiltinFunction : 1;
     unsigned m_superBinding : 1;
     unsigned m_scriptMode: 1;
@@ -385,6 +391,7 @@ private:
     unsigned m_age : 3;
     static_assert(((1U << 3) - 1) >= maxAge);
     bool m_hasCheckpoints : 1;
+    unsigned m_lexicalScopeFeatures : 4;
 public:
     ConcurrentJSLock m_lock;
 private:
@@ -394,10 +401,6 @@ private:
 
     unsigned m_lineCount { 0 };
     unsigned m_endColumn { UINT_MAX };
-
-    unsigned m_numVars { 0 };
-    unsigned m_numCalleeLocals { 0 };
-    unsigned m_numParameters { 0 };
 
     PackedRefPtr<StringImpl> m_sourceURLDirective;
     PackedRefPtr<StringImpl> m_sourceMappingURLDirective;

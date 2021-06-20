@@ -8,14 +8,25 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpBackForwardList();
 }
-   
+    
 onload = function()
 {
     if (sessionStorage.didNav) {
         delete sessionStorage.didNav;
         delete sessionStorage.topShouldNavAndGoBack;
-        if (window.testRunner)
-            testRunner.notifyDone();
+        if (window.testRunner) {
+            // Wait until the iframe is showing the POST response before ending the test.
+            let el = document.getElementById('target-frame');
+            if (el.src !== 'about:blank' && el.readyState === 'complete') {
+                testRunner.notifyDone();
+                return;
+            }
+
+            el.onload = function() {
+                if (el.src !== 'about:blank')
+                    testRunner.notifyDone();
+            };
+        }
     } else {
         sessionStorage.topShouldNavAndGoBack = true;
         document.getElementById('the-form').submit();
@@ -30,6 +41,6 @@ onload = function()
   <input name="the-input" value="input value goes here">
 </form>
 
-<iframe name="target-frame" src="about:blank"></iframe>
+<iframe id="target-frame" name="target-frame" src="about:blank"></iframe>
 </body>
 </html>

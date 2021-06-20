@@ -569,10 +569,18 @@ class WebkitFlatpak:
         if self.gdb is None and '--gdb' in sys.argv:
             self.gdb = True
 
-        self.build_root = os.path.join(self.source_root, 'WebKitBuild')
-        self.build_path = os.path.join(self.build_root, self.platform, self.build_type)
+        base_build_dir = 'WebKitBuild'
+
+        # This path doesn't take $WEBKIT_OUTPUTDIR in account because the standalone toolchains
+        # paths depend on it and those are also hard-coded in the generated sccache config.
+        self.build_root = os.path.join(self.source_root, base_build_dir)
+
         self.config_file = os.path.join(self.flatpak_build_path, 'webkit_flatpak_config.json')
         self.sccache_config_file = os.path.join(self.flatpak_build_path, 'sccache.toml')
+
+        build_root = os.environ.get("WEBKIT_OUTPUTDIR", self.source_root)
+        self.build_path = os.path.join(build_root, base_build_dir, self.platform, self.build_type)
+        _log.debug("Building %s port in %s" % (self.platform, self.build_path))
 
         self.toolchains_directory = os.path.join(self.build_root, "Toolchains")
         if not os.path.isdir(self.toolchains_directory):
@@ -757,6 +765,11 @@ class WebkitFlatpak:
                 if e.errno != errno.EEXIST:
                     raise e
 
+        share_network_option = "--share=network"
+
+        if self.platform == 'WPE':
+            flatpak_command.append(share_network_option)
+
         if not building:
             flatpak_command.extend([
                 "--device=all",
@@ -833,7 +846,6 @@ class WebkitFlatpak:
             if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or envvar_in_suffixes_to_keep(envvar) or (not os.environ.get('GST_BUILD_PATH') and var_tokens[0] == "GST"):
                 sandbox_environment[envvar] = value
 
-        share_network_option = "--share=network"
         remote_sccache_configs = set(["SCCACHE_REDIS", "SCCACHE_BUCKET", "SCCACHE_MEMCACHED",
                                       "SCCACHE_GCS_BUCKET", "SCCACHE_AZURE_CONNECTION_STRING",
                                       "WEBKIT_USE_SCCACHE"])
@@ -862,9 +874,7 @@ class WebkitFlatpak:
 
         if self.use_icecream and not skip_icc:
             _log.debug('Enabling the icecream compiler')
-            if share_network_option not in flatpak_command:
-                flatpak_command.append(share_network_option)
-            flatpak_command.append("--filesystem=home")
+            flatpak_command.extend([share_network_option, "--filesystem=home"])
 
             n_cores = multiprocessing.cpu_count() * 3
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
@@ -910,9 +920,12 @@ class WebkitFlatpak:
         for envvar, value in sandbox_environment.items():
             flatpak_command.append("--env=%s=%s" % (envvar, value))
 
+        # $WEBKIT_OUTPUTDIR is not forwarded in the build sandbox because the host build path is
+        # always bind-mounted to /app in the sandbox.
+        env_vars_to_drop = ("WEBKIT_OUTPUTDIR", "LANGUAGE")
         flatpak_env = os.environ.copy()
         for envvar in list(flatpak_env.keys()):
-            if envvar.startswith("LC_") or envvar == "LANGUAGE":
+            if envvar.startswith("LC_") or envvar in env_vars_to_drop:
                 del flatpak_env[envvar]
                 if self.flatpak_version >= (1, 10, 0):
                     flatpak_command.append("--unset-env=%s" % envvar)
@@ -941,11 +954,14 @@ class WebkitFlatpak:
         if display:
             flatpak_env["WEBKIT_FLATPAK_DISPLAY"] = display
 
+        # FIXME: Remove duplicate values from the flatpak command.
+        command = flatpak_command
+
         if gather_output:
-            return run_sanitized(flatpak_command, gather_output=True, ignore_stderr=True, env=flatpak_env)
+            return run_sanitized(command, gather_output=True, ignore_stderr=True, env=flatpak_env)
 
         try:
-            return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)
+            return self.execute_command(command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)
         except KeyboardInterrupt:
             return 0
 

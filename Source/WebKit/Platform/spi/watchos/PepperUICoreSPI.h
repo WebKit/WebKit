@@ -138,8 +138,17 @@ typedef void (^PUICQuickboardCompletionBlock)(NSAttributedString * _Nullable);
 @interface PUICButton : UIButton
 @end
 
+typedef NS_ENUM(NSUInteger, PUICQuickboardAction) {
+    PUICQuickboardActionAddNumber = 7,
+};
+
+#if HAVE(PUIC_BUTTON_TYPE_PILL)
+extern UIButtonType const PUICButtonTypePill;
+#endif
+
 @interface PUICQuickboardListTrayButton : PUICButton
 - (instancetype)initWithFrame:(CGRect)frame tintColor:(nullable UIColor *)tintColor defaultHeight:(CGFloat)defaultHeight;
+@property (nonatomic) PUICQuickboardAction action;
 @end
 
 @interface PUICTableViewCell : UITableViewCell
@@ -210,6 +219,7 @@ typedef void (^PUICQuickboardCompletionBlock)(NSAttributedString * _Nullable);
 @property (nonatomic, readonly) PUICTableView *listView;
 @property (strong, nonatomic, readonly) PUICQuickboardListViewSpecs *specs;
 @property (nonatomic, copy) UITextContentType textContentType;
+- (instancetype)initWithDelegate:(id <PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_DESIGNATED_INITIALIZER;
 - (void)reloadListItems;
 - (void)reloadHeaderContentView;
 @end
@@ -237,12 +247,6 @@ typedef NS_ENUM(NSInteger, PUICPickerViewStyle) {
 - (instancetype)initWithStyle:(PUICPickerViewStyle)style NS_DESIGNATED_INITIALIZER;
 - (UIView *)dequeueReusableItemView;
 - (void)reloadData;
-@end
-
-@protocol PUICDictationViewControllerDelegate <NSObject>
-@end
-@interface PUICDictationViewController : PUICQuickboardViewController
-- (instancetype)initWithDelegate:(id<PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_DESIGNATED_INITIALIZER;
 @end
 
 @interface PUICQuickboardViewController (ExposeHeader)

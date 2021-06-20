@@ -24,5 +24,5 @@ sys.stdout.write(
 )
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), '../../../contentSecurityPolicy/resources/style-set-red.css'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), '../../../contentSecurityPolicy/resources/style-set-red.css'), 'rb') as file:
     sys.stdout.buffer.write(file.read())

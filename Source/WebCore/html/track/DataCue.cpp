@@ -71,22 +71,30 @@ DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& en
 
 Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
 {
-    return adoptRef(*new DataCue(document, start, end, data, length));
+    auto dataCue = adoptRef(*new DataCue(document, start, end, data, length));
+    dataCue->suspendIfNeeded();
+    return dataCue;
 }
 
 Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
 {
-    return adoptRef(*new DataCue(document, start, end, WTFMove(platformValue), type));
+    auto dataCue = adoptRef(*new DataCue(document, start, end, WTFMove(platformValue), type));
+    dataCue->suspendIfNeeded();
+    return dataCue;
 }
 
 Ref<DataCue> DataCue::create(Document& document, double start, double end, ArrayBuffer& data)
 {
-    return adoptRef(*new DataCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), data, emptyString()));
+    auto dataCue = adoptRef(*new DataCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), data, emptyString()));
+    dataCue->suspendIfNeeded();
+    return dataCue;
 }
 
 Ref<DataCue> DataCue::create(Document& document, double start, double end, JSC::JSValue value, const String& type)
 {
-    return adoptRef(*new DataCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), value, type));
+    auto dataCue = adoptRef(*new DataCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), value, type));
+    dataCue->suspendIfNeeded();
+    return dataCue;
 }
 
 DataCue::~DataCue() = default;

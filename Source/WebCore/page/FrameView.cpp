@@ -137,7 +137,7 @@
 
 #define PAGE_ID frame().pageID().value_or(PageIdentifier()).toUInt64()
 #define FRAME_ID frame().frameID().value_or(FrameIdentifier()).toUInt64()
-#define FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(frame().page() && frame().page()->isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameView::" fmt, this, PAGE_ID, FRAME_ID, frame().isMainFrame(), ##__VA_ARGS__)
+#define FRAMEVIEW_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameView::" fmt, this, PAGE_ID, FRAME_ID, frame().isMainFrame(), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -2209,7 +2209,7 @@ void FrameView::restoreScrollbar()
 bool FrameView::scrollToFragment(const URL& url)
 {
     auto fragmentIdentifier = url.fragmentIdentifier();
-    if (scrollToFragmentInternal(fragmentIdentifier.toString()))
+    if (scrollToFragmentInternal(fragmentIdentifier))
         return true;
 
     if (scrollToFragmentInternal(decodeURLEscapeSequences(fragmentIdentifier)))
@@ -2219,7 +2219,7 @@ bool FrameView::scrollToFragment(const URL& url)
     return false;
 }
 
-bool FrameView::scrollToFragmentInternal(const String& fragmentIdentifier)
+bool FrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
 {
     // If our URL has no ref, then we have no place we need to jump to.
     if (fragmentIdentifier.isNull())
@@ -3407,7 +3407,7 @@ void FrameView::scheduleResizeEventIfNeeded()
 
     auto* document = frame().document();
     if (document->quirks().shouldSilenceWindowResizeEvents()) {
-        FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
+        FRAMEVIEW_RELEASE_LOG(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
         return;
     }
 
@@ -4305,7 +4305,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
 
     ASSERT(!needsLayout());
     if (needsLayout()) {
-        FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Layout, "paintContents: Not painting because render tree needs layout");
+        FRAMEVIEW_RELEASE_LOG(Layout, "paintContents: Not painting because render tree needs layout");
         return;
     }
 
@@ -5319,7 +5319,7 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
 
     if (milestonesAchieved && frame().isMainFrame()) {
         if (milestonesAchieved.contains(DidFirstVisuallyNonEmptyLayout))
-            FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Layout, "fireLayoutRelatedMilestonesIfNeeded: Firing first visually non-empty layout milestone on the main frame");
+            FRAMEVIEW_RELEASE_LOG(Layout, "fireLayoutRelatedMilestonesIfNeeded: Firing first visually non-empty layout milestone on the main frame");
         frame().loader().didReachLayoutMilestone(milestonesAchieved);
     }
 }

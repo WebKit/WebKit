@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_codec_type.h"
@@ -101,6 +102,14 @@ class RTC_EXPORT VideoCodec {
  public:
   VideoCodec();
 
+  // Scalability mode as described in
+  // https://www.w3.org/TR/webrtc-svc/#scalabilitymodes*
+  // or value 'NONE' to indicate no scalability.
+  absl::string_view ScalabilityMode() const { return scalability_mode_; }
+  void SetScalabilityMode(absl::string_view scalability_mode) {
+    scalability_mode_ = std::string(scalability_mode);
+  }
+
   // Public variables. TODO(hta): Make them private with accessors.
   VideoCodecType codecType;
 
@@ -166,6 +175,7 @@ class RTC_EXPORT VideoCodec {
   // TODO(hta): Consider replacing the union with a pointer type.
   // This will allow removing the VideoCodec* types from this file.
   VideoCodecUnion codec_specific_;
+  std::string scalability_mode_;
 };
 
 }  // namespace webrtc

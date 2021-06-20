@@ -33,10 +33,6 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
 OBJC_CLASS UIViewController;
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditions.h>
-#endif
-
 namespace WebKit {
 
 class PaymentAuthorizationPresenter;
@@ -47,6 +43,9 @@ using DidAuthorizePaymentCompletion = BlockPtr<void(PKPaymentAuthorizationResult
 using DidSelectPaymentMethodCompletion = BlockPtr<void(PKPaymentRequestPaymentMethodUpdate *)>;
 using DidSelectShippingContactCompletion = BlockPtr<void(PKPaymentRequestShippingContactUpdate *)>;
 using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentRequestShippingMethodUpdate *)>;
+#if HAVE(PASSKIT_COUPON_CODE)
+using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUpdate *)>;
+#endif
 
 }
 
@@ -61,8 +60,8 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentRequestShipping
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors;
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate;
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate;
-#if defined(WKPaymentAuthorizationDelegateAdditions_interface_public)
-WKPaymentAuthorizationDelegateAdditions_interface_public
+#if HAVE(PASSKIT_COUPON_CODE)
+- (void)completeCouponCodeChange:(PKPaymentRequestCouponCodeUpdate *)couponCodeUpdate;
 #endif
 - (void)invalidate;
 
@@ -79,8 +78,8 @@ WKPaymentAuthorizationDelegateAdditions_interface_public
 - (void)_didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(WebKit::DidSelectPaymentMethodCompletion::BlockType)completion;
 - (void)_didSelectShippingContact:(PKContact *)contact completion:(WebKit::DidSelectShippingContactCompletion::BlockType)completion;
 - (void)_didSelectShippingMethod:(PKShippingMethod *)shippingMethod completion:(WebKit::DidSelectShippingMethodCompletion::BlockType)completion;
-#if defined(WKPaymentAuthorizationDelegateAdditions_interface_protected)
-WKPaymentAuthorizationDelegateAdditions_interface_protected
+#if HAVE(PASSKIT_COUPON_CODE)
+- (void)_didChangeCouponCode:(NSString *)couponCode completion:(WebKit::DidChangeCouponCodeCompletion::BlockType)completion;
 #endif
 - (void)_getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion;
 - (void)_willFinishWithError:(NSError *)error;

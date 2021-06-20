@@ -949,7 +949,6 @@ dom/EventContext.cpp
 dom/EventDispatcher.cpp
 dom/EventListenerMap.cpp
 dom/EventLoop.cpp
-dom/EventLoopEventQueue.cpp
 dom/EventNames.cpp
 dom/EventPath.cpp
 dom/EventTarget.cpp
@@ -2190,6 +2189,7 @@ platform/network/SameSiteInfo.cpp
 platform/network/SocketStreamHandle.cpp
 platform/network/SocketStreamHandleImpl.cpp
 platform/network/SynchronousLoaderClient.cpp
+platform/network/TimingAllowOrigin.cpp
 platform/sql/SQLiteAuthorizer.cpp
 platform/sql/SQLiteDatabase.cpp
 platform/sql/SQLiteDatabaseTracker.cpp

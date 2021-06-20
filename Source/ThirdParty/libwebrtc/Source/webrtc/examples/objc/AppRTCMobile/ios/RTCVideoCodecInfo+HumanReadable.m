@@ -10,7 +10,7 @@
 
 #import "RTCVideoCodecInfo+HumanReadable.h"
 
-#import <WebRTC/RTCH264ProfileLevelId.h>
+#import "sdk/objc/components/video_codec/RTCH264ProfileLevelId.h"
 
 @implementation RTC_OBJC_TYPE (RTCVideoCodecInfo)
 (HumanReadable)

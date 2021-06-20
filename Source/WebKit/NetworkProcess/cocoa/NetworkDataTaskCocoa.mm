@@ -40,6 +40,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
@@ -300,6 +301,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_isForMainResourceNavigationForAnyFrame(parameters.isMainResourceNavigationForAnyFrame)
     , m_isAlwaysOnLoggingAllowed(computeIsAlwaysOnLoggingAllowed(session))
     , m_shouldRelaxThirdPartyCookieBlocking(parameters.shouldRelaxThirdPartyCookieBlocking)
+    , m_sourceOrigin(parameters.sourceOrigin)
 {
     auto request = parameters.request;
     auto url = request.url();
@@ -460,9 +462,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 {
     WTFEmitSignpost(m_task.get(), "DataTask", "redirect");
 
-    // Check if the redirected url is allowed to access the redirecting url's timing information.
-    // FIXME: This should not set back to true after another same-origin redirect once it has been set to true.
-    networkLoadMetrics().hasCrossOriginRedirect = !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url());
+    networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url());
 
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
@@ -717,6 +717,21 @@ void NetworkDataTaskCocoa::setPriority(WebCore::ResourceLoadPriority priority)
     if (!WebCore::ResourceRequest::resourcePrioritiesEnabled())
         return;
     m_task.get().priority = toNSURLSessionTaskPriority(priority);
+}
+
+void NetworkDataTaskCocoa::checkTAO(const WebCore::ResourceResponse& response)
+{
+    if (networkLoadMetrics().failsTAOCheck)
+        return;
+
+    RefPtr<WebCore::SecurityOrigin> origin;
+    if (isTopLevelNavigation())
+        origin = WebCore::SecurityOrigin::create(firstRequest().url());
+    else
+        origin = m_sourceOrigin;
+
+    if (origin)
+        networkLoadMetrics().failsTAOCheck = !passesTimingAllowOriginCheck(response, *origin);
 }
 
 }

@@ -1,0 +1,7 @@
+
+PASS The default value of `paymentTiming` should be `"immediate"`.
+PASS Should not have a default value for `recurringPaymentIntervalStartDate` and `recurringPaymentIntervalEndDate` when `paymentTiming` is `"recurring"`.
+PASS Should also propagate `recurringPaymentIntervalStartDate` and `recurringPaymentIntervalEndDate` if provided when `paymentTiming` is `"recurring"`.
+PASS Should not have a default value for `deferredPaymentDate` when `paymentTiming` is `"deferred"`.
+PASS Should also propagate `deferredPaymentDate` if provided when `paymentTiming` is `"deferred"`.
+

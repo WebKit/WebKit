@@ -30,16 +30,26 @@ class OverflowSupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        let mediaEvents = [];
-        window["WebKitAdditions.OverflowSupport.prototype.get_mediaEvents"]?.(this, mediaEvents);
-        return mediaEvents;
+        return [
+            "abort",
+            "canplay",
+            "canplaythrough",
+            "durationchange",
+            "emptied",
+            "error",
+            "loadeddata",
+            "loadedmetadata",
+            "loadstart",
+            "playing",
+            "stalled",
+            "suspend",
+            "waiting",
+        ];
     }
 
     get tracksToMonitor()
     {
-        let tracksToMonitor = [];
-        window["WebKitAdditions.OverflowSupport.prototype.get_tracksToMonitor"]?.(this, tracksToMonitor);
-        return tracksToMonitor;
+        return [this.mediaController.media.textTracks];
     }
 
     get control()
@@ -57,8 +67,43 @@ class OverflowSupport extends MediaControllerSupport
         this.control.enabled = this.mediaController.canShowMediaControlsContextMenu;
 
         let defaultContextMenuOptions = {};
-        window["WebKitAdditions.OverflowSupport.prototype.syncControl"]?.(this, defaultContextMenuOptions);
+
+        if (this._includePlaybackRates)
+            defaultContextMenuOptions.includePlaybackRates = true;
+
+        for (let textTrack of this.mediaController.media.textTracks) {
+            if (textTrack.kind !== "chapters")
+                continue;
+
+            if (textTrack.mode === "disabled")
+                textTrack.mode = "hidden";
+            defaultContextMenuOptions.includeChapters = true;
+        }
+
         this.control.defaultContextMenuOptions = defaultContextMenuOptions;
+    }
+
+    // Private
+
+    get _includePlaybackRates()
+    {
+        if (this.mediaController.hidePlaybackRates)
+            return false;
+
+        let media = this.mediaController.media;
+
+        if (media.duration === Number.POSITIVE_INFINITY && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+            // Do not allow adjustment of the playback rate for live broadcasts.
+            return false;
+        }
+
+        if (window.MediaStream && media.srcObject instanceof MediaStream) {
+            // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+            // "playbackRate" - A MediaStream is not seekable.
+            return false;
+        }
+
+        return true;
     }
 
 }

@@ -34,15 +34,16 @@ namespace JSC {
 class InstanceOfAccessCase final : public AccessCase {
 public:
     using Base = AccessCase;
+    friend class AccessCase;
     
-    static std::unique_ptr<AccessCase> create(
+    static Ref<AccessCase> create(
         VM&, JSCell*, AccessType, Structure*, const ObjectPropertyConditionSet&,
         JSObject* prototype);
     
     JSObject* prototype() const { return m_prototype.get(); }
     
     void dumpImpl(PrintStream&, CommaPrinter&) const final;
-    std::unique_ptr<AccessCase> clone() const final;
+    Ref<AccessCase> clone() const final;
     
     ~InstanceOfAccessCase() final;
 

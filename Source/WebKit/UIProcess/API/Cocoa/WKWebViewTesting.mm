@@ -454,7 +454,7 @@
         std::optional<WebCore::ExceptionData> result(bool success) const
         {
             if (!success)
-                return { WebCore::ExceptionData { WebCore::InvalidStateError } };
+                return { WebCore::ExceptionData { WebCore::InvalidStateError, String() } };
 
             return { };
         }
@@ -468,7 +468,7 @@
         {
             [m_clientCoordinator joinWithCompletion:makeBlockPtr([weakThis = makeWeakPtr(this), callback = WTFMove(callback)] (BOOL success) mutable {
                 if (!weakThis) {
-                    callback(WebCore::ExceptionData { WebCore::InvalidStateError });
+                    callback(WebCore::ExceptionData { WebCore::InvalidStateError, String() });
                     return;
                 }
 
@@ -485,7 +485,7 @@
         {
             [m_clientCoordinator seekTo:time withCompletion:makeBlockPtr([weakThis = makeWeakPtr(this), callback = WTFMove(callback)] (BOOL success) mutable {
                 if (!weakThis) {
-                    callback(WebCore::ExceptionData { WebCore::InvalidStateError });
+                    callback(WebCore::ExceptionData { WebCore::InvalidStateError, String() });
                     return;
                 }
 
@@ -497,7 +497,7 @@
         {
             [m_clientCoordinator playWithCompletion:makeBlockPtr([weakThis = makeWeakPtr(this), callback = WTFMove(callback)] (BOOL success) mutable {
                 if (!weakThis) {
-                    callback(WebCore::ExceptionData { WebCore::InvalidStateError });
+                    callback(WebCore::ExceptionData { WebCore::InvalidStateError, String() });
                     return;
                 }
 
@@ -509,7 +509,7 @@
         {
             [m_clientCoordinator pauseWithCompletion:makeBlockPtr([weakThis = makeWeakPtr(this), callback = WTFMove(callback)] (BOOL success) mutable {
                 if (!weakThis) {
-                    callback(WebCore::ExceptionData { WebCore::InvalidStateError });
+                    callback(WebCore::ExceptionData { WebCore::InvalidStateError, String() });
                     return;
                 }
 
@@ -521,7 +521,7 @@
         {
             [m_clientCoordinator setTrack:track withCompletion:makeBlockPtr([weakThis = makeWeakPtr(this), callback = WTFMove(callback)] (BOOL success) mutable {
                 if (!weakThis) {
-                    callback(WebCore::ExceptionData { WebCore::InvalidStateError });
+                    callback(WebCore::ExceptionData { WebCore::InvalidStateError, String() });
                     return;
                 }
 

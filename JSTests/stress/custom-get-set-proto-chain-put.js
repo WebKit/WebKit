@@ -37,8 +37,8 @@ function getObjects() {
         ...primitives.map(Object),
         Object.create(customTestGetterSetter),
         Object.create(Object.create(customTestGetterSetter)),
-        // FIXME: ordinarySetSlow() should handle Custom{Accessor,Value} descriptors.
-        // new Proxy(customTestGetterSetter, {}),
+        Object.create(new Proxy(customTestGetterSetter, {})),
+        Object.create($vm.createProxy(customTestGetterSetter)),
     ];
 }
 
@@ -85,13 +85,13 @@ function getBases() {
 })();
 
 // CustomValue: setter returns |false|
+// FIXME: Once legacy RegExp features are implemented, there would be no use case for calling CustomValue setter if receiver is altered.
 (() => {
     for (let base of getBases()) {
         for (let i = 0; i < 100; ++i)
             base.customValue = 1;
-        // This is weird, but it isn't exposed to userland code:
         assert(!base.hasOwnProperty("customValue"));
-        assert(!Reflect.set(Object(base), "customValue", 1));
+        assert(Reflect.set(Object(base), "customValue", 1));
     }
 })();
 

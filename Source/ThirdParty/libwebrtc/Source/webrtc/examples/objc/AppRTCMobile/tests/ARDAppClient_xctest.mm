@@ -15,8 +15,8 @@
 
 #include "rtc_base/ssl_adapter.h"
 
-#import <WebRTC/RTCMediaConstraints.h>
-#import <WebRTC/RTCPeerConnectionFactory.h>
+#import "sdk/objc/api/peerconnection/RTCMediaConstraints.h"
+#import "sdk/objc/api/peerconnection/RTCPeerConnectionFactory.h"
 
 #import "ARDAppClient+Internal.h"
 #import "ARDJoinResponse+Internal.h"

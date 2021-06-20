@@ -46,6 +46,8 @@ __FBSDID("$FreeBSD$");
 #include <pk11pub.h>
 #elif defined(SCTP_USE_OPENSSL_SHA1)
 #include <openssl/sha.h>
+#elif defined(SCTP_USE_MBEDTLS_SHA1)
+#include <mbedtls/sha1.h>
 #endif
 
 struct sctp_sha1_context {
@@ -53,6 +55,8 @@ struct sctp_sha1_context {
 	struct PK11Context *pk11_ctx;
 #elif defined(SCTP_USE_OPENSSL_SHA1)
 	SHA_CTX sha_ctx;
+#elif defined(SCTP_USE_MBEDTLS_SHA1)
+	mbedtls_sha1_context sha1_ctx;
 #else
 	unsigned int A;
 	unsigned int B;

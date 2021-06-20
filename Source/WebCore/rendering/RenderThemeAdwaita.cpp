@@ -172,7 +172,7 @@ String RenderThemeAdwaita::extraMediaControlsStyleSheet()
     return StringImpl::createWithoutCopying(mediaControlsAdwaitaUserAgentStyleSheet, sizeof(mediaControlsAdwaitaUserAgentStyleSheet));
 }
 
-Vector<String, 3> RenderThemeAdwaita::mediaControlsScripts()
+Vector<String, 2> RenderThemeAdwaita::mediaControlsScripts()
 {
     return { StringImpl::createWithoutCopying(mediaControlsAdwaitaJavaScript, sizeof(mediaControlsAdwaitaJavaScript)) };
 }

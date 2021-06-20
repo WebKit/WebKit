@@ -15,10 +15,10 @@
         foo++;
         globalThis[0]++;
         shouldBe(() => foo, "2");
-        shouldBe(() => globalThis[0], "2");
+        shouldBe(() => globalThis[0], "undefined");
     `);
     shouldBe("iframeContentWindow.foo", "2");
-    shouldBe("iframeContentWindow[0]", "2");
+    shouldBe("iframeContentWindow[0]", "undefined");
 </script>
 </body>
 </html>

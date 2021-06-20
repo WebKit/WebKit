@@ -31,10 +31,6 @@
 #import "WKPaymentAuthorizationDelegate.h"
 #import <pal/cocoa/PassKitSoftLink.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/PaymentAuthorizationViewControllerAdditions.mm>
-#endif
-
 @interface WKPaymentAuthorizationViewControllerDelegate : WKPaymentAuthorizationDelegate <PKPaymentAuthorizationViewControllerDelegate, PKPaymentAuthorizationViewControllerPrivateDelegate>
 
 - (instancetype)initWithRequest:(PKPaymentRequest *)request presenter:(WebKit::PaymentAuthorizationPresenter&)presenter;
@@ -83,9 +79,14 @@
     [self _didSelectPaymentMethod:paymentMethod completion:completion];
 }
 
-#if defined(PaymentAuthorizationViewControllerAdditions_PKPaymentAuthorizationViewControllerDelegate)
-PaymentAuthorizationViewControllerAdditions_PKPaymentAuthorizationViewControllerDelegate
-#endif
+#if HAVE(PASSKIT_COUPON_CODE)
+
+- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didChangeCouponCode:(NSString *)couponCode handler:(void (^)(PKPaymentRequestCouponCodeUpdate *update))completion
+{
+    [self _didChangeCouponCode:couponCode completion:completion];
+}
+
+#endif // HAVE(PASSKIT_COUPON_CODE)
 
 #pragma mark PKPaymentAuthorizationViewControllerDelegatePrivate
 

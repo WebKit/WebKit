@@ -56,11 +56,11 @@ void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, const uint
 NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSocketChannel& channel)
 {
     return { document, [&channel](auto& utf8String) {
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, reinterpret_cast<const uint8_t*>(utf8String.data()), utf8String.length());
-        channel.sendMessage(Messages::NetworkSocketChannel::SendString { IPC::DataReference { reinterpret_cast<const uint8_t*>(utf8String.data()), utf8String.length() } }, utf8String.length());
-    }, [&channel](const uint8_t* data, size_t byteLength) {
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, data, byteLength);
-        channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { data, byteLength } }, byteLength);
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, utf8String.dataAsUInt8Ptr(), utf8String.length());
+        channel.sendMessage(Messages::NetworkSocketChannel::SendString { IPC::DataReference { utf8String.dataAsUInt8Ptr(), utf8String.length() } }, utf8String.length());
+    }, [&channel](auto& span) {
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span.data(), span.size());
+        channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { span.data(), span.size() } }, span.size());
     }, [&channel](ExceptionCode exceptionCode) {
         auto code = static_cast<int>(exceptionCode);
         channel.fail(makeString("Failed to load Blob: exception code = ", code));
@@ -295,7 +295,7 @@ void WebSocketChannel::didReceiveText(String&& message)
     }
 
     auto utf8Message = message.utf8();
-    m_inspector.didReceiveWebSocketFrame(m_document.get(), createWebSocketFrameForWebInspector(reinterpret_cast<const uint8_t*>(utf8Message.data()), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
+    m_inspector.didReceiveWebSocketFrame(m_document.get(), createWebSocketFrameForWebInspector(utf8Message.dataAsUInt8Ptr(), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
 
     m_client->didReceiveMessage(message);
 }

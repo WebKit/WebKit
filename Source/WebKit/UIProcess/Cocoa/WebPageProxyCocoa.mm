@@ -39,6 +39,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
 #import "SharedBufferDataReference.h"
+#import "SynapseSPI.h"
 #import "WebContextMenuProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
@@ -49,6 +50,7 @@
 #import "WKErrorInternal.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/HighlightVisibility.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NotImplemented.h>
@@ -65,6 +67,11 @@
 #import "MediaUsageManagerCocoa.h"
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Synapse)
+SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
+#endif
+
 #if USE(APPKIT)
 #import <AppKit/NSImage.h>
 #else
@@ -79,10 +86,7 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPageProxyCocoaAdditionsBefore.mm>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: This additions file should be renamed to WebPageProxyAdditions.mm.
 #import <WebKitAdditions/WebPageProxyAdditions.h>
 #else
 #define WEB_PAGE_PROXY_ADDITIONS
@@ -595,6 +599,24 @@ void WebPageProxy::setAppHighlightsVisibility(WebCore::HighlightVisibility appHi
     send(Messages::WebPage::SetAppHighlightsVisibility(appHighlightsVisibility));
 }
 
+bool WebPageProxy::appHighlightsVisibility()
+{
+    if (!m_appHighlightsObserver)
+        setUpHighlightsObserver();
+    return [m_appHighlightsObserver isVisible];
+}
+
+void WebPageProxy::setUpHighlightsObserver()
+{
+    if (m_appHighlightsObserver)
+        return;
+    auto updateAppHighlightsVisibility = ^(BOOL isVisible) {
+        setAppHighlightsVisibility(isVisible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
+    };
+    m_appHighlightsObserver = adoptNS([allocSYNotesActivationObserverInstance() initWithHandler:updateAppHighlightsVisibility]);
+    updateAppHighlightsVisibility([m_appHighlightsObserver isVisible]);
+}
+
 #endif
 
 SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
@@ -615,18 +637,18 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 }
 
 #if ENABLE(CONTEXT_MENUS)
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::handleContextMenuRevealImage()
+void WebPageProxy::handleContextMenuLookUpImage()
 {
     auto& result = m_activeContextMenuContextData.webHitTestResultData();
     if (!result.imageBitmap)
         return;
 
-    revealExtractedImageInPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL });
+    showImageInVisualSearchPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL });
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 
@@ -694,10 +716,6 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 }
 
 } // namespace WebKit
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPageProxyCocoaAdditionsAfter.mm>
-#endif
 
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK

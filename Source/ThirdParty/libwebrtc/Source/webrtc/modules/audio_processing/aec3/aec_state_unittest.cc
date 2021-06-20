@@ -182,7 +182,7 @@ void RunNormalUsageTest(size_t num_render_channels,
   {
     // Note that the render spectrum is built so it does not have energy in
     // the odd bands but just in the even bands.
-    const auto& erle = state.Erle()[0];
+    const auto& erle = state.Erle(/*onset_compensated=*/true)[0];
     EXPECT_EQ(erle[0], erle[1]);
     constexpr size_t kLowFrequencyLimit = 32;
     for (size_t k = 2; k < kLowFrequencyLimit; k = k + 2) {
@@ -210,7 +210,7 @@ void RunNormalUsageTest(size_t num_render_channels,
 
   ASSERT_TRUE(state.UsableLinearEstimate());
   {
-    const auto& erle = state.Erle()[0];
+    const auto& erle = state.Erle(/*onset_compensated=*/true)[0];
     EXPECT_EQ(erle[0], erle[1]);
     constexpr size_t kLowFrequencyLimit = 32;
     for (size_t k = 1; k < kLowFrequencyLimit; ++k) {

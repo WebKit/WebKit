@@ -19,10 +19,8 @@ Legacy API directory                       | Including subdirectories?
 `modules/audio_coding/include`             | No
 `modules/audio_device/include`             | No
 `modules/audio_processing/include`         | No
-`modules/bitrate_controller/include`       | No
 `modules/congestion_controller/include`    | No
 `modules/include`                          | No
-`modules/remote_bitrate_estimator/include` | No
 `modules/rtp_rtcp/include`                 | No
 `modules/rtp_rtcp/source`                  | No
 `modules/utility/include`                  | No

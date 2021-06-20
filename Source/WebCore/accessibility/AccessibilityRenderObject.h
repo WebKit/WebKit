@@ -96,7 +96,6 @@ public:
     AccessibilityObject* parentObjectIfExists() const override;
     AccessibilityObject* observableObject() const override;
     void linkedUIElements(AccessibilityChildrenVector&) const override;
-    bool exposesTitleUIElement() const override;
     AccessibilityObject* titleUIElement() const override;
     AccessibilityObject* correspondingControlForLabelElement() const override;
     AccessibilityObject* correspondingLabelForControlElement() const override;
@@ -209,6 +208,8 @@ protected:
 
     AccessibilityRole determineAccessibilityRole() override;
     bool computeAccessibilityIsIgnored() const override;
+
+    bool exposesTitleUIElement() const override;
 
 #if ENABLE(MATHML)
     virtual bool isIgnoredElementWithinMathTree() const;

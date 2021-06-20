@@ -59,7 +59,17 @@ WTF_EXTERN_C_END
 #import <PassKit/PKPaymentRequest_Private.h>
 #endif
 
-#import <WebKitAdditions/PassKitSPIAdditions.h>
+#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+#import <PassKitCore/PKRecurringPaymentSummaryItem.h>
+#endif
+
+#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
+#import <PassKitCore/PKDeferredPaymentSummaryItem.h>
+#endif
+
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+#import <PassKitCore/PKDateComponentsRange.h>
+#endif
 
 #else
 
@@ -122,6 +132,10 @@ typedef NS_ERROR_ENUM(PKPaymentErrorDomain, PKPaymentErrorCode) {
     PKPaymentShippingContactInvalidError = 1,
     PKPaymentBillingContactInvalidError,
     PKPaymentShippingAddressUnserviceableError,
+#if HAVE(PASSKIT_COUPON_CODE)
+    PKPaymentCouponCodeInvalidError,
+    PKPaymentCouponCodeExpiredError,
+#endif
 };
 
 typedef NS_OPTIONS(NSUInteger, PKAddressField) {
@@ -232,10 +246,28 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @property (nonatomic, copy) NSDecimalNumber *amount;
 @end
 
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+@interface PKDateComponentsRange : NSObject <NSCopying, NSSecureCoding>
+- (nullable instancetype)initWithStartDateComponents:(NSDateComponents *)startDateComponents endDateComponents:(NSDateComponents *)endDateComponents;
+@property (copy, readonly, nonatomic) NSDateComponents *startDateComponents;
+@property (copy, readonly, nonatomic) NSDateComponents *endDateComponents;
+@end
+#endif
+
 @interface PKShippingMethod : PKPaymentSummaryItem
 @property (nonatomic, copy, nullable) NSString *identifier;
 @property (nonatomic, copy, nullable) NSString *detail;
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+@property (nonatomic, copy, nullable) PKDateComponentsRange *dateComponentsRange;
+#endif
 @end
+
+#if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
+typedef NS_ENUM(NSUInteger, PKShippingContactEditingMode) {
+    PKShippingContactEditingModeEnabled = 1,
+    PKShippingContactEditingModeStorePickup
+};
+#endif
 
 @interface PKPaymentRequest : NSObject
 + (NSArray<PKPaymentNetwork> *)availableNetworks;
@@ -254,6 +286,16 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @property (nonatomic, copy, nullable) NSSet<NSString *> *supportedCountries;
 @property (nonatomic, strong) NSSet<PKContactField> *requiredShippingContactFields;
 @property (nonatomic, strong) NSSet<PKContactField> *requiredBillingContactFields;
+
+#if HAVE(PASSKIT_COUPON_CODE)
+@property (nonatomic, assign) BOOL supportsCouponCode;
+@property (nonatomic, copy, nullable) NSString *couponCode;
+#endif
+
+#if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
+@property (nonatomic, assign) PKShippingContactEditingMode shippingContactEditingMode;
+#endif
+
 @end
 
 @interface PKPaymentAuthorizationViewController : NSViewController
@@ -407,6 +449,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PKPaymentRequestUpdate : NSObject
 - (instancetype)initWithPaymentSummaryItems:(NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems;
 @property (nonatomic, copy) NSArray<PKPaymentSummaryItem *> *paymentSummaryItems;
+#if HAVE(PASSKIT_COUPON_CODE)
+@property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
+#endif
+
 @end
 
 @interface PKPaymentRequestPaymentMethodUpdate : PKPaymentRequestUpdate
@@ -419,6 +465,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PKPaymentRequestShippingMethodUpdate : PKPaymentRequestUpdate
 @end
+
+#if HAVE(PASSKIT_COUPON_CODE)
+@interface PKPaymentRequestCouponCodeUpdate : PKPaymentRequestUpdate
+- (instancetype)initWithErrors:(nullable NSArray<NSError *> *)errors paymentSummaryItems:(NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems shippingMethods:(NSArray<PKShippingMethod *> *)shippingMethods;
+@end
+#endif
 
 NS_ASSUME_NONNULL_END
 

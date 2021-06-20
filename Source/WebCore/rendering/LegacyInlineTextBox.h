@@ -23,6 +23,7 @@
 #pragma once
 
 #include "LegacyInlineBox.h"
+#include "MarkedText.h"
 #include "RenderText.h"
 #include "TextRun.h"
 
@@ -123,7 +124,6 @@ public:
     virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
     bool isSelectable(unsigned startPosition, unsigned endPosition) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
-    std::pair<unsigned, unsigned> highlightStartEnd(HighlightData&) const;
 
 protected:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
@@ -163,15 +163,9 @@ public:
     FloatRect calculateDocumentMarkerBounds(const MarkedText&) const;
 
 private:
-    enum class TextPaintPhase { Background, Foreground, Decoration };
-
-    Vector<MarkedText> collectMarkedTextsForDraggedContent();
-    Vector<MarkedText> collectMarkedTextsForDocumentMarkers(TextPaintPhase) const;
-    Vector<MarkedText> collectMarkedTextsForHighlights(TextPaintPhase) const;
-
     FloatPoint textOriginFromBoxRect(const FloatRect&) const;
 
-    void paintMarkedTexts(PaintInfo&, TextPaintPhase, const FloatRect& boxRect, const Vector<StyledMarkedText>&, const FloatRect& decorationClipOutRect = { });
+    void paintMarkedTexts(PaintInfo&, MarkedText::PaintPhase, const FloatRect& boxRect, const Vector<StyledMarkedText>&, const FloatRect& decorationClipOutRect = { });
 
     void paintPlatformDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkedText&);
     void paintPlatformDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin);

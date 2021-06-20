@@ -228,7 +228,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {
         CString utf8String = partition.utf8();
-        RetainPtr<CFStringRef> partitionValue = adoptCF(CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(utf8String.data()), utf8String.length(), kCFStringEncodingUTF8, false));
+        RetainPtr<CFStringRef> partitionValue = adoptCF(CFStringCreateWithBytes(0, utf8String.dataAsUInt8Ptr(), utf8String.length(), kCFStringEncodingUTF8, false));
         _CFURLRequestSetProtocolProperty(cfRequest.get(), _kCFURLCachePartitionKey, partitionValue.get());
     }
 #endif

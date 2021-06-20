@@ -110,7 +110,7 @@ std::vector<RtpExtension> GetVideoRtpExtensions(
 
 std::string TransformFilePath(std::string path) {
   static const std::string resource_prefix = "res://";
-  int ext_pos = path.rfind(".");
+  int ext_pos = path.rfind('.');
   if (ext_pos < 0) {
     return test::ResourcePath(path, "yuv");
   } else if (absl::StartsWith(path, resource_prefix)) {
@@ -175,8 +175,8 @@ CreateVp9SpecificSettings(VideoStreamConfig video_config) {
     vp9.automaticResizeOn = conf.single.automatic_scaling;
     vp9.denoisingOn = conf.single.denoising;
   }
-  return new rtc::RefCountedObject<
-      VideoEncoderConfig::Vp9EncoderSpecificSettings>(vp9);
+  return rtc::make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(
+      vp9);
 }
 
 rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
@@ -192,8 +192,8 @@ CreateVp8SpecificSettings(VideoStreamConfig config) {
     vp8_settings.automaticResizeOn = config.encoder.single.automatic_scaling;
     vp8_settings.denoisingOn = config.encoder.single.denoising;
   }
-  return new rtc::RefCountedObject<
-      VideoEncoderConfig::Vp8EncoderSpecificSettings>(vp8_settings);
+  return rtc::make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(
+      vp8_settings);
 }
 
 rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
@@ -205,8 +205,8 @@ CreateH264SpecificSettings(VideoStreamConfig config) {
   h264_settings.frameDroppingOn = config.encoder.frame_dropping;
   h264_settings.keyFrameInterval =
       config.encoder.key_frame_interval.value_or(0);
-  return new rtc::RefCountedObject<
-      VideoEncoderConfig::H264EncoderSpecificSettings>(h264_settings);
+  return rtc::make_ref_counted<VideoEncoderConfig::H264EncoderSpecificSettings>(
+      h264_settings);
 }
 
 rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
@@ -248,11 +248,11 @@ VideoEncoderConfig CreateVideoEncoderConfig(VideoStreamConfig config) {
     bool screenshare = config.encoder.content_type ==
                        VideoStreamConfig::Encoder::ContentType::kScreen;
     encoder_config.video_stream_factory =
-        new rtc::RefCountedObject<cricket::EncoderStreamFactory>(
+        rtc::make_ref_counted<cricket::EncoderStreamFactory>(
             cricket_codec, kDefaultMaxQp, screenshare, screenshare);
   } else {
     encoder_config.video_stream_factory =
-        new rtc::RefCountedObject<DefaultVideoStreamFactory>();
+        rtc::make_ref_counted<DefaultVideoStreamFactory>();
   }
 
   // TODO(srte): Base this on encoder capabilities.
@@ -265,6 +265,7 @@ VideoEncoderConfig CreateVideoEncoderConfig(VideoStreamConfig config) {
   if (config.encoder.max_framerate) {
     for (auto& layer : encoder_config.simulcast_layers) {
       layer.max_framerate = *config.encoder.max_framerate;
+      layer.min_bitrate_bps = config.encoder.min_data_rate->bps_or(-1);
     }
   }
 
@@ -412,6 +413,8 @@ SendVideoStream::SendVideoStream(CallClient* sender,
   send_config.encoder_settings.encoder_factory = encoder_factory_.get();
   send_config.encoder_settings.bitrate_allocator_factory =
       bitrate_allocator_factory_.get();
+  send_config.suspend_below_min_bitrate =
+      config.encoder.suspend_below_min_bitrate;
 
   sender_->SendTask([&] {
     if (config.stream.fec_controller_factory) {
@@ -463,7 +466,8 @@ void SendVideoStream::UpdateConfig(
       }
     }
     // TODO(srte): Add more conditions that should cause reconfiguration.
-    if (prior_config.encoder.max_framerate != config_.encoder.max_framerate) {
+    if (prior_config.encoder.max_framerate != config_.encoder.max_framerate ||
+        prior_config.encoder.max_data_rate != config_.encoder.max_data_rate) {
       VideoEncoderConfig encoder_config = CreateVideoEncoderConfig(config_);
       send_stream_->ReconfigureVideoEncoder(std::move(encoder_config));
     }
@@ -479,14 +483,12 @@ void SendVideoStream::UpdateActiveLayers(std::vector<bool> active_layers) {
     if (config_.encoder.codec ==
         VideoStreamConfig::Encoder::Codec::kVideoCodecVP8) {
       send_stream_->UpdateActiveSimulcastLayers(active_layers);
-    } else {
-      VideoEncoderConfig encoder_config = CreateVideoEncoderConfig(config_);
-      RTC_CHECK_EQ(encoder_config.simulcast_layers.size(),
-                   active_layers.size());
-      for (size_t i = 0; i < encoder_config.simulcast_layers.size(); ++i)
-        encoder_config.simulcast_layers[i].active = active_layers[i];
-      send_stream_->ReconfigureVideoEncoder(std::move(encoder_config));
     }
+    VideoEncoderConfig encoder_config = CreateVideoEncoderConfig(config_);
+    RTC_CHECK_EQ(encoder_config.simulcast_layers.size(), active_layers.size());
+    for (size_t i = 0; i < encoder_config.simulcast_layers.size(); ++i)
+      encoder_config.simulcast_layers[i].active = active_layers[i];
+    send_stream_->ReconfigureVideoEncoder(std::move(encoder_config));
   });
 }
 

@@ -160,6 +160,66 @@ private:
     Locker<LockType>& m_lock;
 };
 
+// This is a close replica of Locker, but for generic lock/unlock functions.
+template<typename T, void (lockFunction)(T*), void (*unlockFunction)(T*)>
+class ExternalLocker: public WTF::AbstractLocker {
+public:
+    explicit ExternalLocker(T* lockable)
+        : m_lockable(lockable)
+    {
+        ASSERT(lockable);
+        lock();
+    }
+
+    ~ExternalLocker()
+    {
+        unlock();
+    }
+
+    T* lockable() { return m_lockable; }
+
+    explicit operator bool() const { return !!m_lockable; }
+
+    void unlockEarly()
+    {
+        unlock();
+        m_lockable = nullptr;
+    }
+
+    ExternalLocker(ExternalLocker&& other)
+        : m_lockable(other.m_lockable)
+    {
+        ASSERT(&other != this);
+        other.m_lockable = nullptr;
+    }
+
+    ExternalLocker& operator=(ExternalLocker&& other)
+    {
+        ASSERT(&other != this);
+        m_lockable = other.m_lockable;
+        other.m_lockable = nullptr;
+        return *this;
+    }
+
+private:
+    template<typename>
+    friend class DropLockForScope;
+
+    void unlock()
+    {
+        if (m_lockable)
+            unlockFunction(m_lockable);
+    }
+
+    void lock()
+    {
+        if (m_lockable)
+            lockFunction(m_lockable);
+    }
+
+    T* m_lockable;
+};
+
 }
 
 using WTF::AbstractLocker;
@@ -168,3 +228,4 @@ using WTF::Locker;
 using WTF::NoLockingNecessaryTag;
 using WTF::NoLockingNecessary;
 using WTF::DropLockForScope;
+using WTF::ExternalLocker;

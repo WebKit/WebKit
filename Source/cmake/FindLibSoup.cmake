@@ -42,7 +42,7 @@ endif ()
 # .pc file, so we need to rely on PC_LIBSOUP_VERSION and REQUIRE the .pc file
 # to be found.
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_LIBSOUP REQUIRED QUIET "libsoup-${LIBSOUP_API_VERSION}")
+pkg_check_modules(PC_LIBSOUP QUIET "libsoup-${LIBSOUP_API_VERSION}")
 
 find_path(LIBSOUP_INCLUDE_DIRS
     NAMES libsoup/soup.h

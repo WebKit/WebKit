@@ -15,6 +15,7 @@
 
 #include <algorithm>
 
+#include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -53,17 +54,16 @@ bool DxgiAdapterDuplicator::DoInitialize() {
     }
 
     if (error.Error() == DXGI_ERROR_NOT_CURRENTLY_AVAILABLE) {
-      RTC_LOG(LS_WARNING) << "IDXGIAdapter::EnumOutputs returns "
-                             "NOT_CURRENTLY_AVAILABLE. This may happen when "
-                             "running in session 0.";
+      RTC_LOG(LS_WARNING) << "IDXGIAdapter::EnumOutputs returned "
+                          << "NOT_CURRENTLY_AVAILABLE. This may happen when "
+                          << "running in session 0.";
       break;
     }
 
     if (error.Error() != S_OK || !output) {
-      RTC_LOG(LS_WARNING) << "IDXGIAdapter::EnumOutputs returns an unexpected "
-                             "result "
-                          << error.ErrorMessage() << " with error code"
-                          << error.Error();
+      RTC_LOG(LS_WARNING) << "IDXGIAdapter::EnumOutputs returned an unexpected "
+                          << "result: "
+                          << desktop_capture::utils::ComErrorToString(error);
       continue;
     }
 
@@ -75,16 +75,14 @@ bool DxgiAdapterDuplicator::DoInitialize() {
         error = output.As(&output1);
         if (error.Error() != S_OK || !output1) {
           RTC_LOG(LS_WARNING)
-              << "Failed to convert IDXGIOutput to IDXGIOutput1, "
-                 "this usually means the system does not support "
-                 "DirectX 11";
+              << "Failed to convert IDXGIOutput to IDXGIOutput1, this usually "
+              << "means the system does not support DirectX 11";
           continue;
         }
         DxgiOutputDuplicator duplicator(device_, output1, desc);
         if (!duplicator.Initialize()) {
           RTC_LOG(LS_WARNING) << "Failed to initialize DxgiOutputDuplicator on "
-                                 "output "
-                              << i;
+                              << "output " << i;
           continue;
         }
 

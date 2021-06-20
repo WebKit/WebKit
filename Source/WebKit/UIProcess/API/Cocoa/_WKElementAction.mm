@@ -162,16 +162,16 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         // This action must still exist for compatibility, but doesn't do anything.
         break;
     case _WKElementActionTypeImageExtraction:
-#if ENABLE(IMAGE_EXTRACTION)
-        title = WebCore::localizedNSString(@"Get Info");
+#if ENABLE(IMAGE_ANALYSIS)
+        title = WEB_UI_STRING("Show Text", "Title for Show Text action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
 #endif
         break;
     case _WKElementActionTypeRevealImage:
-#if ENABLE(IMAGE_EXTRACTION)
-        title = WebCore::contextMenuItemTagRevealImage();
+#if ENABLE(IMAGE_ANALYSIS)
+        title = WebCore::contextMenuItemTagLookUpImage();
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -244,14 +244,14 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionToggleShowLinkPreviews:
         return nil; // Intentionally empty.
     case _WKElementActionTypeImageExtraction:
-#if ENABLE(IMAGE_EXTRACTION)
-        return [_WKElementAction imageForElementActionTypeImageExtraction];
+#if ENABLE(IMAGE_ANALYSIS)
+        return [UIImage systemImageNamed:@"text.viewfinder"];
 #else
         return nil;
 #endif
     case _WKElementActionTypeRevealImage:
-#if ENABLE(IMAGE_EXTRACTION)
-        return [_WKElementAction imageForElementActionTypeRevealImage];
+#if ENABLE(IMAGE_ANALYSIS)
+        return [UIImage systemImageNamed:@"info.circle"];
 #else
         return nil;
 #endif
@@ -357,10 +357,6 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
     return nil;
 }
 #endif // USE(UICONTEXTMENU)
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/_WKElementActionAdditions.mm>
-#endif
 
 @end
 

@@ -185,11 +185,17 @@ public:
             bool touched { false };
             bool pressed { false };
             float pressedValue { 0 };
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<InputSourceButton> decode(Decoder&);
         };
 
         struct InputSourcePose {
             Pose pose;
             bool isPositionEmulated { false };
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<InputSourcePose> decode(Decoder&);
         };
 
         struct InputSource {
@@ -201,6 +207,9 @@ public:
             std::optional<InputSourcePose> gripOrigin;
             Vector<InputSourceButton> buttons;
             Vector<float> axes;
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<InputSource> decode(Decoder&);
         };
 
         bool isTrackingValid { false };
@@ -455,6 +464,82 @@ std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode
 }
 
 template<class Encoder>
+void Device::FrameData::InputSourceButton::encode(Encoder& encoder) const
+{
+    encoder << touched;
+    encoder << pressed;
+    encoder << pressedValue;
+}
+
+template<class Decoder>
+std::optional<Device::FrameData::InputSourceButton> Device::FrameData::InputSourceButton::decode(Decoder& decoder)
+{
+    PlatformXR::Device::FrameData::InputSourceButton button;
+    if (!decoder.decode(button.touched))
+        return std::nullopt;
+    if (!decoder.decode(button.pressed))
+        return std::nullopt;
+    if (!decoder.decode(button.pressedValue))
+        return std::nullopt;
+    return button;
+}
+
+template<class Encoder>
+void Device::FrameData::InputSourcePose::encode(Encoder& encoder) const
+{
+    encoder << pose;
+    encoder << isPositionEmulated;
+}
+
+template<class Decoder>
+std::optional<Device::FrameData::InputSourcePose> Device::FrameData::InputSourcePose::decode(Decoder& decoder)
+{
+    PlatformXR::Device::FrameData::InputSourcePose inputSourcePose;
+    if (!decoder.decode(inputSourcePose.pose))
+        return std::nullopt;
+    if (!decoder.decode(inputSourcePose.isPositionEmulated))
+        return std::nullopt;
+    return inputSourcePose;
+}
+
+template<class Encoder>
+void Device::FrameData::InputSource::encode(Encoder& encoder) const
+{
+    encoder << handle;
+    encoder << handeness;
+    encoder << targetRayMode;
+    encoder << profiles;
+    encoder << pointerOrigin;
+    encoder << gripOrigin;
+    encoder << buttons;
+    encoder << axes;
+}
+
+template<class Decoder>
+std::optional<Device::FrameData::InputSource> Device::FrameData::InputSource::decode(Decoder& decoder)
+{
+    PlatformXR::Device::FrameData::InputSource source;
+    if (!decoder.decode(source.handle))
+        return std::nullopt;
+    if (!decoder.decode(source.handeness))
+        return std::nullopt;
+    if (!decoder.decode(source.targetRayMode))
+        return std::nullopt;
+    if (!decoder.decode(source.profiles))
+        return std::nullopt;
+    if (!decoder.decode(source.pointerOrigin))
+        return std::nullopt;
+    if (!decoder.decode(source.gripOrigin))
+        return std::nullopt;
+    if (!decoder.decode(source.buttons))
+        return std::nullopt;
+    if (!decoder.decode(source.axes))
+        return std::nullopt;
+    return source;
+}
+
+
+template<class Encoder>
 void Device::FrameData::encode(Encoder& encoder) const
 {
     encoder << isTrackingValid;
@@ -467,6 +552,7 @@ void Device::FrameData::encode(Encoder& encoder) const
     encoder << stageParameters;
     encoder << views;
     encoder << layers;
+    encoder << inputSources;
 }
 
 template<class Decoder>
@@ -493,6 +579,9 @@ std::optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
         return std::nullopt;
     if (!decoder.decode(frameData.layers))
         return std::nullopt;
+    if (!decoder.decode(frameData.inputSources))
+        return std::nullopt;
+
 
     return frameData;
 }
@@ -529,6 +618,24 @@ template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
         PlatformXR::ReferenceSpaceType::LocalFloor,
         PlatformXR::ReferenceSpaceType::BoundedFloor,
         PlatformXR::ReferenceSpaceType::Unbounded
+    >;
+};
+
+template<> struct EnumTraits<PlatformXR::XRHandedness> {
+    using values = EnumValues<
+        PlatformXR::XRHandedness,
+        PlatformXR::XRHandedness::None,
+        PlatformXR::XRHandedness::Left,
+        PlatformXR::XRHandedness::Right
+    >;
+};
+
+template<> struct EnumTraits<PlatformXR::XRTargetRayMode> {
+    using values = EnumValues<
+        PlatformXR::XRTargetRayMode,
+        PlatformXR::XRTargetRayMode::Gaze,
+        PlatformXR::XRTargetRayMode::TrackedPointer,
+        PlatformXR::XRTargetRayMode::Screen
     >;
 };
 

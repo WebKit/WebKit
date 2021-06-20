@@ -441,12 +441,6 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagTextDirectionRightToLeft:
         frame->editor().command("MakeTextWritingDirectionRightToLeft").execute();
         break;
-    case ContextMenuItemTagAddHighlightToCurrentGroup:
-        // FIXME: Add Highlight Logic
-        break;
-    case ContextMenuItemTagAddHighlightToNewGroup:
-        // FIXME: Add Highlight Logic
-        break;
 #if PLATFORM(COCOA)
     case ContextMenuItemTagSearchInSpotlight:
         m_client.searchWithSpotlight();
@@ -521,7 +515,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagDictationAlternative:
         frame->editor().applyDictationAlternative(title);
         break;
-    case ContextMenuItemTagRevealImage:
+    case ContextMenuItemTagLookUpImage:
         // This should be handled at the client layer.
         ASSERT_NOT_REACHED();
         break;
@@ -801,8 +795,8 @@ void ContextMenuController::populate()
         contextMenuItemTagSearchInSpotlight());
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
-    ContextMenuItem AddHighlightItem(ActionType, ContextMenuItemTagAddHighlightToCurrentGroup, contextMenuItemTagAddHighlightToCurrentGroup());
-    ContextMenuItem AddHighlightToNewGroupItem(ActionType, ContextMenuItemTagAddHighlightToNewGroup, contextMenuItemTagAddHighlightToNewGroup());
+    ContextMenuItem AddHighlightItem(ActionType, ContextMenuItemTagAddHighlightToCurrentQuickNote, contextMenuItemTagAddHighlightToCurrentQuickNote());
+    ContextMenuItem AddHighlightToNewQuickNoteItem(ActionType, ContextMenuItemTagAddHighlightToNewQuickNote, contextMenuItemTagAddHighlightToNewQuickNote());
 #endif
 #if !PLATFORM(GTK)
     ContextMenuItem SearchWebItem(ActionType, ContextMenuItemTagSearchWeb, contextMenuItemTagSearchWeb());
@@ -830,8 +824,8 @@ void ContextMenuController::populate()
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
     ContextMenuItem InsertEmojiItem(ActionType, ContextMenuItemTagInsertEmoji, contextMenuItemTagInsertEmoji());
 #endif
-#if ENABLE(IMAGE_EXTRACTION)
-    ContextMenuItem RevealImageItem(ActionType, ContextMenuItemTagRevealImage, contextMenuItemTagRevealImage());
+#if ENABLE(IMAGE_ANALYSIS)
+    ContextMenuItem LookUpImageItem(ActionType, ContextMenuItemTagLookUpImage, contextMenuItemTagLookUpImage());
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WIN)
@@ -904,9 +898,9 @@ void ContextMenuController::populate()
             if (imageURL.isLocalFile() || image) {
                 appendItem(CopyImageItem, m_contextMenu.get());
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
                 if (image && !image->isAnimated())
-                    appendItem(RevealImageItem, m_contextMenu.get());
+                    appendItem(LookUpImageItem, m_contextMenu.get());
 #endif
             }
 #if PLATFORM(GTK)
@@ -968,7 +962,7 @@ void ContextMenuController::populate()
 #if ENABLE(APP_HIGHLIGHTS)
                 if (auto* page = frame->page()) {
                     if (page->settings().appHighlightsEnabled() && !selectionIsInsideImageOverlay) {
-                        appendItem(AddHighlightToNewGroupItem, m_contextMenu.get());
+                        appendItem(AddHighlightToNewQuickNoteItem, m_contextMenu.get());
                         appendItem(AddHighlightItem, m_contextMenu.get());
                         appendItem(*separatorItem(), m_contextMenu.get());
                     }
@@ -1319,10 +1313,10 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCheckSpellingWhileTyping:
             shouldCheck = frame->editor().isContinuousSpellCheckingEnabled();
             break;
-        case ContextMenuItemTagAddHighlightToCurrentGroup:
+        case ContextMenuItemTagAddHighlightToCurrentQuickNote:
             shouldEnable = frame->selection().isRange();
             break;
-        case ContextMenuItemTagAddHighlightToNewGroup:
+        case ContextMenuItemTagAddHighlightToNewQuickNote:
             shouldEnable = frame->selection().isRange();
             break;
 #if PLATFORM(COCOA)
@@ -1495,7 +1489,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = m_context.hitTestResult().mediaHasAudio();
             shouldCheck = shouldEnable &&  m_context.hitTestResult().mediaMuted();
             break;
-        case ContextMenuItemTagRevealImage:
+        case ContextMenuItemTagLookUpImage:
         case ContextMenuItemTagTranslate:
             break;
     }

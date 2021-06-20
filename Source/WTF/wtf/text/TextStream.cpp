@@ -118,7 +118,19 @@ TextStream& TextStream::operator<<(const void* p)
     return *this << buffer;
 }
 
+TextStream& TextStream::operator<<(const AtomString& string)
+{
+    m_text.append(string);
+    return *this;
+}
+
 TextStream& TextStream::operator<<(const String& string)
+{
+    m_text.append(string);
+    return *this;
+}
+
+TextStream& TextStream::operator<<(StringView string)
 {
     m_text.append(string);
     return *this;

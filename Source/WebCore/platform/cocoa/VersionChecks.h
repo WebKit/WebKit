@@ -73,6 +73,7 @@ enum class SDKVersion : uint32_t {
     FirstWithSharedNetworkProcess = DYLD_IOS_VERSION_14_5,
     FirstWithBlankViewOnJSPrompt = DYLD_IOS_VERSION_14_5,
     FirstWithApplicationCacheDisabledByDefault = DYLD_IOS_VERSION_15_0,
+    FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_IOS_VERSION_15_0,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
@@ -96,6 +97,7 @@ enum class SDKVersion : uint32_t {
     FirstWithDOMWindowReuseRestriction = DYLD_MACOSX_VERSION_11_3,
     FirstWithBlankViewOnJSPrompt = DYLD_MACOSX_VERSION_11_3,
     FirstWithApplicationCacheDisabledByDefault = DYLD_MACOSX_VERSION_12_00,
+    FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_MACOSX_VERSION_12_00,
 #endif
 };
 

@@ -224,8 +224,8 @@ messages -> WebPageProxy {
     CompositionWasCanceled()
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
 
-#if ENABLE(IMAGE_EXTRACTION)
-    RequestImageExtraction(URL imageURL, WebKit::ShareableBitmap::Handle imageData) -> (struct WebCore::ImageExtractionResult result) Async
+#if ENABLE(IMAGE_ANALYSIS)
+    RequestTextRecognition(URL imageURL, WebKit::ShareableBitmap::Handle imageData) -> (struct WebCore::TextRecognitionResult result) Async
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

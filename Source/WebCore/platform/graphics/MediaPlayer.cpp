@@ -610,6 +610,12 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
     client().mediaPlayerDidInitializeMediaEngine();
 }
 
+void MediaPlayer::queueTaskOnEventLoop(Function<void()>&& task)
+{
+    ASSERT(isMainThread());
+    client().mediaPlayerQueueTaskOnEventLoop(WTFMove(task));
+}
+
 bool MediaPlayer::hasAvailableVideoFrame() const
 {
     return m_private->hasAvailableVideoFrame();
@@ -983,9 +989,9 @@ double MediaPlayer::liveUpdateInterval()
     return m_private->liveUpdateInterval();
 }
 
-bool MediaPlayer::didLoadingProgress()
+void MediaPlayer::didLoadingProgress(DidLoadingProgressCompletionHandler&& callback) const
 {
-    return m_private->didLoadingProgress();
+    m_private->didLoadingProgressAsync(WTFMove(callback));
 }
 
 void MediaPlayer::setSize(const IntSize& size)

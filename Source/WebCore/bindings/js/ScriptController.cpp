@@ -78,7 +78,7 @@
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>
 
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(m_frame.isAlwaysOnLoggingAllowed(), channel, "%p - ScriptController::" fmt, this, ##__VA_ARGS__)
+#define SCRIPTCONTROLLER_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - ScriptController::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 using namespace JSC;
@@ -585,7 +585,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     if (m_frame.loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (auto* document = m_frame.document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain.");
-        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "executeScriptInWorld: Ignoring user script injection for non app-bound domain");
+        SCRIPTCONTROLLER_RELEASE_LOG_ERROR(Loading, "executeScriptInWorld: Ignoring user script injection for non app-bound domain");
         return makeUnexpected(ExceptionDetails { "Ignoring user script injection for non-app bound domain"_s });
     }
     m_frame.loader().client().notifyPageOfAppBoundBehavior();
@@ -870,4 +870,4 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 
 } // namespace WebCore
 
-#undef RELEASE_LOG_ERROR_IF_ALLOWED
+#undef SCRIPTCONTROLLER_RELEASE_LOG_ERROR

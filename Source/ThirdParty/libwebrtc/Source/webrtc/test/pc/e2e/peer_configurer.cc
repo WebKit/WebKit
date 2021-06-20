@@ -134,6 +134,15 @@ void ValidateParams(
       RTC_CHECK(inserted) << "Duplicate video_config.stream_label="
                           << video_config.stream_label.value();
 
+      if (video_config.input_dump_file_name.has_value()) {
+        RTC_CHECK_GT(video_config.input_dump_sampling_modulo, 0)
+            << "video_config.input_dump_sampling_modulo must be greater than 0";
+      }
+      if (video_config.output_dump_file_name.has_value()) {
+        RTC_CHECK_GT(video_config.output_dump_sampling_modulo, 0)
+            << "video_config.input_dump_sampling_modulo must be greater than 0";
+      }
+
       // TODO(bugs.webrtc.org/4762): remove this check after synchronization of
       // more than two streams is supported.
       if (video_config.sync_group.has_value()) {

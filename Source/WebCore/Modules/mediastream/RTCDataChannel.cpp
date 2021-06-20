@@ -79,8 +79,8 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(ScriptExecutionContext& cont
     return { context, [&channel](auto& utf8) {
         if (!channel.m_handler->sendStringData(utf8))
             channel.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending string through RTCDataChannel."_s);
-    }, [&channel](auto* data, size_t length) {
-        if (!channel.m_handler->sendRawData(data, length))
+    }, [&channel](auto& span) {
+        if (!channel.m_handler->sendRawData(span.data(), span.size()))
             channel.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending binary data through RTCDataChannel."_s);
     }, [&channel](ExceptionCode errorCode) {
         if (auto* context = channel.scriptExecutionContext()) {
@@ -218,7 +218,7 @@ void RTCDataChannel::didReceiveRawData(const uint8_t* data, size_t dataLength)
 {
     switch (m_binaryType) {
     case BinaryType::Blob:
-        scheduleDispatchEvent(MessageEvent::create(Blob::create(scriptExecutionContext(), SharedBuffer::create(data, dataLength), emptyString()), { }));
+        scheduleDispatchEvent(MessageEvent::create(Blob::create(scriptExecutionContext(), Vector { data, dataLength }, emptyString()), { }));
         return;
     case BinaryType::ArrayBuffer:
         scheduleDispatchEvent(MessageEvent::create(ArrayBuffer::create(data, dataLength)));

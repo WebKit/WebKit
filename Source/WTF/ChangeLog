@@ -1,3 +1,300 @@
+2021-06-14  Per Arne  <pvollan@apple.com>
+
+        [iOS] Sync Accessibility preferences
+        https://bugs.webkit.org/show_bug.cgi?id=226738
+        <rdar://77922839>
+
+        Reviewed by Brent Fulgham.
+
+        Enable Per-App Accessibility preferences on iOS.
+
+        * wtf/PlatformHave.h:
+
+2021-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Number pad button is missing its image when tapping on <input type=tel> in watchOS 8
+        https://bugs.webkit.org/show_bug.cgi?id=226955
+
+        Reviewed by Darin Adler.
+
+        Add compile-time flags to guard the presence of `PUICQuickboardController` and `PUICButtonTypePill`.
+
+        * wtf/PlatformHave.h:
+
+2021-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add WeakHashMap
+        https://bugs.webkit.org/show_bug.cgi?id=226872
+
+        Reviewed by Geoffrey Garen.
+
+        Added WeakHashMap which deletes entries during rehashing and amortized over time (based on
+        the number of read & write accesses done on a given WeakHashMap instance).
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/WeakHashMap.h: Added.
+        (WTF::WeakHashMap): Added.
+        (WTF::WeakHashMap::PeekKeyValuePairTraits): Added.
+        (WTF::WeakHashMap::PeekType): Added.
+        (WTF::WeakHashMap::PeekPtrType): Added. Unlike a regular HashMap, we need to fake the iterator
+        pointer value with this struct since key-value pair doesn't exist in HashTable itself as it stores
+        Ref<WeakRefImpl> instead.
+        (WTF::WeakHashMap::WeakHashMapIteratorBase): Added. Has a bunch of helper functions so that
+        WeakHashMapIterator and WeakHashMapConstIterator can share the code.
+        (WTF::WeakHashMap::WeakHashMapIterator): Added.
+        (WTF::WeakHashMap::WeakHashMapConstIterator): Added.
+        (WTF::WeakHashMap::AddResult): Added.
+        (WTF::WeakHashMap::begin): Added.
+        (WTF::WeakHashMap::end): Added.
+        (WTF::WeakHashMap::add): Added.
+        (WTF::WeakHashMap::set): Added.
+        (WTF::WeakHashMap::find): Added.
+        (WTF::WeakHashMap::contains): Added.
+        (WTF::WeakHashMap::get): Added.
+        (WTF::WeakHashMap::remove): Added.
+        (WTF::WeakHashMap::removeIf): Added.
+        (WTF::WeakHashMap::clear): Added.
+        (WTF::WeakHashMap::capacity): Added.
+        (WTF::WeakHashMap::isEmptyIgnoringNullReferences): Added. This is akin to WeakHashSet::computesEmpty.
+        Per prior discussion, we intend to rename WeakHashSet's version to this name as well for clarity.
+        Note that this function will clear the hash table completely if the map is semantically empty
+        but HashTable contains null references as keys.
+        (WTF::WeakHashMap::hasNullReferences): Added. Triggers amortized cleanup based on the number
+        of iterations performed. If there are no null references, it resets m_operationCountSinceLastCleanup.
+        (WTF::WeakHashMap::computeSize): Added.
+        (WTF::WeakHashMap::removeNullReferences): Added. Since WeakHashMap doesn't eagerly delete the value
+        when the key goes away, this function should be called when values held onto by WeakRefImpl with
+        the nullptr back pointer should be deleted en masse.
+        (WTF::WeakHashMap::checkConsistency): Added.
+        (WTF::WeakHashMap::makeKeyImpl): Added.
+        (WTF::WeakHashMap::keyImplIfExists): Added.
+        * wtf/WeakPtr.h:
+
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [Monterey] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226846
+        <rdar://problem/79095148>
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h: Add HAVE(VK_IMAGE_ANALYSIS).
+        * wtf/spi/cocoa/SecuritySPI.h:
+
+2021-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Avoid some calls to StringView::toString() / StringView::toStringWithoutCopying()
+        https://bugs.webkit.org/show_bug.cgi?id=226803
+
+        Reviewed by Darin Adler.
+
+        Add support to TextStream for printing a StringView directly, without having to convert
+        it to a String first.
+
+        * wtf/text/TextStream.cpp:
+        (WTF::TextStream::operator<<):
+        * wtf/text/TextStream.h:
+
+2021-06-09  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF][GStreamer] Add RAII lockers for 3rd party locks
+        https://bugs.webkit.org/show_bug.cgi?id=225650
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch introduces WTF::ExternalLocker, which allows to lock 3rd
+        party mutexes in a RAII fashion, very similar to WTF::Locker.
+
+        This is used also in WebCore to provide RAII lockers for GStreamer.
+
+        * wtf/Locker.h:
+        (WTF::unlockFunction):
+
+2021-06-08  Alex Christensen  <achristensen@webkit.org>
+
+        Move PrivacyStance code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=226774
+
+        Reviewed by Jer Noble.
+
+        * wtf/PlatformHave.h:
+
+2021-06-08  Ben Nham  <nham@apple.com>
+
+        Use access instead of stat in some filesystem functions
+        https://bugs.webkit.org/show_bug.cgi?id=226667
+
+        Reviewed by Chris Dumez.
+
+        We are spending a bit more time in WTF::FileSystemImpl functions after the move to
+        std::filesystem (https://bugs.webkit.org/show_bug.cgi?id=225255). In particular, several
+        std::filesystem functions (like the ones called by fileExists and makeAllDirectories) prefer
+        to use stat() over access() for file existence checks. Since our sandbox has a fast path for
+        access(path, F_OK) but not for stat, we ended up spending more time in sandbox evaluation in
+        the kernel after the move to std::filesystem.
+
+        Note that the two checks don't do exactly the same thing. access(path, F_OK) only checks for
+        path existence, while stat(path) additionally fetches metadata, which requires checking the
+        file-read-metadata permission. But in practice our code was written to be fine with just
+        checking for existence.
+
+        To work around this, I've re-introduced some of the old WTF::FileSystemImpl functions from
+        FileSystemPosix.cpp. They are the ones that are called by NetworkCache, which seems to be
+        the biggest consumer of these functions. The rest of the functions are still implemented
+        using std::filesystem.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::fileExists):
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+        (WTF::FileSystemImpl::pathByAppendingComponents):
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::fileExists):
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+        (WTF::FileSystemImpl::pathByAppendingComponents):
+
+2021-06-08  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] upstream new features
+        https://bugs.webkit.org/show_bug.cgi?id=226740
+        <rdar://problem/78963132>
+
+        Reviewed by Andy Estes.
+
+         - recurring line items (`HAVE_PASSKIT_RECURRING_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_RECURRING_LINE_ITEM`)
+         - deferred line items (`HAVE_PASSKIT_DEFERRED_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM`)
+         - estimated shipping dates (`HAVE_PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE` and `ENABLE_APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE`)
+         - coupon code entry (`HAVE_PASSKIT_COUPON_CODE` and `ENABLE_APPLE_PAY_COUPON_CODE`)
+         - shipped vs in-store pickup (`HAVE_PASSKIT_SHIPPING_CONTACT_EDITING_MODE` and `ENABLE_APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE`)
+
+        * wtf/PlatformHave.h:
+        * wtf/PlatformEnableCocoa.h:
+
+2021-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of reinterpret_cast<> in the codebase
+        https://bugs.webkit.org/show_bug.cgi?id=226743
+
+        Reviewed by Darin Adler.
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/FastMalloc.h:
+        (WTF::FastAllocator::allocate):
+        * wtf/SHA1.h:
+        (WTF::SHA1::addBytes):
+        * wtf/StackCheck.h:
+        (WTF::StackCheck::Scope::Scope):
+        (WTF::StackCheck::StackCheck):
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::userVisibleURL):
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::formURLDecode):
+        * wtf/cf/URLCF.cpp:
+        (WTF::URL::createCFURL const):
+        * wtf/cocoa/URLCocoa.mm:
+        (WTF::URL::createCFURL const):
+        * wtf/persistence/PersistentCoders.cpp:
+        (WTF::Persistence::Coder<CString>::encode):
+        (WTF::Persistence::Coder<String>::encode):
+        * wtf/text/CString.h:
+        * wtf/text/WTFString.cpp:
+        (WTF::String::latin1 const):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringImpl::createCFString):
+
+2021-06-08  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] upstream new features
+        https://bugs.webkit.org/show_bug.cgi?id=226736
+        <rdar://problem/78957464>
+
+        Reviewed by Eric Carlson.
+
+         - bring the "Audio"/"Languages" tracks menu to iOS
+         - add a new "Playback Speed" menu on iOS and macOS in the overflow menu
+         - add support for showing the most relevant `<track kind="chapters">` in the overflow menu
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
+        Add copy of std::span so that we can use it pre-moving to c++20
+        https://bugs.webkit.org/show_bug.cgi?id=226351
+
+        Reviewed by Alex Christensen.
+
+        Imports a copy of Tristan Brindle's Boost licensed implementation of std::span 
+        from 5d8d366eca918d0ed3d2d196cbeae6abfd874736 of https://github.com/tcbrindle/span.
+
+        It has been further modified to rename tcb::span to WTF::Span.
+
+        * LICENSE_1_0-Boost.txt: Added.
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Span.h: Added.
+
+2021-06-07  Alex Christensen  <achristensen@webkit.org>
+
+        Adopt SecTrustGetCertificateAtIndex replacement where available
+        https://bugs.webkit.org/show_bug.cgi?id=225893
+
+        Reviewed by Chris Dumez.
+
+        rdar://74752046 introduced a new way to access the same thing.
+
+        * wtf/PlatformHave.h:
+
+2021-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy MainThreadTaskQueue & EventLoopTaskQueue classes
+        https://bugs.webkit.org/show_bug.cgi?id=226734
+
+        Reviewed by Ryosuke Niwa.
+
+        We recently introduced the WTF::CancellableTask in order to be able to cancel
+        a pending task in the event loop, and/or check if the task is still pending.
+        It worked great as a replacement for EventLoopDeferrableTask. However, it was
+        insufficient as a replacement for task queues (such as MainThreadTaskQueue &
+        EventLoopTaskQueue) since there was no convenient way to cancel a group of
+        tasks. To address this, I am introducing WTF::TaskCancellationGroup. Whenever one
+        needs to create a CancellableTask, it now needs to provide a TaskCancellationGroup.
+        Several CancellableTask objects can share the same TaskCancellationGroup. Code now
+        now schedule one or more CancellableTasks on the event loop and hold on
+        to a TaskCancellationGroup. If they need to cancel those tasks, they can simply
+        call cancel() on the TaskCancellationGroup. They can also check if previously
+        scheduled tasks are still pending via TaskCancellationGroup::hasPendingTask().
+
+        * wtf/CancellableTask.h:
+        (WTF::TaskCancellationGroup::TaskCancellationGroup):
+        (WTF::TaskCancellationGroup::cancel):
+        (WTF::TaskCancellationGroup::hasPendingTask const):
+        (WTF::TaskCancellationGroup::Impl::cancel):
+        (WTF::TaskCancellationGroup::Impl::hasPendingTask const):
+        (WTF::TaskCancellationGroup::Handle::isCancelled const):
+        (WTF::TaskCancellationGroup::Handle::Handle):
+        (WTF::TaskCancellationGroup::createHandle):
+        (WTF::CancellableTask::CancellableTask):
+        (WTF::CancellableTask::operator()):
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrFactory::weakPtrCount const):
+
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformEnableCocoa.h:
+
+        Move the feature flag out of WebKitAdditions and into OpenSource as IMAGE_ANALYSIS.
+
 2021-06-07  Alicia Boya García  <aboya@igalia.com>
 
         [WTF][GStreamer] Fix clang TSA warnings in WTF::DataMutex

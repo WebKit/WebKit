@@ -253,7 +253,9 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
         return;
     }
 
+IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_BEGIN
     auto slowPaths = info->emitFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::Yes);
+IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
     auto doneLocation = label();
     addSlowCase(slowPaths);
 
@@ -398,8 +400,8 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     emitJumpSlowCaseIfNotJSCell(regT0);
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetById);
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+        CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), JSValueRegs(regT0), JSValueRegs(regT0), regT1, AccessType::GetById);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
@@ -432,8 +434,15 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
     
     Label coldPathBegin = label();
 
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, nextVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iteratorGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+    Call call;
+    if (JITCode::useDataIC(JITType::BaselineJIT)) {
+        gen.stubInfo()->m_slowOperation = operationGetByIdOptimize;
+        move(TrustedImmPtr(gen.stubInfo()), GPRInfo::nonArgGPR0);
+        callOperationWithProfile<decltype(operationGetByIdOptimize)>(bytecode.metadata(m_codeBlock), Address(GPRInfo::nonArgGPR0, StructureStubInfo::offsetOfSlowOperation()), nextVReg, TrustedImmPtr(m_codeBlock->globalObject()), GPRInfo::nonArgGPR0, iteratorGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+    } else
+        call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, nextVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iteratorGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
     gen.reportSlowPathCall(coldPathBegin, call);
+
     auto done = jump();
 
     notObject.link(this);
@@ -480,8 +489,8 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         RegisterSet preservedRegs = RegisterSet::stubUnavailableRegisters();
         preservedRegs.add(valueGPR);
         JITGetByIdGenerator gen(
-            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
-            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), JSValueRegs(iterResultGPR), JSValueRegs(doneGPR), AccessType::GetById);
+            m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
+            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), JSValueRegs(iterResultGPR), JSValueRegs(doneGPR), regT3, AccessType::GetById);
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
@@ -499,8 +508,8 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         JumpList iterationDone = branchIfTruthy(vm(), JSValueRegs(doneGPR), scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
 
         JITGetByIdGenerator gen(
-            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
-            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()), JSValueRegs(valueGPR), JSValueRegs(valueGPR), AccessType::GetById);
+            m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()), JSValueRegs(valueGPR), JSValueRegs(valueGPR), regT4, AccessType::GetById);
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
@@ -528,16 +537,23 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
         linkAllSlowCases(iter);
         JumpList notObject;
         notObject.append(branchIfNotCell(iterResultGPR));
-        notObject.append(branchIfNotObject(iterResultGPR));
 
         UniquedStringImpl* ident = vm().propertyNames->done.impl();
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
         
         Label coldPathBegin = label();
 
-        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, doneVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+        notObject.append(branchIfNotObject(iterResultGPR));
 
+        Call call;
+        if (JITCode::useDataIC(JITType::BaselineJIT)) {
+            gen.stubInfo()->m_slowOperation = operationGetByIdOptimize;
+            move(TrustedImmPtr(gen.stubInfo()), GPRInfo::nonArgGPR0);
+            callOperationWithProfile<decltype(operationGetByIdOptimize)>(bytecode.metadata(m_codeBlock), Address(GPRInfo::nonArgGPR0, StructureStubInfo::offsetOfSlowOperation()), doneVReg, TrustedImmPtr(m_codeBlock->globalObject()), GPRInfo::nonArgGPR0, iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+        } else
+            call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, doneVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
         gen.reportSlowPathCall(coldPathBegin, call);
+
         emitGetVirtualRegister(doneVReg, regT1);
         emitGetVirtualRegister(bytecode.m_value, regT0);
         emitJumpSlowToHotForCheckpoint(jump());
@@ -556,8 +572,13 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
 
         Label coldPathBegin = label();
 
-        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, valueVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
-
+        Call call;
+        if (JITCode::useDataIC(JITType::BaselineJIT)) {
+            gen.stubInfo()->m_slowOperation = operationGetByIdOptimize;
+            move(TrustedImmPtr(gen.stubInfo()), GPRInfo::nonArgGPR0);
+            callOperationWithProfile<decltype(operationGetByIdOptimize)>(bytecode.metadata(m_codeBlock), Address(GPRInfo::nonArgGPR0, StructureStubInfo::offsetOfSlowOperation()), valueVReg, TrustedImmPtr(m_codeBlock->globalObject()), GPRInfo::nonArgGPR0, iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+        } else
+            call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, valueVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
         gen.reportSlowPathCall(coldPathBegin, call);
     }
 

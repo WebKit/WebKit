@@ -53,6 +53,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayCancelEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayContactField.idl \
+    $(WebCore)/Modules/applepay/ApplePayCouponCodeChangedEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePayCouponCodeDetails.idl \
+    $(WebCore)/Modules/applepay/ApplePayCouponCodeUpdate.idl \
+    $(WebCore)/Modules/applepay/ApplePayDateComponents.idl \
+    $(WebCore)/Modules/applepay/ApplePayDateComponentsRange.idl \
     $(WebCore)/Modules/applepay/ApplePayDetailsUpdateBase.idl \
     $(WebCore)/Modules/applepay/ApplePayDetailsUpdateData.idl \
     $(WebCore)/Modules/applepay/ApplePayError.idl \
@@ -63,20 +68,19 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentRetailChannel.idl \
     $(WebCore)/Modules/applepay/ApplePayLineItem.idl \
-    $(WebCore)/Modules/applepay/ApplePayLineItemData.idl \
     $(WebCore)/Modules/applepay/ApplePayMerchantCapability.idl \
     $(WebCore)/Modules/applepay/ApplePayPayment.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentContact.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethod.idl \
-    $(WebCore)/Modules/applepay/ApplePayPaymentMethodModeDetails.idl \
-    $(WebCore)/Modules/applepay/ApplePayPaymentMethodModeUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethodType.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethodUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentPass.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentRequest.idl \
+    $(WebCore)/Modules/applepay/ApplePayPaymentTiming.idl \
+    $(WebCore)/Modules/applepay/ApplePayRecurringPaymentDateUnit.idl \
     $(WebCore)/Modules/applepay/ApplePayRequestBase.idl \
     $(WebCore)/Modules/applepay/ApplePaySession.idl \
     $(WebCore)/Modules/applepay/ApplePaySessionError.idl \
@@ -85,10 +89,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePaySetupFeature.idl \
     $(WebCore)/Modules/applepay/ApplePaySetupFeatureState.idl \
     $(WebCore)/Modules/applepay/ApplePaySetupFeatureType.idl \
+    $(WebCore)/Modules/applepay/ApplePayShippingContactEditingMode.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingMethod.idl \
-    $(WebCore)/Modules/applepay/ApplePayShippingMethodData.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingMethodSelectedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingMethodUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
@@ -1850,6 +1854,7 @@ JS_BINDINGS_SCRIPTS = $(COMMON_BINDINGS_SCRIPTS) $(WebCore)/bindings/scripts/Cod
 SUPPLEMENTAL_DEPENDENCY_FILE = SupplementalDependencies.txt
 SUPPLEMENTAL_MAKEFILE_DEPS = SupplementalDependencies.dep
 ISO_SUBSPACES_HEADER_FILE = DOMIsoSubspaces.h
+CONSTRUCTORS_HEADER_FILE = DOMConstructors.h
 WINDOW_CONSTRUCTORS_FILE = DOMWindowConstructors.idl
 WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = WorkerGlobalScopeConstructors.idl
 DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = DedicatedWorkerGlobalScopeConstructors.idl
@@ -1863,6 +1868,7 @@ IDL_INTERMEDIATE_FILES = \
     $(SUPPLEMENTAL_MAKEFILE_DEPS) \
     $(SUPPLEMENTAL_DEPENDENCY_FILE) \
     $(ISO_SUBSPACES_HEADER_FILE) \
+    $(CONSTRUCTORS_HEADER_FILE) \
     $(WINDOW_CONSTRUCTORS_FILE) \
     $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
     $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
@@ -1875,7 +1881,7 @@ IDL_INTERMEDIATE_PATTERNS = $(subst .,%,$(IDL_INTERMEDIATE_FILES))
 
 $(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(JS_BINDING_IDLS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(shell echo $(JS_BINDING_IDLS) | tr " " "\n" > IDLFileNamesList.txt)
-	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --idlFileNamesList IDLFileNamesList.txt --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --isoSubspacesHeaderFile $(ISO_SUBSPACES_HEADER_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --serviceWorkerGlobalScopeConstructorsFile $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --workletGlobalScopeConstructorsFile $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --paintWorkletGlobalScopeConstructorsFile $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --audioWorkletGlobalScopeConstructorsFile $(AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $(SUPPLEMENTAL_MAKEFILE_DEPS)
+	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --idlFileNamesList IDLFileNamesList.txt --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --isoSubspacesHeaderFile $(ISO_SUBSPACES_HEADER_FILE) --constructorsHeaderFile $(CONSTRUCTORS_HEADER_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --serviceWorkerGlobalScopeConstructorsFile $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --workletGlobalScopeConstructorsFile $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --paintWorkletGlobalScopeConstructorsFile $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --audioWorkletGlobalScopeConstructorsFile $(AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $(SUPPLEMENTAL_MAKEFILE_DEPS)
 
 #
 # Emit the rules to generate bindings from IDL files. Note that there are

@@ -36,6 +36,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSEventListener.h"
@@ -240,7 +241,7 @@ JSObject* JSTestDefaultToJSON::prototype(VM& vm, JSDOMGlobalObject& globalObject
 
 JSValue JSTestDefaultToJSON::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONDOMConstructor, DOMConstructorID::TestDefaultToJSON>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDefaultToJSON::destroy(JSC::JSCell* cell)

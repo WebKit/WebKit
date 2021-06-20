@@ -938,15 +938,9 @@ TEST(IPAddressTest, TestToSensitiveString) {
   EXPECT_EQ(kIPv4PublicAddrString, addr_v4.ToString());
   EXPECT_EQ(kIPv6PublicAddrString, addr_v6.ToString());
   EXPECT_EQ(kIPv6PublicAddr2String, addr_v6_2.ToString());
-#if defined(NDEBUG)
   EXPECT_EQ(kIPv4PublicAddrAnonymizedString, addr_v4.ToSensitiveString());
   EXPECT_EQ(kIPv6PublicAddrAnonymizedString, addr_v6.ToSensitiveString());
   EXPECT_EQ(kIPv6PublicAddr2AnonymizedString, addr_v6_2.ToSensitiveString());
-#else
-  EXPECT_EQ(kIPv4PublicAddrString, addr_v4.ToSensitiveString());
-  EXPECT_EQ(kIPv6PublicAddrString, addr_v6.ToSensitiveString());
-  EXPECT_EQ(kIPv6PublicAddr2String, addr_v6_2.ToSensitiveString());
-#endif  // defined(NDEBUG)
 }
 
 TEST(IPAddressTest, TestInterfaceAddress) {

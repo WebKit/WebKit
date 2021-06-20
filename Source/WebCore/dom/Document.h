@@ -41,7 +41,6 @@
 #include "FrameDestructionObserver.h"
 #include "FrameIdentifier.h"
 #include "FrameLoaderTypes.h"
-#include "GenericTaskQueue.h"
 #include "GraphicsTypes.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
@@ -414,8 +413,6 @@ public:
 
     void setReferrerPolicy(ReferrerPolicy);
     ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.value_or(ReferrerPolicy::NoReferrerWhenDowngrade); }
-
-    bool isAlwaysOnLoggingAllowed() const;
 
     WEBCORE_EXPORT DocumentType* doctype() const;
 

@@ -447,8 +447,10 @@ void CallTest::CreateMatchingFecConfig(
   config.remote_ssrc = send_config.rtp.flexfec.ssrc;
   config.protected_media_ssrcs = send_config.rtp.flexfec.protected_media_ssrcs;
   config.local_ssrc = kReceiverLocalVideoSsrc;
-  if (!video_receive_configs_.empty())
+  if (!video_receive_configs_.empty()) {
     video_receive_configs_[0].rtp.protected_by_flexfec = true;
+    video_receive_configs_[0].rtp.packet_sink_ = this;
+  }
   flexfec_receive_configs_.push_back(config);
 }
 
@@ -510,8 +512,6 @@ void CallTest::CreateVideoStreams() {
     video_receive_streams_.push_back(receiver_call_->CreateVideoReceiveStream(
         video_receive_configs_[i].Copy()));
   }
-
-  AssociateFlexfecStreamsWithVideoStreams();
 }
 
 void CallTest::CreateVideoSendStreams() {
@@ -572,31 +572,12 @@ void CallTest::CreateFlexfecStreams() {
         receiver_call_->CreateFlexfecReceiveStream(
             flexfec_receive_configs_[i]));
   }
-
-  AssociateFlexfecStreamsWithVideoStreams();
 }
 
 void CallTest::ConnectVideoSourcesToStreams() {
   for (size_t i = 0; i < video_sources_.size(); ++i)
     video_send_streams_[i]->SetSource(video_sources_[i].get(),
                                       degradation_preference_);
-}
-
-void CallTest::AssociateFlexfecStreamsWithVideoStreams() {
-  // All FlexFEC streams protect all of the video streams.
-  for (FlexfecReceiveStream* flexfec_recv_stream : flexfec_receive_streams_) {
-    for (VideoReceiveStream* video_recv_stream : video_receive_streams_) {
-      video_recv_stream->AddSecondarySink(flexfec_recv_stream);
-    }
-  }
-}
-
-void CallTest::DissociateFlexfecStreamsFromVideoStreams() {
-  for (FlexfecReceiveStream* flexfec_recv_stream : flexfec_receive_streams_) {
-    for (VideoReceiveStream* video_recv_stream : video_receive_streams_) {
-      video_recv_stream->RemoveSecondarySink(flexfec_recv_stream);
-    }
-  }
 }
 
 void CallTest::Start() {
@@ -632,8 +613,6 @@ void CallTest::StopVideoStreams() {
 }
 
 void CallTest::DestroyStreams() {
-  DissociateFlexfecStreamsFromVideoStreams();
-
   if (audio_send_stream_)
     sender_call_->DestroyAudioSendStream(audio_send_stream_);
   audio_send_stream_ = nullptr;
@@ -689,6 +668,12 @@ VideoSendStream* CallTest::GetVideoSendStream() {
 }
 FlexfecReceiveStream::Config* CallTest::GetFlexFecConfig() {
   return &flexfec_receive_configs_[0];
+}
+
+void CallTest::OnRtpPacket(const RtpPacketReceived& packet) {
+  // All FlexFEC streams protect all of the video streams.
+  for (FlexfecReceiveStream* flexfec_recv_stream : flexfec_receive_streams_)
+    flexfec_recv_stream->OnRtpPacket(packet);
 }
 
 absl::optional<RtpExtension> CallTest::GetRtpExtensionByUri(

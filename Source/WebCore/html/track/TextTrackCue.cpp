@@ -38,6 +38,7 @@
 #include "CSSValueKeywords.h"
 #include "DOMRect.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "HTMLDivElement.h"
 #include "HTMLStyleElement.h"
 #include "Logging.h"
@@ -222,21 +223,25 @@ ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double s
     if (!nodeTypes.contains(RequiredNodes::CueBackground))
         return Exception { InvalidStateError, makeString("Missing required attribute: ", cueBackgroundAttributName().toString()) };
 
-    return adoptRef(*new TextTrackCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(fragment)));
+    auto textTrackCue = adoptRef(*new TextTrackCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(fragment)));
+    textTrackCue->suspendIfNeeded();
+    return textTrackCue;
 }
 
 TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const MediaTime& end, Ref<DocumentFragment>&& cueFragment)
-    : m_startTime(start)
+    : ActiveDOMObject(document)
+    , m_startTime(start)
     , m_endTime(end)
     , m_document(document)
     , m_cueNode(WTFMove(cueFragment))
 {
 }
 
-TextTrackCue::TextTrackCue(Document& context, const MediaTime& start, const MediaTime& end)
-    : m_startTime(start)
+TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const MediaTime& end)
+    : ActiveDOMObject(document)
+    , m_startTime(start)
     , m_endTime(end)
-    , m_document(context)
+    , m_document(document)
 {
 }
 
@@ -335,7 +340,7 @@ void TextTrackCue::dispatchEvent(Event& event)
     EventTarget::dispatchEvent(event);
 }
 
-bool TextTrackCue::isActive()
+bool TextTrackCue::isActive() const
 {
     return m_isActive && track() && track()->mode() != TextTrack::Mode::Disabled;
 }
@@ -529,6 +534,11 @@ void TextTrackCue::rebuildDisplayTree()
     }
 
     m_displayTreeNeedsUpdate = false;
+}
+
+const char* TextTrackCue::activeDOMObjectName() const
+{
+    return "TextTrackCue";
 }
 
 } // namespace WebCore

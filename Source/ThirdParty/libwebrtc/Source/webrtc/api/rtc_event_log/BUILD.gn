@@ -37,6 +37,7 @@ rtc_library("rtc_event_log_factory") {
     ":rtc_event_log",
     "../../rtc_base:checks",
     "../../rtc_base/system:rtc_export",
+    "../../system_wrappers:field_trial",
     "../task_queue",
   ]
 

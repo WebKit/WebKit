@@ -23,7 +23,7 @@ if os.path.isfile(tmpFilePath):
 tmpFile = open(tmpFilePath, 'w+')
 tmpFile.close()
 
-filePath = os.path.join('/'.join(__file__.split('/')[0:-1]), 'compass-no-cache.jpg')
+filePath = os.path.join(os.path.dirname(__file__), 'compass-no-cache.jpg')
 stat = os.stat(filePath)
 filemtime = stat.st_mtime
 filesize = stat.st_size

@@ -70,7 +70,9 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(double);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const char*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const void*);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const AtomString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const String&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(StringView);
     // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
     WTF_EXPORT_PRIVATE TextStream& operator<<(const FormatNumberRespectingIntegers&);
 

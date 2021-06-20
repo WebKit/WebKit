@@ -2310,6 +2310,111 @@ public:
         return Jump();
     }
 
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, ImplicitAddress destAddress)
+    {
+        bool useAddrTempRegister = !(destAddress.offset >= -32768 && destAddress.offset <= 32767
+            && !m_fixedWidth);
+
+        if (useAddrTempRegister) {
+            m_assembler.lui(addrTempRegister, (destAddress.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, destAddress.base);
+        }
+
+        auto loadDest = [&] (RegisterID dest) {
+            if (useAddrTempRegister)
+                m_assembler.lw(dest, addrTempRegister, destAddress.offset);
+            else
+                m_assembler.lw(dest, destAddress.base, destAddress.offset);
+        };
+
+        auto storeDest = [&] (RegisterID src) {
+            if (useAddrTempRegister)
+                m_assembler.sw(src, addrTempRegister, destAddress.offset);
+            else
+                m_assembler.sw(src, destAddress.base, destAddress.offset);
+        };
+
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
+        if (cond == Overflow) {
+            if (m_fixedWidth) {
+                /*
+                    load    dest, dataTemp
+                    move    imm, immTemp
+                    xor     cmpTemp, dataTemp, immTemp
+                    addu    dataTemp, dataTemp, immTemp
+                    store   dataTemp, dest
+                    bltz    cmpTemp, No_overflow    # diff sign bit -> no overflow
+                    xor     cmpTemp, dataTemp, immTemp
+                    bgez    cmpTemp, No_overflow    # same sign big -> no overflow
+                    nop
+                    b       Overflow
+                    nop
+                    b       No_overflow
+                    nop
+                    nop
+                    nop
+                No_overflow:
+                */
+                loadDest(dataTempRegister);
+                move(imm, immTempRegister);
+                m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
+                m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
+                storeDest(dataTempRegister);
+                m_assembler.bltz(cmpTempRegister, 9);
+                m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
+                m_assembler.bgez(cmpTempRegister, 7);
+                m_assembler.nop();
+            } else {
+                loadDest(dataTempRegister);
+                if (imm.m_value >= 0 && imm.m_value  <= 32767) {
+                    move(dataTempRegister, cmpTempRegister);
+                    m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
+                    m_assembler.bltz(cmpTempRegister, 9);
+                    storeDest(dataTempRegister);
+                    m_assembler.bgez(dataTempRegister, 7);
+                    m_assembler.nop();
+                } else if (imm.m_value >= -32768 && imm.m_value < 0) {
+                    move(dataTempRegister, cmpTempRegister);
+                    m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
+                    m_assembler.bgez(cmpTempRegister, 9);
+                    storeDest(dataTempRegister);
+                    m_assembler.bltz(cmpTempRegister, 7);
+                    m_assembler.nop();
+                } else {
+                    move(imm, immTempRegister);
+                    m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
+                    m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
+                    m_assembler.bltz(cmpTempRegister, 10);
+                    storeDest(dataTempRegister);
+                    m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
+                    m_assembler.bgez(cmpTempRegister, 7);
+                    m_assembler.nop();
+                }
+            }
+            return jump();
+        }
+        move(imm, immTempRegister);
+        loadDest(dataTempRegister);
+        add32(immTempRegister, dataTempRegister);
+        storeDest(dataTempRegister);
+        if (cond == Signed) {
+            // Check if dest is negative.
+            m_assembler.slt(cmpTempRegister, dataTempRegister, MIPSRegisters::zero);
+            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == PositiveOrZero) {
+            // Check if dest is not negative.
+            m_assembler.slt(cmpTempRegister, dataTempRegister, MIPSRegisters::zero);
+            return branchEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == Zero)
+            return branchEqual(dataTempRegister, MIPSRegisters::zero);
+        if (cond == NonZero)
+            return branchNotEqual(dataTempRegister, MIPSRegisters::zero);
+        ASSERT(0);
+        return Jump();
+    }
+
     Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));

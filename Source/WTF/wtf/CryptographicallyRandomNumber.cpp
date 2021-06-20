@@ -149,7 +149,7 @@ void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
 {
     Locker locker { m_lock };
 
-    unsigned char* result = reinterpret_cast<unsigned char*>(buffer);
+    auto result = static_cast<unsigned char*>(buffer);
     stirIfNeeded();
     while (length--) {
         m_count--;

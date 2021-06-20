@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Run IWYU against a single webrtc source file.
+#
+# To get iwyu on Debian/glinux, do "sudo apt-get install iwyu".
+#
+# To apply the changes suggested blindly, do tools/iwyu |& fix_include
+#
+# Doing "tools/iwyu filename.cc" will check both the .cc and .h file.
+# 
+iwyu -Xiwyu --no_fwd_decls -D__X86_64__  -DWEBRTC_POSIX -I . -I third_party/abseil-cpp $@

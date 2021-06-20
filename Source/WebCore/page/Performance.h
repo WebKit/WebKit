@@ -75,6 +75,7 @@ public:
     ~Performance();
 
     DOMHighResTimeStamp now() const;
+    DOMHighResTimeStamp timeOrigin() const;
     ReducedResolutionSeconds nowInReducedResolutionSeconds() const;
 
     PerformanceNavigation* navigation();

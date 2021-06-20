@@ -48,6 +48,7 @@ public:
     WebCore::PageIdentifier webPageID;
     WebCore::FrameIdentifier webFrameID;
     RefPtr<WebCore::SecurityOrigin> topOrigin;
+    RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WTF::ProcessID parentPID { 0 };
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> networkProcessAuditToken;

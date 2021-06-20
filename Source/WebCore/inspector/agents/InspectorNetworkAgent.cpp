@@ -465,7 +465,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTFMove(initiatorObject), buildObjectForResourceResponse(redirectResponse, nullptr), WTFMove(typePayload), targetId);
 }
 
-static InspectorPageAgent::ResourceType resourceTypeForCachedResource(CachedResource* resource)
+static InspectorPageAgent::ResourceType resourceTypeForCachedResource(const CachedResource* resource)
 {
     if (resource)
         return InspectorPageAgent::inspectorResourceType(*resource);
@@ -486,9 +486,10 @@ static InspectorPageAgent::ResourceType resourceTypeForLoadType(InspectorInstrum
     return InspectorPageAgent::OtherResource;
 }
 
-void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
 {
-    auto* cachedResource = loader ? InspectorPageAgent::cachedResource(loader->frame(), request.url()) : nullptr;
+    if (!cachedResource && loader)
+        cachedResource = InspectorPageAgent::cachedResource(loader->frame(), request.url());
     willSendRequest(identifier, loader, request, redirectResponse, resourceTypeForCachedResource(cachedResource));
 }
 
@@ -547,7 +548,9 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
                 m_resourcesData->setResourceContent(requestId, previousResourceData->content(), previousResourceData->base64Encoded());
             else if (previousResourceData->hasBufferedData()) {
                 auto previousBuffer = previousResourceData->buffer();
-                m_resourcesData->maybeAddResourceData(requestId, previousBuffer->data(), previousBuffer->size());
+                previousBuffer->forEachSegment([&](auto& segment) {
+                    m_resourcesData->maybeAddResourceData(requestId, segment.data(), segment.size());
+                });
             }
             
             resourceResponse->setString(Protocol::Network::Response::mimeTypeKey, previousResourceData->mimeType());

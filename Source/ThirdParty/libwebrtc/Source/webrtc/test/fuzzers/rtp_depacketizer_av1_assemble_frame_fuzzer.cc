@@ -34,6 +34,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     rtp_payloads.push_back(fuzz_input.ReadByteArray(next_size));
   }
   // Run code under test.
-  VideoRtpDepacketizerAv1::AssembleFrame(rtp_payloads);
+  VideoRtpDepacketizerAv1().AssembleFrame(rtp_payloads);
 }
 }  // namespace webrtc

@@ -18,6 +18,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   const char* message = reinterpret_cast<const char*>(data);
 
   cricket::StunMessage::ValidateFingerprint(message, size);
-  cricket::StunMessage::ValidateMessageIntegrity(message, size, "");
+  cricket::StunMessage::ValidateMessageIntegrityForTesting(message, size, "");
 }
 }  // namespace webrtc

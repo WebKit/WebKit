@@ -1799,9 +1799,9 @@ public:
     unsigned parameterCount() const { return m_parameterCount; }
 
     CodeFeatures features() const { return m_mutableMetadata.m_features; }
+    LexicalScopeFeatures lexicalScopeFeatures() const { return m_mutableMetadata.m_lexicalScopeFeatures; }
     SourceParseMode sourceParseMode() const { return m_sourceParseMode; }
 
-    unsigned isInStrictContext() const { return m_isInStrictContext; }
     unsigned hasCapturedVariables() const { return m_mutableMetadata.m_hasCapturedVariables; }
     unsigned isBuiltinFunction() const { return m_isBuiltinFunction; }
     unsigned isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
@@ -1826,7 +1826,6 @@ private:
     CachedFunctionExecutableMetadata m_mutableMetadata;
 
     unsigned m_firstLineOffset : 31;
-    unsigned m_isInStrictContext : 1;
     unsigned m_lineCount : 31;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_unlinkedFunctionNameStart : 31;
@@ -1902,6 +1901,7 @@ public:
     unsigned evalContextType() const { return m_evalContextType; }
     unsigned hasTailCalls() const { return m_hasTailCalls; }
     unsigned hasCheckpoints() const { return m_hasCheckpoints; }
+    unsigned lexicalScopeFeatures() const { return m_lexicalScopeFeatures; }
     unsigned lineCount() const { return m_lineCount; }
     unsigned endColumn() const { return m_endColumn; }
 
@@ -1934,6 +1934,7 @@ private:
     unsigned m_hasTailCalls : 1;
     unsigned m_codeType : 2;
     unsigned m_hasCheckpoints : 1;
+    unsigned m_lexicalScopeFeatures : 4;
 
     CodeFeatures m_features;
     SourceParseMode m_parseMode;
@@ -2115,9 +2116,13 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_thisRegister(cachedCodeBlock.thisRegister())
     , m_scopeRegister(cachedCodeBlock.scopeRegister())
 
+    , m_numVars(cachedCodeBlock.numVars())
     , m_usesCallEval(cachedCodeBlock.usesCallEval())
+    , m_numCalleeLocals(cachedCodeBlock.numCalleeLocals())
     , m_isConstructor(cachedCodeBlock.isConstructor())
+    , m_numParameters(cachedCodeBlock.numParameters())
     , m_hasCapturedVariables(cachedCodeBlock.hasCapturedVariables())
+
     , m_isBuiltinFunction(cachedCodeBlock.isBuiltinFunction())
     , m_superBinding(cachedCodeBlock.superBinding())
     , m_scriptMode(cachedCodeBlock.scriptMode())
@@ -2133,15 +2138,13 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_age(0)
     , m_hasCheckpoints(cachedCodeBlock.hasCheckpoints())
 
+    , m_lexicalScopeFeatures(cachedCodeBlock.lexicalScopeFeatures())
     , m_features(cachedCodeBlock.features())
     , m_parseMode(cachedCodeBlock.parseMode())
     , m_codeGenerationMode(cachedCodeBlock.codeGenerationMode())
 
     , m_lineCount(cachedCodeBlock.lineCount())
     , m_endColumn(cachedCodeBlock.endColumn())
-    , m_numVars(cachedCodeBlock.numVars())
-    , m_numCalleeLocals(cachedCodeBlock.numCalleeLocals())
-    , m_numParameters(cachedCodeBlock.numParameters())
 
     , m_sourceURLDirective(cachedCodeBlock.sourceURLDirective(decoder))
     , m_sourceMappingURLDirective(cachedCodeBlock.sourceMappingURLDirective(decoder))
@@ -2184,6 +2187,7 @@ ALWAYS_INLINE UnlinkedEvalCodeBlock::UnlinkedEvalCodeBlock(Decoder& decoder, con
 ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const UnlinkedFunctionExecutable& executable)
 {
     m_mutableMetadata.m_features = executable.m_features;
+    m_mutableMetadata.m_lexicalScopeFeatures = executable.m_lexicalScopeFeatures;
     m_mutableMetadata.m_hasCapturedVariables = executable.m_hasCapturedVariables;
 
     m_firstLineOffset = executable.m_firstLineOffset;
@@ -2200,7 +2204,6 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
 
     m_sourceParseMode = executable.m_sourceParseMode;
 
-    m_isInStrictContext = executable.m_isInStrictContext;
     m_isBuiltinFunction = executable.m_isBuiltinFunction;
     m_isBuiltinDefaultClassConstructor = executable.m_isBuiltinDefaultClassConstructor;
     m_constructAbility = executable.m_constructAbility;
@@ -2234,7 +2237,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decod
 ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& decoder, const CachedFunctionExecutable& cachedExecutable)
     : Base(decoder.vm(), decoder.vm().unlinkedFunctionExecutableStructure.get())
     , m_firstLineOffset(cachedExecutable.firstLineOffset())
-    , m_isInStrictContext(cachedExecutable.isInStrictContext())
+    , m_isGeneratedFromCache(true)
     , m_lineCount(cachedExecutable.lineCount())
     , m_hasCapturedVariables(cachedExecutable.hasCapturedVariables())
     , m_unlinkedFunctionNameStart(cachedExecutable.unlinkedFunctionNameStart())
@@ -2250,16 +2253,16 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_parametersStartOffset(cachedExecutable.parametersStartOffset())
     , m_isCached(false)
     , m_typeProfilingStartOffset(cachedExecutable.typeProfilingStartOffset())
+    , m_needsClassFieldInitializer(cachedExecutable.needsClassFieldInitializer())
     , m_typeProfilingEndOffset(cachedExecutable.typeProfilingEndOffset())
     , m_parameterCount(cachedExecutable.parameterCount())
     , m_privateBrandRequirement(cachedExecutable.privateBrandRequirement())
     , m_features(cachedExecutable.features())
-    , m_sourceParseMode(cachedExecutable.sourceParseMode())
     , m_constructorKind(cachedExecutable.constructorKind())
+    , m_sourceParseMode(cachedExecutable.sourceParseMode())
+    , m_lexicalScopeFeatures(cachedExecutable.lexicalScopeFeatures())
     , m_functionMode(cachedExecutable.functionMode())
     , m_derivedContextType(cachedExecutable.derivedContextType())
-    , m_isGeneratedFromCache(true)
-    , m_needsClassFieldInitializer(cachedExecutable.needsClassFieldInitializer())
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
 
@@ -2320,6 +2323,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_numCalleeLocals = codeBlock.m_numCalleeLocals;
     m_numParameters = codeBlock.m_numParameters;
     m_features = codeBlock.m_features;
+    m_lexicalScopeFeatures = codeBlock.m_lexicalScopeFeatures;
     m_parseMode = codeBlock.m_parseMode;
     m_codeGenerationMode = codeBlock.m_codeGenerationMode;
     m_codeType = codeBlock.m_codeType;

@@ -53,6 +53,7 @@ public:
     void willInsertDOMNode(Node& parent);
     void willRemoveDOMNode(Node&);
     void didRemoveDOMNode(Node&);
+    void willDestroyDOMNode(Node&);
     void willModifyDOMAttr(Element&);
     void willInvalidateStyleAttr(Element&);
     void willFireAnimationFrame();

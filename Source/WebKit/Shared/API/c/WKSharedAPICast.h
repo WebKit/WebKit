@@ -509,10 +509,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagMediaPlayPause;
     case WebCore::ContextMenuItemTagMediaMute:
         return kWKContextMenuItemTagMediaMute;
-    case WebCore::ContextMenuItemTagAddHighlightToCurrentGroup:
-        return kWKContextMenuItemTagAddHighlightToCurrentGroup;
-    case WebCore::ContextMenuItemTagAddHighlightToNewGroup:
-        return kWKContextMenuItemTagAddHighlightToNewGroup;
+    case WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote:
+        return kWKContextMenuItemTagAddHighlightToCurrentQuickNote;
+    case WebCore::ContextMenuItemTagAddHighlightToNewQuickNote:
+        return kWKContextMenuItemTagAddHighlightToNewQuickNote;
 #if PLATFORM(COCOA)
     case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
         return kWKContextMenuItemTagCorrectSpellingAutomatically;
@@ -543,7 +543,7 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
 #endif
     case WebCore::ContextMenuItemTagShareMenu:
         return kWKContextMenuItemTagShareMenu;
-    case WebCore::ContextMenuItemTagRevealImage:
+    case WebCore::ContextMenuItemTagLookUpImage:
         return kWKContextMenuItemTagRevealImage;
     case WebCore::ContextMenuItemTagTranslate:
         return kWKContextMenuItemTagTranslate;
@@ -711,10 +711,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagMediaPlayPause;
     case kWKContextMenuItemTagMediaMute:
         return WebCore::ContextMenuItemTagMediaMute;
-    case kWKContextMenuItemTagAddHighlightToCurrentGroup:
-        return WebCore::ContextMenuItemTagAddHighlightToCurrentGroup;
-    case kWKContextMenuItemTagAddHighlightToNewGroup:
-        return WebCore::ContextMenuItemTagAddHighlightToNewGroup;
+    case kWKContextMenuItemTagAddHighlightToCurrentQuickNote:
+        return WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote;
+    case kWKContextMenuItemTagAddHighlightToNewQuickNote:
+        return WebCore::ContextMenuItemTagAddHighlightToNewQuickNote;
 #if PLATFORM(COCOA)
     case kWKContextMenuItemTagCorrectSpellingAutomatically:
         return WebCore::ContextMenuItemTagCorrectSpellingAutomatically;
@@ -746,7 +746,7 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagShareMenu;
 #endif
     case kWKContextMenuItemTagRevealImage:
-        return WebCore::ContextMenuItemTagRevealImage;
+        return WebCore::ContextMenuItemTagLookUpImage;
     case kWKContextMenuItemTagTranslate:
         return WebCore::ContextMenuItemTagTranslate;
     case kWKContextMenuItemTagOpenLinkInThisWindow:

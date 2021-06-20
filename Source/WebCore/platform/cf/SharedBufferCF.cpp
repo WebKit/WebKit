@@ -47,7 +47,11 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData() const
         if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(m_segments[0].segment->m_immutableData))
             return *data;
     }
-    return adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8*>(data()), size()));
+    auto cfData = adoptCF(CFDataCreateMutable(nullptr, size()));
+    forEachSegment([&](auto& segment) {
+        CFDataAppendBytes(cfData.get(), segment.data(), segment.size());
+    });
+    return cfData;
 }
 #endif
 

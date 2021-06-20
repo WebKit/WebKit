@@ -1099,7 +1099,6 @@ public:
     virtual AXCoreObject* observableObject() const = 0;
     virtual void linkedUIElements(AccessibilityChildrenVector&) const = 0;
     virtual AXCoreObject* titleUIElement() const = 0;
-    virtual bool exposesTitleUIElement() const = 0;
     virtual AXCoreObject* correspondingLabelForControlElement() const = 0;
     virtual AXCoreObject* correspondingControlForLabelElement() const = 0;
     virtual AXCoreObject* scrollBar(AccessibilityOrientation) = 0;

@@ -73,7 +73,7 @@ bool Data::apply(const Function<bool(const uint8_t*, size_t)>& applier) const
     if (isEmpty())
         return false;
 
-    return applier(reinterpret_cast<const uint8_t*>(data()), size());
+    return applier(data(), size());
 }
 
 Data Data::subrange(size_t offset, size_t size) const

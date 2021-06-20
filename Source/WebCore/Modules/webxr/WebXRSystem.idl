@@ -24,12 +24,13 @@
  */
 
 [
-    EnabledBySetting=WebXR,
-    Conditional=WEBXR,
     ActiveDOMObject,
-    SecureContext,
+    Conditional=WEBXR,
+    EnabledBySetting=WebXR,
     Exposed=Window,
-    InterfaceName=XRSystem
+    GenerateIsReachable=ReachableFromNavigator,
+    InterfaceName=XRSystem,
+    SecureContext
 ] interface WebXRSystem : EventTarget {
     // Methods
     Promise<undefined> isSessionSupported(XRSessionMode mode);

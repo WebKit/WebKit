@@ -1,3 +1,307 @@
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Fix RTCDataChannelInit::decode
+        https://bugs.webkit.org/show_bug.cgi?id=226968
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https-expected.txt: Added.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html: Added.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.js: Added.
+        (onmessage):
+
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Move Transferable RTCDataChannel tests to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=226967
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-expected.txt: Renamed from LayoutTests/http/wpt/webrtc/datachannel-worker-expected.txt.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel-worker.js: Renamed from LayoutTests/http/wpt/webrtc/datachannel-worker.js.
+        * web-platform-tests/webrtc-extensions/transfer-datachannel.html: Renamed from LayoutTests/http/wpt/webrtc/datachannel-worker.html.
+
+2021-06-11  Cathie Chen  <cathiechen@igalia.com>
+
+        Use HTMLDimension to parse different HTML attribute length values
+        https://bugs.webkit.org/show_bug.cgi?id=226810
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/rendering/dimension-attributes-expected.txt:
+        * web-platform-tests/html/rendering/pixel-length-attributes-expected.txt:
+
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: service-workers/service-worker/credentials.https.html and content-security-policy/reporting/report-only-in-meta.sub.html failing together constantly.
+        https://bugs.webkit.org/show_bug.cgi?id=226884
+        <rdar://problem/79148983>
+
+        Reviewed by Geoffrey Garen.
+
+        Resync set-cookie.py from upsteam WPT 7f913d9d12a54858 as it had a hard-coded
+        expiration for the cookie (which has just passed).
+
+        * web-platform-tests/content-security-policy/reporting/support/set-cookie.py:
+        (main):
+        * web-platform-tests/cookies/resources/set-cookie.py:
+        (main):
+
+2021-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Move Timing-Allow-Origin checks to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=226678
+        <rdar://problem/45227788>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/resource-timing/CodingConventions.md: Added.
+        * web-platform-tests/resource-timing/SO-XO-SO-redirect-chain-tao.https-expected.txt: Added.
+        * web-platform-tests/resource-timing/SO-XO-SO-redirect-chain-tao.https.html: Added.
+        * web-platform-tests/resource-timing/SyntheticResponse.py:
+        (main):
+        * web-platform-tests/resource-timing/TAO-match-expected.txt: Added.
+        * web-platform-tests/resource-timing/TAO-match.html: Added.
+        * web-platform-tests/resource-timing/TAO-null-opaque-origin-expected.txt: Added.
+        * web-platform-tests/resource-timing/TAO-null-opaque-origin.html: Added.
+        * web-platform-tests/resource-timing/TAO-port-mismatch-means-crossorigin-expected.txt: Added.
+        * web-platform-tests/resource-timing/TAO-port-mismatch-means-crossorigin.html: Added.
+        * web-platform-tests/resource-timing/__init__.py: Added.
+        * web-platform-tests/resource-timing/buffer-full-add-after-full-event-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-add-after-full-event.html:
+        * web-platform-tests/resource-timing/buffer-full-add-entries-during-callback-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-add-entries-during-callback-that-drop.html:
+        * web-platform-tests/resource-timing/buffer-full-add-entries-during-callback.html:
+        * web-platform-tests/resource-timing/buffer-full-add-then-clear-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-add-then-clear.html:
+        * web-platform-tests/resource-timing/buffer-full-decrease-buffer-during-callback.html:
+        * web-platform-tests/resource-timing/buffer-full-increase-buffer-during-callback-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-increase-buffer-during-callback.html:
+        * web-platform-tests/resource-timing/buffer-full-inspect-buffer-during-callback-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-inspect-buffer-during-callback.html:
+        * web-platform-tests/resource-timing/buffer-full-set-to-current-buffer-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-set-to-current-buffer.html:
+        * web-platform-tests/resource-timing/buffer-full-store-and-clear-during-callback-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-store-and-clear-during-callback.html:
+        * web-platform-tests/resource-timing/buffer-full-then-increased-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-then-increased.html:
+        * web-platform-tests/resource-timing/buffer-full-when-populate-entries-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-when-populate-entries.html:
+        All these buffer-full tests start failing when I update them.
+        That is an unrelated bug.  Firefox has the same bug, and we had the same bug before and after this change.
+        * web-platform-tests/resource-timing/connection-reuse-expected.txt: Added.
+        * web-platform-tests/resource-timing/connection-reuse.html: Added.
+        * web-platform-tests/resource-timing/connection-reuse.https-expected.txt: Added.
+        * web-platform-tests/resource-timing/connection-reuse.https.html: Added.
+        * web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects-expected.txt: Added.
+        * web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html: Added.
+        * web-platform-tests/resource-timing/cross-origin-status-codes.html:
+        * web-platform-tests/resource-timing/document-domain-no-impact-opener-expected.txt: Added.
+        * web-platform-tests/resource-timing/document-domain-no-impact-opener.html: Added.
+        * web-platform-tests/resource-timing/entry-attributes-expected.txt: Added.
+        * web-platform-tests/resource-timing/entry-attributes.html: Added.
+        * web-platform-tests/resource-timing/fetch-cross-origin-redirect.https-expected.txt: Added.
+        * web-platform-tests/resource-timing/fetch-cross-origin-redirect.https.html: Added.
+        * web-platform-tests/resource-timing/font-timestamps-expected.txt: Added.
+        * web-platform-tests/resource-timing/font-timestamps.html: Added.
+        * web-platform-tests/resource-timing/iframe-failed-commit-expected.txt: Added.
+        * web-platform-tests/resource-timing/iframe-failed-commit.html: Added.
+        * web-platform-tests/resource-timing/initiator-type-for-script-expected.txt: Added.
+        * web-platform-tests/resource-timing/initiator-type-for-script.html: Added.
+        * web-platform-tests/resource-timing/nextHopProtocol-is-tao-protected.https-expected.txt: Added.
+        * web-platform-tests/resource-timing/nextHopProtocol-is-tao-protected.https.html: Added.
+        * web-platform-tests/resource-timing/object-not-found-after-TAO-cross-origin-redirect-expected.txt: Added.
+        * web-platform-tests/resource-timing/object-not-found-after-TAO-cross-origin-redirect.html: Added.
+        * web-platform-tests/resource-timing/object-not-found-after-cross-origin-redirect-expected.txt: Added.
+        * web-platform-tests/resource-timing/object-not-found-after-cross-origin-redirect.html: Added.
+        * web-platform-tests/resource-timing/redirects-expected.txt: Added.
+        * web-platform-tests/resource-timing/redirects.html: Added.
+        * web-platform-tests/resource-timing/resource-ignore-data-url-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource-ignore-data-url.html: Added.
+        * web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain-expected.txt:
+        This apparent regression is actually a progression.
+        When this test is run from our test infrastructure, Chrome and Firefox fail the same tests that you see now failing here,
+        indicating that something is wrong with our test infrastructure.  When run on wpt.live, all browsers pass this test
+        after this change.
+        * web-platform-tests/resource-timing/resource_cached.html: Added.
+        * web-platform-tests/resource-timing/resource_initiator_types.html:
+        * web-platform-tests/resource-timing/resource_nested_dedicated_worker.worker.js:
+        (async_test):
+        (async_test.async const): Deleted.
+        * web-platform-tests/resource-timing/resource_timing_content_length-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_content_length.html: Added.
+        * web-platform-tests/resource-timing/resources/200_empty.asis: Added.
+        * web-platform-tests/resource-timing/resources/TAOResponse.py:
+        (main):
+        * web-platform-tests/resource-timing/resources/all_resource_types.html: Added.
+        * web-platform-tests/resource-timing/resources/buffer-full-utilities.js:
+        (const.waitForNextTask):
+        (const.forceBufferFullEvent.async clearBufferAndSetSize):
+        (const.forceBufferFullEvent):
+        (const.fillUpTheBufferWithTwoResources.async clearBufferAndSetSize):
+        (async const.fillUpTheBufferWithSingleResource.async clearBufferAndSetSize):
+        (async const):
+        (let.appendScript): Deleted.
+        (let.waitForNextTask): Deleted.
+        (let.waitUntilConditionIsMet.cond.return.new.Promise.resolve.let.checkCondition): Deleted.
+        (let.waitForEventToFire.return.new.Promise): Deleted.
+        (let.waitForEventToFire): Deleted.
+        (let.fillUpTheBufferWithTwoResources.async src): Deleted.
+        * web-platform-tests/resource-timing/resources/cacheable-and-validated.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/resources/connection-reuse-test.js: Added.
+        (attribute_test.async client):
+        (attribute_test):
+        * web-platform-tests/resource-timing/resources/csp-default-none.html: Added.
+        * web-platform-tests/resource-timing/resources/csp-default-none.html.headers: Added.
+        * web-platform-tests/resource-timing/resources/document-domain-no-impact.html: Added.
+        * web-platform-tests/resource-timing/resources/document-refreshed.html: Added.
+        * web-platform-tests/resource-timing/resources/document-that-refreshes.html: Added.
+        * web-platform-tests/resource-timing/resources/embed-refresh.html: Added.
+        * web-platform-tests/resource-timing/resources/green-frame.html: Added.
+        * web-platform-tests/resource-timing/resources/green.html: Added.
+        * web-platform-tests/resource-timing/resources/green.html.headers: Added.
+        * web-platform-tests/resource-timing/resources/gzip_xml.py:
+        * web-platform-tests/resource-timing/resources/iframe-refresh.html: Added.
+        * web-platform-tests/resource-timing/resources/iframe-reload-TAO.sub.html:
+        * web-platform-tests/resource-timing/resources/multi_redirect.py:
+        (main):
+        * web-platform-tests/resource-timing/resources/object-refresh.html: Added.
+        * web-platform-tests/resource-timing/resources/redirect-cors.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/resources/resource-timing-content-length.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/resources/resource_timing_test0.xml:
+        * web-platform-tests/resource-timing/resources/sizes-helper.js: Added.
+        (const.checkSizeFields):
+        * web-platform-tests/resource-timing/resources/status-code.py:
+        (main):
+        * web-platform-tests/resource-timing/resources/webperftestharness.js:
+        (test_namespace):
+        (test_attribute_exists):
+        (test_enum):
+        * web-platform-tests/resource-timing/resources/webperftestharnessextension.js:
+        (test_method_exists):
+        * web-platform-tests/resource-timing/same-origin-from-cross-origin-redirect-expected.txt: Added.
+        * web-platform-tests/resource-timing/same-origin-from-cross-origin-redirect.html: Added.
+        * web-platform-tests/resource-timing/sizes-cache.any.js: Added.
+        (const.accumulateEntries):
+        (const.checkResourceSizes.list.let.entry.of.entries.else):
+        (promise_test):
+        * web-platform-tests/resource-timing/sizes-redirect-img-expected.txt: Added.
+        * web-platform-tests/resource-timing/sizes-redirect-img.html: Added.
+        * web-platform-tests/resource-timing/sizes-redirect.any.js: Added.
+        (const.accumulateEntry):
+        (const.checkResourceSizes):
+        (const.redirectUrl):
+        (promise_test):
+        * web-platform-tests/resource-timing/status-codes-create-entry.html:
+        * web-platform-tests/resource-timing/test_resource_timing-expected.txt:
+        * web-platform-tests/resource-timing/test_resource_timing.https-expected.txt:
+        * web-platform-tests/resource-timing/workerStart-tao-protected.https.html:
+
+2021-06-10  Youenn Fablet  <youenn@apple.com>
+
+        CountQueuingStrategy.constructor misses checking the type of init param
+        https://bugs.webkit.org/show_bug.cgi?id=226759
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/streams/queuing-strategies.any-expected.txt:
+        * web-platform-tests/streams/queuing-strategies.any.worker-expected.txt:
+
+2021-06-10  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226494
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/datachannel-emptystring-expected.txt:
+        * web-platform-tests/webrtc/protocol/rtp-payloadtypes-expected.txt:
+        * web-platform-tests/webrtc/protocol/unknown-mediatypes-expected.txt:
+        * web-platform-tests/webrtc/receiver-track-live.https-expected.txt:
+
+2021-06-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Aspect ratio from width and height attribute is not compatible to string with invalid ends
+        https://bugs.webkit.org/show_bug.cgi?id=226469
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+
+2021-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Performance API: Implement performance.timeOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=174862
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/hr-time/idlharness.any-expected.txt:
+        * web-platform-tests/hr-time/idlharness.any.worker-expected.txt:
+        * web-platform-tests/hr-time/window-worker-timeOrigin.window-expected.txt:
+
+2021-06-08  Rob Buis  <rbuis@igalia.com>
+
+        CSSOM test for serializing counter() fails
+        https://bugs.webkit.org/show_bug.cgi?id=184256
+
+        Reviewed by Sam Weinig.
+
+        Update improved test result.
+
+        * web-platform-tests/css/cssom/serialize-values-expected.txt:
+
+2021-06-08  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r278609.
+
+        Broke builds with a linker error.
+
+        Reverted changeset:
+
+        "Update libwebrtc to M92"
+        https://bugs.webkit.org/show_bug.cgi?id=226494
+        https://commits.webkit.org/r278609
+
+2021-06-08  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226494
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/datachannel-emptystring-expected.txt:
+        * web-platform-tests/webrtc/protocol/rtp-payloadtypes-expected.txt:
+        * web-platform-tests/webrtc/protocol/unknown-mediatypes-expected.txt:
+        * web-platform-tests/webrtc/receiver-track-live.https-expected.txt:
+
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226185
+
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver.html:
+
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Window should behave like a legacy platform object without indexed setter
+        https://bugs.webkit.org/show_bug.cgi?id=225894
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-delete-no-cache-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-delete-no-cache.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html:
+
 2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
 
         Use 3D points to map the WebXRBoundedReferenceSpace bounds transform

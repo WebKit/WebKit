@@ -52,7 +52,7 @@
 /* visible name of the network process. The argument is the application name. */
 "%@ Networking" = "%@ Networking";
 
-/* SDH (i.e. deaf and/or hard of hearing) text track display name format that includes the language and/or locale (e.g. 'English SDH').  */
+/* SDH (i.e. deaf and/or hard of hearing) text track display name format that includes the language and/or locale (e.g. 'English SDH'). */
 "%@ SDH (text track)" = "%@ SDH";
 
 /* Visible name of Service Worker process. The argument is the application name. */
@@ -97,11 +97,26 @@
 /* Present the element <select multiple> when no <option> items are selected (iOS only) */
 "0 Items" = "0 Items";
 
+/* 0.5× media controls context menu playback speed label */
+"0.5× (Media Controls Menu Playback Speed)" = "0.5×";
+
 /* Present the element <select multiple> when a single <option> is selected (iOS only) */
 "1 Item" = "1 Item";
 
+/* 1× media controls context menu playback speed label */
+"1× (Media Controls Menu Playback Speed)" = "1×";
+
+/* 1.25× media controls context menu playback speed label */
+"1.25× (Media Controls Menu Playback Speed)" = "1.25×";
+
+/* 1.5× media controls context menu playback speed label */
+"1.5× (Media Controls Menu Playback Speed)" = "1.5×";
+
 /* Option in segmented control for choosing list type in text editing */
 "1. 2. 3." = "1. 2. 3.";
+
+/* 2× media controls context menu playback speed label */
+"2× (Media Controls Menu Playback Speed)" = "2×";
 
 /* Menu item title for KEYGEN pop-up menu */
 "2048 (High Grade)" = "2048 (High Grade)";
@@ -114,6 +129,9 @@
 
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
+
+/* Add to Quick Note context menu item. */
+"Add to Quick Note" = "Add to Quick Note";
 
 /* Label for the add money with Apple Pay button. */
 "Add money with Apple Pay" = "Add money with Apple Pay";
@@ -269,7 +287,7 @@
 "Click to restart" = "Click to restart";
 
 /* Display name for audio track kind 'commentary'. */
-"Commentary (audio track)" = "%@ Commentary";
+"Commentary (audio track)" = "Commentary";
 
 /* WKErrorContentRuleListStoreCompileFailed description */
 "Compiling a WKContentRuleList failed" = "Compiling a WKContentRuleList failed";
@@ -553,6 +571,9 @@
 /* 'Website' name displayed when local documents have stored local data */
 "Local documents on your computer" = "Local documents on your computer";
 
+/* Title for Look Up action button */
+"Look Up" = "Look Up";
+
 /* Look Up in Dictionary context menu item */
 "Look Up in Dictionary" = "Look Up in Dictionary";
 
@@ -606,6 +627,9 @@
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
+
+/* New Quick Note context menu item. */
+"New Quick Note" = "New Quick Note";
 
 /* No Guesses Found context menu item */
 "No Guesses Found" = "No Guesses Found";
@@ -702,6 +726,9 @@
 
 /* Media Play context menu item */
 "Play" = "Play";
+
+/* Playback Speed media controls context menu title */
+"Playback Speed (Media Controls Menu)" = "Playback Speed";
 
 /* accessibility help text for enter full screen button */
 "Play movie in full screen mode" = "Play movie in full screen mode";
@@ -828,6 +855,9 @@
 
 /* menu item title */
 "Show Substitutions" = "Show Substitutions";
+
+/* Title for Show Text action button */
+"Show Text" = "Show Text";
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";

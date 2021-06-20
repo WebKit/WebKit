@@ -33,6 +33,8 @@
 
     --background-color-selected: var(--selected-text-background-color);
     --border-color-selected: var(--selected-background-color);
+    --property-checkbox-width: 17px;
+    --property-indentation: calc(var(--css-declaration-horizontal-padding) + var(--property-checkbox-width));
 }
 
 .spreadsheet-style-declaration-editor:empty {
@@ -41,7 +43,7 @@
 
 .spreadsheet-style-declaration-editor .property {
     padding-right: var(--css-declaration-horizontal-padding);
-    padding-left: calc(var(--css-declaration-horizontal-padding) + 17px);
+    padding-left: var(--property-indentation);
     border-right: 2px solid transparent;
     border-left: 1px solid transparent;
     outline: none;
@@ -231,6 +233,10 @@ body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.dis
     position: relative;
     left: 16px;
     white-space: nowrap;
+}
+
+.spreadsheet-style-declaration-editor > .hidden-variables-button {
+    margin-left: var(--property-indentation);
 }
 
 body.meta-key-pressed .spreadsheet-css-declaration:not(.locked) > .spreadsheet-style-declaration-editor > .property > .content :matches(.name, .value):not(.editing):hover {

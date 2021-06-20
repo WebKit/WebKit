@@ -1,3 +1,94 @@
+2021-06-13  Saam Barati  <sbarati@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=226576
+        <rdar://problem/78810362>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/short-circuit-read-modify-write-cant-write-dst-before-tdz-check.js: Added.
+        (let.result.eval.try.captureV):
+        (catch):
+
+2021-06-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use ResolvedClosureVar to get brand from scope
+        https://bugs.webkit.org/show_bug.cgi?id=226677
+        rdar://78802869
+
+        Reviewed by Saam Barati.
+
+        * stress/private-access-nested-eval.js: Added.
+        (shouldThrow):
+        (shouldThrow.prototype.x):
+        (shouldThrow.prototype.m.C.prototype.z):
+        (shouldThrow.prototype.m.C.prototype.a):
+        (shouldThrow.prototype.m.C):
+        (shouldThrow.prototype.m):
+        * stress/private-access-nested.js: Added.
+        (shouldThrow):
+        (shouldThrow.prototype.x):
+        (shouldThrow.prototype.m.C.prototype.z):
+        (shouldThrow.prototype.m.C.prototype.a):
+        (shouldThrow.prototype.m.C):
+        (shouldThrow.prototype.m):
+
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226185
+
+        * microbenchmarks/put-slow-no-cache-array.js: Added.
+        * microbenchmarks/put-slow-no-cache-function.js: Added.
+        * microbenchmarks/put-slow-no-cache-js-proxy.js: Added.
+        * microbenchmarks/put-slow-no-cache-long-prototype-chain.js: Added.
+        * microbenchmarks/put-slow-no-cache.js: Added.
+        * microbenchmarks/reflect-set-with-receiver.js: Added.
+        * stress/custom-get-set-proto-chain-put.js:
+        * stress/module-namespace-access-set-fails.js: Added.
+        * stress/put-non-reified-static-accessor-or-custom.js: Added.
+        * stress/put-non-reified-static-function-or-custom.js: Added.
+        * stress/put-to-primitive-non-reified-static-custom.js: Added.
+        * stress/put-to-primitive.js: Added.
+        * stress/put-to-proto-chain-overrides-put.js:
+        Rework to always test new objects, add JSProxy coverage, and assert that receiver has own property.
+
+        * stress/typed-array-canonical-numeric-index-string-set.js: Added.
+
+2021-06-07  Saam Barati  <sbarati@apple.com>
+
+        Short circuit read modify write nodes emit byte code that uses the wrong locals
+        https://bugs.webkit.org/show_bug.cgi?id=226576
+        <rdar://problem/78810362>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/short-circuit-read-modify-should-use-the-write-virtual-registers.js: Added.
+        (eval):
+
+2021-06-07  Robin Morisset  <rmorisset@apple.com>
+
+        Optimize compareStrictEq when neither side is a double and at least one is neither a string nor a BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=226676
+
+        Reviewed by Filip Pizlo.
+
+        I made two variants of the already existing poly-stricteq microbenchmarks with different types in the array.
+        I also tweaked all three so that we more reliably reach the FTL.
+        Finally I added a stress-test to verify that I did not introduce an OSR exit bug.
+
+        * microbenchmarks/poly-stricteq-not-double-nor-string.js: Added.
+        (foo):
+        (test):
+        * microbenchmarks/poly-stricteq-not-double.js: Added.
+        (foo):
+        (test):
+        * microbenchmarks/poly-stricteq.js:
+        (foo):
+        (test):
+        * stress/poly-stricteq-not-double-nor-string-fail.js: Added.
+        (foo):
+        (test):
+
 2021-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Private static method should define privateClassBrandIdentifier in class-scope

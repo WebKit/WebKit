@@ -1,0 +1,32 @@
+Test for DOMNodeStyles.usedCSSVariables
+
+
+== Running test suite: DOMNodeStyles.usedCSSVariables
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedUsed
+PASS: Set should contain one used variable
+PASS: --inherited-color should be used
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedUsedReferenced
+PASS: Set should contain two used variables
+PASS: --inherited-color should be used
+PASS: --color should be used
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedNotUsed
+PASS: Set should contain one used variable
+PASS: --color should be used
+PASS: --inherited-color should not be used
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedUsedFunction
+PASS: Set should contain one used variable
+PASS: --inherited-color should be used
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.HighSpecificityUsed
+PASS: --color should be used
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedHighSpecificityUsed
+PASS: Set should contain one used variable
+PASS: --color should be used
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedHighSpecificityNotUsed
+PASS: --color should not be used
+

@@ -63,13 +63,11 @@
 #include "QuickLook.h"
 #endif
 
-#undef RELEASE_LOG_IF_ALLOWED
-#undef RELEASE_LOG_ALWAYS
+#undef CACHEDRESOURCE_RELEASE_LOG
 #define PAGE_ID(frame) (frame.pageID().value_or(PageIdentifier()).toUInt64())
 #define FRAME_ID(frame) (frame.frameID().value_or(FrameIdentifier()).toUInt64())
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
-#define RELEASE_LOG_IF_ALLOWED_WITH_FRAME(fmt, frame, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::" fmt, this, PAGE_ID(frame), FRAME_ID(frame), ##__VA_ARGS__)
-#define RELEASE_LOG_ALWAYS(fmt, ...) RELEASE_LOG(Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
+#define CACHEDRESOURCE_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
+#define CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME(fmt, frame, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::" fmt, this, PAGE_ID(frame), FRAME_ID(frame), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -174,7 +172,7 @@ void CachedResource::failBeforeStarting()
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 {
     if (!cachedResourceLoader.frame()) {
-        RELEASE_LOG_IF_ALLOWED("load: No associated frame");
+        CACHEDRESOURCE_RELEASE_LOG("load: No associated frame");
         failBeforeStarting();
         return;
     }
@@ -192,11 +190,11 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
             // Beacons are allowed to go through in 'pagehide' event handlers.
             if (m_options.keepAlive || shouldUsePingLoad(type()))
                 break;
-            RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: About to enter back/forward cache", frame);
+            CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: About to enter back/forward cache", frame);
             failBeforeStarting();
             return;
         case Document::InBackForwardCache:
-            RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: Already in back/forward cache", frame);
+            CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Already in back/forward cache", frame);
             failBeforeStarting();
             return;
         }
@@ -206,11 +204,11 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_options.keepAlive && !shouldUsePingLoad(type())) {
         while (true) {
             if (frameLoader.state() == FrameState::Provisional)
-                RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: Failed security check -- state is provisional", frame);
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- state is provisional", frame);
             else if (!frameLoader.activeDocumentLoader())
-                RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: Failed security check -- not active document", frame);
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- not active document", frame);
             else if (frameLoader.activeDocumentLoader()->isStopping())
-                RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: Failed security check -- active loader is stopping", frame);
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- active loader is stopping", frame);
             else
                 break;
             failBeforeStarting();
@@ -286,10 +284,10 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         return;
     }
 
-    platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), m_options, [this, protectedThis = CachedResourceHandle<CachedResource>(this), frameRef = makeRef(frame), loggingAllowed = cachedResourceLoader.isAlwaysOnLoggingAllowed()] (RefPtr<SubresourceLoader>&& loader) {
+    platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), m_options, [this, protectedThis = CachedResourceHandle<CachedResource>(this), frameRef = makeRef(frame)] (RefPtr<SubresourceLoader>&& loader) {
         m_loader = WTFMove(loader);
         if (!m_loader) {
-            RELEASE_LOG_IF(loggingAllowed, Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::load: Unable to create SubresourceLoader", this, PAGE_ID(frameRef.get()), FRAME_ID(frameRef.get()));
+            RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::load: Unable to create SubresourceLoader", this, PAGE_ID(frameRef.get()), FRAME_ID(frameRef.get()));
             failBeforeStarting();
             return;
         }
@@ -448,7 +446,7 @@ Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) cons
 
 void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    RELEASE_LOG_ALWAYS("redirectReceived:");
+    CACHEDRESOURCE_RELEASE_LOG("redirectReceived:");
 
     m_requestedFromNetworkingLayer = true;
     if (!response.isNull())
@@ -916,10 +914,10 @@ void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
     if (!mayTryReplaceEncodedData())
         return;
 
-    // We have to do the memcmp because we can't tell if the replacement file backed data is for the
-    // same resource or if we made a second request with the same URL which gave us a different
-    // resource. We have seen this happen for cached POST resources.
-    if (m_data->size() != newBuffer.size() || memcmp(m_data->data(), newBuffer.data(), m_data->size()))
+    // We have to compare the buffers because we can't tell if the replacement file backed data is for the
+    // same resource or if we made a second request with the same URL which gave us a different resource.
+    // We have seen this happen for cached POST resources.
+    if (*m_data != newBuffer)
         return;
 
     m_data->clear();
@@ -943,6 +941,5 @@ void CachedResource::previewResponseReceived(const ResourceResponse& response)
 
 #undef PAGE_ID
 #undef FRAME_ID
-#undef RELEASE_LOG_IF_ALLOWED
-#undef RELEASE_LOG_IF_ALLOWED_WITH_FRAME
-#undef RELEASE_LOG_ALWAYS
+#undef CACHEDRESOURCE_RELEASE_LOG
+#undef CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME

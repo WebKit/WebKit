@@ -32,7 +32,7 @@ class FrameWriter {
 
   // Writes a frame of the configured frame length to the output file.
   // Returns true if the write was successful, false otherwise.
-  virtual bool WriteFrame(uint8_t* frame_buffer) = 0;
+  virtual bool WriteFrame(const uint8_t* frame_buffer) = 0;
 
   // Closes the output file if open. Essentially makes this class impossible
   // to use anymore. Will also be invoked by the destructor.
@@ -54,7 +54,7 @@ class YuvFrameWriterImpl : public FrameWriter {
   YuvFrameWriterImpl(std::string output_filename, int width, int height);
   ~YuvFrameWriterImpl() override;
   bool Init() override;
-  bool WriteFrame(uint8_t* frame_buffer) override;
+  bool WriteFrame(const uint8_t* frame_buffer) override;
   void Close() override;
   size_t FrameLength() override;
 
@@ -76,7 +76,7 @@ class Y4mFrameWriterImpl : public YuvFrameWriterImpl {
                      int frame_rate);
   ~Y4mFrameWriterImpl() override;
   bool Init() override;
-  bool WriteFrame(uint8_t* frame_buffer) override;
+  bool WriteFrame(const uint8_t* frame_buffer) override;
 
  private:
   const int frame_rate_;

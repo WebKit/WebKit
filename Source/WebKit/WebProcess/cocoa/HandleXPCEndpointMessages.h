@@ -29,6 +29,6 @@
 
 namespace WebKit {
 
-void handleXPCEndpointMessages(xpc_object_t event);
+void handleXPCEndpointMessages(xpc_object_t event, const char* messageName);
 
 }

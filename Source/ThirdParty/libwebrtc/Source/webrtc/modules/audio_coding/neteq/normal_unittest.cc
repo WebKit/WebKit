@@ -50,7 +50,7 @@ TEST(Normal, CreateAndDestroy) {
   RandomVector random_vector;
   StatisticsCalculator statistics;
   Expand expand(&bgn, &sync_buffer, &random_vector, &statistics, fs, channels);
-  Normal normal(fs, &db, bgn, &expand);
+  Normal normal(fs, &db, bgn, &expand, &statistics);
   EXPECT_CALL(db, Die());  // Called when |db| goes out of scope.
 }
 
@@ -64,7 +64,7 @@ TEST(Normal, AvoidDivideByZero) {
   StatisticsCalculator statistics;
   MockExpand expand(&bgn, &sync_buffer, &random_vector, &statistics, fs,
                     channels);
-  Normal normal(fs, &db, bgn, &expand);
+  Normal normal(fs, &db, bgn, &expand, &statistics);
 
   int16_t input[1000] = {0};
   AudioMultiVector output(channels);
@@ -99,7 +99,7 @@ TEST(Normal, InputLengthAndChannelsDoNotMatch) {
   StatisticsCalculator statistics;
   MockExpand expand(&bgn, &sync_buffer, &random_vector, &statistics, fs,
                     channels);
-  Normal normal(fs, &db, bgn, &expand);
+  Normal normal(fs, &db, bgn, &expand, &statistics);
 
   int16_t input[1000] = {0};
   AudioMultiVector output(channels);
@@ -124,7 +124,7 @@ TEST(Normal, LastModeExpand120msPacket) {
   StatisticsCalculator statistics;
   MockExpand expand(&bgn, &sync_buffer, &random_vector, &statistics, kFs,
                     kChannels);
-  Normal normal(kFs, &db, bgn, &expand);
+  Normal normal(kFs, &db, bgn, &expand, &statistics);
 
   int16_t input[kPacketsizeBytes] = {0};
   AudioMultiVector output(kChannels);

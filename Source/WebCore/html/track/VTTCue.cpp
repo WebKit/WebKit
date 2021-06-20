@@ -264,12 +264,16 @@ RenderPtr<RenderElement> VTTCueBox::createElementRenderer(RenderStyle&& style, c
 
 Ref<VTTCue> VTTCue::create(Document& document, double start, double end, String&& content)
 {
-    return adoptRef(*new VTTCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(content)));
+    auto cue = adoptRef(*new VTTCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(content)));
+    cue->suspendIfNeeded();
+    return cue;
 }
 
 Ref<VTTCue> VTTCue::create(Document& document, const WebVTTCueData& data)
 {
-    return adoptRef(*new VTTCue(document, data));
+    auto cue = adoptRef(*new VTTCue(document, data));
+    cue->suspendIfNeeded();
+    return cue;
 }
 
 VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end, String&& content)

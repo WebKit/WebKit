@@ -10,7 +10,7 @@ PASS value = getComputedStyle(div).getPropertyValue("content"); value is "\"{foo
 PASS parsed = eval(value.replace(/^'/, "").replace(/'$/, "")); is "{foo: \"bar\"}"
 PASS ruleWithAttributeSelector.selectorText is "span[class=\"foo bar\"]"
 PASS getComputedStyle(document.querySelector("span[class='foo bar']")).getPropertyValue("color") is "rgb(0, 128, 0)"
-PASS counterRule.style.content is "counters(section, \".\", decimal)"
+PASS counterRule.style.content is "counters(section, \".\")"
 PASS fontFamilyRule.style.fontFamily is "\"Two Infinite Loop\", \"Cupertino CA\""
 PASS getComputedStyle(document.querySelector("article")).getPropertyValue("font-family") is "\"Two Infinite Loop\", \"Cupertino CA\""
 PASS backgroundImageRule.style.backgroundImage is "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100px' height='100px'><rect width='100px' height='100px' fill='lightgreen' stroke='green' stroke-width='1px'/></svg>\")"

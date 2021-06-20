@@ -23,6 +23,11 @@
 
 JSApplePayCancelEvent.cpp
 JSApplePayContactField.cpp
+JSApplePayCouponCodeChangedEvent.cpp
+JSApplePayCouponCodeDetails.cpp
+JSApplePayCouponCodeUpdate.cpp
+JSApplePayDateComponents.cpp
+JSApplePayDateComponentsRange.cpp
 JSApplePayDetailsUpdateBase.cpp
 JSApplePayDetailsUpdateData.cpp
 JSApplePayError.cpp
@@ -33,7 +38,6 @@ JSApplePayInstallmentItem.cpp
 JSApplePayInstallmentItemType.cpp
 JSApplePayInstallmentRetailChannel.cpp
 JSApplePayLineItem.cpp
-JSApplePayLineItemData.cpp
 JSApplePayMerchantCapability.cpp
 JSApplePayModifier.cpp
 JSApplePayPayment.cpp
@@ -41,13 +45,13 @@ JSApplePayPaymentAuthorizationResult.cpp
 JSApplePayPaymentAuthorizedEvent.cpp
 JSApplePayPaymentContact.cpp
 JSApplePayPaymentMethod.cpp
-JSApplePayPaymentMethodModeDetails.cpp
-JSApplePayPaymentMethodModeUpdate.cpp
 JSApplePayPaymentMethodSelectedEvent.cpp
 JSApplePayPaymentMethodType.cpp
 JSApplePayPaymentMethodUpdate.cpp
 JSApplePayPaymentPass.cpp
 JSApplePayPaymentRequest.cpp
+JSApplePayPaymentTiming.cpp
+JSApplePayRecurringPaymentDateUnit.cpp
 JSApplePayRequest.cpp
 JSApplePayRequestBase.cpp
 JSApplePaySession.cpp
@@ -57,14 +61,15 @@ JSApplePaySetupConfiguration.cpp
 JSApplePaySetupFeature.cpp
 JSApplePaySetupFeatureState.cpp
 JSApplePaySetupFeatureType.cpp
+JSApplePayShippingContactEditingMode.cpp
 JSApplePayShippingContactSelectedEvent.cpp
 JSApplePayShippingContactUpdate.cpp
 JSApplePayShippingMethod.cpp
-JSApplePayShippingMethodData.cpp
 JSApplePayShippingMethodSelectedEvent.cpp
 JSApplePayShippingMethodUpdate.cpp
 JSApplePayValidateMerchantEvent.cpp
 Modules/airplay/WebMediaSessionManager.cpp
+Modules/applepay/ApplePayCouponCodeChangedEvent.cpp
 Modules/applepay/ApplePayCancelEvent.cpp
 Modules/applepay/ApplePayContactField.cpp
 Modules/applepay/ApplePayMerchantCapability.cpp

@@ -412,8 +412,8 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final { }
     void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) final { }
     void completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&) final { }
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&&) final { }
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) final { }
 #endif
     void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final { }
     void cancelPaymentSession() final { }

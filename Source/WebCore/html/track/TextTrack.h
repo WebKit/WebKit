@@ -52,7 +52,7 @@ public:
     virtual void textTrackRemoveCue(TextTrack&, TextTrackCue&) = 0;
 };
 
-class TextTrack : public TrackBase, public EventTargetWithInlineData, public ContextDestructionObserver {
+class TextTrack : public TrackBase, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(TextTrack);
 public:
     static Ref<TextTrack> create(Document*, TextTrackClient*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
@@ -158,6 +158,9 @@ private:
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "TextTrack"; }

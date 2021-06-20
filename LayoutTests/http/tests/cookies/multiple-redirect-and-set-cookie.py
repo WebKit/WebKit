@@ -23,7 +23,7 @@ cookies = get_cookies()
 
 
 def redirect_url(step):
-    return 'http://127.0.0.1:8000/cookies/{}?step={}&cookie_name={}'.format(__file__.split('/')[-1], step, cookie_name)
+    return 'http://127.0.0.1:8000/cookies/{}?step={}&cookie_name={}'.format(os.path.basename(__file__), step, cookie_name)
 
 
 def redirect_to_step(step):

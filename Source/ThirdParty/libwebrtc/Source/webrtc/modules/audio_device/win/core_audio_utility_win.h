@@ -118,71 +118,6 @@ class ScopedMMCSSRegistration {
   HANDLE mmcss_handle_ = nullptr;
 };
 
-// Initializes COM in the constructor (STA or MTA), and uninitializes COM in the
-// destructor. Taken from base::win::ScopedCOMInitializer.
-//
-// WARNING: This should only be used once per thread, ideally scoped to a
-// similar lifetime as the thread itself.  You should not be using this in
-// random utility functions that make COM calls; instead ensure that these
-// functions are running on a COM-supporting thread!
-// See https://msdn.microsoft.com/en-us/library/ms809971.aspx for details.
-class ScopedCOMInitializer {
- public:
-  // Enum value provided to initialize the thread as an MTA instead of STA.
-  // There are two types of apartments, Single Threaded Apartments (STAs)
-  // and Multi Threaded Apartments (MTAs). Within a given process there can
-  // be multiple STA’s but there is only one MTA. STA is typically used by
-  // "GUI applications" and MTA by "worker threads" with no UI message loop.
-  enum SelectMTA { kMTA };
-
-  // Constructor for STA initialization.
-  ScopedCOMInitializer() {
-    RTC_DLOG(INFO) << "Single-Threaded Apartment (STA) COM thread";
-    Initialize(COINIT_APARTMENTTHREADED);
-  }
-
-  // Constructor for MTA initialization.
-  explicit ScopedCOMInitializer(SelectMTA mta) {
-    RTC_DLOG(INFO) << "Multi-Threaded Apartment (MTA) COM thread";
-    Initialize(COINIT_MULTITHREADED);
-  }
-
-  ~ScopedCOMInitializer() {
-    if (Succeeded()) {
-      CoUninitialize();
-    }
-  }
-
-  ScopedCOMInitializer(const ScopedCOMInitializer&) = delete;
-  ScopedCOMInitializer& operator=(const ScopedCOMInitializer&) = delete;
-
-  bool Succeeded() { return SUCCEEDED(hr_); }
-
- private:
-  void Initialize(COINIT init) {
-    // Initializes the COM library for use by the calling thread, sets the
-    // thread's concurrency model, and creates a new apartment for the thread
-    // if one is required. CoInitializeEx must be called at least once, and is
-    // usually called only once, for each thread that uses the COM library.
-    hr_ = CoInitializeEx(NULL, init);
-    RTC_CHECK_NE(RPC_E_CHANGED_MODE, hr_)
-        << "Invalid COM thread model change (MTA->STA)";
-    // Multiple calls to CoInitializeEx by the same thread are allowed as long
-    // as they pass the same concurrency flag, but subsequent valid calls
-    // return S_FALSE. To close the COM library gracefully on a thread, each
-    // successful call to CoInitializeEx, including any call that returns
-    // S_FALSE, must be balanced by a corresponding call to CoUninitialize.
-    if (hr_ == S_OK) {
-      RTC_DLOG(INFO)
-          << "The COM library was initialized successfully on this thread";
-    } else if (hr_ == S_FALSE) {
-      RTC_DLOG(WARNING)
-          << "The COM library is already initialized on this thread";
-    }
-  }
-  HRESULT hr_;
-};
-
 // A PROPVARIANT that is automatically initialized and cleared upon respective
 // construction and destruction of this class.
 class ScopedPropVariant {
@@ -323,7 +258,7 @@ class ScopedHandle {
 // Always ensure that Core Audio is supported before using these methods.
 // Use webrtc_win::core_audio_utility::IsSupported() for this purpose.
 // Also, all methods must be called on a valid COM thread. This can be done
-// by using the webrtc_win::ScopedCOMInitializer helper class.
+// by using the ScopedCOMInitializer helper class.
 // These methods are based on media::CoreAudioUtil in Chrome.
 namespace core_audio_utility {
 

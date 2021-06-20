@@ -66,9 +66,6 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
 
 ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, const Init& eventSourceInit)
 {
-    if (url.isEmpty())
-        return Exception { SyntaxError };
-
     URL fullURL = context.completeURL(url);
     if (!fullURL.isValid())
         return Exception { SyntaxError };

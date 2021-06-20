@@ -114,6 +114,9 @@ bool MemoryCache::add(CachedResource& resource)
     if (disabled())
         return false;
 
+    if (resource.resourceRequest().httpMethod() != "GET")
+        return false;
+
     ASSERT(WTF::isMainThread());
 
     auto key = std::make_pair(resource.url(), resource.cachePartition());

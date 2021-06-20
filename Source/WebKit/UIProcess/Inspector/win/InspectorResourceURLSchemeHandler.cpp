@@ -42,7 +42,7 @@ namespace WebKit {
 void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLSchemeTask& task)
 {
 #if USE(CF) && USE(CURL)
-    auto& requestURL = task.request().url();
+    auto requestURL = task.request().url();
     auto requestPath = requestURL.fileSystemPath();
     if (requestPath.startsWith("\\"))
         requestPath.remove(0);

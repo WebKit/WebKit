@@ -27,6 +27,7 @@ enum TextTrackMode { "disabled", "hidden", "showing" };
 enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metadata", "forced" };
 
 [
+    ActiveDOMObject,
     Conditional=VIDEO,
     ExportToWrappedFunction,
     GenerateIsReachable=ImplElementRoot,

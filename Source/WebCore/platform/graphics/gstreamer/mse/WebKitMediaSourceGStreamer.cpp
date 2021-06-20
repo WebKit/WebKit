@@ -368,6 +368,24 @@ static void webKitMediaSrcPadLinked(GstPad* pad, GstPad*, void*)
     streamingMembers->padLinkedOrFlushedCondition.notifyOne();
 }
 
+static void webKitMediaSrcWaitForPadLinkedOrFlush(GstPad* pad, DataMutexLocker<Stream::StreamingMembers>& streamingMembers)
+{
+    {
+        auto locker = GstObjectLocker(pad);
+        if (LIKELY(GST_PAD_IS_LINKED(pad)))
+            return;
+
+        GST_DEBUG_OBJECT(pad, "Waiting for the pad to be linked...");
+        g_signal_connect(pad, "linked", G_CALLBACK(webKitMediaSrcPadLinked), nullptr);
+    }
+
+    assertIsHeld(streamingMembers.mutex());
+    streamingMembers->padLinkedOrFlushedCondition.wait(streamingMembers.mutex());
+
+    g_signal_handlers_disconnect_by_func(pad, reinterpret_cast<void*>(webKitMediaSrcPadLinked), nullptr);
+    GST_DEBUG_OBJECT(pad, "Finished waiting for the pad to be linked.");
+}
+
 // Called with STREAM_LOCK.
 static void webKitMediaSrcLoop(void* userData)
 {
@@ -382,22 +400,11 @@ static void webKitMediaSrcLoop(void* userData)
 
     // Since the pad can and will be added when the element is in PLAYING state, this task can start running
     // before the pad is linked. Wait for the pad to be linked to avoid buffers being lost to not-linked errors.
-    GST_OBJECT_LOCK(pad);
-    if (!GST_PAD_IS_LINKED(pad)) {
-        GST_DEBUG_OBJECT(pad, "Waiting for the pad to be linked...");
-        g_signal_connect(pad, "linked", G_CALLBACK(webKitMediaSrcPadLinked), nullptr);
-        GST_OBJECT_UNLOCK(pad);
-
-        streamingMembers->padLinkedOrFlushedCondition.wait(streamingMembers.mutex());
-
-        g_signal_handlers_disconnect_by_func(pad, reinterpret_cast<void*>(webKitMediaSrcPadLinked), nullptr);
-        GST_DEBUG_OBJECT(pad, "Finished waiting for the pad to be linked.");
-        if (streamingMembers->isFlushing) {
-            gst_pad_pause_task(pad);
-            return;
-        }
-    } else
-        GST_OBJECT_UNLOCK(pad);
+    webKitMediaSrcWaitForPadLinkedOrFlush(pad, streamingMembers);
+    if (streamingMembers->isFlushing) {
+        gst_pad_pause_task(pad);
+        return;
+    }
     ASSERT(gst_pad_is_linked(pad));
 
     // By keeping the lock we are guaranteed that a flush will not happen while we send essential events.
@@ -611,7 +618,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
     if (!skipFlush) {
         // By taking the stream lock we are waiting for the streaming thread task to stop if it hadn't yet.
         GST_DEBUG_OBJECT(stream->pad.get(), "Taking the STREAM_LOCK.");
-        GST_PAD_STREAM_LOCK(stream->pad.get());
+        auto streamLock = GstPadStreamLocker(stream->pad.get());
         {
             GST_DEBUG_OBJECT(stream->pad.get(), "Taking the StreamingMembers mutex again.");
             DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
@@ -627,7 +634,6 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
 
         GST_DEBUG_OBJECT(stream->pad.get(), "Starting webKitMediaSrcLoop task and releasing the STREAM_LOCK.");
         gst_pad_start_task(stream->pad.get(), webKitMediaSrcLoop, stream->pad.get(), nullptr);
-        GST_PAD_STREAM_UNLOCK(stream->pad.get());
     }
 }
 
@@ -737,12 +743,9 @@ static const gchar* const* webKitMediaSrcGetProtocols(GType)
 static gchar* webKitMediaSrcGetUri(GstURIHandler* handler)
 {
     WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(handler);
-    gchar* result;
 
-    GST_OBJECT_LOCK(source);
-    result = g_strdup(source->priv->uri.get());
-    GST_OBJECT_UNLOCK(source);
-    return result;
+    auto locker = GstObjectLocker(source);
+    return g_strdup(source->priv->uri.get());
 }
 
 static gboolean webKitMediaSrcSetUri(GstURIHandler* handler, const gchar* uri, GError**)
@@ -754,9 +757,8 @@ static gboolean webKitMediaSrcSetUri(GstURIHandler* handler, const gchar* uri, G
         return false;
     }
 
-    GST_OBJECT_LOCK(source);
+    auto locker = GstObjectLocker(source);
     source->priv->uri = GUniquePtr<char>(g_strdup(uri));
-    GST_OBJECT_UNLOCK(source);
     return TRUE;
 }
 

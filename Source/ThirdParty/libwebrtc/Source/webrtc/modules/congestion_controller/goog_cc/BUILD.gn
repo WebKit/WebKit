@@ -157,6 +157,7 @@ rtc_library("loss_based_controller") {
   deps = [
     "../../../api/rtc_event_log",
     "../../../api/transport:network_control",
+    "../../../api/transport:webrtc_key_value_config",
     "../../../api/units:data_rate",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
@@ -179,6 +180,8 @@ rtc_library("delay_based_bwe") {
   sources = [
     "delay_based_bwe.cc",
     "delay_based_bwe.h",
+    "inter_arrival_delta.cc",
+    "inter_arrival_delta.h",
   ]
 
   deps = [
@@ -186,8 +189,9 @@ rtc_library("delay_based_bwe") {
     "../../../api:network_state_predictor_api",
     "../../../api/rtc_event_log",
     "../../../api/transport:network_control",
-    "../../../api/transport:network_control",
     "../../../api/transport:webrtc_key_value_config",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../logging:rtc_event_bwe",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
@@ -222,10 +226,10 @@ rtc_library("probe_controller") {
     "../../../rtc_base:macromagic",
     "../../../rtc_base:safe_conversions",
     "../../../rtc_base/experiments:field_trial_parser",
-    "../../../rtc_base/system:unused",
     "../../../system_wrappers:metrics",
   ]
   absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -253,50 +257,55 @@ if (rtc_include_tests) {
     ]
     absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
-  rtc_library("goog_cc_unittests") {
-    testonly = true
+  if (!build_with_chromium) {
+    rtc_library("goog_cc_unittests") {
+      testonly = true
 
-    sources = [
-      "acknowledged_bitrate_estimator_unittest.cc",
-      "alr_detector_unittest.cc",
-      "congestion_window_pushback_controller_unittest.cc",
-      "delay_based_bwe_unittest.cc",
-      "delay_based_bwe_unittest_helper.cc",
-      "delay_based_bwe_unittest_helper.h",
-      "goog_cc_network_control_unittest.cc",
-      "probe_bitrate_estimator_unittest.cc",
-      "probe_controller_unittest.cc",
-      "robust_throughput_estimator_unittest.cc",
-      "send_side_bandwidth_estimation_unittest.cc",
-      "trendline_estimator_unittest.cc",
-    ]
-    deps = [
-      ":alr_detector",
-      ":delay_based_bwe",
-      ":estimators",
-      ":goog_cc",
-      ":loss_based_controller",
-      ":probe_controller",
-      ":pushback_controller",
-      "../../../api/rtc_event_log",
-      "../../../api/transport:field_trial_based_config",
-      "../../../api/transport:goog_cc",
-      "../../../api/transport:network_control",
-      "../../../api/transport:webrtc_key_value_config",
-      "../../../api/units:data_rate",
-      "../../../api/units:timestamp",
-      "../../../logging:mocks",
-      "../../../logging:rtc_event_bwe",
-      "../../../rtc_base:checks",
-      "../../../rtc_base:rtc_base_approved",
-      "../../../rtc_base:rtc_base_tests_utils",
-      "../../../rtc_base/experiments:alr_experiment",
-      "../../../system_wrappers",
-      "../../../test:field_trial",
-      "../../../test:test_support",
-      "../../../test/scenario",
-      "../../pacing",
-      "//testing/gmock",
-    ]
+      sources = [
+        "acknowledged_bitrate_estimator_unittest.cc",
+        "alr_detector_unittest.cc",
+        "congestion_window_pushback_controller_unittest.cc",
+        "delay_based_bwe_unittest.cc",
+        "delay_based_bwe_unittest_helper.cc",
+        "delay_based_bwe_unittest_helper.h",
+        "goog_cc_network_control_unittest.cc",
+        "probe_bitrate_estimator_unittest.cc",
+        "probe_controller_unittest.cc",
+        "robust_throughput_estimator_unittest.cc",
+        "send_side_bandwidth_estimation_unittest.cc",
+        "trendline_estimator_unittest.cc",
+      ]
+      deps = [
+        ":alr_detector",
+        ":delay_based_bwe",
+        ":estimators",
+        ":goog_cc",
+        ":loss_based_controller",
+        ":probe_controller",
+        ":pushback_controller",
+        "../../../api/rtc_event_log",
+        "../../../api/test/network_emulation",
+        "../../../api/test/network_emulation:create_cross_traffic",
+        "../../../api/transport:field_trial_based_config",
+        "../../../api/transport:goog_cc",
+        "../../../api/transport:network_control",
+        "../../../api/transport:webrtc_key_value_config",
+        "../../../api/units:data_rate",
+        "../../../api/units:timestamp",
+        "../../../logging:mocks",
+        "../../../logging:rtc_event_bwe",
+        "../../../rtc_base:checks",
+        "../../../rtc_base:rtc_base_approved",
+        "../../../rtc_base:rtc_base_tests_utils",
+        "../../../rtc_base/experiments:alr_experiment",
+        "../../../system_wrappers",
+        "../../../test:explicit_key_value_config",
+        "../../../test:field_trial",
+        "../../../test:test_support",
+        "../../../test/scenario",
+        "../../pacing",
+        "//testing/gmock",
+      ]
+    }
   }
 }

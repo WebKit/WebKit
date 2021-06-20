@@ -33,6 +33,7 @@
 #include "ReadableStreamSink.h"
 #include "ResourceResponse.h"
 #include <JavaScriptCore/TypedArrays.h>
+#include <wtf/Span.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -44,7 +45,6 @@ namespace WebCore {
 
 class AbortSignal;
 class FetchRequest;
-struct ReadableStreamChunk;
 class ReadableStreamSource;
 
 class FetchResponse final : public FetchBodyOwner, public CanMakeWeakPtr<FetchResponse> {
@@ -94,7 +94,7 @@ public:
     bool isBlobBody() const { return !isBodyNull() && body().isBlob(); }
     bool isBlobFormData() const { return !isBodyNull() && body().isFormData(); }
 
-    using ConsumeDataByChunkCallback = WTF::Function<void(ExceptionOr<ReadableStreamChunk*>&&)>;
+    using ConsumeDataByChunkCallback = Function<void(ExceptionOr<Span<const uint8_t>*>&&)>;
     void consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&&);
 
     WEBCORE_EXPORT ResourceResponse resourceResponse() const;

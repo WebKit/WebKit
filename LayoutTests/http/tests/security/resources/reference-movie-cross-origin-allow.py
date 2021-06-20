@@ -16,9 +16,9 @@ sys.stdout.write(
     'Last-Modified: Thu, 01 Jan 2000 00:00:00 GMT\r\n'
     'Cache-Control: max-age=0\r\n'
     'Content-Type: text/html\r\n'
-    'Content-Length: {}\r\n\r\n'.format(os.path.getsize(os.path.join('/'.join(__file__.split('/')[0:-1]), '../../media/resources/reference.mov')))
+    'Content-Length: {}\r\n\r\n'.format(os.path.getsize(os.path.join(os.path.dirname(__file__), '../../media/resources/reference.mov')))
 )
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), '../../media/resources/reference.mov'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), '../../media/resources/reference.mov'), 'rb') as file:
     sys.stdout.buffer.write(file.read())

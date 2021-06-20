@@ -570,8 +570,8 @@ public:
     virtual void changeUniversalAccessZoomFocus(const IntRect&, const IntRect&) { }
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    virtual void requestImageExtraction(Element&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
+#if ENABLE(IMAGE_ANALYSIS)
+    virtual void requestTextRecognition(Element&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
     {
         if (completion)
             completion({ });

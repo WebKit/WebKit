@@ -268,6 +268,11 @@ public:
     {
         return typeInfo().getOwnPropertySlotIsImpure();
     }
+
+    bool hasNonReifiedStaticProperties() const
+    {
+        return typeInfo().hasStaticPropertyTable() && !staticPropertiesReified();
+    }
     
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }

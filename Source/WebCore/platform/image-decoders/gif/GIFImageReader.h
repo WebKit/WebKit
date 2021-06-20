@@ -285,9 +285,9 @@ private:
     bool parse(size_t dataPosition, size_t len, bool parseSizeOnly);
     void setRemainingBytes(size_t);
 
-    const unsigned char* data(size_t dataPosition) const
+    const uint8_t* data(size_t dataPosition) const
     {
-        return reinterpret_cast<const unsigned char*>(m_data->data()) + dataPosition;
+        return m_data->data() + dataPosition;
     }
 
     void addFrameIfNecessary();

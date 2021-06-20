@@ -24,13 +24,13 @@ rtc_library("control_handler") {
   ]
 
   deps = [
+    "../../../api:sequence_checker",
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
     "../../../api/units:data_size",
     "../../../api/units:time_delta",
     "../../../rtc_base:checks",
     "../../../rtc_base:safe_minmax",
-    "../../../rtc_base/synchronization:sequence_checker",
     "../../../rtc_base/system:no_unique_address",
     "../../../system_wrappers:field_trial",
     "../../pacing",
@@ -52,6 +52,7 @@ rtc_library("transport_feedback") {
 
   deps = [
     "../..:module_api_public",
+    "../../../api:sequence_checker",
     "../../../api/transport:network_control",
     "../../../api/units:data_size",
     "../../../api/units:timestamp",

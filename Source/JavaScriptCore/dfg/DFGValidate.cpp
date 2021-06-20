@@ -320,7 +320,7 @@ public:
                     break;
                 case MultiDeleteByOffset:
                     for (unsigned i = node->multiDeleteByOffsetData().variants.size(); i--;) {
-                        const DeleteByIdVariant& variant = node->multiDeleteByOffsetData().variants[i];
+                        const DeleteByVariant& variant = node->multiDeleteByOffsetData().variants[i];
                         VALIDATE((node), !variant.newStructure() || !variant.oldStructure()->dfgShouldWatch());
                     }
                     break;

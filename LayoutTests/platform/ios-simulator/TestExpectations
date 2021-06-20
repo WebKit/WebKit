@@ -95,6 +95,9 @@ webkit.org/b/189686 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.ht
 # to draw lots of nothing.
 webkit.org/b/209416 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Pass Timeout ]
 
+# Test is slow.
+webkit.org/b/226813 webgl/draw-webgl-to-context2d-memory-test.html [ Skip ]
+
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/list-and-writing-mode-001.html [ Failure ]

@@ -1,0 +1,73 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("timer") {
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../public:socket",
+    "../public:strong_alias",
+    "../public:types",
+  ]
+  sources = [
+    "fake_timeout.h",
+    "timer.cc",
+    "timer.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("task_queue_timeout") {
+  deps = [
+    "../../../api:array_view",
+    "../../../api/task_queue:task_queue",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/task_utils:pending_task_safety_flag",
+    "../../../rtc_base/task_utils:to_queued_task",
+    "../public:socket",
+    "../public:strong_alias",
+    "../public:types",
+  ]
+  sources = [
+    "task_queue_timeout.cc",
+    "task_queue_timeout.h",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_timer_unittests") {
+    testonly = true
+
+    defines = []
+    deps = [
+      ":task_queue_timeout",
+      ":timer",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "../../../test/time_controller:time_controller",
+      "../public:socket",
+    ]
+    sources = [
+      "task_queue_timeout_test.cc",
+      "timer_test.cc",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+}

@@ -1079,7 +1079,7 @@ String RenderThemeWin::mediaControlsStyleSheet()
 #endif
 }
 
-Vector<String, 3> RenderThemeWin::mediaControlsScripts()
+Vector<String, 2> RenderThemeWin::mediaControlsScripts()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsScript.isEmpty()) {

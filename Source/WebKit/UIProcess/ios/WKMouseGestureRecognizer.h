@@ -25,10 +25,10 @@
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-#import <UIKit/UIHoverGestureRecognizer.h>
+#import <UIKit/UIGestureRecognizer.h>
 #import "NativeWebMouseEvent.h"
 
-@interface WKMouseGestureRecognizer : UIHoverGestureRecognizer
+@interface WKMouseGestureRecognizer : UIGestureRecognizer
 
 - (std::optional<CGPoint>)lastMouseLocation;
 - (WebKit::NativeWebMouseEvent *)lastMouseEvent;

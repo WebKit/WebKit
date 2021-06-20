@@ -76,5 +76,8 @@ specific_include_rules = {
   ],
   "benchmark_main\.cc": [
     "+benchmark",
+  ],
+  "emulated_turn_server\.h": [
+     "+p2p/base/turn_server.h",
   ]
 }

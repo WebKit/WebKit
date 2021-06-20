@@ -125,7 +125,7 @@ TEST(ImmediateActionTests, ImmediateActionOverBody)
     EXPECT_EQ([hitTestResult lookupText].length, 0U);
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
 TEST(ImmediateActionTests, ImmediateActionOverImageOverlay)
 {
@@ -139,7 +139,7 @@ TEST(ImmediateActionTests, ImmediateActionOverImageOverlay)
     EXPECT_WK_STREQ([hitTestResult lookupText], "foobar");
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace TestWebKitAPI
 

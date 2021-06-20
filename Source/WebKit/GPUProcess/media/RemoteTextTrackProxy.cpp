@@ -113,7 +113,7 @@ void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& e
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddDataCue(m_identifier, start, end, IPC::DataReference(reinterpret_cast<const uint8_t*>(data), length)), m_mediaPlayerIdentifier);
+    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddDataCue(m_identifier, start, end, IPC::DataReference(static_cast<const uint8_t*>(data), length)), m_mediaPlayerIdentifier);
 }
 
 #if ENABLE(DATACUE_VALUE)

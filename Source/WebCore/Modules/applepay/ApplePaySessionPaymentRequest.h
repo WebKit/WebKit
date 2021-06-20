@@ -29,6 +29,7 @@
 
 #include "ApplePayError.h"
 #include "ApplePayLineItem.h"
+#include "ApplePayShippingContactEditingMode.h"
 #include "ApplePayShippingMethod.h"
 #include "PaymentContact.h"
 #include "PaymentInstallmentConfigurationWebCore.h"
@@ -129,6 +130,19 @@ public:
     void setInstallmentConfiguration(PaymentInstallmentConfiguration&& installmentConfiguration) { m_installmentConfiguration = WTFMove(installmentConfiguration); }
 #endif
 
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    std::optional<bool> supportsCouponCode() const { return m_supportsCouponCode; }
+    void setSupportsCouponCode(std::optional<bool> supportsCouponCode) { m_supportsCouponCode = supportsCouponCode; }
+
+    const String& couponCode() const { return m_couponCode; }
+    void setCouponCode(const String& couponCode) { m_couponCode = couponCode; }
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    const std::optional<ApplePayShippingContactEditingMode>& shippingContactEditingMode() const { return m_shippingContactEditingMode; }
+    void setShippingContactEditingMode(const std::optional<ApplePayShippingContactEditingMode>& shippingContactEditingMode) { m_shippingContactEditingMode = shippingContactEditingMode; }
+#endif
+
 private:
     unsigned m_version { 0 };
 
@@ -157,6 +171,15 @@ private:
 
 #if HAVE(PASSKIT_INSTALLMENTS)
     PaymentInstallmentConfiguration m_installmentConfiguration;
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    std::optional<ApplePayShippingContactEditingMode> m_shippingContactEditingMode;
+#endif
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    std::optional<bool> m_supportsCouponCode;
+    String m_couponCode;
 #endif
 
 #if defined(ApplePaySessionPaymentRequestAdditions_members)

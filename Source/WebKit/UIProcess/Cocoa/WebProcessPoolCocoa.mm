@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
+#import "AccessibilityPreferences.h"
 #import "AccessibilitySupportSPI.h"
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
@@ -267,6 +268,21 @@ static bool requiresContainerManagerAccess()
 #endif
 }
 
+static AccessibilityPreferences accessibilityPreferences()
+{
+    AccessibilityPreferences preferences;
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+    auto appId = WebCore::applicationBundleIdentifier().createCFString();
+
+    preferences.reduceMotionEnabled = _AXSReduceMotionEnabledApp(appId.get()) == AXValueStateOn;
+    preferences.increaseButtonLegibility = _AXSIncreaseButtonLegibilityApp(appId.get()) == AXValueStateOn;
+    preferences.enhanceTextLegibility = _AXSEnhanceTextLegibilityEnabledApp(appId.get()) == AXValueStateOn;
+    preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get()) == AXValueStateOn;
+    preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get()) == AXValueStateOn;
+#endif
+    return preferences;
+}
+
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -453,6 +469,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     // However, querying this is a launch time regression, so limit this to only the necessary case.
     if (m_defaultPageGroup->preferences().useGPUProcessForDOMRenderingEnabled())
         parameters.maximumIOSurfaceSize = WebCore::IOSurface::maximumSize();
+
+    parameters.accessibilityPreferences = accessibilityPreferences();
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
@@ -557,6 +575,13 @@ void WebProcessPool::backlightLevelDidChangeCallback(CFNotificationCenterRef cen
     auto* pool = reinterpret_cast<WebProcessPool*>(observer);
     pool->sendToAllProcesses(Messages::WebProcess::BacklightLevelDidChange(BKSDisplayBrightnessGetCurrent()));
 }
+
+void WebProcessPool::accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
+{
+    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    pool->sendToAllProcesses(Messages::WebProcess::AccessibilityPreferencesDidChange(accessibilityPreferences()));
+}
+
 #endif
 
 #if PLATFORM(MAC)
@@ -687,6 +712,14 @@ void WebProcessPool::registerNotificationObservers()
     m_powerSourceNotifier = WTF::makeUnique<WebCore::PowerSourceNotifier>([this] (bool hasAC) {
         sendToAllProcesses(Messages::WebProcess::PowerSourceDidChange(hasAC));
     });
+
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSReduceMotionChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSIncreaseButtonLegibilityNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSEnhanceTextLegibilityChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+#endif
 }
 
 void WebProcessPool::unregisterNotificationObservers()
@@ -720,6 +753,14 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
 
     m_powerSourceNotifier = nullptr;
+
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSReduceMotionChangedNotification, nullptr);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSIncreaseButtonLegibilityNotification, nullptr);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSEnhanceTextLegibilityChangedNotification, nullptr);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSDarkenSystemColorsEnabledNotification, nullptr);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSInvertColorsEnabledNotification, nullptr);
+#endif
 }
 
 bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const

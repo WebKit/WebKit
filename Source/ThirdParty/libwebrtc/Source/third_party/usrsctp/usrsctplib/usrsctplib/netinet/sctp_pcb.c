@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_pcb.c 366483 2020-10-06 11:29:08Z tuexen $");
+__FBSDID("$FreeBSD$");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -5181,6 +5181,10 @@ out:
 		/* Clear net */
 		asoc->last_control_chunk_from = NULL;
 	}
+	if (net == asoc->last_net_cmt_send_started) {
+		/* Clear net */
+		asoc->last_net_cmt_send_started = NULL;
+	}
 	if (net == stcb->asoc.alternate) {
 		sctp_free_remote_addr(stcb->asoc.alternate);
 		stcb->asoc.alternate = NULL;
@@ -6449,7 +6453,7 @@ sctp_startup_mcore_threads(void)
 		(void)kproc_create(sctp_mcore_thread,
 				   (void *)&sctp_mcore_workers[cpu],
 				   &sctp_mcore_workers[cpu].thread_proc,
-				   RFPROC,
+				   0,
 				   SCTP_KTHREAD_PAGES,
 				   SCTP_MCORE_NAME);
 	}
@@ -6704,7 +6708,7 @@ sctp_pcb_init(void)
 #endif
 #if defined(__Userspace__)
 	mbuf_initialize(NULL);
-	// WebKit change, this conflicts with atomic_init
+    // WebKit change, this conflicts with atomic_init
 	// atomic_init();
 #if defined(INET) || defined(INET6)
 	if (start_threads)
@@ -7530,7 +7534,7 @@ sctp_load_addresses_from_init(struct sctp_tcb *stcb, struct mbuf *m,
 			break;
 		}
 		phdr = sctp_get_next_param(m, offset, &param_buf,
-					   sizeof(param_buf));
+		                           sizeof(param_buf));
 	}
 	/* Now check to see if we need to purge any addresses */
 	TAILQ_FOREACH_SAFE(net, &stcb->asoc.nets, sctp_next, nnet) {
@@ -7540,11 +7544,15 @@ sctp_load_addresses_from_init(struct sctp_tcb *stcb, struct mbuf *m,
 			/* remove and free it */
 			stcb->asoc.numnets--;
 			TAILQ_REMOVE(&stcb->asoc.nets, net, sctp_next);
-			sctp_free_remote_addr(net);
+			if (net == stcb->asoc.alternate) {
+				sctp_free_remote_addr(stcb->asoc.alternate);
+				stcb->asoc.alternate = NULL;
+			}
 			if (net == stcb->asoc.primary_destination) {
 				stcb->asoc.primary_destination = NULL;
 				sctp_select_primary_destination(stcb);
 			}
+			sctp_free_remote_addr(net);
 		}
 	}
 	if ((stcb->asoc.ecn_supported == 1) &&

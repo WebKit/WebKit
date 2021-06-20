@@ -31,7 +31,6 @@
 #include "AudioTrack.h"
 #include "AutoplayEvent.h"
 #include "CaptionUserPreferences.h"
-#include "EventLoopEventQueue.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaCanStartListener.h"
@@ -494,6 +493,7 @@ public:
     void userInterfaceLayoutDirectionChanged();
     WEBCORE_EXPORT String getCurrentMediaControlsStatus();
     WEBCORE_EXPORT void setMediaControlsMaximumRightContainerButtonCountOverride(size_t);
+    WEBCORE_EXPORT void setMediaControlsHidePlaybackRates(bool);
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
 
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }
@@ -549,9 +549,7 @@ public:
     WEBCORE_EXPORT void willExitFullscreen();
     WEBCORE_EXPORT void didStopBeingFullscreenElement() final;
 
-#if ENABLE(PICTURE_IN_PICTURE_API)
     void scheduleEvent(Ref<Event>&&);
-#endif
 
     enum class AutoplayEventPlaybackState { None, PreventedAutoplay, StartedWithUserGesture, StartedWithoutUserGesture };
 
@@ -573,6 +571,11 @@ public:
     void setPreferredDynamicRangeMode(DynamicRangeMode);
 
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) override;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    using EventTarget::dispatchEvent;
+    void dispatchEvent(Event&) override;
+#endif
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
@@ -602,6 +605,7 @@ protected:
     void updateMediaControlsAfterPresentationModeChange();
 
     void scheduleEvent(const AtomString&);
+    template<typename T> void scheduleEventOn(T& target, Ref<Event>&&);
 
     bool showPosterFlag() const { return m_showPoster; }
     void setShowPosterFlag(bool);
@@ -663,6 +667,7 @@ private:
     void mediaPlayerWillInitializeMediaEngine() final;
     void mediaPlayerDidInitializeMediaEngine() final;
     void mediaPlayerReloadAndResumePlaybackIfNeeded() final;
+    void mediaPlayerQueueTaskOnEventLoop(Function<void()>&&) final;
 
     void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();
@@ -690,13 +695,10 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     void updateShouldContinueAfterNeedKey();
 #endif
-    
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
     void enqueuePlaybackTargetAvailabilityChangedEvent();
-
-    using EventTarget::dispatchEvent;
-    void dispatchEvent(Event&) override;
 #endif
 
     String mediaPlayerReferrer() const override;
@@ -940,20 +942,20 @@ private:
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
-    CancellableTask::Handle m_configureTextTracksTask;
-    CancellableTask::Handle m_checkPlaybackTargetCompatibilityTask;
-    CancellableTask::Handle m_updateMediaStateTask;
-    CancellableTask::Handle m_mediaEngineUpdatedTask;
-    CancellableTask::Handle m_updatePlayStateTask;
-    CancellableTask::Handle m_resumeTask;
-    CancellableTask::Handle m_seekTask;
-    CancellableTask::Handle m_playbackControlsManagerBehaviorRestrictionsTask;
-    CancellableTask::Handle m_bufferedTimeRangesChangedTask;
-    EventLoopTaskQueue m_resourceSelectionTaskQueue;
+    TaskCancellationGroup m_configureTextTracksTaskCancellationGroup;
+    TaskCancellationGroup m_checkPlaybackTargetCompatibilityTaskCancellationGroup;
+    TaskCancellationGroup m_updateMediaStateTaskCancellationGroup;
+    TaskCancellationGroup m_mediaEngineUpdatedTaskCancellationGroup;
+    TaskCancellationGroup m_updatePlayStateTaskCancellationGroup;
+    TaskCancellationGroup m_resumeTaskCancellationGroup;
+    TaskCancellationGroup m_seekTaskCancellationGroup;
+    TaskCancellationGroup m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup;
+    TaskCancellationGroup m_bufferedTimeRangesChangedTaskCancellationGroup;
+    TaskCancellationGroup m_resourceSelectionTaskCancellationGroup;
     RefPtr<TimeRanges> m_playedTimeRanges;
-    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
+    TaskCancellationGroup m_asyncEventsCancellationGroup;
 #if PLATFORM(IOS_FAMILY)
-    CancellableTask::Handle m_volumeRevertTask;
+    TaskCancellationGroup m_volumeRevertTaskCancellationGroup;
 #endif
 
     PlayPromiseVector m_pendingPlayPromises;

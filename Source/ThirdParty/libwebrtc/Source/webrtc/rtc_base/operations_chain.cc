@@ -19,12 +19,14 @@ OperationsChain::CallbackHandle::CallbackHandle(
     : operations_chain_(std::move(operations_chain)) {}
 
 OperationsChain::CallbackHandle::~CallbackHandle() {
+#if RTC_DCHECK_IS_ON
   RTC_DCHECK(has_run_);
+#endif
 }
 
 void OperationsChain::CallbackHandle::OnOperationComplete() {
+#if RTC_DCHECK_IS_ON
   RTC_DCHECK(!has_run_);
-#ifdef RTC_DCHECK_IS_ON
   has_run_ = true;
 #endif  // RTC_DCHECK_IS_ON
   operations_chain_->OnOperationComplete();

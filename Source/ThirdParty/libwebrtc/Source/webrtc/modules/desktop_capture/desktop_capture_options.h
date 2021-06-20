@@ -126,7 +126,19 @@ class RTC_EXPORT DesktopCaptureOptions {
   void set_allow_cropping_window_capturer(bool allow) {
     allow_cropping_window_capturer_ = allow;
   }
-#endif
+
+#if defined(RTC_ENABLE_WIN_WGC)
+  // This flag enables the WGC capturer for both window and screen capture.
+  // This capturer should offer similar or better performance than the cropping
+  // capturer without the disadvantages listed above. However, the WGC capturer
+  // is only available on Windows 10 version 1809 (Redstone 5) and up. This flag
+  // will have no affect on older versions.
+  // If set, and running a supported version of Win10, this flag will take
+  // precedence over the cropping, directx, and magnification flags.
+  bool allow_wgc_capturer() const { return allow_wgc_capturer_; }
+  void set_allow_wgc_capturer(bool allow) { allow_wgc_capturer_ = allow; }
+#endif  // defined(RTC_ENABLE_WIN_WGC)
+#endif  // defined(WEBRTC_WIN)
 
 #if defined(WEBRTC_USE_PIPEWIRE)
   bool allow_pipewire() const { return allow_pipewire_; }
@@ -149,6 +161,9 @@ class RTC_EXPORT DesktopCaptureOptions {
   bool allow_use_magnification_api_ = false;
   bool allow_directx_capturer_ = false;
   bool allow_cropping_window_capturer_ = false;
+#if defined(RTC_ENABLE_WIN_WGC)
+  bool allow_wgc_capturer_ = false;
+#endif
 #endif
 #if defined(WEBRTC_USE_X11)
   bool use_update_notifications_ = false;

@@ -202,10 +202,6 @@
       "platform": "mac-catalina"
     },
     {
-      "name": "ews129",
-      "platform": "mac-bigsur"
-    },
-    {
       "name": "ews150",
       "platform": "*"
     },

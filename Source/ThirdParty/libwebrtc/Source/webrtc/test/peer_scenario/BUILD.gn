@@ -48,6 +48,7 @@ if (rtc_include_tests) {
       "../../pc:pc_test_utils",
       "../../pc:rtc_pc_base",
       "../../rtc_base",
+      "../../rtc_base:null_socket_server",
       "../../rtc_base:stringutils",
       "../logging:log_writer",
       "../network:emulated_network",

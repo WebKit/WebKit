@@ -86,6 +86,15 @@ bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
 
 AtomString parseHTMLHashNameReference(StringView);
 
+// https://html.spec.whatwg.org/#rules-for-parsing-dimension-values
+struct HTMLDimension {
+    enum class Type : bool { Percentage, Pixel };
+    double number;
+    Type type;
+};
+std::optional<HTMLDimension> parseHTMLDimension(StringView);
+std::optional<HTMLDimension> parseHTMLMultiLength(StringView);
+
 // Inline implementations of some of the functions declared above.
 
 template<typename CharacterType> inline bool isHTMLSpace(CharacterType character)

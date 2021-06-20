@@ -18,8 +18,8 @@
 
 #include "api/peer_connection_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/thread_checker.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
 #include "sdk/android/native_api/video/video_source.h"
 
@@ -46,7 +46,7 @@ class AndroidCallClient {
   void CreatePeerConnection() RTC_RUN_ON(thread_checker_);
   void Connect() RTC_RUN_ON(thread_checker_);
 
-  rtc::ThreadChecker thread_checker_;
+  webrtc::SequenceChecker thread_checker_;
 
   bool call_started_ RTC_GUARDED_BY(thread_checker_);
 

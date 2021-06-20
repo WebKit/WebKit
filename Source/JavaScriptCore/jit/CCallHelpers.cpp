@@ -72,7 +72,7 @@ void CCallHelpers::ensureShadowChickenPacket(VM& vm, GPRReg shadowPacket, GPRReg
     storePtr(scratch2, Address(scratch1NonArgGPR));
 }
 
-void CCallHelpers::emitJITCodeOver(MacroAssemblerCodePtr<JSInternalPtrTag> where, WTF::Function<void(CCallHelpers&)> emitCode, const char* description)
+void CCallHelpers::emitJITCodeOver(MacroAssemblerCodePtr<JSInternalPtrTag> where, ScopedLambda<void(CCallHelpers&)> emitCode, const char* description)
 {
     CCallHelpers jit;
     emitCode(jit);

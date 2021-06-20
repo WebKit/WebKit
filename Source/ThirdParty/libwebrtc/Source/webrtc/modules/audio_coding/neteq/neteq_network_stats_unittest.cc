@@ -162,7 +162,7 @@ class NetEqNetworkStatsTest {
   NetEqNetworkStatsTest(const SdpAudioFormat& format, MockAudioDecoder* decoder)
       : decoder_(decoder),
         decoder_factory_(
-            new rtc::RefCountedObject<AudioDecoderProxyFactory>(decoder)),
+            rtc::make_ref_counted<AudioDecoderProxyFactory>(decoder)),
         samples_per_ms_(format.clockrate_hz / 1000),
         frame_size_samples_(kFrameSizeMs * samples_per_ms_),
         rtp_generator_(new RtpGenerator(samples_per_ms_)),

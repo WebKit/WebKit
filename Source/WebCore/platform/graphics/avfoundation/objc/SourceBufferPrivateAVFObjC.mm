@@ -359,7 +359,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     if (m_hasSessionSemaphore)
         m_hasSessionSemaphore->signal();
 
-    m_mediaSampleTaskQueue.close();
+    m_mediaSampleTaskCancellationGroup.cancel();
 }
 
 void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegment&& segment)
@@ -418,7 +418,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
             return;
         }
 
-        m_mediaSampleTaskQueue.enqueueTask([this, weakThis = WTFMove(weakThis)] {
+        callOnMainThread(CancellableTask(m_mediaSampleTaskCancellationGroup, [this, weakThis = WTFMove(weakThis)] {
             if (!weakThis)
                 return;
 
@@ -439,7 +439,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
                 m_hasPendingAppendCompletedCallback = false;
                 appendCompleted();
             }
-        });
+        }));
     });
 }
 
@@ -676,7 +676,7 @@ void SourceBufferPrivateAVFObjC::abort()
     m_parser->resetParserState();
     m_mediaSamples.clear();
     m_initializationSegmentIsHandled = false;
-    m_mediaSampleTaskQueue.cancelAllTasks();
+    m_mediaSampleTaskCancellationGroup.cancel();
 
     dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
 }

@@ -95,7 +95,7 @@ TEST(VideoCodecTestMediaCodec, DISABLED_ForemanCif500kbpsH264CHP) {
   const auto frame_checker =
       std::make_unique<VideoCodecTestFixtureImpl::H264KeyframeChecker>();
 
-  config.h264_codec_settings.profile = H264::kProfileConstrainedHigh;
+  config.h264_codec_settings.profile = H264Profile::kProfileConstrainedHigh;
   config.encoded_frame_checker = frame_checker.get();
   config.SetCodecSettings(cricket::kH264CodecName, 1, 1, 1, false, false, false,
                           352, 288);

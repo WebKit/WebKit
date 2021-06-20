@@ -51,6 +51,10 @@
     "label": "//common_video:common_video_unittests",
     "type": "console_test_launcher",
   },
+  "dcsctp_unittests": {
+    "label": "//net/dcsctp:dcsctp_unittests",
+    "type": "console_test_launcher",
+  },
   "isac_fix_test": {
     "label": "//modules/audio_coding:isac_fix_test",
     "type": "console_test_launcher",

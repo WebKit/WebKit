@@ -34,6 +34,7 @@
         <item>VP9</item>
         <item>H264 Baseline</item>
         <item>H264 High</item>
+        <item>AV1</item>
     </string-array>
 
     <string-array name="audioCodecs">

@@ -33,6 +33,7 @@
 #if defined(WEBRTC_WIN)
 #include "rtc_base/logging.h"  // For RTC_LOG_GLE
 #endif
+#include "test/field_trial.h"
 
 using ::testing::Contains;
 using ::testing::Not;
@@ -75,9 +76,35 @@ class FakeNetworkMonitor : public NetworkMonitorInterface {
     unavailable_adapters_ = unavailable_adapters;
   }
 
+  bool SupportsBindSocketToNetwork() const override { return true; }
+
+  NetworkBindingResult BindSocketToNetwork(
+      int socket_fd,
+      const IPAddress& address,
+      const std::string& if_name) override {
+    if (absl::c_count(addresses_, address) > 0) {
+      return NetworkBindingResult::SUCCESS;
+    }
+
+    for (auto const& iter : adapters_) {
+      if (if_name.find(iter) != std::string::npos) {
+        return NetworkBindingResult::SUCCESS;
+      }
+    }
+    return NetworkBindingResult::ADDRESS_NOT_FOUND;
+  }
+
+  void set_ip_addresses(std::vector<IPAddress> addresses) {
+    addresses_ = addresses;
+  }
+
+  void set_adapters(std::vector<std::string> adapters) { adapters_ = adapters; }
+
  private:
   bool started_ = false;
+  std::vector<std::string> adapters_;
   std::vector<std::string> unavailable_adapters_;
+  std::vector<IPAddress> addresses_;
 };
 
 class FakeNetworkMonitorFactory : public NetworkMonitorFactory {
@@ -1239,5 +1266,84 @@ TEST_F(NetworkTest, TestWhenNetworkListChangeReturnsChangedFlag) {
     EXPECT_EQ(ADAPTER_TYPE_CELLULAR_4G, list2[0]->type());
   }
 }
+
+#if defined(WEBRTC_POSIX)
+TEST_F(NetworkTest, IgnoresMACBasedIPv6Address) {
+  std::string ipv6_address = "2607:fc20:f340:1dc8:214:22ff:fe01:2345";
+  std::string ipv6_mask = "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF";
+  BasicNetworkManager manager;
+  manager.StartUpdating();
+
+  // IPSec interface; name is in form "ipsec<index>".
+  char if_name[20] = "ipsec11";
+  ifaddrs* addr_list =
+      InstallIpv6Network(if_name, ipv6_address, ipv6_mask, manager);
+
+  BasicNetworkManager::NetworkList list;
+  manager.GetNetworks(&list);
+  EXPECT_EQ(list.size(), 0u);
+  ReleaseIfAddrs(addr_list);
+}
+
+TEST_F(NetworkTest, WebRTC_AllowMACBasedIPv6Address) {
+  webrtc::test::ScopedFieldTrials field_trials(
+      "WebRTC-AllowMACBasedIPv6/Enabled/");
+  std::string ipv6_address = "2607:fc20:f340:1dc8:214:22ff:fe01:2345";
+  std::string ipv6_mask = "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF";
+  BasicNetworkManager manager;
+  manager.StartUpdating();
+
+  // IPSec interface; name is in form "ipsec<index>".
+  char if_name[20] = "ipsec11";
+  ifaddrs* addr_list =
+      InstallIpv6Network(if_name, ipv6_address, ipv6_mask, manager);
+
+  BasicNetworkManager::NetworkList list;
+  manager.GetNetworks(&list);
+  EXPECT_EQ(list.size(), 1u);
+  ReleaseIfAddrs(addr_list);
+}
+#endif
+
+#if defined(WEBRTC_POSIX)
+TEST_F(NetworkTest, WebRTC_BindUsingInterfaceName) {
+  char if_name1[20] = "wlan0";
+  char if_name2[20] = "v4-wlan0";
+  ifaddrs* list = nullptr;
+  list = AddIpv6Address(list, if_name1, "1000:2000:3000:4000:0:0:0:1",
+                        "FFFF:FFFF:FFFF:FFFF::", 0);
+  list = AddIpv4Address(list, if_name2, "192.168.0.2", "255.255.255.255");
+  NetworkManager::NetworkList result;
+
+  // Sanity check that both interfaces are included by default.
+  FakeNetworkMonitorFactory factory;
+  BasicNetworkManager manager(&factory);
+  manager.StartUpdating();
+  CallConvertIfAddrs(manager, list, /*include_ignored=*/false, &result);
+  EXPECT_EQ(2u, result.size());
+  ReleaseIfAddrs(list);
+  bool changed;
+  // This ensures we release the objects created in CallConvertIfAddrs.
+  MergeNetworkList(manager, result, &changed);
+  result.clear();
+
+  FakeNetworkMonitor* network_monitor = GetNetworkMonitor(manager);
+
+  IPAddress ipv6;
+  EXPECT_TRUE(IPFromString("1000:2000:3000:4000:0:0:0:1", &ipv6));
+  IPAddress ipv4;
+  EXPECT_TRUE(IPFromString("192.168.0.2", &ipv4));
+
+  // The network monitor only knwos about the ipv6 address, interface.
+  network_monitor->set_adapters({"wlan0"});
+  network_monitor->set_ip_addresses({ipv6});
+  EXPECT_EQ(manager.BindSocketToNetwork(/* fd */ 77, ipv6),
+            NetworkBindingResult::SUCCESS);
+
+  // But it will bind anyway using string matching...
+  EXPECT_EQ(manager.BindSocketToNetwork(/* fd */ 77, ipv4),
+            NetworkBindingResult::SUCCESS);
+}
+#endif
 
 }  // namespace rtc

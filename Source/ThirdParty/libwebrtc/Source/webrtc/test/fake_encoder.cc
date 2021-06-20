@@ -276,6 +276,17 @@ const char* FakeEncoder::kImplementationName = "fake_encoder";
 VideoEncoder::EncoderInfo FakeEncoder::GetEncoderInfo() const {
   EncoderInfo info;
   info.implementation_name = kImplementationName;
+  MutexLock lock(&mutex_);
+  for (int sid = 0; sid < config_.numberOfSimulcastStreams; ++sid) {
+    int number_of_temporal_layers =
+        config_.simulcastStream[sid].numberOfTemporalLayers;
+    info.fps_allocation[sid].clear();
+    for (int tid = 0; tid < number_of_temporal_layers; ++tid) {
+      // {1/4, 1/2, 1} allocation for num layers = 3.
+      info.fps_allocation[sid].push_back(255 /
+                                         (number_of_temporal_layers - tid));
+    }
+  }
   return info;
 }
 

@@ -177,7 +177,7 @@ Sub32 U:G:32, UZD:G:32
     x86: Tmp, Addr
     x86: Tmp, Index
 
-arm64: Sub32 U:G:32, U:G:32, D:G:32
+arm64: Sub32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
 
 64: Sub64 U:G:64, UD:G:64

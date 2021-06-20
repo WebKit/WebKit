@@ -93,7 +93,7 @@ bool checkUsageDescriptionStringForType(MediaPermissionType type)
         if (videoAccess == kTCCAccessPreflightGranted)
             return true;
         std::call_once(videoDescriptionFlag, [] {
-            hasCameraDescriptionString = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSMicrophoneUsageDescription"]).length > 0;
+            hasCameraDescriptionString = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSCameraUsageDescription"]).length > 0;
         });
         return hasCameraDescriptionString;
     }

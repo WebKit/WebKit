@@ -30,63 +30,87 @@ class TestPeer final {
  public:
   Params* params() const { return params_.get(); }
   PeerConfigurerImpl::VideoSource ReleaseVideoSource(size_t i) {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return std::move(video_sources_[i]);
   }
 
   PeerConnectionFactoryInterface* pc_factory() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->pc_factory();
   }
-  PeerConnectionInterface* pc() { return wrapper_->pc(); }
-  MockPeerConnectionObserver* observer() { return wrapper_->observer(); }
+  PeerConnectionInterface* pc() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
+    return wrapper_->pc();
+  }
+  MockPeerConnectionObserver* observer() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
+    return wrapper_->observer();
+  }
 
   std::unique_ptr<SessionDescriptionInterface> CreateOffer() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->CreateOffer();
   }
 
   std::unique_ptr<SessionDescriptionInterface> CreateAnswer() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->CreateAnswer();
   }
 
   bool SetLocalDescription(std::unique_ptr<SessionDescriptionInterface> desc,
                            std::string* error_out = nullptr) {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->SetLocalDescription(std::move(desc), error_out);
   }
 
   bool SetRemoteDescription(std::unique_ptr<SessionDescriptionInterface> desc,
                             std::string* error_out = nullptr) {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->SetRemoteDescription(std::move(desc), error_out);
   }
 
   rtc::scoped_refptr<RtpTransceiverInterface> AddTransceiver(
       cricket::MediaType media_type,
       const RtpTransceiverInit& init) {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->AddTransceiver(media_type, init);
   }
 
   rtc::scoped_refptr<RtpSenderInterface> AddTrack(
       rtc::scoped_refptr<MediaStreamTrackInterface> track,
       const std::vector<std::string>& stream_ids = {}) {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->AddTrack(track, stream_ids);
   }
 
   rtc::scoped_refptr<DataChannelInterface> CreateDataChannel(
       const std::string& label) {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->CreateDataChannel(label);
   }
 
   PeerConnectionInterface::SignalingState signaling_state() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->signaling_state();
   }
 
-  bool IsIceGatheringDone() { return wrapper_->IsIceGatheringDone(); }
+  bool IsIceGatheringDone() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
+    return wrapper_->IsIceGatheringDone();
+  }
 
-  bool IsIceConnected() { return wrapper_->IsIceConnected(); }
+  bool IsIceConnected() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
+    return wrapper_->IsIceConnected();
+  }
 
   rtc::scoped_refptr<const RTCStatsReport> GetStats() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     return wrapper_->GetStats();
   }
 
   void DetachAecDump() {
+    RTC_CHECK(wrapper_) << "TestPeer is already closed";
     if (audio_processing_) {
       audio_processing_->DetachAecDump();
     }
@@ -95,6 +119,10 @@ class TestPeer final {
   // Adds provided |candidates| to the owned peer connection.
   bool AddIceCandidates(
       std::vector<std::unique_ptr<IceCandidateInterface>> candidates);
+
+  // Closes underlying peer connection and destroys all related objects freeing
+  // up related resources.
+  void Close();
 
  protected:
   friend class TestPeerFactory;

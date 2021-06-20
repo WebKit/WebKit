@@ -77,7 +77,7 @@ TEST(InjectedBundleHitTest, TextParagraph)
     EXPECT_FALSE([webView hasSelectableTextAt:CGPointMake(300, 300)]);
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
 TEST(InjectedBundleHitTest, ImageOverlay)
 {
@@ -89,6 +89,6 @@ TEST(InjectedBundleHitTest, ImageOverlay)
     EXPECT_FALSE([webView hasSelectableTextAt:CGPointMake(400, 300)]);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace TestWebKitAPI

@@ -14,6 +14,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/ref_counted_object.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
+#include "third_party/libyuv/include/libyuv/scale.h"
 
 namespace webrtc {
 
@@ -48,7 +49,7 @@ NV12Buffer::~NV12Buffer() = default;
 
 // static
 rtc::scoped_refptr<NV12Buffer> NV12Buffer::Create(int width, int height) {
-  return new rtc::RefCountedObject<NV12Buffer>(width, height);
+  return rtc::make_ref_counted<NV12Buffer>(width, height);
 }
 
 // static
@@ -56,8 +57,7 @@ rtc::scoped_refptr<NV12Buffer> NV12Buffer::Create(int width,
                                                   int height,
                                                   int stride_y,
                                                   int stride_uv) {
-  return new rtc::RefCountedObject<NV12Buffer>(width, height, stride_y,
-                                               stride_uv);
+  return rtc::make_ref_counted<NV12Buffer>(width, height, stride_y, stride_uv);
 }
 
 // static
@@ -120,6 +120,37 @@ size_t NV12Buffer::UVOffset() const {
 
 void NV12Buffer::InitializeData() {
   memset(data_.get(), 0, NV12DataSize(height_, stride_y_, stride_uv_));
+}
+
+void NV12Buffer::CropAndScaleFrom(const NV12BufferInterface& src,
+                                  int offset_x,
+                                  int offset_y,
+                                  int crop_width,
+                                  int crop_height) {
+  RTC_CHECK_LE(crop_width, src.width());
+  RTC_CHECK_LE(crop_height, src.height());
+  RTC_CHECK_LE(crop_width + offset_x, src.width());
+  RTC_CHECK_LE(crop_height + offset_y, src.height());
+  RTC_CHECK_GE(offset_x, 0);
+  RTC_CHECK_GE(offset_y, 0);
+
+  // Make sure offset is even so that u/v plane becomes aligned.
+  const int uv_offset_x = offset_x / 2;
+  const int uv_offset_y = offset_y / 2;
+  offset_x = uv_offset_x * 2;
+  offset_y = uv_offset_y * 2;
+
+  const uint8_t* y_plane = src.DataY() + src.StrideY() * offset_y + offset_x;
+  const uint8_t* uv_plane =
+      src.DataUV() + src.StrideUV() * uv_offset_y + uv_offset_x * 2;
+
+  // kFilterBox is unsupported in libyuv, so using kFilterBilinear instead.
+  int res = libyuv::NV12Scale(y_plane, src.StrideY(), uv_plane, src.StrideUV(),
+                              crop_width, crop_height, MutableDataY(),
+                              StrideY(), MutableDataUV(), StrideUV(), width(),
+                              height(), libyuv::kFilterBilinear);
+
+  RTC_DCHECK_EQ(res, 0);
 }
 
 }  // namespace webrtc

@@ -28,15 +28,10 @@
 
 #if HAVE(RSA_BSSA)
 
-#include <Security/SecKeyPriv.h>
-#include <WebCore/PrivateClickMeasurement.h>
+#include "CoreCryptoSPI.h"
 
-extern "C" {
-#include <corecrypto/cc_priv.h>
-#include <corecrypto/ccrng.h>
-#include <corecrypto/ccrsa.h>
-#include <corecrypto/ccrsabssa.h>
-}
+#include <WebCore/PrivateClickMeasurement.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 
 using namespace WebCore;
 

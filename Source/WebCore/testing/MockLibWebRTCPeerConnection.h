@@ -335,7 +335,7 @@ protected:
     explicit MockLibWebRTCPeerConnectionFactory(const String&);
 
 private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, webrtc::PeerConnectionDependencies) final;
+    webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::PeerConnectionInterface>> CreatePeerConnectionOrError(const webrtc::PeerConnectionInterface::RTCConfiguration&, webrtc::PeerConnectionDependencies) final;
 
     rtc::scoped_refptr<webrtc::MediaStreamInterface> CreateLocalMediaStream(const std::string&) final;
 

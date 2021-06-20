@@ -30,6 +30,7 @@
 #include "MediaPlayer.h"
 #include "MediaPlayerIdentifier.h"
 #include "PlatformTimeRanges.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -157,6 +158,10 @@ public:
 
     virtual unsigned long long totalBytes() const { return 0; }
     virtual bool didLoadingProgress() const = 0;
+    // The default implementation of didLoadingProgressAsync is implemented in terms of
+    // synchronous didLoadingProgress() calls. Implementations may also
+    // override didLoadingProgressAsync to create a more proper async implementation.
+    virtual void didLoadingProgressAsync(MediaPlayer::DidLoadingProgressCompletionHandler&& callback) const { callback(didLoadingProgress()); }
 
     virtual void setSize(const IntSize&) { }
 

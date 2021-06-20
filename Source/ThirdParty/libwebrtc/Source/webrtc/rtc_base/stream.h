@@ -48,16 +48,9 @@ enum StreamResult { SR_ERROR, SR_SUCCESS, SR_BLOCK, SR_EOS };
 //  SE_WRITE: Data can be written, so Write is likely to not return SR_BLOCK
 enum StreamEvent { SE_OPEN = 1, SE_READ = 2, SE_WRITE = 4, SE_CLOSE = 8 };
 
-struct StreamEventData : public MessageData {
-  int events, error;
-  StreamEventData(int ev, int er) : events(ev), error(er) {}
-};
-
-class RTC_EXPORT StreamInterface : public MessageHandlerAutoCleanup {
+class RTC_EXPORT StreamInterface {
  public:
-  enum { MSG_POST_EVENT = 0xF1F1, MSG_MAX = MSG_POST_EVENT };
-
-  ~StreamInterface() override;
+  virtual ~StreamInterface() {}
 
   virtual StreamState GetState() const = 0;
 
@@ -96,13 +89,6 @@ class RTC_EXPORT StreamInterface : public MessageHandlerAutoCleanup {
   // certain events will be raised in the future.
   sigslot::signal3<StreamInterface*, int, int> SignalEvent;
 
-  // Like calling SignalEvent, but posts a message to the specified thread,
-  // which will call SignalEvent.  This helps unroll the stack and prevent
-  // re-entrancy.
-  void PostEvent(Thread* t, int events, int err);
-  // Like the aforementioned method, but posts to the current thread.
-  void PostEvent(int events, int err);
-
   // Return true if flush is successful.
   virtual bool Flush();
 
@@ -125,55 +111,8 @@ class RTC_EXPORT StreamInterface : public MessageHandlerAutoCleanup {
  protected:
   StreamInterface();
 
-  // MessageHandler Interface
-  void OnMessage(Message* msg) override;
-
  private:
   RTC_DISALLOW_COPY_AND_ASSIGN(StreamInterface);
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// StreamAdapterInterface is a convenient base-class for adapting a stream.
-// By default, all operations are pass-through.  Override the methods that you
-// require adaptation.  Streams should really be upgraded to reference-counted.
-// In the meantime, use the owned flag to indicate whether the adapter should
-// own the adapted stream.
-///////////////////////////////////////////////////////////////////////////////
-
-class StreamAdapterInterface : public StreamInterface,
-                               public sigslot::has_slots<> {
- public:
-  explicit StreamAdapterInterface(StreamInterface* stream, bool owned = true);
-
-  // Core Stream Interface
-  StreamState GetState() const override;
-  StreamResult Read(void* buffer,
-                    size_t buffer_len,
-                    size_t* read,
-                    int* error) override;
-  StreamResult Write(const void* data,
-                     size_t data_len,
-                     size_t* written,
-                     int* error) override;
-  void Close() override;
-
-  bool Flush() override;
-
-  void Attach(StreamInterface* stream, bool owned = true);
-  StreamInterface* Detach();
-
- protected:
-  ~StreamAdapterInterface() override;
-
-  // Note that the adapter presents itself as the origin of the stream events,
-  // since users of the adapter may not recognize the adapted object.
-  virtual void OnEvent(StreamInterface* stream, int events, int err);
-  StreamInterface* stream() { return stream_; }
-
- private:
-  StreamInterface* stream_;
-  bool owned_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(StreamAdapterInterface);
 };
 
 }  // namespace rtc

@@ -116,8 +116,8 @@
 #include <WebCore/MediaConstraints.h>
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-#include <WebCore/ImageExtractionResult.h>
+#if ENABLE(IMAGE_ANALYSIS)
+#include <WebCore/TextRecognitionResult.h>
 #endif
 
 // FIXME: Seems like we could use std::tuple to cut down the code below a lot!
@@ -3225,17 +3225,17 @@ std::optional<WebCore::GraphicsContextGL::ActiveInfo> ArgumentCoder<WebCore::Gra
 
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
-void ArgumentCoder<ImageExtractionDataDetectorInfo>::encode(Encoder& encoder, const ImageExtractionDataDetectorInfo& info)
+void ArgumentCoder<TextRecognitionDataDetector>::encode(Encoder& encoder, const TextRecognitionDataDetector& info)
 {
     encodePlatformData(encoder, info);
     encoder << info.normalizedQuads;
 }
 
-std::optional<ImageExtractionDataDetectorInfo> ArgumentCoder<ImageExtractionDataDetectorInfo>::decode(Decoder& decoder)
+std::optional<TextRecognitionDataDetector> ArgumentCoder<TextRecognitionDataDetector>::decode(Decoder& decoder)
 {
-    ImageExtractionDataDetectorInfo result;
+    TextRecognitionDataDetector result;
     if (!decodePlatformData(decoder, result))
         return std::nullopt;
 
@@ -3248,6 +3248,6 @@ std::optional<ImageExtractionDataDetectorInfo> ArgumentCoder<ImageExtractionData
     return WTFMove(result);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+#endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
 } // namespace IPC

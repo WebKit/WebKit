@@ -45,7 +45,9 @@ inline InbandDataTextTrack::InbandDataTextTrack(Document& document, TextTrackCli
 
 Ref<InbandDataTextTrack> InbandDataTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
 {
-    return adoptRef(*new InbandDataTextTrack(document, client, trackPrivate));
+    auto textTrack = adoptRef(*new InbandDataTextTrack(document, client, trackPrivate));
+    textTrack->suspendIfNeeded();
+    return textTrack;
 }
 
 InbandDataTextTrack::~InbandDataTextTrack() = default;

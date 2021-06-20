@@ -189,7 +189,7 @@ static String signedPublicKeyAndChallengeString(unsigned keySize, const CString&
 
     // Length needs to account for the null terminator.
     signedPublicKeyAndChallenge.publicKeyAndChallenge.challenge.Length = challenge.length() + 1;
-    signedPublicKeyAndChallenge.publicKeyAndChallenge.challenge.Data = reinterpret_cast<uint8_t*>(const_cast<char*>(challenge.data()));
+    signedPublicKeyAndChallenge.publicKeyAndChallenge.challenge.Data = const_cast<uint8_t*>(challenge.dataAsUInt8Ptr());
 
     CSSM_DATA encodedPublicKeyAndChallenge { 0, nullptr };
     if (SecAsn1EncodeItem(coder, &signedPublicKeyAndChallenge.publicKeyAndChallenge, publicKeyAndChallengeTemplate, &encodedPublicKeyAndChallenge) != noErr)

@@ -15,8 +15,8 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/sequence_checker.h"
 #include "api/test/track_id_stream_info_map.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {

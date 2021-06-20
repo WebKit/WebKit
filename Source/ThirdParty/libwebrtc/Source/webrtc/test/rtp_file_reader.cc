@@ -87,10 +87,10 @@ class InterleavedRtpFileReader : public RtpFileReaderImpl {
     uint32_t len = 0;
     TRY(ReadUint32(&len, file_));
     if (packet->length < len) {
-      FATAL() << "Packet is too large to fit: " << len << " bytes vs "
-              << packet->length
-              << " bytes allocated. Consider increasing the buffer "
-                 "size";
+      RTC_FATAL() << "Packet is too large to fit: " << len << " bytes vs "
+                  << packet->length
+                  << " bytes allocated. Consider increasing the buffer "
+                  << "size";
     }
     if (fread(packet->data, 1, len, file_) != len)
       return false;

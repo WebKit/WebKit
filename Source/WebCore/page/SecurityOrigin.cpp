@@ -153,7 +153,7 @@ static bool isLoopbackIPAddress(StringView host)
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy (Editor's Draft, 17 November 2016)
-static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, const String& host)
+static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, StringView host)
 {
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(protocol))
         return true;
@@ -172,7 +172,7 @@ static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, const St
 
 bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 {
-    return shouldTreatAsPotentiallyTrustworthy(url.protocol().toStringWithoutCopying(), url.host().toStringWithoutCopying());
+    return shouldTreatAsPotentiallyTrustworthy(url.protocol().toStringWithoutCopying(), url.host());
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
@@ -190,8 +190,6 @@ SecurityOrigin::SecurityOrigin(const URL& url)
 
     if (m_canLoadLocalResources)
         m_filePath = url.fileSystemPath(); // In case enforceFilePathSeparation() is called.
-
-    m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(url);
 }
 
 SecurityOrigin::SecurityOrigin()
@@ -489,6 +487,13 @@ bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffi
 #else
     return true;
 #endif
+}
+
+bool SecurityOrigin::isPotentiallyTrustworthy() const
+{
+    if (!m_isPotentiallyTrustworthy)
+        m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(m_data.protocol, m_data.host);
+    return *m_isPotentiallyTrustworthy;
 }
 
 void SecurityOrigin::grantLoadLocalResources()

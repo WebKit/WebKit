@@ -75,11 +75,11 @@ Platform/cf/ModuleCF.cpp
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
-Platform/cocoa/ImageExtractionUtilities.mm
 Platform/cocoa/LayerHostingContext.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
 Platform/cocoa/SharedMemoryCocoa.cpp
+Platform/cocoa/TextRecognitionUtilities.mm
 Platform/cocoa/WKCrashReporter.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebKitAdditions.mm @no-unify
@@ -485,7 +485,7 @@ UIProcess/ios/WKDeferringGestureRecognizer.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
-UIProcess/ios/WKImageExtractionGestureRecognizer.mm
+UIProcess/ios/WKImageAnalysisGestureRecognizer.mm
 UIProcess/ios/WKKeyboardScrollingAnimator.mm
 UIProcess/ios/WKMouseDeviceObserver.mm
 UIProcess/ios/WKMouseGestureRecognizer.mm
@@ -524,7 +524,6 @@ UIProcess/mac/WebPopupMenuProxyMac.mm
 UIProcess/mac/WebProcessProxyMac.mm
 UIProcess/mac/WindowServerConnection.mm
 UIProcess/mac/WKFullScreenWindowController.mm
-UIProcess/mac/WKImageExtractionPreviewController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKPrintingView.mm
 UIProcess/mac/WKRevealItemPresenter.mm
@@ -532,6 +531,7 @@ UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
 UIProcess/mac/WKTextInputWindowController.mm
 UIProcess/mac/WKViewLayoutStrategy.mm
+UIProcess/mac/WKVisualSearchPreviewController.mm
 
 UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm
 UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm

@@ -11,9 +11,9 @@
 #import "ARDSettingsModel+Private.h"
 #import "ARDSettingsStore.h"
 
-#import <WebRTC/RTCCameraVideoCapturer.h>
-#import <WebRTC/RTCDefaultVideoEncoderFactory.h>
-#import <WebRTC/RTCMediaConstraints.h>
+#import "sdk/objc/api/peerconnection/RTCMediaConstraints.h"
+#import "sdk/objc/components/capturer/RTCCameraVideoCapturer.h"
+#import "sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

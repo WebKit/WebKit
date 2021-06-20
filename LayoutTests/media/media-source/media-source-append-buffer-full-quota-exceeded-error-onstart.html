@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var exception;
+
+    async function appendBuffer(buffer) {
+        var resultException = null;
+        try {
+            consoleWrite('Appending buffer');
+            sourceBuffer.appendBuffer(buffer);
+            await waitFor(sourceBuffer, 'updateend');
+        } catch (e) {
+            resultException = e;
+            sourceBuffer.abort();
+        }
+        return resultException;
+    }
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+        source = new MediaSource();
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(350, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        // Set a buffer size that is less than the init segment length.
+        internals.settings.setMaximumSourceBufferSize(30);
+        exception = await appendBuffer(initSegment);
+        waitFor(sourceBuffer, 'error');
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

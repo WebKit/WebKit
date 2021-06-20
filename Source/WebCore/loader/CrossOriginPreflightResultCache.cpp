@@ -121,16 +121,16 @@ CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::singleton()
     return cache;
 }
 
-void CrossOriginPreflightResultCache::appendEntry(const String& origin, const URL& url, std::unique_ptr<CrossOriginPreflightResultCacheItem> preflightResult)
+void CrossOriginPreflightResultCache::appendEntry(const PAL::SessionID& sessionID, const String& origin, const URL& url, std::unique_ptr<CrossOriginPreflightResultCacheItem> preflightResult)
 {
     ASSERT(isMainThread());
-    m_preflightHashMap.set(std::make_pair(origin, url), WTFMove(preflightResult));
+    m_preflightHashMap.set(std::make_tuple(sessionID, origin, url), WTFMove(preflightResult));
 }
 
-bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders)
+bool CrossOriginPreflightResultCache::canSkipPreflight(const PAL::SessionID& sessionID, const String& origin, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders)
 {
     ASSERT(isMainThread());
-    auto it = m_preflightHashMap.find(std::make_pair(origin, url));
+    auto it = m_preflightHashMap.find(std::make_tuple(sessionID, origin, url));
     if (it == m_preflightHashMap.end())
         return false;
 

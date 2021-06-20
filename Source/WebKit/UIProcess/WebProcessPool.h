@@ -577,6 +577,10 @@ private:
 #endif
 #endif
 
+#if PLATFORM(COCOA)
+    static void accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
+#endif
+
 #if PLATFORM(MAC)
     static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
 #endif

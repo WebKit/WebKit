@@ -116,10 +116,10 @@ bool HTMLImageElement::hasPresentationalHintsForAttribute(const QualifiedName& n
 void HTMLImageElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+        addHTMLMultiLengthToStyle(style, CSSPropertyWidth, value);
         applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
     } else if (name == heightAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+        addHTMLMultiLengthToStyle(style, CSSPropertyHeight, value);
         applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
     } else if (name == borderAttr)
         applyBorderAttributeToStyle(value, style);

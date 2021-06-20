@@ -244,7 +244,7 @@ void BytecodeGeneratorification::run()
                     scope, // scope
                     storage.identifierIndex, // identifier
                     operand, // value
-                    GetPutInfo(DoNotThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization, m_bytecodeGenerator.ecmaMode()), // info
+                    GetPutInfo(DoNotThrowIfNotFound, ResolvedClosureVar, InitializationMode::NotInitialization, m_bytecodeGenerator.ecmaMode()), // info
                     SymbolTableOrScopeDepth::symbolTable(VirtualRegister { m_generatorFrameSymbolTableIndex }), // symbol table constant index
                     storage.scopeOffset.offset() // scope offset
                 );
@@ -264,7 +264,7 @@ void BytecodeGeneratorification::run()
                     operand, // dst
                     scope, // scope
                     storage.identifierIndex, // identifier
-                    GetPutInfo(DoNotThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization, m_bytecodeGenerator.ecmaMode()), // info
+                    GetPutInfo(DoNotThrowIfNotFound, ResolvedClosureVar, InitializationMode::NotInitialization, m_bytecodeGenerator.ecmaMode()), // info
                     0, // local scope depth
                     storage.scopeOffset.offset() // scope offset
                 );

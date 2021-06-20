@@ -38,7 +38,7 @@ static MonotonicTime dateToMonotonicTime(NSDate *date)
     return { };
 }
 
-static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NSDate *fetchStart, NSDate *domainLookupStart, NSDate *domainLookupEnd, NSDate *connectStart, NSDate *secureConnectionStart, NSDate *connectEnd, NSDate *requestStart, NSDate *responseStart, bool reusedTLSConnection, NSString *protocol, uint16_t redirectCount, bool hasCrossOriginRedirect)
+static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NSDate *fetchStart, NSDate *domainLookupStart, NSDate *domainLookupEnd, NSDate *connectStart, NSDate *secureConnectionStart, NSDate *connectEnd, NSDate *requestStart, NSDate *responseStart, bool reusedTLSConnection, NSString *protocol, uint16_t redirectCount, bool failsTAOCheck, bool hasCrossOriginRedirect)
 {
 
     auto timing = Box<NetworkLoadMetrics>::create();
@@ -56,6 +56,7 @@ static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NS
     timing->requestStart = dateToMonotonicTime(requestStart);
     timing->responseStart = dateToMonotonicTime(responseStart);
     timing->redirectCount = redirectCount;
+    timing->failsTAOCheck = failsTAOCheck;
     timing->hasCrossOriginRedirect = hasCrossOriginRedirect;
 
     // NOTE: responseEnd is not populated in this code path.
@@ -63,7 +64,7 @@ static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NS
     return timing;
 }
 
-Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, bool hasCrossOriginRedirect)
+Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, const NetworkLoadMetrics& metricsFromTask)
 {
     NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics = incompleteMetrics.transactionMetrics;
     NSURLSessionTaskTransactionMetrics *metrics = transactionMetrics.lastObject;
@@ -80,7 +81,8 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetric
         metrics.reusedConnection,
         metrics.response.URL.scheme,
         incompleteMetrics.redirectCount,
-        hasCrossOriginRedirect
+        metricsFromTask.failsTAOCheck,
+        metricsFromTask.hasCrossOriginRedirect
     );
 }
 
@@ -109,6 +111,7 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, const Resour
         timingValue(@"_kCFNTimingDataConnectionReused").get(),
         connection.currentRequest.URL.scheme,
         handle.redirectCount(),
+        handle.failsTAOCheck(),
         handle.hasCrossOriginRedirect()
     );
 

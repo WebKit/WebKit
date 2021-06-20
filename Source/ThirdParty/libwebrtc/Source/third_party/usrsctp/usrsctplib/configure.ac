@@ -28,7 +28,7 @@ dnl OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 dnl SUCH DAMAGE.
 dnl
 
-AC_INIT([libusrsctp], [0.9.3.0])
+AC_INIT([libusrsctp], [0.9.5.0])
 AM_INIT_AUTOMAKE([foreign])
 
 AC_PROG_CC

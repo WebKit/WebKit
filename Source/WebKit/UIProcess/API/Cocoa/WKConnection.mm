@@ -76,7 +76,9 @@ static void didClose(WKConnectionRef, const void* clientInfo)
         [delegate connectionDidClose:connection];
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static void setUpClient(WKConnection *wrapper, WebKit::WebConnection& connection)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKConnectionClientV0 client;
     memset(&client, 0, sizeof(client));

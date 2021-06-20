@@ -44,7 +44,7 @@ rtc_library("rtc_stats_test_utils") {
   ]
 }
 
-if (rtc_include_tests) {
+if (rtc_include_tests && !build_with_chromium) {
   rtc_test("rtc_stats_unittests") {
     testonly = true
     sources = [

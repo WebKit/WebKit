@@ -15,7 +15,7 @@
 #include <bitset>
 #include <vector>
 
-#include "modules/audio_processing/residual_echo_detector.h"
+#include "api/audio/echo_detector_creator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ref_counted_object.h"
 
@@ -43,8 +43,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   read_idx += 2;
   std::bitset<16> call_order(call_order_int);
 
-  rtc::scoped_refptr<ResidualEchoDetector> echo_detector =
-      new rtc::RefCountedObject<ResidualEchoDetector>();
+  rtc::scoped_refptr<EchoDetector> echo_detector = CreateEchoDetector();
   std::vector<float> input(1);
   // Call AnalyzeCaptureAudio once to prevent the flushing of the buffer.
   echo_detector->AnalyzeCaptureAudio(input);

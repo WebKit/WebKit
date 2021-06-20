@@ -15,6 +15,7 @@
 #include <dxgi1_2.h>
 #include <unknwn.h>
 
+#include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/metrics.h"
@@ -64,17 +65,15 @@ bool DxgiTextureStaging::InitializeStage(ID3D11Texture2D* texture) {
   _com_error error = device_.d3d_device()->CreateTexture2D(
       &desc, nullptr, stage_.GetAddressOf());
   if (error.Error() != S_OK || !stage_) {
-    RTC_LOG(LS_ERROR)
-        << "Failed to create a new ID3D11Texture2D as stage, error "
-        << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to create a new ID3D11Texture2D as stage: "
+                      << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
 
   error = stage_.As(&surface_);
   if (error.Error() != S_OK || !surface_) {
-    RTC_LOG(LS_ERROR)
-        << "Failed to convert ID3D11Texture2D to IDXGISurface, error "
-        << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to convert ID3D11Texture2D to IDXGISurface: "
+                      << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
 
@@ -110,8 +109,8 @@ bool DxgiTextureStaging::CopyFromTexture(
   _com_error error = surface_->Map(rect(), DXGI_MAP_READ);
   if (error.Error() != S_OK) {
     *rect() = {0};
-    RTC_LOG(LS_ERROR) << "Failed to map the IDXGISurface to a bitmap, error "
-                      << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to map the IDXGISurface to a bitmap: "
+                      << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
 

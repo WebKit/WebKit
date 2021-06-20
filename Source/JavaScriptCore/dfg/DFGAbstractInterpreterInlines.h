@@ -4011,7 +4011,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             didFoldClobberStructures();
 
         for (unsigned i = node->multiDeleteByOffsetData().variants.size(); i--;) {
-            const DeleteByIdVariant& variant = node->multiDeleteByOffsetData().variants[i];
+            const DeleteByVariant& variant = node->multiDeleteByOffsetData().variants[i];
             RegisteredStructureSet thisSet = *m_graph.addStructureSet(variant.oldStructure());
             thisSet.filter(base);
             if (thisSet.isEmpty())

@@ -1173,6 +1173,8 @@ sub GeneratePut
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
+    push(@$outputArray, "    if (UNLIKELY(thisObject != putPropertySlot.thisValue()))\n");
+    push(@$outputArray, "        return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
 
     push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());\n\n");
 
@@ -2949,11 +2951,6 @@ sub GenerateHeader
         $structureFlags{"JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero"} = 1;
     }
 
-    if ($interface->extendedAttributes->{CheckSecurity}) {
-        push(@headerContent, "    static void doPutPropertySecurityCheck(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PutPropertySlot&);\n");
-        $structureFlags{"JSC::HasPutPropertySecurityCheck"} = 1;
-    }
-
     if ($interface->extendedAttributes->{Plugin} || GetNamedSetterOperation($interface)) {
         $structureFlags{"JSC::ProhibitsPropertyCaching"} = 1;
     }
@@ -2966,6 +2963,7 @@ sub GenerateHeader
     if (InstanceOverridesPut($interface)) {
         push(@headerContent, "    static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static bool putByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n");
+        $structureFlags{"JSC::OverridesPut"} = 1;
     }
     
     if (InstanceOverridesDefineOwnProperty($interface)) {
@@ -4663,7 +4661,7 @@ sub GenerateImplementation
         AddToImplIncludes("ActiveDOMObject.h");
         if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
             push(@implContent, "    static_assert(std::is_base_of<ActiveDOMObject, ${implType}>::value, \"Interface is marked as [ActiveDOMObject] but implementation class does not subclass ActiveDOMObject.\");\n\n");
-        } else {
+        } elsif (!$codeGenerator->InheritsExtendedAttribute($interface, "CustomIsReachable")) {
             push(@implContent, "    static_assert(!std::is_base_of<ActiveDOMObject, ${implType}>::value, \"Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.\");\n\n");
         }
     }
@@ -4767,15 +4765,16 @@ sub GenerateImplementation
     }
 
     if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
+        AddToImplIncludes("JSDOMGlobalObjectInlines.h");
         push(@implContent, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getDOMConstructor<${className}DOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
+        push(@implContent, "    return getDOMConstructor<${className}DOMConstructor, DOMConstructorID::${interfaceName}>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
 
         if ($interface->extendedAttributes->{LegacyFactoryFunction}) {
             push(@implContent, "JSValue ${className}::getLegacyFactoryFunction(VM& vm, JSGlobalObject* globalObject)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    return getDOMConstructor<${className}LegacyFactoryFunction>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
+            push(@implContent, "    return getDOMConstructor<${className}LegacyFactoryFunction, DOMConstructorID::${interfaceName}LegacyFactory>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
             push(@implContent, "}\n\n");
         }
     }
@@ -5212,10 +5211,11 @@ sub GenerateAttributeGetterBodyDefinition
     }
 
     if ($needSecurityCheck) {
-        AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
-            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped(), ThrowSecurityError);\n");
+            AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
+            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject, ThrowSecurityError);\n");
         } else {
+            AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError);\n");
         }
         push(@$outputArray, "    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception() || !shouldAllowAccess);\n");
@@ -5369,10 +5369,11 @@ sub GenerateAttributeSetterBodyDefinition
     GenerateCustomElementReactionsStackIfNeeded($outputArray, $attribute, "lexicalGlobalObject");
 
     if ($needSecurityCheck) {
-        AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
-            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped(), ThrowSecurityError);\n");
+            AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
+            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject, ThrowSecurityError);\n");
         } else {
+            AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError);\n");
         }
         push(@$outputArray, "    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception() || !shouldAllowAccess);\n");
@@ -5581,10 +5582,11 @@ sub GenerateOperationBodyDefinition
         if ($interface->extendedAttributes->{CheckSecurity} and !$operation->extendedAttributes->{DoNotCheckSecurity}) {
             assert("Security checks are not supported for static operations.") if $operation->isStatic;
             
-            AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             if ($interface->type->name eq "DOMWindow") {
-                push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped(), ThrowSecurityError);\n");
+                AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
+                push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, *castedThis, ThrowSecurityError);\n");
             } else {
+                AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
                 push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped().window(), ThrowSecurityError);\n");
             }
             push(@$outputArray, "    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception() || !shouldAllowAccess);\n");
@@ -6458,9 +6460,10 @@ sub GenerateCallbackImplementationContent
 
         GenerateConstructorDefinitions($contentRef, $className, "", $visibleName, $interfaceOrCallback);
 
+        AddToImplIncludes("JSDOMGlobalObjectInlines.h");
         push(@$contentRef, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
         push(@$contentRef, "{\n");
-        push(@$contentRef, "    return getDOMConstructor<${className}DOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
+        push(@$contentRef, "    return getDOMConstructor<${className}DOMConstructor, DOMConstructorID::${name}>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
         push(@$contentRef, "}\n\n");
     }
 

@@ -34,8 +34,17 @@
     Conditional=APPLE_PAY,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
-] dictionary ApplePayLineItem : ApplePayLineItemData {
+] dictionary ApplePayLineItem {
     ApplePayLineItemType type = "final";
     DOMString label;
     DOMString amount;
+
+    [Conditional=APPLE_PAY_RECURRING_LINE_ITEM|APPLE_PAY_DEFERRED_LINE_ITEM] ApplePayPaymentTiming paymentTiming = "immediate";
+
+    [Conditional=APPLE_PAY_RECURRING_LINE_ITEM] Date recurringPaymentStartDate;
+    [Conditional=APPLE_PAY_RECURRING_LINE_ITEM] ApplePayRecurringPaymentDateUnit recurringPaymentIntervalUnit = "month";
+    [Conditional=APPLE_PAY_RECURRING_LINE_ITEM] unsigned long recurringPaymentIntervalCount = 1;
+    [Conditional=APPLE_PAY_RECURRING_LINE_ITEM] Date recurringPaymentEndDate;
+
+    [Conditional=APPLE_PAY_DEFERRED_LINE_ITEM] Date deferredPaymentDate;
 };

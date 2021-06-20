@@ -253,7 +253,7 @@ void LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(const Strin
 bool LegacySchemeRegistry::schemeIsHandledBySchemeHandler(StringView scheme)
 {
     Locker locker { schemeRegistryLock };
-    return schemesHandledBySchemeHandler().contains(scheme.toString());
+    return schemesHandledBySchemeHandler().contains(scheme.toStringWithoutCopying());
 }
 
 static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()

@@ -166,6 +166,7 @@ void InsertParagraphSeparatorCommand::doApply()
     Position canonicalPos = VisiblePosition(insertionPosition).deepEquivalent();
     if (!startBlock
         || !startBlock->nonShadowBoundaryParentNode()
+        || isRenderedTable(startBlock.get())
         || isTableCell(startBlock.get())
         || is<HTMLFormElement>(*startBlock)
         // FIXME: If the node is hidden, we don't have a canonical position so we will do the wrong thing for tables and <hr>. https://bugs.webkit.org/show_bug.cgi?id=40342

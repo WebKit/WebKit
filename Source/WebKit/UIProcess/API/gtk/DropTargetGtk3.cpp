@@ -177,7 +177,7 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
     case DropTargetType::Markup: {
         gint length;
         const auto* markupData = gtk_selection_data_get_data_with_length(data, &length);
-        if (length) {
+        if (length > 0) {
             // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
             if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
                 m_selectionData->setMarkup(String(reinterpret_cast<const UChar*>(markupData) + 1, (length / 2) - 1));
@@ -189,14 +189,14 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
     case DropTargetType::URIList: {
         gint length;
         const auto* uriListData = gtk_selection_data_get_data_with_length(data, &length);
-        if (length)
+        if (length > 0)
             m_selectionData->setURIList(String::fromUTF8(uriListData, length));
         break;
     }
     case DropTargetType::NetscapeURL: {
         gint length;
         const auto* urlData = gtk_selection_data_get_data_with_length(data, &length);
-        if (length) {
+        if (length > 0) {
             Vector<String> tokens = String::fromUTF8(urlData, length).split('\n');
             URL url({ }, tokens[0]);
             if (url.isValid())
@@ -210,7 +210,7 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
     case DropTargetType::Custom: {
         int length;
         const auto* customData = gtk_selection_data_get_data_with_length(data, &length);
-        if (length)
+        if (length > 0)
             m_selectionData->setCustomData(SharedBuffer::create(customData, static_cast<size_t>(length)));
         break;
     }

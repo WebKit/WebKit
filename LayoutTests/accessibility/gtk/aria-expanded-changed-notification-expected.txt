@@ -7,10 +7,6 @@ Setting aria-expanded to true on combobox1.
 Setting aria-expanded to false on combobox2.
 Setting aria-expanded to true on menu1.
 Setting aria-expanded to false on menu2.
-AXExpandedChanged true on combobox1
-AXExpandedChanged false on combobox2
-AXExpandedChanged true on menu1
-AXExpandedChanged false on menu2
 PASS successfullyParsed is true
 
 TEST COMPLETE

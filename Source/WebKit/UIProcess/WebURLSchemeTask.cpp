@@ -161,8 +161,6 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
 
     m_responseSent = true;
 
-    response.includeCertificateInfo();
-
     if (isSync())
         m_syncResponse = response;
 

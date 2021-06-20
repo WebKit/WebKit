@@ -50,16 +50,78 @@ static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePayLineItem::Typ
     }
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PaymentSummaryItemsCocoaAdditions.mm>
-#endif
+#if HAVE(PASSKIT_RECURRING_LINE_ITEM) || HAVE(PASSKIT_DEFERRED_LINE_ITEM)
 
-#if !ENABLE(APPLE_PAY_LINE_ITEM_DATA)
+static NSDate *toDate(double date)
+{
+    return [NSDate dateWithTimeIntervalSince1970:date];
+}
+
+#endif // HAVE(PASSKIT_RECURRING_LINE_ITEM) || HAVE(PASSKIT_DEFERRED_LINE_ITEM)
+
+#if HAVE(PASSKIT_RECURRING_LINE_ITEM)
+
+static NSCalendarUnit toCalendarUnit(ApplePayRecurringPaymentDateUnit unit)
+{
+    switch (unit) {
+    case ApplePayRecurringPaymentDateUnit::Year:
+        return NSCalendarUnitYear;
+
+    case ApplePayRecurringPaymentDateUnit::Month:
+        return NSCalendarUnitMonth;
+
+    case ApplePayRecurringPaymentDateUnit::Day:
+        return NSCalendarUnitDay;
+
+    case ApplePayRecurringPaymentDateUnit::Hour:
+        return NSCalendarUnitHour;
+
+    case ApplePayRecurringPaymentDateUnit::Minute:
+        return NSCalendarUnitMinute;
+    }
+}
+
+#endif // HAVE(PASSKIT_RECURRING_LINE_ITEM)
+
 static PKPaymentSummaryItem *toPKPaymentSummaryItem(const ApplePayLineItem& lineItem)
 {
+#if HAVE(PASSKIT_RECURRING_LINE_ITEM) || HAVE(PASSKIT_DEFERRED_LINE_ITEM)
+    switch (lineItem.paymentTiming) {
+    case ApplePayPaymentTiming::Immediate:
+        break;
+
+    case ApplePayPaymentTiming::Recurring:
+#if HAVE(PASSKIT_RECURRING_LINE_ITEM)
+    {
+        PKRecurringPaymentSummaryItem *summaryItem = [PAL::getPKRecurringPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+        if (!std::isnan(lineItem.recurringPaymentStartDate))
+            summaryItem.startDate = toDate(lineItem.recurringPaymentStartDate);
+        summaryItem.intervalUnit = toCalendarUnit(lineItem.recurringPaymentIntervalUnit);
+        summaryItem.intervalCount = lineItem.recurringPaymentIntervalCount;
+        if (!std::isnan(lineItem.recurringPaymentEndDate))
+            summaryItem.endDate = toDate(lineItem.recurringPaymentEndDate);
+        return summaryItem;
+    }
+#else
+        break;
+#endif
+
+    case ApplePayPaymentTiming::Deferred:
+#if HAVE(PASSKIT_DEFERRED_LINE_ITEM)
+    {
+        PKDeferredPaymentSummaryItem *summaryItem = [PAL::getPKDeferredPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+        if (!std::isnan(lineItem.deferredPaymentDate))
+            summaryItem.deferredDate = toDate(lineItem.deferredPaymentDate);
+        return summaryItem;
+    }
+#else
+        break;
+#endif
+    }
+#endif
+
     return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
-#endif
 
 NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>& lineItems)
 {

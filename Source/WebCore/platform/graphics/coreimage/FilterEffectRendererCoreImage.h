@@ -28,6 +28,7 @@
 #if USE(CORE_IMAGE)
 
 #import "FilterEffectRenderer.h"
+#import "PlatformImageBuffer.h"
 #import <wtf/Vector.h>
 
 OBJC_CLASS CIImage;
@@ -63,7 +64,7 @@ private:
     RetainPtr<CIImage> imageForFEColorMatrix(const FEColorMatrix&, const Vector<RetainPtr<CIImage>>&);
     RetainPtr<CIImage> imageForFEComponentTransfer(const FEComponentTransfer&, Vector<RetainPtr<CIImage>>&);
     
-    RefPtr<ImageBuffer> m_outputImageBuffer;
+    RefPtr<IOSurfaceImageBuffer> m_outputImageBuffer;
     RetainPtr<CIImage> m_outputImage;
 };
 

@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/video/recordable_encoded_frame.h"
 #include "call/rtp_packet_sink_interface.h"
@@ -24,7 +25,6 @@
 #include "modules/video_coding/frame_buffer2.h"
 #include "modules/video_coding/video_receiver2.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_queue.h"
 #include "system_wrappers/include/clock.h"
@@ -45,10 +45,10 @@ class VCMTiming;
 
 namespace internal {
 
-class VideoReceiveStream : public webrtc::VideoReceiveStream,
+class VideoReceiveStream : public webrtc::DEPRECATED_VideoReceiveStream,
                            public rtc::VideoSinkInterface<VideoFrame>,
                            public NackSender,
-                           public video_coding::OnCompleteFrameCallback,
+                           public OnCompleteFrameCallback,
                            public Syncable,
                            public CallStatsObserver {
  public:
@@ -111,9 +111,8 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
   void SendNack(const std::vector<uint16_t>& sequence_numbers,
                 bool buffering_allowed) override;
 
-  // Implements video_coding::OnCompleteFrameCallback.
-  void OnCompleteFrame(
-      std::unique_ptr<video_coding::EncodedFrame> frame) override;
+  // Implements OnCompleteFrameCallback.
+  void OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) override;
 
   // Implements CallStatsObserver::OnRttUpdate
   void OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) override;
@@ -138,7 +137,7 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
  private:
   int64_t GetWaitMs() const;
   void StartNextDecode() RTC_RUN_ON(decode_queue_);
-  void HandleEncodedFrame(std::unique_ptr<video_coding::EncodedFrame> frame)
+  void HandleEncodedFrame(std::unique_ptr<EncodedFrame> frame)
       RTC_RUN_ON(decode_queue_);
   void HandleFrameBufferTimeout() RTC_RUN_ON(decode_queue_);
   void UpdatePlayoutDelays() const

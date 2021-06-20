@@ -345,8 +345,8 @@
 #include "NavigatorMediaSession.h"
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-#include "ImageExtractionResult.h"
+#if ENABLE(IMAGE_ANALYSIS)
+#include "TextRecognitionResult.h"
 #endif
 
 using JSC::CallData;
@@ -765,6 +765,11 @@ String Internals::styleChangeType(Node& node)
 String Internals::description(JSC::JSValue value)
 {
     return toString(value);
+}
+
+void Internals::log(const String& value)
+{
+    WTFLogAlways("%s", value.utf8().data());
 }
 
 bool Internals::isPreloaded(const String& url)
@@ -4822,6 +4827,11 @@ void Internals::setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMed
     mediaElement.setMediaControlsMaximumRightContainerButtonCountOverride(count);
 }
 
+void Internals::setMediaControlsHidePlaybackRates(HTMLMediaElement& mediaElement, bool hidePlaybackRates)
+{
+    mediaElement.setMediaControlsHidePlaybackRates(hidePlaybackRates);
+}
+
 #endif // ENABLE(VIDEO)
 
 #if !PLATFORM(COCOA)
@@ -5605,7 +5615,7 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
 Internals::ImageOverlayLine::~ImageOverlayLine() = default;
 Internals::ImageOverlayText::~ImageOverlayText() = default;
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
 template<typename T>
 static FloatQuad getQuad(const T& overlayTextOrLine)
@@ -5618,28 +5628,31 @@ static FloatQuad getQuad(const T& overlayTextOrLine)
     };
 }
 
-static ImageExtractionLineData makeDataForLine(const Internals::ImageOverlayLine& line)
+static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine& line)
 {
     return {
         getQuad<Internals::ImageOverlayLine>(line),
-        line.children.map([](auto& textChild) -> ImageExtractionTextData {
+        line.children.map([](auto& textChild) -> TextRecognitionWordData {
             return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild) };
         })
     };
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines)
 {
     if (!is<HTMLElement>(element))
         return;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    downcast<HTMLElement>(element).updateWithImageExtractionResult(ImageExtractionResult {
-        lines.map([] (auto& line) -> ImageExtractionLineData {
+#if ENABLE(IMAGE_ANALYSIS)
+    downcast<HTMLElement>(element).updateWithTextRecognitionResult(TextRecognitionResult {
+        lines.map([] (auto& line) -> TextRecognitionLineData {
             return makeDataForLine(line);
         })
+#if ENABLE(DATA_DETECTION)
+        , Vector<TextRecognitionDataDetector>()
+#endif
     });
 #else
     UNUSED_PARAM(lines);
@@ -6081,8 +6094,8 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 Vector<String> Internals::appHighlightContextMenuItemTitles() const
 {
     return {{
-        contextMenuItemTagAddHighlightToCurrentGroup(),
-        contextMenuItemTagAddHighlightToNewGroup(),
+        contextMenuItemTagAddHighlightToCurrentQuickNote(),
+        contextMenuItemTagAddHighlightToNewQuickNote(),
     }};
 }
 

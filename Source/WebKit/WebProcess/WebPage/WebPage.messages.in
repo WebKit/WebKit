@@ -642,7 +642,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     InvalidateMediaSessionCoordinator()
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    UpdateWithImageExtractionResult(struct WebCore::ImageExtractionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (enum:uint8_t WebKit::ImageExtractionUpdateResult result) Async
+#if ENABLE(IMAGE_ANALYSIS)
+    UpdateWithTextRecognitionResult(struct WebCore::TextRecognitionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (enum:uint8_t WebKit::TextRecognitionUpdateResult result) Async
 #endif
 }

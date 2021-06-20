@@ -29,6 +29,7 @@
 #if USE(SOUP)
 
 #include "Credential.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

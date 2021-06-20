@@ -2528,6 +2528,7 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
     float deviceScale = page->deviceScaleFactor();
     size.scale(deviceScale);
 
+#if !USE(GTK4)
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_RGB24, size.width(), size.height()));
     cairo_surface_set_device_scale(surface.get(), deviceScale, deviceScale);
 
@@ -2537,11 +2538,39 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
         cairo_rectangle(cr.get(), clipRect->x(), clipRect->y(), clipRect->width(), clipRect->height());
         cairo_clip(cr.get());
     }
-#if !USE(GTK4)
     webkitWebViewBaseDraw(GTK_WIDGET(webkitWebViewBase), cr.get());
-#endif
 
     return ViewSnapshot::create(WTFMove(surface));
+#else
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    auto* renderer = gtk_native_get_renderer(GTK_NATIVE(priv->toplevelOnScreenWindow));
+
+    GRefPtr<GtkSnapshot> snapshot = adoptGRef(gtk_snapshot_new());
+
+    if (clipRect) {
+        graphene_point_t point = { -static_cast<float>(clipRect->x()), -static_cast<float>(clipRect->y()) };
+        graphene_rect_t rect = {
+            { static_cast<float>(clipRect->x()), static_cast<float>(clipRect->y()) },
+            { static_cast<float>(clipRect->width()), static_cast<float>(clipRect->height()) }
+        };
+
+        gtk_snapshot_translate(snapshot.get(), &point);
+        gtk_snapshot_push_clip(snapshot.get(), &rect);
+    }
+
+    gtk_snapshot_scale(snapshot.get(), deviceScale, deviceScale);
+    webkitWebViewBaseSnapshot(GTK_WIDGET(webkitWebViewBase), snapshot.get());
+
+    if (clipRect)
+        gtk_snapshot_pop(snapshot.get());
+
+    GRefPtr<GskRenderNode> renderNode = adoptGRef(gtk_snapshot_to_node(snapshot.get()));
+
+    graphene_rect_t viewport = { 0, 0, static_cast<float>(size.width()), static_cast<float>(size.height()) };
+    GdkTexture* texture = gsk_renderer_render_texture(renderer, renderNode.get(), &viewport);
+
+    return ViewSnapshot::create(WTFMove(texture));
+#endif
 }
 
 void webkitWebViewBaseDidStartProvisionalLoadForMainFrame(WebKitWebViewBase* webkitWebViewBase)

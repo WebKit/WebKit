@@ -21,5 +21,5 @@ if not username:
 
 sys.stdout.write('Content-Type: image/png\r\n\r\n')
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), '../../contentSecurityPolicy/block-all-mixed-content/resources/red-square.png'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), '../../contentSecurityPolicy/block-all-mixed-content/resources/red-square.png'), 'rb') as file:
     sys.stdout.buffer.write(file.read())

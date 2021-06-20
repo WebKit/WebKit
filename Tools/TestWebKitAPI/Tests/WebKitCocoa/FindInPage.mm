@@ -296,7 +296,7 @@ TEST(WebKit, FindAndReplace)
     EXPECT_WK_STREQ("hi hi", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
 TEST(WebKit, FindTextInImageOverlay)
 {
@@ -318,6 +318,6 @@ TEST(WebKit, FindTextInImageOverlay)
     }
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #endif // !PLATFORM(IOS_FAMILY)

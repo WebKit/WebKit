@@ -4408,6 +4408,23 @@ private:
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
+#if !USE(BIGINT32)
+        // As long as a BigInt32 and a HeapBigInt can compare equal, it is not sound to replace compareStrictEq by a simple comparison of the JSValue in the following cases.
+        if (node->child1()->shouldSpeculateNeitherDoubleNorHeapBigIntNorString()
+            && node->child2()->shouldSpeculateNotDouble()) {
+            fixEdge<NeitherDoubleNorHeapBigIntNorStringUse>(node->child1());
+            fixEdge<NotDoubleUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateNotDouble()
+            && node->child2()->shouldSpeculateNeitherDoubleNorHeapBigIntNorString()) {
+            fixEdge<NotDoubleUse>(node->child1());
+            fixEdge<NeitherDoubleNorHeapBigIntNorStringUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+#endif
     }
 
     void fixupChecksInBlock(BasicBlock* block)

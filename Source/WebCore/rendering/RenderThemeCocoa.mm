@@ -50,10 +50,6 @@
 #import <pal/cocoa/PassKitSoftLink.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/RenderThemeCocoaAdditions.cpp>
-#endif
-
 @interface WebCoreRenderThemeBundle : NSObject
 @end
 
@@ -72,7 +68,6 @@ void RenderThemeCocoa::purgeCaches()
 #if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
     m_mediaControlsLocalizedStringsScript.clearImplIfNotShared();
     m_mediaControlsScript.clearImplIfNotShared();
-    m_mediaControlsAdditionalScript.clearImplIfNotShared();
     m_mediaControlsStyleSheet.clearImplIfNotShared();
 #endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
 
@@ -188,7 +183,7 @@ String RenderThemeCocoa::mediaControlsStyleSheet()
     return m_mediaControlsStyleSheet;
 }
 
-Vector<String, 3> RenderThemeCocoa::mediaControlsScripts()
+Vector<String, 2> RenderThemeCocoa::mediaControlsScripts()
 {
     // FIXME: Localized strings are not worth having a script. We should make it JSON data etc. instead.
     if (m_mediaControlsLocalizedStringsScript.isEmpty()) {
@@ -199,15 +194,9 @@ Vector<String, 3> RenderThemeCocoa::mediaControlsScripts()
     if (m_mediaControlsScript.isEmpty())
         m_mediaControlsScript = StringImpl::createWithoutCopying(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
 
-#if defined(RenderThemeCocoaAdditions_mediaControlsAdditionalScript)
-    if (m_mediaControlsAdditionalScript.isEmpty())
-        m_mediaControlsAdditionalScript = String(RenderThemeCocoaAdditions_mediaControlsAdditionalScript);
-#endif
-
     return {
         m_mediaControlsLocalizedStringsScript,
         m_mediaControlsScript,
-        m_mediaControlsAdditionalScript,
     };
 }
 

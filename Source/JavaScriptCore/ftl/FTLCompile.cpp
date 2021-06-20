@@ -58,9 +58,6 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (shouldDumpDisassembly())
         state.proc->code().setDisassembler(makeUnique<B3::Air::Disassembler>());
 
-    if (!shouldDumpDisassembly() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
-        graph.freeDFGIRAfterLowering();
-
     {
         GraphSafepoint safepoint(state.graph, safepointResult);
 

@@ -141,10 +141,10 @@ public:
     // When this fails (returns GaveUp), this will leave the old stub intact but you should not try
     // to call this method again for that PolymorphicAccess instance.
     AccessGenerationResult addCases(
-        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, Vector<std::unique_ptr<AccessCase>, 2>);
+        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, Vector<RefPtr<AccessCase>, 2>);
 
     AccessGenerationResult addCase(
-        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, std::unique_ptr<AccessCase>);
+        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, Ref<AccessCase>);
     
     AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, VM&, JSGlobalObject*, CodeBlock*, ECMAMode, StructureStubInfo&);
     
@@ -179,16 +179,15 @@ private:
     friend class CodeBlock;
     friend struct AccessGenerationState;
     
-    typedef Vector<std::unique_ptr<AccessCase>, 2> ListType;
+    typedef Vector<RefPtr<AccessCase>, 2> ListType;
     
     void commit(
         const GCSafeConcurrentJSLocker&, VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>&, CodeBlock*, StructureStubInfo&,
         AccessCase&);
 
     ListType m_list;
-    RefPtr<JITStubRoutine> m_stubRoutine;
+    RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
-    FixedVector<WriteBarrier<JSCell>> m_weakReferences;
 };
 
 struct AccessGenerationState {
@@ -196,6 +195,8 @@ struct AccessGenerationState {
         : m_vm(vm) 
         , m_globalObject(globalObject)
         , m_ecmaMode(ecmaMode)
+        , m_doesJSGetterSetterCalls(false)
+        , m_doesCalls(false)
         , m_calculatedRegistersForCallAndExceptionHandling(false)
         , m_needsToRestoreRegistersIfException(false)
         , m_calculatedCallSiteIndex(false)
@@ -223,10 +224,12 @@ struct AccessGenerationState {
     FPRReg scratchFPR { InvalidFPRReg };
     ECMAMode m_ecmaMode { ECMAMode::sloppy() };
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
-    Vector<WriteBarrier<JSCell>> weakReferences;
+    Vector<StructureID> weakStructures;
     Bag<CallLinkInfo> m_callLinkInfos;
+    bool m_doesJSGetterSetterCalls : 1;
+    bool m_doesCalls : 1;
 
-    void installWatchpoint(const ObjectPropertyCondition&);
+    void installWatchpoint(CodeBlock*, const ObjectPropertyCondition&);
 
     void restoreScratch();
     void succeed();
@@ -248,7 +251,7 @@ struct AccessGenerationState {
     const RegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
 
     SpillState preserveLiveRegistersToStackForCall(const RegisterSet& extra = { });
-    SpillState preserveLiveRegistersToStackForCallWithoutExceptions();
+    SpillState preserveLiveRegistersToStackForCallWithoutExceptions(const RegisterSet& extra = { });
 
     void restoreLiveRegistersFromStackForCallWithThrownException(const SpillState&);
     void restoreLiveRegistersFromStackForCall(const SpillState&, const RegisterSet& dontRestore = { });

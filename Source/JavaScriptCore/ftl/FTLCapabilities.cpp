@@ -529,6 +529,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case AnyIntUse:
                 case DoubleRepAnyIntUse:
                 case NotDoubleUse:
+                case NeitherDoubleNorHeapBigIntNorStringUse:
                     // These are OK.
                     break;
                 default:

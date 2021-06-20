@@ -260,7 +260,7 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectSet, (JSGlobalObject* globalObject, CallFr
 
     // Do not raise any readonly errors that happen in strict mode.
     bool shouldThrowIfCantSet = false;
-    PutPropertySlot slot(receiver, shouldThrowIfCantSet);
+    PutPropertySlot slot(receiver, shouldThrowIfCantSet, PutPropertySlot::ReflectSet);
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(targetObject->methodTable(vm)->put(targetObject, globalObject, propertyName, callFrame->argument(2), slot))));
 }
 

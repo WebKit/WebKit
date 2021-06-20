@@ -283,9 +283,13 @@ typedef char* caddr_t;
 
 #else /* !defined(Userspace_os_Windows) */
 #include <sys/socket.h>
-#if defined(__DragonFly__) || defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__native_client__) || defined(__Fuchsia__) || defined(__EMSCRIPTEN_PTHREADS__)
-#include <pthread.h>
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#error "Unsupported build configuration."
 #endif
+
+#include <pthread.h>
+
 typedef pthread_mutex_t userland_mutex_t;
 typedef pthread_cond_t userland_cond_t;
 typedef pthread_t userland_thread_t;
@@ -882,7 +886,7 @@ int sctp_userspace_get_mtu_from_ifn(uint32_t if_index, int af);
 
 #define SCTP_GATHER_MTU_FROM_ROUTE(sctp_ifa, sa, rt) ((rt != NULL) ? rt->rt_rmx.rmx_mtu : 0)
 
-#define SCTP_GATHER_MTU_FROM_INTFC(sctp_ifn)  sctp_userspace_get_mtu_from_ifn(if_nametoindex(((struct ifaddrs *) (sctp_ifn))->ifa_name), AF_INET)
+#define SCTP_GATHER_MTU_FROM_INTFC(sctp_ifn) (sctp_ifn->ifn_mtu)
 
 #define SCTP_SET_MTU_OF_ROUTE(sa, rt, mtu) do { \
                                               if (rt != NULL) \

@@ -64,6 +64,8 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void playbackTargetIsWirelessChanged();
 #endif
+
+    void queueTaskOnEventLoop(Function<void()>&&);
     
     class Notification {
     public:

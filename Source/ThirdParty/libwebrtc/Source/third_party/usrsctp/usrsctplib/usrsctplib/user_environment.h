@@ -92,7 +92,7 @@ extern u_short ip_id;
 #include <stdlib.h>
 
 #if defined(_WIN32)
-static inline void
+static inline void __declspec(noreturn)
 #else
 static inline void __attribute__((__noreturn__))
 #endif

@@ -55,8 +55,10 @@
 #include "PageGroup.h"
 #include "RenderTheme.h"
 #include "TextTrack.h"
+#include "TextTrackCueList.h"
 #include "TextTrackList.h"
 #include "UserGestureIndicator.h"
+#include "VTTCue.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CompletionHandler.h>
@@ -64,10 +66,6 @@
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
 #include <wtf/Variant.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MediaControlsHostAdditions.cpp>
-#endif
 
 namespace WebCore {
 
@@ -358,14 +356,6 @@ String MediaControlsHost::formattedStringForDuration(double durationInSeconds)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-#if !defined(MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData)
-#define MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData
-#endif
-
-#if !defined(MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn)
-#define MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
-#endif
-
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
 class MediaControlsContextMenuProvider final : public ContextMenuProvider {
 public:
@@ -506,13 +496,22 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     enum class PictureInPictureTag { IncludePictureInPicture };
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
+    enum class PlaybackSpeed {
+        x0_5,
+        x1_0,
+        x1_25,
+        x1_5,
+        x2_0,
+    };
+
     using MenuData = Variant<
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         PictureInPictureTag,
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
         RefPtr<AudioTrack>,
-        RefPtr<TextTrack>
-        MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData
+        RefPtr<TextTrack>,
+        RefPtr<VTTCue>,
+        PlaybackSpeed
     >;
     HashMap<MenuItemIdentifier, MenuData> idMap;
 
@@ -586,9 +585,45 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         }
     }
 
-#if defined(MediaControlsHostAdditions_showMediaControlsContextMenu_options)
-    MediaControlsHostAdditions_showMediaControlsContextMenu_options
-#endif
+    if (optionsJSONObject->getBoolean("includeChapters"_s).value_or(false)) {
+        if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
+            auto& captionPreferences = page->group().captionPreferences();
+
+            for (auto& textTrack : captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Chapters })) {
+                Vector<MenuItem> chapterMenuItems;
+
+                if (auto* cues = textTrack->cues()) {
+                    for (unsigned i = 0; i < cues->length(); ++i) {
+                        auto* cue = cues->item(i);
+                        if (!is<VTTCue>(cue))
+                            continue;
+
+                        auto& vttCue = downcast<VTTCue>(*cue);
+                        chapterMenuItems.append(createMenuItem(makeRefPtr(vttCue), vttCue.text()));
+                    }
+                }
+
+                if (!chapterMenuItems.isEmpty()) {
+                    items.append(createSubmenu(captionPreferences.displayNameForTrack(textTrack.get()), "list.bullet"_s, WTFMove(chapterMenuItems)));
+
+                    /* Only show the first valid chapters track. */
+                    break;
+                }
+            }
+        }
+    }
+
+    if (optionsJSONObject->getBoolean("includePlaybackRates"_s).value_or(false)) {
+        auto playbackRate = mediaElement.playbackRate();
+
+        items.append(createSubmenu(WEB_UI_STRING_KEY("Playback Speed", "Playback Speed (Media Controls Menu)", "Playback Speed media controls context menu title"), "speedometer"_s, {
+            createMenuItem(PlaybackSpeed::x0_5, WEB_UI_STRING_KEY("0.5×", "0.5× (Media Controls Menu Playback Speed)", "0.5× media controls context menu playback speed label"), playbackRate == 0.5),
+            createMenuItem(PlaybackSpeed::x1_0, WEB_UI_STRING_KEY("1×", "1× (Media Controls Menu Playback Speed)", "1× media controls context menu playback speed label"), playbackRate == 1.0),
+            createMenuItem(PlaybackSpeed::x1_25, WEB_UI_STRING_KEY("1.25×", "1.25× (Media Controls Menu Playback Speed)", "1.25× media controls context menu playback speed label"), playbackRate == 1.25),
+            createMenuItem(PlaybackSpeed::x1_5, WEB_UI_STRING_KEY("1.5×", "1.5× (Media Controls Menu Playback Speed)", "1.5× media controls context menu playback speed label"), playbackRate == 1.5),
+            createMenuItem(PlaybackSpeed::x2_0, WEB_UI_STRING_KEY("2×", "2× (Media Controls Menu Playback Speed)", "2× media controls context menu playback speed label"), playbackRate == 2.0),
+        }));
+    }
 
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
     if ((items.size() == 1 && items[0].type() == SubmenuType) || optionsJSONObject->getBoolean("promoteSubMenus"_s).value_or(false)) {
@@ -645,9 +680,42 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
                         (*textTrack)->setMode(TextTrack::Mode::Disabled);
                 }
                 mediaElement.setSelectedTextTrack(selectedTextTrack.get());
+            },
+            [&] (RefPtr<VTTCue>& cue) {
+                mediaElement.setCurrentTime(cue->startMediaTime());
+            },
+            [&] (PlaybackSpeed playbackSpeed) {
+                switch (playbackSpeed) {
+                case PlaybackSpeed::x0_5:
+                    mediaElement.setDefaultPlaybackRate(0.5);
+                    mediaElement.setPlaybackRate(0.5);
+                    return;
+
+                case PlaybackSpeed::x1_0:
+                    mediaElement.setDefaultPlaybackRate(1.0);
+                    mediaElement.setPlaybackRate(1.0);
+                    return;
+
+                case PlaybackSpeed::x1_25:
+                    mediaElement.setDefaultPlaybackRate(1.25);
+                    mediaElement.setPlaybackRate(1.25);
+                    return;
+
+                case PlaybackSpeed::x1_5:
+                    mediaElement.setDefaultPlaybackRate(1.5);
+                    mediaElement.setPlaybackRate(1.5);
+                    return;
+
+                case PlaybackSpeed::x2_0:
+                    mediaElement.setDefaultPlaybackRate(2.0);
+                    mediaElement.setPlaybackRate(2.0);
+                    return;
+                }
+
+                ASSERT_NOT_REACHED();
             }
-            MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
         );
+
     };
 
     auto bounds = target.boundsInRootViewSpace();

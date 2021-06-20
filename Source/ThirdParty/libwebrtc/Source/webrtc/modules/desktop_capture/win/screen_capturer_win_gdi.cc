@@ -12,7 +12,9 @@
 
 #include <utility>
 
+#include "modules/desktop_capture/desktop_capture_metrics_helper.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_frame_win.h"
 #include "modules/desktop_capture/desktop_region.h"
@@ -24,6 +26,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -92,8 +95,12 @@ void ScreenCapturerWinGdi::CaptureFrame() {
                                GetDeviceCaps(desktop_dc_, LOGPIXELSY)));
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
-  frame->set_capture_time_ms((rtc::TimeNanos() - capture_start_time_nanos) /
-                             rtc::kNumNanosecsPerMillisec);
+
+  int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
+                        rtc::kNumNanosecsPerMillisec;
+  RTC_HISTOGRAM_COUNTS_1000(
+      "WebRTC.DesktopCapture.Win.ScreenGdiCapturerFrameTime", capture_time_ms);
+  frame->set_capture_time_ms(capture_time_ms);
   frame->set_capturer_id(DesktopCapturerId::kScreenCapturerWinGdi);
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }
@@ -112,6 +119,7 @@ bool ScreenCapturerWinGdi::SelectSource(SourceId id) {
 void ScreenCapturerWinGdi::Start(Callback* callback) {
   RTC_DCHECK(!callback_);
   RTC_DCHECK(callback);
+  RecordCapturerImpl(DesktopCapturerId::kScreenCapturerWinGdi);
 
   callback_ = callback;
 

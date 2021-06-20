@@ -152,7 +152,7 @@ public:
 
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
     bool needsToForceUserSelectWhenInstallingImageOverlay() const;
 #endif
 

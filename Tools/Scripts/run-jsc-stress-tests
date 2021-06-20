@@ -1619,7 +1619,7 @@ def runNoisyTestNoCJIT
 end
 
 def runNoisyTestNoCJITB3O1
-    runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS))
+    runNoisyTest("ftl-no-cjit-b3o1", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS))
 end
 
 def runNoisyTestEagerNoCJIT

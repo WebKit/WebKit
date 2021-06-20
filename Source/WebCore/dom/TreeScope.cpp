@@ -443,7 +443,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(const FloatPoint& p)
 
 // FIXME: Would be nice to change this to take a StringView, since that's what callers have
 // and there is no particular advantage to already having a String.
-Element* TreeScope::findAnchor(const String& name)
+Element* TreeScope::findAnchor(StringView name)
 {
     if (name.isEmpty())
         return nullptr;

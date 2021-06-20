@@ -37,13 +37,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebCoreNSURLSessionAdditions.h>
-#else
-#define WEBCORE_SESSION_ADDITIONS_1
-#define WEBCORE_SESSION_ADDITIONS_2
-#endif
-
 using namespace WebCore;
 
 #pragma mark - Private declarations
@@ -77,7 +70,9 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @property (readonly, getter=isExpensive) BOOL expensive;
 @property (readonly, getter=isConstrained) BOOL constrained;
 @property (readonly, getter=isMultipath) BOOL multipath;
-WEBCORE_SESSION_ADDITIONS_1;
+#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
+@property (assign, readonly) nw_connection_privacy_stance_t _privacyStance;
+#endif
 @end
 
 @implementation WebCoreNSURLSessionTaskTransactionMetrics {
@@ -160,7 +155,29 @@ WEBCORE_SESSION_ADDITIONS_1;
     return _metrics.isReusedConnection;
 }
 
-WEBCORE_SESSION_ADDITIONS_2
+#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
+@dynamic _privacyStance;
+- (nw_connection_privacy_stance_t)_privacyStance
+{
+    auto toConnectionPrivacyStance = [] (WebCore::PrivacyStance privacyStance) {
+        switch (privacyStance) {
+        case WebCore::PrivacyStance::Unknown:
+            return nw_connection_privacy_stance_unknown;
+        case WebCore::PrivacyStance::NotEligible:
+            return nw_connection_privacy_stance_not_eligible;
+        case WebCore::PrivacyStance::Proxied:
+            return nw_connection_privacy_stance_proxied;
+        case WebCore::PrivacyStance::Failed:
+            return nw_connection_privacy_stance_failed;
+        case WebCore::PrivacyStance::Direct:
+            return nw_connection_privacy_stance_direct;
+        }
+        ASSERT_NOT_REACHED();
+        return nw_connection_privacy_stance_unknown;
+    };
+    return toConnectionPrivacyStance(_metrics.privacyStance);
+}
+#endif
 
 @dynamic cellular;
 - (BOOL)cellular

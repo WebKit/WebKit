@@ -84,6 +84,7 @@ set(TestWTF_SOURCES
     Tests/WTF/Scope.cpp
     Tests/WTF/ScopedLambda.cpp
     Tests/WTF/SetForScope.cpp
+    Tests/WTF/Span.cpp
     Tests/WTF/StdLibExtras.cpp
     Tests/WTF/StringBuilder.cpp
     Tests/WTF/StringConcatenate.cpp

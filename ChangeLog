@@ -1,3 +1,42 @@
+2021-06-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.33.2 release
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
+2021-06-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake][GTK][WPE] Improve error message when libsoup3 is not found
+        https://bugs.webkit.org/show_bug.cgi?id=226905
+
+        Reviewed by Adrian Perez de Castro.
+
+        When libsoup 3 is not found be more clear about the problem and
+        offer possible workaround to continue the build.
+
+        * Source/cmake/FindLibSoup.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-06-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Enable Cog for developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=224360
+
+        Reviewed by Adrian Perez de Castro.
+
+        Cog would be preferred over MiniBrowser for WPE developer builds because it provides a nicer
+        user experience, while keeping the same spirit as MiniBrowser. Pass `-DENABLE_COG=NO` to
+        CMake to disable it and fall back to MiniBrowser.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.2 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2021-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.8

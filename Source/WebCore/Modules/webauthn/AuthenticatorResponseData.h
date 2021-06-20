@@ -59,7 +59,7 @@ template<class Encoder>
 static void encodeArrayBuffer(Encoder& encoder, const ArrayBuffer& buffer)
 {
     encoder << static_cast<uint64_t>(buffer.byteLength());
-    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.byteLength(), 1);
+    encoder.encodeFixedLengthData(static_cast<const uint8_t*>(buffer.data()), buffer.byteLength(), 1);
 }
 
 template<class Decoder>
@@ -75,7 +75,7 @@ RefPtr<ArrayBuffer> decodeArrayBuffer(Decoder& decoder)
     auto buffer = ArrayBuffer::tryCreate(length.value(), sizeof(uint8_t));
     if (!buffer)
         return nullptr;
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer->data()), length.value(), 1))
+    if (!decoder.decodeFixedLengthData(static_cast<uint8_t*>(buffer->data()), length.value(), 1))
         return nullptr;
     return buffer;
 }

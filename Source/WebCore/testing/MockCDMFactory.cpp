@@ -213,7 +213,7 @@ bool MockCDM::supportsInitData(const AtomString& initDataType, const SharedBuffe
 
 RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) const
 {
-    if (!charactersAreAllASCII(reinterpret_cast<const LChar*>(response.data()), response.size()))
+    if (!charactersAreAllASCII(response.data(), response.size()))
         return nullptr;
 
     Vector<String> responseArray = String(response.data(), response.size()).split(' ');

@@ -32,7 +32,6 @@
 #include "HTTPParsers.h"
 #include "JSFetchRequest.h"
 #include "JSFetchResponse.h"
-#include "ReadableStreamChunk.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
@@ -289,7 +288,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             }
             size_t recordPosition = taskHandler->addRecord(toConnectionRecord(request.get(), response, nullptr));
 
-            response.consumeBodyReceivedByChunk([taskHandler = WTFMove(taskHandler), recordPosition, data = SharedBuffer::create(), response = makeRef(response)] (ExceptionOr<ReadableStreamChunk*>&& result) mutable {
+            response.consumeBodyReceivedByChunk([taskHandler = WTFMove(taskHandler), recordPosition, data = SharedBuffer::create(), response = makeRef(response)] (auto&& result) mutable {
                 if (taskHandler->isDone())
                     return;
 
@@ -298,8 +297,8 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                     return;
                 }
 
-                if (auto chunk = result.returnValue())
-                    data->append(chunk->data, chunk->size);
+                if (auto* chunk = result.returnValue())
+                    data->append(chunk->data(), chunk->size());
                 else
                     taskHandler->addResponseBody(recordPosition, response, WTFMove(data));
             });
@@ -382,8 +381,8 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
                 return;
             }
 
-            if (auto chunk = result.returnValue())
-                data->append(chunk->data, chunk->size);
+            if (auto* chunk = result.returnValue())
+                data->append(chunk->data(), chunk->size());
             else
                 this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<SharedBuffer> { WTFMove(data) });
         });

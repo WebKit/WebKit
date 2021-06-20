@@ -29,12 +29,13 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayCancelEvent.h"
+#include "ApplePayCouponCodeChangedEvent.h"
+#include "ApplePayCouponCodeUpdate.h"
 #include "ApplePayErrorCode.h"
 #include "ApplePayErrorContactField.h"
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentAuthorizationResult.h"
 #include "ApplePayPaymentAuthorizedEvent.h"
-#include "ApplePayPaymentMethodModeUpdate.h"
 #include "ApplePayPaymentMethodSelectedEvent.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePayPaymentRequest.h"
@@ -281,9 +282,9 @@ static ExceptionOr<ApplePayShippingMethodUpdate> convertAndValidate(ApplePayShip
     return WTFMove(update);
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-static ExceptionOr<ApplePayPaymentMethodModeUpdate> convertAndValidate(ApplePayPaymentMethodModeUpdate&& update)
+static ExceptionOr<ApplePayCouponCodeUpdate> convertAndValidate(ApplePayCouponCodeUpdate&& update)
 {
     auto convertedNewShippingMethods = convertAndValidate(WTFMove(update.newShippingMethods));
     if (convertedNewShippingMethods.hasException())
@@ -303,7 +304,7 @@ static ExceptionOr<ApplePayPaymentMethodModeUpdate> convertAndValidate(ApplePayP
     return WTFMove(update);
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, unsigned version, ApplePayPaymentRequest&& paymentRequest)
 {
@@ -525,6 +526,25 @@ ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(ApplePayPaymen
     return { };
 }
 
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+
+ExceptionOr<void> ApplePaySession::completeCouponCodeChange(ApplePayCouponCodeUpdate&& update)
+{
+    if (!canCompleteCouponCodeChange())
+        return Exception { InvalidAccessError };
+
+    auto convertedUpdate = convertAndValidate(WTFMove(update));
+    if (convertedUpdate.hasException())
+        return convertedUpdate.releaseException();
+
+    m_state = State::Active;
+    paymentCoordinator().completeCouponCodeChange(convertedUpdate.releaseReturnValue());
+
+    return { };
+}
+
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
+
 ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationResult&& result)
 {
     if (!canCompletePayment())
@@ -721,18 +741,23 @@ void ApplePaySession::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
     dispatchEvent(event.get());
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void ApplePaySession::didChangePaymentMethodMode(String&& paymentMethodMode)
+void ApplePaySession::didChangeCouponCode(String&& couponCode)
 {
     ASSERT(m_state == State::Active);
 
-#if defined(ApplePaySessionAdditions_didChangePaymentMethodMode)
-    ApplePaySessionAdditions_didChangePaymentMethodMode
-#endif
+    if (!hasEventListeners(eventNames().couponcodechangedEvent)) {
+        paymentCoordinator().completeCouponCodeChange({ });
+        return;
+    }
+
+    m_state = State::CouponCodeChanged;
+    auto event = ApplePayCouponCodeChangedEvent::create(eventNames().couponcodechangedEvent, WTFMove(couponCode));
+    dispatchEvent(event.get());
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void ApplePaySession::didCancelPaymentSession(PaymentSessionError&& error)
 {
@@ -763,9 +788,9 @@ bool ApplePaySession::canSuspendWithoutCanceling() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return false;
     }
@@ -813,9 +838,9 @@ bool ApplePaySession::canBegin() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return false;
     }
@@ -835,9 +860,9 @@ bool ApplePaySession::canAbort() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return true;
     }
@@ -857,9 +882,9 @@ bool ApplePaySession::canCancel() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return true;
     }
@@ -887,9 +912,9 @@ bool ApplePaySession::canCompleteShippingMethodSelection() const
     case State::Authorized:
     case State::PaymentMethodSelected:
     case State::ShippingContactSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return false;
 
@@ -909,9 +934,9 @@ bool ApplePaySession::canCompleteShippingContactSelection() const
     case State::Authorized:
     case State::PaymentMethodSelected:
     case State::ShippingMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return false;
 
@@ -931,9 +956,9 @@ bool ApplePaySession::canCompletePaymentMethodSelection() const
     case State::Authorized:
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return false;
 
@@ -942,9 +967,9 @@ bool ApplePaySession::canCompletePaymentMethodSelection() const
     }
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-bool ApplePaySession::canCompletePaymentMethodModeChange() const
+bool ApplePaySession::canCompleteCouponCodeChange() const
 {
     switch (m_state) {
     case State::Idle:
@@ -959,12 +984,12 @@ bool ApplePaySession::canCompletePaymentMethodModeChange() const
     case State::PaymentMethodSelected:
         return false;
 
-    case State::PaymentMethodModeChanged:
+    case State::CouponCodeChanged:
         return true;
     }
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 bool ApplePaySession::canCompletePayment() const
 {
@@ -977,9 +1002,9 @@ bool ApplePaySession::canCompletePayment() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::CancelRequested:
         return false;
 
@@ -996,9 +1021,9 @@ bool ApplePaySession::isFinalState() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
     case State::Authorized:
     case State::CancelRequested:
         return false;
@@ -1015,10 +1040,6 @@ bool ApplePaySession::virtualHasPendingActivity() const
     return m_state != State::Idle && !isFinalState();
 }
 
-#if defined(ApplePaySessionAdditions_definitions)
-ApplePaySessionAdditions_definitions
-#endif
+} // namespace WebCore
 
-}
-
-#endif
+#endif // ENABLE(APPLE_PAY)

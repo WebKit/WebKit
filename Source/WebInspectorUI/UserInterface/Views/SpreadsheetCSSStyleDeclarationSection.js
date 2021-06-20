@@ -58,6 +58,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         return this._style.editable;
     }
 
+    set propertyVisibilityMode(propertyVisibilityMode)
+    {
+        this._propertiesEditor.propertyVisibilityMode = propertyVisibilityMode;
+    }
+
     initialLayout()
     {
         super.initialLayout();
@@ -282,6 +287,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         if (this._delegate && this._delegate.spreadsheetCSSStyleDeclarationSectionSelectProperty)
             this._delegate.spreadsheetCSSStyleDeclarationSectionSelectProperty(property);
+    }
+
+    spreadsheetCSSStyleDeclarationEditorSetAllPropertyVisibilityMode(editor, propertyVisibilityMode)
+    {
+        this._delegate?.spreadsheetCSSStyleDeclarationSectionSetAllPropertyVisibilityMode?.(this, propertyVisibilityMode);
     }
 
     applyFilter(filterText)

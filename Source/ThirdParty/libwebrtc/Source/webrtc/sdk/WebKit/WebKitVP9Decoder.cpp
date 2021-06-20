@@ -25,8 +25,9 @@
 
 #include "WebKitVP9Decoder.h"
 
+#include "WebKitDecoder.h"
 #include "WebKitDecoderReceiver.h"
-#include "modules/video_coding/codecs/vp9/vp9_impl.h"
+#include "modules/video_coding/codecs/vp9/libvpx_vp9_decoder.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/cpu_info.h"
 
@@ -39,7 +40,7 @@ void registerWebKitVP9Decoder()
 }
 
 typedef struct {
-    std::unique_ptr<VP9DecoderImpl> m_instance;
+    std::unique_ptr<LibvpxVp9Decoder> m_instance;
     std::unique_ptr<WebKitDecoderReceiver> m_receiver;
 } WebKitVP9Decoder;
 
@@ -142,7 +143,7 @@ OSStatus startVP9DecoderSession(VTVideoDecoderRef instance, VTVideoDecoderSessio
         return kVTParameterErr;
     }
 
-    decoder->m_instance = std::make_unique<VP9DecoderImpl>();
+    decoder->m_instance = std::make_unique<LibvpxVp9Decoder>();
     decoder->m_receiver = std::make_unique<WebKitDecoderReceiver>(session);
     decoder->m_receiver->initializeFromFormatDescription(formatDescription);
 
@@ -172,10 +173,10 @@ static OSStatus decodeVP9DecoderFrameFromContiguousBlock(WebKitVP9Decoder& decod
     RTC_DCHECK(!decoder.m_receiver->currentFrame());
     decoder.m_receiver->setCurrentFrame(frame);
 
-    EncodedImage image { reinterpret_cast<uint8_t*>(data), size, size };
+    EncodedImage image;
+    image.SetEncodedData(WebKitEncodedImageBufferWrapper::create(reinterpret_cast<uint8_t*>(data), size));
     // We set those values as VP9DecoderImpl checks for getting a full key frame as first frame.
     image._frameType = VideoFrameType::kVideoFrameKey;
-    image._completeFrame = true;
     auto error = decoder.m_instance->Decode(image, false, 0);
     if (error)
         return decoder.m_receiver->decoderFailed(error);

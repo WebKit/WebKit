@@ -1159,6 +1159,7 @@ RefPtr<Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle
 
 void InspectorCSSAgent::didRemoveDOMNode(Node& node, Protocol::DOM::NodeId nodeId)
 {
+    // This can be called in response to GC.
     m_nodeIdToForcedPseudoState.remove(nodeId);
 
     auto sheet = m_nodeToInspectorStyleSheet.take(&node);

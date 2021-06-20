@@ -799,7 +799,7 @@ static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)
 void TestRunner::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
-    if (m_waitToDump && !waitToDumpWatchdog)
+    if (m_waitToDump && !waitToDumpWatchdog && useTimeoutWatchdog)
         waitToDumpWatchdog = SetTimer(0, 0, m_timeout, waitUntilDoneWatchdogFired);
 }
 

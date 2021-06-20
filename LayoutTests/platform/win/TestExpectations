@@ -4341,6 +4341,7 @@ webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-b
 webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
 
 webkit.org/b/202954 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure ]
+http/wpt/resource-timing/rt-revalidate-requests-2.html [ Failure ]
 
 webkit.org/b/202951 fast/canvas/drawImage-animated-gif-draws-first-frame-and-no-reset-image.html [ Timeout ]
 
@@ -4637,3 +4638,13 @@ fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 fast/canvas/canvas-color-space-display-p3.html [ Skip ]
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
+
+# WebXR is not enabled on windows.
+webxr [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=226970
+fast/workers/worker-multi-startup.html [ Pass Timeout ]
+fast/workers/worker-script-error.html [ Pass Timeout ]
+fetch/fetch-worker-crash.html [ Pass Timeout ]
+webanimations/accelerated-transform-animation-to-scale-zero-with-implicit-from-keyframe.html [ Pass ImageOnlyFailure ]
+

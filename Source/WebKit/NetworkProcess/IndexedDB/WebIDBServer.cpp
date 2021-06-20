@@ -409,7 +409,7 @@ void WebIDBServer::close(CompletionHandler<void()>&& completionHandler)
         connection.removeWorkQueueMessageReceiver(Messages::WebIDBServer::messageReceiverName());
 
     // Dispatch last task to clean up.
-   postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         m_connectionMap.clear();
 
         {
@@ -418,7 +418,8 @@ void WebIDBServer::close(CompletionHandler<void()>&& completionHandler)
         }
 
         postTaskReply([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler();
+            if (completionHandler)
+                completionHandler();
         });
     });
 }

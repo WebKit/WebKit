@@ -55,6 +55,7 @@ WEBCORE_EXPORT JSC::EncodedJSValue throwRequiredMemberTypeError(JSC::JSGlobalObj
 JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName);
 
 String makeThisTypeErrorMessage(const char* interfaceName, const char* attributeName);
+String makeUnsupportedIndexedSetterErrorMessage(const char* interfaceName);
 
 WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName, const char* functionName);
 

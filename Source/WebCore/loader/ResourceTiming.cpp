@@ -35,28 +35,6 @@
 
 namespace WebCore {
 
-static bool passesTimingAllowCheck(const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin)
-{
-    Ref<SecurityOrigin> resourceOrigin = SecurityOrigin::create(response.url());
-    if (resourceOrigin->isSameSchemeHostPort(initiatorSecurityOrigin))
-        return true;
-
-    const String& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
-    if (timingAllowOriginString.isEmpty() || equalLettersIgnoringASCIICase(timingAllowOriginString, "null"))
-        return false;
-
-    if (timingAllowOriginString == "*")
-        return true;
-
-    const String& securityOrigin = initiatorSecurityOrigin.toString();
-    for (auto& origin : timingAllowOriginString.split(',')) {
-        if (origin.stripWhiteSpace() == securityOrigin)
-            return true;
-    }
-
-    return false;
-}
-
 ResourceTiming ResourceTiming::fromMemoryCache(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
 {
     return ResourceTiming(url, initiator, loadTiming, response, securityOrigin);
@@ -72,28 +50,26 @@ ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String&
     return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
 }
 
-ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
+ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const SecurityOrigin&)
     : m_url(url)
     , m_initiator(initiator)
     , m_resourceLoadTiming(loadTiming)
-    , m_allowTimingDetails(passesTimingAllowCheck(response, securityOrigin))
 {
     initServerTiming(response);
 }
 
-ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
+ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin&)
     : m_url(url)
     , m_initiator(initiator)
     , m_resourceLoadTiming(timing)
     , m_networkLoadMetrics(networkLoadMetrics)
-    , m_allowTimingDetails(passesTimingAllowCheck(response, securityOrigin))
 {
     initServerTiming(response);
 }
 
 void ResourceTiming::initServerTiming(const ResourceResponse& response)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().serverTimingEnabled() && m_allowTimingDetails)
+    if (RuntimeEnabledFeatures::sharedFeatures().serverTimingEnabled() && !m_networkLoadMetrics.failsTAOCheck)
         m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));
 }
 
@@ -111,7 +87,6 @@ ResourceTiming ResourceTiming::isolatedCopy() const
         m_initiator.isolatedCopy(),
         m_resourceLoadTiming.isolatedCopy(),
         m_networkLoadMetrics.isolatedCopy(),
-        m_allowTimingDetails,
         crossThreadCopy(m_serverTiming)
     );
 }

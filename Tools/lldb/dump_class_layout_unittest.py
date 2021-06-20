@@ -318,7 +318,7 @@ Padding percentage: 41.67 %"""
   +1 < :1>   unsigned int bitfield4 : 1
   +1 < :2>   unsigned long bitfield5 : 2
   +1 < :1>   <UNUSED BITS: 1 bit>
-  +2 <  2>   <PADDING: 2 bytes>
+  +2 <  1>   <PADDING: 1 bytes>
   +4 <  4>   int intMember
   +8 < :1>   unsigned int bitfield7 : 1
   +8 < :9>   unsigned int bitfield8 : 9
@@ -326,8 +326,8 @@ Padding percentage: 41.67 %"""
   +9 < :5>   <UNUSED BITS: 5 bits>
  +10 <  6>   <PADDING: 6 bytes>
 Total byte size: 16
-Total pad bytes: 8
-Padding percentage: 50.00 %"""
+Total pad bytes: 7
+Padding percentage: 49.22 %"""
         actual_layout = debugger_instance.layout_for_classname('ClassWithPaddedBitfields')
         self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())
 
@@ -341,7 +341,7 @@ Padding percentage: 50.00 %"""
   +1 < :1>       unsigned int bitfield4 : 1
   +1 < :2>       unsigned long bitfield5 : 2
   +1 < :1>       <UNUSED BITS: 1 bit>
-  +2 <  2>       <PADDING: 2 bytes>
+  +2 <  1>       <PADDING: 1 bytes>
   +4 <  4>       int intMember
   +8 < :1>       unsigned int bitfield7 : 1
   +8 < :9>       unsigned int bitfield8 : 9
@@ -352,8 +352,8 @@ Padding percentage: 50.00 %"""
  +16 < :7>   <UNUSED BITS: 7 bits>
  +17 <  7>   <PADDING: 7 bytes>
 Total byte size: 24
-Total pad bytes: 15
-Padding percentage: 62.50 %"""
+Total pad bytes: 14
+Padding percentage: 61.98 %"""
         actual_layout = debugger_instance.layout_for_classname('MemberHasBitfieldPadding')
         self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())
 
@@ -367,7 +367,7 @@ Padding percentage: 62.50 %"""
   +1 < :1>       unsigned int bitfield4 : 1
   +1 < :2>       unsigned long bitfield5 : 2
   +1 < :1>       <UNUSED BITS: 1 bit>
-  +2 <  2>       <PADDING: 2 bytes>
+  +2 <  1>       <PADDING: 1 bytes>
   +4 <  4>       int intMember
   +8 < :1>       unsigned int bitfield7 : 1
   +8 < :9>       unsigned int bitfield8 : 9
@@ -377,7 +377,7 @@ Padding percentage: 62.50 %"""
  +10 < :7>   <UNUSED BITS: 7 bits>
  +11 <  5>   <PADDING: 5 bytes>
 Total byte size: 16
-Total pad bytes: 7
-Padding percentage: 43.75 %"""
+Total pad bytes: 6
+Padding percentage: 42.97 %"""
         actual_layout = debugger_instance.layout_for_classname('InheritsFromClassWithPaddedBitfields')
         self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())

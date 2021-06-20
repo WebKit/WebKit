@@ -64,6 +64,7 @@ TEST_F(PerfTest, TestClearPerfResults) {
 #if WEBRTC_ENABLE_PROTOBUF
 
 TEST_F(PerfTest, TestGetPerfResultsHistograms) {
+  ClearPerfResults();
   PrintResult("measurement", "_modifier", "story_1", 42, "ms", false);
   PrintResult("foo", "bar", "story_1", 7, "sigma", true);
   // Note: the error will be ignored, not supported by histograms.
@@ -100,6 +101,83 @@ TEST_F(PerfTest, TestGetPerfResultsHistograms) {
 
   EXPECT_EQ(hist2.name(), "measurement_modifier");
   EXPECT_EQ(hist2.unit().unit(), proto::MS_BEST_FIT_FORMAT);
+}
+
+TEST_F(PerfTest, TestGetPerfResultsHistogramsWithEmptyCounter) {
+  ClearPerfResults();
+  ::testing::internal::CaptureStdout();
+
+  SamplesStatsCounter empty_counter;
+  PrintResult("measurement", "_modifier", "story", empty_counter, "ms", false);
+
+  proto::HistogramSet histogram_set;
+  EXPECT_TRUE(histogram_set.ParseFromString(GetPerfResults()))
+      << "Expected valid histogram set";
+
+  ASSERT_EQ(histogram_set.histograms_size(), 1)
+      << "Should be one histogram: measurement_modifier";
+  const proto::Histogram& hist = histogram_set.histograms(0);
+
+  EXPECT_EQ(hist.name(), "measurement_modifier");
+
+  // Spot check some things in here (there's a more thorough test on the
+  // histogram writer itself).
+  EXPECT_EQ(hist.unit().unit(), proto::MS_BEST_FIT_FORMAT);
+  EXPECT_EQ(hist.sample_values_size(), 1);
+  EXPECT_EQ(hist.sample_values(0), 0);
+
+  EXPECT_EQ(hist.diagnostics().diagnostic_map().count("stories"), 1u);
+  const proto::Diagnostic& stories =
+      hist.diagnostics().diagnostic_map().at("stories");
+  ASSERT_EQ(stories.generic_set().values_size(), 1);
+  EXPECT_EQ(stories.generic_set().values(0), "\"story\"");
+
+  std::string expected = "RESULT measurement_modifier: story= {0,0} ms\n";
+  EXPECT_EQ(expected, ::testing::internal::GetCapturedStdout());
+}
+
+TEST_F(PerfTest, TestGetPerfResultsHistogramsWithStatsCounter) {
+  ClearPerfResults();
+  ::testing::internal::CaptureStdout();
+
+  SamplesStatsCounter counter;
+  counter.AddSample(1);
+  counter.AddSample(2);
+  counter.AddSample(3);
+  counter.AddSample(4);
+  counter.AddSample(5);
+  PrintResult("measurement", "_modifier", "story", counter, "ms", false);
+
+  proto::HistogramSet histogram_set;
+  EXPECT_TRUE(histogram_set.ParseFromString(GetPerfResults()))
+      << "Expected valid histogram set";
+
+  ASSERT_EQ(histogram_set.histograms_size(), 1)
+      << "Should be one histogram: measurement_modifier";
+  const proto::Histogram& hist = histogram_set.histograms(0);
+
+  EXPECT_EQ(hist.name(), "measurement_modifier");
+
+  // Spot check some things in here (there's a more thorough test on the
+  // histogram writer itself).
+  EXPECT_EQ(hist.unit().unit(), proto::MS_BEST_FIT_FORMAT);
+  EXPECT_EQ(hist.sample_values_size(), 5);
+  EXPECT_EQ(hist.sample_values(0), 1);
+  EXPECT_EQ(hist.sample_values(1), 2);
+  EXPECT_EQ(hist.sample_values(2), 3);
+  EXPECT_EQ(hist.sample_values(3), 4);
+  EXPECT_EQ(hist.sample_values(4), 5);
+
+  EXPECT_EQ(hist.diagnostics().diagnostic_map().count("stories"), 1u);
+  const proto::Diagnostic& stories =
+      hist.diagnostics().diagnostic_map().at("stories");
+  ASSERT_EQ(stories.generic_set().values_size(), 1);
+  EXPECT_EQ(stories.generic_set().values(0), "\"story\"");
+
+  // mean = 3; std = sqrt(2)
+  std::string expected =
+      "RESULT measurement_modifier: story= {3,1.4142136} ms\n";
+  EXPECT_EQ(expected, ::testing::internal::GetCapturedStdout());
 }
 
 #endif  // WEBRTC_ENABLE_PROTOBUF

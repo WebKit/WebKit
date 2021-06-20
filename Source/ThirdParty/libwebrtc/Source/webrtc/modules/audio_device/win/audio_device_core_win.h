@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef AUDIO_DEVICE_AUDIO_DEVICE_CORE_WIN_H_
-#define AUDIO_DEVICE_AUDIO_DEVICE_CORE_WIN_H_
+#ifndef MODULES_AUDIO_DEVICE_WIN_AUDIO_DEVICE_CORE_WIN_H_
+#define MODULES_AUDIO_DEVICE_WIN_AUDIO_DEVICE_CORE_WIN_H_
 
 #if (_MSC_VER >= 1400)  // only include for VS 2005 and higher
 
@@ -28,6 +28,7 @@
 
 #include "api/scoped_refptr.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/win/scoped_com_initializer.h"
 
 // Use Multimedia Class Scheduler Service (MMCSS) to boost the thread priority
 #pragma comment(lib, "avrt.lib")
@@ -44,37 +45,6 @@ const float MAX_CORE_MICROPHONE_VOLUME = 255.0f;
 const float MIN_CORE_MICROPHONE_VOLUME = 0.0f;
 const uint16_t CORE_SPEAKER_VOLUME_STEP_SIZE = 1;
 const uint16_t CORE_MICROPHONE_VOLUME_STEP_SIZE = 1;
-
-// Utility class which initializes COM in the constructor (STA or MTA),
-// and uninitializes COM in the destructor.
-class ScopedCOMInitializer {
- public:
-  // Enum value provided to initialize the thread as an MTA instead of STA.
-  enum SelectMTA { kMTA };
-
-  // Constructor for STA initialization.
-  ScopedCOMInitializer() { Initialize(COINIT_APARTMENTTHREADED); }
-
-  // Constructor for MTA initialization.
-  explicit ScopedCOMInitializer(SelectMTA mta) {
-    Initialize(COINIT_MULTITHREADED);
-  }
-
-  ~ScopedCOMInitializer() {
-    if (SUCCEEDED(hr_))
-      CoUninitialize();
-  }
-
-  bool succeeded() const { return SUCCEEDED(hr_); }
-
- private:
-  void Initialize(COINIT init) { hr_ = CoInitializeEx(NULL, init); }
-
-  HRESULT hr_;
-
-  ScopedCOMInitializer(const ScopedCOMInitializer&);
-  void operator=(const ScopedCOMInitializer&);
-};
 
 class AudioDeviceWindowsCore : public AudioDeviceGeneric {
  public:
@@ -327,4 +297,4 @@ class AudioDeviceWindowsCore : public AudioDeviceGeneric {
 
 }  // namespace webrtc
 
-#endif  // AUDIO_DEVICE_AUDIO_DEVICE_CORE_WIN_H_
+#endif  // MODULES_AUDIO_DEVICE_WIN_AUDIO_DEVICE_CORE_WIN_H_

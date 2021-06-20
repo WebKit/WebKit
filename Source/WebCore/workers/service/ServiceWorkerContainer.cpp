@@ -58,8 +58,8 @@
 #include <wtf/Scope.h>
 #include <wtf/URL.h>
 
-#define CONTAINER_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
-#define CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
+#define CONTAINER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
+#define CONTAINER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -142,20 +142,20 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     jobData.scriptURL = context->completeURL(relativeScriptURL);
     if (!jobData.scriptURL.isValid()) {
-        CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: Invalid scriptURL");
+        CONTAINER_RELEASE_LOG_ERROR("addRegistration: Invalid scriptURL");
         promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a valid relative script URL"_s });
         return;
     }
 
     if (!jobData.scriptURL.protocolIsInHTTPFamily()) {
-        CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: Invalid scriptURL scheme is not HTTP or HTTPS");
+        CONTAINER_RELEASE_LOG_ERROR("addRegistration: Invalid scriptURL scheme is not HTTP or HTTPS");
         promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS"_s });
         return;
     }
 
     auto path = jobData.scriptURL.path();
     if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
-        CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scriptURL contains invalid character");
+        CONTAINER_RELEASE_LOG_ERROR("addRegistration: scriptURL contains invalid character");
         promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_s });
         return;
     }
@@ -166,19 +166,19 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         jobData.scopeURL = URL(jobData.scriptURL, "./");
 
     if (!jobData.scopeURL.isNull() && !jobData.scopeURL.protocolIsInHTTPFamily()) {
-        CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scopeURL scheme is not HTTP or HTTPS");
+        CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL scheme is not HTTP or HTTPS");
         promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS"_s });
         return;
     }
 
     path = jobData.scopeURL.path();
     if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
-        CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scopeURL contains invalid character");
+        CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL contains invalid character");
         promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'"_s });
         return;
     }
 
-    CONTAINER_RELEASE_LOG_IF_ALLOWED("addRegistration: Registering service worker. jobID=%" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
+    CONTAINER_RELEASE_LOG("addRegistration: Registering service worker. jobID=%" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
 
     jobData.clientCreationURL = context->url();
     jobData.topOrigin = context->topOrigin().data();
@@ -198,7 +198,7 @@ void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIde
         return;
     }
 
-    CONTAINER_RELEASE_LOG_IF_ALLOWED("unregisterRegistration: Unregistering service worker.");
+    CONTAINER_RELEASE_LOG("unregisterRegistration: Unregistering service worker.");
     m_swConnection->scheduleUnregisterJobInServer(registrationIdentifier, contextIdentifier(), [promise = WTFMove(promise)](auto&& result) mutable {
         promise.settle(WTFMove(result));
     });
@@ -225,7 +225,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
     jobData.scopeURL = scopeURL;
     jobData.scriptURL = scriptURL;
 
-    CONTAINER_RELEASE_LOG_IF_ALLOWED("removeRegistration: Updating service worker. jobID=%" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
+    CONTAINER_RELEASE_LOG("removeRegistration: Updating service worker. jobID=%" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
 
     scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
 }
@@ -330,7 +330,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
         destroyJob(job);
     });
 
-    CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("jobFailedWithException: Job %" PRIu64 " failed with error %s", job.identifier().toUInt64(), exception.message().utf8().data());
+    CONTAINER_RELEASE_LOG_ERROR("jobFailedWithException: Job %" PRIu64 " failed with error %s", job.identifier().toUInt64(), exception.message().utf8().data());
 
     auto promise = job.takePromise();
     if (!promise)
@@ -355,10 +355,10 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
     if (job.data().type == ServiceWorkerJobType::Register)
-        CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Registration job %" PRIu64 " succeeded", job.identifier().toUInt64());
+        CONTAINER_RELEASE_LOG("jobResolvedWithRegistration: Registration job %" PRIu64 " succeeded", job.identifier().toUInt64());
     else {
         ASSERT(job.data().type == ServiceWorkerJobType::Update);
-        CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Update job %" PRIu64 " succeeded", job.identifier().toUInt64());
+        CONTAINER_RELEASE_LOG("jobResolvedWithRegistration: Update job %" PRIu64 " succeeded", job.identifier().toUInt64());
     }
 
     auto guard = WTF::makeScopeExit([this, &job] {
@@ -382,7 +382,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
         auto registration = ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(data));
 
-        CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Resolving promise for job %" PRIu64 ". registrationID=%" PRIu64, jobIdentifier.toUInt64(), registration->identifier().toUInt64());
+        CONTAINER_RELEASE_LOG("jobResolvedWithRegistration: Resolving promise for job %" PRIu64 ". registrationID=%" PRIu64, jobIdentifier.toUInt64(), registration->identifier().toUInt64());
 
         if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes) {
             m_ongoingSettledRegistrations.add(++m_lastOngoingSettledRegistrationIdentifier, registration->data().key);
@@ -427,7 +427,7 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
         destroyJob(job);
     });
 
-    CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithUnregistrationResult: Unregister job %" PRIu64 " finished. Success? %d", job.identifier().toUInt64(), unregistrationResult);
+    CONTAINER_RELEASE_LOG("jobResolvedWithUnregistrationResult: Unregister job %" PRIu64 " finished. Success? %d", job.identifier().toUInt64(), unregistrationResult);
 
     auto* context = scriptExecutionContext();
     if (!context) {
@@ -444,7 +444,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
 
-    CONTAINER_RELEASE_LOG_IF_ALLOWED("startScriptFetchForJob: Starting script fetch for job %" PRIu64, job.identifier().toUInt64());
+    CONTAINER_RELEASE_LOG("startScriptFetchForJob: Starting script fetch for job %" PRIu64, job.identifier().toUInt64());
 
     auto* context = scriptExecutionContext();
     if (!context) {
@@ -461,7 +461,7 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
 
-    CONTAINER_RELEASE_LOG_IF_ALLOWED("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
+    CONTAINER_RELEASE_LOG("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
     ensureSWClientConnection().finishFetchingScriptInServer(ServiceWorkerFetchResult { job.data().identifier(), job.data().registrationKey(), script, certificateInfo, contentSecurityPolicy, referrerPolicy, { } });
 }
@@ -471,7 +471,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
-    CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8().data());
+    CONTAINER_RELEASE_LOG_ERROR("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8().data());
 
     if (auto promise = job.takePromise()) {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = WTFMove(exception)]() mutable {
@@ -567,21 +567,6 @@ ServiceWorkerJob* ServiceWorkerContainer::job(ServiceWorkerJobIdentifier identif
     if (iterator == m_jobMap.end())
         return nullptr;
     return iterator->value.job.get();
-}
-
-bool ServiceWorkerContainer::isAlwaysOnLoggingAllowed() const
-{
-    auto* context = scriptExecutionContext();
-    if (!context)
-        return false;
-
-    if (is<Document>(*context)) {
-        auto* page = downcast<Document>(*context).page();
-        return page && page->sessionID().isAlwaysOnLoggingAllowed();
-    }
-
-    // FIXME: No logging inside service workers for now.
-    return false;
 }
 
 bool ServiceWorkerContainer::addEventListener(const AtomString& eventType, Ref<EventListener>&& eventListener, const AddEventListenerOptions& options)

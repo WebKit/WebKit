@@ -19,7 +19,7 @@ TEST(StableBweExperimentTest, Default) {
   StableTargetRateExperiment config =
       StableTargetRateExperiment::ParseFromFieldTrials();
   EXPECT_FALSE(config.IsEnabled());
-  EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.0);
+  EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.2);
   EXPECT_EQ(config.GetScreenshareHysteresisFactor(), 1.35);
 }
 
@@ -30,7 +30,7 @@ TEST(StableBweExperimentTest, EnabledNoHysteresis) {
   StableTargetRateExperiment config =
       StableTargetRateExperiment::ParseFromFieldTrials();
   EXPECT_TRUE(config.IsEnabled());
-  EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.0);
+  EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.2);
   EXPECT_EQ(config.GetScreenshareHysteresisFactor(), 1.35);
 }
 

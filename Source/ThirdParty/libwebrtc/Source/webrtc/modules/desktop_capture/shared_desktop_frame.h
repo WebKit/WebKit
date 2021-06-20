@@ -23,7 +23,7 @@ namespace webrtc {
 
 // SharedDesktopFrame is a DesktopFrame that may have multiple instances all
 // sharing the same buffer.
-class RTC_EXPORT SharedDesktopFrame : public DesktopFrame {
+class RTC_EXPORT SharedDesktopFrame final : public DesktopFrame {
  public:
   ~SharedDesktopFrame() override;
 
@@ -51,7 +51,7 @@ class RTC_EXPORT SharedDesktopFrame : public DesktopFrame {
   bool IsShared();
 
  private:
-  typedef rtc::RefCountedObject<std::unique_ptr<DesktopFrame>> Core;
+  typedef rtc::FinalRefCountedObject<std::unique_ptr<DesktopFrame>> Core;
 
   SharedDesktopFrame(rtc::scoped_refptr<Core> core);
 

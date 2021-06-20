@@ -41,6 +41,7 @@ my $idlFileNamesList;
 my $testGlobalContextName;
 my $supplementalDependencyFile;
 my $isoSubspacesHeaderFile;
+my $constructorsHeaderFile;
 my $windowConstructorsFile;
 my $workerGlobalScopeConstructorsFile;
 my $dedicatedWorkerGlobalScopeConstructorsFile;
@@ -64,6 +65,7 @@ GetOptions('defines=s' => \$defines,
            'testGlobalContextName=s' => \$testGlobalContextName,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
            'isoSubspacesHeaderFile=s' => \$isoSubspacesHeaderFile,
+           'constructorsHeaderFile=s' => \$constructorsHeaderFile,
            'windowConstructorsFile=s' => \$windowConstructorsFile,
            'workerGlobalScopeConstructorsFile=s' => \$workerGlobalScopeConstructorsFile,
            'dedicatedWorkerGlobalScopeConstructorsFile=s' => \$dedicatedWorkerGlobalScopeConstructorsFile,
@@ -92,6 +94,7 @@ die('Must specify IDL attributes file using --idlAttributesFile.') unless define
 
 $supplementalDependencyFile = CygwinPathIfNeeded($supplementalDependencyFile);
 $isoSubspacesHeaderFile = CygwinPathIfNeeded($isoSubspacesHeaderFile);
+$constructorsHeaderFile = CygwinPathIfNeeded($constructorsHeaderFile);
 $windowConstructorsFile = CygwinPathIfNeeded($windowConstructorsFile);
 $workerGlobalScopeConstructorsFile = CygwinPathIfNeeded($workerGlobalScopeConstructorsFile);
 $dedicatedWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($dedicatedWorkerGlobalScopeConstructorsFile);
@@ -155,6 +158,19 @@ class DOMIsoSubspaces {
     WTF_MAKE_FAST_ALLOCATED(DOMIsoSubspaces);
 public:
     DOMIsoSubspaces() = default;
+END
+
+my @constructors = ();
+my $constructorsHeaderCode = <<END;
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <JavaScriptCore/JSCInlines.h>
+
+#pragma once
+
+namespace WebCore {
+
+enum class DOMConstructorID : uint16_t {
 END
 
 # Get rid of duplicates in idlFileNames array.
@@ -252,6 +268,13 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
             }
         }
     }
+
+    $constructorsHeaderCode .= "    ${interfaceName},\n";
+    push(@constructors, "${interfaceName}");
+    if ($extendedAttributes->{LegacyFactoryFunction}) {
+        $constructorsHeaderCode .= "    ${interfaceName}LegacyFactory,\n";
+        push(@constructors, "${interfaceName}LegacyFactory");
+    }
 }
 
 # Generate partial interfaces for Constructors.
@@ -268,6 +291,29 @@ if ($isoSubspacesHeaderFile) {
     $isoSubspacesHeaderCode .= "};\n";
     $isoSubspacesHeaderCode .= "} // namespace WebCore\n";
     WriteFileIfChanged($isoSubspacesHeaderFile, $isoSubspacesHeaderCode);
+}
+
+if ($constructorsHeaderFile) {
+    my $constructorsLength = @constructors;
+    $constructorsHeaderCode .= "};\n";
+    $constructorsHeaderCode .= "\n";
+    $constructorsHeaderCode .= "static constexpr unsigned numberOfDOMConstructors = $constructorsLength;\n";
+    $constructorsHeaderCode .= "\n";
+    $constructorsHeaderCode .= "class DOMConstructors {\n";
+    $constructorsHeaderCode .= "    WTF_MAKE_NONCOPYABLE(DOMConstructors);\n";
+    $constructorsHeaderCode .= "    WTF_MAKE_FAST_ALLOCATED(DOMConstructors);\n";
+    $constructorsHeaderCode .= "public:\n";
+    $constructorsHeaderCode .= "    using ConstructorArray = std::array<JSC::WriteBarrier<JSC::JSObject>, numberOfDOMConstructors>;\n";
+    $constructorsHeaderCode .= "    DOMConstructors() = default;\n";
+    $constructorsHeaderCode .= "    ConstructorArray& array() { return m_array; }\n";
+    $constructorsHeaderCode .= "    const ConstructorArray& array() const { return m_array; }\n";
+    $constructorsHeaderCode .= "\n";
+    $constructorsHeaderCode .= "private:\n";
+    $constructorsHeaderCode .= "    ConstructorArray m_array { };\n";
+    $constructorsHeaderCode .= "};\n";
+    $constructorsHeaderCode .= "\n";
+    $constructorsHeaderCode .= "} // namespace WebCore\n";
+    WriteFileIfChanged($constructorsHeaderFile, $constructorsHeaderCode);
 }
 
 # Resolves partial interfaces and include dependencies.

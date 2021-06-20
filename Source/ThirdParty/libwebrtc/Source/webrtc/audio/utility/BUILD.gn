@@ -26,10 +26,10 @@ rtc_library("audio_frame_operations") {
     "../../api/audio:audio_frame_api",
     "../../common_audio",
     "../../rtc_base:checks",
-    "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers:field_trial",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
 }
 
 if (rtc_include_tests) {

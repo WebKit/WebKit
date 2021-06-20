@@ -27,6 +27,7 @@
 #pragma once
 
 #include "StoredCredentialsPolicy.h"
+#include <pal/SessionID.h>
 #include <wtf/Expected.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -66,15 +67,15 @@ class CrossOriginPreflightResultCache {
     WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static CrossOriginPreflightResultCache& singleton();
-    WEBCORE_EXPORT void appendEntry(const String& origin, const URL&, std::unique_ptr<CrossOriginPreflightResultCacheItem>);
-    WEBCORE_EXPORT bool canSkipPreflight(const String& origin, const URL&, StoredCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders);
+    WEBCORE_EXPORT void appendEntry(const PAL::SessionID&, const String& origin, const URL&, std::unique_ptr<CrossOriginPreflightResultCacheItem>);
+    WEBCORE_EXPORT bool canSkipPreflight(const PAL::SessionID&, const String& origin, const URL&, StoredCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders);
     WEBCORE_EXPORT void clear();
 
 private:
     friend NeverDestroyed<CrossOriginPreflightResultCache>;
     CrossOriginPreflightResultCache();
 
-    HashMap<std::pair<String, URL>, std::unique_ptr<CrossOriginPreflightResultCacheItem>> m_preflightHashMap;
+    HashMap<std::tuple<PAL::SessionID, String, URL>, std::unique_ptr<CrossOriginPreflightResultCacheItem>> m_preflightHashMap;
 };
 
 inline CrossOriginPreflightResultCacheItem::CrossOriginPreflightResultCacheItem(MonotonicTime absoluteExpiryTime, StoredCredentialsPolicy  storedCredentialsPolicy, HashSet<String>&& methods, HashSet<String, ASCIICaseInsensitiveHash>&& headers)

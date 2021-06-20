@@ -5,7 +5,6 @@
 #  tree. An additional intellectual property rights grant can be found
 #  in the file PATENTS.  All contributing project authors may
 #  be found in the AUTHORS file in the root of the source tree.
-
 """Utility functions for calculating statistics.
 """
 
@@ -15,18 +14,17 @@ import sys
 
 
 def CountReordered(sequence_numbers):
-  """Returns number of reordered indices.
+    """Returns number of reordered indices.
 
   A reordered index is an index `i` for which sequence_numbers[i] >=
   sequence_numbers[i + 1]
   """
-  return sum(1 for (s1, s2) in zip(sequence_numbers,
-                                   sequence_numbers[1:]) if
-             s1 >= s2)
+    return sum(1 for (s1, s2) in zip(sequence_numbers, sequence_numbers[1:])
+               if s1 >= s2)
 
 
 def SsrcNormalizedSizeTable(data_points):
-  """Counts proportion of data for every SSRC.
+    """Counts proportion of data for every SSRC.
 
   Args:
      data_points: list of pb_parse.DataPoint
@@ -37,14 +35,14 @@ def SsrcNormalizedSizeTable(data_points):
      SSRC `s` to the total size of all packets.
 
   """
-  mapping = collections.defaultdict(int)
-  for point in data_points:
-    mapping[point.ssrc] += point.size
-  return NormalizeCounter(mapping)
+    mapping = collections.defaultdict(int)
+    for point in data_points:
+        mapping[point.ssrc] += point.size
+    return NormalizeCounter(mapping)
 
 
 def NormalizeCounter(counter):
-  """Returns a normalized version of the dictionary `counter`.
+    """Returns a normalized version of the dictionary `counter`.
 
   Does not modify `counter`.
 
@@ -52,12 +50,12 @@ def NormalizeCounter(counter):
     A new dictionary, in which every value in `counter`
     has been divided by the total to sum up to 1.
   """
-  total = sum(counter.values())
-  return {key: counter[key] / total for key in counter}
+    total = sum(counter.values())
+    return {key: counter[key] / total for key in counter}
 
 
 def Unwrap(data, mod):
-  """Returns `data` unwrapped modulo `mod`. Does not modify data.
+    """Returns `data` unwrapped modulo `mod`. Does not modify data.
 
   Adds integer multiples of mod to all elements of data except the
   first, such that all pairs of consecutive elements (a, b) satisfy
@@ -66,22 +64,22 @@ def Unwrap(data, mod):
   E.g. Unwrap([0, 1, 2, 0, 1, 2, 7, 8], 3) -> [0, 1, 2, 3,
   4, 5, 4, 5]
   """
-  lst = data[:]
-  for i in range(1, len(data)):
-    lst[i] = lst[i - 1] + (lst[i] - lst[i - 1] +
-                           mod // 2) % mod - (mod // 2)
-  return lst
+    lst = data[:]
+    for i in range(1, len(data)):
+        lst[i] = lst[i - 1] + (lst[i] - lst[i - 1] + mod // 2) % mod - (mod //
+                                                                        2)
+    return lst
 
 
 def SsrcDirections(data_points):
-  ssrc_is_incoming = {}
-  for point in data_points:
-    ssrc_is_incoming[point.ssrc] = point.incoming
-  return ssrc_is_incoming
+    ssrc_is_incoming = {}
+    for point in data_points:
+        ssrc_is_incoming[point.ssrc] = point.incoming
+    return ssrc_is_incoming
 
 
 # Python 2/3-compatible input function
 if sys.version_info[0] <= 2:
-  get_input = raw_input  # pylint: disable=invalid-name
+    get_input = raw_input  # pylint: disable=invalid-name
 else:
-  get_input = input  # pylint: disable=invalid-name
+    get_input = input  # pylint: disable=invalid-name

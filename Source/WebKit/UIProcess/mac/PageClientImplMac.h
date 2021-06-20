@@ -130,9 +130,9 @@ private:
 
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&) override;
-    void computeCanRevealImage(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
+#if ENABLE(IMAGE_ANALYSIS)
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
+    void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;

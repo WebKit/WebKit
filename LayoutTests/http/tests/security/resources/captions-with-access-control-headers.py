@@ -15,5 +15,5 @@ if creds:
 sys.stdout.write('Content-Type: text/vtt\r\n\r\n')
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), 'captions.vtt'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), 'captions.vtt'), 'rb') as file:
     sys.stdout.buffer.write(file.read())

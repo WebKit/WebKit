@@ -268,7 +268,7 @@ void RemoteMediaPlayerProxy::setRate(double rate)
 
 void RemoteMediaPlayerProxy::didLoadingProgress(CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler(m_player->didLoadingProgress());
+    m_player->didLoadingProgress(WTFMove(completionHandler));
 }
 
 RefPtr<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options)
@@ -691,7 +691,7 @@ void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(Uint8Array* message)
 #if ENABLE(ENCRYPTED_MEDIA)
 void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, IPC::DataReference(reinterpret_cast<uint8_t*>(initData->data()), initData->byteLength())), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, IPC::DataReference(static_cast<uint8_t*>(initData->data()), initData->byteLength())), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged()

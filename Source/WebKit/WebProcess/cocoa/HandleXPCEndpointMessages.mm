@@ -34,17 +34,13 @@
 
 namespace WebKit {
 
-void handleXPCEndpointMessages(xpc_object_t event)
+void handleXPCEndpointMessages(xpc_object_t event, const char* messageName)
 {
-    if (xpc_get_type(event) != XPC_TYPE_DICTIONARY)
-        return;
+    ASSERT_UNUSED(event, xpc_get_type(event) == XPC_TYPE_DICTIONARY);
+    ASSERT_UNUSED(messageName, messageName);
 
 #if HAVE(LSDATABASECONTEXT)
-    String messageName = xpc_dictionary_get_string(event, XPCEndpoint::xpcMessageNameKey);
-    if (messageName.isEmpty())
-        return;
-
-    if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
+    if (!strcmp(messageName, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName)) {
         auto xpcEndPoint = xpc_dictionary_get_value(event, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
         if (!xpcEndPoint || xpc_get_type(xpcEndPoint) != XPC_TYPE_ENDPOINT)
             return;

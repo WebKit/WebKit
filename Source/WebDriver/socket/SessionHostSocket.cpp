@@ -50,7 +50,7 @@ void SessionHost::sendWebInspectorEvent(const String& event)
         return;
 
     const CString message = event.utf8();
-    send(m_clientID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
+    send(m_clientID.value(), message.dataAsUInt8Ptr(), message.length());
 }
 
 void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)

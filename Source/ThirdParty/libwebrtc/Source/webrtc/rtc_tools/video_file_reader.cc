@@ -224,8 +224,8 @@ rtc::scoped_refptr<Video> OpenY4mFile(const std::string& file_name) {
   }
   RTC_LOG(LS_INFO) << "Video has " << frame_positions.size() << " frames";
 
-  return new rtc::RefCountedObject<VideoFile>(*width, *height, frame_positions,
-                                              file);
+  return rtc::make_ref_counted<VideoFile>(*width, *height, frame_positions,
+                                          file);
 }
 
 rtc::scoped_refptr<Video> OpenYuvFile(const std::string& file_name,
@@ -266,8 +266,7 @@ rtc::scoped_refptr<Video> OpenYuvFile(const std::string& file_name,
   }
   RTC_LOG(LS_INFO) << "Video has " << frame_positions.size() << " frames";
 
-  return new rtc::RefCountedObject<VideoFile>(width, height, frame_positions,
-                                              file);
+  return rtc::make_ref_counted<VideoFile>(width, height, frame_positions, file);
 }
 
 rtc::scoped_refptr<Video> OpenYuvOrY4mFile(const std::string& file_name,

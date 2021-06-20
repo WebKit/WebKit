@@ -34,6 +34,25 @@ TEST(PerfHistogramWriterUnittest, TestSimpleHistogram) {
   ASSERT_EQ(histogram_set.histograms_size(), 1);
 }
 
+TEST(PerfHistogramWriterUnittest, TestListOfValuesHistogram) {
+  std::unique_ptr<PerfTestResultWriter> writer =
+      std::unique_ptr<PerfTestResultWriter>(CreateHistogramWriter());
+
+  std::vector<double> samples{0, 1, 2};
+  writer->LogResultList("-", "-", samples, "ms", false,
+                        ImproveDirection::kNone);
+
+  proto::HistogramSet histogram_set;
+  EXPECT_TRUE(histogram_set.ParseFromString(writer->Serialize()))
+      << "Expected valid histogram set";
+
+  ASSERT_EQ(histogram_set.histograms_size(), 1);
+  ASSERT_EQ(histogram_set.histograms(0).sample_values_size(), 3);
+  EXPECT_EQ(histogram_set.histograms(0).sample_values(0), 0);
+  EXPECT_EQ(histogram_set.histograms(0).sample_values(1), 1);
+  EXPECT_EQ(histogram_set.histograms(0).sample_values(2), 2);
+}
+
 TEST(PerfHistogramWriterUnittest, WritesSamplesAndUserStory) {
   std::unique_ptr<PerfTestResultWriter> writer =
       std::unique_ptr<PerfTestResultWriter>(CreateHistogramWriter());

@@ -44,8 +44,8 @@ namespace WebCore {
 
 static SecurityPolicy::LocalLoadPolicy localLoadPolicy = SecurityPolicy::AllowLocalLoadsForLocalOnly;
 
-typedef Vector<OriginAccessEntry> OriginAccessAllowlist;
-typedef HashMap<String, std::unique_ptr<OriginAccessAllowlist>> OriginAccessMap;
+using OriginAccessAllowlist = Vector<OriginAccessEntry>;
+using OriginAccessMap = HashMap<SecurityOriginData, std::unique_ptr<OriginAccessAllowlist>>;
 
 static Lock originAccessMapLock;
 static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
@@ -207,7 +207,7 @@ bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const S
     ASSERT(targetOrigin.equal(SecurityOrigin::create(targetURL).ptr()));
     {
         Locker locker { originAccessMapLock };
-        if (OriginAccessAllowlist* list = originAccessMap().get(activeOrigin.toString())) {
+        if (auto* list = originAccessMap().get(activeOrigin.data())) {
             for (auto& entry : *list) {
                 if (entry.matchesOrigin(targetOrigin))
                     return true;
@@ -233,15 +233,9 @@ void SecurityPolicy::addOriginAccessAllowlistEntry(const SecurityOrigin& sourceO
     if (sourceOrigin.isUnique())
         return;
 
-    String sourceString = sourceOrigin.toString();
-
     Locker locker { originAccessMapLock };
-    OriginAccessMap::AddResult result = originAccessMap().add(sourceString, nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = makeUnique<OriginAccessAllowlist>();
-
-    OriginAccessAllowlist* list = result.iterator->value.get();
-    list->append(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains, OriginAccessEntry::TreatIPAddressAsIPAddress));
+    auto* allowList = originAccessMap().ensure(sourceOrigin.data(), [] { return makeUnique<OriginAccessAllowlist>(); }).iterator->value.get();
+    allowList->append(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains, OriginAccessEntry::TreatIPAddressAsIPAddress));
 }
 
 void SecurityPolicy::removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
@@ -250,15 +244,13 @@ void SecurityPolicy::removeOriginAccessAllowlistEntry(const SecurityOrigin& sour
     if (sourceOrigin.isUnique())
         return;
 
-    String sourceString = sourceOrigin.toString();
-
     Locker locker { originAccessMapLock };
-    OriginAccessMap& map = originAccessMap();
-    OriginAccessMap::iterator it = map.find(sourceString);
+    auto& map = originAccessMap();
+    auto it = map.find(sourceOrigin.data());
     if (it == map.end())
         return;
 
-    OriginAccessAllowlist& list = *it->value;
+    auto& list = *it->value;
     OriginAccessEntry originAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains, OriginAccessEntry::TreatIPAddressAsIPAddress);
     if (!list.removeFirst(originAccessEntry))
         return;

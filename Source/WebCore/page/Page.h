@@ -107,11 +107,13 @@ class Element;
 class FocusController;
 class FormData;
 class Frame;
+class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
 class ImageOverlayController;
 class InspectorClient;
 class InspectorController;
+class IntSize;
 class LibWebRTCProvider;
 class LowPowerModeNotifier;
 class MediaCanStartListener;
@@ -158,6 +160,7 @@ class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 
 struct SimpleRange;
+struct TextRecognitionResult;
 
 using PlatformDisplayID = uint32_t;
 using SharedStringHash = uint32_t;
@@ -780,8 +783,6 @@ public:
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool controlled) { m_controlledByAutomation = controlled; }
 
-    WEBCORE_EXPORT bool isAlwaysOnLoggingAllowed() const;
-
     String captionUserPreferencesStyleSheet();
     void setCaptionUserPreferencesStyleSheet(const String&);
 
@@ -860,6 +861,11 @@ public:
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);
 
+#if ENABLE(IMAGE_ANALYSIS)
+    WEBCORE_EXPORT bool hasCachedTextRecognitionResult(const HTMLElement&) const;
+    void cacheTextRecognitionResult(const HTMLElement&, const IntSize& offsetSize, const TextRecognitionResult&);
+#endif
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -904,6 +910,11 @@ private:
     RenderingUpdateScheduler& renderingUpdateScheduler();
 
     WheelEventTestMonitor& ensureWheelEventTestMonitor();
+
+#if ENABLE(IMAGE_ANALYSIS)
+    void resetTextRecognitionResults();
+    void updateElementsWithTextRecognitionResults();
+#endif
 
     const std::unique_ptr<Chrome> m_chrome;
     const std::unique_ptr<DragCaretController> m_dragCaretController;
@@ -1175,6 +1186,12 @@ private:
 
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
+
+#if ENABLE(IMAGE_ANALYSIS)
+    // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.
+    Vector<std::pair<WeakPtr<HTMLElement>, std::pair<TextRecognitionResult, IntSize>>> m_textRecognitionResultsByElement;
+    WeakHashSet<HTMLElement> m_elementsWithTextRecognitionResults;
+#endif
 };
 
 inline PageGroup& Page::group()

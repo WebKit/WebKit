@@ -607,8 +607,8 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagDictationAlternative;
     case ContextMenuItemTagToggleVideoFullscreen:
         return WebMenuItemTagToggleVideoFullscreen;
-    case ContextMenuItemTagAddHighlightToCurrentGroup:
-    case ContextMenuItemTagAddHighlightToNewGroup:
+    case ContextMenuItemTagAddHighlightToCurrentQuickNote:
+    case ContextMenuItemTagAddHighlightToNewQuickNote:
         return std::nullopt;
     case ContextMenuItemTagShareMenu:
         return WebMenuItemTagShareMenu;
@@ -616,7 +616,7 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
-    case ContextMenuItemTagRevealImage:
+    case ContextMenuItemTagLookUpImage:
         return std::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:

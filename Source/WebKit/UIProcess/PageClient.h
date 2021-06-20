@@ -62,8 +62,8 @@
 #include <WebCore/InspectorOverlay.h>
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-#include <WebCore/ImageExtractionResult.h>
+#if ENABLE(IMAGE_ANALYSIS)
+#include <WebCore/TextRecognitionResult.h>
 #endif
 
 OBJC_CLASS CALayer;
@@ -538,9 +538,9 @@ public:
     virtual WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const { return WebCore::DataOwnerType::Undefined; }
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    virtual void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
-    virtual void computeCanRevealImage(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
+#if ENABLE(IMAGE_ANALYSIS)
+    virtual void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
+    virtual void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

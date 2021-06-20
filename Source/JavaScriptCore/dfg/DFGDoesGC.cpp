@@ -47,7 +47,7 @@ bool doesGC(Graph& graph, Node* node)
     //     1. Allocates any objects.
     //     2. Resolves a rope string, which allocates a string.
     //     3. Produces a string (which allocates the string) except when we can prove that
-    //        the string will always be one of the pre-allcoated SmallStrings.
+    //        the string will always be one of the pre-allocated SmallStrings.
     //     4. Triggers a structure transition (which can allocate a new structure)
     //        unless it is a known transition between previously allocated structures
     //        such as between Array types.
@@ -496,7 +496,8 @@ bool doesGC(Graph& graph, Node* node)
             || node->isBinaryUseKind(ObjectUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, ObjectUse)
             || node->isBinaryUseKind(ObjectUse)
             || node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse)
-            || node->isBinaryUseKind(StringIdentUse, NotStringVarUse) || node->isBinaryUseKind(NotStringVarUse, StringIdentUse))
+            || node->isBinaryUseKind(StringIdentUse, NotStringVarUse) || node->isBinaryUseKind(NotStringVarUse, StringIdentUse)
+            || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse) || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse))
             return false;
         return true;
 

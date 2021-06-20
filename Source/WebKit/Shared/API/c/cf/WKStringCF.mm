@@ -57,6 +57,6 @@ CFStringRef WKStringCopyCFString(CFAllocatorRef allocatorRef, WKStringRef string
     // NOTE: This does not use StringImpl::createCFString() since that function
     // expects to be called on the thread running WebCore.
     if (WebKit::toImpl(stringRef)->string().is8Bit())
-        return CFStringCreateWithBytes(allocatorRef, reinterpret_cast<const UInt8*>(WebKit::toImpl(stringRef)->string().characters8()), WebKit::toImpl(stringRef)->string().length(), kCFStringEncodingISOLatin1, true);
+        return CFStringCreateWithBytes(allocatorRef, WebKit::toImpl(stringRef)->string().characters8(), WebKit::toImpl(stringRef)->string().length(), kCFStringEncodingISOLatin1, true);
     return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(WebKit::toImpl(stringRef)->string().characters16()), WebKit::toImpl(stringRef)->string().length());
 }

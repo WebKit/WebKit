@@ -1915,6 +1915,68 @@ TEST_F(PeerConnectionJsepTest, RollbackRestoresMid) {
   EXPECT_TRUE(callee->SetLocalDescription(std::move(offer)));
 }
 
+TEST_F(PeerConnectionJsepTest, RollbackRestoresInitSendEncodings) {
+  auto caller = CreatePeerConnection();
+  RtpTransceiverInit init;
+  init.direction = RtpTransceiverDirection::kSendRecv;
+  RtpEncodingParameters encoding;
+  encoding.rid = "hi";
+  init.send_encodings.push_back(encoding);
+  encoding.rid = "mid";
+  init.send_encodings.push_back(encoding);
+  encoding.rid = "lo";
+  init.send_encodings.push_back(encoding);
+  caller->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init);
+  auto encodings =
+      caller->pc()->GetTransceivers()[0]->sender()->init_send_encodings();
+  EXPECT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
+  EXPECT_NE(caller->pc()->GetTransceivers()[0]->sender()->init_send_encodings(),
+            encodings);
+  EXPECT_TRUE(caller->SetLocalDescription(caller->CreateRollback()));
+  EXPECT_EQ(caller->pc()->GetTransceivers()[0]->sender()->init_send_encodings(),
+            encodings);
+}
+
+TEST_F(PeerConnectionJsepTest, RollbackDoesNotAffectSendEncodings) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+  RtpTransceiverInit init;
+  init.direction = RtpTransceiverDirection::kSendOnly;
+  RtpEncodingParameters encoding;
+  encoding.rid = "hi";
+  init.send_encodings.push_back(encoding);
+  encoding.rid = "mid";
+  init.send_encodings.push_back(encoding);
+  encoding.rid = "lo";
+  init.send_encodings.push_back(encoding);
+  caller->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init);
+  callee->AddTransceiver(cricket::MEDIA_TYPE_VIDEO);
+  callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal());
+  caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal());
+  auto params = caller->pc()->GetTransceivers()[0]->sender()->GetParameters();
+  EXPECT_TRUE(params.encodings[0].active);
+  params.encodings[0].active = false;
+  caller->pc()->GetTransceivers()[0]->sender()->SetParameters(params);
+  auto offer = caller->CreateOffer();
+  std::string offer_string;
+  EXPECT_TRUE(offer.get()->ToString(&offer_string));
+  std::string simulcast_line =
+      offer_string.substr(offer_string.find("a=simulcast"));
+  EXPECT_FALSE(simulcast_line.empty());
+  EXPECT_TRUE(caller->SetLocalDescription(std::move(offer)));
+  EXPECT_TRUE(caller->SetLocalDescription(caller->CreateRollback()));
+  EXPECT_FALSE(caller->pc()
+                   ->GetTransceivers()[0]
+                   ->sender()
+                   ->GetParameters()
+                   .encodings[0]
+                   .active);
+  offer = caller->CreateOffer();
+  EXPECT_TRUE(offer.get()->ToString(&offer_string));
+  EXPECT_EQ(offer_string.substr(offer_string.find("a=simulcast")),
+            simulcast_line);
+}
+
 TEST_F(PeerConnectionJsepTest, RollbackRestoresMidAndRemovesTransceiver) {
   auto callee = CreatePeerConnection();
   callee->AddVideoTrack("a");
@@ -2202,18 +2264,6 @@ TEST_F(PeerConnectionJsepTest,
   callee->CreateDataChannel("dummy");
   callee->AddTransceiver(cricket::MEDIA_TYPE_VIDEO);
   EXPECT_TRUE(callee->CreateOfferAndSetAsLocal());
-}
-
-TEST_F(PeerConnectionJsepTest, RollbackRtpDataChannel) {
-  RTCConfiguration config;
-  config.sdp_semantics = SdpSemantics::kUnifiedPlan;
-  config.enable_rtp_data_channel = true;
-  auto pc = CreatePeerConnection(config);
-  pc->CreateDataChannel("dummy");
-  auto offer = pc->CreateOffer();
-  EXPECT_TRUE(pc->CreateOfferAndSetAsLocal());
-  EXPECT_TRUE(pc->SetRemoteDescription(pc->CreateRollback()));
-  EXPECT_TRUE(pc->SetLocalDescription(std::move(offer)));
 }
 
 }  // namespace webrtc

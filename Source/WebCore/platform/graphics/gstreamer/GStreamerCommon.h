@@ -320,4 +320,13 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 #define webkitGstAudioFormatFillSilence gst_audio_format_fill_silence
 #endif
 
+// We can't pass macros as template parameters, so we need to wrap them in inline functions.
+inline void gstObjectLock(void* object) { GST_OBJECT_LOCK(object); }
+inline void gstObjectUnlock(void* object) { GST_OBJECT_UNLOCK(object); }
+inline void gstPadStreamLock(GstPad* pad) { GST_PAD_STREAM_LOCK(pad); }
+inline void gstPadStreamUnlock(GstPad* pad) { GST_PAD_STREAM_UNLOCK(pad); }
+
+using GstObjectLocker = ExternalLocker<void, gstObjectLock, gstObjectUnlock>;
+using GstPadStreamLocker = ExternalLocker<GstPad, gstPadStreamLock, gstPadStreamUnlock>;
+
 #endif // USE(GSTREAMER)

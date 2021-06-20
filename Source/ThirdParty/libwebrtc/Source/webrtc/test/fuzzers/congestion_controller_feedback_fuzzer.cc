@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/functional/bind_front.h"
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
@@ -21,7 +22,10 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     return;
   SimulatedClock clock(data[i++]);
   PacketRouter packet_router;
-  ReceiveSideCongestionController cc(&clock, &packet_router);
+  ReceiveSideCongestionController cc(
+      &clock,
+      absl::bind_front(&PacketRouter::SendCombinedRtcpPacket, &packet_router),
+      absl::bind_front(&PacketRouter::SendRemb, &packet_router), nullptr);
   RemoteBitrateEstimator* rbe = cc.GetRemoteBitrateEstimator(true);
   RTPHeader header;
   header.ssrc = ByteReader<uint32_t>::ReadBigEndian(&data[i]);

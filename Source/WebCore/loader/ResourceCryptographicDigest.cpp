@@ -27,6 +27,7 @@
 #include "ResourceCryptographicDigest.h"
 
 #include "ParsingUtilities.h"
+#include "SharedBuffer.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringParsingBuffer.h>
@@ -151,6 +152,17 @@ ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDig
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
     cryptoDigest->addBytes(bytes, length);
+    return { algorithm, cryptoDigest->computeHash() };
+}
+
+ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm algorithm, const SharedBuffer* buffer)
+{
+    auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
+    if (buffer) {
+        buffer->forEachSegment([&](auto& segment) {
+            cryptoDigest->addBytes(segment.data(), segment.size());
+        });
+    }
     return { algorithm, cryptoDigest->computeHash() };
 }
 

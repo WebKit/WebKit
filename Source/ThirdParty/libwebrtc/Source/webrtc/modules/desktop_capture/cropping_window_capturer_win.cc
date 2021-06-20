@@ -154,13 +154,30 @@ class CroppingWindowCapturerWin : public CroppingWindowCapturer {
 void CroppingWindowCapturerWin::CaptureFrame() {
   DesktopCapturer* win_capturer = window_capturer();
   if (win_capturer) {
-    // Update the list of available sources and override source to capture if
-    // FullScreenWindowDetector returns not zero
+    // Feed the actual list of windows into full screen window detector.
     if (full_screen_window_detector_) {
       full_screen_window_detector_->UpdateWindowListIfNeeded(
-          selected_window(),
-          [win_capturer](DesktopCapturer::SourceList* sources) {
-            return win_capturer->GetSourceList(sources);
+          selected_window(), [this](DesktopCapturer::SourceList* sources) {
+            // Get the list of top level windows, including ones with empty
+            // title. win_capturer_->GetSourceList can't be used here
+            // cause it filters out the windows with empty titles and
+            // it uses responsiveness check which could lead to performance
+            // issues.
+            SourceList result;
+            if (!webrtc::GetWindowList(GetWindowListFlags::kNone, &result))
+              return false;
+
+            // Filter out windows not visible on current desktop
+            auto it = std::remove_if(
+                result.begin(), result.end(), [this](const auto& source) {
+                  HWND hwnd = reinterpret_cast<HWND>(source.id);
+                  return !window_capture_helper_
+                              .IsWindowVisibleOnCurrentDesktop(hwnd);
+                });
+            result.erase(it, result.end());
+
+            sources->swap(result);
+            return true;
           });
     }
     win_capturer->SelectSource(GetWindowToCapture());

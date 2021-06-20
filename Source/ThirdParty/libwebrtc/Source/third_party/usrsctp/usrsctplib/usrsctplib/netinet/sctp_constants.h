@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_constants.h 365071 2020-09-01 21:19:14Z mjg $");
+__FBSDID("$FreeBSD$");
 #endif
 
 #ifndef _NETINET_SCTP_CONSTANTS_H_
@@ -610,7 +610,7 @@ extern void getwintimeofday(struct timeval *tv);
 
 #define SCTP_RTO_UPPER_BOUND	(60000)	/* 60 sec in ms */
 #define SCTP_RTO_LOWER_BOUND	(1000)	/* 1 sec is ms */
-#define SCTP_RTO_INITIAL	(3000)	/* 3 sec in ms */
+#define SCTP_RTO_INITIAL	(1000)	/* 1 sec in ms */
 
 #define SCTP_INP_KILL_TIMEOUT 20	/* number of ms to retry kill of inpcb */
 #define SCTP_ASOC_KILL_TIMEOUT 10	/* number of ms to retry kill of inpcb */

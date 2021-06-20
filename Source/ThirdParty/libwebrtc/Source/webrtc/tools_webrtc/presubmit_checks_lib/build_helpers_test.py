@@ -14,19 +14,20 @@ import unittest
 #pylint: disable=relative-import
 import build_helpers
 
-
 TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'testdata')
 
 
 class GnCheckTest(unittest.TestCase):
-  def testCircularDependencyError(self):
-    test_dir = os.path.join(TESTDATA_DIR, 'circular_dependency')
-    expected_errors = ['ERROR Dependency cycle:\n'
-                       '  //:bar ->\n  //:foo ->\n  //:bar']
-    self.assertListEqual(expected_errors,
-                         build_helpers.RunGnCheck(test_dir))
+    def testCircularDependencyError(self):
+        test_dir = os.path.join(TESTDATA_DIR, 'circular_dependency')
+        expected_errors = [
+            'ERROR Dependency cycle:\n'
+            '  //:bar ->\n  //:foo ->\n  //:bar'
+        ]
+        self.assertListEqual(expected_errors,
+                             build_helpers.RunGnCheck(test_dir))
 
 
 if __name__ == '__main__':
-  unittest.main()
+    unittest.main()

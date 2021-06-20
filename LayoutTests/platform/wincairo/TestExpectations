@@ -1739,6 +1739,7 @@ webanimations [ Skip ]
 webexposed [ Skip ]
 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
+webxr [ Skip ]
 
 [ Debug ] fast/dom/xml-large.html [ Skip ]
 [ Debug ] fast/regex/pcre-test-1.html [ Skip ]
@@ -1799,6 +1800,10 @@ editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-1.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
+editing/selection/select-out-of-floated-non-editable-13.html [ Failure ]
+editing/selection/selecting-content-by-overshooting-the-deprecated-flex-container.html [ Failure ]
+editing/selection/selecting-content-by-overshooting-the-flex-container.html [ Failure ]
+editing/selection/selecting-content-by-overshooting-the-grid-container.html [ Failure ]
 editing/selection/selection-display-block-sibling.html [ Missing ]
 editing/selection/selection-display-flex.html [ Missing ]
 editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed.html [ Missing ]
@@ -1860,7 +1865,9 @@ fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnl
 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
 fast/custom-elements/defined-rule.html [ ImageOnlyFailure ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
+fast/dom/webtiming.html [ Failure ]
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2.html [ Failure ]
+fast/dynamic/mail-autosize-with-iframe.html [ Failure ]
 fast/editing/frame-selection-is-not-caret.html [ Skip ] # Crash by assertion failure
 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 fast/events/autoscroll-when-input-is-offscreen.html [ Skip ] # UIScript
@@ -2078,13 +2085,14 @@ http/tests/cache/memory-cache-pruning.html [ Timeout ]
 http/tests/cookies/document-cookie-after-showModalDialog.html [ Timeout ]
 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Timeout ]
 http/tests/cookies/document-cookie-multiple-cookies.html [ Failure ]
-http/tests/cookies/multiple-redirect-and-set-cookie.py [ Timeout ]
 http/tests/css/css-image-loading.html [ Pass Failure ]
 http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
 http/tests/misc/form-post-textplain.html [ Failure ]
 http/tests/misc/form-submit-file-cross-site-redirect.html [ Timeout ]
 http/tests/misc/gamepads-insecure.html [ Failure ]
 http/tests/misc/large-js-program.py [ Skip ] # Timeout
+http/tests/misc/webtiming-one-redirect.py [ Failure ]
+http/tests/misc/webtiming-two-redirects.py [ Failure ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Failure ]
 http/tests/webgl/1.0.2/readPixelsBadArgs.html [ Failure ]
@@ -2097,7 +2105,8 @@ http/tests/xmlhttprequest/post-blob-content-type-async.html [ Failure ]
 http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
 http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure ]
 http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure ]
-http/tests/xmlhttprequest/xml-encoding.html [ Failure ]
+http/tests/xmlhttprequest/upload-progress-events-gc.html [ Skip ] # Timeout
+inspector/cpu-profiler/threads.html [ Failure ]
 js/dfg-convert-this-dom-window.html [ Skip ] # Slow
 js/dfg-dead-variable-on-exit.html [ Skip ] # Slow
 js/dfg-double-vote-fuzz.html [ Skip ] # Slow
@@ -2116,6 +2125,7 @@ storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Failure Pass ]
 storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
+storage/indexeddb/value-cursor-cycle.html [ Failure Pass ]
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.3/conformance/extensions/oes-element-index-uint.html [ Failure ]
 webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
@@ -2127,6 +2137,8 @@ webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Failure Pass ]
+webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
+webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Failure ]
 webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
@@ -2138,6 +2150,7 @@ webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
 webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
 webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
+webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Failure ]
 webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Failure ]
 webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]

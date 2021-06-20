@@ -101,7 +101,6 @@ static bool dumpPixelsForAllTests = false;
 static bool dumpPixelsForCurrentTest = false;
 static bool threaded = false;
 static bool dumpTree = true;
-static bool useTimeoutWatchdog = true;
 static bool forceComplexText = false;
 static bool dumpAllPixels;
 static bool useAcceleratedDrawing = true; // Not used
@@ -133,6 +132,7 @@ HWND webViewWindow;
 RefPtr<TestRunner> gTestRunner;
 
 UINT_PTR waitToDumpWatchdog = 0;
+bool useTimeoutWatchdog = true;
 
 void setPersistentUserStyleSheetLocation(CFStringRef url)
 {

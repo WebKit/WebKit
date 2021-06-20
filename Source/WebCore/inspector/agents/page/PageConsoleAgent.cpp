@@ -47,20 +47,11 @@ using namespace Inspector;
 
 PageConsoleAgent::PageConsoleAgent(PageAgentContext& context)
     : WebConsoleAgent(context)
-    , m_instrumentingAgents(context.instrumentingAgents)
     , m_inspectedPage(context.inspectedPage)
 {
 }
 
 PageConsoleAgent::~PageConsoleAgent() = default;
-
-Protocol::ErrorStringOr<void> PageConsoleAgent::clearMessages()
-{
-    if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent())
-        domAgent->releaseDanglingNodes();
-
-    return WebConsoleAgent::clearMessages();
-}
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> PageConsoleAgent::getLoggingChannels()
 {

@@ -98,6 +98,25 @@ TEST(MultiHeadQueueTest, ThreeHeadsAddAllRemoveAll) {
   }
 }
 
+TEST(MultiHeadQueueTest, HeadCopy) {
+  MultiHeadQueue<size_t> queue = MultiHeadQueue<size_t>(1);
+  for (size_t i = 0; i < 10; ++i) {
+    queue.PushBack(i);
+    EXPECT_EQ(queue.size(), i + 1);
+  }
+  queue.AddHead(0);
+  EXPECT_EQ(queue.readers_count(), 2u);
+  for (size_t i = 0; i < 10; ++i) {
+    absl::optional<size_t> value1 = queue.PopFront(0);
+    absl::optional<size_t> value2 = queue.PopFront(1);
+    EXPECT_EQ(queue.size(), 10 - i - 1);
+    ASSERT_TRUE(value1.has_value());
+    ASSERT_TRUE(value2.has_value());
+    EXPECT_EQ(value1.value(), i);
+    EXPECT_EQ(value2.value(), i);
+  }
+}
+
 }  // namespace
 }  // namespace webrtc_pc_e2e
 }  // namespace webrtc

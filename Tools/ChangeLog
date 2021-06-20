@@ -1,3 +1,477 @@
+2021-06-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        AcceleratedImageBuffer not instantiated but objects are punned to the type
+        https://bugs.webkit.org/show_bug.cgi?id=226917
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add new test
+        TestWebKitAPI.ImageBufferTests.ImageBufferSubTypeCreateCreatesSubtypes
+        to test that the code compiles.
+        Before, it would fail with:
+          `error: cannot initialize a member subobject of type 'typename PtrTraits::StorageType' (aka 'WebCore::AcceleratedImageBuffer *') with an
+           rvalue of type 'WebCore::ConcreteImageBuffer<WebCore::ImageBufferIOSurfaceBackend> *'`
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ImageBufferTests.cpp: Added.
+        (TestWebKitAPI::TEST):
+
+2021-06-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree] --no-timeout switch doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=226913
+
+        Reviewed by Don Olmstead.
+
+        r177542 added a variable 'useTimeoutWatchdog', but used nowhere.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setWaitToDump): Check useTimeoutWatchdog to start the timer.
+
+2021-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add WeakHashMap
+        https://bugs.webkit.org/show_bug.cgi?id=226872
+
+        Reviewed by Geoffrey Garen.
+
+        Added unit tests for WeakHashMap.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::computeSizeOfWeakHashSet): Deleted the unused variant.
+        (WTF_WeakPtr.WeakHashSetExpansion): Deleted the superflous for loop.
+        (TestWebKitAPI::computeSizeOfWeakHashMap): Added.
+        (TestWebKitAPI::ValueObject): Added.
+        (TestWebKitAPI::ValueObject::create):
+        (TestWebKitAPI::ValueObject::~ValueObject):
+        (TestWebKitAPI::ValueObject::ValueObject):
+        (WTF_WeakPtr.WeakHashMapBasic): Added.
+        (WTF_WeakPtr.WeakHashMapConstObjects): Added.
+        (WTF_WeakPtr.WeakHashMapExpansion): Added.
+        (WTF_WeakPtr.WeakHashMapRemoveNullReferences): Added.
+        (TestWebKitAPI::collectKeyValuePairsUsingIterators): Added.
+        (WTF_WeakPtr.WeakHashMapIterators): Added.
+        (WTF_WeakPtr.WeakHashMapAmortizedCleanup): Added.
+
+2021-06-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed small API test failure fix after r278786.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (TEST):
+
+2021-06-11  Alex Christensen  <achristensen@webkit.org>
+
+        Partition CrossOriginPreflightResultCache by SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=226910
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
+2021-06-11  Peng Liu  <peng.liu6@apple.com>
+
+        Fix the references to audio-buffer-size.html in project.pbxproj
+        https://bugs.webkit.org/show_bug.cgi?id=226932
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [Monterey] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226846
+        <rdar://problem/79095148>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add CoreCryptoSPI.h.
+        * TestWebKitAPI/Tests/WebCore/cocoa/CoreCryptoSPI.h: Added.
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm: Import CoreCryptoSPI.h.
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm: Ditto.
+
+2021-06-11  Devin Rousso  <drousso@apple.com>
+
+        Add an option to Copy WebKit Permalink that automatically opens the URL in the default browser for Sublime Text
+        https://bugs.webkit.org/show_bug.cgi?id=226933
+
+        Reviewed by Tim Horton.
+
+        Usually the step right after copying the permalink is to open a browser and enter it. Having
+        a setting that causes the plugin to do that automatically would save some time and effort.
+
+        * CopyPermalink/Sublime Text/CopyWebKitPermalink/CopyWebKitPermalink.py:
+        (Settings.automatically_open_in_browser): Added.
+        (CopyWebKitPermalinkCommand.run):
+        * CopyPermalink/Sublime Text/CopyWebKitPermalink/CopyWebKitPermalink.sublime-settings:
+
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [check-webkit-style] failing in JS checker due to python byte string
+        https://bugs.webkit.org/show_bug.cgi?id=226925
+        <rdar://problem/79166108>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/style/checkers/jstest.py:
+        (map_functions_to_dict): Use byte regexes.
+        (strip_trailing_blank_lines_and_comments): Ditto.
+        * Scripts/webkitpy/style/checkers/jstest_unittest.py:
+        (JSTestCheckerTestCase.test_map_functions_to_dict): Test content should be bytes.
+
+2021-06-11  Truitt Savell  <tsavell@apple.com>
+
+        Remove ews129 instead of ews179
+        https://bugs.webkit.org/show_bug.cgi?id=226855
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/config.json:
+
+2021-06-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename AppHighlight group to QuickNote to correctly reflect feature.
+        https://bugs.webkit.org/show_bug.cgi?id=226888
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+        (TEST):
+
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r278454): [run-webkit-tests] worker is printed twice for each test in debug logging
+        https://bugs.webkit.org/show_bug.cgi?id=226895
+        <rdar://problem/79164077>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker.run_tests): Strip process names from debug logs.
+        (Worker.stop): Ditto.
+        (Worker._kill_driver): Ditto.
+        (Worker._clean_up_after_test): Ditto.
+
+2021-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Origin is null in http requests when baseURL has custom scheme on iOS 15.0
+        https://bugs.webkit.org/show_bug.cgi?id=226760
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadAlternateHTMLString.mm:
+        (TEST):
+
+2021-06-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: TestWebKitAPI.WebKit.AccessibilityReduceMotion failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=226758
+        <rdar://problem/78984253>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/AccessibilityIncreaseContrast.mm: Added.
+        (-[WKPreferenceObserverForTestingIncreaseContrast preferenceDidChange:key:encodedValue:]):
+        (TEST):
+
+2021-06-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] 6x performance improvement in Memoized
+        https://bugs.webkit.org/show_bug.cgi?id=226891
+        <rdar://problem/79151940>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/decorators.py:
+        (Memoize.__call__.decorator): inspect.getargspec retrieves many bits of
+        information about the function we don't care about. Retrieve arguments manually
+        (and only do it once) to increase performance of Memoized function calls.
+
+2021-06-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Enable Cog for developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=224360
+
+        Reviewed by Adrian Perez de Castro.
+
+        * PlatformWPE.cmake: Enable X11 support in Cog. Re-enable headless support in Cog. Map
+        libsoup configuration in Cog with the one used by the WebKit build.
+
+2021-06-10  Truitt Savell  <tsavell@apple.com>
+
+        Remove Ews179 and bot279 from configs
+        https://bugs.webkit.org/show_bug.cgi?id=226855
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/ews-build/config.json:
+
+2021-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove useDataICInOptimizingJIT option
+        https://bugs.webkit.org/show_bug.cgi?id=226862
+
+        Reviewed by Mark Lam.
+
+        * Scripts/run-jsc-stress-tests:
+
+2021-06-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        Add email address for Igalia's WebKit layout team to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=226829
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2021-06-09  Chris Gambrell  <cgambrell@apple.com>
+
+        Add personal email to Tools/Scripts/webkitpy/common/config/contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=226845
+        <rdar://problem/79095492>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2021-06-09  Dewei Zhu  <dewei_zhu@apple.com>
+
+        HTTP server should run with the same python executable as run-benchmark script.
+        https://bugs.webkit.org/show_bug.cgi?id=226834
+
+        Reviewed by Jonathan Bedard.
+
+        'SimpleHTTPServerDriver._ensure_http_server_dependencies' will not work if the
+        python version used by run-benchmark is not the same as the one invokes http server.
+
+        Remove python modules no longer needed by http server.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver._ensure_http_server_dependencies):
+
+2021-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        CISupport/test-result-archive script reports "SyntaxError: invalid syntax" with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=226797
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/test-result-archive:
+        (archive_test_results): Replaced the old syntax with 'as' for
+        'except' clauses.
+
+2021-06-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use DataIC for AccessCase
+        https://bugs.webkit.org/show_bug.cgi?id=226072
+
+        Reviewed by Saam Barati and Filip Pizlo.
+
+        * Scripts/run-jsc-stress-tests:
+
+2021-06-08  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Increase http server launch timeout on run-benchmark script.
+        https://bugs.webkit.org/show_bug.cgi?id=226801
+
+        Reviewed by Ryosuke Niwa.
+
+        Installing twisted module in http server may take longer than 7.5 seconds.
+        Increase the timeout to be 31.5 seconds and add an early terminate if http server
+        process is not running.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        Removed unused import.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve):
+
+2021-06-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-webkit-tests: TaskPool reports PicklingError for Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=226710
+
+        Reviewed by Jonathan Bedard.
+
+        Since r278454 changed run-webkit-tests to use TaskPool,
+        run-webkit-tests reported PicklingError for Windows Python. It
+        couldn't pickle Port object. This issue happened on multi-core PC,
+        but on single CPU tester bot machines.
+
+        WrappedPopen couldn't be pickled because it was defined as an
+        inner class. It should be defined at the top-level.
+
+        The instance variables _web_platform_test_server,
+        _websocket_server_temporary_directory, and
+        _websocket_secure_server of Port object aren't pickleable. Make
+        them class variables.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (WrappedPopen):
+        (Executive.WrappedPopen):
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.__init__):
+        (Port.ports_to_forward):
+        (Port.is_websocket_server_running):
+        (Port.is_wpt_server_running):
+        (Port.start_websocket_server):
+        (Port.start_web_platform_test_server):
+        (Port.stop_websocket_server):
+        (Port.stop_web_platform_test_server):
+
+2021-06-08  Antti Koivisto  <antti@apple.com>
+
+        Factor MarkedText collection out of LegacyInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=226731
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/MarkedText.cpp:
+        (TestWebKitAPI::TEST):
+
+2021-06-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [test-webkit-lldb] 3 dump_class_layout_unittest.TestDumpClassLayout tests failing with Xcode 12.5
+        https://bugs.webkit.org/show_bug.cgi?id=226540
+
+        Unreviewed test gardening.
+
+        * lldb/dump_class_layout_unittest.py: Rebaseline tests.
+
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
+        Add copy of std::span so that we can use it pre-moving to c++20
+        https://bugs.webkit.org/show_bug.cgi?id=226351
+
+        Reviewed by Alex Christensen.
+
+        Add basic WTF::Span test to make sure things compile and work.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Span.cpp: Added.
+
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
+        Move some hand rolled CSSProperty predicates to be generated based on new CSSProperties.json properties
+        https://bugs.webkit.org/show_bug.cgi?id=226768
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.check_codegen_properties):
+        Add new codegen properties to the checker.
+
+2021-06-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Enable network access in the WPE build sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=225914
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Allow network access for WPE build jobs, so that CMake is
+        able to git checkout Cog from github.
+
+2021-06-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Update jya's email address
+        https://bugs.webkit.org/show_bug.cgi?id=226752
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2021-06-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Allow custom build directories
+        https://bugs.webkit.org/show_bug.cgi?id=226142
+
+        Reviewed by Adrian Perez de Castro.
+
+        By default the build directory remains WebKitBuild/{GTK,WPE}/{Release,Debug}. Builds done
+        with the Flatpak SDK now support the standard WEBKIT_OUTPUTDIR environment variable, eg.
+        setting $WEBKIT_OUTPUTDIR to "/path/to/somewhere", the built files will end up in
+        /path/to/somewhere/{GTK,WPE}/Release.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+
+2021-06-07  Jean-Yves Avenard  <jya@apple.com>
+
+        Update jya's email address
+        https://bugs.webkit.org/show_bug.cgi?id=226752
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2021-06-07  Alex Christensen  <achristensen@webkit.org>
+
+        Adopt SecTrustGetCertificateAtIndex replacement where available
+        https://bugs.webkit.org/show_bug.cgi?id=225893
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (verifyCertificateAndPublicKey):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        Replace IMAGE_EXTRACTION with IMAGE_ANALYSIS.
+
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleHitTest.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+        * TestWebKitAPI/Tests/mac/ImmediateActionTests.mm:
+
+2021-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Windows Python 2.7 fails to install tblib-1.7.0 due to "TypeError: environment can only contain strings"
+        https://bugs.webkit.org/show_bug.cgi?id=226707
+
+        Reviewed by Jonathan Bedard.
+
+        WinCairo port is still using Python 2.7 that has ascii strings and
+        unicode strings. WinPort.setup_crash_log_saving modifies
+        _NT_SYMBOL_PATH env var to have a unicode string. So, after
+        setup_crash_log_saving, AutoInstall failed due to the unicode
+        string in os.environ.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_crash_log_saving): Convert self._build_path() to a
+        ascii string with str().
+
+2021-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-webkit-test should use python2 for wpt serve until the latest will be imported
+        https://bugs.webkit.org/show_bug.cgi?id=226703
+
+        Reviewed by Jonathan Bedard.
+
+        The current imported wpt.py doesn't support Python 3 yet. Use
+        Python 2 temporarily.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__):
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Find-in-page should match text inside image overlays

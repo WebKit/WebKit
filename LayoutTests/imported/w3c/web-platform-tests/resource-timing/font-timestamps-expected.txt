@@ -1,0 +1,5 @@
+This fetches ahem font.
+
+FAIL Test a font's timestamps assert_greater_than_equal: domainLookupStart should be more than 0 in same-origin redirect. expected a number greater than or equal to <nondeterministic test output> but got 0
+PASS Test a font's timestamps with delays
+

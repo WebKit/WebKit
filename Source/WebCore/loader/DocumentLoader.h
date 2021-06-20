@@ -385,8 +385,6 @@ public:
     void deref() const final { RefCounted<DocumentLoader>::deref(); }
 #endif
 
-    bool isAlwaysOnLoggingAllowed() const;
-
     void startIconLoading();
     WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(SharedBuffer*)>&&);
     void finishedLoadingIcon(IconLoader&, SharedBuffer*);

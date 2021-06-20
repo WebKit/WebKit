@@ -9,38 +9,51 @@
 import("../../../webrtc.gni")
 
 if (rtc_include_tests) {
-  rtc_library("voip_core_unittests") {
+  rtc_source_set("mock_task_queue") {
     testonly = true
-    sources = [ "voip_core_unittest.cc" ]
+    visibility = [ "*" ]
+    sources = [ "mock_task_queue.h" ]
     deps = [
-      "..:voip_core",
-      "../../../api/audio_codecs:builtin_audio_decoder_factory",
-      "../../../api/audio_codecs:builtin_audio_encoder_factory",
-      "../../../api/task_queue:default_task_queue_factory",
-      "../../../modules/audio_device:mock_audio_device",
-      "../../../modules/audio_processing:mocks",
-      "../../../test:audio_codec_mocks",
-      "../../../test:mock_transport",
+      "../../../api/task_queue:task_queue",
       "../../../test:test_support",
     ]
+  }
+
+  if (!build_with_chromium) {
+    rtc_library("voip_core_unittests") {
+      testonly = true
+      sources = [ "voip_core_unittest.cc" ]
+      deps = [
+        "..:voip_core",
+        "../../../api/audio_codecs:builtin_audio_decoder_factory",
+        "../../../api/audio_codecs:builtin_audio_encoder_factory",
+        "../../../api/task_queue:default_task_queue_factory",
+        "../../../modules/audio_device:mock_audio_device",
+        "../../../modules/audio_processing:mocks",
+        "../../../modules/utility:mock_process_thread",
+        "../../../test:audio_codec_mocks",
+        "../../../test:mock_transport",
+        "../../../test:test_support",
+      ]
+    }
   }
 
   rtc_library("audio_channel_unittests") {
     testonly = true
     sources = [ "audio_channel_unittest.cc" ]
     deps = [
+      ":mock_task_queue",
       "..:audio_channel",
       "../../../api:transport_api",
       "../../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
-      "../../../api/task_queue:default_task_queue_factory",
+      "../../../api/task_queue:task_queue",
       "../../../modules/audio_mixer:audio_mixer_impl",
       "../../../modules/audio_mixer:audio_mixer_test_utils",
       "../../../modules/rtp_rtcp:rtp_rtcp",
       "../../../modules/rtp_rtcp:rtp_rtcp_format",
       "../../../modules/utility",
       "../../../rtc_base:logging",
-      "../../../rtc_base:rtc_event",
       "../../../test:mock_transport",
       "../../../test:test_support",
     ]

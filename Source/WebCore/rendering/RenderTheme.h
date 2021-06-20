@@ -86,7 +86,7 @@ public:
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() { return String(); }
     virtual String extraMediaControlsStyleSheet() { return String(); }
-    virtual Vector<String, 3> mediaControlsScripts() { return { }; }
+    virtual Vector<String, 2> mediaControlsScripts() { return { }; }
 #if ENABLE(MODERN_MEDIA_CONTROLS)
     virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }

@@ -364,7 +364,7 @@ SCTP_RECVRCVINFO | int | r/w
 SCTP_RECVNXTINFO | int | r/w
 SCTP_DEFAULT_SNDINFO | struct sctp_sndinfo | r/w
 SCTP_DEFAULT_PRINFO | struct sctp_default_prinfo | r/w
-SCTP_REMOTE_UDP_ENCAPS_PORT | int | r/w
+SCTP_REMOTE_UDP_ENCAPS_PORT | struct sctp_udpencaps | r/w
 SCTP_ENABLE_STREAM_RESET | struct sctp_assoc_value | r/w
 SCTP_STATUS | struct sctp_status | r
 SCTP_GET_PEER_ADDR_INFO | struct sctp_paddrinfo | r

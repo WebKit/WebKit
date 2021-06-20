@@ -116,15 +116,15 @@ shouldThrow(`Reflect.set(document.body.dataset, "cocoa-cappuccino", "sweet")`);
 shouldBe(`Reflect.set(document.body.dataset, 0, "sweet")`, `true`);
 shouldBe(`Reflect.get(document.body.dataset, 0)`, `"sweet"`);
 
-debug("DOMStringMap ignores the receiver. These putDelegate only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.");
+debug("DOMStringMap falls back to OrdinarySet if receiver is altered.");
 var receiver = {};
 shouldBe(`Reflect.set(document.body.dataset, "cocoa", "ok", receiver)`, `true`);
-shouldBe(`Reflect.get(document.body.dataset, "cocoa")`, `"ok"`);
-shouldBe(`Reflect.get(receiver, "cocoa")`, `undefined`);
+shouldBe(`Reflect.get(document.body.dataset, "cocoa")`, `"sweet"`);
+shouldBe(`Reflect.get(receiver, "cocoa")`, `"ok"`);
 var receiver = {};
 shouldBe(`Reflect.set(document.body.dataset, 0, "ok", receiver)`, `true`);
-shouldBe(`Reflect.get(document.body.dataset, 0)`, `"ok"`);
-shouldBe(`Reflect.get(receiver, 0)`, `undefined`);
+shouldBe(`Reflect.get(document.body.dataset, 0)`, `"sweet"`);
+shouldBe(`Reflect.get(receiver, 0)`, `"ok"`);
 
 debug("CustomIndexedSetter");
 var select = document.getElementById("testSelect");
@@ -146,11 +146,11 @@ shouldBe(`Reflect.set(select, 44, option2)`, `true`);
 shouldBe(`Reflect.get(select, 44).value`, `"kilimanjaro"`);
 shouldThrow(`Reflect.set(select, 20, "Kilimanjaro")`);
 
-debug("CustomIndexedSetter ignores the receiver. These methods only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.");
+debug("CustomIndexedSetter falls back to OrdinarySet if receiver is altered.");
 var option3 = document.createElement("option");
 option3.value = "rabbit";
 option3.textContent = "Rabbit";
 var receiver = {};
 shouldBe(`Reflect.set(select, 0, option3, receiver)`, `true`);
-shouldBe(`Reflect.get(receiver, 0)`, `undefined`);
-shouldBe(`Reflect.get(select, 0)`, `option3`);
+shouldBe(`Reflect.get(receiver, 0)`, `option3`);
+shouldBe(`Reflect.get(select, 0)`, `select.children[0]`);

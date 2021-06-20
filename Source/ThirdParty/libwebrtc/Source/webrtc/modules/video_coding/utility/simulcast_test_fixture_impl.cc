@@ -84,7 +84,6 @@ class SimulcastTestFixtureImpl::TestEncodedImageCallback
         encoded_key_frame_.SetEncodedData(EncodedImageBuffer::Create(
             encoded_image.data(), encoded_image.size()));
         encoded_key_frame_._frameType = VideoFrameType::kVideoFrameKey;
-        encoded_key_frame_._completeFrame = encoded_image._completeFrame;
       } else {
         encoded_frame_.SetEncodedData(EncodedImageBuffer::Create(
             encoded_image.data(), encoded_image.size()));
@@ -213,7 +212,7 @@ void SimulcastTestFixtureImpl::DefaultSettings(
     VideoCodecType codec_type,
     bool reverse_layer_order) {
   RTC_CHECK(settings);
-  memset(settings, 0, sizeof(VideoCodec));
+  *settings = {};
   settings->codecType = codec_type;
   settings->startBitrate = 300;
   settings->minBitrate = 30;
@@ -869,7 +868,6 @@ void SimulcastTestFixtureImpl::TestDecodeWidthHeightSet() {
             encoded_frame[index].SetEncodedData(EncodedImageBuffer::Create(
                 encoded_image.data(), encoded_image.size()));
             encoded_frame[index]._frameType = encoded_image._frameType;
-            encoded_frame[index]._completeFrame = encoded_image._completeFrame;
             return EncodedImageCallback::Result(
                 EncodedImageCallback::Result::OK, 0);
           }));

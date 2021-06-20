@@ -20,10 +20,12 @@
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/test/video/function_video_decoder_factory.h"
 #include "api/transport/field_trial_based_config.h"
+#include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_decoder.h"
 #include "call/call.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "media/engine/internal_decoder_factory.h"
+#include "modules/video_coding/utility/ivf_file_writer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/string_to_number.h"
 #include "rtc_base/strings/json.h"
@@ -112,8 +114,22 @@ ABSL_FLAG(std::string,
           "",
           "Decoder bitstream output file");
 
+ABSL_FLAG(std::string, decoder_ivf_filename, "", "Decoder ivf output file");
+
 // Flag for video codec.
 ABSL_FLAG(std::string, codec, "VP8", "Video codec");
+
+// Flags for rtp start and stop timestamp.
+ABSL_FLAG(uint32_t,
+          start_timestamp,
+          0,
+          "RTP start timestamp, packets with smaller timestamp will be ignored "
+          "(no wraparound)");
+ABSL_FLAG(uint32_t,
+          stop_timestamp,
+          4294967295,
+          "RTP stop timestamp, packets with larger timestamp will be ignored "
+          "(no wraparound)");
 
 namespace {
 
@@ -189,6 +205,10 @@ static std::string DecoderBitstreamFilename() {
   return absl::GetFlag(FLAGS_decoder_bitstream_filename);
 }
 
+static std::string IVFFilename() {
+  return absl::GetFlag(FLAGS_decoder_ivf_filename);
+}
+
 static std::string Codec() {
   return absl::GetFlag(FLAGS_codec);
 }
@@ -255,6 +275,39 @@ class DecoderBitstreamFileWriter : public test::FakeDecoder {
   FILE* file_;
 };
 
+class DecoderIvfFileWriter : public test::FakeDecoder {
+ public:
+  explicit DecoderIvfFileWriter(const char* filename, const std::string& codec)
+      : file_writer_(
+            IvfFileWriter::Wrap(FileWrapper::OpenWriteOnly(filename), 0)) {
+    RTC_DCHECK(file_writer_.get());
+    if (codec == "VP8") {
+      video_codec_type_ = VideoCodecType::kVideoCodecVP8;
+    } else if (codec == "VP9") {
+      video_codec_type_ = VideoCodecType::kVideoCodecVP9;
+    } else if (codec == "H264") {
+      video_codec_type_ = VideoCodecType::kVideoCodecH264;
+    } else {
+      RTC_LOG(LS_ERROR) << "Unsupported video codec " << codec;
+      RTC_DCHECK(false);
+    }
+  }
+  ~DecoderIvfFileWriter() override { file_writer_->Close(); }
+
+  int32_t Decode(const EncodedImage& encoded_frame,
+                 bool /* missing_frames */,
+                 int64_t render_time_ms) override {
+    if (!file_writer_->WriteFrame(encoded_frame, video_codec_type_)) {
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+    return WEBRTC_VIDEO_CODEC_OK;
+  }
+
+ private:
+  std::unique_ptr<IvfFileWriter> file_writer_;
+  VideoCodecType video_codec_type_;
+};
+
 // The RtpReplayer is responsible for parsing the configuration provided by the
 // user, setting up the windows, recieve streams and decoders and then replaying
 // the provided RTP dump.
@@ -265,35 +318,64 @@ class RtpReplayer final {
                      const std::string& rtp_dump_path) {
     std::unique_ptr<webrtc::TaskQueueFactory> task_queue_factory =
         webrtc::CreateDefaultTaskQueueFactory();
+    auto worker_thread = task_queue_factory->CreateTaskQueue(
+        "worker_thread", TaskQueueFactory::Priority::NORMAL);
+    rtc::Event sync_event(/*manual_reset=*/false,
+                          /*initially_signalled=*/false);
     webrtc::RtcEventLogNull event_log;
     Call::Config call_config(&event_log);
     call_config.task_queue_factory = task_queue_factory.get();
     call_config.trials = new FieldTrialBasedConfig();
-    std::unique_ptr<Call> call(Call::Create(call_config));
+    std::unique_ptr<Call> call;
     std::unique_ptr<StreamState> stream_state;
-    // Attempt to load the configuration
-    if (replay_config_path.empty()) {
-      stream_state = ConfigureFromFlags(rtp_dump_path, call.get());
-    } else {
-      stream_state = ConfigureFromFile(replay_config_path, call.get());
-    }
-    if (stream_state == nullptr) {
-      return;
-    }
+
+    // Creation of the streams must happen inside a task queue because it is
+    // resued as a worker thread.
+    worker_thread->PostTask(ToQueuedTask([&]() {
+      call.reset(Call::Create(call_config));
+
+      // Attempt to load the configuration
+      if (replay_config_path.empty()) {
+        stream_state = ConfigureFromFlags(rtp_dump_path, call.get());
+      } else {
+        stream_state = ConfigureFromFile(replay_config_path, call.get());
+      }
+
+      if (stream_state == nullptr) {
+        return;
+      }
+      // Start replaying the provided stream now that it has been configured.
+      // VideoReceiveStreams must be started on the same thread as they were
+      // created on.
+      for (const auto& receive_stream : stream_state->receive_streams) {
+        receive_stream->Start();
+      }
+      sync_event.Set();
+    }));
+
     // Attempt to create an RtpReader from the input file.
     std::unique_ptr<test::RtpFileReader> rtp_reader =
         CreateRtpReader(rtp_dump_path);
-    if (rtp_reader == nullptr) {
+
+    // Wait for streams creation.
+    sync_event.Wait(/*give_up_after_ms=*/10000);
+
+    if (stream_state == nullptr || rtp_reader == nullptr) {
       return;
     }
-    // Start replaying the provided stream now that it has been configured.
-    for (const auto& receive_stream : stream_state->receive_streams) {
-      receive_stream->Start();
-    }
-    ReplayPackets(call.get(), rtp_reader.get());
-    for (const auto& receive_stream : stream_state->receive_streams) {
-      call->DestroyVideoReceiveStream(receive_stream);
-    }
+
+    ReplayPackets(call.get(), rtp_reader.get(), worker_thread.get());
+
+    // Destruction of streams and the call must happen on the same thread as
+    // their creation.
+    worker_thread->PostTask(ToQueuedTask([&]() {
+      for (const auto& receive_stream : stream_state->receive_streams) {
+        call->DestroyVideoReceiveStream(receive_stream);
+      }
+      call.reset();
+      sync_event.Set();
+    }));
+    sync_event.Wait(/*give_up_after_ms=*/10000);
   }
 
  private:
@@ -390,10 +472,7 @@ class RtpReplayer final {
     // Setup the receiving stream
     VideoReceiveStream::Decoder decoder;
     decoder = test::CreateMatchingDecoder(MediaPayloadType(), Codec());
-    if (DecoderBitstreamFilename().empty()) {
-      stream_state->decoder_factory =
-          std::make_unique<InternalDecoderFactory>();
-    } else {
+    if (!DecoderBitstreamFilename().empty()) {
       // Replace decoder with file writer if we're writing the bitstream to a
       // file instead.
       stream_state->decoder_factory =
@@ -401,6 +480,17 @@ class RtpReplayer final {
             return std::make_unique<DecoderBitstreamFileWriter>(
                 DecoderBitstreamFilename().c_str());
           });
+    } else if (!IVFFilename().empty()) {
+      // Replace decoder with file writer if we're writing the ivf to a
+      // file instead.
+      stream_state->decoder_factory =
+          std::make_unique<test::FunctionVideoDecoderFactory>([]() {
+            return std::make_unique<DecoderIvfFileWriter>(IVFFilename().c_str(),
+                                                          Codec());
+          });
+    } else {
+      stream_state->decoder_factory =
+          std::make_unique<InternalDecoderFactory>();
     }
     receive_config.decoder_factory = stream_state->decoder_factory.get();
     receive_config.decoders.push_back(decoder);
@@ -435,10 +525,15 @@ class RtpReplayer final {
     return rtp_reader;
   }
 
-  static void ReplayPackets(Call* call, test::RtpFileReader* rtp_reader) {
+  static void ReplayPackets(Call* call,
+                            test::RtpFileReader* rtp_reader,
+                            TaskQueueBase* worker_thread) {
     int64_t replay_start_ms = -1;
     int num_packets = 0;
     std::map<uint32_t, int> unknown_packets;
+    rtc::Event event(/*manual_reset=*/false, /*initially_signalled=*/false);
+    uint32_t start_timestamp = absl::GetFlag(FLAGS_start_timestamp);
+    uint32_t stop_timestamp = absl::GetFlag(FLAGS_stop_timestamp);
     while (true) {
       int64_t now_ms = rtc::TimeMillis();
       if (replay_start_ms == -1) {
@@ -449,6 +544,13 @@ class RtpReplayer final {
       if (!rtp_reader->NextPacket(&packet)) {
         break;
       }
+      RTPHeader header;
+      std::unique_ptr<RtpHeaderParser> parser(RtpHeaderParser::CreateForTest());
+      parser->Parse(packet.data, packet.length, &header);
+      if (header.timestamp < start_timestamp ||
+          header.timestamp > stop_timestamp) {
+        continue;
+      }
 
       int64_t deliver_in_ms = replay_start_ms + packet.time_ms - now_ms;
       if (deliver_in_ms > 0) {
@@ -456,17 +558,19 @@ class RtpReplayer final {
       }
 
       ++num_packets;
-      switch (call->Receiver()->DeliverPacket(
-          webrtc::MediaType::VIDEO,
-          rtc::CopyOnWriteBuffer(packet.data, packet.length),
-          /* packet_time_us */ -1)) {
+      PacketReceiver::DeliveryStatus result = PacketReceiver::DELIVERY_OK;
+      worker_thread->PostTask(ToQueuedTask([&]() {
+        result = call->Receiver()->DeliverPacket(
+            webrtc::MediaType::VIDEO,
+            rtc::CopyOnWriteBuffer(packet.data, packet.length),
+            /* packet_time_us */ -1);
+        event.Set();
+      }));
+      event.Wait(/*give_up_after_ms=*/10000);
+      switch (result) {
         case PacketReceiver::DELIVERY_OK:
           break;
         case PacketReceiver::DELIVERY_UNKNOWN_SSRC: {
-          RTPHeader header;
-          std::unique_ptr<RtpHeaderParser> parser(
-              RtpHeaderParser::CreateForTest());
-          parser->Parse(packet.data, packet.length, &header);
           if (unknown_packets[header.ssrc] == 0)
             fprintf(stderr, "Unknown SSRC: %u!\n", header.ssrc);
           ++unknown_packets[header.ssrc];

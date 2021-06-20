@@ -568,11 +568,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
     }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
     if (elementInfo.type == _WKActivatedElementTypeImage || [elementInfo image]) {
-        if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeImageExtractionActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeImageExtractionActionForElement:elementInfo])
+        if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeShowTextActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeShowTextActionForElement:elementInfo])
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeImageExtraction assistant:self]];
-        if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeRevealImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeRevealImageActionForElement:elementInfo])
+        if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeLookUpImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeLookUpImageActionForElement:elementInfo])
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage assistant:self]];
     }
 #endif
@@ -600,10 +600,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeImageExtractionActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeImageExtractionActionForElement:elementInfo])
+#if ENABLE(IMAGE_ANALYSIS)
+    if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeShowTextActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeShowTextActionForElement:elementInfo])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeImageExtraction assistant:self]];
-    if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeRevealImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeRevealImageActionForElement:elementInfo])
+    if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeLookUpImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeLookUpImageActionForElement:elementInfo])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage assistant:self]];
 #endif
 
@@ -1023,13 +1023,13 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
         }
         break;
     case _WKElementActionTypeImageExtraction:
-#if ENABLE(IMAGE_EXTRACTION)
-        [delegate actionSheetAssistant:self handleImageExtraction:element.image imageURL:element.imageURL title:element.title imageBounds:element.boundingRect];
+#if ENABLE(IMAGE_ANALYSIS)
+        [delegate actionSheetAssistant:self showTextForImage:element.image imageURL:element.imageURL title:element.title imageBounds:element.boundingRect];
 #endif
         break;
     case _WKElementActionTypeRevealImage:
-#if ENABLE(IMAGE_EXTRACTION)
-        [delegate actionSheetAssistant:self handleRevealImage:element.image imageURL:element.imageURL title:element.title imageBounds:element.boundingRect];
+#if ENABLE(IMAGE_ANALYSIS)
+        [delegate actionSheetAssistant:self lookUpImage:element.image imageURL:element.imageURL title:element.title imageBounds:element.boundingRect];
 #endif
         break;
     default:

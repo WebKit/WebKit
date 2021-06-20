@@ -14,5 +14,5 @@ if referer != expected:
 sys.stdout.write('Content-type: image/png\r\n\r\n')
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), '../../security/contentSecurityPolicy/block-all-mixed-content/resources/red-square.png'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), '../../security/contentSecurityPolicy/block-all-mixed-content/resources/red-square.png'), 'rb') as file:
     sys.stdout.buffer.write(file.read())

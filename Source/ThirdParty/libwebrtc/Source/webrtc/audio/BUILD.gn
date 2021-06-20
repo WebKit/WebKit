@@ -47,9 +47,11 @@ rtc_library("audio") {
     "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api:scoped_refptr",
+    "../api:sequence_checker",
     "../api:transport_api",
     "../api/audio:aec3_factory",
     "../api/audio:audio_frame_api",
+    "../api/audio:audio_frame_processor",
     "../api/audio:audio_mixer_api",
     "../api/audio_codecs:audio_codecs_api",
     "../api/crypto:frame_decryptor_interface",
@@ -67,6 +69,7 @@ rtc_library("audio") {
     "../common_audio:common_audio_c",
     "../logging:rtc_event_audio",
     "../logging:rtc_stream_config",
+    "../modules/async_audio_processing",
     "../modules/audio_coding",
     "../modules/audio_coding:audio_coding_module_typedefs",
     "../modules/audio_coding:audio_encoder_cng",
@@ -78,7 +81,6 @@ rtc_library("audio") {
     "../modules/audio_processing:audio_frame_proxies",
     "../modules/audio_processing:rms_level",
     "../modules/pacing",
-    "../modules/remote_bitrate_estimator",
     "../modules/rtp_rtcp",
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../modules/utility",
@@ -89,9 +91,9 @@ rtc_library("audio") {
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_task_queue",
     "../rtc_base:safe_minmax",
+    "../rtc_base:threading",
     "../rtc_base/experiments:field_trial_parser",
     "../rtc_base/synchronization:mutex",
-    "../rtc_base/synchronization:sequence_checker",
     "../rtc_base/system:no_unique_address",
     "../rtc_base/task_utils:to_queued_task",
     "../system_wrappers",
@@ -190,7 +192,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  if (rtc_enable_protobuf) {
+  if (rtc_enable_protobuf && !build_with_chromium) {
     rtc_test("low_bandwidth_audio_test") {
       testonly = true
 
@@ -218,8 +220,8 @@ if (rtc_include_tests) {
         "../test:test_support",
         "../test/pc/e2e:network_quality_metrics_reporter",
         "//testing/gtest",
-        "//third_party/abseil-cpp/absl/flags:flag",
       ]
+      absl_deps = [ "//third_party/abseil-cpp/absl/flags:flag" ]
       if (is_android) {
         deps += [ "//testing/android/native_test:native_test_native_code" ]
       }
@@ -277,30 +279,32 @@ if (rtc_include_tests) {
     }
   }
 
-  rtc_library("audio_perf_tests") {
-    testonly = true
+  if (!build_with_chromium) {
+    rtc_library("audio_perf_tests") {
+      testonly = true
 
-    sources = [
-      "test/audio_bwe_integration_test.cc",
-      "test/audio_bwe_integration_test.h",
-    ]
-    deps = [
-      "../api:simulated_network_api",
-      "../api/task_queue",
-      "../call:fake_network",
-      "../call:simulated_network",
-      "../common_audio",
-      "../rtc_base:rtc_base_approved",
-      "../rtc_base:task_queue_for_test",
-      "../system_wrappers",
-      "../test:field_trial",
-      "../test:fileutils",
-      "../test:test_common",
-      "../test:test_main",
-      "../test:test_support",
-      "//testing/gtest",
-    ]
+      sources = [
+        "test/audio_bwe_integration_test.cc",
+        "test/audio_bwe_integration_test.h",
+      ]
+      deps = [
+        "../api:simulated_network_api",
+        "../api/task_queue",
+        "../call:fake_network",
+        "../call:simulated_network",
+        "../common_audio",
+        "../rtc_base:rtc_base_approved",
+        "../rtc_base:task_queue_for_test",
+        "../system_wrappers",
+        "../test:field_trial",
+        "../test:fileutils",
+        "../test:test_common",
+        "../test:test_main",
+        "../test:test_support",
+        "//testing/gtest",
+      ]
 
-    data = [ "//resources/voice_engine/audio_dtx16.wav" ]
+      data = [ "//resources/voice_engine/audio_dtx16.wav" ]
+    }
   }
 }

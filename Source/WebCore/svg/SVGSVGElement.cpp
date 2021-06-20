@@ -546,7 +546,7 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
     return transform;
 }
 
-SVGViewElement* SVGSVGElement::findViewAnchor(const String& fragmentIdentifier) const
+SVGViewElement* SVGSVGElement::findViewAnchor(StringView fragmentIdentifier) const
 {
     auto* anchorElement = document().findAnchor(fragmentIdentifier);
     return is<SVGViewElement>(anchorElement) ? downcast<SVGViewElement>(anchorElement): nullptr;
@@ -558,14 +558,14 @@ SVGSVGElement* SVGSVGElement::findRootAnchor(const SVGViewElement* viewElement) 
     return is<SVGSVGElement>(viewportElement) ? downcast<SVGSVGElement>(viewportElement) : nullptr;
 }
 
-SVGSVGElement* SVGSVGElement::findRootAnchor(const String& fragmentIdentifier) const
+SVGSVGElement* SVGSVGElement::findRootAnchor(StringView fragmentIdentifier) const
 {
     if (auto* viewElement = findViewAnchor(fragmentIdentifier))
         return findRootAnchor(viewElement);
     return nullptr;
 }
 
-bool SVGSVGElement::scrollToFragment(const String& fragmentIdentifier)
+bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
 {
     auto renderer = this->renderer();
     auto view = m_viewSpec;
@@ -616,7 +616,7 @@ bool SVGSVGElement::scrollToFragment(const String& fragmentIdentifier)
             rootElement->inheritViewAttributes(*viewElement);
             if (auto* renderer = rootElement->renderer())
                 RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-            m_currentViewFragmentIdentifier = fragmentIdentifier;
+            m_currentViewFragmentIdentifier = fragmentIdentifier.toString();
             return true;
         }
     }

@@ -38,7 +38,7 @@ namespace test {
 
 class BaseTest;
 
-class CallTest : public ::testing::Test {
+class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
  public:
   CallTest();
   virtual ~CallTest();
@@ -156,9 +156,6 @@ class CallTest : public ::testing::Test {
 
   void ConnectVideoSourcesToStreams();
 
-  void AssociateFlexfecStreamsWithVideoStreams();
-  void DissociateFlexfecStreamsFromVideoStreams();
-
   void Start();
   void StartVideoStreams();
   void Stop();
@@ -176,6 +173,9 @@ class CallTest : public ::testing::Test {
   VideoSendStream* GetVideoSendStream();
   FlexfecReceiveStream::Config* GetFlexFecConfig();
   TaskQueueBase* task_queue() { return task_queue_.get(); }
+
+  // RtpPacketSinkInterface implementation.
+  void OnRtpPacket(const RtpPacketReceived& packet) override;
 
   test::RunLoop loop_;
 

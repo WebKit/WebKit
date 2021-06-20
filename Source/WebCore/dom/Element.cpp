@@ -3248,15 +3248,19 @@ String Element::outerHTML() const
 
 ExceptionOr<void> Element::setOuterHTML(const String& html)
 {
-    auto* parentElement = this->parentElement();
-    if (!is<HTMLElement>(parentElement))
-        return Exception { NoModificationAllowedError };
+    // The specification allows setting outerHTML on an Element whose parent is a DocumentFragment and Gecko supports this.
+    // However, as of June 2021, Blink matches our behavior and throws a NoModificationAllowedError for non-Element parents.
+    RefPtr parent = parentElement();
+    if (UNLIKELY(!parent)) {
+        if (!parentNode())
+            return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because it doesn't have a parent" };
+        return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because its parent is not an Element" };
+    }
 
-    Ref<HTMLElement> parent = downcast<HTMLElement>(*parentElement);
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
 
-    auto fragment = createFragmentForInnerOuterHTML(parent, html, AllowScriptingContent);
+    auto fragment = createFragmentForInnerOuterHTML(*parent, html, AllowScriptingContent);
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -3264,6 +3268,7 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     if (replaceResult.hasException())
         return replaceResult.releaseException();
 
+    // The following is not part of the specification but matches Blink's behavior as of June 2021.
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
     if (is<Text>(node)) {
         auto result = mergeWithNextTextNode(downcast<Text>(*node));

@@ -1895,6 +1895,22 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
 
     LayoutRect cumulativeBounds;
 
+    auto addStyleToCumulativeBounds = [&](const RenderStyle* style) -> bool {
+        auto keyframeBounds = bounds;
+
+        bool canCompute;
+        if (transformFunctionListsMatch())
+            canCompute = computeTransformedExtentViaTransformList(rendererBox, *style, keyframeBounds);
+        else
+            canCompute = computeTransformedExtentViaMatrix(rendererBox, *style, keyframeBounds);
+
+        if (!canCompute)
+            return false;
+
+        cumulativeBounds.unite(keyframeBounds);
+        return true;
+    };
+
     for (const auto& keyframe : m_blendingKeyframes.keyframes()) {
         const auto* keyframeStyle = keyframe.style();
 
@@ -1907,18 +1923,13 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
                 continue;
         }
 
-        auto keyframeBounds = bounds;
-
-        bool canCompute;
-        if (transformFunctionListsMatch())
-            canCompute = computeTransformedExtentViaTransformList(rendererBox, *keyframeStyle, keyframeBounds);
-        else
-            canCompute = computeTransformedExtentViaMatrix(rendererBox, *keyframeStyle, keyframeBounds);
-
-        if (!canCompute)
+        if (!addStyleToCumulativeBounds(keyframeStyle))
             return false;
+    }
 
-        cumulativeBounds.unite(keyframeBounds);
+    if (m_blendingKeyframes.hasImplicitKeyframes()) {
+        if (!addStyleToCumulativeBounds(&box.style()))
+            return false;
     }
 
     bounds = cumulativeBounds;

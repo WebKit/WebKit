@@ -51,13 +51,15 @@ class TrackedReferences;
 class VM;
 
 enum class JITType : uint8_t {
-    None,
-    HostCallThunk,
-    InterpreterThunk,
-    BaselineJIT,
-    DFGJIT,
-    FTLJIT
+    None = 0b000,
+    HostCallThunk = 0b001,
+    InterpreterThunk = 0b010,
+    BaselineJIT = 0b011,
+    DFGJIT = 0b100,
+    FTLJIT = 0b101,
 };
+static constexpr unsigned widthOfJITType = 3;
+static_assert(WTF::getMSBSetConstexpr(static_cast<std::underlying_type_t<JITType>>(JITType::FTLJIT)) + 1 == widthOfJITType);
 
 class JITCode : public ThreadSafeRefCounted<JITCode> {
 public:
@@ -153,6 +155,11 @@ public:
     static bool isBaselineCode(JITType jitType)
     {
         return jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT;
+    }
+
+    static bool useDataIC(JITType)
+    {
+        return Options::useDataIC();
     }
 
     virtual const DOMJIT::Signature* signature() const { return nullptr; }

@@ -48,6 +48,21 @@ static const double swipeAnimationDurationMultiplier = 3;
 static const double swipeCancelArea = 0.5;
 static const double swipeCancelVelocityThreshold = 0.4;
 
+#if USE(GTK4)
+static const float swipeOverlayShadowOpacity = 0.06;
+static const float swipeOverlayBorderOpacity = 0.05;
+static const float swipeOverlayOutlineOpacity = 0.05;
+static const float swipeOverlayDimmingOpacity = 0.12;
+static const float swipeOverlayShadowWidth = 57;
+static const GskColorStop swipeOverlayShadowStops[] = {
+    { 0,     { 0, 0, 0, 0.08  } },
+    { 0.125, { 0, 0, 0, 0.053 } },
+    { 0.428, { 0, 0, 0, 0.026 } },
+    { 0.714, { 0, 0, 0, 0.01  } },
+    { 1,     { 0, 0, 0, 0     } }
+};
+#endif
+
 static bool isEventStop(PlatformGtkScrollData* event)
 {
     return event->isEnd;
@@ -309,6 +324,7 @@ static int elementWidth(GtkStyleContext* context)
 
     return width;
 }
+
 #endif
 
 void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection direction)
@@ -319,34 +335,58 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     willBeginGesture(ViewGestureType::Swipe);
 
+    FloatSize viewSize(m_webPageProxy.viewSize());
+
+#if USE(GTK4)
+    graphene_rect_t bounds = { 0, 0, viewSize.width(), viewSize.height() };
+#endif
+
     if (auto* snapshot = targetItem->snapshot()) {
         m_currentSwipeSnapshot = snapshot;
 
-        FloatSize viewSize(m_webPageProxy.viewSize());
         if (snapshot->hasImage() && shouldUseSnapshotForSize(*snapshot, viewSize, 0))
+#if USE(GTK4)
+            m_currentSwipeSnapshotPattern = gsk_texture_node_new(snapshot->texture(), &bounds);
+#else
             m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_for_surface(snapshot->surface()));
+#endif
 
         Color color = snapshot->backgroundColor();
         if (color.isValid()) {
             m_backgroundColorForCurrentSnapshot = color;
             if (!m_currentSwipeSnapshotPattern) {
                 auto [red, green, blue, alpha] = color.toSRGBALossy<float>();
+#if USE(GTK4)
+                GdkRGBA rgba = { red, green, blue, alpha };
+                m_currentSwipeSnapshotPattern = adoptGRef(gsk_color_node_new(&rgba, &bounds));
+#else
                 m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_rgba(red, green, blue, alpha));
+#endif
             }
         }
     }
 
-#if !USE(GTK4)
     if (!m_currentSwipeSnapshotPattern) {
         GdkRGBA color;
         auto* context = gtk_widget_get_style_context(m_webPageProxy.viewWidget());
         if (gtk_style_context_lookup_color(context, "theme_base_color", &color))
+#if USE(GTK4)
+            m_currentSwipeSnapshotPattern = adoptGRef(gsk_color_node_new(&color, &bounds));
+#else
             m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_rgba(color.red, color.green, color.blue, color.alpha));
+#endif
     }
 
-    if (!m_currentSwipeSnapshotPattern)
+    if (!m_currentSwipeSnapshotPattern) {
+#if USE(GTK4)
+        GdkRGBA color = { 1, 1, 1, 1 };
+        m_currentSwipeSnapshotPattern = adoptGRef(gsk_color_node_new(&color, &bounds));
+#else
         m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_rgb(1, 1, 1));
+#endif
+    }
 
+#if !USE(GTK4)
     auto size = m_webPageProxy.drawingArea()->size();
 
     if (!m_cssProvider) {
@@ -404,33 +444,70 @@ void ViewGestureController::snapshot(GtkSnapshot* snapshot, GskRenderNode* pageR
     int height = size.height();
     double scale = m_webPageProxy.deviceScaleFactor();
 
-    double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
+    float swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
 
-    double dimmingProgress = swipingLeft ? 1 - progress : -progress;
+    float dimmingProgress = swipingLeft ? 1 - progress : -progress;
     if (isRTL) {
         dimmingProgress = 1 - dimmingProgress;
         swipingLayerOffset = -(width - swipingLayerOffset);
     }
 
+    float remainingSwipeDistance = dimmingProgress * width;
+
+    float shadowOpacity = 1;
+    if (remainingSwipeDistance < swipeOverlayShadowWidth)
+        shadowOpacity = remainingSwipeDistance / swipeOverlayShadowWidth;
+
     gtk_snapshot_save(snapshot);
 
-    graphene_point_t translation = { static_cast<float>(swipingLayerOffset), 0 };
+    graphene_rect_t clip = { 0, 0, static_cast<float>(size.width()), static_cast<float>(size.height()) };
+    gtk_snapshot_push_clip(snapshot, &clip);
+
+    graphene_point_t translation = { swipingLayerOffset, 0 };
     if (!swipingBack) {
         gtk_snapshot_append_node(snapshot, pageRenderNode);
         gtk_snapshot_translate(snapshot, &translation);
     }
 
-    graphene_rect_t rect = { 0, 0, (float)width, (float)height };
-    auto* cr = gtk_snapshot_append_cairo(snapshot, &rect);
-    cairo_set_source(cr, m_currentSwipeSnapshotPattern.get());
-    cairo_rectangle(cr, 0, 0, width, height);
-    cairo_fill(cr);
+    gtk_snapshot_append_node(snapshot, m_currentSwipeSnapshotPattern.get());
 
     if (swipingBack) {
         gtk_snapshot_translate(snapshot, &translation);
         gtk_snapshot_append_node(snapshot, pageRenderNode);
     }
 
+    if (!progress) {
+        gtk_snapshot_pop(snapshot);
+        gtk_snapshot_restore(snapshot);
+        return;
+    }
+
+    if (isRTL) {
+        translation = { static_cast<float>(width), 0 };
+        gtk_snapshot_translate(snapshot, &translation);
+    } else
+        gtk_snapshot_scale(snapshot, -1, 1);
+
+    GdkRGBA dimming = { 0, 0, 0, swipeOverlayDimmingOpacity * dimmingProgress };
+    GdkRGBA border = { 0, 0, 0, swipeOverlayBorderOpacity };
+    GdkRGBA outline = { 1, 1, 1, swipeOverlayOutlineOpacity };
+
+    graphene_rect_t dimmingRect = { 0, 0,  static_cast<float>(width), static_cast<float>(height) };
+    graphene_rect_t borderRect = { 0, 0, 1, static_cast<float>(height) };
+    graphene_rect_t outlineRect = { -1, 0, 1, static_cast<float>(height) };
+    graphene_rect_t shadowRect = { 0, 0, swipeOverlayShadowWidth, static_cast<float>(height) };
+    graphene_point_t shadowStart = { 0, 0 };
+    graphene_point_t shadowEnd = { swipeOverlayShadowWidth, 0 };
+
+    gtk_snapshot_append_color(snapshot, &dimming, &dimmingRect);
+    gtk_snapshot_append_color(snapshot, &border, &borderRect);
+    gtk_snapshot_append_color(snapshot, &outline, &outlineRect);
+    gtk_snapshot_push_opacity(snapshot, shadowOpacity);
+    gtk_snapshot_append_linear_gradient(snapshot, &shadowRect, &shadowStart, &shadowEnd,
+        swipeOverlayShadowStops, G_N_ELEMENTS(swipeOverlayShadowStops));
+    gtk_snapshot_pop(snapshot);
+
+    gtk_snapshot_pop(snapshot);
     gtk_snapshot_restore(snapshot);
 }
 #else
@@ -536,10 +613,12 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
 
     m_currentSwipeSnapshotPattern = nullptr;
+#if !USE(GTK4)
     m_swipeDimmingPattern = nullptr;
     m_swipeShadowPattern = nullptr;
     m_swipeBorderPattern = nullptr;
     m_swipeOutlinePattern = nullptr;
+#endif
 
     m_currentSwipeSnapshot = nullptr;
 

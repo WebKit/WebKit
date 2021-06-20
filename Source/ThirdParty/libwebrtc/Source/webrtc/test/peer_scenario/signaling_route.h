@@ -25,8 +25,8 @@ class SignalingRoute {
  public:
   SignalingRoute(PeerScenarioClient* caller,
                  PeerScenarioClient* callee,
-                 TrafficRoute* send_route,
-                 TrafficRoute* ret_route);
+                 CrossTrafficRoute* send_route,
+                 CrossTrafficRoute* ret_route);
 
   void StartIceSignaling();
 
@@ -57,8 +57,8 @@ class SignalingRoute {
  private:
   PeerScenarioClient* const caller_;
   PeerScenarioClient* const callee_;
-  TrafficRoute* const send_route_;
-  TrafficRoute* const ret_route_;
+  CrossTrafficRoute* const send_route_;
+  CrossTrafficRoute* const ret_route_;
 };
 
 }  // namespace test

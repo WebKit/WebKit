@@ -65,8 +65,6 @@
 #import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
-#define NETWORK_SESSION_COCOA_ADDITIONS_2
-#define NETWORK_SESSION_COCOA_ADDITIONS_3
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
@@ -123,7 +121,25 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     return WebCore::NetworkLoadPriority::Medium;
 }
 
-NETWORK_SESSION_COCOA_ADDITIONS_2
+#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
+static WebCore::PrivacyStance toPrivacyStance(nw_connection_privacy_stance_t stance)
+{
+    switch (stance) {
+    case nw_connection_privacy_stance_unknown:
+        return WebCore::PrivacyStance::Unknown;
+    case nw_connection_privacy_stance_not_eligible:
+        return WebCore::PrivacyStance::NotEligible;
+    case nw_connection_privacy_stance_proxied:
+        return WebCore::PrivacyStance::Proxied;
+    case nw_connection_privacy_stance_failed:
+        return WebCore::PrivacyStance::Failed;
+    case nw_connection_privacy_stance_direct:
+        return WebCore::PrivacyStance::Direct;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::PrivacyStance::Unknown;
+}
+#endif
 
 #if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
@@ -555,7 +571,10 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             ASSERT_NOT_REACHED();
 #endif
 
-        networkDataTask->willPerformHTTPRedirection(response, request, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS](auto&& request) {
+        WebCore::ResourceResponse resourceResponse(response);
+        networkDataTask->checkTAO(resourceResponse);
+
+        networkDataTask->willPerformHTTPRedirection(WTFMove(resourceResponse), request, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
 #else
@@ -809,7 +828,9 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 #endif
         networkLoadMetrics.isReusedConnection = m.isReusedConnection;
 
-        NETWORK_SESSION_COCOA_ADDITIONS_3
+#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
+        networkLoadMetrics.privacyStance = toPrivacyStance(m._privacyStance);
+#endif
 
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
@@ -915,7 +936,9 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
 
-        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(taskMetrics, networkDataTask->networkLoadMetrics().hasCrossOriginRedirect));
+        networkDataTask->checkTAO(resourceResponse);
+
+        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(taskMetrics, networkDataTask->networkLoadMetrics()));
 
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier](WebCore::PolicyAction policyAction) {
 #if !LOG_DISABLED

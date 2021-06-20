@@ -9,11 +9,13 @@
  */
 #include "test/scenario/call_client.h"
 
+#include <iostream>
+#include <memory>
 #include <utility>
 
-#include <memory>
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
+#include "api/transport/network_types.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 
 namespace webrtc {
@@ -197,6 +199,12 @@ TimeDelta LoggingNetworkControllerFactory::GetProcessInterval() const {
   return cc_factory_->GetProcessInterval();
 }
 
+void LoggingNetworkControllerFactory::SetRemoteBitrateEstimate(
+    RemoteBitrateReport msg) {
+  if (last_controller_)
+    last_controller_->OnRemoteBitrateReport(msg);
+}
+
 CallClient::CallClient(
     TimeController* time_controller,
     std::unique_ptr<LogWriterFactoryInterface> log_writer_factory,
@@ -267,6 +275,20 @@ DataRate CallClient::stable_target_rate() const {
 
 DataRate CallClient::padding_rate() const {
   return network_controller_factory_.GetUpdate().pacer_config->pad_rate();
+}
+
+void CallClient::SetRemoteBitrate(DataRate bitrate) {
+  RemoteBitrateReport msg;
+  msg.bandwidth = bitrate;
+  msg.receive_time = clock_->CurrentTime();
+  network_controller_factory_.SetRemoteBitrateEstimate(msg);
+}
+
+void CallClient::UpdateBitrateConstraints(
+    const BitrateConstraints& constraints) {
+  SendTask([this, &constraints]() {
+    call_->GetTransportControllerSend()->SetSdpBitrateParameters(constraints);
+  });
 }
 
 void CallClient::OnPacketReceived(EmulatedIpPacket packet) {

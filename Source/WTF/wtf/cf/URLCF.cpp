@@ -52,10 +52,10 @@ RetainPtr<CFURLRef> URL::createCFURL() const
 {
     RetainPtr<CFURLRef> cfURL;
     if (LIKELY(m_string.is8Bit() && m_string.isAllASCII()))
-        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(m_string.characters8()), m_string.length(), kCFStringEncodingUTF8, nullptr, true));
+        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, m_string.characters8(), m_string.length(), kCFStringEncodingUTF8, nullptr, true));
     else {
         CString utf8 = m_string.utf8();
-        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(utf8.data()), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
+        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, utf8.dataAsUInt8Ptr(), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
     }
 
     if (protocolIsInHTTPFamily() && !isCFURLSameOrigin(cfURL.get(), *this))

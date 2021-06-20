@@ -13,7 +13,9 @@
 #include <string>
 #include <vector>
 
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"
+#include "rtc_base/logging.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -27,6 +29,31 @@ TEST(ScreenCaptureUtilsTest, GetScreenList) {
   ASSERT_TRUE(GetScreenList(&screens, &device_names));
 
   ASSERT_EQ(screens.size(), device_names.size());
+}
+
+TEST(ScreenCaptureUtilsTest, DeviceIndexToHmonitor) {
+  DesktopCapturer::SourceList screens;
+  ASSERT_TRUE(GetScreenList(&screens));
+  if (screens.size() == 0) {
+    RTC_LOG(LS_INFO) << "Skip screen capture test on systems with no monitors.";
+    GTEST_SKIP();
+  }
+
+  HMONITOR hmonitor;
+  ASSERT_TRUE(GetHmonitorFromDeviceIndex(screens[0].id, &hmonitor));
+  ASSERT_TRUE(IsMonitorValid(hmonitor));
+}
+
+TEST(ScreenCaptureUtilsTest, FullScreenDeviceIndexToHmonitor) {
+  HMONITOR hmonitor;
+  ASSERT_TRUE(GetHmonitorFromDeviceIndex(kFullDesktopScreenId, &hmonitor));
+  ASSERT_EQ(hmonitor, static_cast<HMONITOR>(0));
+  ASSERT_TRUE(IsMonitorValid(hmonitor));
+}
+
+TEST(ScreenCaptureUtilsTest, InvalidDeviceIndexToHmonitor) {
+  HMONITOR hmonitor;
+  ASSERT_FALSE(GetHmonitorFromDeviceIndex(kInvalidScreenId, &hmonitor));
 }
 
 }  // namespace webrtc

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../../resources/js-test.js"></script>
+<body>
+<img src="../../resources/green-400x400.png"></img>
+<script>
+jsTestIsAsync = true;
+let image = document.querySelector("img");
+let selectionWidth = 0;
+let selectionHeight = 0;
+
+function updateSelectionDimensions() {
+    let selectionBounds = internals.selectionBounds();
+    selectionWidth = selectionBounds.width;
+    selectionHeight = selectionBounds.height;
+}
+
+addEventListener("load", async () => {
+    for (let i = 0; i < 10; ++i) {
+        internals.installImageOverlay(image, [
+            {
+                topLeft : new DOMPointReadOnly(0.5, 0.5),
+                topRight : new DOMPointReadOnly(1, 0.5),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0.5, 1),
+                children: [
+                    {
+                        text : "Hello",
+                        topLeft : new DOMPointReadOnly(0.5, 0.5),
+                        topRight : new DOMPointReadOnly(1, 0.5),
+                        bottomRight : new DOMPointReadOnly(1, 1),
+                        bottomLeft : new DOMPointReadOnly(0.5, 1),
+                    }
+                ],
+            }
+        ]);
+    }
+
+    getSelection().selectAllChildren(internals.shadowRoot(image).querySelector(".image-overlay-text"));
+    updateSelectionDimensions();
+
+    shouldBe("selectionWidth", "200");
+    shouldBe("selectionHeight", "200");
+
+    image.style.width = "100px";
+    setInterval(updateSelectionDimensions, 10);
+
+    await shouldBecomeEqual("selectionWidth", "50");
+    shouldBe("selectionHeight", "50");
+
+    image.style.width = "";
+    await shouldBecomeEqual("selectionWidth", "200");
+    shouldBe("selectionHeight", "200");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

@@ -57,7 +57,7 @@ static constexpr unsigned IsImmutablePrototypeExoticObject = 1 << 14;
 static constexpr unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 15;
 static constexpr unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 16;
 static constexpr unsigned StructureIsImmortal = 1 << 17;
-static constexpr unsigned HasPutPropertySecurityCheck = 1 << 18;
+static constexpr unsigned OverridesPut = 1 << 18;
 static constexpr unsigned OverridesGetPrototype = 1 << 19;
 static constexpr unsigned GetOwnPropertySlotMayBeWrongAboutDontEnum = 1 << 20;
 
@@ -94,6 +94,7 @@ public:
     bool implementsDefaultHasInstance() const { return isSetOnFlags1<ImplementsDefaultHasInstance>(); }
     bool overridesGetCallData() const { return isSetOnFlags1<OverridesGetCallData>(); }
     bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
+    bool hasStaticPropertyTable() const { return isSetOnFlags1<HasStaticPropertyTable>(); }
     static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
     static bool hasStaticPropertyTable(InlineTypeFlags flags) { return flags & HasStaticPropertyTable; }
     static bool perCellBit(InlineTypeFlags flags) { return flags & TypeInfoPerCellBit; }
@@ -102,12 +103,12 @@ public:
     bool overridesGetOwnPropertyNames() const { return isSetOnFlags2<OverridesGetOwnPropertyNames>(); }
     bool overridesGetOwnSpecialPropertyNames() const { return isSetOnFlags2<OverridesGetOwnSpecialPropertyNames>(); }
     bool overridesAnyFormOfGetOwnPropertyNames() const { return overridesGetOwnPropertyNames() || overridesGetOwnSpecialPropertyNames(); }
+    bool overridesPut() const { return isSetOnFlags2<OverridesPut>(); }
     bool overridesGetPrototype() const { return isSetOnFlags2<OverridesGetPrototype>(); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2<ProhibitsPropertyCaching>(); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2<GetOwnPropertySlotIsImpure>(); }
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2<GetOwnPropertySlotIsImpureForPropertyAbsence>(); }
     bool getOwnPropertySlotMayBeWrongAboutDontEnum() const { return isSetOnFlags2<GetOwnPropertySlotMayBeWrongAboutDontEnum>(); }
-    bool hasPutPropertySecurityCheck() const { return isSetOnFlags2<HasPutPropertySecurityCheck>(); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2<NewImpurePropertyFiresWatchpoints>(); }
     bool isImmutablePrototypeExoticObject() const { return isSetOnFlags2<IsImmutablePrototypeExoticObject>(); }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags2<InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero>(); }

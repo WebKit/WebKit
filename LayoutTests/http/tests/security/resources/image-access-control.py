@@ -12,5 +12,5 @@ if allow_origin == 'true':
 sys.stdout.write('Content-Type: image/png\r\n\r\n')
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), query.get('file', [''])[0]), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), query.get('file', [''])[0]), 'rb') as file:
     sys.stdout.buffer.write(file.read())

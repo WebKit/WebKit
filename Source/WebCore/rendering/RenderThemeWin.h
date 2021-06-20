@@ -121,7 +121,7 @@ public:
 
 #if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;
-    Vector<String, 3> mediaControlsScripts() override;
+    Vector<String, 2> mediaControlsScripts() override;
 #endif
 
     IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const override;

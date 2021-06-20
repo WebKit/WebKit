@@ -37,15 +37,11 @@
 
 #if HAVE(RSA_BSSA)
 
+#include "CoreCryptoSPI.h"
+
 #include <Security/SecKeyPriv.h>
 #include <WebCore/PrivateClickMeasurement.h>
-
-extern "C" {
-#include <corecrypto/cc_priv.h>
-#include <corecrypto/ccrng.h>
-#include <corecrypto/ccrsa.h>
-#include <corecrypto/ccrsabssa.h>
-}
+#include <wtf/spi/cocoa/SecuritySPI.h>
 
 #endif // HAVE(RSA_BSSA)
 

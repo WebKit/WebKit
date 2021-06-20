@@ -46,6 +46,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._computedPrimaryFont = null;
 
         this._propertyNameToEffectivePropertyMap = {};
+        this._usedCSSVariables = new Set;
 
         this._pendingRefreshTask = null;
         this.refresh();
@@ -129,6 +130,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     get computedStyle() { return this._computedStyle; }
     get orderedStyles() { return this._orderedStyles; }
     get computedPrimaryFont() { return this._computedPrimaryFont; }
+    get usedCSSVariables() { return this._usedCSSVariables; }
 
     get needsRefresh()
     {
@@ -767,6 +769,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._associateRelatedProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
         this._markOverriddenProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
+        this._collectUsedCSSVariables(cascadeOrderedStyleDeclarations);
 
         for (let pseudoElementInfo of this._pseudoElements.values()) {
             pseudoElementInfo.orderedStyles = this._collectStylesInCascadeOrder(pseudoElementInfo.matchedRules, null, null);
@@ -938,6 +941,35 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
                 if (propertyNameToEffectiveProperty && propertyNameToEffectiveProperty[shorthandProperty.canonicalName] === shorthandProperty)
                     propertyNameToEffectiveProperty[property.canonicalName] = property;
+            }
+        }
+    }
+
+    _collectUsedCSSVariables(styles)
+    {
+        this._usedCSSVariables = new Set;
+
+        for (let style of styles) {
+            for (let property of style.enabledProperties) {
+                let variables = WI.CSSProperty.findVariableNames(property.value);
+
+                if (!style.inherited) {
+                    // FIXME: <https://webkit.org/b/226648> Support the case of variables declared on matching styles but not used anywhere.
+                    this._usedCSSVariables.addAll(variables);
+                    continue;
+                }
+
+                // Always collect variables used in values of inheritable properties.
+                if (WI.CSSKeywordCompletions.InheritedProperties.has(property.name)) {
+                    this._usedCSSVariables.addAll(variables);
+                    continue;
+                }
+
+                // For variables from inherited styles, leverage the fact that styles are already sorted in cascade order to support inherited variables referencing other variables.
+                // If the variable was found to be used before, collect any variables used in its declaration value
+                // (if any variables are found, this isn't the end of the variable reference chain in the inheritance stack).
+                if (property.isVariable && this._usedCSSVariables.has(property.name))
+                    this._usedCSSVariables.addAll(variables);
             }
         }
     }

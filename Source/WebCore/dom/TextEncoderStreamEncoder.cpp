@@ -77,8 +77,8 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::flush()
     if (!m_pendingHighSurrogate)
         return nullptr;
 
-    auto byteSequence = "\xEF\xBF\xBD";
-    return Uint8Array::tryCreate(reinterpret_cast<const uint8_t*>(byteSequence), 3);
+    constexpr uint8_t byteSequence[] = { 0xEF, 0xBF, 0xBD };
+    return Uint8Array::tryCreate(byteSequence, std::size(byteSequence));
 }
 
 }

@@ -155,8 +155,14 @@ void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const uint8_t* data, int
 {
     Ref<NetscapePlugInStreamLoader> protectedThis(*this);
 
-    if (m_client)
-        m_client->didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length);
+    if (m_client) {
+        if (buffer) {
+            buffer->forEachSegment([&](auto& segment) {
+                m_client->didReceiveData(this, segment.data(), segment.size());
+            });
+        } else
+            m_client->didReceiveData(this, data, length);
+    }
 
     ResourceLoader::didReceiveDataOrBuffer(data, length, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }

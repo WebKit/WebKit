@@ -30,7 +30,7 @@
 #include "FrameLoaderClient.h"
 #include "Logging.h"
 
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(frame() && frame()->isAlwaysOnLoggingAllowed(), channel, "%p - WebKitNamespace::" fmt, this, ##__VA_ARGS__)
+#define WEBKIT_NAMESPACE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - WebKitNamespace::" fmt, this, ##__VA_ARGS__)
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
@@ -53,7 +53,7 @@ UserMessageHandlersNamespace* WebKitNamespace::messageHandlers()
 #if ENABLE(APP_BOUND_DOMAINS)
     if (frame()) {
         if (frame()->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
-            RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "Ignoring messageHandlers() request for non app-bound domain");
+            WEBKIT_NAMESPACE_RELEASE_LOG_ERROR(Loading, "Ignoring messageHandlers() request for non app-bound domain");
             return nullptr;
         }
         frame()->loader().client().notifyPageOfAppBoundBehavior();
@@ -67,4 +67,4 @@ UserMessageHandlersNamespace* WebKitNamespace::messageHandlers()
 
 #endif // ENABLE(USER_MESSAGE_HANDLERS)
 
-#undef RELEASE_LOG_ERROR_IF_ALLOWED
+#undef WEBKIT_NAMESPACE_RELEASE_LOG_ERROR

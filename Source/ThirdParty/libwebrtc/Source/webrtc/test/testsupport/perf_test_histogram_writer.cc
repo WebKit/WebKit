@@ -15,7 +15,10 @@
 #include <map>
 #include <memory>
 
+#include "absl/strings/string_view.h"
+#include "api/numerics/samples_stats_counter.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "third_party/catapult/tracing/tracing/value/diagnostics/reserved_infos.h"
 #include "third_party/catapult/tracing/tracing/value/histogram.h"
@@ -39,20 +42,20 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
     histograms_.clear();
   }
 
-  void LogResult(const std::string& graph_name,
-                 const std::string& trace_name,
+  void LogResult(absl::string_view graph_name,
+                 absl::string_view trace_name,
                  const double value,
-                 const std::string& units,
+                 absl::string_view units,
                  const bool important,
                  ImproveDirection improve_direction) override {
     (void)important;
     AddSample(graph_name, trace_name, value, units, improve_direction);
   }
-  void LogResultMeanAndError(const std::string& graph_name,
-                             const std::string& trace_name,
+  void LogResultMeanAndError(absl::string_view graph_name,
+                             absl::string_view trace_name,
                              const double mean,
                              const double error,
-                             const std::string& units,
+                             absl::string_view units,
                              const bool important,
                              ImproveDirection improve_direction) override {
     RTC_LOG(LS_WARNING) << "Discarding stddev, not supported by histograms";
@@ -61,10 +64,10 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
 
     AddSample(graph_name, trace_name, mean, units, improve_direction);
   }
-  void LogResultList(const std::string& graph_name,
-                     const std::string& trace_name,
+  void LogResultList(absl::string_view graph_name,
+                     absl::string_view trace_name,
                      const rtc::ArrayView<const double> values,
-                     const std::string& units,
+                     absl::string_view units,
                      const bool important,
                      ImproveDirection improve_direction) override {
     (void)important;
@@ -88,14 +91,14 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
   }
 
  private:
-  void AddSample(const std::string& original_graph_name,
-                 const std::string& trace_name,
+  void AddSample(absl::string_view original_graph_name,
+                 absl::string_view trace_name,
                  const double value,
-                 const std::string& units,
+                 absl::string_view units,
                  ImproveDirection improve_direction) {
     // WebRTC annotates the units into the metric name when they are not
     // supported by the Histogram API.
-    std::string graph_name = original_graph_name;
+    std::string graph_name(original_graph_name);
     if (units == "dB") {
       graph_name += "_dB";
     } else if (units == "fps") {
@@ -107,9 +110,10 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
     // Lookup on graph name + trace name (or measurement + story in catapult
     // parlance). There should be several histograms with the same measurement
     // if they're for different stories.
-    std::string measurement_and_story = graph_name + trace_name;
+    rtc::StringBuilder measurement_and_story;
+    measurement_and_story << graph_name << trace_name;
     MutexLock lock(&mutex_);
-    if (histograms_.count(measurement_and_story) == 0) {
+    if (histograms_.count(measurement_and_story.str()) == 0) {
       proto::UnitAndDirection unit = ParseUnit(units, improve_direction);
       std::unique_ptr<catapult::HistogramBuilder> builder =
           std::make_unique<catapult::HistogramBuilder>(graph_name, unit);
@@ -117,24 +121,24 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
       // Set all summary options as false - we don't want to generate
       // metric_std, metric_count, and so on for all metrics.
       builder->SetSummaryOptions(proto::SummaryOptions());
-      histograms_[measurement_and_story] = std::move(builder);
+      histograms_[measurement_and_story.str()] = std::move(builder);
 
       proto::Diagnostic stories;
       proto::GenericSet* generic_set = stories.mutable_generic_set();
-      generic_set->add_values(AsJsonString(trace_name));
-      histograms_[measurement_and_story]->AddDiagnostic(
+      generic_set->add_values(AsJsonString(std::string(trace_name)));
+      histograms_[measurement_and_story.str()]->AddDiagnostic(
           catapult::kStoriesDiagnostic, stories);
     }
 
     if (units == "bps") {
       // Bps has been interpreted as bits per second in WebRTC tests.
-      histograms_[measurement_and_story]->AddSample(value / 8);
+      histograms_[measurement_and_story.str()]->AddSample(value / 8);
     } else {
-      histograms_[measurement_and_story]->AddSample(value);
+      histograms_[measurement_and_story.str()]->AddSample(value);
     }
   }
 
-  proto::UnitAndDirection ParseUnit(const std::string& units,
+  proto::UnitAndDirection ParseUnit(absl::string_view units,
                                     ImproveDirection improve_direction) {
     RTC_DCHECK(units.find('_') == std::string::npos)
         << "The unit_bigger|smallerIsBetter syntax isn't supported in WebRTC, "
@@ -155,7 +159,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
     } else if (units == "%") {
       result.set_unit(proto::UNITLESS);
     } else {
-      proto::Unit unit = catapult::UnitFromJsonUnit(units);
+      proto::Unit unit = catapult::UnitFromJsonUnit(std::string(units));
 
       // UnitFromJsonUnit returns UNITLESS if it doesn't recognize the unit.
       if (unit == proto::UNITLESS && units != "unitless") {

@@ -36,7 +36,6 @@
 #include "GraphicsContext.h"
 
 #include "HighlightData.h"
-#include "HighlightRegister.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineTextBoxStyle.h"
@@ -492,10 +491,12 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (containsComposition && !useCustomUnderlines)
             paintCompositionBackground(paintInfo, boxOrigin);
 
-        Vector<MarkedText> markedTexts = collectMarkedTextsForDocumentMarkers(TextPaintPhase::Background);
-        auto highlightMarkedTexts = collectMarkedTextsForHighlights(TextPaintPhase::Background);
-        if (!highlightMarkedTexts.isEmpty())
-            markedTexts.appendVector(WTFMove(highlightMarkedTexts));
+        auto selectableRange = this->selectableRange();
+
+        Vector<MarkedText> markedTexts;
+        markedTexts.appendVector(MarkedText::collectForDocumentMarkers(renderer(), selectableRange, MarkedText::PaintPhase::Background));
+        markedTexts.appendVector(MarkedText::collectForHighlights(renderer(), parent()->renderer(), selectableRange, MarkedText::PaintPhase::Background));
+
 #if ENABLE(TEXT_SELECTION)
         if (haveSelection && !useCustomUnderlines && !context.paintingDisabled()) {
             auto selectionMarkedText = createMarkedTextFromSelectionInBox(*this);
@@ -508,7 +509,7 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
         auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areBackgroundMarkedTextStylesEqual);
 
-        paintMarkedTexts(paintInfo, TextPaintPhase::Background, boxRect, coalescedStyledMarkedTexts);
+        paintMarkedTexts(paintInfo, MarkedText::PaintPhase::Background, boxRect, coalescedStyledMarkedTexts);
     }
 
     // FIXME: Right now, LegacyInlineTextBoxes never call addRelevantUnpaintedObject() even though they might
@@ -525,18 +526,18 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     bool shouldPaintSelectionForeground = haveSelection && !useCustomUnderlines;
     Vector<MarkedText> markedTexts;
     if (paintInfo.phase != PaintPhase::Selection) {
-        // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
         auto selectableRange = this->selectableRange();
+
+        // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
         markedTexts.append({ selectableRange.clamp(m_start), selectableRange.clamp(end()), MarkedText::Unmarked });
+        
         if (!isPrinting) {
-            markedTexts.appendVector(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Foreground));
-            auto highlightMarkedTexts = collectMarkedTextsForHighlights(TextPaintPhase::Foreground);
-            if (!highlightMarkedTexts.isEmpty())
-                markedTexts.appendVector(WTFMove(highlightMarkedTexts));
+            markedTexts.appendVector(MarkedText::collectForDocumentMarkers(renderer(), selectableRange, MarkedText::PaintPhase::Foreground));
+            markedTexts.appendVector(MarkedText::collectForHighlights(renderer(), parent()->renderer(), selectableRange, MarkedText::PaintPhase::Foreground));
 
             bool shouldPaintDraggedContent = !(paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection));
             if (shouldPaintDraggedContent) {
-                auto markedTextsForDraggedContent = collectMarkedTextsForDraggedContent();
+                auto markedTextsForDraggedContent = MarkedText::collectForDraggedContent(renderer(), selectableRange);
                 if (!markedTextsForDraggedContent.isEmpty()) {
                     shouldPaintSelectionForeground = false;
                     markedTexts.appendVector(markedTextsForDraggedContent);
@@ -564,11 +565,11 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
     auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areForegroundMarkedTextStylesEqual);
 
-    paintMarkedTexts(paintInfo, TextPaintPhase::Foreground, boxRect, coalescedStyledMarkedTexts);
+    paintMarkedTexts(paintInfo, MarkedText::PaintPhase::Foreground, boxRect, coalescedStyledMarkedTexts);
 
     // Paint decorations
     auto textDecorations = lineStyle.textDecorationsInEffect();
-    bool highlightDecorations = !collectMarkedTextsForHighlights(TextPaintPhase::Decoration).isEmpty();
+    bool highlightDecorations = !MarkedText::collectForHighlights(renderer(), parent()->renderer(), selectableRange(), MarkedText::PaintPhase::Decoration).isEmpty();
     bool lineDecorations = !textDecorations.isEmpty();
     if ((lineDecorations || highlightDecorations) && paintInfo.phase != PaintPhase::Selection) {
         TextRun textRun = createTextRun();
@@ -603,7 +604,7 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
         auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areDecorationMarkedTextStylesEqual);
 
-        paintMarkedTexts(paintInfo, TextPaintPhase::Decoration, boxRect, coalescedStyledMarkedTexts, textDecorationSelectionClipOutRect);
+        paintMarkedTexts(paintInfo, MarkedText::PaintPhase::Decoration, boxRect, coalescedStyledMarkedTexts, textDecorationSelectionClipOutRect);
     }
 
     // 3. Paint fancy decorations, including composition underlines and platform-specific underlines for spelling errors, grammar errors, et cetera.
@@ -649,20 +650,16 @@ std::pair<unsigned, unsigned> LegacyInlineTextBox::selectionStartEnd() const
     return renderer().view().selection().rangeForTextBox(renderer(), selectableRange());
 }
 
-std::pair<unsigned, unsigned> LegacyInlineTextBox::highlightStartEnd(HighlightData& rangeData) const
-{
-    return rangeData.rangeForTextBox(renderer(), selectableRange());
-}
-
 bool LegacyInlineTextBox::hasMarkers() const
 {
-    return collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration).size();
+    return MarkedText::collectForDocumentMarkers(renderer(), selectableRange(), MarkedText::PaintPhase::Decoration).size();
 }
 
 void LegacyInlineTextBox::paintPlatformDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin)
 {
     // This must match calculateUnionOfAllDocumentMarkerBounds().
-    for (auto& markedText : subdivide(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration), OverlapStrategy::Frontmost))
+    auto markedTexts = MarkedText::collectForDocumentMarkers(renderer(), selectableRange(), MarkedText::PaintPhase::Decoration);
+    for (auto& markedText : MarkedText::subdivide(markedTexts, MarkedText::OverlapStrategy::Frontmost))
         paintPlatformDocumentMarker(context, boxOrigin, markedText);
 }
 
@@ -670,7 +667,8 @@ FloatRect LegacyInlineTextBox::calculateUnionOfAllDocumentMarkerBounds() const
 {
     // This must match paintPlatformDocumentMarkers().
     FloatRect result;
-    for (auto& markedText : subdivide(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration), OverlapStrategy::Frontmost))
+    auto markedTexts = MarkedText::collectForDocumentMarkers(renderer(), selectableRange(), MarkedText::PaintPhase::Decoration);
+    for (auto& markedText : MarkedText::subdivide(markedTexts, MarkedText::OverlapStrategy::Frontmost))
         result = unionRect(result, calculateDocumentMarkerBounds(markedText));
     return result;
 }
@@ -731,174 +729,6 @@ void LegacyInlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, 
     context.drawDotsForDocumentMarker(bounds, lineStyleForMarkedTextType());
 }
 
-Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForDraggedContent()
-{
-    using DraggendContentRange = std::pair<unsigned, unsigned>;
-    auto draggedContentRanges = renderer().draggedContentRangesBetweenOffsets(m_start, m_start + m_len);
-
-    Vector<MarkedText> result = draggedContentRanges.map([this] (const DraggendContentRange& range) -> MarkedText {
-        auto [clampedStart, clampedEnd] = selectableRange().clamp(range.first, range.second);
-        return { clampedStart, clampedEnd, MarkedText::DraggedContent };
-    });
-    return result;
-}
-
-Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaintPhase phase) const
-{
-    ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
-
-    if (!renderer().textNode())
-        return { };
-
-    Vector<RenderedDocumentMarker*> markers = renderer().document().markers().markersFor(*renderer().textNode());
-
-    auto markedTextTypeForMarkerType = [] (DocumentMarker::MarkerType type) {
-        switch (type) {
-        case DocumentMarker::Spelling:
-            return MarkedText::SpellingError;
-        case DocumentMarker::Grammar:
-            return MarkedText::GrammarError;
-        case DocumentMarker::CorrectionIndicator:
-            return MarkedText::Correction;
-        case DocumentMarker::TextMatch:
-            return MarkedText::TextMatch;
-        case DocumentMarker::DictationAlternatives:
-            return MarkedText::DictationAlternatives;
-#if PLATFORM(IOS_FAMILY)
-        case DocumentMarker::DictationPhraseWithAlternatives:
-            return MarkedText::DictationPhraseWithAlternatives;
-#endif
-        default:
-            return MarkedText::Unmarked;
-        }
-    };
-
-    Vector<MarkedText> markedTexts;
-    markedTexts.reserveInitialCapacity(markers.size());
-
-    // Give any document markers that touch this run a chance to draw before the text has been drawn.
-    // Note end() points at the last char, not one past it like endOffset and ranges do.
-    for (auto* marker : markers) {
-        // Collect either the background markers or the foreground markers, but not both
-        switch (marker->type()) {
-        case DocumentMarker::Grammar:
-        case DocumentMarker::Spelling:
-        case DocumentMarker::CorrectionIndicator:
-        case DocumentMarker::Replacement:
-        case DocumentMarker::DictationAlternatives:
-#if PLATFORM(IOS_FAMILY)
-        // FIXME: Remove the PLATFORM(IOS_FAMILY)-guard.
-        case DocumentMarker::DictationPhraseWithAlternatives:
-#endif
-            if (phase != TextPaintPhase::Decoration)
-                continue;
-            break;
-        case DocumentMarker::TextMatch:
-            if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
-                continue;
-            if (phase == TextPaintPhase::Decoration)
-                continue;
-            break;
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-        case DocumentMarker::TelephoneNumber:
-            if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
-                continue;
-            if (phase != TextPaintPhase::Background)
-                continue;
-            break;
-#endif
-        default:
-            continue;
-        }
-
-        if (marker->endOffset() <= start()) {
-            // Marker is completely before this run. This might be a marker that sits before the
-            // first run we draw, or markers that were within runs we skipped due to truncation.
-            continue;
-        }
-
-        if (marker->startOffset() >= end()) {
-            // Marker is completely after this run, bail. A later run will paint it.
-            break;
-        }
-
-        // Marker intersects this run. Collect it.
-        switch (marker->type()) {
-        case DocumentMarker::Spelling:
-        case DocumentMarker::CorrectionIndicator:
-        case DocumentMarker::DictationAlternatives:
-        case DocumentMarker::Grammar:
-#if PLATFORM(IOS_FAMILY)
-        // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
-        case DocumentMarker::DictationPhraseWithAlternatives:
-#endif
-        case DocumentMarker::TextMatch: {
-            auto [clampedStart, clampedEnd] = selectableRange().clamp(marker->startOffset(), marker->endOffset());
-            markedTexts.uncheckedAppend({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker });
-            break;
-        }
-        case DocumentMarker::Replacement:
-            break;
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-        case DocumentMarker::TelephoneNumber:
-            break;
-#endif
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    }
-    return markedTexts;
-}
-
-Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase phase) const
-{
-    ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
-    UNUSED_PARAM(phase);
-    if (!renderer().textNode())
-        return { };
-
-    Vector<MarkedText> markedTexts;
-    HighlightData highlightData;
-    if (RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled()) {
-        auto& parentRenderer = parent()->renderer();
-        auto& parentStyle = parentRenderer.style();
-        if (auto highlightRegister = renderer().document().highlightRegisterIfExists()) {
-            for (auto& highlight : highlightRegister->map()) {
-                auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
-                if (!renderStyle)
-                    continue;
-                if (renderStyle->textDecorationsInEffect().isEmpty() && phase == TextPaintPhase::Decoration)
-                    continue;
-                for (auto& rangeData : highlight.value->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
-                        continue;
-
-                    auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
-                    if (highlightStart < highlightEnd)
-                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
-                }
-            }
-        }
-    }
-#if ENABLE(APP_HIGHLIGHTS)
-    if (auto appHighlightRegister = renderer().document().appHighlightRegisterIfExists()) {
-        if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
-            for (auto& highlight : appHighlightRegister->map()) {
-                for (auto& rangeData : highlight.value->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
-                        continue;
-
-                    auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
-                    if (highlightStart < highlightEnd)
-                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::AppHighlight });
-                }
-            }
-        }
-    }
-#endif
-    return markedTexts;
-}
-
 FloatPoint LegacyInlineTextBox::textOriginFromBoxRect(const FloatRect& boxRect) const
 {
     FloatPoint textOrigin { boxRect.x(), boxRect.y() + lineFont().fontMetrics().ascent() };
@@ -913,18 +743,18 @@ FloatPoint LegacyInlineTextBox::textOriginFromBoxRect(const FloatRect& boxRect) 
     return textOrigin;
 }
 
-void LegacyInlineTextBox::paintMarkedTexts(PaintInfo& paintInfo, TextPaintPhase phase, const FloatRect& boxRect, const Vector<StyledMarkedText>& markedTexts, const FloatRect& decorationClipOutRect)
+void LegacyInlineTextBox::paintMarkedTexts(PaintInfo& paintInfo, MarkedText::PaintPhase phase, const FloatRect& boxRect, const Vector<StyledMarkedText>& markedTexts, const FloatRect& decorationClipOutRect)
 {
     switch (phase) {
-    case TextPaintPhase::Background:
+    case MarkedText::PaintPhase::Background:
         for (auto& markedText : markedTexts)
             paintMarkedTextBackground(paintInfo, boxRect.location(), markedText.style.backgroundColor, markedText.startOffset, markedText.endOffset);
         return;
-    case TextPaintPhase::Foreground:
+    case MarkedText::PaintPhase::Foreground:
         for (auto& markedText : markedTexts)
             paintMarkedTextForeground(paintInfo, boxRect, markedText);
         return;
-    case TextPaintPhase::Decoration:
+    case MarkedText::PaintPhase::Decoration:
         for (auto& markedText : markedTexts)
             paintMarkedTextDecoration(paintInfo, boxRect, decorationClipOutRect, markedText);
         return;

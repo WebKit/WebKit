@@ -5,7 +5,6 @@
 # tree. An additional intellectual property rights grant can be found
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
-
 """Echo path simulation factory module.
 """
 
@@ -16,16 +15,16 @@ from . import echo_path_simulation
 
 class EchoPathSimulatorFactory(object):
 
-  # TODO(alessiob): Replace 20 ms delay (at 48 kHz sample rate) with a more
-  # realistic impulse response.
-  _LINEAR_ECHO_IMPULSE_RESPONSE = np.array([0.0]*(20 * 48) + [0.15])
+    # TODO(alessiob): Replace 20 ms delay (at 48 kHz sample rate) with a more
+    # realistic impulse response.
+    _LINEAR_ECHO_IMPULSE_RESPONSE = np.array([0.0] * (20 * 48) + [0.15])
 
-  def __init__(self):
-    pass
+    def __init__(self):
+        pass
 
-  @classmethod
-  def GetInstance(cls, echo_path_simulator_class, render_input_filepath):
-    """Creates an EchoPathSimulator instance given a class object.
+    @classmethod
+    def GetInstance(cls, echo_path_simulator_class, render_input_filepath):
+        """Creates an EchoPathSimulator instance given a class object.
 
     Args:
       echo_path_simulator_class: EchoPathSimulator class object (not an
@@ -35,14 +34,15 @@ class EchoPathSimulatorFactory(object):
     Returns:
       An EchoPathSimulator instance.
     """
-    assert render_input_filepath is not None or (
-        echo_path_simulator_class == echo_path_simulation.NoEchoPathSimulator)
+        assert render_input_filepath is not None or (
+            echo_path_simulator_class ==
+            echo_path_simulation.NoEchoPathSimulator)
 
-    if echo_path_simulator_class == echo_path_simulation.NoEchoPathSimulator:
-      return echo_path_simulation.NoEchoPathSimulator()
-    elif echo_path_simulator_class == (
-        echo_path_simulation.LinearEchoPathSimulator):
-      return echo_path_simulation.LinearEchoPathSimulator(
-          render_input_filepath, cls._LINEAR_ECHO_IMPULSE_RESPONSE)
-    else:
-      return echo_path_simulator_class(render_input_filepath)
+        if echo_path_simulator_class == echo_path_simulation.NoEchoPathSimulator:
+            return echo_path_simulation.NoEchoPathSimulator()
+        elif echo_path_simulator_class == (
+                echo_path_simulation.LinearEchoPathSimulator):
+            return echo_path_simulation.LinearEchoPathSimulator(
+                render_input_filepath, cls._LINEAR_ECHO_IMPULSE_RESPONSE)
+        else:
+            return echo_path_simulator_class(render_input_filepath)

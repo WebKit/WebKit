@@ -46,11 +46,11 @@ AudioMixerManagerMac::AudioMixerManagerMac()
       _outputDeviceID(kAudioObjectUnknown),
       _noInputChannels(0),
       _noOutputChannels(0) {
-  RTC_LOG(LS_INFO) << __FUNCTION__ << " created";
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << " created";
 }
 
 AudioMixerManagerMac::~AudioMixerManagerMac() {
-  RTC_LOG(LS_INFO) << __FUNCTION__ << " destroyed";
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << " destroyed";
   Close();
 }
 
@@ -59,7 +59,7 @@ AudioMixerManagerMac::~AudioMixerManagerMac() {
 // ============================================================================
 
 int32_t AudioMixerManagerMac::Close() {
-  RTC_LOG(LS_VERBOSE) << __FUNCTION__;
+  RTC_DLOG(LS_VERBOSE) << __FUNCTION__;
 
   MutexLock lock(&mutex_);
 
@@ -75,7 +75,7 @@ int32_t AudioMixerManagerMac::CloseSpeaker() {
 }
 
 int32_t AudioMixerManagerMac::CloseSpeakerLocked() {
-  RTC_LOG(LS_VERBOSE) << __FUNCTION__;
+  RTC_DLOG(LS_VERBOSE) << __FUNCTION__;
 
   _outputDeviceID = kAudioObjectUnknown;
   _noOutputChannels = 0;
@@ -89,7 +89,7 @@ int32_t AudioMixerManagerMac::CloseMicrophone() {
 }
 
 int32_t AudioMixerManagerMac::CloseMicrophoneLocked() {
-  RTC_LOG(LS_VERBOSE) << __FUNCTION__;
+  RTC_DLOG(LS_VERBOSE) << __FUNCTION__;
 
   _inputDeviceID = kAudioObjectUnknown;
   _noInputChannels = 0;
@@ -196,13 +196,13 @@ int32_t AudioMixerManagerMac::OpenMicrophone(AudioDeviceID deviceID) {
 }
 
 bool AudioMixerManagerMac::SpeakerIsInitialized() const {
-  RTC_LOG(LS_INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
 
   return (_outputDeviceID != kAudioObjectUnknown);
 }
 
 bool AudioMixerManagerMac::MicrophoneIsInitialized() const {
-  RTC_LOG(LS_INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
 
   return (_inputDeviceID != kAudioObjectUnknown);
 }

@@ -195,7 +195,7 @@ sctp_startup_iterator(void)
 	kproc_create(sctp_iterator_thread,
 	             (void *)NULL,
 	             &sctp_it_ctl.thread_proc,
-	             RFPROC,
+	             0,
 	             SCTP_KTHREAD_PAGES,
 	             SCTP_KTRHEAD_NAME);
 #elif defined(__APPLE__)

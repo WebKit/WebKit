@@ -22,10 +22,10 @@ catch (ex) {
 
 try {
     new EventSource("");
-    log("FAIL: no exception when passing an empty string to the EventSource constructor");
+    log("PASS: no exception when passing an empty string to the EventSource constructor");
 }
 catch (ex) {
-    log("PASS: passing an empty string to the EventSource constructor resulted in an exception (" + ex + ")");
+    log("FAIL: passing an empty string to the EventSource constructor resulted in an exception (" + ex + ")");
 }
 
 try {

@@ -27,6 +27,8 @@ namespace webrtc {
 
 namespace {
 
+const int kFrameXCoord = 100;
+const int kFrameYCoord = 200;
 const int kScreenWidth = 100;
 const int kScreenHeight = 100;
 const int kCursorWidth = 10;
@@ -249,11 +251,61 @@ TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfNoFrameCaptured) {
   }
 }
 
+TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfFrameMayContainIt) {
+  // We can't use a shared frame because we need to detect modifications
+  // compared to a control.
+  std::unique_ptr<DesktopFrame> control_frame(CreateTestFrame());
+  control_frame->set_top_left(DesktopVector(kFrameXCoord, kFrameYCoord));
+
+  struct {
+    int x;
+    int y;
+    bool may_contain_cursor;
+  } tests[] = {
+      {100, 200, true},
+      {100, 200, false},
+      {150, 250, true},
+      {150, 250, false},
+  };
+
+  for (size_t i = 0; i < arraysize(tests); i++) {
+    SCOPED_TRACE(i);
+
+    std::unique_ptr<DesktopFrame> frame(CreateTestFrame());
+    frame->set_top_left(DesktopVector(kFrameXCoord, kFrameYCoord));
+    frame->set_may_contain_cursor(tests[i].may_contain_cursor);
+    fake_screen_->SetNextFrame(std::move(frame));
+
+    const DesktopVector abs_pos(tests[i].x, tests[i].y);
+    fake_cursor_->SetState(MouseCursorMonitor::INSIDE, abs_pos);
+    blender_.CaptureFrame();
+
+    // If the frame may already have contained the cursor, then |CaptureFrame()|
+    // should not have modified it, so it should be the same as the control.
+    EXPECT_TRUE(frame_);
+    const DesktopVector rel_pos(abs_pos.subtract(control_frame->top_left()));
+    if (tests[i].may_contain_cursor) {
+      EXPECT_EQ(
+          *reinterpret_cast<uint32_t*>(frame_->GetFrameDataAtPos(rel_pos)),
+          *reinterpret_cast<uint32_t*>(
+              control_frame->GetFrameDataAtPos(rel_pos)));
+
+    } else {
+      // |CaptureFrame()| should have modified the frame to have the cursor.
+      EXPECT_NE(
+          *reinterpret_cast<uint32_t*>(frame_->GetFrameDataAtPos(rel_pos)),
+          *reinterpret_cast<uint32_t*>(
+              control_frame->GetFrameDataAtPos(rel_pos)));
+      EXPECT_TRUE(frame_->may_contain_cursor());
+    }
+  }
+}
+
 TEST_F(DesktopAndCursorComposerTest,
        CursorShouldBeIgnoredIfItIsOutOfDesktopFrame) {
   std::unique_ptr<SharedDesktopFrame> frame(
       SharedDesktopFrame::Wrap(CreateTestFrame()));
-  frame->set_top_left(DesktopVector(100, 200));
+  frame->set_top_left(DesktopVector(kFrameXCoord, kFrameYCoord));
   // The frame covers (100, 200) - (200, 300).
 
   struct {
@@ -279,7 +331,7 @@ TEST_F(DesktopAndCursorComposerTest,
 TEST_F(DesktopAndCursorComposerTest, IsOccludedShouldBeConsidered) {
   std::unique_ptr<SharedDesktopFrame> frame(
       SharedDesktopFrame::Wrap(CreateTestFrame()));
-  frame->set_top_left(DesktopVector(100, 200));
+  frame->set_top_left(DesktopVector(kFrameXCoord, kFrameYCoord));
   // The frame covers (100, 200) - (200, 300).
 
   struct {
@@ -304,7 +356,7 @@ TEST_F(DesktopAndCursorComposerTest, IsOccludedShouldBeConsidered) {
 TEST_F(DesktopAndCursorComposerTest, CursorIncluded) {
   std::unique_ptr<SharedDesktopFrame> frame(
       SharedDesktopFrame::Wrap(CreateTestFrame()));
-  frame->set_top_left(DesktopVector(100, 200));
+  frame->set_top_left(DesktopVector(kFrameXCoord, kFrameYCoord));
   // The frame covers (100, 200) - (200, 300).
 
   struct {

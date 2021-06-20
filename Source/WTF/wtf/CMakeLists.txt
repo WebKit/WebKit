@@ -240,6 +240,7 @@ set(WTF_PUBLIC_HEADERS
     SmallSet.h
     SoftLinking.h
     SortedArrayMap.h
+    Span.h
     SpanningTree.h
     Spectrum.h
     StackBounds.h
@@ -303,6 +304,7 @@ set(WTF_PUBLIC_HEADERS
     WTFConfig.h
     WTFSemaphore.h
     WallTime.h
+    WeakHashMap.h
     WeakHashSet.h
     WeakPtr.h
     WeakRandom.h

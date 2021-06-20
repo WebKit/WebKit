@@ -79,7 +79,7 @@ void DisplayList::Iterator::updateCurrentItem()
     }
 
     auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
-    m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
+    m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : static_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
     if (isInlineItem(itemType)) {
         if (UNLIKELY(static_cast<uint64_t>(m_currentEndOfBuffer - m_cursor) < paddedSizeOfTypeAndItem)) {
             m_isValid = false;

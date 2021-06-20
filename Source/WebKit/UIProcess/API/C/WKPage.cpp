@@ -241,7 +241,7 @@ static IPC::DataReference dataFrom(const String& string)
 {
     if (string.isNull() || !string.is8Bit())
         return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
-    return { reinterpret_cast<const uint8_t*>(string.characters8()), string.length() * sizeof(LChar) };
+    return { string.characters8(), string.length() * sizeof(LChar) };
 }
 
 static void loadString(WKPageRef pageRef, WKStringRef stringRef, const String& mimeType, const String& baseURL, WKTypeRef userDataRef)

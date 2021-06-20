@@ -29,6 +29,7 @@
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -208,7 +209,7 @@ JSObject* JSTestOverloadedConstructorsWithSequence::prototype(VM& vm, JSDOMGloba
 
 JSValue JSTestOverloadedConstructorsWithSequence::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestOverloadedConstructorsWithSequenceDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestOverloadedConstructorsWithSequenceDOMConstructor, DOMConstructorID::TestOverloadedConstructorsWithSequence>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestOverloadedConstructorsWithSequence::destroy(JSC::JSCell* cell)

@@ -36,7 +36,11 @@
 #endif
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+#include <gtk/gtk.h>
+#else
 #include <WebCore/RefPtrCairo.h>
+#endif
 #endif
 
 namespace WebKit {
@@ -50,7 +54,11 @@ public:
     static Ref<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);
 #endif
 #if PLATFORM(GTK)
+#if USE(GTK4)
+    static Ref<ViewSnapshot> create(GRefPtr<GdkTexture>&&);
+#else
     static Ref<ViewSnapshot> create(RefPtr<cairo_surface_t>&&);
+#endif
 #endif
 
     ~ViewSnapshot();
@@ -78,7 +86,7 @@ public:
 #if HAVE(IOSURFACE)
     WebCore::IOSurface* surface() const { return m_surface.get(); }
 
-    size_t imageSizeInBytes() const { return m_surface ? m_surface->totalBytes() : 0; }
+    size_t estimatedImageSizeInBytes() const { return m_surface ? m_surface->totalBytes() : 0; }
     WebCore::IntSize size() const { return m_surface ? m_surface->size() : WebCore::IntSize(); }
 
     void setSurface(std::unique_ptr<WebCore::IOSurface>);
@@ -87,9 +95,13 @@ public:
 #endif
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+    GdkTexture* texture() const { return m_texture.get(); }
+#else
     cairo_surface_t* surface() const { return m_surface.get(); }
+#endif
 
-    size_t imageSizeInBytes() const;
+    size_t estimatedImageSizeInBytes() const;
     WebCore::IntSize size() const;
 #endif
 
@@ -101,9 +113,15 @@ private:
 #endif
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+    explicit ViewSnapshot(GRefPtr<GdkTexture>&&);
+
+    GRefPtr<GdkTexture> m_texture;
+#else
     explicit ViewSnapshot(RefPtr<cairo_surface_t>&&);
 
     RefPtr<cairo_surface_t> m_surface;
+#endif
 #endif
 
     uint64_t m_renderTreeSize;

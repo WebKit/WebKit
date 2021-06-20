@@ -27,11 +27,11 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
-#include "GenericTaskQueue.h"
 #include "SourceBufferParser.h"
 #include "SourceBufferPrivate.h"
 #include <dispatch/group.h>
 #include <wtf/Box.h>
+#include <wtf/CancellableTask.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
@@ -193,7 +193,7 @@ private:
     bool m_initializationSegmentIsHandled { false };
     bool m_hasPendingAppendCompletedCallback { false };
     Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
-    MainThreadTaskQueue m_mediaSampleTaskQueue;
+    TaskCancellationGroup m_mediaSampleTaskCancellationGroup;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN

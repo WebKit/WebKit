@@ -152,7 +152,7 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
         // must be called.
         nat_factory_(vss_.get(), kNatUdpAddr, kNatTcpAddr),
         nat_socket_factory_(new rtc::BasicPacketSocketFactory(&nat_factory_)),
-        stun_server_(TestStunServer::Create(rtc::Thread::Current(), kStunAddr)),
+        stun_server_(TestStunServer::Create(fss_.get(), kStunAddr)),
         turn_server_(rtc::Thread::Current(), kTurnUdpIntAddr, kTurnUdpExtAddr),
         candidate_allocation_done_(false) {
     ServerAddresses stun_servers;

@@ -1,0 +1,6 @@
+
+EVENT(sourceopen)
+Appending buffer
+EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+END OF TEST
+

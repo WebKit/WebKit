@@ -76,4 +76,19 @@ template <> void derefGPtr(GtkWidgetPath* ptr)
 }
 #endif
 
+#if USE(GTK4)
+template <> GskRenderNode* refGPtr(GskRenderNode* ptr)
+{
+    if (ptr)
+        gsk_render_node_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GskRenderNode* ptr)
+{
+    if (ptr)
+        gsk_render_node_unref(ptr);
+}
+#endif
+
 }

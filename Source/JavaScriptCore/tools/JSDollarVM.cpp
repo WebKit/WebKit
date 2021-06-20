@@ -690,11 +690,6 @@ JSC_DEFINE_CUSTOM_GETTER(runtimeArrayLengthGetter, (JSGlobalObject* globalObject
     return JSValue::encode(jsNumber(thisObject->getLength()));
 }
 
-static const struct CompactHashIndex staticCustomAccessorTableIndex[2] = {
-    { 0, -1 },
-    { -1, -1 },
-};
-
 static JSC_DECLARE_CUSTOM_GETTER(testStaticAccessorGetter);
 static JSC_DECLARE_CUSTOM_SETTER(testStaticAccessorPutter);
 
@@ -719,19 +714,34 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticAccessorPutter, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
-    if (!thisObject)
-        return throwVMTypeError(globalObject, scope);
+    JSValue receiver = JSValue::decode(thisValue);
+    JSObject* thisObject = receiver.isObject() ? asObject(receiver) : receiver.synthesizePrototype(globalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+    RELEASE_ASSERT(thisObject);
 
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testField")), JSValue::decode(value));
 }
 
-static const struct HashTableValue staticCustomAccessorTableValues[1] = {
+static const struct CompactHashIndex staticCustomAccessorTableIndex[9] = {
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { 0, 8 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
+static const struct HashTableValue staticCustomAccessorTableValues[3] = {
     { "testStaticAccessor", static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticAccessorPutter) } },
+    { "testStaticAccessorDontEnum", PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutValueFunc>(testStaticAccessorPutter) } },
+    { "testStaticAccessorReadOnly", PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), 0 } },
 };
 
 static const struct HashTable staticCustomAccessorTable =
-    { 1, 1, true, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
+    { 3, 7, true, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
 
 class StaticCustomAccessor : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -798,17 +808,25 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutter, (JSGlobalObject* globalObject, E
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValue")), JSValue::decode(value));
 }
 
-static const struct CompactHashIndex staticCustomValueTableIndex[2] = {
+static const struct CompactHashIndex staticCustomValueTableIndex[8] = {
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
     { 0, -1 },
     { -1, -1 },
 };
 
-static const struct HashTableValue staticCustomValueTableValues[1] = {
-    { "testStaticValue", static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticValuePutter) } },
+static const struct HashTableValue staticCustomValueTableValues[3] = {
+    { "testStaticValue", static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutter) } },
+    { "testStaticValueNoSetter", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
+    { "testStaticValueReadOnly", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
 };
 
 static const struct HashTable staticCustomValueTable =
-    { 1, 1, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
+    { 3, 7, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
 
 class StaticCustomValue : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -846,6 +864,7 @@ public:
 
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
 public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)

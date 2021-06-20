@@ -81,7 +81,7 @@ private:
     bool canSwitchToType(const WebCore::ContentType&) final;
     void setMediaSourceEnded(bool) final;
     void setMode(WebCore::SourceBufferAppendMode) final;
-    void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize) final;
+    void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime) final;
     void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
     void resetTrackBuffers() final;
     void clearTrackBuffers() final;
@@ -91,7 +91,7 @@ private:
     void setShouldGenerateTimestamps(bool) final;
     void updateBufferedFromTrackBuffers(bool sourceIsEnded) final;
     void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&&) final;
-    void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded) final;
+    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded) final;
     void resetTimestampOffsetInTrackBuffers() final;
     void startChangingType() final;
     void setTimestampOffset(const MediaTime&) final;

@@ -2639,13 +2639,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityTitleUIElementAttribute]) {
-        if (!backingObject->exposesTitleUIElement())
-            return nil;
-
-        AXCoreObject* obj = backingObject->titleUIElement();
-        if (obj)
-            return obj->wrapper();
-        return nil;
+        auto* object = backingObject->titleUIElement();
+        return object ? object->wrapper() : nil;
     }
 
     if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute])

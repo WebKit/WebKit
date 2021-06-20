@@ -185,6 +185,15 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     // DOMObserver
 
+    willDestroyDOMNode(nodeId)
+    {
+        let node = this._idToDOMNode[nodeId];
+        node.markDestroyed();
+        delete this._idToDOMNode[nodeId];
+
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node});
+    }
+
     didAddEventListener(nodeId)
     {
         let node = this._idToDOMNode[nodeId];

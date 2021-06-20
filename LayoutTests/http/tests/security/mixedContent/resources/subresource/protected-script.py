@@ -23,5 +23,5 @@ if not username:
 sys.stdout.write('Content-Type: text/javascript\r\n\r\n')
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), '../../../contentSecurityPolicy/resources/alert-fail.js'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), '../../../contentSecurityPolicy/resources/alert-fail.js'), 'rb') as file:
     sys.stdout.buffer.write(file.read())

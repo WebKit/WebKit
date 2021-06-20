@@ -14,8 +14,8 @@
 #include <memory>
 
 #include "api/frame_transformer_interface.h"
+#include "api/sequence_checker.h"
 #include "modules/video_coding/frame_object.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread.h"
 
@@ -25,8 +25,7 @@ namespace webrtc {
 // thread after transformation.
 class RtpVideoFrameReceiver {
  public:
-  virtual void ManageFrame(
-      std::unique_ptr<video_coding::RtpFrameObject> frame) = 0;
+  virtual void ManageFrame(std::unique_ptr<RtpFrameObject> frame) = 0;
 
  protected:
   virtual ~RtpVideoFrameReceiver() = default;
@@ -47,7 +46,7 @@ class RtpVideoStreamReceiverFrameTransformerDelegate
   void Reset();
 
   // Delegates the call to FrameTransformerInterface::TransformFrame.
-  void TransformFrame(std::unique_ptr<video_coding::RtpFrameObject> frame);
+  void TransformFrame(std::unique_ptr<RtpFrameObject> frame);
 
   // Implements TransformedFrameCallback. Can be called on any thread. Posts
   // the transformed frame to be managed on the |network_thread_|.

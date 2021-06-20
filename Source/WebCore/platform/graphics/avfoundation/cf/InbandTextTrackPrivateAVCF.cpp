@@ -204,7 +204,7 @@ bool InbandTextTrackPrivateAVCF::readNativeSampleBuffer(CFArrayRef nativeSamples
     }
 
     m_sampleInputBuffer.grow(m_sampleInputBuffer.size() + bufferLength);
-    CFDataGetBytes(sampleBuffer->buffer, CFRangeMake(0, bufferLength), reinterpret_cast<UInt8*>(m_sampleInputBuffer.data()) + m_sampleInputBuffer.size() - bufferLength);
+    CFDataGetBytes(sampleBuffer->buffer, CFRangeMake(0, bufferLength), m_sampleInputBuffer.data() + m_sampleInputBuffer.size() - bufferLength);
 
     buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
 

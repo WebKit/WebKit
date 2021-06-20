@@ -178,15 +178,15 @@ TEST_F(SctpUtilsTest, WriteParseAckMessage) {
 
 TEST_F(SctpUtilsTest, TestIsOpenMessage) {
   rtc::CopyOnWriteBuffer open(1);
-  open[0] = 0x03;
+  open.MutableData()[0] = 0x03;
   EXPECT_TRUE(webrtc::IsOpenMessage(open));
 
   rtc::CopyOnWriteBuffer openAck(1);
-  openAck[0] = 0x02;
+  openAck.MutableData()[0] = 0x02;
   EXPECT_FALSE(webrtc::IsOpenMessage(openAck));
 
   rtc::CopyOnWriteBuffer invalid(1);
-  invalid[0] = 0x01;
+  invalid.MutableData()[0] = 0x01;
   EXPECT_FALSE(webrtc::IsOpenMessage(invalid));
 
   rtc::CopyOnWriteBuffer empty;

@@ -790,6 +790,10 @@ void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 {
     for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->gpuProcessExited(reason);
+
+#if ENABLE(ROUTING_ARBITRATION)
+    m_routingArbitrator->processDidTerminate();
+#endif
 }
 #endif
 
@@ -848,9 +852,9 @@ bool WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
 void WebProcessProxy::didClose(IPC::Connection& connection)
 {
 #if OS(DARWIN)
-    RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy didClose (web process %d crash)", this, connection.remoteProcessID());
+    RELEASE_LOG(Process, "%p - WebProcessProxy didClose (web process %d crash)", this, connection.remoteProcessID());
 #else
-    RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy didClose (web process crash)", this);
+    RELEASE_LOG(Process, "%p - WebProcessProxy didClose (web process crash)", this);
 #endif
 
     processDidTerminateOrFailedToLaunch(ProcessTerminationReason::Crash);
@@ -1015,7 +1019,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
-        RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy didFinishLaunching - invalid connection identifier (web process failed to launch)", this);
+        RELEASE_LOG(Process, "%p - WebProcessProxy didFinishLaunching - invalid connection identifier (web process failed to launch)", this);
         processDidTerminateOrFailedToLaunch(ProcessTerminationReason::Crash);
         return;
     }
@@ -1225,14 +1229,14 @@ void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is fetching Website data", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is fetching Website data", this);
 
     sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (auto reply) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
         completionHandler(WTFMove(reply));
-        RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done fetching Website data", this);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done fetching Website data", this);
     });
 }
 
@@ -1241,14 +1245,14 @@ void WebProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Webs
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data", this);
 
     sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteData(dataTypes, modifiedSince), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
         completionHandler();
-        RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data", this);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data", this);
     });
 }
 
@@ -1257,14 +1261,14 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Opti
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data for several origins", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data for several origins", this);
 
     sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(dataTypes, origins), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
         completionHandler();
-        RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data for several origins", this);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data for several origins", this);
     });
 }
 
@@ -1274,16 +1278,11 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
         return;
 
     auto protectedThis = makeRef(*this);
-    RELEASE_LOG_ERROR_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy::requestTermination - PID %d - reason %d", this, processIdentifier(), reason);
+    RELEASE_LOG_ERROR(Process, "%p - WebProcessProxy::requestTermination - PID %d - reason %d", this, processIdentifier(), reason);
 
     AuxiliaryProcessProxy::terminate();
 
     processDidTerminateOrFailedToLaunch(reason);
-}
-
-bool WebProcessProxy::isReleaseLoggingAllowed() const
-{
-    return !m_websiteDataStore || m_websiteDataStore->sessionID().isAlwaysOnLoggingAllowed();
 }
 
 void WebProcessProxy::stopResponsivenessTimer()

@@ -108,17 +108,6 @@ Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVa
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, builder.finalize(), m_type);
 }
 
-Blob::Blob(ScriptExecutionContext* context, const SharedBuffer& buffer, const String& contentType)
-    : ActiveDOMObject(context)
-    , m_type(contentType)
-    , m_size(buffer.size())
-{
-    Vector<BlobPart> blobParts;
-    blobParts.append(Vector { buffer.data(), buffer.size() });
-    m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
-}
-
 Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
     : ActiveDOMObject(context)
     , m_type(contentType)

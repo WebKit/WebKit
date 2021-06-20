@@ -53,13 +53,12 @@ private:
 
 #if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
     String mediaControlsStyleSheet() override;
-    Vector<String, 3> mediaControlsScripts() override;
+    Vector<String, 2> mediaControlsScripts() override;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) override;
     String mediaControlsFormattedStringForDuration(double) override;
 
     String m_mediaControlsLocalizedStringsScript;
     String m_mediaControlsScript;
-    String m_mediaControlsAdditionalScript;
     String m_mediaControlsStyleSheet;
     RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
 #endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)

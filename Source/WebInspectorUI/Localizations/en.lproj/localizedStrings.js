@@ -1028,6 +1028,8 @@ localizedStrings["Open"] = "Open";
 /* Context menu item for opening the target item in a new window. */
 localizedStrings["Open in New Window @ Context Menu Item"] = "Open in New Window";
 localizedStrings["Option-click to show source"] = "Option-click to show source";
+/* Tooltip with instructions on how to show all hidden CSS variables */
+localizedStrings["Option-click to show unused CSS variables from all rules @ Styles Sidebar Panel Tooltip"] = "Option-click to show unused CSS variables from all rules";
 localizedStrings["Options"] = "Options";
 /* Property value for `font-variant-numeric: ordinal`. */
 localizedStrings["Ordinal Letter Forms @ Font Details Sidebar Property Value"] = "Ordinal Letter Forms";
@@ -1319,6 +1321,10 @@ localizedStrings["Shadow Content (%s)"] = "Shadow Content (%s)";
 localizedStrings["Shared Focus"] = "Shared Focus";
 localizedStrings["Shortest property path to %s"] = "Shortest property path to %s";
 localizedStrings["Show %d More"] = "Show %d More";
+/* Text label for button to reveal multiple unused CSS variables */
+localizedStrings["Show %d unused CSS variable (singular) @ Styles Sidebar Panel"] = "Show %d unused CSS variable";
+/* Text label for button to reveal one unused CSS variable */
+localizedStrings["Show %d unused CSS variables (plural) @ Styles Sidebar Panel"] = "Show %d unused CSS variables";
 localizedStrings["Show All"] = "Show All";
 localizedStrings["Show All (%d More)"] = "Show All (%d More)";
 localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";

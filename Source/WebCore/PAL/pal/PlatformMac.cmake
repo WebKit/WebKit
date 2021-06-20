@@ -19,6 +19,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/RevealSoftLink.h
     cocoa/SpeechSoftLink.h
     cocoa/UsageTrackingSoftLink.h
+    cocoa/VisionKitCoreSoftLink.h
 
     mac/DataDetectorsSoftLink.h
     mac/LookupSoftLink.h
@@ -86,6 +87,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/ServersSPI.h
     spi/cocoa/SpeechSPI.h
     spi/cocoa/URLFormattingSPI.h
+    spi/cocoa/VisionKitCoreSPI.h
     spi/cocoa/WebFilterEvaluatorSPI.h
     spi/cocoa/pthreadSPI.h
 
@@ -161,6 +163,7 @@ list(APPEND PAL_SOURCES
     cocoa/RevealSoftLink.mm
     cocoa/SpeechSoftLink.mm
     cocoa/UsageTrackingSoftLink.mm
+    cocoa/VisionKitCoreSoftLink.mm
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 

@@ -26,6 +26,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -141,7 +142,7 @@ JSObject* JSTestReportExtraMemoryCost::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestReportExtraMemoryCost::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestReportExtraMemoryCostDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestReportExtraMemoryCostDOMConstructor, DOMConstructorID::TestReportExtraMemoryCost>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestReportExtraMemoryCost::destroy(JSC::JSCell* cell)

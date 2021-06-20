@@ -48,6 +48,7 @@ class JSGlobalObject;
 namespace WebCore {
 
 class DOMWindow;
+class Navigator;
 class ScriptExecutionContext;
 class WebXRSession;
 struct XRSessionInit;
@@ -58,7 +59,7 @@ public:
     using IsSessionSupportedPromise = DOMPromiseDeferred<IDLBoolean>;
     using RequestSessionPromise = DOMPromiseDeferred<IDLInterface<WebXRSession>>;
 
-    static Ref<WebXRSystem> create(ScriptExecutionContext&);
+    static Ref<WebXRSystem> create(Navigator&);
     ~WebXRSystem();
 
     using RefCounted<WebXRSystem>::ref;
@@ -77,6 +78,8 @@ public:
     WEBCORE_EXPORT void registerSimulatedXRDeviceForTesting(PlatformXR::Device&);
     WEBCORE_EXPORT void unregisterSimulatedXRDeviceForTesting(PlatformXR::Device&);
 
+    Navigator* navigator();
+
 protected:
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return WebXRSystemEventTargetInterfaceType; }
@@ -89,7 +92,7 @@ protected:
     void stop() override;
 
 private:
-    WebXRSystem(ScriptExecutionContext&);
+    WebXRSystem(Navigator&);
 
     using FeatureList = PlatformXR::Device::FeatureList;
     using JSFeatureList = Vector<JSC::JSValue>;
@@ -117,6 +120,8 @@ private:
         std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) final { return std::nullopt; }
         void deleteLayer(PlatformXR::LayerHandle) final { }
     };
+
+    WeakPtr<Navigator> m_navigator;
     DummyInlineDevice m_defaultInlineDevice;
 
     bool m_immersiveXRDevicesHaveBeenEnumerated { false };

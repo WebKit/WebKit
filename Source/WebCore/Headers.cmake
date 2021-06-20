@@ -142,7 +142,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/speech/SpeechRecognitionUpdate.h
     Modules/speech/SpeechRecognizer.h
 
-    Modules/streams/ReadableStreamChunk.h
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
 
@@ -462,7 +461,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventListenerMap.h
     dom/EventListenerOptions.h
     dom/EventLoop.h
-    dom/EventLoopEventQueue.h
     dom/EventModifierInit.h
     dom/EventNames.h
     dom/EventQueue.h
@@ -1034,7 +1032,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/FileMonitor.h
     platform/FileStreamClient.h
     platform/FloatConversion.h
-    platform/GenericTaskQueue.h
     platform/HostWindow.h
     platform/KeyedCoding.h
     platform/KeypressCommand.h
@@ -1481,6 +1478,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/StorageSessionProvider.h
     platform/network/StoredCredentialsPolicy.h
     platform/network/SynchronousLoaderClient.h
+    platform/network/TimingAllowOrigin.h
 
     platform/sql/SQLValue.h
     platform/sql/SQLiteDatabase.h

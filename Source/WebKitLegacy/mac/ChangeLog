@@ -1,3 +1,56 @@
+2021-06-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename AppHighlight group to QuickNote to correctly reflect feature.
+        https://bugs.webkit.org/show_bug.cgi?id=226888
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm:
+        (toTag):
+        * WebView/WebUIDelegatePrivate.h:
+
+2021-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable legacy WebView plug-ins (but not NPAPI)
+        https://bugs.webkit.org/show_bug.cgi?id=226890
+        <rdar://79075349>
+
+        Reviewed by Tim Horton.
+
+        In r276720 I put the check in the wrong place.
+        This should also fix rdar://77179042 again, which I broke, fixed, broke, and am now fixing again.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+
+2021-06-08  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] upstream new features
+        https://bugs.webkit.org/show_bug.cgi?id=226740
+        <rdar://problem/78963132>
+
+        Reviewed by Andy Estes.
+
+         - recurring line items (`HAVE_PASSKIT_RECURRING_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_RECURRING_LINE_ITEM`)
+         - deferred line items (`HAVE_PASSKIT_DEFERRED_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM`)
+         - estimated shipping dates (`HAVE_PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE` and `ENABLE_APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE`)
+         - coupon code entry (`HAVE_PASSKIT_COUPON_CODE` and `ENABLE_APPLE_PAY_COUPON_CODE`)
+         - shipped vs in-store pickup (`HAVE_PASSKIT_SHIPPING_CONTACT_EDITING_MODE` and `ENABLE_APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE`)
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::completeCouponCodeChange): Renamed from `WebPaymentCoordinatorClient::completePaymentMethodModeChange`.
+
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm: Replace IMAGE_EXTRACTION with IMAGE_ANALYSIS.
+
 2021-06-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Turn TextIteratorBehaviorFlag into an enum class and wrap it in OptionSet

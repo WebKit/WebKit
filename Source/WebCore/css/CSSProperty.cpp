@@ -1,6 +1,6 @@
 /**
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Inc.
+ * Copyright (C) 2004-2021 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -189,105 +189,6 @@ CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyI
         return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::After, scrollPaddingShorthand());
     default:
         return propertyID;
-    }
-}
-
-bool CSSProperty::isDescriptorOnly(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertySrc:
-    case CSSPropertyUnicodeRange:
-    case CSSPropertyFontDisplay:
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool CSSProperty::isDirectionAwareProperty(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyBorderBlockEnd:
-    case CSSPropertyBorderBlockEndColor:
-    case CSSPropertyBorderBlockEndStyle:
-    case CSSPropertyBorderBlockEndWidth:
-    case CSSPropertyBorderBlockStart:
-    case CSSPropertyBorderBlockStartColor:
-    case CSSPropertyBorderBlockStartStyle:
-    case CSSPropertyBorderBlockStartWidth:
-    case CSSPropertyBorderInlineEnd:
-    case CSSPropertyBorderInlineEndColor:
-    case CSSPropertyBorderInlineEndStyle:
-    case CSSPropertyBorderInlineEndWidth:
-    case CSSPropertyBorderInlineStart:
-    case CSSPropertyBorderInlineStartColor:
-    case CSSPropertyBorderInlineStartStyle:
-    case CSSPropertyBorderInlineStartWidth:
-    case CSSPropertyInsetInlineEnd:
-    case CSSPropertyInsetInlineStart:
-    case CSSPropertyInsetBlockStart:
-    case CSSPropertyInsetBlockEnd:
-    case CSSPropertyMarginInlineEnd:
-    case CSSPropertyMarginInlineStart:
-    case CSSPropertyMarginBlockStart:
-    case CSSPropertyMarginBlockEnd:
-    case CSSPropertyPaddingInlineEnd:
-    case CSSPropertyPaddingInlineStart:
-    case CSSPropertyPaddingBlockStart:
-    case CSSPropertyPaddingBlockEnd:
-    case CSSPropertyInlineSize:
-    case CSSPropertyBlockSize:
-    case CSSPropertyMinInlineSize:
-    case CSSPropertyMinBlockSize:
-    case CSSPropertyMaxInlineSize:
-    case CSSPropertyMaxBlockSize:
-    case CSSPropertyBorderStartStartRadius:
-    case CSSPropertyBorderStartEndRadius:
-    case CSSPropertyBorderEndStartRadius:
-    case CSSPropertyBorderEndEndRadius:
-    case CSSPropertyScrollMarginInlineStart:
-    case CSSPropertyScrollMarginInlineEnd:
-    case CSSPropertyScrollMarginBlockStart:
-    case CSSPropertyScrollMarginBlockEnd:
-    case CSSPropertyScrollPaddingInlineStart:
-    case CSSPropertyScrollPaddingInlineEnd:
-    case CSSPropertyScrollPaddingBlockStart:
-    case CSSPropertyScrollPaddingBlockEnd:
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool CSSProperty::isColorProperty(CSSPropertyID propertyId)
-{
-    switch (propertyId) {
-    case CSSPropertyColor:
-    case CSSPropertyBackgroundColor:
-    case CSSPropertyBorderBottomColor:
-    case CSSPropertyBorderLeftColor:
-    case CSSPropertyBorderRightColor:
-    case CSSPropertyBorderTopColor:
-    case CSSPropertyFill:
-    case CSSPropertyFloodColor:
-    case CSSPropertyLightingColor:
-    case CSSPropertyOutlineColor:
-    case CSSPropertyStopColor:
-    case CSSPropertyStroke:
-    case CSSPropertyStrokeColor:
-    case CSSPropertyBorderBlockEndColor:
-    case CSSPropertyBorderBlockStartColor:
-    case CSSPropertyBorderInlineEndColor:
-    case CSSPropertyBorderInlineStartColor:
-    case CSSPropertyColumnRuleColor:
-    case CSSPropertyWebkitTextEmphasisColor:
-    case CSSPropertyWebkitTextFillColor:
-    case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyTextDecorationColor:
-    case CSSPropertyCaretColor:
-        return true;
-    default:
-        return false;
     }
 }
 

@@ -284,6 +284,8 @@ public:
     virtual String audioOutputDeviceId() const { return { }; }
     virtual String audioOutputDeviceIdOverride() const { return { }; }
 
+    virtual void mediaPlayerQueueTaskOnEventLoop(Function<void()>&& task) { callOnMainThread(WTFMove(task)); }
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
@@ -387,6 +389,8 @@ public:
     bool shouldContinueAfterKeyNeeded() const { return m_shouldContinueAfterKeyNeeded; }
 #endif
 
+    void queueTaskOnEventLoop(Function<void()>&&);
+
     bool paused() const;
     bool seeking() const;
 
@@ -425,7 +429,8 @@ public:
     double seekableTimeRangesLastModifiedTime();
     double liveUpdateInterval();
 
-    bool didLoadingProgress();
+    using DidLoadingProgressCompletionHandler = CompletionHandler<void(bool)>;
+    void didLoadingProgress(DidLoadingProgressCompletionHandler&&) const;
 
     double volume() const;
     void setVolume(double);

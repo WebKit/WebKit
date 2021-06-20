@@ -809,7 +809,7 @@ private:
 
     void updateWidgetPositionsTimerFired();
 
-    bool scrollToFragmentInternal(const String&);
+    bool scrollToFragmentInternal(StringView);
     void scrollToAnchor();
     void scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
     void scrollableAreaSetChanged();

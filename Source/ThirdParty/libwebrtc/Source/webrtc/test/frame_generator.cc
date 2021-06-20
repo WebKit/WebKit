@@ -20,20 +20,11 @@
 #include "api/video/video_rotation.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/keep_ref_until_done.h"
 #include "test/frame_utils.h"
 
 namespace webrtc {
 namespace test {
-namespace {
-
-// Helper method for keeping a reference to passed pointers.
-void KeepBufferRefs(rtc::scoped_refptr<webrtc::VideoFrameBuffer>,
-                    rtc::scoped_refptr<webrtc::VideoFrameBuffer>) {}
-
-}  // namespace
 
 SquareGenerator::SquareGenerator(int width,
                                  int height,
@@ -81,12 +72,13 @@ FrameGeneratorInterface::VideoFrameData SquareGenerator::NextFrame() {
           CreateI420Buffer(width_, height_);
       rtc::scoped_refptr<I420Buffer> axx_buffer =
           CreateI420Buffer(width_, height_);
-      buffer = WrapI420ABuffer(
-          yuv_buffer->width(), yuv_buffer->height(), yuv_buffer->DataY(),
-          yuv_buffer->StrideY(), yuv_buffer->DataU(), yuv_buffer->StrideU(),
-          yuv_buffer->DataV(), yuv_buffer->StrideV(), axx_buffer->DataY(),
-          axx_buffer->StrideY(),
-          rtc::Bind(&KeepBufferRefs, yuv_buffer, axx_buffer));
+      buffer = WrapI420ABuffer(yuv_buffer->width(), yuv_buffer->height(),
+                               yuv_buffer->DataY(), yuv_buffer->StrideY(),
+                               yuv_buffer->DataU(), yuv_buffer->StrideU(),
+                               yuv_buffer->DataV(), yuv_buffer->StrideV(),
+                               axx_buffer->DataY(), axx_buffer->StrideY(),
+                               // To keep references alive.
+                               [yuv_buffer, axx_buffer] {});
       break;
     }
     default:
@@ -375,7 +367,8 @@ void ScrollingImageFrameGenerator::CropSourceToScrolledImage(
                      &i420_buffer->DataY()[offset_y], i420_buffer->StrideY(),
                      &i420_buffer->DataU()[offset_u], i420_buffer->StrideU(),
                      &i420_buffer->DataV()[offset_v], i420_buffer->StrideV(),
-                     KeepRefUntilDone(i420_buffer)),
+                     // To keep reference alive.
+                     [i420_buffer] {}),
       update_rect);
 }
 

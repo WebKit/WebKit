@@ -118,7 +118,7 @@ std::optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferF
     ConstPixelBufferConversionView source {
         { AlphaPremultiplication::Premultiplied, pixelFormat(), colorSpace() },
         bytesPerRow(),
-        reinterpret_cast<uint8_t*>(data) + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4
+        static_cast<uint8_t*>(data) + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4
     };
     
     PixelBufferConversionView destination {
@@ -159,7 +159,7 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     PixelBufferConversionView destination {
         { destinationAlphaFormat, pixelFormat(), colorSpace() },
         bytesPerRow(),
-        reinterpret_cast<uint8_t*>(data) + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4
+        static_cast<uint8_t*>(data) + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4
     };
 
     convertImagePixels(source, destination, destinationRect.size());

@@ -13,5 +13,5 @@ sys.stdout.write(
 )
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), path), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), path), 'rb') as file:
     sys.stdout.buffer.write(file.read().replace(b'SVN is the best!', b'SHA-1 is dead!!!'))

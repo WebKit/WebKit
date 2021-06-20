@@ -319,8 +319,8 @@ PASS content: "string"
 PASS content: 'string'
 PASS content: url("http://localhost/")
 PASS content: url(http://localhost/)
-FAIL content: counter(par-num) assert_equals: content raw inline style declaration expected "counter(par-num)" but got "counter(par-num, decimal)"
-FAIL content: counter(par-num, decimal) assert_equals: content raw inline style declaration expected "counter(par-num)" but got "counter(par-num, decimal)"
+PASS content: counter(par-num)
+PASS content: counter(par-num, decimal)
 PASS content: counter(par-num, upper-roman)
 PASS content: attr(foo-bar)
 PASS content: attr(foo_bar)

@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "api/frame_transformer_interface.h"
-#include "rtc_base/synchronization/sequence_checker.h"
+#include "api/sequence_checker.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/thread.h"

@@ -132,13 +132,15 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
    public:
     SendsSetSsrcs(const uint32_t* ssrcs,
                   size_t num_ssrcs,
-                  bool send_single_ssrc_first)
+                  bool send_single_ssrc_first,
+                  TaskQueueBase* task_queue)
         : EndToEndTest(kDefaultTimeoutMs),
           num_ssrcs_(num_ssrcs),
           send_single_ssrc_first_(send_single_ssrc_first),
           ssrcs_to_observe_(num_ssrcs),
           expect_single_ssrc_(send_single_ssrc_first),
-          send_stream_(nullptr) {
+          send_stream_(nullptr),
+          task_queue_(task_queue) {
       for (size_t i = 0; i < num_ssrcs; ++i)
         valid_ssrcs_[ssrcs[i]] = true;
     }
@@ -200,8 +202,10 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
 
       if (send_single_ssrc_first_) {
         // Set full simulcast and continue with the rest of the SSRCs.
-        send_stream_->ReconfigureVideoEncoder(
-            std::move(video_encoder_config_all_streams_));
+        SendTask(RTC_FROM_HERE, task_queue_, [&]() {
+          send_stream_->ReconfigureVideoEncoder(
+              std::move(video_encoder_config_all_streams_));
+        });
         EXPECT_TRUE(Wait()) << "Timed out while waiting on additional SSRCs.";
       }
     }
@@ -218,7 +222,8 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
 
     VideoSendStream* send_stream_;
     VideoEncoderConfig video_encoder_config_all_streams_;
-  } test(kVideoSendSsrcs, num_ssrcs, send_single_ssrc_first);
+    TaskQueueBase* task_queue_;
+  } test(kVideoSendSsrcs, num_ssrcs, send_single_ssrc_first, task_queue());
 
   RunBaseTest(&test);
 }

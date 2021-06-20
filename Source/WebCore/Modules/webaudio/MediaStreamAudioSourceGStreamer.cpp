@@ -43,8 +43,8 @@ static Vector<size_t> copyBusData(AudioBus& bus, GstBuffer* buffer, bool isMuted
     size_t size = mappedBuffer.size() / bus.numberOfChannels();
     for (size_t channelIndex = 0; channelIndex < bus.numberOfChannels(); ++channelIndex) {
         const auto& channel = *bus.channel(channelIndex);
-        auto offset = reinterpret_cast<size_t>(channelIndex * size);
-        memcpy(reinterpret_cast<float*>(mappedBuffer.data() + offset), channel.data(), sizeof(float) * channel.length());
+        auto offset = channelIndex * size;
+        memcpy(mappedBuffer.data() + offset, channel.data(), sizeof(float) * channel.length());
         offsets.uncheckedAppend(offset);
     }
     return offsets;

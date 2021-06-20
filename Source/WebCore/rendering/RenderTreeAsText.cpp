@@ -471,7 +471,7 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
     if (behavior.contains(RenderAsTextFlag::ShowIDAndClass)) {
         if (Element* element = is<Element>(object.node()) ? downcast<Element>(object.node()) : nullptr) {
             if (element->hasID())
-                ts << " id=\"" + element->getIdAttribute() + "\"";
+                ts << " id=\"" << element->getIdAttribute() << "\"";
 
             if (element->hasClass()) {
                 ts << " class=\"";

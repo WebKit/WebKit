@@ -3,7 +3,7 @@
 import os
 import sys
 
-filename = os.path.join('/'.join(__file__.split('/')[0:-4]), 'resources', 'square.png')
+filename = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'resources', 'square.png')
 
 if not os.path.isfile(filename):
     sys.stderr.write('File {} does not exist\n'.format(filename))

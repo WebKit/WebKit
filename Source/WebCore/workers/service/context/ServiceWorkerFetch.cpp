@@ -34,7 +34,6 @@
 #include "FetchRequest.h"
 #include "FetchResponse.h"
 #include "MIMETypeRegistry.h"
-#include "ReadableStreamChunk.h"
 #include "ResourceRequest.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClientIdentifier.h"
@@ -120,8 +119,8 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
                 return;
             }
 
-            if (auto chunk = result.returnValue())
-                client->didReceiveData(SharedBuffer::create(chunk->data, chunk->size));
+            if (auto* chunk = result.returnValue())
+                client->didReceiveData(SharedBuffer::create(chunk->data(), chunk->size()));
             else
                 client->didFinish();
         });

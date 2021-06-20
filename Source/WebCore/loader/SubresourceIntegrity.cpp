@@ -195,7 +195,7 @@ bool matchIntegrityMetadata(const CachedResource& resource, const String& integr
         auto expectedValue = decodeEncodedResourceCryptographicDigest(item);
 
         // 3. Let actualValue be the result of applying algorithm to response.
-        auto actualValue = cryptographicDigestForBytes(algorithm, sharedBuffer ? sharedBuffer->data() : nullptr, sharedBuffer ? sharedBuffer->size() : 0);
+        auto actualValue = cryptographicDigestForSharedBuffer(algorithm, sharedBuffer);
 
         // 4. If actualValue is a case-sensitive match for expectedValue, return true.
         if (expectedValue && actualValue.value == expectedValue->value)

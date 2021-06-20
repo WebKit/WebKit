@@ -64,8 +64,7 @@ static double fetchStart(MonotonicTime timeOrigin, const ResourceTiming& resourc
 
 static double entryStartTime(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
 {
-    if (!resourceTiming.allowTimingDetails()
-        || resourceTiming.networkLoadMetrics().hasCrossOriginRedirect
+    if (resourceTiming.networkLoadMetrics().failsTAOCheck
         || !resourceTiming.networkLoadMetrics().redirectCount)
         return fetchStart(timeOrigin, resourceTiming);
 
@@ -77,9 +76,6 @@ static double entryStartTime(MonotonicTime timeOrigin, const ResourceTiming& res
 
 static double entryEndTime(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
 {
-    if (!resourceTiming.allowTimingDetails())
-        return entryStartTime(timeOrigin, resourceTiming);
-
     if (resourceTiming.networkLoadMetrics().responseEnd)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.networkLoadMetrics().responseEnd);
 
@@ -114,8 +110,7 @@ double PerformanceResourceTiming::workerStart() const
 
 double PerformanceResourceTiming::redirectStart() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     if (!m_resourceTiming.networkLoadMetrics().redirectCount)
@@ -126,8 +121,7 @@ double PerformanceResourceTiming::redirectStart() const
 
 double PerformanceResourceTiming::redirectEnd() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     if (!m_resourceTiming.networkLoadMetrics().redirectCount)
@@ -145,8 +139,7 @@ double PerformanceResourceTiming::fetchStart() const
 
 double PerformanceResourceTiming::domainLookupStart() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     if (!m_resourceTiming.networkLoadMetrics().domainLookupStart)
@@ -157,8 +150,7 @@ double PerformanceResourceTiming::domainLookupStart() const
 
 double PerformanceResourceTiming::domainLookupEnd() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     if (!m_resourceTiming.networkLoadMetrics().domainLookupEnd)
@@ -169,8 +161,7 @@ double PerformanceResourceTiming::domainLookupEnd() const
 
 double PerformanceResourceTiming::connectStart() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     if (!m_resourceTiming.networkLoadMetrics().connectStart)
@@ -181,8 +172,7 @@ double PerformanceResourceTiming::connectStart() const
 
 double PerformanceResourceTiming::connectEnd() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     if (!m_resourceTiming.networkLoadMetrics().connectEnd)
@@ -193,8 +183,7 @@ double PerformanceResourceTiming::connectEnd() const
 
 double PerformanceResourceTiming::secureConnectionStart() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     if (m_resourceTiming.networkLoadMetrics().secureConnectionStart == reusedTLSConnectionSentinel)
@@ -208,8 +197,7 @@ double PerformanceResourceTiming::secureConnectionStart() const
 
 double PerformanceResourceTiming::requestStart() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     // requestStart is 0 when a network request is not made.
@@ -221,8 +209,7 @@ double PerformanceResourceTiming::requestStart() const
 
 double PerformanceResourceTiming::responseStart() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
     // responseStart is 0 when a network request is not made.
@@ -258,8 +245,7 @@ double PerformanceResourceTiming::responseEnd() const
 
 uint64_t PerformanceResourceTiming::transferSize() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0;
 
     auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
@@ -272,8 +258,7 @@ uint64_t PerformanceResourceTiming::transferSize() const
 
 uint64_t PerformanceResourceTiming::encodedBodySize() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0;
 
     auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
@@ -285,8 +270,7 @@ uint64_t PerformanceResourceTiming::encodedBodySize() const
 
 uint64_t PerformanceResourceTiming::decodedBodySize() const
 {
-    if (!m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0;
 
     auto decodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyDecodedSize;

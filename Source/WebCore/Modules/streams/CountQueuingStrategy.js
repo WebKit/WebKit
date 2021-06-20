@@ -34,8 +34,15 @@ function initializeCountQueuingStrategy(parameters)
 {
     "use strict";
 
+    if (!arguments.length || !@isObject(parameters))
+        @throwTypeError("CountQueuingStrategy constructor takes an object as first argument");
+
+    const highWaterMark = parameters.highWaterMark;
+    if (highWaterMark === @undefined)
+        @throwTypeError("Member QueuingStrategyInit.highWaterMark is required");
+
     @Object.@defineProperty(this, "highWaterMark", {
-        value: parameters.highWaterMark,
+        value: @toNumber(highWaterMark),
         configurable: true,
         enumerable: true,
         writable: true

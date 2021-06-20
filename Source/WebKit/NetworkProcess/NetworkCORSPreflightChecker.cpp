@@ -139,7 +139,7 @@ void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceEr
 
     RELEASE_LOG_IF_ALLOWED("didComplete http_status_code=%d", m_response.httpStatusCode());
 
-    auto result = validatePreflightResponse(m_parameters.originalRequest, m_response, m_parameters.storedCredentialsPolicy, m_parameters.sourceOrigin, m_networkResourceLoader.get());
+    auto result = validatePreflightResponse(m_parameters.sessionID, m_parameters.originalRequest, m_response, m_parameters.storedCredentialsPolicy, m_parameters.sourceOrigin, m_networkResourceLoader.get());
     if (!result) {
         RELEASE_LOG_IF_ALLOWED("didComplete, AccessControl error: %s", result.error().utf8().data());
         m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), result.error(), ResourceError::Type::AccessControl });

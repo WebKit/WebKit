@@ -409,11 +409,11 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagLookUpInDictionary:
         return _WKMenuItemIdentifierLookUp;
 
-    case ContextMenuItemTagAddHighlightToCurrentGroup:
-        return _WKMenuItemIdentifierAddHighlightToCurrentGroup;
+    case ContextMenuItemTagAddHighlightToCurrentQuickNote:
+        return _WKMenuItemIdentifierAddHighlightToCurrentQuickNote;
         
-    case ContextMenuItemTagAddHighlightToNewGroup:
-        return _WKMenuItemIdentifierAddHighlightToNewGroup;
+    case ContextMenuItemTagAddHighlightToNewQuickNote:
+        return _WKMenuItemIdentifierAddHighlightToNewQuickNote;
 
     case ContextMenuItemTagOpenFrameInNewWindow:
         return _WKMenuItemIdentifierOpenFrameInNewWindow;
@@ -436,7 +436,7 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagReload:
         return _WKMenuItemIdentifierReload;
 
-    case ContextMenuItemTagRevealImage:
+    case ContextMenuItemTagLookUpImage:
         return _WKMenuItemIdentifierRevealImage;
 
     case ContextMenuItemTagSearchWeb:
@@ -507,14 +507,14 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         });
     }
 
-    std::optional<WebContextMenuItemData> revealImageItem;
+    std::optional<WebContextMenuItemData> lookUpImageItem;
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
     filteredItems.removeFirstMatching([&] (auto& item) {
-        if (item.action() != WebCore::ContextMenuItemTagRevealImage)
+        if (item.action() != WebCore::ContextMenuItemTagLookUpImage)
             return false;
 
-        revealImageItem = { item };
+        lookUpImageItem = { item };
         return true;
     });
 #endif
@@ -531,7 +531,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     auto imageBitmap = m_context.webHitTestResultData().imageBitmap;
 
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);
-    auto insertMenuItem = makeBlockPtr([protectedThis = makeRef(*this), weakPage = makeWeakPtr(page()), imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), revealImageItem = WTFMove(revealImageItem), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
+    auto insertMenuItem = makeBlockPtr([protectedThis = makeRef(*this), weakPage = makeWeakPtr(page()), imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), lookUpImageItem = WTFMove(lookUpImageItem), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
         ASSERT(![sparseMenuItems pointerAtIndex:index]);
         [sparseMenuItems replacePointerAtIndex:index withPointer:item];
@@ -541,11 +541,11 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         [menu setItemArray:[sparseMenuItems allObjects]];
 
         auto page = makeRefPtr(weakPage.get());
-        if (revealImageItem && page && imageBitmap) {
-#if ENABLE(IMAGE_EXTRACTION)
-            page->computeCanRevealImage(imageURL, *imageBitmap, [protectedThis = WTFMove(protectedThis), revealImageItem = WTFMove(*revealImageItem)] (bool canRevealImage) mutable {
-                if (canRevealImage)
-                    [protectedThis->m_menu addItem:createMenuActionItem(revealImageItem).get()];
+        if (lookUpImageItem && page && imageBitmap) {
+#if ENABLE(IMAGE_ANALYSIS)
+            page->computeHasVisualSearchResults(imageURL, *imageBitmap, [protectedThis = WTFMove(protectedThis), lookUpImageItem = WTFMove(*lookUpImageItem)] (bool hasVisualSearchResults) mutable {
+                if (hasVisualSearchResults)
+                    [protectedThis->m_menu addItem:createMenuActionItem(lookUpImageItem).get()];
             });
 #else
             UNUSED_PARAM(imageURL);

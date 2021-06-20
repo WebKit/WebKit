@@ -2,7 +2,6 @@ include_rules = [
   "+call",
   "+modules/audio_coding/audio_network_adaptor",
   "+modules/congestion_controller",
-  "+modules/remote_bitrate_estimator/include",
   "+modules/rtp_rtcp",
   "+system_wrappers",
 ]

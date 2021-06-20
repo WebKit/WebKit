@@ -191,14 +191,8 @@ public:
                 GST_ERROR("Waiting for keyframe but got a delta unit... asking for keyframe");
                 return WEBRTC_VIDEO_CODEC_ERROR;
             }
-            if (inputImage._completeFrame)
-                m_needsKeyframe = false;
-            else {
-                GST_ERROR("Waiting for keyframe but didn't get full frame, getting out");
-                return WEBRTC_VIDEO_CODEC_ERROR;
-            }
+            m_needsKeyframe = false;
         }
-
 
         if (!m_src) {
             GST_ERROR("No source set, can't decode.");
@@ -217,7 +211,7 @@ public:
             inputImage.size()));
         GST_BUFFER_DTS(buffer.get()) = (static_cast<guint64>(inputImage.Timestamp()) * GST_MSECOND) - m_firstBufferDts;
         GST_BUFFER_PTS(buffer.get()) = (static_cast<guint64>(renderTimeMs) * GST_MSECOND) - m_firstBufferPts;
-        InputTimestamps timestamps = {inputImage.Timestamp(), renderTimeMs};
+        InputTimestamps timestamps = { inputImage.Timestamp(), renderTimeMs };
         m_dtsPtsMap[GST_BUFFER_PTS(buffer.get())] = timestamps;
 
         GST_LOG_OBJECT(pipeline(), "%" G_GINT64_FORMAT " Decoding: %" GST_PTR_FORMAT, renderTimeMs, buffer.get());

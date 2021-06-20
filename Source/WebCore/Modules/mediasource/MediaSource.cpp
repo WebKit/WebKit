@@ -1155,7 +1155,8 @@ void MediaSource::updateBufferedIfNeeded()
         m_buffered->intersectWith(sourceRanges);
     }
 
-    m_private->bufferedChanged(*m_buffered);
+    if (m_private)
+        m_private->bufferedChanged(*m_buffered);
 }
 
 #if !RELEASE_LOG_DISABLED

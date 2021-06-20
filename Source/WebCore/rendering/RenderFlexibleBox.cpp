@@ -1308,6 +1308,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax(co
 
 FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChildren)
 {
+    auto childHadLayout = child.everHadLayout();
     child.clearOverridingContentSize();
     if (childHasIntrinsicMainAxisSize(child)) {
         // If this condition is true, then computeMainAxisExtentForChild will call
@@ -1335,7 +1336,7 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
     LayoutUnit childInnerFlexBaseSize = computeInnerFlexBaseSizeForChild(child, borderAndPadding);
     LayoutUnit childMinMaxAppliedMainAxisExtent = adjustChildSizeForMinAndMax(child, childInnerFlexBaseSize);
     LayoutUnit margin = isHorizontalFlow() ? child.horizontalMarginExtent() : child.verticalMarginExtent();
-    return FlexItem(child, childInnerFlexBaseSize, childMinMaxAppliedMainAxisExtent, borderAndPadding, margin);
+    return FlexItem(child, childInnerFlexBaseSize, childMinMaxAppliedMainAxisExtent, borderAndPadding, margin, childHadLayout);
 }
     
 void RenderFlexibleBox::freezeViolations(Vector<FlexItem*>& violations, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
@@ -1737,7 +1738,6 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
     for (size_t i = 0; i < children.size(); ++i) {
         const auto& flexItem = children[i];
         auto& child = flexItem.box;
-        bool childHadLayout = child.everHadLayout();
 
         ASSERT(!flexItem.box.isOutOfFlowPositioned());
 
@@ -1768,7 +1768,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         if (child.needsLayout())
             m_relaidOutChildren.add(&child);
         child.layoutIfNeeded();
-        if (!childHadLayout && child.checkForRepaintDuringLayout()) {
+        if (!flexItem.everHadLayout && child.checkForRepaintDuringLayout()) {
             child.repaint();
             child.repaintOverhangingFloats(true);
         }

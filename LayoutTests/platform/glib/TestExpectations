@@ -129,9 +129,6 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
 
-# Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Failure Pass ]
-
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
@@ -310,7 +307,7 @@ webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Fai
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
-webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure Pass ]
+webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure ]
 
 webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/215405 [ Release ] accessibility/roles-exposed.html [ Failure ]
@@ -544,7 +541,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
@@ -588,7 +585,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-err
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
 
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
-webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
+webkit.org/b/226804 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
 
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
 webkit.org/b/210341 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
@@ -751,7 +748,7 @@ webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext
 webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-TransferToImageBitmap-offscreen.html [ Failure ]
 webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-null-offscreen.html [ Failure ]
 
-webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure Pass ]
+webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]
 
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w.html [ Slow ]
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
@@ -1032,7 +1029,7 @@ webkit.org/b/223655 webanimations/transform-transition-with-delay-on-forced-laye
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # AudioContext.
-webkit.org/b/217542 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure Pass ]
+webkit.org/b/226807 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure ]
 
 # AudioWorklet.
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Failure Pass ]
@@ -1208,7 +1205,7 @@ webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
 
-webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure Pass ]
+webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure ]
 
 # Failing since deferred async loading enabled until document is loaded enabled.
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
@@ -1444,12 +1441,12 @@ webkit.org/b/189196 media/encrypted-media/clearKey/clearKey-encrypted-webm-event
 # Web platform tests
 # Disable and selectively pass, since half the tests require a real DRM system.
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/ [ Skip ]
-webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Crash Pass Failure ]
+webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure ]
 webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure ]
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-check-status-for-hdcp.https.html [ Failure ]
 webkit.org/b/211375 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-segmented.https.html [ Skip ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary.https.html [ Crash Pass ]
-webkit.org/b/210113 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure Pass ]
+webkit.org/b/210113 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure ]
 webkit.org/b/210390 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.https.html [ Crash Pass ]
 webkit.org/b/210965 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
 webkit.org/b/210966 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback.https.html [ Crash Pass ]
@@ -1758,7 +1755,7 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/a
 webkit.org/b/222638 js/throw-large-string-oom.html [ Pass Timeout ]
 
 # Fails when built with GCC but passes with Clang
-webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Pass Failure ]
+webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure Pass ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
@@ -1802,7 +1799,6 @@ webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure 
 # Started failing after it was added in r116473.
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
-webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
 # Implement testRunner.setUseDeferredFrameLoading.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
@@ -2185,10 +2181,10 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 webkit.org/b/163523 media/track/track-manual-mode.html [ Failure ]
 webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
 webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
-webkit.org/b/143702 media/progress-events-generated-correctly.html [ Timeout Failure Pass Crash ]
+webkit.org/b/143702 media/progress-events-generated-correctly.html [ Failure ]
 webkit.org/b/198830 media/context-menu-actions.html [ Pass Crash Failure ]
 webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
-webkit.org/b/201266 media/audio-playback-restriction-play-muted.html [ Failure Pass ]
+webkit.org/b/201266 media/audio-playback-restriction-play-muted.html [ Failure ]
 webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ Failure ]
 webkit.org/b/160119 media/video-object-fit-change.html [ Pass Crash ImageOnlyFailure ]
 
@@ -2211,20 +2207,20 @@ webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.ht
 webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
 webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure ]
-webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass Crash ]
+webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Timeout ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-language.html [ Failure ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure ]
 
 webkit.org/b/145051 webkit.org/b/198830 [ Release ] media/video-rtl.html [ ImageOnlyFailure Pass Crash ]
 
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
-webkit.org/b/158914 webkit.org/b/198830 media/restore-from-page-cache.html [ Failure Pass Crash ]
+webkit.org/b/158914 webkit.org/b/198830 media/restore-from-page-cache.html [ Failure ]
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure  ]
 
 webkit.org/b/186638 media/video-remote-control-playpause.html [ Failure Timeout Pass ]
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
-webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout Pass Crash ]
+webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout ]
 
 webkit.org/b/198830 media/event-attributes.html [ Crash Failure ]
 webkit.org/b/198830 media/track/track-cue-css.html [ ImageOnlyFailure Failure Pass ]
@@ -2241,10 +2237,10 @@ webkit.org/b/198830 [ Release ] media/video-defaultplaybackrate-before-load.html
 # GLX error in gst_gl_context_glx_create_context
 webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Pass Timeout ]
 
-webkit.org/b/208293 media/video-restricted-invisible-autoplay-allowed-if-audible.html [ Failure Pass ]
+webkit.org/b/208293 media/video-restricted-invisible-autoplay-allowed-if-audible.html [ Failure ]
 
 
-webkit.org/b/208321 media/muted-video-is-playing-audio.html [ Timeout Pass Crash ]
+webkit.org/b/208321 media/muted-video-is-playing-audio.html [ Timeout ]
 
 http/tests/media/video-preload.html [ Pass Slow ]
 

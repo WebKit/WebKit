@@ -150,7 +150,7 @@ struct EventTrackingRegions;
 struct ExceptionDetails;
 struct FontAttributes;
 struct FileChooserSettings;
-struct ImageExtractionDataDetectorInfo;
+struct TextRecognitionDataDetector;
 struct RawFile;
 struct ShareData;
 struct ShareDataWithParsedURL;
@@ -842,16 +842,16 @@ template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo> {
 };
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
-template<> struct ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo> {
-    static void encode(Encoder&, const WebCore::ImageExtractionDataDetectorInfo&);
-    static WARN_UNUSED_RETURN std::optional<WebCore::ImageExtractionDataDetectorInfo> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::ImageExtractionDataDetectorInfo&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ImageExtractionDataDetectorInfo&);
+template<> struct ArgumentCoder<WebCore::TextRecognitionDataDetector> {
+    static void encode(Encoder&, const WebCore::TextRecognitionDataDetector&);
+    static WARN_UNUSED_RETURN std::optional<WebCore::TextRecognitionDataDetector> decode(Decoder&);
+    static void encodePlatformData(Encoder&, const WebCore::TextRecognitionDataDetector&);
+    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::TextRecognitionDataDetector&);
 };
 
-#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+#endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
 } // namespace IPC
 

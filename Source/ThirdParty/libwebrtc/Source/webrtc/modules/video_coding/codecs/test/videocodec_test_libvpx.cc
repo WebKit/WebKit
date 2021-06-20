@@ -301,7 +301,7 @@ TEST(VideoCodecTestLibvpx, MAYBE_ChangeFramerateVP8) {
       {31, 30, 0.85, 0.84}, {31.5, 30.5, 0.86, 0.84}, {30.5, 29, 0.83, 0.78}};
 #else
   std::vector<QualityThresholds> quality_thresholds = {
-      {31, 30, 0.87, 0.86}, {32, 31, 0.89, 0.86}, {32, 30, 0.87, 0.82}};
+      {31, 30, 0.87, 0.85}, {32, 31, 0.88, 0.85}, {32, 30, 0.87, 0.82}};
 #endif
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
@@ -358,7 +358,7 @@ TEST(VideoCodecTestLibvpx, MAYBE_MultiresVP8) {
   std::vector<RateProfile> rate_profiles = {{1500, 30, 0}};
 #if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<RateControlThresholds> rc_thresholds = {
-      {4.1, 1.04, 6, 0.18, 0.14, 0.08, 0, 1}};
+      {4.1, 1.04, 7, 0.18, 0.14, 0.08, 0, 1}};
 #else
   std::vector<RateControlThresholds> rc_thresholds = {
       {5, 1, 5, 1, 0.3, 0.1, 0, 1}};

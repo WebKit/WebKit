@@ -51,8 +51,8 @@ namespace WebCore {
     String copyImageUnknownFileLabel();
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
-    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentGroup();
-    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewGroup();
+    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentQuickNote();
+    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewQuickNote();
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -366,8 +366,8 @@ namespace WebCore {
     WEBCORE_EXPORT String genericTouchIDPromptTitle();
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    WEBCORE_EXPORT String contextMenuItemTagRevealImage();
+#if ENABLE(IMAGE_ANALYSIS)
+    WEBCORE_EXPORT String contextMenuItemTagLookUpImage();
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)

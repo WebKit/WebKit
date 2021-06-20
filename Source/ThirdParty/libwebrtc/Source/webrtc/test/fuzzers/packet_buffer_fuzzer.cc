@@ -13,7 +13,6 @@
 
 #include "modules/video_coding/frame_object.h"
 #include "modules/video_coding/packet_buffer.h"
-#include "system_wrappers/include/clock.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
@@ -24,8 +23,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > 200000) {
     return;
   }
-  SimulatedClock clock(0);
-  video_coding::PacketBuffer packet_buffer(&clock, 8, 1024);
+  video_coding::PacketBuffer packet_buffer(8, 1024);
   test::FuzzDataHelper helper(rtc::ArrayView<const uint8_t>(data, size));
 
   while (helper.BytesLeft()) {
@@ -35,7 +33,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     helper.CopyTo(&packet->payload_type);
     helper.CopyTo(&packet->seq_num);
     helper.CopyTo(&packet->timestamp);
-    helper.CopyTo(&packet->ntp_time_ms);
     helper.CopyTo(&packet->times_nacked);
 
     // Fuzz non-POD member of the packet.

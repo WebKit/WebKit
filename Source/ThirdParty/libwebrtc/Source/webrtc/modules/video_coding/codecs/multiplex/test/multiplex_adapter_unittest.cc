@@ -38,7 +38,6 @@
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
-#include "rtc_base/keep_ref_until_done.h"
 #include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -91,9 +90,9 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
     for (int i = 0; i < 16; i++) {
       data[i] = i;
     }
-    rtc::scoped_refptr<AugmentedVideoFrameBuffer> augmented_video_frame_buffer =
-        new rtc::RefCountedObject<AugmentedVideoFrameBuffer>(
-            video_buffer, std::move(data), 16);
+    auto augmented_video_frame_buffer =
+        rtc::make_ref_counted<AugmentedVideoFrameBuffer>(video_buffer,
+                                                         std::move(data), 16);
     return std::make_unique<VideoFrame>(
         VideoFrame::Builder()
             .set_video_frame_buffer(augmented_video_frame_buffer)
@@ -112,7 +111,9 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
         yuv_buffer->width(), yuv_buffer->height(), yuv_buffer->DataY(),
         yuv_buffer->StrideY(), yuv_buffer->DataU(), yuv_buffer->StrideU(),
         yuv_buffer->DataV(), yuv_buffer->StrideV(), yuv_buffer->DataY(),
-        yuv_buffer->StrideY(), rtc::KeepRefUntilDone(yuv_buffer));
+        yuv_buffer->StrideY(),
+        // To keep reference alive.
+        [yuv_buffer] {});
     return std::make_unique<VideoFrame>(VideoFrame::Builder()
                                             .set_video_frame_buffer(yuva_buffer)
                                             .set_timestamp_rtp(123)
@@ -168,8 +169,7 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
     rtc::scoped_refptr<I420BufferInterface> axx_buffer = WrapI420Buffer(
         yuva_buffer->width(), yuva_buffer->height(), yuva_buffer->DataA(),
         yuva_buffer->StrideA(), yuva_buffer->DataU(), yuva_buffer->StrideU(),
-        yuva_buffer->DataV(), yuva_buffer->StrideV(),
-        rtc::KeepRefUntilDone(video_frame_buffer));
+        yuva_buffer->DataV(), yuva_buffer->StrideV(), [video_frame_buffer] {});
     return std::make_unique<VideoFrame>(VideoFrame::Builder()
                                             .set_video_frame_buffer(axx_buffer)
                                             .set_timestamp_rtp(123)

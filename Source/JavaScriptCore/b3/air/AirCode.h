@@ -341,7 +341,14 @@ public:
     // it's mainly for validating the results from JSAir.
     unsigned jsHash() const;
 
-    void setDisassembler(std::unique_ptr<Disassembler>&& disassembler) { m_disassembler = WTFMove(disassembler); }
+    bool shouldPreserveB3Origins() const { return m_preserveB3Origins; }
+    void forcePreservationOfB3Origins() { m_preserveB3Origins = true; }
+
+    void setDisassembler(std::unique_ptr<Disassembler>&& disassembler)
+    {
+        m_disassembler = WTFMove(disassembler);
+        forcePreservationOfB3Origins();
+    }
     Disassembler* disassembler() { return m_disassembler.get(); }
 
     RegisterSet mutableGPRs();
@@ -354,10 +361,6 @@ public:
     void emitEpilogue(CCallHelpers&);
 
     std::unique_ptr<GenerateAndAllocateRegisters> m_generateAndAllocateRegisters;
-
-    bool shouldPreserveB3Origins() const { return m_preserveB3Origins; }
-
-    void forcePreservationOfB3Origins() { m_preserveB3Origins = true; }
     
 private:
     friend class ::JSC::B3::Procedure;

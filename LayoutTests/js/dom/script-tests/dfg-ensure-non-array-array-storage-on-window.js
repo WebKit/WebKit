@@ -51,10 +51,8 @@ for (var i = 0; i < 1000; i = dfgIncrement({f:[foo, bar], i:i + 1, n:500, compil
 var w = this;
 w[0] = 1;
 w.length = 1;
-var thingy = false;
-w.__defineSetter__(1, function(value) { thingy = value; });
-shouldBe("foo(w)", "1");
-shouldBe("thingy", "false");
+shouldThrowErrorName("w.__defineSetter__(1, function() {})", "TypeError");
+shouldBe("foo(w)", "NaN");
 
 // At this point we check to make sure that bar doesn't end up either creating array storage for
 // the window proxy, or equally badly, storing to the already created array storage on the proxy
@@ -62,8 +60,7 @@ shouldBe("thingy", "false");
 // thingy, to detect that for index 1 we fall through the proxy to the real window object.
 bar(w);
 
-shouldBe("thingy", "42");
-shouldBe("foo(w)", "1");
 w.length = 2;
-shouldBe("foo(w)", "0/0");
+shouldBe("w[1]", "");
+shouldBe("foo(w)", "NaN");
 

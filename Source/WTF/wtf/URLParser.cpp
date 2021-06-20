@@ -698,7 +698,7 @@ ALWAYS_INLINE static Scheme scheme(StringView scheme)
     }
 }
 
-std::optional<String> URLParser::maybeCanonicalizeScheme(const String& scheme)
+std::optional<String> URLParser::maybeCanonicalizeScheme(StringView scheme)
 {
     if (scheme.isEmpty())
         return std::nullopt;
@@ -2792,7 +2792,7 @@ std::optional<String> URLParser::formURLDecode(StringView input)
     auto utf8 = input.utf8(StrictConversion);
     if (utf8.isNull())
         return std::nullopt;
-    auto percentDecoded = percentDecode(reinterpret_cast<const LChar*>(utf8.data()), utf8.length());
+    auto percentDecoded = percentDecode(utf8.dataAsUInt8Ptr(), utf8.length());
     return String::fromUTF8ReplacingInvalidSequences(percentDecoded.data(), percentDecoded.size());
 }
 

@@ -40,9 +40,14 @@
 #endif
 
 #if PLATFORM(GTK)
-#include <WebCore/CairoUtilities.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GRefPtr.h>
+
+#if USE(GTK4)
+#include <WebCore/GRefPtrGtk.h>
+#else
+#include <WebCore/CairoUtilities.h>
+#endif
 #endif
 
 #if PLATFORM(COCOA)
@@ -436,15 +441,20 @@ private:
 
     SwipeProgressTracker m_swipeProgressTracker;
 
+#if USE(GTK4)
+    GRefPtr<GskRenderNode> m_currentSwipeSnapshotPattern;
+#else
     RefPtr<cairo_pattern_t> m_currentSwipeSnapshotPattern;
     RefPtr<cairo_pattern_t> m_swipeDimmingPattern;
     RefPtr<cairo_pattern_t> m_swipeShadowPattern;
     RefPtr<cairo_pattern_t> m_swipeBorderPattern;
     RefPtr<cairo_pattern_t> m_swipeOutlinePattern;
+
     int m_swipeShadowSize;
     int m_swipeBorderSize;
     int m_swipeOutlineSize;
     GRefPtr<GtkCssProvider> m_cssProvider;
+#endif
 
     bool m_isSimulatedSwipe { false };
 #endif

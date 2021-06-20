@@ -252,7 +252,6 @@ private:
     AXCoreObject* parentObjectUnignored() const override;
     void linkedUIElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::LinkedUIElements, children); }
     AXCoreObject* titleUIElement() const override { return objectAttributeValue(AXPropertyName::TitleUIElement); }
-    bool exposesTitleUIElement() const override { return boolAttributeValue(AXPropertyName::ExposesTitleUIElement); }
     AXCoreObject* scrollBar(AccessibilityOrientation) override;
     AccessibilityRole ariaRoleAttribute() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::ARIARoleAttribute)); }
     String computedLabel() override { return stringAttributeValue(AXPropertyName::ComputedLabel); }

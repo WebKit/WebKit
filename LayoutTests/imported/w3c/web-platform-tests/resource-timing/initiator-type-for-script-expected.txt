@@ -1,0 +1,3 @@
+
+PASS Validate initiatorType for scripts is 'script'
+

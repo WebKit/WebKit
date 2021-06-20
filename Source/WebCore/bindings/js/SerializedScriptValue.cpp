@@ -2340,7 +2340,7 @@ private:
         if (is8Bit) {
             if ((end - ptr) < static_cast<int>(length))
                 return false;
-            str = String(reinterpret_cast<const LChar*>(ptr), length);
+            str = String { ptr, length };
             ptr += length;
             return true;
         }

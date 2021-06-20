@@ -29,8 +29,8 @@ if (is_android) {
       "//sdk/android:base_java",
       "//sdk/android:java_audio_device_module_java",
       "//sdk/android:video_java",
-      "//third_party/android_deps:androidx_core_core_java",
-      "//third_party/android_deps:androidx_legacy_legacy_support_v4_java",
+      "//third_party/androidx:androidx_core_core_java",
+      "//third_party/androidx:androidx_legacy_legacy_support_v4_java",
     ]
 
     shared_libraries = [ ":examples_androidvoip_jni" ]
@@ -56,6 +56,9 @@ if (is_android) {
 
     deps = [
       ":generated_jni",
+      "../../rtc_base:socket_address",
+      "../../rtc_base:socket_server",
+      "../../rtc_base:threading",
       "//api:transport_api",
       "//api/audio_codecs:audio_codecs_api",
       "//api/audio_codecs:builtin_audio_decoder_factory",

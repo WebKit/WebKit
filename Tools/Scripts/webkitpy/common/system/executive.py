@@ -81,22 +81,23 @@ class ScriptError(Exception):
         return os.path.basename(command_path)
 
 
+class WrappedPopen(object):
+    def __init__(self, popen):
+        for attribute in dir(popen):
+            if attribute.startswith('__'):
+                continue
+            setattr(self, attribute, getattr(popen, attribute))
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.wait()
+
+
 class Executive(AbstractExecutive):
     PIPE = subprocess.PIPE
     STDOUT = subprocess.STDOUT
-
-    class WrappedPopen(object):
-        def __init__(self, popen):
-            for attribute in dir(popen):
-                if attribute.startswith('__'):
-                    continue
-                setattr(self, attribute, getattr(popen, attribute))
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *args):
-            self.wait()
 
     def __init__(self):
         self.pid_to_system_pid = {}
@@ -534,7 +535,7 @@ class Executive(AbstractExecutive):
         # Python 3 treats Popen as a context manager, we should allow this in Python 2
         result = subprocess.Popen(string_args, env=env, **kwargs)
         if not callable(getattr(result, "__enter__", None)) and not callable(getattr(result, "__exit__", None)):
-            return self.WrappedPopen(result)
+            return WrappedPopen(result)
         return result
 
     def run_in_parallel(self, command_lines_and_cwds, processes=None):

@@ -77,6 +77,11 @@ WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
         WI.domManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
+    willDestroyDOMNode(nodeId)
+    {
+        WI.domManager.willDestroyDOMNode(nodeId);
+    }
+
     shadowRootPushed(hostId, root)
     {
         WI.domManager._childNodeInserted(hostId, 0, root);

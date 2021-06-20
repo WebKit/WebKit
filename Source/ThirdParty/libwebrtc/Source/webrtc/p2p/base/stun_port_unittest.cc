@@ -49,10 +49,8 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
         thread_(ss_.get()),
         network_("unittest", "unittest", kLocalAddr.ipaddr(), 32),
         socket_factory_(rtc::Thread::Current()),
-        stun_server_1_(cricket::TestStunServer::Create(rtc::Thread::Current(),
-                                                       kStunAddr1)),
-        stun_server_2_(cricket::TestStunServer::Create(rtc::Thread::Current(),
-                                                       kStunAddr2)),
+        stun_server_1_(cricket::TestStunServer::Create(ss_.get(), kStunAddr1)),
+        stun_server_2_(cricket::TestStunServer::Create(ss_.get(), kStunAddr2)),
         done_(false),
         error_(false),
         stun_keepalive_delay_(1),
@@ -225,7 +223,7 @@ TEST_F(StunPortTest, TestPrepareAddressFail) {
   EXPECT_EQ_SIMULATED_WAIT(error_event_.error_code,
                            cricket::SERVER_NOT_REACHABLE_ERROR, kTimeoutMs,
                            fake_clock);
-  ASSERT_NE(error_event_.error_text.find("."), std::string::npos);
+  ASSERT_NE(error_event_.error_text.find('.'), std::string::npos);
   ASSERT_NE(error_event_.address.find(kLocalAddr.HostAsSensitiveURIString()),
             std::string::npos);
   std::string server_url = "stun:" + kBadAddr.ToString();

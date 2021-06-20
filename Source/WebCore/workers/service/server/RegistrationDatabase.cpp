@@ -459,10 +459,10 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
             || insertStatement->bindText(6, updateViaCacheToString(data.registration.updateViaCache)) != SQLITE_OK
             || insertStatement->bindText(7, data.scriptURL.string()) != SQLITE_OK
             || insertStatement->bindText(8, workerTypeToString(data.workerType)) != SQLITE_OK
-            || insertStatement->bindBlob(9, cspEncoder.buffer(), cspEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->bindBlob(9, Span { cspEncoder.buffer(), cspEncoder.bufferSize() }) != SQLITE_OK
             || insertStatement->bindText(10, data.referrerPolicy) != SQLITE_OK
-            || insertStatement->bindBlob(11, scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize()) != SQLITE_OK
-            || insertStatement->bindBlob(12, certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->bindBlob(11, Span { scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize() }) != SQLITE_OK
+            || insertStatement->bindBlob(12, Span { certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize() }) != SQLITE_OK
             || insertStatement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return false;
@@ -515,9 +515,9 @@ String RegistrationDatabase::importRecords()
         auto workerType = stringToWorkerType(sql->columnText(7));
 
         std::optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
-        auto contentSecurityPolicyDataView = sql->columnBlobView(8);
-        if (contentSecurityPolicyDataView.size()) {
-            WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataView.data(), contentSecurityPolicyDataView.size());
+        auto contentSecurityPolicyDataSpan = sql->columnBlobAsSpan(8);
+        if (contentSecurityPolicyDataSpan.size()) {
+            WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataSpan.data(), contentSecurityPolicyDataSpan.size());
             cspDecoder >> contentSecurityPolicy;
             if (!contentSecurityPolicy) {
                 RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode contentSecurityPolicy");
@@ -528,9 +528,9 @@ String RegistrationDatabase::importRecords()
         auto referrerPolicy = sql->columnText(9);
 
         HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
-        auto scriptResourceMapDataView = sql->columnBlobView(10);
-        if (scriptResourceMapDataView.size()) {
-            WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataView.data(), scriptResourceMapDataView.size());
+        auto scriptResourceMapDataSpan = sql->columnBlobAsSpan(10);
+        if (scriptResourceMapDataSpan.size()) {
+            WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataSpan.data(), scriptResourceMapDataSpan.size());
             std::optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
             scriptResourceMapDecoder >> scriptResourceMapWithoutScripts;
             if (!scriptResourceMapWithoutScripts) {
@@ -540,10 +540,10 @@ String RegistrationDatabase::importRecords()
             scriptResourceMap = populateScriptSourcesFromDisk(scriptStorage(), *key, WTFMove(*scriptResourceMapWithoutScripts));
         }
 
-        auto certificateInfoDataView = sql->columnBlobView(11);
+        auto certificateInfoDataSpan = sql->columnBlobAsSpan(11);
         std::optional<CertificateInfo> certificateInfo;
 
-        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataView.data(), certificateInfoDataView.size());
+        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataSpan.data(), certificateInfoDataSpan.size());
         certificateInfoDecoder >> certificateInfo;
         if (!certificateInfo) {
             RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode certificateInfo");

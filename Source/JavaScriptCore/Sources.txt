@@ -223,7 +223,7 @@ bytecode/DataFormat.cpp
 bytecode/DeferredCompilationCallback.cpp
 bytecode/DeferredSourceDump.cpp
 bytecode/DeleteByStatus.cpp
-bytecode/DeleteByIdVariant.cpp
+bytecode/DeleteByVariant.cpp
 bytecode/DirectEvalCodeCache.cpp
 bytecode/EvalCodeBlock.cpp
 bytecode/ExecutableToCodeBlockEdge.cpp
@@ -235,12 +235,12 @@ bytecode/ExitingJITType.cpp
 bytecode/FullCodeOrigin.cpp
 bytecode/FunctionCodeBlock.cpp
 bytecode/GetByStatus.cpp
-bytecode/GetByIdVariant.cpp
+bytecode/GetByVariant.cpp
 bytecode/GetterSetterAccessCase.cpp
 bytecode/ICStatusMap.cpp
 bytecode/ICStatusUtils.cpp
 bytecode/InByStatus.cpp
-bytecode/InByIdVariant.cpp
+bytecode/InByVariant.cpp
 bytecode/InlineAccess.cpp
 bytecode/InlineCallFrame.cpp
 bytecode/InlineCallFrameSet.cpp

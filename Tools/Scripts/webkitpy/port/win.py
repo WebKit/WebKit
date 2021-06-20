@@ -324,7 +324,7 @@ class WinPort(ApplePort):
             os.environ['_NT_SYMBOL_PATH'] = 'SRV*http://msdl.microsoft.com/download/symbols'
 
         # Add build path to symbol path
-        os.environ['_NT_SYMBOL_PATH'] += ";" + self._build_path()
+        os.environ['_NT_SYMBOL_PATH'] += ";" + str(self._build_path())
 
         ntsd_path = self._ntsd_location()
         if not ntsd_path:

@@ -1,10 +1,8 @@
 
 PASS Indexed properties of the window object (strict mode)
-FAIL Indexed properties of the window object (strict mode) 1 assert_throws_js: function "function () {
-    window[0] = "foo";
-  }" did not throw
-FAIL Indexed properties of the window object (strict mode) 2 assert_throws_js: function "function () {
-    window[1] = "foo";
-  }" did not throw
+PASS Indexed properties of the window object (strict mode) 1
+PASS Indexed properties of the window object (strict mode) 2
+PASS Borderline numeric key: 2 ** 32 - 2 is an index (strict mode)
+PASS Borderline numeric key: 2 ** 32 - 1 is not an index (strict mode)
 PASS Indexed properties of the window object (strict mode) 3
 

@@ -42,7 +42,7 @@ struct SourceProviderCacheItemCreationParameters {
     unsigned parameterCount;
     bool needsFullActivation;
     bool usesEval;
-    bool strictMode;
+    LexicalScopeFeatures lexicalScopeFeatures;
     bool needsSuperBinding;
     InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures;
     Vector<UniquedStringImpl*, 8> usedVariables;
@@ -76,6 +76,14 @@ public:
         // token.m_location.sourceOffset is initialized once by the client. So,
         // we do not need to set it here.
         return token;
+    }
+
+    LexicalScopeFeatures lexicalScopeFeatures() const
+    {
+        LexicalScopeFeatures features = NoLexicalFeatures;
+        if (strictMode)
+            features |= StrictModeLexicalFeature;
+        return features;
     }
 
     bool needsFullActivation : 1;
@@ -122,7 +130,7 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , endFunctionOffset(parameters.endFunctionOffset)
     , usesEval(parameters.usesEval)
     , lastTokenLine(parameters.lastTokenLine)
-    , strictMode(parameters.strictMode)
+    , strictMode(parameters.lexicalScopeFeatures & StrictModeLexicalFeature)
     , lastTokenStartOffset(parameters.lastTokenStartOffset)
     , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
     , lastTokenEndOffset(parameters.lastTokenEndOffset)

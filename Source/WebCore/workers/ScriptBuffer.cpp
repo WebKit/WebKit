@@ -53,8 +53,9 @@ String ScriptBuffer::toString() const
         return String();
 
     StringBuilder builder;
-    for (auto it = m_buffer->begin(); it != m_buffer->end(); ++it)
-        builder.append(String::fromUTF8(it->segment->data(), it->segment->size()));
+    m_buffer->forEachSegment([&](auto& segment) {
+        builder.append(String::fromUTF8(segment.data(), segment.size()));
+    });
     return builder.toString();
 }
 

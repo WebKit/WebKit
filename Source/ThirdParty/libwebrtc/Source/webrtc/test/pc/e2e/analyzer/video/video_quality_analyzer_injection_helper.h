@@ -27,7 +27,6 @@
 #include "api/video_codecs/video_encoder_factory.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
-#include "test/pc/e2e/analyzer/video/id_generator.h"
 #include "test/test_video_capturer.h"
 #include "test/testsupport/video_frame_writer.h"
 
@@ -45,6 +44,13 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
       EncodedImageDataInjector* injector,
       EncodedImageDataExtractor* extractor);
   ~VideoQualityAnalyzerInjectionHelper() override;
+
+  // Registers new call participant to the underlying video quality analyzer.
+  // The method should be called before the participant is actually added.
+  void RegisterParticipantInCall(absl::string_view peer_name) {
+    analyzer_->RegisterParticipantInCall(peer_name);
+    extractor_->AddParticipantInCall();
+  }
 
   // Wraps video encoder factory to give video quality analyzer access to frames
   // before encoding and encoded images after.
@@ -68,14 +74,15 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
                           const VideoConfig& config);
   // Creates sink, that will allow video quality analyzer to get access to
   // the rendered frames. If corresponding video track has
-  // |output_dump_file_name| in its VideoConfig, then video also will be written
+  // |output_dump_file_name| in its VideoConfig, which was used for
+  // CreateFramePreprocessor(...), then video also will be written
   // into that file.
   std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>> CreateVideoSink(
       absl::string_view peer_name);
 
   void Start(std::string test_case_name,
              rtc::ArrayView<const std::string> peer_names,
-             int max_threads_count);
+             int max_threads_count = 1);
 
   // Forwards |stats_reports| for Peer Connection |pc_label| to
   // |analyzer_|.
@@ -124,8 +131,6 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
   std::map<std::string,
            std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>>>
       sinks_ RTC_GUARDED_BY(lock_);
-
-  std::unique_ptr<IdGenerator<int>> encoding_entities_id_generator_;
 };
 
 }  // namespace webrtc_pc_e2e

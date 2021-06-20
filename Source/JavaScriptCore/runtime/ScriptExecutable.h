@@ -62,7 +62,7 @@ public:
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     EvalContextType evalContextType() const { return static_cast<EvalContextType>(m_evalContextType); }
-    bool isInStrictContext() const { return m_features & StrictModeFeature; }
+    bool isInStrictContext() const { return m_lexicalScopeFeatures & StrictModeLexicalFeature; }
     bool usesNonSimpleParameterList() const { return m_features & NonSimpleParameterListFeature; }
 
     void setNeverInline(bool value) { m_neverInline = value; }
@@ -85,7 +85,7 @@ public:
         
     DECLARE_EXPORT_INFO;
 
-    void recordParse(CodeFeatures, bool hasCapturedVariables, int lastLine, unsigned endColumn);
+    void recordParse(CodeFeatures, LexicalScopeFeatures, bool hasCapturedVariables, int lastLine, unsigned endColumn);
     void installCode(CodeBlock*);
     void installCode(VM&, CodeBlock*, CodeType, CodeSpecializationKind);
     CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, Exception*&);
@@ -128,11 +128,12 @@ private:
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 
 protected:
-    ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, Intrinsic);
+    ScriptExecutable(Structure*, VM&, const SourceCode&, LexicalScopeFeatures, DerivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, Intrinsic);
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables)
+    void recordParse(CodeFeatures features, LexicalScopeFeatures lexicalScopeFeatures, bool hasCapturedVariables)
     {
         m_features = features;
+        m_lexicalScopeFeatures = lexicalScopeFeatures;
         m_hasCapturedVariables = hasCapturedVariables;
     }
 
@@ -142,6 +143,7 @@ protected:
     Intrinsic m_intrinsic { NoIntrinsic };
     bool m_didTryToEnterInLoop { false };
     CodeFeatures m_features;
+    unsigned m_lexicalScopeFeatures : 4;
     OptionSet<CodeGenerationMode> m_codeGenerationModeForGeneratorBody;
     bool m_hasCapturedVariables : 1;
     bool m_neverInline : 1;

@@ -158,7 +158,7 @@ if settings['setIcyData'] == 'yes':
 
     for play_file in play_files:
         file_index_in_db += 1
-        if file_name.split('/')[-1] == play_file['fileName']:
+        if os.path.basename(file_name) == play_file['fileName']:
             file_in_db = True
             break
 

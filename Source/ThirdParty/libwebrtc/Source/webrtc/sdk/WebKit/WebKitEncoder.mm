@@ -301,7 +301,6 @@ void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, 
     encodedImage.timing_ = info.timing;
     encodedImage._frameType = info.frameType;
     encodedImage.rotation_ = info.rotation;
-    encodedImage._completeFrame = info.completeFrame;
     encodedImage.qp_ = info.qp;
     encodedImage.content_type_ = info.contentType;
 
@@ -332,7 +331,6 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, LocalEncoderCallb
         info.frameType = encodedImage._frameType;
         info.rotation = encodedImage.rotation_;
         info.contentType = encodedImage.content_type_;
-        info.completeFrame = encodedImage._completeFrame;
         info.qp = encodedImage.qp_;
         info.timing = encodedImage.timing_;
 

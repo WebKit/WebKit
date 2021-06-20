@@ -29,6 +29,7 @@
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SampleMap.h>
+#include <wtf/Identified.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Variant.h>
@@ -49,8 +50,8 @@ class MediaTrackReader;
 
 class MediaSampleCursor : public CoreMediaWrapped<MediaSampleCursor>, ThreadSafeIdentified<MediaSampleCursor> {
 public:
-    using DecodeOrderIterator = DecodeOrderSampleMap::iterator;
-    using PresentationOrderIterator = PresentationOrderSampleMap::iterator;
+    using DecodeOrderIterator = WebCore::DecodeOrderSampleMap::iterator;
+    using PresentationOrderIterator = WebCore::PresentationOrderSampleMap::iterator;
     using Locator = Variant<MediaTime, DecodeOrderIterator, PresentationOrderIterator>;
 
     struct Timing {

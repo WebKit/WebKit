@@ -12,7 +12,9 @@
 
 #include <utility>
 
+#include "modules/desktop_capture/desktop_capture_metrics_helper.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_frame_win.h"
 #include "modules/desktop_capture/desktop_region.h"
@@ -23,6 +25,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -62,6 +65,8 @@ ScreenCapturerWinMagnifier::~ScreenCapturerWinMagnifier() {
 void ScreenCapturerWinMagnifier::Start(Callback* callback) {
   RTC_DCHECK(!callback_);
   RTC_DCHECK(callback);
+  RecordCapturerImpl(DesktopCapturerId::kScreenCapturerWinMagnifier);
+
   callback_ = callback;
 
   if (!InitializeMagnifier()) {
@@ -115,8 +120,13 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
                                GetDeviceCaps(desktop_dc_, LOGPIXELSY)));
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
-  frame->set_capture_time_ms((rtc::TimeNanos() - capture_start_time_nanos) /
-                             rtc::kNumNanosecsPerMillisec);
+
+  int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
+                        rtc::kNumNanosecsPerMillisec;
+  RTC_HISTOGRAM_COUNTS_1000(
+      "WebRTC.DesktopCapture.Win.MagnifierCapturerFrameTime", capture_time_ms);
+  frame->set_capture_time_ms(capture_time_ms);
+  frame->set_capturer_id(DesktopCapturerId::kScreenCapturerWinMagnifier);
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }
 

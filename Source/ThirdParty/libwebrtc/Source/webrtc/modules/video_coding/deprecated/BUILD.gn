@@ -21,7 +21,6 @@ rtc_library("nack_module") {
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:criticalsection",
-    "../../../rtc_base:deprecation",
     "../../../rtc_base:logging",
     "../../../rtc_base:macromagic",
     "../../../rtc_base:rtc_numerics",
@@ -31,4 +30,5 @@ rtc_library("nack_module") {
     "../../../system_wrappers:field_trial",
     "../../utility",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
 }

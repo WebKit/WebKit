@@ -511,6 +511,7 @@
 		9BB91F512648EA4D00A56217 /* CheckedPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckedPtr.h; sourceTree = "<group>"; };
 		9BC70F04176C379D00101DEC /* AtomStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomStringTable.h; sourceTree = "<group>"; };
+		9BE153352671F00F00C7D096 /* WeakHashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakHashMap.h; sourceTree = "<group>"; };
 		9C67C542589348E285B49699 /* IndexedContainerIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedContainerIterator.h; sourceTree = "<group>"; };
 		A1B89B87221E000F00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A30D412C1F0DE0BA00B71954 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
@@ -691,6 +692,7 @@
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
+		BCA30C7F266D3034000D230C /* Span.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Span.h; sourceTree = "<group>"; };
 		C2BCFC3E1F61D13000C9222C /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		C2BCFC3F1F61D13000C9222C /* Language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Language.h; sourceTree = "<group>"; };
 		C2BCFC411F61D61600C9222C /* LanguageCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LanguageCF.cpp; sourceTree = "<group>"; };
@@ -1256,6 +1258,7 @@
 				7936D6A91C99F8AE000D1AED /* SmallSet.h */,
 				A30D412D1F0DE13F00B71954 /* SoftLinking.h */,
 				93156C8D262C982200EAE27B /* SortedArrayMap.h */,
+				BCA30C7F266D3034000D230C /* Span.h */,
 				79038E05224B05A7004C0738 /* SpanningTree.h */,
 				A8A4730D151A825B004123FF /* Spectrum.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,
@@ -1335,6 +1338,7 @@
 				A8A47372151A825B004123FF /* VMTags.h */,
 				0F66B2881DC97BAB004A1D3F /* WallTime.cpp */,
 				0F66B2891DC97BAB004A1D3F /* WallTime.h */,
+				9BE153352671F00F00C7D096 /* WeakHashMap.h */,
 				9B67F3F12228D5310030DE9C /* WeakHashSet.h */,
 				83ABB3C020B3823200BA3306 /* WeakObjCPtr.h */,
 				974CFC8D16A4F327006D5404 /* WeakPtr.h */,

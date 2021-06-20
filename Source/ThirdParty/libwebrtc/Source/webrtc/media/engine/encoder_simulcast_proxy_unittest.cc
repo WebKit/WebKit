@@ -49,7 +49,8 @@ TEST(EncoderSimulcastProxy, ChoosesCorrectImplementation) {
                                        2000,
                                        1000,
                                        1000,
-                                       56};
+                                       56,
+                                       true};
   codec_settings.simulcastStream[1] = {test::kTestWidth,
                                        test::kTestHeight,
                                        test::kTestFrameRate,
@@ -57,7 +58,8 @@ TEST(EncoderSimulcastProxy, ChoosesCorrectImplementation) {
                                        3000,
                                        1000,
                                        1000,
-                                       56};
+                                       56,
+                                       true};
   codec_settings.simulcastStream[2] = {test::kTestWidth,
                                        test::kTestHeight,
                                        test::kTestFrameRate,
@@ -65,7 +67,8 @@ TEST(EncoderSimulcastProxy, ChoosesCorrectImplementation) {
                                        5000,
                                        1000,
                                        1000,
-                                       56};
+                                       56,
+                                       true};
   codec_settings.numberOfSimulcastStreams = 3;
 
   auto mock_encoder = std::make_unique<NiceMock<MockVideoEncoder>>();

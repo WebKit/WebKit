@@ -231,10 +231,10 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
 #else
     g_signal_connect(m_soupMessage.get(), "authenticate", G_CALLBACK(authenticateCallback), this);
     g_signal_connect(m_soupMessage.get(), "accept-certificate", G_CALLBACK(acceptCertificateCallback), this);
+    g_signal_connect(m_soupMessage.get(), "got-body", G_CALLBACK(gotBodyCallback), this);
     if (shouldCaptureExtraNetworkLoadMetrics()) {
         g_signal_connect(m_soupMessage.get(), "wrote-headers", G_CALLBACK(wroteHeadersCallback), this);
         g_signal_connect(m_soupMessage.get(), "wrote-body", G_CALLBACK(wroteBodyCallback), this);
-        g_signal_connect(m_soupMessage.get(), "got-body", G_CALLBACK(gotBodyCallback), this);
     }
 #endif
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
@@ -327,6 +327,7 @@ void NetworkDataTaskSoup::resume()
     }
 
     if (m_file && !m_cancellable) {
+        m_networkLoadMetrics.fetchStart = MonotonicTime::now();
         m_cancellable = adoptGRef(g_cancellable_new());
         g_file_query_info_async(m_file.get(), G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE,
             G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(fileQueryInfoCallback), protectedThis.leakRef());
@@ -334,6 +335,7 @@ void NetworkDataTaskSoup::resume()
     }
 
     if (m_currentRequest.url().protocolIsData() && !m_cancellable) {
+        m_networkLoadMetrics.fetchStart = MonotonicTime::now();
         m_cancellable = adoptGRef(g_cancellable_new());
         DataURLDecoder::decode(m_currentRequest.url(), { }, DataURLDecoder::Mode::Legacy, [this, protectedThis = WTFMove(protectedThis)](auto decodeResult) mutable {
             if (m_state == State::Canceling || m_state == State::Completed || !m_client) {
@@ -481,14 +483,15 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
     m_networkLoadMetrics.responseStart = MonotonicTime::now();
 #endif
 
-    // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's NetworkLoadMetrics.
-    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(m_networkLoadMetrics));
     dispatchDidReceiveResponse();
 }
 
 void NetworkDataTaskSoup::dispatchDidReceiveResponse()
 {
     ASSERT(!m_response.isNull());
+
+    // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's NetworkLoadMetrics.
+    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(m_networkLoadMetrics));
 
     didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed) {
@@ -861,8 +864,9 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
     request.setURL(redirectedURL);
 
-    // Check if the redirected url is allowed to access the redirecting url's timing information.
-    m_networkLoadMetrics.hasCrossOriginRedirect = !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url());
+    m_networkLoadMetrics.hasCrossOriginRedirect = m_networkLoadMetrics.hasCrossOriginRedirect || !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url());
+    // FIXME: Add TAO checks here and when receiving a response.
+    // This was done on Cocoa platforms in https://bugs.webkit.org/show_bug.cgi?id=226678
 
     // Clear the user agent to ensure a new one is computed.
     auto userAgent = request.httpUserAgent();
@@ -1174,7 +1178,7 @@ void NetworkDataTaskSoup::wroteBodyCallback(SoupMessage* soupMessage, NetworkDat
 
 void NetworkDataTaskSoup::gotBodyCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
 {
-    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+    if (task->state() == State::Canceling || task->state() == State::Completed || (!task->m_client && !task->isDownload())) {
         task->clearRequest();
         return;
     }

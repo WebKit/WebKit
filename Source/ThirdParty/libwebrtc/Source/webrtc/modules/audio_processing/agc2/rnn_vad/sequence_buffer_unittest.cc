@@ -17,10 +17,9 @@
 
 namespace webrtc {
 namespace rnn_vad {
-namespace test {
 namespace {
 
-template <typename T, size_t S, size_t N>
+template <typename T, int S, int N>
 void TestSequenceBufferPushOp() {
   SCOPED_TRACE(S);
   SCOPED_TRACE(N);
@@ -32,8 +31,8 @@ void TestSequenceBufferPushOp() {
   chunk.fill(1);
   seq_buf.Push(chunk);
   chunk.fill(0);
-  constexpr size_t required_push_ops = (S % N) ? S / N + 1 : S / N;
-  for (size_t i = 0; i < required_push_ops - 1; ++i) {
+  constexpr int required_push_ops = (S % N) ? S / N + 1 : S / N;
+  for (int i = 0; i < required_push_ops - 1; ++i) {
     SCOPED_TRACE(i);
     seq_buf.Push(chunk);
     // Still in the buffer.
@@ -48,23 +47,21 @@ void TestSequenceBufferPushOp() {
   // Check that the last item moves left by N positions after a push op.
   if (S > N) {
     // Fill in with non-zero values.
-    for (size_t i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
       chunk[i] = static_cast<T>(i + 1);
     seq_buf.Push(chunk);
     // With the next Push(), |last| will be moved left by N positions.
     const T last = chunk[N - 1];
-    for (size_t i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
       chunk[i] = static_cast<T>(last + i + 1);
     seq_buf.Push(chunk);
     EXPECT_EQ(last, seq_buf_view[S - N - 1]);
   }
 }
 
-}  // namespace
-
 TEST(RnnVadTest, SequenceBufferGetters) {
-  constexpr size_t buffer_size = 8;
-  constexpr size_t chunk_size = 8;
+  constexpr int buffer_size = 8;
+  constexpr int chunk_size = 8;
   SequenceBuffer<int, buffer_size, chunk_size> seq_buf;
   EXPECT_EQ(buffer_size, seq_buf.size());
   EXPECT_EQ(chunk_size, seq_buf.chunks_size());
@@ -100,6 +97,6 @@ TEST(RnnVadTest, SequenceBufferPushOpsFloating) {
   TestSequenceBufferPushOp<float, 23, 7>();   // Non-integer ratio.
 }
 
-}  // namespace test
+}  // namespace
 }  // namespace rnn_vad
 }  // namespace webrtc

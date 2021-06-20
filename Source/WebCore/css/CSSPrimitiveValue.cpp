@@ -1080,7 +1080,9 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         result.append(separator.isEmpty() ? "counter(" : "counters(", m_value.counter->identifier(), separator.isEmpty() ? "" : ", ");
         if (!separator.isEmpty())
             serializeString(separator, result);
-        result.append(listStyle.isEmpty() ? "" : ", ", listStyle, ')');
+        if (!(listStyle.isEmpty() || listStyle == "decimal"))
+            result.append(", ", listStyle);
+        result.append(')');
         return result.toString();
     }
     case CSSUnitType::CSS_RECT:

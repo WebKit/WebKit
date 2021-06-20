@@ -41,7 +41,7 @@ class RenderBox;
 
 class FlexItem {
 public:
-    FlexItem(RenderBox&, LayoutUnit flexBaseContentSize, LayoutUnit hypotheticalMainContentSize, LayoutUnit mainAxisBorderAndPadding, LayoutUnit mainAxisMargin);
+    FlexItem(RenderBox&, LayoutUnit flexBaseContentSize, LayoutUnit hypotheticalMainContentSize, LayoutUnit mainAxisBorderAndPadding, LayoutUnit mainAxisMargin, bool everHadLayout);
 
     LayoutUnit hypotheticalMainAxisMarginBoxSize() const
     {
@@ -64,7 +64,8 @@ public:
     const LayoutUnit mainAxisBorderAndPadding;
     const LayoutUnit mainAxisMargin;
     LayoutUnit flexedContentSize;
-    bool frozen;
+    bool frozen { false };
+    bool everHadLayout { false };
 };
 
 class FlexLayoutAlgorithm {

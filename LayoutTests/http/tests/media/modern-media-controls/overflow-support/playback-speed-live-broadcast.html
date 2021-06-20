@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width">
+<script src="/media-resources/modern-media-controls/resources/media-controls-utils.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="../../../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../resources/hls/test-live.py" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay muted playsinline>
+    <track src="/media-resources/content/lorem-ipsum.vtt" kind="chapters"> <!-- guarantees that the overflow button is shown -->
+</video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>OverflowSupport</code> behavior for Playback Speed with a live broadcast video.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+let contextmenu = null;
+
+media.addEventListener("play", function() {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0", async () => {
+            debug("Tapping overflow button...");
+            await pressOnElement(shadowRoot.querySelector("button.overflow"));
+            contextmenu = await getTracksContextMenu();
+            checkedItems = contextmenu[0].children.filter((item) => item.checked);
+            shouldBe("contextmenu[0].children.filter((item) => item.title === 'Playback Speed').length", "0");
+            await UIHelper.waitForContextMenuToHide();
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

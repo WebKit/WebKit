@@ -107,8 +107,8 @@ enum {
     WebMenuItemTagToggleVideoFullscreen,
     WebMenuItemTagShareMenu,
     WebMenuItemTagToggleVideoEnhancedFullscreen,
-    WebMenuItemTagAddHighlightToCurrentGroup,
-    WebMenuItemTagAddHighlightToNewGroup,
+    WebMenuItemTagAddHighlightToCurrentQuickNote,
+    WebMenuItemTagAddHighlightToNewQuickNote,
     WebMenuItemTagRevealImage,
     WebMenuItemTagTranslate,
 };

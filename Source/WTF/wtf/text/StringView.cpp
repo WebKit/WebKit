@@ -247,6 +247,30 @@ String StringView::convertToASCIIUppercase() const
     return convertASCIICase<ASCIICase::Upper>(static_cast<const UChar*>(m_characters), m_length);
 }
 
+template<typename CharacterType>
+static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (UNLIKELY(isASCIIUpper(input[i]))) {
+            CharacterType* characters;
+            auto result = String::createUninitialized(length, characters);
+            StringImpl::copyCharacters(characters, input, i);
+            for (; i < length; ++i)
+                characters[i] = toASCIILower(input[i]);
+            return result;
+        }
+    }
+    // Fast path when the StringView is already all lowercase.
+    return AtomString(input, length);
+}
+
+AtomString StringView::convertToASCIILowercaseAtom() const
+{
+    if (m_is8Bit)
+        return convertASCIILowercaseAtom(characters8(), m_length);
+    return convertASCIILowercaseAtom(characters16(), m_length);
+}
+
 template<typename DestinationCharacterType, typename SourceCharacterType>
 void getCharactersWithASCIICaseInternal(StringView::CaseConvertType type, DestinationCharacterType* destination, const SourceCharacterType* source, unsigned length)
 {

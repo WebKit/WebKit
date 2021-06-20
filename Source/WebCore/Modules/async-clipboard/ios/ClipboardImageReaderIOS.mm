@@ -39,7 +39,7 @@ void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBu
     if (m_mimeType == "image/png") {
         auto image = adoptNS([PAL::allocUIImageInstance() initWithData:buffer->createNSData().get()]);
         if (auto nsData = UIImagePNGRepresentation(image.get()))
-            m_result = Blob::create(m_document.get(), SharedBuffer::create(nsData), m_mimeType);
+            m_result = Blob::create(m_document.get(), Vector { static_cast<const uint8_t*>(nsData.bytes), nsData.length }, m_mimeType);
     }
 }
 

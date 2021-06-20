@@ -50,6 +50,7 @@
 #include "HTMLStyleElement.h"
 #include "InputEvent.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MutationEvent.h"
@@ -348,6 +349,8 @@ Node::~Node()
     ASSERT(m_refCountAndParentBit == s_refCountIncrement);
     ASSERT(m_deletionHasBegun);
     ASSERT(!m_adoptionIsRequired);
+
+    InspectorInstrumentation::willDestroyDOMNode(*this);
 
 #ifndef NDEBUG
     if (!ignoreSet().remove(*this))
@@ -1600,7 +1603,7 @@ ExceptionOr<void> Node::setTextContent(const String& text)
     return { };
 }
 
-static SHA1::Digest hashPointer(void* pointer)
+static SHA1::Digest hashPointer(const void* pointer)
 {
     SHA1 sha1;
     sha1.addBytes(reinterpret_cast<const uint8_t*>(&pointer), sizeof(pointer));

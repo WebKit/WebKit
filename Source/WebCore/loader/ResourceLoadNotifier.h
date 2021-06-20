@@ -36,6 +36,7 @@ namespace WebCore {
 
 class AuthenticationChallenge;
 class CertificateInfo;
+class CachedResource;
 class DocumentLoader;
 class Frame;
 class NetworkLoadMetrics;
@@ -63,7 +64,7 @@ public:
     void didCancelAuthenticationChallenge(WebCore::ResourceLoader*, const WebCore::AuthenticationChallenge&);
 
     void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-    void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, ResourceLoader* = nullptr);
     void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength);
     void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, const NetworkLoadMetrics&, ResourceLoader*);

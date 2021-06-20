@@ -121,3 +121,5 @@ void webkitWebViewConfirmComposition(WebKitWebView*, const String&);
 void webkitWebViewCancelComposition(WebKitWebView*, const String&);
 void webkitWebViewDeleteSurrounding(WebKitWebView*, int offset, unsigned characterCount);
 void webkitWebViewSetIsWebProcessResponsive(WebKitWebView*, bool);
+
+guint createShowOptionMenuSignal(WebKitWebViewClass*);

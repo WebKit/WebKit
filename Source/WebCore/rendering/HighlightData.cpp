@@ -191,6 +191,8 @@ std::pair<unsigned, unsigned> HighlightData::rangeForTextBox(const RenderText& r
     case RenderObject::HighlightState::None:
         return { 0, 0 };
     };
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

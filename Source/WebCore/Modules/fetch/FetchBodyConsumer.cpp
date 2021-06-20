@@ -34,16 +34,15 @@
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
-#include "ReadableStreamChunk.h"
 #include "TextResourceDecoder.h"
 #include <wtf/StringExtras.h>
 #include <wtf/URLParser.h>
 
 namespace WebCore {
 
-static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, const unsigned char* data, unsigned length, const String& contentType)
+static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
 {
-    return Blob::create(context, Vector { data, length }, Blob::normalizedContentType(contentType));
+    return Blob::create(context, WTFMove(data), Blob::normalizedContentType(contentType));
 }
 
 // https://mimesniff.spec.whatwg.org/#http-quoted-string-token-code-point
@@ -98,9 +97,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
         if (parameterName.length()
             && isValidHTTPToken(parameterName)
             && parameterValue.isAllSpecialCharacters<isHTTPQuotedStringTokenCodePoint>()) {
-            String nameString = parameterName.toString();
-            if (!parameters.contains(nameString))
-                parameters.set(nameString, parameterValue.toString());
+            parameters.ensure(parameterName.toString(), [&] { return parameterValue.toString(); });
         }
     }
     return parameters;
@@ -168,7 +165,7 @@ static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, cons
                 contentType = stripLeadingAndTrailingHTTPSpaces(header.substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength));
             }
 
-            form.append(name, File::create(context, Blob::create(context, SharedBuffer::create(bodyBegin, bodyLength).get(), Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
+            form.append(name, File::create(context, Blob::create(context, Vector { bodyBegin, bodyLength }, Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
         }
         return true;
     };
@@ -222,7 +219,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         return;
     case FetchBodyConsumer::Type::Blob:
         promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([&data, &length, &contentType, context](auto&) {
-            return blobFromData(context, data, length, contentType);
+            return blobFromData(context, { data, length }, contentType);
         });
         return;
     case FetchBodyConsumer::Type::JSON:
@@ -275,10 +272,10 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
                 return;
             }
 
-            if (auto chunk = result.returnValue())
-                data->append(chunk->data, chunk->size);
+            if (auto* chunk = result.returnValue())
+                data->append(chunk->data(), chunk->size());
             else
-                resolveWithTypeAndData(WTFMove(promise), type, contentType, reinterpret_cast<const unsigned char*>(data->data()), data->size());
+                resolveWithTypeAndData(WTFMove(promise), type, contentType, data->data(), data->size());
         });
         m_sink->pipeFrom(*stream);
         return;
@@ -354,8 +351,8 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context)
     if (!m_buffer)
         return Blob::create(context, Vector<uint8_t>(), Blob::normalizedContentType(m_contentType));
 
-    // FIXME: We should try to move m_buffer to Blob without doing extra copy.
-    return blobFromData(context, reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size(), m_contentType);
+    auto data = std::exchange(m_buffer, nullptr)->takeData();
+    return blobFromData(context, WTFMove(data), m_contentType);
 }
 
 String FetchBodyConsumer::takeAsText()
@@ -364,7 +361,7 @@ String FetchBodyConsumer::takeAsText()
     if (!m_buffer)
         return String();
 
-    auto text = TextResourceDecoder::textFromUTF8(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size());
+    auto text = TextResourceDecoder::textFromUTF8(m_buffer->data(), m_buffer->size());
     m_buffer = nullptr;
     return text;
 }

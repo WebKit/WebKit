@@ -815,7 +815,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         dataStatement->bindText(2, path);
     } else {
         if (resource->data().size())
-            dataStatement->bindBlob(1, resource->data().data(), resource->data().size());
+            dataStatement->bindBlob(1, resource->data());
     }
     
     if (!dataStatement->executeCommand()) {
@@ -1292,7 +1292,10 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& dat
     if (!handle)
         return false;
     
-    int64_t writtenBytes = FileSystem::writeToFile(handle, data.data(), data.size());
+    int64_t writtenBytes = 0;
+    data.forEachSegment([&](auto& segment) {
+        writtenBytes += FileSystem::writeToFile(handle, segment.data(), segment.size());
+    });
     FileSystem::closeFile(handle);
     
     if (writtenBytes != static_cast<int64_t>(data.size())) {

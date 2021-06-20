@@ -27,6 +27,7 @@
 #include "config.h"
 #include "JSDOMGlobalObject.h"
 
+#include "DOMConstructors.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FetchResponse.h"
@@ -77,6 +78,7 @@ const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject
 
 JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& world, const GlobalObjectMethodTable* globalObjectMethodTable)
     : JSGlobalObject(vm, structure, globalObjectMethodTable)
+    , m_constructors(makeUnique<DOMConstructors>())
     , m_world(WTFMove(world))
     , m_worldIsNormal(m_world->isNormal())
     , m_builtinInternalFunctions(vm)
@@ -262,12 +264,12 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         for (auto& structure : thisObject->m_structures.values())
             visitor.append(structure);
 
-        for (auto& constructor : thisObject->m_constructors.values())
-            visitor.append(constructor);
-
         for (auto& guarded : thisObject->m_guardedObjects)
             guarded->visitAggregate(visitor);
     }
+
+    for (auto& constructor : thisObject->constructors().array())
+        visitor.append(constructor);
 
     thisObject->m_builtinInternalFunctions.visit(visitor);
 }
@@ -427,8 +429,8 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
                 return;
             }
 
-            if (auto chunk = result.returnValue())
-                compiler->addBytes(chunk->data, chunk->size);
+            if (auto* chunk = result.returnValue())
+                compiler->addBytes(chunk->data(), chunk->size());
             else
                 compiler->finalize(globalObject);
         });

@@ -32,6 +32,7 @@
     undefined setShippingAddress(MockPaymentAddress shippingAddress);
     undefined changeShippingOption(DOMString shippingOption);
     undefined changePaymentMethod(ApplePayPaymentMethod paymentMethod);
+    [Conditional=APPLE_PAY_COUPON_CODE] undefined changeCouponCode(DOMString couponCode);
     undefined acceptPayment();
     undefined cancelPayment();
 
@@ -49,4 +50,9 @@
     attribute boolean supportsUnrestrictedApplePay;
 
     [Conditional=APPLE_PAY_INSTALLMENTS] readonly attribute ApplePayInstallmentConfiguration installmentConfiguration;
+
+    [Conditional=APPLE_PAY_COUPON_CODE] readonly attribute boolean? supportsCouponCode;
+    [Conditional=APPLE_PAY_COUPON_CODE] readonly attribute DOMString? couponCode;
+
+    [Conditional=APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE] readonly attribute ApplePayShippingContactEditingMode? shippingContactEditingMode;
 };

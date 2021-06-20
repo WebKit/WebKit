@@ -161,7 +161,19 @@ void WindowCapturerMac::CaptureFrame() {
   if (full_screen_window_detector_) {
     full_screen_window_detector_->UpdateWindowListIfNeeded(
         window_id_, [](DesktopCapturer::SourceList* sources) {
-          return webrtc::GetWindowList(sources, true, false);
+          // Not using webrtc::GetWindowList(sources, true, false)
+          // as it doesn't allow to have in the result window with
+          // empty title along with titled window owned by the same pid.
+          return webrtc::GetWindowList(
+              [sources](CFDictionaryRef window) {
+                WindowId window_id = GetWindowId(window);
+                if (window_id != kNullWindowId) {
+                  sources->push_back(DesktopCapturer::Source{window_id, GetWindowTitle(window)});
+                }
+                return true;
+              },
+              true,
+              false);
         });
 
     CGWindowID full_screen_window = full_screen_window_detector_->FindFullScreenWindow(window_id_);

@@ -138,11 +138,10 @@ void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&
 
 class ActiveDOMObjectEventDispatchTask : public EventLoopTask {
 public:
-    ActiveDOMObjectEventDispatchTask(TaskSource source, EventLoopTaskGroup& group, ActiveDOMObject& object, EventTarget& target, Ref<Event>&& event)
+    ActiveDOMObjectEventDispatchTask(TaskSource source, EventLoopTaskGroup& group, ActiveDOMObject& object, Function<void()>&& dispatchEvent)
         : EventLoopTask(source, group)
         , m_object(object)
-        , m_target(target)
-        , m_event(WTFMove(event))
+        , m_dispatchEvent(WTFMove(dispatchEvent))
     {
         ++m_object.m_pendingActivityInstanceCount;
     }
@@ -158,13 +157,12 @@ public:
         // If this task executes after the script execution context has been stopped, don't
         // actually dispatch the event.
         if (m_object.isAllowedToRunScript())
-            m_target->dispatchEvent(m_event.get());
+            m_dispatchEvent();
     }
 
 private:
     ActiveDOMObject& m_object;
-    Ref<EventTarget> m_target;
-    Ref<Event> m_event;
+    Function<void()> m_dispatchEvent;
 };
 
 void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, TaskSource source, Ref<Event>&& event)
@@ -174,7 +172,22 @@ void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, Task
     if (!context)
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
-    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, target, WTFMove(event));
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = makeRef(target), event = WTFMove(event)] {
+        target->dispatchEvent(event);
+    });
+    eventLoopTaskGroup.queueTask(WTFMove(task));
+}
+
+void ActiveDOMObject::queueCancellableTaskToDispatchEventInternal(EventTarget& target, TaskSource source, TaskCancellationGroup& cancellationGroup, Ref<Event>&& event)
+{
+    ASSERT(!event->target() || &target == event->target());
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+    auto& eventLoopTaskGroup = context->eventLoop();
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = makeRef(target), event = WTFMove(event)] {
+        target->dispatchEvent(event);
+    }));
     eventLoopTaskGroup.queueTask(WTFMove(task));
 }
 

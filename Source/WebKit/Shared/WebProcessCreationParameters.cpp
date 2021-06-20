@@ -202,6 +202,8 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(IOSURFACE)
     encoder << maximumIOSurfaceSize;
 #endif
+
+    encoder << accessibilityPreferences;
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -548,6 +550,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.maximumIOSurfaceSize))
         return false;
 #endif
+
+    std::optional<AccessibilityPreferences> accessibilityPreferences;
+    decoder >> accessibilityPreferences;
+    if (!accessibilityPreferences)
+        return false;
+    parameters.accessibilityPreferences = WTFMove(*accessibilityPreferences);
 
     return true;
 }

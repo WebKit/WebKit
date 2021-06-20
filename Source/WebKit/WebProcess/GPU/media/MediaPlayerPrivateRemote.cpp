@@ -151,7 +151,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
         if (!player)
             return;
 
-        m_videoLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value());
+        m_videoLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value(), m_videoFullscreenGravity);
 #if PLATFORM(COCOA)
         m_videoLayerManager->setVideoLayer(m_videoLayer.get(), snappedIntRect(player->playerContentBoxRect()).size());
 #endif
@@ -285,9 +285,13 @@ void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const Me
 
 bool MediaPlayerPrivateRemote::didLoadingProgress() const
 {
-    bool flag = false;
-    connection().sendSync(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), Messages::RemoteMediaPlayerProxy::DidLoadingProgress::Reply(flag), m_id);
-    return flag;
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Should always be using didLoadingProgressAsync");
+    return false;
+}
+
+void MediaPlayerPrivateRemote::didLoadingProgressAsync(MediaPlayer::DidLoadingProgressCompletionHandler&& callback) const
+{
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), WTFMove(callback), m_id);
 }
 
 bool MediaPlayerPrivateRemote::hasVideo() const
@@ -811,6 +815,7 @@ void MediaPlayerPrivateRemote::setVideoFullscreenFrame(WebCore::FloatRect rect)
 
 void MediaPlayerPrivateRemote::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
+    m_videoFullscreenGravity = gravity;
     connection().send(Messages::RemoteMediaPlayerProxy::SetVideoFullscreenGravity(gravity), m_id);
 }
 

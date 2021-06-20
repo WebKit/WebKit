@@ -101,6 +101,9 @@ struct VariableEnvironmentEntryHashTraits : HashTraits<VariableEnvironmentEntry>
 struct PrivateNameEntry {
     friend class CachedPrivateNameEntry;
 
+    static constexpr unsigned privateClassBrandOffset = 0;
+    static constexpr unsigned privateBrandOffset = 1;
+
 public:
     PrivateNameEntry(uint16_t traits = 0) { m_bits = traits; }
 

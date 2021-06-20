@@ -40,7 +40,7 @@ void KeyedEncoderGeneric::encodeString(const String& key)
 {
     auto utf8 = key.utf8();
     m_encoder << utf8.length();
-    m_encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
+    m_encoder.encodeFixedLengthData(utf8.dataAsUInt8Ptr(), utf8.length());
 }
 
 void KeyedEncoderGeneric::encodeBytes(const String& key, const uint8_t* bytes, size_t size)

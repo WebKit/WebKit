@@ -25,7 +25,6 @@
 #include "api/test/video_quality_analyzer_interface.h"
 #include "pc/sdp_utils.h"
 #include "pc/test/mock_peer_connection_observers.h"
-#include "rtc_base/bind.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "system_wrappers/include/cpu_info.h"
@@ -311,23 +310,20 @@ void PeerConnectionE2EQualityTest::Run(RunParams run_params) {
                               });
 
   // Setup call.
-  signaling_thread->Invoke<void>(
-      RTC_FROM_HERE,
-      rtc::Bind(&PeerConnectionE2EQualityTest::SetupCallOnSignalingThread, this,
-                run_params));
+  signaling_thread->Invoke<void>(RTC_FROM_HERE, [this, &run_params] {
+    SetupCallOnSignalingThread(run_params);
+  });
   std::unique_ptr<SignalingInterceptor> signaling_interceptor =
       CreateSignalingInterceptor(run_params);
   // Connect peers.
-  signaling_thread->Invoke<void>(
-      RTC_FROM_HERE,
-      rtc::Bind(&PeerConnectionE2EQualityTest::ExchangeOfferAnswer, this,
-                signaling_interceptor.get()));
+  signaling_thread->Invoke<void>(RTC_FROM_HERE, [this, &signaling_interceptor] {
+    ExchangeOfferAnswer(signaling_interceptor.get());
+  });
   WaitUntilIceCandidatesGathered(signaling_thread.get());
 
-  signaling_thread->Invoke<void>(
-      RTC_FROM_HERE,
-      rtc::Bind(&PeerConnectionE2EQualityTest::ExchangeIceCandidates, this,
-                signaling_interceptor.get()));
+  signaling_thread->Invoke<void>(RTC_FROM_HERE, [this, &signaling_interceptor] {
+    ExchangeIceCandidates(signaling_interceptor.get());
+  });
   WaitUntilPeersAreConnected(signaling_thread.get());
 
   executor_->Start(task_queue_.get());
@@ -359,10 +355,9 @@ void PeerConnectionE2EQualityTest::Run(RunParams run_params) {
   alice_->DetachAecDump();
   bob_->DetachAecDump();
   // Tear down the call.
-  signaling_thread->Invoke<void>(
-      RTC_FROM_HERE,
-      rtc::Bind(&PeerConnectionE2EQualityTest::TearDownCallOnSignalingThread,
-                this));
+  signaling_thread->Invoke<void>(RTC_FROM_HERE,
+                                 [this] { TearDownCallOnSignalingThread(); });
+
   Timestamp end_time = Now();
   RTC_LOG(INFO) << "All peers are disconnected.";
   {
@@ -675,11 +670,11 @@ void PeerConnectionE2EQualityTest::TearDownCall() {
     video_source->Stop();
   }
 
-  alice_->pc()->Close();
-  bob_->pc()->Close();
-
   alice_video_sources_.clear();
   bob_video_sources_.clear();
+
+  alice_->Close();
+  bob_->Close();
 
   media_helper_ = nullptr;
 }

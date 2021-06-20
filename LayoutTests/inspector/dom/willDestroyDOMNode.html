@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("DOM.willDestroyDOMNode");
+
+    suite.addTestCase({
+        name: "DOM.willDestroyDOMNode.CreateDeleteAndGCDetachedNode",
+        description: "Create a new DOM node that is not attached the DOM tree, and then allow it to be garbage collected.",
+        async test() {
+            ProtocolTest.log("Creating new detached DOM node.");
+            let domNodeResponse = await InspectorProtocol.awaitCommand({ method: "Runtime.evaluate", params: { expression: `document.createElement("a")` } });
+            let objectId = domNodeResponse.result.objectId;
+            ProtocolTest.assert(!domNodeResponse.wasThrown);
+
+            ProtocolTest.log("Requesting DOM node in order to receive future events.");
+            // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
+            await InspectorProtocol.awaitCommand({ method: "DOM.getDocument"});
+            let node = await InspectorProtocol.awaitCommand({ method: "DOM.requestNode", params: { objectId } });
+
+            // ProtocolTest.log("Releasing reference to node held by remote object.")
+            // await InspectorProtocol.awaitCommand({ method: "Console.clearMessages" });
+
+            ProtocolTest.log("Releasing node and then triggering garbage collection while awaiting `DOM.willDestroyDOMNode` event.");
+            let deleteNodePromise = InspectorProtocol.awaitCommand({ method: "Runtime.releaseObject", params: { objectId } });
+            let gcPromise = ProtocolTest.evaluateInPage(`GCController.collect()`);
+
+            await Promise.all([
+                InspectorProtocol.awaitEvent({event:"DOM.willDestroyDOMNode"}),
+                deleteNodePromise.then((resolve) => gcPromise),
+            ]);
+
+            ProtocolTest.log("Received event `DOM.willDestoryDOMNode` after garbage collection.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest();">
+<p>Test for DOM.willDestroyDOMNode.</p>
+</body>
+</html>

@@ -159,6 +159,7 @@ public:
     void addEventListenersToNode(Node&);
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
+    void willDestroyDOMNode(Node&);
     void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
     void didRemoveDOMAttr(Element&, const AtomString& name);
@@ -179,7 +180,6 @@ public:
 
     // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);
-    void releaseDanglingNodes();
 
     void styleAttributeInvalidated(const Vector<Element*>& elements);
 
@@ -218,19 +218,18 @@ private:
     std::unique_ptr<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObject(Inspector::Protocol::ErrorString&, RefPtr<JSON::Object>&& gridOverlayInspectorObject);
 
     // Node-related methods.
-    typedef HashMap<RefPtr<Node>, Inspector::Protocol::DOM::NodeId> NodeToIdMap;
-    Inspector::Protocol::DOM::NodeId bind(Node*, NodeToIdMap*);
-    void unbind(Node*, NodeToIdMap*);
+    Inspector::Protocol::DOM::NodeId bind(Node&);
+    void unbind(Node&);
 
     Node* assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Element* assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
     void pushChildNodesToFrontend(Inspector::Protocol::DOM::NodeId, int depth = 1);
 
-    Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
+    Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth);
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
-    Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
-    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
+    Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth);
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&);
     Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
     Ref<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node&);
     void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>&);
@@ -242,16 +241,15 @@ private:
 
     void innerHighlightQuad(std::unique_ptr<FloatQuad>, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
 
+    void destroyedNodesTimerFired();
+
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     Page& m_inspectedPage;
     InspectorOverlay* m_overlay { nullptr };
-    NodeToIdMap m_documentNodeToIdMap;
-    // Owns node mappings for dangling nodes.
-    Vector<std::unique_ptr<NodeToIdMap>> m_danglingNodeToIdMaps;
+    HashMap<const Node*, Inspector::Protocol::DOM::NodeId> m_nodeToId;
     HashMap<Inspector::Protocol::DOM::NodeId, Node*> m_idToNode;
-    HashMap<Inspector::Protocol::DOM::NodeId, NodeToIdMap*> m_idToNodesMap;
     HashSet<Inspector::Protocol::DOM::NodeId> m_childrenRequested;
     Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
@@ -264,6 +262,10 @@ private:
     std::unique_ptr<InspectorOverlay::Highlight::Config> m_inspectModeHighlightConfig;
     std::unique_ptr<InspectorHistory> m_history;
     std::unique_ptr<DOMEditor> m_domEditor;
+
+    Vector<Inspector::Protocol::DOM::NodeId> m_destroyedDetachedNodeIdentifiers;
+    Vector<std::pair<Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOM::NodeId>> m_destroyedAttachedNodeIdentifiers;
+    Timer m_destroyedNodesTimer;
 
 #if ENABLE(VIDEO)
     Timer m_mediaMetricsTimer;

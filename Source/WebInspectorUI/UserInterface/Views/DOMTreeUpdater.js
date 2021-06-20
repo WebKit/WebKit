@@ -103,7 +103,11 @@ WI.DOMTreeUpdater.prototype = {
 
     _nodeRemoved: function(event)
     {
-        this._recentlyDeletedNodes.set(event.data.node, {parent: event.data.parent});
+        let parent = event.data.parent;
+        if (!parent)
+            return;
+
+        this._recentlyDeletedNodes.set(event.data.node, {parent});
         if (this._treeOutline._visible)
             this._updateModifiedNodesDebouncer.delayForFrame();
     },

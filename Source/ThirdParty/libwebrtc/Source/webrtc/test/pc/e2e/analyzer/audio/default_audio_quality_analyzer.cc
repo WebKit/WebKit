@@ -26,7 +26,7 @@ void DefaultAudioQualityAnalyzer::Start(std::string test_case_name,
 void DefaultAudioQualityAnalyzer::OnStatsReports(
     absl::string_view pc_label,
     const rtc::scoped_refptr<const RTCStatsReport>& report) {
-  // TODO(https://crbug.com/webrtc/11683): use "inbound-rtp" instead of "track"
+  // TODO(https://crbug.com/webrtc/11789): use "inbound-rtp" instead of "track"
   // stats when required audio metrics moved there
   auto stats = report->GetStatsOfType<RTCMediaStreamTrackStats>();
 

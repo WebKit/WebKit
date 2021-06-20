@@ -108,23 +108,6 @@ bool JSLocation::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lex
     RELEASE_AND_RETURN(scope, JSObject::getOwnPropertySlotByIndex(object, lexicalGlobalObject, index, slot));
 }
 
-void JSLocation::doPutPropertySecurityCheck(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PutPropertySlot&)
-{
-    auto* thisObject = jsCast<JSLocation*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-
-    VM& vm = lexicalGlobalObject->vm();
-
-    // Always allow assigning to the whole location.
-    // However, alllowing assigning of pieces might inadvertently disclose parts of the original location.
-    // So fall through to the access check for those.
-    if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName())
-        return;
-
-    // Block access and throw if there is a security error.
-    BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError);
-}
-
 bool JSLocation::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
     VM& vm = lexicalGlobalObject->vm();

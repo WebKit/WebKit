@@ -26,6 +26,7 @@ rtc_library("time_controller") {
   ]
 
   deps = [
+    "../../api:sequence_checker",
     "../../api:time_controller",
     "../../api/task_queue",
     "../../api/task_queue:default_task_queue_factory",
@@ -35,10 +36,10 @@ rtc_library("time_controller") {
     "../../modules/utility:utility",
     "../../rtc_base",
     "../../rtc_base:checks",
+    "../../rtc_base:null_socket_server",
     "../../rtc_base:rtc_base_tests_utils",
     "../../rtc_base:rtc_event",
     "../../rtc_base/synchronization:mutex",
-    "../../rtc_base/synchronization:sequence_checker",
     "../../rtc_base/synchronization:yield_policy",
     "../../rtc_base/task_utils:to_queued_task",
     "../../system_wrappers",
@@ -62,6 +63,7 @@ if (rtc_include_tests) {
       "../../rtc_base",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:threading",
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/task_utils:repeating_task",
       "../../rtc_base/task_utils:to_queued_task",

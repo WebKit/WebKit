@@ -79,6 +79,11 @@ DOMHighResTimeStamp Performance::now() const
     return nowInReducedResolutionSeconds().milliseconds();
 }
 
+DOMHighResTimeStamp Performance::timeOrigin() const
+{
+    return reduceTimeResolution(m_timeOrigin.approximateWallTime().secondsSinceEpoch()).milliseconds();
+}
+
 ReducedResolutionSeconds Performance::nowInReducedResolutionSeconds() const
 {
     Seconds now = MonotonicTime::now() - m_timeOrigin;

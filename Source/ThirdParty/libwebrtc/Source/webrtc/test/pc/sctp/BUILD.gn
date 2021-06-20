@@ -11,5 +11,5 @@ import("../../../webrtc.gni")
 rtc_source_set("fake_sctp_transport") {
   visibility = [ "*" ]
   sources = [ "fake_sctp_transport.h" ]
-  deps = [ "../../../media:rtc_data" ]
+  deps = [ "../../../media:rtc_data_sctp_transport_internal" ]
 }

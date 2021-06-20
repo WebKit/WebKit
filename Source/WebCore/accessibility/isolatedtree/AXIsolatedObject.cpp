@@ -191,7 +191,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
     setProperty(AXPropertyName::DropEffects, object.determineDropEffects());
     setObjectProperty(AXPropertyName::TitleUIElement, object.titleUIElement());
-    setProperty(AXPropertyName::ExposesTitleUIElement, object.exposesTitleUIElement());
     setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
     setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
     setProperty(AXPropertyName::ARIARoleAttribute, static_cast<int>(object.ariaRoleAttribute()));

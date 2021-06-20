@@ -254,7 +254,7 @@ void RunTest(bool use_flexfec) {
                   random.Rand(kMinPacketSize, kMaxPacketSize);
               media_packet->data.SetSize(packet_length);
 
-              uint8_t* data = media_packet->data.data();
+              uint8_t* data = media_packet->data.MutableData();
               // Generate random values for the first 2 bytes.
               data[0] = random.Rand<uint8_t>();
               data[1] = random.Rand<uint8_t>();
@@ -285,7 +285,7 @@ void RunTest(bool use_flexfec) {
               media_packet_list.push_back(std::move(media_packet));
               seq_num++;
             }
-            media_packet_list.back()->data[1] |= 0x80;
+            media_packet_list.back()->data.MutableData()[1] |= 0x80;
 
             ASSERT_EQ(0, fec->EncodeFec(media_packet_list, protection_factor,
                                         num_imp_packets, kUseUnequalProtection,
@@ -312,8 +312,8 @@ void RunTest(bool use_flexfec) {
                 received_packet->pkt = new ForwardErrorCorrection::Packet();
                 received_packet->pkt->data = media_packet->data;
                 received_packet->ssrc = media_ssrc;
-                received_packet->seq_num =
-                    ByteReader<uint16_t>::ReadBigEndian(&media_packet->data[2]);
+                received_packet->seq_num = ByteReader<uint16_t>::ReadBigEndian(
+                    media_packet->data.data() + 2);
                 received_packet->is_fec = false;
                 received_packet_list.push_back(std::move(received_packet));
               }

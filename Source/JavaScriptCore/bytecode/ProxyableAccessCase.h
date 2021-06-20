@@ -37,11 +37,11 @@ public:
 
     WatchpointSet* additionalSet() const override { return m_additionalSet.get(); }
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
+    static Ref<AccessCase> create(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         bool viaProxy = false, WatchpointSet* additionalSet = nullptr, RefPtr<PolyProtoAccessChain>&& = nullptr);
 
     void dumpImpl(PrintStream&, CommaPrinter&) const override;
-    std::unique_ptr<AccessCase> clone() const override;
+    Ref<AccessCase> clone() const override;
 
     ~ProxyableAccessCase() override;
 

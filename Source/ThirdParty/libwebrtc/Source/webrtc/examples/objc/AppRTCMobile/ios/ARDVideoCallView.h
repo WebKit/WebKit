@@ -10,8 +10,8 @@
 
 #import <UIKit/UIKit.h>
 
-#import <WebRTC/RTCCameraPreviewView.h>
-#import <WebRTC/RTCVideoRenderer.h>
+#import "sdk/objc/base/RTCVideoRenderer.h"
+#import "sdk/objc/helpers/RTCCameraPreviewView.h"
 
 #import "ARDStatsView.h"
 

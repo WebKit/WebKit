@@ -97,7 +97,7 @@ public:
         ensureRareData().m_classSource = source;
     }
 
-    bool isInStrictContext() const { return m_isInStrictContext; }
+    bool isInStrictContext() const { return m_lexicalScopeFeatures & StrictModeLexicalFeature; }
     FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
@@ -134,13 +134,15 @@ public:
         vm.unlinkedFunctionExecutableSpace.set.remove(this);
     }
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables)
+    void recordParse(CodeFeatures features, LexicalScopeFeatures lexicalScopeFeatures, bool hasCapturedVariables)
     {
         m_features = features;
+        m_lexicalScopeFeatures = lexicalScopeFeatures;
         m_hasCapturedVariables = hasCapturedVariables;
     }
 
-    CodeFeatures features() const { return m_features; }
+    CodeFeatures features() const { return static_cast<CodeFeatures>(m_features); }
+    LexicalScopeFeatures lexicalScopeFeatures() const { return static_cast<LexicalScopeFeatures>(m_lexicalScopeFeatures); }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
 
     PrivateBrandRequirement privateBrandRequirement() const { return static_cast<PrivateBrandRequirement>(m_privateBrandRequirement); }
@@ -254,7 +256,7 @@ private:
     }
 
     unsigned m_firstLineOffset : 31;
-    unsigned m_isInStrictContext : 1;
+    unsigned m_isGeneratedFromCache : 1;
     unsigned m_lineCount : 31;
     unsigned m_hasCapturedVariables : 1;
     unsigned m_unlinkedFunctionNameStart : 31;
@@ -269,17 +271,17 @@ private:
     unsigned m_superBinding : 1;
     unsigned m_parametersStartOffset : 31;
     unsigned m_isCached : 1;
-    unsigned m_typeProfilingStartOffset;
+    unsigned m_typeProfilingStartOffset : 31;
+    unsigned m_needsClassFieldInitializer : 1;
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount : 31;
     unsigned m_privateBrandRequirement : 1;
-    CodeFeatures m_features;
-    SourceParseMode m_sourceParseMode;
+    unsigned m_features : 14;
     unsigned m_constructorKind : 2;
+    SourceParseMode m_sourceParseMode;
+    unsigned m_lexicalScopeFeatures : 4;
     unsigned m_functionMode : 2; // FunctionMode
     unsigned m_derivedContextType: 2;
-    unsigned m_isGeneratedFromCache : 1;
-    unsigned m_needsClassFieldInitializer : 1;
 
     union {
         WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;

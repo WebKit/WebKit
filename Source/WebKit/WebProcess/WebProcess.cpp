@@ -216,14 +216,14 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
-#undef RELEASE_LOG_IF_ALLOWED
+#undef WEBPROCESS_RELEASE_LOG
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #if RELEASE_LOG_DISABLED
-#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) UNUSED_VARIABLE(this)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) UNUSED_VARIABLE(this)
+#define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) UNUSED_VARIABLE(this)
+#define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) UNUSED_VARIABLE(this)
 #else
-#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
+#define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
+#define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #endif
 
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
@@ -404,11 +404,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
             if (m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended()) {
                 if (m_processType == ProcessType::CachedWebContent)
-                    RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Cached WebProcess is exiting due to memory pressure");
+                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Cached WebProcess is exiting due to memory pressure");
                 else if (m_processType == ProcessType::PrewarmedWebContent)
-                    RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Prewarmed WebProcess is exiting due to memory pressure");
+                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Prewarmed WebProcess is exiting due to memory pressure");
                 else
-                    RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Suspended WebProcess is exiting due to memory pressure");
+                    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Suspended WebProcess is exiting due to memory pressure");
                 stopRunLoop();
                 return;
             }
@@ -549,7 +549,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         prewarmGlobally();
 #endif
 
-    RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Presenting processPID=%d", WebCore::presentingApplicationPID());
+    WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Presenting processPID=%d", WebCore::presentingApplicationPID());
 }
 
 void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -1145,9 +1145,9 @@ void WebProcess::logDiagnosticMessageForNetworkProcessCrash()
 void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connection)
 {
 #if OS(DARWIN)
-    RELEASE_LOG_IF_ALLOWED(Loading, "networkProcessConnectionClosed: NetworkProcess (%d) closed its connection (Crashed)", connection ? connection->connection().remoteProcessID() : 0);
+    WEBPROCESS_RELEASE_LOG(Loading, "networkProcessConnectionClosed: NetworkProcess (%d) closed its connection (Crashed)", connection ? connection->connection().remoteProcessID() : 0);
 #else
-    RELEASE_LOG_IF_ALLOWED(Loading, "networkProcessConnectionClosed: NetworkProcess closed its connection (Crashed)");
+    WEBPROCESS_RELEASE_LOG(Loading, "networkProcessConnectionClosed: NetworkProcess closed its connection (Crashed)");
 #endif
 
     ASSERT(m_networkProcessConnection);
@@ -1469,7 +1469,7 @@ void WebProcess::resetAllGeolocationPermissions()
 
 void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "prepareToSuspend: isSuspensionImminent=%d", isSuspensionImminent);
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: isSuspensionImminent=%d", isSuspensionImminent);
     SetForScope<bool> suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
 
@@ -1477,7 +1477,7 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
 
 #if PLATFORM(COCOA)
     if (m_processType == ProcessType::PrewarmedWebContent) {
-        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "prepareToSuspend: Process is ready to suspend");
+        WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: Process is ready to suspend");
         return completionHandler();
     }
 #endif
@@ -1510,49 +1510,49 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
 #endif
 
     markAllLayersVolatile([this, completionHandler = WTFMove(completionHandler)]() mutable {
-        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "prepareToSuspend: Process is ready to suspend");
+        WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: Process is ready to suspend");
         completionHandler();
     });
 }
 
 void WebProcess::markAllLayersVolatile(CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile:");
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "markAllLayersVolatile:");
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     for (auto& page : m_pageMap.values()) {
         page->markLayersVolatile([this, callbackAggregator, pageID = page->identifier()] (bool succeeded) {
             if (succeeded)
-                RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile: Successfuly marked layers as volatile for webPageID=%" PRIu64, pageID.toUInt64());
+                WEBPROCESS_RELEASE_LOG(ProcessSuspension, "markAllLayersVolatile: Successfuly marked layers as volatile for webPageID=%" PRIu64, pageID.toUInt64());
             else
-                RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile: Failed to mark layers as volatile for webPageID=%" PRIu64, pageID.toUInt64());
+                WEBPROCESS_RELEASE_LOG_ERROR(ProcessSuspension, "markAllLayersVolatile: Failed to mark layers as volatile for webPageID=%" PRIu64, pageID.toUInt64());
         });
     }
 }
 
 void WebProcess::cancelMarkAllLayersVolatile()
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "cancelMarkAllLayersVolatile:");
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "cancelMarkAllLayersVolatile:");
     for (auto& page : m_pageMap.values())
         page->cancelMarkLayersVolatile();
 }
 
 void WebProcess::freezeAllLayerTrees()
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "freezeAllLayerTrees: WebProcess is freezing all layer trees");
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "freezeAllLayerTrees: WebProcess is freezing all layer trees");
     for (auto& page : m_pageMap.values())
         page->freezeLayerTree(WebPage::LayerTreeFreezeReason::ProcessSuspended);
 }
 
 void WebProcess::unfreezeAllLayerTrees()
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "unfreezeAllLayerTrees: WebProcess is unfreezing all layer trees");
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "unfreezeAllLayerTrees: WebProcess is unfreezing all layer trees");
     for (auto& page : m_pageMap.values())
         page->unfreezeLayerTree(WebPage::LayerTreeFreezeReason::ProcessSuspended);
 }
 
 void WebProcess::processDidResume()
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "processDidResume:");
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "processDidResume:");
 
     m_processIsSuspended = false;
 
@@ -1920,7 +1920,7 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
     for (size_t i = 0; i < extensions.size(); i++) {
         const auto& extension = extensions[i];
         extension.second->consume();
-        RELEASE_LOG_IF_ALLOWED(WebRTC, "grantUserMediaDeviceSandboxExtensions: granted extension %s", extension.first.utf8().data());
+        WEBPROCESS_RELEASE_LOG(WebRTC, "grantUserMediaDeviceSandboxExtensions: granted extension %s", extension.first.utf8().data());
         m_mediaCaptureSandboxExtensions.add(extension.first, extension.second.copyRef());
     }
 }
@@ -1951,7 +1951,7 @@ void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& ex
         ASSERT(extension || MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled());
         if (extension) {
             extension->revoke();
-            RELEASE_LOG_IF_ALLOWED(WebRTC, "revokeUserMediaDeviceSandboxExtensions: revoked extension %s", extensionID.utf8().data());
+            WEBPROCESS_RELEASE_LOG(WebRTC, "revokeUserMediaDeviceSandboxExtensions: revoked extension %s", extensionID.utf8().data());
         }
     }
 }
@@ -2166,5 +2166,5 @@ RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFacto
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID
-#undef RELEASE_LOG_IF_ALLOWED
-#undef RELEASE_LOG_ERROR_IF_ALLOWED
+#undef WEBPROCESS_RELEASE_LOG
+#undef WEBPROCESS_RELEASE_LOG_ERROR

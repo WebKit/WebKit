@@ -194,13 +194,13 @@ webkit.org/b/217946 fast/text/synthetic-oblique.html [ ImageOnlyFailure ]
 
 # Cross-origin credentials.
 webkit.org/b/217947 http/tests/security/mixedContent/insecure-basic-auth-image.https.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
+webkit.org/b/217947 http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ Failure ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Failure ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Failure ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Failure ]
 
 # WebInspector.
-webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Crash Failure Timeout Pass ]
+webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
 
 # WebXR is not yet supported in GTK
@@ -455,7 +455,7 @@ webkit.org/b/218368 compositing/backing/solid-color-with-paints-into-ancestor.ht
 webkit.org/b/169917 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
-webkit.org/b/169917 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
+webkit.org/b/169917 fast/canvas/webgl/oes-vertex-array-object.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Failure ]
@@ -475,15 +475,9 @@ webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-formats-test.html [
 webkit.org/b/169917 webkit.org/b/211768 compositing/video/video-border-radius.html [ ImageOnlyFailure Timeout Pass Crash ]
 webkit.org/b/169917 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Failure Timeout Pass ]
 # WebGL timeouts or slow tests.
-webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/ogles/GL/atan/atan_001_to_008.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/ogles/GL/pow/pow_009_to_016.html [ Slow ]
@@ -908,15 +902,10 @@ webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ 
 
 webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mapping.html [ Failure ]
 
-# Failing in test bots. Started failing since r260615.
-webkit.org/b/210968 fast/css/resize-corner-tracking.html [ Failure ImageOnlyFailure Pass ]
-
 webkit.org/b/210239 fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Failure ]
 
 webkit.org/b/211501 compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
 webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.html [ ImageOnlyFailure ]
-
-webkit.org/b/211693 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure Pass ]
 
 # The first one is also crashing for both GTK and WPE debug
 webkit.org/b/211887 [ Release ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
@@ -1008,34 +997,17 @@ webkit.org/b/225921 printing/print-close-crash.html [ Crash ]
 
 webkit.org/b/122481 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
 
-webkit.org/b/62204 svg/custom/circular-marker-reference-4.svg [ Failure Pass ]
-
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-03-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-05-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-06-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-07-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-08-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-10-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-11-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-12-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-15-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-16-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-17-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-19-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-22-b.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-28-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-30-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-32-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-33-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-36-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-37-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-40-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-41-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-46-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-81-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-82-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-85-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
@@ -1045,16 +1017,12 @@ webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 webkit.org/b/119253 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
 webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
 
-webkit.org/b/126432 fast/css/acid2-pixel.html [ Failure Pass ]
-webkit.org/b/126432 fast/css/acid2.html [ Failure Pass ]
-
-webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
+webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
 # Tests showing flakiness in the bot
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure ]
 
 # Fast overflow.
-webkit.org/b/132258 fast/overflow/hit-test-overflow-controls.html [ Failure ImageOnlyFailure Pass ]
 
 webkit.org/b/136066 animations/fill-mode-iteration-count-non-integer.html [ Timeout Pass ]
 
@@ -1089,13 +1057,9 @@ webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xh
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure Pass ]
 
-webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
-
-webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
+webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
-
-webkit.org/b/176105 http/tests/security/video-cross-origin-accessfailure.html [ Pass Failure ]
 
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
@@ -1123,7 +1087,7 @@ webkit.org/b/183609 [ Release ] inspector/unit-tests/throttler.html [ Pass Failu
 
 webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure Pass Timeout ]
+webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure ]
 
 # Tests that fail on the EWS queue since we enabled tests there (obsolete). TODO: the failures below should be filed under a different bug).
 webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure Pass ]
@@ -1153,16 +1117,12 @@ webkit.org/b/191680 editing/pasteboard/copy-paste-first-line-in-textarea.html [ 
 
 webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 
-webkit.org/b/193315 editing/pasteboard/paste-line-endings-006.html [ Failure Pass ]
-
 webkit.org/b/193311 fast/images/decode-render-animated-image.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/193490 [ Debug ] animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
-
-webkit.org/b/194381 editing/pasteboard/paste-4038267-fix.html [ Failure Pass ]
 
 webkit.org/b/194382 mathml/presentation/stretchy-depth-height-symmetric.html [ Failure ]
 
@@ -1171,10 +1131,6 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
 
 webkit.org/b/197256 http/tests/security/sandboxed-iframe-ALLOWED-modals.html [ Crash Pass ]
-
-webkit.org/b/198828 editing/pasteboard/4989774.html [ Failure Pass ]
-webkit.org/b/198828 editing/pasteboard/paste-line-endings-002.html [ Failure Pass ]
-webkit.org/b/198828 editing/pasteboard/paste-line-endings-001.html [ Failure Pass ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure Timeout ]
 
@@ -1187,42 +1143,40 @@ webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event
 
 webkit.org/b/208426 fast/dom/Window/window-resize-and-move-arguments.html [ Failure Pass ]
 
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-003.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-004.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-005.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-006.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-007.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-008.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-003.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-003.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/directory-mismatched-tables-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-length-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-length-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-numTables-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-signature-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-bad-origlength-loca-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-bad-origlength-loca-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-brotli-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-003.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-004.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-extraneous-data-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-003.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-non-zero-loca-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-bad-flag-001.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-bad-flag-002.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-003.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-004.xht [ ImageOnlyFailure Pass ]
-
-webkit.org/b/211834 tables/mozilla/bugs/bug4527.html [ Failure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-003.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-004.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-005.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-006.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-007.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-008.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-003.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-003.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/directory-mismatched-tables-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-length-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-length-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-numTables-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-signature-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-bad-origlength-loca-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-bad-origlength-loca-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-brotli-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-003.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-004.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-extraneous-data-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-003.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-non-zero-loca-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-bad-flag-001.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-bad-flag-002.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-003.xht [ ImageOnlyFailure ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-004.xht [ ImageOnlyFailure ]
 
 webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Failure Pass ]
 
@@ -1230,7 +1184,7 @@ webkit.org/b/212821 scrollbars/scrollbar-selectors.html [ Pass Timeout Missing ]
 
 webkit.org/b/212893 http/tests/navigation/page-cache-video.html [ Failure Pass ]
 
-webkit.org/b/213386 fast/images/low-memory-decode.html [ Failure Timeout Pass ]
+webkit.org/b/213386 fast/images/low-memory-decode.html [ Timeout ]
 
 webkit.org/b/213387 imported/w3c/web-platform-tests/html/browsers/offline/introduction-4/event_noupdate.https.html [ Timeout Pass ]
 
@@ -1624,7 +1578,7 @@ webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure Pass ]
+webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 
 webkit.org/b/120596 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
@@ -1999,7 +1953,7 @@ webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.h
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
 
-webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure Pass ]
+webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure ]
 
 webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
 

@@ -65,6 +65,7 @@ bool setAlwaysAcceptCookies(bool alwaysAcceptCookies);
 unsigned worldIDForWorld(IWebScriptWorld*);
 
 extern UINT_PTR waitToDumpWatchdog;
+extern bool useTimeoutWatchdog;
 
 extern COMPtr<FrameLoadDelegate> sharedFrameLoadDelegate;
 

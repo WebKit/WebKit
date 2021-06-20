@@ -74,13 +74,13 @@ class VideoCodecInitializerTest : public ::testing::Test {
       config_.number_of_streams = num_spatial_streams;
       VideoCodecVP8 vp8_settings = VideoEncoder::GetDefaultVp8Settings();
       vp8_settings.numberOfTemporalLayers = num_temporal_streams;
-      config_.encoder_specific_settings = new rtc::RefCountedObject<
+      config_.encoder_specific_settings = rtc::make_ref_counted<
           webrtc::VideoEncoderConfig::Vp8EncoderSpecificSettings>(vp8_settings);
     } else if (type == VideoCodecType::kVideoCodecVP9) {
       VideoCodecVP9 vp9_settings = VideoEncoder::GetDefaultVp9Settings();
       vp9_settings.numberOfSpatialLayers = num_spatial_streams;
       vp9_settings.numberOfTemporalLayers = num_temporal_streams;
-      config_.encoder_specific_settings = new rtc::RefCountedObject<
+      config_.encoder_specific_settings = rtc::make_ref_counted<
           webrtc::VideoEncoderConfig::Vp9EncoderSpecificSettings>(vp9_settings);
     } else if (type != VideoCodecType::kVideoCodecMultiplex) {
       ADD_FAILURE() << "Unexpected codec type: " << type;
@@ -424,6 +424,41 @@ TEST_F(VideoCodecInitializerTest, Vp9DeactivateLayers) {
   EXPECT_TRUE(codec_out_.spatialLayers[0].active);
   EXPECT_FALSE(codec_out_.spatialLayers[1].active);
   EXPECT_FALSE(codec_out_.spatialLayers[2].active);
+}
+
+TEST_F(VideoCodecInitializerTest, Av1SingleSpatialLayerBitratesAreConsistent) {
+  VideoEncoderConfig config;
+  config.codec_type = VideoCodecType::kVideoCodecAV1;
+  std::vector<VideoStream> streams = {DefaultStream()};
+  streams[0].scalability_mode = "L1T2";
+
+  VideoCodec codec;
+  EXPECT_TRUE(VideoCodecInitializer::SetupCodec(config, streams, &codec));
+
+  EXPECT_GE(codec.spatialLayers[0].targetBitrate,
+            codec.spatialLayers[0].minBitrate);
+  EXPECT_LE(codec.spatialLayers[0].targetBitrate,
+            codec.spatialLayers[0].maxBitrate);
+}
+
+TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersBitratesAreConsistent) {
+  VideoEncoderConfig config;
+  config.codec_type = VideoCodecType::kVideoCodecAV1;
+  std::vector<VideoStream> streams = {DefaultStream()};
+  streams[0].scalability_mode = "L2T2";
+
+  VideoCodec codec;
+  EXPECT_TRUE(VideoCodecInitializer::SetupCodec(config, streams, &codec));
+
+  EXPECT_GE(codec.spatialLayers[0].targetBitrate,
+            codec.spatialLayers[0].minBitrate);
+  EXPECT_LE(codec.spatialLayers[0].targetBitrate,
+            codec.spatialLayers[0].maxBitrate);
+
+  EXPECT_GE(codec.spatialLayers[1].targetBitrate,
+            codec.spatialLayers[1].minBitrate);
+  EXPECT_LE(codec.spatialLayers[1].targetBitrate,
+            codec.spatialLayers[1].maxBitrate);
 }
 
 }  // namespace webrtc

@@ -86,7 +86,7 @@ struct NetworkResourceLoader::SynchronousLoadData {
     ResourceError error;
 };
 
-static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoadData& data, const SharedBuffer* buffer)
+static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoadData& data, const SharedBuffer* buffer, const NetworkLoadMetrics& metrics)
 {
     ASSERT(data.delayedReply);
     ASSERT(!data.response.isNull() || !data.error.isNull());
@@ -94,6 +94,8 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
     Vector<uint8_t> responseBuffer;
     if (buffer && buffer->size())
         responseBuffer.append(buffer->data(), buffer->size());
+
+    data.response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(metrics));
 
     data.delayedReply(data.error, data.response, responseBuffer);
     data.delayedReply = nullptr;
@@ -728,7 +730,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 #endif
 
     if (isSynchronous())
-        sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get());
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get(), networkLoadMetrics);
     else {
         if (m_bufferedData && !m_bufferedData->isEmpty()) {
             // FIXME: Pass a real value or remove the encoded data size feature.
@@ -763,7 +765,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 
     if (isSynchronous()) {
         m_synchronousLoadData->error = error;
-        sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr, { });
     } else if (auto* connection = messageSenderConnection()) {
 #if ENABLE(SERVICE_WORKER)
         if (m_serviceWorkerFetchTask)
@@ -1142,7 +1144,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);
     if (isSynchronous()) {
         m_synchronousLoadData->response = WTFMove(response);
-        sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer(), { });
         cleanup(LoadResult::Success);
         return;
     }
