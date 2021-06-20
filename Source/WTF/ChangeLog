@@ -1,3 +1,23 @@
+2021-06-20  Sam Weinig  <weinig@apple.com>
+
+        Adopt Span in SHA1.h
+        https://bugs.webkit.org/show_bug.cgi?id=227184
+
+        Reviewed by Chris Dumez.
+
+        Replaces overload of addBytes taking a Vector with ones taking
+        a Span and add overloads for Span<const std::byte> which all the
+        others are now implemented in terms of. This is useful since
+        any Span can be turned into one of type Span<const std::byte>
+        just by calling asBytes(existingSpan).
+
+        This leaves most of the existing overloads in place (though
+        simplifies them by implementing them as Span contructions),
+        though we should consider removing some in a separate pass.
+
+        * wtf/SHA1.cpp:
+        * wtf/SHA1.h:
+
 2021-06-19  Sam Weinig  <weinig@apple.com>
 
         Adopt Span in Base64.h
