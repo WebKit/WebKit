@@ -11726,7 +11726,7 @@ void SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString(Edge edge, JSV
 
 void SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString(Edge edge)
 {
-    if (!needsTypeCheck(edge, ~(SpecFullDouble | SpecString)))
+    if (!needsTypeCheck(edge, ~(SpecFullDouble | SpecHeapBigInt | SpecString)))
         return;
 
     JSValueOperand operand(this, edge, ManualOperandSpeculation);

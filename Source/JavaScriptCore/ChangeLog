@@ -1,3 +1,19 @@
+2021-06-20  Robin Morisset  <rmorisset@apple.com>
+
+        Fix speculated type in the one-argument overload of speculateNeitherDoubleNorHeapBigIntNorString
+        https://bugs.webkit.org/show_bug.cgi?id=227119
+
+        Reviewed by Yusuke Suzuki.
+
+        Same problem as bug 226786: a missing check for HeapBigInt in the speculateNeitherDoubleNorHeapBigIntNorString function introduced in 226676.
+
+        I also rewrote the SpeculatedType for NeitherDoubleNorHeapBigIntNorString in typeFilterFor for readability. The old and the new SpeculatedType are perfectly identical, it is just a different (and in my view more readable) way of writing it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+
 2021-06-19  Mark Lam  <mark.lam@apple.com>
 
         [Revert r278576] Put the Baseline JIT prologue and op_loop_hint code in JIT thunks.
