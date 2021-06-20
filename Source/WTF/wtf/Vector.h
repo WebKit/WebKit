@@ -612,7 +612,9 @@ private:
     friend class JSC::LLIntOffsetsExtractor;
 
 public:
+    // FIXME: Remove uses of ValueType and standardize on value_type, which is required for std::span.
     typedef T ValueType;
+    typedef T value_type;
 
     typedef T* iterator;
     typedef const T* const_iterator;

@@ -1,3 +1,41 @@
+2021-06-19  Sam Weinig  <weinig@apple.com>
+
+        Adopt Span in Base64.h
+        https://bugs.webkit.org/show_bug.cgi?id=227132
+
+        Reviewed by Chris Dumez.
+
+        Replaces overloads taking Vectors with ones taking Spans
+        and add overloads for Span<const std::byte> which all the
+        others are now implemented in terms of. This is useful since
+        any Span can be turned into one of type Span<const std::byte>
+        just by calling asBytes(existingSpan).
+
+        This leaves most of the existing overloads in place (though
+        simplifies them by implementing them as Span contructions)
+        though we should consider removing some in a separate pass.
+
+        * wtf/Vector.h:
+        Add value_type typedef so that Vector<T> can be automatically
+        deduced as Span<T>.
+
+        * wtf/text/CString.h:
+        Add bytes() and bytesInludingNullTerminator() (only the former
+        is used in this patch, but the later will be needed shortly)
+        which return Span<const uint8_t> of the CString. I chose to use
+        an explicit function, rather than making it converible to Span
+        like Vector, because some callers will want the null terminator
+        and some will not.
+
+        * wtf/text/Base64.cpp:
+        * wtf/text/Base64.h:
+        Canonicalize all input buffers either as a Span<const std::byte> or
+        a StringView, making all the other overloads just forward to one of
+        those two (String -> StringView, everything else -> Span<const std::byte>).
+
+        Clean up the header a bit by putting all the declarations at the top of
+        the file.
+
 2021-06-17  Said Abou-Hallawa  <said@apple.com>
 
         [Cocoa] Disable hardware decoding in the WebProcess
