@@ -25,22 +25,23 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && ENABLE(IMAGE_ANALYSIS)
+#if HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
 
 #import <Foundation/Foundation.h>
 
 namespace WebKit {
 class WebPageProxy;
+enum class QuickLookPreviewActivity : uint8_t { None, VisualSearch };
 }
 
 @class QLPreviewPanel;
 
-@interface WKVisualSearchPreviewController : NSObject
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)data title:(NSString *)title imageURL:(NSURL *)imageURL;
+@interface WKQuickLookPreviewController : NSObject
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)data title:(NSString *)title imageURL:(NSURL *)imageURL activity:(WebKit::QuickLookPreviewActivity)activity;
 - (void)beginControl:(QLPreviewPanel *)panel;
 - (BOOL)isControlling:(QLPreviewPanel *)panel;
 - (void)endControl:(QLPreviewPanel *)panel;
 - (void)closePanelIfNecessary;
 @end
 
-#endif // PLATFORM(MAC) && ENABLE(IMAGE_ANALYSIS)
+#endif // HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)

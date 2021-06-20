@@ -2031,7 +2031,7 @@
 		F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A8421583A0200C6752B /* AppKitSPI.h */; };
 		F496A4311F58A272004C1757 /* DragDropInteractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = F496A42F1F58A272004C1757 /* DragDropInteractionState.h */; };
 		F4974E76265ECBBC00B49B8C /* WKRevealItemPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */; };
-		F4975CF22624B80A003C626E /* WKVisualSearchPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4975CF12624B80A003C626E /* WKVisualSearchPreviewController.h */; };
+		F4975CF22624B80A003C626E /* WKQuickLookPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4975CF12624B80A003C626E /* WKQuickLookPreviewController.h */; };
 		F4A6D6BC254CA3E900B65FAA /* SharedDisplayListHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = F4A6D6BB254CA3E900B65FAA /* SharedDisplayListHandle.h */; };
 		F4BA33F225757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */; };
 		F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */; };
@@ -5988,8 +5988,8 @@
 		F48D2A8421583A0200C6752B /* AppKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
 		F496A42F1F58A272004C1757 /* DragDropInteractionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DragDropInteractionState.h; path = ios/DragDropInteractionState.h; sourceTree = "<group>"; };
 		F496A4301F58A272004C1757 /* DragDropInteractionState.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DragDropInteractionState.mm; path = ios/DragDropInteractionState.mm; sourceTree = "<group>"; };
-		F4975CF12624B80A003C626E /* WKVisualSearchPreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKVisualSearchPreviewController.h; sourceTree = "<group>"; };
-		F4975CF32624B918003C626E /* WKVisualSearchPreviewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKVisualSearchPreviewController.mm; sourceTree = "<group>"; };
+		F4975CF12624B80A003C626E /* WKQuickLookPreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKQuickLookPreviewController.h; sourceTree = "<group>"; };
+		F4975CF32624B918003C626E /* WKQuickLookPreviewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKQuickLookPreviewController.mm; sourceTree = "<group>"; };
 		F4A6D6BB254CA3E900B65FAA /* SharedDisplayListHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedDisplayListHandle.h; sourceTree = "<group>"; };
 		F4A7CE842667EB4E00228685 /* TextRecognitionUpdateResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextRecognitionUpdateResult.h; sourceTree = "<group>"; };
 		F4AC655E22A3140E00A05607 /* WebPreferencesDefaultValuesIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPreferencesDefaultValuesIOS.mm; path = ios/WebPreferencesDefaultValuesIOS.mm; sourceTree = "<group>"; };
@@ -10861,6 +10861,8 @@
 				9321D5871A38EE74008052BE /* WKImmediateActionController.mm */,
 				0FCB4E5C18BBE3D9000FCFC9 /* WKPrintingView.h */,
 				0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */,
+				F4975CF12624B80A003C626E /* WKQuickLookPreviewController.h */,
+				F4975CF32624B918003C626E /* WKQuickLookPreviewController.mm */,
 				F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */,
 				F446EDF1265EB3B60031DA8F /* WKRevealItemPresenter.mm */,
 				513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */,
@@ -10871,8 +10873,6 @@
 				0FCB4E5F18BBE3D9000FCFC9 /* WKTextInputWindowController.mm */,
 				2D28A4951AF965A100F190C9 /* WKViewLayoutStrategy.h */,
 				2D28A4961AF965A100F190C9 /* WKViewLayoutStrategy.mm */,
-				F4975CF12624B80A003C626E /* WKVisualSearchPreviewController.h */,
-				F4975CF32624B918003C626E /* WKVisualSearchPreviewController.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -12911,6 +12911,7 @@
 				5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */,
 				518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */,
 				F4D5F51F206087A10038BBA8 /* WKQuickboardViewControllerDelegate.h in Headers */,
+				F4975CF22624B80A003C626E /* WKQuickLookPreviewController.h in Headers */,
 				1AD01BCD1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h in Headers */,
 				1A9E329B1822E1CC00F5D04C /* WKRemoteObject.h in Headers */,
 				1A9E329F1822FEDD00F5D04C /* WKRemoteObjectCoder.h in Headers */,
@@ -12985,7 +12986,6 @@
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
 				2D28A4971AF965A100F190C9 /* WKViewLayoutStrategy.h in Headers */,
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
-				F4975CF22624B80A003C626E /* WKVisualSearchPreviewController.h in Headers */,
 				5136E516236A62110074FD5D /* WKWebArchive.h in Headers */,
 				5136E514236A60DC0074FD5D /* WKWebArchiveRef.h in Headers */,
 				C5E1AFEB16B20B7E006CC1F2 /* WKWebArchiveResource.h in Headers */,

@@ -1,3 +1,16 @@
+2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Rename WKVisualSearchPreviewController to WKQuickLookPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=227193
+
+        Reviewed by Sam Weinig.
+
+        Fix up some compiler flags in this SPI header. Instead of using `HAVE(VK_IMAGE_ANALYSIS)` to guard SPI
+        declarations, use the new `HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)`, `HAVE(QUICKLOOK_ITEM_PREVIEW_OPTIONS)`
+        and `HAVE(QUICKLOOK_PREVIEW_ACTIVITY)` flags.
+
+        * pal/spi/mac/QuickLookMacSPI.h:
+
 2021-06-17  Said Abou-Hallawa  <said@apple.com>
 
         [Cocoa] Disable hardware decoding in the WebProcess

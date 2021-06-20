@@ -24,27 +24,29 @@
  */
 
 #import "config.h"
-#import "WKVisualSearchPreviewController.h"
+#import "WKQuickLookPreviewController.h"
 
-#if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
+#if HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
 
 #import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
 #import <pal/mac/QuickLookUISoftLink.h>
 
-@interface WKVisualSearchPreviewController () <QLPreviewPanelDelegate, QLPreviewPanelDataSource>
+@interface WKQuickLookPreviewController () <QLPreviewPanelDelegate, QLPreviewPanelDataSource>
 @end
 
-@implementation WKVisualSearchPreviewController {
+@implementation WKQuickLookPreviewController {
     RetainPtr<QLItem> _item;
     RetainPtr<NSData> _imageData;
+    WebKit::QuickLookPreviewActivity _activity;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)imageData title:(NSString *)title imageURL:(NSURL *)imageURL
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)imageData title:(NSString *)title imageURL:(NSURL *)imageURL activity:(WebKit::QuickLookPreviewActivity)activity
 {
     if (!(self = [super init]))
         return nil;
 
+    _activity = activity;
     _imageData = imageData;
     _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:(id)self contentType:UTTypePNG previewTitle:title]);
     if ([_item respondsToSelector:@selector(setPreviewOptions:)]) {
@@ -113,9 +115,9 @@
 
 - (QLPreviewActivity)previewPanel:(QLPreviewPanel *)previewPanel initialActivityForItem:(id <QLPreviewItem>)item
 {
-    return QLPreviewActivityVisualSearch;
+    return _activity == WebKit::QuickLookPreviewActivity::VisualSearch ? QLPreviewActivityVisualSearch : QLPreviewActivityNone;
 }
 
 @end
 
-#endif // ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
+#endif // HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)

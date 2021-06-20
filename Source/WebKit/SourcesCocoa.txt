@@ -523,12 +523,12 @@ UIProcess/mac/WindowServerConnection.mm
 UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKPrintingView.mm
+UIProcess/mac/WKQuickLookPreviewController.mm
 UIProcess/mac/WKRevealItemPresenter.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
 UIProcess/mac/WKTextInputWindowController.mm
 UIProcess/mac/WKViewLayoutStrategy.mm
-UIProcess/mac/WKVisualSearchPreviewController.mm
 
 UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm
 UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm

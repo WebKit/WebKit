@@ -637,19 +637,6 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 }
 
 #if ENABLE(CONTEXT_MENUS)
-#if ENABLE(IMAGE_ANALYSIS)
-
-void WebPageProxy::handleContextMenuLookUpImage()
-{
-    auto& result = m_activeContextMenuContextData.webHitTestResultData();
-    if (!result.imageBitmap)
-        return;
-
-    showImageInVisualSearchPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL });
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS)
-
 #if HAVE(TRANSLATION_UI_SERVICES)
 
 bool WebPageProxy::canHandleContextMenuTranslation() const

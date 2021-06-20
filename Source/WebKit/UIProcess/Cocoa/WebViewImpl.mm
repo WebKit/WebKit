@@ -65,12 +65,12 @@
 #import "WKNSURLExtras.h"
 #import "WKPDFHUDView.h"
 #import "WKPrintingView.h"
+#import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
 #import "WKSafeBrowsingWarning.h"
 #import <WebKit/WKShareSheet.h>
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
-#import "WKVisualSearchPreviewController.h"
 #import "WKWebViewInternal.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebBackForwardList.h>
@@ -5786,7 +5786,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)
 {
 #if ENABLE(IMAGE_ANALYSIS)
-    return !!m_page->visualSearchPreviewController();
+    return !!m_page->quickLookPreviewController();
 #else
     return false;
 #endif

@@ -1,5 +1,51 @@
 2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [macOS] Rename WKVisualSearchPreviewController to WKQuickLookPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=227193
+
+        Reviewed by Sam Weinig.
+
+        Rename WKVisualSearchPreviewController to WKQuickLookPreviewController, with the intention of using this logic
+        to implement a new context menu action for opening images in a QuickLook preview panel. See below for more
+        details.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::handleContextMenuLookUpImage): Deleted.
+
+        Move this into WebPageProxyMac.mm, since this is (1) only relevant to macOS, and (2) this logic now requires
+        WKQuickLookPreviewController.h, which WebPageProxyMac.mm already imports.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::acceptsPreviewPanelControl):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKQuickLookPreviewController.h: Renamed from Source/WebKit/UIProcess/mac/WKVisualSearchPreviewController.h.
+        * UIProcess/mac/WKQuickLookPreviewController.mm: Renamed from Source/WebKit/UIProcess/mac/WKVisualSearchPreviewController.mm.
+        (-[WKQuickLookPreviewController initWithPage:imageData:title:imageURL:activity:]):
+
+        Add QuickLookPreviewActivity, a flag to indicate whether or not WKQuickLookPreviewController should
+        start with QLPreviewActivityVisualSearch or QLPreviewActivityNone. For the time being, we only use this helper
+        object for visual search, so we only pass in QuickLookPreviewActivity::VisualSearch.
+
+        (-[WKQuickLookPreviewController beginControl:]):
+        (-[WKQuickLookPreviewController endControl:]):
+        (-[WKQuickLookPreviewController closePanelIfNecessary]):
+        (-[WKQuickLookPreviewController isControlling:]):
+        (-[WKQuickLookPreviewController provideDataForItem:]):
+        (-[WKQuickLookPreviewController numberOfPreviewItemsInPreviewPanel:]):
+        (-[WKQuickLookPreviewController previewPanel:previewItemAtIndex:]):
+        (-[WKQuickLookPreviewController previewPanel:initialActivityForItem:]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::beginPreviewPanelControl):
+        (WebKit::WebPageProxy::endPreviewPanelControl):
+        (WebKit::WebPageProxy::closeSharedPreviewPanelIfNecessary):
+        (WebKit::WebPageProxy::handleContextMenuLookUpImage):
+        (WebKit::WebPageProxy::showImageInQuickLookPreviewPanel):
+        (WebKit::WebPageProxy::showImageInVisualSearchPreviewPanel): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Live Text] Mouse events should only trigger text recognition if the cursor is moving
         https://bugs.webkit.org/show_bug.cgi?id=227181
         rdar://79469827
