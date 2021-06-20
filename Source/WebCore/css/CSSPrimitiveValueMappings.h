@@ -1760,20 +1760,23 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ListStyleType e)
     case ListStyleType::Bengali:
         m_value.valueID = CSSValueBengali;
         break;
+    case ListStyleType::CJKDecimal:
+        m_value.valueID = CSSValueCjkDecimal;
+        break;
+    case ListStyleType::CJKEarthlyBranch:
+        m_value.valueID = CSSValueCjkEarthlyBranch;
+        break;
+    case ListStyleType::CJKHeavenlyStem:
+        m_value.valueID = CSSValueCjkHeavenlyStem;
+        break;
+    case ListStyleType::CJKIdeographic:
+        m_value.valueID = CSSValueCjkIdeographic;
+        break;
     case ListStyleType::Cambodian:
         m_value.valueID = CSSValueCambodian;
         break;
     case ListStyleType::Circle:
         m_value.valueID = CSSValueCircle;
-        break;
-    case ListStyleType::CjkEarthlyBranch:
-        m_value.valueID = CSSValueCjkEarthlyBranch;
-        break;
-    case ListStyleType::CjkHeavenlyStem:
-        m_value.valueID = CSSValueCjkHeavenlyStem;
-        break;
-    case ListStyleType::CJKIdeographic:
-        m_value.valueID = CSSValueCjkIdeographic;
         break;
     case ListStyleType::DecimalLeadingZero:
         m_value.valueID = CSSValueDecimalLeadingZero;
@@ -1934,6 +1937,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ListStyleType e)
     case ListStyleType::String:
         ASSERT_NOT_REACHED();
         m_value.valueID = CSSValueInvalid;
+        break;
+    case ListStyleType::Tamil:
+        m_value.valueID = CSSValueTamil;
         break;
     case ListStyleType::Telugu:
         m_value.valueID = CSSValueTelugu;

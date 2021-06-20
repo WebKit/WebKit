@@ -1,3 +1,16 @@
+2021-06-20  Darin Adler  <darin@apple.com>
+
+        CSS counter style improvements for Armenian, Tamil, and some CJK styles
+        https://bugs.webkit.org/show_bug.cgi?id=227190
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Remove failure expectations for 26 tests.
+
+        * fast/lists/w3-css3-list-styles-fallback-style-expected.txt: Expect 9999 limit instead
+        of 99999999 for Armenian, and success rather than failure for Tamil.
+        * fast/lists/w3-css3-list-styles-fallback-style.html: Ditto.
+
 2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Skip shadow-root creation for input element if it is not necessary

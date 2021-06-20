@@ -1,3 +1,52 @@
+2021-06-20  Darin Adler  <darin@apple.com>
+
+        CSS counter style improvements for Armenian, Tamil, and some CJK styles
+        https://bugs.webkit.org/show_bug.cgi?id=227190
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSPrimitiveValueMappings.h: Added CJKDecimal and Tamil.
+        Also updated for name changes of Cjk to CJK.
+
+        * css/CSSValueKeywords.in: Added cjk-decimal and tamil.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::isPredefinedCounterStyle):
+        Updated since the last predefined counter style is now Tamil.
+
+        * rendering/RenderListMarker.cpp: Tweak coding style a bit, using
+        constexpr and auto and removing some unneeded explicit type names.
+        (WebCore::effectiveListMarkerType): Added Tamil. Corrected range
+        for Armenian, LowerArmenian, and UpperArmenian to be 1-9999.
+        Added CJKDecimal. Updated for name changes of Cjk to CJK.
+        (WebCore::listMarkerSuffix): Addded Tamil. Corrected suffix for
+        multiple types to be ideographic comma instead of period.
+        (WebCore::suffixRequiresSpace): Added. Used so we don't add a space
+        after all suffixes.
+        (WebCore::listMarkerText): Added CJKDecimal and Tamil.
+        (WebCore::RenderListMarker::paint): Removed all the cases for the
+        many list style types that just paint as text, using default instead.
+        Call suffixRequiresSpace and don't add a space if not needed.
+        (WebCore::RenderListMarker::updateContent): Removed all the cases for
+        the many list style types that are text based, using default instead.
+        (WebCore::RenderListMarker::computePreferredLogicalWidths): Removed
+        all the cases for the many list style types that are text based, using
+        default instead. Call suffixRequiresSpace and don't include the space
+        if not needed.
+        (WebCore::RenderListMarker::suffix const): Call suffixRequiresSpace
+        and don't include a space if not needed.
+        (WebCore::RenderListMarker::getRelativeMarkerRect): Removed all the
+        cases for the many list style types that are text based, using default
+        instead. Call suffixRequiresSpace and don't include the space if not
+        needed.
+
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<): Added CJKDecimal and Tamil. Also sorted the
+        list styles alphabetically.
+
+        * rendering/style/RenderStyleConstants.h: Added CJKDecimal and
+        Tamil and use CJK instead of Cjk in names of the other styles.
+
 2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Skip shadow-root creation for input element if it is not necessary
