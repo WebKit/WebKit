@@ -1,3 +1,12 @@
+2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add ValueOf fast path in toPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=226948
+
+        Reviewed by Ross Kirsling.
+
+        * microbenchmarks/valueof-via-toprimitive.js: Added.
+
 2021-06-17  Saam Barati  <sbarati@apple.com>
 
         Make microbenchmarks/delete-property-from-prototype-chain not time out on debug builds

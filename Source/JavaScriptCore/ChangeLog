@@ -1,3 +1,22 @@
+2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add ValueOf fast path in toPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=226948
+
+        Reviewed by Ross Kirsling.
+
+        Add fast path for Object.prototype.valueOf function call since we
+        sometimes encounter this case in Speedometer2/EmberJS-Debug-TodoMVC.
+
+                                       ToT                     Patched
+
+            value-of-call        65.7169+-0.6192     ^     45.0986+-0.0830        ^ definitely 1.4572x faster
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toStringSlowCase const):
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+
 2021-06-20  Robin Morisset  <rmorisset@apple.com>
 
         Fix speculated type in the one-argument overload of speculateNeitherDoubleNorHeapBigIntNorString

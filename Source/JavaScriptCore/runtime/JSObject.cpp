@@ -2234,6 +2234,11 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
         }
     }
 
+    if constexpr (key == CachedSpecialPropertyKey::ValueOf) {
+        if (function == globalObject->objectProtoValueOfFunction())
+            return JSValue();
+    }
+
     auto callData = getCallData(vm, function);
     if (callData.type == CallData::Type::None) {
         if constexpr (key == CachedSpecialPropertyKey::ToPrimitive)

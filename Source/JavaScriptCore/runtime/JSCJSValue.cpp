@@ -434,8 +434,8 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
         return errorValue();
     }
 
-    ASSERT(isCell());
-    JSValue value = asCell()->toPrimitive(globalObject, PreferString);
+    ASSERT(isObject()); // String, Symbol, and HeapBigInt are already handled.
+    JSValue value = asObject(asCell())->toPrimitive(globalObject, PreferString);
     RETURN_IF_EXCEPTION(scope, errorValue());
     ASSERT(!value.isObject());
     JSString* result = value.toString(globalObject);
