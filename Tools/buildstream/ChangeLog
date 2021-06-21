@@ -1,3 +1,17 @@
+2021-06-21  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 20.08.13 release
+        https://bugs.webkit.org/show_bug.cgi?id=227176
+
+        Reviewed by Žan Doberšek.
+
+        This release contains libvpx 1.10.0 which we need since the libwebrtc bump to M92. The
+        current version we have has ABI incompatible with what libwebrtc expects and this issue was
+        hidden by r277036 which pulls in the bundled libvpx headers...
+
+        * elements/freedesktop-sdk.bst:
+        * patches/fdo-0001-meson-Bump-to-0.56.1.patch: Removed.
+
 2021-06-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix libsoup3 build in Flatpak SDK
