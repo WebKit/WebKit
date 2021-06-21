@@ -2822,8 +2822,11 @@ HighlightRegister& Document::highlightRegister()
 #if ENABLE(APP_HIGHLIGHTS)
 HighlightRegister& Document::appHighlightRegister()
 {
-    if (!m_appHighlightRegister)
+    if (!m_appHighlightRegister) {
         m_appHighlightRegister = HighlightRegister::create();
+        if (auto* currentPage = page())
+            m_appHighlightRegister->setHighlightVisibility(currentPage->chrome().client().appHighlightsVisiblility());
+    }
     return *m_appHighlightRegister;
 }
 

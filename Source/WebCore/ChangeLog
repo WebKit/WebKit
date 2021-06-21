@@ -1,3 +1,18 @@
+2021-06-21  Megan Gardner  <megan_gardner@apple.com>
+
+        AppHighlights disappear on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=227141
+        rdar://78190331
+
+        Reviewed by Devin Rousso.
+
+        Preserve the state of highlight visibility so that is correct on page-reload.
+
+        * dom/Document.cpp:
+        (WebCore::Document::appHighlightRegister):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::appHighlightsVisiblility const):
+
 2021-06-21  Rob Buis  <rbuis@igalia.com>
 
         CSSOM test for serializing font-variant fails

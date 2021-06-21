@@ -1173,6 +1173,13 @@ void WebChromeClient::sampledPageTopColorChanged() const
     m_page.sampledPageTopColorChanged();
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+WebCore::HighlightVisibility WebChromeClient::appHighlightsVisiblility() const
+{
+    return m_page.appHighlightsVisiblility();
+}
+#endif
+
 void WebChromeClient::wheelEventHandlersChanged(bool hasHandlers)
 {
     m_page.wheelEventHandlersChanged(hasHandlers);
