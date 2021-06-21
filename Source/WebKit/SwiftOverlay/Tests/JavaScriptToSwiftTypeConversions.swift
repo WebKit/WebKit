@@ -120,4 +120,16 @@ final class JavaScriptToSwiftConversions : XCTestCase {
 
         wait(for: [evaluationExpectation], timeout: 30)
     }
+
+    #if swift(>=5.5)
+    @available(iOS 15.0, macOS 12.0, *)
+    func testUsingSwiftAsync() async throws {
+        guard let result = try await webView.evaluateJavaScript(#""Hello, world!""#) as? String else {
+            XCTFail("Unexpected result from evaluating JavaScript.")
+            return
+        }
+
+        XCTAssertEqual(result, "Hello, world!")
+    }
+    #endif
 }

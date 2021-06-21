@@ -1,3 +1,22 @@
+2021-06-21  James Savage  <james.savage@apple.com>
+
+        Upstream async support to Swift overlay.
+        https://bugs.webkit.org/show_bug.cgi?id=227006.
+
+        Reviewed by Alex Christensen.
+
+        * SwiftOverlay/Tests/JavaScriptToSwiftTypeConversions.swift:
+        (JavaScriptToSwiftConversions.testUsingSwiftAsync): Adds a simple test
+        for the Swift async interface.
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/project.pbxproj: Removed
+        use of WebKitAdditions, which is needed both to prevent redefinition
+        errors and because they are no longer necessary.
+        * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift:
+        (WKWebView.callAsyncJavaScript(_:arguments:in:contentWorld:)):
+        (WKWebView.pdf(_:)):
+        (WKWebView.evaluateJavaScript(_:in:contentWorld:)):
+        (WKWebView.find(_:configuration:)):
+
 2021-06-21  Alex Christensen  <achristensen@webkit.org>
 
         Add log when creating NSURLSession that will not accept cookies
