@@ -1,3 +1,12 @@
+2021-06-21  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Reenable ChakraCore/test/Math/max.js on ARMv7 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=227209
+
+        Reviewed by Adrian Perez de Castro.
+
+        * ChakraCore.yaml: reenable the test, should be working fine now.
+
 2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add ValueOf fast path in toPrimitive
