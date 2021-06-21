@@ -1,3 +1,16 @@
+2021-06-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Make InProcessIDBServer use WorkQueue instead of Thread
+        https://bugs.webkit.org/show_bug.cgi?id=227225
+
+        Reviewed by Chris Dumez.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::~InProcessIDBServer):
+        (InProcessIDBServer::InProcessIDBServer):
+        (InProcessIDBServer::dispatchTask):
+        * Storage/InProcessIDBServer.h:
+
 2021-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Remove empty header WebTypesInternal.h
