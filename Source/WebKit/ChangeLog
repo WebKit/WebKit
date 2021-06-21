@@ -1,3 +1,13 @@
+2021-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Turn ENABLE_SHAREABLE_RESOURCE on
+        https://bugs.webkit.org/show_bug.cgi?id=227011
+
+        Reviewed by Don Olmstead.
+
+        * NetworkProcess/cache/NetworkCacheDataCurl.cpp:
+        (WebKit::NetworkCache::Data::tryCreateSharedMemory const): Added.
+
 2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App Privacy Report code from WebKitAdditions

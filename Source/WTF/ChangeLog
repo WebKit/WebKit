@@ -1,3 +1,31 @@
+2021-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Turn ENABLE_SHAREABLE_RESOURCE on
+        https://bugs.webkit.org/show_bug.cgi?id=227011
+
+        Reviewed by Don Olmstead.
+
+        Added a new member m_fileMapping to MappedFileData to store a file
+        mapping object handle to create a SharedMemory from a
+        MappedFileData on Windows.
+
+        Conditioned out MappedFileData::leakHandle() if OS(WINDOWS). And,
+        removed unmapViewOfFile(). Destruction of MappedFileData should be
+        done by ~MappedFileData.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::MappedFileData::~MappedFileData):
+        (WTF::FileSystemImpl::MappedFileData::mapFileHandle):
+        (WTF::FileSystemImpl::unmapViewOfFile): Deleted.
+        * wtf/FileSystem.h:
+        (WTF::FileSystemImpl::MappedFileData::fileMapping const):
+        (WTF::FileSystemImpl::MappedFileData::MappedFileData):
+        (WTF::FileSystemImpl::MappedFileData::operator=):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::MappedFileData::~MappedFileData):
+        (WTF::FileSystemImpl::MappedFileData::mapFileHandle):
+        (WTF::FileSystemImpl::unmapViewOfFile): Deleted.
+
 2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App Privacy Report code from WebKitAdditions

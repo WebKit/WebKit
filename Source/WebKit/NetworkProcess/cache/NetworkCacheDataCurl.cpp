@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkCacheData.h"
 
+#include "SharedMemory.h"
+
 namespace WebKit {
 namespace NetworkCache {
 
@@ -104,6 +106,21 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::Platfor
 
     return { WTFMove(mappedFile) };
 }
+
+#if ENABLE(SHAREABLE_RESOURCE) && OS(WINDOWS)
+RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
+{
+    if (isNull() || !isMap())
+        return nullptr;
+
+    HANDLE handle = WTF::get<FileSystem::MappedFileData>(*m_buffer).fileMapping();
+    HANDLE newHandle;
+    if (!DuplicateHandle(GetCurrentProcess(), handle, GetCurrentProcess(), &newHandle, 0, false, DUPLICATE_SAME_ACCESS))
+        return nullptr;
+
+    return SharedMemory::adopt(newHandle, m_size, SharedMemory::Protection::ReadOnly);
+}
+#endif
 
 } // namespace NetworkCache
 } // namespace WebKit

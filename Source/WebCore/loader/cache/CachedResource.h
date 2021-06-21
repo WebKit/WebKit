@@ -281,7 +281,7 @@ public:
 
     virtual void didSendData(unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
 
-#if USE(FOUNDATION) || USE(SOUP)
+#if ENABLE(SHAREABLE_RESOURCE)
     WEBCORE_EXPORT void tryReplaceEncodedData(SharedBuffer&);
 #endif
 

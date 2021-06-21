@@ -363,9 +363,12 @@ String createTemporaryDirectory()
     });
 }
 
-bool unmapViewOfFile(void* buffer, size_t)
+MappedFileData::~MappedFileData()
 {
-    return UnmapViewOfFile(buffer);
+    if (m_fileData)
+        UnmapViewOfFile(m_fileData);
+    if (m_fileMapping)
+        CloseHandle(m_fileMapping);
 }
 
 bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode)
@@ -399,12 +402,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         break;
     }
 
-    auto mapping = CreateFileMapping(handle, nullptr, pageProtection, 0, 0, nullptr);
-    if (!mapping)
+    m_fileMapping = CreateFileMapping(handle, nullptr, pageProtection, 0, 0, nullptr);
+    if (!m_fileMapping)
         return false;
 
-    m_fileData = MapViewOfFile(mapping, desiredAccess, 0, 0, *size);
-    CloseHandle(mapping);
+    m_fileData = MapViewOfFile(m_fileMapping, desiredAccess, 0, 0, *size);
     if (!m_fileData)
         return false;
     m_fileSize = *size;

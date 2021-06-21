@@ -317,13 +317,6 @@ bool excludeFromBackup(const String&)
 
 #endif
 
-MappedFileData::~MappedFileData()
-{
-    if (!m_fileData)
-        return;
-    unmapViewOfFile(m_fileData, m_fileSize);
-}
-
 MappedFileData::MappedFileData(const String& filePath, MappedFileMode mapMode, bool& success)
 {
     auto fd = openFile(filePath, FileSystem::FileOpenMode::Read);
@@ -333,6 +326,13 @@ MappedFileData::MappedFileData(const String& filePath, MappedFileMode mapMode, b
 }
 
 #if HAVE(MMAP)
+
+MappedFileData::~MappedFileData()
+{
+    if (!m_fileData)
+        return;
+    munmap(m_fileData, m_fileSize);
+}
 
 bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode mapMode)
 {
@@ -387,12 +387,6 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
     m_fileSize = size;
     return true;
 }
-
-bool unmapViewOfFile(void* buffer, size_t size)
-{
-    return !munmap(buffer, size);
-}
-
 #endif
 
 PlatformFileHandle openAndLockFile(const String& path, FileOpenMode openMode, OptionSet<FileLockMode> lockMode)

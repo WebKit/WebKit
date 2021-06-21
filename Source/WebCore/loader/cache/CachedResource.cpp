@@ -904,7 +904,7 @@ void CachedResource::Callback::timerFired()
     m_resource.didAddClient(m_client);
 }
 
-#if USE(FOUNDATION) || USE(SOUP)
+#if ENABLE(SHAREABLE_RESOURCE)
 
 void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
 {

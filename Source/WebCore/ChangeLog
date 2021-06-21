@@ -1,3 +1,13 @@
+2021-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Turn ENABLE_SHAREABLE_RESOURCE on
+        https://bugs.webkit.org/show_bug.cgi?id=227011
+
+        Reviewed by Don Olmstead.
+
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+
 2021-06-21  Chris Dumez  <cdumez@apple.com>
 
         Too much CPU time is spent under MemoryPressureHandler::currentMemoryUsagePolicy()
