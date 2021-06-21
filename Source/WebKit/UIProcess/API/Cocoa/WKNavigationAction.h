@@ -78,7 +78,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 /*! @abstract A value indicating whether the web content used a download attribute to indicate that this should be downloaded.
 */
-@property (nonatomic, readonly) BOOL shouldPerformDownload WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL shouldPerformDownload WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 #if !TARGET_OS_IPHONE
 

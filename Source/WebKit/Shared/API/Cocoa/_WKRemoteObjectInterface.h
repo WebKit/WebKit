@@ -39,7 +39,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 - (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex ofReply:(BOOL)ofReply;
 - (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex ofReply:(BOOL)ofReply;
 
-- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex WK_API_DEPRECATED_WITH_REPLACEMENT("-classesForSelector:argumentIndex:ofReply:", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
-- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex WK_API_DEPRECATED_WITH_REPLACEMENT("-setClasses:forSelector:argumentIndex:ofReply:", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex WK_API_DEPRECATED_WITH_REPLACEMENT("-classesForSelector:argumentIndex:ofReply:", macos(10.10, 12.0), ios(8.0, 15.0));
+- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex WK_API_DEPRECATED_WITH_REPLACEMENT("-setClasses:forSelector:argumentIndex:ofReply:", macos(10.10, 12.0), ios(8.0, 15.0));
 
 @end

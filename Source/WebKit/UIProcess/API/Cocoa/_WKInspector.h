@@ -39,7 +39,7 @@ WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
 
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (nonatomic, weak) id <_WKInspectorDelegate> delegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, weak) id <_WKInspectorDelegate> delegate WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 @property (nonatomic, readonly) WKWebView *webView;
 @property (nonatomic, readonly) BOOL isConnected;

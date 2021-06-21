@@ -79,8 +79,8 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setDeferrableUserScriptsShouldWaitUntilNotification:) BOOL _deferrableUserScriptsShouldWaitUntilNotification WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, setter=_setCrossOriginAccessControlCheckEnabled:) BOOL _crossOriginAccessControlCheckEnabled WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-@property (nonatomic, setter=_setLoadsFromNetwork:) BOOL _loadsFromNetwork WK_API_DEPRECATED_WITH_REPLACEMENT("_allowedNetworkHosts", macos(11.0, WK_MAC_TBA), ios(14.0, WK_IOS_TBA));
-@property (nonatomic, copy, setter=_setAllowedNetworkHosts:) NSSet<NSString *> *_allowedNetworkHosts WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setLoadsFromNetwork:) BOOL _loadsFromNetwork WK_API_DEPRECATED_WITH_REPLACEMENT("_allowedNetworkHosts", macos(11.0, 12.0), ios(14.0, 15.0));
+@property (nonatomic, copy, setter=_setAllowedNetworkHosts:) NSSet<NSString *> *_allowedNetworkHosts WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, setter=_setLoadsSubresources:) BOOL _loadsSubresources WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, setter=_setIgnoresAppBoundDomains:) BOOL _ignoresAppBoundDomains WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
@@ -98,7 +98,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 #else
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_API_AVAILABLE(macos(10.12));
-@property (nonatomic, setter=_setImageControlsEnabled:) BOOL _imageControlsEnabled WK_API_DEPRECATED("Image controls are no longer supported", macos(10.12, WK_MAC_TBA));
+@property (nonatomic, setter=_setImageControlsEnabled:) BOOL _imageControlsEnabled WK_API_DEPRECATED("Image controls are no longer supported", macos(10.12, 12.0));
 @property (nonatomic, readwrite, setter=_setRequiresUserActionForEditingControlsManager:) BOOL _requiresUserActionForEditingControlsManager WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, readwrite, setter=_setCPULimit:) double _cpuLimit WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, readwrite, setter=_setPageGroup:) WKPageGroupRef _pageGroup WK_API_AVAILABLE(macos(10.13.4));
@@ -113,7 +113,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setLegacyEncryptedMediaAPIEnabled:) BOOL _legacyEncryptedMediaAPIEnabled WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic, setter=_setAllowMediaContentTypesRequiringHardwareSupportAsFallback:) BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
-@property (nonatomic, setter=_setMediaCaptureEnabled:) BOOL _mediaCaptureEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setMediaCaptureEnabled:) BOOL _mediaCaptureEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 // The input of this SPI is an array of image UTI (Uniform Type Identifier).
 @property (nonatomic, copy, setter=_setAdditionalSupportedImageTypes:) NSArray<NSString *> *_additionalSupportedImageTypes WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
@@ -122,15 +122,15 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setShouldRelaxThirdPartyCookieBlocking:) BOOL _shouldRelaxThirdPartyCookieBlocking WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, setter=_setProcessDisplayName:) NSString *_processDisplayName WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-@property (nonatomic, setter=_setAppHighlightsEnabled:) BOOL _appHighlightsEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAppHighlightsEnabled:) BOOL _appHighlightsEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 // The maximum Lab color difference allowed between two consecutive page top snapshots.
 // Expects 0 (disables page top color sampling entirely) or any positive number.
-@property (nonatomic, setter=_setSampledPageTopColorMaxDifference:) double _sampledPageTopColorMaxDifference WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setSampledPageTopColorMaxDifference:) double _sampledPageTopColorMaxDifference WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 // How far down the page the sampled page top color needs to extend in order to be considered valid.
 // Expects 0 (the color doesn't need to continue into the page at all) or any positive number.
-@property (nonatomic, setter=_setSampledPageTopColorMinHeight:) double _sampledPageTopColorMinHeight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setSampledPageTopColorMinHeight:) double _sampledPageTopColorMinHeight WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 // Attributes network activity from this WKWebView to the app with this bundle.
 @property (nonatomic, setter=_setAttributedBundleIdentifier:) NSString *_attributedBundleIdentifier;
@@ -141,7 +141,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 
 @interface WKWebViewConfiguration (WKPrivateDeprecated)
 
-@property (nonatomic, setter=_setTextInteractionGesturesEnabled:) BOOL _textInteractionGesturesEnabled WK_API_DEPRECATED_WITH_REPLACEMENT("WKPreferences.textInteractionGesturesEnabled", ios(12.0, WK_IOS_TBA));
+@property (nonatomic, setter=_setTextInteractionGesturesEnabled:) BOOL _textInteractionGesturesEnabled WK_API_DEPRECATED_WITH_REPLACEMENT("WKPreferences.textInteractionGesturesEnabled", ios(12.0, 15.0));
 
 @end
 

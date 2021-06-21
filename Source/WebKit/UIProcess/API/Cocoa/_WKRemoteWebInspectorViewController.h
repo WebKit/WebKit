@@ -43,10 +43,10 @@ WK_CLASS_AVAILABLE(macos(10.12.3))
 
 @property (nonatomic, readonly, retain) NSWindow *window;
 @property (nonatomic, readonly, retain) WKWebView *webView;
-@property (nonatomic, readonly, copy) _WKInspectorConfiguration *configuration WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readonly, copy) _WKInspectorConfiguration *configuration WK_API_AVAILABLE(macos(12.0));
 
-- (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration WK_API_AVAILABLE(macos(WK_MAC_TBA));
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL WK_API_AVAILABLE(macos(WK_MAC_TBA));
+- (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration WK_API_AVAILABLE(macos(12.0));
+- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL WK_API_AVAILABLE(macos(12.0));
 - (void)close;
 - (void)show;
 

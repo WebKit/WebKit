@@ -42,7 +42,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (readonly) WKWebProcessPlugInFrame *mainFrame;
 
-@property (readonly) WKWebProcessPlugInPageGroup *pageGroup WK_API_DEPRECATED_WITH_REPLACEMENT("_groupIdentifier", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+@property (readonly) WKWebProcessPlugInPageGroup *pageGroup WK_API_DEPRECATED_WITH_REPLACEMENT("_groupIdentifier", macos(10.10, 12.0), ios(8.0, 15.0));
 
 @property (weak) id <WKWebProcessPlugInLoadDelegate> loadDelegate;
 

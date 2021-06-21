@@ -31,4 +31,4 @@ typedef NS_ENUM(NSInteger, _WKUserVerificationRequirement) {
     _WKUserVerificationRequirementRequired,
     _WKUserVerificationRequirementPreferred,
     _WKUserVerificationRequirementDiscouraged,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(12.0), ios(15.0));

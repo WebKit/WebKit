@@ -1,3 +1,75 @@
+2021-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Update TBA macros for iOS 15 / macOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=227228
+        <rdar://78581134>
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/WebKit.xcconfig:
+        * Shared/API/Cocoa/_WKFrameHandle.h:
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.h:
+        * UIProcess/API/Cocoa/WKContentRuleListPrivate.h:
+        * UIProcess/API/Cocoa/WKDownload.h:
+        * UIProcess/API/Cocoa/WKDownloadDelegate.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStorePrivate.h:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKAppHighlight.h:
+        * UIProcess/API/Cocoa/_WKAppHighlightDelegate.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        * UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientInputs.h:
+        * UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientOutputs.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorAttachment.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponse.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorResponse.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorSelectionCriteria.h:
+        * UIProcess/API/Cocoa/_WKAutomationDelegate.h:
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKInspector.h:
+        * UIProcess/API/Cocoa/_WKInspectorConfiguration.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialCreationOptions.h:
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialDescriptor.h:
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialEntity.h:
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialParameters.h:
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialRelyingPartyEntity.h:
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialRequestOptions.h:
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialUserEntity.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.h:
+        * UIProcess/API/Cocoa/_WKUserVerificationRequirement.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelForTesting.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+
 2021-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix Apple internal build
