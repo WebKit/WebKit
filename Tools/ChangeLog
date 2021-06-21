@@ -1,3 +1,15 @@
+2021-06-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Adopt autoinstaller (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=227096
+        <rdar://problem/79418080>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/container: Fix libraries path.
+        * Scripts/libraries/resultsdbpy/run: Ditto.
+        * Scripts/libraries/resultsdbpy/run-tests: Ditto.
+
 2021-06-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278699.

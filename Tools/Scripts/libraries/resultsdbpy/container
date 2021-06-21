@@ -29,7 +29,7 @@ import sys
 import resultsdbpy
 from webkitcorepy import AutoInstall
 
-libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'libraries')
+libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if sys.platform == 'darwin':
     is_root = not os.getuid()
     does_own_libraries = os.stat(libraries).st_uid == os.getuid()
