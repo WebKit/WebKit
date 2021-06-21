@@ -379,12 +379,8 @@ private:
 #endif // ASSERT_ENABLED
     }
 
-    void materializeConstantsAndLocals(Stack& expressionStack)
+    void materializeConstantsAndLocals(Stack& expressionStack, NoConsistencyCheckTag)
     {
-        if (expressionStack.isEmpty())
-            return;
-
-        checkConsistency();
         walkExpressionStack(expressionStack, [&](TypedExpression& expression, VirtualRegister slot) {
             ASSERT(expression.value() == slot || expression.value().isConstant() || expression.value().isArgument() || static_cast<unsigned>(expression.value().toLocal()) < m_codeBlock->m_numVars);
             if (expression.value() == slot)
@@ -392,6 +388,15 @@ private:
             WasmMov::emit(this, slot, expression);
             expression = TypedExpression { expression.type(), slot };
         });
+    }
+
+    void materializeConstantsAndLocals(Stack& expressionStack)
+    {
+        if (expressionStack.isEmpty())
+            return;
+
+        checkConsistency();
+        materializeConstantsAndLocals(expressionStack, NoConsistencyCheck);
         checkConsistency();
     }
 
@@ -871,7 +876,20 @@ auto LLIntGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
 auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
 {
     splitStack(signature, enclosingStack, newStack);
-    materializeConstantsAndLocals(newStack);
+    materializeConstantsAndLocals(newStack, NoConsistencyCheck);
+#if ASSERT_ENABLED
+    // We cannot yet call checkConsistency, since the arguments we are
+    // materializing for the loop are not neither in the expression
+    // nor the control stack, and it won't know what to do in this
+    // intermediate state. As a sanity check just verify that
+    // everything in newStack is a virtual register that is actually
+    // pointing to each stack position, which is what we should have
+    // after we split the stack and the previous call materializes
+    // constants and aliases if needed.
+    walkExpressionStack(newStack, [](VirtualRegister expression, VirtualRegister slot) {
+        ASSERT(expression == slot);
+    });
+#endif
 
     Ref<Label> body = newEmittedLabel();
     Ref<Label> continuation = newLabel();

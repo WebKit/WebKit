@@ -1,3 +1,13 @@
+2021-06-21  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Fix consistency check during stack splitting in Wasm::LLIntGenerator::addLoop
+        https://bugs.webkit.org/show_bug.cgi?id=226012
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/wasm-loop-consistency.js: Added.
+        (vm.isWasmSupported):
+
 2021-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Release assert memory in JSC::Wasm::Memory::growShared(JSC::Wasm::PageCount)::<lambda()>
