@@ -57,7 +57,7 @@ public:
 
     void cookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
     void cookiesForURL(WTF::URL&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
-    void setCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void()>&&);
+    void setCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
     
     void deleteAllCookies(CompletionHandler<void()>&&);
@@ -75,14 +75,12 @@ public:
 
     void cookiesDidChange();
 
-    void filterAppBoundCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+    void filterAppBoundCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
     
-    // FIXME: This is a reference cycle.
-    Ref<WebKit::WebsiteDataStore> m_owningDataStore;
-
+    WeakPtr<WebKit::WebsiteDataStore> m_owningDataStore;
     WeakHashSet<Observer> m_observers;
     WeakPtr<WebKit::WebCookieManagerProxy> m_observedCookieManagerProxy;
     std::unique_ptr<APIWebCookieManagerProxyObserver> m_cookieManagerProxyObserver;

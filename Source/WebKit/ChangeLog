@@ -1,3 +1,28 @@
+2021-06-21  Alex Christensen  <achristensen@webkit.org>
+
+        Break ref cycle between API::HTTPCookieStore and WebKit::WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=226992
+
+        Reviewed by Chris Dumez.
+
+        Covered by an API test.
+
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::HTTPCookieStore):
+        (API::HTTPCookieStore::filterAppBoundCookies):
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::cookiesForURL):
+        (API::HTTPCookieStore::setCookies):
+        (API::HTTPCookieStore::deleteCookie):
+        (API::HTTPCookieStore::deleteAllCookies):
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicy):
+        (API::HTTPCookieStore::flushCookies):
+        (API::HTTPCookieStore::registerObserver):
+        (API::HTTPCookieStore::unregisterObserver):
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::complete):
+
 2021-06-21  James Savage  <james.savage@apple.com>
 
         Upstream async support to Swift overlay.
