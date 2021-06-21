@@ -32,6 +32,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 
 #include <wtf/CompletionHandler.h>

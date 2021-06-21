@@ -187,7 +187,7 @@ String RenderThemeHaiku::mediaControlsStyleSheet()
     return ASCIILiteral::fromLiteralUnsafe(mediaControlsBaseUserAgentStyleSheet);
 }
 
-Vector<String, 3> RenderThemeHaiku::mediaControlsScripts()
+Vector<String, 2> RenderThemeHaiku::mediaControlsScripts()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     // FIXME store the thing in a member variable like it is done in the windows theme

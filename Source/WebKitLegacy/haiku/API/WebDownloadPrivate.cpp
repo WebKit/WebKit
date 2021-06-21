@@ -33,6 +33,7 @@
 #include "WebCore/ResourceHandle.h"
 #include "WebCore/ResourceRequest.h"
 #include "WebCore/ResourceResponse.h"
+#include "WebCore/SecurityOrigin.h"
 #include "TextEncoding.h"
 #include "WebDownload.h"
 #include "WebPage.h"
@@ -54,7 +55,7 @@ static const int kMaxMimeTypeGuessTries	= 5;
 WebDownloadPrivate::WebDownloadPrivate(const ResourceRequest& request,
         WebCore::NetworkingContext* context)
     : m_webDownload(0)
-    , m_resourceHandle(ResourceHandle::create(context, request, this, false, false, false))
+    , m_resourceHandle(ResourceHandle::create(context, request, this, false, false, false, WebCore::SecurityOrigin::createUnique(), false))
     , m_currentSize(0)
     , m_expectedSize(0)
     , m_url(request.url().string())

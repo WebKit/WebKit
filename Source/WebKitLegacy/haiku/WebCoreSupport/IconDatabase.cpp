@@ -1899,7 +1899,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data,
         // signifying that this icon doesn't have any data
         if (snapshot.data() && snapshot.data()->size())
-            m_updateIconDataStatement->bindBlob(1, snapshot.data()->data(), snapshot.data()->size());
+            m_updateIconDataStatement->bindBlob(1, *snapshot.data());
         else
             m_updateIconDataStatement->bindNull(1);
 
@@ -1925,7 +1925,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data,
         // signifying that this icon doesn't have any data
         if (snapshot.data() && snapshot.data()->size())
-            m_setIconDataStatement->bindBlob(2, snapshot.data()->data(), snapshot.data()->size());
+            m_setIconDataStatement->bindBlob(2, *snapshot.data());
         else
             m_setIconDataStatement->bindNull(2);
 
