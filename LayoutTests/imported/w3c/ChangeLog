@@ -1,3 +1,16 @@
+2021-06-21  Rob Buis  <rbuis@igalia.com>
+
+        CSSOM test for serializing font-variant fails
+        https://bugs.webkit.org/show_bug.cgi?id=226770
+
+        Reviewed by Darin Adler.
+
+        Update improved test result.
+
+        * web-platform-tests/css/css-fonts/parsing/font-variant-east-asian-invalid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variant-valid-expected.txt:
+        * web-platform-tests/css/cssom/serialize-values-expected.txt:
+
 2021-06-19  Darin Adler  <darin@apple.com>
 
         Fix CSS serialization issues affecting css-counter-styles tests

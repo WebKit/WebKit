@@ -74,13 +74,13 @@ PASS window.getComputedStyle(document.getElementById('testElement')).getProperty
 PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "full-width"
 PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "proportional-width"
 PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "ruby"
-PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "jis83"
-PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "traditional"
+PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "normal"
+PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "normal"
 PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "traditional full-width"
 PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "jis04 proportional-width"
 PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "jis04 proportional-width ruby"
 PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "jis83 ruby"
-PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "proportional-width"
+PASS window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('font-variant-east-asian').cssText is "normal"
 PASS successfullyParsed is true
 
 TEST COMPLETE

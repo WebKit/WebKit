@@ -172,6 +172,7 @@ private:
     String get4Values(const StylePropertyShorthand&) const;
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
+    String fontVariantValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
 
     friend class PropertySetCSSStyleDeclaration;

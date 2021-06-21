@@ -393,9 +393,9 @@ PASS font-style: normal
 PASS font-style: italic
 PASS font-style: oblique
 PASS font-style: inherit
-FAIL font-variant: normal assert_equals: font-variant raw inline style declaration expected "normal" but got ""
-FAIL font-variant: small-caps assert_equals: font-variant raw inline style declaration expected "small-caps" but got ""
-FAIL font-variant: inherit assert_equals: font-variant raw inline style declaration expected "inherit" but got ""
+PASS font-variant: normal
+PASS font-variant: small-caps
+PASS font-variant: inherit
 PASS font-weight: normal
 PASS font-weight: bold
 PASS font-weight: bolder

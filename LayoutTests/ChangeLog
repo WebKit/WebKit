@@ -1,3 +1,13 @@
+2021-06-21  Rob Buis  <rbuis@igalia.com>
+
+        CSSOM test for serializing font-variant fails
+        https://bugs.webkit.org/show_bug.cgi?id=226770
+
+        Reviewed by Darin Adler.
+
+        * css3/font-variant-parsing-expected.txt:
+        * css3/font-variant-parsing.html:
+
 2021-06-20  Darin Adler  <darin@apple.com>
 
         CSS counter style improvements for Armenian, Tamil, and some CJK styles

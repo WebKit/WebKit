@@ -237,6 +237,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getAlignmentShorthandValue(placeSelfShorthand());
     case CSSPropertyFont:
         return fontValue();
+    case CSSPropertyFontVariant:
+        return fontVariantValue();
     case CSSPropertyInset:
         return get4Values(insetShorthand());
     case CSSPropertyInsetBlock:
@@ -362,7 +364,12 @@ void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID
     case CSSPropertyFontStyle:
         break; // No prefix.
     case CSSPropertyFontFamily:
+    case CSSPropertyFontVariantAlternates:
     case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontVariantLigatures:
+    case CSSPropertyFontVariantNumeric:
+    case CSSPropertyFontVariantPosition:
+    case CSSPropertyFontVariantEastAsian:
     case CSSPropertyFontWeight:
     case CSSPropertyFontStretch:
         prefix = ' ';
@@ -409,6 +416,21 @@ String StyleProperties::fontValue() const
     result.append(fontFamilyProperty.value()->cssText());
     if (isCSSWideValueKeyword(commonValue))
         return commonValue;
+    return result.toString();
+}
+
+String StyleProperties::fontVariantValue() const
+{
+    String commonValue;
+    StringBuilder result;
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantLigatures, result, commonValue);
+    if (isCSSWideValueKeyword(result.toString()))
+        return result.toString();
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantAlternates, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantEastAsian, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantNumeric, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantPosition, result, commonValue);
     return result.toString();
 }
 
