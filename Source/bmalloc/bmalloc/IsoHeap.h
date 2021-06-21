@@ -96,6 +96,6 @@ public: \
     void operator delete[](void* p) = delete; \
 using webkitFastMalloced = int; \
 private: \
-using __makeBisoMallocedMacroSemicolonifier = int
+using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api

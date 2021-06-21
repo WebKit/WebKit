@@ -129,7 +129,7 @@ namespace JSC {
     public: \
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED_IMPL(__classToNew) \
     private: \
-        typedef int __thisIsHereToForceASemicolonAfterThisMacro
+        typedef int __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
     class ParserArenaRoot {

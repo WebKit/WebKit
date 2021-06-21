@@ -1,3 +1,16 @@
+2021-06-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        makeUnique cannot be used to instantiate function-local classes
+        https://bugs.webkit.org/show_bug.cgi?id=227163
+
+        Reviewed by Antti Koivisto.
+
+        Make JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED
+        consistent with WTF_MAKE_FAST_ALLOCATED behavior
+        with respect to unused typedefs inside the macro.
+
+        * parser/Nodes.h:
+
 2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add ValueOf fast path in toPrimitive

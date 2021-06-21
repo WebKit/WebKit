@@ -1,3 +1,16 @@
+2021-06-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        makeUnique cannot be used to instantiate function-local classes
+        https://bugs.webkit.org/show_bug.cgi?id=227163
+
+        Reviewed by Antti Koivisto.
+
+        Test that WTF_MAKE_FAST_ALLOCATED and similar macros work in function
+        local classes.
+
+        * TestWebKitAPI/Tests/WTF/StdLibExtras.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-06-21  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r275496): WebSocket Message too long when message is larger than 1mb

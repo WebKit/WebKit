@@ -400,11 +400,11 @@ using WTF::fastAlignedFree;
 public: \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
 private: \
-using __thisIsHereToForceASemicolonAfterThisMacro = int
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
-using __thisIsHereToForceASemicolonAfterThisMacro = int
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 
@@ -443,14 +443,14 @@ public: \
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
 private: \
     WTF_EXPORT_PRIVATE static WTF::DebugHeap& debugHeap(const char*); \
-using __thisIsHereToForceASemicolonAfterThisMacro = int
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
 private: \
     WTF_EXPORT_PRIVATE static WTF::DebugHeap& debugHeap(const char*); \
 public: \
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
-using __thisIsHereToForceASemicolonAfterThisMacro = int
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #else
 
@@ -461,11 +461,11 @@ using __thisIsHereToForceASemicolonAfterThisMacro = int
 public: \
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
 private: \
-using __thisIsHereToForceASemicolonAfterThisMacro = int
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
 public: \
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
-using __thisIsHereToForceASemicolonAfterThisMacro = int
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #endif

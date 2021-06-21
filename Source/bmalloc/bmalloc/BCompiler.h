@@ -79,3 +79,13 @@
 #if !defined(BFALLTHROUGH)
 #define BFALLTHROUGH
 #endif
+
+/* BUNUSED_TYPE_ALIAS */
+
+#if !defined(BUNUSED_TYPE_ALIAS) && BCOMPILER(GCC_COMPATIBLE)
+#define BUNUSED_TYPE_ALIAS __attribute__((unused))
+#endif
+
+#if !defined(BUNUSED_TYPE_ALIAS)
+#define BUNUSED_TYPE_ALIAS
+#endif

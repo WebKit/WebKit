@@ -352,6 +352,16 @@
 #define UNUSED_FUNCTION
 #endif
 
+/* UNUSED_TYPE_ALIAS */
+
+#if !defined(UNUSED_TYPE_ALIAS) && COMPILER(GCC_COMPATIBLE)
+#define UNUSED_TYPE_ALIAS __attribute__((unused))
+#endif
+
+#if !defined(UNUSED_TYPE_ALIAS)
+#define UNUSED_TYPE_ALIAS
+#endif
+
 /* REFERENCED_FROM_ASM */
 
 #if !defined(REFERENCED_FROM_ASM) && COMPILER(GCC_COMPATIBLE)
