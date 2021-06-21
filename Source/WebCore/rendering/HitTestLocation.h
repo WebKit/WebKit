@@ -46,7 +46,7 @@ public:
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
     bool isRectilinear() const { return m_isRectilinear; }
-    IntRect boundingBox() const { return m_boundingBox; }
+    LayoutRect boundingBox() const { return m_boundingBox; }
     
     int topPadding() const { return roundedPoint().y() - m_boundingBox.y(); }
     int rightPadding() const { return m_boundingBox.maxX() - roundedPoint().x() - 1; }
@@ -67,7 +67,7 @@ private:
 
     // These are the cached forms of the more accurate point and rect below.
     LayoutPoint m_point;
-    IntRect m_boundingBox;
+    LayoutRect m_boundingBox;
 
     FloatPoint m_transformedPoint;
     FloatQuad m_transformedRect;

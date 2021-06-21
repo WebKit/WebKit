@@ -1,3 +1,20 @@
+2021-06-20  Alan Bujtas  <zalan@apple.com>
+
+        HitTestLocation::m_boundingBox should be able hold subpixel values
+        https://bugs.webkit.org/show_bug.cgi?id=227185
+
+        Reviewed by Sam Weinig.
+
+        This is in preparation for supporting non-integral area hi-testing (e.g. on 2x displays).
+        No functionality change yet.
+
+        * rendering/HitTestLocation.cpp:
+        (WebCore::rectForPoint):
+        * rendering/HitTestLocation.h:
+        (WebCore::HitTestLocation::boundingBox const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::hitTestCulledInline):
+
 2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Mouse events should only trigger text recognition if the cursor is moving

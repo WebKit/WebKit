@@ -24,17 +24,16 @@
 
 namespace WebCore {
 
-static IntRect rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+static LayoutRect rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
 {
-    IntPoint actualPoint(flooredIntPoint(point));
-    actualPoint -= IntSize(leftPadding, topPadding);
+    auto adjustedPosition = LayoutPoint { flooredIntPoint(point) };
+    adjustedPosition -= LayoutSize  { leftPadding, topPadding };
 
-    IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);
+    auto width = LayoutUnit { leftPadding + rightPadding };
+    auto height = LayoutUnit { topPadding + bottomPadding };
     // As IntRect is left inclusive and right exclusive (seeing IntRect::contains(x, y)), adding "1".
     // FIXME: Remove this once non-rect based hit-detection stops using IntRect:intersects.
-    actualPadding += IntSize(1, 1);
-
-    return IntRect(actualPoint, actualPadding);
+    return { adjustedPosition, LayoutSize { width + 1, height + 1 } };
 }
 
 HitTestLocation::HitTestLocation() = default;
