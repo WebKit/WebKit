@@ -1626,6 +1626,13 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     if (url.protocolIsAbout())
         return;
 
+    if (!url.protocolIsInHTTPFamily() && !processPool().configuration().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol()) {
+        // Unless the processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol flag is set, we don't process swap on navigations withing the same
+        // non HTTP(s) protocol. For this reason, we ignore the registrable domain and processes are not eligible for the process cache.
+        m_registrableDomain = WebCore::RegistrableDomain { };
+        return;
+    }
+
     auto registrableDomain = WebCore::RegistrableDomain { url };
     if (m_registrableDomain && *m_registrableDomain != registrableDomain) {
 #if ENABLE(SERVICE_WORKER)

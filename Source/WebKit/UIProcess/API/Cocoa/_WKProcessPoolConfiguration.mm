@@ -285,6 +285,16 @@
     return _processPoolConfiguration->processSwapsOnWindowOpenWithOpener();
 }
 
+- (void)setProcessSwapsOnNavigationWithinSameNonHTTPFamilyProtocol:(BOOL)swaps
+{
+    _processPoolConfiguration->setProcessSwapsOnNavigationWithinSameNonHTTPFamilyProtocol(swaps);
+}
+
+- (BOOL)processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol
+{
+    return _processPoolConfiguration->processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol();
+}
+
 - (BOOL)pageCacheEnabled
 {
     return _processPoolConfiguration->usesBackForwardCache();
