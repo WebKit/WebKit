@@ -1,3 +1,19 @@
+2021-06-21  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r275496): WebSocket Message too long when message is larger than 1mb
+        https://bugs.webkit.org/show_bug.cgi?id=227030
+        <rdar://problem/79370994>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::Connection::receiveBytes const):
+
 2021-06-21  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Adopt autoinstaller (Follow-up fix)

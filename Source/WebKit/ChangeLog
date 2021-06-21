@@ -1,3 +1,24 @@
+2021-06-21  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r275496): WebSocket Message too long when message is larger than 1mb
+        https://bugs.webkit.org/show_bug.cgi?id=227030
+        <rdar://problem/79370994>
+
+        Reviewed by Youenn Fablet.
+
+        NSURLSession's WebSocket implementation currently has maximumMessageSize's default value at 1MB.
+        Our CFReadStream-based WebSocket implementation had no message size limitation, so set it to 0 to remove the limit.
+
+        Writing a test for this was tricky because our WebSocket LayoutTests use the deflate extension.  I wrote an API test
+        that implements a simple WebSocket exchange and verifies each byte is what we expect.
+        The test used to fail using our NSURLSession-based WebSocket implementation but now passes everywhere.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        Set maximumMessageSize to 0, which, as documented in ws_options.h but unfortunately not yet in NSURLSession.h:
+        "means there is no receive limit."
+        This matches our behavior with the CFReadStream-based WebSocket implementation.
+
 2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Rename WKVisualSearchPreviewController to WKQuickLookPreviewController

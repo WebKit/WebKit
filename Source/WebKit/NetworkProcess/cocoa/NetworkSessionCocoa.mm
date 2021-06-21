@@ -1672,6 +1672,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
     RetainPtr<NSURLSessionWebSocketTask> task = [sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
+    task.get().maximumMessageSize = 0;
     return makeUnique<WebSocketTask>(channel, webPageProxyID, request, WTFMove(task));
 }
 

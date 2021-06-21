@@ -2942,6 +2942,7 @@
 		DF4B273821A47727009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSDictionaryEmptyDictionaryCrash.mm; sourceTree = "<group>"; };
 		DF6BC46F2534E120008F63CC /* TestDownloadDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestDownloadDelegate.mm; path = cocoa/TestDownloadDelegate.mm; sourceTree = "<group>"; };
 		DF6BC4702534E120008F63CC /* TestDownloadDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestDownloadDelegate.h; path = cocoa/TestDownloadDelegate.h; sourceTree = "<group>"; };
+		DF8A2E41267BEFAB00ED59DF /* WebSocket.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocket.mm; sourceTree = "<group>"; };
 		DFB80E352615124E002D4771 /* TestAwakener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAwakener.h; sourceTree = "<group>"; };
 		DFB80E362615124E002D4771 /* TestAwakener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestAwakener.mm; sourceTree = "<group>"; };
 		DFB8FF312492F51A00F00B0D /* Preconnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Preconnect.mm; sourceTree = "<group>"; };
@@ -3619,6 +3620,7 @@
 				C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */,
 				5120C83C1E6750790025B250 /* WebsiteDataStoreCustomPaths.mm */,
 				5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */,
+				DF8A2E41267BEFAB00ED59DF /* WebSocket.mm */,
 				931C281C22BC55A7001D98C4 /* WebSQLBasics.mm */,
 				44C2FBE125E7592C00ABC72F /* WKAppHighlights.mm */,
 				2E5C77061FA70136005932C3 /* WKAttachmentTests.mm */,
