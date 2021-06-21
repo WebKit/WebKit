@@ -33,6 +33,7 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -53,6 +54,8 @@ HTMLSlotElement::HTMLSlotElement(const QualifiedName& tagName, Document& documen
 
 HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
+    SetForScope isInInsertedIntoAncestor { m_isInInsertedIntoAncestor, true };
+
     auto insertionResult = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     ASSERT_UNUSED(insertionResult, insertionResult == InsertedIntoAncestorResult::Done);
 
