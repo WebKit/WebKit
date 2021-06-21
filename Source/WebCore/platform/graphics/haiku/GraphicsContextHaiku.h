@@ -80,6 +80,10 @@ public:
     void setCTM(const AffineTransform&) override;
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
 
+    void beginTransparencyLayer(float opacity) override;
+    void endTransparencyLayer() override;
+    IntRect clipBounds() const override;
+
     BView* m_view;
     pattern m_strokeStyle;
 };

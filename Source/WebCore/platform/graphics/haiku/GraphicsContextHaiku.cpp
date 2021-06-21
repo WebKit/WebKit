@@ -279,9 +279,12 @@ void GraphicsContextHaiku::clip(const FloatRect& rect)
 
 void GraphicsContextHaiku::clipPath(const Path& path, WindRule windRule)
 {
+    int32 fillRule = m_view->FillRule();
+
     m_view->SetFillRule(windRule == WindRule::EvenOdd ? B_EVEN_ODD : B_NONZERO);
     m_view->ClipToShape(path.platformPath());
-    // TODO: reset wind rule
+
+    m_view->SetFillRule(fillRule);
 }
 
 
@@ -521,8 +524,15 @@ void GraphicsContextHaiku::updateState(const GraphicsContextState& state, Graphi
 #endif
     if (flags & GraphicsContextState::StrokeThicknessChange)
         m_view->SetPenSize(state.strokeThickness);
-    if (flags & GraphicsContextState::StrokeColorChange)
-        m_view->SetHighColor(state.strokeColor);
+    if (flags & GraphicsContextState::StrokeColorChange
+        || flags & GraphicsContextState::AlphaChange) {
+        rgb_color color = state.strokeColor;
+        // FIXME the alpha is only applied to plain colors, not bitmaps, gradients,
+        // or anything else. Support should be moved to app_server using the trick
+        // mentionned here: http://permalink.gmane.org/gmane.comp.graphics.agg/2241
+        color.alpha *= state.alpha;
+        m_view->SetHighColor(color);
+    }
     if (flags & GraphicsContextState::StrokeStyleChange) {
         switch (strokeStyle()) {
             case DoubleStroke:
@@ -546,8 +556,16 @@ void GraphicsContextHaiku::updateState(const GraphicsContextState& state, Graphi
                 break;
         }
     }
-    if (flags & GraphicsContextState::FillColorChange)
-        m_view->SetLowColor(state.fillColor);
+    if (flags & GraphicsContextState::FillColorChange
+        || flags & GraphicsContextState::AlphaChange) {
+        rgb_color color = state.fillColor;
+        // FIXME the alpha is only applied to plain colors, not bitmaps, gradients,
+        // or anything else. Support should be moved to app_server using the trick
+        // mentionned here: http://permalink.gmane.org/gmane.comp.graphics.agg/2241
+        color.alpha *= state.alpha;
+
+        m_view->SetLowColor(color);
+    }
     if (flags & GraphicsContextState::FillRuleChange)
         m_view->SetFillRule(fillRule() == WindRule::NonZero ? B_NONZERO : B_EVEN_ODD);
 #if 0
@@ -639,6 +657,46 @@ void GraphicsContextHaiku::set3DTransform(const TransformationMatrix& transform)
     setCTM(transform.toAffineTransform());
 }
 #endif
+
+void GraphicsContextHaiku::beginTransparencyLayer(float opacity)
+{
+    GraphicsContext::beginTransparencyLayer(opacity);
+    m_view->BeginLayer(static_cast<uint8>(opacity * 255.0));
+}
+
+void GraphicsContextHaiku::endTransparencyLayer()
+{
+    GraphicsContext::endTransparencyLayer();
+    m_view->EndLayer();
+}
+
+IntRect GraphicsContextHaiku::clipBounds() const
+{
+    // This can be used by drawing code to do some early clipping (for example
+    // the SVG code may skip complete parts of the image which are outside
+    // the bounds).
+    // So, we get the current clipping region, and convert it back to drawing
+    // space by applying the reverse of the view transform.
+
+    BRegion region;
+    m_view->GetClippingRegion(&region);
+    BRect rect = region.Frame();
+
+    BPoint points[2];
+    points[0] = rect.LeftTop();
+    points[1] = rect.RightBottom();
+
+    BAffineTransform t = m_view->Transform();
+    t.ApplyInverse(points, 2);
+
+    rect.left   = std::min(points[0].x, points[1].x);
+    rect.right  = std::max(points[0].x, points[1].x);
+    rect.top    = std::min(points[0].y, points[1].y);
+    rect.bottom = std::max(points[0].y, points[1].y);
+
+    return IntRect(rect);
+}
+
 
 } // namespace WebCore
 
