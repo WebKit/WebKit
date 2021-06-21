@@ -46,8 +46,6 @@ public:
     WEBCORE_EXPORT explicit HitTestResult(const LayoutPoint&);
 
     WEBCORE_EXPORT explicit HitTestResult(const LayoutRect&);
-    WEBCORE_EXPORT HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
-
     WEBCORE_EXPORT explicit HitTestResult(const HitTestLocation&);
     WEBCORE_EXPORT HitTestResult(const HitTestResult&);
     WEBCORE_EXPORT ~HitTestResult();

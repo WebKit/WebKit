@@ -32,7 +32,6 @@ public:
     HitTestLocation(const FloatPoint&, const FloatQuad&);
 
     HitTestLocation(const LayoutRect&);
-    HitTestLocation(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
 
     // Make a copy the HitTestLocation in a new region by applying given offset to internal point and area.
     HitTestLocation(const HitTestLocation&, const LayoutSize& offset);

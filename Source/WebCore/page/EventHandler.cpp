@@ -1155,9 +1155,9 @@ OptionSet<DragSourceAction> EventHandler::updateDragSourceActionsAllowed() const
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, OptionSet<HitTestRequest::Type> hitType, const LayoutSize& padding) const
+HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, OptionSet<HitTestRequest::Type> hitType) const
 {
-    ASSERT((hitType & HitTestRequest::Type::CollectMultipleElements) || padding.isEmpty());
+    ASSERT(!hitType.contains(HitTestRequest::Type::CollectMultipleElements));
 
     Ref<Frame> protectedFrame(m_frame);
 
@@ -1169,18 +1169,15 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, Optio
         FrameView* mainView = mainFrame.view();
         if (frameView && mainView) {
             IntPoint mainFramePoint = mainView->rootViewToContents(frameView->contentsToRootView(roundedIntPoint(point)));
-            return mainFrame.eventHandler().hitTestResultAtPoint(mainFramePoint, hitType, padding);
+            return mainFrame.eventHandler().hitTestResultAtPoint(mainFramePoint, hitType);
         }
     }
-
-    unsigned nonNegativePaddingWidth = std::max<LayoutUnit>(0, padding.width()).toUnsigned();
-    unsigned nonNegativePaddingHeight = std::max<LayoutUnit>(0, padding.height()).toUnsigned();
 
     // We should always start hit testing a clean tree.
     if (auto* frameView = m_frame.view())
         frameView->updateLayoutAndStyleIfNeededRecursive();
 
-    HitTestResult result(point, nonNegativePaddingHeight, nonNegativePaddingWidth, nonNegativePaddingHeight, nonNegativePaddingWidth);
+    auto result = HitTestResult { point };
     auto* document = m_frame.document();
     if (!document)
         return result;

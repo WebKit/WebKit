@@ -75,12 +75,6 @@ HitTestResult::HitTestResult(const LayoutRect& rect)
 {
 }
 
-HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
-    : m_hitTestLocation(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
-    , m_pointInInnerNodeFrame(centerPoint)
-{
-}
-
 HitTestResult::HitTestResult(const HitTestLocation& other)
     : m_hitTestLocation(other)
     , m_pointInInnerNodeFrame(m_hitTestLocation.point())

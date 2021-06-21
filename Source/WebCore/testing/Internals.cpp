@@ -2312,7 +2312,13 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
 
     HitTestRequest request(hitType);
 
-    auto hitTestResult = HitTestResult { point, topPadding, rightPadding, bottomPadding, leftPadding };
+    auto hitTestResult = [&] {
+        auto size = LayoutSize { leftPadding + rightPadding + 1, topPadding + bottomPadding + 1 };
+        if (size.isEmpty())
+            return HitTestResult { point };
+        auto adjustedPosition = LayoutPoint { flooredIntPoint(point) } - LayoutSize  { leftPadding, topPadding };
+        return HitTestResult { LayoutRect { adjustedPosition, size } };
+    }();
     // When ignoreClipping is false, this method returns null for coordinates outside of the viewport.
     if (!request.ignoreClipping() && !hitTestResult.hitTestLocation().intersects(LayoutRect { frameView->visibleContentRect() }))
         return nullptr;
