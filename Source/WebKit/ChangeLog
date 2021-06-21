@@ -1,3 +1,11 @@
+2021-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix Apple internal build
+
+        Rubber-stamped by Megan Gardner.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2021-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Turn ENABLE_SHAREABLE_RESOURCE on

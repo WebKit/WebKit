@@ -302,7 +302,7 @@
 #include "RemoteMediaSessionCoordinatorProxy.h"
 
 #if ENABLE(APP_HIGHLIGHTS)
-#include "HighlightVisibility.h"
+#include <WebCore/HighlightVisibility.h>
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
