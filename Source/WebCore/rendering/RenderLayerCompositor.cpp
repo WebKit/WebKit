@@ -485,8 +485,16 @@ bool RenderLayerCompositor::updateCompositingPolicy()
         return m_compositingPolicy != currentPolicy;
     }
     
-    auto memoryPolicy = MemoryPressureHandler::currentMemoryUsagePolicy();
-    m_compositingPolicy = memoryPolicy == WTF::MemoryUsagePolicy::Unrestricted ? CompositingPolicy::Normal : CompositingPolicy::Conservative;
+    static auto cachedMemoryPolicy = WTF::MemoryUsagePolicy::Unrestricted;
+    static MonotonicTime cachedMemoryPolicyTime;
+    static constexpr auto memoryPolicyCachingDuration = 2_s;
+    auto now = MonotonicTime::now();
+    if (now - cachedMemoryPolicyTime > memoryPolicyCachingDuration) {
+        cachedMemoryPolicy = MemoryPressureHandler::currentMemoryUsagePolicy();
+        cachedMemoryPolicyTime = now;
+    }
+
+    m_compositingPolicy = cachedMemoryPolicy == WTF::MemoryUsagePolicy::Unrestricted ? CompositingPolicy::Normal : CompositingPolicy::Conservative;
     return m_compositingPolicy != currentPolicy;
 }
 
