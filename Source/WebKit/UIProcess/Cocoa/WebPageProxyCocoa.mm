@@ -48,6 +48,7 @@
 #import "WebProcessProxy.h"
 #import "WebsiteDataStore.h"
 #import "WKErrorInternal.h"
+#import <Foundation/NSURLRequest.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HighlightVisibility.h>
@@ -83,13 +84,6 @@ SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-// FIXME: This additions file should be renamed to WebPageProxyAdditions.mm.
-#import <WebKitAdditions/WebPageProxyAdditions.h>
-#else
-#define WEB_PAGE_PROXY_ADDITIONS
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
@@ -659,7 +653,12 @@ void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(boo
 
 void WebPageProxy::setLastNavigationWasAppBound(ResourceRequest& request)
 {
-    WEB_PAGE_PROXY_ADDITIONS
+#if ENABLE(APP_PRIVACY_REPORT)
+    auto *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    request.setIsAppBound(!nsRequest._isNonAppInitiated);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     m_lastNavigationWasAppBound = request.isAppBound();
 }
 

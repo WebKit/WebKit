@@ -1,3 +1,16 @@
+2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        Update compile flag naming to align with the App Privacy Report
+        feature.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-06-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         makeUnique cannot be used to instantiate function-local classes

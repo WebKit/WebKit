@@ -1,3 +1,13 @@
+2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2021-06-21  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Don't process-swap on navigations within the same non-HTTP(s) protocol

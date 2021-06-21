@@ -1,3 +1,29 @@
+2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        No new tests, covered by existing tests.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (contextString): Deleted.
+        This patch deletes the contextString function because it is no longer
+        needed now that CFNetwork sets the attribution context, and it seemed
+        silly to migrate code from WebKitAdditions just to delete it
+        immediately. This also moves the processPCMRequest function
+        declaration from WebKitAdditions so we can remove
+        NETWORK_DATA_TASK_COCOA_ADDITIONS.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::isActingOnBehalfOfAFullWebBrowser):
+        (WebKit::NetworkSessionCocoa::removeNetworkWebsiteData):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setLastNavigationWasAppBound):
+
 2021-06-21  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Don't process-swap on navigations within the same non-HTTP(s) protocol
