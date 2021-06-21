@@ -4,7 +4,7 @@ set(libwebrtc_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/libwebrtc/DerivedSources"
 file(MAKE_DIRECTORY ${libwebrtc_DERIVED_SOURCES_DIR})
 
 if (NOT APPLE)
-    find_package(LibVpx 1.7.0)
+    find_package(LibVpx 1.10.0)
     if (NOT LIBVPX_FOUND)
         message(FATAL_ERROR "libvpx is needed for USE_LIBWEBRTC.")
     endif ()
@@ -1674,6 +1674,8 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_CODEC_ISAC
   WEBRTC_CODEC_OPUS
   WEBRTC_CODEC_RED
+  WEBRTC_HAVE_SCTP
+  WEBRTC_HAVE_USRSCTP
   WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE
   WEBRTC_INTELLIGIBILITY_ENHANCER=0
   WEBRTC_NS_FLOAT
@@ -1731,7 +1733,6 @@ set(webrtc_INCLUDE_DIRECTORIES PRIVATE
     Source/third_party/libsrtp/crypto/include
     Source/third_party/libsrtp/include
     Source/third_party/libyuv/include
-    Source/third_party/libvpx/source/libvpx
     Source/third_party/opus/src/celt
     Source/third_party/opus/src/include
     Source/third_party/opus/src/silk
