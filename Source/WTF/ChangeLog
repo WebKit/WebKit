@@ -1,3 +1,20 @@
+2021-06-20  Sam Weinig  <weinig@apple.com>
+
+        Replace Span implementation with one from libc++, which is more spec complient
+        https://bugs.webkit.org/show_bug.cgi?id=227197
+
+        Reviewed by Darin Adler.
+
+        * wtf/Span.h:
+        The tcb span implementation had some SFINAE issues when converting containers
+        had data() and size() member functions but were not span compatible that were
+        causing failures. Rather than trying to fix those, this adopts a modified version
+        of the libc++ span implementation which is more up-to-date.
+
+        To fix MSVC compile issues, the as_bytes/as_writable_bytes functions have been
+        re-implemented to not work around a compile issue seen where using the dynamic_extent
+        specicialization from the static extent specicialization was failing to compile.
+
 2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Rename WKVisualSearchPreviewController to WKQuickLookPreviewController
