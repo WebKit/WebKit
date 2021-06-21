@@ -257,6 +257,9 @@ arm64: MultiplySub32 U:G:32, U:G:32, U:G:32, ZD:G:32
 arm64: MultiplySub64 U:G:64, U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp, Tmp
 
+arm64: MultiplySubSignExtend32 U:G:32, U:G:32, U:G:64, D:G:64
+    Tmp, Tmp, Tmp, Tmp
+
 arm64: MultiplyNeg32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
 

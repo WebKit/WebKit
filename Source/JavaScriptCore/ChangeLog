@@ -1,3 +1,58 @@
+2021-06-21  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to utilize SMSUBL supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227195
+
+        Reviewed by Keith Miller.
+
+        Signed Multiply-Subtract Long(SMSUBL), supported by ARM64, multiplies two 
+        32-bit register values, subtracts the product from a 64-bit register value, 
+        and writes the result 64-bit destination register. The instruction selector 
+        can utilize this to lowering certain patterns in B3 IR before further Air 
+        optimization. Given the operation:
+
+        smsubl d, n, m, a
+
+        The equivalent pattern would be:
+
+        d = a - SExt32(n) * SExt32(m)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = SExt32(Trunc(ArgumentReg(%x1)))
+        Int @2 = SExt32(Trunc(ArgumentReg(%x2)))
+        Int @3 = Mul(@1, @2)
+        Int @4 = Sub(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        Before Adding SMSUBL:
+        // Old optimized AIR
+        SignExtend32ToPtr  %x1, %x1,           @1
+        SignExtend32ToPtr  %x2, %x2,           @2
+        MultiplySub64      %x1, %x2, %x0, %x0, @4
+        Ret64              %x0,                @5
+
+        After Adding SMSUBL:
+        // New optimized AIR
+        MultiplySubSignExtend32 %x1, %x2, %x0, %x0, @4
+        Ret64                   %x0,                @5
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::multiplySubSignExtend32):
+        * assembler/testmasm.cpp:
+        (JSC::testMulSubSignExtend32):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testMulSubArgsLeft):
+        (testMulSubArgsRight):
+        (testMulSubArgsLeft32):
+        (testMulSubArgsRight32):
+        (testMulSubSignExtend32Args):
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
 2021-06-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         makeUnique cannot be used to instantiate function-local classes

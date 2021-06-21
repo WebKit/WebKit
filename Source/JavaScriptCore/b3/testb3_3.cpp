@@ -3200,6 +3200,7 @@ void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testMulSubArgsRight());
     RUN(testMulSubArgsLeft32());
     RUN(testMulSubArgsRight32());
+    RUN(testMulSubSignExtend32Args());
     RUN(testMulNegArgs());
     RUN(testMulNegArgs32());
     

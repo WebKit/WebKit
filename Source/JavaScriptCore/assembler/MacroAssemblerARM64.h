@@ -632,6 +632,11 @@ public:
         m_assembler.msub<64>(dest, mulLeft, mulRight, minuend);
     }
 
+    void multiplySubSignExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        m_assembler.smsubl(dest, mulLeft, mulRight, minuend);
+    }
+
     void multiplyNeg64(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
     {
         m_assembler.msub<64>(dest, mulLeft, mulRight, ARM64Registers::zr);

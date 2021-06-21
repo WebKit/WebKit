@@ -1102,17 +1102,18 @@ void testMulSubArgsLeft()
     Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
     Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
     Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
-    Value* added = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
-    root->appendNewControlValue(proc, Return, Origin(), added);
+    Value* subtracted = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
+    root->appendNewControlValue(proc, Return, Origin(), subtracted);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkDoesNotUseInstruction(*code, "msub");
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value * b.value - c.value);
-            }
         }
     }
 }
@@ -1126,17 +1127,18 @@ void testMulSubArgsRight()
     Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
     Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
     Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg1, arg2);
-    Value* added = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
-    root->appendNewControlValue(proc, Return, Origin(), added);
+    Value* subtracted = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
+    root->appendNewControlValue(proc, Return, Origin(), subtracted);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "msub");
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value - b.value * c.value);
-            }
         }
     }
 }
@@ -1153,17 +1155,18 @@ void testMulSubArgsLeft32()
     Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
     Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
-    Value* added = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
-    root->appendNewControlValue(proc, Return, Origin(), added);
+    Value* subtracted = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
+    root->appendNewControlValue(proc, Return, Origin(), subtracted);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkDoesNotUseInstruction(*code, "msub");
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value * b.value - c.value);
-            }
         }
     }
 }
@@ -1180,16 +1183,54 @@ void testMulSubArgsRight32()
     Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
     Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg1, arg2);
-    Value* added = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
-    root->appendNewControlValue(proc, Return, Origin(), added);
+    Value* subtracted = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
+    root->appendNewControlValue(proc, Return, Origin(), subtracted);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "msub");
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value - b.value * c.value);
+        }
+    }
+}
+
+void testMulSubSignExtend32Args()
+{
+    // d = a - SExt32(n) * SExt32(m)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* aValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* nValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+    Value* mValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* subValue = root->appendNew<Value>(proc, Sub, Origin(), aValue, mulValue);
+    root->appendNewControlValue(proc, Return, Origin(), subValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "smsubl");
+
+    for (auto a : int64Operands()) {
+        for (auto n : int32Operands()) {
+            for (auto m : int32Operands()) {
+                int64_t lhs = invoke<int64_t>(*code, a.value, n.value, m.value);
+                int64_t rhs = a.value - static_cast<int64_t>(n.value) * static_cast<int64_t>(m.value);
+                CHECK(lhs == rhs);
             }
         }
     }

@@ -1067,6 +1067,29 @@ void testUbfx32()
     }
 }
 
+void testMulSubSignExtend32()
+{
+    // d = a - SExt32(n) *  SExt32(m)
+    auto sub = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.multiplySubSignExtend32(GPRInfo::argumentGPR1, 
+            GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR0, 
+            GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : int64Operands()) {
+        for (auto n : int32Operands()) {
+            for (auto m : int32Operands())
+                CHECK_EQ(invoke<int64_t>(sub, a, n, m), a - static_cast<int64_t>(n) * static_cast<int64_t>(m));
+        }
+    }
+}
+
 void testUbfx64()
 {
     uint64_t src = 0xffffffffffffffff;
@@ -3254,6 +3277,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testSub64ArgImm32());
     RUN(testSub64Imm64());
     RUN(testSub64ArgImm64());
+    RUN(testMulSubSignExtend32());
     RUN(testUbfx32());
     RUN(testUbfx64());
 #endif

@@ -2583,24 +2583,51 @@ private:
                 && isValidForm(multiplySubOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 Value* left = m_value->child(0);
                 Value* right = m_value->child(1);
-                if (!imm(right) || m_valueToTmp[right]) {
-                    auto tryAppendMultiplySub = [&] () -> bool {
-                        if (right->opcode() != Mul || !canBeInternal(right))
-                            return false;
+                auto tryMultiply = [&] (Value* v) -> bool {
+                    if (v->opcode() != Mul || !canBeInternal(v))
+                        return false;
+                    if (m_locked.contains(v->child(0)) || m_locked.contains(v->child(1)))
+                        return false;
+                    return true;
+                };
 
-                        Value* multiplyLeft = right->child(0);
-                        Value* multiplyRight = right->child(1);
-                        if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
-                            return false;
+                // MSUB: d = a - n * m
+                if ((!imm(right) || m_valueToTmp[right]) && tryMultiply(right)) {
+                    Value* multiplyLeft = right->child(0);
+                    Value* multiplyRight = right->child(1);
 
-                        append(multiplySubOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
-                        commitInternal(right);
+                    // SMSUBL: d = a - SExt32(n) *  SExt32(m)
+                    if (multiplySubOpcode == MultiplySub64
+                        && isValidForm(MultiplySubSignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                        auto trySExt32 = [&] (Value* v) {
+                            if (v->opcode() != SExt32 || !canBeInternal(v))
+                                return false;
+                            if (m_locked.contains(v->child(0)))
+                                return false;
+                            return true;
+                        };
 
-                        return true;
-                    };
+                        auto tryAppendMultiplySubSignExtend32 = [&] () -> bool {
+                            if (!trySExt32(multiplyLeft) || !trySExt32(multiplyRight))
+                                return false;
+                            append(MultiplySubSignExtend32, 
+                                tmp(multiplyLeft->child(0)), 
+                                tmp(multiplyRight->child(0)), 
+                                tmp(left), 
+                                tmp(m_value));
+                            commitInternal(right);
+                            commitInternal(multiplyLeft);
+                            commitInternal(multiplyRight);
+                            return true;
+                        };
 
-                    if (tryAppendMultiplySub())
-                        return;
+                        if (tryAppendMultiplySubSignExtend32())
+                            return;
+                    }
+
+                    append(multiplySubOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
+                    commitInternal(right);
+                    return;
                 }
             }
 
