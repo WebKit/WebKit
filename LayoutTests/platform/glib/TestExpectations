@@ -2322,6 +2322,33 @@ webkit.org/b/227053 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
 # Require expect file for dumped render tree.
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ]
 
+webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003a.html [ ImageOnlyFailure Pass ]
+webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003b.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/227233 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
+webkit.org/b/227233 imported/w3c/web-platform-tests/webrtc-priority/RTCPeerConnection-ondatachannel.html [ Failure ]
+webkit.org/b/227233 inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Timeout ]
+webkit.org/b/227233 webrtc/calling-peerconnection-once-closed.html [ Failure ]
+webkit.org/b/227233 webrtc/candidate-stats.html [ Failure ]
+webkit.org/b/227233 webrtc/closing-peerconnection.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/basic.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/binary.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/bufferedAmount-afterClose.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/bufferedAmountLowThreshold.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-gc.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-page-cache.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-page-cache-send.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-stats.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/dtls10.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/filter-ice-candidate.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/multi-channel.html [ Failure ]
+webkit.org/b/227233 webrtc/filtering-ice-candidate-after-reload.html [ Timeout ]
+webkit.org/b/227233 webrtc/legacy-api.html [ Failure ]
+webkit.org/b/227233 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

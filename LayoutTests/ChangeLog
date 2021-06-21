@@ -1,3 +1,12 @@
+2021-06-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of test failures
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-06-21  Rob Buis  <rbuis@igalia.com>
 
         CSSOM test for serializing font-variant fails
