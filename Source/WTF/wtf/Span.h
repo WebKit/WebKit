@@ -71,11 +71,11 @@ template <class _Tp, class _ElementType>
 struct __is_span_compatible_container<_Tp, _ElementType,
         std::void_t<
         // is not a specialization of Span
-            typename std::enable_if<!__is_span<_Tp>::value, nullptr_t>::type,
+            typename std::enable_if<!__is_span<_Tp>::value, std::nullptr_t>::type,
         // is not a specialization of array
-            typename std::enable_if<!__is_std_array<_Tp>::value, nullptr_t>::type,
+            typename std::enable_if<!__is_std_array<_Tp>::value, std::nullptr_t>::type,
         // sd::is_array_v<Container> is false,
-            typename std::enable_if<!std::is_array_v<_Tp>, nullptr_t>::type,
+            typename std::enable_if<!std::is_array_v<_Tp>, std::nullptr_t>::type,
         // std::data(cont) and std::size(cont) are well formed
             decltype(std::data(std::declval<_Tp>())),
             decltype(std::size(std::declval<_Tp>())),
@@ -83,7 +83,7 @@ struct __is_span_compatible_container<_Tp, _ElementType,
             typename std::enable_if<
                 std::is_convertible_v<std::remove_pointer_t<decltype(std::data(std::declval<_Tp &>()))>(*)[],
                                  _ElementType(*)[]>,
-                nullptr_t>::type
+                std::nullptr_t>::type
         >>
     : public std::true_type {};
 
@@ -110,7 +110,7 @@ public:
     static constexpr size_type extent = _Extent;
 
 // [span.cons], span constructors, copy, assignment, and destructor
-    template <std::size_t _Sz = _Extent, std::enable_if_t<_Sz == 0, nullptr_t> = nullptr>
+    template <std::size_t _Sz = _Extent, std::enable_if_t<_Sz == 0, std::nullptr_t> = nullptr>
     _WTF_LIBCPP_INLINE_VISIBILITY constexpr Span() noexcept : __data{nullptr} {}
 
     constexpr Span           (const Span&) noexcept = default;
@@ -124,19 +124,19 @@ public:
     _WTF_LIBCPP_INLINE_VISIBILITY constexpr Span(element_type (&__arr)[_Extent])          noexcept : __data{__arr} {}
 
     template <class _OtherElementType,
-              std::enable_if_t<std::is_convertible_v<_OtherElementType(*)[], element_type (*)[]>, nullptr_t> = nullptr>
+              std::enable_if_t<std::is_convertible_v<_OtherElementType(*)[], element_type (*)[]>, std::nullptr_t> = nullptr>
     _WTF_LIBCPP_INLINE_VISIBILITY
     constexpr Span(std::array<_OtherElementType, _Extent>& __arr) noexcept : __data{__arr.data()} {}
 
     template <class _OtherElementType,
-              std::enable_if_t<std::is_convertible_v<const _OtherElementType(*)[], element_type (*)[]>, nullptr_t> = nullptr>
+              std::enable_if_t<std::is_convertible_v<const _OtherElementType(*)[], element_type (*)[]>, std::nullptr_t> = nullptr>
     _WTF_LIBCPP_INLINE_VISIBILITY
     constexpr Span(const std::array<_OtherElementType, _Extent>& __arr) noexcept : __data{__arr.data()} {}
 
     template <class _Container>
     _WTF_LIBCPP_INLINE_VISIBILITY
         constexpr explicit Span(      _Container& __c,
-            std::enable_if_t<__is_span_compatible_container<_Container, _Tp>::value, nullptr_t> = nullptr)
+            std::enable_if_t<__is_span_compatible_container<_Container, _Tp>::value, std::nullptr_t> = nullptr)
         : __data{_WTF_VSTD::data(__c)} {
             _WTF_LIBCPP_ASSERT(_Extent == _WTF_VSTD::size(__c), "size mismatch in Span's constructor (range)");
         }
@@ -144,7 +144,7 @@ public:
     template <class _Container>
     _WTF_LIBCPP_INLINE_VISIBILITY
         constexpr explicit Span(const _Container& __c,
-            std::enable_if_t<__is_span_compatible_container<const _Container, _Tp>::value, nullptr_t> = nullptr)
+            std::enable_if_t<__is_span_compatible_container<const _Container, _Tp>::value, std::nullptr_t> = nullptr)
         : __data{_WTF_VSTD::data(__c)} {
             _WTF_LIBCPP_ASSERT(_Extent == _WTF_VSTD::size(__c), "size mismatch in Span's constructor (range)");
         }
@@ -154,7 +154,7 @@ public:
         constexpr Span(const Span<_OtherElementType, _Extent>& __other,
                        std::enable_if_t<
                           std::is_convertible_v<_OtherElementType(*)[], element_type (*)[]>,
-                          nullptr_t> = nullptr)
+                          std::nullptr_t> = nullptr)
         : __data{__other.data()} {}
 
     template <class _OtherElementType>
@@ -162,7 +162,7 @@ public:
         constexpr explicit Span(const Span<_OtherElementType>& __other,
                        std::enable_if_t<
                           std::is_convertible_v<_OtherElementType(*)[], element_type (*)[]>,
-                          nullptr_t> = nullptr) noexcept
+                          std::nullptr_t> = nullptr) noexcept
         : __data{__other.data()} { _WTF_LIBCPP_ASSERT(_Extent == __other.size(), "size mismatch in Span's constructor (other Span)"); }
 
 
@@ -296,25 +296,25 @@ public:
     constexpr Span(element_type (&__arr)[_Sz])          noexcept : __data{__arr}, __size{_Sz} {}
 
     template <class _OtherElementType, std::size_t _Sz,
-              std::enable_if_t<std::is_convertible_v<_OtherElementType(*)[], element_type (*)[]>, nullptr_t> = nullptr>
+              std::enable_if_t<std::is_convertible_v<_OtherElementType(*)[], element_type (*)[]>, std::nullptr_t> = nullptr>
     _WTF_LIBCPP_INLINE_VISIBILITY
     constexpr Span(std::array<_OtherElementType, _Sz>& __arr) noexcept : __data{__arr.data()}, __size{_Sz} {}
 
     template <class _OtherElementType, std::size_t _Sz,
-              std::enable_if_t<std::is_convertible_v<const _OtherElementType(*)[], element_type (*)[]>, nullptr_t> = nullptr>
+              std::enable_if_t<std::is_convertible_v<const _OtherElementType(*)[], element_type (*)[]>, std::nullptr_t> = nullptr>
     _WTF_LIBCPP_INLINE_VISIBILITY
     constexpr Span(const std::array<_OtherElementType, _Sz>& __arr) noexcept : __data{__arr.data()}, __size{_Sz} {}
 
     template <class _Container>
     _WTF_LIBCPP_INLINE_VISIBILITY
         constexpr Span(      _Container& __c,
-            std::enable_if_t<__is_span_compatible_container<_Container, _Tp>::value, nullptr_t> = nullptr)
+            std::enable_if_t<__is_span_compatible_container<_Container, _Tp>::value, std::nullptr_t> = nullptr)
         : __data{_WTF_VSTD::data(__c)}, __size{(size_type) _WTF_VSTD::size(__c)} {}
 
     template <class _Container>
     _WTF_LIBCPP_INLINE_VISIBILITY
         constexpr Span(const _Container& __c,
-            std::enable_if_t<__is_span_compatible_container<const _Container, _Tp>::value, nullptr_t> = nullptr)
+            std::enable_if_t<__is_span_compatible_container<const _Container, _Tp>::value, std::nullptr_t> = nullptr)
         : __data{_WTF_VSTD::data(__c)}, __size{(size_type) _WTF_VSTD::size(__c)} {}
 
 
@@ -323,7 +323,7 @@ public:
         constexpr Span(const Span<_OtherElementType, _OtherExtent>& __other,
                        std::enable_if_t<
                           std::is_convertible_v<_OtherElementType(*)[], element_type (*)[]>,
-                          nullptr_t> = nullptr) noexcept
+                          std::nullptr_t> = nullptr) noexcept
         : __data{__other.data()}, __size{__other.size()} {}
 
 //    ~Span() noexcept = default;
