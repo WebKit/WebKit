@@ -43,7 +43,6 @@ class AudioBus;
 
 class AudioFileReader {
 public:
-    explicit AudioFileReader(const char* filePath);
     explicit AudioFileReader(const void* data, size_t dataSize);
     ~AudioFileReader();
 

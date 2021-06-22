@@ -54,7 +54,6 @@ class AudioFileReader : public CanMakeWeakPtr<AudioFileReader> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AudioFileReader);
 public:
-    AudioFileReader(const char* filePath);
     AudioFileReader(const void* data, size_t dataSize);
     ~AudioFileReader();
 
@@ -75,7 +74,6 @@ private:
     RunLoop& m_runLoop;
     const void* m_data { nullptr };
     size_t m_dataSize { 0 };
-    const char* m_filePath { nullptr };
     float m_sampleRate { 0 };
     int m_channels { 0 };
     HashMap<int, GRefPtr<GstBufferList>> m_buffers;
@@ -112,12 +110,6 @@ void AudioFileReader::deinterleaveReadyCallback(AudioFileReader* reader)
 void AudioFileReader::decodebinPadAddedCallback(AudioFileReader* reader, GstPad* pad)
 {
     reader->plugDeinterleave(pad);
-}
-
-AudioFileReader::AudioFileReader(const char* filePath)
-    : m_runLoop(RunLoop::current())
-    , m_filePath(filePath)
-{
 }
 
 AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
@@ -361,9 +353,6 @@ void AudioFileReader::decodeAudioForBusCreation()
         source = makeGStreamerElement("giostreamsrc", nullptr);
         GRefPtr<GInputStream> memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, nullptr));
         g_object_set(source, "stream", memoryStream.get(), nullptr);
-    } else {
-        source = gst_element_factory_make("filesrc", nullptr);
-        g_object_set(source, "location", m_filePath, nullptr);
     }
 
     m_decodebin = makeGStreamerElement("decodebin", "decodebin");
@@ -411,18 +400,6 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     if (mixToMono)
         return AudioBus::createByMixingToMono(audioBus.get());
     return audioBus;
-}
-
-RefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
-{
-    initializeDebugCategory();
-    GST_DEBUG("Creating bus from file %s", filePath);
-    RefPtr<AudioBus> bus;
-    auto thread = Thread::create("AudioFileReader", [&bus, filePath, mixToMono, sampleRate] {
-        bus = AudioFileReader(filePath).createBus(sampleRate, mixToMono);
-    });
-    thread->waitForCompletion();
-    return bus;
 }
 
 RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)

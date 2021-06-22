@@ -99,15 +99,6 @@ static bool validateAudioBufferList(AudioBufferList* bufferList)
     return true;
 }
 
-AudioFileReader::AudioFileReader(const char* filePath)
-{
-    auto filePathString = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, filePath, kCFStringEncodingUTF8));
-    auto urlRef = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePathString.get(), kCFURLPOSIXPathStyle, false));
-    if (!urlRef)
-        return;
-    ExtAudioFileOpenURL(urlRef.get(), &m_extAudioFileRef);
-}
-
 AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
     : m_data(data)
     , m_dataSize(dataSize)
@@ -268,12 +259,6 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     destroyAudioBufferList(bufferList);
 
     return audioBus;
-}
-
-RefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
-{
-    AudioFileReader reader(filePath);
-    return reader.createBus(sampleRate, mixToMono);
 }
 
 RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)

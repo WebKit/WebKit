@@ -1,3 +1,18 @@
+2021-06-22  Jean-Yves Avenard  <jya@apple.com>
+
+        Remove unused method in AudioFileReader
+        https://bugs.webkit.org/show_bug.cgi?id=227208
+
+        Reviewed by Chris Dumez.
+
+        Remove two unused methods in AudioFileReader and their related constructors.
+
+        * platform/audio/AudioFileReader.h:
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        * platform/audio/cocoa/AudioFileReaderCocoa.h:
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::decodeAudioForBusCreation):
+
 2021-06-22  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] iOS device steals BT headphones from other devices during silent playback
