@@ -1,3 +1,25 @@
+2021-06-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Update textfield border color to match specification
+        https://bugs.webkit.org/show_bug.cgi?id=227135
+        <rdar://problem/79456679>
+
+        Reviewed by Maciej Stachowiak.
+
+        * css/html.css:
+        (input, textarea):
+
+        Use the system opaque separator color for textfield borders, as it has
+        better visibility compared to the system fill color.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::cssValueSystemColorInformationList):
+
+        Define CSSValueAppleSystemOpaqueSeparator using separatorColor composited
+        on top of a solid color, rather than using opaqueSeparatorColor, since
+        the latter currently lacks an Increase Contrast variant. Note that the
+        colors are equivalent with regular contrast.
+
 2021-06-21  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes late June 2021 edition

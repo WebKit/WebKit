@@ -414,7 +414,7 @@ input {
 #endif
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: 5px;
-    border: 1px solid -apple-system-opaque-fill;
+    border: 1px solid -apple-system-opaque-separator;
     font: 11px system-ui;
     padding: 0.2em 0.5em 0.3em 0.5em;
 #else

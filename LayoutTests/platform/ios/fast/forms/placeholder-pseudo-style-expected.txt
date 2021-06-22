@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 336x19
         text run at (0,0) width 336: "This tests that you can set the placeholder text color."
       RenderBR {BR} at (335,0) size 1x19
-      RenderTextControl {INPUT} at (2,22) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+      RenderTextControl {INPUT} at (2,22) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
       RenderText {#text} at (158,21) size 5x19
         text run at (158,21) width 5: " "
       RenderTextControl {INPUT} at (164,22) size 167x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
@@ -16,16 +16,16 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (152,7) size 0x0
       RenderText {#text} at (332,21) size 5x19
         text run at (332,21) width 5: " "
-      RenderTextControl {INPUT} at (338,22) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+      RenderTextControl {INPUT} at (338,22) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
         RenderFlexibleBox {DIV} at (6,3) size 143x15
           RenderBlock {DIV} at (0,0) size 142x14
       RenderText {#text} at (495,21) size 5x19
         text run at (495,21) width 5: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderTextControl {INPUT} at (2,47) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+      RenderTextControl {INPUT} at (2,47) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
       RenderText {#text} at (158,46) size 5x19
         text run at (158,46) width 5: " "
-      RenderTextControl {INPUT} at (164,47) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+      RenderTextControl {INPUT} at (164,47) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
       RenderText {#text} at (0,0) size 0x0
 layer at (17,33) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15 [color=#640000]
@@ -58,7 +58,7 @@ layer at (179,58) size 141x14
 layer at (179,58) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
 layer at (510,30) size 153x21
-  RenderTextControl {INPUT} at (501,22) size 154x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+  RenderTextControl {INPUT} at (501,22) size 154x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
 layer at (516,33) size 139x14
   RenderBlock {DIV} at (6,3) size 141x15 [color=#640000]
     RenderText {#text} at (0,0) size 68x14

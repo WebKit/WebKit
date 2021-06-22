@@ -1325,7 +1325,8 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
             { CSSValueAppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
             { CSSValueAppleSystemPlaceholderText, @selector(placeholderTextColor) },
             { CSSValueAppleSystemSeparator, @selector(separatorColor) },
-            { CSSValueAppleSystemOpaqueSeparator, @selector(opaqueSeparatorColor) },
+            // FIXME: <rdar://problem/79471528> Adopt [UIColor opaqueSeparatorColor] once it has a high contrast variant.
+            { CSSValueAppleSystemOpaqueSeparator, @selector(separatorColor), true },
             { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
             { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemGrid, @selector(separatorColor) },
