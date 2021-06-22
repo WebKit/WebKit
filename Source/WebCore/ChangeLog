@@ -1,3 +1,16 @@
+2021-06-22  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: [iOS] ASSERTION FAILED: pixelBuffer->data().length() >= 4 under WebCore::sampleColor
+        https://bugs.webkit.org/show_bug.cgi?id=227256
+        <rdar://problem/79584286>
+
+        Unreviewed, speculative internal test fix.
+
+        * page/PageColorSampler.cpp:
+        (WebCore::sampleColor):
+        It seems like sometimes the `PixelBuffer` can have a `length()` of `0`. Instead of only
+        having an `ASSERT` that there are enough items, actually early-return.
+
 2021-06-22  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] AVPlayer periodic time observer callback should use weakPtr
