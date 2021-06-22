@@ -1,5 +1,14 @@
 2021-06-22  Saam Barati  <sbarati@apple.com>
 
+        Run microbenchmarks/interpreter-wasm under runDefault only
+        https://bugs.webkit.org/show_bug.cgi?id=227261
+
+        Reviewed by Robin Morisset.
+
+        * microbenchmarks/interpreter-wasm.js:
+
+2021-06-22  Saam Barati  <sbarati@apple.com>
+
         jitCompileAndSetHeuristics shouldn't return true when we fail to compile
         https://bugs.webkit.org/show_bug.cgi?id=227155
 
