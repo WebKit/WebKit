@@ -55,6 +55,7 @@ class Manager(object):
         result = []
         current_test_suite = None
         for line in output.split('\n'):
+            line = line.split("#")[0]  # Value-parametrized tests contain #.
             striped_line = line.lstrip().rstrip()
             if not striped_line:
                 continue

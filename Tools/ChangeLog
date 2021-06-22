@@ -1,3 +1,30 @@
+2021-06-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Test runner parses the names of value parametrised GTEST tests wrong
+        https://bugs.webkit.org/show_bug.cgi?id=227207
+
+        Reviewed by Jonathan Bedard.
+
+        Fix the parsing of test names.
+        * Scripts/webkitpy/api_tests/manager_unittest.py:
+        Add a test for the parsing.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager._test_list_from_output):
+        Fix the test name parsing.
+        The name is printed as:
+          ValueParametrizedTestsSupported/DogGreen  # GetParam() = (Dog, Green)
+
+        * TestWebKitAPI/Test.h:
+        (TestWebKitAPI::TestParametersToStringFormatter::operator() const):
+        Add a general-purpose formatter for all value-parametrized tests
+        to use.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/Misc/TestRunnerTests.cpp: Added.
+        (TestWebKitAPI::TEST_P):
+        Add a value-parametrized test testing the test runner.
+
 2021-06-21  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Don't process-swap on navigations within the same non-HTTP(s) protocol
