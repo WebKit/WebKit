@@ -1,3 +1,16 @@
+2021-06-22  Peng Liu  <peng.liu6@apple.com>
+
+        ASSERTION FAILED: videoFullscreenManager->client() == nullptr in WKFullScreenWindowController.mm
+        https://bugs.webkit.org/show_bug.cgi?id=227243
+
+        Reviewed by Eric Carlson.
+
+        `-[WKFullScreenWindowController windowDidExitFullScreen:]` needs to clear
+        its client like `-[WKFullScreenWindowController didExitPictureInPicture]` does.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController windowDidExitFullScreen:]):
+
 2021-06-22  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r279083.
