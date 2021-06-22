@@ -84,6 +84,9 @@ public:
     void endTransparencyLayer() override;
     IntRect clipBounds() const override;
 
+    void save() override;
+    void restore() override;
+
     BView* m_view;
     pattern m_strokeStyle;
 };

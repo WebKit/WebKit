@@ -118,7 +118,7 @@ void GraphicsContextHaiku::drawEllipse(const FloatRect& rect)
             const BGradient& gradient = m_state.fillGradient->getHaikuGradient();
             m_view->FillEllipse(rect, gradient);
         } else
-            m_view->FillEllipse(rect);
+            m_view->FillEllipse(rect, B_SOLID_LOW);
     }
 
     // TODO: Support gradients
@@ -181,7 +181,7 @@ void GraphicsContextHaiku::fillRect(const FloatRect& rect, const Color& color)
 void GraphicsContextHaiku::fillRect(const FloatRect& rect)
 {
     // TODO fill the shadow
-    m_view->FillRect(rect);
+    m_view->FillRect(rect, B_SOLID_LOW);
 }
 
 void GraphicsContextHaiku::fillRoundedRectImpl(const FloatRoundedRect& roundRect, const Color& color)
@@ -266,7 +266,7 @@ void GraphicsContextHaiku::fillPath(const Path& path)
         if (m_view->HighColor().alpha < 255)
             m_view->SetDrawingMode(B_OP_ALPHA);
 
-        m_view->FillShape(path.platformPath());
+        m_view->FillShape(path.platformPath(), B_SOLID_LOW);
     }
 
     m_view->SetDrawingMode(mode);
@@ -519,7 +519,7 @@ void GraphicsContextHaiku::updateState(const GraphicsContextState& state, Graphi
 #if 0
         StrokeGradientChange                    = 1 << 0,
         StrokePatternChange                     = 1 << 1,
-        FillGradientChange // 
+        FillGradientChange // Handled directly in drawing operations
         FillPatternChange                       = 1 << 3,
 #endif
     if (flags & GraphicsContextState::StrokeThicknessChange)
@@ -635,7 +635,7 @@ void GraphicsContextHaiku::updateState(const GraphicsContextState& state, Graphi
         ShouldSmoothFontsChange                 = 1 << 16,
         ShouldSubpixelQuantizeFontsChange       = 1 << 17,
         DrawLuminanceMaskChange                 = 1 << 18,
-        ImageInterpolationQualityChange         = 1 << 19,
+        ImageInterpolationQualityChange // Handled in drawNativeImage
         UseDarkAppearanceChange                 = 1 << 20,
 #endif
 }
@@ -695,6 +695,19 @@ IntRect GraphicsContextHaiku::clipBounds() const
     rect.bottom = std::max(points[0].y, points[1].y);
 
     return IntRect(rect);
+}
+
+
+void GraphicsContextHaiku::save()
+{
+    m_view->PushState();
+    GraphicsContext::save();
+}
+
+void GraphicsContextHaiku::restore()
+{
+    GraphicsContext::restore();
+    m_view->PopState();
 }
 
 
