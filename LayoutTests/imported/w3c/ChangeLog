@@ -1,3 +1,41 @@
+2021-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Adjust `fetch` port blocking for ports 990, 989
+        https://bugs.webkit.org/show_bug.cgi?id=226971
+        <rdar://problem/79287147>
+
+        Reviewed by Geoffrey Garen.
+
+        Re-sync some WPT tests from upstream d41f24fb67a2d65c to gain test coverage from:
+        - https://github.com/web-platform-tests/wpt/pull/29343
+
+        * web-platform-tests/fetch/api/request/request-bad-port.any-expected.txt:
+        * web-platform-tests/fetch/api/request/request-bad-port.any.js:
+        * web-platform-tests/fetch/api/request/request-bad-port.any.worker-expected.txt:
+        * web-platform-tests/tools/wptserve/wptserve/utils.py:
+        (isomorphic_decode):
+        (isomorphic_encode):
+        (is_bad_port):
+        (http2_compatible):
+        * web-platform-tests/websockets/Create-blocked-port.any-expected.txt:
+        * web-platform-tests/websockets/Create-blocked-port.any.js:
+        * web-platform-tests/websockets/Create-blocked-port.any.worker-expected.txt:
+        * web-platform-tests/websockets/constants.sub.js: Added.
+        (url_has_variant):
+        (else.url_has_flag):
+        (url_has_flag):
+        (IsWebSocket):
+        (CreateWebSocketNonAbsolute):
+        (CreateWebSocketNonWsScheme):
+        (CreateWebSocketNonAsciiProtocol):
+        (CreateWebSocketWithAsciiSep):
+        (CreateWebSocketWithBlockedPort):
+        (CreateWebSocketWithSpaceInUrl):
+        (CreateWebSocketWithSpaceInProtocol):
+        (CreateWebSocketWithRepeatedProtocols):
+        (CreateWebSocketWithRepeatedProtocolsCaseInsensitive):
+        (CreateWebSocket):
+
 2021-06-21  Rob Buis  <rbuis@igalia.com>
 
         CSSOM test for serializing font-variant fails
