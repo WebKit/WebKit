@@ -1,3 +1,20 @@
+2021-06-22  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in null ptr deref in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
+        https://bugs.webkit.org/show_bug.cgi?id=226799
+
+        Reviewed by Ryosuke Niwa.
+
+        Various places in ReplaceSelectionCommand::doApply() may execute mutation events and lead
+        to nodes being removed. This patch adds one more early return after the call to
+        makeInsertedContentRoundTrippableWithHTMLTreeBuilder() to ensure that the function
+        removeRedundantStylesAndKeepStyleSpanInline() is properly executed.
+
+        Test: fast/editing/paste-and-indent-microtask-crash.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2021-06-22  Cathie Chen  <cathiechen@igalia.com>
 
         Implement width and height attributes on source elements of <picture>

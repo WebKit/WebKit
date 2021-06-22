@@ -1355,6 +1355,8 @@ void ReplaceSelectionCommand::doApply()
     makeInsertedContentRoundTrippableWithHTMLTreeBuilder(insertedNodes);
     if (insertedNodes.isEmpty())
         return;
+    if (!insertedNodes.firstNodeInserted()->isConnected())
+        return;
 
     if (needsColorTransformed)
         inverseTransformColor(insertedNodes);
