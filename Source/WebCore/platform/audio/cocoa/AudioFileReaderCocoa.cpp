@@ -32,11 +32,32 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioFileReaderCocoa.h"
 
+#include "AudioBus.h"
+#include "AudioFileReader.h"
+#include "FloatConversion.h"
+#include "Logging.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS_FAMILY)
+#include <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK(AudioToolbox)
+SOFT_LINK(AudioToolbox, AudioFileClose, OSStatus, (AudioFileID inAudioFile), (inAudioFile))
+SOFT_LINK(AudioToolbox, AudioFileOpenWithCallbacks, OSStatus, (void *inClientData, AudioFile_ReadProc inReadFunc, AudioFile_WriteProc inWriteFunc, AudioFile_GetSizeProc inGetSizeFunc, AudioFile_SetSizeProc inSetSizeFunc, AudioFileTypeID inFileTypeHint, AudioFileID *outAudioFile), (inClientData, inReadFunc, inWriteFunc, inGetSizeFunc, inSetSizeFunc, inFileTypeHint, outAudioFile))
+SOFT_LINK(AudioToolbox, ExtAudioFileDispose, OSStatus, (ExtAudioFileRef inExtAudioFile), (inExtAudioFile))
+SOFT_LINK(AudioToolbox, ExtAudioFileGetProperty, OSStatus, (ExtAudioFileRef inExtAudioFile, ExtAudioFilePropertyID inPropertyID, UInt32 *ioPropertyDataSize, void *outPropertyData), (inExtAudioFile, inPropertyID, ioPropertyDataSize, outPropertyData))
+SOFT_LINK(AudioToolbox, ExtAudioFileRead, OSStatus, (ExtAudioFileRef inExtAudioFile, UInt32 *ioNumberFrames, AudioBufferList *ioData), (inExtAudioFile, ioNumberFrames, ioData))
+SOFT_LINK(AudioToolbox, ExtAudioFileSetProperty, OSStatus, (ExtAudioFileRef inExtAudioFile, ExtAudioFilePropertyID inPropertyID, UInt32 inPropertyDataSize, const void *inPropertyData), (inExtAudioFile, inPropertyID, inPropertyDataSize, inPropertyData))
+SOFT_LINK(AudioToolbox, ExtAudioFileWrapAudioFileID, OSStatus, (AudioFileID inFileID, Boolean inForWriting, ExtAudioFileRef *outExtAudioFile), (inFileID, inForWriting, outExtAudioFile))
+SOFT_LINK(AudioToolbox, ExtAudioFileOpenURL, OSStatus, (CFURLRef inURL, ExtAudioFileRef* outExtAudioFile), (inURL, outExtAudioFile))
+#endif
 
 namespace WebCore {
 
-AudioBufferList* tryCreateAudioBufferList(size_t numberOfBuffers)
+static WARN_UNUSED_RETURN AudioBufferList* tryCreateAudioBufferList(size_t numberOfBuffers)
 {
     CheckedSize bufferListSize = sizeof(AudioBufferList) - sizeof(AudioBuffer);
     bufferListSize += numberOfBuffers * sizeof(AudioBuffer);
@@ -52,12 +73,12 @@ AudioBufferList* tryCreateAudioBufferList(size_t numberOfBuffers)
     return bufferList;
 }
 
-void destroyAudioBufferList(AudioBufferList* bufferList)
+static inline void destroyAudioBufferList(AudioBufferList* bufferList)
 {
     fastFree(bufferList);
 }
 
-bool validateAudioBufferList(AudioBufferList* bufferList)
+static bool validateAudioBufferList(AudioBufferList* bufferList)
 {
     if (!bufferList)
         return false;
@@ -78,6 +99,189 @@ bool validateAudioBufferList(AudioBufferList* bufferList)
     return true;
 }
 
+AudioFileReader::AudioFileReader(const char* filePath)
+{
+    auto filePathString = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, filePath, kCFStringEncodingUTF8));
+    auto urlRef = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePathString.get(), kCFURLPOSIXPathStyle, false));
+    if (!urlRef)
+        return;
+    ExtAudioFileOpenURL(urlRef.get(), &m_extAudioFileRef);
 }
+
+AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
+    : m_data(data)
+    , m_dataSize(dataSize)
+{
+    if (AudioFileOpenWithCallbacks(this, readProc, 0, getSizeProc, 0, 0, &m_audioFileID) != noErr)
+        return;
+
+    if (ExtAudioFileWrapAudioFileID(m_audioFileID, false, &m_extAudioFileRef) != noErr)
+        m_extAudioFileRef = 0;
+}
+
+AudioFileReader::~AudioFileReader()
+{
+    if (m_extAudioFileRef)
+        ExtAudioFileDispose(m_extAudioFileRef);
+
+    m_extAudioFileRef = 0;
+
+    if (m_audioFileID)
+        AudioFileClose(m_audioFileID);
+
+    m_audioFileID = 0;
+}
+
+OSStatus AudioFileReader::readProc(void* clientData, SInt64 position, UInt32 requestCount, void* buffer, UInt32* actualCount)
+{
+    auto* audioFileReader = static_cast<AudioFileReader*>(clientData);
+
+    auto dataSize = audioFileReader->dataSize();
+    auto* data = audioFileReader->data();
+    size_t bytesToRead = 0;
+
+    if (static_cast<UInt64>(position) < dataSize) {
+        size_t bytesAvailable = dataSize - static_cast<size_t>(position);
+        bytesToRead = requestCount <= bytesAvailable ? requestCount : bytesAvailable;
+        memcpy(buffer, static_cast<const uint8_t*>(data) + position, bytesToRead);
+    }
+
+    if (actualCount)
+        *actualCount = bytesToRead;
+
+    return noErr;
+}
+
+SInt64 AudioFileReader::getSizeProc(void* clientData)
+{
+    return static_cast<AudioFileReader*>(clientData)->dataSize();
+}
+
+RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
+{
+    if (!m_extAudioFileRef)
+        return nullptr;
+
+    // Get file's data format
+    UInt32 size = sizeof(m_fileDataFormat);
+    if (ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileDataFormat, &size, &m_fileDataFormat) != noErr)
+        return nullptr;
+
+    size_t numberOfChannels = m_fileDataFormat.mChannelsPerFrame;
+
+    // Number of frames
+    SInt64 numberOfFrames64 = 0;
+    size = sizeof(numberOfFrames64);
+    if (ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFrames64) != noErr || numberOfFrames64 <= 0)
+        return nullptr;
+
+    double fileSampleRate = m_fileDataFormat.mSampleRate;
+
+    // Make client format same number of channels as file format, but tweak a few things.
+    // Client format will be linear PCM (canonical), and potentially change sample-rate.
+    m_clientDataFormat = m_fileDataFormat;
+
+    const int bytesPerFloat = sizeof(Float32);
+    const int bitsPerByte = 8;
+    m_clientDataFormat.mFormatID = kAudioFormatLinearPCM;
+    m_clientDataFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
+    m_clientDataFormat.mBytesPerPacket = bytesPerFloat;
+    m_clientDataFormat.mFramesPerPacket = 1;
+    m_clientDataFormat.mBytesPerFrame = bytesPerFloat;
+    m_clientDataFormat.mChannelsPerFrame = numberOfChannels;
+    m_clientDataFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
+
+    if (sampleRate)
+        m_clientDataFormat.mSampleRate = sampleRate;
+
+    if (ExtAudioFileSetProperty(m_extAudioFileRef, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &m_clientDataFormat) != noErr)
+        return nullptr;
+
+    // Change numberOfFrames64 to destination sample-rate
+    numberOfFrames64 = numberOfFrames64 * (m_clientDataFormat.mSampleRate / fileSampleRate);
+    size_t numberOfFrames = static_cast<size_t>(numberOfFrames64);
+
+    size_t busChannelCount = mixToMono ? 1 : numberOfChannels;
+
+    // Create AudioBus where we'll put the PCM audio data
+    auto audioBus = AudioBus::create(busChannelCount, numberOfFrames);
+    audioBus->setSampleRate(narrowPrecisionToFloat(m_clientDataFormat.mSampleRate)); // save for later
+
+    // Only allocated in the mixToMono case; deallocated on destruction.
+    AudioFloatArray leftChannel;
+    AudioFloatArray rightChannel;
+
+    AudioBufferList* bufferList = tryCreateAudioBufferList(numberOfChannels);
+    if (!bufferList) {
+        RELEASE_LOG_FAULT(WebAudio, "tryCreateAudioBufferList(%ld) returned null", numberOfChannels);
+        return nullptr;
+    }
+    const size_t bufferSize = numberOfFrames * sizeof(float);
+
+    RELEASE_ASSERT(bufferList->mNumberBuffers == numberOfChannels);
+    if (mixToMono && numberOfChannels == 2) {
+        leftChannel.resize(numberOfFrames);
+        rightChannel.resize(numberOfFrames);
+
+        bufferList->mBuffers[0].mNumberChannels = 1;
+        bufferList->mBuffers[0].mDataByteSize = bufferSize;
+        bufferList->mBuffers[0].mData = leftChannel.data();
+
+        bufferList->mBuffers[1].mNumberChannels = 1;
+        bufferList->mBuffers[1].mDataByteSize = bufferSize;
+        bufferList->mBuffers[1].mData = rightChannel.data();
+    } else {
+        RELEASE_ASSERT(!mixToMono || numberOfChannels == 1);
+
+        // For True-stereo (numberOfChannels == 4)
+        for (size_t i = 0; i < numberOfChannels; ++i) {
+            audioBus->channel(i)->zero();
+            bufferList->mBuffers[i].mNumberChannels = 1;
+            bufferList->mBuffers[i].mDataByteSize = bufferSize;
+            bufferList->mBuffers[i].mData = audioBus->channel(i)->mutableData();
+            ASSERT(bufferList->mBuffers[i].mData);
+        }
+    }
+
+    if (!validateAudioBufferList(bufferList)) {
+        RELEASE_LOG_FAULT(WebAudio, "Generated buffer in AudioFileReader::createBus() did not pass validation");
+        ASSERT_NOT_REACHED();
+        destroyAudioBufferList(bufferList);
+        return nullptr;
+    }
+
+    // Read from the file (or in-memory version)
+    UInt32 framesToRead = numberOfFrames;
+    if (ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList) != noErr) {
+        destroyAudioBufferList(bufferList);
+        return nullptr;
+    }
+
+    if (mixToMono && numberOfChannels == 2) {
+        // Mix stereo down to mono
+        float* destL = audioBus->channel(0)->mutableData();
+        for (size_t i = 0; i < numberOfFrames; ++i)
+            destL[i] = 0.5f * (leftChannel[i] + rightChannel[i]);
+    }
+
+    // Cleanup
+    destroyAudioBufferList(bufferList);
+
+    return audioBus;
+}
+
+RefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
+{
+    AudioFileReader reader(filePath);
+    return reader.createBus(sampleRate, mixToMono);
+}
+
+RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
+{
+    AudioFileReader reader(data, dataSize);
+    return reader.createBus(sampleRate, mixToMono);
+}
+
+} // WebCore
 
 #endif // ENABLE(WEB_AUDIO)

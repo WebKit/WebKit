@@ -31,11 +31,40 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#include <AudioToolbox/AudioFile.h>
+#include <AudioToolbox/ExtendedAudioFile.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-WARN_UNUSED_RETURN AudioBufferList* tryCreateAudioBufferList(size_t numberOfBuffers);
-void destroyAudioBufferList(AudioBufferList*);
-bool validateAudioBufferList(AudioBufferList*);
+class AudioBus;
+
+// Wrapper class for AudioFile and ExtAudioFile CoreAudio APIs for reading files and in-memory versions of them...
+
+class AudioFileReader {
+public:
+    explicit AudioFileReader(const char* filePath);
+    explicit AudioFileReader(const void* data, size_t dataSize);
+    ~AudioFileReader();
+
+    RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono); // Returns nullptr on error
+
+    const void* data() const { return m_data; }
+    size_t dataSize() const { return m_dataSize; }
+
+private:
+    static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount, void* buffer, UInt32* actualCount);
+    static SInt64 getSizeProc(void* clientData);
+
+    const void* m_data = { nullptr };
+    size_t m_dataSize = { 0 };
+
+    AudioFileID m_audioFileID = { 0 };
+    ExtAudioFileRef m_extAudioFileRef = { nullptr };
+
+    AudioStreamBasicDescription m_fileDataFormat;
+    AudioStreamBasicDescription m_clientDataFormat;
+};
 
 }
 

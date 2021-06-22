@@ -1,3 +1,36 @@
+2021-06-21  Jean-Yves Avenard  <jya@apple.com>
+
+        Merge AudioFileReaderMac and AudioFileReaderIOS into AudioFileReaderCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=227205
+        <rdar://problem/79549527>
+
+        Reviewed by Chris Dumez.
+
+        Merge AudioFileReaderIOS and AudioFileReaderMac into AudioFileReaderCocoa.
+        No change in functionality.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::tryCreateAudioBufferList): make method static as it's not used elsewhere.
+        (WebCore::destroyAudioBufferList): make method static as it's not used elsewhere.
+        (WebCore::validateAudioBufferList): make method static as it's not used elsewhere.
+        (WebCore::AudioFileReader::AudioFileReader):
+        (WebCore::AudioFileReader::~AudioFileReader):
+        (WebCore::AudioFileReader::readProc):
+        (WebCore::AudioFileReader::getSizeProc):
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/cocoa/AudioFileReaderCocoa.h:
+        (WebCore::AudioFileReader::data const):
+        (WebCore::AudioFileReader::dataSize const):
+        * platform/audio/ios/AudioFileReaderIOS.cpp: Removed.
+        * platform/audio/ios/AudioFileReaderIOS.h: Removed.
+        * platform/audio/mac/AudioFileReaderMac.cpp: Removed.
+        * platform/audio/mac/AudioFileReaderMac.h: Removed.
+
 2021-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WebKitLegacy] Non-actionable "Look Up" action appears when right clicking images
