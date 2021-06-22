@@ -608,9 +608,6 @@ WebPageProxy::~WebPageProxy()
 
     websiteDataStore().networkProcess().send(Messages::NetworkProcess::RemoveWebPageNetworkParameters(sessionID(), m_identifier), 0);
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
-#endif
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
     GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
