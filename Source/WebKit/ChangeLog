@@ -1,3 +1,92 @@
+2021-06-07  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Upstream GroupActivitiesCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=226757
+
+        Reviewed by Eric Carlson.
+
+        Upstream the backing objects for a GroupActivities-based MediaSessionCoordinator.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesCoordinator.h: Added.
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesCoordinator.mm: Added.
+        (-[WKGroupActivitiesCoordinatorDelegate initWithParent:]):
+        (-[WKGroupActivitiesCoordinatorDelegate playbackCoordinator:didIssuePlayCommand:completionHandler:]):
+        (-[WKGroupActivitiesCoordinatorDelegate playbackCoordinator:didIssuePauseCommand:completionHandler:]):
+        (-[WKGroupActivitiesCoordinatorDelegate playbackCoordinator:didIssueSeekCommand:completionHandler:]):
+        (-[WKGroupActivitiesCoordinatorDelegate playbackCoordinator:didIssueBufferingCommand:completionHandler:]):
+        (-[WKGroupActivitiesCoordinatorDelegate playbackCoordinator:didIssuePrepareTransitionCommand:]):
+        (WebKit::GroupActivitiesCoordinator::create):
+        (WebKit::GroupActivitiesCoordinator::GroupActivitiesCoordinator):
+        (WebKit::GroupActivitiesCoordinator::~GroupActivitiesCoordinator):
+        (WebKit::GroupActivitiesCoordinator::sessionStateChanged):
+        (WebKit::GroupActivitiesCoordinator::identifier const):
+        (WebKit::GroupActivitiesCoordinator::join):
+        (WebKit::GroupActivitiesCoordinator::leave):
+        (WebKit::GroupActivitiesCoordinator::seekTo):
+        (WebKit::GroupActivitiesCoordinator::play):
+        (WebKit::GroupActivitiesCoordinator::pause):
+        (WebKit::GroupActivitiesCoordinator::setTrack):
+        (WebKit::GroupActivitiesCoordinator::positionStateChanged):
+        (WebKit::GroupActivitiesCoordinator::readyStateChanged):
+        (WebKit::GroupActivitiesCoordinator::playbackStateChanged):
+        (WebKit::GroupActivitiesCoordinator::trackIdentifierChanged):
+        (WebKit::GroupActivitiesCoordinator::issuePlayCommand):
+        (WebKit::GroupActivitiesCoordinator::issuePauseCommand):
+        (WebKit::GroupActivitiesCoordinator::issueSeekCommand):
+        (WebKit::GroupActivitiesCoordinator::issueBufferingCommand):
+        (WebKit::GroupActivitiesCoordinator::issuePrepareTransitionCommand):
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesSession.h: Added.
+        (WebKit::GroupActivitiesSession::groupSession):
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesSession.mm: Added.
+        (WebKit::GroupActivitiesSession::create):
+        (WebKit::GroupActivitiesSession::GroupActivitiesSession):
+        (WebKit::GroupActivitiesSession::~GroupActivitiesSession):
+        (WebKit::GroupActivitiesSession::join):
+        (WebKit::GroupActivitiesSession::leave):
+        (WebKit::GroupActivitiesSession::state const):
+        (WebKit::GroupActivitiesSession::uuid const):
+        (WebKit::GroupActivitiesSession::fallbackURL const):
+        (WebKit::GroupActivitiesSession::addStateChangeObserver):
+        (WebKit::GroupActivitiesSession::addFallbackURLObserver):
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.h: Added.
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm: Added.
+        (WebKitSwiftLibrary):
+        (WebKit::GroupActivitiesSessionNotifier::sharedNotifier):
+        (WebKit::GroupActivitiesSessionNotifier::GroupActivitiesSessionNotifier):
+        (WebKit::GroupActivitiesSessionNotifier::sessionStateChanged):
+        (WebKit::GroupActivitiesSessionNotifier::addWebPage):
+        (WebKit::GroupActivitiesSessionNotifier::removeWebPage):
+        (WebKit::GroupActivitiesSessionNotifier::webPageURLChanged):
+        (WebKit::GroupActivitiesSessionNotifier::hasSessionForURL):
+        (WebKit::GroupActivitiesSessionNotifier::takeSessionForURL):
+        * UIProcess/Cocoa/GroupActivities/WKGroupSession.h: Added.
+        * UIProcess/Cocoa/GroupActivities/WKGroupSession.swift: Added.
+        (WKURLActivityWrapper.urlActivity):
+        (WKURLActivityWrapper.fallbackURL):
+        (WKGroupSessionWrapper.groupSession):
+        (WKGroupSessionWrapper.cancellables):
+        (WKGroupSessionWrapper.activity):
+        (WKGroupSessionWrapper.uuid):
+        (WKGroupSessionWrapper.wrapperSessionState(_:)):
+        (WKGroupSessionWrapper.state):
+        (WKGroupSessionWrapper.newActivityCallback):
+        (WKGroupSessionWrapper.stateChangedCallback):
+        (WKGroupSessionWrapper.join):
+        (WKGroupSessionWrapper.leave):
+        (WKGroupSessionWrapper.coordinate(_:)):
+        (WKGroupSessionWrapper.activityChanged(_:)):
+        (WKGroupSessionWrapper.stateChanged(_:)):
+        (WKGroupSessionObserver.newSessionCallback):
+        (WKGroupSessionObserver.cancellables):
+        (WKGroupSessionObserver.recievedSession(_:)):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-22  Peng Liu  <peng.liu6@apple.com>
 
         ASSERTION FAILED: videoFullscreenManager->client() == nullptr in WKFullScreenWindowController.mm

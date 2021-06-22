@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1903,7 +1903,6 @@
 		CD78E1191DB7E5AD0014A2DE /* _WKFullscreenDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD8252DE25D4916C00862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8252DA25D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp */; };
 		CD8252E225D4919100862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8252E025D4918400862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp */; };
-		CD9549432615917B008372D9 /* WKGroupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */; };
 		CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */; };
 		CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */; };
 		CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */; };
@@ -1937,6 +1936,8 @@
 		CDE555332406EB8C008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552A2406B896008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp */; };
 		CDE555342406EB8C008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */; };
 		CDE555352406EB8C008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */; };
+		CDF1B915266F396A0007EC10 /* WKGroupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */; };
+		CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF1B91A267021D60007EC10 /* WebKitSwiftSoftLink.mm */; };
 		CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */ = {isa = PBXBuildFile; fileRef = CE11AD511CBC482F00681EE5 /* CodeSigning.h */; };
 		CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */; };
 		CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */; };
@@ -5812,6 +5813,16 @@
 		CDE555302406B897008A3DDB /* RemoteLegacyCDMSessionMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionMessagesReplies.h; sourceTree = "<group>"; };
 		CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKGroupSession.swift; sourceTree = "<group>"; };
+		CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKGroupSession.swift; sourceTree = "<group>"; };
+		CDF1B90E266F395E0007EC10 /* GroupActivitiesSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupActivitiesSession.h; sourceTree = "<group>"; };
+		CDF1B90F266F395E0007EC10 /* GroupActivitiesCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GroupActivitiesCoordinator.mm; sourceTree = "<group>"; };
+		CDF1B910266F395E0007EC10 /* WKGroupSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKGroupSession.h; sourceTree = "<group>"; };
+		CDF1B911266F395E0007EC10 /* GroupActivitiesSession.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GroupActivitiesSession.mm; sourceTree = "<group>"; };
+		CDF1B912266F395E0007EC10 /* GroupActivitiesCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupActivitiesCoordinator.h; sourceTree = "<group>"; };
+		CDF1B913266F395E0007EC10 /* GroupActivitiesSessionNotifier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GroupActivitiesSessionNotifier.mm; sourceTree = "<group>"; };
+		CDF1B914266F395F0007EC10 /* GroupActivitiesSessionNotifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupActivitiesSessionNotifier.h; sourceTree = "<group>"; };
+		CDF1B919267021D60007EC10 /* WebKitSwiftSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitSwiftSoftLink.h; sourceTree = "<group>"; };
+		CDF1B91A267021D60007EC10 /* WebKitSwiftSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitSwiftSoftLink.mm; sourceTree = "<group>"; };
 		CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CodeSigning.mm; sourceTree = "<group>"; };
 		CE11AD511CBC482F00681EE5 /* CodeSigning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSigning.h; sourceTree = "<group>"; };
 		CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
@@ -7009,6 +7020,7 @@
 			isa = PBXGroup;
 			children = (
 				CDF17C93260D3B5200F0A4E8 /* Coordinator */,
+				CDF1B90C266F395E0007EC10 /* GroupActivities */,
 				57FD316B22B3367E008D0E8B /* SOAuthorization */,
 				99C81D551C20DFBE005C4C82 /* AutomationClient.h */,
 				99C81D561C20DFBE005C4C82 /* AutomationClient.mm */,
@@ -7063,6 +7075,8 @@
 				52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */,
 				C18F3A13256332A600797E66 /* WebInspectorPreferenceObserver.h */,
 				C18F3A142563334300797E66 /* WebInspectorPreferenceObserver.mm */,
+				CDF1B919267021D60007EC10 /* WebKitSwiftSoftLink.h */,
+				CDF1B91A267021D60007EC10 /* WebKitSwiftSoftLink.mm */,
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 				7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */,
 				A3937B6123CD1B9B005B2A2E /* WebPreferencesCocoa.mm */,
@@ -11473,6 +11487,21 @@
 			path = usr/local/include/WebKitAdditions;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CDF1B90C266F395E0007EC10 /* GroupActivities */ = {
+			isa = PBXGroup;
+			children = (
+				CDF1B912266F395E0007EC10 /* GroupActivitiesCoordinator.h */,
+				CDF1B90F266F395E0007EC10 /* GroupActivitiesCoordinator.mm */,
+				CDF1B90E266F395E0007EC10 /* GroupActivitiesSession.h */,
+				CDF1B911266F395E0007EC10 /* GroupActivitiesSession.mm */,
+				CDF1B914266F395F0007EC10 /* GroupActivitiesSessionNotifier.h */,
+				CDF1B913266F395E0007EC10 /* GroupActivitiesSessionNotifier.mm */,
+				CDF1B910266F395E0007EC10 /* WKGroupSession.h */,
+				CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */,
+			);
+			path = GroupActivities;
+			sourceTree = "<group>";
+		};
 		CE1A0BCA1A48E6C60054EF74 /* spi */ = {
 			isa = PBXGroup;
 			children = (
@@ -13279,11 +13308,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CD95493B26159004008372D9 /* Build configuration list for PBXNativeTarget "WebKitSwift" */;
 			buildPhases = (
-				CDF17CBE260DAD1B00F0A4E8 /* Copy Additional Sources */,
 				CD95493126159004008372D9 /* Headers */,
 				CD95493226159004008372D9 /* Sources */,
 				CD95493326159004008372D9 /* Frameworks */,
-				CD954942261590EE008372D9 /* Copy ObjC Interface Header */,
 			);
 			buildRules = (
 			);
@@ -13965,50 +13992,6 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/generate-derived-sources.sh\n";
 		};
-		CD954942261590EE008372D9 /* Copy ObjC Interface Header */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(DERIVED_SOURCES_DIR)/$(SWIFT_OBJC_INTERFACE_HEADER_NAME)",
-			);
-			name = "Copy ObjC Interface Header";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/usr/local/include/$(TARGET_NAME)/$(SWIFT_OBJC_INTERFACE_HEADER_NAME)",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"$WK_HAVE_COORDINATOR\" == \"YES\" ]]\nthen\n    ditto \"${DERIVED_SOURCES_DIR}/${SWIFT_OBJC_INTERFACE_HEADER_NAME}\" \"${BUILT_PRODUCTS_DIR}/usr/local/include/${TARGET_NAME}/${SWIFT_OBJC_INTERFACE_HEADER_NAME}\"\nfi\n";
-		};
-		CDF17CBE260DAD1B00F0A4E8 /* Copy Additional Sources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.h",
-				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.mm",
-				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WKGroupSession.swift",
-			);
-			name = "Copy Additional Sources";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.h",
-				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.mm",
-				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKGroupSession.swift",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions\"\nSOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nDESTINATION_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nfor SOURCE in WKCoordinator.h WKCoordinator.mm WKGroupSession.swift; do\n    if [[ \"$SOURCE_PATH/$SOURCE\" -nt \"$DESTINATION_PATH/$SOURCE\" ]]; then\n        ditto \"$SOURCE_PATH/$SOURCE\" \"$DESTINATION_PATH/$SOURCE\"\n    fi\ndone\n";
-		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -14143,6 +14126,7 @@
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
+				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				9BF5EC642541145600984E77 /* JSIPCBinding.cpp in Sources */,
 				2D913441212CF9F000128AFD /* JSNPMethod.cpp in Sources */,
@@ -14581,7 +14565,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD9549432615917B008372D9 /* WKGroupSession.swift in Sources */,
+				CDF1B915266F396A0007EC10 /* WKGroupSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

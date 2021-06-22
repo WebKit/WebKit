@@ -300,6 +300,11 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #include "RemoteMediaSessionCoordinatorProxy.h"
+#endif
+
+#if HAVE(GROUP_ACTIVITIES)
+#include "GroupActivitiesSessionNotifier.h"
+#endif
 
 #if ENABLE(APP_HIGHLIGHTS)
 #include <WebCore/HighlightVisibility.h>
@@ -311,7 +316,6 @@
 #define WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
 #define WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
 #define WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
-#endif
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -571,8 +575,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         process.setIgnoreInvalidMessageForTesting();
 #endif
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
+#if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
+    GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
 #endif
 }
 
@@ -614,6 +618,9 @@ WebPageProxy::~WebPageProxy()
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
+#endif
+#if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
+    GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
 }
 
@@ -4919,8 +4926,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #endif
     }
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
+#if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
+    if (frame->isMainFrame())
+        GroupActivitiesSessionNotifier::sharedNotifier().webPageURLChanged(*this);
 #endif
 }
 
