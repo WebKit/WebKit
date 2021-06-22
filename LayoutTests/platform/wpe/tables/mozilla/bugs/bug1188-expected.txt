@@ -87,8 +87,8 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (436,120) size 161x18 [r=2 c=2 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 130x18 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 130x16 [color=#0066FF]
-                    RenderText {#text} at (15,1) size 130x16
-                      text run at (15,2) width 130: "Hassle-Free Upgrades"
+                    RenderText {#text} at (15,0) size 130x17
+                      text run at (15,1) width 130: "Hassle-Free Upgrades"
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,155) size 600x20
               RenderTableCell {TD} at (2,155) size 595x20 [r=3 c=0 rs=1 cs=3]
