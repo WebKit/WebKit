@@ -1,3 +1,33 @@
+2021-06-22  Saam Barati  <sbarati@apple.com>
+
+        jitCompileAndSetHeuristics shouldn't return true when we fail to compile
+        https://bugs.webkit.org/show_bug.cgi?id=227155
+
+        Reviewed by Tadeu Zagallo.
+
+        jitCompileAndSetHeuristics should only return true when we've successfully
+        compiled a baseline JIT CodeBlock. However, with the rewrite to using a
+        unified JIT worklist, the code was changed to returning true when a
+        compilation finished, regardless of it being successful or not. This patch
+        fixes that error.
+        
+        This bug was found by our existing executable allocation fuzzer, but at a low
+        hit rate. That fuzzer only ran a single test case. This patch also introduces
+        a new form of the executable fuzzer where we fail to allocate JIT code
+        randomly, and the crash manifests more reliably. And this patch also hooks
+        the new fuzzer into more JSC stress tests.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        * jit/ExecutableAllocationFuzz.cpp:
+        (JSC::doExecutableAllocationFuzzing):
+        * jsc.cpp:
+        (runJSC):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/OptionsList.h:
+
 2021-06-22  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Properly set numFPRs on ARM with NEON/VFP_V3_D32

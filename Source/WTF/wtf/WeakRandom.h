@@ -85,6 +85,19 @@ public:
         }
     }
 
+    bool returnTrueWithProbability(double probability)
+    {
+        ASSERT(0.0 <= probability && probability <= 1.0);
+
+        if (!probability)
+            return false;
+
+        double value = getUint32();
+        if (value <= static_cast<double>(std::numeric_limits<unsigned>::max()) * probability)
+            return true;
+        return false;
+    }
+
     static unsigned lowOffset() { return OBJECT_OFFSETOF(WeakRandom, m_low); }
     static unsigned highOffset() { return OBJECT_OFFSETOF(WeakRandom, m_high); }
 

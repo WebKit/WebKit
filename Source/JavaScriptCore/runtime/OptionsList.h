@@ -398,6 +398,8 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useExecutableAllocationFuzz, false, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAt, 0, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, Normal, nullptr) \
+    v(Bool, fireExecutableAllocationFuzzRandomly, false, Normal, nullptr) \
+    v(Double, fireExecutableAllocationFuzzRandomlyProbability, 0.1, Normal, nullptr) \
     v(Bool, verboseExecutableAllocationFuzz, false, Normal, nullptr) \
     \
     v(Bool, useOSRExitFuzz, false, Normal, nullptr) \

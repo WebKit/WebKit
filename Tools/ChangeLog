@@ -1,3 +1,12 @@
+2021-06-22  Saam Barati  <sbarati@apple.com>
+
+        jitCompileAndSetHeuristics shouldn't return true when we fail to compile
+        https://bugs.webkit.org/show_bug.cgi?id=227155
+
+        Reviewed by Tadeu Zagallo.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-06-22  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r279083.
