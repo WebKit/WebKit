@@ -1,3 +1,15 @@
+2021-06-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the service 'com.apple.print.normalizerd'
+        https://bugs.webkit.org/show_bug.cgi?id=227248
+        <rdar://problem/79600557>
+
+        Reviewed by Brent Fulgham.
+
+        Skip EPS test, which is failing when this service is unavailable.
+
+        * platform/mac/TestExpectations:
+
 2021-06-22  Alan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] ASSERTION FAILED: m_renderer in FloatingObject::renderer()

@@ -1762,7 +1762,6 @@
             "com.apple.iconservices"
             "com.apple.iconservices.store"
             "com.apple.tccd"
-            "com.apple.print.normalizerd" ;; <rdar://problem/77354349>
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
             "com.apple.accessibility.mediaaccessibilityd"
