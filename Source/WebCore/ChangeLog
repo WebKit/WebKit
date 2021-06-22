@@ -1,3 +1,25 @@
+2021-06-22  Alan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] ASSERTION FAILED: m_renderer in FloatingObject::renderer()
+        https://bugs.webkit.org/show_bug.cgi?id=227260
+        <rdar://77329323>
+
+        Reviewed by Antti Koivisto.
+
+        This is a very similar to webkit.org/b/224996, where moving subtrees around fails to invalidate floating object sets in sibling blocks.
+        (see the Changelog entry for more details on how sibling invalidation works).
+        In this case the anonymous parent block is destroyed as it is no longer needed (and we move all its descendants out first). However this
+        block has an intruding float and this float is also registered in the sibling blocks. 
+
+        Test: fast/block/float-assert-when-anon-parent-is-destroyed.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::moveChildren):
+        (WebCore::RenderTreeBuilder::removeFloatingObjects):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::removeLeftoverAnonymousBlock):
+
 2021-06-22  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed tvOS build fix after r279119: add PLATFORM(IOS) guards to exclude tvOS and Catalyst builds.

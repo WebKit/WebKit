@@ -1,3 +1,14 @@
+2021-06-22  Alan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] ASSERTION FAILED: m_renderer in FloatingObject::renderer()
+        https://bugs.webkit.org/show_bug.cgi?id=227260
+        <rdar://77329323>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/float-assert-when-anon-parent-is-destroyed-expected.txt: Added.
+        * fast/block/float-assert-when-anon-parent-is-destroyed.html: Added.
+
 2021-06-22  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Unreviewed test gardening, add timeouts in new test
