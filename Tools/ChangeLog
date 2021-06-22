@@ -1,3 +1,23 @@
+2021-06-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [results.webkit.org] XSS vulnerability in test name
+        https://bugs.webkit.org/show_bug.cgi?id=227235
+        <rdar://problem/77851775>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/archiveRouter.js:
+        (_ArchiveRouter.prototype.labelFor): Escape any HTML in a potential label.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/common.js:
+        (escapeHTML): If an object is undefined, don't attempt to escape it.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/configuration.js:
+        (Configuration.prototype.toString): Escape configuration parameters.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/investigate.html:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/search.html:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/suite_results.html:
+        * Scripts/libraries/resultsdbpy/setup.py:
+
 2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App Privacy Report code from WebKitAdditions
