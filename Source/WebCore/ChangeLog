@@ -1,5 +1,20 @@
 2021-06-21  Jean-Yves Avenard  <jya@apple.com>
 
+        Safari 15 breaks all Web Audio content using WebM Opus
+        https://bugs.webkit.org/show_bug.cgi?id=226922
+        rdar://79218243
+
+        Reviewed by Eric Carlson.
+
+        Temporarily reports that neither Opus and Vorbis audio codec are supported to allow
+        webaudio sites to fallback to other containers. The content will continue to play
+        as before. Will be reverted once bug 227110 lands.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType const):
+
+2021-06-21  Jean-Yves Avenard  <jya@apple.com>
+
         Merge AudioFileReaderMac and AudioFileReaderIOS into AudioFileReaderCocoa
         https://bugs.webkit.org/show_bug.cgi?id=227205
         <rdar://problem/79549527>
