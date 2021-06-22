@@ -1,3 +1,48 @@
+2021-06-22  Cathie Chen  <cathiechen@igalia.com>
+
+        Implement width and height attributes on source elements of <picture>
+        https://bugs.webkit.org/show_bug.cgi?id=222368
+
+        Reviewed by Darin Adler.
+
+        According to [1], the source element supports dimension attributes. The img element can use the width
+        and height attributes of the source element to determine its rendered dimensions and aspect-ratio.
+        In order to implement this, add m_sourceElement to HTMLImageElement to indicate the source element that
+        is selected. Also add invalidateAttributeMapping() to synchronize with the changes of source's attributes
+        to the img element. Then add collectExtraStyleForPresentationalHints() to collect style from source attributes.
+
+        [1] https://html.spec.whatwg.org/#the-source-element
+
+        * dom/ElementData.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::rebuildPresentationalHintStyle): collectExtraStyleForPresentationalHints() when rebuild.
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::collectExtraStyleForPresentationalHints): Add an interface to collect extra style from other elements.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle): Add width and height attributes as input variables.
+        * html/HTMLElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLImageElement::collectExtraStyleForPresentationalHints): If source element has width or height attributes, apply them
+        to width, height and aspect-ratio of the style.
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement): Keep the source element.
+        (WebCore::HTMLImageElement::selectImageSource): Reset the source element to null if no candidate is found.
+        (WebCore::HTMLImageElement::sourceElement const):
+        (WebCore::HTMLImageElement::setSourceElement):
+        (WebCore::HTMLImageElement::invalidateAttributeMapping): Invalidate the presentationalHintStyle.
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::collectPresentationalHintsForAttribute):
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::sourceDimensionAttributesChanged): Call invalidateAttributeMapping if source element's attributes are changed.
+        * html/HTMLPictureElement.h:
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::attributeChanged): Call sourceDimensionAttributesChanged if width or height attributes are changed.
+        * html/HTMLSourceElement.h:
+        * html/HTMLSourceElement.idl:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::collectPresentationalHintsForAttribute):
+
 2021-06-21  Jean-Yves Avenard  <jya@apple.com>
 
         Safari 15 breaks all Web Audio content using WebM Opus

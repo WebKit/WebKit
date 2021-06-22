@@ -170,6 +170,7 @@ private:
     friend class ShareableElementData;
     friend class UniqueElementData;
     friend class SVGElement;
+    friend class HTMLImageElement;
 
     void destroy();
 

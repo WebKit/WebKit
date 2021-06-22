@@ -64,6 +64,14 @@ void HTMLPictureElement::sourcesChanged()
         element.selectImageSource(RelevantMutation::Yes);
 }
 
+void HTMLPictureElement::sourceDimensionAttributesChanged(const HTMLSourceElement& sourceElement)
+{
+    for (auto& element : childrenOfType<HTMLImageElement>(*this)) {
+        if (&sourceElement == element.sourceElement())
+            element.invalidateAttributeMapping();
+    }
+}
+
 #if USE(SYSTEM_PREVIEW)
 bool HTMLPictureElement::isSystemPreviewImage()
 {

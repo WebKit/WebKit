@@ -1,20 +1,18 @@
 
 
-
-
 PASS source width and height attributes are used to infer aspect-ratio in <picture>
-FAIL Computed style for width/height/aspect-ratio assert_approx_equals: expected 1 +/- 0.001 but got Infinity
-FAIL Source width/height should take precedence over img attributes. assert_approx_equals: expected 2 +/- 0.001 but got 5
-FAIL Make sure style gets invalidated correctly when the source gets removed. assert_equals: expected "auto 250 / 50" but got "auto"
-FAIL If the <source> has only one of width/height, we don't get an aspect ratio, even if the <img> has both. assert_equals: expected "100px" but got "200px"
-FAIL If we don't have width/height on the source, we fall back to width/height on the <img>. assert_equals: expected "auto 200 / 100" but got "auto"
-FAIL If we only have one width attribute, we should get width mapped but no aspect ratio, even if <img> has attributes. assert_equals: expected "100px" but got "200px"
-FAIL If we only have height attribute, we should get height mapped but no aspect ratio, even if <img> has attributes. assert_equals: expected "auto" but got "200px"
-FAIL Dynamically changing width/height should change computed style assert_equals: expected "auto 100 / 100" but got "auto"
-FAIL Changing which <source> matches should change computed style assert_equals: expected "auto 100 / 100" but got "auto"
-FAIL Percentages on source should be ignored for aspect-ratio but used for width/height. assert_equals: expected 100 but got 0
-FAIL Trailing garbage should be ignored but not make the attribute invalid assert_equals: expected 100 but got 0
+PASS Computed style for width/height/aspect-ratio
+PASS Source width/height should take precedence over img attributes.
+PASS Make sure style gets invalidated correctly when the source gets removed.
+PASS If the <source> has only one of width/height, we don't get an aspect ratio, even if the <img> has both.
+PASS If we don't have width/height on the source, we fall back to width/height on the <img>.
+PASS If we only have one width attribute, we should get width mapped but no aspect ratio, even if <img> has attributes.
+PASS If we only have height attribute, we should get height mapped but no aspect ratio, even if <img> has attributes.
+PASS Dynamically changing width/height should change computed style
+PASS Changing which <source> matches should change computed style
+PASS Percentages on source should be ignored for aspect-ratio but used for width/height.
+PASS Trailing garbage should be ignored but not make the attribute invalid
 PASS Loaded picture test: Both <source> and <img> are without width and height attributes
-FAIL Loaded picture test: <source> with width and height attributes, <img> without width and height attributes assert_equals: expected "auto 100 / 100" but got "auto"
-FAIL Loaded picture test: Both <source> and <img> are with width and height attributes assert_equals: expected "auto 100 / 100" but got "auto"
+PASS Loaded picture test: <source> with width and height attributes, <img> without width and height attributes
+PASS Loaded picture test: Both <source> and <img> are with width and height attributes
 

@@ -32,4 +32,6 @@
     [CEReactions=NotNeeded, Reflect] attribute USVString srcset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString sizes;
     [CEReactions=NotNeeded, Reflect] attribute DOMString media;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
 };

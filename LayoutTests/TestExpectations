@@ -1434,9 +1434,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html [ Failure Pass ]
 
-# Newly importing aspect ratio test is flaky.
-imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio.html [ Failure Pass ]
-
 # Newly importing W3C tests needed support for reftest-wait.
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed.html [ Skip ]

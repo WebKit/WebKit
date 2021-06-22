@@ -115,10 +115,10 @@ void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedNam
 {
     if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
-        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
     } else if (name == heightAttr) {
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
     } else
         HTMLMediaElement::collectPresentationalHintsForAttribute(name, value, style);
 }

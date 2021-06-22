@@ -58,6 +58,8 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+
     void errorEventTimerFired();
 
     Timer m_errorEventTimer;
