@@ -595,6 +595,9 @@ webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html 
 
 webkit.org/b/199617 http/tests/media/hls/hls-video-resize.html [ Skip ]
 
+webkit.org/b/227258 media/media-source/media-source-has-audio-video.html [ Timeout ]
+webkit.org/b/227258 media/media-source/media-source-seek-unbuffered.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
