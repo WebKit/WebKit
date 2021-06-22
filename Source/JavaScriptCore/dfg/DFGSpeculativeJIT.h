@@ -738,9 +738,10 @@ public:
     void compileGetByIdFlush(Node*, AccessType);
     void compileInById(Node*);
     void compileInByVal(Node*);
+    void compileHasPrivate(Node*, AccessType);
     void compileHasPrivateName(Node*);
     void compileHasPrivateBrand(Node*);
-    
+
     void nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand);
     void nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, Node* branchNode);
     

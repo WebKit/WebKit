@@ -922,6 +922,32 @@ void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeleteP
     }
 }
 
+inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingInByFunction(InByKind kind)
+{
+    switch (kind) {
+    case InByKind::ById:
+        return operationInByIdOptimize;
+    case InByKind::ByVal:
+        return operationInByValOptimize;
+    case InByKind::PrivateName:
+        return operationHasPrivateNameOptimize;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline FunctionPtr<CFunctionPtrTag> appropriateGenericInByFunction(InByKind kind)
+{
+    switch (kind) {
+    case InByKind::ById:
+        return operationInByIdGeneric;
+    case InByKind::ByVal:
+        return operationInByValGeneric;
+    case InByKind::PrivateName:
+        return operationHasPrivateNameGeneric;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 static InlineCacheAction tryCacheInBy(
     JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* base, CacheableIdentifier propertyName,
     bool wasFound, const PropertySlot& slot, StructureStubInfo& stubInfo, InByKind kind)
@@ -1016,17 +1042,12 @@ static InlineCacheAction tryCacheInBy(
 
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::InReplaceWithJump, structure->classInfo(), ident, slot.slotBase() == base));
-            
-            RELEASE_ASSERT(result.code());
 
-            switch (kind) {
-            case InByKind::ById:
+            RELEASE_ASSERT(result.code());
+            if (kind == InByKind::ById)
                 InlineAccess::rewireStubAsJumpInAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
-                break;
-            case InByKind::ByVal:
+            else
                 InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
-                break;
-            }
         }
     }
 
@@ -1042,11 +1063,53 @@ void repatchInBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* b
 
     if (tryCacheInBy(globalObject, codeBlock, baseObject, propertyName, wasFound, slot, stubInfo, kind) == GiveUpOnCache) {
         LOG_IC((ICEvent::InReplaceWithGeneric, baseObject->classInfo(globalObject->vm()), Identifier::fromUid(vm, propertyName.uid())));
-        if (kind == InByKind::ById)
-            repatchSlowPathCall(codeBlock, stubInfo, operationInByIdGeneric);
-        else
-            repatchSlowPathCall(codeBlock, stubInfo, operationInByValGeneric);
+        repatchSlowPathCall(codeBlock, stubInfo, appropriateGenericInByFunction(kind));
     }
+}
+
+static InlineCacheAction tryCacheHasPrivateBrand(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* base, CacheableIdentifier brandID, bool wasFound, StructureStubInfo& stubInfo)
+{
+    VM& vm = globalObject->vm();
+    AccessGenerationResult result;
+    Identifier ident = Identifier::fromUid(vm, brandID.uid());
+
+    {
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        if (forceICFailure(globalObject))
+            return GiveUpOnCache;
+
+        Structure* structure = base->structure(vm);
+
+        InlineCacheAction action = actionForCell(vm, base);
+        if (action != AttemptToCache)
+            return action;
+
+        bool isBaseProperty = true;
+        LOG_IC((ICEvent::InAddAccessCase, structure->classInfo(), ident, isBaseProperty));
+
+        Ref<AccessCase> newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, brandID, invalidOffset, structure, { }, { });
+
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
+
+        if (result.generatedSomeCode()) {
+            LOG_IC((ICEvent::InReplaceWithJump, structure->classInfo(), ident, isBaseProperty));
+
+            RELEASE_ASSERT(result.code());
+            InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
+        }
+    }
+
+    fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+
+    return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
+}
+
+void repatchHasPrivateBrand(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* baseObject, CacheableIdentifier brandID, bool wasFound, StructureStubInfo& stubInfo)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    if (tryCacheHasPrivateBrand(globalObject, codeBlock, baseObject, brandID, wasFound, stubInfo) == GiveUpOnCache)
+        repatchSlowPathCall(codeBlock, stubInfo, operationHasPrivateBrandGeneric);
 }
 
 static InlineCacheAction tryCacheCheckPrivateBrand(
@@ -1728,16 +1791,17 @@ void resetDelBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, DelByKind kin
 
 void resetInBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, InByKind kind)
 {
-    switch (kind) {
-    case InByKind::ById:
-        repatchSlowPathCall(codeBlock, stubInfo, operationInByIdOptimize);
+    repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingInByFunction(kind));
+    if (kind == InByKind::ById)
         InlineAccess::resetStubAsJumpInAccess(codeBlock, stubInfo);
-        break;
-    case InByKind::ByVal:
-        repatchSlowPathCall(codeBlock, stubInfo, operationInByValOptimize);
+    else
         InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo);
-        break;
-    }
+}
+
+void resetHasPrivateBrand(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+{
+    repatchSlowPathCall(codeBlock, stubInfo, operationHasPrivateBrandOptimize);
+    InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo);
 }
 
 void resetInstanceOf(CodeBlock* codeBlock, StructureStubInfo& stubInfo)

@@ -264,6 +264,7 @@ private:
     void handleDeleteById(
         VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus, ECMAMode);
 
+    bool handleInByAsMatchStructure(VirtualRegister destination, Node* base, InByStatus);
     void handleInById(VirtualRegister destination, Node* base, CacheableIdentifier, InByStatus);
 
     // Either register a watchpoint or emit a check for this condition. Returns false if the
@@ -4941,31 +4942,39 @@ void ByteCodeParser::handleDeleteById(
     return;
 }
 
-void ByteCodeParser::handleInById(VirtualRegister destination, Node* base, CacheableIdentifier identifier, InByStatus status)
+bool ByteCodeParser::handleInByAsMatchStructure(VirtualRegister destination, Node* base, InByStatus status)
 {
-    if (status.isSimple() && Options::useAccessInlining()) {
-        bool allOK = true;
-        MatchStructureData* data = m_graph.m_matchStructureData.add();
-        for (const InByVariant& variant : status.variants()) {
-            if (!check(variant.conditionSet())) {
-                allOK = false;
-                break;
-            }
-            for (Structure* structure : variant.structureSet()) {
-                MatchStructureVariant matchVariant;
-                matchVariant.structure = m_graph.registerStructure(structure);
-                matchVariant.result = variant.isHit();
+    if (!status.isSimple() || !Options::useAccessInlining())
+        return false;
 
-                data->variants.append(WTFMove(matchVariant));
-            }
+    bool allOK = true;
+    MatchStructureData* data = m_graph.m_matchStructureData.add();
+    for (const InByVariant& variant : status.variants()) {
+        if (!check(variant.conditionSet())) {
+            allOK = false;
+            break;
         }
+        for (Structure* structure : variant.structureSet()) {
+            MatchStructureVariant matchVariant;
+            matchVariant.structure = m_graph.registerStructure(structure);
+            matchVariant.result = variant.isHit();
 
-        if (allOK) {
-            addToGraph(FilterInByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addInByStatus(currentCodeOrigin(), status)), base);
-            set(destination, addToGraph(MatchStructure, OpInfo(data), base));
-            return;
+            data->variants.append(WTFMove(matchVariant));
         }
     }
+
+    if (allOK) {
+        addToGraph(FilterInByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addInByStatus(currentCodeOrigin(), status)), base);
+        set(destination, addToGraph(MatchStructure, OpInfo(data), base));
+    }
+
+    return allOK;
+}
+
+void ByteCodeParser::handleInById(VirtualRegister destination, Node* base, CacheableIdentifier identifier, InByStatus status)
+{
+    if (handleInByAsMatchStructure(destination, base, status))
+        return;
 
     set(destination, addToGraph(InById, OpInfo(identifier), base));
 }
@@ -8304,18 +8313,59 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
         
         case op_has_private_name: {
-            // FIXME: Improve this once InByVal has been optimized.
-            // https://bugs.webkit.org/show_bug.cgi?id=226146
             auto bytecode = currentInstruction->as<OpHasPrivateName>();
-            set(bytecode.m_dst, addToGraph(HasPrivateName, get(bytecode.m_base), get(bytecode.m_property)));
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
+            bool compiledAsInById = false;
+
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                InByStatus status = InByStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap,
+                    m_icContextStack, currentCodeOrigin());
+
+                if (CacheableIdentifier identifier = status.singleIdentifier()) {
+                    m_graph.identifiers().ensure(identifier.uid());
+                    ASSERT(identifier.isSymbolCell());
+                    FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                    addToGraph(CheckIsConstant, OpInfo(frozen), property);
+                    handleInById(bytecode.m_dst, base, identifier, status);
+                    compiledAsInById = true;
+                }
+            }
+
+            if (!compiledAsInById)
+                set(bytecode.m_dst, addToGraph(HasPrivateName, base, property));
             NEXT_OPCODE(op_has_private_name);
         }
 
         case op_has_private_brand: {
-            // FIXME: Improve this once InByVal has been optimized.
-            // https://bugs.webkit.org/show_bug.cgi?id=226146
             auto bytecode = currentInstruction->as<OpHasPrivateBrand>();
-            set(bytecode.m_dst, addToGraph(HasPrivateBrand, get(bytecode.m_base), get(bytecode.m_brand)));
+            Node* base = get(bytecode.m_base);
+            Node* brand = get(bytecode.m_brand);
+            bool compiledAsMatchStructure = false;
+
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                InByStatus status = InByStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap,
+                    m_icContextStack, currentCodeOrigin());
+
+                if (CacheableIdentifier identifier = status.singleIdentifier()) {
+                    m_graph.identifiers().ensure(identifier.uid());
+                    ASSERT(identifier.isSymbolCell());
+                    FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                    addToGraph(CheckIsConstant, OpInfo(frozen), brand);
+                    compiledAsMatchStructure = handleInByAsMatchStructure(bytecode.m_dst, base, status);
+                }
+            }
+
+            if (!compiledAsMatchStructure)
+                set(bytecode.m_dst, addToGraph(HasPrivateBrand, base, brand));
             NEXT_OPCODE(op_has_private_brand);
         }
 

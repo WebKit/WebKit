@@ -249,8 +249,8 @@ void JITDelByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
 }
 
-JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR)
-    : Base(codeBlock, jitType, codeOrigin, callSiteIndex, AccessType::InByVal, usedRegisters)
+JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR)
+    : Base(codeBlock, jitType, codeOrigin, callSiteIndex, accessType, usedRegisters)
 {
     m_stubInfo->hasConstantIdentifier = false;
 

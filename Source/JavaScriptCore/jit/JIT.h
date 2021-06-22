@@ -571,6 +571,8 @@ namespace JSC {
         void emit_op_get_prototype_of(const Instruction*);
         void emit_op_in_by_id(const Instruction*);
         void emit_op_in_by_val(const Instruction*);
+        void emit_op_has_private_name(const Instruction*);
+        void emit_op_has_private_brand(const Instruction*);
         void emit_op_init_lazy_reg(const Instruction*);
         void emit_op_overrides_has_instance(const Instruction*);
         void emit_op_instanceof(const Instruction*);
@@ -705,6 +707,8 @@ namespace JSC {
         void emitSlow_op_get_argument_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_in_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_in_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_has_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_has_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof_custom(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jless(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -752,6 +756,9 @@ namespace JSC {
 
         void emitRightShift(const Instruction*, bool isUnsigned);
         void emitRightShiftSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
+
+        void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
+        void emitHasPrivateSlow(VirtualRegister dst, AccessType);
 
         template<typename Op>
         void emitNewFuncCommon(const Instruction*);

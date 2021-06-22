@@ -924,7 +924,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     emitArrayProfilingSiteWithCell(regT0, regT4, profile);
 
     JITInByValGenerator gen(
-        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0), InvalidGPRReg);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -949,6 +949,61 @@ void JIT::emitSlow_op_in_by_val(const Instruction* currentInstruction, Vector<Sl
     Call call = callOperation(operationInByValOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 
     gen.reportSlowPathCall(coldPathBegin, call);
+}
+
+void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType type)
+{
+    emitLoad2(base, regT1, regT0, propertyOrBrand, regT3, regT2);
+    emitJumpSlowCaseIfNotJSCell(base, regT1);
+
+    JITInByValGenerator gen(
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), type, RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0), InvalidGPRReg);
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_inByVals.append(gen);
+
+    emitStore(dst, regT1, regT0);
+}
+
+void JIT::emitHasPrivateSlow(VirtualRegister dst, AccessType type)
+{
+    ASSERT(type == AccessType::HasPrivateName || type == AccessType::HasPrivateBrand);
+
+    JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
+    Label coldPathBegin = label();
+
+    Call call = callOperation(type == AccessType::HasPrivateName ? operationHasPrivateNameOptimize : operationHasPrivateBrandOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
+void JIT::emit_op_has_private_name(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpHasPrivateName>();
+    emitHasPrivate(bytecode.m_dst, bytecode.m_base, bytecode.m_property, AccessType::HasPrivateName);
+}
+
+void JIT::emitSlow_op_has_private_name(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpHasPrivateName>();
+    emitHasPrivateSlow(bytecode.m_dst, AccessType::HasPrivateName);
+}
+
+void JIT::emit_op_has_private_brand(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpHasPrivateBrand>();
+    emitHasPrivate(bytecode.m_dst, bytecode.m_base, bytecode.m_brand, AccessType::HasPrivateBrand);
+}
+
+void JIT::emitSlow_op_has_private_brand(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpHasPrivateBrand>();
+    emitHasPrivateSlow(bytecode.m_dst, AccessType::HasPrivateBrand);
 }
 
 void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)

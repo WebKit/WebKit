@@ -50,7 +50,8 @@ enum class DelByKind {
 
 enum class InByKind {
     ById,
-    ByVal
+    ByVal,
+    PrivateName
 };
 
 void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&);
@@ -58,6 +59,7 @@ void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, con
 void repatchPutByID(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void repatchDeleteBy(JSGlobalObject*, CodeBlock*, DeletePropertySlot&, JSValue, Structure*, CacheableIdentifier, StructureStubInfo&, DelByKind, ECMAMode);
 void repatchInBy(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound, const PropertySlot&, StructureStubInfo&, InByKind);
+void repatchHasPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound,  StructureStubInfo&);
 void repatchCheckPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, StructureStubInfo&);
 void repatchSetPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, Structure*, CacheableIdentifier, StructureStubInfo&);
 void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue value, JSValue prototype, StructureStubInfo&, bool wasFound);
@@ -70,6 +72,7 @@ void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);
 void resetPutByID(CodeBlock*, StructureStubInfo&);
 void resetDelBy(CodeBlock*, StructureStubInfo&, DelByKind);
 void resetInBy(CodeBlock*, StructureStubInfo&, InByKind);
+void resetHasPrivateBrand(CodeBlock*, StructureStubInfo&);
 void resetInstanceOf(CodeBlock*, StructureStubInfo&);
 void resetCheckPrivateBrand(CodeBlock*, StructureStubInfo&);
 void resetSetPrivateBrand(CodeBlock*, StructureStubInfo&);

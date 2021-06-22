@@ -2010,8 +2010,6 @@ if not JSVALUE64
     slowPathOp(get_prototype_of)
 end
 
-slowPathOp(has_private_name)
-slowPathOp(has_private_brand)
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
 slowPathOp(less)
@@ -2044,6 +2042,8 @@ end
 
 llintSlowPathOp(in_by_id)
 llintSlowPathOp(in_by_val)
+llintSlowPathOp(has_private_name)
+llintSlowPathOp(has_private_brand)
 llintSlowPathOp(del_by_id)
 llintSlowPathOp(del_by_val)
 llintSlowPathOp(instanceof)

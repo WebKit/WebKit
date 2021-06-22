@@ -12420,24 +12420,13 @@ private:
         setJSValue(m_out.phi(Int64, results));
     }
 
-    void compileHasPrivateName()
-    {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        setJSValue(vmCall(Int64, operationHasPrivateName, weakPointer(globalObject), lowCell(m_node->child1()), lowSymbol(m_node->child2())));
-    }
-
-    void compileHasPrivateBrand()
-    {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        setJSValue(vmCall(Int64, operationHasPrivateBrand, weakPointer(globalObject), lowCell(m_node->child1()), lowSymbol(m_node->child2())));
-    }
-
-    template<InByKind kind, typename SubscriptKind>
+    template<AccessType type, typename SubscriptKind>
     void compileInBy(LValue base, SubscriptKind subscriptValue)
     {
+        static_assert(type == AccessType::InById || type == AccessType::InByVal || type == AccessType::HasPrivateName || type == AccessType::HasPrivateBrand);
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
-        if constexpr (kind != InByKind::ById)
+        if constexpr (type != AccessType::InById)
             patchpoint->appendSomeRegister(subscriptValue);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
@@ -12462,15 +12451,28 @@ private:
                 auto returnGPR = params[0].gpr();
                 auto base = JSValueRegs(params[1].gpr());
 
+                constexpr auto optimizationFunction = [&] () {
+                    if constexpr (type == AccessType::InById)
+                        return operationInByIdOptimize;
+                    else if constexpr (type == AccessType::InByVal)
+                        return operationInByValOptimize;
+                    else if constexpr (type == AccessType::HasPrivateName)
+                        return operationHasPrivateNameOptimize;
+                    else {
+                        static_assert(type == AccessType::HasPrivateBrand);
+                        return operationHasPrivateBrandOptimize;
+                    }
+                }();
+
                 const auto subscript = [&] {
-                    if constexpr (kind == InByKind::ById)
+                    if constexpr (type == AccessType::InById)
                         return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
                     else
                         return JSValueRegs(params[2].gpr());
                 }();
 
                 const auto generator = [&] {
-                    if constexpr (kind == InByKind::ById) {
+                    if constexpr (type == AccessType::InById) {
                         return Box<JITInByIdGenerator>::create(
                             jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
@@ -12478,14 +12480,14 @@ private:
                     } else {
                         return Box<JITInByValGenerator>::create(
                             jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
-                            params.unavailableRegisters(), base, subscript,
+                            type, params.unavailableRegisters(), base, subscript,
                             JSValueRegs(returnGPR), stubInfoGPR);
                     }
                 }();
 
                 CCallHelpers::JumpList slowCases;
                 generator->generateFastPath(jit);
-                if constexpr (kind == InByKind::ById)
+                if constexpr (type == AccessType::InById)
                     slowCases.append(generator->slowPathJump());
                 else {
                     if (!JITCode::useDataIC(JITType::FTLJIT))
@@ -12500,10 +12502,10 @@ private:
                         slowCases.link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
                         CCallHelpers::Call slowPathCall;
-                        if constexpr (kind == InByKind::ById) {
+                        if constexpr (type != AccessType::InByVal) {
                             if (JITCode::useDataIC(JITType::FTLJIT)) {
                                 jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
-                                generator->stubInfo()->m_slowOperation = operationInByIdOptimize;
+                                generator->stubInfo()->m_slowOperation = optimizationFunction;
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
@@ -12512,14 +12514,14 @@ private:
                             } else {
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
-                                    exceptions.get(), operationInByIdOptimize, returnGPR,
+                                    exceptions.get(), optimizationFunction, returnGPR,
                                     jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                     CCallHelpers::TrustedImmPtr(generator->stubInfo()), base, subscript).call();
                             }
                         } else {
                             if (JITCode::useDataIC(JITType::FTLJIT)) {
                                 jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
-                                generator->stubInfo()->m_slowOperation = operationInByValOptimize;
+                                generator->stubInfo()->m_slowOperation = optimizationFunction;
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
@@ -12529,7 +12531,7 @@ private:
                             } else {
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
-                                    exceptions.get(), operationInByValOptimize, returnGPR,
+                                    exceptions.get(), optimizationFunction, returnGPR,
                                     jit.codeBlock()->globalObjectFor(semanticNodeOrigin),
                                     CCallHelpers::TrustedImmPtr(generator->stubInfo()),
                                     CCallHelpers::TrustedImmPtr(nullptr), base, subscript).call();
@@ -12551,12 +12553,22 @@ private:
 
     void compileInById()
     {
-        compileInBy<InByKind::ById>(lowCell(m_node->child1()), m_node->cacheableIdentifier());
+        compileInBy<AccessType::InById>(lowCell(m_node->child1()), m_node->cacheableIdentifier());
     }
 
     void compileInByVal()
     {
-        compileInBy<InByKind::ByVal>(lowCell(m_node->child1()), lowJSValue(m_node->child2()));
+        compileInBy<AccessType::InByVal>(lowCell(m_node->child1()), lowJSValue(m_node->child2()));
+    }
+
+    void compileHasPrivateName()
+    {
+        compileInBy<AccessType::HasPrivateName>(lowCell(m_node->child1()), lowSymbol(m_node->child2()));
+    }
+
+    void compileHasPrivateBrand()
+    {
+        compileInBy<AccessType::HasPrivateBrand>(lowCell(m_node->child1()), lowSymbol(m_node->child2()));
     }
 
     void compileHasOwnProperty()
