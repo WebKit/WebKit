@@ -310,14 +310,6 @@
 #include <WebCore/HighlightVisibility.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKCoordinatorAdditions.h>
-#else
-#define WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
-#define WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
-#define WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
-#endif
-
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 

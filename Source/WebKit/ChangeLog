@@ -1,3 +1,9 @@
+2021-06-22  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r279133: remove unnecessary includes and defines after upstreaming.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2021-06-22  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the service 'com.apple.print.normalizerd'
