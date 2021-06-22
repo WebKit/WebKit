@@ -1,3 +1,28 @@
+2021-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Safari 14): Submenus on https://codelearn.cat don't show
+        https://bugs.webkit.org/show_bug.cgi?id=225467
+        <rdar://problem/77612276>
+
+        Reviewed by Alan Bujtas.
+        
+        RenderBox::requiresLayerWithScrollableArea() is called via RenderLayer::styleChanged()
+        which is before layout, yet requiresLayerWithScrollableArea() was consulting layout-dependent
+        state under hasHorizontalOverflow() || hasVerticalOverflow(). This resulted in composited
+        scrolling layers sticking around after overflow style changed from `scroll` to `visible`.
+
+        Fix by just removing the "has overflow" checks; we make RenderLayerScrollableArea
+        for any non-visible overflow anyway. scrollsOverflow() checks hasOverflowClip(),
+        so all we need is a hasOverflowClip() check.
+
+        Remove some redundant comments and add a FIXME about layers which get RenderLayerScrollableAreas
+        but don't need them.
+
+        Test: compositing/overflow/overflow-scroll-to-visible.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::requiresLayerWithScrollableArea const):
+
 2021-06-22  Chris Dumez  <cdumez@apple.com>
 
         CSSStyleDeclaration.getPropertyPriority() should return the empty string for invalid CSS properties

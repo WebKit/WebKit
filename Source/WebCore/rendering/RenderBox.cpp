@@ -959,19 +959,16 @@ bool RenderBox::isScrollableOrRubberbandableBox() const
 
 bool RenderBox::requiresLayerWithScrollableArea() const
 {
-    // The RenderView is always expected to be potentially scrollable.
+    // FIXME: This is wrong; these boxes' layers should not need ScrollableAreas via RenderLayer.
     if (isRenderView() || isDocumentElementRenderer())
         return true;
 
-    // Overflow handling needs RenderLayerScrollableArea.
-    if (scrollsOverflow() || hasOverflowClip() || hasHorizontalOverflow() || hasVerticalOverflow())
+    if (hasOverflowClip())
         return true;
 
-    // Resize handling needs RenderLayerScrollableArea.
     if (style().resize() != Resize::None)
         return true;
 
-    // Marquee handling needs RenderLayerScrollableArea.
     if (isHTMLMarquee() && style().marqueeBehavior() != MarqueeBehavior::None)
         return true;
 
