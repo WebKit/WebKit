@@ -1,3 +1,40 @@
+2021-06-21  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] RELEASE_ASSERT in RemoteResourceCacheProxy::didFinalizeRenderingUpdate() may fire if GPUP is relaunched
+        https://bugs.webkit.org/show_bug.cgi?id=227229
+        <rdar://79147947>
+
+        Reviewed by Myles C. Maxfield.
+
+        1) Remove maximumUnusedFontCountToSkipRemoval because 
+           'unusedFontCount < maximumUnusedFontCountToSkipRemoval' can't be true
+           since both unusedFontCount and maximumUnusedFontCountToSkipRemoval are
+           unsigned and maximumUnusedFontCountToSkipRemoval is equal to zero.
+           So they can only be equal and we can replace this by '!unusedFontCount'.
+
+        2) RemoteResourceCacheProxy::cacheFont() assumes if the font is cached in
+           m_fontIdentifierToLastRenderingUpdateVersionMap then it is also cached
+           in GPUP. We have to keep this assumption correct by removing the 
+           corresponding entries from m_fontIdentifierToLastRenderingUpdateVersionMap.
+
+        3) RemoteResourceCacheProxy::didFinalizeRenderingUpdate() needs to reset
+           m_numberOfFontsUsedInCurrentRenderingUpdate and to increment 
+           m_currentRenderingUpdateVersion in all its code branches.
+
+        4) If the GPUP is relaunched, we need to set 
+           m_numberOfFontsUsedInCurrentRenderingUpdate to zero after we clear
+           m_fontIdentifierToLastRenderingUpdateVersionMap. Otherwise the
+           RELEASE_ASSERT in RemoteResourceCacheProxy::didFinalizeRenderingUpdate()
+           will fire.
+
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::prepareForNextRenderingUpdate):
+        (WebKit::RemoteResourceCacheProxy::clearFontMap):
+        (WebKit::RemoteResourceCacheProxy::didFinalizeRenderingUpdate):
+        (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+        (WebKit::RemoteResourceCacheProxy::releaseMemory):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
 2021-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WebKitLegacy] Non-actionable "Look Up" action appears when right clicking images

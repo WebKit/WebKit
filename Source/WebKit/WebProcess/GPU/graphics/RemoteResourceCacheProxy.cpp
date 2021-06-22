@@ -105,15 +105,16 @@ void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
 void RemoteResourceCacheProxy::cacheFont(Font& font)
 {
     auto result = m_fontIdentifierToLastRenderingUpdateVersionMap.ensure(font.renderingResourceIdentifier(), [&] {
-        return 0;
+        m_remoteRenderingBackendProxy.cacheFont(makeRef(font));
+        ++m_numberOfFontsUsedInCurrentRenderingUpdate;
+        return m_currentRenderingUpdateVersion;
     });
+
     auto& lastVersion = result.iterator->value;
     if (lastVersion != m_currentRenderingUpdateVersion) {
         lastVersion = m_currentRenderingUpdateVersion;
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
     }
-    if (result.isNewEntry)
-        m_remoteRenderingBackendProxy.cacheFont(makeRef(font));
 }
 
 void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier renderingResourceIdentifier)
@@ -125,25 +126,42 @@ void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier re
     m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
 }
 
+void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
+{
+    ++m_currentRenderingUpdateVersion;
+    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
+}
+
+void RemoteResourceCacheProxy::clearFontMap()
+{
+    m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
+    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
+    m_currentRenderingUpdateVersion = 0;
+}
+
 void RemoteResourceCacheProxy::didFinalizeRenderingUpdate()
 {
     static constexpr unsigned minimumRenderingUpdateCountToKeepFontAlive = 4;
     static constexpr double minimumFractionOfUnusedFontCountToTriggerRemoval = 0.25;
-    static constexpr unsigned maximumUnusedFontCountToSkipRemoval = 0;
 
     unsigned totalFontCount = m_fontIdentifierToLastRenderingUpdateVersionMap.size();
     RELEASE_ASSERT(m_numberOfFontsUsedInCurrentRenderingUpdate <= totalFontCount);
-    unsigned unusedFontCount = totalFontCount - m_numberOfFontsUsedInCurrentRenderingUpdate;
-    if (unusedFontCount < minimumFractionOfUnusedFontCountToTriggerRemoval * totalFontCount && unusedFontCount <= maximumUnusedFontCountToSkipRemoval)
-        return;
 
-    for (auto& item : m_fontIdentifierToLastRenderingUpdateVersionMap) {
-        if (m_currentRenderingUpdateVersion - item.value >= minimumRenderingUpdateCountToKeepFontAlive)
-            m_remoteRenderingBackendProxy.releaseRemoteResource(item.key);
+    unsigned unusedFontCount = totalFontCount - m_numberOfFontsUsedInCurrentRenderingUpdate;
+    if (unusedFontCount <= minimumFractionOfUnusedFontCountToTriggerRemoval * totalFontCount) {
+        prepareForNextRenderingUpdate();
+        return;
     }
 
-    ++m_currentRenderingUpdateVersion;
-    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
+    m_fontIdentifierToLastRenderingUpdateVersionMap.removeIf([&] (const auto& item) {
+        if (m_currentRenderingUpdateVersion - item.value < minimumRenderingUpdateCountToKeepFontAlive)
+            return false;
+
+        m_remoteRenderingBackendProxy.releaseRemoteResource(item.key);
+        return true;
+    });
+    
+    prepareForNextRenderingUpdate();
 }
 
 void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
@@ -155,14 +173,13 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
         imageBuffer->clearBackend();
     }
     m_nativeImages.clear();
-    m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
+    clearFontMap();
 }
 
 void RemoteResourceCacheProxy::releaseMemory()
 {
-    m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
-    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
     m_remoteRenderingBackendProxy.deleteAllFonts();
+    clearFontMap();
 }
 
 } // namespace WebKit
