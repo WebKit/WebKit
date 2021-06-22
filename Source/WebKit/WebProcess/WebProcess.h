@@ -420,7 +420,7 @@ private:
     void platformTerminate();
 
     void setHasSuspendedPageProxy(bool);
-    void setIsInProcessCache(bool);
+    void setIsInProcessCache(bool, CompletionHandler<void()>&&);
     void markIsNoLongerPrewarmed();
 
     void registerURLSchemeAsEmptyDocument(const String&);
