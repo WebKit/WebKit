@@ -1,3 +1,21 @@
+2021-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Force a copy of font data when receiving it from the untrusted web process
+        https://bugs.webkit.org/show_bug.cgi?id=227247
+        <rdar://problem/70825675>
+
+        Reviewed by Maciej Stachowiak.
+
+        Sending a SharedBuffer across IPC is implemented by having the receiver map a shmem into its address space. On
+        the sender's side, the shmem still exists, and a compromised web process could scribble data into it after
+        sending it. So, when the GPU process receives the font data, we need to make a copy of it locally to make sure
+        the data can't change out from under us.
+
+        No new tests because there is no behavior change.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData):
+
 2021-06-21  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] RELEASE_ASSERT in RemoteResourceCacheProxy::didFinalizeRenderingUpdate() may fire if GPUP is relaunched
