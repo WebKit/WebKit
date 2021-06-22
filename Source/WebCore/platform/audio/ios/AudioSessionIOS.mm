@@ -96,11 +96,34 @@
 
 namespace WebCore {
 
+static void setEligibleForSmartRouting(bool eligible)
+{
+    ASSERT(!isMainThread());
+
+    auto *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    if (![session respondsToSelector:@selector(setEligibleForBTSmartRoutingConsideration:error:)]
+        || ![session respondsToSelector:@selector(eligibleForBTSmartRoutingConsideration)])
+        return;
+
+    if (session.eligibleForBTSmartRoutingConsideration == eligible)
+        return;
+
+    NSError *error = nil;
+    if (![session setEligibleForBTSmartRoutingConsideration:eligible error:&error])
+        RELEASE_LOG_ERROR(Media, "failed to set eligible to %d with error: %@", eligible, error.localizedDescription);
+}
+
 AudioSessionIOS::AudioSessionIOS()
+    : m_workQueue(WorkQueue::create("AudioSession Activation Queue"))
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_interruptionObserverHelper = adoptNS([[WebInterruptionObserverHelper alloc] initWithCallback:this]);
     END_BLOCK_OBJC_EXCEPTIONS
+
+    m_workQueue->dispatch([] {
+        setEligibleForSmartRouting(false);
+    });
+
 }
 
 AudioSessionIOS::~AudioSessionIOS()
@@ -240,9 +263,6 @@ size_t AudioSessionIOS::maximumNumberOfOutputChannels() const
 
 bool AudioSessionIOS::tryToSetActiveInternal(bool active)
 {
-    if (!m_workQueue)
-        m_workQueue = WorkQueue::create("AudioSession Activation Queue");
-
     // We need to deactivate the session on another queue because the AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation option
     // means that AVAudioSession may synchronously unduck previously ducked clients. Activation needs to complete before this method
     // returns, so do it synchronously on the same serial queue.
@@ -250,6 +270,7 @@ bool AudioSessionIOS::tryToSetActiveInternal(bool active)
         bool success = false;
         m_workQueue->dispatchSync([&success] {
             NSError *error = nil;
+            setEligibleForSmartRouting(true);
             [[PAL::getAVAudioSessionClass() sharedInstance] setActive:YES withOptions:0 error:&error];
             success = !error;
         });
@@ -259,6 +280,7 @@ bool AudioSessionIOS::tryToSetActiveInternal(bool active)
     m_workQueue->dispatch([] {
         NSError *error = nil;
         [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:0 error:&error];
+        setEligibleForSmartRouting(false);
     });
 
     return true;

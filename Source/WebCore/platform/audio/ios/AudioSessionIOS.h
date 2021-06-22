@@ -65,7 +65,7 @@ private:
     void endInterruption(MayResume) final;
 
     AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };
-    RefPtr<WTF::WorkQueue> m_workQueue;
+    Ref<WTF::WorkQueue> m_workQueue;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
 };
 

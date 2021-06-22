@@ -393,6 +393,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AVAudioSession (AVAudioSessionPrivate)
 - (instancetype)initAuxiliarySession;
 @property (readonly) NSString* routingContextUID;
+@property (readonly) BOOL eligibleForBTSmartRoutingConsideration;
+- (BOOL)setEligibleForBTSmartRoutingConsideration:(BOOL)inValue error:(NSError **)outError;
 @end
 
 NS_ASSUME_NONNULL_END
