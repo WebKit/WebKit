@@ -4644,6 +4644,7 @@ storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 webxr [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=226970
+fast/css/parse-border-image-repeat-null-crash.html [ Failure ]
 fast/workers/worker-multi-startup.html [ Pass Timeout ]
 fast/workers/worker-script-error.html [ Pass Timeout ]
 fetch/fetch-worker-crash.html [ Pass Timeout ]
