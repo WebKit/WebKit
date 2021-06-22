@@ -4276,7 +4276,7 @@ String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
 String CSSComputedStyleDeclaration::getPropertyPriority(const String&)
 {
     // All computed styles have a priority of not "important".
-    return emptyString(); // FIXME: Should this sometimes be null instead of empty, to match a normal style declaration?
+    return emptyString();
 }
 
 String CSSComputedStyleDeclaration::getPropertyShorthand(const String&)

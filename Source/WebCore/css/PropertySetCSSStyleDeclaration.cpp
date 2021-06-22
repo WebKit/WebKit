@@ -209,7 +209,7 @@ String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propert
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
-        return String();
+        return emptyString();
     return m_propertySet->propertyIsImportant(propertyID) ? "important"_s : emptyString();
 }
 

@@ -1,3 +1,27 @@
+2021-06-22  Chris Dumez  <cdumez@apple.com>
+
+        CSSStyleDeclaration.getPropertyPriority() should return the empty string for invalid CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=227257
+
+        Reviewed by Geoffrey Garen.
+
+        CSSStyleDeclaration.getPropertyPriority() should return the empty string for invalid CSS properties,
+        not null. Corresponding specification:
+        - https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-getpropertyvalue
+
+        Gecko and Blink match the specification here so changing our behavior improves compatibility.
+
+        Also use CSSOMString instead of DOMString in the CSSStyleDeclaration IDL to match the specification,
+        since I was modifying the IDL.
+
+        Test: fast/css/CSSStyleDeclaration-getPropertyPriority-invalid-property.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyPriority):
+        * css/CSSStyleDeclaration.idl:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyPriority):
+
 2021-06-22  Jean-Yves Avenard  <jya@apple.com>
 
         Remove unused method in AudioFileReader

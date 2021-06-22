@@ -1,3 +1,15 @@
+2021-06-22  Chris Dumez  <cdumez@apple.com>
+
+        CSSStyleDeclaration.getPropertyPriority() should return the empty string for invalid CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=227257
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/css/CSSStyleDeclaration-getPropertyPriority-invalid-property-expected.txt: Added.
+        * fast/css/CSSStyleDeclaration-getPropertyPriority-invalid-property.html: Added.
+
 2021-06-22  Per Arne Vollan  <pvollan@apple.com>
 
         [AppleWin] Update test expectations

@@ -1,0 +1,11 @@
+Checks that CSSStyleDeclaration.getPropertyPriority() returns the empty string for invalid CSS properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS declaration.getPropertyPriority('invalidProperty') is ""
+PASS declaration.getPropertyPriority('margin') is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
