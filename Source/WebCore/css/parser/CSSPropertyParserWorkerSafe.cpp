@@ -35,6 +35,7 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleValue.h"
+#include "CSSImageValue.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
 #include "CSSParserTokenRange.h"

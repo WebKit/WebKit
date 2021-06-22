@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ArgumentCoders.h"
 #include "RemoteRenderingBackendProxy.h"
 
 namespace WebKit {

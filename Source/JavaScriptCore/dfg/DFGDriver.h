@@ -32,6 +32,7 @@ namespace JSC {
 class CodeBlock;
 class JITCode;
 class VM;
+enum class JITCompilationMode;
 
 namespace DFG {
 

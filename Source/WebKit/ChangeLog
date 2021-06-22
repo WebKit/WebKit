@@ -1,5 +1,17 @@
 2021-06-21  Don Olmstead  <don.olmstead@sony.com>
 
+        Non-unified build fixes late June 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=227241
+
+        Unreviewed non-unified build fixes.
+
+        * GPUProcess/GPUProcess.cpp:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        * WebProcess/GPU/media/WebMediaStrategy.cpp:
+        (WebKit::WebMediaStrategy::createNowPlayingManager const):
+
+2021-06-21  Don Olmstead  <don.olmstead@sony.com>
+
         Update signature of createVideoLayerRemote for PlayStation and GStreamer
         https://bugs.webkit.org/show_bug.cgi?id=227242
 

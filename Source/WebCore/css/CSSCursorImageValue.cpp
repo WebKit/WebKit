@@ -27,6 +27,7 @@
 #include "SVGCursorElement.h"
 #include "SVGLengthContext.h"
 #include "SVGURIReference.h"
+#include "StyleBuilderState.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 

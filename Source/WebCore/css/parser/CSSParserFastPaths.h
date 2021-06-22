@@ -32,6 +32,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ColorTypes.h"
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
