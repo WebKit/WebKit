@@ -447,3 +447,4 @@ editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.ht
 editing/pasteboard/smart-paste-paragraph-003.html [ Failure ]
 
 fast/events/contextmenu-actions-in-selected-text.html [ ImageOnlyFailure ]
+fast/events/contextmenu-lookup-action-for-image.html [ Failure ]

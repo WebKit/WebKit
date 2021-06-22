@@ -130,6 +130,10 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
     void showContextMenu() final { }
 #endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+    bool supportsLookUpInImages() final { return false; }
+#endif
 };
 
 #endif // ENABLE(CONTEXT_MENUS)

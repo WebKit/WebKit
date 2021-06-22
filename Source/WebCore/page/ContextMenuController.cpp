@@ -899,7 +899,7 @@ void ContextMenuController::populate()
                 appendItem(CopyImageItem, m_contextMenu.get());
 
 #if ENABLE(IMAGE_ANALYSIS)
-                if (image && !image->isAnimated())
+                if (m_client.supportsLookUpInImages() && image && !image->isAnimated())
                     appendItem(LookUpImageItem, m_contextMenu.get());
 #endif
             }

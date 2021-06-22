@@ -1,3 +1,20 @@
+2021-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WebKitLegacy] Non-actionable "Look Up" action appears when right clicking images
+        https://bugs.webkit.org/show_bug.cgi?id=227240
+
+        Reviewed by Devin Rousso.
+
+        The "Look Up" action currently appears in legacy WebKit, despite visual search not being supported in WebKit1.
+        Add and consult a context menu client hook to avoid inserting this item when its functionality is unsupported.
+
+        Test: fast/events/contextmenu-lookup-action-for-image.html
+
+        * loader/EmptyClients.cpp:
+        * page/ContextMenuClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+
 2021-06-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Update textfield border color to match specification

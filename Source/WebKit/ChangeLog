@@ -1,3 +1,14 @@
+2021-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WebKitLegacy] Non-actionable "Look Up" action appears when right clicking images
+        https://bugs.webkit.org/show_bug.cgi?id=227240
+
+        Reviewed by Devin Rousso.
+
+        Override the new client hook and return true.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+
 2021-06-21  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes late June 2021 edition
