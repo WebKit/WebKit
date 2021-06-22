@@ -57,7 +57,8 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
-static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { };
+#define NETWORK_DATA_TASK_COCOA_ADDITIONS UNUSED_VARIABLE(pcmDataCarried);
+static WebCore::RegistrableDomain contextString(NSURLRequest *) { return { }; }
 #endif
 
 namespace WebKit {
@@ -337,31 +338,24 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
     restrictRequestReferrerToOriginIfNeeded(request);
 
-    RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
-    RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
+    // FIXME: Once we are done with NETWORK_DATA_TASK_COCOA_ADDITIONS, make nsRequest a RetainPtr and get rid of protectedNSRequest and pcmDataCarried.
+    NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    auto pcmDataCarried = parameters.pcmDataCarried;
 
-#if ENABLE(APP_PRIVACY_REPORT)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    mutableRequest.get()._isNonAppInitiated = !request.isAppBound();
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
+    NETWORK_DATA_TASK_COCOA_ADDITIONS
 
-    if (parameters.pcmDataCarried)
-        processPCMRequest(*parameters.pcmDataCarried, mutableRequest.get());
+    auto protectedNSRequest = retainPtr(nsRequest);
+    m_session->appBoundNavigationTestingData().updateAppBoundNavigationTestingData(request, contextString(protectedNSRequest.get()));
 
-    nsRequest = mutableRequest;
+    applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(protectedNSRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
-    m_session->appBoundNavigationTestingData().updateAppBoundNavigationTestingData(request, request.firstPartyForCookies().isEmpty() ? WebCore::RegistrableDomain(request.url()) : WebCore::RegistrableDomain(request.firstPartyForCookies()));
-
-    applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Sniff);
-
-    m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
+    m_task = [m_sessionWrapper->session dataTaskWithRequest:protectedNSRequest.get()];
 
     WTFBeginSignpost(m_task.get(), "DataTask", "%{public}s pri: %.2f preconnect: %d", url.string().ascii().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
 
     RELEASE_ASSERT(!m_sessionWrapper->dataTaskMap.contains([m_task taskIdentifier]));
     m_sessionWrapper->dataTaskMap.add([m_task taskIdentifier], this);
-    LOG(NetworkSession, "%lu Creating NetworkDataTask with URL %s", (unsigned long)[m_task taskIdentifier], [nsRequest URL].absoluteString.UTF8String);
+    LOG(NetworkSession, "%lu Creating NetworkDataTask with URL %s", (unsigned long)[m_task taskIdentifier], [protectedNSRequest URL].absoluteString.UTF8String);
 
     if (parameters.shouldPreconnectOnly == PreconnectOnly::Yes) {
 #if ENABLE(SERVER_PRECONNECT)
@@ -378,9 +372,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (shouldBlockCookies) {
 #if !RELEASE_LOG_DISABLED
         if (m_session->shouldLogCookieInformation())
-            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: Blocking cookies for URL %s", this, pageID().toUInt64(), frameID().toUInt64(), (unsigned long)[m_task taskIdentifier], [nsRequest URL].absoluteString.UTF8String);
+            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: Blocking cookies for URL %s", this, pageID().toUInt64(), frameID().toUInt64(), (unsigned long)[m_task taskIdentifier], [protectedNSRequest URL].absoluteString.UTF8String);
 #else
-        LOG(NetworkSession, "%lu Blocking cookies for URL %s", (unsigned long)[m_task taskIdentifier], [nsRequest URL].absoluteString.UTF8String);
+        LOG(NetworkSession, "%lu Blocking cookies for URL %s", (unsigned long)[m_task taskIdentifier], [protectedNSRequest URL].absoluteString.UTF8String);
 #endif
         blockCookies();
     }

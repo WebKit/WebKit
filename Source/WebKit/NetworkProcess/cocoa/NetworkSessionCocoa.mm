@@ -59,31 +59,10 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
-#import <wtf/cocoa/VectorCocoa.h>
-#import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
-
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-#import <Symptoms/SymptomAnalytics.h>
-#import <Symptoms/SymptomPresentationFeed.h>
-#endif
-
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
-SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(Symptoms, SymptomAnalytics);
-SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(Symptoms, SymptomPresentationFeed);
-SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(Symptoms, SymptomPresentationLite);
-SOFT_LINK_CLASS_OPTIONAL(SymptomAnalytics, AnalyticsWorkspace);
-SOFT_LINK_CLASS_OPTIONAL(SymptomPresentationFeed, UsageFeed);
-SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationFeed, kSymptomAnalyticsServiceDomainTrackingClearHistoryBundleIDs, const NSString *);
-SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationFeed, kSymptomAnalyticsServiceDomainTrackingClearHistoryStartDate, const NSString *);
-SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationFeed, kSymptomAnalyticsServiceDomainTrackingClearHistoryEndDate, const NSString *);
-SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationFeed, kSymptomAnalyticsServiceDomainTrackingClearHistoryKey, const NSString *);
-SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationLite, kSymptomAnalyticsServiceEndpoint, NSString *)
-#endif
-
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
@@ -1784,86 +1763,5 @@ void NetworkSessionCocoa::clearAlternativeServices(WallTime modifiedSince)
     UNUSED_PARAM(modifiedSince);
 #endif
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
-static bool isActingOnBehalfOfAFullWebBrowser(const String& bundleID)
-{
-    return bundleID == "com.apple.webbookmarksd";
-}
-#endif
-
-void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modifiedSince, std::optional<HashSet<WebCore::RegistrableDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
-{
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
-    auto bundleID = WebCore::applicationBundleIdentifier();
-    if (!isParentProcessAFullWebBrowser(networkProcess()) && !isActingOnBehalfOfAFullWebBrowser(bundleID))
-        return completionHandler();
-
-    if (!SymptomAnalyticsLibrary()
-        || !SymptomPresentationFeedLibrary()
-        || !SymptomPresentationLiteLibrary()
-        || !getAnalyticsWorkspaceClass()
-        || !getUsageFeedClass()
-        || !canLoadkSymptomAnalyticsServiceEndpoint()) {
-        completionHandler();
-        return;
-    }
-
-    RetainPtr<AnalyticsWorkspace> workspace = adoptNS([allocAnalyticsWorkspaceInstance() initWorkspaceWithService:getkSymptomAnalyticsServiceEndpoint()]);
-    RetainPtr<UsageFeed> usageFeed = adoptNS([allocUsageFeedInstance() initWithWorkspace:workspace.get()]);
-
-    if (![usageFeed.get() respondsToSelector:@selector(performNetworkDomainsActionWithOptions:reply:)]
-        || !canLoadkSymptomAnalyticsServiceDomainTrackingClearHistoryKey()
-        || !canLoadkSymptomAnalyticsServiceDomainTrackingClearHistoryBundleIDs()
-        || !canLoadkSymptomAnalyticsServiceDomainTrackingClearHistoryStartDate()
-        || !canLoadkSymptomAnalyticsServiceDomainTrackingClearHistoryEndDate()) {
-        completionHandler();
-        return;
-    }
-
-    auto *startDate = [NSDate distantPast];
-    if (modifiedSince) {
-        NSTimeInterval timeInterval = modifiedSince.value().secondsSinceEpoch().seconds();
-        startDate = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-    }
-
-    auto contextArray = adoptNS([[NSMutableArray alloc] init]);
-    if (domains) {
-        contextArray = createNSArray(*domains, [&] (auto domain) {
-            return [NSString stringWithUTF8String:domain.string().utf8().data()];
-        });
-    }
-
-    if (isActingOnBehalfOfAFullWebBrowser(bundleID))
-        bundleID = "com.apple.mobilesafari";
-
-    NSDictionary *options = @{
-        (id)getkSymptomAnalyticsServiceDomainTrackingClearHistoryKey(): @{
-            (id)getkSymptomAnalyticsServiceDomainTrackingClearHistoryBundleIDs(): @{
-                bundleID : contextArray.get(),
-            },
-            (id)getkSymptomAnalyticsServiceDomainTrackingClearHistoryStartDate(): startDate,
-            (id)getkSymptomAnalyticsServiceDomainTrackingClearHistoryEndDate(): [NSDate distantFuture]
-        }
-    };
-
-    bool result = [usageFeed performNetworkDomainsActionWithOptions:options reply:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSDictionary *reply, NSError *error) mutable {
-        if (error)
-            LOG(NetworkSession, "Error deleting network domain data %" PUBLIC_LOG_STRING, error);
-
-        completionHandler();
-    }).get()];
-
-    if (!result)
-        LOG(NetworkSession, "Error deleting network domain data: invalid parameter or failure to contact the service");
-#else
-    UNUSED_PARAM(modifiedSince);
-    completionHandler();
-#endif
-}
-
-#endif // USE(APPLE_INTERNAL_SDK)
 
 } // namespace WebKit
