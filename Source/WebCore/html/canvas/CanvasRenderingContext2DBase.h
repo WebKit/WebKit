@@ -87,8 +87,8 @@ public:
 
     const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
 
-    float lineWidth() const { return state().lineWidth; }
-    void setLineWidth(float);
+    double lineWidth() const { return state().lineWidth; }
+    void setLineWidth(double);
 
     CanvasLineCap lineCap() const { return state().canvasLineCap(); }
     void setLineCap(CanvasLineCap);
@@ -98,17 +98,17 @@ public:
     void setLineJoin(CanvasLineJoin);
     void setLineJoin(const String&);
 
-    float miterLimit() const { return state().miterLimit; }
-    void setMiterLimit(float);
+    double miterLimit() const { return state().miterLimit; }
+    void setMiterLimit(double);
 
-    const Vector<float>& getLineDash() const { return state().lineDash; }
-    void setLineDash(const Vector<float>&);
+    const Vector<double>& getLineDash() const { return state().lineDash; }
+    void setLineDash(const Vector<double>&);
 
-    const Vector<float>& webkitLineDash() const { return getLineDash(); }
-    void setWebkitLineDash(const Vector<float>&);
+    const Vector<double>& webkitLineDash() const { return getLineDash(); }
+    void setWebkitLineDash(const Vector<double>&);
 
-    float lineDashOffset() const { return state().lineDashOffset; }
-    void setLineDashOffset(float);
+    double lineDashOffset() const { return state().lineDashOffset; }
+    void setLineDashOffset(double);
 
     float shadowOffsetX() const { return state().shadowOffset.width(); }
     void setShadowOffsetX(float);
@@ -122,8 +122,8 @@ public:
     String shadowColor() const { return state().shadowColorString(); }
     void setShadowColor(const String&);
 
-    float globalAlpha() const { return state().globalAlpha; }
-    void setGlobalAlpha(float);
+    double globalAlpha() const { return state().globalAlpha; }
+    void setGlobalAlpha(double);
 
     String globalCompositeOperation() const { return state().globalCompositeOperationString(); }
     void setGlobalCompositeOperation(const String&);
@@ -131,13 +131,13 @@ public:
     void save() { ++m_unrealizedSaveCount; }
     void restore();
 
-    void scale(float sx, float sy);
-    void rotate(float angleInRadians);
-    void translate(float tx, float ty);
-    void transform(float m11, float m12, float m21, float m22, float dx, float dy);
+    void scale(double sx, double sy);
+    void rotate(double angleInRadians);
+    void translate(double tx, double ty);
+    void transform(double m11, double m12, double m21, double m22, double dx, double dy);
 
     Ref<DOMMatrix> getTransform() const;
-    void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
+    void setTransform(double m11, double m12, double m21, double m22, double dx, double dy);
     ExceptionOr<void> setTransform(DOMMatrix2DInit&&);
     void resetTransform();
 
@@ -159,15 +159,15 @@ public:
     void stroke(Path2D&);
     void clip(Path2D&, CanvasFillRule = CanvasFillRule::Nonzero);
 
-    bool isPointInPath(float x, float y, CanvasFillRule = CanvasFillRule::Nonzero);
-    bool isPointInStroke(float x, float y);
+    bool isPointInPath(double x, double y, CanvasFillRule = CanvasFillRule::Nonzero);
+    bool isPointInStroke(double x, double y);
 
-    bool isPointInPath(Path2D&, float x, float y, CanvasFillRule = CanvasFillRule::Nonzero);
-    bool isPointInStroke(Path2D&, float x, float y);
+    bool isPointInPath(Path2D&, double x, double y, CanvasFillRule = CanvasFillRule::Nonzero);
+    bool isPointInStroke(Path2D&, double x, double y);
 
-    void clearRect(float x, float y, float width, float height);
-    void fillRect(float x, float y, float width, float height);
-    void strokeRect(float x, float y, float width, float height);
+    void clearRect(double x, double y, double width, double height);
+    void fillRect(double x, double y, double width, double height);
+    void strokeRect(double x, double y, double width, double height);
 
     void setShadow(float width, float height, float blur, const String& color = String(), std::optional<float> alpha = std::nullopt);
     void setShadow(float width, float height, float blur, float grayLevel, float alpha = 1.0);
@@ -257,20 +257,20 @@ public:
         String unparsedFillColor;
         CanvasStyle strokeStyle;
         CanvasStyle fillStyle;
-        float lineWidth;
+        double lineWidth;
         LineCap lineCap;
         LineJoin lineJoin;
-        float miterLimit;
+        double miterLimit;
         FloatSize shadowOffset;
         float shadowBlur;
         Color shadowColor;
-        float globalAlpha;
+        double globalAlpha;
         CompositeOperator globalComposite;
         BlendMode globalBlend;
         AffineTransform transform;
         bool hasInvertibleTransform;
-        Vector<float> lineDash;
-        float lineDashOffset;
+        Vector<double> lineDash;
+        double lineDashOffset;
         bool imageSmoothingEnabled;
         ImageSmoothingQuality imageSmoothingQuality;
         TextAlign textAlign;
@@ -302,9 +302,9 @@ protected:
 
     static String normalizeSpaces(const String&);
 
-    void drawText(const String& text, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
-    bool canDrawText(float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
-    void drawTextUnchecked(const TextRun&, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
+    void drawText(const String& text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
+    bool canDrawText(double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
+    void drawTextUnchecked(const TextRun&, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
 
     Ref<TextMetrics> measureTextInternal(const TextRun&);
     Ref<TextMetrics> measureTextInternal(const String& text);
@@ -371,8 +371,8 @@ private:
     void strokeInternal(const Path&);
     void clipInternal(const Path&, CanvasFillRule);
 
-    bool isPointInPathInternal(const Path&, float x, float y, CanvasFillRule);
-    bool isPointInStrokeInternal(const Path&, float x, float y);
+    bool isPointInPathInternal(const Path&, double x, double y, CanvasFillRule);
+    bool isPointInStrokeInternal(const Path&, double x, double y);
 
     Path transformAreaToDevice(const Path&) const;
     Path transformAreaToDevice(const FloatRect&) const;

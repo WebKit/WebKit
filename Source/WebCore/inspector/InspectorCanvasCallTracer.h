@@ -153,6 +153,7 @@ enum ImageSmoothingQuality;
     macro(ImageDataSettings&) \
     macro(ImageSmoothingQuality) \
     macro(std::optional<float>&) \
+    macro(std::optional<double>&) \
     macro(Path2D*) \
     macro(RefPtr<CanvasGradient>&) \
     macro(RefPtr<CanvasPattern>&) \
@@ -168,6 +169,7 @@ enum ImageSmoothingQuality;
     macro(String&) \
     macro(Vector<String>&) \
     macro(Vector<float>&) \
+    macro(Vector<double>&) \
     macro(Vector<uint32_t>&) \
     macro(Vector<int32_t>&) \
     macro(double) \

@@ -1,3 +1,70 @@
+2021-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Use double instead of float where appropriate in HTML Canvas IDL
+        https://bugs.webkit.org/show_bug.cgi?id=227238
+
+        Reviewed by Sam Weinig.
+
+        There are a lot of places in our HTML Canvas IDL where we're using float type, even though
+        the specification is using double. This patch fixes those.
+
+        * html/canvas/CanvasCompositing.idl:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasDrawPath.idl:
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::addColorStop):
+        * html/canvas/CanvasGradient.h:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasPathDrawingStyles.idl:
+        * html/canvas/CanvasRect.idl:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fillText):
+        (WebCore::CanvasRenderingContext2D::strokeText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setLineWidth):
+        (WebCore::CanvasRenderingContext2DBase::setMiterLimit):
+        (WebCore::lineDashSequenceIsValid):
+        (WebCore::CanvasRenderingContext2DBase::setLineDash):
+        (WebCore::CanvasRenderingContext2DBase::setWebkitLineDash):
+        (WebCore::CanvasRenderingContext2DBase::setLineDashOffset):
+        (WebCore::CanvasRenderingContext2DBase::setGlobalAlpha):
+        (WebCore::CanvasRenderingContext2DBase::scale):
+        (WebCore::CanvasRenderingContext2DBase::rotate):
+        (WebCore::CanvasRenderingContext2DBase::translate):
+        (WebCore::CanvasRenderingContext2DBase::transform):
+        (WebCore::CanvasRenderingContext2DBase::setTransform):
+        (WebCore::validateRectForCanvas):
+        (WebCore::CanvasRenderingContext2DBase::isPointInPath):
+        (WebCore::CanvasRenderingContext2DBase::isPointInStroke):
+        (WebCore::CanvasRenderingContext2DBase::isPointInPathInternal):
+        (WebCore::CanvasRenderingContext2DBase::isPointInStrokeInternal):
+        (WebCore::CanvasRenderingContext2DBase::clearRect):
+        (WebCore::CanvasRenderingContext2DBase::fillRect):
+        (WebCore::CanvasRenderingContext2DBase::strokeRect):
+        (WebCore::CanvasRenderingContext2DBase::canDrawText):
+        (WebCore::CanvasRenderingContext2DBase::drawText):
+        (WebCore::CanvasRenderingContext2DBase::drawTextUnchecked):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        (WebCore::CanvasRenderingContext2DBase::lineWidth const):
+        (WebCore::CanvasRenderingContext2DBase::miterLimit const):
+        (WebCore::CanvasRenderingContext2DBase::getLineDash const):
+        (WebCore::CanvasRenderingContext2DBase::webkitLineDash const):
+        (WebCore::CanvasRenderingContext2DBase::lineDashOffset const):
+        (WebCore::CanvasRenderingContext2DBase::globalAlpha const):
+        * html/canvas/CanvasShadowStyles.idl:
+        * html/canvas/CanvasText.idl:
+        * html/canvas/CanvasTransform.idl:
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        (WebCore::OffscreenCanvasRenderingContext2D::fillText):
+        (WebCore::OffscreenCanvasRenderingContext2D::strokeText):
+        * html/canvas/OffscreenCanvasRenderingContext2D.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::processArgument):
+        * inspector/InspectorCanvasCallTracer.h:
+
 2021-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Turn ENABLE_SHAREABLE_RESOURCE on

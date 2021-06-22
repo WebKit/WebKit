@@ -181,12 +181,12 @@ CanvasDirection CanvasRenderingContext2D::direction() const
     return toTextDirection(state().direction) == TextDirection::RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
 }
 
-void CanvasRenderingContext2D::fillText(const String& text, float x, float y, std::optional<float> maxWidth)
+void CanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
 {
     drawTextInternal(text, x, y, true, maxWidth);
 }
 
-void CanvasRenderingContext2D::strokeText(const String& text, float x, float y, std::optional<float> maxWidth)
+void CanvasRenderingContext2D::strokeText(const String& text, double x, double y, std::optional<double> maxWidth)
 {
     drawTextInternal(text, x, y, false, maxWidth);
 }
@@ -224,7 +224,7 @@ auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
     return &state().font;
 }
 
-void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth)
+void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, double y, bool fill, std::optional<double> maxWidth)
 {
     downcast<HTMLCanvasElement>(canvasBase()).document().updateStyleIfNeeded();
 

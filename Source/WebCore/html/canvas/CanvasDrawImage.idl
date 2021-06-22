@@ -38,8 +38,6 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasdrawimage
 interface mixin CanvasDrawImage {
-    // FIXME: All the unrestricted float arguments below should be unrestricted doubles.
-
     // drawing images
     undefined drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy);
     undefined drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);

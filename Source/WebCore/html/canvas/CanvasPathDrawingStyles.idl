@@ -25,16 +25,14 @@
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvaspathdrawingstyles
 interface mixin CanvasPathDrawingStyles {
-    // FIXME: All the unrestricted float arguments / attributes below should be unrestricted doubles.
-
     // line caps/joins
-    attribute unrestricted float lineWidth; // (default 1)
+    attribute unrestricted double lineWidth; // (default 1)
     attribute CanvasLineCap lineCap; // (default "butt")
     attribute CanvasLineJoin lineJoin; // (default "miter")
-    attribute unrestricted float miterLimit; // (default 10)
+    attribute unrestricted double miterLimit; // (default 10)
 
     // dashed lines
-    undefined setLineDash(sequence<unrestricted float> segments); // default empty
-    sequence<unrestricted float> getLineDash();
-    attribute unrestricted float lineDashOffset;
+    undefined setLineDash(sequence<unrestricted double> segments); // default empty
+    sequence<unrestricted double> getLineDash();
+    attribute unrestricted double lineDashOffset;
 };
