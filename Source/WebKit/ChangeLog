@@ -1,3 +1,18 @@
+2021-06-21  Don Olmstead  <don.olmstead@sony.com>
+
+        Update signature of createVideoLayerRemote for PlayStation and GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=227242
+
+        Reviewed by Eric Carlson.
+
+        Followup on r278740 which changed the signature of createVideoLayerRemote. Updating the PlayStation and
+        GStreamer accordingly.
+
+        * WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp:
+        (WebKit::createVideoLayerRemote):
+        * WebProcess/GPU/media/playstation/VideoLayerRemotePlayStation.cpp:
+        (WebKit::createVideoLayerRemote):
+
 2021-06-21  Chris Dumez  <cdumez@apple.com>
 
         Update TBA macros for iOS 15 / macOS 13
