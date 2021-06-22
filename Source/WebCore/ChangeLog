@@ -1,3 +1,10 @@
+2021-06-22  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed tvOS build fix after r279119: add PLATFORM(IOS) guards to exclude tvOS and Catalyst builds.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::setEligibleForSmartRouting):
+
 2021-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Safari 14): Submenus on https://codelearn.cat don't show

@@ -98,6 +98,7 @@ namespace WebCore {
 
 static void setEligibleForSmartRouting(bool eligible)
 {
+#if PLATFORM(IOS)
     ASSERT(!isMainThread());
 
     auto *session = [PAL::getAVAudioSessionClass() sharedInstance];
@@ -111,6 +112,9 @@ static void setEligibleForSmartRouting(bool eligible)
     NSError *error = nil;
     if (![session setEligibleForBTSmartRoutingConsideration:eligible error:&error])
         RELEASE_LOG_ERROR(Media, "failed to set eligible to %d with error: %@", eligible, error.localizedDescription);
+#else
+    UNUSED_PARAM(eligible);
+#endif
 }
 
 AudioSessionIOS::AudioSessionIOS()
