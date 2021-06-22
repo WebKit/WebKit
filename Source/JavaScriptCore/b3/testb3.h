@@ -872,6 +872,8 @@ void testMulAddArgsLeft();
 void testMulAddArgsRight();
 void testMulAddArgsLeft32();
 void testMulAddArgsRight32();
+void testMulAddSignExtend32ArgsLeft();
+void testMulAddSignExtend32ArgsRight();
 void testMulSubArgsLeft();
 void testMulSubArgsRight();
 void testMulSubArgsLeft32();

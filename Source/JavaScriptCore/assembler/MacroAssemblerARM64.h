@@ -627,6 +627,11 @@ public:
         m_assembler.madd<64>(dest, mulLeft, mulRight, summand);
     }
 
+    void multiplyAddSignExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        m_assembler.smaddl(dest, mulLeft, mulRight, summand);
+    }
+
     void multiplySub64(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
     {
         m_assembler.msub<64>(dest, mulLeft, mulRight, minuend);

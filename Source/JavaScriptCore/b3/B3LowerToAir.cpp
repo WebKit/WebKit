@@ -2544,36 +2544,57 @@ private:
         case Add: {
             if (tryAppendLea())
                 return;
-            
+
+            ASSERT(isValidForm(MultiplyAdd64, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp) 
+                == isValidForm(MultiplyAddSignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp));
             Air::Opcode multiplyAddOpcode = tryOpcodeForType(MultiplyAdd32, MultiplyAdd64, m_value->type());
             if (isValidForm(multiplyAddOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 Value* left = m_value->child(0);
                 Value* right = m_value->child(1);
                 if (!imm(right) || m_valueToTmp[right]) {
-                    auto tryAppendMultiplyAdd = [&] (Value* left, Value* right) -> bool {
-                        if (left->opcode() != Mul || !canBeInternal(left))
+                    auto tryMultiply = [&] (Value* v) -> bool { 
+                        if (v->opcode() != Mul || !canBeInternal(v))
                             return false;
-
-                        Value* multiplyLeft = left->child(0);
-                        Value* multiplyRight = left->child(1);
-                        if (canBeInternal(multiplyLeft) || canBeInternal(multiplyRight))
+                        if (m_locked.contains(v->child(0)) || m_locked.contains(v->child(1)))
                             return false;
-
-                        append(multiplyAddOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(right), tmp(m_value));
-                        commitInternal(left);
-
                         return true;
                     };
 
-                    if (tryAppendMultiplyAdd(left, right))
-                        return;
-                    if (tryAppendMultiplyAdd(right, left))
+                    auto trySExt32 = [&] (Value* v) -> bool { 
+                        return v->opcode() == SExt32 && canBeInternal(v);
+                    };
+
+                    // MADD: d = n * m + a
+                    auto tryAppendMultiplyAdd = [&] (Value* left, Value* right) -> bool {
+                        if (!tryMultiply(left))
+                            return false;
+                        Value* multiplyLeft = left->child(0);
+                        Value* multiplyRight = left->child(1);
+
+                        // SMADDL: d = SExt32(n) *  SExt32(m) + a
+                        if (multiplyAddOpcode == MultiplyAdd64 && trySExt32(multiplyLeft) && trySExt32(multiplyRight)) {
+                            append(MultiplyAddSignExtend32, 
+                                tmp(multiplyLeft->child(0)), 
+                                tmp(multiplyRight->child(0)), 
+                                tmp(right), 
+                                tmp(m_value));
+                            commitInternal(multiplyLeft);
+                            commitInternal(multiplyRight);
+                            commitInternal(left);
+                            return true;
+                        }
+
+                        append(multiplyAddOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(right), tmp(m_value));
+                        commitInternal(left);
+                        return true;
+                    };
+
+                    if (tryAppendMultiplyAdd(left, right) || tryAppendMultiplyAdd(right, left))
                         return;
                 }
             }
 
-            appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(
-                m_value->child(0), m_value->child(1));
+            appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(m_value->child(0), m_value->child(1));
             return;
         }
 

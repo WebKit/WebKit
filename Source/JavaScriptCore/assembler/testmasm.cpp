@@ -921,6 +921,52 @@ void testMul32SignExtend()
     }
 }
 
+void testMultiplyAddSignExtend32Left()
+{
+    // d = SExt32(n) * SExt32(m) + a
+    auto add = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.multiplyAddSignExtend32(GPRInfo::argumentGPR0, 
+            GPRInfo::argumentGPR1, 
+            GPRInfo::argumentGPR2, 
+            GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto a : int64Operands())
+                CHECK_EQ(invoke<int64_t>(add, n, m, a), static_cast<int64_t>(n) * static_cast<int64_t>(m) + a);
+        }
+    }
+}
+
+void testMultiplyAddSignExtend32Right()
+{
+    // d = a + SExt32(n) * SExt32(m)
+    auto add = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.multiplyAddSignExtend32(GPRInfo::argumentGPR1, 
+            GPRInfo::argumentGPR2, 
+            GPRInfo::argumentGPR0, 
+            GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : int64Operands()) {
+        for (auto n : int32Operands()) {
+            for (auto m : int32Operands())
+                CHECK_EQ(invoke<int64_t>(add, a, n, m), a + static_cast<int64_t>(n) * static_cast<int64_t>(m));
+        }
+    }
+}
+
 void testSub32Args()
 {
     for (auto value : int32Operands()) {
@@ -3270,6 +3316,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testLoadStorePair64Int64());
     RUN(testLoadStorePair64Double());
     RUN(testMul32SignExtend());
+    RUN(testMultiplyAddSignExtend32Left());
+    RUN(testMultiplyAddSignExtend32Right());
     RUN(testSub32Args());
     RUN(testSub32Imm());
     RUN(testSub32ArgImm());

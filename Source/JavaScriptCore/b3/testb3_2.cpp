@@ -841,7 +841,10 @@ void testMulAddArg(int a)
             root->appendNew<Value>(proc, Mul, Origin(), value, value),
             value));
 
-    CHECK(compileAndRun<int>(proc, a) == a * a + a);
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "madd");
+    CHECK(invoke<int64_t>(*code, a, a, a) == a * a + a);
 }
 
 void testMulArgs(int a, int b)
@@ -1004,13 +1007,14 @@ void testMulAddArgsLeft()
     root->appendNewControlValue(proc, Return, Origin(), added);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "madd");
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value * b.value + c.value);
-            }
         }
     }
 }
@@ -1028,12 +1032,87 @@ void testMulAddArgsRight()
     root->appendNewControlValue(proc, Return, Origin(), added);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "madd");
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value + b.value * c.value);
+        }
+    }
+}
+
+void testMulAddSignExtend32ArgsLeft()
+{
+    // d = SExt32(n) *  SExt32(m) + a
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* nValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    Value* mValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+    Value* aValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* addValue = root->appendNew<Value>(proc, Add, Origin(), mulValue, aValue);
+    root->appendNewControlValue(proc, Return, Origin(), addValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "smaddl");
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto a : int64Operands()) {
+                int64_t lhs = invoke<int64_t>(*code, n.value, m.value, a.value);
+                int64_t rhs = static_cast<int64_t>(n.value) * static_cast<int64_t>(m.value) + a.value;
+                CHECK(lhs == rhs);
+            }
+        }
+    }
+}
+
+void testMulAddSignExtend32ArgsRight()
+{
+    // d = a + SExt32(n) * SExt32(m)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* aValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* nValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+    Value* mValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* addValue = root->appendNew<Value>(proc, Add, Origin(), aValue, mulValue);
+    root->appendNewControlValue(proc, Return, Origin(), addValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "smaddl");
+
+    for (auto a : int64Operands()) {
+        for (auto n : int32Operands()) {
+            for (auto m : int32Operands()) {
+                int64_t lhs = invoke<int64_t>(*code, a.value, n.value, m.value);
+                int64_t rhs = a.value + static_cast<int64_t>(n.value) * static_cast<int64_t>(m.value);
+                CHECK(lhs == rhs);
             }
         }
     }
@@ -1055,13 +1134,14 @@ void testMulAddArgsLeft32()
     root->appendNewControlValue(proc, Return, Origin(), added);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "madd");
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value * b.value + c.value);
-            }
         }
     }
 }
@@ -1082,13 +1162,14 @@ void testMulAddArgsRight32()
     root->appendNewControlValue(proc, Return, Origin(), added);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "madd");
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            for (auto c : testValues) {
+            for (auto c : testValues)
                 CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value + b.value * c.value);
-            }
         }
     }
 }
