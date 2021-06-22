@@ -47,33 +47,19 @@ static OSStatus invalidateVP9Decoder(CMBaseObjectRef);
 static void finalizeVP9Decoder(CMBaseObjectRef);
 static CFStringRef copyVP9DecoderDebugDescription(CMBaseObjectRef);
 
-#if defined(__x86_64__) || defined(_M_X64)
-    constexpr size_t padSize = 4;
-#else
-    constexpr size_t padSize = 0;
-#endif
-
-#pragma pack(push, 4)
-    struct DecoderClass { uint8_t pad[padSize]; CMBaseClass alignedClass; } WebKitVP9Decoder_BaseClass { { }, {
-        kCMBaseObject_ClassVersion_1,
-        sizeof(WebKitVP9Decoder),
-        nullptr, // Comparison by pointer equality
-        invalidateVP9Decoder,
-        finalizeVP9Decoder,
-        copyVP9DecoderDebugDescription,
-        nullptr, // CopyProperty
-        nullptr, // SetProperty
-        nullptr,
-        nullptr
-    } };
-#pragma pack(pop)
-
-#if defined(__x86_64__) || defined(_M_X64)
-    static_assert(sizeof(WebKitVP9Decoder_BaseClass.alignedClass.version) != sizeof(void*), "CMBaseClass fixup is required on X86_64");
-#else
-    static_assert(sizeof(WebKitVP9Decoder_BaseClass.alignedClass.version) == sizeof(void*), "CMBaseClass fixup only required on X86_64");
-#endif
-    static_assert(alignof(DecoderClass) == 4, "CMBaseClass must have 4 byte alignment");
+static const CMBaseClass WebKitVP9Decoder_BaseClass =
+{
+    kCMBaseObject_ClassVersion_1,
+    sizeof(WebKitVP9Decoder),
+    nullptr, // Comparison by pointer equality
+    invalidateVP9Decoder,
+    finalizeVP9Decoder,
+    copyVP9DecoderDebugDescription,
+    nullptr, // CopyProperty
+    nullptr, // SetProperty
+    nullptr,
+    nullptr
+};
 
 static OSStatus startVP9DecoderSession(VTVideoDecoderRef, VTVideoDecoderSession, CMVideoFormatDescriptionRef);
 static OSStatus decodeVP9DecoderFrame(VTVideoDecoderRef, VTVideoDecoderFrame, CMSampleBufferRef, VTDecodeFrameFlags, VTDecodeInfoFlags*);
@@ -95,7 +81,7 @@ static const VTVideoDecoderClass WebKitVP9Decoder_VideoDecoderClass =
 
 static const VTVideoDecoderVTable WebKitVP9DecoderVTable =
 {
-    { nullptr, &WebKitVP9Decoder_BaseClass.alignedClass },
+    { nullptr, &WebKitVP9Decoder_BaseClass },
     &WebKitVP9Decoder_VideoDecoderClass
 };
 
