@@ -1,3 +1,18 @@
+2021-06-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GLib] Rewrite NetworkCache::Data::adoptMap without FileSystem::MappedFileData::leakHandle and munmap
+        https://bugs.webkit.org/show_bug.cgi?id=227017
+
+        Reviewed by Carlos Garcia Campos.
+
+        FileSystem::MappedFileData class wraps file mapping APIs like mmap
+        and munmap in cross-platform manner. NetworkCache::Data::adoptMap
+        shouldn't use FileSystem::MappedFileData::leakHandle and munmap.
+
+        * NetworkProcess/cache/NetworkCacheDataGLib.cpp:
+        (WebKit::NetworkCache::MapWrapper::~MapWrapper):
+        (WebKit::NetworkCache::Data::adoptMap):
+
 2021-06-07  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Upstream GroupActivitiesCoordinator
