@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import {DOM, REF} from '/library/js/Ref.js';
-import {queryToParams, paramsToQuery, QueryModifier} from '/assets/js/common.js';
+import {queryToParams, paramsToQuery, QueryModifier, escapeHTML} from '/assets/js/common.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js'
 
@@ -315,7 +315,7 @@ function ConfigurationSelectors(callback) {
                         });
 
                         return `<div class="input" ${isExpanded ? '' : `style="display: none;"`}>
-                                <label>${option}</label>
+                                <label>${escapeHTML(option)}</label>
                                 <label class="switch">
                                     <input type="checkbox"${isChecked ? ' checked': ''} ref="${swtch}">
                                     <span class="slider"></span>
