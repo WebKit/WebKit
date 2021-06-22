@@ -1088,8 +1088,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
     ASSERT(!m_currentTimeObserver);
-    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[this] (CMTime time) {
-        currentMediaTimeDidChange(PAL::toMediaTime(time));
+    auto weakThis = makeWeakPtr(*this);
+    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis] (CMTime time) {
+        if (weakThis)
+            weakThis->currentMediaTimeDidChange(PAL::toMediaTime(time));
     }];
 
     setDelayCallbacks(false);
