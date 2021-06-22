@@ -768,7 +768,27 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   CFBooleanRef hwaccl_enabled = nullptr;
   if (status == noErr) {
     auto result = VTSessionCopyProperty(_vtCompressionSession, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, nullptr, &hwaccl_enabled);
-    _isUsingSoftwareEncoder = result == noErr ? !CFBooleanGetValue(hwaccl_enabled) : _width <= 480 && _height <= 480;
+    _isUsingSoftwareEncoder = result == noErr ? !CFBooleanGetValue(hwaccl_enabled) : true;
+#if HAVE_VTB_REQUIREDLOWLATENCY
+    if (_isUsingSoftwareEncoder && _isH264LowLatencyEncoderEnabled && _vtCompressionSession && !_useVCP) {
+      VTCompressionSessionInvalidate(_vtCompressionSession);
+      CFRelease(_vtCompressionSession);
+      _vtCompressionSession = nullptr;
+
+      CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
+      CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanFalse);
+      status = VTCompressionSessionCreate(nullptr,  // use default allocator
+                                       _width,
+                                       _height,
+                                       kCMVideoCodecType_H264,
+                                       encoderSpecs,  // use hardware accelerated encoder if available
+                                       sourceAttributes,
+                                       nullptr,  // use default compressed data allocator
+                                       compressionOutputCallback,
+                                       nullptr,
+                                       &_vtCompressionSession);
+    }
+#endif
   }
 #else
   // Provided encoder should be good enough.
