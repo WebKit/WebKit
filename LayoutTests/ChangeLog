@@ -1,3 +1,13 @@
+2021-06-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GLIB] Gardening of test failures.
+
+        Unreviewed gardening
+
+        Remove tests that pass after r279065.
+
+        * platform/glib/TestExpectations:
+
 2021-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WebKitLegacy] Non-actionable "Look Up" action appears when right clicking images
