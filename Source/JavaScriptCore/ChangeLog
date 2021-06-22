@@ -1,3 +1,23 @@
+2021-06-22  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Properly set numFPRs on ARM with NEON/VFP_V3_D32
+        https://bugs.webkit.org/show_bug.cgi?id=227212
+
+        Reviewed by Filip Pizlo.
+
+        Don't hardcode the number of FP regs on ARMv7 to 16; when targetting a
+        CPU with NEON or VFP_V3_d32, the number of FP regs is 32.
+
+        This also reverts the recent change to add an extra word to RegisterSet
+        which essentially covered up for this mismatch. The reason this bug only
+        manifested on certain compiler versions was that GCC 8.4/8.5 where built using
+        our buildroot infrastructure, whereas the other GCC versions we tested with
+        were debian system toolchains, targetting a lowest common denominator.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::std::initializer_list<int>):
+        * jit/RegisterSet.h:
+
 2021-06-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add JIT ICs for `#x in obj` feature
