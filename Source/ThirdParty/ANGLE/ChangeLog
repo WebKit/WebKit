@@ -1,3 +1,90 @@
+2021-06-22  Dean Jackson  <dino@apple.com>
+
+        [ANGLE] Support importing external MTLTextures
+        https://bugs.webkit.org/show_bug.cgi?id=226690
+
+        Reviewed by Tim Horton.
+
+        Support MTLTextures as GL textures.
+        Merge https://chromium-review.googlesource.com/c/angle/angle/+/2820178
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * extensions/EGL_ANGLE_metal_texture_client_buffer.txt: Added.
+        * include/EGL/eglext_angle.h:
+        * src/common/utilities.cpp:
+        (egl::IsExternalImageTarget):
+        * src/libANGLE/Caps.cpp:
+        (egl::DisplayExtensions::getStrings const):
+        * src/libANGLE/Caps.h:
+        * src/libANGLE/renderer/metal/BUILD.gn:
+        * src/libANGLE/renderer/metal/DisplayMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::createImage):
+        (rx::DisplayMtl::createExternalImageSibling):
+        (rx::DisplayMtl::generateExtensions const):
+        (rx::DisplayMtl::validateImageClientBuffer const):
+        (rx::DisplayMtl::initializeExtensions const):
+        * src/libANGLE/renderer/metal/ImageMtl.h: Added.
+        (rx::TextureImageSiblingMtl::getTexture const):
+        (rx::TextureImageSiblingMtl::getFormatMtl const):
+        (rx::ImageMtl::getTexture const):
+        (rx::ImageMtl::getImageTextureType const):
+        (rx::ImageMtl::getImageLevel const):
+        (rx::ImageMtl::getImageLayer const):
+        * src/libANGLE/renderer/metal/ImageMtl.mm: Added.
+        (rx::TextureImageSiblingMtl::TextureImageSiblingMtl):
+        (rx::TextureImageSiblingMtl::~TextureImageSiblingMtl):
+        (rx::TextureImageSiblingMtl::ValidateClientBuffer):
+        (rx::TextureImageSiblingMtl::initialize):
+        (rx::TextureImageSiblingMtl::initImpl):
+        (rx::TextureImageSiblingMtl::onDestroy):
+        (rx::TextureImageSiblingMtl::getFormat const):
+        (rx::TextureImageSiblingMtl::isRenderable const):
+        (rx::TextureImageSiblingMtl::isTexturable const):
+        (rx::TextureImageSiblingMtl::getSize const):
+        (rx::TextureImageSiblingMtl::getSamples const):
+        (rx::ImageMtl::ImageMtl):
+        (rx::ImageMtl::~ImageMtl):
+        (rx::ImageMtl::onDestroy):
+        (rx::ImageMtl::initialize):
+        (rx::ImageMtl::orphan):
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::setStorageEGLImageTarget):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::setEGLImageTarget):
+        * src/libANGLE/renderer/metal/gen_mtl_format_table.py:
+        (gen_image_map_switch_mac_case.gen_format_assign_code):
+        (gen_image_mtl_to_angle_switch_string):
+        (main):
+        * src/libANGLE/renderer/metal/mtl_common.h:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::MetalToAngleFormatID):
+        * src/libANGLE/renderer/metal/mtl_format_utils.h:
+        * src/libANGLE/validationEGL.cpp:
+        (egl::ValidateCreateImage):
+        * src/tests/BUILD.gn:
+        * src/tests/gl_tests/ImageTest.cpp:
+        (angle::TEST_P):
+        * src/tests/gl_tests/ImageTestMetal.mm: Added.
+        (angle::ScopeMetalTextureRef::ScopeMetalTextureRef):
+        (angle::ScopeMetalTextureRef::~ScopeMetalTextureRef):
+        (angle::ScopeMetalTextureRef::get const):
+        (angle::ScopeMetalTextureRef::operator id<MTLTexture> const):
+        (angle::ScopeMetalTextureRef::operator=):
+        (angle::ScopeMetalTextureRef::release):
+        (angle::CreateMetalTexture2D):
+        (angle::ImageTestMetal::ImageTestMetal):
+        (angle::ImageTestMetal::getMtlDevice):
+        (angle::ImageTestMetal::createMtlTexture2D):
+        (angle::ImageTestMetal::verifyResultsTexture):
+        (angle::ImageTestMetal::verifyResults2D):
+        (angle::ImageTestMetal::reinterpretHelper):
+        (angle::ImageTestMetal::hasImageNativeMetalTextureExt const):
+        (angle::ImageTestMetal::hasOESExt const):
+        (angle::ImageTestMetal::hasBaseExt const):
+        (angle::ImageTestMetal::sourceMetalTarget2D_helper):
+        (angle::TEST_P):
+
 2021-06-17  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE] Shaders with reserved metal keywords do not translate, nor do shaders with struct and variable names that are the same except prefixed by an underscore

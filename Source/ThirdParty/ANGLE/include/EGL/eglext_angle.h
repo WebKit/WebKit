@@ -226,6 +226,11 @@ EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limi
 #define EGL_BIND_TO_TEXTURE_TARGET_ANGLE 0x348D
 #endif /* EGL_ANGLE_iosurface_client_buffer */
 
+#ifndef ANGLE_metal_texture_client_buffer
+#define ANGLE_metal_texture_client_buffer 1
+#define EGL_METAL_TEXTURE_ANGLE 0x34A7
+#endif /* ANGLE_metal_texture_client_buffer */
+
 #ifndef EGL_ANGLE_create_context_extensions_enabled
 #define EGL_ANGLE_create_context_extensions_enabled 1
 #define EGL_EXTENSIONS_ENABLED_ANGLE 0x345F

@@ -155,6 +155,14 @@ if (is_win || is_linux || is_chromeos || is_mac || is_android || is_fuchsia) {
         "CoreFoundation.framework",
         "IOSurface.framework",
       ]
+      ldflags = [
+        "-weak_framework",
+        "Metal",
+      ]
+      cflags_objcc = [
+        "-Wno-nullability-completeness",
+        "-Wno-unguarded-availability",
+      ]
     }
     if (is_win) {
       sources += angle_end2end_tests_win_sources

@@ -23,6 +23,8 @@ _metal_backend_sources = [
   "FrameBufferMtl.mm",
   "IOSurfaceSurfaceMtl.h",
   "IOSurfaceSurfaceMtl.mm",
+  "ImageMtl.h",
+  "ImageMtl.mm",
   "ProgramMtl.h",
   "ProgramMtl.mm",
   "QueryMtl.h",

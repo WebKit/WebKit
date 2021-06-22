@@ -20,6 +20,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/FrameBufferMtl.h"
+#include "libANGLE/renderer/metal/ImageMtl.h"
 #include "libANGLE/renderer/metal/SamplerMtl.h"
 #include "libANGLE/renderer/metal/SurfaceMtl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
@@ -1234,9 +1235,32 @@ angle::Result TextureMtl::setEGLImageTarget(const gl::Context *context,
                                             gl::TextureType type,
                                             egl::Image *image)
 {
-    UNIMPLEMENTED();
+    releaseTexture(true);
 
-    return angle::Result::Stop;
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+
+    ImageMtl *imageMtl = mtl::GetImpl(image);
+    if (type != imageMtl->getImageTextureType())
+    {
+        return angle::Result::Stop;
+    }
+
+    mNativeTexture = imageMtl->getTexture();
+
+    const angle::FormatID angleFormatId =
+        angle::Format::InternalFormatToID(image->getFormat().info->sizedInternalFormat);
+    mFormat = contextMtl->getPixelFormat(angleFormatId);
+
+    mSlices = mNativeTexture->cubeFacesOrArrayLength();
+
+    gl::Extents size = mNativeTexture->sizeAt0();
+    mIsPow2          = gl::isPow2(size.width) && gl::isPow2(size.height) && gl::isPow2(size.depth);
+    ANGLE_TRY(ensureSamplerStateCreated(context));
+
+    // Tell context to rebind textures
+    contextMtl->invalidateCurrentTextures();
+
+    return angle::Result::Continue;
 }
 
 angle::Result TextureMtl::setImageExternal(const gl::Context *context,

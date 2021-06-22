@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3154A847266C4AFF00BF33B7 /* ImageMtl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3154A845266C4AFE00BF33B7 /* ImageMtl.mm */; };
 		31CD0000249184B500486F27 /* WindowSurfaceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = A31B6181230B747E001610D7 /* WindowSurfaceCGL.h */; };
 		31CD0001249184B500486F27 /* DeviceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E31A0A2234EEED400C84784 /* DeviceCGL.h */; };
 		31CD0002249184B500486F27 /* IOSurfaceSurfaceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59712284FA820018F2D8 /* IOSurfaceSurfaceCGL.h */; };
@@ -956,6 +957,8 @@
 		313BCE532361133900FC39E5 /* DisplayEAGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayEAGL.mm; sourceTree = "<group>"; };
 		3153ACFE239071D900D51DD8 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		3153ACFF239071D900D51DD8 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		3154A845266C4AFE00BF33B7 /* ImageMtl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageMtl.mm; sourceTree = "<group>"; };
+		3154A846266C4AFF00BF33B7 /* ImageMtl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageMtl.h; sourceTree = "<group>"; };
 		315EBD3E1FCE43BD00AC7A89 /* uniform_type_info_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uniform_type_info_autogen.cpp; sourceTree = "<group>"; };
 		315EBD401FCE442600AC7A89 /* TranslatorVulkan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorVulkan.cpp; sourceTree = "<group>"; };
 		315EBD431FCE442700AC7A89 /* UtilsHLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsHLSL.cpp; sourceTree = "<group>"; };
@@ -2990,6 +2993,8 @@
 				FF81FE8225818D6800894E24 /* DisplayMtl_api.h */,
 				FF81FEBC25818D6800894E24 /* FrameBufferMtl.h */,
 				FF81FEC925818D6800894E24 /* FrameBufferMtl.mm */,
+				3154A846266C4AFF00BF33B7 /* ImageMtl.h */,
+				3154A845266C4AFE00BF33B7 /* ImageMtl.mm */,
 				FF81FEA525818D6800894E24 /* IOSurfaceSurfaceMtl.h */,
 				FF81FE9E25818D6800894E24 /* IOSurfaceSurfaceMtl.mm */,
 				FF81FEC125818D6800894E24 /* mtl_buffer_pool.h */,
@@ -3782,6 +3787,7 @@
 				DF83E2932639FD83000825EF /* ImageFunctionHLSL.cpp in Sources */,
 				DF83E34B2639FE92000825EF /* ImageGL.cpp in Sources */,
 				DF83E3212639FE18000825EF /* ImageIndex.cpp in Sources */,
+				3154A847266C4AFF00BF33B7 /* ImageMtl.mm in Sources */,
 				DF83E2C62639FD84000825EF /* ImmutableString_autogen.cpp in Sources */,
 				DF83E2992639FD83000825EF /* ImmutableStringBuilder.cpp in Sources */,
 				DF83E31B2639FE17000825EF /* IndexRangeCache.cpp in Sources */,

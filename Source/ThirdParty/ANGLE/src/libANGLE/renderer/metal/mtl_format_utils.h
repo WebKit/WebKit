@@ -69,6 +69,8 @@ struct Format : public FormatBase
 {
     Format() = default;
 
+    static angle::FormatID MetalToAngleFormatID(MTLPixelFormat formatMtl);
+
     const gl::InternalFormat &intendedInternalFormat() const;
     const gl::InternalFormat &actualInternalFormat() const;
 
