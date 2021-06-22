@@ -1,3 +1,18 @@
+2021-06-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Functions dispatched to WorkQueue are sometimes destroyed in the calling thread due to block refcounting
+        https://bugs.webkit.org/show_bug.cgi?id=227160
+
+        Reviewed by Antti Koivisto.
+
+        As an example, remove one workaround mutability of dispatched function
+        and nullptr assignment that was needed for working around
+        WorkQueue::dispatch bug where the dispatched function was not always
+        destroyed in the queue.
+
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::finalize):
+
 2021-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Force a copy of font data when receiving it from the untrusted web process

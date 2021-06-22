@@ -203,9 +203,7 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
 void MediaTrackReader::finalize()
 {
     Locker locker { m_sampleStorageLock };
-    storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)]() mutable {
-        sampleStorage = nullptr;
-    });
+    storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)] { });
     CoreMediaWrapped<MediaTrackReader>::finalize();
 }
 

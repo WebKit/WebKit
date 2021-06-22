@@ -1,3 +1,32 @@
+2021-06-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Functions dispatched to WorkQueue are sometimes destroyed in the calling thread due to block refcounting
+        https://bugs.webkit.org/show_bug.cgi?id=227160
+
+        Reviewed by Antti Koivisto.
+
+        WorkQueue::dispatch Function bodies always execute in the thread of target
+        queue. However, sometimes the Function destruction would happen in the
+        dispatched-from thread. This is not what the WorkQueue::dispatch callers
+        expect.
+
+        Implement some of the WorkQueue::dispatch* in terms of dispatch_..._f()
+        variants which take a function and context pointer instead of a block.
+
+        Blocks are reference counted objects without the ability to pass the
+        ownership of the reference. For dispatch case, it means that caller will
+        need to hold the reference while dispatch_...() returns. In thread
+        contention cases the called block might complete and reference be
+        dropped in the thread of the queue before the dispatched-from thread
+        would drop its reference to the block. This would cause the dispatched
+        Function to be destroyed in the dispatched-from thread.
+
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::dispatchWorkItem):
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        (WTF::WorkQueue::dispatchSync):
+
 2021-06-21  Chris Dumez  <cdumez@apple.com>
 
         Adjust `fetch` port blocking for ports 990, 989
