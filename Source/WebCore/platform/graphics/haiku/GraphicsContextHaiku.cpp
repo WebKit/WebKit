@@ -505,7 +505,7 @@ void GraphicsContextHaiku::scale(const FloatSize& size)
 void GraphicsContextHaiku::concatCTM(const AffineTransform& transform)
 {
     BAffineTransform current = m_view->Transform();
-    current.PreMultiply(transform);
+    current.Multiply(transform);
     m_view->SetTransform(current);
 }
 
