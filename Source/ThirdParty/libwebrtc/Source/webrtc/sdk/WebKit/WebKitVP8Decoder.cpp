@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,19 +48,42 @@ static OSStatus invalidateVP8Decoder(CMBaseObjectRef);
 static void finalizeVP8Decoder(CMBaseObjectRef);
 static CFStringRef copyVP8DecoderDebugDescription(CMBaseObjectRef);
 
-static const CMBaseClass WebKitVP8Decoder_BaseClass =
-{
-    kCMBaseObject_ClassVersion_1,
-    sizeof(WebKitVP8Decoder),
-    nullptr, // Comparison by pointer equality
-    invalidateVP8Decoder,
-    finalizeVP8Decoder,
-    copyVP8DecoderDebugDescription,
-    nullptr, // CopyProperty
-    nullptr, // SetProperty
-    nullptr,
-    nullptr
+#if defined(CMBASE_OBJECT_NEEDS_ALIGNMENT) && CMBASE_OBJECT_NEEDS_ALIGNMENT
+    constexpr size_t padSize = 4;
+#else
+    constexpr size_t padSize = 0;
+#endif
+
+#pragma pack(push, 4)
+struct DecoderClass {
+    uint8_t pad[padSize];
+    CMBaseClass alignedClass;
 };
+
+static const DecoderClass WebKitVP8Decoder_BaseClass {
+    { },
+    {
+        kCMBaseObject_ClassVersion_1,
+        sizeof(WebKitVP8Decoder),
+        nullptr, // Comparison by pointer equality
+        invalidateVP8Decoder,
+        finalizeVP8Decoder,
+        copyVP8DecoderDebugDescription,
+        nullptr, // CopyProperty
+        nullptr, // SetProperty
+        nullptr,
+        nullptr
+    }
+};
+#pragma pack(pop)
+
+#if defined(CMBASE_OBJECT_NEEDS_ALIGNMENT) && CMBASE_OBJECT_NEEDS_ALIGNMENT
+    static_assert(sizeof(WebKitVP8Decoder_BaseClass.alignedClass.version) == sizeof(uint32_t), "CMBaseClass fixup is required!");
+#else
+    static_assert(sizeof(WebKitVP8Decoder_BaseClass.alignedClass.version) == sizeof(uintptr_t), "CMBaseClass fixup is not required!");
+#endif
+static_assert(offsetof(DecoderClass, alignedClass) == padSize, "CMBaseClass offset is incorrect!");
+static_assert(alignof(DecoderClass) == 4, "CMBaseClass must have 4 byte alignment");
 
 static OSStatus startVP8DecoderSession(VTVideoDecoderRef, VTVideoDecoderSession, CMVideoFormatDescriptionRef);
 static OSStatus decodeVP8DecoderFrame(VTVideoDecoderRef, VTVideoDecoderFrame, CMSampleBufferRef, VTDecodeFrameFlags, VTDecodeInfoFlags*);
@@ -82,7 +105,7 @@ static const VTVideoDecoderClass WebKitVP8Decoder_VideoDecoderClass =
 
 static const VTVideoDecoderVTable WebKitVP8DecoderVTable =
 {
-    { nullptr, &WebKitVP8Decoder_BaseClass },
+    { nullptr, &WebKitVP8Decoder_BaseClass.alignedClass },
     &WebKitVP8Decoder_VideoDecoderClass
 };
 
