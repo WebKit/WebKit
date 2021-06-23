@@ -1,5 +1,32 @@
 2021-06-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r279187. rdar://problem/79474211
+
+    WebKitDecoder.h should include TargetConditionals.h
+    https://bugs.webkit.org/show_bug.cgi?id=227314
+    <rdar://problem/79689776>
+    
+    Reviewed by Geoff Garen.
+    
+    * Source/webrtc/sdk/WebKit/WebKitDecoder.h: Include TargetConditionals.h so the
+    TARGET_ defines are initialized correctly.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279187 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+            WebKitDecoder.h should include TargetConditionals.h
+            https://bugs.webkit.org/show_bug.cgi?id=227314
+            <rdar://problem/79689776>
+
+            Reviewed by Geoff Garen.
+
+            * Source/webrtc/sdk/WebKit/WebKitDecoder.h: Include TargetConditionals.h so the
+            TARGET_ defines are initialized correctly.
+
+2021-06-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r279101. rdar://problem/79474211
 
     [Mac] libwebrtc CMBaseClass objects need alignment fixup
