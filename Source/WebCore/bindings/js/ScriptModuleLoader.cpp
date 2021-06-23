@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -244,18 +244,12 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
         return JSC::throwTypeError(jsGlobalObject, scope, "Module key is an invalid URL."_s);
 
     if (m_ownerType == OwnerType::Document) {
-        if (auto* frame = downcast<Document>(m_context).frame()) {
-            auto jsValue = frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode);
-            RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
-            return jsValue;
-        }
+        if (auto* frame = downcast<Document>(m_context).frame())
+            RELEASE_AND_RETURN(scope, frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
     } else {
         ASSERT(is<WorkerOrWorkletGlobalScope>(m_context));
-        if (auto* script = downcast<WorkerOrWorkletGlobalScope>(m_context).script()) {
-            auto jsValue = script->evaluateModule(*moduleRecord, awaitedValue, resumeMode);
-            RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
-            return jsValue;
-        }
+        if (auto* script = downcast<WorkerOrWorkletGlobalScope>(m_context).script())
+            RELEASE_AND_RETURN(scope, script->evaluateModule(*moduleRecord, awaitedValue, resumeMode));
     }
     return JSC::jsUndefined();
 }
