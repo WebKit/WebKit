@@ -1,3 +1,18 @@
+2021-06-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Message dropped when restoring webpages.
+        https://bugs.webkit.org/show_bug.cgi?id=227278
+
+        Reviewed by Tim Horton.
+
+        The message to initialize the state of highlightVisibility is dropped sometimes, but
+        fortunately, there is no need to pass the current state when initializing the
+        HighlightObserver, as WebPageProxy::creationParameters will obtain the correct
+        highlight state on initialization after r279078.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setUpHighlightsObserver):
+
 2021-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] [macOS] Add an internal option to disable inline text selection in images

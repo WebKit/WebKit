@@ -614,7 +614,6 @@ void WebPageProxy::setUpHighlightsObserver()
         setAppHighlightsVisibility(isVisible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
     };
     m_appHighlightsObserver = adoptNS([allocSYNotesActivationObserverInstance() initWithHandler:updateAppHighlightsVisibility]);
-    updateAppHighlightsVisibility([m_appHighlightsObserver isVisible]);
 }
 
 #endif
