@@ -33,7 +33,7 @@ typedef struct __CVBuffer* CVPixelBufferRef;
 
 namespace webrtc {
 
-#if (TARGET_OS_OSX || TARGET_OS_MACCATALYST) && defined(__x86_64__) 
+#if (TARGET_OS_OSX || TARGET_OS_MACCATALYST) && TARGET_CPU_X86_64
     #define CMBASE_OBJECT_NEEDS_ALIGNMENT 1
 #else
     #define CMBASE_OBJECT_NEEDS_ALIGNMENT 0
