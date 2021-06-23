@@ -1,3 +1,13 @@
+2021-06-23  Saam Barati  <sbarati@apple.com>
+
+        Run typedarray-intrinsic-getters-change-prototype for a fixed set of iterations
+        https://bugs.webkit.org/show_bug.cgi?id=227304
+
+        Reviewed by Mark Lam.
+
+        * stress/typedarray-intrinsic-getters-change-prototype.js:
+        (body):
+
 2021-06-22  Saam Barati  <sbarati@apple.com>
 
         Don't assume stress/out-of-memory-while-constructing-BytecodeGenerator.js will OOM
