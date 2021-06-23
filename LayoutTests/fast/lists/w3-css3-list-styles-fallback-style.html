@@ -15,37 +15,21 @@
         */
         
         ol.armenian { list-style-type: armenian; }
-        
         ol.cjk-ideographic { list-style-type: cjk-ideographic; }
-        
         ol.ethiopic-numeric { list-style-type: ethiopic-numeric; }
-        
         ol.georgian { list-style-type: georgian; }
-        
         ol.hebrew { list-style-type: hebrew; }
-        
         ol.japanese-formal { list-style-type: japanese-formal; }
-        
         ol.japanese-informal { list-style-type: japanese-informal; }
-        
         ol.lower-armenian { list-style-type: lower-armenian; }
-        
         ol.lower-roman { list-style-type: lower-roman; }
-        
         ol.simp-chinese-formal { list-style-type: simp-chinese-formal; }
-        
         ol.simp-chinese-informal { list-style-type: simp-chinese-informal; }
-        
         ol.syriac { list-style-type: syriac; }
-        
         ol.tamil { list-style-type: tamil; }
-        
         ol.trad-chinese-formal { list-style-type: trad-chinese-formal; }
-        
         ol.trad-chinese-informal { list-style-type: trad-chinese-informal; }
-        
         ol.upper-armenian { list-style-type: upper-armenian; }
-        
         ol.upper-roman { list-style-type: upper-roman; }
     </style>
     <script src="resources/dump-list.js"></script>
@@ -66,7 +50,7 @@
     <h1>CSS3 Fallback to Decimal List Style</h1>
     <div id="description">
         <p>This tests that we fallback to the decimal list style type when the ordinal is outside the representable range for the list style type as per the <a href="http://www.w3.org/TR/css3-lists/">CSS3 Lists module</a> (Draft 7 November 2002). This test PASSED if the list item matches its marker for every list item (below).</p>
-        <p>Note, as of 12/04/2010, ethiopic-numeric; japanese-formal; japanese-informal; simp-chinese-formal; simp-chinese-informal; syriac; tamil; trad-chinese-formal; and trad-chinese-informal are unsupported and hence have expected failure results.</p>
+        <p>Note, as of 2021-06-20, syriac is unsupported and hence has expected failure results.</p>
     </div>
     <hr/>
     <h2>Algorithmic</h2>
@@ -86,19 +70,18 @@
     <div class="test">
         <h2>cjk-ideographic</h2>
         <ol class="cjk-ideographic" start="-1">
-            <li>-1</li>
+            <li>&#x8CA0;&#x4E00;</li>
             <li>&#x96F6;</li>
             <li>&#x4E00;</li>
         </ol>
     </div>
     
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>ethiopic-numeric</h2>
         <ol class="ethiopic-numeric" start="-1">
             <li>-1</li>
             <li>0</li>
-            <li>1</li>
+            <li>&#x1369;</li>
         </ol>
     </div>
     
@@ -119,31 +102,29 @@
         <h2>hebrew</h2>
         <ol class="hebrew" start="-1">
             <li>-1</li>
-            <li>&#x5D0;&#x5E4;&#x5E1;</li>
+            <li>0</li>
             <li>&#x5D0;</li>
         </ol>
         <ol class="hebrew" start="999999">
-            <li>&#x5EA;&#x5EA;&#x5E7;&#x5E6;&#x5D8;&#x27;&#x5EA;&#x5EA;&#x5E7;&#x5E6;&#x5D8;</li>
+            <li>999999</li>
             <li>1000000</li>
             <li>1000001</li>
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>japanese-formal</h2>
         <ol class="japanese-formal" start="-1">
-            <li>-1</li>
-            <li>0</li>
-            <li>1</li>
+            <li>&#x30DE;&#x30A4;&#x30CA;&#x30B9;&#x58F1;</li>
+            <li>&#x96F6;</li>
+            <li>&#x58F1;</li>
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>japanese-informal</h2>
         <ol class="japanese-informal" start="-1">
-            <li>-1</li>
-            <li>0</li>
-            <li>1</li>
+            <li>&#x30DE;&#x30A4;&#x30CA;&#x30B9;&#x4E00;</li>
+            <li>&#x3007;</li>
+            <li>&#x4E00;</li>
         </ol>
     </div>
     <div class="test">
@@ -163,21 +144,19 @@
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>simp-chinese-formal</h2>
         <ol class="simp-chinese-formal" start="-1">
-            <li>-1</li>
-            <li>0</li>
-            <li>1</li>
+            <li>&#x8D1F;&#x58F9;</li>
+            <li>&#x96F6;</li>
+            <li>&#x58F9;</li>
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>simp-chinese-informal</h2>
         <ol class="simp-chinese-informal" start="-1">
-            <li>-1</li>
-            <li>0</li>
-            <li>1</li>
+            <li>&#x8D1F;&#x4E00;</li>
+            <li>&#x96F6;</li>
+            <li>&#x4E00;</li>
         </ol>
     </div>
     <div class="test">
@@ -198,21 +177,19 @@
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>trad-chinese-formal</h2>
         <ol class="trad-chinese-formal" start="-1">
-            <li>-1</li>
-            <li>0</li>
-            <li>1</li>
+            <li>&#x8CA0;&#x58F9;</li>
+            <li>&#x96F6;</li>
+            <li>&#x58F9;</li>
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>trad-chinese-informal</h2>
         <ol class="trad-chinese-informal" start="-1">
-            <li>-1</li>
-            <li>0</li>
-            <li>1</li>
+            <li>&#x8CA0;&#x4E00;</li>
+            <li>&#x96F6;</li>
+            <li>&#x4E00;</li>
         </ol>
     </div>
     <div class="test">

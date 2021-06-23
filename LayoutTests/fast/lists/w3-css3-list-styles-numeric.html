@@ -4,6 +4,7 @@
     <style>
         .test ol { float: left; padding-right: 20px; }
         .test h2 { clear: left; }
+        .right { padding-left: 120px; }
         .negative-number { padding-left: 300px; }
         .negative-number li:before { content: "\002D"; }
         
@@ -13,49 +14,28 @@
         */
         
         ol.arabic-indic { list-style-type: arabic-indic; }
-        
         ol.binary { list-style-type: binary; }
-        
         ol.bengali { list-style-type: bengali; }
-        
         ol.cambodian { list-style-type: cambodian; }
         ol.khmer { list-style-type: khmer; }
-        
         ol.decimal { list-style-type: decimal; }
-        
         ol.decimal-leading-zero { list-style-type: decimal-leading-zero; }
-        
         ol.devanagari { list-style-type: devanagari; }
-        
         ol.gujarati { list-style-type: gujarati; }
-        
         ol.gurmukhi { list-style-type: gurmukhi; }
-        
         ol.kannada { list-style-type: kannada; }
-        
         ol.lower-hexadecimal { list-style-type: lower-hexadecimal; }
-        
         ol.lao { list-style-type: lao; }
-        
         ol.malayalam { list-style-type: malayalam; }
-        
         ol.mongolian { list-style-type: mongolian; }
-        
         ol.myanmar { list-style-type: myanmar; }
-        
         ol.octal { list-style-type: octal; }
-        
         ol.oriya { list-style-type: oriya; }
-        
         ol.persian { list-style-type: persian; }
         ol.urdu { list-style-type: urdu; }
-        
         ol.telugu { list-style-type: telugu; }
-        
         ol.tibetan { list-style-type: tibetan; }
-        
         ol.thai { list-style-type: thai; }
-        
         ol.upper-hexadecimal { list-style-type: upper-hexadecimal; }
     </style>
     <script src="resources/dump-list.js"></script>
@@ -71,7 +51,7 @@
         {
             if (!window.testRunner)
                 return;
-            
+
             testRunner.dumpAsText();
             filterListsWithReplacement(document.querySelectorAll(".test ol"), testListItemMarkerEqualsListItemText);
             document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
@@ -703,6 +683,39 @@
         <ol class="upper-hexadecimal negative-number" start="-2147483648">
             <li>80000000</li>
             <li>7FFFFFFF</li>
+        </ol>
+    </div>
+
+    <div class="test">
+        <h2>ethiopic-numeric</h2>
+        <ol style="list-style-type: ethiopic-numeric">
+            <li>&#x1369;</li>
+            <li>&#x136A;</li>
+            <li>&#x136B;</li>
+            <li>&#x136C;</li>
+            <li>&#x136D;</li>
+            <li>&#x136E;</li>
+            <li>&#x136F;</li>
+            <li>&#x1370;</li>
+            <li>&#x1371;</li>
+            <li>&#x1372;</li>
+            <li>&#x1372;&#x1369;</li>
+        </ol>
+        <ol style="list-style-type: ethiopic-numeric" start="0">
+            <li>0</li>
+        </ol>
+        <ol style="list-style-type: ethiopic-numeric" start="100">
+            <li>&#x137B;</li>
+        </ol>
+        <ol style="list-style-type: ethiopic-numeric" start="-2147483649">
+            <li>&#x1369;</li>
+        </ol>
+        <ol style="list-style-type: ethiopic-numeric" class="right" start="78010092">
+            <li>&#x1378;&#x1370;&#x137B;&#x1369;&#x137C;&#x137A;&#x136A;</li>
+        </ol>
+        <ol style="list-style-type: ethiopic-numeric" class="negative-number" start="-2147483648">
+            <li>2147483648</li>
+            <li>2147483647</li>
         </ol>
     </div>
 </body>

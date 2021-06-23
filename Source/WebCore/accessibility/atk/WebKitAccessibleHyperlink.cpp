@@ -177,8 +177,7 @@ static gint rangeLengthForObject(AccessibilityObject& obj, const std::optional<S
     if (!is<RenderListMarker>(renderer))
         return baseLength;
 
-    auto& marker = downcast<RenderListMarker>(*renderer);
-    return baseLength + marker.text().length() + marker.suffix().length();
+    return baseLength + downcast<RenderListMarker>(*renderer).textWithSuffix().length();
 }
 
 static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)

@@ -41,53 +41,21 @@
 
 namespace WebCore {
 
-using namespace WTF::Unicode;
+// As of June 2021, the Microsoft C++ compiler seems unable to include std::initializer_list in a constexpr.
+#if COMPILER(MSVC)
+#define CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND const
+#else
+#define CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND constexpr
+#endif
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListMarker);
 
 constexpr int cMarkerPadding = 7;
 
-enum class LetterCase { Lower, Upper };
-enum class SequenceType { Numeric, Alphabetic };
+enum class SequenceType : bool { Numeric, Alphabetic };
+enum class Formality : bool { Informal, Formal };
 
-static NEVER_INLINE String toRoman(int number, LetterCase letterCase)
-{
-    // FIXME: CSS3 describes how to make this work for much larger numbers,
-    // using overbars and special characters. It also specifies the characters
-    // in the range U+2160 to U+217F instead of standard ASCII ones.
-    ASSERT(number >= 1 && number <= 3999);
-
-    // Big enough to store largest roman number less than 3999 which
-    // is 3888 (MMMDCCCLXXXVIII)
-    constexpr unsigned lettersSize = 15;
-    LChar letters[lettersSize];
-
-    unsigned length = 0;
-    constexpr LChar ldigits[] = { 'i', 'v', 'x', 'l', 'c', 'd', 'm' };
-    constexpr LChar udigits[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
-    const LChar* digits = letterCase == LetterCase::Upper ? udigits : ldigits;
-    int d = 0;
-    do {
-        int num = number % 10;
-        if (num % 5 < 4)
-            for (int i = num % 5; i > 0; i--)
-                letters[lettersSize - ++length] = digits[d];
-        if (num >= 4 && num <= 8)
-            letters[lettersSize - ++length] = digits[d + 1];
-        if (num == 9)
-            letters[lettersSize - ++length] = digits[d + 2];
-        if (num % 5 == 4)
-            letters[lettersSize - ++length] = digits[d];
-        number /= 10;
-        d += 2;
-    } while (number);
-
-    ASSERT(length <= lettersSize);
-    return { &letters[lettersSize - length], length };
-}
-
-template<typename CharacterType>
-static inline String toAlphabeticOrNumeric(int number, const CharacterType* sequence, unsigned sequenceSize, SequenceType type)
+template<SequenceType type, typename CharacterType> static String toAlphabeticOrNumeric(int number, const CharacterType* sequence, unsigned sequenceSize)
 {
     ASSERT(sequenceSize >= 2);
 
@@ -98,7 +66,7 @@ static inline String toAlphabeticOrNumeric(int number, const CharacterType* sequ
 
     bool isNegativeNumber = false;
     unsigned numberShadow = number;
-    if (type == SequenceType::Alphabetic) {
+    if constexpr (type == SequenceType::Alphabetic) {
         ASSERT(number > 0);
         --numberShadow;
     } else if (number < 0) {
@@ -108,7 +76,7 @@ static inline String toAlphabeticOrNumeric(int number, const CharacterType* sequ
     letters[lettersSize - 1] = sequence[numberShadow % sequenceSize];
     unsigned length = 1;
 
-    if (type == SequenceType::Alphabetic) {
+    if constexpr (type == SequenceType::Alphabetic) {
         while ((numberShadow /= sequenceSize) > 0) {
             --numberShadow;
             letters[lettersSize - ++length] = sequence[numberShadow % sequenceSize];
@@ -124,14 +92,13 @@ static inline String toAlphabeticOrNumeric(int number, const CharacterType* sequ
     return { &letters[lettersSize - length], length };
 }
 
-template<typename CharacterType>
-static NEVER_INLINE String toSymbolic(int number, const CharacterType* symbols, unsigned symbolsSize)
+template<typename CharacterType> static String toSymbolic(int number, const CharacterType* symbols, unsigned symbolsSize)
 {
     ASSERT(number > 0);
     ASSERT(symbolsSize >= 1);
 
     // The asterisks list-style-type is the worst case; we show |number| asterisks.
-    CharacterType symbol = symbols[(number - 1) % symbolsSize];
+    auto symbol = symbols[(number - 1) % symbolsSize];
     unsigned count = (number - 1) / symbolsSize + 1;
 
     CharacterType* characters;
@@ -141,246 +108,90 @@ static NEVER_INLINE String toSymbolic(int number, const CharacterType* symbols, 
     return result;
 }
 
-template<typename CharacterType>
-static NEVER_INLINE String toAlphabetic(int number, const CharacterType* alphabet, unsigned alphabetSize)
+template<typename CharacterType> static String toAlphabetic(int number, const CharacterType* alphabet, unsigned alphabetSize)
 {
-    return toAlphabeticOrNumeric(number, alphabet, alphabetSize, SequenceType::Alphabetic);
+    return toAlphabeticOrNumeric<SequenceType::Alphabetic>(number, alphabet, alphabetSize);
 }
 
-template<typename CharacterType>
-static NEVER_INLINE String toNumeric(int number, const CharacterType* numerals, unsigned numeralsSize)
+template<typename CharacterType> static String toNumeric(int number, const CharacterType* numerals, unsigned numeralsSize)
 {
-    return toAlphabeticOrNumeric(number, numerals, numeralsSize, SequenceType::Numeric);
+    return toAlphabeticOrNumeric<SequenceType::Numeric>(number, numerals, numeralsSize);
 }
 
-template<typename CharacterType, size_t size>
-static inline String toAlphabetic(int number, const CharacterType(&alphabet)[size])
+template<typename CharacterType, size_t size> static String toAlphabetic(int number, const CharacterType(&alphabet)[size])
 {
     return toAlphabetic(number, alphabet, size);
 }
 
-template<typename CharacterType, size_t size>
-static inline String toNumeric(int number, const CharacterType(&alphabet)[size])
+template<typename CharacterType, size_t size> static String toNumeric(int number, const CharacterType(&alphabet)[size])
 {
     return toNumeric(number, alphabet, size);
 }
 
-template<typename CharacterType, size_t size>
-static inline String toSymbolic(int number, const CharacterType(&alphabet)[size])
+template<typename CharacterType, size_t size> static String toSymbolic(int number, const CharacterType(&alphabet)[size])
 {    
     return toSymbolic(number, alphabet, size);
 }
 
-static NEVER_INLINE int toHebrewUnder1000(int number, UChar letters[5])
+// This table format was derived from an old draft of the CSS specification: 3 group markers, 3 digit markers, 10 digits, negative sign.
+static String toCJKIdeographic(int number, const UChar table[17], Formality formality)
 {
-    // FIXME: CSS3 mentions various refinements not implemented here.
-    // FIXME: Should take a look at Mozilla's HebrewToText function (in nsBulletFrame).
-    ASSERT(number >= 0 && number < 1000);
-    int length = 0;
-    int fourHundreds = number / 400;
-    for (int i = 0; i < fourHundreds; i++)
-        letters[length++] = 1511 + 3;
-    number %= 400;
-    if (number / 100)
-        letters[length++] = 1511 + (number / 100) - 1;
-    number %= 100;
-    if (number == 15 || number == 16) {
-        letters[length++] = 1487 + 9;
-        letters[length++] = 1487 + number - 9;
-    } else {
-        if (int tens = number / 10) {
-            static constexpr UChar hebrewTens[9] = { 1497, 1499, 1500, 1502, 1504, 1505, 1506, 1508, 1510 };
-            letters[length++] = hebrewTens[tens - 1];
-        }
-        if (int ones = number % 10)
-            letters[length++] = 1487 + ones;
-    }
-    ASSERT(length <= 5);
-    return length;
-}
-
-static NEVER_INLINE String toHebrew(int number)
-{
-    // FIXME: CSS3 mentions ways to make this work for much larger numbers.
-    ASSERT(number >= 0 && number <= 999999);
-
-    if (number == 0) {
-        static constexpr UChar hebrewZero[3] = { 0x05D0, 0x05E4, 0x05E1 };
-        return { hebrewZero, 3 };
-    }
-
-    constexpr unsigned lettersSize = 11; // big enough for two 5-digit sequences plus a quote mark between
-    UChar letters[lettersSize];
-
-    unsigned length;
-    if (number < 1000)
-        length = 0;
-    else {
-        length = toHebrewUnder1000(number / 1000, letters);
-        letters[length++] = '\'';
-        number = number % 1000;
-    }
-    length += toHebrewUnder1000(number, letters + length);
-
-    ASSERT(length <= lettersSize);
-    return { letters, length };
-}
-
-static NEVER_INLINE unsigned toArmenianUnder10000(int number, LetterCase letterCase, bool addCircumflex, UChar letters[9])
-{
-    ASSERT(number >= 0 && number < 10000);
-    unsigned length = 0;
-
-    int lowerOffset = letterCase == LetterCase::Upper ? 0 : 0x0030;
-
-    if (int thousands = number / 1000) {
-        if (thousands == 7) {
-            letters[length++] = 0x0552 + lowerOffset;
-            if (addCircumflex)
-                letters[length++] = 0x0302;
-        } else {
-            letters[length++] = (0x054C - 1 + lowerOffset) + thousands;
-            if (addCircumflex)
-                letters[length++] = 0x0302;
-        }
-    }
-
-    if (int hundreds = (number / 100) % 10) {
-        letters[length++] = (0x0543 - 1 + lowerOffset) + hundreds;
-        if (addCircumflex)
-            letters[length++] = 0x0302;
-    }
-
-    if (int tens = (number / 10) % 10) {
-        letters[length++] = (0x053A - 1 + lowerOffset) + tens;
-        if (addCircumflex)
-            letters[length++] = 0x0302;
-    }
-
-    if (int ones = number % 10) {
-        letters[length++] = (0x531 - 1 + lowerOffset) + ones;
-        if (addCircumflex)
-            letters[length++] = 0x0302;
-    }
-
-    return length;
-}
-
-static NEVER_INLINE String toArmenian(int number, LetterCase letterCase)
-{
-    ASSERT(number >= 1 && number <= 99999999);
-
-    constexpr unsigned lettersSize = 18; // twice what toArmenianUnder10000 needs
-    UChar letters[lettersSize];
-
-    unsigned length = toArmenianUnder10000(number / 10000, letterCase, true, letters);
-    length += toArmenianUnder10000(number % 10000, letterCase, false, letters + length);
-
-    ASSERT(length <= lettersSize);
-    return { letters, length };
-}
-
-static NEVER_INLINE String toGeorgian(int number)
-{
-    ASSERT(number >= 1 && number <= 19999);
-
-    constexpr unsigned lettersSize = 5;
-    UChar letters[lettersSize];
-
-    unsigned length = 0;
-
-    if (number > 9999)
-        letters[length++] = 0x10F5;
-
-    if (int thousands = (number / 1000) % 10) {
-        static constexpr UChar georgianThousands[9] = {
-            0x10E9, 0x10EA, 0x10EB, 0x10EC, 0x10ED, 0x10EE, 0x10F4, 0x10EF, 0x10F0
-        };
-        letters[length++] = georgianThousands[thousands - 1];
-    }
-
-    if (int hundreds = (number / 100) % 10) {
-        static constexpr UChar georgianHundreds[9] = {
-            0x10E0, 0x10E1, 0x10E2, 0x10F3, 0x10E4, 0x10E5, 0x10E6, 0x10E7, 0x10E8
-        };
-        letters[length++] = georgianHundreds[hundreds - 1];
-    }
-
-    if (int tens = (number / 10) % 10) {
-        static constexpr UChar georgianTens[9] = {
-            0x10D8, 0x10D9, 0x10DA, 0x10DB, 0x10DC, 0x10F2, 0x10DD, 0x10DE, 0x10DF
-        };
-        letters[length++] = georgianTens[tens - 1];
-    }
-
-    if (int ones = number % 10) {
-        static constexpr UChar georgianOnes[9] = {
-            0x10D0, 0x10D1, 0x10D2, 0x10D3, 0x10D4, 0x10D5, 0x10D6, 0x10F1, 0x10D7
-        };
-        letters[length++] = georgianOnes[ones - 1];
-    }
-
-    ASSERT(length <= lettersSize);
-    return { letters, length };
-}
-
-// The table uses the order from the CSS3 specification:
-// first 3 group markers, then 3 digit markers, then ten digits.
-static NEVER_INLINE String toCJKIdeographic(int number, const UChar table[16])
-{
-    ASSERT(number >= 0);
-
-    enum AbstractCJKChar {
-        noChar,
-        secondGroupMarker, thirdGroupMarker, fourthGroupMarker,
-        secondDigitMarker, thirdDigitMarker, fourthDigitMarker,
-        digit0, digit1, digit2, digit3, digit4,
-        digit5, digit6, digit7, digit8, digit9
+    enum AbstractCJKCharacter {
+        NoChar,
+        SecondGroupMarker, ThirdGroupMarker, FourthGroupMarker,
+        SecondDigitMarker, ThirdDigitMarker, FourthDigitMarker,
+        Digit0, Digit1, Digit2, Digit3, Digit4,
+        Digit5, Digit6, Digit7, Digit8, Digit9,
+        NegativeSign
     };
 
     if (!number)
-        return { &table[digit0 - 1] , 1 };
+        return { &table[Digit0 - 1] , 1 };
+
+    ASSERT(number != std::numeric_limits<int>::min());
+    bool needsNegativeSign = number < 0;
+    if (needsNegativeSign)
+        number = -number;
 
     constexpr unsigned groupLength = 8; // 4 digits, 3 digit markers, and a group marker
     constexpr unsigned bufferLength = 4 * groupLength;
-    AbstractCJKChar buffer[bufferLength] = { noChar };
+    AbstractCJKCharacter buffer[bufferLength] = { NoChar };
 
     for (int i = 0; i < 4; ++i) {
         int groupValue = number % 10000;
         number /= 10000;
 
         // Process least-significant group first, but put it in the buffer last.
-        AbstractCJKChar* group = &buffer[(3 - i) * groupLength];
+        auto group = &buffer[(3 - i) * groupLength];
 
         if (groupValue && i)
-            group[7] = static_cast<AbstractCJKChar>(secondGroupMarker - 1 + i);
+            group[7] = static_cast<AbstractCJKCharacter>(SecondGroupMarker - 1 + i);
 
         // Put in the four digits and digit markers for any non-zero digits.
-        group[6] = static_cast<AbstractCJKChar>(digit0 + (groupValue % 10));
+        group[6] = static_cast<AbstractCJKCharacter>(Digit0 + (groupValue % 10));
         if (number != 0 || groupValue > 9) {
             int digitValue = ((groupValue / 10) % 10);
-            group[4] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            group[4] = static_cast<AbstractCJKCharacter>(Digit0 + digitValue);
             if (digitValue)
-                group[5] = secondDigitMarker;
+                group[5] = SecondDigitMarker;
         }
         if (number != 0 || groupValue > 99) {
             int digitValue = ((groupValue / 100) % 10);
-            group[2] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            group[2] = static_cast<AbstractCJKCharacter>(Digit0 + digitValue);
             if (digitValue)
-                group[3] = thirdDigitMarker;
+                group[3] = ThirdDigitMarker;
         }
         if (number != 0 || groupValue > 999) {
             int digitValue = groupValue / 1000;
-            group[0] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            group[0] = static_cast<AbstractCJKCharacter>(Digit0 + digitValue);
             if (digitValue)
-                group[1] = fourthDigitMarker;
+                group[1] = FourthDigitMarker;
         }
 
-        // Remove the tens digit, but leave the marker, for any group that has
-        // a value of less than 20.
-        if (groupValue < 20) {
-            ASSERT(group[4] == noChar || group[4] == digit0 || group[4] == digit1);
-            group[4] = noChar;
+        if (formality == Formality::Informal && groupValue < 20) {
+            // Remove the tens digit, but leave the marker.
+            ASSERT(group[4] == NoChar || group[4] == Digit0 || group[4] == Digit1);
+            group[4] = NoChar;
         }
 
         if (!number)
@@ -389,26 +200,106 @@ static NEVER_INLINE String toCJKIdeographic(int number, const UChar table[16])
 
     // Convert into characters, omitting consecutive runs of digit0 and trailing digit0.
     unsigned length = 0;
-    UChar characters[bufferLength];
-    AbstractCJKChar last = noChar;
+    UChar characters[1 + bufferLength];
+    auto last = NoChar;
+    if (needsNegativeSign)
+        characters[length++] = table[NegativeSign - 1];
     for (unsigned i = 0; i < bufferLength; ++i) {
-        AbstractCJKChar a = buffer[i];
-        if (a != noChar) {
-            if (a != digit0 || last != digit0)
-                characters[length++] = table[a - 1];
-            last = a;
+        auto character = buffer[i];
+        if (character != NoChar) {
+            if (character != Digit0 || last != Digit0)
+                characters[length++] = table[character - 1];
+            last = character;
         }
     }
-    if (last == digit0)
+    if (last == Digit0)
         --length;
 
     return { characters, length };
 }
 
+struct AdditiveSymbol {
+    int value;
+    std::initializer_list<UChar> characters;
+};
+struct AdditiveSystem {
+    std::initializer_list<AdditiveSymbol> symbols;
+    std::initializer_list<UChar> negative;
+};
+
+static String toPredefinedAdditiveSystem(int value, const AdditiveSystem& system)
+{
+    if (!value) {
+        ASSERT(!system.symbols.end()[-1].value);
+        auto& zeroCharacters = system.symbols.end()[-1].characters;
+        return { zeroCharacters.begin(), static_cast<unsigned>(zeroCharacters.size()) };
+    }
+
+    StringBuilder result;
+    auto append = [&] (std::initializer_list<UChar> characters) {
+        result.append(StringView { characters.begin(), static_cast<unsigned>(characters.size()) });
+    };
+    if (value < 0) {
+        ASSERT(value != std::numeric_limits<int>::min());
+        append(system.negative);
+        value = -value;
+    }
+    for (auto& symbol : system.symbols) {
+        while (value >= symbol.value) {
+            append(symbol.characters);
+            value -= symbol.value;
+        }
+        if (!value)
+            break;
+    }
+    ASSERT(!value);
+    return result.toString();
+}
+
+static String toEthiopicNumeric(int value)
+{
+    ASSERT(value >= 1);
+
+    if (value == 1) {
+        UChar ethiopicDigitOne = 0x1369;
+        return { &ethiopicDigitOne, 1 };
+    }
+
+    // Split the number into groups of two digits, starting with the least significant decimal digit.
+    uint8_t groups[5];
+    for (auto& group : groups) {
+        group = value % 100;
+        value /= 100;
+    }
+
+    UChar buffer[std::size(groups) * 3];
+    unsigned length = 0;
+    bool isMostSignificantGroup = true;
+    for (int i = std::size(groups) - 1; i >= 0; --i) {
+        auto value = groups[i];
+        bool isOddIndex = i & 1;
+        // If the group has the value zero, or if the group is the most significant one and has the value 1,
+        // or if the group has an odd index (as given in the previous step) and has the value 1,
+        // then remove the digits (but leave the group, so it still has a separator appended below).
+        if (!(value == 1 && (isMostSignificantGroup || isOddIndex))) {
+            if (auto tens = value / 10)
+                buffer[length++] = 0x1371 + tens;
+            if (auto ones = value % 10)
+                buffer[length++] = 0x1368 + ones;
+        }
+        if (value && isOddIndex)
+            buffer[length++] = 0x137B;
+        if ((value || !isMostSignificantGroup) && !isOddIndex && i)
+            buffer[length++] = 0x137C;
+        if (value)
+            isMostSignificantGroup = false;
+    }
+
+    return { buffer, length };
+}
+
 static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
 {
-    // FIXME: Types we need to add: japanese-formal, japanese-informal, korean-hangul-formal, korean-hanja-formal, korean-hanja-informal, simp-chinese-formal, simp-chinese-informal, tammil, trad-chinese-formal, trad-chinese-informal
-
     // Note, the following switch statement has been explicitly grouped by list-style-type ordinal range.
     switch (type) {
     case ListStyleType::ArabicIndic:
@@ -420,6 +311,8 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
     case ListStyleType::Decimal:
     case ListStyleType::Devanagari:
     case ListStyleType::Disc:
+    case ListStyleType::DisclosureClosed:
+    case ListStyleType::DisclosureOpen:
     case ListStyleType::Gujarati:
     case ListStyleType::Gurmukhi:
     case ListStyleType::Kannada:
@@ -441,20 +334,6 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
     case ListStyleType::UpperHexadecimal:
     case ListStyleType::Urdu:
         return type; // Can represent all ordinals.
-    case ListStyleType::Armenian:
-    case ListStyleType::LowerArmenian:
-    case ListStyleType::UpperArmenian:
-        return (value < 1 || value > 9999) ? ListStyleType::Decimal : type;
-    case ListStyleType::CJKDecimal:
-    case ListStyleType::CJKIdeographic:
-        return (value < 0) ? ListStyleType::Decimal : type;
-    case ListStyleType::Georgian:
-        return (value < 1 || value > 19999) ? ListStyleType::Decimal : type;
-    case ListStyleType::Hebrew:
-        return (value < 0 || value > 999999) ? ListStyleType::Decimal : type;
-    case ListStyleType::LowerRoman:
-    case ListStyleType::UpperRoman:
-        return (value < 1 || value > 3999) ? ListStyleType::Decimal : type;
     case ListStyleType::Afar:
     case ListStyleType::Amharic:
     case ListStyleType::AmharicAbegede:
@@ -477,6 +356,7 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
     case ListStyleType::EthiopicHalehameTiEr:
     case ListStyleType::EthiopicHalehameTiEt:
     case ListStyleType::EthiopicHalehameTig:
+    case ListStyleType::EthiopicNumeric:
     case ListStyleType::Footnotes:
     case ListStyleType::Hangul:
     case ListStyleType::HangulConsonant:
@@ -501,6 +381,31 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
     case ListStyleType::UpperLatin:
     case ListStyleType::UpperNorwegian:
         return (value < 1) ? ListStyleType::Decimal : type;
+    case ListStyleType::Armenian:
+    case ListStyleType::LowerArmenian:
+    case ListStyleType::UpperArmenian:
+        return (value < 1 || value > 9999) ? ListStyleType::Decimal : type;
+    case ListStyleType::CJKDecimal:
+        return (value < 0) ? ListStyleType::Decimal : type;
+    case ListStyleType::CJKIdeographic:
+    case ListStyleType::JapaneseFormal:
+    case ListStyleType::JapaneseInformal:
+    case ListStyleType::SimplifiedChineseFormal:
+    case ListStyleType::SimplifiedChineseInformal:
+    case ListStyleType::TraditionalChineseFormal:
+    case ListStyleType::TraditionalChineseInformal:
+        return value < -9999 ? ListStyleType::Decimal : value > 9999 ? ListStyleType::CJKDecimal : type;
+    case ListStyleType::Georgian:
+        return (value < 1 || value > 19999) ? ListStyleType::Decimal : type;
+    case ListStyleType::Hebrew:
+        return (value < 1 || value > 10999) ? ListStyleType::Decimal : type;
+    case ListStyleType::KoreanHangulFormal:
+    case ListStyleType::KoreanHanjaInformal:
+    case ListStyleType::KoreanHanjaFormal:
+        return (value < -9999 || value > 9999) ? ListStyleType::Decimal : type;
+    case ListStyleType::LowerRoman:
+    case ListStyleType::UpperRoman:
+        return (value < 1 || value > 3999) ? ListStyleType::Decimal : type;
     case ListStyleType::String:
         ASSERT_NOT_REACHED();
         break;
@@ -510,17 +415,18 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
     return type;
 }
 
-static UChar listMarkerSuffix(ListStyleType type, int value)
+static StringView listMarkerSuffix(ListStyleType type)
 {
-    // Note, the following switch statement has been explicitly grouped by list-style-type suffix.
-    switch (effectiveListMarkerType(type, value)) {
+    switch (type) {
     case ListStyleType::Asterisks:
     case ListStyleType::Circle:
     case ListStyleType::Disc:
+    case ListStyleType::DisclosureClosed:
+    case ListStyleType::DisclosureOpen:
     case ListStyleType::Footnotes:
     case ListStyleType::None:
     case ListStyleType::Square:
-        return ' ';
+        return { &space, 1 };
     case ListStyleType::Afar:
     case ListStyleType::Amharic:
     case ListStyleType::AmharicAbegede:
@@ -547,14 +453,15 @@ static UChar listMarkerSuffix(ListStyleType type, int value)
     case ListStyleType::TigrinyaEr:
     case ListStyleType::TigrinyaErAbegede:
     case ListStyleType::TigrinyaEt:
-    case ListStyleType::TigrinyaEtAbegede:
-        return ethiopicPrefaceColon;
+    case ListStyleType::TigrinyaEtAbegede: {
+        static constexpr UChar ethiopicPrefaceColonAndSpace[2] = { ethiopicPrefaceColon, ' ' };
+        return { ethiopicPrefaceColonAndSpace, 2 };
+    }
     case ListStyleType::Armenian:
     case ListStyleType::ArabicIndic:
     case ListStyleType::Bengali:
     case ListStyleType::Binary:
     case ListStyleType::Cambodian:
-    case ListStyleType::CJKIdeographic:
     case ListStyleType::DecimalLeadingZero:
     case ListStyleType::Decimal:
     case ListStyleType::Devanagari:
@@ -592,27 +499,35 @@ static UChar listMarkerSuffix(ListStyleType type, int value)
     case ListStyleType::UpperNorwegian:
     case ListStyleType::UpperRoman:
     case ListStyleType::Urdu:
-        return '.';
+        return ". ";
     case ListStyleType::CJKDecimal:
     case ListStyleType::CJKEarthlyBranch:
     case ListStyleType::CJKHeavenlyStem:
+    case ListStyleType::CJKIdeographic:
     case ListStyleType::Hiragana:
     case ListStyleType::HiraganaIroha:
+    case ListStyleType::JapaneseFormal:
+    case ListStyleType::JapaneseInformal:
     case ListStyleType::Katakana:
     case ListStyleType::KatakanaIroha:
-        return ideographicComma;
+    case ListStyleType::SimplifiedChineseFormal:
+    case ListStyleType::SimplifiedChineseInformal:
+    case ListStyleType::TraditionalChineseFormal:
+    case ListStyleType::TraditionalChineseInformal:
+        return { &ideographicComma, 1 };
+    case ListStyleType::EthiopicNumeric:
+        return "/ ";
+    case ListStyleType::KoreanHangulFormal:
+    case ListStyleType::KoreanHanjaInformal:
+    case ListStyleType::KoreanHanjaFormal:
+        return ", ";
     case ListStyleType::String:
         ASSERT_NOT_REACHED();
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return '.';
-}
-
-static bool suffixRequiresSpace(UChar suffix)
-{
-    return suffix == '.' || suffix == ethiopicPrefaceColon;
+    return ". ";
 }
 
 String listMarkerText(ListStyleType type, int value)
@@ -625,8 +540,8 @@ String listMarkerText(ListStyleType type, int value)
         static constexpr LChar asterisksSymbols[1] = { 0x2A };
         return toSymbolic(value, asterisksSymbols);
     }
-    // We use the same characters for text security.
-    // See RenderText::setInternalString.
+
+    // We use the same characters for text security. See RenderText::setRenderedText.
     case ListStyleType::Circle:
         return { &whiteBullet, 1 };
     case ListStyleType::Disc:
@@ -635,10 +550,15 @@ String listMarkerText(ListStyleType type, int value)
         static constexpr UChar footnotesSymbols[4] = { 0x002A, 0x2051, 0x2020, 0x2021 };
         return toSymbolic(value, footnotesSymbols);
     }
+
+    // CSS specification calls for U+25FE BLACK MEDIUM SMALL SQUARE; we have been using U+25A0 BLACK SQUARE instead for a long time.
     case ListStyleType::Square:
-        // The CSS 2.1 test suite uses U+25EE BLACK MEDIUM SMALL SQUARE instead,
-        // but we used this because we thought it looked better.
         return { &blackSquare, 1 };
+
+    case ListStyleType::DisclosureClosed:
+        return { &blackRightPointingSmallTriangle, 1 };
+    case ListStyleType::DisclosureOpen:
+        return { &blackDownPointingSmallTriangle, 1 };
 
     case ListStyleType::Decimal:
         return String::number(value);
@@ -1025,31 +945,272 @@ String listMarkerText(ListStyleType type, int value)
         };
         return toAlphabetic(value, upperNorwegianAlphabet);
     }
-    case ListStyleType::CJKIdeographic: {
-        static constexpr UChar traditionalChineseInformalTable[16] = {
+
+    case ListStyleType::SimplifiedChineseInformal: {
+        static constexpr UChar simplifiedChineseInformalTable[17] = {
+            0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
+            0x5341, 0x767E, 0x5343,
+            0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
+            0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D,
+            0x8D1F
+        };
+        return toCJKIdeographic(value, simplifiedChineseInformalTable, Formality::Informal);
+    }
+    case ListStyleType::SimplifiedChineseFormal: {
+        static constexpr UChar simplifiedChineseFormalTable[17] = {
+            0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
+            0x62FE, 0x4F70, 0x4EDF,
+            0x96F6, 0x58F9, 0x8D30, 0x53C1, 0x8086,
+            0x4F0D, 0x9646, 0x67D2, 0x634C, 0x7396,
+            0x8D1F
+        };
+        return toCJKIdeographic(value, simplifiedChineseFormalTable, Formality::Formal);
+    }
+    case ListStyleType::CJKIdeographic:
+    case ListStyleType::TraditionalChineseInformal: {
+        static constexpr UChar traditionalChineseInformalTable[17] = {
             0x842C, 0x5104, 0x5146,
             0x5341, 0x767E, 0x5343,
             0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
-            0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D
+            0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D,
+            0x8CA0
         };
-        return toCJKIdeographic(value, traditionalChineseInformalTable);
+        return toCJKIdeographic(value, traditionalChineseInformalTable, Formality::Informal);
+    }
+    case ListStyleType::TraditionalChineseFormal: {
+        static constexpr UChar traditionalChineseFormalTable[17] = {
+            0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
+            0x62FE, 0x4F70, 0x4EDF,
+            0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x8086,
+            0x4F0D, 0x9678, 0x67D2, 0x634C, 0x7396,
+            0x8CA0
+        };
+        return toCJKIdeographic(value, traditionalChineseFormalTable, Formality::Formal);
     }
 
-    case ListStyleType::LowerRoman:
-        return toRoman(value, LetterCase::Lower);
-    case ListStyleType::UpperRoman:
-        return toRoman(value, LetterCase::Upper);
+    case ListStyleType::LowerRoman: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem lowerRomanSystem {
+            {
+                { 1000, { 'm' } },
+                { 900, { 'c', 'm' } },
+                { 500, { 'd' } },
+                { 400, { 'c', 'd' } },
+                { 100, { 'c' } },
+                { 90, { 'x', 'c' } },
+                { 50, { 'l' } },
+                { 40, { 'x', 'l' } },
+                { 10, { 'x' } },
+                { 9, { 'i', 'x' } },
+                { 5, { 'v' } },
+                { 4, { 'i', 'v' } },
+                { 1, { 'i' } }
+            },
+            { }
+        };
+        return toPredefinedAdditiveSystem(value, lowerRomanSystem);
+    }
+    case ListStyleType::UpperRoman: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem upperRomanSystem {
+            {
+                { 1000, { 'M' } },
+                { 900, { 'C', 'M' } },
+                { 500, { 'D' } },
+                { 400, { 'C', 'D' } },
+                { 100, { 'C' } },
+                { 90, { 'X', 'C' } },
+                { 50, { 'L' } },
+                { 40, { 'X', 'L' } },
+                { 10, { 'X' } },
+                { 9, { 'I', 'X' } },
+                { 5, { 'V' } },
+                { 4, { 'I', 'V' } },
+                { 1, { 'I' } }
+            },
+            { }
+        };
+        return toPredefinedAdditiveSystem(value, upperRomanSystem);
+    }
 
     case ListStyleType::Armenian:
-    case ListStyleType::UpperArmenian:
-        return toArmenian(value, LetterCase::Upper);
-    case ListStyleType::LowerArmenian:
-        return toArmenian(value, LetterCase::Lower);
+    case ListStyleType::UpperArmenian: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem upperArmenianSystem {
+            {
+                { 9000, { 0x554 } },
+                { 8000, { 0x553 } },
+                { 7000, { 0x552 } },
+                { 6000, { 0x551 } },
+                { 5000, { 0x550 } },
+                { 4000, { 0x54F } },
+                { 3000, { 0x54E } },
+                { 2000, { 0x54D } },
+                { 1000, { 0x54C } },
+                { 900, { 0x54B } },
+                { 800, { 0x54A } },
+                { 700, { 0x549 } },
+                { 600, { 0x548 } },
+                { 500, { 0x547 } },
+                { 400, { 0x546 } },
+                { 300, { 0x545 } },
+                { 200, { 0x544 } },
+                { 100, { 0x543 } },
+                { 90, { 0x542 } },
+                { 80, { 0x541 } },
+                { 70, { 0x540 } },
+                { 60, { 0x53F } },
+                { 50, { 0x53E } },
+                { 40, { 0x53D } },
+                { 30, { 0x53C } },
+                { 20, { 0x53B } },
+                { 10, { 0x53A } },
+                { 9, { 0x539 } },
+                { 8, { 0x538 } },
+                { 7, { 0x537 } },
+                { 6, { 0x536 } },
+                { 5, { 0x535 } },
+                { 4, { 0x534 } },
+                { 3, { 0x533 } },
+                { 2, { 0x532 } },
+                { 1, { 0x531 } }
+            },
+            { }
+        };
+        return toPredefinedAdditiveSystem(value, upperArmenianSystem);
+    }
+    case ListStyleType::LowerArmenian: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem lowerArmenianSystem {
+            {
+                { 9000, { 0x584 } },
+                { 8000, { 0x583 } },
+                { 7000, { 0x582 } },
+                { 6000, { 0x581 } },
+                { 5000, { 0x580 } },
+                { 4000, { 0x57F } },
+                { 3000, { 0x57E } },
+                { 2000, { 0x57D } },
+                { 1000, { 0x57C } },
+                { 900, { 0x57B } },
+                { 800, { 0x57A } },
+                { 700, { 0x579 } },
+                { 600, { 0x578 } },
+                { 500, { 0x577 } },
+                { 400, { 0x576 } },
+                { 300, { 0x575 } },
+                { 200, { 0x574 } },
+                { 100, { 0x573 } },
+                { 90, { 0x572 } },
+                { 80, { 0x571 } },
+                { 70, { 0x570 } },
+                { 60, { 0x56F } },
+                { 50, { 0x56E } },
+                { 40, { 0x56D } },
+                { 30, { 0x56C } },
+                { 20, { 0x56B } },
+                { 10, { 0x56A } },
+                { 9, { 0x569 } },
+                { 8, { 0x568 } },
+                { 7, { 0x567 } },
+                { 6, { 0x566 } },
+                { 5, { 0x565 } },
+                { 4, { 0x564 } },
+                { 3, { 0x563 } },
+                { 2, { 0x562 } },
+                { 1, { 0x561 } }
+            },
+            { }
+        };
+        return toPredefinedAdditiveSystem(value, lowerArmenianSystem);
+    }
 
-    case ListStyleType::Georgian:
-        return toGeorgian(value);
-    case ListStyleType::Hebrew:
-        return toHebrew(value);
+    case ListStyleType::Georgian: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem georgianSystem {
+            {
+                { 10000, { 0x10F5 } },
+                { 9000, { 0x10F0 } },
+                { 8000, { 0x10EF } },
+                { 7000, { 0x10F4 } },
+                { 6000, { 0x10EE } },
+                { 5000, { 0x10ED } },
+                { 4000, { 0x10EC } },
+                { 3000, { 0x10EB } },
+                { 2000, { 0x10EA } },
+                { 1000, { 0x10E9 } },
+                { 900, { 0x10E8 } },
+                { 800, { 0x10E7 } },
+                { 700, { 0x10E6 } },
+                { 600, { 0x10E5 } },
+                { 500, { 0x10E4 } },
+                { 400, { 0x10F3 } },
+                { 300, { 0x10E2 } },
+                { 200, { 0x10E1 } },
+                { 100, { 0x10E0 } },
+                { 90, { 0x10DF } },
+                { 80, { 0x10DE } },
+                { 70, { 0x10DD } },
+                { 60, { 0x10F2 } },
+                { 50, { 0x10DC } },
+                { 40, { 0x10DB } },
+                { 30, { 0x10DA } },
+                { 20, { 0x10D9 } },
+                { 10, { 0x10D8 } },
+                { 9, { 0x10D7 } },
+                { 8, { 0x10F1 } },
+                { 7, { 0x10D6 } },
+                { 6, { 0x10D5 } },
+                { 5, { 0x10D4 } },
+                { 4, { 0x10D3 } },
+                { 3, { 0x10D2 } },
+                { 2, { 0x10D1 } },
+                { 1, { 0x10D0 } }
+            },
+            { }
+        };
+        return toPredefinedAdditiveSystem(value, georgianSystem);
+    }
+    case ListStyleType::Hebrew: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem hebrewSystem {
+            {
+                { 10000, { 0x5D9, 0x5F3 } },
+                { 9000, { 0x5D8, 0x5F3 } },
+                { 8000, { 0x5D7, 0x5F3 } },
+                { 7000, { 0x5D6, 0x5F3 } },
+                { 6000, { 0x5D5, 0x5F3 } },
+                { 5000, { 0x5D4, 0x5F3 } },
+                { 4000, { 0x5D3, 0x5F3 } },
+                { 3000, { 0x5D2, 0x5F3 } },
+                { 2000, { 0x5D1, 0x5F3 } },
+                { 1000, { 0x5D0, 0x5F3 } },
+                { 400, { 0x5EA } },
+                { 300, { 0x5E9 } },
+                { 200, { 0x5E8 } },
+                { 100, { 0x5E7 } },
+                { 90, { 0x5E6 } },
+                { 80, { 0x5E4 } },
+                { 70, { 0x5E2 } },
+                { 60, { 0x5E1 } },
+                { 50, { 0x5E0 } },
+                { 40, { 0x5DE } },
+                { 30, { 0x5DC } },
+                { 20, { 0x5DB } },
+                { 19, { 0x5D9, 0x5D8 } },
+                { 18, { 0x5D9, 0x5D7 } },
+                { 17, { 0x5D9, 0x5D6 } },
+                { 16, { 0x5D8, 0x5D6 } },
+                { 15, { 0x5D8, 0x5D5 } },
+                { 10, { 0x5D9 } },
+                { 9, { 0x5D8 } },
+                { 8, { 0x5D7 } },
+                { 7, { 0x5D6 } },
+                { 6, { 0x5D5 } },
+                { 5, { 0x5D4 } },
+                { 4, { 0x5D3 } },
+                { 3, { 0x5D2 } },
+                { 2, { 0x5D1 } },
+                { 1, { 0x5D0 } }
+            },
+            { }
+        };
+        return toPredefinedAdditiveSystem(value, hebrewSystem);
+    }
 
     case ListStyleType::CJKDecimal: {
         static constexpr UChar CJKDecimalNumerals[10] = {
@@ -1063,6 +1224,235 @@ String listMarkerText(ListStyleType type, int value)
         };
         return toNumeric(value, tamilNumerals);
     }
+
+    case ListStyleType::JapaneseInformal: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem japaneseInformalSystem {
+            {
+                { 9000, { 0x4E5D, 0x5343 } },
+                { 8000, { 0x516B, 0x5343 } },
+                { 7000, { 0x4E03, 0x5343 } },
+                { 6000, { 0x516D, 0x5343 } },
+                { 5000, { 0x4E94, 0x5343 } },
+                { 4000, { 0x56DB, 0x5343 } },
+                { 3000, { 0x4E09, 0x5343 } },
+                { 2000, { 0x4E8C, 0x5343 } },
+                { 1000, { 0x5343 } },
+                { 900, { 0x4E5D, 0x767E } },
+                { 800, { 0x516B, 0x767E } },
+                { 700, { 0x4E03, 0x767E } },
+                { 600, { 0x516D, 0x767E } },
+                { 500, { 0x4E94, 0x767E } },
+                { 400, { 0x56DB, 0x767E } },
+                { 300, { 0x4E09, 0x767E } },
+                { 200, { 0x4E8C, 0x767E } },
+                { 100, { 0x767E } },
+                { 90, { 0x4E5D, 0x5341 } },
+                { 80, { 0x516B, 0x5341 } },
+                { 70, { 0x4E03, 0x5341 } },
+                { 60, { 0x516D, 0x5341 } },
+                { 50, { 0x4E94, 0x5341 } },
+                { 40, { 0x56DB, 0x5341 } },
+                { 30, { 0x4E09, 0x5341 } },
+                { 20, { 0x4E8C, 0x5341 } },
+                { 10, { 0x5341 } },
+                { 9, { 0x4E5D } },
+                { 8, { 0x516B } },
+                { 7, { 0x4E03 } },
+                { 6, { 0x516D } },
+                { 5, { 0x4E94 } },
+                { 4, { 0x56DB } },
+                { 3, { 0x4E09 } },
+                { 2, { 0x4E8C } },
+                { 1, { 0x4E00 } },
+                { 0, { 0x3007 } }
+            },
+            { 0x30DE, 0x30A4, 0x30CA, 0x30B9 }
+        };
+        return toPredefinedAdditiveSystem(value, japaneseInformalSystem);
+    }
+    case ListStyleType::JapaneseFormal: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem japaneseFormalSystem {
+            {
+                { 9000, { 0x4E5D, 0x9621 } },
+                { 8000, { 0x516B, 0x9621 } },
+                { 7000, { 0x4E03, 0x9621 } },
+                { 6000, { 0x516D, 0x9621 } },
+                { 5000, { 0x4F0D, 0x9621 } },
+                { 4000, { 0x56DB, 0x9621 } },
+                { 3000, { 0x53C2, 0x9621 } },
+                { 2000, { 0x5F10, 0x9621 } },
+                { 1000, { 0x58F1, 0x9621 } },
+                { 900, { 0x4E5D, 0x767E } },
+                { 800, { 0x516B, 0x767E } },
+                { 700, { 0x4E03, 0x767E } },
+                { 600, { 0x516D, 0x767E } },
+                { 500, { 0x4F0D, 0x767E } },
+                { 400, { 0x56DB, 0x767E } },
+                { 300, { 0x53C2, 0x767E } },
+                { 200, { 0x5F10, 0x767E } },
+                { 100, { 0x58F1, 0x767E } },
+                { 90, { 0x4E5D, 0x62FE } },
+                { 80, { 0x516B, 0x62FE } },
+                { 70, { 0x4E03, 0x62FE } },
+                { 60, { 0x516D, 0x62FE } },
+                { 50, { 0x4F0D, 0x62FE } },
+                { 40, { 0x56DB, 0x62FE } },
+                { 30, { 0x53C2, 0x62FE } },
+                { 20, { 0x5F10, 0x62FE } },
+                { 10, { 0x58F1, 0x62FE } },
+                { 9, { 0x4E5D } },
+                { 8, { 0x516B } },
+                { 7, { 0x4E03 } },
+                { 6, { 0x516D } },
+                { 5, { 0x4F0D } },
+                { 4, { 0x56DB } },
+                { 3, { 0x53C2 } },
+                { 2, { 0x5F10 } },
+                { 1, { 0x58F1 } },
+                { 0, { 0x96F6 } }
+            },
+            { 0x30DE, 0x30A4, 0x30CA, 0x30B9 }
+        };
+        return toPredefinedAdditiveSystem(value, japaneseFormalSystem);
+    }
+    case ListStyleType::KoreanHangulFormal: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem koreanHangulFormalSystem {
+            {
+                { 9000, { 0xAD6C, 0xCC9C } },
+                { 8000, { 0xD314, 0xCC9C } },
+                { 7000, { 0xCE60, 0xCC9C } },
+                { 6000, { 0xC721, 0xCC9C } },
+                { 5000, { 0xC624, 0xCC9C } },
+                { 4000, { 0xC0AC, 0xCC9C } },
+                { 3000, { 0xC0BC, 0xCC9C } },
+                { 2000, { 0xC774, 0xCC9C } },
+                { 1000, { 0xC77C, 0xCC9C } },
+                { 900, { 0xAD6C, 0xBC31 } },
+                { 800, { 0xD314, 0xBC31 } },
+                { 700, { 0xCE60, 0xBC31 } },
+                { 600, { 0xC721, 0xBC31 } },
+                { 500, { 0xC624, 0xBC31 } },
+                { 400, { 0xC0AC, 0xBC31 } },
+                { 300, { 0xC0BC, 0xBC31 } },
+                { 200, { 0xC774, 0xBC31 } },
+                { 100, { 0xC77C, 0xBC31 } },
+                { 90, { 0xAD6C, 0xC2ED } },
+                { 80, { 0xD314, 0xC2ED } },
+                { 70, { 0xCE60, 0xC2ED } },
+                { 60, { 0xC721, 0xC2ED } },
+                { 50, { 0xC624, 0xC2ED } },
+                { 40, { 0xC0AC, 0xC2ED } },
+                { 30, { 0xC0BC, 0xC2ED } },
+                { 20, { 0xC774, 0xC2ED } },
+                { 10, { 0xC77C, 0xC2ED } },
+                { 9, { 0xAD6C } },
+                { 8, { 0xD314 } },
+                { 7, { 0xCE60 } },
+                { 6, { 0xC721 } },
+                { 5, { 0xC624 } },
+                { 4, { 0xC0AC } },
+                { 3, { 0xC0BC } },
+                { 2, { 0xC774 } },
+                { 1, { 0xC77C } },
+                { 0, { 0xC601 } }
+            },
+            { 0xB9C8, 0xC774, 0xB108, 0xC2A4, ' ' }
+        };
+        return toPredefinedAdditiveSystem(value, koreanHangulFormalSystem);
+    }
+    case ListStyleType::KoreanHanjaInformal: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem koreanHanjaInformalSystem {
+            {
+                { 9000, { 0x4E5D, 0x5343 } },
+                { 8000, { 0x516B, 0x5343 } },
+                { 7000, { 0x4E03, 0x5343 } },
+                { 6000, { 0x516D, 0x5343 } },
+                { 5000, { 0x4E94, 0x5343 } },
+                { 4000, { 0x56DB, 0x5343 } },
+                { 3000, { 0x4E09, 0x5343 } },
+                { 2000, { 0x4E8C, 0x5343 } },
+                { 1000, { 0x5343 } },
+                { 900, { 0x4E5D, 0x767E } },
+                { 800, { 0x516B, 0x767E } },
+                { 700, { 0x4E03, 0x767E } },
+                { 600, { 0x516D, 0x767E } },
+                { 500, { 0x4E94, 0x767E } },
+                { 400, { 0x56DB, 0x767E } },
+                { 300, { 0x4E09, 0x767E } },
+                { 200, { 0x4E8C, 0x767E } },
+                { 100, { 0x767E } },
+                { 90, { 0x4E5D, 0x5341 } },
+                { 80, { 0x516B, 0x5341 } },
+                { 70, { 0x4E03, 0x5341 } },
+                { 60, { 0x516D, 0x5341 } },
+                { 50, { 0x4E94, 0x5341 } },
+                { 40, { 0x56DB, 0x5341 } },
+                { 30, { 0x4E09, 0x5341 } },
+                { 20, { 0x4E8C, 0x5341 } },
+                { 10, { 0x5341 } },
+                { 9, { 0x4E5D } },
+                { 8, { 0x516B } },
+                { 7, { 0x4E03 } },
+                { 6, { 0x516D } },
+                { 5, { 0x4E94 } },
+                { 4, { 0x56DB } },
+                { 3, { 0x4E09 } },
+                { 2, { 0x4E8C } },
+                { 1, { 0x4E00 } },
+                { 0, { 0x96F6 } }
+            },
+            { 0xB9C8, 0xC774, 0xB108, 0xC2A4, ' ' }
+        };
+        return toPredefinedAdditiveSystem(value, koreanHanjaInformalSystem);
+    }
+    case ListStyleType::KoreanHanjaFormal: {
+        static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem koreanHanjaFormalSystem {
+            {
+                { 9000, { 0x4E5D, 0x4EDF } },
+                { 8000, { 0x516B, 0x4EDF } },
+                { 7000, { 0x4E03, 0x4EDF } },
+                { 6000, { 0x516D, 0x4EDF } },
+                { 5000, { 0x4E94, 0x4EDF } },
+                { 4000, { 0x56DB, 0x4EDF } },
+                { 3000, { 0x53C3, 0x4EDF } },
+                { 2000, { 0x8CB3, 0x4EDF } },
+                { 1000, { 0x58F9, 0x4EDF } },
+                { 900, { 0x4E5D, 0x767E } },
+                { 800, { 0x516B, 0x767E } },
+                { 700, { 0x4E03, 0x767E } },
+                { 600, { 0x516D, 0x767E } },
+                { 500, { 0x4E94, 0x767E } },
+                { 400, { 0x56DB, 0x767E } },
+                { 300, { 0x53C3, 0x767E } },
+                { 200, { 0x8CB3, 0x767E } },
+                { 100, { 0x58F9, 0x767E } },
+                { 90, { 0x4E5D, 0x62FE } },
+                { 80, { 0x516B, 0x62FE } },
+                { 70, { 0x4E03, 0x62FE } },
+                { 60, { 0x516D, 0x62FE } },
+                { 50, { 0x4E94, 0x62FE } },
+                { 40, { 0x56DB, 0x62FE } },
+                { 30, { 0x53C3, 0x62FE } },
+                { 20, { 0x8CB3, 0x62FE } },
+                { 10, { 0x58F9, 0x62FE } },
+                { 9, { 0x4E5D } },
+                { 8, { 0x516B } },
+                { 7, { 0x4E03 } },
+                { 6, { 0x516D } },
+                { 5, { 0x4E94 } },
+                { 4, { 0x56DB } },
+                { 3, { 0x53C3 } },
+                { 2, { 0x8CB3 } },
+                { 1, { 0x58F9 } },
+                { 0, { 0x96F6 } }
+            },
+            { 0xB9C8, 0xC774, 0xB108, 0xC2A4, ' ' }
+        };
+        return toPredefinedAdditiveSystem(value, koreanHanjaFormalSystem);
+    }
+
+    case ListStyleType::EthiopicNumeric:
+        return toEthiopicNumeric(value);
 
     case ListStyleType::String:
         ASSERT_NOT_REACHED();
@@ -1120,7 +1510,7 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
 std::unique_ptr<LegacyInlineElementBox> RenderListMarker::createInlineBox()
 {
     auto box = RenderBox::createInlineBox();
-    box->setBehavesLikeText(isText());
+    box->setBehavesLikeText(!isImage());
     return box;
 }
 
@@ -1141,6 +1531,50 @@ LayoutRect RenderListMarker::localSelectionRect()
     return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
 }
 
+static String reversed(StringView string)
+{
+    auto length = string.length();
+    if (length <= 1)
+        return string.toString();
+    UChar* characters;
+    auto result = String::createUninitialized(length, characters);
+    for (unsigned i = 0; i < length; ++i)
+        *characters++ = string[length - i - 1];
+    return result;
+}
+
+struct RenderListMarker::TextRunWithUnderlyingString {
+    TextRun textRun;
+    String underlyingString;
+    operator const TextRun&() const { return textRun; }
+};
+
+auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
+{
+    ASSERT(!m_textWithSuffix.isEmpty());
+
+    // Since the bidi algorithm doesn't run on this text, we instead reorder the characters here.
+    // We use u_charDirection to figure out if the marker text is RTL and assume the suffix matches the surrounding direction.
+    String textForRun;
+    if (m_textIsLeftToRightDirection) {
+        if (style().isLeftToRightDirection())
+            textForRun = m_textWithSuffix;
+        else {
+            if (style().listStyleType() == ListStyleType::DisclosureClosed)
+                textForRun = { &blackLeftPointingSmallTriangle, 1 };
+            else
+                textForRun = makeString(reversed(m_textWithSuffix.substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
+        }
+    } else {
+        if (!style().isLeftToRightDirection())
+            textForRun = reversed(m_textWithSuffix);
+        else
+            textForRun = makeString(reversed(m_textWithSuffix.left(m_textWithoutSuffixLength)), m_textWithSuffix.substring(m_textWithoutSuffixLength));
+    }
+    auto textRun = RenderBlock::constructTextRun(textForRun, style());
+    return { WTFMove(textRun), WTFMove(textForRun) };
+}
+
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhase::Foreground)
@@ -1157,7 +1591,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     LayoutRect box(boxOrigin, size());
     
-    auto markerRect = getRelativeMarkerRect();
+    auto markerRect = relativeMarkerRect();
     markerRect.moveBy(boxOrigin);
     if (markerRect.isEmpty())
         return;
@@ -1187,8 +1621,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     context.setStrokeThickness(1.0f);
     context.setFillColor(color);
 
-    auto type = style().listStyleType();
-    switch (type) {
+    switch (style().listStyleType()) {
     case ListStyleType::Disc:
         context.drawEllipse(markerRect);
         return;
@@ -1199,16 +1632,11 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     case ListStyleType::Square:
         context.drawRect(markerRect);
         return;
-    case ListStyleType::None:
-        return;
     default:
         break;
     }
-    if (m_text.isEmpty())
+    if (m_textWithSuffix.isEmpty())
         return;
-
-    const FontCascade& font = style().fontCascade();
-    TextRun textRun = RenderBlock::constructTextRun(m_text, style());
 
     GraphicsContextStateSaver stateSaver(context, false);
     if (!style().isHorizontalWritingMode()) {
@@ -1223,47 +1651,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     FloatPoint textOrigin = FloatPoint(markerRect.x(), markerRect.y() + style().fontMetrics().ascent());
     textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), style().isLeftToRightDirection());
-
-    if (type == ListStyleType::Asterisks || type == ListStyleType::Footnotes || type == ListStyleType::String)
-        context.drawText(font, textRun, textOrigin);
-    else {
-        auto suffix = listMarkerSuffix(type, m_listItem->value());
-
-        // FIXME: Could use a Vector with inline capacity instead of String to avoid
-        // memory allocation here.
-        String textToDraw;
-
-        // Since marker text is not arbitrary, we can judge its direction just by
-        // checking the first character, and only need to handle U_RIGHT_TO_LEFT.
-        // FIXME: Could check more efficiently than u_charDirection, since we know
-        // only certain characters are used and only need to check for U_RIGHT_TO_LEFT.
-        bool shouldAddSpace = suffixRequiresSpace(suffix);
-        if (u_charDirection(m_text[0]) == U_RIGHT_TO_LEFT) {
-            unsigned length = m_text.length();
-            UChar* characters;
-            textToDraw = String::createUninitialized(length + 1 + shouldAddSpace, characters);
-            if (!style().isLeftToRightDirection()) {
-                if (shouldAddSpace)
-                    *characters++ = space;
-                *characters++ = suffix;
-            }
-            for (unsigned i = 0; i < length; ++i)
-                *characters++ = m_text[length - i - 1];
-            if (style().isLeftToRightDirection()) {
-                *characters++ = suffix;
-                if (shouldAddSpace)
-                    *characters++ = space;
-            }
-        } else {
-            if (style().isLeftToRightDirection())
-                textToDraw = makeString(m_text, suffix, shouldAddSpace ? " " : "");
-            else
-                textToDraw = makeString(shouldAddSpace ? " " : "", suffix, m_text);
-        }
-        textRun.setText(textToDraw);
-
-        context.drawText(font, textRun, textOrigin);
-    }
+    context.drawText(style().fontCascade(), textRun(), textOrigin);
 }
 
 RenderBox* RenderListMarker::parentBox(RenderBox& box)
@@ -1305,7 +1693,7 @@ void RenderListMarker::addOverflowFromListMarker()
 
     // FIXME: Need to account for relative positioning in the layout overflow.
     if (m_listItem->style().isLeftToRightDirection()) {
-        markerLogicalLeft = lineOffsetForListItem() - lineOffset - m_listItem->paddingStart() - m_listItem->borderStart() + marginStart();
+        markerLogicalLeft = m_lineOffsetForListItem - lineOffset - m_listItem->paddingStart() - m_listItem->borderStart() + marginStart();
         inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
         for (auto* box = inlineBoxWrapper()->parent(); box; box = box->parent()) {
             auto newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
@@ -1327,7 +1715,7 @@ void RenderListMarker::addOverflowFromListMarker()
                 hitSelfPaintingLayer = true;
         }
     } else {
-        markerLogicalLeft = lineOffsetForListItem() - lineOffset + m_listItem->paddingStart() + m_listItem->borderStart() + marginEnd();
+        markerLogicalLeft = m_lineOffsetForListItem - lineOffset + m_listItem->paddingStart() + m_listItem->borderStart() + marginEnd();
         inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
         for (auto* box = inlineBoxWrapper()->parent(); box; box = box->parent()) {
             auto newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
@@ -1423,19 +1811,14 @@ void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect*)
 
 void RenderListMarker::updateMarginsAndContent()
 {
-    updateContent();
+    // FIXME: It's messy to use the preferredLogicalWidths dirty bit for this optimization, also unclear if this is premature optimization.
+    if (preferredLogicalWidthsDirty())
+        updateContent();
     updateMargins();
 }
 
 void RenderListMarker::updateContent()
 {
-    // FIXME: This if-statement is just a performance optimization, but it's messy to use the preferredLogicalWidths dirty bit for this.
-    // It's unclear if this is a premature optimization.
-    if (!preferredLogicalWidthsDirty())
-        return;
-
-    m_text = emptyString();
-
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
@@ -1443,23 +1826,25 @@ void RenderListMarker::updateContent()
         LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
         LayoutSize imageSize = calculateImageIntrinsicDimensions(m_image.get(), defaultBulletSize, DoNotScaleByEffectiveZoom);
         m_image->setContainerContextForRenderer(*this, imageSize, style().effectiveZoom());
+        m_textWithSuffix = emptyString();
+        m_textWithoutSuffixLength = 0;
+        m_textIsLeftToRightDirection = true;
         return;
     }
 
     auto type = style().listStyleType();
     switch (type) {
-    case ListStyleType::None:
-        break;
     case ListStyleType::String:
-        m_text = style().listStyleStringValue();
-        break;
-    case ListStyleType::Circle:
-    case ListStyleType::Disc:
-    case ListStyleType::Square:
-        m_text = listMarkerText(type, 0); // value is ignored for these types
+        m_textWithSuffix = style().listStyleStringValue();
+        m_textWithoutSuffixLength = m_textWithSuffix.length();
+        // FIXME: Depending on the string value, we may need the real bidi algorithm.
+        m_textIsLeftToRightDirection = u_charDirection(m_textWithSuffix[0]) != U_RIGHT_TO_LEFT;
         break;
     default:
-        m_text = listMarkerText(type, m_listItem->value());
+        auto text = listMarkerText(type, m_listItem->value());
+        m_textWithSuffix = makeString(text, listMarkerSuffix(type));
+        m_textWithoutSuffixLength = text.length();
+        m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;
         break;
     }
 }
@@ -1480,33 +1865,15 @@ void RenderListMarker::computePreferredLogicalWidths()
     const FontCascade& font = style().fontCascade();
 
     LayoutUnit logicalWidth;
-    auto type = style().listStyleType();
-    switch (type) {
-    case ListStyleType::None:
-        break;
-    case ListStyleType::Asterisks:
-    case ListStyleType::Footnotes:
-    case ListStyleType::String:
-        if (!m_text.isEmpty()) {
-            TextRun run = RenderBlock::constructTextRun(m_text, style());
-            logicalWidth = font.width(run); // no suffix for these types
-        }
-        break;
+    switch (style().listStyleType()) {
     case ListStyleType::Circle:
     case ListStyleType::Disc:
     case ListStyleType::Square:
         logicalWidth = (font.fontMetrics().ascent() * 2 / 3 + 1) / 2 + 2;
         break;
     default:
-        if (m_text.isEmpty())
-            logicalWidth = 0;
-        else {
-            TextRun run = RenderBlock::constructTextRun(m_text, style());
-            LayoutUnit itemWidth { font.width(run) };
-            UChar suffix[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
-            LayoutUnit suffixWidth { font.width(RenderBlock::constructTextRun(suffix, suffixRequiresSpace(suffix[0]) ? 2 : 1, style())) };
-            logicalWidth = itemWidth + suffixWidth;
-        }
+        if (!m_textWithSuffix.isEmpty())
+            logicalWidth = font.width(textRun());
         break;
     }
 
@@ -1550,14 +1917,12 @@ void RenderListMarker::updateMargins()
             marginStart = -offset - cMarkerPadding - 1;
             marginEnd = offset + cMarkerPadding + 1 - minPreferredLogicalWidth();
             break;
-        case ListStyleType::None:
-            break;
         case ListStyleType::String:
-            if (!m_text.isEmpty())
+            if (!m_textWithSuffix.isEmpty())
                 marginStart = -minPreferredLogicalWidth();
             break;
         default:
-            if (!m_text.isEmpty()) {
+            if (!m_textWithSuffix.isEmpty()) {
                 marginStart = -minPreferredLogicalWidth() - offset / 2;
                 marginEnd = offset / 2;
             }
@@ -1582,53 +1947,18 @@ LayoutUnit RenderListMarker::baselinePosition(FontBaseline baselineType, bool fi
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-String RenderListMarker::suffix() const
-{
-    auto type = style().listStyleType();
-    if (type == ListStyleType::String)
-        return emptyString();
-
-    auto suffix = listMarkerSuffix(type, m_listItem->value());
-
-    if (suffix == ' ')
-        return " "_str;
-    if (!suffixRequiresSpace(suffix))
-        return { &suffix, 1 };
-
-    UChar data[2];
-    if (style().isLeftToRightDirection()) {
-        data[0] = suffix;
-        data[1] = ' ';
-    } else {
-        data[0] = ' ';
-        data[1] = suffix;
-    }
-    return { data, 2 };
-}
-
 bool RenderListMarker::isInside() const
 {
     return m_listItem->notInList() || style().listStylePosition() == ListStylePosition::Inside;
 }
 
-FloatRect RenderListMarker::getRelativeMarkerRect()
+FloatRect RenderListMarker::relativeMarkerRect()
 {
     if (isImage())
         return FloatRect(0, 0, m_image->imageSize(this, style().effectiveZoom()).width(), m_image->imageSize(this, style().effectiveZoom()).height());
-    
+
     FloatRect relativeRect;
-    auto type = style().listStyleType();
-    switch (type) {
-    case ListStyleType::Asterisks:
-    case ListStyleType::Footnotes:
-    case ListStyleType::String: {
-        if (m_text.isEmpty())
-            return FloatRect();
-        const FontCascade& font = style().fontCascade();
-        TextRun run = RenderBlock::constructTextRun(m_text, style());
-        relativeRect = FloatRect(0, 0, font.width(run), font.fontMetrics().height());
-        break;
-    }
+    switch (style().listStyleType()) {
     case ListStyleType::Disc:
     case ListStyleType::Circle:
     case ListStyleType::Square: {
@@ -1639,17 +1969,12 @@ FloatRect RenderListMarker::getRelativeMarkerRect()
         relativeRect = FloatRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
         break;
     }
-    case ListStyleType::None:
-        return FloatRect();
     default:
-        if (m_text.isEmpty())
+        if (m_textWithSuffix.isEmpty())
             return FloatRect();
-        const FontCascade& font = style().fontCascade();
-        TextRun run = RenderBlock::constructTextRun(m_text, style());
-        float itemWidth = font.width(run);
-        UChar suffix[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
-        float suffixWidth = font.width(RenderBlock::constructTextRun(suffix, suffixRequiresSpace(suffix[0]) ? 2 : 1, style()));
-        relativeRect = FloatRect(0, 0, itemWidth + suffixWidth, font.fontMetrics().height());
+        auto& font = style().fontCascade();
+        relativeRect = FloatRect(0, 0, font.width(textRun()), font.fontMetrics().height());
+        break;
     }
 
     if (!style().isHorizontalWritingMode()) {
@@ -1673,6 +1998,11 @@ LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObjec
     if (clipToVisibleContent)
         return computeRectForRepaint(rect, repaintContainer);
     return localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
+}
+
+StringView RenderListMarker::textWithoutSuffix() const
+{
+    return StringView { m_textWithSuffix }.left(m_textWithoutSuffixLength);
 }
 
 } // namespace WebCore

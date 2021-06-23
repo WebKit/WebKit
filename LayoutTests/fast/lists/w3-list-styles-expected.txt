@@ -229,7 +229,7 @@ The CSS2.0 specification doesn't define the algorithm for the Hebrew numbering.
 צט ninety-nine, undefined, may show צט
 ק hundred, undefined, may show ק
 קא a hundred and one, undefined, may show קא
-אפס zero, undefined, may show אפס
+0 zero, undefined, may show אפס
 א one, should show א
 georgian
 

@@ -658,6 +658,18 @@ enum class ListStyleType : uint8_t {
     KatakanaIroha,
     CJKDecimal,
     Tamil,
+    DisclosureOpen,
+    DisclosureClosed,
+    JapaneseInformal,
+    JapaneseFormal,
+    KoreanHangulFormal,
+    KoreanHanjaInformal,
+    KoreanHanjaFormal,
+    SimplifiedChineseInformal,
+    SimplifiedChineseFormal,
+    TraditionalChineseInformal,
+    TraditionalChineseFormal,
+    EthiopicNumeric,
     String,
     None
 };

@@ -3533,7 +3533,7 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext
 // https://www.w3.org/TR/css-counter-styles-3/#predefined-counters
 bool isPredefinedCounterStyle(CSSValueID valueID)
 {
-    return valueID >= CSSValueDisc && valueID <= CSSValueTamil;
+    return valueID >= CSSValueDisc && valueID <= CSSValueEthiopicNumeric;
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#typedef-counter-style-name

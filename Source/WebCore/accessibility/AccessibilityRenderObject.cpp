@@ -770,7 +770,7 @@ String AccessibilityRenderObject::stringValue() const
     }
     
     if (is<RenderListMarker>(*m_renderer))
-        return downcast<RenderListMarker>(*m_renderer).text();
+        return downcast<RenderListMarker>(*m_renderer).textWithoutSuffix().toString();
     
     if (isWebArea())
         return String();

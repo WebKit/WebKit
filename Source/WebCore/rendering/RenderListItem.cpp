@@ -276,23 +276,18 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     RenderBlockFlow::paint(paintInfo, paintOffset);
 }
 
-const String& RenderListItem::markerText() const
-{
-    if (m_marker)
-        return m_marker->text();
-    return nullAtom().string();
-}
-
-String RenderListItem::markerTextWithSuffix() const
+StringView RenderListItem::markerTextWithoutSuffix() const
 {
     if (!m_marker)
-        return String();
+        return { };
+    return m_marker->textWithoutSuffix();
+}
 
-    // Append the suffix for the marker in the right place depending
-    // on the direction of the text (right-to-left or left-to-right).
-    if (m_marker->style().isLeftToRightDirection())
-        return m_marker->text() + m_marker->suffix();
-    return m_marker->suffix() + m_marker->text();
+StringView RenderListItem::markerTextWithSuffix() const
+{
+    if (!m_marker)
+        return { };
+    return m_marker->textWithSuffix();
 }
 
 void RenderListItem::explicitValueChanged()

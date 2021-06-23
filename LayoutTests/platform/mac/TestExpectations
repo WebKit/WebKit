@@ -2163,10 +2163,6 @@ webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 # @counter-style WPT failures specific to Mac platforms
 [ Mojave Catalina ] imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ ImageOnlyFailure ]
 
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 

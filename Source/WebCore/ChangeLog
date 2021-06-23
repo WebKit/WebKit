@@ -1,3 +1,148 @@
+2021-06-21  Darin Adler  <darin@apple.com>
+
+        Improve more of the CSS list style implementations
+        https://bugs.webkit.org/show_bug.cgi?id=227206
+
+        Reviewed by Antti Koivisto.
+
+        Added support for 12 new values for list-style-type: disclosure-closed,
+        disclosure-open, ethiopic-numeric, japanese-formal, japanese-informal,
+        korean-hangul-formal, korean-hanja-formal, korean-hanja-informal,
+        simp-chinese-formal, simp-chinese-informal, trad-chinese-informal,
+        and trad-chinese-formal.
+
+        Improved implementation to match specification more closely for a few
+        existing values for list-style-type: armenian, cjk-ideographic, hebrew,
+        lower-armenian, lower-roman, upper-armenian, and upper-roman.
+
+        Fixed a rendering issue where we would position list items incorrectly
+        in list-style-position:inside cases because of measuring the list marker
+        widths and the list marker suffix widths separately and adding them
+        instead of measuring them together. This was causing some of the
+        Web Platform Tests, done using ref tests, to fail.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::listMarkerTextForNode): Updated since
+        RenderListItem::markerTextWithSuffix now returns a StringView.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue const): Updated
+        to call RenderListMarker::textWithoutSuffix.
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (rangeLengthForObject): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (accessibilityObjectLength): Ditto.
+        (webkitAccessibleTextGetText): Updated since
+        RenderListItem::markerTextWithSuffix now returns a StringView.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::toCSSValueID): Factored this out into a separate helper.
+        Also made it take advantage of the relationship between the enumeration
+        and the CSS value keywords that the code in the other direction already
+        was relying on so we don't have to list all the keywords.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Refactored to call the
+        toCSSValueID function.
+
+        * css/CSSValueKeywords.in: Added 12 new list-type-style constants:
+        disclosure-open, disclosure-closed, japanese-informal, japanese-formal,
+        korean-hangul-formal, korean-hanja-informal, korean-hanja-formal,
+        simp-chinese-informal, simp-chinese-formal, trad-chinese-informal,
+        trad-chinese-formal, and ethiopic-numeric.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::isPredefinedCounterStyle): Updated
+        since the last predefined counter style is EthiopicNumeric.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::markerTextWithoutSuffix const): Renamed from
+        markerText, and changed to return a StringView.
+        (WebCore::RenderListItem::markerTextWithSuffix const): Return a StringView.
+        * rendering/RenderListItem.h: Updated for the above.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toRoman): Deleted.
+        (WebCore::toAlphabeticOrNumeric): Tweaked to use compile time instead of
+        runtime checks for alphabetic vs. numeric.
+        (WebCore::toSymbolic): Updated for above.
+        (WebCore::toAlphabetic): Ditto.
+        (WebCore::toNumeric): Ditto.
+        (WebCore::toHebrewUnder1000): Deleted.
+        (WebCore::toHebrew): Deleted.
+        (WebCore::toArmenianUnder10000): Deleted.
+        (WebCore::toArmenian): Deleted.
+        (WebCore::toGeorgian): Deleted.
+        (WebCore::toCJKIdeographic): Added handling for negative numbers and also
+        tweaked coding style a bit.
+        (WebCore::toPredefinedAdditiveSystem): Added. Implements the additive
+        system concept, which we use below to re-implement Hebrew, Armenian,
+        Georgian, Japanese, and Korean styles.
+        (WebCore::toEthiopicNumeric): Added.
+        (WebCore::effectiveListMarkerType): Added the new styles. Also updated the
+        allowable values for CJKIdeographic to allow negative numbers, and for Hebrew
+        to no longer allow 0 or numbers over 10999. Also sorted the sections by the
+        name of the first list style type in each section.
+        (WebCore::listMarkerSuffix): Changed to return a StringView instead of a
+        UChar, and include the trailing space. Choose the suffix based on the
+        specified type and not the effective type, so fallback does not cause the
+        suffix to fall back. Added the new types.
+        (WebCore::suffixRequiresSpace): Deleted.
+        (WebCore::listMarkerText): Added implementations for all the new types.
+        Also updated the implementation of CJKIdeographic, LowerRoman, UpperRoman,
+        Armenian, UpperArmenian, LowerArmenian, Georgian, and Hebrew to match a
+        newer CSS specification draft, and in most cases was able to use
+        toPredefinedAdditiveSystem instead of language-specific functions.
+        (WebCore::RenderListMarker::createInlineBox): Stop using the isText function,
+        which was only used here.
+        (WebCore::RenderListMarker::paint): Updated for the name change of
+        relativeMarkerRect. Removed unneeded special case for ListStyleType::None.
+        Use the new RenderListMarker::textRun function, moving all the code that
+        deals with direction and suffix in there.
+        (WebCore::reversed): Added. Helper used by textRun.
+        (WebCore::RenderListMarker::textRun const): Added. Composes a TextRun for
+        drawing or measuring text. By using the same function in all those places,
+        we guarantee we measure the text together instead of in pieces, which fixes
+        some layout errors leading to test failures that measuring separately and
+        adding the results together was causing.
+        (WebCore::RenderListMarker::addOverflowFromListMarker): Use the data
+        member m_lineOffsetForListItem instead of the lineOffsetForListItem
+        function, which was only used here.
+        (WebCore::RenderListMarker::updateMarginsAndContent): Moved the check of
+        preferredLogicalWidthsDirty and the comment about it here.
+        (WebCore::RenderListMarker::updateContent): Moved check of
+        preferredLogicalWidthsDirty out of this function since one caller asserts
+        it, and so the other caller can do the check itself. Added code to set
+        m_textWithSuffix, m_textWithoutSuffixLength, and m_textIsLeftToRightDirection.
+        Removed unneeded special cases for ListStyleType::None, Circle, Disc, and
+        Square, which are all handled correctly by the main algorithm. Added a FIXME
+        about the inadequacy of our bidi algorithm implementation for the general case.
+        (WebCore::RenderListMarker::computePreferredLogicalWidths): Use the new
+        textRun function, allowing us to remove some special case code, including
+        the special cases for ListStyleType::None, Asterisks, Footnotes, and String.
+        (WebCore::RenderListMarker::updateMargins): Removed unneeded special case for
+        ListStyleType::None, and updated string empty checks for the new name of the
+        m_textWithSuffix data member.
+        (WebCore::RenderListMarker::suffix const): Deleted.
+        (WebCore::RenderListMarker::relativeMarkerRect): Renamed from
+        getRelativeMarkerRect. Use the new textRun function, allowing us to remove
+        some special case code, including the special cases for ListTyleType::None,
+        Asterisks, Footnotes, and String.
+        (WebCore::RenderListMarker::textWithoutSuffix const): Added.
+
+        * rendering/RenderListMarker.h: Marked functions as final instead of just
+        override. Got rid of unneeded suffix and lineOffsetForListItem functions.
+        Renamed text ot textWithoutSuffix and added textWithSuffix. Added textRun
+        private member function. Replaced m_text with m_textWithSuffix,
+        m_textWithoutSuffixLength, and m_textIsLeftToRightDirection.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject): Use textWithoutSuffix.
+        (WebCore::markerTextForListItem): Use markerTextWithoutSuffix.
+
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<): Use getValueName from CSSValueKeywords.h and
+        toCSSValueID to avoid repeating the names of all the list style types here.
+
+        * rendering/style/RenderStyleConstants.h: Added the 12 new list style types.
+
 2021-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] [macOS] Add an internal option to disable inline text selection in images

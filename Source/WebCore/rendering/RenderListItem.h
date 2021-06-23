@@ -46,8 +46,8 @@ public:
     void setNotInList(bool notInList) { m_notInList = notInList; }
     bool notInList() const { return m_notInList; }
 
-    WEBCORE_EXPORT const String& markerText() const;
-    String markerTextWithSuffix() const;
+    WEBCORE_EXPORT StringView markerTextWithoutSuffix() const;
+    StringView markerTextWithSuffix() const;
 
     void updateListMarkerNumbers();
 
@@ -62,7 +62,6 @@ public:
     bool isInReversedOrderedList() const;
 
 private:
-
     const char* renderName() const final { return "RenderListItem"; }
 
     bool isListItem() const final { return true; }
