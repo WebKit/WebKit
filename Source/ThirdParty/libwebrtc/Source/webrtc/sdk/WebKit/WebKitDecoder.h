@@ -26,6 +26,7 @@
 #pragma once
 
 #include <Availability.h>
+#include <TargetConditionals.h>
 #include "WebKitUtilities.h"
 #include "api/video/encoded_image.h"
 #include "api/video_codecs/video_decoder_factory.h"
