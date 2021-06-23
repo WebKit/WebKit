@@ -1,3 +1,18 @@
+2021-06-23  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make the hostTime parameter to playSession a Monotonic time
+        https://bugs.webkit.org/show_bug.cgi?id=226515
+
+        Reviewed by Youenn Fablet.
+
+        Fire the playSession action handler at approximately the hostTime indicated by the MediaSessionCoordinatorPrivate.
+
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::playSession):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h:
+        (WebCore::MediaSessionCoordinatorClient::playSession):
+
 2021-06-23  Mark Lam  <mark.lam@apple.com>
 
         Remove unneeded explicit exception checks in ScriptModuleLoader::evaluate().

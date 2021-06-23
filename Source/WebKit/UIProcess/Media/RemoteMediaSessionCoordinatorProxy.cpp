@@ -159,7 +159,7 @@ void RemoteMediaSessionCoordinatorProxy::seekSessionToTime(double time, Completi
     m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SeekSessionToTime { time }, callback);
 }
 
-void RemoteMediaSessionCoordinatorProxy::playSession(std::optional<double> atTime, std::optional<double> hostTime, CompletionHandler<void(bool)>&& callback)
+void RemoteMediaSessionCoordinatorProxy::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& callback)
 {
     m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PlaySession { WTFMove(atTime), WTFMove(hostTime) }, callback);
 }

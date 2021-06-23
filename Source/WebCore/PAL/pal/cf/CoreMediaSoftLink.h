@@ -322,6 +322,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMClockGetHostTimeClock, CMClockRe
 #define CMClockGetHostTimeClock  softLink_CoreMedia_CMClockGetHostTimeClock
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMClockGetTime, CMTime, (CMClockRef clock), (clock))
 #define CMClockGetTime  softLink_CoreMedia_CMClockGetTime
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMClockConvertHostTimeToSystemUnits, uint64_t, (CMTime hostTime), (hostTime))
+#define CMClockConvertHostTimeToSystemUnits softLink_CoreMedia_CMClockConvertHostTimeToSystemUnits
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCallForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (* CMSAMPLEBUFFERCALL_NOESCAPE callback)(CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon), void *refcon), (sbuf, callback, refcon))
 #define CMSampleBufferCallForEachSample softLink_CoreMedia_CMSampleBufferCallForEachSample

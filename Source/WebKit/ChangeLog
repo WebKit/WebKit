@@ -1,3 +1,21 @@
+2021-06-23  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make the hostTime parameter to playSession a Monotonic time
+        https://bugs.webkit.org/show_bug.cgi?id=226515
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _createMediaSessionCoordinatorForTesting:completionHandler:]):
+        (-[WKMediaSessionCoordinatorHelper playSessionWithCompletion:]):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::playSession):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp:
+        (WebKit::RemoteMediaSessionCoordinator::playSession):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.h:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in:
+
 2021-06-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App Privacy Report code from WebKitAdditions
