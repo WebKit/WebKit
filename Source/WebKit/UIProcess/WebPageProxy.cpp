@@ -212,6 +212,7 @@
 
 #if PLATFORM(COCOA)
 #include "InsertTextOptions.h"
+#include "QuickLookPreviewActivity.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "UserMediaCaptureManagerProxy.h"
@@ -6905,9 +6906,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         ++m_pendingLearnOrIgnoreWordMessageCount;
         break;
 
-    case ContextMenuItemTagLookUpImage:
+    case ContextMenuItemTagQuickLookImage:
 #if ENABLE(IMAGE_ANALYSIS)
-        handleContextMenuLookUpImage();
+        if (m_activeContextMenu)
+            handleContextMenuQuickLookImage(m_activeContextMenu->quickLookPreviewActivity());
 #endif
         return;
 
@@ -8499,14 +8501,15 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 
 
 #if ENABLE(IMAGE_ANALYSIS)
+
 void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completionHandler)
 {
     pageClient().requestTextRecognition(imageURL, imageData, WTFMove(completionHandler));
 }
 
-void WebPageProxy::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+void WebPageProxy::computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType type, CompletionHandler<void(bool)>&& completion)
 {
-    pageClient().computeHasVisualSearchResults(imageURL, imageBitmap, WTFMove(completion));
+    pageClient().computeHasImageAnalysisResults(imageURL, imageBitmap, type, WTFMove(completion));
 }
 
 void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
@@ -8518,7 +8521,8 @@ void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& resul
 
     sendWithAsyncReply(Messages::WebPage::UpdateWithTextRecognitionResult(WTFMove(results), context, location), WTFMove(completionHandler));
 }
-#endif
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(ENCRYPTED_MEDIA)
 MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermissionRequestManager()

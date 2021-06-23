@@ -25,23 +25,15 @@
 
 #pragma once
 
-#if HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
-
-#import <Foundation/Foundation.h>
+#if PLATFORM(COCOA)
 
 namespace WebKit {
-class WebPageProxy;
-enum class QuickLookPreviewActivity : uint8_t;
-}
 
-@class QLPreviewPanel;
+enum class QuickLookPreviewActivity : uint8_t {
+    None,
+    VisualSearch,
+};
 
-@interface WKQuickLookPreviewController : NSObject
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)data title:(NSString *)title imageURL:(NSURL *)imageURL activity:(WebKit::QuickLookPreviewActivity)activity;
-- (void)beginControl:(QLPreviewPanel *)panel;
-- (BOOL)isControlling:(QLPreviewPanel *)panel;
-- (void)endControl:(QLPreviewPanel *)panel;
-- (void)closePanelIfNecessary;
-@end
+} // namespace WebKit
 
-#endif // HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
+#endif // PLATFORM(COCOA)

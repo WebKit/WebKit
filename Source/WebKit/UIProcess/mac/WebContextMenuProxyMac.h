@@ -60,6 +60,13 @@ public:
 private:
     WebContextMenuProxyMac(NSView *, WebPageProxy&, ContextMenuContextData&&, const UserData&);
 
+    QuickLookPreviewActivity quickLookPreviewActivity() const final { return m_quickLookPreviewActivity; }
+
+#if ENABLE(IMAGE_ANALYSIS)
+    void insertOrUpdateQuickLookImageItem(const URL& imageURL, Ref<ShareableBitmap>&& imageBitmap, std::optional<WebContextMenuItemData>&&, bool);
+    void updateQuickLookContextMenuItemTitle(const String&);
+#endif
+
     void show() override;
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
     void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) override;
@@ -79,6 +86,7 @@ private:
     RetainPtr<NSMenu> m_menu;
     RetainPtr<WKMenuDelegate> m_menuDelegate;
     WeakObjCPtr<NSView> m_webView;
+    QuickLookPreviewActivity m_quickLookPreviewActivity { QuickLookPreviewActivity::None };
 };
 
 } // namespace WebKit

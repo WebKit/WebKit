@@ -1,3 +1,51 @@
+2021-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] [macOS] Add an internal option to disable inline text selection in images
+        https://bugs.webkit.org/show_bug.cgi?id=227265
+        rdar://79460142
+
+        Reviewed by Tim Horton.
+
+        Add support for the new feature flag. See WebKit/ChangeLog for more details.
+
+        * en.lproj/Localizable.strings:
+
+        Add additional localizable strings to represent each of the possible titles for the "Quick Look"/"Look Up"
+        context menu item. When inline text selection is enabled, the item shows up as "Look Up", and is only added if
+        we actually discover visual search results.
+
+        However, when inline text selection is disabled, this item will always be added to the context menu under the
+        title "Quick Look", and will be retitled to either "Look Up in Quick Look" or "Select Text in Quick Look" once
+        either visual search results or text is recognized, respectively.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+
+        In the case where inline text selection is disabled, add the Quick Look item to the end of the context menu,
+        after a separator. Note that in the case where inline text selection is enabled, it doesn't actually matter
+        where we add this item, since it is automatically removed and only reinserted if we find visual search results
+        for the image.
+
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded const):
+
+        Rename the existing ContextMenuItemTagLookUpImage to ContextMenuItemTagQuickLookImage, since it is no longer
+        limited to the visual look up feature.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
+        Consult the feature flag and avoid kicking off the text recognition timer if inline text selection is disabled.
+
+        * platform/ContextMenuItem.cpp:
+        (WebCore::isValidContextMenuAction):
+        * platform/ContextMenuItem.h:
+        * platform/LocalizedStrings.h:
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::contextMenuItemTagQuickLookImage):
+        (WebCore::contextMenuItemTagQuickLookImageForTextSelection):
+        (WebCore::contextMenuItemTagQuickLookImageForVisualSearch):
+
 2021-06-22  Devin Rousso  <drousso@apple.com>
 
         REGRESSION: [iOS] ASSERTION FAILED: pixelBuffer->data().length() >= 4 under WebCore::sampleColor

@@ -746,13 +746,13 @@ void WebPageProxy::closeSharedPreviewPanelIfNecessary()
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::handleContextMenuLookUpImage()
+void WebPageProxy::handleContextMenuQuickLookImage(QuickLookPreviewActivity activity)
 {
     auto& result = m_activeContextMenuContextData.webHitTestResultData();
     if (!result.imageBitmap)
         return;
 
-    showImageInQuickLookPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL }, QuickLookPreviewActivity::VisualSearch);
+    showImageInQuickLookPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL }, activity);
 }
 
 void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL, QuickLookPreviewActivity activity)

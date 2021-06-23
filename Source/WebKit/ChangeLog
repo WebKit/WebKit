@@ -1,3 +1,86 @@
+2021-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] [macOS] Add an internal option to disable inline text selection in images
+        https://bugs.webkit.org/show_bug.cgi?id=227265
+        rdar://79460142
+
+        Reviewed by Tim Horton.
+
+        Refactor Live Text and Visual Look Up logic, such that the ability to select text inside of images is behind an
+        internal feature flag that can be toggled at runtime. When Live Text is disabled, we'll unconditionally show the
+        "Look Up" context menu action using the more generic title "Quick Look". This "Quick Look" action is then
+        retitled to either "Look Up in Quick Look" or "Select Text in Quick Look" once image analysis completes.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+
+        Rename ContextMenuItemTagLookUpImage to ContextMenuItemTagQuickLookImage.
+
+        * UIProcess/Cocoa/QuickLookPreviewActivity.h: Copied from Source/WebKit/UIProcess/mac/WKQuickLookPreviewController.h.
+
+        Move this enum out of WKQuickLookPreviewController.h, such that we can use and import it in non-Cocoa headers
+        and implementation files.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::computeHasImageAnalysisResults):
+
+        Rename `computeHasVisualSearchResults` to `computeHasImageAnalysisResults`, and allow it to take a flag to
+        indicate whether or not it should request text recognition results or visual search results. We use this for the
+        "Quick Look" context menu action when inline text selection is disabled, in order to retitle the item to "Select
+        Text in Quick Look".
+
+        (WebKit::WebViewImpl::computeHasVisualSearchResults): Deleted.
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::computeHasImageAnalysisResults):
+        (WebKit::PageClient::computeHasVisualSearchResults): Deleted.
+        * UIProcess/WebContextMenuProxy.h:
+        (WebKit::WebContextMenuProxy::quickLookPreviewActivity const):
+
+        Add a flag to WebContextMenuProxy to determine what initial activity to use when presenting the QuickLook
+        preview panel after selecting the ContextMenuItemTagQuickLookImage item.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::computeHasImageAnalysisResults):
+        (WebKit::WebPageProxy::computeHasVisualSearchResults): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::computeHasImageAnalysisResults):
+        (WebKit::PageClientImpl::computeHasVisualSearchResults): Deleted.
+        * UIProcess/mac/WKQuickLookPreviewController.h:
+        * UIProcess/mac/WKQuickLookPreviewController.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+
+        Add logic to either remove and reinsert the "Look Up" context menu action (if inline text selection in images is
+        enabled), or to promote the "Quick Look" context menu action to either "Select Text in Quick Look" or "Look Up
+        in Quick Look" in the case where inline text selection in images is disabled.
+
+        Note that when inline text selection in images is disabled, we'll first check for visual search results before
+        checking for text. This is because visual search results will take precedence over text selection (i.e., we'll
+        show "Look Up in Quick Look" even if both visual search results and text is present), so we can avoid performing
+        text analysis in the case where we already found visual search results.
+
+        (WebKit::WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem):
+        (WebKit::WebContextMenuProxyMac::updateQuickLookContextMenuItemTitle):
+
+        Add a helper method to find and update the title of the NSMenuItem corresponding to
+        ContextMenuItemTagQuickLookImage. See `getContextMenuFromItems` above for more details.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::handleContextMenuQuickLookImage):
+        (WebKit::WebPageProxy::handleContextMenuLookUpImage): Deleted.
+
+        Rename this to `handleContextMenuQuickLookImage`, and have it take an argument to indicate whether the QuickLook
+        panel should start out in Visual Look Up mode.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-22  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Suspend WebProcesses that are in the process cache

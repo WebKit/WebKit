@@ -38,6 +38,7 @@
 #import "WebContextMenuItem.h"
 #import "WebContextMenuItemData.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
@@ -436,7 +437,7 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagReload:
         return _WKMenuItemIdentifierReload;
 
-    case ContextMenuItemTagLookUpImage:
+    case ContextMenuItemTagQuickLookImage:
         return _WKMenuItemIdentifierRevealImage;
 
     case ContextMenuItemTagSearchWeb:
@@ -507,17 +508,22 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         });
     }
 
-    std::optional<WebContextMenuItemData> lookUpImageItem;
+    bool shouldUpdateQuickLookItemTitle = false;
+    std::optional<WebContextMenuItemData> quickLookItemToInsertIfNeeded;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    filteredItems.removeFirstMatching([&] (auto& item) {
-        if (item.action() != WebCore::ContextMenuItemTagLookUpImage)
-            return false;
-
-        lookUpImageItem = { item };
-        return true;
+    auto indexOfQuickLookItem = filteredItems.findMatching([&] (auto& item) {
+        return item.action() == WebCore::ContextMenuItemTagQuickLookImage;
     });
-#endif
+
+    if (indexOfQuickLookItem != notFound) {
+        if (auto page = this->page(); page && page->preferences().preferInlineTextSelectionInImages()) {
+            quickLookItemToInsertIfNeeded = filteredItems[indexOfQuickLookItem];
+            filteredItems.remove(indexOfQuickLookItem);
+        } else
+            shouldUpdateQuickLookItemTitle = true;
+    }
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
     if (!page()->canHandleContextMenuTranslation() || isPopover) {
@@ -531,7 +537,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     auto imageBitmap = m_context.webHitTestResultData().imageBitmap;
 
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);
-    auto insertMenuItem = makeBlockPtr([protectedThis = makeRef(*this), weakPage = makeWeakPtr(page()), imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), lookUpImageItem = WTFMove(lookUpImageItem), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
+    auto insertMenuItem = makeBlockPtr([protectedThis = makeRef(*this), weakPage = makeWeakPtr(page()), imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), shouldUpdateQuickLookItemTitle, quickLookItemToInsertIfNeeded = WTFMove(quickLookItemToInsertIfNeeded), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
         ASSERT(![sparseMenuItems pointerAtIndex:index]);
         [sparseMenuItems replacePointerAtIndex:index withPointer:item];
@@ -541,13 +547,12 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         [menu setItemArray:[sparseMenuItems allObjects]];
 
         auto page = makeRefPtr(weakPage.get());
-        if (lookUpImageItem && page && imageBitmap) {
+        if (page && imageBitmap) {
 #if ENABLE(IMAGE_ANALYSIS)
-            page->computeHasVisualSearchResults(imageURL, *imageBitmap, [protectedThis = WTFMove(protectedThis), lookUpImageItem = WTFMove(*lookUpImageItem)] (bool hasVisualSearchResults) mutable {
-                if (hasVisualSearchResults)
-                    [protectedThis->m_menu addItem:createMenuActionItem(lookUpImageItem).get()];
-            });
+            protectedThis->insertOrUpdateQuickLookImageItem(imageURL, imageBitmap.releaseNonNull(), WTFMove(quickLookItemToInsertIfNeeded), shouldUpdateQuickLookItemTitle);
 #else
+            UNUSED_PARAM(quickLookItemToInsertIfNeeded);
+            UNUSED_PARAM(shouldUpdateQuickLookItemTitle);
             UNUSED_PARAM(imageURL);
 #endif
         }
@@ -562,6 +567,63 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         });
     }
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageURL, Ref<ShareableBitmap>&& imageBitmap, std::optional<WebContextMenuItemData>&& quickLookItemToInsertIfNeeded, bool shouldUpdateQuickLookItemTitle)
+{
+    auto page = makeRef(*this->page());
+    if (quickLookItemToInsertIfNeeded) {
+        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = makeWeakPtr(*this), quickLookItemToInsertIfNeeded = WTFMove(*quickLookItemToInsertIfNeeded)] (bool hasVisualSearchResults) mutable {
+            if (auto protectedThis = makeRefPtr(weakThis.get()); protectedThis && hasVisualSearchResults) {
+                protectedThis->m_quickLookPreviewActivity = QuickLookPreviewActivity::VisualSearch;
+                [protectedThis->m_menu addItem:NSMenuItem.separatorItem];
+                [protectedThis->m_menu addItem:createMenuActionItem(quickLookItemToInsertIfNeeded).get()];
+            }
+        });
+        return;
+    }
+
+    if (shouldUpdateQuickLookItemTitle) {
+        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = makeWeakPtr(*this), weakPage = makeWeakPtr(page.get()), imageURL, imageBitmap = WTFMove(imageBitmap)] (bool hasVisualSearchResults) mutable {
+            auto protectedThis = makeRefPtr(weakThis.get());
+            if (!protectedThis)
+                return;
+
+            auto page = makeRefPtr(weakPage.get());
+            if (!page)
+                return;
+
+            if (hasVisualSearchResults) {
+                protectedThis->m_quickLookPreviewActivity = QuickLookPreviewActivity::VisualSearch;
+                protectedThis->updateQuickLookContextMenuItemTitle(contextMenuItemTagQuickLookImageForVisualSearch());
+                return;
+            }
+
+            page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::Text, [weakThis = WTFMove(weakThis), weakPage] (bool hasText) mutable {
+                auto protectedThis = makeRefPtr(weakThis.get());
+                if (!protectedThis)
+                    return;
+
+                if (auto page = makeRefPtr(weakPage.get()); page && hasText)
+                    protectedThis->updateQuickLookContextMenuItemTitle(contextMenuItemTagQuickLookImageForTextSelection());
+            });
+        });
+    }
+}
+
+void WebContextMenuProxyMac::updateQuickLookContextMenuItemTitle(const String& newTitle)
+{
+    for (NSInteger itemIndex = 0; itemIndex < [m_menu numberOfItems]; ++itemIndex) {
+        auto item = [m_menu itemAtIndex:itemIndex];
+        if (static_cast<ContextMenuAction>(item.tag) == ContextMenuItemTagQuickLookImage) {
+            item.title = newTitle;
+            break;
+        }
+    }
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& item, CompletionHandler<void(NSMenuItem *)>&& completionHandler)
 {

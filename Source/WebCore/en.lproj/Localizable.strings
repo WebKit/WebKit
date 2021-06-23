@@ -577,6 +577,9 @@
 /* Look Up in Dictionary context menu item */
 "Look Up in Dictionary" = "Look Up in Dictionary";
 
+/* Title for Quick Look action button for images with visual search results */
+"Look Up in Quick Look" = "Look Up in Quick Look";
+
 /* Look Up context menu item with selected word */
 "Look Up “%@”" = "Look Up “%@”";
 
@@ -751,6 +754,9 @@
 /* Description of the PostScript type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
 "PostScript" = "PostScript";
 
+/* Title for Quick Look action button */
+"Quick Look" = "Quick Look";
+
 /* Undo action name */
 "Raise Baseline (Undo action name)" = "Raise Baseline";
 
@@ -792,6 +798,9 @@
 
 /* Search with search provider context menu item with provider name inserted */
 "Search with %@" = "Search with %@";
+
+/* Title for Quick Look action button for images with text */
+"Select Text in Quick Look" = "Select Text in Quick Look";
 
 /* Validation message for required file inputs that have no value */
 "Select a file" = "Select a file";
