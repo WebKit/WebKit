@@ -1,3 +1,10 @@
+2021-06-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-06-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Adopt new date picker presentation SPI
