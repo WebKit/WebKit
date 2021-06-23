@@ -62,8 +62,6 @@ private:
     using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
     
     void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
-    void prepareForNextRenderingUpdate();
-    void clearFontMap();
 
     ImageBufferHashMap m_imageBuffers;
     NativeImageHashMap m_nativeImages;
