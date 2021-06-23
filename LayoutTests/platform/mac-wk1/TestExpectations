@@ -1295,7 +1295,7 @@ webkit.org/b/226517 [ BigSur ] media/media-event-listeners.html [ Pass Timeout ]
 [ arm64 ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
 [ arm64 ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
 
-webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ Pass Failure ]
+webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/227237 Updating test expectations for 3 tests.
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1.html [ Pass ImageOnlyFailure ]
