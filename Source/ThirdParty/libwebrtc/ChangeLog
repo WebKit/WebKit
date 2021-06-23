@@ -1,3 +1,44 @@
+2021-06-23  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r279101. rdar://problem/79474211
+
+    [Mac] libwebrtc CMBaseClass objects need alignment fixup
+    https://bugs.webkit.org/show_bug.cgi?id=227137
+    <rdar://problem/79464124>
+    
+    Reviewed by Youenn Fablet.
+    
+    * Source/webrtc/sdk/WebKit/WebKitDecoder.h: Define CMBASE_OBJECT_NEEDS_ALIGNMENT.
+    
+    * Source/webrtc/sdk/WebKit/WebKitVP8Decoder.cpp:
+    (webrtc::createWebKitVP8Decoder): Add padding to the CMBaseClass object on Mac and
+    Mac Catalyst when building for x86_64 so function pointers are naturally aligned.
+    Add static_asserts to ensure alignment and sizes are correct.
+    
+    * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp:
+    (webrtc::createWebKitVP9Decoder): Ditto.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279101 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-21  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] libwebrtc CMBaseClass objects need alignment fixup
+            https://bugs.webkit.org/show_bug.cgi?id=227137
+            <rdar://problem/79464124>
+
+            Reviewed by Youenn Fablet.
+
+            * Source/webrtc/sdk/WebKit/WebKitDecoder.h: Define CMBASE_OBJECT_NEEDS_ALIGNMENT.
+
+            * Source/webrtc/sdk/WebKit/WebKitVP8Decoder.cpp:
+            (webrtc::createWebKitVP8Decoder): Add padding to the CMBaseClass object on Mac and
+            Mac Catalyst when building for x86_64 so function pointers are naturally aligned.
+            Add static_asserts to ensure alignment and sizes are correct.
+
+            * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp:
+            (webrtc::createWebKitVP9Decoder): Ditto.
+
 2021-06-22  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r278906. rdar://problem/79581492
