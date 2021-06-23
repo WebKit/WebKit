@@ -400,6 +400,16 @@ public:
         m_assembler.ubfx<64>(dest, src, lsb.m_value, width.m_value);
     }
 
+    void ubfiz32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfiz<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void ubfiz64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfiz<64>(dest, src, lsb.m_value, width.m_value);
+    }
+
     void and64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         m_assembler.and_<64>(dest, src1, src2);

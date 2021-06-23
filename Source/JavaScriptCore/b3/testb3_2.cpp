@@ -2662,12 +2662,15 @@ void testNegFloatWithUselessDoubleConversion(float a)
     CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), -a));
 }
 
-void testUbfx32()
+void testUbfx32ShiftAnd()
 {
-    // (src >> lsb) & mask
+    // Test Pattern: (src >> lsb) & mask
+    // where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
     uint32_t src = 0xffffffff;
-    Vector<uint32_t> lsbs = { 0, 15, 30 };
-    Vector<uint32_t> widths = { 30, 16, 1 };
+    Vector<uint32_t> lsbs = { 1, 14, 30 };
+    Vector<uint32_t> widths = { 30, 17, 1 };
 
     auto test = [&] (uint32_t lsb, uint32_t mask) -> uint32_t {
         Procedure proc;
@@ -2683,8 +2686,11 @@ void testUbfx32()
         root->appendNewControlValue(
             proc, Return, Origin(),
             root->appendNew<Value>(proc, BitAnd, Origin(), left, maskValue));
-        
-        return compileAndRun<uint32_t>(proc, src);
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfx");
+        return invoke<uint32_t>(*code, src);
     };
 
     auto generateMask = [&] (uint32_t width) -> uint32_t {
@@ -2694,19 +2700,21 @@ void testUbfx32()
     for (size_t i = 0; i < lsbs.size(); ++i) {
         uint32_t lsb = lsbs.at(i);
         uint32_t mask = generateMask(widths.at(i));
-        uint32_t lhs = test(lsb, mask);
-        uint32_t rhs = ((src >> lsb) & mask);
-        CHECK(lhs == rhs);
+        CHECK(test(lsb, mask) == ((src >> lsb) & mask));
     }
 }
 
-void testUbfx32PatternMatch()
+void testUbfx32AndShift()
 {
-    // (src >> lsb) & ((1 << width) - 1)
+    // Test Pattern: mask & (src >> lsb)
+    // Where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
     uint32_t src = 0xffffffff;
-    Vector<uint32_t> imms = { 0, 1, 30, 31, 32, 62, 63, 64 };
+    Vector<uint32_t> lsbs = { 1, 14, 30 };
+    Vector<uint32_t> widths = { 30, 17, 1 };
 
-    auto test = [&] (uint32_t lsb, uint32_t width) -> uint32_t {
+    auto test = [&] (uint32_t lsb, uint32_t mask) -> uint32_t {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
 
@@ -2714,36 +2722,39 @@ void testUbfx32PatternMatch()
             proc, Trunc, Origin(), 
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
-        Value* widthValue = root->appendNew<Const32Value>(proc, Origin(), width);
-        Value* constValueA = root->appendNew<Const32Value>(proc, Origin(), 1);
-        Value* constValueB = root->appendNew<Const32Value>(proc, Origin(), 1);
+        Value* maskValue = root->appendNew<Const32Value>(proc, Origin(), mask);
 
-        Value* left = root->appendNew<Value>(proc, ZShr, Origin(), srcValue, lsbValue);
-        Value* right = root->appendNew<Value>(
-            proc, Sub, Origin(), 
-            root->appendNew<Value>(proc, Shl, Origin(), constValueA, widthValue), constValueB);
+        Value* right = root->appendNew<Value>(proc, ZShr, Origin(), srcValue, lsbValue);
         root->appendNewControlValue(
             proc, Return, Origin(),
-            root->appendNew<Value>(proc, BitAnd, Origin(), left, right));
+            root->appendNew<Value>(proc, BitAnd, Origin(), maskValue, right));
 
-        return compileAndRun<uint32_t>(proc, src);
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfx");
+        return invoke<uint32_t>(*code, src);
     };
 
-    for (auto lsb : imms) {
-        for (auto width : imms) {
-            uint32_t lhs = test(lsb, width);
-            uint32_t rhs = ((src >> lsb) & ((1U << width) - 1U));
-            CHECK(lhs == rhs);
-        }
+    auto generateMask = [&] (uint32_t width) -> uint32_t {
+        return (1U << width) - 1U;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask = generateMask(widths.at(i));
+        CHECK(test(lsb, mask) == (mask & (src >> lsb)));
     }
 }
 
-void testUbfx64()
+void testUbfx64ShiftAnd()
 {
-    // (src >> lsb) & mask
-    uint64_t src = 0xffffffff;
-    Vector<uint64_t> lsbs = { 0, 31, 62 };
-    Vector<uint64_t> widths = { 63, 32, 1 };
+    // Test Pattern: (src >> lsb) & mask
+    // where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint64_t src = 0xffffffffffffffff;
+    Vector<uint64_t> lsbs = { 1, 30, 62 };
+    Vector<uint64_t> widths = { 62, 33, 1 };
 
     auto test = [&] (uint64_t lsb, uint64_t mask) -> uint64_t {
         Procedure proc;
@@ -2758,7 +2769,10 @@ void testUbfx64()
             proc, Return, Origin(),
             root->appendNew<Value>(proc, BitAnd, Origin(), left, maskValue));
 
-        return compileAndRun<uint64_t>(proc, src);
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfx");
+        return invoke<uint64_t>(*code, src);
     };
 
     auto generateMask = [&] (uint64_t width) -> uint64_t {
@@ -2768,45 +2782,379 @@ void testUbfx64()
     for (size_t i = 0; i < lsbs.size(); ++i) {
         uint64_t lsb = lsbs.at(i);
         uint64_t mask = generateMask(widths.at(i));
-        uint64_t lhs = test(lsb, mask);
-        uint64_t rhs = ((src >> lsb) & mask);
-        CHECK(lhs == rhs);
+        CHECK(test(lsb, mask) == ((src >> lsb) & mask));
     }
 }
 
-void testUbfx64PatternMatch()
+void testUbfx64AndShift()
 {
-    // (src >> lsb) & ((1 << width) - 1)
+    // Test Pattern: mask & (src >> lsb)
+    // Where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
     uint64_t src = 0xffffffffffffffff;
-    Vector<uint32_t> imms = { 0, 1, 30, 31, 32, 62, 63, 64 };
+    Vector<uint64_t> lsbs = { 1, 30, 62 };
+    Vector<uint64_t> widths = { 62, 33, 1 };
 
-    auto test = [&] (uint32_t lsb, uint32_t width) -> uint64_t {
+    auto test = [&] (uint64_t lsb, uint64_t mask) -> uint64_t {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
 
         Value* srcValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
         Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
-        Value* widthValue = root->appendNew<Const32Value>(proc, Origin(), width);
-        Value* constValueA = root->appendNew<Const64Value>(proc, Origin(), 1);
-        Value* constValueB = root->appendNew<Const64Value>(proc, Origin(), 1);
+        Value* maskValue = root->appendNew<Const64Value>(proc, Origin(), mask);
 
-        Value* left = root->appendNew<Value>(proc, ZShr, Origin(), srcValue, lsbValue);
-        Value* right = root->appendNew<Value>(
-            proc, Sub, Origin(), 
-            root->appendNew<Value>(proc, Shl, Origin(), constValueA, widthValue), constValueB);
+        Value* right = root->appendNew<Value>(proc, ZShr, Origin(), srcValue, lsbValue);
         root->appendNewControlValue(
             proc, Return, Origin(),
-            root->appendNew<Value>(proc, BitAnd, Origin(), left, right));
+            root->appendNew<Value>(proc, BitAnd, Origin(), maskValue, right));
 
-        return compileAndRun<uint64_t>(proc, src);
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfx");
+        return invoke<uint64_t>(*code, src);
     };
 
-    for (auto lsb : imms) {
-        for (auto width : imms) {
-            uint64_t lhs = test(lsb, width);
-            uint64_t rhs = ((src >> lsb) & ((1ULL << width) - 1ULL));
-            CHECK(lhs == rhs);
-        }
+    auto generateMask = [&] (uint64_t width) -> uint64_t {
+        return (1ULL << width) - 1ULL;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t mask = generateMask(widths.at(i));
+        CHECK(test(lsb, mask) == (mask & (src >> lsb)));
+    }
+}
+
+void testUbfiz32AndShiftValueMask()
+{
+    // Test Pattern: d = (n & mask) << lsb 
+    // Where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint32_t n = 0xffffffff;
+    Vector<uint32_t> lsbs = { 1, 14, 30 };
+    Vector<uint32_t> widths = { 30, 17, 1 };
+
+    auto test = [&] (uint32_t lsb, uint32_t mask) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue = root->appendNew<Const32Value>(proc, Origin(), mask);
+
+        Value* left = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, maskValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Shl, Origin(), left, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint32_t>(*code, n);
+    };
+
+    auto generateMask = [&] (uint32_t width) -> uint32_t {
+        return (1U << width) - 1U;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask = generateMask(widths.at(i));
+        CHECK(test(lsb, mask) == ((n & mask) << lsb));
+    }
+}
+
+void testUbfiz32AndShiftMaskValue()
+{
+    // Test Pattern: d = (mask & n) << lsb 
+    // Where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint32_t n = 0xffffffff;
+    Vector<uint32_t> lsbs = { 1, 14, 30 };
+    Vector<uint32_t> widths = { 30, 17, 1 };
+
+    auto test = [&] (uint32_t lsb, uint32_t mask) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue = root->appendNew<Const32Value>(proc, Origin(), mask);
+
+        Value* left = root->appendNew<Value>(proc, BitAnd, Origin(), maskValue, nValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Shl, Origin(), left, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint32_t>(*code, n);
+    };
+
+    auto generateMask = [&] (uint32_t width) -> uint32_t {
+        return (1U << width) - 1U;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask = generateMask(widths.at(i));
+        CHECK(test(lsb, mask) == ((mask & n) << lsb));
+    }
+}
+
+void testUbfiz32ShiftAnd()
+{
+    // Test Pattern: d = (n << lsb) & maskShift
+    // Where: maskShift = mask << lsb
+    //        mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint32_t n = 0xffffffff;
+    Vector<uint32_t> lsbs = { 1, 14, 30 };
+    Vector<uint32_t> widths = { 30, 17, 1 };
+
+    auto test = [&] (uint32_t lsb, uint32_t maskShift) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskShiftValue = root->appendNew<Const32Value>(proc, Origin(), maskShift);
+
+        Value* left = root->appendNew<Value>(proc, Shl, Origin(), nValue, lsbValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitAnd, Origin(), left, maskShiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint32_t>(*code, n);
+    };
+
+    auto generateMaskShift = [&] (uint32_t width, uint32_t lsb) -> uint32_t {
+        return ((1U << width) - 1U) << lsb;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t maskShift = generateMaskShift(widths.at(i), lsb);
+        CHECK(test(lsb, maskShift) == ((n << lsb) & maskShift));
+    }
+}
+
+void testUbfiz32AndShift()
+{
+    // Test Pattern: d = maskShift & (n << lsb)
+    // Where: maskShift = mask << lsb
+    //        mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint32_t n = 0xffffffff;
+    Vector<uint32_t> lsbs = { 1, 14, 30 };
+    Vector<uint32_t> widths = { 30, 17, 1 };
+
+    auto test = [&] (uint32_t lsb, uint32_t maskShift) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskShiftValue = root->appendNew<Const32Value>(proc, Origin(), maskShift);
+
+        Value* right = root->appendNew<Value>(proc, Shl, Origin(), nValue, lsbValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitAnd, Origin(), maskShiftValue, right));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint32_t>(*code, n);
+    };
+
+    auto generateMaskShift = [&] (uint32_t width, uint32_t lsb) -> uint32_t {
+        return ((1U << width) - 1U) << lsb;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t maskShift = generateMaskShift(widths.at(i), lsb);
+        CHECK(test(lsb, maskShift) == (maskShift & (n << lsb)));
+    }
+}
+
+void testUbfiz64AndShiftValueMask()
+{
+    // Test Pattern: d = (n & mask) << lsb 
+    // Where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint64_t n = 0xffffffffffffffff;
+    Vector<uint64_t> lsbs = { 1, 30, 62 };
+    Vector<uint64_t> widths = { 62, 33, 1 };
+
+    auto test = [&] (uint64_t lsb, uint64_t mask) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue = root->appendNew<Const64Value>(proc, Origin(), mask);
+
+        Value* left = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, maskValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Shl, Origin(), left, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint64_t>(*code, n);
+    };
+
+    auto generateMask = [&] (uint64_t width) -> uint64_t {
+        return (1ULL << width) - 1ULL;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t mask = generateMask(widths.at(i));
+        CHECK(test(lsb, mask) == ((n & mask) << lsb));
+    }
+}
+
+void testUbfiz64AndShiftMaskValue()
+{
+    // Test Pattern: d = (mask & n) << lsb 
+    // Where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint64_t n = 0xffffffffffffffff;
+    Vector<uint64_t> lsbs = { 1, 30, 62 };
+    Vector<uint64_t> widths = { 62, 33, 1 };
+
+    auto test = [&] (uint64_t lsb, uint64_t mask) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue = root->appendNew<Const64Value>(proc, Origin(), mask);
+
+        Value* left = root->appendNew<Value>(proc, BitAnd, Origin(), maskValue, nValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Shl, Origin(), left, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint64_t>(*code, n);
+    };
+
+    auto generateMask = [&] (uint64_t width) -> uint64_t {
+        return (1ULL << width) - 1ULL;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t mask = generateMask(widths.at(i));
+        CHECK(test(lsb, mask) == ((mask & n) << lsb));
+    }
+}
+
+void testUbfiz64ShiftAnd()
+{
+    // Test Pattern: d = (n << lsb) & maskShift
+    // Where: maskShift = mask << lsb
+    //        mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint64_t n = 0xffffffffffffffff;
+    Vector<uint64_t> lsbs = { 1, 30, 62 };
+    Vector<uint64_t> widths = { 62, 33, 1 };
+
+    auto test = [&] (uint64_t lsb, uint64_t maskShift) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskShiftValue = root->appendNew<Const64Value>(proc, Origin(), maskShift);
+
+        Value* left = root->appendNew<Value>(proc, Shl, Origin(), nValue, lsbValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitAnd, Origin(), left, maskShiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint64_t>(*code, n);
+    };
+
+    auto generateMaskShift = [&] (uint64_t width, uint64_t lsb) -> uint64_t {
+        return ((1ULL << width) - 1ULL) << lsb;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t maskShift = generateMaskShift(widths.at(i), lsb);
+        CHECK(test(lsb, maskShift) == ((n << lsb) & maskShift));
+    }
+}
+
+void testUbfiz64AndShift()
+{
+    // Test Pattern: d = maskShift & (n << lsb)
+    // Where: maskShift = mask << lsb
+    //        mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint64_t n = 0xffffffffffffffff;
+    Vector<uint64_t> lsbs = { 1, 30, 62 };
+    Vector<uint64_t> widths = { 62, 33, 1 };
+
+    auto test = [&] (uint64_t lsb, uint64_t maskShift) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskShiftValue = root->appendNew<Const64Value>(proc, Origin(), maskShift);
+
+        Value* right = root->appendNew<Value>(proc, Shl, Origin(), nValue, lsbValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitAnd, Origin(), maskShiftValue, right));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "ubfiz");
+        return invoke<uint64_t>(*code, n);
+    };
+
+    auto generateMaskShift = [&] (uint64_t width, uint64_t lsb) -> uint64_t {
+        return ((1ULL << width) - 1ULL) << lsb;
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t maskShift = generateMaskShift(widths.at(i), lsb);
+        CHECK(test(lsb, maskShift) == (maskShift & (n << lsb)));
     }
 }
 
@@ -2815,8 +3163,8 @@ void testBitAndZeroShiftRightArgImmMask32()
     // Turn this: (tmp >> imm) & mask 
     // Into this: tmp >> imm
     uint32_t tmp = 0xffffffff;
-    Vector<uint32_t> imms = { 4, 28 };
-    Vector<uint32_t> masks = { 0x0fffffff, 0xf };
+    Vector<uint32_t> imms = { 4, 28, 31 };
+    Vector<uint32_t> masks = { 0x0fffffff, 0xf, 0xffff };
 
     auto test = [&] (uint32_t imm, uint32_t mask) {
         Procedure proc;
@@ -2833,11 +3181,8 @@ void testBitAndZeroShiftRightArgImmMask32()
             root->appendNew<Value>(proc, BitAnd, Origin(), leftValue, rightValue));
 
         auto code = compileProc(proc);
-        if (isARM64()) {
+        if (isARM64())
             checkUsesInstruction(*code, "lsr");
-            checkDoesNotUseInstruction(*code, "and");
-            checkDoesNotUseInstruction(*code, "ubfx");
-        }
         uint32_t lhs = invoke<uint32_t>(*code, tmp);
         uint32_t rhs = tmp >> imm;
         CHECK(lhs == rhs);
@@ -2852,8 +3197,8 @@ void testBitAndZeroShiftRightArgImmMask64()
     // Turn this: (tmp >> imm) & mask 
     // Into this: tmp >> imm
     uint64_t tmp = 0xffffffffffffffff;
-    Vector<uint64_t> imms = { 4, 60 };
-    Vector<uint64_t> masks = { 0x0fffffffffffffff, 0xf };
+    Vector<uint64_t> imms = { 4, 60, 63 };
+    Vector<uint64_t> masks = { 0x0fffffffffffffff, 0xf, 0xffff };
 
     auto test = [&] (uint64_t imm, uint64_t mask) {
         Procedure proc;
@@ -2868,11 +3213,8 @@ void testBitAndZeroShiftRightArgImmMask64()
             root->appendNew<Value>(proc, BitAnd, Origin(), leftValue, rightValue));
 
         auto code = compileProc(proc);
-        if (isARM64()) {
+        if (isARM64())
             checkUsesInstruction(*code, "lsr");
-            checkDoesNotUseInstruction(*code, "and");
-            checkDoesNotUseInstruction(*code, "ubfx");
-        }
         uint64_t lhs = invoke<uint64_t>(*code, tmp);
         uint64_t rhs = tmp >> imm;
         CHECK(lhs == rhs);
@@ -3696,10 +4038,18 @@ static void testBitOrImmArg32(int a, int b)
 
 void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
-    RUN(testUbfx32());
-    RUN(testUbfx32PatternMatch());
-    RUN(testUbfx64());
-    RUN(testUbfx64PatternMatch());
+    RUN(testUbfx32ShiftAnd());
+    RUN(testUbfx32AndShift());
+    RUN(testUbfx64ShiftAnd());
+    RUN(testUbfx64AndShift());
+    RUN(testUbfiz32AndShiftValueMask());
+    RUN(testUbfiz32AndShiftMaskValue());
+    RUN(testUbfiz32ShiftAnd());
+    RUN(testUbfiz32AndShift());
+    RUN(testUbfiz64AndShiftValueMask());
+    RUN(testUbfiz64AndShiftMaskValue());
+    RUN(testUbfiz64ShiftAnd());
+    RUN(testUbfiz64AndShift());
     RUN(testBitAndZeroShiftRightArgImmMask32());
     RUN(testBitAndZeroShiftRightArgImmMask64());
     RUN(testBitAndArgs(43, 43));

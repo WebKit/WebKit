@@ -1159,6 +1159,56 @@ void testUbfx64()
         }
     }
 }
+
+void testUbfiz32()
+{
+    uint32_t src = 0xffffffff;
+    Vector<uint32_t> imms = { 0, 1, 30, 31, 32, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto ubfiz32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.ubfiz32(GPRInfo::returnValueGPR, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                uint32_t mask = (1U << width) - 1U;
+                CHECK_EQ(invoke<uint32_t>(ubfiz32, src), (src & mask) << lsb);
+            }
+        }
+    }
+}
+
+void testUbfiz64()
+{
+    uint64_t src = 0xffffffffffffffff;
+    Vector<uint32_t> imms = { 0, 1, 30, 31, 32, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+                auto ubfiz64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.ubfiz64(GPRInfo::returnValueGPR, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                uint64_t mask = (1ULL << width) - 1ULL;
+                CHECK_EQ(invoke<uint64_t>(ubfiz64, src), (src & mask) << lsb);
+            }
+        }
+    }
+}
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)
@@ -3328,6 +3378,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testMulSubSignExtend32());
     RUN(testUbfx32());
     RUN(testUbfx64());
+    RUN(testUbfiz32());
+    RUN(testUbfiz64());
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)

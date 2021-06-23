@@ -1,3 +1,113 @@
+2021-06-23  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to utilize UBFIZ supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227204
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes three parts:
+            A) Add UBFIZ to instruction selector.
+            B) Fix UBFX, introduced in https://bugs.webkit.org/show_bug.cgi?id=226984, 
+               to match all patterns. 
+            C) Fix error condition in one strength reduction introduced 
+               in https://bugs.webkit.org/show_bug.cgi?id=227138.
+
+        Part A
+        Unsigned Bitfield Insert in Zero(UBFIZ), supported by ARM64, zeros the 
+        destination register and copies any number of contiguous bits from a 
+        source register into any position in the destination register. The 
+        instruction selector can utilize this to lowering certain patterns in 
+        B3 IR before further Air optimization. 
+
+        Given the operation: ubfiz d, n, lsb, width
+
+        This is equivalent to "d = (n << lsb) & (((1 << width) - 1) << lsb)". 
+        Since wasm introduces constant folding, then the matched patterns would be:
+        1.1 d = (n << lsb) & maskShift
+        1.2 d = maskShift & (n << lsb)
+
+        2.1 d = (n & mask) << lsb
+        2.2 d = (mask & n) << lsb
+
+        Where:
+            maskShift = mask << lsb
+            mask = (1 << width) - 1
+
+        To make the pattern matching in instruction selection beneficial to JIT, these 
+        constraints should be introduced:
+            1. 0 <= lsb < datasize
+            2. 0 < width < datasize
+            3. lsb + width <= datasize
+
+        Choose (n & mask) << lsb as the canonical form and introduce a strength reduction.
+        Turn this: (n << lsb) & maskShift
+        Into this: (n & mask) << lsb
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = lsb
+        Int @2 = 0b0110
+        Int @3 = Shl(@0, @1)
+        Int @4 = BitAnd(@3, @2)  
+        Void@5 = Return(@4, Terminal)      
+
+        Before Adding UBFIZ Pattern:
+        // Old optimized AIR
+        Lshift  %x0, $62, %x0, @3
+        And  0b0110, %x0, %x0, @4
+        Ret     %x0,           @5
+
+        After Adding UBFIZ Pattern:
+        // New optimized AIR
+        Ubfiz %x0, lsb, 2, %x0, @4
+        Ret   %x0,              @5
+
+        Part B
+        Fix UBFX to match both patterns:
+        dest = (src >> lsb) & mask
+        dest = mask & (src >> lsb)
+
+        Where:
+        1. mask = (1 << width) - 1
+        2. 0 <= lsb < datasize
+        3. 0 < width < datasize
+        4. lsb + width <= datasize       
+
+        Part C
+        Fix one B3 strength reduction.
+        Turn this: (src >> shiftAmount) & mask
+        Into this: src >> shiftAmount
+
+        With updated constraints:
+        1. mask = (1 << width) - 1
+        2. 0 <= shiftAmount < datasize
+        3. 0 < width < datasize
+        4. shiftAmount + width >= datasize
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::ubfiz32):
+        (JSC::MacroAssemblerARM64::ubfiz64):
+        * assembler/testmasm.cpp:
+        (JSC::testUbfiz32):
+        (JSC::testUbfiz64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testUbfx32ArgLeft):
+        (testUbfx32ArgRight):
+        (testUbfx64ArgLeft):
+        (testUbfx64ArgRight):
+        (testUbfiz32ArgLeft):
+        (testUbfiz32ArgRight):
+        (testUbfiz64ArgLeft):
+        (testUbfiz64ArgRight):
+        (addBitTests):
+        (testUbfx32): Deleted.
+        (testUbfx32PatternMatch): Deleted.
+        (testUbfx64): Deleted.
+        (testUbfx64PatternMatch): Deleted.
+
 2021-06-23  Keith Miller  <keith_miller@apple.com>
 
         add/removeManagedReference:withOwner: should have autoreleasepools

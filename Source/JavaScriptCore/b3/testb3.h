@@ -416,10 +416,18 @@ inline double modelLoad<double, double>(double value) { return value; }
 
 void run(const char* filter);
 void testBitAndSExt32(int32_t value, int64_t mask);
-void testUbfx32();
-void testUbfx32PatternMatch();
-void testUbfx64();
-void testUbfx64PatternMatch();
+void testUbfx32ShiftAnd();
+void testUbfx32AndShift();
+void testUbfx64ShiftAnd();
+void testUbfx64AndShift();
+void testUbfiz32AndShiftValueMask();
+void testUbfiz32AndShiftMaskValue();
+void testUbfiz32ShiftAnd();
+void testUbfiz32AndShift();
+void testUbfiz64AndShiftValueMask();
+void testUbfiz64AndShiftMaskValue();
+void testUbfiz64ShiftAnd();
+void testUbfiz64AndShift();
 void testBitAndZeroShiftRightArgImmMask32();
 void testBitAndZeroShiftRightArgImmMask64();
 void testBasicSelect();
