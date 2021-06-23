@@ -1,3 +1,28 @@
+2021-06-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a delegate SPI to allow arbitrary gestures to ignore preventDefault() with active touch events
+        https://bugs.webkit.org/show_bug.cgi?id=227311
+        rdar://79624236
+
+        Reviewed by Tim Horton.
+
+        Add a UI delegate hook to allow internal clients to (easily) introduce gesture recognizers on WKWebView that are
+        capable of recognizing even if active touch events are prevented by the page. This allows Safari to stop
+        overriding an internal method on WKWebView, `-_isNavigationSwipeGestureRecognizer:`.
+
+        Testing this requires the ability to simulate touch events (through HID event dispatch) in API tests.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _touchEventsMustRequireGestureRecognizerToFail:]):
+
+        Note that we only consult the delegate here for gestures that are added directly to WKWebView. This is because
+        we already avoid deferring gestures that are added *above* WKWebView, and it's unnecessary to allow clients to
+        avoid deferring gestures that are internal to WebKit (i.e. added on WKContentView).
+
+        (-[WKContentView gestureRecognizer:shouldRequireFailureOfGestureRecognizer:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
 2021-06-23  Martin Robinson  <mrobinson@igalia.com>
 
         [iOS 15 Regression]: scroll position resets when using scroll snap
