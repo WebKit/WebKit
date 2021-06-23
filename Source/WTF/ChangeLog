@@ -1,3 +1,18 @@
+2021-06-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        Update compile flag naming to align with the App Privacy Report
+        feature. Added a new check for Symptoms for a simpler, more clear
+        check.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
 2021-06-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Adopt new date picker presentation SPI

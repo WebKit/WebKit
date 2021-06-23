@@ -1,3 +1,27 @@
+2021-06-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (processPCMRequest):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (contextString): Deleted.
+        This patch deletes the contextString function because it is no longer
+        needed now that CFNetwork sets the attribution context based on the
+        main document URL, and it seemed silly to migrate code from
+        WebKitAdditions just to delete it immediately. This also moves the
+        processPCMRequest function declaration from WebKitAdditions so we can
+        remove NETWORK_DATA_TASK_COCOA_ADDITIONS.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::isActingOnBehalfOfAFullWebBrowser):
+        (WebKit::NetworkSessionCocoa::removeNetworkWebsiteData):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setLastNavigationWasAppBound):
+
 2021-06-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Adopt new date picker presentation SPI

@@ -33,6 +33,7 @@
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <Foundation/NSURLRequest.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
@@ -43,12 +44,9 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKUserContentWorld.h>
 #import <WebKit/_WKUserStyleSheet.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/InAppBrowserPrivacyAdditions.h>
-#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
 
@@ -1420,7 +1418,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
 
 #endif // ENABLE(APP_BOUND_DOMAINS)
 
-#if USE(APPLE_INTERNAL_SDK) && ENABLE(APP_BOUND_REQUESTS)
+#if ENABLE(APP_PRIVACY_REPORT)
 TEST(InAppBrowserPrivacy, AppBoundRequest)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1430,7 +1428,10 @@ TEST(InAppBrowserPrivacy, AppBoundRequest)
 
     __block bool isDone = false;
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    APP_BOUND_REQUEST_ADDITIONS
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    nonAppBoundRequest._isNonAppInitiated = YES;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [webView loadRequest:nonAppBoundRequest];
     [webView _test_waitForDidFinishNavigation];
@@ -1484,7 +1485,9 @@ TEST(InAppBrowserPrivacy, AppBoundRequestWithNavigation)
     
     isDone = false;
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:nonAppBoundURL]];
-    APP_BOUND_REQUEST_ADDITIONS
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    nonAppBoundRequest._isNonAppInitiated = YES;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     
     isDone = false;
     [webView _clearAppBoundNavigationData:^{
@@ -1542,7 +1545,9 @@ TEST(InAppBrowserPrivacy, NonAppBoundRequestWithSubFrame)
     __block bool isDone = false;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-with-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    APP_BOUND_REQUEST_ADDITIONS
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    nonAppBoundRequest._isNonAppInitiated = YES;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [webView loadRequest:nonAppBoundRequest];
 
@@ -1622,7 +1627,9 @@ static void runTest(ResponseType responseType, IsAppBound appBound)
     NSURLRequest *request = server.request();
     if (appBound == IsAppBound::No) {
         NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
-        APP_BOUND_REQUEST_ADDITIONS
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        nonAppBoundRequest._isNonAppInitiated = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
         request = nonAppBoundRequest;
     }
 
@@ -1730,7 +1737,9 @@ TEST(InAppBrowserPrivacy, MultipleWebViewsWithSharedServiceWorker)
 
     isDone = false;
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/main.html", server.port()]]];
-    APP_BOUND_REQUEST_ADDITIONS
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    nonAppBoundRequest._isNonAppInitiated = YES;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [webView2 loadRequest:nonAppBoundRequest];
     EXPECT_WK_STREQ([webView2 _test_waitForAlert], "fetched from server");
 
@@ -1780,7 +1789,9 @@ static void softUpdateTest(IsAppBound isAppBound)
         NSURLRequest *request = server1.request();
         if (isAppBound == IsAppBound::No) {
             NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server1.port()]]];
-            APP_BOUND_REQUEST_ADDITIONS
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            nonAppBoundRequest._isNonAppInitiated = YES;
+            ALLOW_DEPRECATED_DECLARATIONS_END
             request = nonAppBoundRequest;
         }
 
@@ -1799,7 +1810,9 @@ static void softUpdateTest(IsAppBound isAppBound)
         NSURLRequest *request2 = server2.request();
         if (isAppBound == IsAppBound::No) {
             NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server2.port()]]];
-            APP_BOUND_REQUEST_ADDITIONS
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            nonAppBoundRequest._isNonAppInitiated = YES;
+            ALLOW_DEPRECATED_DECLARATIONS_END
             request2 = nonAppBoundRequest;
         }
 
@@ -1850,7 +1863,9 @@ static void runWebProcessPlugInTest(IsAppBound isAppBound)
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     if (isAppBound == IsAppBound::No) {
         NSMutableURLRequest *nonAppBoundRequest = request;
-        APP_BOUND_REQUEST_ADDITIONS
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        nonAppBoundRequest._isNonAppInitiated = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
         request = nonAppBoundRequest;
     }
 
@@ -2005,7 +2020,9 @@ TEST(InAppBrowserPrivacy, RegisterServiceWorkerClientUpdatesAppBoundValue)
     expectedMessage = "starts app-bound";
     receivedMessage = false;
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/main.html", server.port()]]];
-    APP_BOUND_REQUEST_ADDITIONS
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    nonAppBoundRequest._isNonAppInitiated = YES;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [webView2 loadRequest:nonAppBoundRequest];
     TestWebKitAPI::Util::run(&receivedMessage);
