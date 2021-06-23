@@ -1,5 +1,16 @@
 2021-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Resync IndexedDB WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227315
+
+        Reviewed by Darin Adler.
+
+        Resync IndexedDB WPT tests from upstream a38612f39e7752c3532080c.
+
+        * web-platform-tests/IndexedDB/*: Updated.
+
+2021-06-23  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (r279169?): [MacOS] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html is consistently failing.
         https://bugs.webkit.org/show_bug.cgi?id=227312
         <rdar://problem/79684170>

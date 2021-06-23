@@ -120,6 +120,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_update_index6.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_update_index7.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_update_index8.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_update_index9.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_update_objectstore.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_update_objectstore2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_update_objectstore3.htm
@@ -323,6 +324,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put7.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put8.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put9.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_putall.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest-onupgradeneeded.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_error.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_result.html
@@ -367,6 +369,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request-abort-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/structured-clone-transaction-state.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.js

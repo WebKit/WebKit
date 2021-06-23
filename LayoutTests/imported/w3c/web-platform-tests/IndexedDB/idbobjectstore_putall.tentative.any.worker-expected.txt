@@ -1,0 +1,12 @@
+
+FAIL Data can be successfully inserted into an object store using putAll. promise_test: Unhandled rejection with value: object "TypeError: objectStore.putAllValues is not a function. (In 'objectStore.putAllValues(values)', 'objectStore.putAllValues' is undefined)"
+FAIL Values with array keys can be successfully inserted into an object store using putAll. promise_test: Unhandled rejection with value: object "TypeError: objectStore.putAllValues is not a function. (In 'objectStore.putAllValues(values)', 'objectStore.putAllValues' is undefined)"
+FAIL Inserting an empty list using putAll. promise_test: Unhandled rejection with value: object "TypeError: objectStore.putAllValues is not a function. (In 'objectStore.putAllValues([])', 'objectStore.putAllValues' is undefined)"
+FAIL Empty values can be inserted into an objectstore with a key generator using putAll. promise_test: Unhandled rejection with value: object "TypeError: objectStore.putAllValues is not a function. (In 'objectStore.putAllValues([{}, {}, {}])', 'objectStore.putAllValues' is undefined)"
+FAIL Attempting to insert with a read only transaction using putAll throws a ReadOnlyError. assert_throws_dom: The transaction is readonly function "() => { objectStore.putAllValues([{}]); }" threw object "TypeError: objectStore.putAllValues is not a function. (In 'objectStore.putAllValues([{}])', 'objectStore.putAllValues' is undefined)" that is not a DOMException ReadOnlyError: property "code" is equal to undefined, expected 0
+FAIL Inserting duplicate unique keys into a store that already has the keyusing putAll throws a ConstraintError. promise_test: Unhandled rejection with value: object "TypeError: objectStore.putAllValues is not a function. (In 'objectStore.putAllValues([
+    {isbn: 2, title: "duplicate"},
+    {isbn: 3, title: "duplicate"}
+  ])', 'objectStore.putAllValues' is undefined)"
+FAIL Inserting values without the key into an object store that does not have generated keys throws an exception. assert_throws_dom: Evaluating the object store's key path did not yield a value function "() => { const putAllRequest = objectStore.putAllValues(values); }" threw object "TypeError: objectStore.putAllValues is not a function. (In 'objectStore.putAllValues(values)', 'objectStore.putAllValues' is undefined)" that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+
