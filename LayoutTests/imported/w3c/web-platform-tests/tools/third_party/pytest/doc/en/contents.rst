@@ -33,20 +33,28 @@ Full pytest documentation
    reference
 
    goodpractices
+   flaky
    pythonpath
    customize
    example/index
    bash-completion
 
    backwards-compatibility
-   historical-notes
-   license
+   deprecations
+   py27-py34-deprecation
+
    contributing
    development_guide
+
+   sponsor
+   tidelift
+   license
+   contact
+
+   historical-notes
    talks
    projects
-   faq
-   contact
+
 
 .. only:: html
 

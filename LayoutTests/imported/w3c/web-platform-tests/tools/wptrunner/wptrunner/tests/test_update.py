@@ -1,9 +1,10 @@
 import json
-import mock
 import os
-import pytest
 import sys
 from io import BytesIO
+from unittest import mock
+
+import pytest
 
 from .. import metadata, manifestupdate
 from ..update.update import WPTUpdate
@@ -442,7 +443,7 @@ def test_update_reorder_expected():
 
     assert not new_manifest.is_empty
     assert new_manifest.get_test(test_id).children[0].get(
-        "expected", default_run_info) == ["FAIL", "PASS"]
+        "expected", default_run_info) == ["PASS", "FAIL"]
 
 
 def test_update_and_preserve_unchanged_expected_intermittent():

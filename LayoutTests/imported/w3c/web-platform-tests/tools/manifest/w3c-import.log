@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/commands.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/download.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/item.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/manifest/jsonlib.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/log.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/manifest.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/sourcefile.py

@@ -1,11 +1,7 @@
-from __future__ import unicode_literals
-
 import abc
 import inspect
 import os
 import re
-
-import six
 
 MYPY = False
 if MYPY:
@@ -19,7 +15,7 @@ def collapse(text):
     return inspect.cleandoc(str(text)).replace("\n", " ")
 
 
-class Rule(six.with_metaclass(abc.ABCMeta)):
+class Rule(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def name(self):
         # type: () -> Text
@@ -197,6 +193,14 @@ class MultipleTestharness(Rule):
     """
 
 
+class MissingReftestWait(Rule):
+    name = "MISSING-REFTESTWAIT"
+    description = "Missing `class=reftest-wait`"
+    to_fix = """
+        ensure tests that include reftest-wait.js also use class=reftest-wait on the root element.
+    """
+
+
 class MissingTestharnessReport(Rule):
     name = "MISSING-TESTHARNESSREPORT"
     description = "Missing `<script src='/resources/testharnessreport.js'>`"
@@ -353,13 +357,21 @@ class DuplicateBasenamePath(Rule):
     to_fix = "rename files so they have unique basename paths"
 
 
+class DuplicatePathCaseInsensitive(Rule):
+    name = "DUPLICATE-CASE-INSENSITIVE-PATH"
+    description = collapse("""
+            Path differs from path %s only in case
+    """)
+    to_fix = "rename files so they are unique irrespective of case"
+
+
 class TentativeDirectoryName(Rule):
     name = "TENTATIVE-DIRECTORY-NAME"
     description = "Directories for tentative tests must be named exactly 'tentative'"
     to_fix = "rename directory to be called 'tentative'"
 
 
-class Regexp(six.with_metaclass(abc.ABCMeta)):
+class Regexp(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def pattern(self):
         # type: () -> bytes

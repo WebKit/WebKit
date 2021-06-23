@@ -21,25 +21,36 @@ file descriptors.  This allows to capture output from simple
 print statements as well as output from a subprocess started by
 a test.
 
+.. _capture-method:
+
 Setting capturing methods or disabling capturing
 -------------------------------------------------
 
-There are two ways in which ``pytest`` can perform capturing:
+There are three ways in which ``pytest`` can perform capturing:
 
-* file descriptor (FD) level capturing (default): All writes going to the
+* ``fd`` (file descriptor) level capturing (default): All writes going to the
   operating system file descriptors 1 and 2 will be captured.
 
 * ``sys`` level capturing: Only writes to Python files ``sys.stdout``
   and ``sys.stderr`` will be captured.  No capturing of writes to
   filedescriptors is performed.
 
+* ``tee-sys`` capturing: Python writes to ``sys.stdout`` and ``sys.stderr``
+  will be captured, however the writes will also be passed-through to
+  the actual ``sys.stdout`` and ``sys.stderr``. This allows output to be
+  'live printed' and captured for plugin use, such as junitxml (new in pytest 5.4).
+
 .. _`disable capturing`:
 
-You can influence output capturing mechanisms from the command line::
+You can influence output capturing mechanisms from the command line:
 
-    pytest -s            # disable all capturing
-    pytest --capture=sys # replace sys.stdout/stderr with in-mem files
-    pytest --capture=fd  # also point filedescriptors 1 and 2 to temp file
+.. code-block:: bash
+
+    pytest -s                  # disable all capturing
+    pytest --capture=sys       # replace sys.stdout/stderr with in-mem files
+    pytest --capture=fd        # also point filedescriptors 1 and 2 to temp file
+    pytest --capture=tee-sys   # combines 'sys' and '-s', capturing sys.stdout/stderr
+                               # and passing it along to the actual sys.stdout/stderr
 
 .. _printdebugging:
 
@@ -47,26 +58,34 @@ Using print statements for debugging
 ---------------------------------------------------
 
 One primary benefit of the default capturing of stdout/stderr output
-is that you can use print statements for debugging::
+is that you can use print statements for debugging:
+
+.. code-block:: python
 
     # content of test_module.py
 
+
     def setup_function(function):
-        print ("setting up %s" % function)
+        print("setting up", function)
+
 
     def test_func1():
         assert True
+
 
     def test_func2():
         assert False
 
 and running this module will show you precisely the output
-of the failing function and hide the other one::
+of the failing function and hide the other one:
+
+.. code-block:: pytest
 
     $ pytest
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-3.x.y, py-1.x.y, pluggy-0.x.y
-    rootdir: $REGENDOC_TMPDIR, inifile:
+    platform linux -- Python 3.x.y, pytest-6.x.y, py-1.x.y, pluggy-0.x.y
+    cachedir: $PYTHON_PREFIX/.pytest_cache
+    rootdir: $REGENDOC_TMPDIR
     collected 2 items
 
     test_module.py .F                                                    [100%]
@@ -78,10 +97,12 @@ of the failing function and hide the other one::
     >       assert False
     E       assert False
 
-    test_module.py:9: AssertionError
+    test_module.py:12: AssertionError
     -------------------------- Captured stdout setup ---------------------------
     setting up <function test_func2 at 0xdeadbeef>
-    ==================== 1 failed, 1 passed in 0.12 seconds ====================
+    ========================= short test summary info ==========================
+    FAILED test_module.py::test_func2 - assert False
+    ======================= 1 failed, 1 passed in 0.12s ========================
 
 Accessing captured output from a test function
 ---------------------------------------------------
@@ -116,19 +137,18 @@ same interface but allows to also capture output from
 libraries or subprocesses that directly write to operating
 system level output streams (FD1 and FD2).
 
-.. versionadded:: 3.3
+
 
 The return value from ``readouterr`` changed to a ``namedtuple`` with two attributes, ``out`` and ``err``.
 
-.. versionadded:: 3.3
+
 
 If the code under test writes non-textual data, you can capture this using
 the ``capsysbinary`` fixture which instead returns ``bytes`` from
-the ``readouterr`` method.  The ``capfsysbinary`` fixture is currently only
-available in python 3.
+the ``readouterr`` method.
 
 
-.. versionadded:: 3.3
+
 
 If the code under test writes non-textual data, you can capture this using
 the ``capfdbinary`` fixture which instead returns ``bytes`` from
@@ -136,7 +156,7 @@ the ``readouterr`` method.  The ``capfdbinary`` fixture operates on the
 filedescriptor level.
 
 
-.. versionadded:: 3.0
+
 
 To temporarily disable capture within a test, both ``capsys``
 and ``capfd`` have a ``disabled()`` method that can be used
@@ -149,5 +169,3 @@ as a context manager, disabling capture inside the ``with`` block:
         with capsys.disabled():
             print("output not captured, going directly to sys.stdout")
         print("this output is also captured")
-
-.. include:: links.inc

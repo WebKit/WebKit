@@ -1,9 +1,9 @@
 import os
 import subprocess
 import sys
-from six.moves.urllib.parse import urljoin
 from collections import defaultdict
-from six import iteritems, string_types
+from typing import Any, ClassVar, Dict, Type
+from urllib.parse import urljoin
 
 from .wptmanifest.parser import atoms
 
@@ -83,7 +83,7 @@ def get_run_info(metadata_root, product, **kwargs):
     return RunInfo(metadata_root, product, **kwargs)
 
 
-class RunInfo(dict):
+class RunInfo(Dict[str, Any]):
     def __init__(self, metadata_root, product, debug,
                  browser_version=None,
                  browser_channel=None,
@@ -150,9 +150,9 @@ def server_protocol(manifest_item):
 
 class Test(object):
 
-    result_cls = None
-    subtest_result_cls = None
-    test_type = None
+    result_cls = None  # type: ClassVar[Type[Result]]
+    subtest_result_cls = None  # type: ClassVar[Type[SubtestResult]]
+    test_type = None  # type: ClassVar[str]
 
     default_timeout = 10  # seconds
     long_timeout = 60  # seconds
@@ -307,7 +307,7 @@ class Test(object):
         rv = {}
         for meta in self.itermeta(None):
             threshold = meta.leak_threshold
-            for key, value in iteritems(threshold):
+            for key, value in threshold.items():
                 if key not in rv:
                     rv[key] = value
         return rv
@@ -349,7 +349,7 @@ class Test(object):
 
         try:
             expected = metadata.get("expected")
-            if isinstance(expected, string_types):
+            if isinstance(expected, str):
                 return expected
             elif isinstance(expected, list):
                 return expected[0]
@@ -464,9 +464,9 @@ class ReftestTest(Test):
 
     def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, references,
                  timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None,
-                 protocol="http", quic=False):
+                 protocol="http", subdomain=False, quic=False):
         Test.__init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, timeout,
-                      path, protocol, quic)
+                      path, protocol, subdomain, quic)
 
         for _, ref_type in references:
             if ref_type not in ("==", "!="):
@@ -504,6 +504,7 @@ class ReftestTest(Test):
                    [],
                    timeout=timeout,
                    path=manifest_test.path,
+                   subdomain=manifest_test.subdomain,
                    quic=quic,
                    **cls.cls_kwargs(manifest_test))
 
@@ -622,10 +623,10 @@ class PrintReftestTest(ReftestTest):
 
     def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, references,
                  timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None,
-                 page_ranges=None, protocol="http", quic=False):
+                 page_ranges=None, protocol="http", subdomain=False, quic=False):
         super(PrintReftestTest, self).__init__(url_base, tests_root, url, inherit_metadata, test_metadata,
                                                references, timeout, path, viewport_size, dpi,
-                                               fuzzy, protocol, quic=quic)
+                                               fuzzy, protocol, subdomain=subdomain, quic=quic)
         self._page_ranges = page_ranges
 
     @classmethod

@@ -2,9 +2,7 @@ import os
 import unittest
 import time
 import json
-
-from six import assertRegex
-from six.moves import urllib
+import urllib
 
 import pytest
 
@@ -121,7 +119,7 @@ server: http://localhost:{0}""".format(self.server.port).encode("ascii")
 
     def test_sub_uuid(self):
         resp = self.request("/sub_uuid.sub.txt")
-        assertRegex(self, resp.read().rstrip(), b"Before [a-f0-9-]+ After")
+        self.assertRegex(resp.read().rstrip(), b"Before [a-f0-9-]+ After")
 
     def test_sub_var(self):
         resp = self.request("/sub_var.sub.txt")
@@ -225,6 +223,11 @@ class TestPipesWithVariousHandlers(TestUsingServer):
         t1 = time.time()
         self.assertTrue(b'Content' in resp.read())
         self.assertGreater(6, t1-t0)
+
+    def test_gzip_handler(self):
+        resp = self.request("/document.txt", query="pipe=gzip")
+        self.assertEqual(resp.getcode(), 200)
+
 
 if __name__ == '__main__':
     unittest.main()

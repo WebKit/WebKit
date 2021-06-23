@@ -1,18 +1,10 @@
-import io
-import itertools
-import json
 import os
+import sys
 from atomicwrites import atomic_write
 from copy import deepcopy
 from multiprocessing import Pool, cpu_count
-from six import (
-    PY3,
-    ensure_text,
-    iteritems,
-    itervalues,
-    string_types,
-)
 
+from . import jsonlib
 from . import vcs
 from .item import (ConformanceCheckerTest,
                    CrashTest,
@@ -45,11 +37,6 @@ if MYPY:
     from typing import Type
     from typing import Union
 
-try:
-    import ujson
-    fast_json = ujson
-except ImportError:
-    fast_json = json  # type: ignore
 
 CURRENT_VERSION = 8  # type: int
 
@@ -97,7 +84,7 @@ class ManifestData(ManifestDataType):
         """Dictionary subclass containing a TypeData instance for each test type,
         keyed by type name"""
         self.initialized = False  # type: bool
-        for key, value in iteritems(item_classes):
+        for key, value in item_classes.items():
             self[key] = TypeData(manifest, value)
         self.initialized = True
         self.json_obj = None  # type: None
@@ -113,7 +100,7 @@ class ManifestData(ManifestDataType):
         """Get a list of all paths containing test items
         without actually constructing all the items"""
         rv = set()  # type: Set[Text]
-        for item_data in itervalues(self):
+        for item_data in self.values():
             for item in item_data:
                 rv.add(os.path.sep.join(item))
         return rv
@@ -121,7 +108,7 @@ class ManifestData(ManifestDataType):
     def type_by_path(self):
         # type: () -> Dict[Tuple[Text, ...], Text]
         rv = {}
-        for item_type, item_data in iteritems(self):
+        for item_type, item_data in self.items():
             for item in item_data:
                 rv[item] = item_type
         return rv
@@ -163,7 +150,7 @@ class Manifest(object):
         tpath_len = len(tpath)
 
         for type_tests in self._data.values():
-            for path, tests in iteritems(type_tests):
+            for path, tests in type_tests.items():
                 if path[:tpath_len] == tpath:
                     for test in tests:
                         yield test
@@ -177,6 +164,8 @@ class Manifest(object):
         unusual API is designed as an optimistaion meaning that SourceFile items need not be
         constructed in the case we are not updating a path, but the absence of an item from
         the iterator may be used to remove defunct entries from the manifest."""
+
+        logger = get_logger()
 
         changed = False
 
@@ -226,35 +215,52 @@ class Manifest(object):
                     to_update.append(source_file)
 
         if to_update:
+            logger.debug("Computing manifest update for %s items" % len(to_update))
             changed = True
 
+
+        # 25 items was derived experimentally (2020-01) to be approximately the
+        # point at which it is quicker to create a Pool and parallelize update.
+        pool = None
         if parallel and len(to_update) > 25 and cpu_count() > 1:
-            # 25 derived experimentally (2020-01) to be approximately
-            # the point at which it is quicker to create Pool and
-            # parallelize this
-            pool = Pool()
+            # On Python 3 on Windows, using >= MAXIMUM_WAIT_OBJECTS processes
+            # causes a crash in the multiprocessing module. Whilst this enum
+            # can technically have any value, it is usually 64. For safety,
+            # restrict manifest regeneration to 48 processes on Windows.
+            #
+            # See https://bugs.python.org/issue26903 and https://bugs.python.org/issue40263
+            processes = cpu_count()
+            if sys.platform == "win32" and processes > 48:
+                processes = 48
+            pool = Pool(processes)
 
             # chunksize set > 1 when more than 10000 tests, because
             # chunking is a net-gain once we get to very large numbers
             # of items (again, experimentally, 2020-01)
+            chunksize = max(1, len(to_update) // 10000)
+            logger.debug("Doing a multiprocessed update. CPU count: %s, "
+                "processes: %s, chunksize: %s" % (cpu_count(), processes, chunksize))
             results = pool.imap_unordered(compute_manifest_items,
                                           to_update,
-                                          chunksize=max(1, len(to_update) // 10000)
+                                          chunksize=chunksize
                                           )  # type: Iterator[Tuple[Tuple[Text, ...], Text, Set[ManifestItem], Text]]
-        elif PY3:
-            results = map(compute_manifest_items, to_update)
         else:
-            results = itertools.imap(compute_manifest_items, to_update)
+            results = map(compute_manifest_items, to_update)
 
         for result in results:
             rel_path_parts, new_type, manifest_items, file_hash = result
             data[new_type][rel_path_parts] = manifest_items
             data[new_type].hashes[rel_path_parts] = file_hash
 
+        # Make sure to terminate the Pool, to avoid hangs on Python 3.
+        # https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool
+        if pool is not None:
+            pool.terminate()
+
         if remaining_manifest_paths:
             changed = True
             for rel_path_parts in remaining_manifest_paths:
-                for test_data in itervalues(data):
+                for test_data in data.values():
                     if rel_path_parts in test_data:
                         del test_data[rel_path_parts]
 
@@ -274,7 +280,7 @@ class Manifest(object):
         """
         out_items = {
             test_type: type_paths.to_json()
-            for test_type, type_paths in iteritems(self._data) if type_paths
+            for test_type, type_paths in self._data.items() if type_paths
         }
 
         if caller_owns_obj:
@@ -308,7 +314,7 @@ class Manifest(object):
         if not hasattr(obj, "items"):
             raise ManifestError
 
-        for test_type, type_paths in iteritems(obj["items"]):
+        for test_type, type_paths in obj["items"].items():
             if test_type not in item_classes:
                 raise ManifestError
 
@@ -341,20 +347,20 @@ def _load(logger,  # type: Logger
           allow_cached=True  # type: bool
           ):
     # type: (...) -> Optional[Manifest]
-    manifest_path = (manifest if isinstance(manifest, string_types)
+    manifest_path = (manifest if isinstance(manifest, str)
                      else manifest.name)
     if allow_cached and manifest_path in __load_cache:
         return __load_cache[manifest_path]
 
-    if isinstance(manifest, string_types):
+    if isinstance(manifest, str):
         if os.path.exists(manifest):
             logger.debug("Opening manifest at %s" % manifest)
         else:
             logger.debug("Creating new manifest at %s" % manifest)
         try:
-            with io.open(manifest, "r", encoding="utf-8") as f:
+            with open(manifest, "r", encoding="utf-8") as f:
                 rv = Manifest.from_json(tests_root,
-                                        fast_json.load(f),
+                                        jsonlib.load(f),
                                         types=types,
                                         callee_owns_obj=True)
         except IOError:
@@ -364,7 +370,7 @@ def _load(logger,  # type: Logger
             return None
     else:
         rv = Manifest.from_json(tests_root,
-                                fast_json.load(manifest),
+                                jsonlib.load(manifest),
                                 types=types,
                                 callee_owns_obj=True)
 
@@ -373,55 +379,19 @@ def _load(logger,  # type: Logger
     return rv
 
 
-def load_and_update(tests_root,  # type: Union[Text, bytes]
-                    manifest_path,  # type: Union[Text, bytes]
+def load_and_update(tests_root,  # type: Text
+                    manifest_path,  # type: Text
                     url_base,  # type: Text
                     update=True,  # type: bool
                     rebuild=False,  # type: bool
-                    metadata_path=None,  # type: Optional[Union[Text, bytes]]
-                    cache_root=None,  # type: Optional[Union[Text, bytes]]
+                    metadata_path=None,  # type: Optional[Text]
+                    cache_root=None,  # type: Optional[Text]
                     working_copy=True,  # type: bool
                     types=None,  # type: Optional[Container[Text]]
                     write_manifest=True,  # type: bool
                     allow_cached=True,  # type: bool
                     parallel=True  # type: bool
                     ):
-    # type: (...) -> Manifest
-
-    # This function is now a facade for the purposes of type conversion, so that
-    # the external API can accept paths as text or (utf8) bytes, but internal
-    # functions always use Text.
-
-    metadata_path_text = ensure_text(metadata_path) if metadata_path is not None else None
-    cache_root_text = ensure_text(cache_root) if cache_root is not None else None
-
-    return _load_and_update(ensure_text(tests_root),
-                            ensure_text(manifest_path),
-                            url_base,
-                            update=update,
-                            rebuild=rebuild,
-                            metadata_path=metadata_path_text,
-                            cache_root=cache_root_text,
-                            working_copy=working_copy,
-                            types=types,
-                            write_manifest=write_manifest,
-                            allow_cached=allow_cached,
-                            parallel=parallel)
-
-
-def _load_and_update(tests_root,  # type: Text
-                     manifest_path,  # type: Text
-                     url_base,  # type: Text
-                     update=True,  # type: bool
-                     rebuild=False,  # type: bool
-                     metadata_path=None,  # type: Optional[Text]
-                     cache_root=None,  # type: Optional[Text]
-                     working_copy=True,  # type: bool
-                     types=None,  # type: Optional[Container[Text]]
-                     write_manifest=True,  # type: bool
-                     allow_cached=True,  # type: bool
-                     parallel=True  # type: bool
-                     ):
     # type: (...) -> Manifest
 
     logger = get_logger()
@@ -449,6 +419,7 @@ def _load_and_update(tests_root,  # type: Text
         update = True
 
     if rebuild or update:
+        logger.info("Updating manifest")
         for retry in range(2):
             try:
                 tree = vcs.get_tree(tests_root, manifest, manifest_path, cache_root,
@@ -476,6 +447,5 @@ def write(manifest, manifest_path):
     with atomic_write(manifest_path, overwrite=True) as f:
         # Use ',' instead of the default ', ' separator to prevent trailing
         # spaces: https://docs.python.org/2/library/json.html#json.dump
-        json.dump(manifest.to_json(caller_owns_obj=True), f,
-                  sort_keys=True, indent=1, separators=(',', ': '))
+        jsonlib.dump_dist(manifest.to_json(caller_owns_obj=True), f)
         f.write("\n")

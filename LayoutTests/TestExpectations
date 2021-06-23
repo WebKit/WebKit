@@ -935,6 +935,8 @@ imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure 
 imported/w3c/web-platform-tests/mediacapture-fromelement/ended.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/font-timestamps.html [ Failure ]
+imported/w3c/web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/resource_timing_content_length.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/SO-XO-SO-redirect-chain-tao.https.html [ Failure ]
 imported/w3c/web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain.html [ Failure ]

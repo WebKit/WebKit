@@ -1,11 +1,9 @@
 import json
 import os
-import sys
 import traceback
 from collections import defaultdict
 
-from six.moves.urllib.parse import quote, unquote, urljoin
-from six import iteritems
+from urllib.parse import quote, unquote, urljoin
 
 from .constants import content_types
 from .pipes import Pipeline, template
@@ -14,10 +12,7 @@ from .request import Authentication
 from .response import MultipartContent
 from .utils import HTTPException
 
-try:
-    from html import escape
-except ImportError:
-    from cgi import escape
+from html import escape
 
 __all__ = ["file_handler", "python_script_handler",
            "FunctionHandler", "handler", "json_handler",
@@ -99,7 +94,9 @@ class DirectoryHandler(object):
                    {"link": link, "name": ".."})
         items = []
         prev_item = None
-        for item in sorted(os.listdir(path)):
+        # This ensures that .headers always sorts after the file it provides the headers for. E.g.,
+        # if we have x, x-y, and x.headers, the order will be x, x.headers, and then x-y.
+        for item in sorted(os.listdir(path), key=lambda x: (x[:-len(".headers")], x) if x.endswith(".headers") else (x, x)):
             if prev_item and prev_item + ".headers" == item:
                 items[-1][1] = item
                 prev_item = None
@@ -287,9 +284,9 @@ class PythonScriptHandler(object):
     def __repr__(self):
         return "<%s base_path:%s url_base:%s>" % (self.__class__.__name__, self.base_path, self.url_base)
 
-    def _set_path_and_load_file(self, request, response, func):
+    def _load_file(self, request, response, func):
         """
-        This modifies the `sys.path` and loads the requested python file as an environ variable.
+        This loads the requested python file as an environ variable.
 
         Once the environ is loaded, the passed `func` is run with this loaded environ.
 
@@ -300,11 +297,8 @@ class PythonScriptHandler(object):
         """
         path = filesystem_path(self.base_path, request, self.url_base)
 
-        sys_path = sys.path[:]
-        sys_modules = sys.modules.copy()
         try:
             environ = {"__file__": path}
-            sys.path.insert(0, os.path.dirname(path))
             with open(path, 'rb') as f:
                 exec(compile(f.read(), path, 'exec'), environ, environ)
 
@@ -313,9 +307,6 @@ class PythonScriptHandler(object):
 
         except IOError:
             raise HTTPException(404)
-        finally:
-            sys.path = sys_path
-            sys.modules = sys_modules
 
     def __call__(self, request, response):
         def func(request, response, environ, path):
@@ -326,7 +317,7 @@ class PythonScriptHandler(object):
             else:
                 raise HTTPException(500, "No main function in script %s" % path)
 
-        self._set_path_and_load_file(request, response, func)
+        self._load_file(request, response, func)
 
     def frame_handler(self, request):
         """
@@ -353,7 +344,7 @@ class PythonScriptHandler(object):
                 raise HTTPException(500, "No main function or handlers in script %s" % path)
 
             return handler
-        return self._set_path_and_load_file(request, None, func)
+        return self._load_file(request, None, func)
 
 
 python_script_handler = PythonScriptHandler()
@@ -487,7 +478,7 @@ class StringHandler(object):
         self.data = data
 
         self.resp_headers = [("Content-Type", content_type)]
-        for k, v in iteritems(headers):
+        for k, v in headers.items():
             self.resp_headers.append((k.replace("_", "-"), v))
 
         self.handler = handler(self.handle_request)

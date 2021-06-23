@@ -14,5 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/tests/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/tests/test_jobs.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/ci/tests/test_pr_preview.py

@@ -1,10 +1,10 @@
 def main(request, response):
     response.status = (200, "OK")
-    response.headers.set("Content-Type", 'text/javascript')
-    response.headers.set("Cache-Control", "max-age=0");
+    response.headers.set(b"Content-Type", b'text/javascript')
+    response.headers.set(b"Cache-Control", b"max-age=0");
 
-    if "useCORS" in request.GET:
-        response.headers.set("Access-Control-Allow-Origin", "*")
+    if b"useCORS" in request.GET:
+        response.headers.set(b"Access-Control-Allow-Origin", b"*")
 
     return """
 class DummyProcessor extends AudioWorkletProcessor {

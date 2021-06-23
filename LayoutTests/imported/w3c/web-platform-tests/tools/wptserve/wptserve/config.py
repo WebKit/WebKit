@@ -1,10 +1,7 @@
 import copy
-import logging
 import os
 from collections import defaultdict
-
-from six.moves.collections_abc import Mapping
-from six import integer_types, iteritems, itervalues, string_types
+from collections.abc import Mapping
 
 from . import sslutils
 from .utils import get_port
@@ -20,7 +17,7 @@ _renamed_props = {
 
 def _merge_dict(base_dict, override_dict):
     rv = base_dict.copy()
-    for key, value in iteritems(base_dict):
+    for key, value in base_dict.items():
         if key in override_dict:
             if isinstance(value, dict):
                 rv[key] = _merge_dict(value, override_dict[key])
@@ -30,11 +27,18 @@ def _merge_dict(base_dict, override_dict):
 
 
 class Config(Mapping):
-    """wptserve config
+    """wptserve configuration data
 
-    Inherits from Mapping for backwards compatibility with the old dict-based config"""
-    def __init__(self, logger_name, data):
-        self.__dict__["_logger_name"] = logger_name
+    Immutable configuration that's safe to be passed between processes.
+
+    Inherits from Mapping for backwards compatibility with the old dict-based config
+
+    :param data: - Extra configuration data
+    """
+    def __init__(self, data):
+        for name in data.keys():
+            if name.startswith("_"):
+                raise ValueError("Invalid configuration key %s" % name)
         self.__dict__.update(data)
 
     def __str__(self):
@@ -43,7 +47,7 @@ class Config(Mapping):
     def __setattr__(self, key, value):
         raise ValueError("Config is immutable")
 
-    def __setitem__(self, key):
+    def __setitem__(self, key, value):
         raise ValueError("Config is immutable")
 
     def __getitem__(self, key):
@@ -61,46 +65,17 @@ class Config(Mapping):
     def __len__(self):
         return len([item for item in self])
 
-    @property
-    def logger(self):
-        logger = logging.getLogger(self._logger_name)
-        logger.setLevel(self.log_level.upper())
-        return logger
-
     def as_dict(self):
-        return json_types(self.__dict__)
-
-    # Environment variables are limited in size so we need to prune the most egregious contributors
-    # to size, the origin policy subdomains.
-    def as_dict_for_wd_env_variable(self):
-        result = self.as_dict()
-
-        for key in [
-            ("subdomains",),
-            ("domains", "alt"),
-            ("domains", ""),
-            ("all_domains", "alt"),
-            ("all_domains", ""),
-            ("domains_set",),
-            ("all_domains_set",)
-        ]:
-            target = result
-            for part in key[:-1]:
-                target = target[part]
-            value = target[key[-1]]
-            if isinstance(value, dict):
-                target[key[-1]] = {k:v for (k,v) in iteritems(value) if not k.startswith("op")}
-            else:
-                target[key[-1]] = [x for x in value if not x.startswith("op")]
-
-        return result
+        return json_types(self.__dict__, skip={"_logger"})
 
 
-def json_types(obj):
+def json_types(obj, skip=None):
+    if skip is None:
+        skip = set()
     if isinstance(obj, dict):
-        return {key: json_types(value) for key, value in iteritems(obj)}
-    if (isinstance(obj, string_types) or
-        isinstance(obj, integer_types) or
+        return {key: json_types(value) for key, value in obj.items() if key not in skip}
+    if (isinstance(obj, str) or
+        isinstance(obj, int) or
         isinstance(obj, float) or
         isinstance(obj, bool) or
         obj is None):
@@ -111,7 +86,7 @@ def json_types(obj):
 
 
 class ConfigBuilder(object):
-    """Builder object for setting the wptsync config.
+    """Builder object for setting the wptserve config.
 
     Configuration can be passed in as a dictionary to the constructor, or
     set via attributes after construction. Configuration options must match
@@ -136,6 +111,17 @@ class ConfigBuilder(object):
     dictionary containing the current set of properties. Thus computed
     properties later in the list may depend on the value of earlier
     ones.
+
+
+    :param logger: - A logger object. This is used for logging during
+                     the creation of the configuration, but isn't
+                     part of the configuration
+    :param subdomains: - A set of valid subdomains to include in the
+                         configuration.
+    :param not_subdomains: - A set of invalid subdomains to include in
+                             the configuration.
+    :param config_cls: - A class to use for the configuration. Defaults
+                         to default_config_cls
     """
 
     _default = {
@@ -184,34 +170,27 @@ class ConfigBuilder(object):
                            "ssl_config"]
 
     def __init__(self,
-                 logger=None,
+                 logger,
                  subdomains=set(),
                  not_subdomains=set(),
                  config_cls=None,
                  **kwargs):
 
+        self._logger = logger
         self._data = self._default.copy()
         self._ssl_env = None
 
         self._config_cls = config_cls or self.default_config_cls
 
-        if logger is None:
-            self._logger_name = "web-platform-tests"
-        else:
-            level_name = logging.getLevelName(logger.level)
-            if level_name != "NOTSET":
-                self.log_level = level_name
-            self._logger_name = logger.name
-
-        for k, v in iteritems(self._default):
+        for k, v in self._default.items():
             self._data[k] = kwargs.pop(k, v)
 
         self._data["subdomains"] = subdomains
         self._data["not_subdomains"] = not_subdomains
 
-        for k, new_k in iteritems(_renamed_props):
+        for k, new_k in _renamed_props.items():
             if k in kwargs:
-                self.logger.warning(
+                logger.warning(
                     "%s in config is deprecated; use %s instead" % (
                         k,
                         new_k
@@ -228,12 +207,6 @@ class ConfigBuilder(object):
         else:
             self.__dict__[key] = value
 
-    @property
-    def logger(self):
-        logger = logging.getLogger(self._logger_name)
-        logger.setLevel(self._data["log_level"].upper())
-        return logger
-
     def update(self, override):
         """Load an overrides dict to override config values"""
         override = override.copy()
@@ -242,9 +215,9 @@ class ConfigBuilder(object):
             if k in override:
                 self._set_override(k, override.pop(k))
 
-        for k, new_k in iteritems(_renamed_props):
+        for k, new_k in _renamed_props.items():
             if k in override:
-                self.logger.warning(
+                self._logger.warning(
                     "%s in config is deprecated; use %s instead" % (
                         k,
                         new_k
@@ -270,7 +243,7 @@ class ConfigBuilder(object):
         prefix = "_get_"
         for key in self.computed_properties:
             data[key] = getattr(self, prefix + key)(data)
-        return self._config_cls(self._logger_name, data)
+        return self._config_cls(data)
 
     def __exit__(self, *args):
         self._ssl_env.__exit__(*args)
@@ -287,7 +260,7 @@ class ConfigBuilder(object):
 
     def _get_ports(self, data):
         new_ports = defaultdict(list)
-        for scheme, ports in iteritems(data["ports"]):
+        for scheme, ports in data["ports"].items():
             if scheme in ["wss", "https"] and not sslutils.get_cls(data["ssl"]["type"]).ssl_enabled:
                 continue
             for i, port in enumerate(ports):
@@ -301,7 +274,7 @@ class ConfigBuilder(object):
         hosts[""] = data["browser_host"]
 
         rv = {}
-        for name, host in iteritems(hosts):
+        for name, host in hosts.items():
             rv[name] = {subdomain: (subdomain.encode("idna").decode("ascii") + u"." + host)
                         for subdomain in data["subdomains"]}
             rv[name][""] = host
@@ -313,7 +286,7 @@ class ConfigBuilder(object):
         hosts[""] = data["browser_host"]
 
         rv = {}
-        for name, host in iteritems(hosts):
+        for name, host in hosts.items():
             rv[name] = {subdomain: (subdomain.encode("idna").decode("ascii") + u"." + host)
                         for subdomain in data["not_subdomains"]}
         return rv
@@ -327,13 +300,13 @@ class ConfigBuilder(object):
 
     def _get_domains_set(self, data):
         return {domain
-                for per_host_domains in itervalues(data["domains"])
-                for domain in itervalues(per_host_domains)}
+                for per_host_domains in data["domains"].values()
+                for domain in per_host_domains.values()}
 
     def _get_not_domains_set(self, data):
         return {domain
-                for per_host_domains in itervalues(data["not_domains"])
-                for domain in itervalues(per_host_domains)}
+                for per_host_domains in data["not_domains"].values()
+                for domain in per_host_domains.values()}
 
     def _get_all_domains_set(self, data):
         return data["domains_set"] | data["not_domains_set"]
@@ -342,7 +315,7 @@ class ConfigBuilder(object):
         ssl_type = data["ssl"]["type"]
         ssl_cls = sslutils.get_cls(ssl_type)
         kwargs = data["ssl"].get(ssl_type, {})
-        self._ssl_env = ssl_cls(self.logger, **kwargs)
+        self._ssl_env = ssl_cls(self._logger, **kwargs)
         self._ssl_env.__enter__()
         if self._ssl_env.ssl_enabled:
             key_path, cert_path = self._ssl_env.host_cert_path(data["domains_set"])

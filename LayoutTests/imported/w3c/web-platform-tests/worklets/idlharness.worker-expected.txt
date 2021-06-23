@@ -1,5 +1,5 @@
 
 FAIL worklets interfaces promise_test: Unhandled rejection with value: object "WebIDLParseError: Syntax error at line 1:
-{"error": {"message"
+{"error": {"code"
 ^ Unrecognised tokens"
 

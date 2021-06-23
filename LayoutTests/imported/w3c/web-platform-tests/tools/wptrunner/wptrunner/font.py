@@ -77,13 +77,15 @@ class FontInstaller(object):
 
         # Per https://github.com/web-platform-tests/results-collection/issues/218
         # installing Ahem on macOS is flaky, so check if it actually installed
-        fonts = check_output(['/usr/sbin/system_profiler', '-xml', 'SPFontsDataType'])
+        with open(os.devnull, 'w') as f:
+            fonts = check_output(['/usr/sbin/system_profiler', '-xml', 'SPFontsDataType'], stderr=f)
+
         try:
             # if py3
-            readPlistFromBytes = plistlib.readPlistFromBytes
+            load_plist = plistlib.loads
         except AttributeError:
-            readPlistFromBytes = plistlib.readPlistFromString
-        fonts = readPlistFromBytes(fonts)
+            load_plist = plistlib.readPlistFromString
+        fonts = load_plist(fonts)
         assert len(fonts) == 1
         for font in fonts[0]['_items']:
             if font['path'] == installed_font_path:

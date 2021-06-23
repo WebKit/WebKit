@@ -19,9 +19,8 @@ def get_browser_args(product, channel):
     if product == "servo":
         return ["--install-browser", "--processes=12"]
     if product == "chrome":
-        # Taskcluster machines do not have proper GPUs, so we need to use
-        # software rendering for webgl: https://crbug.com/1130585
-        args = ["--binary-arg=--use-gl=swiftshader-webgl"]
+        # Taskcluster machines do not have GPUs, so use software rendering via --enable-swiftshader.
+        args = ["--enable-swiftshader"]
         if channel == "nightly":
             args.extend(["--install-browser", "--install-webdriver"])
         return args
@@ -62,7 +61,7 @@ def main(product, channel, commit_range, wpt_args):
     )
     logger.addHandler(handler)
 
-    subprocess.call(['python', './wpt', 'manifest-download'])
+    subprocess.call(['python3', './wpt', 'manifest-download'])
 
     if commit_range:
         logger.info(
@@ -88,7 +87,7 @@ def main(product, channel, commit_range, wpt_args):
     if product == "servo" and "--test-type=wdspec" in wpt_args:
         wpt_args = [item for item in wpt_args if not item.startswith("--processes")]
 
-    command = ["python", "./wpt", "run"] + wpt_args + [product]
+    command = ["python3", "./wpt", "run"] + wpt_args + [product]
 
     logger.info("Executing command: %s" % " ".join(command))
     with open("/home/test/artifacts/checkrun.md", "a") as f:
@@ -118,4 +117,4 @@ if __name__ == "__main__":
                         help="Channel of the browser")
     parser.add_argument("wpt_args", nargs="*",
                         help="Arguments to forward to `wpt run` command")
-    main(**vars(parser.parse_args()))
+    main(**vars(parser.parse_args()))  # type: ignore

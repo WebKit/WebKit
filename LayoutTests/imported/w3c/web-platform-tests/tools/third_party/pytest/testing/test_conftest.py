@@ -1,24 +1,13 @@
-from __future__ import absolute_import, division, print_function
-from textwrap import dedent
+import os
+import textwrap
 
-import _pytest._code
 import py
+
 import pytest
+from _pytest.config import ExitCode
 from _pytest.config import PytestPluginManager
-from _pytest.main import EXIT_NOTESTSCOLLECTED, EXIT_USAGEERROR
-
-
-@pytest.fixture(scope="module", params=["global", "inpackage"])
-def basedir(request, tmpdir_factory):
-    from _pytest.tmpdir import tmpdir
-
-    tmpdir = tmpdir(request, tmpdir_factory)
-    tmpdir.ensure("adir/conftest.py").write("a=1 ; Directory = 3")
-    tmpdir.ensure("adir/b/conftest.py").write("b=2 ; a = 1.5")
-    if request.param == "inpackage":
-        tmpdir.ensure("adir/__init__.py")
-        tmpdir.ensure("adir/b/__init__.py")
-    return tmpdir
+from _pytest.pathlib import Path
+from _pytest.pathlib import symlink_or_skip
 
 
 def ConftestWithSetinitial(path):
@@ -28,58 +17,72 @@ def ConftestWithSetinitial(path):
 
 
 def conftest_setinitial(conftest, args, confcutdir=None):
-
-    class Namespace(object):
-
+    class Namespace:
         def __init__(self):
             self.file_or_dir = args
             self.confcutdir = str(confcutdir)
             self.noconftest = False
+            self.pyargs = False
+            self.importmode = "prepend"
 
     conftest._set_initial_conftests(Namespace())
 
 
-class TestConftestValueAccessGlobal(object):
+@pytest.mark.usefixtures("_sys_snapshot")
+class TestConftestValueAccessGlobal:
+    @pytest.fixture(scope="module", params=["global", "inpackage"])
+    def basedir(self, request, tmpdir_factory):
+        tmpdir = tmpdir_factory.mktemp("basedir", numbered=True)
+        tmpdir.ensure("adir/conftest.py").write("a=1 ; Directory = 3")
+        tmpdir.ensure("adir/b/conftest.py").write("b=2 ; a = 1.5")
+        if request.param == "inpackage":
+            tmpdir.ensure("adir/__init__.py")
+            tmpdir.ensure("adir/b/__init__.py")
+
+        yield tmpdir
 
     def test_basic_init(self, basedir):
         conftest = PytestPluginManager()
         p = basedir.join("adir")
-        assert conftest._rget_with_confmod("a", p)[1] == 1
+        assert conftest._rget_with_confmod("a", p, importmode="prepend")[1] == 1
 
     def test_immediate_initialiation_and_incremental_are_the_same(self, basedir):
         conftest = PytestPluginManager()
-        len(conftest._path2confmods)
-        conftest._getconftestmodules(basedir)
-        snap1 = len(conftest._path2confmods)
-        # assert len(conftest._path2confmods) == snap1 + 1
-        conftest._getconftestmodules(basedir.join("adir"))
-        assert len(conftest._path2confmods) == snap1 + 1
-        conftest._getconftestmodules(basedir.join("b"))
-        assert len(conftest._path2confmods) == snap1 + 2
+        assert not len(conftest._dirpath2confmods)
+        conftest._getconftestmodules(basedir, importmode="prepend")
+        snap1 = len(conftest._dirpath2confmods)
+        assert snap1 == 1
+        conftest._getconftestmodules(basedir.join("adir"), importmode="prepend")
+        assert len(conftest._dirpath2confmods) == snap1 + 1
+        conftest._getconftestmodules(basedir.join("b"), importmode="prepend")
+        assert len(conftest._dirpath2confmods) == snap1 + 2
 
     def test_value_access_not_existing(self, basedir):
         conftest = ConftestWithSetinitial(basedir)
         with pytest.raises(KeyError):
-            conftest._rget_with_confmod("a", basedir)
+            conftest._rget_with_confmod("a", basedir, importmode="prepend")
 
     def test_value_access_by_path(self, basedir):
         conftest = ConftestWithSetinitial(basedir)
         adir = basedir.join("adir")
-        assert conftest._rget_with_confmod("a", adir)[1] == 1
-        assert conftest._rget_with_confmod("a", adir.join("b"))[1] == 1.5
+        assert conftest._rget_with_confmod("a", adir, importmode="prepend")[1] == 1
+        assert (
+            conftest._rget_with_confmod("a", adir.join("b"), importmode="prepend")[1]
+            == 1.5
+        )
 
     def test_value_access_with_confmod(self, basedir):
         startdir = basedir.join("adir", "b")
         startdir.ensure("xx", dir=True)
         conftest = ConftestWithSetinitial(startdir)
-        mod, value = conftest._rget_with_confmod("a", startdir)
+        mod, value = conftest._rget_with_confmod("a", startdir, importmode="prepend")
         assert value == 1.5
         path = py.path.local(mod.__file__)
         assert path.dirpath() == basedir.join("adir", "b")
         assert path.purebasename.startswith("conftest")
 
 
-def test_conftest_in_nonpkg_with_init(tmpdir):
+def test_conftest_in_nonpkg_with_init(tmpdir, _sys_snapshot):
     tmpdir.ensure("adir-1.0/conftest.py").write("a=1 ; Directory = 3")
     tmpdir.ensure("adir-1.0/b/conftest.py").write("b=2 ; a = 1.5")
     tmpdir.ensure("adir-1.0/b/__init__.py")
@@ -92,7 +95,7 @@ def test_doubledash_considered(testdir):
     conf.ensure("conftest.py")
     conftest = PytestPluginManager()
     conftest_setinitial(conftest, [conf.basename, conf.basename])
-    values = conftest._getconftestmodules(conf)
+    values = conftest._getconftestmodules(conf, importmode="prepend")
     assert len(values) == 1
 
 
@@ -115,13 +118,13 @@ def test_conftest_global_import(testdir):
         import py, pytest
         from _pytest.config import PytestPluginManager
         conf = PytestPluginManager()
-        mod = conf._importconftest(py.path.local("conftest.py"))
+        mod = conf._importconftest(py.path.local("conftest.py"), importmode="prepend")
         assert mod.x == 3
         import conftest
         assert conftest is mod, (conftest, mod)
         subconf = py.path.local().ensure("sub", "conftest.py")
         subconf.write("y=4")
-        mod2 = conf._importconftest(subconf)
+        mod2 = conf._importconftest(subconf, importmode="prepend")
         assert mod != mod2
         assert mod2.y == 4
         import conftest
@@ -137,17 +140,17 @@ def test_conftestcutdir(testdir):
     p = testdir.mkdir("x")
     conftest = PytestPluginManager()
     conftest_setinitial(conftest, [testdir.tmpdir], confcutdir=p)
-    values = conftest._getconftestmodules(p)
+    values = conftest._getconftestmodules(p, importmode="prepend")
     assert len(values) == 0
-    values = conftest._getconftestmodules(conf.dirpath())
+    values = conftest._getconftestmodules(conf.dirpath(), importmode="prepend")
     assert len(values) == 0
     assert conf not in conftest._conftestpath2mod
     # but we can still import a conftest directly
-    conftest._importconftest(conf)
-    values = conftest._getconftestmodules(conf.dirpath())
+    conftest._importconftest(conf, importmode="prepend")
+    values = conftest._getconftestmodules(conf.dirpath(), importmode="prepend")
     assert values[0].__file__.startswith(str(conf))
     # and all sub paths get updated properly
-    values = conftest._getconftestmodules(p)
+    values = conftest._getconftestmodules(p, importmode="prepend")
     assert len(values) == 1
     assert values[0].__file__.startswith(str(conf))
 
@@ -156,7 +159,7 @@ def test_conftestcutdir_inplace_considered(testdir):
     conf = testdir.makeconftest("")
     conftest = PytestPluginManager()
     conftest_setinitial(conftest, [conf.dirpath()], confcutdir=conf.dirpath())
-    values = conftest._getconftestmodules(conf.dirpath())
+    values = conftest._getconftestmodules(conf.dirpath(), importmode="prepend")
     assert len(values) == 1
     assert values[0].__file__.startswith(str(conf))
 
@@ -167,11 +170,12 @@ def test_setinitial_conftest_subdirs(testdir, name):
     subconftest = sub.ensure("conftest.py")
     conftest = PytestPluginManager()
     conftest_setinitial(conftest, [sub.dirpath()], confcutdir=testdir.tmpdir)
+    key = Path(str(subconftest)).resolve()
     if name not in ("whatever", ".dotdir"):
-        assert subconftest in conftest._conftestpath2mod
+        assert key in conftest._conftestpath2mod
         assert len(conftest._conftestpath2mod) == 1
     else:
-        assert subconftest not in conftest._conftestpath2mod
+        assert key not in conftest._conftestpath2mod
         assert len(conftest._conftestpath2mod) == 0
 
 
@@ -179,50 +183,137 @@ def test_conftest_confcutdir(testdir):
     testdir.makeconftest("assert 0")
     x = testdir.mkdir("x")
     x.join("conftest.py").write(
-        _pytest._code.Source(
+        textwrap.dedent(
+            """\
+            def pytest_addoption(parser):
+                parser.addoption("--xyz", action="store_true")
             """
-        def pytest_addoption(parser):
-            parser.addoption("--xyz", action="store_true")
-    """
         )
     )
     result = testdir.runpytest("-h", "--confcutdir=%s" % x, x)
     result.stdout.fnmatch_lines(["*--xyz*"])
-    assert "warning: could not load initial" not in result.stdout.str()
+    result.stdout.no_fnmatch_line("*warning: could not load initial*")
+
+
+def test_conftest_symlink(testdir):
+    """`conftest.py` discovery follows normal path resolution and does not resolve symlinks."""
+    # Structure:
+    # /real
+    # /real/conftest.py
+    # /real/app
+    # /real/app/tests
+    # /real/app/tests/test_foo.py
+
+    # Links:
+    # /symlinktests -> /real/app/tests (running at symlinktests should fail)
+    # /symlink -> /real (running at /symlink should work)
+
+    real = testdir.tmpdir.mkdir("real")
+    realtests = real.mkdir("app").mkdir("tests")
+    symlink_or_skip(realtests, testdir.tmpdir.join("symlinktests"))
+    symlink_or_skip(real, testdir.tmpdir.join("symlink"))
+    testdir.makepyfile(
+        **{
+            "real/app/tests/test_foo.py": "def test1(fixture): pass",
+            "real/conftest.py": textwrap.dedent(
+                """
+                import pytest
+
+                print("conftest_loaded")
+
+                @pytest.fixture
+                def fixture():
+                    print("fixture_used")
+                """
+            ),
+        }
+    )
+
+    # Should fail because conftest cannot be found from the link structure.
+    result = testdir.runpytest("-vs", "symlinktests")
+    result.stdout.fnmatch_lines(["*fixture 'fixture' not found*"])
+    assert result.ret == ExitCode.TESTS_FAILED
+
+    # Should not cause "ValueError: Plugin already registered" (#4174).
+    result = testdir.runpytest("-vs", "symlink")
+    assert result.ret == ExitCode.OK
+
+
+def test_conftest_symlink_files(testdir):
+    """Symlinked conftest.py are found when pytest is executed in a directory with symlinked
+    files."""
+    real = testdir.tmpdir.mkdir("real")
+    source = {
+        "app/test_foo.py": "def test1(fixture): pass",
+        "app/__init__.py": "",
+        "app/conftest.py": textwrap.dedent(
+            """
+            import pytest
+
+            print("conftest_loaded")
+
+            @pytest.fixture
+            def fixture():
+                print("fixture_used")
+            """
+        ),
+    }
+    testdir.makepyfile(**{"real/%s" % k: v for k, v in source.items()})
+
+    # Create a build directory that contains symlinks to actual files
+    # but doesn't symlink actual directories.
+    build = testdir.tmpdir.mkdir("build")
+    build.mkdir("app")
+    for f in source:
+        symlink_or_skip(real.join(f), build.join(f))
+    build.chdir()
+    result = testdir.runpytest("-vs", "app/test_foo.py")
+    result.stdout.fnmatch_lines(["*conftest_loaded*", "PASSED"])
+    assert result.ret == ExitCode.OK
+
+
+@pytest.mark.skipif(
+    os.path.normcase("x") != os.path.normcase("X"),
+    reason="only relevant for case insensitive file systems",
+)
+def test_conftest_badcase(testdir):
+    """Check conftest.py loading when directory casing is wrong (#5792)."""
+    testdir.tmpdir.mkdir("JenkinsRoot").mkdir("test")
+    source = {"setup.py": "", "test/__init__.py": "", "test/conftest.py": ""}
+    testdir.makepyfile(**{"JenkinsRoot/%s" % k: v for k, v in source.items()})
+
+    testdir.tmpdir.join("jenkinsroot/test").chdir()
+    result = testdir.runpytest()
+    assert result.ret == ExitCode.NO_TESTS_COLLECTED
+
+
+def test_conftest_uppercase(testdir):
+    """Check conftest.py whose qualified name contains uppercase characters (#5819)"""
+    source = {"__init__.py": "", "Foo/conftest.py": "", "Foo/__init__.py": ""}
+    testdir.makepyfile(**source)
+
+    testdir.tmpdir.chdir()
+    result = testdir.runpytest()
+    assert result.ret == ExitCode.NO_TESTS_COLLECTED
 
 
 def test_no_conftest(testdir):
     testdir.makeconftest("assert 0")
     result = testdir.runpytest("--noconftest")
-    assert result.ret == EXIT_NOTESTSCOLLECTED
+    assert result.ret == ExitCode.NO_TESTS_COLLECTED
 
     result = testdir.runpytest()
-    assert result.ret == EXIT_USAGEERROR
-
-
-def test_conftest_existing_resultlog(testdir):
-    x = testdir.mkdir("tests")
-    x.join("conftest.py").write(
-        _pytest._code.Source(
-            """
-        def pytest_addoption(parser):
-            parser.addoption("--xyz", action="store_true")
-    """
-        )
-    )
-    testdir.makefile(ext=".log", result="")  # Writes result.log
-    result = testdir.runpytest("-h", "--resultlog", "result.log")
-    result.stdout.fnmatch_lines(["*--xyz*"])
+    assert result.ret == ExitCode.USAGE_ERROR
 
 
 def test_conftest_existing_junitxml(testdir):
     x = testdir.mkdir("tests")
     x.join("conftest.py").write(
-        _pytest._code.Source(
+        textwrap.dedent(
+            """\
+            def pytest_addoption(parser):
+                parser.addoption("--xyz", action="store_true")
             """
-        def pytest_addoption(parser):
-            parser.addoption("--xyz", action="store_true")
-    """
         )
     )
     testdir.makefile(ext=".xml", junit="")  # Writes junit.xml
@@ -236,54 +327,54 @@ def test_conftest_import_order(testdir, monkeypatch):
     ct2 = sub.join("conftest.py")
     ct2.write("")
 
-    def impct(p):
+    def impct(p, importmode):
         return p
 
     conftest = PytestPluginManager()
     conftest._confcutdir = testdir.tmpdir
     monkeypatch.setattr(conftest, "_importconftest", impct)
-    assert conftest._getconftestmodules(sub) == [ct1, ct2]
+    assert conftest._getconftestmodules(sub, importmode="prepend") == [ct1, ct2]
 
 
-def test_fixture_dependency(testdir, monkeypatch):
+def test_fixture_dependency(testdir):
     ct1 = testdir.makeconftest("")
     ct1 = testdir.makepyfile("__init__.py")
     ct1.write("")
     sub = testdir.mkdir("sub")
     sub.join("__init__.py").write("")
     sub.join("conftest.py").write(
-        dedent(
+        textwrap.dedent(
+            """\
+            import pytest
+
+            @pytest.fixture
+            def not_needed():
+                assert False, "Should not be called!"
+
+            @pytest.fixture
+            def foo():
+                assert False, "Should not be called!"
+
+            @pytest.fixture
+            def bar(foo):
+                return 'bar'
             """
-        import pytest
-
-        @pytest.fixture
-        def not_needed():
-            assert False, "Should not be called!"
-
-        @pytest.fixture
-        def foo():
-            assert False, "Should not be called!"
-
-        @pytest.fixture
-        def bar(foo):
-            return 'bar'
-    """
         )
     )
     subsub = sub.mkdir("subsub")
     subsub.join("__init__.py").write("")
     subsub.join("test_bar.py").write(
-        dedent(
+        textwrap.dedent(
+            """\
+            import pytest
+
+            @pytest.fixture
+            def bar():
+                return 'sub bar'
+
+            def test_event_fixture(bar):
+                assert bar == 'sub bar'
             """
-        import pytest
-
-        @pytest.fixture
-        def bar():
-            return 'sub bar'
-
-        def test_event_fixture(bar):
-            assert bar == 'sub bar'
-    """
         )
     )
     result = testdir.runpytest("sub")
@@ -293,11 +384,11 @@ def test_fixture_dependency(testdir, monkeypatch):
 def test_conftest_found_with_double_dash(testdir):
     sub = testdir.mkdir("sub")
     sub.join("conftest.py").write(
-        dedent(
+        textwrap.dedent(
+            """\
+            def pytest_addoption(parser):
+                parser.addoption("--hello-world", action="store_true")
             """
-        def pytest_addoption(parser):
-            parser.addoption("--hello-world", action="store_true")
-    """
         )
     )
     p = sub.join("test_hello.py")
@@ -310,8 +401,7 @@ def test_conftest_found_with_double_dash(testdir):
     )
 
 
-class TestConftestVisibility(object):
-
+class TestConftestVisibility:
     def _setup_tree(self, testdir):  # for issue616
         # example mostly taken from:
         # https://mail.python.org/pipermail/pytest-dev/2014-September/002617.html
@@ -319,61 +409,60 @@ class TestConftestVisibility(object):
         package = testdir.mkdir("package")
 
         package.join("conftest.py").write(
-            dedent(
+            textwrap.dedent(
                 """\
-            import pytest
-            @pytest.fixture
-            def fxtr():
-                return "from-package"
-        """
+                import pytest
+                @pytest.fixture
+                def fxtr():
+                    return "from-package"
+                """
             )
         )
         package.join("test_pkgroot.py").write(
-            dedent(
+            textwrap.dedent(
                 """\
-            def test_pkgroot(fxtr):
-                assert fxtr == "from-package"
-        """
+                def test_pkgroot(fxtr):
+                    assert fxtr == "from-package"
+                """
             )
         )
 
         swc = package.mkdir("swc")
         swc.join("__init__.py").ensure()
         swc.join("conftest.py").write(
-            dedent(
+            textwrap.dedent(
                 """\
-            import pytest
-            @pytest.fixture
-            def fxtr():
-                return "from-swc"
-        """
+                import pytest
+                @pytest.fixture
+                def fxtr():
+                    return "from-swc"
+                """
             )
         )
         swc.join("test_with_conftest.py").write(
-            dedent(
+            textwrap.dedent(
                 """\
-            def test_with_conftest(fxtr):
-                assert fxtr == "from-swc"
-
-        """
+                def test_with_conftest(fxtr):
+                    assert fxtr == "from-swc"
+                """
             )
         )
 
         snc = package.mkdir("snc")
         snc.join("__init__.py").ensure()
         snc.join("test_no_conftest.py").write(
-            dedent(
+            textwrap.dedent(
                 """\
-            def test_no_conftest(fxtr):
-                assert fxtr == "from-package"   # No local conftest.py, so should
-                                                # use value from parent dir's
-
-        """
+                def test_no_conftest(fxtr):
+                    assert fxtr == "from-package"   # No local conftest.py, so should
+                                                    # use value from parent dir's
+                """
             )
         )
         print("created directory structure:")
-        for x in testdir.tmpdir.visit():
-            print("   " + x.relto(testdir.tmpdir))
+        tmppath = Path(str(testdir.tmpdir))
+        for x in tmppath.rglob(""):
+            print("   " + str(x.relative_to(tmppath)))
 
         return {"runner": runner, "package": package, "swc": swc, "snc": snc}
 
@@ -404,10 +493,10 @@ class TestConftestVisibility(object):
             ("snc", ".", 1),
         ],
     )
-    @pytest.mark.issue616
     def test_parsefactories_relative_node_ids(
         self, testdir, chdir, testarg, expect_ntests_passed
     ):
+        """#616"""
         dirs = self._setup_tree(testdir)
         print("pytest run in cwd: %s" % (dirs[chdir].relto(testdir.tmpdir)))
         print("pytestarg        : %s" % (testarg))
@@ -428,31 +517,31 @@ def test_search_conftest_up_to_inifile(testdir, confcutdir, passed, error):
     src = root.join("src").ensure(dir=1)
     src.join("pytest.ini").write("[pytest]")
     src.join("conftest.py").write(
-        _pytest._code.Source(
+        textwrap.dedent(
+            """\
+            import pytest
+            @pytest.fixture
+            def fix1(): pass
             """
-        import pytest
-        @pytest.fixture
-        def fix1(): pass
-    """
         )
     )
     src.join("test_foo.py").write(
-        _pytest._code.Source(
+        textwrap.dedent(
+            """\
+            def test_1(fix1):
+                pass
+            def test_2(out_of_reach):
+                pass
             """
-        def test_1(fix1):
-            pass
-        def test_2(out_of_reach):
-            pass
-    """
         )
     )
     root.join("conftest.py").write(
-        _pytest._code.Source(
+        textwrap.dedent(
+            """\
+            import pytest
+            @pytest.fixture
+            def out_of_reach(): pass
             """
-        import pytest
-        @pytest.fixture
-        def out_of_reach(): pass
-    """
         )
     )
 
@@ -470,19 +559,19 @@ def test_search_conftest_up_to_inifile(testdir, confcutdir, passed, error):
 
 def test_issue1073_conftest_special_objects(testdir):
     testdir.makeconftest(
-        """
+        """\
         class DontTouchMe(object):
             def __getattr__(self, x):
                 raise Exception('cant touch me')
 
         x = DontTouchMe()
-    """
+        """
     )
     testdir.makepyfile(
-        """
+        """\
         def test_some():
             pass
-    """
+        """
     )
     res = testdir.runpytest()
     assert res.ret == 0
@@ -490,15 +579,15 @@ def test_issue1073_conftest_special_objects(testdir):
 
 def test_conftest_exception_handling(testdir):
     testdir.makeconftest(
-        """
+        """\
         raise ValueError()
-    """
+        """
     )
     testdir.makepyfile(
-        """
+        """\
         def test_some():
             pass
-    """
+        """
     )
     res = testdir.runpytest()
     assert res.ret == 4
@@ -513,7 +602,7 @@ def test_hook_proxy(testdir):
         **{
             "root/demo-0/test_foo1.py": "def test1(): pass",
             "root/demo-a/test_foo2.py": "def test1(): pass",
-            "root/demo-a/conftest.py": """
+            "root/demo-a/conftest.py": """\
             def pytest_ignore_collect(path, config):
                 return True
             """,
@@ -531,13 +620,13 @@ def test_required_option_help(testdir):
     testdir.makeconftest("assert 0")
     x = testdir.mkdir("x")
     x.join("conftest.py").write(
-        _pytest._code.Source(
+        textwrap.dedent(
+            """\
+            def pytest_addoption(parser):
+                parser.addoption("--xyz", action="store_true", required=True)
             """
-        def pytest_addoption(parser):
-            parser.addoption("--xyz", action="store_true", required=True)
-    """
         )
     )
     result = testdir.runpytest("-h", x)
-    assert "argument --xyz is required" not in result.stdout.str()
+    result.stdout.no_fnmatch_line("*argument --xyz is required*")
     assert "general:" in result.stdout.str()

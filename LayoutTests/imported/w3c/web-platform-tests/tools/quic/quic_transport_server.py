@@ -6,7 +6,7 @@ import re
 import struct
 import urllib.parse
 import traceback
-from typing import Dict, Optional
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from aioquic.asyncio import QuicConnectionProtocol, serve
 from aioquic.quic.configuration import QuicConfiguration
@@ -21,7 +21,7 @@ handlers_path = ''
 
 
 class EventHandler:
-    def __init__(self, connection: QuicConnectionProtocol, global_dict: Dict):
+    def __init__(self, connection: QuicConnectionProtocol, global_dict: Dict[str, Any]):
         self.connection = connection
         self.global_dict = global_dict
 
@@ -39,14 +39,13 @@ class EventHandler:
             self.global_dict[name](self.connection, event)
 
 
-class QuicTransportProtocol(QuicConnectionProtocol):
-    def __init__(self, *args, **kwargs) -> None:
+class QuicTransportProtocol(QuicConnectionProtocol):  # type: ignore
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.streams = dict()
-        self.pending_events = []
+        self.pending_events: List[QuicEvent] = []
         self.client_indication_finished = False
         self.client_indication_data = b''
-        self.handler = None
+        self.handler: Optional[EventHandler] = None
 
     def quic_event_received(self, event: QuicEvent) -> None:
         prefix = '!!'
@@ -62,6 +61,7 @@ class QuicTransportProtocol(QuicConnectionProtocol):
                     raise Exception('too large data for client indication')
                 if event.end_stream:
                     self.process_client_indication()
+                    assert self.handler is not None
                     if self.is_closing_or_closed():
                         return
                     prefix = 'Event handling Error: '
@@ -79,7 +79,7 @@ class QuicTransportProtocol(QuicConnectionProtocol):
             traceback.print_exc()
             self.close()
 
-    def parse_client_indication(self, bs):
+    def parse_client_indication(self, bs: io.BytesIO) -> Iterator[Tuple[int, bytes]]:
         while True:
             key_b = bs.read(2)
             if len(key_b) == 0:
@@ -117,8 +117,10 @@ class QuicTransportProtocol(QuicConnectionProtocol):
         logger.info('origin = %s, path = %s', origin_string, path_string)
         if origin is None:
             raise Exception('No origin is given')
+        assert origin_string is not None
         if path is None:
             raise Exception('No path is given')
+        assert path_string is not None
         if origin.scheme != 'https' and origin.scheme != 'http':
             raise Exception('Invalid origin: %s' % origin_string)
         if origin.netloc == '':
@@ -138,8 +140,8 @@ class QuicTransportProtocol(QuicConnectionProtocol):
         self.client_indication_finished = True
         logger.info('Client indication finished')
 
-    def create_event_handler(self, handler_name: str) -> None:
-        global_dict = {}
+    def create_event_handler(self, handler_name: str) -> EventHandler:
+        global_dict: Dict[str, Any] = {}
         with open(handlers_path + '/' + handler_name) as f:
             exec(f.read(), global_dict)
         return EventHandler(self, global_dict)
@@ -167,7 +169,7 @@ class SessionTicketStore:
         return self.tickets.pop(label, None)
 
 
-def start(kwargs):
+def start(**kwargs: Any) -> None:
     configuration = QuicConfiguration(
         alpn_protocols=['wq-vvv-01'] + ['siduck'],
         is_client=False,

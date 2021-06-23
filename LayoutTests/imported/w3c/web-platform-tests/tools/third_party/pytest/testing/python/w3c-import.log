@@ -16,11 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/approx.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/collect.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/fixture.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/fixtures.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/integration.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/metafunc.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/raises.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/setup_only.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/setup_plan.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/show_fixtures_per_test.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/python/test_deprecations.py

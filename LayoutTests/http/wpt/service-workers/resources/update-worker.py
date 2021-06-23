@@ -12,4 +12,4 @@ self.addEventListener("fetch", async (event) => {
 
 
 def main(request, response):
-  return [('Content-Type', 'application/javascript'), ('Cache-Control', 'np-cache, no-store')], script % time.time()
+  return [(b'Content-Type', b'application/javascript'), (b'Cache-Control', b'np-cache, no-store')], script % time.time()

@@ -1,5 +1,5 @@
 def main(request, response):
-    headers = [("Cache-Control", "no-cache"),
-               ("Pragma", "no-cache"),
-               ("Location", request.GET['location'])]
+    headers = [(b"Cache-Control", b"no-cache"),
+               (b"Pragma", b"no-cache"),
+               (b"Location", request.GET[b'location'])]
     return 302, headers, ""

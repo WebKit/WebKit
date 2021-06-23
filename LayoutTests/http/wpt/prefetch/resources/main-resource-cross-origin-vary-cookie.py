@@ -1,5 +1,7 @@
+from wptserve.utils import isomorphic_decode
+
 def main(request, response):
-    headers = [("Content-Type", "text/html"), ("Vary", "Cookie")]
+    headers = [(b"Content-Type", b"text/html"), (b"Vary", b"Cookie")]
 
     document = """
 <!DOCTYPE html>
@@ -12,4 +14,4 @@ def main(request, response):
 <body onload="test()">
 """
 
-    return headers, document % {'cookie': request.headers.get("Cookie", "") }
+    return headers, document % {'cookie': isomorphic_decode(request.headers.get(b"Cookie", b"")) }

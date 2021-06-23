@@ -1,8 +1,8 @@
-import mock
+from unittest import mock
+
 import pytest
 
 from tools.ci.tc import decision
-from six import iteritems
 
 
 @pytest.mark.parametrize("run_jobs,tasks,expected", [
@@ -42,7 +42,7 @@ def test_extra_jobs_pr(msg, expected, event):
         """Copy obj, except if it's a string with the value <message>
         replace it with the value of the msg argument"""
         if isinstance(obj, dict):
-            return {key: sub(value) for (key, value) in iteritems(obj)}
+            return {key: sub(value) for (key, value) in obj.items()}
         elif isinstance(obj, list):
             return [sub(value) for value in obj]
         elif obj == "<message>":

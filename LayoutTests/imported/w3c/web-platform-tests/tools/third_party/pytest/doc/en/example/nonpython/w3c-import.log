@@ -16,4 +16,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/nonpython/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/nonpython/conftest.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/nonpython/test_simple.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/nonpython/test_simple.yaml

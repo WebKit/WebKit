@@ -3,8 +3,7 @@ import re
 import os
 from collections import deque
 from io import BytesIO
-from six import binary_type, iteritems, text_type
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 from fnmatch import fnmatch
 
 MYPY = False
@@ -74,7 +73,7 @@ def read_script_metadata(f, regexp):
                value.
     """
     for line in f:
-        assert isinstance(line, binary_type), line
+        assert isinstance(line, bytes), line
         m = regexp.match(line)
         if not m:
             break
@@ -85,9 +84,13 @@ def read_script_metadata(f, regexp):
 _any_variants = {
     "window": {"suffix": ".any.html"},
     "serviceworker": {"force_https": True},
+    "serviceworker-module": {"force_https": True},
     "sharedworker": {},
+    "sharedworker-module": {},
     "dedicatedworker": {"suffix": ".any.worker.html"},
+    "dedicatedworker-module": {"suffix": ".any.worker-module.html"},
     "worker": {"longhand": {"dedicatedworker", "sharedworker", "serviceworker"}},
+    "worker-module": {},
     "jsshell": {"suffix": ".any.js"},
 }  # type: Dict[Text, Dict[Text, Any]]
 
@@ -97,7 +100,7 @@ def get_any_variants(item):
     """
     Returns a set of variants (strings) defined by the given keyword.
     """
-    assert isinstance(item, text_type), item
+    assert isinstance(item, str), item
 
     variant = _any_variants.get(item, None)
     if variant is None:
@@ -119,7 +122,7 @@ def parse_variants(value):
     """
     Returns a set of variants (strings) defined by a comma-separated value.
     """
-    assert isinstance(value, text_type), value
+    assert isinstance(value, str), value
 
     if value == "":
         return get_default_any_variants()
@@ -138,7 +141,7 @@ def global_suffixes(value):
     variant is intended to run in a JS shell, for the variants defined by the
     given comma-separated value.
     """
-    assert isinstance(value, text_type), value
+    assert isinstance(value, str), value
 
     rv = set()
 
@@ -167,27 +170,27 @@ def global_variant_url(url, suffix):
 
 
 def _parse_html(f):
-    # type: (BinaryIO) -> ElementTree.ElementTree
+    # type: (BinaryIO) -> ElementTree.Element
     doc = html5lib.parse(f, treebuilder="etree", useChardet=False)
     if MYPY:
-        return cast(ElementTree.ElementTree, doc)
+        return cast(ElementTree.Element, doc)
     return doc
 
 def _parse_xml(f):
-    # type: (BinaryIO) -> ElementTree.ElementTree
+    # type: (BinaryIO) -> ElementTree.Element
     try:
         # raises ValueError with an unsupported encoding,
         # ParseError when there's an undefined entity
-        return ElementTree.parse(f)
+        return ElementTree.parse(f).getroot()
     except (ValueError, ElementTree.ParseError):
         f.seek(0)
-        return ElementTree.parse(f, XMLParser.XMLParser())  # type: ignore
+        return ElementTree.parse(f, XMLParser.XMLParser()).getroot()  # type: ignore
 
 
 class SourceFile(object):
     parsers = {u"html":_parse_html,
                u"xhtml":_parse_xml,
-               u"svg":_parse_xml}  # type: Dict[Text, Callable[[BinaryIO], ElementTree.ElementTree]]
+               u"svg":_parse_xml}  # type: Dict[Text, Callable[[BinaryIO], ElementTree.Element]]
 
     root_dir_non_test = {u"common"}
 
@@ -243,7 +246,7 @@ class SourceFile(object):
 
         if "__cached_properties__" in rv:
             cached_properties = rv["__cached_properties__"]
-            rv = {key:value for key, value in iteritems(rv) if key not in cached_properties}
+            rv = {key:value for key, value in rv.items() if key not in cached_properties}
             del rv["__cached_properties__"]
         return rv
 
@@ -304,7 +307,7 @@ class SourceFile(object):
                 content = f.read()
 
             data = b"".join((b"blob ", b"%d" % len(content), b"\0", content))
-            self._hash = text_type(hashlib.sha1(data).hexdigest())
+            self._hash = str(hashlib.sha1(data).hexdigest())
 
         return self._hash
 
@@ -447,7 +450,7 @@ class SourceFile(object):
 
     @cached_property
     def root(self):
-        # type: () -> Optional[Union[ElementTree.Element, ElementTree.ElementTree]]
+        # type: () -> Optional[ElementTree.Element]
         """Return an ElementTree Element for the root node of the file if it contains
         markup, or None if it does not"""
         if not self.markup_type:
@@ -461,12 +464,7 @@ class SourceFile(object):
             except Exception:
                 return None
 
-        if hasattr(tree, "getroot"):
-            root = tree.getroot()  # type: Union[ElementTree.Element, ElementTree.ElementTree]
-        else:
-            root = tree
-
-        return root
+        return tree
 
     @cached_property
     def timeout_nodes(self):

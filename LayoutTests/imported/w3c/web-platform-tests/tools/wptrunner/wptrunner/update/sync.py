@@ -67,7 +67,7 @@ class UpdateCheckout(Step):
                          state.local_branch)
         sync_path = os.path.abspath(sync_tree.root)
         if sync_path not in sys.path:
-            from update import setup_paths
+            from .update import setup_paths
             setup_paths(sync_path)
 
     def restore(self, state):
@@ -98,7 +98,7 @@ class UpdateManifest(Step):
     provides = ["manifest_path", "test_manifest"]
 
     def create(self, state):
-        from manifest import manifest
+        from manifest import manifest  # type: ignore
         state.manifest_path = os.path.join(state.metadata_path, "MANIFEST.json")
         state.test_manifest = manifest.load_and_update(state.sync["path"],
                                                        state.manifest_path,
