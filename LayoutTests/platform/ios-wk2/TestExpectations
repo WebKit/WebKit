@@ -1939,3 +1939,5 @@ webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-s
 webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/226826 http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
+
+webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout ]
