@@ -45,9 +45,15 @@
 #include "PlatformCALayer.h"
 #endif
 
-#if !USE(ANGLE)
+#if USE(ANGLE)
+#include "GraphicsContextGLANGLEUtilities.h"
+#else
 #include "ANGLEWebKitBridge.h"
 #include "ExtensionsGLOpenGLCommon.h"
+#endif
+
+#if PLATFORM(MAC)
+#include "ScopedHighPerformanceGPURequest.h"
 #endif
 
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
@@ -70,10 +76,6 @@ class GraphicsContextGLIOSurfaceSwapChain;
 namespace Nicosia {
 class GCGLLayer;
 }
-#endif
-
-#if PLATFORM(MAC)
-#include "ScopedHighPerformanceGPURequest.h"
 #endif
 
 namespace WebCore {
@@ -574,6 +576,10 @@ private:
     bool allocateAndBindDisplayBufferBacking();
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
 #endif
+#if USE(ANGLE)
+    // Returns false if context should be lost due to timeout.
+    bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
+#endif
 
 #if PLATFORM(COCOA)
     GraphicsContextGLIOSurfaceSwapChain* m_swapChain { nullptr };
@@ -786,6 +792,11 @@ private:
 #endif
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     std::unique_ptr<GraphicsContextGLCV> m_cv;
+#endif
+#if USE(ANGLE)
+    static constexpr size_t maxPendingFrames = 3;
+    size_t m_oldestFrameCompletionFence { 0 };
+    ScopedGLFence m_frameCompletionFences[maxPendingFrames];
 #endif
 };
 

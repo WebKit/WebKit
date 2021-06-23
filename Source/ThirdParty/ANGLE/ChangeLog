@@ -1,3 +1,18 @@
+2021-06-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        rAF driven WebGL submits excessive amount of GPU work when frames are slow
+        https://bugs.webkit.org/show_bug.cgi?id=227059
+        <rdar://problem/79385858>
+
+        Reviewed by Kenneth Russell.
+
+        Advertise GL_ARB_sync for the Metal backend.
+        Since GL_ARB_sync is core in OpenGL ES 3.0 and the Metal backend advertises OpenGL ES 3.0,
+        the API must be working already.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeExtensions const):
+
 2021-06-22  Dean Jackson  <dino@apple.com>
 
         [ANGLE] Support importing external MTLTextures

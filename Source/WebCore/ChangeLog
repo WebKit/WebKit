@@ -1,3 +1,37 @@
+2021-06-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        rAF driven WebGL submits excessive amount of GPU work when frames are slow
+        https://bugs.webkit.org/show_bug.cgi?id=227059
+        <rdar://problem/79385858>
+
+        Reviewed by Kenneth Russell.
+
+        Limit in-flight WebGL frames to three frames. Do not continue preparation for display
+        until the commands for the oldest frame have been executed by the GPU.
+
+        This limits the impact slow frames have, especially in the
+        case where the compositor skip frames and WebKit would issue a new slow frame
+        on top of the skipped frame.
+
+        No new tests, tested manually with the pages referenced from the bugs.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::waitAndUpdateOldestFrame):
+        * platform/graphics/angle/GraphicsContextGLANGLEUtilities.h:
+        (WebCore::ScopedGLFence::ScopedGLFence):
+        (WebCore::ScopedGLFence::operator=):
+        (WebCore::ScopedGLFence::~ScopedGLFence):
+        (WebCore::ScopedGLFence::reset):
+        (WebCore::ScopedGLFence::abandon):
+        (WebCore::ScopedGLFence::fenceSync):
+        (WebCore::ScopedGLFence::operator GLsync const):
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::prepareForDisplay):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2021-06-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Accessibility support for image text recognition.
