@@ -47,6 +47,12 @@ static OSStatus invalidateVP9Decoder(CMBaseObjectRef);
 static void finalizeVP9Decoder(CMBaseObjectRef);
 static CFStringRef copyVP9DecoderDebugDescription(CMBaseObjectRef);
 
+#if (TARGET_OS_OSX || TARGET_OS_MACCATALYST) && TARGET_CPU_X86_64
+    #define CMBASE_OBJECT_NEEDS_ALIGNMENT 1
+#else
+    #define CMBASE_OBJECT_NEEDS_ALIGNMENT 0
+#endif
+
 #if defined(CMBASE_OBJECT_NEEDS_ALIGNMENT) && CMBASE_OBJECT_NEEDS_ALIGNMENT
     constexpr size_t padSize = 4;
 #else
