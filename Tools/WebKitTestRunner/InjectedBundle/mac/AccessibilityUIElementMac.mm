@@ -349,6 +349,15 @@ void AccessibilityUIElement::getUIElementsWithAttribute(JSStringRef attribute, V
         elements = makeVector<RefPtr<AccessibilityUIElement>>(value);
 }
 
+JSValueRef AccessibilityUIElement::children() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(m_element.get(), NSAccessibilityChildrenAttribute)));
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
     elementVector = makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(m_element.get(), NSAccessibilityChildrenAttribute));
@@ -1671,6 +1680,15 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() cons
     NSString *value = descriptionOfValue(attributeValue(m_element.get(), @"AXEmbeddedImageDescription"), m_element.get());
     return concatenateAttributeAndValue(@"AXEmbeddedImageDescription", value);
     END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElement::imageOverlayElements() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(m_element.get(), @"AXImageOverlayElements")));
+    END_AX_OBJC_EXCEPTIONS
+
     return nullptr;
 }
 

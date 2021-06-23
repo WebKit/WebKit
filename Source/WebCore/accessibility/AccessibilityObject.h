@@ -93,6 +93,7 @@ public:
     bool isAccessibilityRenderObject() const override { return false; }
     bool isAccessibilityScrollbar() const override { return false; }
     bool isAccessibilityScrollViewInstance() const override { return false; }
+    bool isAXImageInstance() const override { return false; }
     bool isAccessibilitySVGRoot() const override { return false; }
     bool isAccessibilitySVGElement() const override { return false; }
     bool isAccessibilityTableInstance() const override { return false; }
@@ -399,6 +400,7 @@ public:
     String brailleLabel() const override { return getAttribute(HTMLNames::aria_braillelabelAttr); }
     String brailleRoleDescription() const override { return getAttribute(HTMLNames::aria_brailleroledescriptionAttr); }
     String embeddedImageDescription() const override;
+    std::optional<AccessibilityChildrenVector> imageOverlayElements() override { return std::nullopt; }
 
     // Abbreviations
     String expandedTextValue() const override { return String(); }

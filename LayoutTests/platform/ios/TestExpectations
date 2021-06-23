@@ -2120,6 +2120,9 @@ accessibility/attachment-element.html [ Pass ]
 # Enable Text marker tests for iOS
 webkit.org/b/153292 accessibility/text-marker [ Pass ]
 
+# Skip accessibility text recognition tests on iOS 14 and earlier.
+accessibility/ios-simulator/image-overlay-elements.html
+
 # More flaky tests (Sept 18, 2015)
 
 fast/forms/select-element-focus-ring.html [ Failure Pass ]

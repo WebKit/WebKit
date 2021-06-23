@@ -1,0 +1,7 @@
+PASS axImageOverlayElements.length is 2
+hello
+world
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

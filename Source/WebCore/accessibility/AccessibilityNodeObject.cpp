@@ -378,7 +378,6 @@ bool AccessibilityNodeObject::canHaveChildren() const
     
     // Elements that should not have children
     switch (roleValue()) {
-    case AccessibilityRole::Image:
     case AccessibilityRole::Button:
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::CheckBox:

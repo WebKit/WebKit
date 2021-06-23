@@ -1,3 +1,22 @@
+2021-06-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility support for image text recognition.
+        https://bugs.webkit.org/show_bug.cgi?id=224280
+        rdar://76348740
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::children const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::children const):
+        (WTR::AccessibilityUIElement::imageOverlayElements const):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::children const):
+        (WTR::AccessibilityUIElement::imageOverlayElements const):
+
 2021-06-23  Chris Dumez  <cdumez@apple.com>
 
         Update WPT tools from upstream

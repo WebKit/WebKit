@@ -1,3 +1,59 @@
+2021-06-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility support for image text recognition.
+        https://bugs.webkit.org/show_bug.cgi?id=224280
+        rdar://76348740
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/ios-simulator/image-overlay-elements.html
+
+        Exposes to accessibility clients the elements created by
+        WebPage::requestTextRecognition for static images. This allows clients
+        to present the recognized text in images to assistive technology users.
+        - Added a new AXObject subclass, AXImage, to encapsulate this functionality.
+        This class can be expanded to offload some of the image specific code
+        contained in AccessibilityRenderObject, AccessibilityNodeObject,
+        AccessibilityObject and others.
+        - Since requestTextRecognition is an async call, added an AXNotification
+        to notify clients when the image overlay elements are available for
+        consumption.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXImage.cpp: Added.
+        (WebCore::AXImage::AXImage):
+        (WebCore::AXImage::create):
+        (WebCore::AXImage::roleValue const):
+        (WebCore::AXImage::imageOverlayElements):
+        * accessibility/AXImage.h: Added.
+        * accessibility/AXLogger.cpp:
+        (WebCore::operator<<):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::isSimpleImage): Determines whether a given element is a static
+        image.
+        (WebCore::createFromRenderer): Instantiate an AXImage object when
+        appropriate.
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canHaveChildren const): Images can
+        have children.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::notificationPlatformName):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityElements]):
+        (-[WebAccessibilityObjectWrapper accessibilityImageOverlayElements]):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::isAXImageInstance const):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2021-06-18  Mark Lam  <mark.lam@apple.com>
 
         Add missing exception checks in ScriptModuleLoader and JSDOMPromiseDeferred.

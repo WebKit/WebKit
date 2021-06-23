@@ -319,6 +319,9 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
     case AXFocusedUIElementChanged:
         macNotification = NSAccessibilityFocusedUIElementChangedNotification;
         break;
+    case AXImageOverlayChanged:
+        macNotification = @"AXImageOverlayChanged";
+        break;
     case AXLayoutComplete:
         macNotification = @"AXLayoutComplete";
         break;

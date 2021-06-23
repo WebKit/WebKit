@@ -127,8 +127,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextSentenceEndTextMarke
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange*, bool) { return nullptr; }
 void AccessibilityUIElement::dismiss() { }
+JSValueRef AccessibilityUIElement::children() const { return { }; }
 JSValueRef AccessibilityUIElement::detailsElements() const { return { }; }
 JSValueRef AccessibilityUIElement::errorMessageElements() const { return { }; }
+JSValueRef AccessibilityUIElement::imageOverlayElements() const { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }
 #endif
 

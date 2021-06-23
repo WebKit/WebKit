@@ -51,6 +51,9 @@ String AXObjectCache::notificationPlatformName(AXNotification notification)
     case AXFocusedUIElementChanged:
         name = "AXFocusChanged";
         break;
+    case AXImageOverlayChanged:
+        name = "AXImageOverlayChanged";
+        break;
     case AXPageScrolled:
         name = "AXPageScrolled";
         break;

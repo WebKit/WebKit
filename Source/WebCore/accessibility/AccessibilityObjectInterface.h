@@ -791,6 +791,7 @@ public:
     virtual bool isAccessibilityRenderObject() const = 0;
     virtual bool isAccessibilityScrollbar() const = 0;
     virtual bool isAccessibilityScrollViewInstance() const = 0;
+    virtual bool isAXImageInstance() const = 0;
     virtual bool isAccessibilitySVGRoot() const = 0;
     virtual bool isAccessibilitySVGElement() const = 0;
     virtual bool isAccessibilityTableInstance() const = 0;
@@ -1014,6 +1015,7 @@ public:
     virtual String brailleLabel() const = 0;
     virtual String brailleRoleDescription() const = 0;
     virtual String embeddedImageDescription() const = 0;
+    virtual std::optional<AccessibilityChildrenVector> imageOverlayElements() = 0;
 
     virtual bool supportsARIAOwns() const = 0;
     virtual bool isActiveDescendantOfFocusedContainer() const = 0;

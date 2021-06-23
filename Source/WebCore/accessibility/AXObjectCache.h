@@ -284,6 +284,7 @@ public:
         AXFocusedUIElementChanged,
         AXFrameLoadComplete,
         AXIdAttributeChanged,
+        AXImageOverlayChanged,
         AXLanguageChanged,
         AXLayoutComplete,
         AXLoadComplete,

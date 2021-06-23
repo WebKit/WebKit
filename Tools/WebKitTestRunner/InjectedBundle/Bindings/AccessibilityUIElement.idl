@@ -110,6 +110,7 @@
     readonly attribute DOMString ariaDropEffects;
     readonly attribute DOMString classList;
     readonly attribute DOMString embeddedImageDescription;
+    readonly attribute object imageOverlayElements;
 
     readonly attribute long x;
     readonly attribute long y;
@@ -118,6 +119,7 @@
     readonly attribute long clickPointX;
     readonly attribute long clickPointY;
 
+    readonly attribute object children;
     readonly attribute long childrenCount;
     readonly attribute long selectedChildrenCount;
     readonly attribute long rowCount;

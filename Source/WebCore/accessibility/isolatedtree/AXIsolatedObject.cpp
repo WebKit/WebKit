@@ -1258,6 +1258,12 @@ bool AXIsolatedObject::isAccessibilityScrollViewInstance() const
     return false;
 }
 
+bool AXIsolatedObject::isAXImageInstance() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool AXIsolatedObject::isAccessibilitySVGRoot() const
 {
     ASSERT_NOT_REACHED();

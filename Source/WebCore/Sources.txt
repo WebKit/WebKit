@@ -442,6 +442,7 @@ Modules/webxr/XRInputSourceEvent.cpp @no-unify
 Modules/webxr/XRInputSourcesChangeEvent.cpp @no-unify
 Modules/webxr/XRReferenceSpaceEvent.cpp @no-unify
 Modules/webxr/XRSessionEvent.cpp @no-unify
+accessibility/AXImage.cpp
 accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
 accessibility/AccessibilityARIAGrid.cpp

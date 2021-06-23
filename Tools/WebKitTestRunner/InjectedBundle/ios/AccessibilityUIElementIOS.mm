@@ -102,6 +102,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)_accessibilityLandmarkAncestor;
 - (id)_accessibilityListAncestor;
 - (id)_accessibilityPhotoDescription;
+- (NSArray *)accessibilityImageOverlayElements;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -213,6 +214,11 @@ void AccessibilityUIElement::getLinkedUIElements(Vector<RefPtr<AccessibilityUIEl
 
 void AccessibilityUIElement::getDocumentLinks(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
+}
+
+JSValueRef AccessibilityUIElement::children() const
+{
+    return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>([m_element accessibilityElements]));
 }
 
 void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
@@ -1099,6 +1105,11 @@ bool AccessibilityUIElement::isOffScreen() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const
 {
     return concatenateAttributeAndValue(@"AXEmbeddedImageDescription", [m_element _accessibilityPhotoDescription]);
+}
+
+JSValueRef AccessibilityUIElement::imageOverlayElements() const
+{
+    return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>([m_element accessibilityImageOverlayElements]));
 }
 
 bool AccessibilityUIElement::isCollapsed() const
