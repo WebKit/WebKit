@@ -1057,3 +1057,12 @@
 #define HAVE_QUICKLOOK_ITEM_PREVIEW_OPTIONS 1
 #define HAVE_QUICKLOOK_PREVIEW_ACTIVITY 1
 #endif
+
+// FIXME: Replace the __has_include check with a version check once internal bots are updated (webkit.org/b/227298).
+#if PLATFORM(IOS_FAMILY) && defined __has_include && __has_include(<UIKit/_UIDatePickerOverlayPresentation.h>)
+#define HAVE_UIDATEPICKER_OVERLAY_PRESENTATION 1
+#endif
+
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#define HAVE_UITOOLBAR_STANDARD_APPEARANCE 1
+#endif

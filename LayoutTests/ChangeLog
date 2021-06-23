@@ -1,3 +1,18 @@
+2021-06-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Adopt new date picker presentation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=227221
+        <rdar://problem/77930086>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/ios/constant-scroll-area-when-moving-focus-between-fields.html:
+
+        Re-order the call to wait for the keyboard to dismiss since the
+        presentation SPI doesn't tell us exactly when the presentation animation
+        is complete. The other alternative was to add a manual delay, however,
+        re-ordering the calls is safe and preserves the original test behavior.
+
 2021-06-23  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Unreviewed test gardening, skip a WebGL2 test

@@ -1,3 +1,61 @@
+2021-06-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Adopt new date picker presentation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=227221
+        <rdar://problem/77930086>
+
+        Reviewed by Wenson Hsieh.
+
+        In native applications, tapping on a compact UIDatePicker presents an
+        inline picker using _UIDatePickerOverlayPresentation. To avoid
+        maintaining our own presentation logic, and to better match the native
+        presentation, use _UIDatePickerOverlayPresentation when tapping on a
+        date/time input in WebKit.
+
+        Covered by existing tests.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Declare the SPI rather than importing the header directly, as the
+        _UIDatePickerOverlayAnchor enum is not available in all SDKs with
+        the header.
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePickerViewController initWithDatePicker:]):
+        (-[WKDateTimePickerViewController setDelegate:]):
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+
+        Create the UIDatePicker here so it can be shared by the old context menu
+        presentation and the new overlay presentation.
+
+        (-[WKDateTimePicker handleDatePickerPresentationDismissal]):
+        (-[WKDateTimePicker removeDatePickerPresentation]):
+
+        `accessoryDone` eventually removes the presentation. If the date picker
+        is already being dismissed, do not dismiss it without an animation.
+
+        For programmatic dismissal (using blur()) this method is called prior to
+        `accessoryDone`, in which case we force dismissal without animation.
+
+        (-[WKDateTimePicker dateTimePickerViewControllerDidPressResetButton:]):
+        (-[WKDateTimePicker dateTimePickerViewControllerDidPressDoneButton:]):
+        (-[WKDateTimePicker showDateTimePicker]):
+        (-[WKDateTimePicker datePickerChanged:]):
+        (-[WKDateTimePicker reset:]):
+        (-[WKDateTimePicker done:]):
+        (-[WKDateTimePicker dealloc]):
+        (-[WKDateTimePicker _timeZoneOffsetFromGMT:]):
+        (-[WKDateTimePicker dateFormatterForPicker]):
+        (-[WKDateTimePicker _dateChangedSetAsNumber]):
+        (-[WKDateTimePicker _dateChangedSetAsString]):
+        (-[WKDateTimePicker setDateTimePickerToInitialValue]):
+        (-[WKDateTimePicker controlBeginEditing]):
+        (-[WKDateTimePicker controlEndEditing]):
+        (-[WKDateTimePicker calendarType]):
+        (-[WKDateTimePicker hour]):
+        (-[WKDateTimePicker minute]):
+        (-[WKDateTimePicker setHour:minute:]):
+
 2021-06-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279104.

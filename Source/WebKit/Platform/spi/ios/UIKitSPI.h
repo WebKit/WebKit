@@ -1451,6 +1451,30 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 #endif
 
+#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
+
+// FIXME: Import the header directly once bots are updated to a build containing rdar://78779655.
+
+typedef NS_ENUM(NSInteger, _UIDatePickerOverlayAnchor) {
+    _UIDatePickerOverlayAnchorSourceRect = 2
+};
+
+@interface _UIDatePickerOverlayPresentation : NSObject
+
+- (instancetype)initWithSourceView:(UIView *)sourceView;
+- (void)presentDatePicker:(UIDatePicker *)datePicker onDismiss:(void(^)(BOOL retargeted))dismissHandler;
+- (void)dismissPresentationAnimated:(BOOL)animated;
+
+@property (nonatomic, weak, readonly) UIView *sourceView;
+@property (nonatomic, assign) CGRect sourceRect;
+@property (nonatomic, assign) _UIDatePickerOverlayAnchor overlayAnchor;
+@property (nonatomic, strong) UIView *accessoryView;
+@property (nonatomic, assign) BOOL accessoryViewIgnoresDefaultInsets;
+
+@end
+
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
