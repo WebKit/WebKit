@@ -1,3 +1,31 @@
+2021-06-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [iOS 15 Regression]: scroll position resets when using scroll snap
+        https://bugs.webkit.org/show_bug.cgi?id=226816
+        <rdar://problem/79081301>
+
+        Reviewed by Simon Fraser.
+
+        To improve scrolling fluidity on iOS, have any sort of momentum scroll trigger directional
+        scroll snapping. This means that any momentum scroll will move to the next or previous scroll
+        position and not snap back. This improves behavior on tesla.com and also on the scroll
+        snapping demo on the WebKit page.
+
+        Tests: fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-main-frame.html
+               fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-overflow-scroll-area.html
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Pass the current scroll offset to
+        the RemoteScrollingCoordinatorProxy. Passing a value for this offset is the trigger for directional scroll
+        snapping.
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h: Update method definitions.
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping): Pass the current offset.
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling const): Ditto.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Enable
+        directional scroll snapping for RenderLayers.
+
 2021-06-23  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make the hostTime parameter to playSession a Monotonic time

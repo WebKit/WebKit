@@ -100,7 +100,7 @@ public:
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID);
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID);
 #if ENABLE(CSS_SCROLL_SNAP)
-    void adjustTargetContentOffsetForSnapping(CGSize maxScrollDimensions, CGPoint velocity, CGFloat topInset, CGPoint* targetContentOffset);
+    void adjustTargetContentOffsetForSnapping(CGSize maxScrollDimensions, CGPoint velocity, CGFloat topInset, CGPoint currentContentOffset, CGPoint* targetContentOffset);
     bool hasActiveSnapPoint() const;
     CGPoint nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint&) const;
     bool shouldSetScrollViewDecelerationRateFast() const;
@@ -121,7 +121,7 @@ private:
 
 #if ENABLE(CSS_SCROLL_SNAP)
     bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
-    std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float scrollDestination, float velocity) const;
+    std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float currentScrollOffset, float scrollDestination, float velocity) const;
 #endif
 
     void sendUIStateChangedIfNecessary();

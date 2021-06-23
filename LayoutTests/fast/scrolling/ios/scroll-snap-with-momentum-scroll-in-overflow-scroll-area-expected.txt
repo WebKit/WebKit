@@ -1,0 +1,12 @@
+Verifies that a momentum scroll always moves to the next or previous snap position no matter how far away it is.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollTop is 1000
+PASS scroller.scrollTop is 6500
+PASS scroller.scrollTop is 1000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

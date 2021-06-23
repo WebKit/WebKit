@@ -1,3 +1,16 @@
+2021-06-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [iOS 15 Regression]: scroll position resets when using scroll snap
+        https://bugs.webkit.org/show_bug.cgi?id=226816
+        <rdar://problem/79081301>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-main-frame-expected.txt: Added.
+        * fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-main-frame.html: Added.
+        * fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-overflow-scroll-area-expected.txt: Added.
+        * fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-overflow-scroll-area.html: Added.
+
 2021-06-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
