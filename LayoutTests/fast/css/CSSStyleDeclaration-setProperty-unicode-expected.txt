@@ -1,0 +1,12 @@
+Tests use of USVString in CSSStyleDeclaration.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS declaration.getPropertyValue('animation-name') is "abc�def�ghi"
+PASS declaration.cssText.includes(REPLACED) is true
+PASS declaration.removeProperty('animation-name') is "abc�def�ghi"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
