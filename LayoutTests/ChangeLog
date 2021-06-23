@@ -1,3 +1,10 @@
+2021-06-23  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening, skip a WebGL2 test
+        https://bugs.webkit.org/show_bug.cgi?id=227303
+
+        * platform/glib/TestExpectations:
+
 2021-06-23  Chris Dumez  <cdumez@apple.com>
 
         CSSStyleDeclaration.getPropertyPriority() should return the empty string for invalid CSS properties

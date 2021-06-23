@@ -1685,6 +1685,7 @@ inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/webgl-transformed-varying-name-crash.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-mix-with-bool.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-vec-array-deref-no-crash.html [ Skip ]
+webkit.org/b/166536 fast/canvas/webgl/shader-with-reserved-keyword.html [ Skip ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]
