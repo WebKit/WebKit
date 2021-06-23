@@ -1,3 +1,20 @@
+2021-06-23  Keith Miller  <keith_miller@apple.com>
+
+        add/removeManagedReference:withOwner: should have autoreleasepools
+        https://bugs.webkit.org/show_bug.cgi?id=227308
+
+        Reviewed by Darin Adler.
+
+        Since these APIs create autoreleased objects as an implementation detail
+        but don't return any to the caller there's no indication such autoreleased
+        objects could be accumulating. Additionally, it's entirely reasonable to
+        call these methods in a loop an a large set of objects, which further
+        exacerbates the problem.
+
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine addManagedReference:withOwner:]):
+        (-[JSVirtualMachine removeManagedReference:withOwner:]):
+
 2021-06-23  Saam Barati  <sbarati@apple.com>
 
         Run lazy properties initializers under a DeferTerminationForAWhile scope

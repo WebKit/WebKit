@@ -162,64 +162,68 @@ static id getInternalObjcObject(id object)
 }
 
 - (void)addManagedReference:(id)object withOwner:(id)owner
-{    
-    if ([object isKindOfClass:[JSManagedValue class]])
-        [object didAddOwner:owner];
-        
-    object = getInternalObjcObject(object);
-    owner = getInternalObjcObject(owner);
-    
-    if (!object || !owner)
-        return;
-    
-    JSC::JSLockHolder locker(toJS(m_group));
-    if ([self isOldExternalObject:owner] && ![self isOldExternalObject:object])
-        [self addExternalRememberedObject:owner];
- 
-    Locker externalDataMutexLocker { m_externalDataMutex };
-    RetainPtr<NSMapTable> ownedObjects = [m_externalObjectGraph objectForKey:owner];
-    if (!ownedObjects) {
-        NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
-        NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
-        ownedObjects = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1]);
+{
+    @autoreleasepool {
+        if ([object isKindOfClass:[JSManagedValue class]])
+            [object didAddOwner:owner];
 
-        [m_externalObjectGraph setObject:ownedObjects.get() forKey:owner];
+        object = getInternalObjcObject(object);
+        owner = getInternalObjcObject(owner);
+
+        if (!object || !owner)
+            return;
+
+        JSC::JSLockHolder locker(toJS(m_group));
+        if ([self isOldExternalObject:owner] && ![self isOldExternalObject:object])
+            [self addExternalRememberedObject:owner];
+
+        Locker externalDataMutexLocker { m_externalDataMutex };
+        RetainPtr<NSMapTable> ownedObjects = [m_externalObjectGraph objectForKey:owner];
+        if (!ownedObjects) {
+            NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
+            NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
+            ownedObjects = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1]);
+
+            [m_externalObjectGraph setObject:ownedObjects.get() forKey:owner];
+        }
+
+        size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects.get(), (__bridge void*)object));
+        NSMapInsert(ownedObjects.get(), (__bridge void*)object, reinterpret_cast<void*>(count + 1));
     }
-
-    size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects.get(), (__bridge void*)object));
-    NSMapInsert(ownedObjects.get(), (__bridge void*)object, reinterpret_cast<void*>(count + 1));
 }
 
 - (void)removeManagedReference:(id)object withOwner:(id)owner
 {
-    if ([object isKindOfClass:[JSManagedValue class]])
-        [object didRemoveOwner:owner];
+    @autoreleasepool {
+        if ([object isKindOfClass:[JSManagedValue class]])
+            [object didRemoveOwner:owner];
 
-    object = getInternalObjcObject(object);
-    owner = getInternalObjcObject(owner);
-    
-    if (!object || !owner)
-        return;
-    
-    JSC::JSLockHolder locker(toJS(m_group));
-    
-    Locker externalDataMutexLocker { m_externalDataMutex };
-    NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
-    if (!ownedObjects)
-        return;
-   
-    size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects, (__bridge void*)object));
-    if (count > 1) {
-        NSMapInsert(ownedObjects, (__bridge void*)object, reinterpret_cast<void*>(count - 1));
-        return;
-    }
-    
-    if (count == 1)
-        NSMapRemove(ownedObjects, (__bridge void*)object);
+        object = getInternalObjcObject(object);
+        owner = getInternalObjcObject(owner);
 
-    if (![ownedObjects count]) {
-        [m_externalObjectGraph removeObjectForKey:owner];
-        [m_externalRememberedSet removeObjectForKey:owner];
+        if (!object || !owner)
+            return;
+
+        JSC::JSLockHolder locker(toJS(m_group));
+
+        Locker externalDataMutexLocker { m_externalDataMutex };
+        NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
+        if (!ownedObjects)
+            return;
+
+        size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects, (__bridge void*)object));
+        if (count > 1) {
+            NSMapInsert(ownedObjects, (__bridge void*)object, reinterpret_cast<void*>(count - 1));
+            return;
+        }
+
+        if (count == 1)
+            NSMapRemove(ownedObjects, (__bridge void*)object);
+
+        if (![ownedObjects count]) {
+            [m_externalObjectGraph removeObjectForKey:owner];
+            [m_externalRememberedSet removeObjectForKey:owner];
+        }
     }
 }
 
