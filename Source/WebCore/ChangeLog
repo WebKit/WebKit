@@ -1,3 +1,39 @@
+2021-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception checks in ScriptModuleLoader and JSDOMPromiseDeferred.
+        https://bugs.webkit.org/show_bug.cgi?id=221374
+        rdar://problem/68911404
+
+        Reviewed by Yusuke Suzuki.
+
+        Based on patch by Frédéric Wang <fwang@igalia.com>.
+
+        When an import call fails, ScriptModuleLoader::notifyFinished() rejects the
+        deferred promise with either a call to
+        DeferredPromise::reject(ExceptionCode, const String&, RejectAsHandled) or a call to
+        rejectToPropagateNetworkError() / DeferredPromise::rejectWithCallback().  When it
+        succeeds, it calls DeferredPromise::resolveWithPromise(). These correspond to three
+        places where we enter the VM. Catch scopes are thus added to handle uncaught
+        exceptions for DeferredPromise.
+
+        Currently, this logic for uncaught exceptions is already duplicated at several
+        places in the code, and is likely needed for other places too in follow-up work.
+        This patch however covers all the rejection and resolution calls from
+        ScriptModuleLoader.  Additionally, it handles missing exception checks in
+        ScriptModuleLoader::evaluate.
+
+        Test: js/dom/modules/missing-exception-check-for-import.html
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::reject):
+        (WebCore::DeferredPromise::handleTerminationExceptionIfNeeded):
+        (WebCore::DeferredPromise::handleUncaughtException):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DeferredPromise::resolveWithCallback):
+        (WebCore::DeferredPromise::rejectWithCallback):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::evaluate):
+
 2021-06-21  Darin Adler  <darin@apple.com>
 
         Improve more of the CSS list style implementations

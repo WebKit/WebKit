@@ -1,3 +1,32 @@
+2021-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception checks in ScriptModuleLoader and JSDOMPromiseDeferred.
+        https://bugs.webkit.org/show_bug.cgi?id=221374
+        rdar://problem/68911404
+
+        Reviewed by Yusuke Suzuki.
+
+        Based on patch by Frédéric Wang <fwang@igalia.com>.
+
+        Add a regression test for import('./'). Depending on the system configuration this can
+        execute two different rejection methods from ScriptModuleLoader::notifyFinished().
+        In other words, we may get 2 different error messages.  Hence, the test needs to
+        allow for this variance.
+
+        Additional test cases are added for rejectToPropagateNetworkError /
+        DeferredPromise::rejectWithCallback (e.g. module file not found), for
+        DeferredPromise::reject(ExceptionCode, const String&, RejectAsHandled) (e.g. module file does
+        not have JavaScript MIME type) and DeferredPromise::resolveWithCallback (e.g. module import
+        is successful).
+
+        Also update promise-rejection-might-stack-overflow.html now that the stack overflow error is
+        reported.
+
+        * js/dom/modules/missing-exception-check-for-import-expected.txt: Added.
+        * js/dom/modules/missing-exception-check-for-import.html: Added.
+        * js/dom/promise-rejection-might-stack-overflow-expected.txt:
+        * js/dom/promise-rejection-might-stack-overflow.html:
+
 2021-06-21  Darin Adler  <darin@apple.com>
 
         Improve more of the CSS list style implementations

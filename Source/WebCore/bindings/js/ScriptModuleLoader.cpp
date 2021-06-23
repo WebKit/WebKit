@@ -244,12 +244,18 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
         return JSC::throwTypeError(jsGlobalObject, scope, "Module key is an invalid URL."_s);
 
     if (m_ownerType == OwnerType::Document) {
-        if (auto* frame = downcast<Document>(m_context).frame())
-            return frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode);
+        if (auto* frame = downcast<Document>(m_context).frame()) {
+            auto jsValue = frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode);
+            RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
+            return jsValue;
+        }
     } else {
         ASSERT(is<WorkerOrWorkletGlobalScope>(m_context));
-        if (auto* script = downcast<WorkerOrWorkletGlobalScope>(m_context).script())
-            return script->evaluateModule(*moduleRecord, awaitedValue, resumeMode);
+        if (auto* script = downcast<WorkerOrWorkletGlobalScope>(m_context).script()) {
+            auto jsValue = script->evaluateModule(*moduleRecord, awaitedValue, resumeMode);
+            RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
+            return jsValue;
+        }
     }
     return JSC::jsUndefined();
 }
