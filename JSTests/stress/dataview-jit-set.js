@@ -340,17 +340,30 @@ function test5() {
     let arr = new Float32Array(buffer);
     let bits = new Uint32Array(buffer);
     let dv = new DataView(buffer);
+    let f32_exponent_bits = 0x7F800000;
+    let f32_fraction_bits = 0x007FFFFF;
 
     for (let i = 0; i < 10000; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessFloat32(1.5));
         assert(arr[0] === 1.5);
 
+        // The right way how to process this test is to uncomment the line below
+        // and comment out the line below it. But strangely it doesn't work. I
+        // opened https://bugs.webkit.org/show_bug.cgi?id=209289 for it.
+        //storeLittleEndian(dv, 0, adjustForEndianessFloat32(12912.124123215122));
         store(dv, 0, 12912.124123215122, isLittleEndian);
         assert(bits[0] === 0x4649c07f);
         assert(arr[0] === 12912.1240234375);
 
         storeLittleEndian(dv, 0, adjustForEndianessFloat32(NaN));
         assert(isNaN(arr[0]));
+        // The conversion of our initial 64-bit pure NaN (0x7ff8000000000000)
+        // should yield a Float32 NaN, but we can't check for a specific binary
+        // value since different CPUs might convert to different 32-bit NaNs,
+        // so we just check that the bits represent a NaN.
+        // The binary representation of a NaN has all its exponent bits set to
+        // 1 and at least one fraction bit set to 1.
+        assert(((bits[0] & f32_exponent_bits) === f32_exponent_bits) && !!(bits[0] & f32_fraction_bits))
 
         storeLittleEndian(dv, 0, adjustForEndianessFloat32(2.3879393e-38));
         assert(arr[0] === 2.387939260590663e-38);
@@ -397,6 +410,8 @@ function test6() {
     for (let i = 0; i < 10000; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessFloat64(NaN));
         assert(isNaN(arr[0]));
+        // The NaN we stored should be a pure NaN, so that's what we should get
+        assert(readHex(dv, 8) == "0x7ff8000000000000");
 
         storeLittleEndian(dv, 0, adjustForEndianessFloat64(-2.5075187084135162e+284));
         assert(arr[0] === -2.5075187084135162e+284);
