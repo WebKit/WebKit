@@ -1,3 +1,12 @@
+2021-06-23  Jean-Yves Avenard  <jya@apple.com>
+
+        Remove #include <wtf/Optional.h>
+        https://bugs.webkit.org/show_bug.cgi?id=227335
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h:
+
 2021-06-23  Peng Liu  <peng.liu6@apple.com>
 
         [iPadOS] A video cannot enter picture-in-picture when Safari is suspended
