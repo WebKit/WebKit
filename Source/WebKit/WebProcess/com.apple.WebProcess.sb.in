@@ -1336,7 +1336,7 @@
 )
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
 (allow mach-lookup
     (global-name "com.apple.tccd.system")
 )

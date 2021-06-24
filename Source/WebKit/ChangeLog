@@ -1,3 +1,13 @@
+2021-06-24  Per Arne  <pvollan@apple.com>
+
+        [macOS] Fix incorrect version check in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=227346
+        <rdar://79589961>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-06-24  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Allow network-outbound logging for internal builds
