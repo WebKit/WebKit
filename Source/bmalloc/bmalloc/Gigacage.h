@@ -64,12 +64,13 @@ BINLINE const char* name(Kind kind)
     return nullptr;
 }
 
+constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
+
 #if GIGACAGE_ENABLED
 
-constexpr bool useLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
-constexpr size_t primitiveGigacageSize = (useLargeGigacage ? 32 : 2) * bmalloc::Sizes::GB;
-constexpr size_t jsValueGigacageSize = (useLargeGigacage ? 16 : 2) * bmalloc::Sizes::GB;
-constexpr size_t maximumCageSizeReductionForSlide = useLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
+constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 32 : 2) * bmalloc::Sizes::GB;
+constexpr size_t jsValueGigacageSize = (hasCapacityToUseLargeGigacage ? 16 : 2) * bmalloc::Sizes::GB;
+constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
 
 
 // In Linux, if `vm.overcommit_memory = 2` is specified, mmap with large size can fail if it exceeds the size of RAM.

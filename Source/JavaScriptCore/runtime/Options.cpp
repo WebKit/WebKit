@@ -38,6 +38,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
+#include <wtf/Gigacage.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/OSLogPrintStream.h>
 #include <wtf/StdLibExtras.h>
@@ -1144,5 +1145,13 @@ bool canUseJITCage()
 #else
 bool canUseJITCage() { return false; }
 #endif
+
+bool canUseWebAssemblyFastMemory()
+{
+    // Gigacage::hasCapacityToUseLargeGigacage is determined based on EFFECTIVE_ADDRESS_WIDTH.
+    // If we have enough address range to potentially use a large gigacage,
+    // then we have enough address range to useWebAssemblyFastMemory.
+    return Gigacage::hasCapacityToUseLargeGigacage;
+}
 
 } // namespace JSC

@@ -1,3 +1,18 @@
+2021-06-23  Mark Lam  <mark.lam@apple.com>
+
+        Base Options::useWebAssemblyFastMemory's default value on Gigacage::hasCapacityToUseLargeGigacage.
+        https://bugs.webkit.org/show_bug.cgi?id=227328
+
+        Reviewed by Saam Barati.
+
+        Gigacage::hasCapacityToUseLargeGigacage is determined based on EFFECTIVE_ADDRESS_WIDTH.
+        If we have enough address range to potentially use a large gigacage, then we have
+        enough address range to useWebAssemblyFastMemory.
+
+        * runtime/Options.cpp:
+        (JSC::canUseWebAssemblyFastMemory):
+        * runtime/OptionsList.h:
+
 2021-06-23  Yijia Huang  <yijia_huang@apple.com>
 
         Add a new pattern to instruction selector to utilize UBFIZ supported by ARM64
