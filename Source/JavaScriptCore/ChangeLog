@@ -1,3 +1,33 @@
+2021-06-24  Xan López  <xan@igalia.com>
+
+        [JSC] Implement returnEarlyFromInfiniteLoopsForFuzzing for 32bits
+        https://bugs.webkit.org/show_bug.cgi?id=227290
+
+        Reviewed by Mark Lam.
+
+        Mostly a matter of changing the counter type to uintptr_t and
+        making the baseline/dfg/ftl code generation work on both 32 and
+        64bits, most of it can be shared with minor tweaks.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLoopHint):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * runtime/VM.cpp:
+        (JSC::VM::addLoopHintExecutionCounter):
+        (JSC::VM::getLoopHintExecutionCounter):
+        * runtime/VM.h:
+
 2021-06-23  Mark Lam  <mark.lam@apple.com>
 
         Base Options::useWebAssemblyFastMemory's default value on Gigacage::hasCapacityToUseLargeGigacage.

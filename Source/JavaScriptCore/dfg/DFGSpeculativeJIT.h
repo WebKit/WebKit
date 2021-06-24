@@ -714,6 +714,7 @@ public:
     
     void compileCheckTraps(Node*);
 
+    void compileLoopHint(Node*);
     void compileMovHint(Node*);
     void compileMovHintAndCheck(Node*);
 

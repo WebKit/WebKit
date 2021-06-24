@@ -5251,46 +5251,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case LoopHint:
-        if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing())) {
-            bool emitEarlyReturn = true;
-            node->origin.semantic.walkUpInlineStack([&](CodeOrigin origin) {
-                CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(origin);
-                if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
-                    emitEarlyReturn = false;
-            });
-            if (emitEarlyReturn) {
-                CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-                BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
-                const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
-
-                uint64_t* ptr = vm().getLoopHintExecutionCounter(instruction);
-                m_jit.pushToSave(GPRInfo::regT0);
-                m_jit.load64(ptr, GPRInfo::regT0);
-                auto skipEarlyReturn = m_jit.branch64(CCallHelpers::Below, GPRInfo::regT0, CCallHelpers::TrustedImm64(Options::earlyReturnFromInfiniteLoopsLimit()));
-
-                if constexpr (validateDFGDoesGC) {
-                    if (Options::validateDoesGC()) {
-                        // We need to mock what a Return does: claims to GC.
-                        m_jit.move(CCallHelpers::TrustedImmPtr(vm().heap.addressOfDoesGC()), GPRInfo::regT0);
-                        m_jit.store32(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized)), CCallHelpers::Address(GPRInfo::regT0));
-                    }
-                }
-
-                m_jit.popToRestore(GPRInfo::regT0);
-                m_jit.moveValue(baselineCodeBlock->globalObject(), JSValueRegs { GPRInfo::returnValueGPR });
-                m_jit.emitRestoreCalleeSaves();
-                m_jit.emitFunctionEpilogue();
-                m_jit.ret();
-
-                skipEarlyReturn.link(&m_jit);
-                m_jit.add64(CCallHelpers::TrustedImm32(1), GPRInfo::regT0);
-                m_jit.store64(GPRInfo::regT0, ptr);
-                m_jit.popToRestore(GPRInfo::regT0);
-            }
-        }
-
-        // This is a no-op.
-        noResult(node);
+        compileLoopHint(node);
         break;
 
     case Unreachable:

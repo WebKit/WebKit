@@ -1,3 +1,18 @@
+2021-06-24  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Implement returnEarlyFromInfiniteLoopsForFuzzing for 32bits
+        https://bugs.webkit.org/show_bug.cgi?id=227290
+
+        Reviewed by Mark Lam.
+
+        Now that we can return early from infinite (actual or just
+        extremely long running) loops on 32bits, we can pass these tests.
+
+        * stress/construct-return-early-from-infinite-loop-for-fuzzer.js: unskip for 32bits.
+        * stress/early-return-from-builtin2.js: ditto.
+        * stress/validate-does-gc-with-return-early-from-infinite-loop-2.js: ditto.
+        * stress/validate-does-gc-with-return-early-from-infinite-loop.js: ditto.
+
 2021-06-23  Saam Barati  <sbarati@apple.com>
 
         Bound stress/put-by-id-flags with a fixed number of iterations

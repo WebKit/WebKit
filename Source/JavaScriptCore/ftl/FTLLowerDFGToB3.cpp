@@ -15475,7 +15475,7 @@ private:
         BytecodeIndex bytecodeIndex = m_origin.semantic.bytecodeIndex();
         const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
         VM* vm = &this->vm();
-        uint64_t* ptr = vm->getLoopHintExecutionCounter(instruction);
+        uintptr_t* ptr = vm->getLoopHintExecutionCounter(instruction);
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->effects = Effects::none();

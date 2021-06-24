@@ -2096,6 +2096,54 @@ void SpeculativeJIT::noticeOSRBirth(Node* node)
     info.noticeOSRBirth(*m_stream, node, virtualRegister);
 }
 
+void SpeculativeJIT::compileLoopHint(Node* node)
+{
+    if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing())) {
+        bool emitEarlyReturn = true;
+        node->origin.semantic.walkUpInlineStack([&](CodeOrigin origin) {
+            CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(origin);
+            if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+                emitEarlyReturn = false;
+        });
+        if (emitEarlyReturn) {
+            CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
+            BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
+            const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
+
+            uintptr_t* ptr = vm().getLoopHintExecutionCounter(instruction);
+            m_jit.pushToSave(GPRInfo::regT0);
+            m_jit.loadPtr(ptr, GPRInfo::regT0);
+            auto skipEarlyReturn = m_jit.branchPtr(CCallHelpers::Below, GPRInfo::regT0, CCallHelpers::TrustedImmPtr(Options::earlyReturnFromInfiniteLoopsLimit()));
+
+            if constexpr (validateDFGDoesGC) {
+                if (Options::validateDoesGC()) {
+                    // We need to mock what a Return does: claims to GC.
+                    m_jit.move(CCallHelpers::TrustedImmPtr(vm().heap.addressOfDoesGC()), GPRInfo::regT0);
+                    m_jit.store32(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized)), CCallHelpers::Address(GPRInfo::regT0));
+                }
+            }
+
+            m_jit.popToRestore(GPRInfo::regT0);
+#if USE(JSVALUE64)
+            JSValueRegs resultRegs(GPRInfo::returnValueGPR);
+#else
+            JSValueRegs resultRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+#endif
+            m_jit.moveValue(baselineCodeBlock->globalObject(), resultRegs);
+            m_jit.emitRestoreCalleeSaves();
+            m_jit.emitFunctionEpilogue();
+            m_jit.ret();
+
+            skipEarlyReturn.link(&m_jit);
+            m_jit.addPtr(CCallHelpers::TrustedImm32(1), GPRInfo::regT0);
+            m_jit.storePtr(GPRInfo::regT0, ptr);
+            m_jit.popToRestore(GPRInfo::regT0);
+        }
+    }
+
+    noResult(node);
+}
+
 void SpeculativeJIT::compileMovHint(Node* node)
 {
     ASSERT(node->containsMovHint());

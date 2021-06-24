@@ -464,7 +464,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
             codeBlock->llintExecuteCounter());
 
     if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
-        uint64_t* ptr = vm.getLoopHintExecutionCounter(pc);
+        uintptr_t* ptr = vm.getLoopHintExecutionCounter(pc);
         *ptr += codeBlock->llintExecuteCounter().m_activeThreshold;
         if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit())
             LLINT_RETURN_TWO(LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint().code().executableAddress(), callFrame->topOfFrame());
