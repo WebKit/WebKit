@@ -1,3 +1,94 @@
+2021-06-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Using a video as a source for a WebGL texture is slow and hangs on iOS 15
+        https://bugs.webkit.org/show_bug.cgi?id=227081
+
+        Reviewed by Eric Carlson.
+
+        In current form, media is decoded in GPU process and WebGL is processed
+        in Web process.
+
+        Video frame transfer from GPU process to Web process would fail when
+        WebGL tried to copy the video frame to a texture. The failure was
+        artificial, due to use of WebCore::IOSurface as a unneeeded helper
+        to convert CVPixelBufferRef to a cross-process object.
+
+        The failure would occur when AVPlayerItemVideoOutput
+        would generate a CVPixelBufferRef without color space information. Creating
+        WebCore::IOSurface out of this would fail. WebCore::IOSurface
+        has always a color space. The failure is not significant, as WebCore::IOSurface
+        was only used as a convenience.
+
+        This would cause performance regression when WebGL would
+        fall back to software conversion fallback. This callback did work
+        as it obtains the image through "get last frame as native image"
+        API.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        Use the correct type of object in the IPC messages:
+        Function `PixelBufferForCurrentTime` returns `CVPixelBufferRef`
+        so use that type instead of `MachPort`. It is an implementation
+        detail of `CVPixelBufferRef` encode/decode how the object
+        transfer is implemented.
+
+        The type of transfer must be RetainPtr<CVPixelBufferRef> as that
+        is how the IPC system operates wrt input, output and "storage"
+        types. This is the same as with IPC support for RefPtr<> types.
+
+        No tests as Sources/WebKit is not unit-testable ATM.
+
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTime):
+        Change the receive side according to the message type change.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (class_template_headers):
+        Add support for RetainPtr in the IPC message language.
+
+        * Scripts/webkit/messages_unittest.py:
+        * Scripts/webkit/tests/Makefile:
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::jsValueForArguments):
+        (IPC::messageArgumentDescriptions):
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        * Scripts/webkit/tests/TestWithCVPixelBuffer.messages.in: Added.
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessageReceiver.cpp: Added.
+        (WebKit::TestWithCVPixelBuffer::didReceiveMessage):
+        (WebKit::TestWithCVPixelBuffer::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessages.h: Copied from Source/WebKit/Scripts/webkit/tests/TestWithSuperclassMessagesReplies.h.
+        (Messages::TestWithCVPixelBuffer::messageReceiverName):
+        (Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name):
+        (Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::SendCVPixelBuffer):
+        (Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::arguments const):
+        (Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name):
+        (Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::arguments const):
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessagesReplies.h: Copied from Source/WebKit/Scripts/webkit/tests/TestWithSuperclassMessagesReplies.h.
+        * Scripts/webkit/tests/TestWithSuperclassMessagesReplies.h:
+        Add code generation examples for IPC implemetation regarding transferring
+        RetainPtr<CVPixelBufferRef>.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<RetainPtr<CVPixelBufferRef>>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CVPixelBufferRef>>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        Move the CVPixelBufferRef transfer code from IOSurface
+        to the IPC layer.
+        The encode function must be of type RetainPtr<CVPixelBufferRef> instead of
+        CVPixelBufferRef, in contrast to existing RetainPtr<CF*> types.
+        The existing RetainPtr<CF*> types are not used as IPC message inputs,
+        only as subobjects. The IPC message language does not have concept of
+        encode type differing from decode type.
+
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+        Change the send side according to the message type change.
+
 2021-06-24  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Remove ENABLE_SCROLL_SNAP compile-time option

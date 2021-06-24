@@ -84,18 +84,11 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 
 RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime()
 {
-    std::optional<MachSendRight> sendRight;
-    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTime(), Messages::RemoteMediaPlayerProxy::NativeImageForCurrentTime::Reply(sendRight), m_id))
-        return nullptr;
 
-    if (!sendRight)
+    RetainPtr<CVPixelBufferRef> result;
+    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTime(), Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTime::Reply(result), m_id))
         return nullptr;
-
-    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), WebCore::DestinationColorSpace::SRGB());
-    if (!surface)
-        return nullptr;
-
-    return surface->createPixelBuffer();
+    return result;
 }
 
 } // namespace WebKit

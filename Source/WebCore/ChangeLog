@@ -1,3 +1,32 @@
+2021-06-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Using a video as a source for a WebGL texture is slow and hangs on iOS 15
+        https://bugs.webkit.org/show_bug.cgi?id=227081
+
+        Reviewed by Eric Carlson.
+
+        Video frame transfer from GPU process to Web process would fail when
+        WebGL tried to copy the video frame to a texture. The failure was
+        artificial, due to use of WebCore::IOSurface as a unneeeded helper
+        to convert CVPixelBufferRef to cross-process object.
+
+        This would cause performance regression when WebGL would
+        fall back to software conversion fallback. This callback did work
+        as it obtains the image through "get last frame as native image"
+        API.
+
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        Remove CVPixelBufferRef -> WebCore::IOSurface conversion function.
+        Remove WebCore::IOSurface -> CVPixelBufferRef conversion function.
+        These were used in WebKit IPC serialization for CVPixelBufferRef.
+        However, this is incorrect behavior as CVPixelBufferRef
+        is not always compatible with WebCore::IOSurface. IOSurfaceRef
+        has always a destination color space. This would be missing from
+        CVPixelBufferRef. The code is moved to the IPC serialization
+        functions.
+
 2021-06-24  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Text selection flashing to end of paragraph

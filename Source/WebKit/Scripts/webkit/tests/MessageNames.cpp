@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,10 @@ namespace IPC {
 const char* description(MessageName name)
 {
     switch (name) {
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return "TestWithCVPixelBuffer_ReceiveCVPixelBuffer";
+    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
+        return "TestWithCVPixelBuffer_SendCVPixelBuffer";
     case MessageName::TestWithIfMessage_LoadURL:
         return "TestWithIfMessage_LoadURL";
     case MessageName::TestWithImageData_ReceiveImageData:
@@ -182,6 +186,9 @@ const char* description(MessageName name)
 ReceiverName receiverName(MessageName messageName)
 {
     switch (messageName) {
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
+        return ReceiverName::TestWithCVPixelBuffer;
     case MessageName::TestWithIfMessage_LoadURL:
         return ReceiverName::TestWithIfMessage;
     case MessageName::TestWithImageData_ReceiveImageData:
@@ -275,6 +282,14 @@ ReceiverName receiverName(MessageName messageName)
 
 bool isValidMessageName(MessageName messageName)
 {
+#if USE(AVFOUNDATION)
+    if (messageName == IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer)
+        return true;
+#endif
+#if USE(AVFOUNDATION)
+    if (messageName == IPC::MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer)
+        return true;
+#endif
 #if PLATFORM(COCOA)
     if (messageName == IPC::MessageName::TestWithIfMessage_LoadURL)
         return true;

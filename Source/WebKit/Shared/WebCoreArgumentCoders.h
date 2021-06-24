@@ -89,6 +89,10 @@ class MachSendRight;
 }
 #endif
 
+#if USE(AVFOUNDATION)
+typedef struct __CVBuffer* CVPixelBufferRef;
+#endif
+
 namespace WebCore {
 
 class AbsolutePositionConstraints;
@@ -852,6 +856,15 @@ template<> struct ArgumentCoder<WebCore::TextRecognitionDataDetector> {
 };
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
+
+#if USE(AVFOUNDATION)
+
+template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {
+    static void encode(Encoder&, const RetainPtr<CVPixelBufferRef>&);
+    static std::optional<RetainPtr<CVPixelBufferRef>> decode(Decoder&);
+};
+
+#endif
 
 } // namespace IPC
 

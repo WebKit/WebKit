@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,9 @@
 #if ENABLE(IPC_TESTING_API)
 
 #include "ArgumentCoders.h"
+#if USE(AVFOUNDATION)
+#include "ArgumentCodersCF.h"
+#endif
 #include "Connection.h"
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
 #include "DummyType.h"
@@ -46,6 +49,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "TestTwoStateEnum.h"
 #endif
+#include "TestWithCVPixelBufferMessages.h"
 #include "TestWithIfMessageMessages.h"
 #include "TestWithImageDataMessages.h"
 #include "TestWithLegacyReceiverMessages.h"
@@ -75,6 +79,9 @@
 #include <wtf/OptionSet.h>
 #endif
 #include <wtf/RefCounted.h>
+#if USE(AVFOUNDATION)
+#include <wtf/RetainPtr.h>
+#endif
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -249,6 +256,12 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
 #endif
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return jsValueForDecodedArguments<Messages::TestWithStreamBuffer::SendStreamBuffer::Arguments>(globalObject, decoder);
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
+        return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::Arguments>(globalObject, decoder);
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::Arguments>(globalObject, decoder);
+#endif
     default:
         break;
     }
@@ -586,6 +599,14 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             {"stream", "IPC::StreamConnectionBuffer", nullptr, false},
         };
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
+        return Vector<ArgumentDescription> {
+            {"s0", "RetainPtr<CVPixelBufferRef>", nullptr, false},
+        };
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return Vector<ArgumentDescription> { };
+#endif
     default:
         break;
     }

@@ -23,20 +23,27 @@
  */
 
 #include "config.h"
-#include "TestWithSemaphore.h"
+#include "TestWithCVPixelBuffer.h"
 
+#if USE(AVFOUNDATION)
+#include "ArgumentCodersCF.h"
+#endif
 #include "Decoder.h"
 #include "HandleMessage.h"
-#include "IPCSemaphore.h"
-#include "TestWithSemaphoreMessages.h"
+#include "TestWithCVPixelBufferMessages.h"
+#if USE(AVFOUNDATION)
+#include <wtf/RetainPtr.h>
+#endif
 
 namespace WebKit {
 
-void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name())
-        return IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(decoder, this, &TestWithSemaphore::sendSemaphore);
+#if USE(AVFOUNDATION)
+    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
+#endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -46,11 +53,13 @@ void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Deco
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
 }
 
-bool TestWithSemaphore::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool TestWithCVPixelBuffer::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
-        return IPC::handleMessage<Messages::TestWithSemaphore::ReceiveSemaphore>(decoder, *replyEncoder, this, &TestWithSemaphore::receiveSemaphore);
+#if USE(AVFOUNDATION)
+    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(decoder, *replyEncoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
+#endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);

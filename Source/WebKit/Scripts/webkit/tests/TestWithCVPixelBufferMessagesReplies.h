@@ -24,63 +24,13 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
-#include "Connection.h"
 #include "MessageNames.h"
-#include "TestWithImageDataMessagesReplies.h"
-#include <WebCore/ImageData.h>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 
 namespace Messages {
-namespace TestWithImageData {
+namespace TestWithCVPixelBuffer {
 
-static inline IPC::ReceiverName messageReceiverName()
-{
-    return IPC::ReceiverName::TestWithImageData;
-}
 
-class SendImageData {
-public:
-    using Arguments = std::tuple<const RefPtr<WebCore::ImageData>&>;
-
-    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_SendImageData; }
-    static constexpr bool isSync = false;
-
-    explicit SendImageData(const RefPtr<WebCore::ImageData>& s0)
-        : m_arguments(s0)
-    {
-    }
-
-    const Arguments& arguments() const
-    {
-        return m_arguments;
-    }
-
-private:
-    Arguments m_arguments;
-};
-
-class ReceiveImageData {
-public:
-    using Arguments = std::tuple<>;
-
-    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageData; }
-    static constexpr bool isSync = true;
-
-    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using Reply = std::tuple<RefPtr<WebCore::ImageData>&>;
-    using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
-    const Arguments& arguments() const
-    {
-        return m_arguments;
-    }
-
-private:
-    Arguments m_arguments;
-};
-
-} // namespace TestWithImageData
+} // namespace TestWithCVPixelBuffer
 } // namespace Messages

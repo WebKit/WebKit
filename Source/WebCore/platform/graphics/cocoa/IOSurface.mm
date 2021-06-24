@@ -105,22 +105,6 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     return surface;
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromPixelBuffer(CVPixelBufferRef pixelBuffer)
-{
-    if (!pixelBuffer)
-        return nullptr;
-
-    auto surface = CVPixelBufferGetIOSurface(pixelBuffer);
-    if (!surface)
-        return nullptr;
-
-    auto colorSpace = CVImageBufferGetColorSpace(pixelBuffer);
-    if (!colorSpace)
-        return nullptr;
-
-    return createFromSurface(surface, DestinationColorSpace { colorSpace });
-}
-
 void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
 {
     IOSurfacePool::sharedPool().addSurface(WTFMove(surface));
@@ -298,16 +282,6 @@ RetainPtr<CGImageRef> IOSurface::createImage()
 RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface)
 {
     return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
-}
-
-RetainPtr<CVPixelBufferRef> IOSurface::createPixelBuffer()
-{
-    CVPixelBufferRef rawBuffer = nullptr;
-    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, m_surface.get(), nullptr, &rawBuffer);
-    if (status == noErr && rawBuffer)
-        return adoptCF(rawBuffer);
-
-    return nullptr;
 }
 
 void IOSurface::setContextSize(IntSize contextSize)

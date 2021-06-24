@@ -27,29 +27,29 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
-#include "TestWithImageDataMessagesReplies.h"
-#include <WebCore/ImageData.h>
+#include "TestWithCVPixelBufferMessagesReplies.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 
 namespace Messages {
-namespace TestWithImageData {
+namespace TestWithCVPixelBuffer {
 
 static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::ReceiverName::TestWithImageData;
+    return IPC::ReceiverName::TestWithCVPixelBuffer;
 }
 
-class SendImageData {
+#if USE(AVFOUNDATION)
+class SendCVPixelBuffer {
 public:
-    using Arguments = std::tuple<const RefPtr<WebCore::ImageData>&>;
+    using Arguments = std::tuple<const RetainPtr<CVPixelBufferRef>&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_SendImageData; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer; }
     static constexpr bool isSync = false;
 
-    explicit SendImageData(const RefPtr<WebCore::ImageData>& s0)
+    explicit SendCVPixelBuffer(const RetainPtr<CVPixelBufferRef>& s0)
         : m_arguments(s0)
     {
     }
@@ -62,17 +62,19 @@ public:
 private:
     Arguments m_arguments;
 };
+#endif
 
-class ReceiveImageData {
+#if USE(AVFOUNDATION)
+class ReceiveCVPixelBuffer {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageData; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer; }
     static constexpr bool isSync = true;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using Reply = std::tuple<RefPtr<WebCore::ImageData>&>;
-    using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
+    using Reply = std::tuple<RetainPtr<CVPixelBufferRef>&>;
+    using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
     const Arguments& arguments() const
     {
         return m_arguments;
@@ -81,6 +83,7 @@ public:
 private:
     Arguments m_arguments;
 };
+#endif
 
-} // namespace TestWithImageData
+} // namespace TestWithCVPixelBuffer
 } // namespace Messages

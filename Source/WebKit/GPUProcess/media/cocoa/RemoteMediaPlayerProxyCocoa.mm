@@ -107,30 +107,12 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(st
     completionHandler(surface->createSendRight());
 }
 
-void RemoteMediaPlayerProxy::pixelBufferForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::pixelBufferForCurrentTime(CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&& completionHandler)
 {
-#if !USE(AVFOUNDATION)
-    completionHandler(std::nullopt);
-#else
-    if (!m_player) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    auto pixelBuffer = m_player->pixelBufferForCurrentTime();
-    if (!pixelBuffer) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    auto surface = WebCore::IOSurface::createFromPixelBuffer(pixelBuffer.get());
-    if (!surface) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    completionHandler(surface->createSendRight());
-#endif
+    RetainPtr<CVPixelBufferRef> result;
+    if (m_player)
+        result = m_player->pixelBufferForCurrentTime();
+    completionHandler(WTFMove(result));
 }
 
 } // namespace WebKit
