@@ -1,3 +1,0 @@
-
-PASS Create Secure WebSocket - wsocket.url should be set correctly
-

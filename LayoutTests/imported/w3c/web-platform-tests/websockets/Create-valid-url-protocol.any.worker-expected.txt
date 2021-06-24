@@ -1,4 +1,3 @@
 
-PASS Create WebSocket - Pass a valid URL and a protocol string - Connection should be opened
 PASS Create WebSocket - Pass a valid URL and a protocol string - Connection should be closed
 
