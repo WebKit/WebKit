@@ -1,3 +1,13 @@
+2021-06-23  Truitt Savell  <tsavell@apple.com>
+
+        Fix iOS Debug testing be removing the assert added in r279119
+        https://bugs.webkit.org/show_bug.cgi?id=227227
+
+        Reviewed by Eric Carlson.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::setEligibleForSmartRouting):
+
 2021-06-23  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make the hostTime parameter to playSession a Monotonic time
