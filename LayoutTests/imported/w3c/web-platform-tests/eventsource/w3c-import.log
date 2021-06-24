@@ -19,6 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/event-data.html
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-close.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-document-domain.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.html
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-non-same-origin.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-stringify.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.any.js
@@ -56,7 +58,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-newlines.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-null-character.html
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-utf-8.htm
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/request-accept.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/request-cache-control.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/request-credentials.htm
