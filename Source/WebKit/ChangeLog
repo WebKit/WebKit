@@ -1,3 +1,17 @@
+2021-06-24  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WKDownloadDelegate header doc
+        https://bugs.webkit.org/show_bug.cgi?id=227378
+
+        Reviewed by Brady Eidson.
+
+        This removes the following sentence:
+        "If this is a download of a blob URL, response will be null."
+        This was correct in an earlier iteration of the implementation of this API, but is now incorrect
+        and verified by the WKDownload.BlobResponse API test.
+
+        * UIProcess/API/Cocoa/WKDownloadDelegate.h:
+
 2021-06-24  Kate Cheney  <katherine_cheney@apple.com>
 
         WKWebView loadSimulatedRequest does not set attribution value for url requests within html content

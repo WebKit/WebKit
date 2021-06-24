@@ -51,10 +51,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param suggestedFilename The suggested filename.
  @param completionHandler The completion handler you must invoke with
  either a file URL to begin the download or nil to cancel the download.
- @discussion If this is a download of a blob URL, response will be null.  suggestedFilename
- will often be the same as response.suggestedFilename, but web content can specify the
- suggested download filename.  If the destination file URL is non-null, it must be a file
- that does not exist in a directory that does exist and can be written to.
+ @discussion suggestedFilename will often be the same as response.suggestedFilename,
+ but web content can specify the suggested download filename.  If the destination file
+ URL is non-null, it must be a file that does not exist in a directory that does exist
+ and can be written to.
  */
 - (void)download:(WKDownload *)download decideDestinationUsingResponse:(NSURLResponse *)response suggestedFilename:(NSString *)suggestedFilename completionHandler:(void (^)(NSURL * _Nullable destination))completionHandler;
 
