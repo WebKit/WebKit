@@ -1,5 +1,18 @@
 2021-06-24  Chris Dumez  <cdumez@apple.com>
 
+        (r279211) introduced 4 failing web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=227355
+        <rdar://problem/79728204>
+
+        Unreviewed, rebaseline a few WPT url tests after resync in r279211.
+
+        * web-platform-tests/url/url-constructor.any-expected.txt:
+        * web-platform-tests/url/url-constructor.any.worker-expected.txt:
+        * web-platform-tests/url/url-origin.any-expected.txt:
+        * web-platform-tests/url/url-origin.any.worker-expected.txt:
+
+2021-06-24  Chris Dumez  <cdumez@apple.com>
+
         Resync websockets WPT tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=227317
 
