@@ -33,6 +33,10 @@ set(WebKitAPITest_LIBRARIES
     WebKit::WebKit
 )
 
+set(WebKitGLibAPITestsCore_LIBRARIES
+    WebKit::WebKit
+)
+
 set(WebKitGLibAPITest_LIBRARIES
     ${GLIB_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
@@ -109,7 +113,7 @@ add_library(WebKitGLibAPITestsCore STATIC ${WebKitGLibAPITests_SOURCES})
 target_include_directories(WebKitGLibAPITestsCore PUBLIC ${WebKitGLibAPITests_INCLUDE_DIRECTORIES})
 target_include_directories(WebKitGLibAPITestsCore SYSTEM PUBLIC ${WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES})
 target_compile_definitions(WebKitGLibAPITestsCore PUBLIC ${WebKitGLibAPITests_DEFINITIONS})
-target_link_libraries(WebKitGLibAPITestsCore WebKit::WebKit)
+target_link_libraries(WebKitGLibAPITestsCore ${WebKitGLibAPITestsCore_LIBRARIES})
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitGLibAPITestsCore -Wno-unused-parameter)

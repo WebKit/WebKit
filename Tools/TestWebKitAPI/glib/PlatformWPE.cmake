@@ -17,7 +17,13 @@ list(APPEND WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
     ${WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
+list(APPEND WebKitGLibAPITestsCore_LIBRARIES
+    Cairo::Cairo
+    WPEToolingBackends
+)
+
 list(APPEND WebKitGLibAPITest_LIBRARIES
+    Cairo::Cairo
     ${WPEBACKEND_FDO_LIBRARIES}
     WPE::libwpe
     WPEToolingBackends

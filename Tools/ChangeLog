@@ -1,3 +1,16 @@
+2021-06-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] WebKitGLibAPITestsCore should more explicitly link against library dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=227288
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/glib/CMakeLists.txt: Set up the WebKitGLibAPITestsCore_LIBRARIES
+        variable, use that for the target_link_libraries() call for the
+        WebKitGLibAPITestsCore target.
+        * TestWebKitAPI/glib/PlatformWPE.cmake: Extent the new variable to also
+        explicitly include Cairo and WPEToolingBackends libraries.
+
 2021-06-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App Privacy Report code from WebKitAdditions
