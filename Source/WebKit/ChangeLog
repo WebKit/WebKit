@@ -1,5 +1,67 @@
 2021-06-24  Chris Dumez  <cdumez@apple.com>
 
+        Improve release logging in WebProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=227374
+
+        Reviewed by Geoffrey Garen.
+
+        Improve release logging in WebProcessProxy:
+        - Add more logging
+        - Use more consistent logging format to faciliate grep'ing
+        - Always include pointer and PID in the logging
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::enableProcessTermination):
+        (WebKit::WebProcessPool::disableProcessTermination):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::setIsInProcessCache):
+        (WebKit::WebProcessProxy::setWebsiteDataStore):
+        (WebKit::WebProcessProxy::addProvisionalPageProxy):
+        (WebKit::WebProcessProxy::removeProvisionalPageProxy):
+        (WebKit::WebProcessProxy::processWillShutDown):
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::markIsNoLongerInPrewarmedPool):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+        (WebKit::WebProcessProxy::gpuProcessExited):
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didBecomeResponsive):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::canBeAddedToWebProcessCache const):
+        (WebKit::WebProcessProxy::canTerminateAuxiliaryProcess):
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::WebProcessProxy::requestTermination):
+        (WebKit::WebProcessProxy::sendPrepareToSuspend):
+        (WebKit::WebProcessProxy::sendProcessDidResume):
+        (WebKit::WebProcessProxy::didSetAssertionType):
+        (WebKit::WebProcessProxy::updateAudibleMediaAssertions):
+        (WebKit::WebProcessProxy::setIsHoldingLockedFiles):
+        (WebKit::WebProcessProxy::processTerminated):
+        (WebKit::WebProcessProxy::didExceedActiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedInactiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedCPULimit):
+        (WebKit::WebProcessProxy::didStartProvisionalLoadForMainFrame):
+        (WebKit::WebProcessProxy::incrementSuspendedPageCount):
+        (WebKit::WebProcessProxy::decrementSuspendedPageCount):
+        (WebKit::WebProcessProxy::processPoolIfExists const):
+        (WebKit::WebProcessProxy::startBackgroundActivityForFullscreenInput):
+        (WebKit::WebProcessProxy::endBackgroundActivityForFullscreenInput):
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        (WebKit::WebProcessProxy::updateServiceWorkerProcessAssertion):
+        (WebKit::WebProcessProxy::registerServiceWorkerClientProcess):
+        (WebKit::WebProcessProxy::unregisterServiceWorkerClientProcess):
+        (WebKit::WebProcessProxy::disableServiceWorkers):
+        (WebKit::WebProcessProxy::enableServiceWorkers):
+
+2021-06-24  Chris Dumez  <cdumez@apple.com>
+
         Add release logging in the WebPage constructor / destructor
         https://bugs.webkit.org/show_bug.cgi?id=227361
 
