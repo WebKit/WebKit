@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+Harness Error (FAIL), message = TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+FAIL ElementInternals.shadowRoot allows access to open shadow root assert_true: expected true got false
+FAIL ElementInternals.shadowRoot allows access to closed shadow root assert_true: expected true got false
+FAIL ElementInternals cannot be called before constructor, upgrade case assert_throws_dom: attachInternals cannot be called before definition exists function "() => element.attachInternals()" threw object "TypeError: element.attachInternals is not a function. (In 'element.attachInternals()', 'element.attachInternals' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL ElementInternals *can* be called after constructor, upgrade case assert_throws_dom: attachInternals cannot be called before constructor function "() => element.attachInternals()" threw object "TypeError: element.attachInternals is not a function. (In 'element.attachInternals()', 'element.attachInternals' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL ElementInternals cannot be called after constructor calls it, create case assert_true: expected true got false
+FAIL ElementInternals disabled by disabledFeatures assert_throws_dom: attachInternals forbidden by disabledFeatures, pre-upgrade function "() => element.attachInternals()" threw object "TypeError: element.attachInternals is not a function. (In 'element.attachInternals()', 'element.attachInternals' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL ElementInternals.shadowRoot doesn't reveal pre-attached closed shadowRoot assert_true: Failed to construct - test failed expected true got false
+

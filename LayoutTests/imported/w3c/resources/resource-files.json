@@ -1341,6 +1341,8 @@
         "web-platform-tests/css/selectors/selection-image-001-noref.html",
         "web-platform-tests/cssom-view/iframe.html",
         "web-platform-tests/cssom/support/xmlss-pi.xhtml",
+        "web-platform-tests/custom-elements/prevent-extensions-crash.html",
+        "web-platform-tests/custom-elements/xhtml-crash.xhtml",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-2.sub.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subsubframe.sub.html",
