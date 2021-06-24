@@ -1,5 +1,241 @@
 2021-06-23  Jean-Yves Avenard  <jya@apple.com>
 
+        Not all uses of AudioToolbox framework use soft linking
+        https://bugs.webkit.org/show_bug.cgi?id=227250
+        <rdar://problem/79606090>
+
+        Reviewed by Eric Carlson.
+
+        Unify AudioToolbox, CoreMedia, VideoToolbox and MediaToolbox's method
+        definitions and their use, ensuring that they are always soft-linked.
+        Unified builds and the inconsistent use of explicitly using the PAL namespace
+        caused some calls to be ambiguous leading to compilation errors; some
+        code would also use the softlinked methods while others called into the frameworks
+        directly.
+        To get around those we ensure that any calls to AudioToolbox or CoreMedia is always using
+        the fully resolved PAL name.
+        Remove unnecessary `using namespace PAL;` statements wherever applicable.
+        No change in observable behavior.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        * Modules/webaudio/MediaStreamAudioSourceCocoa.cpp:
+        (WebCore::MediaStreamAudioSource::consumeAudio):
+        * dom/Document.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * platform/audio/AudioFileReader.h:
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::AudioFileReader::AudioFileReader):
+        (WebCore::AudioFileReader::~AudioFileReader):
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile): Deleted.
+        * platform/audio/cocoa/AudioFileReaderCocoa.h:
+        * platform/audio/cocoa/AudioOutputUnitAdaptor.cpp:
+        (WebCore::AudioOutputUnitAdaptor::~AudioOutputUnitAdaptor):
+        (WebCore::AudioOutputUnitAdaptor::start):
+        (WebCore::AudioOutputUnitAdaptor::stop):
+        * platform/audio/cocoa/AudioSampleBufferList.cpp:
+        (WebCore::AudioSampleBufferList::copyFrom):
+        * platform/audio/cocoa/AudioSampleDataSource.mm:
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::WebAudioBufferList):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::decodeAudioForBusCreation):
+        (WebCore::createBusFromAudioFile): Deleted.
+        * platform/audio/ios/AudioOutputUnitAdaptorIOS.cpp:
+        (WebCore::AudioOutputUnitAdaptor::configure):
+        * platform/audio/mac/AudioOutputUnitAdaptorMac.cpp:
+        (WebCore::AudioOutputUnitAdaptor::configure):
+        * platform/cocoa/MediaUtilities.cpp:
+        (WebCore::createAudioFormatDescription):
+        (WebCore::createAudioSampleBuffer):
+        * platform/graphics/RemoteVideoSample.cpp:
+        (WebCore::RemoteVideoSample::create):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::create):
+        (WebCore::AudioSourceProviderAVFObjC::provideInput):
+        (WebCore::AudioSourceProviderAVFObjC::createMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::finalizeCallback):
+        (WebCore::AudioSourceProviderAVFObjC::prepareCallback):
+        (WebCore::AudioSourceProviderAVFObjC::unprepareCallback):
+        (WebCore::AudioSourceProviderAVFObjC::processCallback):
+        (WebCore::AudioSourceProviderAVFObjC::prepare):
+        (WebCore::AudioSourceProviderAVFObjC::process):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::getStartDate const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isAvailable):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataGroupDidArrive):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::EffectiveRateChangedListener::stop):
+        (WebCore::EffectiveRateChangedListener::EffectiveRateChangedListener):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::streamSession):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::isAvailable):
+        (WebCore::videoTransformationMatrix):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WTF::CFTypeTrait<CMSampleBufferRef>::typeID):
+        (WebCore::MediaSampleAVFObjC::createImageSample):
+        (WebCore::MediaSampleAVFObjC::presentationTime const):
+        (WebCore::MediaSampleAVFObjC::decodeTime const):
+        (WebCore::MediaSampleAVFObjC::duration const):
+        (WebCore::MediaSampleAVFObjC::sizeInBytes const):
+        (WebCore::MediaSampleAVFObjC::videoPixelFormat const):
+        (WebCore::isCMSampleBufferAttachmentRandomAccess):
+        (WebCore::doesCMSampleBufferHaveSyncInfo):
+        (WebCore::isCMSampleBufferRandomAccess):
+        (WebCore::isCMSampleBufferAttachmentNonDisplaying):
+        (WebCore::isCMSampleBufferNonDisplaying):
+        (WebCore::MediaSampleAVFObjC::presentationSize const):
+        (WebCore::MediaSampleAVFObjC::offsetTimestampsBy):
+        (WebCore::MediaSampleAVFObjC::setTimestamps):
+        (WebCore::MediaSampleAVFObjC::isDivisable const):
+        (WebCore::MediaSampleAVFObjC::divide):
+        (WebCore::MediaSampleAVFObjC::createNonDisplayingCopy const):
+        (WebCore::MediaSampleAVFObjC::getRGBAImageData const):
+        (WebCore::setSampleBufferAsDisplayImmediately):
+        (WebCore::MediaSampleAVFObjC::isHomogeneous const):
+        (WebCore::MediaSampleAVFObjC::divideIntoHomogeneousSamples):
+        (WebCore::MediaSampleAVFObjC::cloneSampleBufferAndSetAsDisplayImmediately):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::bufferWasConsumedCallback):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime const):
+        (WebCore::SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::OnFrame):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::createSampleBuffer):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::createSampleBuffer):
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::convertToCMColorPrimaries):
+        (WebCore::convertToCMTransferFunction):
+        (WebCore::convertToCMYCbCRMatrix):
+        (WebCore::createFormatDescriptionFromVPCodecConfigurationRecord):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WTF::CFTypeTrait<CMSampleBufferRef>::typeID):
+        (WebCore::WebCoreDecompressionSession::setTimebase):
+        (WebCore::WebCoreDecompressionSession::enqueueSample):
+        (WebCore::WebCoreDecompressionSession::shouldDecodeSample):
+        (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+        (WebCore::WebCoreDecompressionSession::decodeSample):
+        (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+        (WebCore::WebCoreDecompressionSession::getFirstVideoFrame):
+        (WebCore::WebCoreDecompressionSession::automaticDequeue):
+        (WebCore::WebCoreDecompressionSession::enqueueDecodedSample):
+        (WebCore::WebCoreDecompressionSession::isReadyForMoreMediaData const):
+        (WebCore::WebCoreDecompressionSession::notifyWhenHasAvailableVideoFrame):
+        (WebCore::WebCoreDecompressionSession::imageForTime):
+        (WebCore::WebCoreDecompressionSession::flush):
+        (WebCore::WebCoreDecompressionSession::getDecodeTime):
+        (WebCore::WebCoreDecompressionSession::getPresentationTime):
+        (WebCore::WebCoreDecompressionSession::getDuration):
+        (WebCore::WebCoreDecompressionSession::compareBuffers):
+        (WebCore::WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics):
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        (WebCore::ImageTransferSessionVT::createPixelBuffer):
+        (WebCore::ImageTransferSessionVT::convertCMSampleBuffer):
+        (WebCore::ImageTransferSessionVT::createCMSampleBuffer):
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::seekableRangesChanged):
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::videoSampleAvailable):
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm:
+        (WebCore::AudioSampleBufferCompressor::~AudioSampleBufferCompressor):
+        (WebCore::AudioSampleBufferCompressor::initialize):
+        (WebCore::AudioSampleBufferCompressor::finish):
+        (WebCore::AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription):
+        (WebCore::AudioSampleBufferCompressor::attachPrimingTrimsIfNeeded):
+        (WebCore::AudioSampleBufferCompressor::gradualDecoderRefreshCount):
+        (WebCore::AudioSampleBufferCompressor::sampleBufferWithNumPackets):
+        (WebCore::AudioSampleBufferCompressor::provideSourceDataNumOutputPackets):
+        (WebCore::AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime):
+        (WebCore::AudioSampleBufferCompressor::processSampleBuffer):
+        (WebCore::AudioSampleBufferCompressor::getOutputSampleBuffer):
+        (WebCore::AudioSampleBufferCompressor::takeOutputSampleBuffer):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::MediaRecorderPrivateWriter):
+        (WebCore::MediaRecorderPrivateWriter::processNewCompressedVideoSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::processNewCompressedAudioSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::startAssetWriter):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer):
+        (WebCore::appendEndsPreviousSampleDurationMarker):
+        (WebCore::copySampleBufferWithCurrentTimeStamp):
+        (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::completeFetchData):
+        (WebCore::MediaRecorderPrivateWriter::pause):
+        (WebCore::MediaRecorderPrivateWriter::resume):
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm:
+        (WebCore::VideoSampleBufferCompressor::~VideoSampleBufferCompressor):
+        (WebCore::VideoSampleBufferCompressor::initialize):
+        (WebCore::VideoSampleBufferCompressor::finish):
+        (WebCore::VideoSampleBufferCompressor::videoCompressionCallback):
+        (WebCore::VideoSampleBufferCompressor::vtProfileLevel const):
+        (WebCore::VideoSampleBufferCompressor::initCompressionSession):
+        (WebCore::VideoSampleBufferCompressor::processSampleBuffer):
+        (WebCore::VideoSampleBufferCompressor::getOutputSampleBuffer):
+        (WebCore::VideoSampleBufferCompressor::takeOutputSampleBuffer):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp:
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::start):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::stop):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setSessionSizeAndFrameRate):
+        (WebCore::AVVideoCaptureSource::frameDurationForFrameRate):
+        (WebCore::AVVideoCaptureSource::generatePresets):
+        * platform/mediastream/mac/CoreAudioCaptureDevice.cpp:
+        (WebCore::CoreAudioCaptureDevice::deviceClock):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::configureMicrophoneProc):
+        (WebCore::CoreAudioSharedUnit::configureSpeakerProc):
+        (WebCore::CoreAudioSharedUnit::cleanupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::reconfigureAudioUnit):
+        (WebCore::CoreAudioSharedUnit::startInternal):
+        (WebCore::CoreAudioSharedUnit::stopInternal):
+        (WebCore::CoreAudioSharedUnit::defaultInputDevice):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+        (WebCore::MockAudioSharedUnit::reconfigure):
+        (WebCore::MockAudioSharedUnit::emitSampleBuffers):
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::OnFrame):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable):
+        * platform/mediastream/mac/WindowDisplayCapturerMac.mm:
+
+2021-06-23  Jean-Yves Avenard  <jya@apple.com>
+
         Remove #include <wtf/Optional.h>
         https://bugs.webkit.org/show_bug.cgi?id=227335
 

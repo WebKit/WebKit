@@ -25,12 +25,12 @@
 
 #include "config.h"
 #include "MediaSampleByteRange.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 #if ENABLE(WEBM_FORMAT_READER)
 
 namespace WebKit {
 
-using namespace PAL;
 using namespace WebCore;
 
 MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSourceRef byteSource, uint64_t trackID)
@@ -50,7 +50,7 @@ MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSour
     auto platformSample = sample.platformSample();
     switch (platformSample.type) {
     case PlatformSample::CMSampleBufferType:
-        m_formatDescription = CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
+        m_formatDescription = PAL::CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
         break;
     case PlatformSample::ByteRangeSampleType:
         m_formatDescription = platformSample.sample.byteRangeSample.second;

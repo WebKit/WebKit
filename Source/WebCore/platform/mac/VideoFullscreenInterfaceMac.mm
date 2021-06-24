@@ -373,7 +373,6 @@ enum class PIPState {
 @end
 
 namespace WebCore {
-using namespace PAL;
 
 VideoFullscreenInterfaceMac::VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac& playbackSessionInterface)
     : m_playbackSessionInterface(playbackSessionInterface)

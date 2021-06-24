@@ -48,6 +48,8 @@
 #include <wtf/Algorithms.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+
+#include <pal/cf/AudioToolboxSoftLink.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -57,7 +59,6 @@
 #endif
 
 namespace WebCore {
-using namespace PAL;
 
 #if PLATFORM(MAC)
 CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
@@ -203,7 +204,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     m_DTSConversionRatio = 1e-9 * static_cast<double>(timebaseInfo.numer) / static_cast<double>(timebaseInfo.denom);
 
     AudioComponentDescription ioUnitDescription = { kAudioUnitType_Output, kAudioUnitSubType_VoiceProcessingIO, kAudioUnitManufacturer_Apple, 0, 0 };
-    AudioComponent ioComponent = AudioComponentFindNext(nullptr, &ioUnitDescription);
+    AudioComponent ioComponent = PAL::AudioComponentFindNext(nullptr, &ioUnitDescription);
     ASSERT(ioComponent);
     if (!ioComponent) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to find vpio unit component", this);
@@ -212,7 +213,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
 
 #if !LOG_DISABLED
     CFStringRef name = nullptr;
-    AudioComponentCopyName(ioComponent, &name);
+    PAL::AudioComponentCopyName(ioComponent, &name);
     if (name) {
         m_ioUnitName = name;
         CFRelease(name);
@@ -220,7 +221,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     }
 #endif
 
-    auto err = AudioComponentInstanceNew(ioComponent, &m_ioUnit);
+    auto err = PAL::AudioComponentInstanceNew(ioComponent, &m_ioUnit);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to open vpio unit, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
@@ -228,13 +229,13 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
 
     if (!enableEchoCancellation()) {
         uint32_t param = 0;
-        err = AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_VoiceProcessingEnableAGC, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
+        err = PAL::AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_VoiceProcessingEnableAGC, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
         if (err) {
             RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio automatic gain control, error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
         }
         param = 1;
-        err = AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_BypassVoiceProcessing, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
+        err = PAL::AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_BypassVoiceProcessing, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
         if (err) {
             RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit echo cancellation, error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
@@ -243,7 +244,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
 
 #if PLATFORM(IOS_FAMILY)
     uint32_t param = 1;
-    err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param));
+    err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param));
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to enable vpio unit input, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
@@ -255,7 +256,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
             return err;
     }
 
-    err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, &m_captureDeviceID, sizeof(m_captureDeviceID));
+    err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, &m_captureDeviceID, sizeof(m_captureDeviceID));
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit capture device ID %d, error %d (%.4s)", this, (int)m_captureDeviceID, (int)err, (char*)&err);
         return err;
@@ -270,7 +271,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     if (err)
         return err;
 
-    err = AudioUnitInitialize(m_ioUnit);
+    err = PAL::AudioUnitInitialize(m_ioUnit);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) AudioUnitInitialize() failed, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
@@ -292,7 +293,7 @@ void CoreAudioSharedUnit::unduck()
 OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
 {
     AURenderCallbackStruct callback = { microphoneCallback, this };
-    auto err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, inputBus, &callback, sizeof(callback));
+    auto err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, inputBus, &callback, sizeof(callback));
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureMicrophoneProc(%p) unable to set vpio unit mic proc, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
@@ -301,14 +302,14 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
     AudioStreamBasicDescription microphoneProcFormat = { };
 
     UInt32 size = sizeof(microphoneProcFormat);
-    err = AudioUnitGetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, inputBus, &microphoneProcFormat, &size);
+    err = PAL::AudioUnitGetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, inputBus, &microphoneProcFormat, &size);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureMicrophoneProc(%p) unable to get output stream format, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 
     microphoneProcFormat.mSampleRate = sampleRate();
-    err = AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, inputBus, &microphoneProcFormat, size);
+    err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, inputBus, &microphoneProcFormat, size);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureMicrophoneProc(%p) unable to set output stream format, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
@@ -323,7 +324,7 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
 OSStatus CoreAudioSharedUnit::configureSpeakerProc()
 {
     AURenderCallbackStruct callback = { speakerCallback, this };
-    auto err = AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, outputBus, &callback, sizeof(callback));
+    auto err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, outputBus, &callback, sizeof(callback));
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureSpeakerProc(%p) unable to set vpio unit speaker proc, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
@@ -332,14 +333,14 @@ OSStatus CoreAudioSharedUnit::configureSpeakerProc()
     AudioStreamBasicDescription speakerProcFormat = { };
 
     UInt32 size = sizeof(speakerProcFormat);
-    err = AudioUnitGetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, &size);
+    err = PAL::AudioUnitGetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, &size);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureSpeakerProc(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 
     speakerProcFormat.mSampleRate = sampleRate();
-    err = AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, size);
+    err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, size);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureSpeakerProc(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
@@ -459,7 +460,7 @@ void CoreAudioSharedUnit::cleanupAudioUnit()
     }
 
     if (m_ioUnit) {
-        AudioComponentInstanceDispose(m_ioUnit);
+        PAL::AudioComponentInstanceDispose(m_ioUnit);
         m_ioUnit = nullptr;
     }
 
@@ -477,7 +478,7 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
         return 0;
 
     if (m_ioUnitStarted) {
-        err = AudioOutputUnitStop(m_ioUnit);
+        err = PAL::AudioOutputUnitStop(m_ioUnit);
         if (err) {
             RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
@@ -490,7 +491,7 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
         return err;
 
     if (m_ioUnitStarted) {
-        err = AudioOutputUnitStart(m_ioUnit);
+        err = PAL::AudioOutputUnitStart(m_ioUnit);
         if (err) {
             RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
@@ -514,7 +515,7 @@ OSStatus CoreAudioSharedUnit::startInternal()
 
     unduck();
 
-    err = AudioOutputUnitStart(m_ioUnit);
+    err = PAL::AudioOutputUnitStart(m_ioUnit);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::start(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);
         cleanupAudioUnit();
@@ -551,7 +552,7 @@ void CoreAudioSharedUnit::stopInternal()
     if (!m_ioUnit || !m_ioUnitStarted)
         return;
 
-    auto err = AudioOutputUnitStop(m_ioUnit);
+    auto err = PAL::AudioOutputUnitStop(m_ioUnit);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::stop(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
         return;
@@ -565,7 +566,7 @@ OSStatus CoreAudioSharedUnit::defaultInputDevice(uint32_t* deviceID)
     ASSERT(m_ioUnit);
 
     UInt32 propertySize = sizeof(*deviceID);
-    auto err = AudioUnitGetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, deviceID, &propertySize);
+    auto err = PAL::AudioUnitGetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, deviceID, &propertySize);
     if (err)
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::defaultInputDevice(%p) unable to get default input device ID, error %d (%.4s)", this, (int)err, (char*)&err);
 

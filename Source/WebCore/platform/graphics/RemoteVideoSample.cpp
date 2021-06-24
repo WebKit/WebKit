@@ -41,7 +41,6 @@
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
-using namespace PAL;
 
 static inline std::unique_ptr<IOSurface> transferBGRAPixelBufferToIOSurface(CVPixelBufferRef pixelBuffer)
 {
@@ -90,7 +89,7 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample
 {
     ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
 
-    auto imageBuffer = CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer);
+    auto imageBuffer = PAL::CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer);
     if (!imageBuffer) {
         RELEASE_LOG_ERROR(Media, "RemoteVideoSample::create: CMSampleBufferGetImageBuffer returned nullptr");
         return nullptr;

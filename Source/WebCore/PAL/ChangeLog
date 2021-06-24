@@ -1,3 +1,25 @@
+2021-06-23  Jean-Yves Avenard  <jya@apple.com>
+
+        Not all uses of AudioToolbox framework use soft linking
+        https://bugs.webkit.org/show_bug.cgi?id=227250
+        <rdar://problem/79606090>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add methods whose definitions were scattered across
+        the code.
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Same as above.
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add missing methods
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h: Add missing methods
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h: Add missing methods and fix some spelling in define names
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Add missing methods
+
 2021-06-23  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make the hostTime parameter to playSession a Monotonic time

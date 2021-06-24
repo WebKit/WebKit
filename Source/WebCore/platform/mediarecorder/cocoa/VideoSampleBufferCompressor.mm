@@ -34,11 +34,10 @@
 #import <VideoToolbox/VTCompressionSession.h>
 #import <wtf/SoftLinking.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cf/VideoToolboxSoftLink.h>
 
 namespace WebCore {
-
-using namespace PAL;
 
 std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create(String mimeType, CMBufferQueueTriggerCallback callback, void* callbackObject)
 {
@@ -69,7 +68,7 @@ VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType output
 VideoSampleBufferCompressor::~VideoSampleBufferCompressor()
 {
     if (m_vtSession) {
-        VTCompressionSessionInvalidate(m_vtSession.get());
+        PAL::VTCompressionSessionInvalidate(m_vtSession.get());
         m_vtSession = nullptr;
     }
 }
@@ -77,12 +76,12 @@ VideoSampleBufferCompressor::~VideoSampleBufferCompressor()
 bool VideoSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callback, void* callbackObject)
 {
     CMBufferQueueRef outputBufferQueue;
-    if (auto error = CMBufferQueueCreate(kCFAllocatorDefault, 0, CMBufferQueueGetCallbacksForUnsortedSampleBuffers(), &outputBufferQueue)) {
+    if (auto error = PAL::CMBufferQueueCreate(kCFAllocatorDefault, 0, PAL::CMBufferQueueGetCallbacksForUnsortedSampleBuffers(), &outputBufferQueue)) {
         RELEASE_LOG_ERROR(MediaStream, "VideoSampleBufferCompressor unable to create buffer queue %d", error);
         return false;
     }
     m_outputBufferQueue = outputBufferQueue;
-    CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, kCMTimeZero, NULL);
+    PAL::CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, PAL::kCMTimeZero, NULL);
 
     m_isEncoding = true;
     return true;
@@ -96,10 +95,10 @@ void VideoSampleBufferCompressor::setBitsPerSecond(unsigned bitRate)
 void VideoSampleBufferCompressor::finish()
 {
     m_serialDispatchQueue->dispatchSync([this] {
-        auto error = VTCompressionSessionCompleteFrames(m_vtSession.get(), kCMTimeInvalid);
+        auto error = PAL::VTCompressionSessionCompleteFrames(m_vtSession.get(), PAL::kCMTimeInvalid);
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionCompleteFrames failed with %d", error);
 
-        error = CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
+        error = PAL::CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor CMBufferQueueMarkEndOfData failed with %d", error);
 
         m_isEncoding = false;
@@ -114,7 +113,7 @@ void VideoSampleBufferCompressor::videoCompressionCallback(void *refCon, void*, 
 
     VideoSampleBufferCompressor *compressor = static_cast<VideoSampleBufferCompressor*>(refCon);
 
-    auto error = CMBufferQueueEnqueue(compressor->m_outputBufferQueue.get(), buffer);
+    auto error = PAL::CMBufferQueueEnqueue(compressor->m_outputBufferQueue.get(), buffer);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor CMBufferQueueEnqueue failed with %d", error);
 }
 
@@ -130,53 +129,53 @@ CFStringRef VideoSampleBufferCompressor::vtProfileLevel() const
 {
     switch (m_profile) {
     case Profile::Baseline:
-        return kVTProfileLevel_H264_Baseline_AutoLevel;
+        return PAL::kVTProfileLevel_H264_Baseline_AutoLevel;
     case Profile::High:
-        return kVTProfileLevel_H264_High_AutoLevel;
+        return PAL::kVTProfileLevel_H264_High_AutoLevel;
     case Profile::Main:
-        return kVTProfileLevel_H264_Main_AutoLevel;
+        return PAL::kVTProfileLevel_H264_Main_AutoLevel;
     }
 }
 
 bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptionRef formatDescription)
 {
-    CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(formatDescription);
 #if PLATFORM(IOS)
     NSDictionary *encoderSpecifications = nil;
 #else
-    NSDictionary *encoderSpecifications = @{(__bridge NSString *)kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder:@YES};
+    NSDictionary *encoderSpecifications = @{(__bridge NSString *)PAL::kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder:@YES};
 #endif
 
     VTCompressionSessionRef vtSession;
-    auto error = VTCompressionSessionCreate(kCFAllocatorDefault, dimensions.width, dimensions.height, m_outputCodecType, (__bridge CFDictionaryRef)encoderSpecifications, NULL, NULL, videoCompressionCallback, this, &vtSession);
+    auto error = PAL::VTCompressionSessionCreate(kCFAllocatorDefault, dimensions.width, dimensions.height, m_outputCodecType, (__bridge CFDictionaryRef)encoderSpecifications, NULL, NULL, videoCompressionCallback, this, &vtSession);
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "VideoSampleBufferCompressor VTCompressionSessionCreate failed with %d", error);
         return NO;
     }
     m_vtSession = adoptCF(vtSession);
 
-    error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
+    error = VTSessionSetProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_RealTime failed with %d", error);
-    error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, m_maxKeyFrameIntervalDuration);
+    error = setCompressionSessionProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, m_maxKeyFrameIntervalDuration);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration failed with %d", error);
-    error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_ExpectedFrameRate, m_expectedFrameRate);
+    error = setCompressionSessionProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_ExpectedFrameRate, m_expectedFrameRate);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ExpectedFrameRate failed with %d", error);
 
-    error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_ProfileLevel, vtProfileLevel());
+    error = VTSessionSetProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_ProfileLevel, vtProfileLevel());
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ProfileLevel failed with %d for profile %d", error, m_profile);
         if (m_profile != Profile::Baseline) {
-            error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Baseline_AutoLevel);
+            error = VTSessionSetProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_ProfileLevel, PAL::kVTProfileLevel_H264_Baseline_AutoLevel);
             RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ProfileLevel failed with %d for default profile", error);
         }
     }
 
     if (m_outputBitRate) {
-        error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_AverageBitRate, *m_outputBitRate);
+        error = setCompressionSessionProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_AverageBitRate, *m_outputBitRate);
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_AverageBitRate failed with %d", error);
     }
 
-    error = VTCompressionSessionPrepareToEncodeFrames(m_vtSession.get());
+    error = PAL::VTCompressionSessionPrepareToEncodeFrames(m_vtSession.get());
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionPrepareToEncodeFrames failed with %d", error);
 
     return YES;
@@ -185,14 +184,14 @@ bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptio
 void VideoSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
 {
     if (!m_vtSession) {
-        if (!initCompressionSession(CMSampleBufferGetFormatDescription(buffer)))
+        if (!initCompressionSession(PAL::CMSampleBufferGetFormatDescription(buffer)))
             return;
     }
 
-    auto imageBuffer = CMSampleBufferGetImageBuffer(buffer);
-    auto presentationTimeStamp = CMSampleBufferGetPresentationTimeStamp(buffer);
-    auto duration = CMSampleBufferGetDuration(buffer);
-    auto error = VTCompressionSessionEncodeFrame(m_vtSession.get(), imageBuffer, presentationTimeStamp, duration, NULL, this, NULL);
+    auto imageBuffer = PAL::CMSampleBufferGetImageBuffer(buffer);
+    auto presentationTimeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(buffer);
+    auto duration = PAL::CMSampleBufferGetDuration(buffer);
+    auto error = PAL::VTCompressionSessionEncodeFrame(m_vtSession.get(), imageBuffer, presentationTimeStamp, duration, NULL, this, NULL);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionEncodeFrame failed with %d", error);
 }
 
@@ -208,12 +207,12 @@ void VideoSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
 
 CMSampleBufferRef VideoSampleBufferCompressor::getOutputSampleBuffer()
 {
-    return (CMSampleBufferRef)(const_cast<void*>(CMBufferQueueGetHead(m_outputBufferQueue.get())));
+    return (CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueGetHead(m_outputBufferQueue.get())));
 }
 
 RetainPtr<CMSampleBufferRef> VideoSampleBufferCompressor::takeOutputSampleBuffer()
 {
-    return adoptCF((CMSampleBufferRef)(const_cast<void*>(CMBufferQueueDequeueAndRetain(m_outputBufferQueue.get()))));
+    return adoptCF((CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueDequeueAndRetain(m_outputBufferQueue.get()))));
 }
 
 unsigned VideoSampleBufferCompressor::bitRate() const

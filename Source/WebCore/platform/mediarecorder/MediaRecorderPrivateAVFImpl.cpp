@@ -42,7 +42,6 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
-using namespace PAL;
 
 std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
@@ -88,12 +87,12 @@ void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer
 {
     if (shouldMuteVideo()) {
         if (!m_blackFrame) {
-            m_blackFrameDescription = CMSampleBufferGetFormatDescription(sampleBuffer.platformSample().sample.cmSampleBuffer);
-            auto dimensions = CMVideoFormatDescriptionGetDimensions(m_blackFrameDescription.get());
+            m_blackFrameDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer.platformSample().sample.cmSampleBuffer);
+            auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(m_blackFrameDescription.get());
             m_blackFrame = createBlackPixelBuffer(dimensions.width, dimensions.height);
 
             CMVideoFormatDescriptionRef formatDescription = nullptr;
-            auto status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, m_blackFrame.get(), &formatDescription);
+            auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, m_blackFrame.get(), &formatDescription);
             if (status != noErr) {
                 RELEASE_LOG_ERROR(Media, "MediaRecorderPrivateAVFImpl::videoSampleAvailable ::unable to create a black frame description: %d", static_cast<int>(status));
                 m_blackFrame = nullptr;
@@ -103,8 +102,8 @@ void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer
         }
 
         CMSampleBufferRef sample = nullptr;
-        CMSampleTimingInfo timingInfo { kCMTimeInvalid, toCMTime(sampleBuffer.presentationTime()), toCMTime(sampleBuffer.decodeTime()) };
-        auto status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)m_blackFrame.get(), m_blackFrameDescription.get(), &timingInfo, &sample);
+        CMSampleTimingInfo timingInfo { PAL::kCMTimeInvalid, PAL::toCMTime(sampleBuffer.presentationTime()), PAL::toCMTime(sampleBuffer.decodeTime()) };
+        auto status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)m_blackFrame.get(), m_blackFrameDescription.get(), &timingInfo, &sample);
 
         if (status != noErr) {
             RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateAVFImpl::videoSampleAvailable - unable to create a black frame: %d", static_cast<int>(status));

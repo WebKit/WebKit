@@ -42,7 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 namespace WebKit {
-using namespace PAL;
 using namespace WebCore;
 
 static bool usageTrackingAvailable()

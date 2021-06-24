@@ -33,13 +33,11 @@
 
 namespace WebCore {
 
-using namespace PAL;
-
 RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description, size_t magicCookieSize, const void* magicCookie)
 {
     auto basicDescription = WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
     CMFormatDescriptionRef format = nullptr;
-    auto error = CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, nullptr, magicCookieSize, magicCookie, nullptr, &format);
+    auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, nullptr, magicCookieSize, magicCookie, nullptr, &format);
     if (error) {
         LOG_ERROR("createAudioFormatDescription failed with %d", error);
         return nullptr;
@@ -55,14 +53,14 @@ RetainPtr<CMSampleBufferRef> createAudioSampleBuffer(const PlatformAudioData& da
         return nullptr;
 
     CMSampleBufferRef sampleBuffer = nullptr;
-    auto error = CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, nullptr, false, nullptr, nullptr, format.get(), sampleCount, time, nullptr, &sampleBuffer);
+    auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, nullptr, false, nullptr, nullptr, format.get(), sampleCount, time, nullptr, &sampleBuffer);
     if (error) {
         LOG_ERROR("createAudioSampleBuffer with packet descriptions failed - %d", error);
         return nullptr;
     }
     auto buffer = adoptCF(sampleBuffer);
 
-    error = CMSampleBufferSetDataBufferFromAudioBufferList(buffer.get(), kCFAllocatorDefault, kCFAllocatorDefault, 0, downcast<WebAudioBufferList>(data).list());
+    error = PAL::CMSampleBufferSetDataBufferFromAudioBufferList(buffer.get(), kCFAllocatorDefault, kCFAllocatorDefault, 0, downcast<WebAudioBufferList>(data).list());
     if (error) {
         LOG_ERROR("createAudioSampleBuffer from audio buffer list failed - %d", error);
         return nullptr;

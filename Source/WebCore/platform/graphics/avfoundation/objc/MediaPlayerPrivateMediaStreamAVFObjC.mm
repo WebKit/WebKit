@@ -32,6 +32,7 @@
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "LocalSampleBufferDisplayLayer.h"
+#import "MediaPlayer.h"
 #import "MediaSessionManagerCocoa.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
@@ -121,7 +122,6 @@
 @end
 
 namespace WebCore {
-using namespace PAL;
 
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaStreamAVFObjC
@@ -210,7 +210,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::registerMediaEngine(MediaEngineRegist
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
 {
-    return isAVFoundationFrameworkAvailable() && isCoreMediaFrameworkAvailable() && getAVSampleBufferDisplayLayerClass();
+    return PAL::isAVFoundationFrameworkAvailable() && PAL::isCoreMediaFrameworkAvailable() && PAL::getAVSampleBufferDisplayLayerClass();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
@@ -230,7 +230,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 static inline CGAffineTransform videoTransformationMatrix(MediaSample& sample)
 {
     CMSampleBufferRef sampleBuffer = sample.platformSample().sample.cmSampleBuffer;
-    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sampleBuffer));
+    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sampleBuffer));
     size_t width = CVPixelBufferGetWidth(pixelBuffer);
     size_t height = CVPixelBufferGetHeight(pixelBuffer);
     if (!width || !height)
@@ -960,7 +960,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
     if (!m_imagePainter.pixelBufferConformer)
         return;
 
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_imagePainter.mediaSample->platformSample().sample.cmSampleBuffer));
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_imagePainter.mediaSample->platformSample().sample.cmSampleBuffer));
     m_imagePainter.cgImage = NativeImage::create(m_imagePainter.pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer));
 }
 

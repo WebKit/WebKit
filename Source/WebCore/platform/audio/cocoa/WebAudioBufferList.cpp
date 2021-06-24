@@ -32,7 +32,6 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
-using namespace PAL;
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     : m_bytesPerFrame(format.bytesPerFrame())
@@ -116,7 +115,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, C
         return;
 
     CMBlockBufferRef buffer = nullptr;
-    if (noErr == CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_canonicalList.get(), m_listBufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer))
+    if (noErr == PAL::CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_canonicalList.get(), m_listBufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer))
         m_blockBuffer = adoptCF(buffer);
 
     reset();

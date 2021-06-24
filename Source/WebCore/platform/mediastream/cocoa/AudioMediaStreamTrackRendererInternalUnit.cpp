@@ -42,6 +42,7 @@
 #include "CoreAudioCaptureDeviceManager.h"
 #endif
 
+#include <pal/cf/AudioToolboxSoftLink.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
@@ -123,9 +124,9 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::start()
     if (!m_remoteIOUnit)
         return;
 
-    if (auto error = AudioOutputUnitStart(m_remoteIOUnit)) {
+    if (auto error = PAL::AudioOutputUnitStart(m_remoteIOUnit)) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::start AudioOutputUnitStart failed, error = %d", error);
-        AudioComponentInstanceDispose(m_remoteIOUnit);
+        PAL::AudioComponentInstanceDispose(m_remoteIOUnit);
         m_remoteIOUnit = nullptr;
         return;
     }
@@ -139,11 +140,11 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::stop()
         return;
 
     if (m_isStarted) {
-        AudioOutputUnitStop(m_remoteIOUnit);
+        PAL::AudioOutputUnitStop(m_remoteIOUnit);
         m_isStarted = false;
     }
 
-    AudioComponentInstanceDispose(m_remoteIOUnit);
+    PAL::AudioComponentInstanceDispose(m_remoteIOUnit);
     m_remoteIOUnit = nullptr;
 }
 
@@ -163,14 +164,14 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
     ioUnitDescription.componentSubType = kAudioUnitSubType_DefaultOutput;
 #endif
 
-    AudioComponent ioComponent = AudioComponentFindNext(nullptr, &ioUnitDescription);
+    AudioComponent ioComponent = PAL::AudioComponentFindNext(nullptr, &ioUnitDescription);
     ASSERT(ioComponent);
     if (!ioComponent) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to find remote IO unit component");
         return;
     }
 
-    auto error = AudioComponentInstanceNew(ioComponent, &remoteIOUnit);
+    auto error = PAL::AudioComponentInstanceNew(ioComponent, &remoteIOUnit);
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to open vpio unit, error = %d", error);
         return;
@@ -178,7 +179,7 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
 
 #if PLATFORM(IOS_FAMILY)
     UInt32 param = 1;
-    error = AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(param));
+    error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(param));
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to enable vpio unit output, error = %d", error);
         return;
@@ -187,7 +188,7 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
 
 #if PLATFORM(MAC)
     if (m_deviceID) {
-        error = AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &m_deviceID, sizeof(m_deviceID));
+        error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &m_deviceID, sizeof(m_deviceID));
         if (error) {
             RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to set unit device ID %d, error %d (%.4s)", (int)m_deviceID, (int)error, (char*)&error);
             return;
@@ -196,14 +197,14 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
 #endif
 
     AURenderCallbackStruct callback = { LocalAudioMediaStreamTrackRendererInternalUnit::renderingCallback, this };
-    error = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
+    error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to set vpio unit speaker proc, error = %d", error);
         return;
     }
 
     UInt32 size = sizeof(outputDescription.streamDescription());
-    error  = AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), &size);
+    error  = PAL::AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), &size);
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to get input stream format, error = %d", error);
         return;
@@ -211,13 +212,13 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
 
     outputDescription.streamDescription().mSampleRate = AudioSession::sharedSession().sampleRate();
 
-    error = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), sizeof(outputDescription.streamDescription()));
+    error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), sizeof(outputDescription.streamDescription()));
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to set input stream format, error = %d", error);
         return;
     }
 
-    error = AudioUnitInitialize(remoteIOUnit);
+    error = PAL::AudioUnitInitialize(remoteIOUnit);
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit AudioUnitInitialize() failed, error = %d", error);
         return;

@@ -47,7 +47,6 @@ WTF_DECLARE_CF_TYPE_TRAIT(MTPluginFormatReader);
 
 namespace WebKit {
 
-using namespace PAL;
 using namespace WebCore;
 
 static const void* nextLogIdentifier()
@@ -245,7 +244,7 @@ OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocat
     if (m_duration.isIndefinite())
         return kCMBaseObjectError_ValueNotAvailable;
 
-    if (auto leakedDuration = adoptCF(CMTimeCopyAsDictionary(PAL::toCMTime(m_duration), allocator)).leakRef()) {
+    if (auto leakedDuration = adoptCF(PAL::CMTimeCopyAsDictionary(PAL::toCMTime(m_duration), allocator)).leakRef()) {
         *reinterpret_cast<CFDictionaryRef*>(valueCopy) = leakedDuration;
         return noErr;
     }
