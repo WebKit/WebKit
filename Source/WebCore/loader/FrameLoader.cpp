@@ -94,6 +94,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "PageTransitionEvent.h"
+#include "Performance.h"
 #include "PerformanceLogging.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
@@ -2561,6 +2562,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 page->didFinishLoad();
             }
         }
+
+        if (auto domWindow = makeRefPtr(m_frame.document() ? m_frame.document()->domWindow() : nullptr))
+            domWindow->performance().scheduleNavigationObservationTaskIfNeeded();
 
         const ResourceError& error = m_documentLoader->mainDocumentError();
 

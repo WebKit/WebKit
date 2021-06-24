@@ -1,3 +1,32 @@
+2021-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some PerformanceNavigationTiming bugs
+        https://bugs.webkit.org/show_bug.cgi?id=227329
+
+        Reviewed by Chris Dumez.
+
+        Test: imported/w3c/web-platform-tests/navigation-timing/buffered-flag.window.html
+
+        This fixes two bugs:
+        1. We need to delay the PerformanceObserver event until didFinishNavigation time, which is after iframes have also finished loading.
+        2. We need to remember whether we've added the PerformanceNavigationTiming to a PerformanceObserver's list to avoid duplicate entries.
+
+        This fixes two WPT tests that were passed by Chrome and Firefox.
+        PerformanceNavigationTiming is still an off-by-default experimental feature, so this won't affect anything yet.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * page/Performance.cpp:
+        (WebCore::Performance::appendBufferedEntriesByType const):
+        (WebCore::Performance::registerPerformanceObserver):
+        (WebCore::Performance::scheduleNavigationObservationTaskIfNeeded):
+        * page/Performance.h:
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::observe):
+        * page/PerformanceObserver.h:
+        (WebCore::PerformanceObserver::hasNavigationTiming const):
+        (WebCore::PerformanceObserver::addedNavigationTiming):
+
 2021-06-23  Truitt Savell  <tsavell@apple.com>
 
         Fix iOS Debug testing be removing the assert added in r279119
