@@ -36,6 +36,7 @@
 - (void)_setContentSizePreservingContentOffsetDuringRubberband:(CGSize)contentSize;
 - (void)_setScrollEnabledInternal:(BOOL)enabled;
 - (void)_setZoomEnabledInternal:(BOOL)enabled;
+- (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets;
 
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
