@@ -3,7 +3,9 @@ CONSOLE MESSAGE: EventSource cannot load http://foo/ due to access control check
 EventSource IDL tests
 
 
-PASS EventTarget interface: existence and properties of interface object
+FAIL EventTarget interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function () {
+                new interface_object();
+            }" did not throw
 PASS EventTarget interface object length
 PASS EventTarget interface object name
 PASS EventTarget interface: existence and properties of interface prototype object
@@ -18,7 +20,7 @@ PASS EventListener interface: existence and properties of interface prototype ob
 PASS EventListener interface: existence and properties of interface prototype object's @@unscopables property
 PASS EventListener interface: operation handleEvent(Event)
 PASS EventSource interface: existence and properties of interface object
-PASS EventSource interface object length
+FAIL EventSource interface object length assert_equals: wrong value for EventSource.length expected 0 but got 1
 PASS EventSource interface object name
 PASS EventSource interface: existence and properties of interface prototype object
 PASS EventSource interface: existence and properties of interface prototype object's "constructor" property

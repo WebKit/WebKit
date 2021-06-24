@@ -159,6 +159,4 @@ PASS Stringification of new ProgressEvent("type")
 PASS ProgressEvent interface: new ProgressEvent("type") must inherit property "lengthComputable" with the proper type
 PASS ProgressEvent interface: new ProgressEvent("type") must inherit property "loaded" with the proper type
 PASS ProgressEvent interface: new ProgressEvent("type") must inherit property "total" with the proper type
-PASS Node interface: existence and properties of interface object
-PASS Document interface: existence and properties of interface object
 

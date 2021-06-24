@@ -1,5 +1,47 @@
 2021-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Update WPT resources from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227296
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/idlharness.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/idlharness.https.any.worker-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window-expected.txt:
+        * web-platform-tests/css/css-animations/idlharness-expected.txt:
+        * web-platform-tests/css/css-font-loading/idlharness.https-expected.txt:
+        * web-platform-tests/css/css-syntax/input-preprocessing-expected.txt:
+        * web-platform-tests/css/css-transitions/idlharness-expected.txt:
+        * web-platform-tests/css/cssom-view/idlharness-expected.txt:
+        * web-platform-tests/css/cssom/idlharness-expected.txt:
+        * web-platform-tests/dom/idlharness.any.worker-expected.txt:
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/domparsing/idlharness.window-expected.txt:
+        * web-platform-tests/eventsource/idlharness-expected.txt:
+        * web-platform-tests/fetch/api/idlharness.any-expected.txt:
+        * web-platform-tests/fetch/api/idlharness.any.worker-expected.txt:
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any-expected.txt:
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.worker-expected.txt:
+        * web-platform-tests/hr-time/idlharness.any-expected.txt:
+        * web-platform-tests/hr-time/idlharness.any.worker-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-return-value-handling-dynamic-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window-expected.txt:
+        * web-platform-tests/interfaces/DOM-Parsing.idl:
+        * web-platform-tests/interfaces/SVG.idl:
+        * web-platform-tests/interfaces/mediasession.idl:
+        * web-platform-tests/mediasession/idlharness.window-expected.txt:
+        * web-platform-tests/notifications/idlharness.https.any-expected.txt:
+        * web-platform-tests/notifications/idlharness.https.any.worker-expected.txt:
+        * web-platform-tests/pointerevents/idlharness.window-expected.txt:
+        Rebaseline existing tests.
+
+        * web-platform-tests/resources/*: Updated.
+
+2021-06-23  Chris Dumez  <cdumez@apple.com>
+
         Resync IndexedDB WPT tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=227315
 

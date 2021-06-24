@@ -4,12 +4,11 @@ import os
 import ssl
 import sys
 import subprocess
+import urllib
 
 import html5lib
 import py
 import pytest
-from six import text_type
-from six.moves import urllib
 
 from wptserver import WPTServer
 
@@ -18,6 +17,9 @@ WPT_ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 HARNESS = os.path.join(HERE, 'harness.html')
 TEST_TYPES = ('functional', 'unit')
 DEFAULT_VARIANTS = ["?default"]
+
+sys.path.insert(0, os.path.normpath(os.path.join(WPT_ROOT, "tools")))
+import localpaths
 
 sys.path.insert(0, os.path.normpath(os.path.join(WPT_ROOT, "tools", "webdriver")))
 import webdriver
@@ -39,7 +41,11 @@ def pytest_collect_file(path, parent):
         return
     test_type = test_type.split(os.path.sep)[1]
 
-    return HTMLItem(str(path), test_type, parent)
+    # Handle the deprecation of Node construction in pytest6
+    # https://docs.pytest.org/en/stable/deprecations.html#node-construction-changed-to-node-from-parent
+    if hasattr(HTMLItem, "from_parent"):
+        return HTMLItem.from_parent(parent, filename=str(path), test_type=test_type)
+    return HTMLItem(parent, str(path), test_type)
 
 
 def pytest_configure(config):
@@ -56,8 +62,6 @@ def pytest_configure(config):
                                       capabilities=capabilities)
     config.add_cleanup(config.driver.end)
 
-    config.server = WPTServer(WPT_ROOT)
-    config.server.start()
     # Although the name of the `_create_unverified_context` method suggests
     # that it is not intended for external consumption, the standard library's
     # documentation explicitly endorses its use:
@@ -68,6 +72,9 @@ def pytest_configure(config):
     #
     # https://docs.python.org/2/library/httplib.html#httplib.HTTPSConnection
     config.ssl_context = ssl._create_unverified_context()
+
+    config.server = WPTServer(WPT_ROOT)
+    config.server.start(config.ssl_context)
     config.add_cleanup(config.server.stop)
 
 
@@ -83,7 +90,7 @@ def resolve_uri(context, uri):
 
 
 class HTMLItem(pytest.Item, pytest.Collector):
-    def __init__(self, filename, test_type, parent):
+    def __init__(self, parent, filename, test_type):
         self.url = parent.session.config.server.url(filename)
         self.type = test_type
         self.variants = []
@@ -105,7 +112,7 @@ class HTMLItem(pytest.Item, pytest.Collector):
         includes_variants_script = False
         self.expected = None
 
-        for element in parsed.getiterator():
+        for element in parsed.iter():
             if not name and element.tag == 'title':
                 name = element.text
                 continue
@@ -114,7 +121,11 @@ class HTMLItem(pytest.Item, pytest.Collector):
                 continue
             if element.tag == 'script':
                 if element.attrib.get('id') == 'expected':
-                    self.expected = json.loads(text_type(element.text))
+                    try:
+                        self.expected = json.loads(element.text)
+                    except ValueError:
+                        print("Failed parsing JSON in %s" % filename)
+                        raise
 
                 src = element.attrib.get('src', '')
 
@@ -192,6 +203,8 @@ class HTMLItem(pytest.Item, pytest.Collector):
         test_url = self.url + variant
         actual = driver.execute_async_script('runTest("%s", "foo", arguments[0])' % test_url)
 
+        print(json.dumps(actual, indent=2))
+
         summarized = self._summarize(copy.deepcopy(actual))
 
         print(json.dumps(summarized, indent=2))
@@ -203,6 +216,17 @@ class HTMLItem(pytest.Item, pytest.Collector):
 
         self.expected[u'summarized_tests'].sort(key=lambda test_obj: test_obj.get('name'))
 
+        # Make asserts opt-in for now
+        if "summarized_asserts" not in self.expected:
+            del summarized["summarized_asserts"]
+        else:
+            # We can't be sure of the order of asserts even within the same test
+            # although we could also check for the failing assert being the final
+            # one
+            for obj in [summarized, self.expected]:
+                obj["summarized_asserts"].sort(
+                    key=lambda x: (x["test"] or "", x["status"], x["assert_name"], tuple(x["args"])))
+
         assert summarized == self.expected
 
     def _summarize(self, actual):
@@ -212,6 +236,11 @@ class HTMLItem(pytest.Item, pytest.Collector):
         summarized[u'summarized_tests'] = [
             self._summarize_test(test) for test in actual['tests']]
         summarized[u'summarized_tests'].sort(key=lambda test_obj: test_obj.get('name'))
+        summarized[u'summarized_asserts'] = [
+            {"assert_name": assert_item["assert_name"],
+            "test": assert_item["test"]["name"] if assert_item["test"] else None,
+            "args": assert_item["args"],
+            "status": assert_item["status"]} for assert_item in actual["asserts"]]
         summarized[u'type'] = actual['type']
 
         return summarized

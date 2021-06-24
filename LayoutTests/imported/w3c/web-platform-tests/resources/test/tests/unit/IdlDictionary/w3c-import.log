@@ -14,5 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlDictionary/get_inheritance_stack.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlDictionary/get_reverse_inheritance_stack.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlDictionary/test_partial_dictionary.html

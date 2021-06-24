@@ -11,6 +11,5 @@ PASS Navigator includes NavigatorContentUtils: member names are unique
 PASS Navigator includes NavigatorCookies: member names are unique
 PASS Navigator includes NavigatorPlugins: member names are unique
 PASS Navigator includes NavigatorConcurrentHardware: member names are unique
-PASS Navigator interface: existence and properties of interface object
 PASS Navigator interface: navigator must not have property "sendBeacon"
 
