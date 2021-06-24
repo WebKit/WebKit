@@ -1,3 +1,14 @@
+2021-06-24  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB prints error log about blob files when there is no error
+        https://bugs.webkit.org/show_bug.cgi?id=227092
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StoreBlobThenDelete.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/StoreBlobToBeDeleted.html:
+
 2021-06-24  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Uninstalled Cog now requires a COG_MODULEDIR environment variable

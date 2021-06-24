@@ -1,3 +1,17 @@
+2021-06-24  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB prints error log about blob files when there is no error
+        https://bugs.webkit.org/show_bug.cgi?id=227092
+
+        Reviewed by Chris Dumez.
+
+        We should try opening database if file exists, and try getting blob files only if database is opened.
+
+        API test: IndexedDB.StoreBlobThenDeleteDatabase
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+
 2021-06-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Using a video as a source for a WebGL texture is slow and hangs on iOS 15
