@@ -1,3 +1,14 @@
+2021-06-24  John Cunningham  <johncunningham@apple.com>
+
+        [ANGLE Metal] - Set barriers on transform feedback buffers only up to the in use buffer count
+        https://bugs.webkit.org/show_bug.cgi?id=227272
+        <rdar://79587861>
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::onEndTransformFeedback):
+
 2021-06-23  Kyle Piddington  <kpiddington@apple.com>
 
         Fix incorrect indexing / out of bounds access in getRestartIndices

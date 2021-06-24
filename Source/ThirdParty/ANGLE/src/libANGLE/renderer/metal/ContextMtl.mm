@@ -1412,9 +1412,16 @@ void ContextMtl::onEndTransformFeedback()
     }
     if (getDisplay()->getFeatures().hasExplicitMemBarrier.enabled)
     {
-        for(auto & bufferRef : mCurrentTransformFeedbackBuffers)
+        const gl::ProgramExecutable *executable = mState.getProgramExecutable();
+        ASSERT(executable);
+        ASSERT(executable->hasTransformFeedbackOutput() || mState.isTransformFeedbackActive());
+        TransformFeedbackMtl *transformFeedbackMtl = mtl::GetImpl(mState.getCurrentTransformFeedback());
+        size_t bufferCount                         = executable->getTransformFeedbackBufferCount();
+        const gl::TransformFeedbackBuffersArray<BufferMtl *> &bufferHandles =
+            transformFeedbackMtl->getBufferHandles();
+        for (size_t i = 0; i < bufferCount; i++)
         {
-            const mtl::BufferRef & constBufferRef = bufferRef->getCurrentBuffer();
+            const mtl::BufferRef & constBufferRef = bufferHandles[i]->getCurrentBuffer();
             mRenderEncoder.memoryBarrierWithResource(constBufferRef, mtl::kRenderStageVertex, mtl::kRenderStageVertex);
         }
     }
