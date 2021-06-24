@@ -27,7 +27,7 @@
 
 #include <algorithm>
 #include <array>
-#include <math.h>
+#include <cmath>
 #include <tuple>
 
 namespace WebCore {
