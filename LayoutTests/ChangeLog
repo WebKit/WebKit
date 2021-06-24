@@ -1,5 +1,11 @@
 2021-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html as flaky on iOS.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-06-23  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, silence console logging for imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html
 
         The console logging was making the test flaky.
