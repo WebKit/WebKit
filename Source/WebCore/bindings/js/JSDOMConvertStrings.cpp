@@ -74,7 +74,7 @@ String valueToByteString(JSGlobalObject& lexicalGlobalObject, JSValue value)
     return stringToByteString(lexicalGlobalObject, scope, WTFMove(string));
 }
 
-static inline String stringToUSVString(String&& string)
+String stringToUSVString(String&& string)
 {
     // Fast path for the case where there are no unpaired surrogates.
     if (!hasUnpairedSurrogate(string))

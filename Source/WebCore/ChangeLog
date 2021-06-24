@@ -1,3 +1,20 @@
+2021-06-24  Darin Adler  <darin@apple.com>
+
+        CSS parser does not handle unpaired surrogates correctly
+        https://bugs.webkit.org/show_bug.cgi?id=227357
+
+        Reviewed by Sam Weinig.
+
+        Tests: imported/w3c/web-platform-tests/css/css-syntax/input-preprocessing.html
+
+        * bindings/js/JSDOMConvertStrings.cpp:
+        (WebCore::stringToUSVString): Made non-inline to be used outside this file.
+        * bindings/js/JSDOMConvertStrings.h: Added stringToUSVString.
+
+        * css/parser/CSSTokenizer.cpp:
+        (WebCore::preprocessString): Call stringToUSVString to convert unpaired
+        surrogates to replacement characters.
+
 2021-06-24  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB prints error log about blob files when there is no error

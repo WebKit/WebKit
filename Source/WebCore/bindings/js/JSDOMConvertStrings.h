@@ -37,6 +37,9 @@ WEBCORE_EXPORT String valueToByteString(JSC::JSGlobalObject&, JSC::JSValue);
 WEBCORE_EXPORT String identifierToUSVString(JSC::JSGlobalObject&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToUSVString(JSC::JSGlobalObject&, JSC::JSValue);
 
+// FIXME: Consider renaming this to replaceUnpairedSurrogatesWithReplacementCharacter and moving to WTF.
+String stringToUSVString(String&&);
+
 inline String propertyNameToString(JSC::PropertyName propertyName)
 {
     ASSERT(!propertyName.isSymbol());
