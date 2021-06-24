@@ -1,3 +1,50 @@
+2021-06-24  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r279210. rdar://problem/79726355
+
+    REGRESSION(r278970): A CATransaction commitHandler should not execute a client callback
+    https://bugs.webkit.org/show_bug.cgi?id=227318
+    <rdar://79625962>
+    
+    Reviewed by Tim Horton.
+    
+    In takeSnapshotWithConfiguration() we call callSnapshotRect() inside the
+    callback of [CATransaction addCommitHandler].
+    
+    callSnapshotRect() calls the client callback which may call directly or
+    indirectly addCommitHandler. But it is prohibited by CA to add a commit
+    handler while processing a registered commit handler.
+    
+    The fix is to postpone calling callSnapshotRect() till CATransaction
+    processes all its commit handler callbacks.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279210 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-23  Said Abou-Hallawa  <said@apple.com>
+
+            REGRESSION(r278970): A CATransaction commitHandler should not execute a client callback
+            https://bugs.webkit.org/show_bug.cgi?id=227318
+            <rdar://79625962>
+
+            Reviewed by Tim Horton.
+
+            In takeSnapshotWithConfiguration() we call callSnapshotRect() inside the
+            callback of [CATransaction addCommitHandler].
+
+            callSnapshotRect() calls the client callback which may call directly or
+            indirectly addCommitHandler. But it is prohibited by CA to add a commit
+            handler while processing a registered commit handler.
+
+            The fix is to postpone calling callSnapshotRect() till CATransaction
+            processes all its commit handler callbacks.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+
 2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Rename WKVisualSearchPreviewController to WKQuickLookPreviewController
