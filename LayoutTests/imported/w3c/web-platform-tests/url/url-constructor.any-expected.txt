@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked setting data:, as the base URL because it does not have an allowed scheme.
 
 PASS Loading data…
 PASS Parsing: <http://example	.
@@ -26,7 +25,7 @@ PASS Parsing: <http://f:
 PASS Parsing: <http://f:fifty-two/c> against <http://example.org/foo/bar>
 PASS Parsing: <http://f:999999/c> against <http://example.org/foo/bar>
 PASS Parsing: <non-special://f:999999/c> against <http://example.org/foo/bar>
-FAIL Parsing: <http://f: 21 / b ? d # e > against <http://example.org/foo/bar> assert_equals: failure should set href to input expected "http://f: 21 / b ? d # e " but got "http://f: 21 / b ? d # e"
+PASS Parsing: <http://f: 21 / b ? d # e > against <http://example.org/foo/bar>
 PASS Parsing: <> against <http://example.org/foo/bar>
 PASS Parsing: <  	> against <http://example.org/foo/bar>
 PASS Parsing: <:foo.com/> against <http://example.org/foo/bar>
@@ -307,7 +306,7 @@ PASS Parsing: <http://[::1.]> against <http://other.com/>
 PASS Parsing: <http://foo:💩@example.com/bar> against <http://other.com/>
 PASS Parsing: <#> against <test:test>
 PASS Parsing: <#x> against <mailto:x@x.com>
-FAIL Parsing: <#x> against <data:,> assert_equals: href expected "data:,#x" but got "mailto:x@x.com#x"
+PASS Parsing: <#x> against <data:,>
 PASS Parsing: <#x> against <about:blank>
 PASS Parsing: <#> against <test:test?test>
 PASS Parsing: <https://@test@test@example:800/> against <http://doesnotmatter/>
@@ -364,7 +363,7 @@ PASS Parsing: <sc::a@example.net> against <about:blank>
 PASS Parsing: <wow:%NBD> against <about:blank>
 PASS Parsing: <wow:%1G> against <about:blank>
 PASS Parsing: <wow:￿> against <about:blank>
-PASS Parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
+PASS Parsing: <http://example.com/U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿?U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
 PASS Parsing: <http://a<b> against <about:blank>
 PASS Parsing: <http://a>b> against <about:blank>
 PASS Parsing: <http://a^b> against <about:blank>

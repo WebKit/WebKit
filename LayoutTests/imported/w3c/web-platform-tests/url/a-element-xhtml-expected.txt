@@ -44,6 +44,8 @@ PASS Parsing: <?> against <http://example.org/foo/bar>
 PASS Parsing: </> against <http://example.org/foo/bar>
 PASS Parsing: <:23> against <http://example.org/foo/bar>
 PASS Parsing: </:23> against <http://example.org/foo/bar>
+PASS Parsing: <\x> against <http://example.org/foo/bar>
+PASS Parsing: <\\x\hello> against <http://example.org/foo/bar>
 PASS Parsing: <::> against <http://example.org/foo/bar>
 PASS Parsing: <::23> against <http://example.org/foo/bar>
 PASS Parsing: <foo://> against <http://example.org/foo/bar>
@@ -274,10 +276,6 @@ PASS Parsing: <https://�> against <about:blank>
 PASS Parsing: <https://%EF%BF%BD> against <about:blank>
 PASS Parsing: <https://x/�?�#�> against <about:blank>
 PASS Parsing: <http://a.b.c.xn--pokxncvks> against <about:blank>
-PASS Parsing: <http://a.b.x.xn--pokxncvks> against <about:blank>
-PASS Parsing: <http://a.b.xn.xn--pokxncvks> against <about:blank>
-PASS Parsing: <http://a.b.xn-.xn--pokxncvks> against <about:blank>
-PASS Parsing: <http://a.b.xn--.xn--pokxncvks> against <about:blank>
 PASS Parsing: <http://10.0.0.xn--pokxncvks> against <about:blank>
 PASS Parsing: <http://Ｇｏ.com> against <http://other.com/>
 PASS Parsing: <http://％４１.com> against <http://other.com/>
@@ -373,6 +371,28 @@ PASS Parsing: <http://a^b> against <about:blank>
 PASS Parsing: <non-special://a<b> against <about:blank>
 PASS Parsing: <non-special://a>b> against <about:blank>
 PASS Parsing: <non-special://a^b> against <about:blank>
+PASS Parsing: <foo://ho\0st/> against <about:blank>
+PASS Parsing: <foo://ho|st/> against <about:blank>
+PASS Parsing: <foo://ho	st/> against <about:blank>
+PASS Parsing: <foo://ho
+st/> against <about:blank>
+PASS Parsing: <foo://ho\rst/> against <about:blank>
+PASS Parsing: <http://ho%00st/> against <about:blank>
+PASS Parsing: <http://ho%09st/> against <about:blank>
+PASS Parsing: <http://ho%0Ast/> against <about:blank>
+PASS Parsing: <http://ho%0Dst/> against <about:blank>
+PASS Parsing: <http://ho%20st/> against <about:blank>
+PASS Parsing: <http://ho%23st/> against <about:blank>
+PASS Parsing: <http://ho%2Fst/> against <about:blank>
+PASS Parsing: <http://ho%3Ast/> against <about:blank>
+PASS Parsing: <http://ho%3Cst/> against <about:blank>
+PASS Parsing: <http://ho%3Est/> against <about:blank>
+PASS Parsing: <http://ho%3Fst/> against <about:blank>
+PASS Parsing: <http://ho%40st/> against <about:blank>
+PASS Parsing: <http://ho%5Bst/> against <about:blank>
+PASS Parsing: <http://ho%5Cst/> against <about:blank>
+PASS Parsing: <http://ho%5Dst/> against <about:blank>
+PASS Parsing: <http://ho%7Cst/> against <about:blank>
 PASS Parsing: <http://!"$&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing: <sc://!"$&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing: <ftp://example.com%80/> against <about:blank>
@@ -478,6 +498,14 @@ PASS Parsing: </c:/foo/bar> against <file://host/path>
 PASS Parsing: <file://example.net/C:/> against <about:blank>
 PASS Parsing: <file://1.2.3.4/C:/> against <about:blank>
 PASS Parsing: <file://[1::8]/C:/> against <about:blank>
+PASS Parsing: <C|/> against <file://host/>
+PASS Parsing: </C:/> against <file://host/>
+PASS Parsing: <file:C:/> against <file://host/>
+PASS Parsing: <file:/C:/> against <file://host/>
+PASS Parsing: <//C:/> against <file://host/>
+PASS Parsing: <file://C:/> against <file://host/>
+PASS Parsing: <///C:/> against <file://host/>
+PASS Parsing: <file:///C:/> against <file://host/>
 PASS Parsing: <file:/C|/> against <about:blank>
 PASS Parsing: <file://C|/> against <about:blank>
 PASS Parsing: <file:> against <about:blank>
@@ -600,4 +628,20 @@ PASS Parsing: <#link> against <https://example.org/##link>
 PASS Parsing: <non-special:cannot-be-a-base-url-\0~> against <about:blank>
 PASS Parsing: <https://www.example.com/path{path.html?query'=query#fragment<fragment> against <about:blank>
 PASS Parsing: <https://user:pass[@foo/bar> against <http://example.org>
+PASS Parsing: <foo:// !"$%&'()*+,-.;<=>@[\]^_`{|}~@host/> against <about:blank>
+PASS Parsing: <wss:// !"$%&'()*+,-.;<=>@[]^_`{|}~@host/> against <about:blank>
+PASS Parsing: <foo://joe: !"$%&'()*+,-.:;<=>@[\]^_`{|}~@host/> against <about:blank>
+PASS Parsing: <wss://joe: !"$%&'()*+,-.:;<=>@[]^_`{|}~@host/> against <about:blank>
+PASS Parsing: <foo://!"$%&'()*+,-.;=_`{}~/> against <about:blank>
+PASS Parsing: <wss://!"$&'()*+,-.;=_`{}~/> against <about:blank>
+PASS Parsing: <foo://host/ !"$%&'()*+,-./:;<=>@[\]^_`{|}~> against <about:blank>
+PASS Parsing: <wss://host/ !"$%&'()*+,-./:;<=>@[\]^_`{|}~> against <about:blank>
+PASS Parsing: <foo://host/dir/? !"$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
+PASS Parsing: <wss://host/dir/? !"$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
+PASS Parsing: <foo://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
+PASS Parsing: <wss://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
+PASS Parsing: <abc:rootless> against <abc://host/path>
+PASS Parsing: <abc:rootless> against <abc:/path>
+PASS Parsing: <abc:rootless> against <abc:path>
+PASS Parsing: <abc:/rooted> against <abc://host/path>
 
