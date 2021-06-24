@@ -140,11 +140,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , gridItem(o.gridItem)
     , scrollMargin(o.scrollMargin)
     , scrollPadding(o.scrollPadding)
-#if ENABLE(CSS_SCROLL_SNAP)
     , scrollSnapType(o.scrollSnapType)
     , scrollSnapAlign(o.scrollSnapAlign)
     , scrollSnapStop(o.scrollSnapStop)
-#endif
     , overscrollBehaviorX(o.overscrollBehaviorX)
     , overscrollBehaviorY(o.overscrollBehaviorY)
     , content(o.content ? o.content->clone() : nullptr)
@@ -248,11 +246,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && gridItem == o.gridItem
         && scrollMargin == o.scrollMargin
         && scrollPadding == o.scrollPadding
-#if ENABLE(CSS_SCROLL_SNAP)
         && scrollSnapType == o.scrollSnapType
         && scrollSnapAlign == o.scrollSnapAlign
         && scrollSnapStop == o.scrollSnapStop
-#endif
         && overscrollBehaviorX == o.overscrollBehaviorX
         && overscrollBehaviorY == o.overscrollBehaviorY
         && contentDataEquivalent(o)

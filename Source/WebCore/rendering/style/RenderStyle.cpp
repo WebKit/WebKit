@@ -955,10 +955,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
             return true;
     }
 
-#if ENABLE(CSS_SCROLL_SNAP)
     if (scrollPadding() != other.scrollPadding() || scrollSnapType() != other.scrollSnapType())
         return true;
-#endif
 
     return false;
 }
@@ -2533,7 +2531,6 @@ void RenderStyle::setScrollPaddingRight(Length&& length)
 {
     SET_VAR(m_rareNonInheritedData, scrollPadding.right(), WTFMove(length));
 }
-#if ENABLE(CSS_SCROLL_SNAP)
 
 ScrollSnapType RenderStyle::initialScrollSnapType()
 {
@@ -2585,7 +2582,6 @@ bool RenderStyle::hasSnapPosition() const
     const ScrollSnapAlign& alignment = this->scrollSnapAlign();
     return alignment.blockAlign != ScrollSnapAxisAlignType::None || alignment.inlineAlign != ScrollSnapAxisAlignType::None;
 }
-#endif
 
 bool RenderStyle::hasReferenceFilterOnly() const
 {

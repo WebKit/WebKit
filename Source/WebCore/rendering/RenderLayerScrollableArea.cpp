@@ -1221,11 +1221,9 @@ void RenderLayerScrollableArea::updateScrollInfoAfterLayout()
     computeScrollDimensions();
     m_layer.updateSelfPaintingLayer();
 
-#if ENABLE(CSS_SCROLL_SNAP)
     // FIXME: Ensure that offsets are also updated in case of programmatic style changes.
     // https://bugs.webkit.org/show_bug.cgi?id=135964
     updateSnapOffsets();
-#endif
 
     if (!box->isHTMLMarquee() && !isRubberBandInProgress() && !isUserScrollInProgress()) {
         // Layout may cause us to be at an invalid scroll position. In this case we need
@@ -1507,7 +1505,6 @@ bool RenderLayerScrollableArea::useDarkAppearance() const
     return m_layer.renderer().useDarkAppearance();
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 void RenderLayerScrollableArea::updateSnapOffsets()
 {
     // FIXME: Extend support beyond HTMLElements.
@@ -1533,7 +1530,6 @@ bool RenderLayerScrollableArea::isScrollSnapInProgress() const
 
     return false;
 }
-#endif
 
 void RenderLayerScrollableArea::paintOverlayScrollbars(GraphicsContext& context, const LayoutRect& damageRect, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot)
 {

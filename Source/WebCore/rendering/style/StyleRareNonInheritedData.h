@@ -36,6 +36,7 @@
 #include "ScaleTransformOperation.h"
 #include "ShapeValue.h"
 #include "StyleContentAlignmentData.h"
+#include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
 #include "TouchAction.h"
 #include "TranslateTransformOperation.h"
@@ -44,10 +45,6 @@
 #include <wtf/DataRef.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(CSS_SCROLL_SNAP)
-#include "StyleScrollSnapPoints.h"
-#endif
 
 namespace WebCore {
 
@@ -135,11 +132,9 @@ public:
 
     LengthBox scrollMargin { 0, 0, 0, 0 };
     LengthBox scrollPadding { Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto) };
-#if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapType scrollSnapType;
     ScrollSnapAlign scrollSnapAlign;
     ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
-#endif
 
     unsigned overscrollBehaviorX : 2; // OverscrollBehavior
     unsigned overscrollBehaviorY : 2; // OverscrollBehavior

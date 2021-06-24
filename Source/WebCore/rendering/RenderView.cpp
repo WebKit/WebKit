@@ -891,7 +891,6 @@ RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()
     return result;
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {
     m_boxesWithScrollSnapPositions.add(&box);
@@ -901,6 +900,5 @@ void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
 {
     m_boxesWithScrollSnapPositions.remove(&box);
 }
-#endif
 
 } // namespace WebCore

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "ScrollSnapOffsetsInfo.h"
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 #include "ElementChildIterator.h"
 #include "LayoutRect.h"
 #include "Length.h"
@@ -389,5 +387,3 @@ std::pair<float, std::optional<unsigned>> FloatScrollSnapOffsetsInfo::closestSna
 }
 
 }
-
-#endif // ENABLE(CSS_SCROLL_SNAP)

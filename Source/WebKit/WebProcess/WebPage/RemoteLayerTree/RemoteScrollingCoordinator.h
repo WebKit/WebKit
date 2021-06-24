@@ -70,9 +70,7 @@ private:
 
     bool isRubberBandInProgress(WebCore::ScrollingNodeID) const final;
     bool isUserScrollInProgress(WebCore::ScrollingNodeID) const final;
-#if ENABLE(CSS_SCROLL_SNAP)
     bool isScrollSnapInProgress(WebCore::ScrollingNodeID) const final;
-#endif
 
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
 

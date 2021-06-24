@@ -778,9 +778,9 @@ enum TreeType {
 
     [Conditional=CONTENT_FILTERING] readonly attribute MockContentFilterSettings mockContentFilterSettings;
 
-    [Conditional=CSS_SCROLL_SNAP] DOMString scrollSnapOffsets(Element element);
-    [Conditional=CSS_SCROLL_SNAP] boolean isScrollSnapInProgress(Element element);
-    [Conditional=CSS_SCROLL_SNAP] undefined setPlatformMomentumScrollingPredictionEnabled(boolean enabled);
+    DOMString scrollSnapOffsets(Element element);
+    boolean isScrollSnapInProgress(Element element);
+    undefined setPlatformMomentumScrollingPredictionEnabled(boolean enabled);
 
     DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
 

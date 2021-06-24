@@ -7414,8 +7414,7 @@
         },
         "scroll-snap-align": {
             "codegen-properties": {
-                "converter": "ScrollSnapAlign",
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+                "converter": "ScrollSnapAlign"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -7424,8 +7423,7 @@
         },
         "scroll-snap-type": {
             "codegen-properties": {
-                "converter": "ScrollSnapType",
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+                "converter": "ScrollSnapType"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -7434,8 +7432,7 @@
         },
         "scroll-snap-stop": {
             "codegen-properties": {
-                "converter": "ScrollSnapStop",
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+                "converter": "ScrollSnapStop"
             },
             "specification": {
                 "category": "css-scroll-snap",

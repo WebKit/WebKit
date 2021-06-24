@@ -1,3 +1,125 @@
+2021-06-24  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Remove ENABLE_SCROLL_SNAP compile-time option
+        https://bugs.webkit.org/show_bug.cgi?id=227067
+
+        Reviewed by Simon Fraser.
+
+        Remove compile-time ENABLE_SCROLL_SNAP configuration option.
+
+        No new tests. This should not change behavior in any way.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEventInAppropriateEnclosingBox):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateScrollingCoordinatorScrollSnapProperties const):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/FrameView.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::processWheelEventForScrollSnap):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::setStateScrollingNodeSnapOffsetsAsFloat):
+        (WebCore::AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry):
+        (WebCore::AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+        * page/scrolling/ScrollingMomentumCalculator.cpp:
+        * page/scrolling/ScrollingMomentumCalculator.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::applicableProperties const):
+        (WebCore::ScrollingStateScrollingNode::setCurrentVerticalSnapPointIndex):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties const):
+        (WebCore::ScrollingTreeScrollingNode::setCurrentVerticalSnapPointIndex):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::viewportSize const):
+        * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp:
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::~ScrollAnimator):
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::resnapAfterLayout):
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        (WebCore::ScrollAnimator::updateActiveScrollSnapIndexForOffset):
+        (WebCore::ScrollAnimator::notifyPositionChanged):
+        (WebCore::ScrollAnimator::pageScaleFactor const):
+        (WebCore::ScrollAnimator::scrollControllerAnimationTimerFired):
+        (WebCore::ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::usesScrollSnap const):
+        (WebCore::ScrollController::resnapAfterLayout):
+        * platform/ScrollController.h:
+        * platform/ScrollSnapAnimatorState.cpp:
+        * platform/ScrollSnapAnimatorState.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::doPostThumbMoveSnapping):
+        * platform/ScrollableArea.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::isScrollSnapInProgress const):
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture const):
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture const):
+        (WebCore::gestureShouldBeginSnap):
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching const):
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching const):
+        * platform/mac/ScrollController.mm:
+        (WebCore::ScrollController::stopAllTimers):
+        (WebCore::ScrollController::handleWheelEvent):
+        (WebCore::ScrollController::isScrollSnapInProgress const):
+        (WebCore::ScrollController::updateScrollSnapAnimatingState):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        (WebCore::RenderBox::styleWillChange):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView const):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayerScrollableArea::isScrollSnapInProgress const):
+        * rendering/RenderLayerScrollableArea.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::unregisterBoxWithScrollSnapPositions):
+        * rendering/RenderView.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        (WebCore::RenderStyle::setScrollPaddingRight):
+        (WebCore::RenderStyle::hasSnapPosition const):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/StyleScrollSnapPoints.h:
+        * style/StyleBuilderConverter.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isScrollSnapInProgress):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-06-24  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] media/muted-video-is-playing-audio.html is timing out

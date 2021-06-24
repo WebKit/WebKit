@@ -29,15 +29,10 @@
 #include "LayoutSize.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
-#include "WheelEventTestMonitor.h"
-#include <wtf/text/TextStream.h>
-
-#if ENABLE(CSS_SCROLL_SNAP)
 #include "ScrollSnapAnimatorState.h"
 #include "ScrollableArea.h"
-#endif
-
-#if ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)
+#include "WheelEventTestMonitor.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -90,14 +85,8 @@ void ScrollController::setIsAnimatingScrollSnap(bool isAnimatingScrollSnap)
 
 bool ScrollController::usesScrollSnap() const
 {
-#if ENABLE(CSS_SCROLL_SNAP)
     return !!m_scrollSnapState;
-#else
-    return false;
-#endif
 }
-
-#if ENABLE(CSS_SCROLL_SNAP)
 
 void ScrollController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
 {
@@ -206,8 +195,6 @@ void ScrollController::resnapAfterLayout()
         setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset.y());
 
 }
-#endif
-
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding
 // so all of these methods are a noop on non-Mac platforms.
 #if !PLATFORM(MAC)
@@ -236,5 +223,3 @@ void ScrollController::updateRubberBandAnimatingState(MonotonicTime)
 #endif // PLATFORM(MAC)
 
 } // namespace WebCore
-
-#endif // ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)

@@ -3030,9 +3030,7 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if ENABLE(WHEEL_EVENT_LATCHING)
     shouldHandleEvent |= wheelEvent.phase() == PlatformWheelEventPhase::Ended;
-#if ENABLE(CSS_SCROLL_SNAP)
     shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended;
-#endif
 #endif
     if (!startNode->renderer())
         return false;

@@ -1157,7 +1157,6 @@ at
 // closest-side
 // farthest-side
 
-#if defined(ENABLE_CSS_SCROLL_SNAP)
 // -webkit-scroll-snap-points-x
 // -webkit-scroll-snap-points-y
 elements
@@ -1167,7 +1166,6 @@ mandatory
 proximity
 // x
 // y
-#endif
 
 break
 

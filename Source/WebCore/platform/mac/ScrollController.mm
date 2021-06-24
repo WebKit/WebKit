@@ -34,7 +34,7 @@
 #import <sys/time.h>
 #import <wtf/text/TextStream.h>
 
-#if PLATFORM(MAC) && (ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP))
+#if PLATFORM(MAC)
 
 namespace WebCore {
 
@@ -77,10 +77,8 @@ ScrollController::~ScrollController()
 
 void ScrollController::stopAllTimers()
 {
-#if ENABLE(CSS_SCROLL_SNAP)
     if (m_statelessSnapTransitionTimer)
         m_statelessSnapTransitionTimer->stop();
-#endif
 
 #if ASSERT_ENABLED
     m_timersWereStopped = true;
@@ -89,10 +87,9 @@ void ScrollController::stopAllTimers()
 
 bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-#if ENABLE(CSS_SCROLL_SNAP)
     if (processWheelEventForScrollSnap(wheelEvent))
         return true;
-#endif
+
     if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
         return false;
 
@@ -466,10 +463,9 @@ bool ScrollController::isScrollSnapInProgress() const
     if (!usesScrollSnap())
         return false;
 
-#if ENABLE(CSS_SCROLL_SNAP)
     if (m_inScrollGesture || m_momentumScrollInProgress || m_isAnimatingScrollSnap)
         return true;
-#endif
+
     return false;
 }
 
@@ -568,7 +564,6 @@ void ScrollController::updateRubberBandingEdges(IntSize clientStretch)
 
 #endif // ENABLE(RUBBER_BANDING)
 
-#if ENABLE(CSS_SCROLL_SNAP)
 enum class WheelEventStatus {
     UserScrollBegin,
     UserScrolling,
@@ -787,10 +782,7 @@ void ScrollController::updateScrollSnapAnimatingState(MonotonicTime currentTime)
         stopScrollSnapAnimation();
     }
 }
-#endif // ENABLE(CSS_SCROLL_SNAP)
-
-
 
 } // namespace WebCore
 
-#endif // ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP))
+#endif // PLATFORM(MAC)

@@ -29,8 +29,6 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 namespace WebCore {
 
 static const Seconds scrollSnapAnimationDuration = 1_s;
@@ -235,5 +233,3 @@ float BasicScrollingMomentumCalculator::animationProgressAfterElapsedTime(Second
 }
 
 }; // namespace WebCore
-
-#endif // ENABLE(CSS_SCROLL_SNAP)

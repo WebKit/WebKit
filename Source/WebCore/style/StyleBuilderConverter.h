@@ -109,11 +109,9 @@ public:
     static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
     static OptionSet<TextDecorationSkip> convertTextDecorationSkip(BuilderState&, const CSSValue&);
     static RefPtr<ShapeValue> convertShapeValue(BuilderState&, CSSValue&);
-#if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
     static ScrollSnapAlign convertScrollSnapAlign(BuilderState&, const CSSValue&);
     static ScrollSnapStop convertScrollSnapStop(BuilderState&, const CSSValue&);
-#endif
     static GridTrackSize convertGridTrackSize(BuilderState&, const CSSValue&);
     static Vector<GridTrackSize> convertGridTrackSizeList(BuilderState&, const CSSValue&);
     static std::optional<GridPosition> convertGridPosition(BuilderState&, const CSSValue&);
@@ -175,9 +173,7 @@ private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, const CSSPrimitiveValue&);
     static OptionSet<TextEmphasisPosition> valueToEmphasisPosition(const CSSPrimitiveValue&);
     static OptionSet<TextDecorationSkip> valueToDecorationSkip(const CSSPrimitiveValue&);
-#if ENABLE(CSS_SCROLL_SNAP)
     static Length parseSnapCoordinate(BuilderState&, const CSSValue&);
-#endif
 
 #if ENABLE(DARK_MODE_CSS)
     static void updateColorScheme(const CSSPrimitiveValue&, StyleColorScheme&);
@@ -898,8 +894,6 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
     return nullptr;
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 inline ScrollSnapType BuilderConverter::convertScrollSnapType(BuilderState&, const CSSValue& value)
 {
     ScrollSnapType type;
@@ -934,8 +928,6 @@ inline ScrollSnapStop BuilderConverter::convertScrollSnapStop(BuilderState&, con
     ASSERT(is<CSSPrimitiveValue>(value));
     return downcast<CSSPrimitiveValue>(value);
 }
-
-#endif
 
 inline GridLength BuilderConverter::createGridTrackBreadth(const CSSPrimitiveValue& primitiveValue, BuilderState& builderState)
 {

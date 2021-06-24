@@ -35,21 +35,18 @@
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIView.h>
+#import <WebCore/ScrollSnapOffsetsInfo.h>
+#import <WebCore/ScrollTypes.h>
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
 #import <WebCore/ScrollingStatePositionedNode.h>
 #import <WebCore/ScrollingStateTree.h>
-
-#if ENABLE(CSS_SCROLL_SNAP)
-#import <WebCore/ScrollSnapOffsetsInfo.h>
-#import <WebCore/ScrollTypes.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <tuple>
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -195,7 +192,6 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
     }
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 void RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping(CGSize maxScrollOffsets, CGPoint velocity, CGFloat topInset, CGPoint currentContentOffset, CGPoint* targetContentOffset)
 {
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
@@ -291,8 +287,6 @@ CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOf
 
     return activePoint;
 }
-
-#endif
 
 } // namespace WebKit
 

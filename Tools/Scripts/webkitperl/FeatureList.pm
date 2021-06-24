@@ -260,9 +260,6 @@ my @features = (
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
 
-    { option => "css-scroll-snap", desc => "Toggle CSS snap scroll support",
-      define => "ENABLE_CSS_SCROLL_SNAP", value => \$cssScrollSnapSupport },
-
     { option => "css-selectors-level4", desc => "Toggle CSS Selectors Level 4 support",
       define => "ENABLE_CSS_SELECTORS_LEVEL4", value => \$cssSelectorsLevel4Support },
 

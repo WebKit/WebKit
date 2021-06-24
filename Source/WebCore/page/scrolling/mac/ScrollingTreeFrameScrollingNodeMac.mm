@@ -124,12 +124,11 @@ WheelEventHandlingResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(co
 
     bool handled = m_delegate.handleWheelEvent(wheelEvent);
 
-#if ENABLE(CSS_SCROLL_SNAP)
     setScrollSnapInProgress(m_delegate.isScrollSnapInProgress());
 
     if (m_delegate.activeScrollSnapIndexDidChange())
         scrollingTree().setActiveScrollSnapIndices(scrollingNodeID(), m_delegate.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_delegate.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
-#endif
+
     return WheelEventHandlingResult::result(handled);
 }
 

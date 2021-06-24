@@ -5079,8 +5079,6 @@ template<> inline CSSPrimitiveValue::operator OptionSet<TouchAction>() const
     return TouchAction::Auto;
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapStrictness strictness)
     : CSSValue(PrimitiveClass)
 {
@@ -5222,8 +5220,6 @@ template<> inline CSSPrimitiveValue::operator ScrollSnapStop() const
         return ScrollSnapStop::Normal;
     }
 }
-
-#endif
 
 #if ENABLE(CSS_TRAILING_WORD)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TrailingWord e)

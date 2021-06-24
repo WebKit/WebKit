@@ -143,9 +143,7 @@ public:
     bool isScrollableOrRubberbandable() final;
     bool hasScrollableOrRubberbandableAncestor() final;
     bool useDarkAppearance() const final;
-#if ENABLE(CSS_SCROLL_SNAP)
     void updateSnapOffsets() final;
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -188,9 +186,7 @@ public:
     bool isUserScrollInProgress() const final;
     bool isRubberBandInProgress() const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
-#if ENABLE(CSS_SCROLL_SNAP)
     bool isScrollSnapInProgress() const final;
-#endif
     bool usesMockScrollAnimator() const final;
     void logMockScrollAnimatorMessage(const String&) const final;
 

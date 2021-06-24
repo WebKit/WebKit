@@ -945,7 +945,6 @@ TextStream& operator<<(TextStream& ts, RubyPosition position)
     return ts;
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 TextStream& operator<<(TextStream& ts, ScrollSnapAxis axis)
 {
     switch (axis) {
@@ -987,7 +986,6 @@ TextStream& operator<<(TextStream& ts, ScrollSnapStop stop)
     }
     return ts;
 }
-#endif
 
 TextStream& operator<<(TextStream& ts, SpeakAs speakAs)
 {

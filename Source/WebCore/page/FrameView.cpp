@@ -914,7 +914,6 @@ GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) co
 
 #endif // ENABLE(RUBBER_BANDING)
 
-#if ENABLE(CSS_SCROLL_SNAP)
 void FrameView::updateSnapOffsets()
 {
     if (!frame().document())
@@ -976,7 +975,6 @@ void FrameView::updateScrollingCoordinatorScrollSnapProperties() const
 {
     renderView()->compositor().updateScrollSnapPropertiesWithFrameView(*this);
 }
-#endif
 
 bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)
 {
@@ -3333,9 +3331,8 @@ void FrameView::performPostLayoutTasks()
 
     updateWidgetPositions();
 
-#if ENABLE(CSS_SCROLL_SNAP)
     updateSnapOffsets();
-#endif
+
     m_updateEmbeddedObjectsTimer.startOneShot(0_s);
 
     if (auto scrollingCoordinator = this->scrollingCoordinator())

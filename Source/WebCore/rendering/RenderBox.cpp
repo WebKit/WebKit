@@ -166,10 +166,8 @@ void RenderBox::willBeDestroyed()
     view().unscheduleLazyRepaint(*this);
     removeControlStatesForRenderer(*this);
 
-#if ENABLE(CSS_SCROLL_SNAP)
     if (hasInitializedStyle() && style().hasSnapPosition())
         view().unregisterBoxWithScrollSnapPositions(*this);
-#endif
 
     RenderBoxModelObject::willBeDestroyed();
 }
@@ -280,7 +278,6 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
     } else if (isBody())
         view().repaintRootContents();
 
-#if ENABLE(CSS_SCROLL_SNAP)
     bool boxContributesSnapPositions = newStyle.hasSnapPosition();
     if (boxContributesSnapPositions || (oldStyle && oldStyle->hasSnapPosition())) {
         if (boxContributesSnapPositions)
@@ -288,7 +285,6 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
         else
             view().unregisterBoxWithScrollSnapPositions(*this);
     }
-#endif
 
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }

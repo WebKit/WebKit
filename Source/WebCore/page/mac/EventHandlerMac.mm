@@ -1011,10 +1011,8 @@ void EventHandler::processWheelEventForScrollSnap(const PlatformWheelEvent& whee
     if (wheelEvent.phase() != PlatformWheelEventPhase::Ended && wheelEvent.momentumPhase() != PlatformWheelEventPhase::Ended)
         return;
 
-#if ENABLE(CSS_SCROLL_SNAP)
     if (auto* scrollAnimator = scrollableArea->existingScrollAnimator())
         scrollAnimator->processWheelEventForScrollSnap(wheelEvent);
-#endif
 }
 
 VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult& result)

@@ -99,12 +99,10 @@ public:
     void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID);
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID);
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID);
-#if ENABLE(CSS_SCROLL_SNAP)
     void adjustTargetContentOffsetForSnapping(CGSize maxScrollDimensions, CGPoint velocity, CGFloat topInset, CGPoint currentContentOffset, CGPoint* targetContentOffset);
     bool hasActiveSnapPoint() const;
     CGPoint nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint&) const;
     bool shouldSetScrollViewDecelerationRateFast() const;
-#endif
 #endif
 
     String scrollingTreeAsText() const;
@@ -119,10 +117,8 @@ private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&);
 
-#if ENABLE(CSS_SCROLL_SNAP)
     bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
     std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float currentScrollOffset, float scrollDestination, float velocity) const;
-#endif
 
     void sendUIStateChangedIfNecessary();
 
@@ -131,10 +127,8 @@ private:
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;
     RequestedScrollInfo* m_requestedScrollInfo { nullptr };
     RemoteScrollingUIState m_uiState;
-#if ENABLE(CSS_SCROLL_SNAP)
     std::optional<unsigned> m_currentHorizontalSnapPointIndex;
     std::optional<unsigned> m_currentVerticalSnapPointIndex;
-#endif
     bool m_propagatesMainFrameScrolls { true };
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithScrollingRelations;
 };
