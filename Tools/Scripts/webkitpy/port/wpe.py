@@ -149,8 +149,8 @@ class WPEPort(Port):
         configuration['platform'] = 'WPE'
         return configuration
 
-    def cog_path(self):
-        return self._build_path('Tools', 'cog-prefix', 'src', 'cog-build', 'cog')
+    def cog_path_to(self, file_or_directory):
+        return self._build_path('Tools', 'cog-prefix', 'src', 'cog-build', file_or_directory)
 
     def browser_name(self):
         """Returns the lower case name of the browser to be used (Cog or MiniBrowser)
@@ -164,7 +164,7 @@ class WPEPort(Port):
         if browser:
             print("Unknown browser {}. Defaulting to Cog and MiniBrowser selection".format(browser))
 
-        if self._filesystem.isfile(self.cog_path()):
+        if self._filesystem.isfile(self.cog_path_to('cog')):
             return "cog"
         return "minibrowser"
 
@@ -173,6 +173,7 @@ class WPEPort(Port):
 
         if self.browser_name() == "cog":
             env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
+                        'COG_MODULEDIR': self.cog_path_to('modules'),
                         'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
 
         return env
@@ -182,7 +183,7 @@ class WPEPort(Port):
         miniBrowser = None
 
         if self.browser_name() == "cog":
-            miniBrowser = self.cog_path()
+            miniBrowser = self.cog_path_to('cog')
             if not self._filesystem.isfile(miniBrowser):
                 print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
                 miniBrowser = None
