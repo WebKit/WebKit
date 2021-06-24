@@ -798,7 +798,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::DBusProxy) {
         sandboxArgs.appendVector(Vector<CString>({
-            "--ro-bind", "/usr/bin", "/usr/bin",
+            "--ro-bind", DBUS_PROXY_EXECUTABLE, DBUS_PROXY_EXECUTABLE,
             // This is a lot of access, but xdg-dbus-proxy is trusted so that's OK. It's sandboxed
             // only because we have to mount .flatpak-info in its mount namespace. The user rundir
             // is where we mount our proxy socket.
