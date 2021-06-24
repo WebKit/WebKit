@@ -1,3 +1,15 @@
+2021-06-24  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Text selection flashing to end of paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=227158
+        <rdar://79138828>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/events/touch/ios/drag-to-autoscroll-in-single-line-editable.html:
+        * fast/events/touch/ios/hidpi-selection-when-content-is-on-subpixel-expected.txt: Added.
+        * fast/events/touch/ios/hidpi-selection-when-content-is-on-subpixel.html: Added.
+
 2021-06-24  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] media/muted-video-is-playing-audio.html is timing out

@@ -1,3 +1,22 @@
+2021-06-24  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Text selection flashing to end of paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=227158
+        <rdar://79138828>
+
+        Reviewed by Antti Koivisto.
+
+        The "find the line for this position" code in RenderText::positionForPoint() expects adjoining lines boxes (i.e. no gaps between the lines). This function is called by hittesting as part of the text selection process.
+        This patch implements the legacy behavior by
+        1. expanding the "selection top" all the way to the (selection)bottom of the previous line.
+        2. ensures that the first line's computed offset is ignored when the containing block has no border/padding.
+
+        Test: fast/events/touch/ios/hidpi-selection-when-content-is-on-subpixel.html
+
+        * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+        (WebCore::LayoutIntegration::LineIteratorModernPath::selectionTop const):
+        (WebCore::LayoutIntegration::LineIteratorModernPath::selectionTopForHitTesting const):
+
 2021-06-24  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Remove ENABLE_SCROLL_SNAP compile-time option
