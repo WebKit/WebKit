@@ -15,19 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/beacon/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-blob.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-blobMax.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-buffersource.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-buffersourceMax.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-formdata.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-formdataMax.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-string.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-stringMax.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-common.sub.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-cors.sub.window.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-error.sub.window.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-navigate.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-preflight-failure.sub.window.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-readablestream.window.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-redirect.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-cors.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-navigate.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/idlharness.any.js

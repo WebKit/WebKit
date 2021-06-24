@@ -1,0 +1,6 @@
+
+PASS The frame navigates away after calling sendBeacon[type = string].
+PASS The frame navigates away after calling sendBeacon[type = arraybuffer].
+PASS The frame navigates away after calling sendBeacon[type = form].
+PASS The frame navigates away after calling sendBeacon[type = blob].
+
