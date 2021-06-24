@@ -1,3 +1,17 @@
+2021-06-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow network-outbound logging for internal builds
+        https://bugs.webkit.org/show_bug.cgi?id=227332
+        <rdar://problem/79669627>
+
+        Reviewed by Per Arne Vollan.
+
+        We allow network-outbound for /private/var/run/syslog in the WebContent process for debugging
+        purposes on internal OS images. We should do the same for our other processes to avoid noisy logging.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2021-06-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Using a video as a source for a WebGL texture is slow and hangs on iOS 15
