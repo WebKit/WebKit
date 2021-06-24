@@ -1,3 +1,17 @@
+2021-06-24  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] media/muted-video-is-playing-audio.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=208321
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Set the WebKitTestRunnerWPE application name on user-agent to ease the
+        detection of the WPE port from the layout tests using the isWPE()
+        function in platform-helper.js.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformConfigureViewForTest): Set WebKitTestRunnerWPE application name on user-agent.
+
 2021-06-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] WebKitGLibAPITestsCore should more explicitly link against library dependencies

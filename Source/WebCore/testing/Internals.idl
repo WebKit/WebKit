@@ -789,6 +789,7 @@ enum TreeType {
     [Conditional=VIDEO] undefined setMediaControlsHidePlaybackRates(HTMLMediaElement element, boolean hidePlaybackRates);
 
     DOMString userVisibleString(DOMURL url);
+    undefined setPageMediaVolume(float volume);
 
     undefined setShowAllPlugins(boolean showAll);
 

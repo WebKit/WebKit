@@ -1,3 +1,19 @@
+2021-06-24  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] media/muted-video-is-playing-audio.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=208321
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added setPageMediaVolume() API to set the Page mediaVolume. This was 0
+        by default and a way to set it to a non-zero value was needed in order
+        to prevent a zero effectiveVolume in HTMLMediaElement.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPageMediaVolume): Set the Page mediaVolume.
+        * testing/Internals.h: Added setPageMediaVolume().
+        * testing/Internals.idl: Ditto.
+
 2021-06-23  Jean-Yves Avenard  <jya@apple.com>
 
         Not all uses of AudioToolbox framework use soft linking

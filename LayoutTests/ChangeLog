@@ -1,3 +1,28 @@
+2021-06-24  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] media/muted-video-is-playing-audio.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=208321
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Changed the test to set a non-zero mediaVolume, because a zero one
+        (default value set by TestController::resetStateToConsistentValues())
+        would multiply any other volume in HTMLMediaElement::effectiveVolume(),
+        cause a zero effectiveVolume (being considered in practice as "no audio" by
+        HTMLMediaElement::mediaState()) and prevent the IsPlayingAudio MediaState
+        being set.
+
+        Also, adapted the test to still expect IsPlayingAudio after mute on the
+        glib ports (GTK & WPE), since on those ports a muted video is expected to
+        report IsPlayingAudio, as per the HTMLMediaElement::mediaState() source
+        code comments.
+
+        * media/muted-video-is-playing-audio.html: Test changed as described above.
+        * platform/glib/media/muted-video-is-playing-audio-expected.txt: Added expectation for glib port.
+        * resources/platform-helper.js:
+        (isGtk): Clarified where the GTK user-agent string comes from.
+        (isWPE): New function to check if a WPE port is being used.
+
 2021-06-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html as flaky on iOS.

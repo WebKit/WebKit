@@ -4840,6 +4840,19 @@ void Internals::setMediaControlsHidePlaybackRates(HTMLMediaElement& mediaElement
 
 #endif // ENABLE(VIDEO)
 
+void Internals::setPageMediaVolume(float volume)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+
+    Page* page = document->page();
+    if (!page)
+        return;
+
+    page->setMediaVolume(volume);
+}
+
 #if !PLATFORM(COCOA)
 
 String Internals::userVisibleString(const DOMURL& url)

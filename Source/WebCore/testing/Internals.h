@@ -756,6 +756,8 @@ public:
     void setMediaControlsHidePlaybackRates(HTMLMediaElement&, bool);
 #endif // ENABLE(VIDEO)
 
+    void setPageMediaVolume(float);
+
     String userVisibleString(const DOMURL&);
     void setShowAllPlugins(bool);
 
