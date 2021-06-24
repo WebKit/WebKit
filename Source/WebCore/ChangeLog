@@ -1,3 +1,17 @@
+2021-06-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r275633.
+        https://bugs.webkit.org/show_bug.cgi?id=227373
+
+        Revert to see if this was the cause for some crashes seen
+        lately
+
+        Reverted changeset:
+
+        "Reduce Vector<> wasted capacity in some RuleSet code"
+        https://bugs.webkit.org/show_bug.cgi?id=224160
+        https://trac.webkit.org/changeset/275633
+
 2021-06-24  Dmitry Kalinkin  <dmitry.kalinkin+webkit@gmail.com>
 
         Use <cmath> instead of <math.h>
