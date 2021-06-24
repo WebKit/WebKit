@@ -1,3 +1,14 @@
+2021-06-24  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip arguments-properties-order.js on MIPS 
+        https://bugs.webkit.org/show_bug.cgi?id=227254
+
+        No failures after 50 iterations. Also tested on Loongson 3A4000 (in 32-bits mode).
+
+        Unreviewed Gardening.
+
+        * stress/arguments-properties-order.js:
+
 2021-06-24  Xan Lopez  <xan@igalia.com>
 
         [JSC] Implement returnEarlyFromInfiniteLoopsForFuzzing for 32bits
