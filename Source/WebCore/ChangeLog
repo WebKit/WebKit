@@ -1,3 +1,42 @@
+2021-06-24  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
+        https://bugs.webkit.org/show_bug.cgi?id=226069
+        <rdar://78004793>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac-bigsur/media/media-source/media-vorbis-partial.html
+
+        When parsing samples from a WebM file, the samples emitted by the parser can be very short in
+        duration, which is ineffecient both in storage costs in our SampleMap, as well as in decoding
+        CPU costs, as each sample must be fed into the decoder separately. So the parser will group
+        together these small samples into a larger "meta sample" with a duration no shorter than 2s.
+
+        However, at the end of a file, no more sample data will be appended, up to 2s of audio data
+        will not be emitted from the parser.
+
+        At the end of an append, always flush audio track data to ensure that all parsed samples are
+        emitted, regardless of their collective duration.
+
+        Drive-by Fixes:
+
+        - createSampleBuffer() would completely empty m_packetData, which would corrupt the parser state
+          in the case where there was partial frame data read (because that partial data would be cleared)
+          Instead, remove only the data from the m_packetData that actually went into the CMSampleBuffer
+        - createSampleBuffer() would use the entire m_packetData to create a CMSampleBuffer, even if partial
+          data was read but not yet complete. Only use the fully parsed data to create the CMSampleBuffer.
+        - consumeFrameData() would only increase the size of m_packetData when m_currentPacketSize was
+          unset, which would leave the buffer zeroed when partial sample data was present. Always grow
+          m_packetData to be large enough to receive the read data.
+        - The Read() method would not return the correct number of bytes read (0) when a null destination
+          buffer was passed in.
+
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::appendData):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::createSampleBuffer):
+
 2021-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r275633.
