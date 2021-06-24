@@ -1,3 +1,13 @@
+2021-06-24  Chris Dumez  <cdumez@apple.com>
+
+        Add release logging in the WebPage constructor / destructor
+        https://bugs.webkit.org/show_bug.cgi?id=227361
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+
 2021-06-24  Per Arne  <pvollan@apple.com>
 
         [macOS] Fix incorrect version check in the WebContent process' sandbox
