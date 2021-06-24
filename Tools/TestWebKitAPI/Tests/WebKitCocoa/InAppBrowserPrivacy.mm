@@ -2039,4 +2039,37 @@ TEST(InAppBrowserPrivacy, RegisterServiceWorkerClientUpdatesAppBoundValue)
 
 #endif
 
+static void loadSimulatedRequestTest(bool isAppInitiated)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSMutableURLRequest *loadRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org"]];
+    loadRequest.attribution = isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+
+    NSString *HTML = @"<html><head></head><body><img src='https://apple.com/'></img></body></html>";
+    [webView loadSimulatedRequest:loadRequest responseHTMLString:HTML];
+    [delegate waitForDidFinishNavigation];
+
+    static bool isDone = false;
+    [webView _appBoundNavigationData:^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppBoundRequestTesting, isAppInitiated);
+        EXPECT_EQ(data.hasLoadedNonAppBoundRequestTesting, !isAppInitiated);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, LoadSimulatedRequestIsAppInitiated)
+{
+    loadSimulatedRequestTest(true);
+}
+
+TEST(InAppBrowserPrivacy, LoadSimulatedRequestIsNonAppInitiated)
+{
+    loadSimulatedRequestTest(false);
+}
+
 #endif

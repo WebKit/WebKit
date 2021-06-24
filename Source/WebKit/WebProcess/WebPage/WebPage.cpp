@@ -1771,6 +1771,8 @@ void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, R
     ASSERT(simulatedResponse.textEncodingName() == loadParameters.encodingName);
     ASSERT(static_cast<size_t>(simulatedResponse.expectedContentLength()) == loadParameters.data.size());
 
+    setLastNavigationWasAppBound(loadParameters.request.isAppBound());
+
     platformDidReceiveLoadParameters(loadParameters);
 
     auto sharedBuffer = SharedBuffer::create(loadParameters.data.data(), loadParameters.data.size());

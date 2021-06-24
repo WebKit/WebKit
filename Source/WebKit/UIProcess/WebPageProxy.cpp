@@ -1491,6 +1491,10 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadSimulatedRequest:");
 
+#if PLATFORM(COCOA)
+    setLastNavigationWasAppBound(simulatedRequest);
+#endif
+
 #if ENABLE(APP_BOUND_DOMAINS)
     if (simulatedResponse.mimeType() == "text/html"_s && !isFullWebBrowser())
         m_limitsNavigationsToAppBoundDomains = true;
