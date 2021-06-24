@@ -308,6 +308,7 @@
     "web-platform-tests/html/semantics/scripting-1/the-script-element/module": "import", 
     "web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event.xhtml": "skip", 
     "web-platform-tests/html/semantics/scripting-1/the-script-element/script-text.xhtml": "skip", 
+    "web-platform-tests/html/semantics/selectors": "import", 
     "web-platform-tests/html/semantics/tabular-data": "import", 
     "web-platform-tests/html/semantics/tabular-data/processing-model-1": "import", 
     "web-platform-tests/html/semantics/text-level-semantics/the-data-element": "skip", 
