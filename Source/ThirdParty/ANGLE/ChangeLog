@@ -1,3 +1,27 @@
+2021-06-23  Kyle Piddington  <kpiddington@apple.com>
+
+        Guard against compile failures of the default libraries
+        https://bugs.webkit.org/show_bug.cgi?id=227239
+        <rdar://79037623>
+
+        Under certain events (High memory usage), the MTLCompilerService can fail when creating the default library.
+        Guard against nil pipelines by failing GL calls instead, if this happens. While this can create rendering artifacts
+        due to missing blits / conversions, this can at least avoid crashing the process.
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/mtl_render_utils.h:
+        * src/libANGLE/renderer/metal/mtl_render_utils.mm:
+        (rx::mtl::ClearUtils::setupClearWithDraw):
+        (rx::mtl::ClearUtils::clearWithDraw):
+        (rx::mtl::ColorBlitUtils::setupColorBlitWithDraw):
+        (rx::mtl::ColorBlitUtils::blitColorWithDraw):
+        (rx::mtl::DepthStencilBlitUtils::setupDepthStencilBlitWithDraw):
+        (rx::mtl::DepthStencilBlitUtils::blitDepthStencilWithDraw):
+        (rx::mtl::VertexFormatConversionUtils::setupCommonConvertVertexFormatToFloat):
+        (rx::mtl::VertexFormatConversionUtils::expandVertexFormatComponentsVS):
+        (rx::mtl::VertexFormatConversionUtils::setupCommonExpandVertexFormatComponents):
+
 2021-06-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         rAF driven WebGL submits excessive amount of GPU work when frames are slow
