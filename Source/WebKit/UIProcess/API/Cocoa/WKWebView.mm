@@ -1241,8 +1241,13 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         [CATransaction activate];
 
         // Wait for the next flush to ensure the latest IOSurfaces are pushed to backboardd before taking the snapshot.
-        [CATransaction addCommitHandler:[callSnapshotRect = WTFMove(callSnapshotRect)] {
-            callSnapshotRect();
+        [CATransaction addCommitHandler:[callSnapshotRect = WTFMove(callSnapshotRect)]() mutable {
+            // callSnapshotRect() calls the client callback which may call directly or indirectly addCommitHandler.
+            // It is prohibited by CA to add a commit handler while processing a registered commit handler.
+            // So postpone calling callSnapshotRect() till CATransaction processes its commit handlers.
+            dispatch_async(dispatch_get_main_queue(), [callSnapshotRect = WTFMove(callSnapshotRect)] {
+                callSnapshotRect();
+            });
         } forPhase:kCATransactionPhasePostCommit];
     });
 #endif
