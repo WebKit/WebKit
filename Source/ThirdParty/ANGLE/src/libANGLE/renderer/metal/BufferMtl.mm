@@ -416,7 +416,8 @@ static void calculateRestartRanges(ContextMtl* ctx, mtl::BufferRef idxBuffer, st
 {
     ranges->clear();
     T *bufferData = (T*)(idxBuffer->mapReadOnly(ctx));
-    for(int i = 0; i < idxBuffer->size()/sizeof(T); i++)
+    const size_t numIndices = idxBuffer->size()/sizeof(T);
+    for(int i = 0; i < numIndices; i++)
     {
         T value = bufferData[i];
         if(value == std::numeric_limits<T>::max())
@@ -427,8 +428,9 @@ static void calculateRestartRanges(ContextMtl* ctx, mtl::BufferRef idxBuffer, st
             do
             {
                 ++i;
-                value = bufferData[i];
-            }while (i < idxBuffer->size() && value == std::numeric_limits<T>::max());
+                if(i < numIndices)
+                    value = bufferData[i];
+            }while (i < numIndices && value == std::numeric_limits<T>::max());
             newRange.restartEnd = i-1;
             ranges->push_back(newRange);
         }

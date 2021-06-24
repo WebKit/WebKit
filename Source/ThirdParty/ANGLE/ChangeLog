@@ -1,5 +1,21 @@
 2021-06-23  Kyle Piddington  <kpiddington@apple.com>
 
+        Fix incorrect indexing / out of bounds access in getRestartIndices
+        https://bugs.webkit.org/show_bug.cgi?id=227274
+        <rdar://79244789>
+
+        In the case where a restart index is present in the last element of an index array, we can accidently
+        access out of bounds. Fix this by checking boundaries, and fixing other indexing errors
+
+        Tests: Ran deqp/functional/gles3/primitiverestart suite. Passed 8 tests.
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::calculateRestartRanges):
+
+2021-06-23  Kyle Piddington  <kpiddington@apple.com>
+
         Guard against compile failures of the default libraries
         https://bugs.webkit.org/show_bug.cgi?id=227239
         <rdar://79037623>
