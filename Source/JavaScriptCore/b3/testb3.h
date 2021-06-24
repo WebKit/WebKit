@@ -428,6 +428,8 @@ void testUbfiz64AndShiftValueMask();
 void testUbfiz64AndShiftMaskValue();
 void testUbfiz64ShiftAnd();
 void testUbfiz64AndShift();
+void testBitFieldInsert32();
+void testBitFieldInsert64();
 void testBitAndZeroShiftRightArgImmMask32();
 void testBitAndZeroShiftRightArgImmMask64();
 void testBasicSelect();

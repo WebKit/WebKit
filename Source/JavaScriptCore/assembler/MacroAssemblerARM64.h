@@ -2753,12 +2753,15 @@ public:
     }
 
     // Bit field operations:
+    void bitFieldInsert32(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfi<32>(dest, source, lsb.m_value, width.m_value);
+    }
 
     // destBitOffset is the top bit of the destination where the bits should be copied to. Zero is the lowest order bit.
-    void bitFieldInsert64(RegisterID source, unsigned destBitOffset, unsigned width, RegisterID dest)
+    void bitFieldInsert64(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
-        ASSERT(width <= 64 - destBitOffset && destBitOffset < 64);
-        m_assembler.bfi<64>(dest, source, destBitOffset, width);
+        m_assembler.bfi<64>(dest, source, lsb.m_value, width.m_value);
     }
 
     // Forwards / external control flow operations:

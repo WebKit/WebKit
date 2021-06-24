@@ -2761,17 +2761,18 @@ private:
                 return;
             }
 
-            // UBFX Pattern: dest = (src >> lsb) & mask where mask = (1 << width) - 1
+            // UBFX Pattern: dest = (src >> lsb) & mask 
+            // Where: mask = (1 << width) - 1
             auto tryAppendUBFX = [&] () -> bool {
-                if (left->opcode() != ZShr || !canBeInternal(left))
-                    return false;
-                Value* srcValue = left->child(0);
-                Value* lsbValue = left->child(1);
-
-                Air::Opcode opcode = opcodeForType(Ubfx32, Ubfx64, srcValue->type());
+                Air::Opcode opcode = opcodeForType(Ubfx32, Ubfx64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
                     return false;
-                if (!imm(lsbValue) || lsbValue->asInt() < 0 || !right->hasInt())
+                if (left->opcode() != ZShr || !canBeInternal(left))
+                    return false;
+
+                Value* srcValue = left->child(0);
+                Value* lsbValue = left->child(1);
+                if (m_locked.contains(srcValue) || !imm(lsbValue) || lsbValue->asInt() < 0 || !right->hasInt())
                     return false;
 
                 uint64_t lsb = lsbValue->asInt();
@@ -2796,8 +2797,67 @@ private:
         }
 
         case BitOr: {
-            appendBinOp<Or32, Or64, OrDouble, OrFloat, Commutative>(
-                m_value->child(0), m_value->child(1));
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
+
+            // BFI Pattern: d = ((n & mask1) << lsb) | (d & mask2)
+            // Where: mask1 = ((1 << width) - 1)
+            //        mask2 = ~(mask1 << lsb)
+            auto tryAppendBFI = [&] (Value* left, Value* right) -> bool {
+                Air::Opcode opcode = opcodeForType(BitFieldInsert32, BitFieldInsert64, m_value->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
+                    return false;
+                if (left->opcode() != Shl || !canBeInternal(left))
+                    return false;
+                if (right->opcode() != BitAnd || !canBeInternal(right))
+                    return false;
+                if (left->child(0)->opcode() != BitAnd || !canBeInternal(left->child(0)))
+                    return false;
+
+                Value* nValue = left->child(0)->child(0);
+                Value* maskValue1 = left->child(0)->child(1);
+                Value* lsbValue = left->child(1);
+                Value* dValue = right->child(0);
+                Value* maskValue2 = right->child(1);
+                if (m_locked.contains(nValue) || m_locked.contains(dValue))
+                    return false;
+                if (!maskValue1->hasInt() || !imm(lsbValue) || lsbValue->asInt() < 0 || !maskValue2->hasInt())
+                    return false;
+
+                uint64_t lsb = lsbValue->asInt();
+                uint64_t mask1 = maskValue1->asInt();
+                if (!mask1 || mask1 & (mask1 + 1))
+                    return false;
+                uint64_t datasize = opcode == BitFieldInsert32 ? 32 : 64;
+                uint64_t width = WTF::bitCount(mask1);
+                if (lsb + width > datasize)
+                    return false;
+
+                uint64_t mask2 = maskValue2->asInt();
+
+                auto isValidMask2 = [&] () -> bool {
+                    uint64_t mask = ((mask1 << lsb) ^ mask2);
+                    uint64_t lowerSet = 0xffffffff;
+                    uint64_t fullSet = 0xffffffffffffffff;
+                    return datasize == 32 ? !((mask & lowerSet) ^ lowerSet) : !(mask ^ fullSet);
+                };
+
+                if (!isValidMask2())
+                    return false;
+
+                Tmp result = tmp(m_value);
+                append(relaxedMoveForType(m_value->type()), tmp(dValue), result);
+                append(opcode, tmp(nValue), imm(lsbValue), imm(width), result);
+                commitInternal(left->child(0));
+                commitInternal(left);
+                commitInternal(right);
+                return true;
+            };
+
+            if (tryAppendBFI(left, right) || tryAppendBFI(right, left))
+                return;
+
+            appendBinOp<Or32, Or64, OrDouble, OrFloat, Commutative>(left, right);
             return;
         }
 
@@ -2836,17 +2896,18 @@ private:
             Value* left = m_value->child(0);
             Value* right = m_value->child(1);
 
-            // UBFIZ Pattern: d = (n & mask) << lsb where mask = (1 << width) - 1
+            // UBFIZ Pattern: d = (n & mask) << lsb 
+            // Where: mask = (1 << width) - 1
             auto tryAppendUBFZ = [&] () -> bool {
+                Air::Opcode opcode = opcodeForType(Ubfiz32, Ubfiz64, m_value->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
+                    return false;
                 if (left->opcode() != BitAnd || !canBeInternal(left))
                     return false;
+
                 Value* nValue = left->child(0);
                 Value* maskValue = left->child(1);
-
-                Air::Opcode opcode = opcodeForType(Ubfiz32, Ubfiz64, nValue->type());
-                if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
-                    return false;
-                if (!maskValue->hasInt() || !imm(right) || right->asInt() < 0)
+                if (m_locked.contains(nValue) || !maskValue->hasInt() || !imm(right) || right->asInt() < 0) 
                     return false;
 
                 uint64_t lsb = right->asInt();
