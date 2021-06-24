@@ -1,3 +1,20 @@
+2021-06-24  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] RELEASE_ASSERT in RemoteResourceCacheProxy::didFinalizeRenderingUpdate() may fire if GPUP is relaunched
+        https://bugs.webkit.org/show_bug.cgi?id=227229
+        <rdar://79147947>
+
+        Reviewed by Myles C. Maxfield.
+
+        When the GPUP is relaunched remoteResourceCacheWasDestroyed() clears
+        m_fontIdentifierToLastRenderingUpdateVersionMap but it does not reset
+        m_numberOfFontsUsedInCurrentRenderingUpdate. This will make it always
+        greater than m_fontIdentifierToLastRenderingUpdateVersionMap.size().
+        And this is why the assertion fires.
+
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+
 2021-06-24  Alex Christensen  <achristensen@webkit.org>
 
         Fix WKDownloadDelegate header doc

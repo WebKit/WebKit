@@ -156,6 +156,7 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
     }
     m_nativeImages.clear();
     m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
+    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
 }
 
 void RemoteResourceCacheProxy::releaseMemory()
