@@ -37,6 +37,7 @@
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
+#import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
@@ -684,6 +685,51 @@ void GraphicsContextGLOpenGL::destroyPbufferAndDetachIOSurface(void* handle)
     EGL_DestroySurface(display, handle);
 }
 
+void* GraphicsContextGLOpenGL::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
+{
+    constexpr EGLint emptyAttributes[] = { EGL_NONE };
+
+    // Create a MTLTexture out of the IOSurface.
+    // FIXME: We need to use the same device that ANGLE is using, which might not be the default.
+
+    RetainPtr<MTLSharedTextureHandle> handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
+    if (!handle) {
+        LOG(WebGL, "Unable to create a MTLSharedTextureHandle from the IOSurface in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    if (!handle.get().device) {
+        LOG(WebGL, "MTLSharedTextureHandle does not have a Metal device in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    auto texture = adoptNS([handle.get().device newSharedTextureWithHandle:handle.get()]);
+    if (!texture) {
+        LOG(WebGL, "Unable to create a MTLSharedTexture from the texture handle in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    // FIXME: Does the texture have the correct usage mode?
+
+    // Create an EGLImage out of the MTLTexture
+    auto display = platformDisplay();
+    auto eglImage = EGL_CreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
+    if (!eglImage) {
+        LOG(WebGL, "Unable to create an EGLImage from the Metal handle in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    // Tell the currently bound texture to use the EGLImage.
+    gl::EGLImageTargetTexture2DOES(target, eglImage);
+
+    return eglImage;
+}
+
+void GraphicsContextGLOpenGL::detachIOSurfaceFromSharedTexture(void* handle)
+{
+    auto display = platformDisplay();
+    EGL_DestroyImageKHR(display, handle);
+}
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {

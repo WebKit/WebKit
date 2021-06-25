@@ -1,3 +1,32 @@
+2021-06-22  Dean Jackson  <dino@apple.com>
+
+        Add support for MTLSharedTextures in WebXR
+        https://bugs.webkit.org/show_bug.cgi?id=227245
+        <rdar://problem/79591620>
+
+        Reviewed by Tim Horton.
+
+        Sometimes, the IOSurface passed to WebXR come from a shared MTLTexture. In
+        this case we can't treat the IOSurface data as a regular single-plane
+        image. Instead we should use it to recreate the MTLTexture and then
+        bind that to WebGL's framebuffer.
+
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp: Use some new binding methods on GraphicsContextGLOpenGL
+        if given a shared texture.
+        (WebCore::WebXROpaqueFramebuffer::startFrame):
+        (WebCore::WebXROpaqueFramebuffer::endFrame):
+        * Modules/webxr/WebXROpaqueFramebuffer.h:
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm: New methods to link an
+        IOSurface to a GL texture, going through a MTLSharedTexture.
+        (WebCore::GraphicsContextGLOpenGL::attachIOSurfaceToSharedTexture):
+        (WebCore::GraphicsContextGLOpenGL::detachIOSurfaceFromSharedTexture):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/xr/PlatformXR.h: Add a new "isShared" member to LayerData
+        to differentiate between normal IOSurfaces and those that came
+        from a shared texture.
+        (PlatformXR::Device::FrameData::LayerData::encode const):
+        (PlatformXR::Device::FrameData::LayerData::decode):
+
 2021-06-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix null crash in AudioMediaStreamTrackRendererCocoa::start

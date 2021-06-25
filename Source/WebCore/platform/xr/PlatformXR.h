@@ -173,6 +173,7 @@ public:
         struct LayerData {
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
             std::unique_ptr<WebCore::IOSurface> surface;
+            bool isShared { false };
 #else
             PlatformGLObject opaqueTexture { 0 };
 #endif
@@ -442,6 +443,7 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     WTF::MachSendRight surfaceSendRight = surface ? surface->createSendRight() : WTF::MachSendRight();
     encoder << surfaceSendRight;
+    encoder << isShared;
 #else
     encoder << opaqueTexture;
 #endif
@@ -456,6 +458,8 @@ std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode
     if (!decoder.decode(surfaceSendRight))
         return std::nullopt;
     layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());
+    if (!decoder.decode(layerData.isShared))
+        return std::nullopt;
 #else
     if (!decoder.decode(layerData.opaqueTexture))
         return std::nullopt;

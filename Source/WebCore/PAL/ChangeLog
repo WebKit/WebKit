@@ -1,3 +1,15 @@
+2021-06-22  Dean Jackson  <dino@apple.com>
+
+        Add support for MTLSharedTextures in WebXR
+        https://bugs.webkit.org/show_bug.cgi?id=227245
+        <rdar://problem/79591620>
+
+        Reviewed by Tim Horton.
+
+        Define MTLSharedTextureHandle's initWithIOSurface.
+
+        * pal/spi/cocoa/MetalSPI.h:
+
 2021-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the macOS Monterey build
