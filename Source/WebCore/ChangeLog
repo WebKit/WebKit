@@ -1,3 +1,20 @@
+2021-06-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix null crash in AudioMediaStreamTrackRendererCocoa::start
+        https://bugs.webkit.org/show_bug.cgi?id=227386
+        <rdar://79045120>
+
+        Reviewed by Youenn Fablet.
+
+        AudioMediaStreamTrackRendererInternalUnitManager::Proxy::~Proxy calls those callbacks with nullptr.
+        So can LocalAudioMediaStreamTrackRendererInternalUnit::retrieveFormatDescription when createAudioUnitIfNeeded
+        has an early return or hasn't been called yet.
+
+        When this happens, let's not crash.
+
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::start):
+
 2021-06-25  Philippe Normand  <pnormand@igalia.com>
 
         WIRELESS_PLAYBACK_TARGET guards protect unrelated code
