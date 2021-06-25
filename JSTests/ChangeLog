@@ -1,3 +1,14 @@
+2021-06-25  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip materialize-regexp-cyclic-regexp.js on ARM and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=227223
+
+        Tested with 50 iterations in both arm and mips.
+
+        Unreviewed Gardening.
+
+        * stress/materialize-regexp-cyclic-regexp.js:
+
 2021-06-24  Asumu Takikawa  <asumu@igalia.com>
 
         [WASM-Function-References] Add support for (ref null? $t) type constructor
