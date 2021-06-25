@@ -207,6 +207,7 @@ webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
 # WebXR is not yet supported in GTK
 webkit.org/b/208988 http/wpt/webxr [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/208988 webxr [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations

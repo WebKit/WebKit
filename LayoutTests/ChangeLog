@@ -1,3 +1,10 @@
+2021-06-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GTK] Unreviewed test gardening, mark more WebXR tests as unsupported
+        https://bugs.webkit.org/show_bug.cgi?id=227358
+
+        * platform/gtk/TestExpectations:
+
 2021-06-25  Ziran Sun  <zsun@igalia.com>
 
         Resync web-platform-tests/css/css-grid tests from upstream
