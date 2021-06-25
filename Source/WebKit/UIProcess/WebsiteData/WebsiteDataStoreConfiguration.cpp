@@ -47,6 +47,9 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
         setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory());
         setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory());
         setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory());
+#if ENABLE(MODEL_ELEMENT)
+        setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
+#endif
     }
 }
 
@@ -96,6 +99,9 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 #if PLATFORM(COCOA)
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));
+#endif
+#if ENABLE(MODEL_ELEMENT)
+    copy->m_modelElementCacheDirectory = this->m_modelElementCacheDirectory;
 #endif
 
     return copy;

@@ -321,6 +321,13 @@ WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
     return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug", ShouldCreateDirectory::No);
 }
 
+#if ENABLE(MODEL_ELEMENT)
+WTF::String WebsiteDataStore::defaultModelElementCacheDirectory()
+{
+    return tempDirectoryFileSystemRepresentation("ModelElement", ShouldCreateDirectory::No);
+}
+#endif
+
 WTF::String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;

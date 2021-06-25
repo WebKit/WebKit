@@ -56,6 +56,9 @@ public:
     RefPtr<SharedBuffer> modelData() const;
     RefPtr<Model> model() const;
 
+    WEBCORE_EXPORT static void setModelElementCacheDirectory(const String&);
+    WEBCORE_EXPORT static const String& modelElementCacheDirectory();
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 

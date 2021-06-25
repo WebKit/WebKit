@@ -1,3 +1,20 @@
+2021-06-24  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Create a sandbox extension for a temporary directory to store model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227359
+
+        Reviewed by Tim Horton.
+
+        The SPIs we will use to render <model> resources expect a file URL to load and render the model.
+        Before we adopt these SPIs, we extend the sandbox to allow writing to a temporary directory where
+        we will store these resources.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        (WebCore::sharedModelElementCacheDirectory):
+        (WebCore::HTMLModelElement::setModelElementCacheDirectory):
+        (WebCore::HTMLModelElement::modelElementCacheDirectory):
+        * Modules/model-element/HTMLModelElement.h:
+
 2021-06-24  Sihui Liu  <sihui_liu@apple.com>
 
         Remove references to order files

@@ -141,6 +141,10 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/StringHash.h>
 
+#if ENABLE(MODEL_ELEMENT)
+#include <WebCore/HTMLModelElement.h>
+#endif
+
 #if !OS(WINDOWS)
 #include <unistd.h>
 #endif
@@ -566,6 +570,11 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 #if ENABLE(VIDEO)
     if (!parameters.mediaCacheDirectory.isEmpty())
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    if (!parameters.modelElementCacheDirectory.isEmpty())
+        WebCore::HTMLModelElement::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
 #endif
 
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);

@@ -253,6 +253,9 @@ public:
     const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
     const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
     const String& resolvedHSTSStorageDirectory() const { return m_resolvedConfiguration->hstsStorageDirectory(); }
+#if ENABLE(MODEL_ELEMENT)
+    const String& resolvedModelElementCacheDirectory() const { return m_resolvedConfiguration->modelElementCacheDirectory(); }
+#endif
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
@@ -328,6 +331,9 @@ public:
     static WTF::String defaultWebSQLDatabaseDirectory();
 #if USE(GLIB)
     static WTF::String defaultHSTSDirectory();
+#endif
+#if ENABLE(MODEL_ELEMENT)
+    static WTF::String defaultModelElementCacheDirectory();
 #endif
     static WTF::String defaultIndexedDBDatabaseDirectory();
     static WTF::String defaultCacheStorageDirectory();

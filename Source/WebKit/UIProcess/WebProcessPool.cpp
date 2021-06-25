@@ -692,7 +692,14 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     if (!javaScriptConfigurationDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, javaScriptConfigurationDirectoryExtensionHandle);
-        
+
+#if ENABLE(MODEL_ELEMENT)
+    auto modelElementCacheDirectory = websiteDataStore.resolvedModelElementCacheDirectory();
+    SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
+    if (!modelElementCacheDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(modelElementCacheDirectory, SandboxExtension::Type::ReadWrite, modelElementCacheDirectoryExtensionHandle);
+#endif
+
     return WebProcessDataStoreParameters {
         websiteDataStore.sessionID(),
         WTFMove(applicationCacheDirectory),
@@ -708,6 +715,10 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         websiteDataStore.thirdPartyCookieBlockingMode(),
         m_domainsWithUserInteraction,
         m_domainsWithCrossPageStorageAccessQuirk,
+#endif
+#if ENABLE(MODEL_ELEMENT)
+        WTFMove(modelElementCacheDirectory),
+        WTFMove(modelElementCacheDirectoryExtensionHandle),
 #endif
         websiteDataStore.resourceLoadStatisticsEnabled()
     };

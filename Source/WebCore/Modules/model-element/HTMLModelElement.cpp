@@ -147,6 +147,22 @@ HTMLModelElement& HTMLModelElement::readyPromiseResolve()
     return *this;
 }
 
+static String& sharedModelElementCacheDirectory()
+{
+    static NeverDestroyed<String> sharedModelElementCacheDirectory;
+    return sharedModelElementCacheDirectory;
+}
+
+void HTMLModelElement::setModelElementCacheDirectory(const String& path)
+{
+    sharedModelElementCacheDirectory() = path;
+}
+
+const String& HTMLModelElement::modelElementCacheDirectory()
+{
+    return sharedModelElementCacheDirectory();
+}
+
 // MARK: - DOM overrides.
 
 void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
