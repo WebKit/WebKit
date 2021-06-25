@@ -1,3 +1,30 @@
+2021-06-25  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Simplify snap point selection helpers
+        https://bugs.webkit.org/show_bug.cgi?id=227062
+
+        Reviewed by Frédéric Wang.
+
+        Combine indicesOfNearestSnapOffsets and findFirstSnapStopOffsetBetweenOriginAndDestination
+        and have the helper return the geometric previous and next snap points. This makes the
+        code a bit easier to read, slightly more efficient, and prepares for looking at
+        the geometric previous and next snap points for certain upcoming CSS Scroll Snap features.
+
+        Previously, indicesOfNearestSnapOffsets used a binary search and findFirstSnapStopOffsetBetweenOriginAndDestination
+        used a linear search. This change replaces these two functions with a single linear search.
+        While findFirstSnapStopOffsetBetweenOriginAndDestination is only called for directional scrolling,
+        directional scrolling is more common than non-directional scrolling (which is typically only called
+        by scrollIntoView() and other JS scrolling APIs). I have tested this change with a large table of
+        snap points and performance does not seem to be changed. In addition, a future change should mean
+        that this searchForPotentialSnapPoints should be called much less.
+
+        No new tests. This should not change behavior in any way.
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::searchForPotentialSnapPoints): Added this new helper which is the combination
+        of indicesOfNearestSnapOffsets and findFirstSnapStopOffsetBetweenOriginAndDestination.
+        (WebCore::closestSnapOffsetWithInfoAndAxis): Use the new helper.
+
 2021-06-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Do not clamp flex base size with {min|max}-{height|width}
