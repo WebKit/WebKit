@@ -1370,34 +1370,80 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax(co
     return childSize;
 }
 
+// A scoped class that resets either min-width & max-width or min-height & max-height (depending on the
+// flex container main size) to their initial values on instantiation. It later resets them back to their
+// original values on destruction. It's used when computing the flex base sizes of flex items as "when determining 
+// the flex base size, the item’s min and max main sizes are ignored (no clamping occurs)". See
+// https://drafts.csswg.org/css-flexbox/#line-sizing
+class ScopedUnboundedBox {
+WTF_MAKE_NONCOPYABLE(ScopedUnboundedBox);
+public:
+    ScopedUnboundedBox(RenderBox& box, bool mainAxisIsChildInlineAxis)
+        : m_box(box)
+        , m_isHorizontalWritingModeInParallelFlow(mainAxisIsChildInlineAxis == box.isHorizontalWritingMode())
+    {
+        m_originalMin = m_isHorizontalWritingModeInParallelFlow ? m_box.style().minWidth() : m_box.style().minHeight();
+        m_originalMax = m_isHorizontalWritingModeInParallelFlow ? m_box.style().maxWidth() : m_box.style().maxHeight();
+        if (m_isHorizontalWritingModeInParallelFlow) {
+            m_box.mutableStyle().setMinWidth(RenderStyle::initialMinSize());
+            m_box.mutableStyle().setMaxWidth(RenderStyle::initialMaxSize());
+            return;
+        }
+        m_box.mutableStyle().setMinHeight(RenderStyle::initialMinSize());
+        m_box.mutableStyle().setMaxHeight(RenderStyle::initialMaxSize());
+    }
+
+
+    ~ScopedUnboundedBox()
+    {
+        if (m_isHorizontalWritingModeInParallelFlow) {
+            m_box.mutableStyle().setMinWidth(WTFMove(m_originalMin));
+            m_box.mutableStyle().setMaxWidth(WTFMove(m_originalMax));
+            return;
+        }
+        m_box.mutableStyle().setMinHeight(WTFMove(m_originalMin));
+        m_box.mutableStyle().setMaxHeight(WTFMove(m_originalMax));
+    }
+
+private:
+    RenderBox& m_box;
+    bool m_isHorizontalWritingModeInParallelFlow;
+    Length m_originalMin;
+    Length m_originalMax;
+};
+
 FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChildren)
 {
     auto childHadLayout = child.everHadLayout();
-    child.clearOverridingContentSize();
-    if (childHasIntrinsicMainAxisSize(child)) {
-        // If this condition is true, then computeMainAxisExtentForChild will call
-        // child.intrinsicContentLogicalHeight() and child.scrollbarLogicalHeight(),
-        // so if the child has intrinsic min/max/preferred size, run layout on it now to make sure
-        // its logical height and scroll bars are up to date.
-        updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, child);
-        // Don't resolve percentages in children. This is especially important for the min-height calculation,
-        // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
-        // by definition we have an indefinite flex basis here and thus percentages should not resolve.
-        if (child.needsLayout() || !m_intrinsicSizeAlongMainAxis.contains(&child)) {
-            if (isHorizontalWritingMode() == child.isHorizontalWritingMode())
-                child.setOverridingContainingBlockContentLogicalHeight(std::nullopt);
-            else
-                child.setOverridingContainingBlockContentLogicalWidth(std::nullopt);
-            child.clearOverridingContentSize();
-            child.setChildNeedsLayout(MarkOnlyThis);
-            child.layoutIfNeeded();
-            cacheChildMainSize(child);
-            child.clearOverridingContainingBlockContentSize();
+    LayoutUnit borderAndPadding = isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
+    LayoutUnit childInnerFlexBaseSize;
+    {
+        ScopedUnboundedBox unbounded(child, mainAxisIsChildInlineAxis(child));
+        child.clearOverridingContentSize();
+        if (childHasIntrinsicMainAxisSize(child)) {
+            // If this condition is true, then computeMainAxisExtentForChild will call
+            // child.intrinsicContentLogicalHeight() and child.scrollbarLogicalHeight(),
+            // so if the child has intrinsic min/max/preferred size, run layout on it now to make sure
+            // its logical height and scroll bars are up to date.
+            updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, child);
+            // Don't resolve percentages in children. This is especially important for the min-height calculation,
+            // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
+            // by definition we have an indefinite flex basis here and thus percentages should not resolve.
+            if (child.needsLayout() || !m_intrinsicSizeAlongMainAxis.contains(&child)) {
+                if (isHorizontalWritingMode() == child.isHorizontalWritingMode())
+                    child.setOverridingContainingBlockContentLogicalHeight(std::nullopt);
+                else
+                    child.setOverridingContainingBlockContentLogicalWidth(std::nullopt);
+                child.clearOverridingContentSize();
+                child.setChildNeedsLayout(MarkOnlyThis);
+                child.layoutIfNeeded();
+                cacheChildMainSize(child);
+                child.clearOverridingContainingBlockContentSize();
+            }
         }
+        childInnerFlexBaseSize = computeInnerFlexBaseSizeForChild(child, borderAndPadding);
     }
     
-    LayoutUnit borderAndPadding = isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
-    LayoutUnit childInnerFlexBaseSize = computeInnerFlexBaseSizeForChild(child, borderAndPadding);
     LayoutUnit margin = isHorizontalFlow() ? child.horizontalMarginExtent() : child.verticalMarginExtent();
     return FlexItem(child, childInnerFlexBaseSize, borderAndPadding, margin, computeFlexItemMinMaxSizes(child), childHadLayout);
 }

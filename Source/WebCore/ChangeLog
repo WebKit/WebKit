@@ -1,3 +1,27 @@
+2021-06-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Do not clamp flex base size with {min|max}-{height|width}
+        https://bugs.webkit.org/show_bug.cgi?id=225590
+
+        Reviewed by Alan Bujtas.
+
+        When computing flex base size we should not clamp it with neither min-{height|width}
+        nor max-{height|width}. That would be done later and will be called the hypothetical
+        main size.
+
+        For most of the cases we were already doing it, however there are some particular cases
+        in which we have to call the generic layout code which does clamp the sizes using min
+        and max sizes. In order to make those code paths work, we reset the min|max values to
+        their initial ones (so they effectively become inactive) and then we set the original
+        values back after computing the base size.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::ScopedUnboundedBox::ScopedUnboundedBox): New scoped class that sets min|max sizes
+        to their initial values on instantiation and restores the original values on destruction.
+        (WebCore::ScopedUnboundedBox::~ScopedUnboundedBox):
+        (WebCore::RenderFlexibleBox::constructFlexItems): Wrap the base size computation with a
+        ScopedUnboundedBox.
+
 2021-06-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Move flex item preferred width computation specifics to RenderFlexibleBox class

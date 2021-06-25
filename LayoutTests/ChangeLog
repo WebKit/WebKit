@@ -1,3 +1,18 @@
+2021-06-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Do not clamp flex base size with {min|max}-{height|width}
+        https://bugs.webkit.org/show_bug.cgi?id=225590
+
+        Reviewed by Alan Bujtas.
+
+        The patch allows us to pass 3 new tests. We're adding percentage-max-height-003.html to
+        the list of expected failures because these changes make it fail. This is not really a
+        regression however because although the size of the deepest flex item was correct (and thus
+        allowed us to pass the test) the other sizes were completely wrong. So it's more an issue
+        of the test not being complete enough and passing artificially than anything else.
+
+        * TestExpectations: Unskipped 3 tests & skipped 1.
+
 2021-06-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] Unreviewed test gardening, mark more WebXR tests as unsupported
