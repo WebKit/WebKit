@@ -1,3 +1,14 @@
+2021-06-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Minor debugging improvements in mediastream source element
+        https://bugs.webkit.org/show_bug.cgi?id=227396
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp: Give representative name to
+        the appsrc elements embedded in the MediaStreamSource element. Also add logging calls
+        related with tracks observation.
+
 2021-06-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Cleanup OverridingSizesScope RAII class
