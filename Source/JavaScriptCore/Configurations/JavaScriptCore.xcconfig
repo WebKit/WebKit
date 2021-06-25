@@ -34,6 +34,7 @@ OTHER_LDFLAGS[sdk=embedded*] = $(inherited) $(OTHER_LDFLAGS_BASE);
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_BASE) -framework CoreServices;
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
+SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,JavaScriptCore.order;
 
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;

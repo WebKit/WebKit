@@ -131,6 +131,7 @@ OTHER_LDFLAGS_PLATFORM_cocoatouch = -allowable_client WebKit -allowable_client i
 OTHER_LDFLAGS_PLATFORM_macosx = -sub_library libobjc -umbrella WebKit;
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
+SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebCore.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,WebCore.order;
 
 NORMAL_WEBCORE_FRAMEWORKS_DIR[sdk=iphone*] = $(PRODUCTION_FRAMEWORKS_DIR);
