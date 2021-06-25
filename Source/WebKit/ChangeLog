@@ -1,3 +1,16 @@
+2021-06-24  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: (r279244) [ Mac ] http/tests/workers/service/postmessage-after-terminate.https.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=227380
+        <rdar://problem/79748648>
+
+        Unreviewed, drop protector added in r279244 inside establishServiceWorkerContext() as it is what caused this test
+        to time out. I am not sure why this is happening yet but I am doing this partial revert to get us back in a good
+        state.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+
 2021-06-24  Venky Dass  <yaranamavenkataramana@apple.com>
 
         Crash in WebFrameLoaderClient::dispatchDidStartProvisionalLoad after provisionalLoader is gone. 
