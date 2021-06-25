@@ -1,3 +1,13 @@
+2021-06-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove references to order files
+        https://bugs.webkit.org/show_bug.cgi?id=227377
+        rdar://76070556
+
+        Reviewed by Mark Lam.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2021-06-24  Asumu Takikawa  <asumu@igalia.com>
 
         [WASM-Function-References] Add support for (ref null? $t) type constructor

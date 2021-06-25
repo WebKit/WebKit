@@ -1,3 +1,13 @@
+2021-06-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove references to order files
+        https://bugs.webkit.org/show_bug.cgi?id=227377
+        rdar://76070556
+
+        Reviewed by Mark Lam.
+
+        * Configurations/WebKit.xcconfig:
+
 2021-06-24  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: (r279244) [ Mac ] http/tests/workers/service/postmessage-after-terminate.https.html is timing out
