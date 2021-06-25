@@ -5813,75 +5813,6 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
     });
 }
 
-void HTMLMediaElement::dispatchEvent(Event& event)
-{
-    DEBUG_LOG(LOGIDENTIFIER, event.type());
-
-    if (m_removedBehaviorRestrictionsAfterFirstUserGesture && event.type() == eventNames().endedEvent)
-        document().userActivatedMediaFinishedPlaying();
-
-    HTMLElement::dispatchEvent(event);
-
-    // Some pages may change the position/size of an inline video element
-    // when/after the video element enters fullscreen (rdar://problem/55814988).
-    // We need to fire the end fullscreen event to notify the page
-    // to change the position/size back *before* exiting fullscreen.
-    // Otherwise, the exit fullscreen animation will be incorrect.
-    if (!m_videoFullscreenStandby && m_videoFullscreenMode == VideoFullscreenModeNone && event.type() == eventNames().webkitendfullscreenEvent)
-        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
-}
-
-bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
-{
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
-    if (eventType == eventNames().webkitneedkeyEvent)
-        updateShouldContinueAfterNeedKey();
-#endif
-
-    if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
-        return Node::addEventListener(eventType, WTFMove(listener), options);
-
-    bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
-
-    if (!Node::addEventListener(eventType, WTFMove(listener), options))
-        return false;
-
-    if (isFirstAvailabilityChangedListener) {
-        m_hasPlaybackTargetAvailabilityListeners = true;
-        mediaSession().setActive(true);
-        mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
-    }
-
-    ALWAYS_LOG(LOGIDENTIFIER, "'webkitplaybacktargetavailabilitychanged'");
-
-    enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.
-    return true;
-}
-
-bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
-{
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
-    if (eventType == eventNames().webkitneedkeyEvent)
-        updateShouldContinueAfterNeedKey();
-#endif
-
-    if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
-        return Node::removeEventListener(eventType, listener, options);
-
-    if (!Node::removeEventListener(eventType, listener, options))
-        return false;
-
-    bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
-    ALWAYS_LOG(LOGIDENTIFIER, "removed last listener = ", didRemoveLastAvailabilityChangedListener);
-    if (didRemoveLastAvailabilityChangedListener) {
-        m_hasPlaybackTargetAvailabilityListeners = false;
-        mediaSession().setHasPlaybackTargetAvailabilityListeners(false);
-        scheduleUpdateMediaState();
-    }
-
-    return true;
-}
-
 void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
 {
     bool hasTargets = m_mediaSession && mediaSession().hasWirelessPlaybackTargets();
@@ -5926,6 +5857,82 @@ void HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()
     scheduleUpdateMediaState();
 }
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
+
+void HTMLMediaElement::dispatchEvent(Event& event)
+{
+    DEBUG_LOG(LOGIDENTIFIER, event.type());
+
+    if (m_removedBehaviorRestrictionsAfterFirstUserGesture && event.type() == eventNames().endedEvent)
+        document().userActivatedMediaFinishedPlaying();
+
+    HTMLElement::dispatchEvent(event);
+
+    // Some pages may change the position/size of an inline video element
+    // when/after the video element enters fullscreen (rdar://problem/55814988).
+    // We need to fire the end fullscreen event to notify the page
+    // to change the position/size back *before* exiting fullscreen.
+    // Otherwise, the exit fullscreen animation will be incorrect.
+    if (!m_videoFullscreenStandby && m_videoFullscreenMode == VideoFullscreenModeNone && event.type() == eventNames().webkitendfullscreenEvent)
+        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
+}
+
+bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+{
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    if (eventType == eventNames().webkitneedkeyEvent)
+        updateShouldContinueAfterNeedKey();
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
+        return Node::addEventListener(eventType, WTFMove(listener), options);
+
+    bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
+
+    if (!Node::addEventListener(eventType, WTFMove(listener), options))
+        return false;
+
+    if (isFirstAvailabilityChangedListener) {
+        m_hasPlaybackTargetAvailabilityListeners = true;
+        mediaSession().setActive(true);
+        mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER, "'webkitplaybacktargetavailabilitychanged'");
+
+    enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.
+    return true;
+#else
+    return Node::addEventListener(eventType, WTFMove(listener), options);
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
+}
+
+bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
+{
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    if (eventType == eventNames().webkitneedkeyEvent)
+        updateShouldContinueAfterNeedKey();
+#endif
+
+    bool listenerWasRemoved = Node::removeEventListener(eventType, listener, options);
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
+        return listenerWasRemoved;
+
+    if (!listenerWasRemoved)
+        return false;
+
+    bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
+    ALWAYS_LOG(LOGIDENTIFIER, "removed last listener = ", didRemoveLastAvailabilityChangedListener);
+    if (didRemoveLastAvailabilityChangedListener) {
+        m_hasPlaybackTargetAvailabilityListeners = false;
+        mediaSession().setHasPlaybackTargetAvailabilityListeners(false);
+        scheduleUpdateMediaState();
+    }
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
+
+    return listenerWasRemoved;
+}
 
 bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
 {

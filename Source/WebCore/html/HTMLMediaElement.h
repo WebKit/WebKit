@@ -398,10 +398,11 @@ public:
     void textTrackReadyStateChanged(TextTrack*);
     void updateTextTrackRepresentationImageIfNeeded();
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    void webkitShowPlaybackTargetPicker();
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void webkitShowPlaybackTargetPicker();
 
     void wirelessRoutesAvailableDidChange() override;
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
@@ -572,10 +573,8 @@ public:
 
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) override;
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
-#endif
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);

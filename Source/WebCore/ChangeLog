@@ -1,3 +1,24 @@
+2021-06-25  Philippe Normand  <pnormand@igalia.com>
+
+        WIRELESS_PLAYBACK_TARGET guards protect unrelated code
+        https://bugs.webkit.org/show_bug.cgi?id=227404
+
+        Reviewed by Eric Carlson.
+
+        The dispatchEvent(), addEventListener() and removeEventListener() are now unconditionally
+        implemented. The WIRELESS_PLAYBACK_TARGET guards were refactored to enclose only the code
+        specific to this feature.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::setWirelessPlaybackTarget):
+        (WebCore::HTMLMediaElement::setShouldPlayToPlaybackTarget):
+        (WebCore::HTMLMediaElement::playbackTargetPickerWasDismissed):
+        (WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged):
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        * html/HTMLMediaElement.h:
+
 2021-06-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r279208.
