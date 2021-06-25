@@ -1,3 +1,330 @@
+2021-06-24  Mark Lam  <mark.lam@apple.com>
+
+        Use ldp and stp more for saving / restoring registers on ARM64.
+        https://bugs.webkit.org/show_bug.cgi?id=227039
+        rdar://79354736
+
+        Reviewed by Saam Barati.
+
+        This patch introduces a spooler abstraction in AssemblyHelpers.  The spooler
+        basically batches up load / store operations and emit them as pair instructions
+        if appropriate.
+
+        There are 4 spooler classes:
+        a. Spooler
+           - template base class for LoadRegSpooler and StoreRegSpooler.
+           - encapsulates the batching strategy for load / store pairs.
+
+        b. LoadRegSpooler - specializes Spooler to handle load pairs.
+        b. StoreRegSpooler - specializes Spooler to handle store pairs.
+
+        d. CopySpooler
+           - handles matching loads with stores.
+           - tries to emit loads as load pairs if possible.
+           - tries to emot stores as store pairs if possible.
+           - ensures that pre-requisite loads are emitted before stores are emitted.
+           - other than loads, also support constants and registers as sources of values
+             to be stored.  This is useful in OSR exit ramps where we may materialize a
+             stack value to store from constants or registers in addition to values we
+             load from the old stack frame or from a scratch buffer.
+
+        In this patch, we also do the following:
+
+        1. Use spoolers in many places so that we can emit load / store pairs instead of
+           single load / stores.  This helps shrink JIT code side, and also potentially
+           improves performance.
+
+        2. In DFG::OSRExit::compileExit(), we used to recover constants into a scratch
+           buffer, and then later, load from that scratch buffer to store into the
+           new stack frame(s).
+
+           This patch changes it so that we defer constant recovery until the final
+           loop where we store the recovered value directly into the new stack frame(s).
+           This saves us the work (and JIT code space) for storing into a scratch buffer
+           and then reloading from the scratch buffer.
+
+           There is one exception: tmp values used by active checkpoints.  We need to call
+           operationMaterializeOSRExitSideState() to materialize the active checkpoint
+           side state before the final loop where we now recover constants.  Hence, we
+           need these tmp values recovered before hand.
+
+           So, we check upfront if we have active checkpoint side state to materialize.
+           If so, we'll eagerly recover the constants for initializing those tmps.
+
+           We also use the CopySpooler in the final loop to emit load / store pairs for
+           filling in the new stack frame(s).
+
+           One more thing: it turns out that the vast majority of constants to be recovered
+           is simply the undefined value.  So, as an optimization, the final loop keeps
+           the undefined value in a register, and has the spooler store directly from
+           that register when appropriate.  This saves on JIT code to repeatedly materialize
+           the undefined JSValue constant.
+
+        3. In reifyInlinedCallFrames(), replace the use of GPRInfo::nonArgGPR0 with
+           GPRInfo::regT4.  nonArgGPRs are sometimes map to certain regTXs on certain ports.
+           Replacing with regT4 makes it easier to ensure that we're not trashing the
+           register when we use more temp registers.
+
+           reifyInlinedCallFrames() will be using emitSaveOrCopyLLIntBaselineCalleeSavesFor()
+           later where we need more temp registers.
+
+        4. Move the following functions to AssemblyHelpers.cpp.  They don't need to be
+           inline functions.  Speedometer2 and JetStream2 shows that making these non
+           inline does not hurt performance:
+
+                AssemblyHelpers::emitSave(const RegisterAtOffsetList&);
+                AssemblyHelpers::emitRestore(const RegisterAtOffsetList&);
+                AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList*);
+                AssemblyHelpers::emitSaveOrCopyCalleeSavesFor(...);
+                AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList*);
+                AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(...);
+
+           Also renamed emitSaveOrCopyCalleeSavesFor() to emitSaveOrCopyLLIntBaselineCalleeSavesFor()
+           because it is only used with baseline codeBlocks.
+
+        Results:
+        Cummulative LinkBuffer profile sizes shrunk by ~2M in aggregate:
+
+                            base                           new
+                            ====                           ===
+               BaselineJIT: 83827048 (79.943703 MB)     => 83718736 (79.840408 MB)
+                       DFG: 56594836 (53.973042 MB)     => 56603508 (53.981312 MB)
+               InlineCache: 33923900 (32.352352 MB)     => 33183156 (31.645924 MB)
+                       FTL: 6770956 (6.457287 MB)       => 6568964 (6.264652 MB)
+                DFGOSRExit: 5212096 (4.970642 MB)       => 3728088 (3.555382 MB)
+                    CSSJIT: 748428 (730.886719 KB)      => 748428 (730.886719 KB)
+                FTLOSRExit: 692276 (676.050781 KB)      => 656884 (641.488281 KB)
+                   YarrJIT: 445280 (434.843750 KB)      => 512988 (500.964844 KB)
+                  FTLThunk: 22908 (22.371094 KB)        => 22556 (22.027344 KB)
+        BoundFunctionThunk: 8400 (8.203125 KB)          => 10088 (9.851562 KB)
+             ExtraCTIThunk: 6952 (6.789062 KB)          => 6824 (6.664062 KB)
+          SpecializedThunk: 4508 (4.402344 KB)          => 4508 (4.402344 KB)
+                     Thunk: 3912 (3.820312 KB)          => 3784 (3.695312 KB)
+                LLIntThunk: 2908 (2.839844 KB)          => 2908 (2.839844 KB)
+              VirtualThunk: 1248 (1.218750 KB)          => 1248 (1.218750 KB)
+                  DFGThunk: 1084 (1.058594 KB)          => 444
+               DFGOSREntry: 216                         => 184
+                JumpIsland: 0
+                 WasmThunk: 0
+                      Wasm: 0
+             Uncategorized: 0
+                     Total: 188266956 (179.545361 MB)   => 185773296 (177.167221 MB)
+
+        Speedometer2 and JetStream2 results shows that performance is neutral for this
+        patch (as measured on an M1 Mac):
+
+        Speedometer2:
+        ----------------------------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |129.037500   |127.212500   |0.985857  | 0.012706                                         |
+        | VueJS-TodoMVC                        |28.312500    |27.525000    |0.972185  | 0.240315                                         |
+        | EmberJS-TodoMVC                      |132.550000   |132.025000   |0.996039  | 0.538034                                         |
+        | Flight-TodoMVC                       |80.762500    |80.875000    |1.001393  | 0.914749                                         |
+        | BackboneJS-TodoMVC                   |51.637500    |51.175000    |0.991043  | 0.285427                                         |
+        | Preact-TodoMVC                       |21.025000    |22.075000    |1.049941  | 0.206140                                         |
+        | AngularJS-TodoMVC                    |142.900000   |142.887500   |0.999913  | 0.990681                                         |
+        | Inferno-TodoMVC                      |69.300000    |69.775000    |1.006854  | 0.505201                                         |
+        | Vanilla-ES2015-TodoMVC               |71.500000    |71.225000    |0.996154  | 0.608650                                         |
+        | Angular2-TypeScript-TodoMVC          |43.287500    |43.275000    |0.999711  | 0.987926                                         |
+        | VanillaJS-TodoMVC                    |57.212500    |57.812500    |1.010487  | 0.333357                                         |
+        | jQuery-TodoMVC                       |276.150000   |276.775000   |1.002263  | 0.614404                                         |
+        | EmberJS-Debug-TodoMVC                |353.612500   |352.762500   |0.997596  | 0.518836                                         |
+        | React-TodoMVC                        |93.637500    |92.637500    |0.989321  | 0.036277                                         |
+        | React-Redux-TodoMVC                  |158.237500   |156.587500   |0.989573  | 0.042154                                         |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |68.050000    |68.087500    |1.000551  | 0.897149                                         |
+        ----------------------------------------------------------------------------------------------------------------------------------
+
+        a mean = 236.26950
+        b mean = 236.57964
+        pValue = 0.7830785938
+        (Bigger means are better.)
+        1.001 times better
+        Results ARE NOT significant
+
+        JetStream2:
+        -------------------------------------------------------------------------------------------------------------------------
+        |          subtest          |     pts      |     pts      |  b / a   | pValue (significance using False Discovery Rate) |
+        -------------------------------------------------------------------------------------------------------------------------
+        | gaussian-blur             |542.570057    |542.671885    |1.000188  | 0.982573                                         |
+        | HashSet-wasm              |57.710498     |64.406371     |1.116025  | 0.401424                                         |
+        | gcc-loops-wasm            |44.516009     |44.453535     |0.998597  | 0.973651                                         |
+        | json-parse-inspector      |241.275085    |240.720491    |0.997701  | 0.704732                                         |
+        | prepack-wtb               |62.640114     |63.754878     |1.017796  | 0.205840                                         |
+        | date-format-xparb-SP      |416.976817    |448.921409    |1.076610  | 0.052977                                         |
+        | WSL                       |1.555257      |1.570233      |1.009629  | 0.427924                                         |
+        | OfflineAssembler          |177.052352    |179.746511    |1.015217  | 0.112114                                         |
+        | cdjs                      |192.517586    |194.598906    |1.010811  | 0.025807                                         |
+        | UniPoker                  |514.023694    |526.111500    |1.023516  | 0.269892                                         |
+        | json-stringify-inspector  |227.584725    |223.619390    |0.982576  | 0.102714                                         |
+        | crypto-sha1-SP            |980.728788    |984.192104    |1.003531  | 0.838618                                         |
+        | Basic                     |685.148483    |711.590247    |1.038593  | 0.142952                                         |
+        | chai-wtb                  |106.256376    |106.590318    |1.003143  | 0.865894                                         |
+        | crypto-aes-SP             |722.308829    |728.702310    |1.008851  | 0.486766                                         |
+        | Babylon                   |655.857561    |654.204901    |0.997480  | 0.931520                                         |
+        | string-unpack-code-SP     |407.837271    |405.710752    |0.994786  | 0.729122                                         |
+        | stanford-crypto-aes       |456.906021    |449.993856    |0.984872  | 0.272994                                         |
+        | raytrace                  |883.911335    |902.887238    |1.021468  | 0.189785                                         |
+        | multi-inspector-code-load |409.997347    |405.643639    |0.989381  | 0.644447                                         |
+        | hash-map                  |593.590160    |601.576332    |1.013454  | 0.249414                                         |
+        | stanford-crypto-pbkdf2    |722.178638    |728.283532    |1.008453  | 0.661195                                         |
+        | coffeescript-wtb          |42.393544     |41.869545     |0.987640  | 0.197441                                         |
+        | Box2D                     |452.034685    |454.104868    |1.004580  | 0.535342                                         |
+        | richards-wasm             |140.873688    |148.394050    |1.053384  | 0.303651                                         |
+        | lebab-wtb                 |61.671318     |62.119403     |1.007266  | 0.620998                                         |
+        | tsf-wasm                  |108.592794    |119.498398    |1.100427  | 0.504710                                         |
+        | base64-SP                 |629.744643    |603.425565    |0.958207  | 0.049997                                         |
+        | navier-stokes             |740.588523    |739.951662    |0.999140  | 0.871445                                         |
+        | jshint-wtb                |51.938359     |52.651104     |1.013723  | 0.217137                                         |
+        | regex-dna-SP              |459.251148    |463.492489    |1.009235  | 0.371891                                         |
+        | async-fs                  |235.853820    |236.031189    |1.000752  | 0.938459                                         |
+        | first-inspector-code-load |275.298325    |274.172125    |0.995909  | 0.623403                                         |
+        | segmentation              |44.002842     |43.445960     |0.987344  | 0.207134                                         |
+        | typescript                |26.360161     |26.458820     |1.003743  | 0.609942                                         |
+        | octane-code-load          |1126.749036   |1087.132024   |0.964840  | 0.524171                                         |
+        | float-mm.c                |16.691935     |16.721354     |1.001762  | 0.194425                                         |
+        | quicksort-wasm            |461.630091    |450.161127    |0.975156  | 0.371394                                         |
+        | Air                       |392.442375    |412.201810    |1.050350  | 0.046887                                         |
+        | splay                     |510.111886    |475.131657    |0.931426  | 0.024732                                         |
+        | ai-astar                  |607.966974    |626.573181    |1.030604  | 0.468711                                         |
+        | acorn-wtb                 |67.510766     |68.143956     |1.009379  | 0.481663                                         |
+        | gbemu                     |144.133842    |145.620304    |1.010313  | 0.802154                                         |
+        | richards                  |963.475078    |946.658879    |0.982546  | 0.231189                                         |
+        | 3d-cube-SP                |549.426784    |550.479154    |1.001915  | 0.831307                                         |
+        | espree-wtb                |68.707483     |73.762202     |1.073569  | 0.033603                                         |
+        | bomb-workers              |96.882596     |96.116121     |0.992089  | 0.687952                                         |
+        | tagcloud-SP               |309.888767    |303.538511    |0.979508  | 0.187768                                         |
+        | mandreel                  |133.667031    |135.009929    |1.010047  | 0.075232                                         |
+        | 3d-raytrace-SP            |491.967649    |492.528992    |1.001141  | 0.957842                                         |
+        | delta-blue                |1066.718312   |1080.230772   |1.012667  | 0.549382                                         |
+        | ML                        |139.617293    |140.088630    |1.003376  | 0.661651                                         |
+        | regexp                    |351.773956    |351.075935    |0.998016  | 0.769250                                         |
+        | crypto                    |1510.474663   |1519.218842   |1.005789  | 0.638420                                         |
+        | crypto-md5-SP             |795.447899    |774.082493    |0.973140  | 0.079728                                         |
+        | earley-boyer              |812.574545    |870.678372    |1.071506  | 0.044081                                         |
+        | octane-zlib               |25.162470     |25.660261     |1.019783  | 0.554591                                         |
+        | date-format-tofte-SP      |395.296135    |398.008992    |1.006863  | 0.650475                                         |
+        | n-body-SP                 |1165.386611   |1150.525110   |0.987248  | 0.227908                                         |
+        | pdfjs                     |189.060252    |191.015628    |1.010343  | 0.633777                                         |
+        | FlightPlanner             |908.426192    |903.636642    |0.994728  | 0.838821                                         |
+        | uglify-js-wtb             |34.029399     |34.164342     |1.003965  | 0.655652                                         |
+        | babylon-wtb               |81.329869     |80.855680     |0.994170  | 0.854393                                         |
+        | stanford-crypto-sha256    |826.850533    |838.494164    |1.014082  | 0.579636                                         |
+        -------------------------------------------------------------------------------------------------------------------------
+
+        a mean = 237.91084
+        b mean = 239.92670
+        pValue = 0.0657710897
+        (Bigger means are better.)
+        1.008 times better
+        Results ARE NOT significant
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::pushToSaveByteOffset):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::pushToSaveByteOffset):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * ftl/FTLSaveRestore.cpp:
+        (JSC::FTL::saveAllRegisters):
+        (JSC::FTL::restoreAllRegisters):
+        * ftl/FTLSaveRestore.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl):
+        (JSC::AssemblyHelpers::emitSave):
+        (JSC::AssemblyHelpers::emitRestore):
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor):
+        (JSC::AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::emitSave): Deleted.
+        (JSC::AssemblyHelpers::emitRestore): Deleted.
+        (JSC::AssemblyHelpers::emitSaveOrCopyCalleeSavesFor): Deleted.
+        * jit/AssemblyHelpersSpoolers.h: Added.
+        (JSC::AssemblyHelpers::Spooler::Spooler):
+        (JSC::AssemblyHelpers::Spooler::handleGPR):
+        (JSC::AssemblyHelpers::Spooler::finalizeGPR):
+        (JSC::AssemblyHelpers::Spooler::handleFPR):
+        (JSC::AssemblyHelpers::Spooler::finalizeFPR):
+        (JSC::AssemblyHelpers::Spooler::op):
+        (JSC::AssemblyHelpers::LoadRegSpooler::LoadRegSpooler):
+        (JSC::AssemblyHelpers::LoadRegSpooler::loadGPR):
+        (JSC::AssemblyHelpers::LoadRegSpooler::finalizeGPR):
+        (JSC::AssemblyHelpers::LoadRegSpooler::loadFPR):
+        (JSC::AssemblyHelpers::LoadRegSpooler::finalizeFPR):
+        (JSC::AssemblyHelpers::LoadRegSpooler::handlePair):
+        (JSC::AssemblyHelpers::LoadRegSpooler::handleSingle):
+        (JSC::AssemblyHelpers::StoreRegSpooler::StoreRegSpooler):
+        (JSC::AssemblyHelpers::StoreRegSpooler::storeGPR):
+        (JSC::AssemblyHelpers::StoreRegSpooler::finalizeGPR):
+        (JSC::AssemblyHelpers::StoreRegSpooler::storeFPR):
+        (JSC::AssemblyHelpers::StoreRegSpooler::finalizeFPR):
+        (JSC::AssemblyHelpers::StoreRegSpooler::handlePair):
+        (JSC::AssemblyHelpers::StoreRegSpooler::handleSingle):
+        (JSC::RegDispatch<GPRReg>::get):
+        (JSC::RegDispatch<GPRReg>::temp1):
+        (JSC::RegDispatch<GPRReg>::temp2):
+        (JSC::RegDispatch<GPRReg>::regToStore):
+        (JSC::RegDispatch<GPRReg>::invalid):
+        (JSC::RegDispatch<GPRReg>::regSize):
+        (JSC::RegDispatch<GPRReg>::isValidLoadPairImm):
+        (JSC::RegDispatch<GPRReg>::isValidStorePairImm):
+        (JSC::RegDispatch<FPRReg>::get):
+        (JSC::RegDispatch<FPRReg>::temp1):
+        (JSC::RegDispatch<FPRReg>::temp2):
+        (JSC::RegDispatch<FPRReg>::regToStore):
+        (JSC::RegDispatch<FPRReg>::invalid):
+        (JSC::RegDispatch<FPRReg>::regSize):
+        (JSC::RegDispatch<FPRReg>::isValidLoadPairImm):
+        (JSC::RegDispatch<FPRReg>::isValidStorePairImm):
+        (JSC::AssemblyHelpers::CopySpooler::Source::getReg):
+        (JSC::AssemblyHelpers::CopySpooler::CopySpooler):
+        (JSC::AssemblyHelpers::CopySpooler::temp1 const):
+        (JSC::AssemblyHelpers::CopySpooler::temp2 const):
+        (JSC::AssemblyHelpers::CopySpooler::regToStore):
+        (JSC::AssemblyHelpers::CopySpooler::invalid):
+        (JSC::AssemblyHelpers::CopySpooler::regSize):
+        (JSC::AssemblyHelpers::CopySpooler::isValidLoadPairImm):
+        (JSC::AssemblyHelpers::CopySpooler::isValidStorePairImm):
+        (JSC::AssemblyHelpers::CopySpooler::load):
+        (JSC::AssemblyHelpers::CopySpooler::move):
+        (JSC::AssemblyHelpers::CopySpooler::copy):
+        (JSC::AssemblyHelpers::CopySpooler::store):
+        (JSC::AssemblyHelpers::CopySpooler::flush):
+        (JSC::AssemblyHelpers::CopySpooler::loadGPR):
+        (JSC::AssemblyHelpers::CopySpooler::copyGPR):
+        (JSC::AssemblyHelpers::CopySpooler::moveConstant):
+        (JSC::AssemblyHelpers::CopySpooler::storeGPR):
+        (JSC::AssemblyHelpers::CopySpooler::finalizeGPR):
+        (JSC::AssemblyHelpers::CopySpooler::loadFPR):
+        (JSC::AssemblyHelpers::CopySpooler::copyFPR):
+        (JSC::AssemblyHelpers::CopySpooler::storeFPR):
+        (JSC::AssemblyHelpers::CopySpooler::finalizeFPR):
+        (JSC::AssemblyHelpers::CopySpooler::loadPair):
+        (JSC::AssemblyHelpers::CopySpooler::storePair):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        (JSC::ScratchRegisterAllocator::preserveRegistersToStackForCall):
+        (JSC::ScratchRegisterAllocator::restoreRegistersFromStackForCall):
+        * jit/ScratchRegisterAllocator.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addReturn):
+
 2021-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for ARM64

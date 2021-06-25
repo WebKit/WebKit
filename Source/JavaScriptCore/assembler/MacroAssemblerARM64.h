@@ -2534,7 +2534,7 @@ public:
         storeDouble(src, stackPointerRegister);
     }
 
-    static ptrdiff_t pushToSaveByteOffset() { return 16; }
+    static constexpr ptrdiff_t pushToSaveByteOffset() { return 16; }
 
     // Register move operations:
 
