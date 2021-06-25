@@ -24,7 +24,6 @@
 #include "WebKitFaviconDatabasePrivate.h"
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/RefPtrCairo.h>
 #include <WebCore/SharedBuffer.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/FileSystem.h>
@@ -33,6 +32,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(GTK)
+#include <WebCore/RefPtrCairo.h>
+#endif
 
 using namespace WebKit;
 using namespace WebCore;

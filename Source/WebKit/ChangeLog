@@ -1,3 +1,19 @@
+2021-06-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Guard Cairo inclusions in shared GLib API implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=227370
+
+        Reviewed by Philippe Normand.
+
+        For cross-port GLib API implementation, different Cairo inclusions are
+        moved into appropriate build guards tha match the build guards where
+        Cairo is then used.
+
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleGPU):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+
 2021-06-24  Antoine Quint  <graouts@webkit.org>
 
         [Model] Create a sandbox extension for a temporary directory to store model resources
