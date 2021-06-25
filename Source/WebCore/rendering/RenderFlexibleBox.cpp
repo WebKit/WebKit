@@ -212,6 +212,16 @@ void RenderFlexibleBox::computeChildIntrinsicLogicalWidths(RenderObject& childOb
     ASSERT(childObject.isBox());
     RenderBox& child = downcast<RenderBox>(childObject);
 
+    // If the item cross size should use the definite container cross size then set the overriding size now so
+    // the intrinsic sizes are properly computed in the presence of aspect ratios. The only exception is when
+    // we are both a flex item&container, because our parent might have already set our overriding size.
+    if (childCrossSizeShouldUseContainerCrossSize(child) && !isFlexItem()) {
+        auto axis = mainAxisIsChildInlineAxis(child) ? OverridingSizesScope::Axis::Block : OverridingSizesScope::Axis::Inline;
+        OverridingSizesScope overridingSizeScope(child, axis, computeCrossSizeForChildUsingContainerCrossSize(child));
+        RenderBlock::computeChildIntrinsicLogicalWidths(childObject, minPreferredLogicalWidth, maxPreferredLogicalWidth);
+        return;
+    }
+
     OverridingSizesScope cleanOverridingSizesScope(child, OverridingSizesScope::Axis::Both);
     RenderBlock::computeChildIntrinsicLogicalWidths(childObject, minPreferredLogicalWidth, maxPreferredLogicalWidth);
 }
@@ -869,13 +879,9 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
     std::optional<LayoutUnit> crossSize;
     if (crossSizeLength.isFixed())
         crossSize = adjustForBoxSizing(child, crossSizeLength);
-    else if (crossSizeLength.isAuto()) {
-        ASSERT(childCrossSizeShouldUseContainerCrossSize(child));
-        auto containerCrossSizeLength = isHorizontalFlow() ? style().height() : style().width();
-        // Keep this sync'ed with childCrossSizeShouldUseContainerCrossSize().
-        ASSERT(containerCrossSizeLength.isFixed());
-        crossSize = std::max(0_lu, valueForLength(containerCrossSizeLength, -1_lu) - crossAxisMarginExtentForChild(child));
-    } else {
+    else if (crossSizeLength.isAuto())
+        crossSize = computeCrossSizeForChildUsingContainerCrossSize(child);
+    else {
         ASSERT(crossSizeLength.isPercentOrCalculated());
         crossSize = mainAxisIsChildInlineAxis(child) ? child.computePercentageLogicalHeight(crossSizeLength) : adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(crossSizeLength, contentWidth()), crossSizeLength.type());
         if (!crossSize)
@@ -948,7 +954,7 @@ bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBo
     // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
     // stretched flex items is the flex container's inner cross size (clamped to the flex item's min and max cross size)
     // and is considered definite.
-    if (!isMultiline() && alignmentForChild(child) == ItemPosition::Stretch && !hasAutoMarginsInCrossAxis(child)) {
+    if (!isMultiline() && alignmentForChild(child) == ItemPosition::Stretch && !hasAutoMarginsInCrossAxis(child) && crossSizeLengthForChild(MainOrPreferredSize, child).isAuto()) {
         // This must be kept in sync with computeMainSizeFromAspectRatioUsing().
         // FIXME: so far we're only considered fixed sizes but we should extend it to other definite sizes.
         auto& crossSize = isHorizontalFlow() ? style().height() : style().width();
@@ -1665,6 +1671,15 @@ bool RenderFlexibleBox::setStaticPositionForPositionedLayout(const RenderBox& ch
         }
     }
     return positionChanged;
+}
+
+// This refers to https://drafts.csswg.org/css-flexbox-1/#definite-sizes, section 1).
+LayoutUnit RenderFlexibleBox::computeCrossSizeForChildUsingContainerCrossSize(const RenderBox& child) const
+{
+    auto containerCrossSizeLength = isHorizontalFlow() ? style().height() : style().width();
+    // Keep this sync'ed with childCrossSizeShouldUseContainerCrossSize().
+    ASSERT(containerCrossSizeLength.isFixed());
+    return std::max(0_lu, valueForLength(containerCrossSizeLength, -1_lu) - crossAxisMarginExtentForChild(child));
 }
 
 void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox& child)

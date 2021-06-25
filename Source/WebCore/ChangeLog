@@ -1,3 +1,29 @@
+2021-06-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Improve computation of intrinsic sizes of flex items with aspect ratio
+        https://bugs.webkit.org/show_bug.cgi?id=227395
+
+        Reviewed by Rob Buis.
+
+        Before computing the intrinsic sizes of flex items we first clear the overriding sizes of the item
+        that might have been set before in order to get the proper intrinsic size. However there is one
+        situation in which having an overriding size is desirable and it's when the cross size should
+        be set to the flex container's definite cross size. That's one of the exceptions for definite/indefinite
+        sizes mentioned in the specs (see https://drafts.csswg.org/css-flexbox/#definite-sizes).
+
+        In the aforementioned case we should temporarily set that overriding size in the cross axis so that
+        the intrinsic size could be computed with that constrain.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeChildIntrinsicLogicalWidths const): Set the overriding size
+        in the cross axis to compute the intrinsic size.
+        (WebCore::RenderFlexibleBox::computeMainSizeFromAspectRatioUsing const):
+        (WebCore::RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize const): Added a missing check,
+        the cross size of the child must be auto, otherwise the rule does not apply.
+        (WebCore::RenderFlexibleBox::computeCrossSizeForChildUsingContainerCrossSize const): Refactored from
+        computeMainSizeFromAspectRatioUsing() as it's now used in two different places.
+        * rendering/RenderFlexibleBox.h:
+
 2021-06-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] TextCombiner has unlinked internal encoders

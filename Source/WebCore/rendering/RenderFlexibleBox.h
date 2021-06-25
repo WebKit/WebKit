@@ -145,6 +145,7 @@ private:
     bool childHasComputableAspectRatio(const RenderBox&) const;
     bool childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox&);
     bool childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const;
+    LayoutUnit computeCrossSizeForChildUsingContainerCrossSize(const RenderBox& child) const;
     void computeChildIntrinsicLogicalWidths(RenderObject&, LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const;
     void setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint&);
