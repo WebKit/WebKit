@@ -1,3 +1,26 @@
+2021-06-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] TextCombiner has unlinked internal encoders
+        https://bugs.webkit.org/show_bug.cgi?id=227362
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Each combiner pad can receive multiple caps events for the same stream, so we can't really
+        rely on those to modify the internal topology of the combiner. Instead we can check the
+        sticky events from the pad chain function, this is done at most once per pad. In case a caps
+        event was sticked to the pad, the combiner now reacts properly.
+
+        This issue was detected while running
+        media/track/in-band/track-in-band-kate-ogg-cues-added-once.html with playbin3 enabled. 6
+        different encoders where added to the combiner while only 2 are needed actually.
+
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        (webKitTextCombinerHandleCaps):
+        * platform/graphics/gstreamer/TextCombinerGStreamer.h:
+        * platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp:
+        (webkitTextCombinerPadChain):
+        (webkitTextCombinerPadConstructed):
+
 2021-06-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Nullptr crash in StyledMarkupAccumulator::traverseNodesForSerialization

@@ -36,6 +36,7 @@
 struct _WebKitTextCombinerPadPrivate {
     GRefPtr<GstTagList> tags;
     GRefPtr<GstPad> innerCombinerPad;
+    bool shouldProcessStickyEvents { true };
 };
 
 enum {
@@ -53,9 +54,6 @@ WEBKIT_DEFINE_TYPE(WebKitTextCombinerPad, webkit_text_combiner_pad, GST_TYPE_GHO
 static gboolean webkitTextCombinerPadEvent(GstPad* pad, GstObject* parent, GstEvent* event)
 {
     switch (GST_EVENT_TYPE(event)) {
-    case GST_EVENT_CAPS:
-        webKitTextCombinerHandleCapsEvent(WEBKIT_TEXT_COMBINER(parent), pad, event);
-        break;
     case GST_EVENT_TAG: {
         auto* combinerPad = WEBKIT_TEXT_COMBINER_PAD(pad);
         GstTagList* tags;
@@ -77,6 +75,28 @@ static gboolean webkitTextCombinerPadEvent(GstPad* pad, GstObject* parent, GstEv
         break;
     }
     return gst_pad_event_default(pad, parent, event);
+}
+
+static GstFlowReturn webkitTextCombinerPadChain(GstPad* pad, GstObject* parent, GstBuffer* buffer)
+{
+    auto* combinerPad = WEBKIT_TEXT_COMBINER_PAD(pad);
+
+    if (combinerPad->priv->shouldProcessStickyEvents) {
+        gst_pad_sticky_events_foreach(pad, [](GstPad* pad, GstEvent** event, gpointer) -> gboolean {
+            if (GST_EVENT_TYPE(*event) != GST_EVENT_CAPS)
+                return TRUE;
+
+            auto* combinerPad = WEBKIT_TEXT_COMBINER_PAD(pad);
+            auto parent = adoptGRef(gst_pad_get_parent(pad));
+            GstCaps* caps;
+            gst_event_parse_caps(*event, &caps);
+            combinerPad->priv->shouldProcessStickyEvents = false;
+            webKitTextCombinerHandleCaps(WEBKIT_TEXT_COMBINER(parent.get()), pad, caps);
+            return FALSE;
+        }, nullptr);
+    }
+
+    return gst_proxy_pad_chain_default(pad, parent, buffer);
 }
 
 static void webkitTextCombinerPadGetProperty(GObject* object, unsigned propertyId, GValue* value, GParamSpec* pspec)
@@ -120,6 +140,7 @@ static void webkitTextCombinerPadConstructed(GObject* object)
     GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
     gst_ghost_pad_construct(GST_GHOST_PAD(object));
     gst_pad_set_event_function(GST_PAD_CAST(object), webkitTextCombinerPadEvent);
+    gst_pad_set_chain_function(GST_PAD_CAST(object), webkitTextCombinerPadChain);
 }
 
 static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klass)

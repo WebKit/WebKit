@@ -56,6 +56,6 @@ struct _WebKitTextCombinerClass {
 
 GstElement* webkitTextCombinerNew();
 
-void webKitTextCombinerHandleCapsEvent(WebKitTextCombiner*, GstPad*, GstEvent*);
+void webKitTextCombinerHandleCaps(WebKitTextCombiner*, GstPad*, const GstCaps*);
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)
