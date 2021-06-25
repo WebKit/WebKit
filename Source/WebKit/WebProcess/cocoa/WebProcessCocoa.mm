@@ -1395,7 +1395,7 @@ void WebProcess::consumeAudioComponentRegistrations(const IPC::DataReference& da
 {
     using namespace PAL;
 
-    if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentApplyServerRegistrations())
+    if (!isAudioToolboxCoreFrameworkAvailable() || !canLoad_AudioToolboxCore_AudioComponentApplyServerRegistrations())
         return;
 
     auto registrations = adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size()));

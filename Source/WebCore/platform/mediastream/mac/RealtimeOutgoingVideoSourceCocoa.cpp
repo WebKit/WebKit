@@ -45,6 +45,7 @@ ALLOW_UNUSED_PARAMETERS_END
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+using namespace PAL;
 
 Ref<RealtimeOutgoingVideoSource> RealtimeOutgoingVideoSource::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {
@@ -84,7 +85,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample)
     }
 
     ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
     RetainPtr<CVPixelBufferRef> convertedBuffer = pixelBuffer;

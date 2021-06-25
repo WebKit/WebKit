@@ -42,6 +42,7 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+using namespace PAL;
 using namespace JSC;
 
 Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCount, LoggerHelper& loggerHelper, size_t waitToStartForPushCount)

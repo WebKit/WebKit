@@ -56,6 +56,7 @@
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+using namespace PAL;
 
 CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& device, const MediaConstraints* constraints)
 {

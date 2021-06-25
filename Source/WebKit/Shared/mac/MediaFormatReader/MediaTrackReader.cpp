@@ -47,6 +47,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(MTPluginTrackReader);
 
 namespace WebKit {
 
+using namespace PAL;
 using namespace WebCore;
 
 CMBaseClassID MediaTrackReader::wrapperClassID()

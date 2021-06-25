@@ -109,6 +109,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLCanvasElement);
 
+using namespace PAL;
 using namespace HTMLNames;
 
 // These values come from the WhatWG/W3C HTML spec.

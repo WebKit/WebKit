@@ -47,6 +47,7 @@
 
 namespace WebCore {
 
+using namespace PAL;
 using namespace webm;
 
 VP9TestingOverrides& VP9TestingOverrides::singleton()
@@ -361,11 +362,11 @@ static CFStringRef convertToCMColorPrimaries(uint8_t primaries)
     case VPConfigurationColorPrimaries::SMPTE_ST_240:
         return kCVImageBufferColorPrimaries_SMPTE_C;
     case VPConfigurationColorPrimaries::SMPTE_RP_431_2:
-        return PAL::kCMFormatDescriptionColorPrimaries_DCI_P3;
+        return kCMFormatDescriptionColorPrimaries_DCI_P3;
     case VPConfigurationColorPrimaries::SMPTE_EG_432_1:
-        return PAL::kCMFormatDescriptionColorPrimaries_P3_D65;
+        return kCMFormatDescriptionColorPrimaries_P3_D65;
     case VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
-        return PAL::kCMFormatDescriptionColorPrimaries_ITU_R_2020;
+        return kCMFormatDescriptionColorPrimaries_ITU_R_2020;
     }
 
     return nullptr;
@@ -419,18 +420,18 @@ static CFStringRef convertToCMTransferFunction(uint8_t characteristics)
     case VPConfigurationTransferCharacteristics::SMPTE_ST_240:
         return kCVImageBufferTransferFunction_SMPTE_240M_1995;
     case VPConfigurationTransferCharacteristics::SMPTE_ST_2084:
-        return PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ;
+        return kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ;
     case VPConfigurationTransferCharacteristics::BT_2020_10bit:
     case VPConfigurationTransferCharacteristics::BT_2020_12bit:
-        return PAL::kCMFormatDescriptionTransferFunction_ITU_R_2020;
+        return kCMFormatDescriptionTransferFunction_ITU_R_2020;
     case VPConfigurationTransferCharacteristics::SMPTE_ST_428_1:
-        return PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1;
+        return kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1;
     case VPConfigurationTransferCharacteristics::BT_2100_HLG:
-        return PAL::kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG;
+        return kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG;
     case VPConfigurationTransferCharacteristics::IEC_61966_2_1:
-        return PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() ? PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() : nullptr;
+        return canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() ? PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() : nullptr;
     case VPConfigurationTransferCharacteristics::Linear:
-        return PAL::kCMFormatDescriptionTransferFunction_Linear;
+        return kCMFormatDescriptionTransferFunction_Linear;
     }
 
     return nullptr;
@@ -466,7 +467,7 @@ static CFStringRef convertToCMYCbCRMatrix(uint8_t coefficients)
 {
     switch (coefficients) {
     case VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
-        return PAL::kCMFormatDescriptionYCbCrMatrix_ITU_R_2020;
+        return kCMFormatDescriptionYCbCrMatrix_ITU_R_2020;
     case VPConfigurationMatrixCoefficients::BT_470_7_BG:
     case VPConfigurationMatrixCoefficients::BT_601_7:
         return kCVImageBufferYCbCrMatrix_ITU_R_601_4;
@@ -542,11 +543,11 @@ static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVPCodecConfi
     CFTypeRef configurationValues[] = { data.get() };
     auto configurationDict = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, configurationKeys, configurationValues, WTF_ARRAY_LENGTH(configurationKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    Vector<CFTypeRef> extensionsKeys { PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
+    Vector<CFTypeRef> extensionsKeys { kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
     Vector<CFTypeRef> extensionsValues = { configurationDict.get() };
 
     if (record.videoFullRangeFlag == VPConfigurationRange::FullRange) {
-        extensionsKeys.append(PAL::kCMFormatDescriptionExtension_FullRangeVideo);
+        extensionsKeys.append(kCMFormatDescriptionExtension_FullRangeVideo);
         extensionsValues.append(kCFBooleanTrue);
     }
 

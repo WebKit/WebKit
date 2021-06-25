@@ -28,8 +28,6 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include <pal/cf/AudioToolboxSoftLink.h>
-
 namespace WebCore {
 
 AudioOutputUnitAdaptor::AudioOutputUnitAdaptor(AudioUnitRenderer& renderer)
@@ -41,12 +39,12 @@ AudioOutputUnitAdaptor::AudioOutputUnitAdaptor(AudioUnitRenderer& renderer)
 AudioOutputUnitAdaptor::~AudioOutputUnitAdaptor()
 {
     if (m_outputUnit)
-        PAL::AudioComponentInstanceDispose(m_outputUnit);
+        AudioComponentInstanceDispose(m_outputUnit);
 }
 
 OSStatus AudioOutputUnitAdaptor::start()
 {
-    auto result = PAL::AudioOutputUnitStart(m_outputUnit);
+    auto result = AudioOutputUnitStart(m_outputUnit);
     if (result != noErr)
         WTFLogAlways("ERROR: AudioOutputUnitStart() call failed with error code: %ld", static_cast<long>(result));
     return result;
@@ -54,7 +52,7 @@ OSStatus AudioOutputUnitAdaptor::start()
 
 OSStatus AudioOutputUnitAdaptor::stop()
 {
-    return PAL::AudioOutputUnitStop(m_outputUnit);
+    return AudioOutputUnitStop(m_outputUnit);
 }
 
 // DefaultOutputUnit callback

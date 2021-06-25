@@ -41,6 +41,7 @@
 #include <WebCore/WebAudioBufferList.h>
 
 namespace WebKit {
+using namespace PAL;
 using namespace WebCore;
 
 RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy()

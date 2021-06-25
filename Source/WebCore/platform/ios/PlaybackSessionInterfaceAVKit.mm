@@ -47,6 +47,7 @@ SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
+using namespace PAL;
 
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
@@ -144,7 +145,7 @@ void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& time
         double start = timeRanges.start(i).releaseReturnValue();
         double end = timeRanges.end(i).releaseReturnValue();
 
-        CMTimeRange range = PAL::CMTimeRangeMake(PAL::CMTimeMakeWithSeconds(start, 1000), PAL::CMTimeMakeWithSeconds(end-start, 1000));
+        CMTimeRange range = CMTimeRangeMake(CMTimeMakeWithSeconds(start, 1000), CMTimeMakeWithSeconds(end-start, 1000));
         [seekableRanges addObject:[NSValue valueWithCMTimeRange:range]];
     }
 #else

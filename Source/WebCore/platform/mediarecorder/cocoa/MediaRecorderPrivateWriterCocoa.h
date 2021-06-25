@@ -127,8 +127,8 @@ private:
     RetainPtr<CMFormatDescriptionRef> m_videoFormatDescription;
     std::unique_ptr<VideoSampleBufferCompressor> m_videoCompressor;
     RetainPtr<AVAssetWriterInput> m_videoAssetWriterInput;
-    CMTime m_lastVideoPresentationTime;
-    CMTime m_lastVideoDecodingTime;
+    CMTime m_lastVideoPresentationTime { kCMTimeInvalid };
+    CMTime m_lastVideoDecodingTime { kCMTimeInvalid };
     bool m_hasEncodedVideoSamples { false };
 
     RetainPtr<WebAVAssetWriterDelegate> m_writerDelegate;
@@ -139,9 +139,9 @@ private:
     bool m_shouldStopAfterFlushingSamples { false };
     bool m_firstVideoFrame { false };
     std::optional<CGAffineTransform> m_videoTransform;
-    CMTime m_resumedVideoTime;
-    CMTime m_currentVideoDuration;
-    CMTime m_currentAudioSampleTime;
+    CMTime m_resumedVideoTime { kCMTimeZero };
+    CMTime m_currentVideoDuration { kCMTimeZero };
+    CMTime m_currentAudioSampleTime { kCMTimeZero };
     double m_timeCode { 0 };
 };
 

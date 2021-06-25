@@ -258,6 +258,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 @end
 
 namespace WebCore {
+using namespace PAL;
 
 #pragma mark -
 #pragma mark SourceBufferPrivateAVFObjC
@@ -276,7 +277,7 @@ static uint64_t nextMapID()
 
 static void bufferWasConsumedCallback(CMNotificationCenterRef, const void* listener, CFStringRef notificationName, const void*, CFTypeRef)
 {
-    if (!CFEqual(PAL::kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
+    if (!CFEqual(kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
         return;
 
     if (!isMainThread()) {
@@ -315,7 +316,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (![PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
-        PAL::CMNotificationCenterAddListener(PAL::CMNotificationCenterGetDefaultLocalCenter(), reinterpret_cast<void*>(m_mapID), bufferWasConsumedCallback, PAL::kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
+        CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), reinterpret_cast<void*>(m_mapID), bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
 
 #if !RELEASE_LOG_DISABLED
     m_parser->setLogger(m_logger.get(), m_logIdentifier);
@@ -353,7 +354,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     clearTracks();
 
     if (![PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
-        PAL::CMNotificationCenterRemoveListener(PAL::CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, PAL::kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
+        CMNotificationCenterRemoveListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
 
     if (m_hasSessionSemaphore)
         m_hasSessionSemaphore->signal();
@@ -992,7 +993,7 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 
 void SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *renderer, const CMTime& time)
 {
-    auto mediaTime = PAL::toMediaTime(time);
+    auto mediaTime = toMediaTime(time);
     ERROR_LOG(LOGIDENTIFIER, mediaTime);
     AtomString trackId;
     for (auto& pair : m_audioRenderers) {
@@ -1100,13 +1101,13 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
     auto logSiteIdentifier = LOGIDENTIFIER;
     DEBUG_LOG(logSiteIdentifier, "track ID = ", trackID, ", sample = ", sample.get());
 
-    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
+    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
     ASSERT(formatDescription);
     if (!formatDescription) {
         ERROR_LOG(logSiteIdentifier, "Received sample with a null formatDescription. Bailing.");
         return;
     }
-    auto mediaType = PAL::CMFormatDescriptionGetMediaType(formatDescription);
+    auto mediaType = CMFormatDescriptionGetMediaType(formatDescription);
 
     if (trackID == m_enabledVideoTrackID) {
         // AVSampleBufferDisplayLayer will throw an un-documented exception if passed a sample
@@ -1119,7 +1120,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         }
 
         auto player = this->player();
-        FloatSize formatSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
+        FloatSize formatSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (!m_cachedSize || formatSize != m_cachedSize.value()) {
             DEBUG_LOG(logSiteIdentifier, "size changed to ", formatSize);
             bool sizeWasNull = !m_cachedSize;
@@ -1145,9 +1146,9 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
 
             if (!havePrerollDecodeWithCompletionHandler) {
                 CMSampleBufferRef rawSampleCopy;
-                PAL::CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
+                CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
                 auto sampleCopy = adoptCF(rawSampleCopy);
-                PAL::CMSetAttachment(sampleCopy.get(), PAL::kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)PAL::kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @YES }, kCMAttachmentMode_ShouldNotPropagate);
+                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @YES }, kCMAttachmentMode_ShouldNotPropagate);
                 [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
 #if PLATFORM(IOS_FAMILY)
                 player->setHasAvailableVideoFrame(true);
@@ -1297,14 +1298,14 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomS
 bool SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime(const AtomString& trackIDString) const
 {
     return parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0) == m_enabledVideoTrackID
-        && [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(expectMinimumUpcomingSampleBufferPresentationTime:)];
+        && [getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(expectMinimumUpcomingSampleBufferPresentationTime:)];
 }
 
 void SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime(const AtomString& trackIDString, const MediaTime& presentationTime)
 {
     ASSERT(canSetMinimumUpcomingPresentationTime(trackIDString));
     if (canSetMinimumUpcomingPresentationTime(trackIDString))
-        [m_displayLayer expectMinimumUpcomingSampleBufferPresentationTime:PAL::toCMTime(presentationTime)];
+        [m_displayLayer expectMinimumUpcomingSampleBufferPresentationTime:toCMTime(presentationTime)];
 }
 
 void SourceBufferPrivateAVFObjC::clearMinimumUpcomingPresentationTime(const AtomString& trackIDString)

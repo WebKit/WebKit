@@ -42,6 +42,7 @@ ALLOW_UNUSED_PARAMETERS_END
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+using namespace PAL;
 
 Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
@@ -172,19 +173,19 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
     }
 
     CMSampleTimingInfo timingInfo;
-    timingInfo.presentationTimeStamp = PAL::CMTimeMake(frame.timestamp_us(), 1000000);
-    timingInfo.decodeTimeStamp = PAL::kCMTimeInvalid;
-    timingInfo.duration = PAL::kCMTimeInvalid;
+    timingInfo.presentationTimeStamp = CMTimeMake(frame.timestamp_us(), 1000000);
+    timingInfo.decodeTimeStamp = kCMTimeInvalid;
+    timingInfo.duration = kCMTimeInvalid;
 
     CMVideoFormatDescriptionRef formatDescription;
-    OSStatus ostatus = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
+    OSStatus ostatus = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
     if (ostatus != noErr) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "Failed to initialize CMVideoFormatDescription with error ", static_cast<int>(ostatus));
         return;
     }
 
     CMSampleBufferRef sampleBuffer;
-    ostatus = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
+    ostatus = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
     CFRelease(formatDescription);
     if (ostatus != noErr) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "Failed to create the sample buffer with error ", static_cast<int>(ostatus));

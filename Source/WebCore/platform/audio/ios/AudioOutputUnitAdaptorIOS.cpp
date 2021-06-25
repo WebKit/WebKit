@@ -33,7 +33,15 @@
 #if ENABLE(WEB_AUDIO) && PLATFORM(IOS_FAMILY)
 
 #include "AudioSession.h"
-#include <pal/cf/AudioToolboxSoftLink.h>
+#include <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK(AudioToolbox)
+SOFT_LINK(AudioToolbox, AudioComponentFindNext, AudioComponent, (AudioComponent inComponent, const AudioComponentDescription *inDesc), (inComponent, inDesc))
+SOFT_LINK(AudioToolbox, AudioComponentInstanceNew, OSStatus, (AudioComponent inComponent, AudioComponentInstance *outInstance), (inComponent, outInstance))
+SOFT_LINK(AudioToolbox, AudioUnitAddPropertyListener, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitPropertyListenerProc inProc, void *inProcUserData), (inUnit, inID, inProc, inProcUserData))
+SOFT_LINK(AudioToolbox, AudioUnitGetProperty, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement, void *outData, UInt32 *ioDataSize), (inUnit, inID, inScope, inElement, outData, ioDataSize))
+SOFT_LINK(AudioToolbox, AudioUnitInitialize, OSStatus, (AudioUnit inUnit), (inUnit))
+SOFT_LINK(AudioToolbox, AudioUnitSetProperty, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement, const void *inData, UInt32 inDataSize), (inUnit, inID, inScope, inElement, inData, inDataSize))
 
 namespace WebCore {
 
@@ -50,15 +58,15 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     desc.componentFlags = 0;
     desc.componentFlagsMask = 0;
-    comp = PAL::AudioComponentFindNext(0, &desc);
+    comp = AudioComponentFindNext(0, &desc);
 
     ASSERT(comp);
 
-    OSStatus result = PAL::AudioComponentInstanceNew(comp, &m_outputUnit);
+    OSStatus result = AudioComponentInstanceNew(comp, &m_outputUnit);
     ASSERT(!result);
 
     UInt32 flag = 1;
-    result = PAL::AudioUnitSetProperty(m_outputUnit,
+    result = AudioUnitSetProperty(m_outputUnit,
         kAudioOutputUnitProperty_EnableIO,
         kAudioUnitScope_Output,
         0,
@@ -66,20 +74,20 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
         sizeof(flag));
     ASSERT(!result);
 
-    result = PAL::AudioUnitInitialize(m_outputUnit);
+    result = AudioUnitInitialize(m_outputUnit);
     ASSERT(!result);
     // Set render callback
     AURenderCallbackStruct input;
     input.inputProc = inputProc;
     input.inputProcRefCon = this;
-    result = PAL::AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &input, sizeof(input));
+    result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &input, sizeof(input));
     ASSERT(!result);
 
     // Set stream format
     AudioStreamBasicDescription streamFormat;
 
     UInt32 size = sizeof(AudioStreamBasicDescription);
-    result = PAL::AudioUnitGetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, (void*)&streamFormat, &size);
+    result = AudioUnitGetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, (void*)&streamFormat, &size);
     ASSERT(!result);
 
     constexpr int bytesPerFloat = sizeof(Float32);
@@ -93,7 +101,7 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     streamFormat.mChannelsPerFrame = numberOfOutputChannels;
     streamFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
 
-    result = PAL::AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
+    result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT(!result);
 
     AudioSession::sharedSession().setPreferredBufferSize(kPreferredBufferSize);
