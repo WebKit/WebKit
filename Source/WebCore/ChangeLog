@@ -1,3 +1,38 @@
+2021-06-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Move flex item preferred width computation specifics to RenderFlexibleBox class
+        https://bugs.webkit.org/show_bug.cgi?id=226822
+
+        Reviewed by Alan Bujtas.
+
+        RenderBlock had some specific code for flex items that cleared the overriding sizes before
+        computing the {min|max}PreferredWidths and then restored them afterwards. That is done to
+        properly compute flex items intrinsic sizes. That code is flexbox specific so we better move
+        it to RenderFlexibleBox. In order to do that a new virtual method was added to RenderBlock which
+        just calls minPreferredLogicalWidth() and maxPreferredLogicalWidth() for every block except
+        flexbox containers.
+
+        In the case of flexbox containers, it wraps those calls with a RAII class that properly
+        clears the overriding sizes on instantiation and clears them on destruction. Now that the RAII
+        class is available we use it also for another existing code path that requires to
+        temporarily set an overriding size in a given scope.
+
+        No need for new tests as there is no change in behaviour.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeChildIntrinsicLogicalWidths const): New virtual method.
+        (WebCore::RenderBlock::computeChildPreferredLogicalWidths const): Call computeChildIntrinsicLogicalWidths().
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::OverridingSizesScope::OverridingSizesScope): New RAII class to set/clear overriding sizes in a scope.
+        (WebCore::OverridingSizesScope::~OverridingSizesScope):
+        (WebCore::OverridingSizesScope::setOrClearOverridingSize):
+        (WebCore::RenderFlexibleBox::computeChildIntrinsicLogicalWidths const): Redefinition for flexbox containers.
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalHeight const): Removed constness from attribute.
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalWidth): Ditto.
+        (WebCore::RenderFlexibleBox::crossAxisIntrinsicExtentForChild): Ditto.
+        * rendering/RenderFlexibleBox.h:
+
 2021-06-24  Antoine Quint  <graouts@webkit.org>
 
         [Model] Create a sandbox extension for a temporary directory to store model resources

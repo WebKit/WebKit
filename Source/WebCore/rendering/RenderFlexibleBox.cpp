@@ -153,6 +153,77 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     addScrollbarWidth();
 }
 
+// RAII class which defines a scope in which overriding sizes of a box are either:
+//   1) replaced by other size in one axis if size is specified
+//   2) cleared in both axis if size == std::nullopt
+//
+// In any case the previous overriding sizes are restored on destruction (in case of
+// not having a previous value it's simply cleared).
+class OverridingSizesScope {
+public:
+    enum class Axis {
+        Inline,
+        Block,
+        Both
+    };
+
+    OverridingSizesScope(RenderBox& box, Axis axis, std::optional<LayoutUnit> size = std::nullopt)
+        : m_box(box)
+        , m_axis(axis)
+    {
+        ASSERT(!size || (axis != Axis::Both));
+        if (axis == Axis::Both || axis == Axis::Inline) {
+            if (box.hasOverridingLogicalWidth())
+                m_overridingWidth = box.overridingLogicalWidth();
+            setOrClearOverridingSize(size, Axis::Inline);
+        }
+        if (axis == Axis::Both || axis == Axis::Block) {
+            if (box.hasOverridingLogicalHeight())
+                m_overridingHeight = box.overridingLogicalHeight();
+            setOrClearOverridingSize(size, Axis::Block);
+        }
+    }
+    ~OverridingSizesScope()
+    {
+        if (m_axis == Axis::Both || m_axis == Axis::Inline)
+            setOrClearOverridingSize(m_overridingWidth, Axis::Inline);
+
+        if (m_axis == Axis::Both || m_axis == Axis::Block)
+            setOrClearOverridingSize(m_overridingHeight, Axis::Block);
+    }
+
+private:
+    void setOrClearOverridingSize(std::optional<LayoutUnit> size, Axis axis)
+    {
+        ASSERT(axis != Axis::Both);
+        if (size) {
+            if (axis == Axis::Inline)
+                m_box.setOverridingLogicalWidth(*size);
+            else
+                m_box.setOverridingLogicalHeight(*size);
+            return;
+        }
+        if (axis == Axis::Inline)
+            m_box.clearOverridingLogicalWidth();
+        else
+            m_box.clearOverridingLogicalHeight();
+    }
+
+    RenderBox& m_box;
+    Axis m_axis;
+    std::optional<LayoutUnit> m_overridingWidth;
+    std::optional<LayoutUnit> m_overridingHeight;
+};
+
+void RenderFlexibleBox::computeChildIntrinsicLogicalWidths(RenderObject& childObject, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
+{
+    ASSERT(childObject.isBox());
+    RenderBox& child = downcast<RenderBox>(childObject);
+
+    OverridingSizesScope cleanOverridingSizesScope(child, OverridingSizesScope::Axis::Both);
+    RenderBlock::computeChildIntrinsicLogicalWidths(childObject, minPreferredLogicalWidth, maxPreferredLogicalWidth);
+}
+
 LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
 {
     auto baseline = firstLineBaseline();
@@ -476,7 +547,7 @@ void RenderFlexibleBox::clearCachedChildIntrinsicContentLogicalHeight(const Rend
     m_intrinsicContentLogicalHeights.remove(&child);
 }
 
-LayoutUnit RenderFlexibleBox::childIntrinsicLogicalHeight(const RenderBox& child) const
+LayoutUnit RenderFlexibleBox::childIntrinsicLogicalHeight(RenderBox& child) const
 {
     // This should only be called if the logical height is the cross size
     ASSERT(mainAxisIsChildInlineAxis(child));
@@ -488,27 +559,22 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalHeight(const RenderBox& child
     return child.logicalHeight();
 }
 
-LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
+LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(RenderBox& child)
 {
     // This should only be called if the logical width is the cross size
     ASSERT(!mainAxisIsChildInlineAxis(child));
     if (childCrossSizeIsDefinite(child, child.style().logicalWidth()))
         return child.logicalWidth();
 
-    std::optional<LayoutUnit> childOverridingWidth;
-    if (child.hasOverridingLogicalWidth()) {
-        // Temporarily clear potential overrides to compute the logical width otherwise it'll return the override size.
-        childOverridingWidth = child.overridingLogicalWidth();
-        const_cast<RenderBox*>(&child)->clearOverridingLogicalWidth();
-    }
     LogicalExtentComputedValues values;
-    child.computeLogicalWidthInFragment(values);
-    if (childOverridingWidth)
-        const_cast<RenderBox*>(&child)->setOverridingLogicalWidth(*childOverridingWidth);
+    {
+        OverridingSizesScope cleanOverridingWidthScope(child, OverridingSizesScope::Axis::Inline);
+        child.computeLogicalWidthInFragment(values);
+    }
     return values.m_extent;
 }
 
-LayoutUnit RenderFlexibleBox::crossAxisIntrinsicExtentForChild(const RenderBox& child)
+LayoutUnit RenderFlexibleBox::crossAxisIntrinsicExtentForChild(RenderBox& child)
 {
     return mainAxisIsChildInlineAxis(child) ? childIntrinsicLogicalHeight(child) : childIntrinsicLogicalWidth(child);
 }
