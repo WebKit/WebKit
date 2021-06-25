@@ -1,3 +1,25 @@
+2021-06-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Cleanup OverridingSizesScope RAII class
+        https://bugs.webkit.org/show_bug.cgi?id=227394
+
+        Reviewed by Rob Buis.
+
+        In r279268 we added a new RAII class which adds an overriding sizes free scope to perform
+        layout computations. That class heavily uses the different set/get/clear methods for overriding
+        sizes. We can use a macro with subsitutions there to reduce the amount of required code.
+
+        Also moving the computeChildIntrinsicLogicalWidths() method to the private section as it does
+        not require protected visibility.
+
+        No new tests as it's just a code refactoring that does not modify the functionality.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::OverridingSizesScope::OverridingSizesScope):
+        (WebCore::OverridingSizesScope::~OverridingSizesScope):
+        (WebCore::OverridingSizesScope::setOrClearOverridingSize): Deleted.
+        * rendering/RenderFlexibleBox.h:
+
 2021-06-25  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Simplify snap point selection helpers

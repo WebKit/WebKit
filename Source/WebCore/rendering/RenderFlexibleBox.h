@@ -89,7 +89,6 @@ public:
 
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    void computeChildIntrinsicLogicalWidths(RenderObject&, LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
     bool shouldResetChildLogicalHeightBeforeLayout(const RenderBox&) const override { return m_shouldResetChildLogicalHeightBeforeLayout; }
 
@@ -146,6 +145,7 @@ private:
     bool childHasComputableAspectRatio(const RenderBox&) const;
     bool childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox&);
     bool childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const;
+    void computeChildIntrinsicLogicalWidths(RenderObject&, LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const;
     void setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint&);
     LayoutUnit computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding);

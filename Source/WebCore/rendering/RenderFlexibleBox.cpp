@@ -153,6 +153,14 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     addScrollbarWidth();
 }
 
+#define SET_OR_CLEAR_OVERRIDING_SIZE(box, SizeType, size)   \
+    {                                                       \
+        if (size)                                           \
+            box.setOverridingLogical##SizeType(*size);      \
+        else                                                \
+            box.clearOverridingLogical##SizeType();         \
+    }
+
 // RAII class which defines a scope in which overriding sizes of a box are either:
 //   1) replaced by other size in one axis if size is specified
 //   2) cleared in both axis if size == std::nullopt
@@ -175,40 +183,24 @@ public:
         if (axis == Axis::Both || axis == Axis::Inline) {
             if (box.hasOverridingLogicalWidth())
                 m_overridingWidth = box.overridingLogicalWidth();
-            setOrClearOverridingSize(size, Axis::Inline);
+            SET_OR_CLEAR_OVERRIDING_SIZE(m_box, Width, size);
         }
         if (axis == Axis::Both || axis == Axis::Block) {
             if (box.hasOverridingLogicalHeight())
                 m_overridingHeight = box.overridingLogicalHeight();
-            setOrClearOverridingSize(size, Axis::Block);
+            SET_OR_CLEAR_OVERRIDING_SIZE(m_box, Height, size);
         }
     }
     ~OverridingSizesScope()
     {
-        if (m_axis == Axis::Both || m_axis == Axis::Inline)
-            setOrClearOverridingSize(m_overridingWidth, Axis::Inline);
+        if (m_axis == Axis::Inline || m_axis == Axis::Both)
+            SET_OR_CLEAR_OVERRIDING_SIZE(m_box, Width, m_overridingWidth);
 
-        if (m_axis == Axis::Both || m_axis == Axis::Block)
-            setOrClearOverridingSize(m_overridingHeight, Axis::Block);
+        if (m_axis == Axis::Block || m_axis == Axis::Both)
+            SET_OR_CLEAR_OVERRIDING_SIZE(m_box, Height, m_overridingHeight);
     }
 
 private:
-    void setOrClearOverridingSize(std::optional<LayoutUnit> size, Axis axis)
-    {
-        ASSERT(axis != Axis::Both);
-        if (size) {
-            if (axis == Axis::Inline)
-                m_box.setOverridingLogicalWidth(*size);
-            else
-                m_box.setOverridingLogicalHeight(*size);
-            return;
-        }
-        if (axis == Axis::Inline)
-            m_box.clearOverridingLogicalWidth();
-        else
-            m_box.clearOverridingLogicalHeight();
-    }
-
     RenderBox& m_box;
     Axis m_axis;
     std::optional<LayoutUnit> m_overridingWidth;
