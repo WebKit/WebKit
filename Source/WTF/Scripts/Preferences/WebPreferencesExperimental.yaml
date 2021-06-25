@@ -458,7 +458,7 @@ ImageBitmapEnabled:
       default: true
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES)" : true
-      default: false
+      default: true
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 InProcessCookieCacheEnabled:
