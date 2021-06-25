@@ -1,3 +1,76 @@
+2021-06-24  Asumu Takikawa  <asumu@igalia.com>
+
+        [WASM-Function-References] Add support for (ref null? $t) type constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226296
+
+        Reviewed by Yusuke Suzuki.
+
+        Adds the `ref` type constructor from the typed function references proposal:
+
+          https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md
+
+        It's also required for the type imports and GC proposals as well. Ref types represent
+        references to any heap type (including existing funcref and externref) with a specified
+        nullability.
+
+        This requires a new isNullable flag in the type representation. This flag also enables
+        non-null externref and funcrefs, and hence this commit also adds the necessary checks
+        at Wasm/JS boundaries.
+
+        Non-null reference types also generally cannot be used as function locals.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::gTypeIdx):
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::marshallLocation const):
+        (JSC::Wasm::JSCallingConvention::marshallLocation const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isSubtype):
+        (JSC::Wasm::isValidHeapTypeKind):
+        (JSC::Wasm::isDefaultableType):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        (JSC::Wasm::FunctionParser<Context>::parseAnnotatedSelectImmediates):
+        (JSC::Wasm::FunctionParser<Context>::checkBranchTarget):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::get const):
+        (JSC::Wasm::Global::set):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseBlockSignature):
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        (JSC::Wasm::Parser<SuccessType>::parseRefType):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfExpressions):
+        (JSC::Wasm::SectionParser::parseGlobalType):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::computeHash):
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        (JSC::WebAssemblyFunctionBase::offsetOfSignatureIndex):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::linkImpl):
+        * wasm/wasm.json:
+
 2021-06-24  Mark Lam  <mark.lam@apple.com>
 
         Use ldp and stp more for saving / restoring registers on ARM64.

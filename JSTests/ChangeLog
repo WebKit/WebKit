@@ -1,3 +1,27 @@
+2021-06-24  Asumu Takikawa  <asumu@igalia.com>
+
+        [WASM-Function-References] Add support for (ref null? $t) type constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226296
+
+        Adds additional tests for uses of `(ref $t)` and `(ref null $t)`
+        types, including with non-null extern/funcrefs.
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/function-references/ref_types.js: Added.
+        (module):
+        (async testRefTypeLocal):
+        (async testNonNullRefTypeLocal):
+        (async testRefTypeInSignature):
+        (async testRefTypeParamCheck):
+        (async testRefGlobalCheck):
+        (async testExternFuncrefNonNullCheck):
+        (async testExternrefCompatibility):
+        (async testNonNullExternrefIncompatible):
+        (async testFuncrefCompatibility):
+        (async testNonNullFuncrefIncompatible):
+        * wasm/wasm.json:
+
 2021-06-24  Guillaume Emont  <guijemont@igalia.com>
 
         Improve our checking of NaN values in DataView tests

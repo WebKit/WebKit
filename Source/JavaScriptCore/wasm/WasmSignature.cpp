@@ -70,10 +70,12 @@ static unsigned computeHash(size_t returnCount, const Type* returnTypes, size_t 
     unsigned accumulator = 0xa1bcedd8u;
     for (uint32_t i = 0; i < argumentCount; ++i) {
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(argumentTypes[i].kind)));
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(argumentTypes[i].nullable)));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<unsigned>::hash(argumentTypes[i].index));
     }
     for (uint32_t i = 0; i < returnCount; ++i) {
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(returnTypes[i].kind)));
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(returnTypes[i].nullable)));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<unsigned>::hash(returnTypes[i].index));
     }
     return accumulator;

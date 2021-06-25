@@ -247,16 +247,35 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
                     if (globalValue->global()->mutability() != Wasm::GlobalInformation::Immutable)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
                     switch (moduleInformation.globals[import.kindIndex].type.kind) {
-                    case Wasm::TypeKind::Funcref:
+                    case Wasm::TypeKind::TypeIdx:
+                    case Wasm::TypeKind::Funcref: {
+                        bool isNullable = global.type.isNullable();
+                        WebAssemblyFunction* wasmFunction = nullptr;
+                        WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                         value = globalValue->global()->get(globalObject);
                         RETURN_IF_EXCEPTION(scope, void());
-                        if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
-                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
+                        if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!isNullable || !value.isNull())) {
+                            const char* msg = isNullable ? "must be a wasm exported function or null" : "must be a wasm exported function";
+                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", msg)));
+                        }
+                        if (global.type.kind == Wasm::TypeKind::TypeIdx && (wasmFunction || wasmWrapperFunction)) {
+                            Wasm::SignatureIndex paramIndex = global.type.index;
+                            Wasm::SignatureIndex argIndex;
+                            if (wasmFunction)
+                                argIndex = wasmFunction->signatureIndex();
+                            else
+                                argIndex = wasmWrapperFunction->signatureIndex();
+                            if (paramIndex != argIndex)
+                                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument function did not match the reference type")));
+                        }
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
+                    }
                     case Wasm::TypeKind::Externref:
                         value = globalValue->global()->get(globalObject);
                         RETURN_IF_EXCEPTION(scope, void());
+                        if (!global.type.isNullable() && value.isNull())
+                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "non-null externref cannot be null")));
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
                     case Wasm::TypeKind::I32:
@@ -283,12 +302,31 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
 
                     // iii. Append ToWebAssemblyValue(v) to imports.
                     switch (globalType.kind) {
-                    case Wasm::TypeKind::Funcref:
-                        if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
-                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
+                    case Wasm::TypeKind::TypeIdx:
+                    case Wasm::TypeKind::Funcref: {
+                        bool isNullable = globalType.isNullable();
+                        WebAssemblyFunction* wasmFunction = nullptr;
+                        WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+                        if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!isNullable || !value.isNull())) {
+                            const char* msg = isNullable ? "must be a wasm exported function or null" : "must be a wasm exported function";
+                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", msg)));
+                        }
+                        if (globalType.kind == Wasm::TypeKind::TypeIdx && (wasmFunction || wasmWrapperFunction)) {
+                            Wasm::SignatureIndex paramIndex = global.type.index;
+                            Wasm::SignatureIndex argIndex;
+                            if (wasmFunction)
+                                argIndex = wasmFunction->signatureIndex();
+                            else
+                                argIndex = wasmWrapperFunction->signatureIndex();
+                            if (paramIndex != argIndex)
+                                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument function did not match the reference type")));
+                        }
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
+                    }
                     case Wasm::TypeKind::Externref:
+                        if (!globalType.isNullable() && value.isNull())
+                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a non-null value")));
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
                     case Wasm::TypeKind::I32:
@@ -490,6 +528,7 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
             switch (global.type.kind) {
             case Wasm::TypeKind::Externref:
             case Wasm::TypeKind::Funcref:
+            case Wasm::TypeKind::TypeIdx:
             case Wasm::TypeKind::I32:
             case Wasm::TypeKind::I64:
             case Wasm::TypeKind::F32:

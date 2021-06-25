@@ -107,6 +107,7 @@ private:
         case TypeKind::I64:
         case TypeKind::Funcref:
         case TypeKind::Externref:
+        case TypeKind::TypeIdx:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:
@@ -195,6 +196,7 @@ private:
         case TypeKind::I64:
         case TypeKind::Funcref:
         case TypeKind::Externref:
+        case TypeKind::TypeIdx:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:
