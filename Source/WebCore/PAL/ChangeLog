@@ -1,3 +1,13 @@
+2021-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the macOS Monterey build
+
+        Some internal builders are still attempting to build WebKit for macOS Monterey using an SDK without the fix for
+        rdar://74299451. Restore the forward staging declaration for `-initWithDataProvider:contentType:previewTitle:`
+        in the meantime.
+
+        * pal/spi/mac/QuickLookMacSPI.h:
+
 2021-06-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r279208.

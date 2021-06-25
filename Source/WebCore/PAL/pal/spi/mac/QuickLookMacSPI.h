@@ -73,16 +73,16 @@ typedef NS_ENUM(NSInteger, QLPreviewActivity) {
 
 #endif // HAVE(QUICKLOOK_PREVIEW_ACTIVITY)
 
+#endif // USE(APPLE_INTERNAL_SDK)
+
 #if HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
 
 @class UTType;
-@interface QLItem ()
+@interface QLItem (Staging_74299451)
 - (instancetype)initWithDataProvider:(id /* <QLPreviewItemDataProvider> */)data contentType:(UTType *)contentType previewTitle:(NSString *)previewTitle;
 @end
 
 #endif // HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
-
-#endif // USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(QUICKLOOK_ITEM_PREVIEW_OPTIONS)
 
