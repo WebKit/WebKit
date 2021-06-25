@@ -1,3 +1,18 @@
+2021-06-25  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Sources: Scope Chain sidebar panel is stripping repeating whitespace from strings
+        https://bugs.webkit.org/show_bug.cgi?id=227234
+
+        Reviewed by Devin Rousso.
+
+        String and Regular Expression values in Object Trees were having `white-space: nowrap;` applied to them, which
+        was redundant because `white-space: pre;` was already defined for `.formatted-string` and `.formatted-regexp`,
+        which makes sure that the text does not wrap unless it contains a newline, and these previews have newlines
+        replaced with a Unicode symbol to visually represent a newline without breaking to a new line.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree-property :matches(.formatted-string, .formatted-regexp)): Deleted.
+
 2021-06-14  Patrick Angle  <pangle@apple.com>
 
         [REGRESSION: r276616] Uncaught Exception: TypeError: undefined is not an object (evaluating 'this._setupCodeMirror.getValue')
