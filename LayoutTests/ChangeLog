@@ -1,3 +1,9 @@
+2021-06-25  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GStreamer gardening
+
+        * platform/glib/TestExpectations: Mark a mediastream as flaky.
+
 2021-06-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Do not clamp flex base size with {min|max}-{height|width}

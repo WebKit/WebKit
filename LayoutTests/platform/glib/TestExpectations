@@ -545,6 +545,8 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-e
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
+webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure Pass ]
+
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
