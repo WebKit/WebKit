@@ -1,3 +1,23 @@
+2021-06-25  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Consider container's writing mode to get grid item's margin
+        https://bugs.webkit.org/show_bug.cgi?id=226877
+
+        Reviewed by Sergio Villar Senin.
+
+        When computing the logical offset of a non-static absolute positioned grid item, we need
+        to pass its container's style in order to resolve the child margin correctly, especially
+        for the case when the item has flipped block writing mode (vertical-rl).
+
+        This change is an import of the Chromium change at
+        https://chromium-review.googlesource.com/c/chromium/src/+/2577365
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::marginLogicalLeft const):
+        (WebCore::RenderBox::marginLogicalRight const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::logicalOffsetForOutOfFlowChild const):
+
 2021-06-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Minor debugging improvements in mediastream source element
