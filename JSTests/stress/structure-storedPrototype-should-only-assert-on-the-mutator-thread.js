@@ -1,4 +1,3 @@
-//@ skip if ["arm", "mips"].include?($architecture)
 //@ slow!
 //@ runDefault("--jitPolicyScale=0")
 

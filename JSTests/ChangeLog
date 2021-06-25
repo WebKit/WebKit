@@ -1,3 +1,14 @@
+2021-06-25  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip structure-storedPrototype-should-only-assert-on-the-mutator-thread.js on arm and mips
+        https://bugs.webkit.org/show_bug.cgi?id=227222
+
+        Tested with 50 iterations in both arm and mips.
+
+        Unreviewed Gardening.
+
+        * stress/structure-storedPrototype-should-only-assert-on-the-mutator-thread.js:
+
 2021-06-25  Paulo Matos  <pmatos@igalia.com>
 
         Unskip materialized-regexp-has-correct-last-index-set-by-match on arm and mips
