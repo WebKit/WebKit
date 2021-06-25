@@ -38,6 +38,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-box-sizing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-button-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-computed-value-display-floated-items-001.html

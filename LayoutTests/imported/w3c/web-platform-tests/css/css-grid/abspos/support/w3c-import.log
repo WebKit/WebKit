@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/support/colors-8x16.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/support/positioned-grid-descendants.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/support/positioned-grid-descendants.js

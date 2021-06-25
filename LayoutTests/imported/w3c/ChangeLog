@@ -1,3 +1,422 @@
+2021-06-25  Ziran Sun  <zsun@igalia.com>
+
+        Resync web-platform-tests/css/css-grid tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=223593
+
+        Reviewed by Sergio Villar Senin and Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/descendant-static-position-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/descendant-static-position-004.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-003-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-013-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-015-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-018-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-018.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-019-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-019.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-020-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-020.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-021-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-021.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-022-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-022.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/support/colors-8x16.png: Added.
+        * web-platform-tests/css/css-grid/abspos/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/abspos/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036.html:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-004.html:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-align-cycles-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-overflow-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-overflow-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-026-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-026.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-027-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-027.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-028-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-028.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-015-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-015.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-016-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-016.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-003.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-008.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-012.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-016-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-016.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003.html:
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-003.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-003.tentative.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-004-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-004.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-005-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-005.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-006-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-006.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-007-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-007.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-008-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-008.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-009-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-009.html: Added.
+        * web-platform-tests/css/css-grid/alignment/support/25x50-green.png: Added.
+        * web-platform-tests/css/css-grid/alignment/support/50x50-green.png: Added.
+        * web-platform-tests/css/css-grid/alignment/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/dynamic-grid-with-auto-fill-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/dynamic-grid-with-auto-fill.html: Added.
+        * web-platform-tests/css/css-grid/dynamic-grid-within-flexbox-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/dynamic-grid-within-flexbox.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-004-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-005.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-001.html:
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-002.html:
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-auto-margin-and-replaced-item-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-015-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-015.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-007-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-007.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-010-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-010.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-011-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-011.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-012-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-012.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-013-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-013.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003-expected.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003-expected.html.
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003.html.
+        * web-platform-tests/css/css-grid/grid-model/grid-button-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-002.html:
+        * web-platform-tests/css/css-grid/grid-model/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-within-flexbox-definite-change-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-within-flexbox-definite-change.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-002.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-003.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-004.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-005.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-006.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-expected.xht: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-002-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-002.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-001-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-001.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-002-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-002.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-with-orthogonal-items-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-with-orthogonal-items.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-multi-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-multi-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-005.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-006-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-006.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-gap-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-gap-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-content-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-content-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002a-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002a.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002b-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002b.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-template-columns-computed-withcontent-expected.txt: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-template-columns-computed-withcontent.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-005.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-006-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-006.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-005.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-006-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-006.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-007-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-007.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-multi-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-multi-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-parsing.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-004.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/w3c-import.log:
+        * web-platform-tests/css/css-grid/support/grid-child-utils.js:
+        * web-platform-tests/css/css-grid/table-grid-item-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-005.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-002.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-003.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-004.html: Added.
+        * web-platform-tests/css/css-grid/w3c-import.log:
+
 2021-06-24  Darin Adler  <darin@apple.com>
 
         CSS parser does not handle unpaired surrogates correctly

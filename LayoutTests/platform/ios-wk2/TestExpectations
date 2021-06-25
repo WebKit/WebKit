@@ -1873,6 +1873,14 @@ webkit.org/b/215773 http/tests/websocket/tests/hybi/client-close-2.html [ Pass F
 
 webkit.org/b/209461 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html [ Failure ]
 
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-001.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-002.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-003.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-011.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-012.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-013.html [ ImageOnlyFailure ]
+
 webkit.org/b/215929 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]

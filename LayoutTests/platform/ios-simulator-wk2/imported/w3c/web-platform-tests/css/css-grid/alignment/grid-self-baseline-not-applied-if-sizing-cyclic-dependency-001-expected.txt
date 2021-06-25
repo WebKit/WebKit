@@ -16,7 +16,7 @@ auto-sized rows - items with relative height
 ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
  flexible-sized columns - items with relative width
  flex max-function columns - items with relative width
-baseline is not applied initially, but orthogonal items force repeating the track sizing and height is not indefinite in that phase.
+baseline is not applied initially, but orthogonal items in an auto-sized row force repeating the track sizing and height is not indefinite in that phase.
 
 PASS .inline-grid 1
 FAIL .inline-grid 2 assert_equals:
