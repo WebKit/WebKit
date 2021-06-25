@@ -584,6 +584,7 @@ void IDBTransaction::enqueueEvent(Ref<Event>&& event)
     if (!scriptExecutionContext() || isContextStopped())
         return;
 
+    m_abortOrCommitEvent = event.ptr();
     queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(event));
 }
 
@@ -594,15 +595,19 @@ void IDBTransaction::dispatchEvent(Event& event)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(scriptExecutionContext());
     ASSERT(!isContextStopped());
-    ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
+    
 
     auto protectedThis = makeRef(*this);
 
     EventDispatcher::dispatchEvent({ this, m_database.ptr() }, event);
+    
+    if (m_abortOrCommitEvent != &event)
+        return;
+    
+    ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
     m_didDispatchAbortOrCommit = true;
 
     if (isVersionChange()) {
-        ASSERT(m_openDBRequest);
         m_openDBRequest->versionChangeTransactionDidFinish();
 
         if (event.type() == eventNames().completeEvent) {
