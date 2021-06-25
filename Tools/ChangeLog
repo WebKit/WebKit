@@ -1,3 +1,12 @@
+2021-06-25  Ziran Sun  <zsun@igalia.com>
+
+        Add myself to contributor list
+        https://bugs.webkit.org/show_bug.cgi?id=227400
+
+        Reviewed by Sergio Villar Senin.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-06-24  Kate Cheney  <katherine_cheney@apple.com>
 
         WKWebView loadSimulatedRequest does not set attribution value for url requests within html content

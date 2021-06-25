@@ -6097,6 +6097,15 @@
       ],
       "status" : "committer"
    },
+   "Ziran Sun" : {
+      "emails" : [
+         "zsun@igalia.com"
+      ],
+      "nicks" : [
+         "zsun"
+      ],
+      "status" : "committer"
+   },
    "Zoltan Arvai" : {
       "emails" : [
          "zarvai@inf.u-szeged.hu"
