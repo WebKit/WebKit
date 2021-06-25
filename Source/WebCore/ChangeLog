@@ -1,3 +1,22 @@
+2021-06-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Nullptr crash in StyledMarkupAccumulator::traverseNodesForSerialization
+        https://bugs.webkit.org/show_bug.cgi?id=226821
+
+        Reviewed by Ryosuke Niwa.
+
+        r276394 fixed an issue in serialization when transversing the nodes. It added a new condition
+        to the ASSERT that was checking that its OK not to have a next pointer when there is a valid
+        pastEnd in the case of pastEnd being a descendant of the pointer traversing the node tree.
+
+        However that descendant check was not including the shadow DOM. This is precisely the case
+        detected by the test case this patch is adding.
+
+        Test: editing/selection/setSelection-shadow-dom-crash.html
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+
 2021-06-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Build warnings in AudioFileReader since r279123
