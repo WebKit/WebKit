@@ -1301,3 +1301,5 @@ webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1.html [ Pass ImageOnlyFailure ]
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-filter-1.html [ Pass ImageOnlyFailure ]
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-1.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/227366 [ BigSur ] http/tests/preload/onload_event.html [ Pass Timeout ]
