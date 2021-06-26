@@ -2895,8 +2895,10 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     }
 
 #if ENABLE(DATA_DETECTION)
-    if (info.isImageOverlayText && is<HTMLElement>(element))
-        dataDetectorImageOverlayPositionInformation(downcast<HTMLElement>(element), request, info);
+    if (info.isImageOverlayText && innerNonSharedNode->shadowHost() == &element && is<HTMLElement>(element)) {
+        if (auto htmlElement = makeRef(downcast<HTMLElement>(element)); htmlElement->hasImageOverlay())
+            dataDetectorImageOverlayPositionInformation(htmlElement.get(), request, info);
+    }
 #endif
 
     info.elementContext = page.contextForElement(element);

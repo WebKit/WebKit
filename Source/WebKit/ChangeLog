@@ -1,3 +1,18 @@
+2021-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web process sometimes crashes under findDataDetectionResultElementInImageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=227412
+        rdar://79588091
+
+        Reviewed by Devin Rousso.
+
+        Speculatively fix the crash by ensuring that the hit-tested text node inside an image overlay is inside the
+        shadow root of the element responding to click events, and that the element responding to click events contains
+        an image overlay.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::elementPositionInformation):
+
 2021-06-25  Per Arne  <pvollan@apple.com>
 
         [macOS] Add missing methods to IOKit filter
