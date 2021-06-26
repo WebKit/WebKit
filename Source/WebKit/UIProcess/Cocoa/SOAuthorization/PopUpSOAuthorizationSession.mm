@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,6 +89,8 @@
 
 @end
 
+#define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] PopUpSOAuthorizationSession::" fmt, this, initiatingActionString(), stateString(), ##__VA_ARGS__)
+
 namespace WebKit {
 
 Ref<SOAuthorizationSession> PopUpSOAuthorizationSession::create(SOAuthorization *soAuthorization, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
@@ -112,17 +114,20 @@ PopUpSOAuthorizationSession::~PopUpSOAuthorizationSession()
 
 void PopUpSOAuthorizationSession::shouldStartInternal()
 {
+    AUTHORIZATIONSESSION_RELEASE_LOG("shouldStartInternal: m_page=%p", page());
     ASSERT(page() && page()->isInWindow());
     start();
 }
 
 void PopUpSOAuthorizationSession::fallBackToWebPathInternal()
 {
+    AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal");
     m_uiClientCallback(releaseNavigationAction(), WTFMove(m_newPageCallback));
 }
 
 void PopUpSOAuthorizationSession::abortInternal()
 {
+    AUTHORIZATIONSESSION_RELEASE_LOG("abortInternal: m_page=%p", page());
     if (!page()) {
         m_newPageCallback(nullptr);
         return;
@@ -140,6 +145,7 @@ void PopUpSOAuthorizationSession::abortInternal()
 
 void PopUpSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
 {
+    AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d", response.httpStatusCode());
     if (response.httpStatusCode() != 200 || !page()) {
         fallBackToWebPathInternal();
         return;
@@ -157,6 +163,7 @@ void PopUpSOAuthorizationSession::completeInternal(const WebCore::ResourceRespon
 
 void PopUpSOAuthorizationSession::close(WKWebView *webView)
 {
+    AUTHORIZATIONSESSION_RELEASE_LOG("close");
     if (!m_secretWebView)
         return;
     if (state() != State::Completed || webView != m_secretWebView.get()) {
@@ -169,6 +176,7 @@ void PopUpSOAuthorizationSession::close(WKWebView *webView)
 
 void PopUpSOAuthorizationSession::initSecretWebView()
 {
+    AUTHORIZATIONSESSION_RELEASE_LOG("initSecretWebView");
     ASSERT(page());
     auto initiatorWebView = page()->cocoaView();
     if (!initiatorWebView)
@@ -186,5 +194,7 @@ void PopUpSOAuthorizationSession::initSecretWebView()
 }
 
 } // namespace WebKit
+
+#undef AUTHORIZATIONSESSION_RELEASE_LOG
 
 #endif

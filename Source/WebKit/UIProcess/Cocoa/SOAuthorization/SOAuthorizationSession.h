@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,8 @@ protected:
     void start();
     WebPageProxy* page() const { return m_page.get(); }
     State state() const { return m_state; }
+    const char* stateString() const;
+    const char* initiatingActionString() const;
     void setState(State state) { m_state = state; }
     const API::NavigationAction* navigationAction() { return m_navigationAction.get(); }
     Ref<API::NavigationAction> releaseNavigationAction();
@@ -104,6 +106,9 @@ private:
 
     void becomeCompleted();
     void dismissViewController();
+#if PLATFORM(MAC)
+    void dismissModalSheetIfNecessary();
+#endif
     void continueStartAfterGetAuthorizationHints(const String&);
     void continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy&);
 

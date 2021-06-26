@@ -1,3 +1,65 @@
+2021-06-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Add logging and clean up AppSSO flows 
+        https://bugs.webkit.org/show_bug.cgi?id=227379
+
+        Reviewed by Kate Cheney.
+
+        This patch adds detailed logging to understand the flows through the AppSSO authentication code,
+        and adds clean-up code in more places to ensure that the modal sheet used by AppSSO is dismissed
+        in cases where the authentication has completed (or failed).
+
+        * UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm:
+        (WebKit::NavigationSOAuthorizationSession::shouldStartInternal): Adds new logging.
+        (WebKit::NavigationSOAuthorizationSession::webViewDidMoveToWindow): Ditto.
+        (WebKit::NavigationSOAuthorizationSession::pageActiveURLDidChangeDuringWaiting const): Ditto.
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm:
+        (WebKit::PopUpSOAuthorizationSession::shouldStartInternal): Adds new logging.
+        (WebKit::PopUpSOAuthorizationSession::fallBackToWebPathInternal): Ditto.
+        (WebKit::PopUpSOAuthorizationSession::abortInternal): Ditto.
+        (WebKit::PopUpSOAuthorizationSession::completeInternal): Ditto.
+        (WebKit::PopUpSOAuthorizationSession::close): Ditto.
+        (WebKit::PopUpSOAuthorizationSession::initSecretWebView): Ditto.
+        * UIProcess/Cocoa/SOAuthorization/RedirectSOAuthorizationSession.mm:
+        (WebKit::RedirectSOAuthorizationSession::fallBackToWebPathInternal): Adds new logging.
+        (WebKit::RedirectSOAuthorizationSession::abortInternal): Ditto.
+        (WebKit::RedirectSOAuthorizationSession::completeInternal): Ditto.
+        (WebKit::RedirectSOAuthorizationSession::beforeStart): Ditto.
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.mm:
+        (WebKit::SOAuthorizationCoordinator::tryAuthorize): Adds new logging.
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::stateString const): Added.
+        (WebKit::SOAuthorizationSession::~SOAuthorizationSession): Add new logging, and ensure modal sheet is dismissed.
+        (WebKit::SOAuthorizationSession::becomeCompleted): Added new logging.
+        (WebKit::SOAuthorizationSession::shouldStart): Ditto.
+        (WebKit::SOAuthorizationSession::start): Ditto.
+        (WebKit::SOAuthorizationSession::continueStartAfterGetAuthorizationHints): Ditto.
+        (WebKit::SOAuthorizationSession::continueStartAfterDecidePolicy): Ditto.
+        (WebKit::SOAuthorizationSession::fallBackToWebPath): Add new logging, and ensure modal sheet is dismissed.
+        (WebKit::SOAuthorizationSession::abort): Ditto.
+        (WebKit::SOAuthorizationSession::complete): Ditto.
+        (WebKit::SOAuthorizationSession::presentViewController): Added new logging, and dismiss modal if an existing
+        view is in place.
+        (WebKit::SOAuthorizationSession::dismissModalSheetIfNecessary): Added.
+        (WebKit::SOAuthorizationSession::dismissViewController): Use new helper function.
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm:
+        (WebKit::SubFrameSOAuthorizationSession::fallBackToWebPathInternal): Adds new logging.
+        (WebKit::SubFrameSOAuthorizationSession::abortInternal): Ditto.
+        (WebKit::SubFrameSOAuthorizationSession::completeInternal): Ditto.
+        (WebKit::SubFrameSOAuthorizationSession::beforeStart): Ditto.
+        (WebKit::SubFrameSOAuthorizationSession::didFinishLoad): Ditto.
+        (WebKit::SubFrameSOAuthorizationSession::loadRequestToFrame): Ditto.
+        * UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm:
+        (-[WKSOAuthorizationDelegate authorization:presentViewController:withCompletion:]): Adds new logging.
+        (-[WKSOAuthorizationDelegate authorizationDidNotHandle:]): Ditto.
+        (-[WKSOAuthorizationDelegate authorizationDidCancel:]): Ditto.
+        (-[WKSOAuthorizationDelegate authorizationDidComplete:]): Ditto.
+        (-[WKSOAuthorizationDelegate authorization:didCompleteWithHTTPAuthorizationHeaders:]): Ditto.
+        (-[WKSOAuthorizationDelegate authorization:didCompleteWithHTTPResponse:httpBody:]): Ditto.
+        (-[WKSOAuthorizationDelegate authorization:didCompleteWithError:]): Ditto.
+        (-[WKSOAuthorizationDelegate setSession:]): Ditto.
+
 2021-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web process sometimes crashes under findDataDetectionResultElementInImageOverlay

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,8 @@
 #import <pal/spi/cocoa/AuthKitSPI.h>
 #import <wtf/Function.h>
 
+#define AUTHORIZATIONCOORDINATOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - SOAuthorizationCoordinator::" fmt, this, ##__VA_ARGS__)
+
 namespace WebKit {
 
 SOAuthorizationCoordinator::SOAuthorizationCoordinator()
@@ -63,7 +65,9 @@ bool SOAuthorizationCoordinator::canAuthorize(const URL& url) const
 
 void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Function<void(bool)>&& completionHandler)
 {
+    AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize");
     if (!canAuthorize(navigationAction->request().url())) {
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize: Cannot authorize the requested URL.");
         completionHandler(false);
         return;
     }
@@ -72,6 +76,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
     auto* targetFrame = navigationAction->targetFrame();
     bool subframeNavigation = targetFrame && !targetFrame->isMainFrame();
     if (subframeNavigation && (!page.mainFrame() || ![AKAuthorizationController isURLFromAppleOwnedDomain:page.mainFrame()->url()])) {
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize: Attempting to perform subframe navigation for non-Apple authorization URL.");
         completionHandler(false);
         return;
     }
@@ -82,8 +87,10 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
 
 void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
+    AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize (2)");
     bool subframeNavigation = navigationAction->sourceFrame() && !navigationAction->sourceFrame()->isMainFrame();
     if (subframeNavigation || !navigationAction->isProcessingUserGesture() || !canAuthorize(navigationAction->request().url())) {
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize (2): Attempting to perform invalid auth.");
         uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
         return;
     }
@@ -93,5 +100,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
 }
 
 } // namespace WebKit
+
+#undef AUTHORIZATIONCOORDINATOR_RELEASE_LOG
 
 #endif
