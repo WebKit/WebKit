@@ -1,3 +1,19 @@
+2021-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] -[NSString _web_widthWithFont:] returns 0
+        https://bugs.webkit.org/show_bug.cgi?id=227385
+        <rdar://problem/79430938>
+
+        Reviewed by Simon Fraser.
+
+        Simply take the iOS codepath on macOS.
+
+        Test: WebKitLegacyStringWidth.ThaiWidthForWeb
+
+        * platform/graphics/FontCascade.cpp:
+        * platform/graphics/coretext/FontCascadeCoreText.cpp:
+        (WebCore::FontCascade::FontCascade):
+
 2021-06-22  Dean Jackson  <dino@apple.com>
 
         Add support for MTLSharedTextures in WebXR
