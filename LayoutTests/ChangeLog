@@ -1,3 +1,12 @@
+2021-06-25  Eric Hutchison  <ehutchison@apple.com>
+
+        REGRESSION (r278746): [Mac wk 1] media/media-fullscreen-return-to-inline.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=227367.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-06-25  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         REGRESSION: http/tests/preload/onload_event.html is a flaky timeout on Big Sur wk1 Release
