@@ -1,5 +1,24 @@
 2021-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [macOS] WebGL content is unable to use the discrete GPU
+        https://bugs.webkit.org/show_bug.cgi?id=227408
+        <rdar://problem/79216506>
+
+        Reviewed by Dean Jackson.
+
+        Simply pass along the power preference into ANGLE. This is read in
+        DisplayMtl::getMetalDeviceMatchingAttribute().
+
+        No new tests. I _think_ this is untestable, because the web exposed power preference is being set correctly.
+        We’re correctly reporting to the web content that they have successfully asked for a high power context.
+        We’re just not honoring that internally. If the test is a performance test, or checks the renderer string,
+        that test would be hardware-dependent, and couldn’t be a regular layout test.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::InitializeEGLDisplay):
+
+2021-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [macOS] -[NSString _web_widthWithFont:] returns 0
         https://bugs.webkit.org/show_bug.cgi?id=227385
         <rdar://problem/79430938>

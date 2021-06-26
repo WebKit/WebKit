@@ -1,3 +1,25 @@
+2021-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] WebGL content is unable to use the discrete GPU
+        https://bugs.webkit.org/show_bug.cgi?id=227408
+        <rdar://problem/79216506>
+
+        Reviewed by Dean Jackson.
+
+        There appears to be a key collision:
+
+        Source/ThirdParty/ANGLE/include/platform/PlatformMethods.h:#define EGL_PLATFORM_ANGLE_PLATFORM_METHODS_ANGLEX 0x3482
+        Source/ThirdParty/ANGLE/include/EGL/eglext_angle.h:#define EGL_POWER_PREFERENCE_ANGLE 0x3482
+
+        Both these keys seem to be accepted by EGL_GetPlatformDisplayEXT().
+
+        This patch just changes the value of one of them to a value I picked out of a hat, just so they don't conflict.
+        We should work with upstream to either:
+        A) Find a better solution (maybe disambiguate these values based on which function is accepting them), or
+        B) Make a robust way to make sure keys don't collide in the future.
+
+        * include/platform/PlatformMethods.h:
+
 2021-06-24  John Cunningham  <johncunningham@apple.com>
 
         [ANGLE Metal] - Set barriers on transform feedback buffers only up to the in use buffer count

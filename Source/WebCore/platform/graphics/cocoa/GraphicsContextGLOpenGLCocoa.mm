@@ -121,6 +121,15 @@ static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttri
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
     LOG(WebGL, "Attempting to use ANGLE's %s backend.\n", attrs.useMetal ? "Metal" : "OpenGL");
+    if (attrs.powerPreference != GraphicsContextGLAttributes::PowerPreference::Default) {
+        displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
+        if (attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower)
+            displayAttributes.append(EGL_LOW_POWER_ANGLE);
+        else {
+            ASSERT(attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance);
+            displayAttributes.append(EGL_HIGH_POWER_ANGLE);
+        }
+    }
     displayAttributes.append(EGL_NONE);
     display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
 
