@@ -1,3 +1,13 @@
+2021-06-25  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Remove redundant struct ResolvedItem
+        https://bugs.webkit.org/show_bug.cgi?id=227405
+
+        Reviewed by Sam Weinig.
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::distributeAvailableSpace):
+
 2021-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] WebGL content is unable to use the discrete GPU

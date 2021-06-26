@@ -113,14 +113,10 @@ inline static GridSpace& operator/(GridSpace& a, unsigned value)
 template <typename SpanType>
 static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, LayoutUnit availableSpace, const WTF::Function<GridSpace(const TableGrid::Slot&, size_t)>& slotSpace)
 {
-    struct ResolvedItem {
-        GridSpace slotSpace;
-    };
-
     auto& columns = grid.columns();
     auto& rows = grid.rows();
     // 1. Collect the non-spanning spaces first. They are used for the final distribution as well as for distributing the spanning space.
-    Vector<std::optional<ResolvedItem>> resolvedItems(SpanType::size(grid));
+    Vector<std::optional<GridSpace>> resolvedItems(SpanType::size(grid));
     for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
         for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
             auto& slot = *grid.slot({ columnIndex, rowIndex });
@@ -128,8 +124,8 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
                 continue;
             auto index = SpanType::index(columnIndex, rowIndex);
             if (!resolvedItems[index])
-                resolvedItems[index] = ResolvedItem { };
-            resolvedItems[index]->slotSpace = max(resolvedItems[index]->slotSpace, slotSpace(slot, index));
+                resolvedItems[index] = GridSpace { };
+            resolvedItems[index] = max(*resolvedItems[index], slotSpace(slot, index));
         }
     }
 
@@ -174,14 +170,14 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
                     continue;
                 ASSERT(unresolvedColumnCount);
                 --unresolvedColumnCount;
-                unresolvedSpanningSpace -= resolvedItems[spanIndex]->slotSpace;
+                unresolvedSpanningSpace -= *resolvedItems[spanIndex];
             }
             ASSERT(unresolvedColumnCount);
             auto equalSpaceForSpannedColumns = unresolvedSpanningSpace / unresolvedColumnCount;
             for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
                 if (resolvedItems[spanIndex])
                     continue;
-                resolvedItems[spanIndex] = ResolvedItem { equalSpaceForSpannedColumns };
+                resolvedItems[spanIndex] = equalSpaceForSpannedColumns;
             }
         } else {
             // 1. Collect the non-spaning resolved spaces.
@@ -190,7 +186,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             // New resolved widths: [ 3 ] [ 6 ].
             auto resolvedSpanningSpace = GridSpace { };
             for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                resolvedSpanningSpace += resolvedItems[spanIndex]->slotSpace;
+                resolvedSpanningSpace += *resolvedItems[spanIndex];
             if (resolvedSpanningSpace.preferredSpace >= unresolvedSpanningSpace.preferredSpace) {
                 // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
                 continue;
@@ -200,7 +196,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             if (!spaceToDistribute.isEmpty()) {
                 auto columnsFlexBase = spaceToDistribute.flexBase / resolvedSpanningSpace.flexBase;
                 for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                    resolvedItems[spanIndex]->slotSpace += GridSpace { resolvedItems[spanIndex]->slotSpace.preferredSpace * columnsFlexBase, resolvedItems[spanIndex]->slotSpace.flexBase * columnsFlexBase};
+                    *resolvedItems[spanIndex] += GridSpace { resolvedItems[spanIndex]->preferredSpace * columnsFlexBase, resolvedItems[spanIndex]->flexBase * columnsFlexBase};
             }
         }
     }
@@ -213,7 +209,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     // Fixed size cells don't participate in available space distribution.
     auto adjustabledSpace = GridSpace { };
     for (auto& resolvedItem : resolvedItems)
-        adjustabledSpace += resolvedItem->slotSpace;
+        adjustabledSpace += *resolvedItem;
 
     Vector<LayoutUnit> distributedSpaces(resolvedItems.size());
     float spaceToDistribute = availableSpace;
@@ -224,8 +220,8 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     // we may assign less space to columns.
     auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
     for (size_t index = 0; index < resolvedItems.size(); ++index) {
-        auto columnExtraSpace = columnsFlexBase * resolvedItems[index]->slotSpace.flexBase;
-        distributedSpaces[index] = LayoutUnit { resolvedItems[index]->slotSpace.preferredSpace + columnExtraSpace };
+        auto columnExtraSpace = columnsFlexBase * resolvedItems[index]->flexBase;
+        distributedSpaces[index] = LayoutUnit { resolvedItems[index]->preferredSpace + columnExtraSpace };
     }
     return distributedSpaces;
 }
