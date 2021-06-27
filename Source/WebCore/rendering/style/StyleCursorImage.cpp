@@ -68,4 +68,9 @@ void StyleCursorImage::setContainerContextForRenderer(const RenderElement& rende
     cachedImage()->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, m_cssValue->imageURL());
 }
 
+bool StyleCursorImage::usesDataProtocol() const
+{
+    return m_cssValue->imageURL().protocolIsData();
+}
+
 }
