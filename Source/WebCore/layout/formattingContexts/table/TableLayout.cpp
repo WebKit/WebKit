@@ -216,10 +216,34 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     for (auto& resolvedItem : resolvedItems)
         ASSERT(resolvedItem);
 #endif
+    Vector<size_t> percentColumnIndexes;
+    Vector<size_t> fixedColumnIndexes;
+    Vector<size_t> relativeColumnIndexes;
+    Vector<size_t> autoColumnIndexes;
+
     // Fixed size cells don't participate in available space distribution.
     auto adjustabledSpace = GridSpace { };
-    for (auto& resolvedItem : resolvedItems)
+    for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
+        auto& resolvedItem = resolvedItems[columnIndex];
         adjustabledSpace += *resolvedItem;
+        switch (resolvedItem->type) {
+        case GridSpace::Type::Percent:
+            percentColumnIndexes.append(columnIndex);
+            break;
+        case GridSpace::Type::Fixed:
+            fixedColumnIndexes.append(columnIndex);
+            break;
+        case GridSpace::Type::Relative:
+            relativeColumnIndexes.append(columnIndex);
+            break;
+        case GridSpace::Type::Auto:
+            autoColumnIndexes.append(columnIndex);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
 
     Vector<LayoutUnit> distributedSpaces(resolvedItems.size());
     float spaceToDistribute = availableSpace;
@@ -229,10 +253,17 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     // Distribute the extra space based on the resolved spaces. Note that the extra space could be a negative value in which case
     // we may assign less space to columns.
     auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
-    for (size_t index = 0; index < resolvedItems.size(); ++index) {
-        auto columnExtraSpace = columnsFlexBase * resolvedItems[index]->flexBase;
-        distributedSpaces[index] = LayoutUnit { resolvedItems[index]->preferredSpace + columnExtraSpace };
-    }
+    auto distributeSpaceForType = [&](const auto& columnIndexes) {
+        for (auto& columnIndex : columnIndexes) {
+            auto columnExtraSpace = columnsFlexBase * resolvedItems[columnIndex]->flexBase;
+            distributedSpaces[columnIndex] = LayoutUnit { resolvedItems[columnIndex]->preferredSpace + columnExtraSpace };
+        }
+    };
+    // Distribute the available space starting with percent columns and ending with autos.
+    distributeSpaceForType(percentColumnIndexes);
+    distributeSpaceForType(fixedColumnIndexes);
+    distributeSpaceForType(relativeColumnIndexes);
+    distributeSpaceForType(autoColumnIndexes);
     return distributedSpaces;
 }
 

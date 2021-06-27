@@ -1,5 +1,18 @@
 2021-06-27  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Introduce a priority order for the grid types
+        https://bugs.webkit.org/show_bug.cgi?id=227417
+
+        Reviewed by Antti Koivisto.
+
+        Extra space distribution is based on a priority list with percent columns having the highest priority
+        and auto columns having the lowest (percent > fixed > relative > auto).
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::distributeAvailableSpace):
+
+2021-06-27  Alan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Introduce GridSpace::type
         https://bugs.webkit.org/show_bug.cgi?id=227409
 
