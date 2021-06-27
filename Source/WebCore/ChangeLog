@@ -1,3 +1,21 @@
+2021-06-27  Peng Liu  <peng.liu6@apple.com>
+
+        Backgrounding and returning to a FaceTime call in MobileSafari leads to a blank black sreen
+        https://bugs.webkit.org/show_bug.cgi?id=227406
+
+        Reviewed by Eric Carlson.
+
+        The `RequireUserGestureForFullscreen` restriction will be kept in a `MediaElementSession`
+        if the corresponding media element is `autoplay`. Therefore, the request to enter
+        picture-in-picture from the UI process will be ignored by the media element, and the
+        state machine managing video presentation mode in the UI process will be an inconsistent state.
+
+        This patch creates a `UserGestureIndicator` before requesting the media element
+        to change its presentation mode to make sure the request will be handled.
+
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::fullscreenModeChanged):
+
 2021-06-27  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for shrinking over-constrained columns based on the width type priority list
