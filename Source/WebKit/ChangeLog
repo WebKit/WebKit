@@ -1,3 +1,16 @@
+2021-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS build after rdar://76781873
+
+        Remove support for `-[UIResponder _insertTextFromCamera:]` in WebKit2, now that UIKit only supports the public
+        API version (`-[UIResponder captureTextFromCamera:]`).
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView _insertTextFromCameraForWebView:]): Deleted.
+
 2021-06-27  Antoine Quint  <graouts@webkit.org>
 
         [Model] [iOS] Add support for rendering model resources

@@ -151,7 +151,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 
 #if ENABLE(IMAGE_ANALYSIS)
 #define FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
-    M(_insertTextFromCamera) \
     M(captureTextFromCamera)
 #else
 #define FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M)

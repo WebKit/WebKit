@@ -3879,7 +3879,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if ((action == @selector(captureTextFromCamera:) || action == @selector(_insertTextFromCamera:)) && !editorState.isContentEditable)
+    if (action == @selector(captureTextFromCamera:) && !editorState.isContentEditable)
         return NO;
 #endif
 
@@ -10314,11 +10314,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif
         }];
     } forRequest:request];
-}
-
-- (void)_insertTextFromCameraForWebView:(id)sender
-{
-    [super _insertTextFromCamera:sender];
 }
 
 - (void)captureTextFromCameraForWebView:(id)sender
