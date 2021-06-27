@@ -4703,7 +4703,7 @@ static RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& 
     } while (consumeCommaIncludingWhitespace(range));
     if (!range.atEnd() || !values->length())
         return nullptr;
-    return WTFMove(values);
+    return values;
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as

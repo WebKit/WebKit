@@ -220,7 +220,7 @@ static RefPtr<CSSFontFaceSrcValue> consumeFontFaceSrcURI(CSSParserTokenRange& ra
     // FIXME: Change CSSFontFaceSrcValue::create to take format so we don't need a separate setFormat call.
     auto srcValue = CSSFontFaceSrcValue::create(location, context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
     srcValue->setFormat(format);
-    return WTFMove(srcValue);
+    return srcValue;
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)

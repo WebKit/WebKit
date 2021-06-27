@@ -1,3 +1,15 @@
+2021-06-26  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warnings below since r279050.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        No new tests, no new behavioral changes.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeCounterStyleAdditiveSymbols):
+        * css/parser/CSSPropertyParserWorkerSafe.cpp:
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceSrcURI):
+
 2021-06-26  Sam Weinig  <weinig@apple.com>
 
         [Modern Media Controls] Modern media controls should not need to know about specific platforms in shared code
