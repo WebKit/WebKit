@@ -1,5 +1,36 @@
 2021-06-27  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Add support for shrinking over-constrained columns based on the width type priority list
+        https://bugs.webkit.org/show_bug.cgi?id=227426
+
+        Reviewed by Antti Koivisto.
+
+        Let's take the priority list into use when shrinking the columns in an over-constrained context.
+        e.g.
+        <div style="width: 100px">
+          <table><tr><td style="width: 90%""></td><td style="width: 400px;"></td><td style="width: 100px;"></td></tr></table>
+        </div>
+
+        While the second and the third columns have the preferred width of 400px and 100px respectively, we can't accommodate 
+        them as the containing block (<div>) sets a 100px horizontal constraint on the table content and the first column already takes up 90px space.
+
+        Now we start shrinking the columns using the following priority list: auto < relative < fixed < percent (ignoring the actual column order).
+
+        The preferred width of the table (assume 0px border spacing and padding) is 90px + 400px + 100px. It produces a -490px 
+        available space. This negative space needs to be distributed among the columns staring with the fixed sized ones.
+        The fixed sized columns have a flex space of 500px which covers the -490px gap. Based on their 4:1 distribution ratio, they'll end
+        up with 8px and 2px and the percent column stays at 90px.
+
+        Tests: fast/layoutformattingcontext/table-space-shinking-mixed-width-type-simple.html
+               fast/layoutformattingcontext/table-space-shinking-mixed-width-type-simple2.html
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::distributeAvailableSpace):
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+
+2021-06-27  Alan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Rename GridSpace::preferredSpace to preferredSize
         https://bugs.webkit.org/show_bug.cgi?id=227425
 

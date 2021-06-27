@@ -85,6 +85,7 @@ struct GridSpace {
     // The base space value for the distribution computation e.g [ 9 ] [ 1 ] values for 2 columns in the table means that if
     // we've go 100px flexible space to distribute, 90px and 10px go to the columns respectively.
     float flexBase { 0 };
+    float minimumSize { 0 };
 };
 
 inline static GridSpace& operator-(GridSpace& a, const GridSpace& b)
@@ -210,60 +211,79 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             }
         }
     }
-    // 4. Distribute the extra space using the final resolved widths.
-#if ASSERT_ENABLED
-    // We have to have all the spaces resolved at this point.
-    for (auto& resolvedItem : resolvedItems)
-        ASSERT(resolvedItem);
-#endif
-    Vector<size_t> percentColumnIndexes;
-    Vector<size_t> fixedColumnIndexes;
-    Vector<size_t> relativeColumnIndexes;
-    Vector<size_t> autoColumnIndexes;
-
-    // Fixed size cells don't participate in available space distribution.
-    auto adjustabledSpace = GridSpace { };
-    for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
-        auto& resolvedItem = resolvedItems[columnIndex];
-        adjustabledSpace += *resolvedItem;
-        switch (resolvedItem->type) {
-        case GridSpace::Type::Percent:
-            percentColumnIndexes.append(columnIndex);
-            break;
-        case GridSpace::Type::Fixed:
-            fixedColumnIndexes.append(columnIndex);
-            break;
-        case GridSpace::Type::Relative:
-            relativeColumnIndexes.append(columnIndex);
-            break;
-        case GridSpace::Type::Auto:
-            autoColumnIndexes.append(columnIndex);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
+    // 4. Distribute the extra space using the final resolved sizes.
     Vector<LayoutUnit> distributedSpaces(resolvedItems.size());
-    float spaceToDistribute = availableSpace;
-    // Top and bottom spacing are fixed.
-    spaceToDistribute -= 2 * SpanType::spacing(grid);
-    spaceToDistribute -= adjustabledSpace.preferredSize + ((resolvedItems.size() - 1) * SpanType::spacing(grid));
-    // Distribute the extra space based on the resolved spaces. Note that the extra space could be a negative value in which case
-    // we may assign less space to columns.
-    auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
-    auto distributeSpaceForType = [&](const auto& columnIndexes) {
-        for (auto& columnIndex : columnIndexes) {
+    float spaceToDistribute = availableSpace - (resolvedItems.size() + 1) * SpanType::spacing(grid);
+    auto adjustabledSpace = GridSpace { };
+    for (auto& resolvedItem : resolvedItems) {
+        ASSERT(resolvedItem);
+        adjustabledSpace += *resolvedItem;
+    }
+    spaceToDistribute -= adjustabledSpace.preferredSize;
+    // Let's start with the preferred size for each column.
+    for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex)
+        distributedSpaces[columnIndex] = LayoutUnit { resolvedItems[columnIndex]->preferredSize };
+
+    if (spaceToDistribute > 0) {
+        // Each column can get some extra space.
+        auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
+        for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
             auto columnExtraSpace = columnsFlexBase * resolvedItems[columnIndex]->flexBase;
-            distributedSpaces[columnIndex] = LayoutUnit { resolvedItems[columnIndex]->preferredSize + columnExtraSpace };
+            distributedSpaces[columnIndex] += LayoutUnit { columnExtraSpace };
         }
-    };
-    // Distribute the available space starting with percent columns and ending with autos.
-    distributeSpaceForType(percentColumnIndexes);
-    distributeSpaceForType(fixedColumnIndexes);
-    distributeSpaceForType(relativeColumnIndexes);
-    distributeSpaceForType(autoColumnIndexes);
+    } else if (spaceToDistribute < 0) {
+        // Can't accomodate the preferred width. Let's use the priority list to shrink columns.
+        Vector<size_t> autoColumnIndexes;
+        Vector<size_t> relativeColumnIndexes;
+        Vector<size_t> fixedColumnIndexes;
+        Vector<size_t> percentColumnIndexes;
+
+        for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
+            switch (resolvedItems[columnIndex]->type) {
+            case GridSpace::Type::Percent:
+                percentColumnIndexes.append(columnIndex);
+                break;
+            case GridSpace::Type::Fixed:
+                fixedColumnIndexes.append(columnIndex);
+                break;
+            case GridSpace::Type::Relative:
+                relativeColumnIndexes.append(columnIndex);
+                break;
+            case GridSpace::Type::Auto:
+                autoColumnIndexes.append(columnIndex);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+
+        auto spaceNeeded = -spaceToDistribute;
+        auto shrinkSpaceForType = [&](const auto& columnIndexes) {
+            auto adjustabledSpace = GridSpace { };
+            for (auto& columnIndex : columnIndexes)
+                adjustabledSpace += *resolvedItems[columnIndex];
+
+            auto columnsFlexBase = adjustabledSpace.flexBase ? spaceNeeded / adjustabledSpace.flexBase : 0.f;
+            for (auto& columnIndex : columnIndexes) {
+                auto& resolvedItem = *resolvedItems[columnIndex];
+                auto spaceToRemove = std::min(resolvedItem.preferredSize - resolvedItem.minimumSize, columnsFlexBase * resolvedItem.flexBase);
+                spaceToRemove = std::min(spaceToRemove, spaceNeeded);
+                distributedSpaces[columnIndex] -= spaceToRemove;
+                spaceNeeded -= spaceToRemove;
+                if (!spaceNeeded)
+                    return;
+            }
+            ASSERT(spaceNeeded > 0);
+        };
+        shrinkSpaceForType(autoColumnIndexes);
+        if (spaceNeeded)
+            shrinkSpaceForType(relativeColumnIndexes);
+        if (spaceNeeded)
+            shrinkSpaceForType(fixedColumnIndexes);
+        if (spaceNeeded)
+            shrinkSpaceForType(percentColumnIndexes);
+    }
     return distributedSpaces;
 }
 
@@ -304,7 +324,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             // total adjustable space: 120px - 80px - 50px = -10px <- Note the negative available space with over-constrained values.
             // columns extra widths: -10px / (30px + 0px) * 30px = -10px and -10px / (30px + 0px) * 0px = 0px
             // columns final widths: 70px and 50px (first column is narrower than its preferred width and the second is as wide as the minimum content width)
-            return GridSpace { type, preferredWidth, preferredWidth - minimumContentWidth };
+            return GridSpace { type, preferredWidth, preferredWidth - minimumContentWidth, minimumContentWidth };
         }
 
         // maximum width <= available horizontal space
@@ -324,7 +344,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         // total adjustable space: 2600px - 500px = 2100px
         // columns extra widths: 2100px / 500px * 200px = 840px and 2100px / 500px * 300px = 1260px
         // columns final widths: 1040px and 1560px
-        return GridSpace { type, preferredWidth, preferredWidth };
+        return GridSpace { type, preferredWidth, preferredWidth, minimumContentWidth };
     });
 }
 
@@ -367,12 +387,14 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     auto availableSpace = std::max(availableVerticalSpace.value_or(0_lu), tableUsedHeight);
     // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
     return distributeAvailableSpace<RowSpan>(m_grid, availableSpace, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
-        if (slot.hasRowSpan())
-            return GridSpace { { }, formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight(), formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight() };
+        if (slot.hasRowSpan()) {
+            auto borderBoxHeight = formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight();
+            return GridSpace { { }, borderBoxHeight, borderBoxHeight, borderBoxHeight };
+        }
         auto& rows = m_grid.rows();
         auto computedRowHeight = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), { });
         auto height = std::max<float>(rowHeight[rowIndex], computedRowHeight.value_or(0_lu));
-        return GridSpace { { }, height, height };
+        return GridSpace { { }, height, height, height };
     });
 }
 
