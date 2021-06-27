@@ -31,6 +31,10 @@
 
 #import <AssetViewer/ASVThumbnailView.h>
 
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#import <AssetViewer/ASVInlinePreview.h>
+#endif
+
 #else
 
 #import <UIKit/UIKit.h>
@@ -60,6 +64,22 @@
 @interface ARQuickLookWebKitItem : QLItem
 - (instancetype)initWithPreviewItemProvider:(NSItemProvider *)itemProvider contentType:(NSString *)contentType previewTitle:(NSString *)previewTitle fileSize:(NSNumber *)fileSize previewItem:(ARQuickLookPreviewItem *)previewItem;
 - (void)setDelegate:(id <ARQuickLookWebKitItemDelegate>)delegate;
+@end
+
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+
+@class ASVInlinePreview;
+
+@interface ASVInlinePreview : NSObject
+@property (nonatomic, readonly) CALayer *layer;
+
+- (instancetype)initWithFrame:(CGRect)frame;
+- (void)setupRemoteConnectionWithCompletionHandler:(void (^)(NSError * _Nullable error))handler;
+- (void)preparePreviewOfFileAtURL:(NSURL *)url completionHandler:(void (^)(NSError * _Nullable error))handler;
+- (void)updateFrame:(CGRect)newFrame completionHandler:(void (^)(CAFenceHandle * _Nullable fenceHandle, NSError * _Nullable error))handler;
+
 @end
 
 #endif

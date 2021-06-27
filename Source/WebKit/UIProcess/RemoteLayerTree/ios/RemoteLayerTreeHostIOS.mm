@@ -35,6 +35,10 @@
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#import "WKModelView.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -95,6 +99,8 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeModelLayer:
 #if ENABLE(SEPARATED_MODEL)
         return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*properties.model]));
+#elif HAVE(ARKIT_INLINE_PREVIEW_IOS)
+        return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*properties.model]));
 #else
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 #endif

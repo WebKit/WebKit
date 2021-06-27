@@ -1,3 +1,17 @@
+2021-06-27  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227392
+        <rdar://problem/79770136>
+
+        Reviewed by Tim Horton.
+
+        Ensure the anchor point is set correctly for model content layers, otherwise the preview layer shows
+        its center at the corner of the parent layer's origin.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToModel):
+
 2021-06-26  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warnings below since r279050.

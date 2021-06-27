@@ -1,3 +1,17 @@
+2021-06-27  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227392
+        <rdar://problem/79770136>
+
+        Reviewed by Tim Horton.
+
+        Add a new compile-time flag indicating the availability of the ASVInlinePreview SPI on iOS.
+        We only define it when the header itself is present for now to avoid issues with older iOS
+        15 SDKs, but ultimately we will only use the iOS version check.
+
+        * wtf/PlatformHave.h:
+
 2021-06-25  Kenneth Russell  <kbr@chromium.org>
 
         Set ImageBitmap experimental feature flag to true

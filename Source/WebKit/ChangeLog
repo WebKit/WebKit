@@ -1,3 +1,33 @@
+2021-06-27  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227392
+        <rdar://problem/79770136>
+
+        Reviewed by Tim Horton.
+
+        Add a new WKModelView class which manages an ASVInlinePreview and displays its layer.
+        The current incarnation of the ASVInlinePreview SPI requires a URL to a file to specify
+        the resource, so we write a file to the temporary directory added in 279267 with the data
+        wrapped in the Model object passed through the remote layer tree. Ultimately we will be
+        able to use an SPI that does not require a file and instead will allow data to be passed
+        directly, this is purely for a temporary experimentation.
+
+        * Platform/Logging.h:
+        * SourcesCocoa.txt:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/ios/WKModelView.h: Added.
+        * UIProcess/ios/WKModelView.mm: Added.
+        (-[WKModelView preview]):
+        (-[WKModelView initWithFrame:]):
+        (-[WKModelView initWithCoder:]):
+        (-[WKModelView initWithModel:]):
+        (-[WKModelView createFileForModel:]):
+        (-[WKModelView layoutSubviews]):
+        (-[WKModelView updateBounds]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Safari sometimes hangs under sync IPC in `-[WKWebView _setSuppressSoftwareKeyboard:]`

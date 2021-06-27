@@ -1285,6 +1285,7 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
         m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents model"));
 #endif
 
+        m_contentsLayer->setAnchorPoint({ });
         m_contentsLayerPurpose = ContentsLayerPurpose::Model;
         contentsLayerChanged = true;
     } else {
