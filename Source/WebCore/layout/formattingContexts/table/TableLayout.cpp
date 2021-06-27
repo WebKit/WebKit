@@ -71,7 +71,7 @@ struct RowSpan {
 };
 
 struct GridSpace {
-    bool isEmpty() const { return !preferredSpace; }
+    bool isEmpty() const { return !preferredSize; }
 
     enum class Type {
         Percent,
@@ -81,7 +81,7 @@ struct GridSpace {
     };
     Type type { Type::Auto };
     // Preferred width/height for column/row we start the distribution with (usually the minimum content width).
-    float preferredSpace { 0 };
+    float preferredSize { 0 };
     // The base space value for the distribution computation e.g [ 9 ] [ 1 ] values for 2 columns in the table means that if
     // we've go 100px flexible space to distribute, 90px and 10px go to the columns respectively.
     float flexBase { 0 };
@@ -89,14 +89,14 @@ struct GridSpace {
 
 inline static GridSpace& operator-(GridSpace& a, const GridSpace& b)
 {
-    a.preferredSpace = std::max(0.0f, a.preferredSpace - b.preferredSpace);
+    a.preferredSize = std::max(0.0f, a.preferredSize - b.preferredSize);
     a.flexBase = std::max(0.0f, a.flexBase - b.flexBase);
     return a;
 }
 
 inline static GridSpace& operator+=(GridSpace& a, const GridSpace& b)
 {
-    a.preferredSpace += b.preferredSpace;
+    a.preferredSize += b.preferredSize;
     a.flexBase += b.flexBase;
     return a;
 }
@@ -108,7 +108,7 @@ inline static GridSpace& operator-=(GridSpace& a, const GridSpace& b)
 
 inline static GridSpace& operator/(GridSpace& a, unsigned value)
 {
-    a.preferredSpace /= value;
+    a.preferredSize /= value;
     a.flexBase /= value;
     return a;
 }
@@ -134,7 +134,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             auto& resolvedItem = resolvedItems[index];
             // FIXME: Add support for mixed column/row types e.g. first row first column is fixed, while second row first column is percent.
             ASSERT(resolvedItem->type == currentSpace.type);
-            resolvedItem->preferredSpace = std::max(resolvedItem->preferredSpace, currentSpace.preferredSpace);
+            resolvedItem->preferredSize = std::max(resolvedItem->preferredSize, currentSpace.preferredSize);
             resolvedItem->flexBase = std::max(resolvedItem->flexBase, currentSpace.flexBase);
         }
     }
@@ -197,7 +197,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             auto resolvedSpanningSpace = GridSpace { };
             for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
                 resolvedSpanningSpace += *resolvedItems[spanIndex];
-            if (resolvedSpanningSpace.preferredSpace >= unresolvedSpanningSpace.preferredSpace) {
+            if (resolvedSpanningSpace.preferredSize >= unresolvedSpanningSpace.preferredSize) {
                 // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
                 continue;
             }
@@ -206,7 +206,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             if (!spaceToDistribute.isEmpty()) {
                 auto columnsFlexBase = spaceToDistribute.flexBase / resolvedSpanningSpace.flexBase;
                 for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                    *resolvedItems[spanIndex] += GridSpace { resolvedItems[spanIndex]->type, resolvedItems[spanIndex]->preferredSpace * columnsFlexBase, resolvedItems[spanIndex]->flexBase * columnsFlexBase };
+                    *resolvedItems[spanIndex] += GridSpace { resolvedItems[spanIndex]->type, resolvedItems[spanIndex]->preferredSize * columnsFlexBase, resolvedItems[spanIndex]->flexBase * columnsFlexBase };
             }
         }
     }
@@ -249,14 +249,14 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     float spaceToDistribute = availableSpace;
     // Top and bottom spacing are fixed.
     spaceToDistribute -= 2 * SpanType::spacing(grid);
-    spaceToDistribute -= adjustabledSpace.preferredSpace + ((resolvedItems.size() - 1) * SpanType::spacing(grid));
+    spaceToDistribute -= adjustabledSpace.preferredSize + ((resolvedItems.size() - 1) * SpanType::spacing(grid));
     // Distribute the extra space based on the resolved spaces. Note that the extra space could be a negative value in which case
     // we may assign less space to columns.
     auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
     auto distributeSpaceForType = [&](const auto& columnIndexes) {
         for (auto& columnIndex : columnIndexes) {
             auto columnExtraSpace = columnsFlexBase * resolvedItems[columnIndex]->flexBase;
-            distributedSpaces[columnIndex] = LayoutUnit { resolvedItems[columnIndex]->preferredSpace + columnExtraSpace };
+            distributedSpaces[columnIndex] = LayoutUnit { resolvedItems[columnIndex]->preferredSize + columnExtraSpace };
         }
     };
     // Distribute the available space starting with percent columns and ending with autos.
@@ -284,6 +284,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
 
         float minimumContentWidth = slot.widthConstraints().minimum;
         float maximumContentWidth = slot.widthConstraints().maximum;
+        auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(maximumContentWidth));
         if (!hasEnoughAvailableSpaceForMaximumWidth) {
             // maximum width > available horizontal space
             // preferred width: it's always at least as wide as the minimum content width and if column fixed width is set then the greater of the two.
@@ -303,7 +304,6 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             // total adjustable space: 120px - 80px - 50px = -10px <- Note the negative available space with over-constrained values.
             // columns extra widths: -10px / (30px + 0px) * 30px = -10px and -10px / (30px + 0px) * 0px = 0px
             // columns final widths: 70px and 50px (first column is narrower than its preferred width and the second is as wide as the minimum content width)
-            auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(maximumContentWidth));
             return GridSpace { type, preferredWidth, preferredWidth - minimumContentWidth };
         }
 
@@ -324,7 +324,6 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         // total adjustable space: 2600px - 500px = 2100px
         // columns extra widths: 2100px / 500px * 200px = 840px and 2100px / 500px * 300px = 1260px
         // columns final widths: 1040px and 1560px
-        auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(maximumContentWidth));
         return GridSpace { type, preferredWidth, preferredWidth };
     });
 }

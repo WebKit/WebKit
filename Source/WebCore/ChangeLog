@@ -1,5 +1,22 @@
 2021-06-27  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Rename GridSpace::preferredSpace to preferredSize
+        https://bugs.webkit.org/show_bug.cgi?id=227425
+
+        Reviewed by Antti Koivisto.
+
+        It is a more descriptive name.
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::GridSpace::isEmpty const):
+        (WebCore::Layout::operator-):
+        (WebCore::Layout::operator+=):
+        (WebCore::Layout::operator/):
+        (WebCore::Layout::distributeAvailableSpace):
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace): preferredWidth is the same in both cases.
+
+2021-06-27  Alan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Introduce a priority order for the grid types
         https://bugs.webkit.org/show_bug.cgi?id=227417
 
