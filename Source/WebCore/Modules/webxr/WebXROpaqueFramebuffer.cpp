@@ -137,8 +137,12 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
     // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
     if (data.isShared) {
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
         m_ioSurfaceTextureHandle = gCGL->attachIOSurfaceToSharedTexture(textureTarget, data.surface.get());
         m_ioSurfaceTextureHandleIsShared = true;
+#else
+        ASSERT_NOT_REACHED();
+#endif
     } else {
         auto size = data.surface->size();
         if (!size.width() || !size.height())
@@ -195,9 +199,13 @@ void WebXROpaqueFramebuffer::endFrame()
 
     if (m_ioSurfaceTextureHandle) {
         auto gCGL = static_cast<GraphicsContextGLOpenGL*>(&gl);
-        if (m_ioSurfaceTextureHandleIsShared)
+        if (m_ioSurfaceTextureHandleIsShared) {
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
             gCGL->detachIOSurfaceFromSharedTexture(m_ioSurfaceTextureHandle);
-        else
+#else
+            ASSERT_NOT_REACHED();
+#endif
+        } else
             gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
         m_ioSurfaceTextureHandle = nullptr;
         m_ioSurfaceTextureHandleIsShared = false;

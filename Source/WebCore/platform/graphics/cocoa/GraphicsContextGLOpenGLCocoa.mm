@@ -694,6 +694,7 @@ void GraphicsContextGLOpenGL::destroyPbufferAndDetachIOSurface(void* handle)
     EGL_DestroySurface(display, handle);
 }
 
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
 void* GraphicsContextGLOpenGL::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
 {
     constexpr EGLint emptyAttributes[] = { EGL_NONE };
@@ -739,6 +740,7 @@ void GraphicsContextGLOpenGL::detachIOSurfaceFromSharedTexture(void* handle)
     auto display = platformDisplay();
     EGL_DestroyImageKHR(display, handle);
 }
+#endif
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {

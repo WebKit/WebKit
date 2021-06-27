@@ -536,8 +536,10 @@ public:
     // detach call below.
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
     void* attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
     void detachIOSurfaceFromSharedTexture(void* handle);
+#endif
 #endif
 
 private:

@@ -1,3 +1,14 @@
+2021-06-26  Dean Jackson  <dino@apple.com>
+
+        Build fix for iOS Simulator. MTLSharedTexture is not available
+        on that configuration.
+
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp:
+        (WebCore::WebXROpaqueFramebuffer::startFrame):
+        (WebCore::WebXROpaqueFramebuffer::endFrame):
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2021-06-25  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Remove redundant struct ResolvedItem
