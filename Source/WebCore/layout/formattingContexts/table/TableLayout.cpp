@@ -72,17 +72,20 @@ struct RowSpan {
 
 struct GridSpace {
     bool isEmpty() const { return !preferredSpace; }
+
+    enum class Type {
+        Percent,
+        Fixed,
+        Relative,
+        Auto
+    };
+    Type type { Type::Auto };
     // Preferred width/height for column/row we start the distribution with (usually the minimum content width).
     float preferredSpace { 0 };
     // The base space value for the distribution computation e.g [ 9 ] [ 1 ] values for 2 columns in the table means that if
     // we've go 100px flexible space to distribute, 90px and 10px go to the columns respectively.
     float flexBase { 0 };
 };
-
-inline static GridSpace max(const GridSpace& a, const GridSpace& b)
-{
-    return { std::max(a.preferredSpace, b.preferredSpace), std::max(a.flexBase, b.flexBase) };
-}
 
 inline static GridSpace& operator-(GridSpace& a, const GridSpace& b)
 {
@@ -123,9 +126,16 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
             if (SpanType::hasSpan(slot) || SpanType::isSpanned(slot))
                 continue;
             auto index = SpanType::index(columnIndex, rowIndex);
-            if (!resolvedItems[index])
-                resolvedItems[index] = GridSpace { };
-            resolvedItems[index] = max(*resolvedItems[index], slotSpace(slot, index));
+            auto currentSpace = slotSpace(slot, index);
+            if (!resolvedItems[index]) {
+                resolvedItems[index] = currentSpace;
+                continue;
+            }
+            auto& resolvedItem = resolvedItems[index];
+            // FIXME: Add support for mixed column/row types e.g. first row first column is fixed, while second row first column is percent.
+            ASSERT(resolvedItem->type == currentSpace.type);
+            resolvedItem->preferredSpace = std::max(resolvedItem->preferredSpace, currentSpace.preferredSpace);
+            resolvedItem->flexBase = std::max(resolvedItem->flexBase, currentSpace.flexBase);
         }
     }
 
@@ -192,11 +202,11 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
                 continue;
             }
             auto spacing = SpanType::spacing(grid) * (SpanType::spanCount(cell) - 1);
-            auto spaceToDistribute = unresolvedSpanningSpace - GridSpace { spacing, spacing } - resolvedSpanningSpace; 
+            auto spaceToDistribute = unresolvedSpanningSpace - GridSpace { { }, spacing, spacing } - resolvedSpanningSpace;
             if (!spaceToDistribute.isEmpty()) {
                 auto columnsFlexBase = spaceToDistribute.flexBase / resolvedSpanningSpace.flexBase;
                 for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                    *resolvedItems[spanIndex] += GridSpace { resolvedItems[spanIndex]->preferredSpace * columnsFlexBase, resolvedItems[spanIndex]->flexBase * columnsFlexBase};
+                    *resolvedItems[spanIndex] += GridSpace { resolvedItems[spanIndex]->type, resolvedItems[spanIndex]->preferredSpace * columnsFlexBase, resolvedItems[spanIndex]->flexBase * columnsFlexBase };
             }
         }
     }
@@ -232,10 +242,14 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     return distributeAvailableSpace<ColumnSpan>(m_grid, availableHorizontalSpace, [&] (const TableGrid::Slot& slot, size_t columnIndex) {
         auto& column = m_grid.columns().list()[columnIndex];
         auto columnWidth = std::optional<float> { };
-        if (auto fixedWidth = column.fixedWidth())
+        auto type = GridSpace::Type::Auto;
+        if (auto fixedWidth = column.fixedWidth()) {
             columnWidth = *fixedWidth;
-        else if (auto percent = column.percent())
+            type = GridSpace::Type::Fixed;
+        } else if (auto percent = column.percent()) {
             columnWidth = *percent * availableHorizontalSpace / 100.0f;
+            type = GridSpace::Type::Percent;
+        }
 
         float minimumContentWidth = slot.widthConstraints().minimum;
         float maximumContentWidth = slot.widthConstraints().maximum;
@@ -259,7 +273,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             // columns extra widths: -10px / (30px + 0px) * 30px = -10px and -10px / (30px + 0px) * 0px = 0px
             // columns final widths: 70px and 50px (first column is narrower than its preferred width and the second is as wide as the minimum content width)
             auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(maximumContentWidth));
-            return GridSpace { preferredWidth, preferredWidth - minimumContentWidth };
+            return GridSpace { type, preferredWidth, preferredWidth - minimumContentWidth };
         }
 
         // maximum width <= available horizontal space
@@ -280,7 +294,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         // columns extra widths: 2100px / 500px * 200px = 840px and 2100px / 500px * 300px = 1260px
         // columns final widths: 1040px and 1560px
         auto preferredWidth = std::max(minimumContentWidth, columnWidth.value_or(maximumContentWidth));
-        return GridSpace { preferredWidth, preferredWidth };
+        return GridSpace { type, preferredWidth, preferredWidth };
     });
 }
 
@@ -324,11 +338,11 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
     return distributeAvailableSpace<RowSpan>(m_grid, availableSpace, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
         if (slot.hasRowSpan())
-            return GridSpace { formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight(), formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight() };
+            return GridSpace { { }, formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight(), formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight() };
         auto& rows = m_grid.rows();
         auto computedRowHeight = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), { });
         auto height = std::max<float>(rowHeight[rowIndex], computedRowHeight.value_or(0_lu));
-        return GridSpace { height, height };
+        return GridSpace { { }, height, height };
     });
 }
 

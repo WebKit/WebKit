@@ -1,3 +1,19 @@
+2021-06-27  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Introduce GridSpace::type
+        https://bugs.webkit.org/show_bug.cgi?id=227409
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting mixed width/height types (percent/fixed/relative/auto).
+        Available space distribution is based on type priority (e.g. percent value takes precedence over fixed width).
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::distributeAvailableSpace):
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+        (WebCore::Layout::max): Deleted.
+
 2021-06-27  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] SleepDisabler not destroyed when video playback stops
