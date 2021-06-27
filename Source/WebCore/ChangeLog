@@ -1,3 +1,19 @@
+2021-06-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] SleepDisabler not destroyed when video playback stops
+        https://bugs.webkit.org/show_bug.cgi?id=219353
+
+        Reviewed by Eric Carlson.
+
+        In GStreamer ports the SleepDisabler remained active after EOS because
+        HTMLMediaElement::updateSleepDisabling() was not being triggered. An explicit clean-up upon
+        the ended event in the media element is better than any other implicit action.
+
+        Test: media/video-ended-does-not-hold-sleep-assertion.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::dispatchEvent):
+
 2021-06-27  Antoine Quint  <graouts@webkit.org>
 
         [Model] [iOS] Add support for rendering model resources
