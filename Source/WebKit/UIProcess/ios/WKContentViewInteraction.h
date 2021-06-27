@@ -441,6 +441,8 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _isFocusingElementWithKeyboard;
     BOOL _isBlurringFocusedElement;
     BOOL _isRelinquishingFirstResponderToFocusedElement;
+    BOOL _unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate;
+    BOOL _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext;
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;
@@ -708,6 +710,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (void)_didChangeLinkPreviewAvailability;
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
+
+- (void)updateSoftwareKeyboardSuppressionStateFromWebView;
 
 #if USE(UICONTEXTMENU)
 - (UIView *)textEffectsWindow;

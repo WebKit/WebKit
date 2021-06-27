@@ -1,3 +1,57 @@
+2021-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Safari sometimes hangs under sync IPC in `-[WKWebView _setSuppressSoftwareKeyboard:]`
+        https://bugs.webkit.org/show_bug.cgi?id=227424
+        rdar://79745385
+
+        Reviewed by Tim Horton.
+
+        When activating streamlined AutoFill, Safari calls UIKit SPI (`-_setSuppressSoftwareKeyboard:`) on WKWebView to
+        ensure that the normal software keyboard doesn't briefly appear instead of the AutoFill input view; after
+        requesting AutoFill credentials, Safari then stops suppressing the software keyboard by setting the SPI property
+        back to NO. In WebKit, we override `-[WKWebView _setSuppressSoftwareKeyboard:]`, such that WKContentView's
+        keyboard suppression state follows the web view's state (this is necessary, since WKContentView is the actual
+        `-firstResponder` when editing focused text inputs). However, when changing software keyboard suppression from
+        YES to NO, UIKit reloads input views and (in the process) calls into
+        `-requestAutocorrectionContextWithCompletionHandler:`, which then makes a sync IPC call into the web process.
+
+        To avoid this sync IPC call, we refactor the implementation of `-[WKWebView _setSuppressSoftwareKeyboard:]`,
+        such that we don't immediately attempt to unsuppress the software keyboard by calling into WKContentView.
+        Instead, we asynchronously request an autocorrection context from the web process, and then call
+        `-[WKContentView _setSuppressSoftwareKeyboard:NO]` after the autocorrection context request completes (using
+        the last known autocorrection context data in the UI process rather than making a sync IPC call).
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setSuppressSoftwareKeyboard:]):
+
+        Call into `-updateSoftwareKeyboardSuppressionStateFromWebView` below.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+
+        Invoke `-unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded` to ensure that we stop software
+        keyboard suppression if the web process terminates while we're waiting for autocorrection context data to
+        arrive.
+
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        (-[WKContentView _handleAutocorrectionContext:]):
+        (-[WKContentView updateSoftwareKeyboardSuppressionStateFromWebView]):
+
+        Add a new helper that keeps WKContentView's software keyboard suppression state in sync with the WKWebView's
+        software keyboard suppression state. In the case where we're supressing the software keyboard, we can simply
+        call into `-[WKContentView _setSuppressSoftwareKeyboard:]` right away, since UIKit won't try to request an
+        autocorrection context.
+
+        However, in the case where we're unsuppressing the software keyboard, set a new flag, don't immediately forward
+        the call to WKContentView. Instead, set the `_unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate`
+        flag to YES and call into WebPageProxy to request an updated autocorrection context. Upon receiving the response
+        in `-[WKContentView _handleAutocorrectionContext:]`, we then unset the flag and unsuppress the software keyboard
+        (crucially, using `_lastAutocorrectionContext` instead of making a synchronous call back to the web content
+        process).
+
+        (-[WKContentView unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded]):
+
 2021-06-25  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Add logging and clean up AppSSO flows 

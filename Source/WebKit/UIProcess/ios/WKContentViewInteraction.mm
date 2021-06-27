@@ -1180,6 +1180,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _removeContainerForContextMenuHintPreviews];
     [self _removeContainerForDragPreviews];
     [self _removeContainerForDropPreviews];
+    [self unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded];
 
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
@@ -4623,7 +4624,20 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    if (_page->isRunningModalJavaScriptDialog() || _domPasteRequestHandler) {
+    bool respondWithLastKnownAutocorrectionContext = ([&] {
+        if (_page->isRunningModalJavaScriptDialog())
+            return true;
+
+        if (_domPasteRequestHandler)
+            return true;
+
+        if (_isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext)
+            return true;
+
+        return false;
+    })();
+
+    if (respondWithLastKnownAutocorrectionContext) {
         completionHandler([WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]);
         return;
     }
@@ -4649,6 +4663,32 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     _lastAutocorrectionContext = context;
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
+    [self unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded];
+}
+
+- (void)updateSoftwareKeyboardSuppressionStateFromWebView
+{
+    BOOL webViewIsSuppressingSoftwareKeyboard = [_webView _suppressSoftwareKeyboard];
+    if (webViewIsSuppressingSoftwareKeyboard) {
+        _unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate = NO;
+        self._suppressSoftwareKeyboard = webViewIsSuppressingSoftwareKeyboard;
+        return;
+    }
+
+    if (self._suppressSoftwareKeyboard == webViewIsSuppressingSoftwareKeyboard)
+        return;
+
+    if (!std::exchange(_unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate, YES))
+        _page->requestAutocorrectionContext();
+}
+
+- (void)unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded
+{
+    if (!std::exchange(_unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate, NO))
+        return;
+
+    SetForScope<BOOL> unsuppressSoftwareKeyboardScope { _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext, YES };
+    self._suppressSoftwareKeyboard = NO;
 }
 
 - (void)runModalJavaScriptDialog:(CompletionHandler<void()>&&)callback

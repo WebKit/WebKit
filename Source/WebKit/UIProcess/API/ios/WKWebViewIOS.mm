@@ -3083,8 +3083,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_setSuppressSoftwareKeyboard:(BOOL)suppressSoftwareKeyboard
 {
-    [super _setSuppressSoftwareKeyboard:suppressSoftwareKeyboard];
-    [_contentView _setSuppressSoftwareKeyboard:suppressSoftwareKeyboard];
+    super._suppressSoftwareKeyboard = suppressSoftwareKeyboard;
+    [_contentView updateSoftwareKeyboardSuppressionStateFromWebView];
 }
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
