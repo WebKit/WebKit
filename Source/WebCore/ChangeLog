@@ -1,3 +1,20 @@
+2021-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] Fix the internal build after rdar://76549109
+        https://bugs.webkit.org/show_bug.cgi?id=227430
+        rdar://79832425
+
+        Reviewed by Sam Weinig.
+
+        Fix the build by replacing the use of the `UIFloatIsZero` macro with its actual definition. The immediate cause
+        of this build failure is a UIKit change that changed the definition of `UIFloatIsZero`, such that we end up
+        redefining `UIFloatIsZero` in HTMLConverter.mm. However, since `UIFloatIsZero` is specific to iOS family and
+        HTMLConverter is used only in this one place on both macOS and iOS, it makes more sense to simply use the macro
+        definition itself.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::computedAttributesForElement):
+
 2021-06-27  Peng Liu  <peng.liu6@apple.com>
 
         Backgrounding and returning to a FaceTime call in MobileSafari leads to a blank black sreen
