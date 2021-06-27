@@ -7,7 +7,7 @@ description("Testing an <code>Button</code> has a scale transform when pressed."
 
 window.jsTestIsAsync = true;
 
-const button = new Button({ layoutDelegate: { layoutTraits: LayoutTraits.macOS } });
+const button = new Button({ layoutDelegate: { layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) } });
 button.iconName = Icons.Pause;
 document.body.appendChild(button.element);
 

@@ -10,7 +10,7 @@ const mediaControls = new WatchOSMediaControls;
 
 shouldBeEqualToString("mediaControls.element.localName", "div");
 shouldBeEqualToString("mediaControls.element.className", "watchos media-controls");
-shouldBe("mediaControls.layoutTraits", "LayoutTraits.watchOS");
+shouldBeType("mediaControls.layoutTraits", "WatchOSLayoutTraits");
 shouldBe("mediaControls.state", "WatchOSMediaControls.State.Paused");
 debug("");
 

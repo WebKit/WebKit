@@ -11,16 +11,16 @@ shouldBeEqualToString("mediaControls.element.localName", "div");
 shouldBeTrue("mediaControls.element.classList.contains('media-controls')");
 shouldBeTrue("mediaControls.element.classList.contains('inline')");
 shouldBeTrue("mediaControls.element.classList.contains('ios')");
-shouldBe("mediaControls.layoutTraits", "LayoutTraits.iOS");
+shouldBeType("mediaControls.layoutTraits", "IOSLayoutTraits");
 
 mediaControls.bottomControlsBar.element.id = "groupping-label";
 document.body.appendChild(mediaControls.bottomControlsBar.element);
 
 mediaControls.shouldUseAudioLayout = false;
-shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXLabel: Video Controls");
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description", "AXLabel: Video Controls");
 
 mediaControls.shouldUseAudioLayout = true;
-shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXLabel: Audio Controls");
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description", "AXLabel: Audio Controls");
 
 debug("");
 

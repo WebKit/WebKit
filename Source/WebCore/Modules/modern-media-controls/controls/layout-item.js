@@ -23,14 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const LayoutTraits = {
-    Unknown        : 0,
-    macOS          : 1 << 0,
-    iOS            : 1 << 1,
-    watchOS        : 1 << 2,
-    Fullscreen     : 1 << 3,
-};
-
 class LayoutItem extends LayoutNode
 {
 
@@ -45,7 +37,8 @@ class LayoutItem extends LayoutNode
 
     get layoutTraits()
     {
-        return (this.layoutDelegate && this.layoutDelegate.layoutTraits) || LayoutTraits.Unknown;
+        if (!this.layoutDelegate?.layoutTraits)
+            throw "No layout traits specified via layoutDelegate or overriden layouTraits() getter";
+        return this.layoutDelegate.layoutTraits;
     }
-
 }

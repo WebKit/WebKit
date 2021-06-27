@@ -19,7 +19,7 @@ description("Testing the <code>Button</code> class.");
 
 const button = new Button({
     layoutDelegate: {
-        layoutTraits: LayoutTraits.macOS
+        layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline)
     } 
 });
 button.iconName = Icons.Pause;

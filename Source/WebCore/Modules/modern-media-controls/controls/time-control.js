@@ -40,8 +40,8 @@ class TimeControl extends LayoutItem
         });
 
         this.elapsedTimeLabel = new TimeLabel(TimeLabel.Type.Elapsed);
-        this.scrubber = new Slider("scrubber", this.layoutTraits & LayoutTraits.macOS ? Slider.KnobStyle.Bar : Slider.KnobStyle.Circle);
-        if (this.layoutTraits & LayoutTraits.macOS)
+        this.scrubber = new Slider("scrubber", this.layoutTraits.knobStyleForScrubber());
+        if (this.layoutTraits.supportsDurationTimeLabel())
             this.durationTimeLabel = new TimeLabel(TimeLabel.Type.Duration);
         this.remainingTimeLabel = new TimeLabel(TimeLabel.Type.Remaining);
 
@@ -55,7 +55,7 @@ class TimeControl extends LayoutItem
         this._currentTime = 0;
         this._loading = false;
 
-        this._showDurationTimeLabel = this.layoutTraits & LayoutTraits.macOS;
+        this._showDurationTimeLabel = this.layoutTraits.supportsDurationTimeLabel();
         if (this._showDurationTimeLabel) {
             this.durationTimeLabel.element.addEventListener("click", this);
             this.remainingTimeLabel.element.addEventListener("click", this);

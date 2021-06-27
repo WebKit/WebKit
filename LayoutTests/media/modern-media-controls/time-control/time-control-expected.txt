@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS timeControl.element.localName is "div"
 PASS timeControl.element.className is "time-control"
 
-PASS timeControl.elapsedTimeLabel instanceof TimeLabel is true
-PASS timeControl.scrubber instanceof Slider is true
-PASS timeControl.remainingTimeLabel instanceof TimeLabel is true
+PASS timeControl.elapsedTimeLabel is an instance of TimeLabel
+PASS timeControl.scrubber is an instance of Slider
+PASS timeControl.remainingTimeLabel is an instance of TimeLabel
 
 timeControl.width = 500;
 PASS timeControl.children.length is 3

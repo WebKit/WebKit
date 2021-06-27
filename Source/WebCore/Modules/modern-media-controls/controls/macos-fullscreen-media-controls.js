@@ -30,7 +30,7 @@ class MacOSFullscreenMediaControls extends MediaControls
 
     constructor(options = {})
     {
-        options.layoutTraits = LayoutTraits.macOS | LayoutTraits.Fullscreen;
+        options.layoutTraits = new MacOSLayoutTraits(LayoutTraits.Mode.Fullscreen);
 
         super(options);
 

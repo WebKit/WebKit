@@ -45,14 +45,16 @@ function toggleFullscreen()
 {
     if (media.webkitDisplayingFullscreen) {
         debug("Media entered fullscreen");
-        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Fullscreen");
-        shouldBeTrue("mediaController.controls instanceof MacOSFullscreenMediaControls");
+        shouldBeType("mediaController.layoutTraits", "MacOSLayoutTraits");
+        shouldBeTrue("mediaController.layoutTraits.isFullscreen");
+        shouldBeType("mediaController.controls", "MacOSFullscreenMediaControls");
         debug("");
         media.webkitExitFullscreen()
     } else {
         debug("Media exited fullscreen");
-        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Inline");
-        shouldBeTrue("mediaController.controls instanceof MacOSInlineMediaControls");
+        shouldBeType("mediaController.layoutTraits", "MacOSLayoutTraits");
+        shouldBeFalse("mediaController.layoutTraits.isFullscreen");
+        shouldBeType("mediaController.controls", "MacOSInlineMediaControls");
 
         debug("");
         shadowRoot.host.remove();

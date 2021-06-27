@@ -30,7 +30,7 @@ class MacOSInlineMediaControls extends InlineMediaControls
 
     constructor(options = {})
     {
-        options.layoutTraits = LayoutTraits.macOS;
+        options.layoutTraits = new MacOSLayoutTraits(LayoutTraits.Mode.Inline);
 
         super(options);
 

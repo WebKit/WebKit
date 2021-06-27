@@ -1,3 +1,53 @@
+2021-06-26  Sam Weinig  <weinig@apple.com>
+
+        [Modern Media Controls] Modern media controls should not need to know about specific platforms in shared code
+        https://bugs.webkit.org/show_bug.cgi?id=227423
+
+        Reviewed by Eric Carlson.
+
+        Rather than requiring the shared media control classes to know specifics about
+        the various platforms via the LayoutTraits flags, we now abstract those decisions
+        via a new polymorphic LayoutTraits class, which each platform subclasses and
+        implements.
+
+        This will gives better separation and will allow easier experimentation with new
+        control patterns.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * Modules/modern-media-controls/js-files:
+        Adds new files for layout traits and its subclasses.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::layoutTraitsClassName const):
+        (WebCore::MediaControlsHost::platform const): Deleted.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        Replace platform accessor with a new layoutTraitsClassName, which allows
+        the platform to spcecify which of the trait subclasses to use.
+
+        * Modules/modern-media-controls/controls/layout-traits.js: Added.
+        * Modules/modern-media-controls/controls/ios-layout-traits.js: Added.
+        * Modules/modern-media-controls/controls/macos-layout-traits.js: Added.
+        * Modules/modern-media-controls/controls/watchos-layout-traits.js: Added.
+        Add new layout trait files.
+
+        * Modules/modern-media-controls/controls/fullscreen-button.js:
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.js:
+        * Modules/modern-media-controls/controls/layout-item.js:
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        * Modules/modern-media-controls/controls/media-controls.js:
+        * Modules/modern-media-controls/controls/play-pause-button.js:
+        * Modules/modern-media-controls/controls/time-control.js:
+        * Modules/modern-media-controls/controls/watchos-media-controls.js:
+        * Modules/modern-media-controls/media/media-controller.js:
+        * Modules/modern-media-controls/media/tracks-support.js:
+        Replace explicit checks for platform with queries to the layout traits interface.
+
 2021-06-26  Dean Jackson  <dino@apple.com>
 
         Build fix for iOS Simulator. MTLSharedTexture is not available

@@ -6,7 +6,7 @@
 description("Testing the <code>PiPPlacard</code> class.");
 
 debug("Placard with all parameters");
-const placard = new PiPPlacard({ layoutTraits: LayoutTraits.macOS });
+const placard = new PiPPlacard({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBe("placard.children[0].children[0].iconName", "Icons.PiPPlacard");
 shouldBeEqualToString("placard.children[0].children[1].element.innerText", "This video is playing in picture in picture.");

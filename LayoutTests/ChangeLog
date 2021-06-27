@@ -1,3 +1,57 @@
+2021-06-26  Sam Weinig  <weinig@apple.com>
+
+        [Modern Media Controls] Modern media controls should not need to know about specific platforms in shared code
+        https://bugs.webkit.org/show_bug.cgi?id=227423
+
+        Reviewed by Eric Carlson.
+
+        Update tests and results to use LayoutTraits class.
+
+        * media/modern-media-controls/airplay-button/airplay-button-on.html:
+        * media/modern-media-controls/airplay-button/airplay-button.html:
+        * media/modern-media-controls/airplay-placard/airplay-placard.html:
+        * media/modern-media-controls/button/button-active-state.html:
+        * media/modern-media-controls/button/button-click-on-edges.html:
+        * media/modern-media-controls/button/button-focus-state.html:
+        * media/modern-media-controls/button/button-icon-name-expected.txt:
+        * media/modern-media-controls/button/button-icon-name.html:
+        * media/modern-media-controls/button/button-on.html:
+        * media/modern-media-controls/forward-button/forward-button.html:
+        * media/modern-media-controls/fullscreen-button/fullscreen-button.html:
+        * media/modern-media-controls/icon-service/icon-service-expected.txt:
+        * media/modern-media-controls/icon-service/icon-service.html:
+        * media/modern-media-controls/invalid-placard/invalid-placard-constrained-metrics-expected.txt:
+        * media/modern-media-controls/invalid-placard/invalid-placard-constrained-metrics.html:
+        * media/modern-media-controls/invalid-placard/invalid-placard.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor.html:
+        * media/modern-media-controls/layout-item/layout-item-expected.txt:
+        * media/modern-media-controls/layout-item/layout-item.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor.html:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-change.html:
+        * media/modern-media-controls/media-controls/media-controls-appear-when-focus.html:
+        * media/modern-media-controls/media-controls/media-controls-constructor-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-constructor.html:
+        * media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html:
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * media/modern-media-controls/overflow-button/overflow-button.html:
+        * media/modern-media-controls/pip-button/pip-button.html:
+        * media/modern-media-controls/pip-placard/pip-placard.html:
+        * media/modern-media-controls/placard/placard-expected.txt:
+        * media/modern-media-controls/placard/placard.html:
+        * media/modern-media-controls/play-pause-button/play-pause-button.html:
+        * media/modern-media-controls/rewind-button/rewind-button.html:
+        * media/modern-media-controls/skip-back-button/skip-back-button.html:
+        * media/modern-media-controls/skip-forward-button/skip-forward-button.html:
+        * media/modern-media-controls/time-control/time-control-expected.txt:
+        * media/modern-media-controls/time-control/time-control.html:
+        * media/modern-media-controls/tracks-button/tracks-button.html:
+        * media/modern-media-controls/watchos-media-controls/watchos-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/watchos-media-controls/watchos-media-controls-constructor.html:
+
 2021-06-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations after r279217

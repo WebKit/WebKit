@@ -8,7 +8,7 @@ description("Testing an <code>Button</code> has a white background-color when se
 
 window.jsTestIsAsync = true;
 
-const button = new Button({ layoutDelegate: { layoutTraits: LayoutTraits.macOS } });
+const button = new Button({ layoutDelegate: { layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) } });
 button.iconName = Icons.Pause;
 button.on = true;
 document.body.appendChild(button.element);

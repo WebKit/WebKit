@@ -34,7 +34,7 @@ class WatchOSMediaControls extends LayoutNode
         this._scaleFactor = 1;
         this._shouldCenterControlsVertically = false;
 
-        this.layoutTraits = LayoutTraits.watchOS;
+        this.layoutTraits = new WatchOSLayoutTraits(LayoutTraits.Mode.Inline);
 
         this.playButton = new Button({
             cssClassName: "play",

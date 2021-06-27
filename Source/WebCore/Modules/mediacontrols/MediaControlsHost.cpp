@@ -111,16 +111,14 @@ MediaControlsHost::~MediaControlsHost()
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 }
 
-String MediaControlsHost::platform() const
+String MediaControlsHost::layoutTraitsClassName() const
 {
-#if PLATFORM(MAC)
-    return "macos";
-#elif PLATFORM(MACCATALYST)
-    return "maccatalyst"_s;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    return "MacOSLayoutTraits";
 #elif PLATFORM(IOS)
-    return "ios"_s;
+    return "IOSLayoutTraits";
 #elif PLATFORM(WATCHOS)
-    return "watchos"_s;
+    return "WatchOSLayoutTraits";
 #else
     ASSERT_NOT_REACHED();
     return nullString();

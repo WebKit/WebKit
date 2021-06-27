@@ -294,12 +294,15 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/inline-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/inline-media-controls.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/invalid-placard.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/ios-inline-media-controls.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/ios-layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/layout-item.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/layout-node.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/macos-inline-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/macos-inline-media-controls.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/macos-layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/media-controls.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/media-document.css
@@ -326,6 +329,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/tracks-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-media-controls.js
 $(PROJECT_DIR)/Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js

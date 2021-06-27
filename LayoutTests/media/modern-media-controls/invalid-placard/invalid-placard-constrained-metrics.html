@@ -5,14 +5,14 @@
 
 description("Testing the invalid placard with constrained metrics.");
 
-const placard = new InvalidPlacard({ layoutTraits: LayoutTraits.macOS });
+const placard = new InvalidPlacard({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 debug("Setting width and height to 50");
 placard.width = 50;
 placard.height = 50;
 shouldBe("placard.children[0].children.length", "1");
 shouldBe("placard.children[0].children.length", "1");
-shouldBeTrue("placard.children[0].children[0] instanceof Button");
+shouldBeType("placard.children[0].children[0]", "Button");
 
 debug("");
 debug("Setting width and height to 49");

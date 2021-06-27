@@ -9,14 +9,15 @@ const mediaControls = new MacOSFullscreenMediaControls;
 
 shouldBeEqualToString("mediaControls.element.localName", "div");
 shouldBeEqualToString("mediaControls.element.className", "media-controls mac fullscreen");
-shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Fullscreen");
+shouldBeType("mediaControls.layoutTraits", "MacOSLayoutTraits");
+shouldBeTrue("mediaControls.layoutTraits.isFullscreen")
 
 debug("");
 debug("Controls bar");
 shouldBe("mediaControls.bottomControlsBar.children.length", "4");
-shouldBeTrue("mediaControls.bottomControlsBar.children[1] instanceof ButtonsContainer");
-shouldBeTrue("mediaControls.bottomControlsBar.children[2] instanceof ButtonsContainer");
-shouldBeTrue("mediaControls.bottomControlsBar.children[3] instanceof ButtonsContainer");
+shouldBeType("mediaControls.bottomControlsBar.children[1]", "ButtonsContainer");
+shouldBeType("mediaControls.bottomControlsBar.children[2]", "ButtonsContainer");
+shouldBeType("mediaControls.bottomControlsBar.children[3]", "ButtonsContainer");
 
 debug("");
 debug("Left container");

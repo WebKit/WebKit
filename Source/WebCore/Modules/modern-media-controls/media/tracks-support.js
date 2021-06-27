@@ -46,7 +46,7 @@ class TracksSupport extends MediaControllerSupport
     buttonWasPressed(control)
     {
         this.mediaController.showMediaControlsContextMenu(control, {
-            promoteSubMenus: !!(this.mediaController.layoutTraits & LayoutTraits.macOS),
+            promoteSubMenus: this.mediaController.layoutTraits.promoteSubMenusWhenShowingMediaControlsContextMenu(),
         });
     }
 

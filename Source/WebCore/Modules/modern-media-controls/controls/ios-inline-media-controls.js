@@ -28,7 +28,7 @@ class IOSInlineMediaControls extends InlineMediaControls
 
     constructor(options = {})
     {
-        options.layoutTraits = LayoutTraits.iOS;
+        options.layoutTraits = new IOSLayoutTraits(LayoutTraits.Mode.Inline);
 
         super(options);
 

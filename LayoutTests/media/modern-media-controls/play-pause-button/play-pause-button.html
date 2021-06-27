@@ -8,25 +8,25 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>PlayPauseButton</code> class.");
 
-const playButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS });
+const playButton = new PlayPauseButton({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBeEqualToString("playButton.element.localName", "button");
 shouldBeTrue('playButton.element.classList.contains("play-pause")');
 shouldBe("playButton.iconName", "Icons.Play");
 shouldBeFalse("playButton.playing");
 
-const fullscreenPlayButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
-const iOSPlayButton = new PlayPauseButton({ layoutTraits: LayoutTraits.iOS });
+const fullscreenPlayButton = new PlayPauseButton({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Fullscreen) });
+const iOSPlayButton = new PlayPauseButton({ layoutTraits: new IOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
-const pauseButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS });
+const pauseButton = new PlayPauseButton({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 pauseButton.playing = true;
 shouldBeTrue("pauseButton.playing");
 shouldBe("pauseButton.iconName", "Icons.Pause");
 
-const fullscreenPauseButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
+const fullscreenPauseButton = new PlayPauseButton({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Fullscreen) });
 fullscreenPauseButton.playing = true;
 
-const iOSPauseButton = new PlayPauseButton({ layoutTraits: LayoutTraits.iOS });
+const iOSPauseButton = new PlayPauseButton({ layoutTraits: new IOSLayoutTraits(LayoutTraits.Mode.Inline) });
 iOSPauseButton.playing = true;
 
 shouldBecomeEqual('playButton.image.element.style.webkitMaskImage.includes("macOS/Play.svg")', "true", () => {

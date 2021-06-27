@@ -3,6 +3,7 @@ gesture-recognizers/gesture-recognizer.js
 gesture-recognizers/tap.js
 gesture-recognizers/pinch.js
 controls/scheduler.js
+controls/layout-traits.js
 controls/layout-node.js
 controls/layout-item.js
 controls/icon-service.js
@@ -31,14 +32,17 @@ controls/media-controls.js
 controls/background-click-delegate-notifier.js
 controls/inline-media-controls.js
 controls/ios-inline-media-controls.js
+controls/ios-layout-traits.js
 controls/macos-inline-media-controls.js
 controls/macos-fullscreen-media-controls.js
+controls/macos-layout-traits.js
 controls/placard.js
 controls/airplay-placard.js
 controls/invalid-placard.js
 controls/pip-placard.js
 controls/watchos-activity-indicator.js
 controls/watchos-media-controls.js
+controls/watchos-layout-traits.js
 media/media-controller-support.js
 media/airplay-support.js
 media/audio-support.js
