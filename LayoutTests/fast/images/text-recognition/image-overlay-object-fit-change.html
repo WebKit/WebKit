@@ -2,6 +2,12 @@
 <html>
 <head>
 <script src="../../../resources/js-test.js"></script>
+<style>
+img {
+    width: 100px;
+    height: 200px;
+}
+</style>
 </head>
 <body>
 <img src="../resources/green-400x400.png"></img>
@@ -18,38 +24,35 @@ function updateImageOverlayTextDimensions() {
 }
 
 addEventListener("load", async () => {
+    image.style.objectFit = "contain";
     internals.installImageOverlay(image, [
         {
-            topLeft : new DOMPointReadOnly(0.5, 0.5),
-            topRight : new DOMPointReadOnly(1, 0.5),
-            bottomRight : new DOMPointReadOnly(1, 1),
-            bottomLeft : new DOMPointReadOnly(0.5, 1),
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(0.5, 0),
+            bottomRight : new DOMPointReadOnly(0.5, 0.25),
+            bottomLeft : new DOMPointReadOnly(0, 0.25),
             children: [
                 {
-                    text : "Hello",
-                    topLeft : new DOMPointReadOnly(0.5, 0.5),
-                    topRight : new DOMPointReadOnly(1, 0.5),
-                    bottomRight : new DOMPointReadOnly(1, 1),
-                    bottomLeft : new DOMPointReadOnly(0.5, 1),
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.5, 0),
+                    bottomRight : new DOMPointReadOnly(0.5, 0.25),
+                    bottomLeft : new DOMPointReadOnly(0, 0.25),
                 }
-            ],
+            ]
         }
     ]);
 
     updateImageOverlayTextDimensions();
 
-    shouldBe("width", "200");
-    shouldBe("height", "200");
+    shouldBe("width", "50");
+    shouldBe("height", "25");
 
-    image.style.width = "100px";
+    image.style.objectFit = "cover";
     setInterval(updateImageOverlayTextDimensions, 10);
 
-    await shouldBecomeEqual("width", "50");
+    await shouldBecomeEqual("width", "100");
     shouldBe("height", "50");
-
-    image.style.width = "";
-    await shouldBecomeEqual("width", "200");
-    shouldBe("height", "200");
 
     finishJSTest();
 });

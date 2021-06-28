@@ -1,3 +1,35 @@
+2021-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Live Text selections inside images is misaligned when "object-fit" is not "fill"
+        https://bugs.webkit.org/show_bug.cgi?id=227453
+
+        Reviewed by Tim Horton.
+
+        We currently use the bounds of the image overlay host element when injecting transformed Live Text into image
+        element UA shadow roots. However, this causes text to lay out in the wrong place relative to the image when
+        using any "object-fit" values that are not "fill". To address this, use the `replacedContentRect()` of the image
+        renderer when injecting OCR text quads instead.
+
+        Tests: fast/images/text-recognition/image-overlay-object-fit-change.html
+               fast/images/text-recognition/image-overlay-object-fit.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithTextRecognitionResult): See description above for more details.
+        * page/Page.cpp:
+        (WebCore::Page::updateElementsWithTextRecognitionResults):
+
+        We also refactor this code so that we don't immediately try to update text recognition results, and instead
+        queue an internal async task to do so. Immediately performing the update here can potentially cause a debug
+        assertion due to leaving us in a state where we require layout immediately after a rendering update.
+
+        (WebCore::Page::cacheTextRecognitionResult):
+
+        Additionally adjust the text recognition result caching mechanism to update image overlay content when changing
+        the replaced content rect, rather than the element's offset width or height. This ensures that changing CSS
+        "object-fit" values dynamically for images with Live Text causes Live Text bounds to stay up to date.
+
+        * page/Page.h:
+
 2021-06-28  Sam Weinig  <weinig@apple.com>
 
         [Modern Media Controls] Support customizing the media controls via WebKitAdditions

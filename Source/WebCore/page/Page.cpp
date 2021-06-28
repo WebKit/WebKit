@@ -108,6 +108,7 @@
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RenderDescendantIterator.h"
+#include "RenderImage.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -3618,18 +3619,33 @@ void Page::updateElementsWithTextRecognitionResults()
         return !elementAndResult.first;
     });
 
-    for (auto& [element, resultAndSize] : m_textRecognitionResultsByElement) {
-        if (!element || !element->isConnected())
+    Vector<std::pair<Ref<HTMLElement>, TextRecognitionResult>> elementsToUpdate;
+    for (auto& [element, resultAndRect] : m_textRecognitionResultsByElement) {
+        if (!element->isConnected())
             continue;
 
+        auto& [result, containerRect] = resultAndRect;
         auto protectedElement = makeRef(*element);
-        auto& [result, offsetSize] = resultAndSize;
-        IntSize newOffsetSize { protectedElement->offsetWidth(), protectedElement->offsetHeight() };
-        if (offsetSize == newOffsetSize)
+        auto renderer = protectedElement->renderer();
+        if (!is<RenderImage>(renderer))
             continue;
 
-        offsetSize = newOffsetSize;
-        protectedElement->updateWithTextRecognitionResult(result, HTMLElement::CacheTextRecognitionResults::No);
+        auto newContainerRect = enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
+        if (containerRect == newContainerRect)
+            continue;
+
+        containerRect = newContainerRect;
+        elementsToUpdate.append({ WTFMove(protectedElement), result });
+    }
+
+    for (auto& [element, result] : elementsToUpdate) {
+        element->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [result = TextRecognitionResult { result }, weakElement = makeWeakPtr(element.get())] {
+            auto element = makeRefPtr(weakElement.get());
+            if (!element)
+                return;
+
+            element->updateWithTextRecognitionResult(result, HTMLElement::CacheTextRecognitionResults::No);
+        });
     }
 }
 
@@ -3638,7 +3654,7 @@ bool Page::hasCachedTextRecognitionResult(const HTMLElement& element) const
     return m_elementsWithTextRecognitionResults.contains(element);
 }
 
-void Page::cacheTextRecognitionResult(const HTMLElement& element, const IntSize& offsetSize, const TextRecognitionResult& result)
+void Page::cacheTextRecognitionResult(const HTMLElement& element, const IntRect& containerRect, const TextRecognitionResult& result)
 {
     m_elementsWithTextRecognitionResults.add(element);
 
@@ -3647,9 +3663,9 @@ void Page::cacheTextRecognitionResult(const HTMLElement& element, const IntSize&
     });
 
     if (index == notFound)
-        m_textRecognitionResultsByElement.append({ makeWeakPtr(element), { result, offsetSize } });
+        m_textRecognitionResultsByElement.append({ makeWeakPtr(element), { result, containerRect } });
     else
-        m_textRecognitionResultsByElement[index].second = { result, offsetSize };
+        m_textRecognitionResultsByElement[index].second = { result, containerRect };
 
     m_textRecognitionResultsByElement.removeAllMatching([](auto& elementAndResult) {
         return !elementAndResult.first;
