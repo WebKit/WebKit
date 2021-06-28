@@ -435,6 +435,7 @@ static void calculateRestartRanges(ContextMtl* ctx, mtl::BufferRef idxBuffer, st
             ranges->push_back(newRange);
         }
     }
+    idxBuffer->unmap(ctx);
 }
 
 const std::vector<IndexRange> & BufferMtl::getRestartIndices(ContextMtl * ctx, gl::DrawElementsType indexType)
