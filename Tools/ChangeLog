@@ -1,3 +1,14 @@
+2021-06-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Fix race condition in TaskPool unittests 
+        https://bugs.webkit.org/show_bug.cgi?id=227455
+        <rdar://problem/79873003>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/task_pool_unittest.py:
+        (TaskPoolUnittest.test_invalid_shutdown): Increase worker load to 5 seconds.
+
 2021-06-28  Alex Christensen  <achristensen@webkit.org>
 
         RELEASE_ASSERT hit in NetworkSessionCocoa::removeWebSocketTask when using WKWebViewConfiguration._attributedBundleIdentifier
