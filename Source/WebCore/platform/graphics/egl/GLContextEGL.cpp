@@ -476,6 +476,9 @@ bool GLContextEGL::makeContextCurrent()
 
 void GLContextEGL::swapBuffers()
 {
+    if (m_type == Surfaceless)
+        return;
+
     ASSERT(m_surface);
     eglSwapBuffers(m_display.eglDisplay(), m_surface);
 }
