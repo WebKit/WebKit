@@ -5820,6 +5820,16 @@
          "seumas"
       ]
    },
+   "W.D. Xiong" : {
+      "emails" : [
+         "wdx@apple.com",
+         "w_xiong@apple.com"
+      ],
+      "nicks" : [
+         "wdx"
+      ],
+      "status" : "committer"
+   },
    "Web Components Team" : {
       "emails" : [
          "webcomponents-bugzilla@chromium.org"
