@@ -8,6 +8,7 @@
       <dep package="wpebackend-fdo"/>
       <dep package="libsoup"/>
       <dep package="manette"/>
+      <dep package="libvpx"/>
     </dependencies>
   </metamodule>
 
@@ -16,6 +17,7 @@
       <dep package="wpebackend-fdo"/>
       <dep package="libsoup"/>
       <dep package="openxr"/>
+      <dep package="libvpx"/>
     </dependencies>
   </metamodule>
 
@@ -129,5 +131,15 @@
             repo="github-tarball"
             hash="sha256:8f28f0f7707487435578264ac18e14af17a5eab2062fc925fe01cd96ed802dce"/>
   </cmake>
+
+  <!-- libvpx needed for libwebrtc -->
+  <autotools id="libvpx" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --extra-cflags=-fPIC --extra-cxxflags=-fPIC">
+    <pkg-config>vpx.pc</pkg-config>
+    <branch repo="github-tarball"
+            version="1.10.0"
+            module="webmproject/libvpx/archive/refs/tags/v${version}.tar.gz"
+            checkoutdir="libvpx-${version}"
+            hash="sha256:85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"/>
+  </autotools>
 
 </moduleset>

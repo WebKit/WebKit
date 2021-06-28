@@ -1,3 +1,12 @@
+2021-06-28  Daniel Kolesa  <dkolesa@igalia.com>
+
+        [GTK][WPE] Add libvpx to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=227437
+
+        Reviewed by Philippe Normand.
+
+        * jhbuild/jhbuild-minimal.modules:
+
 2021-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] -[NSString _web_widthWithFont:] returns 0
