@@ -1,3 +1,19 @@
+2021-06-28  Per Arne  <pvollan@apple.com>
+
+        Pass correct value of AX per app settings to the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=227441
+        <rdar://problem/79857797>
+
+        Reviewed by Brent Fulgham.
+
+        Pass value of type AXValueState instead of a boolean value for per app AX settings.
+
+        * Shared/AccessibilityPreferences.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::accessibilityPreferences):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::accessibilityPreferencesDidChange):
+
 2021-06-28  Alex Christensen  <achristensen@webkit.org>
 
         RELEASE_ASSERT hit in NetworkSessionCocoa::removeWebSocketTask when using WKWebViewConfiguration._attributedBundleIdentifier
