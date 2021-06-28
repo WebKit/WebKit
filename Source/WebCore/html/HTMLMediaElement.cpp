@@ -190,6 +190,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMediaElement);
 
+using namespace PAL;
+
 static const Seconds SeekRepeatDelay { 100_ms };
 static const double SeekTime = 0.2;
 static const Seconds ScanRepeatDelay { 1.5_s };

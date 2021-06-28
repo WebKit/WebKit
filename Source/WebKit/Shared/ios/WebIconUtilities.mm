@@ -124,7 +124,7 @@ RetainPtr<UIImage> iconForVideoFile(NSURL *file)
     [generator setAppliesPreferredTrackTransform:YES];
 
     NSError *error = nil;
-    RetainPtr<CGImageRef> imageRef = adoptCF([generator copyCGImageAtTime:PAL::kCMTimeZero actualTime:nil error:&error]);
+    RetainPtr<CGImageRef> imageRef = adoptCF([generator copyCGImageAtTime:kCMTimeZero actualTime:nil error:&error]);
     if (!imageRef) {
         LOG_ERROR("Error creating image for video '%@': %@", file, error);
         return fallbackIconForFile(file);

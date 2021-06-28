@@ -34,17 +34,17 @@ namespace WebKit {
 
 bool createWrapper(CFAllocatorRef allocator, const CMBaseVTable* baseVTable, CMBaseClassID classID, CMBaseObjectRef* wrapper)
 {
-    return PAL::CMDerivedObjectCreate(allocator, baseVTable, classID, wrapper) == noErr;
+    return CMDerivedObjectCreate(allocator, baseVTable, classID, wrapper) == noErr;
 }
 
 void* wrapperStorage(CMBaseObjectRef wrapper)
 {
-    return PAL::CMBaseObjectGetDerivedStorage(wrapper);
+    return CMBaseObjectGetDerivedStorage(wrapper);
 }
 
 const CMBaseVTable* wrapperVTable(CMBaseObjectRef wrapper)
 {
-    return PAL::CMBaseObjectGetVTable(wrapper);
+    return CMBaseObjectGetVTable(wrapper);
 }
 
 } // namespace WebKit

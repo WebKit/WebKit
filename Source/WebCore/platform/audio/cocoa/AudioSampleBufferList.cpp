@@ -30,7 +30,6 @@
 #include "VectorMath.h"
 #include <Accelerate/Accelerate.h>
 #include <AudioToolbox/AudioConverter.h>
-#include <pal/cf/AudioToolboxSoftLink.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
@@ -273,7 +272,7 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, size_t f
 
     AudioStreamBasicDescription inputFormat;
     UInt32 propertyDataSize = sizeof(inputFormat);
-    PAL::AudioConverterGetProperty(converter, kAudioConverterCurrentInputStreamDescription, &propertyDataSize, &inputFormat);
+    AudioConverterGetProperty(converter, kAudioConverterCurrentInputStreamDescription, &propertyDataSize, &inputFormat);
     ASSERT(frameCount <= source.mBuffers[0].mDataByteSize / inputFormat.mBytesPerPacket);
 
     AudioConverterFromABLContext context { source, frameCount, inputFormat.mBytesPerPacket };
@@ -281,7 +280,7 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, size_t f
 #if !LOG_DISABLED
     AudioStreamBasicDescription outputFormat;
     propertyDataSize = sizeof(outputFormat);
-    PAL::AudioConverterGetProperty(converter, kAudioConverterCurrentOutputStreamDescription, &propertyDataSize, &outputFormat);
+    AudioConverterGetProperty(converter, kAudioConverterCurrentOutputStreamDescription, &propertyDataSize, &outputFormat);
 
     ASSERT(CAAudioStreamDescription(outputFormat).numberOfChannelStreams() == m_bufferList->bufferCount());
     for (uint32_t i = 0; i < m_bufferList->bufferCount(); ++i) {
@@ -291,7 +290,7 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, size_t f
 #endif
 
     UInt32 samplesConverted = m_sampleCapacity;
-    OSStatus err = PAL::AudioConverterFillComplexBuffer(converter, audioConverterFromABLCallback, &context, &samplesConverted, m_bufferList->list(), nullptr);
+    OSStatus err = AudioConverterFillComplexBuffer(converter, audioConverterFromABLCallback, &context, &samplesConverted, m_bufferList->list(), nullptr);
     if (!err || err == kRanOutOfInputDataStatus) {
         m_sampleCount = samplesConverted;
         return 0;

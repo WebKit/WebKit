@@ -258,6 +258,8 @@ template<> struct LogArgument<WebCore::SourceBufferParserWebM::State> {
 
 namespace WebCore {
 
+using namespace PAL;
+
 static WTFLogChannel& logChannel() { return LogMedia; }
 static const char* logClassName() { return "SourceBufferParserWebM"; }
 
@@ -1064,7 +1066,7 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
         return Skip(reader, bytesRemaining);
     }
 
-    return trackData->consumeFrameData(*reader, metadata, bytesRemaining, PAL::CMTimeMake(block->timecode + m_currentTimecode, m_timescale), block->num_frames);
+    return trackData->consumeFrameData(*reader, metadata, bytesRemaining, CMTimeMake(block->timecode + m_currentTimecode, m_timescale), block->num_frames);
 }
 
 void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID, std::optional<size_t> byteRangeOffset)
@@ -1088,7 +1090,7 @@ webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Read
     CMBlockBufferRef rawBlockBuffer = nullptr;
 
     if (!m_currentBlockBuffer) {
-        auto err = PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, metadata.size, kCFAllocatorDefault, nullptr, 0, metadata.size, 0, &rawBlockBuffer);
+        auto err = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, metadata.size, kCFAllocatorDefault, nullptr, 0, metadata.size, 0, &rawBlockBuffer);
         if (err) {
             PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferCreateWithMemoryBlock failed with error", err);
             return Skip(&reader, bytesRemaining);
@@ -1097,7 +1099,7 @@ webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Read
         m_currentBlockBuffer = adoptCF(rawBlockBuffer);
         m_currentBlockBufferPosition = 0;
 
-        err = PAL::CMBlockBufferAssureBlockMemory(m_currentBlockBuffer.get());
+        err = CMBlockBufferAssureBlockMemory(m_currentBlockBuffer.get());
         if (err) {
             PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioSampleBufferCreateWithPacketDescriptions failed with error", err);
             return Skip(&reader, bytesRemaining);
@@ -1108,7 +1110,7 @@ webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Read
     while (bytesToRead) {
         size_t segmentSizeAtPosition = 0;
         uint8_t* blockBufferData = nullptr;
-        auto err = PAL::CMBlockBufferGetDataPointer(m_currentBlockBuffer.get(), m_currentBlockBufferPosition, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData);
+        auto err = CMBlockBufferGetDataPointer(m_currentBlockBuffer.get(), m_currentBlockBufferPosition, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData);
         if (err) {
             PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferGetDataPointer failed with error", err);
             return Skip(&reader, bytesRemaining);
@@ -1142,7 +1144,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
 #if ENABLE(VP9)
     uint8_t* blockBufferData = nullptr;
     size_t segmentSizeAtPosition = 0;
-    auto err = PAL::CMBlockBufferGetDataPointer(m_currentBlockBuffer.get(), 0, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData);
+    auto err = CMBlockBufferGetDataPointer(m_currentBlockBuffer.get(), 0, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferGetDataPointer failed with error", err);
         return;
@@ -1186,9 +1188,9 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
         duration = track.default_duration.value() * presentationTime.timescale / 1000000000;
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
-    size_t frameSize = PAL::CMBlockBufferGetDataLength(m_currentBlockBuffer.get());
-    CMSampleTimingInfo timing = { PAL::CMTimeMake(duration, presentationTime.timescale), presentationTime, presentationTime };
-    err = PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, m_currentBlockBuffer.get(), this->formatDescription().get(), sampleCount, 1, &timing, 1, &frameSize, &rawSampleBuffer);
+    size_t frameSize = CMBlockBufferGetDataLength(m_currentBlockBuffer.get());
+    CMSampleTimingInfo timing = { CMTimeMake(duration, presentationTime.timescale), presentationTime, presentationTime };
+    err = CMSampleBufferCreateReady(kCFAllocatorDefault, m_currentBlockBuffer.get(), this->formatDescription().get(), sampleCount, 1, &timing, 1, &frameSize, &rawSampleBuffer);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferCreateReady failed with error", err);
         return;
@@ -1198,7 +1200,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     m_currentBlockBuffer = nullptr;
     m_currentBlockBufferPosition = 0;
 
-    auto attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+    auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
     ASSERT(attachmentsArray);
     if (!attachmentsArray) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferGetSampleAttachmentsArray returned NULL");
@@ -1208,7 +1210,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     if (!isKey) {
         for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
             CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-            CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
+            CFDictionarySetValue(attachments, kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
         }
     }
 
@@ -1293,12 +1295,12 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
             return Skip(&reader, bytesRemaining);
         }
 
-        auto streamDescription = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
+        auto streamDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
         if (!streamDescription) {
             PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioFormatDescriptionGetStreamBasicDescription failed");
             return Skip(&reader, bytesRemaining);
         }
-        m_packetDuration = PAL::CMTimeMake(streamDescription->mFramesPerPacket, streamDescription->mSampleRate);
+        m_packetDuration = CMTimeMake(streamDescription->mFramesPerPacket, streamDescription->mSampleRate);
 
         setFormatDescription(WTFMove(formatDescription));
     } else if (codec() == CodecType::Opus) {
@@ -1320,7 +1322,7 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
     m_currentPacketByteOffset = std::nullopt;
     m_currentPacketSize = std::nullopt;
 
-    auto sampleDuration = PAL::CMTimeGetSeconds(PAL::CMTimeSubtract(presentationTime, m_samplePresentationTime)) + PAL::CMTimeGetSeconds(m_packetDuration) * sampleCount;
+    auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration) * sampleCount;
     if (sampleDuration >= m_minimumSampleDuration)
         createSampleBuffer(metadata.position);
 
@@ -1337,21 +1339,21 @@ void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(std::optional<si
     auto fullPacketBytesRead = m_packetBytesRead - m_partialBytesRead;
 
     CMBlockBufferRef blockBuffer = nullptr;
-    auto err = PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, fullPacketBytesRead, kCFAllocatorDefault, nullptr, 0, fullPacketBytesRead, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
+    auto err = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, fullPacketBytesRead, kCFAllocatorDefault, nullptr, 0, fullPacketBytesRead, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferCreateWithMemoryBlock failed with %d", err);
         return;
     }
     auto buffer = adoptCF(blockBuffer);
 
-    err = PAL::CMBlockBufferReplaceDataBytes(m_packetData.data(), buffer.get(), 0, fullPacketBytesRead);
+    err = CMBlockBufferReplaceDataBytes(m_packetData.data(), buffer.get(), 0, fullPacketBytesRead);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferReplaceDataBytes failed with %d", err);
         return;
     }
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
-    err = PAL::CMAudioSampleBufferCreateReadyWithPacketDescriptions(kCFAllocatorDefault, buffer.get(), formatDescription().get(), m_packetDescriptions.size(), m_samplePresentationTime, m_packetDescriptions.data(), &rawSampleBuffer);
+    err = CMAudioSampleBufferCreateReadyWithPacketDescriptions(kCFAllocatorDefault, buffer.get(), formatDescription().get(), m_packetDescriptions.size(), m_samplePresentationTime, m_packetDescriptions.data(), &rawSampleBuffer);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioSampleBufferCreateWithPacketDescriptions failed with %d", err);
         return;

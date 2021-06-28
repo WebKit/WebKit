@@ -31,11 +31,9 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include <CoreAudio/CoreAudioTypes.h>
+#include <AudioToolbox/AudioFile.h>
+#include <AudioToolbox/ExtendedAudioFile.h>
 #include <wtf/RefPtr.h>
-
-using ExtAudioFileRef = struct OpaqueExtAudioFile*;
-using AudioFileID = struct OpaqueAudioFileID*;
 
 namespace WebCore {
 
@@ -60,7 +58,7 @@ private:
     const void* m_data = { nullptr };
     size_t m_dataSize = { 0 };
 
-    AudioFileID m_audioFileID = { nullptr };
+    AudioFileID m_audioFileID = { 0 };
     ExtAudioFileRef m_extAudioFileRef = { nullptr };
 
     AudioStreamBasicDescription m_fileDataFormat;
