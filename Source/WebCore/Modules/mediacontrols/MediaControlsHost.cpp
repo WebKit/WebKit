@@ -67,6 +67,10 @@
 #include <wtf/UUID.h>
 #include <wtf/Variant.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MediaControlsHostAdditions.h>
+#endif
+
 namespace WebCore {
 
 const AtomString& MediaControlsHost::automaticKeyword()
@@ -113,6 +117,9 @@ MediaControlsHost::~MediaControlsHost()
 
 String MediaControlsHost::layoutTraitsClassName() const
 {
+#if defined(MEDIA_CONTROLS_HOST_LAYOUT_TRAITS_CLASS_NAME_OVERRIDE)
+    return MEDIA_CONTROLS_HOST_LAYOUT_TRAITS_CLASS_NAME_OVERRIDE;
+#else
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     return "MacOSLayoutTraits";
 #elif PLATFORM(IOS)
@@ -122,6 +129,7 @@ String MediaControlsHost::layoutTraitsClassName() const
 #else
     ASSERT_NOT_REACHED();
     return nullString();
+#endif
 #endif
 }
 

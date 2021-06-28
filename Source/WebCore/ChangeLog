@@ -1,3 +1,19 @@
+2021-06-28  Sam Weinig  <weinig@apple.com>
+
+        [Modern Media Controls] Support customizing the media controls via WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227433
+
+        Reviewed by Eric Carlson.
+
+        - Support adding additional style sheets and scripts to the media controls
+          via ADDITIONAL_MODERN_MEDIA_CONTROLS_STYLE_SHEETS and ADDITIONAL_MODERN_MEDIA_CONTROLS_SCRIPTS
+          variables in DerivedSources.make
+        - Support overriding default layout traits object class name in MediaControlsHost.
+
+        * DerivedSources.make:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::layoutTraitsClassName const):
+
 2021-06-28  Jean-Yves Avenard  <jya@apple.com>
 
         Not all uses of AudioToolbox framework use soft linking
