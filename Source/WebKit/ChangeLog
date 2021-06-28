@@ -1,3 +1,19 @@
+2021-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r279305) [Mac DEBUG] 4 SOAuthorizationRedirect Tests are Crashing with Assert: !m_sheetWindow
+        https://bugs.webkit.org/show_bug.cgi?id=227454
+        <rdar://problem/79871423>
+
+        Reviewed by Kate Cheney.
+
+        The new assertion is wrong in the case that the app is hidden. When minimized (or hidden) we need to remember
+        to dismiss the sheet once Cocoa restores the app to visible state. So the m_sheetWindow may still exist after
+        returning from 'dismissViewController'. We should assert that either m_sheetWindow is nullptr, or that both
+        m_sheetWindow and m_sheetWindowWillCloseObserver exist. 
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::becomeCompleted):
+
 2021-06-28  Kate Cheney  <katherine_cheney@apple.com>
 
         I-beam pointer is vertical for vertical text

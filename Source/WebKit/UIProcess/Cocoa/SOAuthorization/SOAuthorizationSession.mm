@@ -150,7 +150,7 @@ void SOAuthorizationSession::becomeCompleted()
     m_state = State::Completed;
     dismissViewController();
 #if PLATFORM(MAC)
-    ASSERT(!m_sheetWindow);
+    ASSERT(!m_sheetWindow || (m_sheetWindow && m_sheetWindowWillCloseObserver));
 #endif
 }
 
