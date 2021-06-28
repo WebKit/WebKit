@@ -46,7 +46,6 @@
 WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 namespace WebCore {
-using namespace PAL;
 
 static bool anyOfCGWindow(const Function<bool(CFDictionaryRef info, unsigned id, const String& title)>& predicate)
 {

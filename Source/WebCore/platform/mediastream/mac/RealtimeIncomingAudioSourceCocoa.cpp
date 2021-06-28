@@ -40,7 +40,6 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
-using namespace PAL;
 
 Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {
@@ -131,7 +130,7 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
             m_numberOfFrames = 0;
     }
 
-    CMTime startTime = CMTimeMake(m_numberOfFrames, sampleRate);
+    CMTime startTime = PAL::CMTimeMake(m_numberOfFrames, sampleRate);
     auto mediaTime = PAL::toMediaTime(startTime);
     m_numberOfFrames += numberOfFrames;
 
