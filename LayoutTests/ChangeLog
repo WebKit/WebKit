@@ -1,3 +1,19 @@
+2021-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Resync fetch WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227307
+
+        Reviewed by Geoff Garen.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * tests-options.json:
+
 2021-06-27  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for shrinking over-constrained columns based on the width type priority list

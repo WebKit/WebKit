@@ -14,5 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-length/api-and-duplicate-headers.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/content-length/content-length.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/content-length/content-length.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-length/parsing.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-length/too-long.window.js

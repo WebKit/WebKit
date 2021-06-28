@@ -14,17 +14,18 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/304-update.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/304-update.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/README.md
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/freshness.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/heuristic.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/cache-mode.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/freshness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/heuristic.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/http-cache.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/invalidate.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/partial.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/post-patch.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/partial.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/post-patch.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/split-cache.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/status.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/vary.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/status.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/vary.any.js

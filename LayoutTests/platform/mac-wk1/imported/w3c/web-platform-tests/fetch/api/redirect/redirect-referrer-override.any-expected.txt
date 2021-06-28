@@ -1,0 +1,130 @@
+
+PASS Same origin redirection, no-referrer init, no-referrer redirect header
+PASS Cross origin redirection, no-referrer init, no-referrer redirect header
+PASS Same origin redirection, no-referrer init, no-referrer-when-downgrade redirect header
+PASS Cross origin redirection, no-referrer init, no-referrer-when-downgrade redirect header
+PASS Same origin redirection, no-referrer init, origin redirect header
+PASS Cross origin redirection, no-referrer init, origin redirect header
+PASS Same origin redirection, no-referrer init, origin-when-cross-origin redirect header
+PASS Cross origin redirection, no-referrer init, origin-when-cross-origin redirect header
+PASS Same origin redirection, no-referrer init, same-origin redirect header
+PASS Cross origin redirection, no-referrer init, same-origin redirect header
+PASS Same origin redirection, no-referrer init, strict-origin redirect header
+PASS Cross origin redirection, no-referrer init, strict-origin redirect header
+PASS Same origin redirection, no-referrer init, strict-origin-when-cross-origin redirect header
+PASS Cross origin redirection, no-referrer init, strict-origin-when-cross-origin redirect header
+PASS Same origin redirection, no-referrer init, unsafe-url redirect header
+PASS Cross origin redirection, no-referrer init, unsafe-url redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, no-referrer redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, no-referrer redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, no-referrer-when-downgrade redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, no-referrer-when-downgrade redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, origin redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, origin redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, origin-when-cross-origin redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, origin-when-cross-origin redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, same-origin redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, same-origin redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, strict-origin redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, strict-origin redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, strict-origin-when-cross-origin redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, strict-origin-when-cross-origin redirect header
+PASS Same origin redirection, no-referrer-when-downgrade init, unsafe-url redirect header
+PASS Cross origin redirection, no-referrer-when-downgrade init, unsafe-url redirect header
+PASS Same origin redirection, origin init, no-referrer redirect header
+PASS Cross origin redirection, origin init, no-referrer redirect header
+PASS Same origin redirection, origin init, no-referrer-when-downgrade redirect header
+PASS Cross origin redirection, origin init, no-referrer-when-downgrade redirect header
+PASS Same origin redirection, origin init, origin redirect header
+PASS Cross origin redirection, origin init, origin redirect header
+PASS Same origin redirection, origin init, origin-when-cross-origin redirect header
+PASS Cross origin redirection, origin init, origin-when-cross-origin redirect header
+PASS Same origin redirection, origin init, same-origin redirect header
+PASS Cross origin redirection, origin init, same-origin redirect header
+PASS Same origin redirection, origin init, strict-origin redirect header
+PASS Cross origin redirection, origin init, strict-origin redirect header
+PASS Same origin redirection, origin init, strict-origin-when-cross-origin redirect header
+PASS Cross origin redirection, origin init, strict-origin-when-cross-origin redirect header
+PASS Same origin redirection, origin init, unsafe-url redirect header
+PASS Cross origin redirection, origin init, unsafe-url redirect header
+PASS Same origin redirection, origin-when-cross-origin init, no-referrer redirect header
+PASS Cross origin redirection, origin-when-cross-origin init, no-referrer redirect header
+PASS Same origin redirection, origin-when-cross-origin init, no-referrer-when-downgrade redirect header
+FAIL Cross origin redirection, origin-when-cross-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.html" but got "http://localhost:8800/"
+PASS Same origin redirection, origin-when-cross-origin init, origin redirect header
+PASS Cross origin redirection, origin-when-cross-origin init, origin redirect header
+PASS Same origin redirection, origin-when-cross-origin init, origin-when-cross-origin redirect header
+PASS Cross origin redirection, origin-when-cross-origin init, origin-when-cross-origin redirect header
+PASS Same origin redirection, origin-when-cross-origin init, same-origin redirect header
+PASS Cross origin redirection, origin-when-cross-origin init, same-origin redirect header
+PASS Same origin redirection, origin-when-cross-origin init, strict-origin redirect header
+PASS Cross origin redirection, origin-when-cross-origin init, strict-origin redirect header
+PASS Same origin redirection, origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
+PASS Cross origin redirection, origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
+PASS Same origin redirection, origin-when-cross-origin init, unsafe-url redirect header
+FAIL Cross origin redirection, origin-when-cross-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.html" but got "http://localhost:8800/"
+PASS Same origin redirection, same-origin init, no-referrer redirect header
+PASS Cross origin redirection, same-origin init, no-referrer redirect header
+PASS Same origin redirection, same-origin init, no-referrer-when-downgrade redirect header
+FAIL Cross origin redirection, same-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.html" but got (object) null
+PASS Same origin redirection, same-origin init, origin redirect header
+FAIL Cross origin redirection, same-origin init, origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+PASS Same origin redirection, same-origin init, origin-when-cross-origin redirect header
+FAIL Cross origin redirection, same-origin init, origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+PASS Same origin redirection, same-origin init, same-origin redirect header
+PASS Cross origin redirection, same-origin init, same-origin redirect header
+PASS Same origin redirection, same-origin init, strict-origin redirect header
+FAIL Cross origin redirection, same-origin init, strict-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+PASS Same origin redirection, same-origin init, strict-origin-when-cross-origin redirect header
+FAIL Cross origin redirection, same-origin init, strict-origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+PASS Same origin redirection, same-origin init, unsafe-url redirect header
+FAIL Cross origin redirection, same-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.html" but got (object) null
+PASS Same origin redirection, strict-origin init, no-referrer redirect header
+PASS Cross origin redirection, strict-origin init, no-referrer redirect header
+PASS Same origin redirection, strict-origin init, no-referrer-when-downgrade redirect header
+PASS Cross origin redirection, strict-origin init, no-referrer-when-downgrade redirect header
+PASS Same origin redirection, strict-origin init, origin redirect header
+PASS Cross origin redirection, strict-origin init, origin redirect header
+PASS Same origin redirection, strict-origin init, origin-when-cross-origin redirect header
+PASS Cross origin redirection, strict-origin init, origin-when-cross-origin redirect header
+PASS Same origin redirection, strict-origin init, same-origin redirect header
+PASS Cross origin redirection, strict-origin init, same-origin redirect header
+PASS Same origin redirection, strict-origin init, strict-origin redirect header
+PASS Cross origin redirection, strict-origin init, strict-origin redirect header
+PASS Same origin redirection, strict-origin init, strict-origin-when-cross-origin redirect header
+PASS Cross origin redirection, strict-origin init, strict-origin-when-cross-origin redirect header
+PASS Same origin redirection, strict-origin init, unsafe-url redirect header
+PASS Cross origin redirection, strict-origin init, unsafe-url redirect header
+PASS Same origin redirection, strict-origin-when-cross-origin init, no-referrer redirect header
+PASS Cross origin redirection, strict-origin-when-cross-origin init, no-referrer redirect header
+PASS Same origin redirection, strict-origin-when-cross-origin init, no-referrer-when-downgrade redirect header
+FAIL Cross origin redirection, strict-origin-when-cross-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.html" but got "http://localhost:8800/"
+PASS Same origin redirection, strict-origin-when-cross-origin init, origin redirect header
+PASS Cross origin redirection, strict-origin-when-cross-origin init, origin redirect header
+PASS Same origin redirection, strict-origin-when-cross-origin init, origin-when-cross-origin redirect header
+PASS Cross origin redirection, strict-origin-when-cross-origin init, origin-when-cross-origin redirect header
+PASS Same origin redirection, strict-origin-when-cross-origin init, same-origin redirect header
+PASS Cross origin redirection, strict-origin-when-cross-origin init, same-origin redirect header
+PASS Same origin redirection, strict-origin-when-cross-origin init, strict-origin redirect header
+PASS Cross origin redirection, strict-origin-when-cross-origin init, strict-origin redirect header
+PASS Same origin redirection, strict-origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
+PASS Cross origin redirection, strict-origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
+PASS Same origin redirection, strict-origin-when-cross-origin init, unsafe-url redirect header
+FAIL Cross origin redirection, strict-origin-when-cross-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.html" but got "http://localhost:8800/"
+PASS Same origin redirection, unsafe-url init, no-referrer redirect header
+PASS Cross origin redirection, unsafe-url init, no-referrer redirect header
+PASS Same origin redirection, unsafe-url init, no-referrer-when-downgrade redirect header
+PASS Cross origin redirection, unsafe-url init, no-referrer-when-downgrade redirect header
+PASS Same origin redirection, unsafe-url init, origin redirect header
+PASS Cross origin redirection, unsafe-url init, origin redirect header
+PASS Same origin redirection, unsafe-url init, origin-when-cross-origin redirect header
+PASS Cross origin redirection, unsafe-url init, origin-when-cross-origin redirect header
+PASS Same origin redirection, unsafe-url init, same-origin redirect header
+PASS Cross origin redirection, unsafe-url init, same-origin redirect header
+PASS Same origin redirection, unsafe-url init, strict-origin redirect header
+PASS Cross origin redirection, unsafe-url init, strict-origin redirect header
+PASS Same origin redirection, unsafe-url init, strict-origin-when-cross-origin redirect header
+PASS Cross origin redirection, unsafe-url init, strict-origin-when-cross-origin redirect header
+PASS Same origin redirection, unsafe-url init, unsafe-url redirect header
+PASS Cross origin redirection, unsafe-url init, unsafe-url redirect header
+

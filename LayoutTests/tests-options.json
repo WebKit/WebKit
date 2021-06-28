@@ -1424,6 +1424,9 @@
     "imported/w3c/web-platform-tests/fetch/api/response/response-clone.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/http-cache/304-update.html": [
         "slow"
     ],

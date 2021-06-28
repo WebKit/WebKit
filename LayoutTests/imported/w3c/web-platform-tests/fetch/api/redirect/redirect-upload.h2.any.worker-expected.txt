@@ -1,0 +1,15 @@
+
+FAIL Fetch upload streaming should be accepted on 303 promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Fetch upload streaming should fail on 301 promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch upload streaming should fail on 302 promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch upload streaming should fail on 307 promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch upload streaming should fail on 308 promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

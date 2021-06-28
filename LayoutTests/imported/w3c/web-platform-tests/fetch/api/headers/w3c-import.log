@@ -14,13 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-basic.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-casing.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-combine.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-errors.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-no-cors.window.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-normalize.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-record.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-structure.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-basic.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-casing.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-combine.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-errors.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-no-cors.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-normalize.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-record.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-structure.any.js

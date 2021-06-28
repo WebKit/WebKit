@@ -1,4 +1,5 @@
 
+PASS Constructing a Request with a stream holds the original object.
 PASS Constructing a Request with a stream on which getReader() is called
 PASS Constructing a Request with a stream on which read() is called
 PASS Constructing a Request with a stream on which read() and releaseLock() are called

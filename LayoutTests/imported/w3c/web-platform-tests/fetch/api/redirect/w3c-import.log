@@ -22,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-origin.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer-override.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer.any.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-schemes.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-schemes.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-upload.h2.any.js
