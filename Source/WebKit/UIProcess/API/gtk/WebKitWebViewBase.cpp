@@ -263,6 +263,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
     std::unique_ptr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
+    IntSize viewSize { };
     bool shouldForwardNextKeyEvent { false };
     bool shouldForwardNextWheelEvent { false };
 #if !USE(GTK4)
@@ -867,8 +868,10 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
     }
 #endif
 
+    priv->viewSize = viewRect.size();
+
     if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
-        drawingArea->setSize(viewRect.size());
+        drawingArea->setSize(priv->viewSize);
 }
 
 #if USE(GTK4)
@@ -2215,6 +2218,51 @@ void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
         priv->activityState.remove(ActivityState::IsFocused);
 
     webkitWebViewBaseScheduleUpdateActivityState(webViewBase, flagsToUpdate);
+}
+
+IntSize webkitWebViewBaseGetViewSize(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    int width = priv->viewSize.width();
+    int height = priv->viewSize.height();
+
+    // First try the widget's own size. If it's already allocated,
+    // everything is fine and we'll just use that.
+    if (width > 0 || height > 0)
+        return IntSize(width, height);
+
+    GtkWidget* parent = gtk_widget_get_parent(GTK_WIDGET(webViewBase));
+
+    // If it's not allocated, then its size will be 0. This can be a problem
+    // if the web view is loaded in background and the container doesn't
+    // allocate non-visible children: e.g. GtkNotebook in GTK3 does allocate
+    // them, but GtkStack, and so GtkNotebook in GTK4 and HdyTabView don't.
+    // See https://gitlab.gnome.org/GNOME/epiphany/-/issues/1532
+    // In that case we go up through the hierarchy and try to find a parent
+    // with non-0 size.
+    while (parent) {
+#if USE(GTK4)
+        width = gtk_widget_get_width(parent);
+        height = gtk_widget_get_height(parent);
+
+        if (width > 0 || height > 0)
+#else
+        width = gtk_widget_get_allocated_width(parent);
+        height = gtk_widget_get_allocated_height(parent);
+
+        // The default widget size in GTK3 is 1x1, not 0x0.
+        if (width > 1 || height > 1)
+#endif
+            return IntSize(width, height);
+
+        parent = gtk_widget_get_parent(parent);
+    }
+
+    // If there was no such a parent, it's likely the widget widget isn't
+    // in a window, or the whole window isn't mapped. No point in trying
+    // in this case.
+
+    return IntSize();
 }
 
 bool webkitWebViewBaseIsInWindowActive(WebKitWebViewBase* webViewBase)
