@@ -1,3 +1,15 @@
+2021-06-28  Sam Weinig  <weinig@apple.com>
+
+        Add helpers to create Spans from CFDataRef and NSData
+        https://bugs.webkit.org/show_bug.cgi?id=227217
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/cf/SpanCF.cpp: Added.
+        * TestWebKitAPI/Tests/WTF/cocoa/SpanCocoa.mm: Added.
+        Add tests for new asBytes() overloads. 
+
 2021-06-28  Philippe Normand  <pnormand@igalia.com>
 
         [webkitpy] Test timeouts not properly detected when running layout tests with Python 3

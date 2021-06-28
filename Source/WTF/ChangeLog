@@ -1,3 +1,22 @@
+2021-06-28  Sam Weinig  <weinig@apple.com>
+
+        Add helpers to create Spans from CFDataRef and NSData
+        https://bugs.webkit.org/show_bug.cgi?id=227217
+
+        Reviewed by Chris Dumez.
+
+        Add overloads of asBytes() for CFDataRef and NSData. This is going to
+        be a common enough pattern to warrent these helpers.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/PlatformFTW.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/cf/SpanCF.h: Added.
+        (WTF::asBytes):
+        * wtf/cocoa/SpanCocoa.h: Added.
+        (WTF::asBytes):
+
 2021-06-27  Antoine Quint  <graouts@webkit.org>
 
         [Model] [iOS] Add support for rendering model resources
