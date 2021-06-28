@@ -72,6 +72,7 @@ struct InteractionInformationAtPosition {
 #endif
     bool shouldNotUseIBeamInEditableContent { false };
     bool isImageOverlayText { false };
+    bool isHorizontalWritingMode { false };
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;
@@ -85,7 +86,7 @@ struct InteractionInformationAtPosition {
     String textBefore;
     String textAfter;
 
-    float caretHeight { 0 };
+    float caretLength { 0 };
     WebCore::FloatRect lineCaretExtent;
 
     std::optional<WebCore::Cursor> cursor;

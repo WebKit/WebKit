@@ -9625,8 +9625,9 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     double scaleFactor = self._contentZoomScale;
 
     UIPointerStyle *(^iBeamCursor)(void) = ^{
-        float beamLength = _positionInformation.caretHeight * scaleFactor;
-        UIAxis iBeamConstraintAxes = UIAxisVertical;
+        float beamLength = _positionInformation.caretLength * scaleFactor;
+        auto axisOrientation = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
+        UIAxis iBeamConstraintAxes = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
 
         // If the I-beam is so large that the magnetism is hard to fight, we should not apply any magnetism.
         if (beamLength > [UITextInteraction _maximumBeamSnappingLength])
@@ -9636,7 +9637,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         if ([region.identifier isEqual:editablePointerRegionIdentifier])
             iBeamConstraintAxes = UIAxisNeither;
 
-        return [UIPointerStyle styleWithShape:[UIPointerShape beamWithPreferredLength:beamLength axis:UIAxisVertical] constrainedAxes:iBeamConstraintAxes];
+        return [UIPointerStyle styleWithShape:[UIPointerShape beamWithPreferredLength:beamLength axis:axisOrientation] constrainedAxes:iBeamConstraintAxes];
     };
 
     if (self.webView._editable) {
