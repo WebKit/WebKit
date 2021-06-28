@@ -21,18 +21,23 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import os
 import shutil
 import tempfile
-import unittest
 
 from datetime import datetime
-from webkitcorepy import OutputCapture
+from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import program, mocks
 
 
-class TestFind(unittest.TestCase):
-    path = '/mock/repository'
+class TestFind(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super(TestFind, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_basic_git(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
@@ -235,7 +240,7 @@ Identifier: 3@trunk
         )
 
 
-class TestInfo(unittest.TestCase):
+class TestInfo(testing.TestCase):
     path = '/mock/repository'
 
     def test_basic_git(self):

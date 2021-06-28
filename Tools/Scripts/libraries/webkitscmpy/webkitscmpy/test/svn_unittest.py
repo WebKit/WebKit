@@ -21,17 +21,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import shutil
-import tempfile
-import unittest
 
 from datetime import datetime, timedelta
-from webkitcorepy import OutputCapture
+from webkitcorepy import OutputCapture, LoggerCapture, testing
 from webkitscmpy import Commit, local, mocks, remote
 
 
-class TestLocalSvn(unittest.TestCase):
-    path = '/mock/repository'
+class TestLocalSvn(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super(TestLocalSvn, self).setUp()
+        os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_detection(self):
         with mocks.local.Svn(self.path), mocks.local.Git():
@@ -81,7 +82,7 @@ class TestLocalSvn(unittest.TestCase):
             self.assertDictEqual(
                 {
                     u'Path': u'.',
-                    u'Working Copy Root Path': u'/mock/repository',
+                    u'Working Copy Root Path': self.path,
                     u'Repository Root': u'https://svn.mock.org/repository/repository',
                     u'URL': u'https://svn.mock.org/repository/repository/trunk',
                     u'Relative URL':  u'^/trunk',
@@ -95,7 +96,7 @@ class TestLocalSvn(unittest.TestCase):
             )
 
     def test_commit_revision(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertEqual('1@trunk', str(local.Svn(self.path).commit(revision=1)))
             self.assertEqual('2@trunk', str(local.Svn(self.path).commit(revision=2)))
             self.assertEqual('2.1@branch-a', str(local.Svn(self.path).commit(revision=3)))
@@ -110,13 +111,13 @@ class TestLocalSvn(unittest.TestCase):
                 self.assertEqual(None, local.Svn(self.path).commit(revision=11))
 
     def test_commit_from_branch(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertEqual('4@trunk', str(local.Svn(self.path).commit(branch='trunk')))
             self.assertEqual('2.2@branch-a', str(local.Svn(self.path).commit(branch='branch-a')))
             self.assertEqual('2.3@branch-b', str(local.Svn(self.path).commit(branch='branch-b')))
 
     def test_identifier(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertEqual(1, local.Svn(self.path).commit(identifier='1@trunk').revision)
             self.assertEqual(2, local.Svn(self.path).commit(identifier='2@trunk').revision)
             self.assertEqual(3, local.Svn(self.path).commit(identifier='2.1@branch-a').revision)
@@ -127,7 +128,7 @@ class TestLocalSvn(unittest.TestCase):
             self.assertEqual(8, local.Svn(self.path).commit(identifier='2.3@branch-b').revision)
 
     def test_non_cannonical_identifiers(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertEqual('2@trunk', str(local.Svn(self.path).commit(identifier='0@branch-a')))
             self.assertEqual('1@trunk', str(local.Svn(self.path).commit(identifier='-1@branch-a')))
 
@@ -181,31 +182,26 @@ class TestLocalSvn(unittest.TestCase):
             self.assertEqual('2.1@branch-a', str(repo.commit(revision=3)))
 
     def test_cache(self):
-        try:
-            dirname = tempfile.mkdtemp()
-            with mocks.local.Svn(dirname) as mock_repo, OutputCapture():
-                os.mkdir(os.path.join(dirname, '.svn'))
-                self.assertEqual('4@trunk', str(local.Svn(dirname).commit()))
+        with mocks.local.Svn(self.path) as mock_repo, OutputCapture():
+            self.assertEqual('4@trunk', str(local.Svn(self.path).commit()))
 
-                mock_repo.connected = False
-                commit = local.Svn(dirname).commit()
-                self.assertEqual('4@trunk', str(commit))
+            mock_repo.connected = False
+            commit = local.Svn(self.path).commit()
+            self.assertEqual('4@trunk', str(commit))
 
-                with self.assertRaises(local.Svn.Exception):
-                    local.Svn(dirname).commit(revision=3)
-        finally:
-            shutil.rmtree(dirname)
+            with self.assertRaises(local.Svn.Exception):
+                local.Svn(self.path).commit(revision=3)
 
     def test_tag(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertEqual(9, local.Svn(self.path).commit(tag='tag-1').revision)
 
     def test_tag_previous(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertEqual(7, local.Svn(self.path).commit(identifier='2.2@tags/tag-1').revision)
 
     def test_checkout(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             repository = local.Svn(self.path)
 
             self.assertEqual(6, repository.commit().revision)
@@ -219,20 +215,20 @@ class TestLocalSvn(unittest.TestCase):
             self.assertEqual(9, repository.commit().revision)
 
     def test_no_log(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertIsNone(local.Svn(self.path).commit(identifier='4@trunk', include_log=False).message)
 
     def test_alternative_default_branch(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertEqual(str(local.Svn(self.path).find('4@main')), '4@trunk')
             self.assertEqual(str(local.Svn(self.path).find('4@master')), '4@trunk')
 
     def test_no_identifier(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             self.assertIsNone(local.Svn(self.path).find('trunk', include_identifier=False).identifier)
 
     def test_commits(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             svn = local.Svn(self.path)
             self.assertEqual(Commit.Encoder().default([
                 svn.commit(revision='r6'),
@@ -242,7 +238,7 @@ class TestLocalSvn(unittest.TestCase):
             ]), Commit.Encoder().default(list(svn.commits(begin=dict(revision='r1'), end=dict(revision='r6')))))
 
     def test_commits_branch(self):
-        with mocks.local.Svn(self.path), OutputCapture():
+        with mocks.local.Svn(self.path), LoggerCapture():
             svn = local.Svn(self.path)
             self.assertEqual(Commit.Encoder().default([
                 svn.commit(revision='r7'),
@@ -252,7 +248,7 @@ class TestLocalSvn(unittest.TestCase):
             ]), Commit.Encoder().default(list(svn.commits(begin=dict(argument='r1'), end=dict(argument='r7')))))
 
 
-class TestRemoteSvn(unittest.TestCase):
+class TestRemoteSvn(testing.TestCase):
     remote = 'https://svn.example.org/repository/webkit'
 
     def test_detection(self):

@@ -1,5 +1,36 @@
 2021-06-28  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Add test suite with temp directory
+        https://bugs.webkit.org/show_bug.cgi?id=227327
+        <rdar://problem/79697909>
+
+        Reviewed by Stephanie Lewis.
+
+        We had some duplicated code which set up, then cleaned up a temporary
+        directory associated with a test. This should really be owned by a
+        base class shared between multiple test suites.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/testing.py: Added.
+        (PathTestCase): Create a temporary directory before a test starts, delete it after.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/canonicalize_unittest.py:
+        (TestCanonicalize): Adopt PathTestCase.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py:
+        (TestCheckout): Adopt PathTestCase.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind): Adopt PathTestCase.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit): Adopt PathTestCase.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/scm_unittest.py:
+        (TestScm): Adopt PathTestCase.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_git_svn_unittest.py:
+        (TestSetupGitSvn): Adopt PathTestCase.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn): Adopt PathTestCase.
+
+2021-06-28  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Fix race condition in TaskPool unittests 
         https://bugs.webkit.org/show_bug.cgi?id=227455
         <rdar://problem/79873003>

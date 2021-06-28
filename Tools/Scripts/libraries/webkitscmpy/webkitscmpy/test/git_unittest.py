@@ -21,18 +21,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import shutil
-import tempfile
-import unittest
 
 from datetime import datetime
-from webkitcorepy import run, LoggerCapture, OutputCapture
+from webkitcorepy import run, testing, LoggerCapture, OutputCapture
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import Commit, local, mocks, remote
 
 
-class TestGit(unittest.TestCase):
-    path = '/mock/repository'
+class TestGit(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super(TestGit, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
 
     def test_detection(self):
         with OutputCapture(), mocks.local.Git(self.path), mocks.local.Svn():
@@ -79,65 +80,52 @@ class TestGit(unittest.TestCase):
             self.assertEqual(local.Git(self.path).default_branch, 'main')
 
     def test_scm_type(self):
-        try:
-            dirname = tempfile.mkdtemp()
-            with mocks.local.Git(dirname, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
-                self.assertTrue(local.Git(dirname).is_git)
-                self.assertFalse(local.Git(dirname).is_svn)
+        with mocks.local.Git(self.path, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+            self.assertTrue(local.Git(self.path).is_git)
+            self.assertFalse(local.Git(self.path).is_svn)
 
-            with mocks.local.Git(dirname, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
-                self.assertTrue(local.Git(dirname).is_git)
-                self.assertTrue(local.Git(dirname).is_svn)
-
-        finally:
-            shutil.rmtree(dirname)
+        with mocks.local.Git(self.path, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+            self.assertTrue(local.Git(self.path).is_git)
+            self.assertTrue(local.Git(self.path).is_svn)
 
     def test_info(self):
-        try:
-            dirname = tempfile.mkdtemp()
-            with mocks.local.Git(dirname, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
-                with self.assertRaises(local.Git.Exception):
-                    self.assertEqual(dict(), local.Git(dirname).info())
+        with mocks.local.Git(self.path, remote='git@example.org:mock/repository'), MockTime, LoggerCapture():
+            with self.assertRaises(local.Git.Exception):
+                self.assertEqual(dict(), local.Git(self.path).info())
 
-            with mocks.local.Git(dirname, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime:
-                self.assertDictEqual(
-                    {
-                        'Path': '.',
-                        'Repository Root': 'git@example.org:/mock/repository',
-                        'URL': 'git@example.org:/mock/repository/main',
-                        'Revision': '9',
-                        'Node Kind': 'directory',
-                        'Schedule': 'normal',
-                        'Last Changed Author': 'jbedard@apple.com',
-                        'Last Changed Rev': '9',
-                        'Last Changed Date': datetime.fromtimestamp(1601668000).strftime('%Y-%m-%d %H:%M:%S'),
-                    }, local.Git(dirname).info(),
-                )
-        finally:
-            shutil.rmtree(dirname)
+        with mocks.local.Git(self.path, git_svn=True, remote='git@example.org:mock/repository'), MockTime:
+            self.assertDictEqual(
+                {
+                    'Path': '.',
+                    'Repository Root': 'git@example.org:mock/repository',
+                    'URL': 'git@example.org:mock/repository/main',
+                    'Revision': '9',
+                    'Node Kind': 'directory',
+                    'Schedule': 'normal',
+                    'Last Changed Author': 'jbedard@apple.com',
+                    'Last Changed Rev': '9',
+                    'Last Changed Date': datetime.fromtimestamp(1601668000).strftime('%Y-%m-%d %H:%M:%S'),
+                }, local.Git(self.path).info(),
+            )
 
     def test_commit_revision(self):
-        try:
-            dirname = tempfile.mkdtemp()
-            with mocks.local.Git(dirname), MockTime, LoggerCapture():
-                with self.assertRaises(local.Git.Exception):
-                    self.assertEqual(None, local.Git(dirname).commit(revision=1))
+        with mocks.local.Git(self.path), MockTime, LoggerCapture():
+            with self.assertRaises(local.Git.Exception):
+                self.assertEqual(None, local.Git(self.path).commit(revision=1))
 
-            with mocks.local.Git(dirname, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
-                self.assertEqual('1@main', str(local.Git(dirname).commit(revision=1)))
-                self.assertEqual('2@main', str(local.Git(dirname).commit(revision=2)))
-                self.assertEqual('2.1@branch-a', str(local.Git(dirname).commit(revision=3)))
-                self.assertEqual('3@main', str(local.Git(dirname).commit(revision=4)))
-                self.assertEqual('2.2@branch-b', str(local.Git(dirname).commit(revision=5)))
-                self.assertEqual('2.2@branch-a', str(local.Git(dirname).commit(revision=6)))
-                self.assertEqual('2.3@branch-b', str(local.Git(dirname).commit(revision=7)))
-                self.assertEqual('4@main', str(local.Git(dirname).commit(revision=8)))
+        with mocks.local.Git(self.path, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+            self.assertEqual('1@main', str(local.Git(self.path).commit(revision=1)))
+            self.assertEqual('2@main', str(local.Git(self.path).commit(revision=2)))
+            self.assertEqual('2.1@branch-a', str(local.Git(self.path).commit(revision=3)))
+            self.assertEqual('3@main', str(local.Git(self.path).commit(revision=4)))
+            self.assertEqual('2.2@branch-b', str(local.Git(self.path).commit(revision=5)))
+            self.assertEqual('2.2@branch-a', str(local.Git(self.path).commit(revision=6)))
+            self.assertEqual('2.3@branch-b', str(local.Git(self.path).commit(revision=7)))
+            self.assertEqual('4@main', str(local.Git(self.path).commit(revision=8)))
 
-                # Out-of-bounds commit
-                with self.assertRaises(local.Git.Exception):
-                    self.assertEqual(None, local.Git(dirname).commit(revision=10))
-        finally:
-            shutil.rmtree(dirname)
+            # Out-of-bounds commit
+            with self.assertRaises(local.Git.Exception):
+                self.assertEqual(None, local.Git(self.path).commit(revision=10))
 
     def test_commit_hash(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
@@ -285,7 +273,7 @@ class TestGit(unittest.TestCase):
 
     def test_commits(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mock:
+            with mock, LoggerCapture():
                 git = local.Git(self.path)
                 self.assertEqual(Commit.Encoder().default([
                     git.commit(hash='bae5d1e9'),
@@ -296,7 +284,7 @@ class TestGit(unittest.TestCase):
 
     def test_commits_branch(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mock:
+            with mock, LoggerCapture():
                 git = local.Git(self.path)
                 self.assertEqual(Commit.Encoder().default([
                     git.commit(hash='621652ad'),
@@ -378,7 +366,7 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
             )
 
 
-class TestGitHub(unittest.TestCase):
+class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
 
     def test_detection(self):
@@ -530,8 +518,7 @@ class TestGitHub(unittest.TestCase):
             ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
 
 
-
-class TestBitBucket(unittest.TestCase):
+class TestBitBucket(testing.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
 
     def test_detection(self):

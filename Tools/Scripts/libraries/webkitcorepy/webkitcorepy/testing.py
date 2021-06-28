@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,44 +20,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
+from __future__ import absolute_import
+
+import os
+import shutil
+import tempfile
+
+from unittest import TestCase
 
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+class PathTestCase(TestCase):
+    basepath = ''
 
+    def __init__(self, *args, **kwargs):
+        super(PathTestCase, self).__init__(*args, **kwargs)
+        self.container = None
+        self.path = None
 
-setup(
-    name='webkitcorepy',
-    version='0.6.0',
-    description='Library containing various Python support classes and functions.',
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: Other/Proprietary License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    keywords='python unicode',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitcorepy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitcorepy',
-        'webkitcorepy.mocks',
-        'webkitcorepy.tests',
-        'webkitcorepy.tests.mocks',
-    ],
-    install_requires=[
-        'mock',
-        'requests',
-        'six',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-)
+    def setUp(self):
+        self.container = tempfile.mkdtemp()
+        self.path = os.path.join(self.container, self.basepath)
+        os.makedirs(self.path)
+
+    def tearDown(self):
+        shutil.rmtree(self.container, ignore_errors=True)
+        self.container = None
+        self.path = None

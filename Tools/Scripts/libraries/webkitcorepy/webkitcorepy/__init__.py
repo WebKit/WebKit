@@ -37,7 +37,7 @@ from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDupl
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.credentials import credentials
 
-version = Version(0, 5, 19)
+version = Version(0, 6, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
