@@ -2030,7 +2030,7 @@ void B3IRGenerator::emitEntryTierUpCheck()
         return;
 
     ASSERT(m_tierUp);
-    Value* countDownLocation = constant(pointerType(), reinterpret_cast<uint64_t>(&m_tierUp->m_counter), Origin());
+    Value* countDownLocation = constant(pointerType(), bitwise_cast<uintptr_t>(&m_tierUp->m_counter), Origin());
 
     PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Void, Origin());
     Effects effects = Effects::none();
@@ -2080,7 +2080,7 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
     m_tierUp->osrEntryTriggers().append(TierUpCount::TriggerReason::DontTrigger);
     m_tierUp->outerLoops().append(outerLoopIndex);
 
-    Value* countDownLocation = constant(pointerType(), reinterpret_cast<uint64_t>(&m_tierUp->m_counter), origin);
+    Value* countDownLocation = constant(pointerType(), bitwise_cast<uintptr_t>(&m_tierUp->m_counter), origin);
 
     Vector<ExpressionType> stackmap;
     for (auto& local : m_locals) {
