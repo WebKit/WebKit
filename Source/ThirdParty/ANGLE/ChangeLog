@@ -1,5 +1,29 @@
 2021-06-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        iPhone 6S - iOS 15.0 - unable to retrieve WebGL2 context
+        https://bugs.webkit.org/show_bug.cgi?id=226975
+        rdar://78966563
+
+        Reviewed by Kenneth Russell.
+
+        Limit the OpenGL ES 3.0 contexts to iOS GPU Family 3, not
+        4.
+
+        The limit was most likely added to guard sample_compare
+        lod_options properties .lod and .gradient. However, these
+        are always supported on iOS.
+
+        Currently there is already ES 3.0 features implemented
+        in ANGLE that are guarded by iOS GPU Family 3.
+
+        Fixes WebGL 2.0 to work on iPhone6s and similar
+        devices  (A9, A9X).
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::getMaxSupportedESVersion const):
+
+2021-06-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         ANGLE Metal index buffer left mapped when building primitive restart ranges
         https://bugs.webkit.org/show_bug.cgi?id=227371
 
