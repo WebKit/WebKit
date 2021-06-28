@@ -1,3 +1,13 @@
+2021-06-28  Philippe Normand  <pnormand@igalia.com>
+
+        [webkitpy] Test timeouts not properly detected when running layout tests with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=227442
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._check_for_driver_timeout): out_line contains a byte string, so test it as such.
+
 2021-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: add an option to enable the web process sandbox
