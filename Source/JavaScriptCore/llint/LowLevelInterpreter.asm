@@ -1998,8 +1998,6 @@ slowPathOp(get_by_val_with_this)
 slowPathOp(get_direct_pname)
 slowPathOp(get_enumerable_length)
 slowPathOp(get_property_enumerator)
-slowPathOp(greater)
-slowPathOp(greatereq)
 slowPathOp(has_enumerable_indexed_property)
 slowPathOp(has_enumerable_property)
 
@@ -2012,8 +2010,6 @@ end
 
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
-slowPathOp(less)
-slowPathOp(lesseq)
 slowPathOp(mod)
 slowPathOp(new_array_buffer)
 slowPathOp(new_array_with_spread)
@@ -2112,6 +2108,21 @@ llintJumpTrueOrFalseOp(jfalse, OpJfalse,
     # Truthy Cell
     macro (dispatch) dispatch() end)
 
+compareOp(greater, OpGreater,
+    macro (left, right, result) cigt left, right, result end,
+    macro (left, right, result) cdgt left, right, result end)
+
+compareOp(greatereq, OpGreatereq,
+    macro (left, right, result) cigteq left, right, result end,
+    macro (left, right, result) cdgteq left, right, result end)
+
+compareOp(less, OpLess,
+    macro (left, right, result) cilt left, right, result end,
+    macro (left, right, result) cdlt left, right, result end)
+
+compareOp(lesseq, OpLesseq,
+    macro (left, right, result) cilteq left, right, result end,
+    macro (left, right, result) cdlteq left, right, result end)
 
 compareJumpOp(
     jless, OpJless,

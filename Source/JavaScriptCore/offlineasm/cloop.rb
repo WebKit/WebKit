@@ -958,6 +958,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int64, ">")
         when "cpgt"
             cloopEmitCompareAndSet(operands, :intptr, ">")
+        when "cdgt"
+            cloopEmitCompareAndSet(operands, :double, ">")
 
         when "cbgteq"
             cloopEmitCompareAndSet(operands, :int8, ">=")
@@ -967,6 +969,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int64, ">=")
         when "cpgteq"
             cloopEmitCompareAndSet(operands, :intptr, ">=")
+        when "cdgteq"
+            cloopEmitCompareAndSet(operands, :double, ">=")
 
         when "cblt"
             cloopEmitCompareAndSet(operands, :int8, "<")
@@ -976,6 +980,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int64, "<")
         when "cplt"
             cloopEmitCompareAndSet(operands, :intptr, "<")
+        when "cdlt"
+            cloopEmitCompareAndSet(operands, :double, "<")
 
         when "cblteq"
             cloopEmitCompareAndSet(operands, :int8, "<=")
@@ -985,6 +991,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int64, "<=")
         when "cplteq"
             cloopEmitCompareAndSet(operands, :intptr, "<=")
+        when "cdlteq"
+            cloopEmitCompareAndSet(operands, :double, "<=")
 
         when "tbs"
             cloopEmitTestSet(operands, :int8, "< 0")
