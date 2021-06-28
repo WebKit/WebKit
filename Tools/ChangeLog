@@ -1,3 +1,14 @@
+2021-06-28  Alex Christensen  <achristensen@webkit.org>
+
+        RELEASE_ASSERT hit in NetworkSessionCocoa::removeWebSocketTask when using WKWebViewConfiguration._attributedBundleIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=227420
+        <rdar://79609212>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm:
+        (TestWebKitAPI::TEST):
+
 2021-06-28  Sam Weinig  <weinig@apple.com>
 
         Add helpers to create Spans from CFDataRef and NSData

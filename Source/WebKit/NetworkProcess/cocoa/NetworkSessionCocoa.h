@@ -64,6 +64,36 @@ struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper> {
 #endif
 };
 
+struct IsolatedSession {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    SessionWrapper sessionWithCredentialStorage;
+    SessionWrapper sessionWithoutCredentialStorage;
+    WallTime lastUsed;
+};
+
+struct SessionSet : public RefCounted<SessionSet>, public CanMakeWeakPtr<SessionSet> {
+public:
+    static Ref<SessionSet> create()
+    {
+        return adoptRef(*new SessionSet);
+    }
+
+    SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
+    SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
+
+    HashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> isolatedSessions;
+    std::unique_ptr<IsolatedSession> appBoundSession;
+
+    SessionWrapper sessionWithCredentialStorage;
+    SessionWrapper sessionWithoutCredentialStorage;
+    SessionWrapper ephemeralStatelessSession;
+
+private:
+
+    SessionSet() = default;
+};
+
 class NetworkSessionCocoa final : public NetworkSession {
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
@@ -125,41 +155,12 @@ private:
 #if HAVE(NSURLSESSION_WEBSOCKET)
     std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
     void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) final;
-    void removeWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) final;
+    void removeWebSocketTask(SessionSet&, WebSocketTask&) final;
 #endif
 
     void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) final;
     void removeWebPageNetworkParameters(WebPageProxyIdentifier) final;
     size_t countNonDefaultSessionSets() const final;
-
-    struct IsolatedSession {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        SessionWrapper sessionWithCredentialStorage;
-        SessionWrapper sessionWithoutCredentialStorage;
-        WallTime lastUsed;
-    };
-
-    struct SessionSet : public RefCounted<SessionSet>, public CanMakeWeakPtr<SessionSet> {
-    public:
-        static Ref<SessionSet> create()
-        {
-            return adoptRef(*new SessionSet);
-        }
-    
-        SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
-        SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
-
-        HashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> isolatedSessions;
-        std::unique_ptr<IsolatedSession> appBoundSession;
-
-        SessionWrapper sessionWithCredentialStorage;
-        SessionWrapper sessionWithoutCredentialStorage;
-        SessionWrapper ephemeralStatelessSession;
-
-    private:
-        SessionSet() = default;
-    };
 
     Ref<SessionSet> m_defaultSessionSet;
     HashMap<WebPageProxyIdentifier, Ref<SessionSet>> m_perPageSessionSets;

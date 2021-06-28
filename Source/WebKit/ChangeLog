@@ -1,3 +1,41 @@
+2021-06-28  Alex Christensen  <achristensen@webkit.org>
+
+        RELEASE_ASSERT hit in NetworkSessionCocoa::removeWebSocketTask when using WKWebViewConfiguration._attributedBundleIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=227420
+        <rdar://79609212>
+
+        Reviewed by Brady Eidson.
+
+        WKWebViewConfiguration._attributedBundleIdentifier makes us use a SessionSet per WKWebView.
+        When the WKWebView is destroyed with an open WebSocket, there's a race condition between the
+        NetworkSessionCocoa::removeWebPageNetworkParameters message coming from the UI process and the
+        NetworkConnectionToWebProcess::didClose message coming from the closing of the web process, which
+        calls NetworkSessionCocoa::removeWebSocketTask which currently expects the WebSocketTask to still
+        be there.  Instead, keep a WeakPtr<SessionSet> and don't remove it if the SessionSet's map is gone.
+
+        I wrote an API test that hits this condition sometimes when HAVE_NSURLSESSION_WEBSOCKET is true.
+
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::removeWebSocketTask):
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::~NetworkSocketChannel):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        (WebKit::SessionSet::create):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionSetForPage):
+        (WebKit::NetworkSessionCocoa::sessionSetForPage const):
+        (WebKit::SessionSet::initializeEphemeralStatelessSessionIfNeeded):
+        (WebKit::SessionSet::isolatedSession):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        (WebKit::NetworkSessionCocoa::addWebSocketTask):
+        (WebKit::NetworkSessionCocoa::removeWebSocketTask):
+        (WebKit::NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSessionIfNeeded): Deleted.
+        (WebKit::NetworkSessionCocoa::SessionSet::isolatedSession): Deleted.
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        (WebKit::WebSocketTask::sessionSet):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::WebSocketTask):
+
 2021-06-28  Jean-Yves Avenard  <jya@apple.com>
 
         Not all uses of AudioToolbox framework use soft linking

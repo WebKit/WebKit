@@ -40,10 +40,11 @@ namespace WebKit {
 
 using namespace WebCore;
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webPageProxyID, const WebCore::ResourceRequest& request, RetainPtr<NSURLSessionWebSocketTask>&& task)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier pageID, WeakPtr<SessionSet>&& sessionSet, const WebCore::ResourceRequest& request, RetainPtr<NSURLSessionWebSocketTask>&& task)
     : m_channel(channel)
     , m_task(WTFMove(task))
-    , m_pageID(webPageProxyID)
+    , m_pageID(pageID)
+    , m_sessionSet(WTFMove(sessionSet))
     , m_partition(request.cachePartition())
 {
     readNextMessage();

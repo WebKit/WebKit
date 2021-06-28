@@ -65,11 +65,11 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
 
 NetworkSocketChannel::~NetworkSocketChannel()
 {
-    if (m_session)
-        m_session->removeWebSocketTask(m_webPageProxyID, *m_socket);
-
-    if (m_socket)
+    if (m_socket) {
+        if (m_session && m_socket->sessionSet())
+            m_session->removeWebSocketTask(*m_socket->sessionSet(), *m_socket);
         m_socket->cancel();
+    }
 }
 
 void NetworkSocketChannel::sendString(const IPC::DataReference& message, CompletionHandler<void()>&& callback)
