@@ -1,3 +1,14 @@
+2021-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser: add an option to enable the web process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=227343
+
+        Reviewed by Michael Catanzaro.
+
+        * MiniBrowser/gtk/main.c:
+        (activate):
+        (main):
+
 2021-06-28  Daniel Kolesa  <dkolesa@igalia.com>
 
         [GTK][WPE] Add libvpx to jhbuild

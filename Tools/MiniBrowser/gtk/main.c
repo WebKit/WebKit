@@ -52,6 +52,7 @@ static const char *cookiesPolicy;
 static const char *proxy;
 static gboolean darkMode;
 static gboolean enableITP;
+static gboolean enableSandbox;
 static gboolean exitAfterLoad;
 static gboolean webProcessCrashed;
 static gboolean printVersion;
@@ -145,6 +146,7 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", NULL },
+    { "enable-sandbox", 0, 0, G_OPTION_ARG_NONE, &enableSandbox, "Enable web process sandbox support", NULL },
     { "exit-after-load", 0, 0, G_OPTION_ARG_NONE, &exitAfterLoad, "Quit the browser after the load finishes", NULL },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
@@ -674,6 +676,9 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         NULL);
     g_object_unref(manager);
 
+    if (enableSandbox)
+        webkit_web_context_set_sandbox_enabled(webContext, TRUE);
+
     if (cookiesPolicy) {
         WebKitCookieManager *cookieManager = webkit_web_context_get_cookie_manager(webContext);
         GEnumClass *enumClass = g_type_class_ref(WEBKIT_TYPE_COOKIE_ACCEPT_POLICY);
@@ -827,7 +832,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    GtkApplication *application = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
+    GtkApplication *application = gtk_application_new("org.webkitgtk.MiniBrowser", G_APPLICATION_NON_UNIQUE);
     g_signal_connect(application, "startup", G_CALLBACK(startup), NULL);
     g_signal_connect(application, "activate", G_CALLBACK(activate), webkitSettings);
     g_application_run(G_APPLICATION(application), 0, NULL);
