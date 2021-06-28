@@ -1117,7 +1117,10 @@ angle::Result FramebufferGL::clipSrcRegion(const gl::Context *context,
         // If pixels lying outside the read framebuffer, adjust src region
         // and dst region to appropriate in-bounds regions respectively.
         gl::Rectangle realSourceRegion;
-        ClipRectangle(bounds.sourceRegion, bounds.sourceBounds, &realSourceRegion);
+        if (!ClipRectangle(bounds.sourceRegion, bounds.sourceBounds, &realSourceRegion))
+        {
+            return angle::Result::Stop;
+        }
         GLuint xOffset = realSourceRegion.x - bounds.sourceRegion.x;
         GLuint yOffset = realSourceRegion.y - bounds.sourceRegion.y;
 
