@@ -41,7 +41,6 @@
 #include <WebCore/WebAudioBufferList.h>
 
 namespace WebKit {
-using namespace PAL;
 using namespace WebCore;
 
 Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)

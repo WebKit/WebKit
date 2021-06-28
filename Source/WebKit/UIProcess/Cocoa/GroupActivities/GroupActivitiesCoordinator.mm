@@ -102,8 +102,6 @@
 
 namespace WebKit {
 
-using namespace PAL;
-
 Ref<GroupActivitiesCoordinator> GroupActivitiesCoordinator::create(GroupActivitiesSession& session)
 {
     return adoptRef(*new GroupActivitiesCoordinator(session));
@@ -154,7 +152,7 @@ void GroupActivitiesCoordinator::leave()
 
 void GroupActivitiesCoordinator::seekTo(double time, CoordinatorCompletionHandler&& callback)
 {
-    [m_playbackCoordinator coordinateSeekToTime:CMTimeMakeWithSeconds(time, 1000) options:0];
+    [m_playbackCoordinator coordinateSeekToTime:PAL::CMTimeMakeWithSeconds(time, 1000) options:0];
     callback(std::nullopt);
 }
 
@@ -211,10 +209,10 @@ void GroupActivitiesCoordinator::issuePlayCommand(AVDelegatingPlaybackCoordinato
 
     std::optional<double> itemTime;
     if (CMTIME_IS_NUMERIC(playCommand.itemTime))
-        itemTime = CMTimeGetSeconds(playCommand.itemTime);
+        itemTime = PAL::CMTimeGetSeconds(playCommand.itemTime);
     std::optional<MonotonicTime> hostTime;
     if (CMTIME_IS_NUMERIC(playCommand.hostClockTime))
-        hostTime = MonotonicTime::fromMachAbsoluteTime(CMClockConvertHostTimeToSystemUnits(playCommand.hostClockTime));
+        hostTime = MonotonicTime::fromMachAbsoluteTime(PAL::CMClockConvertHostTimeToSystemUnits(playCommand.hostClockTime));
 
     client()->playSession(itemTime, hostTime, [callback = WTFMove(callback)] (bool) {
         callback();
@@ -246,7 +244,7 @@ void GroupActivitiesCoordinator::issueSeekCommand(AVDelegatingPlaybackCoordinato
         return;
     }
 
-    client()->seekSessionToTime(CMTimeGetSeconds(seekCommand.itemTime), [callback = WTFMove(callback)] (bool) mutable {
+    client()->seekSessionToTime(PAL::CMTimeGetSeconds(seekCommand.itemTime), [callback = WTFMove(callback)] (bool) mutable {
         callback();
     });
 }

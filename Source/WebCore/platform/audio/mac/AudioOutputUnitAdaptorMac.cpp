@@ -34,6 +34,7 @@
 
 #include "AudioBus.h"
 #include <CoreAudio/AudioHardware.h>
+#include <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
 
@@ -48,21 +49,21 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     desc.componentFlags = 0;
     desc.componentFlagsMask = 0;
-    comp = AudioComponentFindNext(0, &desc);
+    comp = PAL::AudioComponentFindNext(0, &desc);
 
     ASSERT(comp);
 
-    OSStatus result = AudioComponentInstanceNew(comp, &m_outputUnit);
+    OSStatus result = PAL::AudioComponentInstanceNew(comp, &m_outputUnit);
     ASSERT(!result);
 
-    result = AudioUnitInitialize(m_outputUnit);
+    result = PAL::AudioUnitInitialize(m_outputUnit);
     ASSERT(!result);
 
     // Set render callback
     AURenderCallbackStruct input;
     input.inputProc = inputProc;
     input.inputProcRefCon = this;
-    result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &input, sizeof(input));
+    result = PAL::AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &input, sizeof(input));
     ASSERT(!result);
 
     // Set stream format
@@ -79,7 +80,7 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     streamFormat.mChannelsPerFrame = numberOfOutputChannels;
     streamFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
 
-    result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
+    result = PAL::AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT(!result);
 }
 

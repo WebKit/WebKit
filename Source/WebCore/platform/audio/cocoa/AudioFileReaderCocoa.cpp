@@ -36,24 +36,12 @@
 #include "AudioFileReader.h"
 #include "FloatConversion.h"
 #include "Logging.h"
+#include <AudioToolbox/ExtendedAudioFile.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <pal/cf/AudioToolboxSoftLink.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RetainPtr.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(AudioToolbox)
-SOFT_LINK(AudioToolbox, AudioFileClose, OSStatus, (AudioFileID inAudioFile), (inAudioFile))
-SOFT_LINK(AudioToolbox, AudioFileOpenWithCallbacks, OSStatus, (void *inClientData, AudioFile_ReadProc inReadFunc, AudioFile_WriteProc inWriteFunc, AudioFile_GetSizeProc inGetSizeFunc, AudioFile_SetSizeProc inSetSizeFunc, AudioFileTypeID inFileTypeHint, AudioFileID *outAudioFile), (inClientData, inReadFunc, inWriteFunc, inGetSizeFunc, inSetSizeFunc, inFileTypeHint, outAudioFile))
-SOFT_LINK(AudioToolbox, ExtAudioFileDispose, OSStatus, (ExtAudioFileRef inExtAudioFile), (inExtAudioFile))
-SOFT_LINK(AudioToolbox, ExtAudioFileGetProperty, OSStatus, (ExtAudioFileRef inExtAudioFile, ExtAudioFilePropertyID inPropertyID, UInt32 *ioPropertyDataSize, void *outPropertyData), (inExtAudioFile, inPropertyID, ioPropertyDataSize, outPropertyData))
-SOFT_LINK(AudioToolbox, ExtAudioFileRead, OSStatus, (ExtAudioFileRef inExtAudioFile, UInt32 *ioNumberFrames, AudioBufferList *ioData), (inExtAudioFile, ioNumberFrames, ioData))
-SOFT_LINK(AudioToolbox, ExtAudioFileSetProperty, OSStatus, (ExtAudioFileRef inExtAudioFile, ExtAudioFilePropertyID inPropertyID, UInt32 inPropertyDataSize, const void *inPropertyData), (inExtAudioFile, inPropertyID, inPropertyDataSize, inPropertyData))
-SOFT_LINK(AudioToolbox, ExtAudioFileWrapAudioFileID, OSStatus, (AudioFileID inFileID, Boolean inForWriting, ExtAudioFileRef *outExtAudioFile), (inFileID, inForWriting, outExtAudioFile))
-SOFT_LINK(AudioToolbox, ExtAudioFileOpenURL, OSStatus, (CFURLRef inURL, ExtAudioFileRef* outExtAudioFile), (inURL, outExtAudioFile))
-#endif
 
 namespace WebCore {
 
@@ -103,22 +91,22 @@ AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
     : m_data(data)
     , m_dataSize(dataSize)
 {
-    if (AudioFileOpenWithCallbacks(this, readProc, 0, getSizeProc, 0, 0, &m_audioFileID) != noErr)
+    if (PAL::AudioFileOpenWithCallbacks(this, readProc, 0, getSizeProc, 0, 0, &m_audioFileID) != noErr)
         return;
 
-    if (ExtAudioFileWrapAudioFileID(m_audioFileID, false, &m_extAudioFileRef) != noErr)
+    if (PAL::ExtAudioFileWrapAudioFileID(m_audioFileID, false, &m_extAudioFileRef) != noErr)
         m_extAudioFileRef = 0;
 }
 
 AudioFileReader::~AudioFileReader()
 {
     if (m_extAudioFileRef)
-        ExtAudioFileDispose(m_extAudioFileRef);
+        PAL::ExtAudioFileDispose(m_extAudioFileRef);
 
     m_extAudioFileRef = 0;
 
     if (m_audioFileID)
-        AudioFileClose(m_audioFileID);
+        PAL::AudioFileClose(m_audioFileID);
 
     m_audioFileID = 0;
 }
@@ -155,7 +143,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 
     // Get file's data format
     UInt32 size = sizeof(m_fileDataFormat);
-    if (ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileDataFormat, &size, &m_fileDataFormat) != noErr)
+    if (PAL::ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileDataFormat, &size, &m_fileDataFormat) != noErr)
         return nullptr;
 
     size_t numberOfChannels = m_fileDataFormat.mChannelsPerFrame;
@@ -163,7 +151,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     // Number of frames
     SInt64 numberOfFrames64 = 0;
     size = sizeof(numberOfFrames64);
-    if (ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFrames64) != noErr || numberOfFrames64 <= 0)
+    if (PAL::ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFrames64) != noErr || numberOfFrames64 <= 0)
         return nullptr;
 
     double fileSampleRate = m_fileDataFormat.mSampleRate;
@@ -185,7 +173,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     if (sampleRate)
         m_clientDataFormat.mSampleRate = sampleRate;
 
-    if (ExtAudioFileSetProperty(m_extAudioFileRef, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &m_clientDataFormat) != noErr)
+    if (PAL::ExtAudioFileSetProperty(m_extAudioFileRef, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &m_clientDataFormat) != noErr)
         return nullptr;
 
     // Change numberOfFrames64 to destination sample-rate
@@ -243,7 +231,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 
     // Read from the file (or in-memory version)
     UInt32 framesToRead = numberOfFrames;
-    if (ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList) != noErr) {
+    if (PAL::ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList) != noErr) {
         destroyAudioBufferList(bufferList);
         return nullptr;
     }
