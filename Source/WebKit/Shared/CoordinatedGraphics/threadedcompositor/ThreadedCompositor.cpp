@@ -70,9 +70,12 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
         m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
 
-        m_scene->setActive(!!m_nativeSurfaceHandle);
-        if (m_nativeSurfaceHandle)
-            createGLContext();
+        createGLContext();
+        if (m_context) {
+            if (!m_nativeSurfaceHandle)
+                m_paintFlags |= TextureMapper::PaintingMirrored;
+            m_scene->setActive(true);
+        }
     });
 }
 
@@ -83,8 +86,6 @@ ThreadedCompositor::~ThreadedCompositor()
 void ThreadedCompositor::createGLContext()
 {
     ASSERT(!RunLoop::isMain());
-
-    ASSERT(m_nativeSurfaceHandle);
 
     // GLNativeWindowType depends on the EGL implementation: reinterpret_cast works
     // for pointers (only if they are 64-bit wide and not for other cases), and static_cast for
