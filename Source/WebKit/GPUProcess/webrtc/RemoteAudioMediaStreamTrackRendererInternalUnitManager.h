@@ -57,6 +57,7 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
+    bool hasUnits() { return !m_units.isEmpty(); }
     class Unit;
 
 private:

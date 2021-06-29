@@ -84,7 +84,6 @@ public:
     WebCore::NowPlayingManager& nowPlayingManager();
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    WorkQueue& audioMediaStreamTrackRendererQueue();
     WorkQueue& videoMediaStreamTrackRendererQueue();
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
@@ -164,7 +163,6 @@ private:
     };
     HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    RefPtr<WorkQueue> m_audioMediaStreamTrackRendererQueue;
     RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
     uint64_t m_orientation { 0 };

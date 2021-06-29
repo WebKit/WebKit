@@ -1,3 +1,15 @@
+2021-06-29  Youenn Fablet  <youenn@apple.com>
+
+        Remove RemoteAudioMediaStreamTrackRenderer and RemoteAudioMediaStreamTrackRendererManager
+        https://bugs.webkit.org/show_bug.cgi?id=227438
+
+        Reviewed by Eric Carlson.
+
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp:
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::start):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::stop):
+        Add some logging.
+
 2021-06-29  Antti Koivisto  <antti@apple.com>
 
         Enable Probabilistic Guard Malloc for RuleData and RuleFeature vectors
