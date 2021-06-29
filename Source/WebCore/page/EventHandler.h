@@ -29,6 +29,7 @@
 #include "DragActions.h"
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
+#include "KeyboardScroll.h"
 #include "LayoutPoint.h"
 #include "PlatformMouseEvent.h"
 #include "RenderObject.h"
@@ -374,6 +375,9 @@ private:
     bool handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
+
+    float scrollDistance(ScrollDirection, ScrollGranularity);
+    bool handleKeyboardScrolling(KeyboardEvent&);
 
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);

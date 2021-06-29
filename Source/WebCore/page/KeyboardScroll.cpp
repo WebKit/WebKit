@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/ScrollTypes.h>
-
-#if PLATFORM(IOS_FAMILY)
+#include "config.h"
+#include "KeyboardScroll.h"
 
 namespace WebCore {
-class FloatPoint;
+
+FloatSize unitVectorForScrollDirection(ScrollDirection direction)
+{
+    switch (direction) {
+    case ScrollDirection::ScrollUp:
+        return { 0, -1 };
+    case ScrollDirection::ScrollDown:
+        return { 0, 1 };
+    case ScrollDirection::ScrollLeft:
+        return { -1, 0 };
+    case ScrollDirection::ScrollRight:
+        return { 1, 0 };
+    }
 }
 
-
-@class UIScrollView;
-@class WebEvent;
-@protocol WKKeyboardScrollViewAnimatorDelegate;
-
-@interface WKKeyboardScrollViewAnimator : NSObject
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView;
-
-- (void)invalidate;
-
-- (void)willStartInteractiveScroll;
-
-- (BOOL)beginWithEvent:(::WebEvent *)event;
-- (void)handleKeyEvent:(::WebEvent *)event;
-
-- (BOOL)scrollTriggeringKeyIsPressed;
-
-@property (nonatomic, weak) id <WKKeyboardScrollViewAnimatorDelegate> delegate;
-
-@end
-
-@protocol WKKeyboardScrollViewAnimatorDelegate <NSObject>
-@optional
-- (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator;
-- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction;
-- (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator;
-- (void)keyboardScrollViewAnimatorDidFinishScrolling:(WKKeyboardScrollViewAnimator *)animator;
-
-@end
-
-#endif // PLATFORM(IOS_FAMILY)
+}

@@ -108,6 +108,7 @@
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyEventCodesIOS.h>
+#import <WebCore/KeyboardScroll.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NotImplemented.h>
@@ -116,6 +117,7 @@
 #import <WebCore/PathUtilities.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/ScrollTypes.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/ShareData.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -5950,21 +5952,23 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return YES;
 }
 
-- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebKit::ScrollingIncrement)increment inDirection:(WebKit::ScrollingDirection)direction
+- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction
 {
-    BOOL directionIsHorizontal = direction == WebKit::ScrollingDirection::Left || direction == WebKit::ScrollingDirection::Right;
+    BOOL directionIsHorizontal = direction == WebCore::ScrollDirection::ScrollLeft || direction == WebCore::ScrollDirection::ScrollRight;
 
     switch (increment) {
-    case WebKit::ScrollingIncrement::Document: {
+    case WebCore::ScrollGranularity::ScrollByDocument: {
         CGSize documentSize = [self convertRect:self.bounds toView:self.webView].size;
         return directionIsHorizontal ? documentSize.width : documentSize.height;
     }
-    case WebKit::ScrollingIncrement::Page: {
+    case WebCore::ScrollGranularity::ScrollByPage: {
         CGSize pageSize = [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height)) toView:self.webView];
         return directionIsHorizontal ? pageSize.width : pageSize.height;
     }
-    case WebKit::ScrollingIncrement::Line:
+    case WebCore::ScrollGranularity::ScrollByLine:
         return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pixelsPerLineStep()) toView:self.webView].height;
+    case WebCore::ScrollGranularity::ScrollByPixel:
+        return 0;
     }
     ASSERT_NOT_REACHED();
     return 0;

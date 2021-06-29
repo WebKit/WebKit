@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/ScrollTypes.h>
+#pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#include "ScrollTypes.h"
 
 namespace WebCore {
-class FloatPoint;
-}
 
+WEBCORE_EXPORT FloatSize unitVectorForScrollDirection(ScrollDirection);
 
-@class UIScrollView;
-@class WebEvent;
-@protocol WKKeyboardScrollViewAnimatorDelegate;
+struct KeyboardScroll {
+    FloatSize offset; // Points per increment.
+    FloatSize maximumVelocity; // Points per second.
+    FloatSize force;
 
-@interface WKKeyboardScrollViewAnimator : NSObject
+    ScrollGranularity granularity;
+    ScrollDirection direction;
+};
 
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView;
+struct KeyboardScrollParameters {
+    float springMass { 1 };
+    float springStiffness { 109 };
+    float springDamping { 20 };
 
-- (void)invalidate;
+    float maximumVelocityMultiplier { 25 };
+    float timeToMaximumVelocity { 1 };
 
-- (void)willStartInteractiveScroll;
+    float rubberBandForce { 5000 };
 
-- (BOOL)beginWithEvent:(::WebEvent *)event;
-- (void)handleKeyEvent:(::WebEvent *)event;
+    static const KeyboardScrollParameters& parameters()
+    {
+        static const KeyboardScrollParameters parameters;
+        return parameters;
+    }
+};
 
-- (BOOL)scrollTriggeringKeyIsPressed;
-
-@property (nonatomic, weak) id <WKKeyboardScrollViewAnimatorDelegate> delegate;
-
-@end
-
-@protocol WKKeyboardScrollViewAnimatorDelegate <NSObject>
-@optional
-- (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator;
-- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction;
-- (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator;
-- (void)keyboardScrollViewAnimatorDidFinishScrolling:(WKKeyboardScrollViewAnimator *)animator;
-
-@end
-
-#endif // PLATFORM(IOS_FAMILY)
+} // namespace WebCore
