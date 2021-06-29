@@ -40,6 +40,8 @@ FloatSize unitVectorForScrollDirection(ScrollDirection direction)
     case ScrollDirection::ScrollRight:
         return { 1, 0 };
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 }

@@ -4252,6 +4252,8 @@ float EventHandler::scrollDistance(ScrollDirection direction, ScrollGranularity 
     case ScrollGranularity::ScrollByPixel:
         return scrollbar->pixelStep();
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool EventHandler::handleKeyboardScrolling(KeyboardEvent& event)
@@ -4289,6 +4291,7 @@ bool EventHandler::handleKeyboardScrolling(KeyboardEvent& event)
         case Key::Space:
             return ScrollGranularity::ScrollByPage;
         };
+        RELEASE_ASSERT_NOT_REACHED();
     }();
 
     auto direction = [&] {
@@ -4304,6 +4307,7 @@ bool EventHandler::handleKeyboardScrolling(KeyboardEvent& event)
         case Key::Space:
             return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }();
 
     return EventHandler::scrollRecursively(direction, granularity, nullptr);
