@@ -1,5 +1,39 @@
 2021-06-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Add NestedFuzzyDict
+        https://bugs.webkit.org/show_bug.cgi?id=227150
+        <rdar://problem/79475464>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/nested_fuzzy_dict.py: Added.
+        (NestedFuzzyDict):
+        (NestedFuzzyDict.assert_valid_key): Ensure that the provided key is fuzz-able.
+        (NestedFuzzyDict.__init__): Construct the object the same way a dictionary is constructed.
+        (NestedFuzzyDict.__getitem__): Split provided keyname and fuzzy match the second part.
+        (NestedFuzzyDict.get): Ditto.
+        (NestedFuzzyDict.getitem): Return the complete keyname and value.
+        (NestedFuzzyDict.__setitem__): Add value to dictionary.
+        (NestedFuzzyDict.update): Given a dictionary, insert it's contents into this object.
+        (NestedFuzzyDict.keys): Iterate through all keys in the object.
+        (NestedFuzzyDict.values): Iterate through all values in the object.
+        (NestedFuzzyDict.items): Iterate through all key/value pairs in the object.
+        (NestedFuzzyDict.dict): Return a standard dictionary with the contents of this object.
+        (NestedFuzzyDict.__repr__):
+        (NestedFuzzyDict.__str__):
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/nested_fuzzy_dict_unittest.py: Added.
+        (TestNestedFuzzyDict):
+        (TestNestedFuzzyDict.test_constructor):
+        (TestNestedFuzzyDict.test_index):
+        (TestNestedFuzzyDict.test_get):
+        (TestNestedFuzzyDict.test_getitem):
+        (TestNestedFuzzyDict.test_set):
+        (TestNestedFuzzyDict.test_dict):
+
+2021-06-29  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Add MeasureTime python tool
         https://bugs.webkit.org/show_bug.cgi?id=227313
         <rdar://problem/79689588>
