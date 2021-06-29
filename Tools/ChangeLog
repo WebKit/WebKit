@@ -1,3 +1,13 @@
+2021-06-29  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Add new argument of device os version for reporting JavaScriptCore test result
+        https://bugs.webkit.org/show_bug.cgi?id=227363
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload):
+
 2021-06-29  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add NestedFuzzyDict

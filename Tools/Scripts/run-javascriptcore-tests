@@ -111,6 +111,7 @@ my $artifact_exec_wrapper = undef;
 my $version;
 my $versionName;
 my $sdk;
+my $deviceOS;
 my $failFast = 1;
 my $coverage = 0;
 my $coverageDir;
@@ -266,6 +267,7 @@ Usage: $programName [options] [options to pass to build system]
   --version                     Specify the version number of the device running tests.
   --version-name                Specify the version name of the hardware running tests.
   --sdk                         Specific SDK or OS version of the form ##*###
+  --device-os                   Speicifc OS version for the remote device
   --extra-tests=                Path to a file containing extra tests
   --child-processes=            Specify the number of child processes.
   --shell-runner                Uses the shell-based test runner instead of the default make-based runner.
@@ -340,6 +342,7 @@ GetOptions(
     'version=s' => \$version,
     'version-name=s' => \$versionName,
     'sdk=s' => \$sdk,
+    'device-os=s' => \$deviceOS,
     'remote-config-file=s' => \$remoteConfigFile,
     'child-processes=s' => \$childProcesses,
     'shell-runner' => \$shellRunner,
@@ -472,6 +475,9 @@ sub configurationForUpload()
     }
     if ($sdk) {
         $result->{sdk} = $sdk;
+    }
+    if ($deviceOS) {
+        $result->{sdk} = $deviceOS;
     }
     return $result;
 }
