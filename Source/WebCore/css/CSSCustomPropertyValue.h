@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,12 @@
 namespace WebCore {
 
 class CSSParserToken;
-class RenderStyle;
 
 class CSSCustomPropertyValue final : public CSSValue {
 public:
-    using VariantValue = Variant<Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, Ref<StyleImage>>;
+    using VariantValue = Variant<Monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, Ref<StyleImage>>;
+
+    static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
 
     static Ref<CSSCustomPropertyValue> createUnresolved(const AtomString& name, Ref<CSSVariableReferenceValue>&& value)
     {
@@ -78,7 +79,7 @@ public:
     {
         return adoptRef(*new CSSCustomPropertyValue(other));
     }
-    
+
     String customCSSText() const;
 
     const AtomString& name() const { return m_name; }
@@ -89,44 +90,27 @@ public:
     const VariantValue& value() const { return m_value; }
 
     Vector<CSSParserToken> tokens() const;
-    bool equals(const CSSCustomPropertyValue& other) const;
+    bool equals(const CSSCustomPropertyValue&) const;
 
 private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
         : CSSValue(CustomPropertyClass)
         , m_name(name)
         , m_value(WTFMove(value))
-        , m_serialized(false)
     {
     }
 
     CSSCustomPropertyValue(const CSSCustomPropertyValue& other)
         : CSSValue(CustomPropertyClass)
         , m_name(other.m_name)
-        , m_value(CSSValueUnset)
+        , m_value(other.m_value)
         , m_stringValue(other.m_stringValue)
-        , m_serialized(other.m_serialized)
     {
-        // No copy constructor for Ref<>, so we have to do this ourselves
-        auto visitor = WTF::makeVisitor([&](const Ref<CSSVariableReferenceValue>& value) {
-            m_value = value.copyRef();
-        }, [&](const CSSValueID& value) {
-            m_value = value;
-        }, [&](const Ref<CSSVariableData>& value) {
-            m_value = value.copyRef();
-        }, [&](const Length& value) {
-            m_value = value;
-        }, [&](const Ref<StyleImage>& value) {
-            m_value = value.copyRef();
-        });
-        WTF::visit(visitor, other.m_value);
     }
-    
+
     const AtomString m_name;
-    VariantValue m_value;
-    
+    const VariantValue m_value;
     mutable String m_stringValue;
-    mutable bool m_serialized { false }; // FIXME: Should use null m_stringValue instead of a separate boolean.
 };
 
 } // namespace WebCore

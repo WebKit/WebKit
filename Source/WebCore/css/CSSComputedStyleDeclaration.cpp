@@ -2463,25 +2463,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& prope
     if (!style)
         return nullptr;
 
-    auto* registered = styledElement->document().getCSSRegisteredCustomPropertySet().get(propertyName);
     auto* value = style->getCustomProperty(propertyName);
+    if (!value) {
+        auto registered = styledElement->document().getCSSRegisteredCustomPropertySet().get(propertyName);
+        return registered ? registered->initialValueCopy() : nullptr;
+    }
 
-    if (registered && !value)
-        return registered->initialValueCopy();
-
-    if (!value)
-        return nullptr;
-
-    return WTF::switchOn(value->value(), [&](const Ref<CSSVariableReferenceValue>&) {
-        ASSERT_NOT_REACHED();
-        return RefPtr<CSSValue>();
-    }, [&](const CSSValueID&) {
-        return CSSCustomPropertyValue::create(*value);
-    }, [&](const Ref<CSSVariableData>&) {
-        return CSSCustomPropertyValue::create(*value);
-    }, [&](const Length& value) {
+    return WTF::switchOn(value->value(), [&](const Length& value) -> Ref<CSSValue> {
         return zoomAdjustedPixelValueForLength(value, *style);
-    }, [&](const Ref<StyleImage>&) {
+    }, [&](auto&) -> Ref<CSSValue> {
         return CSSCustomPropertyValue::create(*value);
     });
 }

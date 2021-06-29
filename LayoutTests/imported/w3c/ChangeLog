@@ -1,3 +1,45 @@
+2021-06-28  Darin Adler  <darin@apple.com>
+
+        CSS parser "consume declaration" algorithm does not handle whitespace correctly
+        https://bugs.webkit.org/show_bug.cgi?id=227368
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-properties-values-api/at-property-animation-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/at-property-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/at-property-shadow-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/determine-registration-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/registered-property-cssom-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-expected.txt:
+        Regenerated to reflect the whitespace trimming: one new pass, no new failures. Some of
+        these tests will also need updates to match the newer CSS specification. Not doing those
+        here right now.
+
+        * web-platform-tests/css/css-properties-values-api/at-property.html:
+        Pulled down a newer version of this test from the WPT repository with expectations in line
+        with newer CSS specification.
+
+        * web-platform-tests/css/css-syntax/declarations-trim-whitespace-expected.txt:
+        * web-platform-tests/css/css-variables/variable-cssText-expected.txt:
+        Expect most tests to pass instead of fail. There are still some failures. Given my reading
+        of the CSS specification I suspect it is the tests that are incorrect.
+
+        * web-platform-tests/css/css-variables/variable-definition-expected.txt:
+        * web-platform-tests/css/css-variables/variable-definition.html:
+        Pulled down a newer version of this test from the WPT repository with expectations in line
+        with newer CSS specification. Some tests are still failing because of expectations about
+        trailing whitespace. Given my reading of the CSS specification I suspect it is the tests
+        that are incorrect.
+
+        * web-platform-tests/css/css-variables/variable-reference-expected.txt:
+        * web-platform-tests/css/css-variables/variable-reference.html:
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration-expected.txt:
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration.html:
+        Pulled down a newer version of these tests from the WPT repository with expectations in
+        line with newer CSS specification.
+
+        * web-platform-tests/css/cssom/variable-names-expected.txt: Expect tests to pass, not fail.
+
 2021-06-28  Chris Dumez  <cdumez@apple.com>
 
         Resync fetch WPT tests from upstream

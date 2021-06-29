@@ -35,6 +35,7 @@
 #include "CSSCalcValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserHelpers.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 
@@ -137,11 +138,8 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     unsigned argumentCount = 0;
     while (!tokens.atEnd()) {
         tokens.consumeWhitespace();
-        if (requireComma) {
-            if (tokens.consume().type() != CommaToken)
-                return false;
-            tokens.consumeWhitespace();
-        }
+        if (requireComma && !CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens))
+            return false;
 
         RefPtr<CSSCalcExpressionNode> node;
         if (!parseCalcSum(tokens, depth, node))

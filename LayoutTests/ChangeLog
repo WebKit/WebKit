@@ -1,3 +1,36 @@
+2021-06-28  Darin Adler  <darin@apple.com>
+
+        CSS parser "consume declaration" algorithm does not handle whitespace correctly
+        https://bugs.webkit.org/show_bug.cgi?id=227368
+
+        Reviewed by Sam Weinig.
+
+        * css-custom-properties-api/inline.html: Update expectations to expect leading
+        whitespace to be trimmed.
+
+        * fast/css/variables/test-suite/011.html: Updated to expect a variable reference
+        with no fallback tokens to be valid. Change in the CSS specification since this
+        test was written.
+        * fast/css/variables/test-suite/013.html: Ditto.
+        * fast/css/variables/test-suite/041.html: Ditto.
+        * fast/css/variables/test-suite/043.html: Ditto.
+
+        * fast/css/variables/test-suite/061.html: Updated to expect a value with no tokens
+        to be valid. Change in the CSS specification since this test was written.
+
+        * fast/css/variables/test-suite/100.html: Updated to expect a variable reference
+        with no fallback tokens to be valid. Change in the CSS specification since this
+        test was written.
+        * fast/css/variables/test-suite/105.html: Ditto.
+        * fast/css/variables/test-suite/136.html: Ditto.
+
+        * fast/css/variables/test-suite/170.html: Updated to expect a value with no tokens
+        to be valid. Change in the CSS specification since this test was written.
+        * fast/css/variables/test-suite/171.html: Ditto.
+
+        * platform/mac/TestExpectations: Removed a line for a test that no longer exists
+        (not changed in this patch).
+
 2021-06-28  Cameron McCormack  <heycam@apple.com>
 
         Fix canvas color stroke test stroke widths

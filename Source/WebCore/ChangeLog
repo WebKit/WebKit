@@ -1,3 +1,59 @@
+2021-06-28  Darin Adler  <darin@apple.com>
+
+        CSS parser "consume declaration" algorithm does not handle whitespace correctly
+        https://bugs.webkit.org/show_bug.cgi?id=227368
+
+        Reviewed by Sam Weinig.
+
+        Test: imported/w3c/web-platform-tests/css/css-syntax/declarations-trim-whitespace.html
+
+        To avoid creating regressions in CSS variable behavior, had to make
+        changes there to handle whitespace correctly at the same time as the
+        change to the "consume declaration" algorithm.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::customPropertyValue): Restructured
+        to not have a case for each variant custom value type. This lets us
+        support the new Empty value type without extra code here.
+
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::createEmpty): Added. Used for a new
+        Empty value type for properties that have empty string as their value,
+        which is a new capability added to the CSS specification.
+        (WebCore::CSSCustomPropertyValue::equals const): Removed unneeded pointer
+        comparison optimization. Added support for Empty value.
+        (WebCore::CSSCustomPropertyValue::customCSSText const): Updated to use
+        null string for m_stringValue instead of a separate m_serialized flag.
+        Added support for Empty value.
+        (WebCore::CSSCustomPropertyValue::tokens const): Added support for
+        Empty value. Also call directly to customCSSText instead of calling
+        through cssText.
+
+        * css/CSSCustomPropertyValue.h: Updated for the above, adding Empty value.
+        Removed m_serialized. Greatly simplified the copy constructor since Ref
+        now has a copy constructor.
+
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::resolveVariableFallback): Consume whitespace after the comma,
+        matching what is now called for in the CSS specification.
+
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction): Use
+        consumeCommaIncludingWhitespace to simplify the code. No behavior change,
+        just refactoring.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeDeclaration): Updated algorithm to match
+        the CSS specification, trimming whitespace correctly.
+        (WebCore::CSSParserImpl::consumeCustomPropertyValue): Added support for
+        a custom property value with no declaration value, as now called for in
+        the CSS specification, using CSSCustomPropertyValue::createEmpty.
+
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::isValidVariableReference): Allow empty fallback, as now called
+        for in the CSS specification.
+        (WebCore::isValidConstantReference): Ditto.
+
 2021-06-28  Dana Estra  <destra@apple.com>
 
         Refactor MacOS keyboard scrolling and use KeyboardScroll struct
