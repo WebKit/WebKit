@@ -1,3 +1,18 @@
+2021-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r279310): Occasional crash when focusing login fields on iPad with a software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=227472
+        rdar://79876040
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to exercise the crash. See Tools and Source/WebKit ChangeLogs for more information.
+        This new test suppresses and then immediately un-suppresses the software keyboard inside the
+        `-_webView:willStartInputSession:` input delegate hook while focusing a regular text field.
+
+        * fast/forms/ios/suppress-software-keyboard-while-focusing-input-expected.txt: Added.
+        * fast/forms/ios/suppress-software-keyboard-while-focusing-input.html: Added.
+
 2021-06-28  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Mark media/track/video/video-track-mkv-{vorbis,theora}-language.html as passing

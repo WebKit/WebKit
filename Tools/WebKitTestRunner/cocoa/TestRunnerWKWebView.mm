@@ -30,6 +30,7 @@
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKInputDelegate.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -59,7 +60,7 @@ struct CustomMenuActionInfo {
     BlockPtr<void()> callback;
 };
 
-@interface TestRunnerWKWebView () <WKUIDelegatePrivate
+@interface TestRunnerWKWebView () <WKUIDelegatePrivate, _WKInputDelegate
 #if PLATFORM(IOS_FAMILY)
     , UIGestureRecognizerDelegate
 #endif
@@ -116,6 +117,7 @@ IGNORE_WARNINGS_END
         [center addObserver:self selector:@selector(_willPresentPopover) name:@"UIPopoverControllerWillPresentPopoverNotification" object:nil];
         [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
         self.UIDelegate = self;
+        self._inputDelegate = self;
 #endif
     }
     return self;
@@ -207,6 +209,7 @@ IGNORE_WARNINGS_END
     self.didEndZoomingCallback = nil;
     self.didShowKeyboardCallback = nil;
     self.didHideKeyboardCallback = nil;
+    self.willStartInputSessionCallback = nil;
     self.willPresentPopoverCallback = nil;
     self.didDismissPopoverCallback = nil;
     self.didEndScrollingCallback = nil;
@@ -565,6 +568,14 @@ static bool isQuickboardViewController(UIViewController *viewController)
 - (void)_webView:(WKWebView *)webView didDismissFocusedElementViewController:(UIViewController *)controller
 {
     [self _invokeHideKeyboardCallbackIfNecessary];
+}
+
+#pragma mark - _WKInputDelegate
+
+- (void)_webView:(WKWebView *)webView willStartInputSession:(id <_WKFormInputSession>)inputSession
+{
+    if (self.willStartInputSessionCallback)
+        self.willStartInputSessionCallback();
 }
 
 #pragma mark - UIGestureRecognizerDelegate

@@ -1,3 +1,30 @@
+2021-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r279310): Occasional crash when focusing login fields on iPad with a software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=227472
+        rdar://79876040
+
+        Reviewed by Tim Horton.
+
+        I added a mechanism in r279310 to defer calling `-[WKContentView _setSuppressSoftwareKeyboard:NO]` until we've
+        gotten a response from the web process containing an up-to-date autocorrection context. However, in the case
+        where the WKWebView client sets `_suppressSoftwareKeyboard` to `YES` and then immediately to `NO` underneath the
+        scope of a call to `-_webView:willStartInputSession:`, we'll end up calling into `-_setSuppressSoftwareKeyboard:`
+        inside the scope of `-requestAutocorrectionContextWithCompletionHandler:`, when we've received an
+        autocorrection context while sync-waiting. This is problematic because it breaks UIKeyboardTaskQueue's state,
+        since the call to `-_setSuppressSoftwareKeyboard:` will attempt to enqueue a new task after the previous task's
+        context has already returned execution to the parent.
+
+        To fix this, we instead invoke `self._suppressSoftwareKeyboard = NO;` *before* calling the completion block in
+        `-_handleAutocorrectionContext:`. This allows the request for an autocorrection context underneath
+        `-_setSuppressSoftwareKeyboard:` to be handled (and completed) as a child task of the previous task, which keeps
+        UIKeyboardTaskQueue in a valid state.
+
+        Test: fast/forms/ios/suppress-software-keyboard-while-focusing-input.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleAutocorrectionContext:]):
+
 2021-06-28  Dana Estra  <destra@apple.com>
 
         Refactor MacOS keyboard scrolling and use KeyboardScroll struct

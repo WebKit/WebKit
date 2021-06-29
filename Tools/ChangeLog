@@ -1,3 +1,45 @@
+2021-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r279310): Occasional crash when focusing login fields on iPad with a software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=227472
+        rdar://79876040
+
+        Reviewed by Tim Horton.
+
+        Make it possible to induce the crash (prior to the fix) by introducing two new testing primitives on iOS:
+
+        -   `UIScriptController.suppressSoftwareKeyboard`, a readwrite attribute that can be used to suppress the
+            appearance of the software keyboard on iOS by calling `-[WKWebView _setSuppressSoftwareKeyboard:]`.
+
+        -   `UIScriptController.willStartInputSessionCallback`, a callback that is invoked when we're about to start a
+            UI-process-side input session. On iOS, this corresponds to
+            `-[_WKInputDelegate _webView:willStartInputSession:`].
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::suppressSoftwareKeyboard const):
+        (WTR::UIScriptController::setSuppressSoftwareKeyboard):
+        * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp:
+        (WTR::UIScriptController::setWillStartInputSessionCallback):
+        (WTR::UIScriptController::willStartInputSessionCallback const):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]):
+        (-[TestRunnerWKWebView resetInteractionCallbacks]):
+        (-[TestRunnerWKWebView _webView:willStartInputSession:]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Make sure that we revert `_suppressSoftwareKeyboard` to `NO`, in case a layout test ends while leaving this on,
+        to prevent subsequent layout tests from behaving in unexpected ways.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::setWillStartInputSessionCallback):
+        (WTR::UIScriptControllerIOS::suppressSoftwareKeyboard const):
+        (WTR::UIScriptControllerIOS::setSuppressSoftwareKeyboard):
+
 2021-06-28  W.D. Xiong  <w_xiong@apple.com>
 
         Add wdx to contributors.json

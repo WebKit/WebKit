@@ -153,10 +153,14 @@ private:
     void setDidEndZoomingCallback(JSValueRef) override;
     void setDidShowKeyboardCallback(JSValueRef) override;
     void setDidHideKeyboardCallback(JSValueRef) override;
+    void setWillStartInputSessionCallback(JSValueRef) override;
     void setWillPresentPopoverCallback(JSValueRef) override;
     void setDidDismissPopoverCallback(JSValueRef) override;
     void setDidEndScrollingCallback(JSValueRef) override;
     void clearAllCallbacks() override;
+
+    bool suppressSoftwareKeyboard() const final;
+    void setSuppressSoftwareKeyboard(bool) final;
 
     void waitForModalTransitionToFinish() const;
     void waitForSingleTapToReset() const;
