@@ -58,6 +58,36 @@ static const void* nextLogIdentifier()
 static WTFLogChannel& logChannel() { return WebCore::LogMedia; }
 static const char* logClassName() { return "MediaFormatReader"; }
 
+class AbortAction {
+public:
+    AbortAction(Condition& condition)
+        : m_condition(condition)
+    {
+        if (noErr != PAL::FigThreadRegisterAbortAction(action, this, &m_token))
+            m_token = nullptr;
+    }
+
+    ~AbortAction()
+    {
+        if (m_token)
+            PAL::FigThreadUnregisterAbortAction(m_token);
+    }
+
+    bool aborted() const { return m_aborted; }
+
+private:
+    static void action(void* refcon)
+    {
+        auto thisPtr = static_cast<AbortAction*>(refcon);
+        thisPtr->m_aborted = true;
+        thisPtr->m_condition.notifyAll();
+    }
+
+    Condition& m_condition;
+    FigThreadAbortActionToken m_token { nullptr };
+    bool m_aborted { false };
+};
+
 CMBaseClassID MediaFormatReader::wrapperClassID()
 {
     return MTPluginFormatReaderGetClassID();
@@ -235,10 +265,12 @@ OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocat
         return kCMBaseObjectError_ValueNotAvailable;
     }
 
+    AbortAction action { m_parseTracksCondition };
+
     Locker locker { m_parseTracksLock };
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
         assertIsHeld(m_parseTracksLock);
-        return m_parseTracksStatus.has_value();
+        return m_parseTracksStatus.has_value() || action.aborted();
     });
 
     if (m_duration.isIndefinite())
@@ -255,10 +287,12 @@ OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocat
 
 OSStatus MediaFormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
 {
+    AbortAction action { m_parseTracksCondition };
+
     Locker locker { m_parseTracksLock };
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
         assertIsHeld(m_parseTracksLock);
-        return m_parseTracksStatus.has_value();
+        return m_parseTracksStatus.has_value() || action.aborted();
     });
 
     if (*m_parseTracksStatus != noErr)

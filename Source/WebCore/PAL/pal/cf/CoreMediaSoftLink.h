@@ -361,6 +361,10 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCallBlockForEachSamp
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioClockCreate, OSStatus, (CFAllocatorRef allocator, CMClockRef* clockOut), (allocator, clockOut))
 #define CMAudioClockCreate softLink_CoreMedia_CMAudioClockCreate
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, FigThreadRegisterAbortAction, OSStatus, (FigThreadAbortAction action, void* refcon, FigThreadAbortActionToken* token), (action, refcon, token))
+#define FigThreadRegisterAbortAction softLink_CoreMedia_FigThreadRegisterAbortAction
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, FigThreadUnregisterAbortAction, void, (FigThreadAbortActionToken token), (token))
+#define FigThreadUnregisterAbortAction softLink_CoreMedia_FigThreadUnregisterAbortAction
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionExtension_ProtectedContentOriginalFormat, CFStringRef)
 #define kCMFormatDescriptionExtension_ProtectedContentOriginalFormat get_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat()

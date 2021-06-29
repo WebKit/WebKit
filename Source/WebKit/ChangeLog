@@ -1,3 +1,35 @@
+2021-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Loading WebM hangs if server sends only small amount of data
+        https://bugs.webkit.org/show_bug.cgi?id=226217
+        <rdar://problem/78709010>
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/media/video-webm-stall.html
+
+        Adopt FigThread{Un,}RegisterAbortAction() when blocking against track parsing.
+
+        CoreMedia will attempt to abort reads during AVPlayer teardown, but because the parsing
+        thread is blocked on a Condition variable in WebKit code, the abort request has no effect.
+        Adopt methods from CoreMedia to run code during an abort request, and wrap these calls in a
+        stack-based object. The new AbortAction object takes a Condition variable to notify during
+        an abort, and its aborted() state can be queried by the Condition's predicate.
+
+        Drive-by Fix: enable running an unsigned MTFormatReaderPlugin in the GPU process for 
+        engineering builds.
+
+        * Configurations/BaseTarget.xcconfig:
+        * GPUProcess/mac/GPUProcessMac.mm:
+        (WebKit::GPUProcess::initializeProcess):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::AbortAction::AbortAction):
+        (WebKit::AbortAction::~AbortAction):
+        (WebKit::AbortAction::aborted const):
+        (WebKit::AbortAction::action):
+        (WebKit::MediaFormatReader::copyProperty):
+        (WebKit::MediaFormatReader::copyTrackArray):
+
 2021-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Check GApplication has a valid ID before trying to create the flatpack info

@@ -224,6 +224,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.htm
 platform/mac/media/media-source/media-source-change-source.html [ Skip ]
 media/now-playing-status-without-media.html [ Skip ]
 
+# WebM not supported in WK1 on macOS.
+http/tests/media/video-webm-stall.html
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////
