@@ -1377,3 +1377,5 @@ webkit.org/b/226783 [ arm64 ] tiled-drawing/scrolling/non-fast-region/wheel-even
 webkit.org/b/227273 [ Catalina Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/227467 [ BigSur arm64 Release ] fast/css/sticky/sticky-left.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/227504 [ BigSur Debug ] accessibility/table-title.html [ Pass Timeout ]
