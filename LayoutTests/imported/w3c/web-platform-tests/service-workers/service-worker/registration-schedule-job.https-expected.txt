@@ -1,4 +1,5 @@
 
-FAIL different scriptURL and updateViaCache promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'registration.installing.scriptURL')"
-FAIL different type assert_equals: expected (string) "classic" but got (undefined) undefined
+PASS different scriptURL
+PASS different updateViaCache
+PASS different type
 

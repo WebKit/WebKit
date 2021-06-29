@@ -117,7 +117,7 @@ function fetch_test(frame, url, mode, credentials,
       credentials: expected_credentials,
       redirect: 'follow',
       integrity: '',
-      destination: 'empty',
+      destination: '',
       message: `fetch (url:${actual_url} mode:${mode} ` +
                `credentials:${credentials})`
     };
@@ -162,9 +162,9 @@ promise_test(async t => {
   const SCRIPT = 'resources/fetch-request-resources-worker.js';
   const host_info = get_host_info();
   const LOCAL_URL =
-      host_info['HTTPS_ORIGIN'] + base_path() + 'resources/dummy?test';
+      host_info['HTTPS_ORIGIN'] + base_path() + 'resources/sample?test';
   const REMOTE_URL =
-      host_info['HTTPS_REMOTE_ORIGIN'] + base_path() + 'resources/dummy?test';
+      host_info['HTTPS_REMOTE_ORIGIN'] + base_path() + 'resources/sample?test';
 
   const registration =
       await service_worker_unregister_and_register(t, SCRIPT, SCOPE);

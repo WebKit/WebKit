@@ -316,7 +316,10 @@ webkit.org/b/201665 imported/w3c/web-platform-tests/service-workers/service-work
 imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-worker-timing-frame.tentative.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/claim-worker-fetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/nested-blob-url-workers.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck-cors-import.https.html [ Skip ]
 
 # Thee tests are crashing in Debug (https://bugs.webkit.org/show_bug.cgi?id=227310)
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic.any.html [ Skip ]

@@ -2849,6 +2849,12 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/claim-fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-order.https.html": [
         "slow"
     ],
@@ -2915,6 +2921,9 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/registration-schedule-job.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html": [
         "slow"
     ],
@@ -2933,7 +2942,13 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-redirect.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck-cors-import.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/update-module-request-mode.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html": [
