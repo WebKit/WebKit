@@ -36,7 +36,7 @@ public:
     static Ref<WebDatabaseProvider> getOrCreate(uint64_t identifier);
     virtual ~WebDatabaseProvider();
 
-    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) final;
+    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID) final;
 
 private:
     explicit WebDatabaseProvider(uint64_t identifier);

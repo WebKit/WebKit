@@ -28,7 +28,12 @@
 
 #include <type_traits>
 #include <wtf/FastMalloc.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
 
 namespace WTF {
 

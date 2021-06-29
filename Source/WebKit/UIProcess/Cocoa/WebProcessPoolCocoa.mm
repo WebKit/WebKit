@@ -96,6 +96,11 @@
 #import <WebCore/SystemBattery.h>
 #endif
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include <WebCore/CaptionUserPreferencesMediaAF.h>
+#include <WebCore/MediaAccessibilitySoftLink.h>
+#endif
+
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
@@ -280,6 +285,10 @@ static AccessibilityPreferences accessibilityPreferences()
     preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get()) == AXValueStateOn;
     preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get()) == AXValueStateOn;
 #endif
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    preferences.captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
+    preferences.preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
+#endif
     return preferences;
 }
 
@@ -445,6 +454,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.launchServicesExtensionHandle = WTFMove(launchServicesExtensionHandle);
 #endif
 
+#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
+    SandboxExtension::Handle trustdAgentExtensionHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt, trustdAgentExtensionHandle);
+    parameters.trustdAgentExtensionHandle = WTFMove(trustdAgentExtensionHandle);
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(CFPREFS_DIRECT_MODE)
     if ([UIApplication sharedApplication]) {
         auto state = [[UIApplication sharedApplication] applicationState];
@@ -575,14 +590,13 @@ void WebProcessPool::backlightLevelDidChangeCallback(CFNotificationCenterRef cen
     auto* pool = reinterpret_cast<WebProcessPool*>(observer);
     pool->sendToAllProcesses(Messages::WebProcess::BacklightLevelDidChange(BKSDisplayBrightnessGetCurrent()));
 }
+#endif
 
 void WebProcessPool::accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
 {
     auto* pool = reinterpret_cast<WebProcessPool*>(observer);
     pool->sendToAllProcesses(Messages::WebProcess::AccessibilityPreferencesDidChange(accessibilityPreferences()));
 }
-
-#endif
 
 #if PLATFORM(MAC)
 void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
@@ -720,6 +734,9 @@ void WebProcessPool::registerNotificationObservers()
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+#endif
 }
 
 void WebProcessPool::unregisterNotificationObservers()
@@ -760,6 +777,9 @@ void WebProcessPool::unregisterNotificationObservers()
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSEnhanceTextLegibilityChangedNotification, nullptr);
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSDarkenSystemColorsEnabledNotification, nullptr);
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSInvertColorsEnabledNotification, nullptr);
+#endif
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, nullptr);
 #endif
 }
 

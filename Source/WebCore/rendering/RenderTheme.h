@@ -166,6 +166,8 @@ public:
     Color appHighlightColor(OptionSet<StyleColor::Options>) const;
 #endif
 
+    Color defaultButtonTextColor(OptionSet<StyleColor::Options>) const;
+
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
@@ -284,6 +286,9 @@ protected:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual Color platformAppHighlightColor(OptionSet<StyleColor::Options>) const;
 #endif
+
+    virtual Color platformDefaultButtonTextColor(OptionSet<StyleColor::Options>) const;
+
     virtual bool supportsSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
 
@@ -442,6 +447,8 @@ protected:
 #if ENABLE(APP_HIGHLIGHTS)
         Color appHighlightColor;
 #endif
+
+        Color defaultButtonTextColor;
     };
 
     virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const;

@@ -57,7 +57,7 @@ public:
 
 #if ENABLE(CSS_SCROLL_SNAP)
     bool activeScrollSnapIndexDidChange() const;
-    unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     bool isScrollSnapInProgress() const;
 #endif
 

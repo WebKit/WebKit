@@ -76,10 +76,10 @@ void PlaybackSessionInterfaceContext::bufferedTimeChanged(double bufferedTime)
         m_manager->bufferedTimeChanged(m_contextId, bufferedTime);
 }
 
-void PlaybackSessionInterfaceContext::rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate)
+void PlaybackSessionInterfaceContext::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
     if (m_manager)
-        m_manager->rateChanged(m_contextId, isPlaying, playbackRate, defaultPlaybackRate);
+        m_manager->rateChanged(m_contextId, playbackState, playbackRate, defaultPlaybackRate);
 }
 
 void PlaybackSessionInterfaceContext::playbackStartedTimeChanged(double playbackStartedTime)
@@ -341,9 +341,9 @@ void PlaybackSessionManager::playbackStartedTimeChanged(PlaybackSessionContextId
     m_page->send(Messages::PlaybackSessionManagerProxy::PlaybackStartedTimeChanged(contextId, playbackStartedTime));
 }
 
-void PlaybackSessionManager::rateChanged(PlaybackSessionContextIdentifier contextId, bool isPlaying, float playbackRate, float defaultPlaybackRate)
+void PlaybackSessionManager::rateChanged(PlaybackSessionContextIdentifier contextId, OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(contextId, isPlaying, playbackRate, defaultPlaybackRate));
+    m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(contextId, playbackState, playbackRate, defaultPlaybackRate));
 }
 
 void PlaybackSessionManager::seekableRangesChanged(PlaybackSessionContextIdentifier contextId, const WebCore::TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)

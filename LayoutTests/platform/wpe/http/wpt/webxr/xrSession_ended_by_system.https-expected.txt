@@ -1,0 +1,4 @@
+
+PASS end event fires when immersive session is ended by system
+PASS end event fires when immersive session is ended by system and device reports shutdown complete
+

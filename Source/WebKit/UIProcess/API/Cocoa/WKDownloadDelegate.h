@@ -36,7 +36,7 @@
 typedef NS_ENUM(NSInteger, WKDownloadRedirectPolicy) {
     WKDownloadRedirectPolicyCancel,
     WKDownloadRedirectPolicyAllow,
-} NS_SWIFT_NAME(WKDownload.RedirectPolicy) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} NS_SWIFT_NAME(WKDownload.RedirectPolicy) WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 NS_ASSUME_NONNULL_BEGIN
 

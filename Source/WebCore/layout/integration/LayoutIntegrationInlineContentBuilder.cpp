@@ -182,18 +182,30 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
     LineLevelVisualAdjustmentsForRunsList lineLevelVisualAdjustmentsForRuns(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto lineNeedsLegacyIntegralVerticalPosition = [&] {
-            // InlineTree rounds y position to integral value for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection).
+            // Legacy inline tree integral rounds the vertical position for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection and ::addToLine).
+            auto& rootInlineBox = inlineFormattingState.lineBoxes()[lineIndex].rootInlineBox();
             auto& nonRootInlineLevelBoxList = inlineFormattingState.lineBoxes()[lineIndex].nonRootInlineLevelBoxes();
             if (nonRootInlineLevelBoxList.isEmpty()) {
                 // This is text content only with root inline box.
                 return true;
             }
-            // Text + <br> (or just <br> or text<span></span><br>) behaves like text.
             for (auto& inlineLevelBox : nonRootInlineLevelBoxList) {
-                if (inlineLevelBox.isAtomicInlineLevelBox()) {
-                    // Content like text<img> prevents legacy snapping.
+                // See shouldClearDescendantsHaveSameLineHeightAndBaseline in LegacyInlineFlowBox::addToLine.
+                auto contentPreventsIntegralSnapping = inlineLevelBox.isAtomicInlineLevelBox() || (inlineLevelBox.isLineBreakBox() && !m_layoutState.inStandardsMode());
+                if (contentPreventsIntegralSnapping)
                     return false;
-                }
+
+                auto& rootInlineBoxStyle = rootInlineBox.style();
+                auto& inlineLevelBoxStyle = inlineLevelBox.style();
+                auto stylePreventsIntegralSnapping = rootInlineBoxStyle.lineHeight() != inlineLevelBoxStyle.lineHeight() || inlineLevelBoxStyle.verticalAlign() != VerticalAlign::Baseline;
+                if (stylePreventsIntegralSnapping)
+                    return false;
+
+                auto& rootInlineBoxFontMetrics = rootInlineBoxStyle.fontCascade().fontMetrics();
+                auto& inlineLevelBoxFontMetrics = inlineLevelBoxStyle.fontCascade().fontMetrics();
+                auto fontPreventsIntegralSnapping = !rootInlineBoxFontMetrics.hasIdenticalAscentDescentAndLineGap(inlineLevelBoxFontMetrics);
+                if (fontPreventsIntegralSnapping)
+                    return false;
             }
             return true;
         };

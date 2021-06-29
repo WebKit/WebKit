@@ -387,6 +387,10 @@ public:
         value = std::numeric_limits<type>::max();
         EXPECT_EQ(true, (value += 1U).hasOverflowed());
         EXPECT_EQ(true, value.hasOverflowed());
+        value = std::numeric_limits<type>::max() - 1;
+        EXPECT_FALSE((value + 1).hasOverflowed());
+        value = std::numeric_limits<type>::min() + 1;
+        EXPECT_FALSE((value - 1).hasOverflowed());
     }
 };
 

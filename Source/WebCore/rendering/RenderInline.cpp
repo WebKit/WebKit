@@ -584,7 +584,7 @@ bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestRes
         // We cannot use addNodeToListBasedTestResult to determine if we fully enclose the hit-test area
         // because it can only handle rectangular targets.
         result.addNodeToListBasedTestResult(nodeForHitTest(), request, locationInContainer);
-        return regionResult.contains(tmpLocation.boundingBox());
+        return regionResult.contains(enclosingIntRect(tmpLocation.boundingBox()));
     }
     return false;
 }

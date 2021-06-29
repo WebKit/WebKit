@@ -33,6 +33,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnalignedAccess.h>
 
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
+
 namespace WTF {
 
 template<typename T>
@@ -115,6 +119,7 @@ public:
     static constexpr bool isAlignmentShiftProfitable = storageSizeWithoutAlignmentShift > storageSizeWithAlignmentShift;
     static constexpr unsigned alignmentShiftSize = isAlignmentShiftProfitable ? alignmentShiftSizeIfProfitable : 0;
     static constexpr unsigned storageSize = storageSizeWithAlignmentShift;
+    static_assert(storageSize <= sizeof(uintptr_t));
 
     constexpr PackedAlignedPtr()
         : m_storage()
@@ -136,11 +141,15 @@ public:
         // FIXME: PackedPtr<> can load memory with one mov by checking page boundary.
         // https://bugs.webkit.org/show_bug.cgi?id=197754
         uintptr_t value = 0;
+
+IGNORE_ARRAY_BOUNDS_WARNINGS_BEGIN
 #if CPU(LITTLE_ENDIAN)
         memcpy(&value, m_storage.data(), storageSize);
 #else
         memcpy(bitwise_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), m_storage.data(), storageSize);
 #endif
+IGNORE_ARRAY_BOUNDS_WARNINGS_END
+
         if (isAlignmentShiftProfitable)
             value <<= alignmentShiftSize;
 

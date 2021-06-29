@@ -2136,12 +2136,6 @@ void AXIsolatedObject::insertChild(AXCoreObject*, unsigned)
     ASSERT_NOT_REACHED();
 }
 
-bool AXIsolatedObject::shouldIgnoreAttributeRole() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::canHaveChildren() const
 {
     ASSERT_NOT_REACHED();

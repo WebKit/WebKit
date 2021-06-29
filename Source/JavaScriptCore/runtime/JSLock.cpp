@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,10 @@
 
 #if USE(WEB_THREAD)
 #include <wtf/ios/WebCoreThread.h>
+#endif
+
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace JSC {
@@ -197,7 +201,24 @@ void JSLock::willReleaseLock()
 {   
     RefPtr<VM> vm = m_vm;
     if (vm) {
-        vm->drainMicrotasks();
+        static bool useLegacyDrain = false;
+#if PLATFORM(COCOA)
+        static std::once_flag once;
+        std::call_once(once, [] {
+#if PLATFORM(MAC)
+            useLegacyDrain = applicationSDKVersion() < DYLD_MACOSX_VERSION_12_00;
+#elif PLATFORM(WATCH)
+            // Don't check, JSC isn't API on watch anyway.
+#elif PLATFORM(IOS_FAMILY)
+            useLegacyDrain = applicationSDKVersion() < DYLD_IOS_VERSION_15_0;
+#else
+#error "Unsupported Cocoa Platform"
+#endif
+        });
+#endif
+
+        if (!m_lockDropDepth || useLegacyDrain)
+            vm->drainMicrotasks();
 
         if (!vm->topCallFrame)
             vm->clearLastException();

@@ -53,11 +53,6 @@ WebCookieManagerProxy::~WebCookieManagerProxy()
     ASSERT(m_cookieObservers.isEmpty());
 }
 
-void WebCookieManagerProxy::initializeClient(const WKCookieManagerClientBase* client)
-{
-    m_client.initialize(client);
-}
-
 void WebCookieManagerProxy::getHostnamesWithCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&&)>&& callbackFunction)
 {
     if (m_networkProcess)
@@ -138,17 +133,9 @@ void WebCookieManagerProxy::stopObservingCookieChanges(PAL::SessionID sessionID)
         m_networkProcess->send(Messages::WebCookieManager::StopObservingCookieChanges(sessionID), 0);
 }
 
-void WebCookieManagerProxy::setCookieObserverCallback(PAL::SessionID sessionID, WTF::Function<void ()>&& callback)
-{
-    if (callback)
-        m_legacyCookieObservers.set(sessionID, WTFMove(callback));
-    else
-        m_legacyCookieObservers.remove(sessionID);
-}
-
 void WebCookieManagerProxy::registerObserver(PAL::SessionID sessionID, Observer& observer)
 {
-    auto result = m_cookieObservers.set(sessionID, HashSet<Observer*>());
+    auto result = m_cookieObservers.set(sessionID, WeakHashSet<Observer>());
     result.iterator->value.add(&observer);
 
     if (result.isNewEntry)
@@ -161,8 +148,8 @@ void WebCookieManagerProxy::unregisterObserver(PAL::SessionID sessionID, Observe
     if (iterator == m_cookieObservers.end())
         return;
 
-    iterator->value.remove(&observer);
-    if (!iterator->value.isEmpty())
+    iterator->value.remove(observer);
+    if (!iterator->value.computesEmpty())
         return;
 
     m_cookieObservers.remove(iterator);
@@ -171,17 +158,12 @@ void WebCookieManagerProxy::unregisterObserver(PAL::SessionID sessionID, Observe
 
 void WebCookieManagerProxy::cookiesDidChange(PAL::SessionID sessionID)
 {
-    m_client.cookiesDidChange(this);
-    auto legacyIterator = m_legacyCookieObservers.find(sessionID);
-    if (legacyIterator != m_legacyCookieObservers.end())
-        ((*legacyIterator).value)();
-
     auto iterator = m_cookieObservers.find(sessionID);
     if (iterator == m_cookieObservers.end())
         return;
 
-    for (auto* observer : iterator->value)
-        observer->cookiesDidChange();
+    for (auto& observer : iterator->value)
+        observer.cookiesDidChange();
 }
 
 void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& callbackFunction)

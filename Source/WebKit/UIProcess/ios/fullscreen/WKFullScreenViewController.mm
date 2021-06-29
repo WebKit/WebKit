@@ -50,9 +50,9 @@ class WKFullScreenViewControllerPlaybackSessionModelClient : WebCore::PlaybackSe
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 
-    void rateChanged(bool isPlaying, float /* playbackRate */, float /* defaultPlaybackRate */) override
+    void rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double /* playbackRate */, double /* defaultPlaybackRate */) override
     {
-        m_parent.playing = isPlaying;
+        m_parent.playing = playbackState.contains(WebCore::PlaybackSessionModel::PlaybackState::Playing);
     }
 
     void isPictureInPictureSupportedChanged(bool) override

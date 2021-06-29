@@ -75,7 +75,7 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
 #endif
 }
 
-unsigned ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
+std::optional<unsigned> ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
 {
     return m_scrollController.activeScrollSnapIndexForAxis(axis);
 }

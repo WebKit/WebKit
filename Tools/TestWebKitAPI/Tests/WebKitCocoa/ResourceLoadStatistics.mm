@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
@@ -1338,11 +1339,16 @@ TEST(ResourceLoadStatistics, StoreSuspension)
 
 TEST(ResourceLoadStatistics, BackForwardPerPageData)
 {
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
     auto delegate = adoptNS([TestNavigationDelegate new]);
 
     auto schemeHandler = adoptNS([[ResourceLoadStatisticsSchemeHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:processPool.get()];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"resource-load-statistics"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

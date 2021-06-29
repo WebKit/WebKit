@@ -92,7 +92,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     PrepareToSuspend(bool isSuspensionImminent) -> () Async
     ProcessDidResume()
 
-    MainThreadPing()
     BackgroundResponsivenessPing()
 
 #if ENABLE(GAMEPAD)

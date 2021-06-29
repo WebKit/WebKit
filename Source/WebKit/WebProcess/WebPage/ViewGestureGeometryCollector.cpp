@@ -244,16 +244,14 @@ void ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales(double
 #endif
 }
 
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS_FAMILY)
 void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
     FloatRect visibleContentRect = m_webPage.mainFrameView()->unobscuredContentRectIncludingScrollbars();
     bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame().handlesPageScaleGesture();
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }
-#endif
 
-#if !PLATFORM(IOS_FAMILY)
 void ViewGestureGeometryCollector::setRenderTreeSizeNotificationThreshold(uint64_t size)
 {
     m_renderTreeSizeNotificationThreshold = size;

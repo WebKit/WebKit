@@ -38,11 +38,11 @@ class State;
 
 class SnippetParams final : public JSC::SnippetParams {
 public:
-    SnippetParams(State& state, const B3::StackmapGenerationParams& params, DFG::Node* node, Box<CCallHelpers::JumpList> exceptions, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+    SnippetParams(State& state, const B3::StackmapGenerationParams& params, CodeOrigin semanticNodeOrigin, Box<CCallHelpers::JumpList> exceptions, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : JSC::SnippetParams(state.vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
         , m_state(state)
         , m_params(params)
-        , m_node(node)
+        , m_semanticNodeOrigin(semanticNodeOrigin)
         , m_exceptions(exceptions)
     {
     }
@@ -54,7 +54,7 @@ private:
 
     State& m_state;
     const B3::StackmapGenerationParams& m_params;
-    DFG::Node* m_node;
+    CodeOrigin m_semanticNodeOrigin;
     Box<CCallHelpers::JumpList> m_exceptions;
 };
 

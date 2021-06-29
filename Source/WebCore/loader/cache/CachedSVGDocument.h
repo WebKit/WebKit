@@ -32,7 +32,7 @@ class Settings;
 
 class CachedSVGDocument final : public CachedResource {
 public:
-    explicit CachedSVGDocument(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*, const Settings&);
+    explicit CachedSVGDocument(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, const Settings&);
     explicit CachedSVGDocument(CachedResourceRequest&&, CachedSVGDocument&);
     virtual ~CachedSVGDocument();
 

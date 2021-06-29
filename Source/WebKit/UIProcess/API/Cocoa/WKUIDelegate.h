@@ -49,13 +49,13 @@ typedef NS_ENUM(NSInteger, WKPermissionDecision) {
     WKPermissionDecisionPrompt,
     WKPermissionDecisionGrant,
     WKPermissionDecisionDeny,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
     WKMediaCaptureTypeCamera,
     WKMediaCaptureTypeMicrophone,
     WKMediaCaptureTypeCameraAndMicrophone,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 /*! A class conforming to the WKUIDelegate protocol provides methods for
  presenting native UI on behalf of a webpage.
@@ -144,14 +144,14 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
  @param decisionHandler The completion handler to call once the decision is made
  @discussion If not implemented, the result is the same as calling the decisionHandler with WKPermissionDecisionPrompt.
  */
-- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_SWIFT_ASYNC_NAME(webView(_:decideMediaCapturePermissionsFor:initiatedBy:type:)) WK_SWIFT_ASYNC(5) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_SWIFT_ASYNC_NAME(webView(_:decideMediaCapturePermissionsFor:initiatedBy:type:)) WK_SWIFT_ASYNC(5) WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 /*! @abstract Allows your app to determine whether or not the given security origin should have access to the device's orientation and motion.
  @param securityOrigin The security origin which requested access to the device's orientation and motion.
  @param frame The frame that initiated the request.
  @param decisionHandler The decision handler to call once the app has made its decision.
  */
-- (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA)) WK_API_UNAVAILABLE(macos);
+- (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(ios(15.0)) WK_API_UNAVAILABLE(macos);
 
 #if TARGET_OS_IPHONE
 

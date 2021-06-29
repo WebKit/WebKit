@@ -69,6 +69,7 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     Color platformAppHighlightColor(OptionSet<StyleColor::Options>) const final;
 #endif
+    Color platformDefaultButtonTextColor(OptionSet<StyleColor::Options>) const final;
 
     ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return ScrollbarControlSize::Small; }
 

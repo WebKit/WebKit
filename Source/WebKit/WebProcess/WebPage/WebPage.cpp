@@ -535,6 +535,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)
 #endif
     , m_lastNavigationWasAppBound(parameters.lastNavigationWasAppBound)
+#if ENABLE(APP_HIGHLIGHTS)
+    , m_appHighlightsVisible(parameters.appHighlightsVisible)
+#endif
 {
     ASSERT(m_identifier);
 
@@ -7617,6 +7620,7 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IP
 
 void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightVisibility)
 {
+    m_appHighlightsVisible = appHighlightVisibility;
     for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
         if (auto document = makeRefPtr(frame->document()))
             document->appHighlightRegister().setHighlightVisibility(appHighlightVisibility);

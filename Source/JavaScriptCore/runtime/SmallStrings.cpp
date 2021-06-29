@@ -92,10 +92,10 @@ SmallStrings::~SmallStrings()
 {
 }
 
-Ref<StringImpl> SmallStrings::singleCharacterStringRep(unsigned char character)
+Ref<AtomStringImpl> SmallStrings::singleCharacterStringRep(unsigned char character)
 {
     if (LIKELY(m_isInitialized))
-        return *const_cast<StringImpl*>(m_singleCharacterStrings[character]->tryGetValueImpl());
+        return *static_cast<AtomStringImpl*>(const_cast<StringImpl*>(m_singleCharacterStrings[character]->tryGetValueImpl()));
     const LChar string[] = { static_cast<LChar>(character) };
     return AtomStringImpl::add(string, 1).releaseNonNull();
 }

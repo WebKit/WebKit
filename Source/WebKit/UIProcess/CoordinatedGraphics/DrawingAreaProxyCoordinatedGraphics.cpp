@@ -152,6 +152,18 @@ void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBa
 #endif
 }
 
+#if PLATFORM(GTK)
+void DrawingAreaProxyCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
+{
+    send(Messages::DrawingArea::AdjustTransientZoom(scale, origin));
+}
+
+void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin)
+{
+    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
+}
+#endif
+
 void DrawingAreaProxyCoordinatedGraphics::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);

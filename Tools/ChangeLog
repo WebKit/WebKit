@@ -1,3 +1,554 @@
+2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
+2021-06-21  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Don't process-swap on navigations within the same non-HTTP(s) protocol
+        https://bugs.webkit.org/show_bug.cgi?id=227220
+
+        Reviewed by Tim Horton.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2021-06-21  Alex Christensen  <achristensen@webkit.org>
+
+        Break ref cycle between API::HTTPCookieStore and WebKit::WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=226992
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+
+2021-06-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        makeUnique cannot be used to instantiate function-local classes
+        https://bugs.webkit.org/show_bug.cgi?id=227163
+
+        Reviewed by Antti Koivisto.
+
+        Test that WTF_MAKE_FAST_ALLOCATED and similar macros work in function
+        local classes.
+
+        * TestWebKitAPI/Tests/WTF/StdLibExtras.cpp:
+        (TestWebKitAPI::TEST):
+
+2021-06-21  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r275496): WebSocket Message too long when message is larger than 1mb
+        https://bugs.webkit.org/show_bug.cgi?id=227030
+        <rdar://problem/79370994>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::Connection::receiveBytes const):
+
+2021-06-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Adopt autoinstaller (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=227096
+        <rdar://problem/79418080>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/container: Fix libraries path.
+        * Scripts/libraries/resultsdbpy/run: Ditto.
+        * Scripts/libraries/resultsdbpy/run-tests: Ditto.
+
+2021-06-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r278699.
+        https://bugs.webkit.org/show_bug.cgi?id=227174
+
+        Regressed JetStream2/WSL
+
+        Reverted changeset:
+
+        "[JSC] Remove useDataICInOptimizingJIT option"
+        https://bugs.webkit.org/show_bug.cgi?id=226862
+        https://trac.webkit.org/changeset/278699
+
+2021-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [MSE][GStreamer] Soundcloud serves MP4 audio with empty tfdt boxes
+        https://bugs.webkit.org/show_bug.cgi?id=191419
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST): Add a test for the soundcloud quirk.
+
+2021-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Define MacroAssemblerARM64E::numberOfPACBits based on OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH).
+        https://bugs.webkit.org/show_bug.cgi?id=227147
+        rdar://78785309
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WTF/Packed.cpp:
+
+2021-06-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] WTF.ParseInteger and WTF.ParseIntegerAllowingTrailingJunk are failing
+        https://bugs.webkit.org/show_bug.cgi?id=227090
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::AllowMixedSignednessTest::run):
+
+2021-06-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Adopt autoinstaller
+        https://bugs.webkit.org/show_bug.cgi?id=227096
+        <rdar://problem/79418080>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/container: Moved from insdie library.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Register required libraries.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/container: Moved to containing folder.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/example/main.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/run: Moved to containing folder.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/view_routes_unittest.py: Use specific imports
+        * Scripts/libraries/resultsdbpy/run: Moved from insdie library.
+        * Scripts/libraries/resultsdbpy/run-tests: Use autoinstalled libraries.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
+2021-06-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Retry downloads in Autoinstall
+        https://bugs.webkit.org/show_bug.cgi?id=227134
+        <rdar://problem/79462182>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.Archive.download): Retry failed downloads
+        (AutoInstall): Allow for a single retry by default
+
+2021-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Trying to take empty snapshots of the view should not cause crashes
+        https://bugs.webkit.org/show_bug.cgi?id=227133
+
+        Reviewed by Tim Horton.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewSnapshot.mm:
+        (TEST):
+
+2021-06-17  W.D. Xiong  <w_xiong@apple.com>
+
+        [iOS 15] Add iOS 15 simulator/device to bot watchers' dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=226779
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS15.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS15Simulator.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js: Added references to iOS 15 device + simulator, shifted ordering down
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css: Added references to iOS 15 device + simulator
+        (table.queue-grid tr.platform.ios-simulator-15 img.logo):
+        (table.queue-grid tr.platform.ios-15 img.logo):
+
+2021-06-17  W.D. Xiong  <w_xiong@apple.com>
+
+        [watchOS 8] Add watchOS 8 simulator/device to bot watchers' dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=226781
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS8.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator8.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js: Added references for watchOS 8 device + simulator; shifted order down for Windows platforms to make room
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css: Added references for watchOS 8 device + simulator
+        (table.queue-grid tr.platform.watchos-simulator-8 img.logo):
+        (table.queue-grid tr.platform.watchos-8 img.logo):
+
+2021-06-17  W.D. Xiong  <w_xiong@apple.com>
+
+        [tvOS 15] Add tvOS 15 simulator/device to bot watchers' dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=226782
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS15.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS15Simulator.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js: Added references to tvOS 15 device + simulator
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css: Added references to tvOS 15 device + simulator
+        (table.queue-grid tr.platform.tvos-simulator-15 img.logo):
+        (table.queue-grid tr.platform.tvos-15 img.logo):
+
+2021-06-17  W.D. Xiong  <w_xiong@apple.com>
+
+        [Monterey] Add Seed 1 to bot watchers' dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=226747
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Monterey.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js: Added Monterey
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css: Added Monterey
+        (table.queue-grid tr.platform.macos-monterey img.logo):
+
+2021-06-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Exception running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=227114
+
+        Reviewed by Jonathan Bedard.
+
+        Catch exception and print warning message.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (TaskPool.__exit__):
+
+2021-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        Remove empty header WebTypesInternal.h
+        https://bugs.webkit.org/show_bug.cgi?id=227094
+
+        Reviewed by Fujii Hironori.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        * DumpRenderTree/mac/TextInputControllerMac.m:
+
+2021-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        WKScriptMessageHandlerWithReply should raise an exception if replyHandler is called twice
+        https://bugs.webkit.org/show_bug.cgi?id=226863
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (-[AsyncScriptMessageHandler userContentController:didReceiveScriptMessage:replyHandler:]):
+
+2021-06-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac EWS] TestWebKitAPI.WebKit.AudioBufferSize is flaky timing out on EWS
+        https://bugs.webkit.org/show_bug.cgi?id=227046
+        <rdar://problem/79360787>
+
+        Unreviewed, fix broken test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add audio-buffer-size.html 
+        to the Copy Resources step so tests can use it.
+
+2021-06-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Improve build summary about finding flaky test in ReRunWebKitTests
+        https://bugs.webkit.org/show_bug.cgi?id=227123
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (ReRunWebKitTests.evaluateCommand):
+        * CISupport/ews-build/steps_unittest.py:
+
+2021-06-17  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r278536): Wrong comment character used in coverage.xcconfig
+
+        * coverage/coverage.xcconfig:
+        - Change '#' to '//' to fix the comment.
+
+2021-06-17  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement logical property groups
+        https://bugs.webkit.org/show_bug.cgi?id=226878
+
+        Reviewed by Antti Koivisto.
+
+        Add validator for new codegen property "logical-property-group",
+        replacing the old "direction-aware-property".
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.validate_logical_property_group):
+        (JSONCSSPropertiesChecker.check_codegen_properties):
+
+2021-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Pass a GTlsCertificate to soup_server_new()
+        https://bugs.webkit.org/show_bug.cgi?id=227023
+
+        Reviewed by Michael Catanzaro.
+
+        Instead of using soup_server_set_ssl_cert_file() that will be removed from libsoup soon.
+
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::WebKitTestServer):
+
+2021-06-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] TestWTF.WTF_WeakPtr.WeakHashMapIterators is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=227102
+
+        Reviewed by Ryosuke Niwa.
+
+        A heap corruption was detected while a Derived class object was
+        destroyed as a Base class object.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::Base::~Base): Made Base class dtor virtual.
+        (TestWebKitAPI::Derived::~Derived):
+
+2021-06-16  Jonathan Bedard  <jbedard@apple.com>
+
+        Clean up how platform images are handled in the bot watchers' dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=226989
+
+        Patch by W.D. Xiong.
+
+        Renamed the _@2x.png files to _.png and removed old platforms that don't have queues anymore. Also renamed WatchOSSimulator7 to WatchOS7Simulator
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/BigSur.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/BigSur@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/BigSur@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Catalina.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/Catalina@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Catalina@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/ElCapitan.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/ElCapitan@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/GTK.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/GTK@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/GTK@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/HighSierra.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/HighSierra@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS10.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS10@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS10Simulator.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS10Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS11.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS11@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS11Simulator.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS11Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS12.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS12@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS12Simulator.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS12Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS13.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS13@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS13Simulator.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS13Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS14.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/IOS14@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS14@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS14Simulator.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/IOS14Simulator@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS14Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS9.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS9@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS9Simulator.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOS9Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOSDevice.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/IOSDevice@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOSDevice@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOSSimulator.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/IOSSimulator@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/IOSSimulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Mavericks.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Mavericks@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Mojave.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/Mojave@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Mojave@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/MountainLion.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/MountainLion@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/MountainLion@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/PlatformRing.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/PlatformRing@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/PlatformRing@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Sierra.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Sierra@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/SquirrelFish.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/SquirrelFish@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/SquirrelFish@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS13.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS13@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS13Simulator.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS13Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS14.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/TvOS14@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS14@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS14Simulator.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/TvOS14Simulator@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/TvOS14Simulator@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WPE.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/WPE@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WPE@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS6.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS6@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS7.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS7@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS7@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOS7Simulator.png: Copied from Tools/CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator7@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator6.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator6@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator6@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator7.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WatchOSSimulator7@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Windows10.png: Replaced with Tools/CISupport/build-webkit-org/public_html/dashboard/Images/Windows10@2x.png.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Windows10@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Windows7.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Windows7@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Windows8.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Windows8@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WindowsXP.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/WindowsXP@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Yosemite.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Images/Yosemite@2x.png: Removed.
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css: Applied above changes
+        (table.queue-grid td.logo img.ring):
+        (table.queue-grid tr.platform.ios-simulator-14 img.logo):
+        (table.queue-grid tr.platform.ios-14 img.logo):
+        (table.queue-grid tr.platform.tvos-simulator-14 img.logo):
+        (table.queue-grid tr.platform.tvos-14 img.logo):
+        (table.queue-grid tr.platform.watchos-simulator-7 img.logo):
+        (table.queue-grid tr.platform.watchos-7 img.logo):
+        (table.queue-grid tr.platform.macos-catalina img.logo):
+        (table.queue-grid tr.platform.macos-bigsur img.logo):
+        (table.queue-grid tr.platform.wincairo-windows-10 img.logo):
+        (table.queue-grid tr.platform.windows-10 img.logo):
+        (table.queue-grid tr.platform.windows-7 img.logo):
+        (table.queue-grid tr.platform.linux-gtk img.logo):
+        (table.queue-grid tr.platform.linux-wpe img.logo):
+        (table.queue-grid tr.platform.linux-jsconly img.logo):
+
+2021-06-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Support branch queries in mock git log
+        https://bugs.webkit.org/show_bug.cgi?id=225889
+        <rdar://problem/78122705>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Add support for branches in
+        `git log` commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_log):
+        (TestGit.test_branch_log):
+
+2021-06-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Cache more Git commands
+        https://bugs.webkit.org/show_bug.cgi?id=227082
+        <rdar://problem/79405244>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.__init__): Reset branch cache.
+        (Git.default_branch): Memoize default_branch call.
+        (Git.branch): Prefer branch cache.
+        (Git.checkout): Reset branch cache.
+
+2021-06-16  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] DataMutex: Assert on double locking on the same thread
+        https://bugs.webkit.org/show_bug.cgi?id=227069
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update expectations to include the fixed test.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Allow legacy SecurityOrigin behavior for x-apple-ql-id2 scheme
+        https://bugs.webkit.org/show_bug.cgi?id=226993
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Handle auth failures
+        https://bugs.webkit.org/show_bug.cgi?id=226999
+        <rdar://problem/79313850>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): We should attempt to retrieve credentials, even if they
+        are not requested because retrieving credentials does not prompt the user.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.request): In the event we get a 400 error from the GitHub API,
+        attempt forcing authentication before reporting an error.
+
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Check for "xn--" in any subdomain when parsing URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=226912
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        These tests used to hit UIDNA_ERROR_LABEL_TOO_LONG which is allowed now.
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+        This test, from r262171, needs to verify that non-ASCII characters are not truncated to ASCII values when converting to NSURL.
+        It used to use an invalid URL that had a host that ended in U+FE63 (SMALL HYPHEN-MINUS) which would fail because of UIDNA_ERROR_TRAILING_HYPHEN.
+        Now that trailing hyphens are allowed, we end in U+0661 and U+06F1 which fail because of UIDNA_ERROR_BIDI which makes this test still verify
+        the non-truncated values of an invalid host converted to an NSURL.
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm: Remove unneeded import.
+
+2021-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Gardened three API GTK test failures.
+
+        These tests were constant failures in EWS and were slowing down the
+        bot. The tests are the following:
+          - /WebKit2Gtk/TestContextMenu:/webkit/WebKitWebPage/context-menu.
+          - /WebKit2Gtk/TestContextMenu:/webkit/WebKitWebPage/context-menu-node.
+          - /TestWTF:WTF_DataMutex.DoubleLockDeathTest.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2021-06-14  Keith Miller  <keith_miller@apple.com>
+
+        run-javascriptcore-tests should print output when a test binary fails by default
+        https://bugs.webkit.org/show_bug.cgi?id=226985
+
+        Reviewed by Mark Lam.
+
+        * Scripts/run-javascriptcore-tests:
+        (runTest):
+
+2021-06-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up an Apple-BigSur-AppleSilicon-Release-Test262-Tests queue
+        https://bugs.webkit.org/show_bug.cgi?id=226602
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2021-06-14  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         AcceleratedImageBuffer not instantiated but objects are punned to the type

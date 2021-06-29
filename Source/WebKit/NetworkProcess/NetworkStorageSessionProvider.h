@@ -35,10 +35,10 @@ namespace WebKit {
 
 class NetworkStorageSessionProvider final : public WebCore::StorageSessionProvider {
 public:
-    static Ref<NetworkStorageSessionProvider> create(NetworkProcess& networkProcess, const PAL::SessionID& sessionID) { return adoptRef(*new NetworkStorageSessionProvider(networkProcess, sessionID)); }
+    static Ref<NetworkStorageSessionProvider> create(NetworkProcess& networkProcess, PAL::SessionID sessionID) { return adoptRef(*new NetworkStorageSessionProvider(networkProcess, sessionID)); }
     
 private:
-    NetworkStorageSessionProvider(NetworkProcess& networkProcess, const PAL::SessionID& sessionID)
+    NetworkStorageSessionProvider(NetworkProcess& networkProcess, PAL::SessionID sessionID)
         : m_networkProcess(makeWeakPtr(networkProcess))
         , m_sessionID(sessionID) { }
 

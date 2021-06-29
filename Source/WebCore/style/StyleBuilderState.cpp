@@ -30,6 +30,7 @@
 #include "config.h"
 #include "StyleBuilderState.h"
 
+#include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontSelector.h"
@@ -41,7 +42,6 @@
 #include "FontCache.h"
 #include "HTMLElement.h"
 #include "RenderTheme.h"
-#include "SVGElement.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleBuilder.h"
@@ -84,33 +84,31 @@ bool BuilderState::useSVGZoomRulesForLength() const
 
 Ref<CSSValue> BuilderState::resolveImageStyles(CSSValue& value)
 {
-    if (is<CSSGradientValue>(value))
-        return downcast<CSSGradientValue>(value).gradientWithStylesResolved(*this);
-
-    if (is<CSSImageSetValue>(value))
-        return downcast<CSSImageSetValue>(value).imageSetWithStylesResolved(*this);
-
-    // Creating filter operations doesn't create a new CSSValue reference.
+    if (is<CSSCrossfadeValue>(value))
+        return downcast<CSSCrossfadeValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSCursorImageValue>(value))
+        return downcast<CSSCursorImageValue>(value).valueWithStylesResolved(*this);
     if (is<CSSFilterImageValue>(value))
-        downcast<CSSFilterImageValue>(value).createFilterOperations(*this);
-
+        return downcast<CSSFilterImageValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSGradientValue>(value))
+        return downcast<CSSGradientValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSImageSetValue>(value))
+        return downcast<CSSImageSetValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSImageValue>(value))
+        return downcast<CSSImageValue>(value).valueWithStylesResolved(*this);
     return makeRef(value);
 }
 
 RefPtr<StyleImage> BuilderState::createStyleImage(CSSValue& value)
 {
     if (is<CSSImageValue>(value))
-        return StyleCachedImage::create(downcast<CSSImageValue>(value));
-
+        return StyleCachedImage::create(downcast<CSSImageValue>(resolveImageStyles(value).get()));
     if (is<CSSCursorImageValue>(value))
-        return StyleCursorImage::create(downcast<CSSCursorImageValue>(value));
-
+        return StyleCursorImage::create(downcast<CSSCursorImageValue>(resolveImageStyles(value).get()));
     if (is<CSSImageGeneratorValue>(value))
         return StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(resolveImageStyles(value).get()));
-    
     if (is<CSSImageSetValue>(value))
         return StyleImageSet::create(downcast<CSSImageSetValue>(resolveImageStyles(value).get()));
-
     return nullptr;
 }
 

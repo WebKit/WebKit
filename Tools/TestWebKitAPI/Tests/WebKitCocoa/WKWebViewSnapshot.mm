@@ -82,6 +82,112 @@ TEST(WKWebView, SnapshotImageError)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+TEST(WKWebView, SnapshotImageEmptyRect)
+{
+    CGFloat viewWidth = 800;
+    CGFloat viewHeight = 600;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto pid = [webView _webProcessIdentifier];
+
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(0, 0, 0, 0)];
+    [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(0, snapshotImage.size.width);
+        EXPECT_EQ(0, snapshotImage.size.height);
+
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]); // Make sure the WebProcess did not crash.
+}
+
+TEST(WKWebView, SnapshotImageZeroWidth)
+{
+    CGFloat viewWidth = 800;
+    CGFloat viewHeight = 600;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto pid = [webView _webProcessIdentifier];
+
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
+    [snapshotConfiguration setSnapshotWidth:@(0.0)]; // Will fall back to the view width.
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(viewWidth, snapshotImage.size.width);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]); // Make sure the WebProcess did not crash.
+}
+
+TEST(WKWebView, SnapshotImageZeroSizeView)
+{
+    CGFloat viewWidth = 0;
+    CGFloat viewHeight = 0;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto pid = [webView _webProcessIdentifier];
+
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
+    [snapshotConfiguration setSnapshotWidth:@(100)];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(0, snapshotImage.size.width);
+        EXPECT_EQ(0, snapshotImage.size.height);
+
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]); // Make sure the WebProcess did not crash.
+}
+
+TEST(WKWebView, SnapshotImageZeroSizeViewNoConfiguration)
+{
+    CGFloat viewWidth = 0;
+    CGFloat viewHeight = 0;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto pid = [webView _webProcessIdentifier];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:nil completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(0, snapshotImage.size.width);
+        EXPECT_EQ(0, snapshotImage.size.height);
+
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]); // Make sure the WebProcess did not crash.
+}
+
 TEST(WKWebView, SnapshotImageBaseCase)
 {
     NSInteger viewWidth = 800;

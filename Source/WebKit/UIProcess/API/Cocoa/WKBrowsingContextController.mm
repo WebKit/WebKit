@@ -57,6 +57,7 @@
 #import "WebProtectionSpace.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/WeakObjCPtr.h>
 

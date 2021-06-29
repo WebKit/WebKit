@@ -966,10 +966,6 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
         storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
     }
 
-    // Tell GC mark phase how much of the scratch buffer is active during call.
-    move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
-    storePtr(TrustedImmPtr(scratchSize), GPRInfo::regT0);
-
 #if CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS)
     move(TrustedImmPtr(buffer), GPRInfo::argumentGPR2);
     move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
@@ -981,9 +977,6 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
     prepareCallOperation(vm);
     move(TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(function)), scratch);
     call(scratch, OperationPtrTag);
-
-    move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
-    storePtr(TrustedImmPtr(nullptr), GPRInfo::regT0);
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
@@ -1052,7 +1045,7 @@ void AssemblyHelpers::cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage)
     addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
 #if CPU(ARM64E)
     if (kind == Gigacage::Primitive)
-        bitFieldInsert64(storage, 0, 64 - numberOfPACBits, tempReg);
+        bitFieldInsert64(storage, 0, 64 - maxNumberOfAllowedPACBits, tempReg);
     if (skip.isSet())
         skip.link(this);
 #endif
@@ -1089,7 +1082,7 @@ void AssemblyHelpers::cageConditionallyAndUntag(Gigacage::Kind kind, GPRReg stor
             ASSERT(LogicalImmediate::create64(Gigacage::mask(kind)).isValid());
             andPtr(TrustedImmPtr(Gigacage::mask(kind)), tempReg);
             addPtr(scratch, tempReg);
-            bitFieldInsert64(tempReg, 0, 64 - numberOfPACBits, storage);
+            bitFieldInsert64(tempReg, 0, 64 - maxNumberOfAllowedPACBits, storage);
 #else
             andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
             addPtr(scratch, storage);

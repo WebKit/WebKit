@@ -691,42 +691,60 @@ static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
         return consumeIdent(range);
     
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
-    FontVariantEastAsianVariant variant = FontVariantEastAsianVariant::Normal;
-    FontVariantEastAsianWidth width = FontVariantEastAsianWidth::Normal;
-    FontVariantEastAsianRuby ruby = FontVariantEastAsianRuby::Normal;
+    std::optional<FontVariantEastAsianVariant> variant;
+    std::optional<FontVariantEastAsianWidth> width;
+    std::optional<FontVariantEastAsianRuby> ruby;
     
     while (!range.atEnd()) {
         if (range.peek().type() != IdentToken)
             return nullptr;
-        
+
         auto id = range.peek().id();
         
         switch (id) {
         case CSSValueJis78:
+            if (variant)
+                return nullptr;
             variant = FontVariantEastAsianVariant::Jis78;
             break;
         case CSSValueJis83:
+            if (variant)
+                return nullptr;
             variant = FontVariantEastAsianVariant::Jis83;
             break;
         case CSSValueJis90:
+            if (variant)
+                return nullptr;
             variant = FontVariantEastAsianVariant::Jis90;
             break;
         case CSSValueJis04:
+            if (variant)
+                return nullptr;
             variant = FontVariantEastAsianVariant::Jis04;
             break;
         case CSSValueSimplified:
+            if (variant)
+                return nullptr;
             variant = FontVariantEastAsianVariant::Simplified;
             break;
         case CSSValueTraditional:
+            if (variant)
+                return nullptr;
             variant = FontVariantEastAsianVariant::Traditional;
             break;
         case CSSValueFullWidth:
+            if (width)
+                return nullptr;
             width = FontVariantEastAsianWidth::Full;
             break;
         case CSSValueProportionalWidth:
+            if (width)
+                return nullptr;
             width = FontVariantEastAsianWidth::Proportional;
             break;
         case CSSValueRuby:
+            if (ruby)
+                return nullptr;
             ruby = FontVariantEastAsianRuby::Yes;
             break;
         default:
@@ -735,8 +753,8 @@ static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
         
         range.consumeIncludingWhitespace();
     }
-        
-    switch (variant) {
+
+    switch (variant.value_or(FontVariantEastAsianVariant::Normal)) {
     case FontVariantEastAsianVariant::Normal:
         break;
     case FontVariantEastAsianVariant::Jis78:
@@ -758,8 +776,8 @@ static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
         values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueTraditional));
         break;
     }
-        
-    switch (width) {
+
+    switch (width.value_or(FontVariantEastAsianWidth::Normal)) {
     case FontVariantEastAsianWidth::Normal:
         break;
     case FontVariantEastAsianWidth::Full:
@@ -770,7 +788,7 @@ static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
         break;
     }
         
-    switch (ruby) {
+    switch (ruby.value_or(FontVariantEastAsianRuby::Normal)) {
     case FontVariantEastAsianRuby::Normal:
         break;
     case FontVariantEastAsianRuby::Yes:
@@ -2258,22 +2276,20 @@ static RefPtr<CSSPrimitiveValue> consumeRxOrRy(CSSParserTokenRange& range, CSSPa
 static RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParserContext& context, bool inQuirksMode)
 {
     RefPtr<CSSValueList> list;
-    while (RefPtr<CSSValue> image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::ImageSet })) {
-        IntPoint hotSpot(-1, -1);
-        bool hotSpotSpecified = false;
+    while (auto image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::ImageSet })) {
+        std::optional<IntPoint> hotSpot;
         if (auto x = consumeNumberRaw(range)) {
-            hotSpot.setX(static_cast<int>(*x));
             auto y = consumeNumberRaw(range);
             if (!y)
                 return nullptr;
-            hotSpot.setY(static_cast<int>(*y));
-            hotSpotSpecified = true;
+            // FIXME: Should we clamp or round instead of just casting from double to int?
+            hotSpot = IntPoint { static_cast<int>(*x), static_cast<int>(*y) };
         }
 
         if (!list)
             list = CSSValueList::createCommaSeparated();
 
-        list->append(CSSCursorImageValue::create(image.releaseNonNull(), hotSpotSpecified, hotSpot, context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No));
+        list->append(CSSCursorImageValue::create(image.releaseNonNull(), hotSpot, context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No));
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     }
@@ -4668,37 +4684,32 @@ static RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange& range, c
 static RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto values = CSSValueList::createCommaSeparated();
-    RefPtr<CSSPrimitiveValue> lastInteger;
+    std::optional<int> lastWeight;
     do {
-        RefPtr<CSSPrimitiveValue> integer;
-        RefPtr<CSSValue> symbol;
-        while (!integer || !symbol) {
-            if (!integer) {
-                integer = consumeInteger(range, 0);
-                if (integer)
-                    continue;
-            }
-            if (!symbol) {
-                symbol = consumeCounterStyleSymbol(range, context);
-                if (symbol)
-                    continue;
-            }
-            return nullptr;
-        }
-
-        if (lastInteger) {
-            // The additive tuples must be specified in order of strictly descending
-            // weight; otherwise, the declaration is invalid and must be ignored.
-            if (integer->intValue() >= lastInteger->intValue())
+        auto integer = consumeInteger(range, 0);
+        auto symbol = consumeCounterStyleSymbol(range, context);
+        if (!integer) {
+            if (!symbol)
+                return nullptr;
+            integer = consumeInteger(range, 0);
+            if (!integer)
                 return nullptr;
         }
-        lastInteger = integer;
-        values->append(integer.releaseNonNull());
-        values->append(symbol.releaseNonNull());
+
+        // Additive tuples must be specified in order of strictly descending weight.
+        auto weight = integer->intValue();
+        if (lastWeight && !(weight < lastWeight))
+            return nullptr;
+        lastWeight = weight;
+
+        auto pair = CSSValueList::createSpaceSeparated();
+        pair->append(integer.releaseNonNull());
+        pair->append(symbol.releaseNonNull());
+        values->append(WTFMove(pair));
     } while (consumeCommaIncludingWhitespace(range));
     if (!range.atEnd() || !values->length())
         return nullptr;
-    return values;
+    return WTFMove(values);
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as
@@ -4940,9 +4951,9 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
 {
     if (identMatches<CSSValueNormal, CSSValueNone>(m_range.peek().id())) {
         addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, consumeIdent(m_range).releaseNonNull(), important);
-        addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-        addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-        addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+        addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+        addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+        addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
         return m_range.atEnd();
     }
 
@@ -4953,6 +4964,8 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     RefPtr<CSSValue> eastAsianValue;
     FontVariantLigaturesParser ligaturesParser;
     FontVariantNumericParser numericParser;
+    bool implicitLigatures = true;
+    bool implicitNumeric = true;
     do {
         if (!capsValue) {
             capsValue = consumeFontVariantCaps(m_range);
@@ -4974,9 +4987,14 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
 
         FontVariantLigaturesParser::ParseResult ligaturesParseResult = ligaturesParser.consumeLigature(m_range);
         FontVariantNumericParser::ParseResult numericParseResult = numericParser.consumeNumeric(m_range);
-        if (ligaturesParseResult == FontVariantLigaturesParser::ParseResult::ConsumedValue
-            || numericParseResult == FontVariantNumericParser::ParseResult::ConsumedValue)
+        if (ligaturesParseResult == FontVariantLigaturesParser::ParseResult::ConsumedValue) {
+            implicitLigatures = false;
             continue;
+        }
+        if (numericParseResult == FontVariantNumericParser::ParseResult::ConsumedValue) {
+            implicitNumeric = false;
+            continue;
+        }
 
         if (ligaturesParseResult == FontVariantLigaturesParser::ParseResult::DisallowedValue
             || numericParseResult == FontVariantNumericParser::ParseResult::DisallowedValue)
@@ -4985,7 +5003,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
         if (!eastAsianValue) {
             eastAsianValue = consumeFontVariantEastAsian(m_range);
             if (eastAsianValue)
-            continue;
+                continue;
         }
 
         // Saw some value that didn't match anything else.
@@ -4993,15 +5011,19 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
 
     } while (!m_range.atEnd());
 
-    addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, ligaturesParser.finalizeValue().releaseNonNull(), important);
-    addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFontVariant, numericParser.finalizeValue().releaseNonNull(), important);
-    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, capsValue ? capsValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-    addProperty(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, alternatesValue ? alternatesValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-    addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, positionValue ? positionValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-    
+    addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, ligaturesParser.finalizeValue().releaseNonNull(), important, implicitLigatures);
+    addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFontVariant, numericParser.finalizeValue().releaseNonNull(), important, implicitNumeric);
+    bool implicitCaps = !capsValue;
+    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, capsValue ? capsValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, implicitCaps);
+    bool implicitAlternates = !alternatesValue;
+    addProperty(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, alternatesValue ? alternatesValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, implicitAlternates);
+    bool implicitPosition = !positionValue;
+    addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, positionValue ? positionValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, implicitPosition);
+
+    bool implicitEastAsian = !eastAsianValue;
     if (!eastAsianValue)
         eastAsianValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-    addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, eastAsianValue.releaseNonNull(), important);
+    addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, eastAsianValue.releaseNonNull(), important, implicitEastAsian);
     
     return true;
 }

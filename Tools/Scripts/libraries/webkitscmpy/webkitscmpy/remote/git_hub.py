@@ -97,6 +97,8 @@ class GitHub(Scm):
             path='/{}'.format(path) if path else '',
         )
         response = requests.get(url, params=params, headers=headers, auth=auth)
+        if authenticated is None and not auth and response.status_code // 100 == 4:
+            return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate)
         if response.status_code != 200:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
             message = response.json().get('message')

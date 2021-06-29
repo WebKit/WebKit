@@ -173,12 +173,12 @@ public:
     void forEachNetworkSession(const Function<void(NetworkSession&)>&);
 
     void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
-    WebCore::NetworkStorageSession* storageSession(const PAL::SessionID&) const;
-    std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(const PAL::SessionID&);
+    WebCore::NetworkStorageSession* storageSession(PAL::SessionID) const;
+    std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(PAL::SessionID);
 #if PLATFORM(COCOA)
-    void ensureSession(const PAL::SessionID&, bool shouldUseTestingNetworkSession, const String& identifier, RetainPtr<CFHTTPCookieStorageRef>&&);
+    void ensureSession(PAL::SessionID, bool shouldUseTestingNetworkSession, const String& identifier, RetainPtr<CFHTTPCookieStorageRef>&&);
 #else
-    void ensureSession(const PAL::SessionID&, bool shouldUseTestingNetworkSession, const String& identifier);
+    void ensureSession(PAL::SessionID, bool shouldUseTestingNetworkSession, const String& identifier);
 #endif
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
@@ -329,9 +329,9 @@ public:
     void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
-    CacheStorage::Engine* findCacheEngine(const PAL::SessionID&);
-    CacheStorage::Engine& ensureCacheEngine(const PAL::SessionID&, Function<Ref<CacheStorage::Engine>()>&&);
-    void removeCacheEngine(const PAL::SessionID&);
+    CacheStorage::Engine* findCacheEngine(PAL::SessionID);
+    CacheStorage::Engine& ensureCacheEngine(PAL::SessionID, Function<Ref<CacheStorage::Engine>()>&&);
+    void removeCacheEngine(PAL::SessionID);
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
@@ -451,11 +451,11 @@ private:
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);
     
-    void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
+    void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
-    void addWebPageNetworkParameters(const PAL::SessionID&, WebPageProxyIdentifier, WebPageNetworkParameters&&);
-    void removeWebPageNetworkParameters(const PAL::SessionID&, WebPageProxyIdentifier);
-    void countNonDefaultSessionSets(const PAL::SessionID&, CompletionHandler<void(size_t)>&&);
+    void addWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier, WebPageNetworkParameters&&);
+    void removeWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier);
+    void countNonDefaultSessionSets(PAL::SessionID, CompletionHandler<void(size_t)>&&);
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(PAL::SessionID, bool);
@@ -472,7 +472,7 @@ private:
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif
 
-    void platformFlushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
+    void platformFlushCookies(PAL::SessionID, CompletionHandler<void()>&&);
     
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;

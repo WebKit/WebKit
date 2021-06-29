@@ -1,0 +1,12 @@
+
+PASS updateRenderState handles appropriately ended sessions - webgl
+FAIL updateRenderState handles appropriately ended sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS updateRenderState handles appropriately baseLayers created with different sessions - webgl
+FAIL updateRenderState handles appropriately baseLayers created with different sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS updateRenderState handles appropriately immersive sessions with specified inlineVerticalFieldOfView - webgl
+FAIL updateRenderState handles appropriately immersive sessions with specified inlineVerticalFieldOfView - webgl2 assert_implements: webgl2 not supported. undefined
+PASS updateRenderState handles appropriately XRRenderStateInit with no params - webgl
+FAIL updateRenderState handles appropriately XRRenderStateInit with no params - webgl2 assert_implements: webgl2 not supported. undefined
+PASS updateRenderState handles appropriately XRRenderStateInit params - webgl
+FAIL updateRenderState handles appropriately XRRenderStateInit params - webgl2 assert_implements: webgl2 not supported. undefined
+

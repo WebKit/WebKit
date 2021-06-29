@@ -50,7 +50,7 @@ public:
 
     Ref<StorageArea> localStorageArea(Document&);
 
-    WEBCORE_EXPORT void setSessionIDForTesting(const PAL::SessionID&);
+    WEBCORE_EXPORT void setSessionIDForTesting(PAL::SessionID);
 
 protected:
     StorageNamespace* optionalLocalStorageNamespace() { return m_localStorageNamespace.get(); }

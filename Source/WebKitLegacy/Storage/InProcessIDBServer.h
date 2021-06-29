@@ -39,7 +39,6 @@ class SessionID;
 namespace WebCore {
 struct ClientOrigin;
 class StorageQuotaManager;
-class StorageThread;
 
 namespace IDBClient {
 class IDBConnectionToServer;
@@ -130,7 +129,7 @@ private:
     std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
     RefPtr<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
     RefPtr<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
-    std::unique_ptr<WebCore::StorageThread> m_thread;
+    Ref<WorkQueue> m_queue;
 
     HashMap<WebCore::ClientOrigin, RefPtr<WebCore::StorageQuotaManager>> m_quotaManagers;
 };

@@ -1,3 +1,76 @@
+2021-06-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GLIB] REGRESSION(r278701): numerous WebRTC tests failing after libwebrtc update to M92
+        https://bugs.webkit.org/show_bug.cgi?id=227172
+
+        Reviewed by Adrian Perez de Castro.
+
+        Non-apple ports do not use the bundled libvpx library, they rely on the host libvpx instead.
+        LibWebRTC expects to depend on the bundled version, thus using its API. So we need to be
+        very careful with which libvpx version is used from the host, in order to avoid API/ABI
+        issues. Hence the version check should specify a version that is API/ABI compatible with
+        what libwebrtc expects.
+
+        This patch also re-enables data channel support, which was disabled during the update to M92
+        in CMake ports.
+
+        * CMakeLists.txt:
+
+2021-06-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279011.
+        https://bugs.webkit.org/show_bug.cgi?id=227153
+
+        broke ios build
+
+        Reverted changeset:
+
+        "[Mac] libwebrtc CMBaseClass objects need alignment fixup"
+        https://bugs.webkit.org/show_bug.cgi?id=227137
+        https://trac.webkit.org/changeset/279011
+
+2021-06-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] libwebrtc CMBaseClass objects need alignment fixup
+        https://bugs.webkit.org/show_bug.cgi?id=227137
+
+        Reviewed by Youenn Fablet.
+
+        * Source/webrtc/sdk/WebKit/WebKitVP8Decoder.cpp:
+        (webrtc::createWebKitVP8Decoder): Add padding to the CMBaseClass object on x86_64
+        so function pointers are naturally aligned. Add static_asserts to ensure alignment
+        and sizes are correct.
+        * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp:
+        (webrtc::createWebKitVP9Decoder): Ditto.
+
+2021-06-15  Youenn Fablet  <youenn@apple.com>
+
+        Enable kVTVideoEncoderSpecification_RequiredLowLatency in case of MacOS software encoder
+        https://bugs.webkit.org/show_bug.cgi?id=226873
+
+        Reviewed by Eric Carlson.
+
+        In case software encoder is being created for baseline, we can use kVTVideoEncoderSpecification_RequiredLowLatency
+        which provides better bitrate management than the regular SW encoder while still generating baseline content.
+        We check whether SW encoder is created based on kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder.
+        If property is unsupported or if its value is false, it means the encoder is software.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
+2021-06-15  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: [ BigSur iOS wk1 Debug ] imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=226928
+        <rdar://problem/79205526>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/rtc_base/task_queue_stdlib.cc:
+        thread_ is created in TaskQueueStdlib constructor before other members pending_queue_ or delayed_queue_.
+        It might happen that thread_ will start executing its callback which will read delayed_queue_ before it is initialized by TaskQueueStdlib constructor.
+        Update to create thread_ before all other members.
+
 2021-06-10  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
 
         Update libwebrtc to M92

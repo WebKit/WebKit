@@ -31,6 +31,7 @@ This is the scrolled contents
             (GraphicsLayer
               (position 44.00 44.00)
               (bounds 320.00 200.00)
+              (clips 1)
               (children 1
                 (GraphicsLayer
                   (position 305.00 0.00)
@@ -64,6 +65,7 @@ This is the scrolled contents
             (GraphicsLayer
               (position 44.00 44.00)
               (bounds 320.00 200.00)
+              (clips 1)
               (children 1
                 (GraphicsLayer
                   (position 305.00 0.00)

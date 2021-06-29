@@ -67,7 +67,9 @@
     (subpath "/System/Library/PrivateFrameworks")
     (subpath "/usr/lib")
     (subpath "/usr/local/lib/sanitizers") ;; FIXME(209820)
-    (subpath "/usr/appleinternal/lib/sanitizers"))
+    (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
+
+)
 
 (allow file-read-metadata
     (literal "/etc")
@@ -186,6 +188,7 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (iokit-method-number
                 17
+                40
             )
 #endif
         )
@@ -212,6 +215,7 @@
                 35
                 36
                 38
+                39
                 44
             )
 #endif
@@ -1961,6 +1965,7 @@
         (syscall-number SYS_bsdthread_terminate)
         (syscall-number SYS_workq_kernreturn)
         (syscall-number SYS_thread_selfid)
+        (syscall-number SYS_thread_selfusage)
         (syscall-number SYS_kevent)
         (syscall-number SYS_kevent_qos)
         (syscall-number SYS_kevent_id)

@@ -50,6 +50,7 @@ class Git(Scm):
 
     def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):
         super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
+        self._branch = None
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
@@ -94,6 +95,7 @@ class Git(Scm):
         return result.stdout.rstrip()
 
     @property
+    @decorators.Memoize()
     def default_branch(self):
         result = run([self.executable(), 'rev-parse', '--abbrev-ref', 'origin/HEAD'], cwd=self.path, capture_output=True, encoding='utf-8')
         if result.returncode:
@@ -107,6 +109,9 @@ class Git(Scm):
 
     @property
     def branch(self):
+        if self._branch:
+            return self._branch
+
         status = run([self.executable(), 'status'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if status.returncode:
             raise self.Exception('Failed to run `git status` for {}'.format(self.root_path))
@@ -116,7 +121,8 @@ class Git(Scm):
         result = run([self.executable(), 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             raise self.Exception('Failed to retrieve branch for {}'.format(self.root_path))
-        return result.stdout.rstrip()
+        self._branch = result.stdout.rstrip()
+        return self._branch
 
     @property
     def branches(self):
@@ -441,6 +447,8 @@ class Git(Scm):
     def checkout(self, argument):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
+
+        self._branch = None
 
         if log.level > logging.WARNING:
             log_arg = ['-q']

@@ -1,0 +1,6 @@
+
+PASS XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for immersive sessions - webgl
+FAIL XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for non-immersive sessions - webgl
+FAIL XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for non-immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+

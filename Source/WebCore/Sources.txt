@@ -724,7 +724,6 @@ css/CSSContentDistributionValue.cpp
 css/CSSCounterStyleRule.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
-css/CSSCustomIdentValue.cpp
 css/CSSCustomPropertyValue.cpp
 css/CSSFilterImageValue.cpp
 css/CSSFontFace.cpp

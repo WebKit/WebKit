@@ -38,10 +38,12 @@
 #import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
@@ -750,6 +752,10 @@ TEST(EvaluateJavaScript, JavaScriptInMissingFrameError)
 // This test verifies that evaluating JavaScript in a frame from the previous main navigation results in an error
 TEST(EvaluateJavaScript, JavaScriptInMissingFrameAfterNavigationError)
 {
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
     allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
 
     auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
@@ -774,6 +780,7 @@ TEST(EvaluateJavaScript, JavaScriptInMissingFrameAfterNavigationError)
     }];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:processPool.get()];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"framestest"];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"otherprotocol"];
 

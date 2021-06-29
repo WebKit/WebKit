@@ -55,8 +55,8 @@ public:
     virtual void beginScanningForward() = 0;
     virtual void beginScanningBackward() = 0;
     virtual void endScanning() = 0;
-    virtual void setDefaultPlaybackRate(float) = 0;
-    virtual void setPlaybackRate(float) = 0;
+    virtual void setDefaultPlaybackRate(double) = 0;
+    virtual void setPlaybackRate(double) = 0;
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
     virtual void togglePictureInPicture() = 0;
@@ -72,10 +72,16 @@ public:
     virtual double duration() const = 0;
     virtual double currentTime() const = 0;
     virtual double bufferedTime() const = 0;
+
+    enum class PlaybackState {
+        Playing = 1 << 0,
+        Stalled = 1 << 1,
+    };
     virtual bool isPlaying() const = 0;
+    virtual bool isStalled() const = 0;
     virtual bool isScrubbing() const = 0;
-    virtual float defaultPlaybackRate() const = 0;
-    virtual float playbackRate() const = 0;
+    virtual double defaultPlaybackRate() const = 0;
+    virtual double playbackRate() const = 0;
     virtual Ref<TimeRanges> seekableRanges() const = 0;
     virtual double seekableTimeRangesLastModifiedTime() const = 0;
     virtual double liveUpdateInterval() const = 0;
@@ -101,7 +107,7 @@ public:
     virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }
     virtual void bufferedTimeChanged(double) { }
     virtual void playbackStartedTimeChanged(double /* playbackStartedTime */) { }
-    virtual void rateChanged(bool /* isPlaying */, float /* playbackRate */, float /* defaultPlaybackRate */) { }
+    virtual void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double /* playbackRate */, double /* defaultPlaybackRate */) { }
     virtual void seekableRangesChanged(const TimeRanges&, double /* lastModified */, double /* liveInterval */) { }
     virtual void canPlayFastReverseChanged(bool) { }
     virtual void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /* options */, uint64_t /* selectedIndex */) { }
@@ -118,6 +124,18 @@ public:
     virtual void modelDestroyed() { }
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlaybackSessionModel::PlaybackState> {
+    using values = EnumValues<
+        WebCore::PlaybackSessionModel::PlaybackState,
+        WebCore::PlaybackSessionModel::PlaybackState::Playing,
+        WebCore::PlaybackSessionModel::PlaybackState::Stalled
+    >;
+};
+
+} // namespace WTF
 
 #endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

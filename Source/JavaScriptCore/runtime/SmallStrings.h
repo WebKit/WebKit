@@ -70,7 +70,7 @@ public:
         return m_singleCharacterStrings[character];
     }
 
-    JS_EXPORT_PRIVATE Ref<StringImpl> singleCharacterStringRep(unsigned char character);
+    JS_EXPORT_PRIVATE Ref<AtomStringImpl> singleCharacterStringRep(unsigned char character);
 
     void setIsInitialized(bool isInitialized) { m_isInitialized = isInitialized; }
 

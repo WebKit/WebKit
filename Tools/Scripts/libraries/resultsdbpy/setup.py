@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='resultsdbpy',
-    version='2.0.5',
+    version='3.0.0',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[

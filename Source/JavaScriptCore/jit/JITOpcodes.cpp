@@ -388,7 +388,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_ret_handlerGenerator(VM& vm)
     JIT jit(vm);
 
     jit.checkStackPointerAlignment();
-    jit.emitRestoreCalleeSavesForBaselineJIT();
+    jit.emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
     jit.emitFunctionEpilogue();
     jit.ret();
 
@@ -1198,115 +1198,103 @@ void JIT::emit_op_enter(const Instruction*)
     emitEnterOptimizationCheck();
 #else
     ASSERT(m_bytecodeIndex.offset() == 0);
+    constexpr GPRReg localsToInitGPR = argumentGPR0;
+    constexpr GPRReg canBeOptimizedGPR = argumentGPR4;
+
     unsigned localsToInit = count - CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
     RELEASE_ASSERT(localsToInit < count);
-    ThunkGenerator generator = canBeOptimized() ? op_enter_canBeOptimized_Generator : op_enter_cannotBeOptimized_Generator;
-    emitNakedNearCall(vm().getCTIStub(generator).retaggedCode<NoPtrTag>());
+    move(TrustedImm32(localsToInit * sizeof(Register)), localsToInitGPR);
+    move(TrustedImm32(canBeOptimized()), canBeOptimizedGPR);
+    emitNakedNearCall(vm().getCTIStub(op_enter_handlerGenerator).retaggedCode<NoPtrTag>());
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 }
 
 #if ENABLE(EXTRA_CTI_THUNKS)
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_Generator(VM& vm, bool canBeOptimized, const char* thunkName)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
 {
+    JIT jit(vm);
+
 #if CPU(X86_64)
-    push(X86Registers::ebp);
+    jit.push(X86Registers::ebp);
 #elif CPU(ARM64)
-    tagReturnAddress();
-    pushPair(framePointerRegister, linkRegister);
+    jit.tagReturnAddress();
+    jit.pushPair(framePointerRegister, linkRegister);
 #endif
     // op_enter is always at bytecodeOffset 0.
-    store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
 
     constexpr GPRReg localsToInitGPR = argumentGPR0;
     constexpr GPRReg iteratorGPR = argumentGPR1;
     constexpr GPRReg endGPR = argumentGPR2;
     constexpr GPRReg undefinedGPR = argumentGPR3;
-    constexpr GPRReg codeBlockGPR = argumentGPR4;
-
-    constexpr int virtualRegisterSizeShift = 3;
-    static_assert((1 << virtualRegisterSizeShift) == sizeof(Register));
-
-    loadPtr(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
-    load32(Address(codeBlockGPR, CodeBlock::offsetOfNumVars()), localsToInitGPR);
-    sub32(TrustedImm32(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters()), localsToInitGPR);
-    lshift32(TrustedImm32(virtualRegisterSizeShift), localsToInitGPR);
+    constexpr GPRReg canBeOptimizedGPR = argumentGPR4;
 
     size_t startLocal = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
     int startOffset = virtualRegisterForLocal(startLocal).offset();
-    move(TrustedImm64(startOffset * sizeof(Register)), iteratorGPR);
-    sub64(iteratorGPR, localsToInitGPR, endGPR);
+    jit.move(TrustedImm64(startOffset * sizeof(Register)), iteratorGPR);
+    jit.sub64(iteratorGPR, localsToInitGPR, endGPR);
 
-    move(TrustedImm64(JSValue::encode(jsUndefined())), undefinedGPR);
-    auto initLoop = label();
-    Jump initDone = branch32(LessThanOrEqual, iteratorGPR, endGPR);
+    jit.move(TrustedImm64(JSValue::encode(jsUndefined())), undefinedGPR);
+    auto initLoop = jit.label();
+    Jump initDone = jit.branch32(LessThanOrEqual, iteratorGPR, endGPR);
     {
-        store64(undefinedGPR, BaseIndex(GPRInfo::callFrameRegister, iteratorGPR, TimesOne));
-        sub64(TrustedImm32(sizeof(Register)), iteratorGPR);
-        jump(initLoop);
+        jit.store64(undefinedGPR, BaseIndex(GPRInfo::callFrameRegister, iteratorGPR, TimesOne));
+        jit.sub64(TrustedImm32(sizeof(Register)), iteratorGPR);
+        jit.jump(initLoop);
     }
-    initDone.link(this);
+    initDone.link(&jit);
 
-    // Implementing emitWriteBarrier(m_codeBlock).
-    Jump ownerIsRememberedOrInEden = barrierBranch(vm, codeBlockGPR, argumentGPR2);
+    // emitWriteBarrier(m_codeBlock).
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
+    Jump ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
 
-    setupArguments<decltype(operationWriteBarrierSlowPath)>(&vm, codeBlockGPR);
-    prepareCallOperation(vm);
-    Call operationWriteBarrierCall = call(OperationPtrTag);
+    jit.move(canBeOptimizedGPR, GPRInfo::numberTagRegister); // save.
+    jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(&vm, argumentGPR1);
+    jit.prepareCallOperation(vm);
+    Call operationWriteBarrierCall = jit.call(OperationPtrTag);
 
-    if (canBeOptimized)
-        loadPtr(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
-
-    ownerIsRememberedOrInEden.link(this);
+    jit.move(GPRInfo::numberTagRegister, canBeOptimizedGPR); // restore.
+    jit.move(TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
+    ownerIsRememberedOrInEden.link(&jit);
 
 #if ENABLE(DFG_JIT)
-    // Implementing emitEnterOptimizationCheck().
     Call operationOptimizeCall;
-    if (canBeOptimized) {
+    if (Options::useDFGJIT()) {
+        // emitEnterOptimizationCheck().
         JumpList skipOptimize;
 
-        skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(codeBlockGPR, CodeBlock::offsetOfJITExecuteCounter())));
+        skipOptimize.append(jit.branchTest32(Zero, canBeOptimizedGPR));
 
-        copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+        jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
+        skipOptimize.append(jit.branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter())));
 
-        setupArguments<decltype(operationOptimize)>(&vm, TrustedImm32(0));
-        prepareCallOperation(vm);
-        operationOptimizeCall = call(OperationPtrTag);
+        jit.copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
 
-        skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
-        farJump(returnValueGPR, GPRInfo::callFrameRegister);
+        jit.setupArguments<decltype(operationOptimize)>(&vm, TrustedImm32(0));
+        jit.prepareCallOperation(vm);
+        operationOptimizeCall = jit.call(OperationPtrTag);
 
-        skipOptimize.link(this);
+        skipOptimize.append(jit.branchTestPtr(Zero, returnValueGPR));
+        jit.farJump(returnValueGPR, GPRInfo::callFrameRegister);
+
+        skipOptimize.link(&jit);
     }
 #endif // ENABLE(DFG_JIT)
 
 #if CPU(X86_64)
-    pop(X86Registers::ebp);
+    jit.pop(X86Registers::ebp);
 #elif CPU(ARM64)
-    popPair(framePointerRegister, linkRegister);
+    jit.popPair(framePointerRegister, linkRegister);
 #endif
-    ret();
+    jit.ret();
 
-    LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operationWriteBarrierCall, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
 #if ENABLE(DFG_JIT)
-    if (canBeOptimized)
+    if (Options::useDFGJIT())
         patchBuffer.link(operationOptimizeCall, FunctionPtr<OperationPtrTag>(operationOptimize));
 #endif
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, thunkName);
-}
-
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_canBeOptimized_Generator(VM& vm)
-{
-    JIT jit(vm);
-    constexpr bool canBeOptimized = true;
-    return jit.op_enter_Generator(vm, canBeOptimized, "Baseline: op_enter_canBeOptimized");
-}
-
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_cannotBeOptimized_Generator(VM& vm)
-{
-    JIT jit(vm);
-    constexpr bool canBeOptimized = false;
-    return jit.op_enter_Generator(vm, canBeOptimized, "Baseline: op_enter_cannotBeOptimized");
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_enter_handler");
 }
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
@@ -1458,27 +1446,22 @@ void JIT::emit_op_loop_hint(const Instruction* instruction)
         add64(TrustedImm32(1), regT0);
         store64(regT0, ptr);
     }
-#else
-    UNUSED_PARAM(instruction);
 #endif
 
-    // Emit the JIT optimization check:
+    // Emit the JIT optimization check: 
     if (canBeOptimized()) {
-        constexpr GPRReg codeBlockGPR = regT0;
-        loadPtr(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
         addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
-            Address(codeBlockGPR, CodeBlock::offsetOfJITExecuteCounter())));
+            AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     }
 }
 
-void JIT::emitSlow_op_loop_hint(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
 #if ENABLE(DFG_JIT)
     // Emit the slow path for the JIT optimization check:
     if (canBeOptimized()) {
         linkAllSlowCases(iter);
 
-#if !ENABLE(EXTRA_CTI_THUNKS)
         copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
         callOperationNoExceptionCheck(operationOptimize, &vm(), m_bytecodeIndex.asBits());
@@ -1491,81 +1474,13 @@ void JIT::emitSlow_op_loop_hint(const Instruction* instruction, Vector<SlowCaseE
         farJump(returnValueGPR, GPRInfo::callFrameRegister);
         noOptimizedEntry.link(this);
 
-#else // ENABLE(EXTRA_CTI_THUNKS)
-        uint32_t bytecodeOffset = m_bytecodeIndex.offset();
-        ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
-        ASSERT(m_codeBlock->instructionAt(m_bytecodeIndex) == instruction);
-
-        constexpr GPRReg bytecodeOffsetGPR = regT7;
-
-        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-        emitNakedNearCall(vm().getCTIStub(op_loop_hint_Generator).retaggedCode<NoPtrTag>());
-#endif // !ENABLE(EXTRA_CTI_THUNKS)
+        emitJumpSlowToHot(jump(), currentInstruction->size());
     }
-#endif // ENABLE(DFG_JIT)
+#else
+    UNUSED_PARAM(currentInstruction);
     UNUSED_PARAM(iter);
-    UNUSED_PARAM(instruction);
+#endif
 }
-
-#if ENABLE(EXTRA_CTI_THUNKS)
-
-#if ENABLE(DFG_JIT)
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_loop_hint_Generator(VM& vm)
-{
-    // The thunk generated by this function can only work with the LLInt / Baseline JIT because
-    // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
-    // DFG/FTL may inline functions belonging to other globalObjects, which may not match
-    // CallFrame::codeBlock().
-    JIT jit(vm);
-
-    jit.tagReturnAddress();
-
-    constexpr GPRReg bytecodeOffsetGPR = regT7; // incoming.
-
-#if CPU(X86_64)
-    jit.push(framePointerRegister);
-#elif CPU(ARM64)
-    jit.pushPair(framePointerRegister, linkRegister);
-#endif
-
-    auto usedRegisters = RegisterSet::stubUnavailableRegisters();
-    usedRegisters.add(bytecodeOffsetGPR);
-    jit.copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, usedRegisters);
-
-    jit.store32(bytecodeOffsetGPR, CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-    jit.lshift32(TrustedImm32(BytecodeIndex::checkpointShift), bytecodeOffsetGPR);
-    jit.setupArguments<decltype(operationOptimize)>(TrustedImmPtr(&vm), bytecodeOffsetGPR);
-    jit.prepareCallOperation(vm);
-    Call operationCall = jit.call(OperationPtrTag);
-    Jump hasOptimizedEntry = jit.branchTestPtr(NonZero, returnValueGPR);
-
-#if CPU(X86_64)
-    jit.pop(framePointerRegister);
-#elif CPU(ARM64)
-    jit.popPair(framePointerRegister, linkRegister);
-#endif
-    jit.ret();
-
-    hasOptimizedEntry.link(&jit);
-#if CPU(X86_64)
-    jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(CPURegister)), stackPointerRegister);
-#elif CPU(ARM64)
-    jit.popPair(framePointerRegister, linkRegister);
-#endif
-    if (ASSERT_ENABLED) {
-        Jump ok = jit.branchPtr(MacroAssembler::Above, returnValueGPR, TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
-        jit.abortWithReason(JITUnreasonableLoopHintJumpTarget);
-        ok.link(&jit);
-    }
-
-    jit.farJump(returnValueGPR, GPRInfo::callFrameRegister);
-
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(operationOptimize));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_loop_hint");
-}
-#endif // ENABLE(DFG_JIT)
-#endif // !ENABLE(EXTRA_CTI_THUNKS)
 
 void JIT::emit_op_check_traps(const Instruction*)
 {

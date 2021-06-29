@@ -315,10 +315,11 @@
         (with-filter (system-attribute apple-internal)
             ;; <rdar://problem/8565035>
             ;; <rdar://problem/23857452>
+            ;; <rdar://problem/72317112>
             (allow file-read* file-map-executable
                    (subpath "/AppleInternal")
                    (subpath "/usr/local/lib")
-                   (subpath "/usr/appleinternal/lib/sanitizers")))
+                   (subpath "/usr/appleinternal/lib")))
             (with-elevated-precedence
                 (allow file-read* file-map-executable file-issue-extension
                    (front-user-home-subpath "/XcodeBuiltProducts")))
@@ -879,13 +880,24 @@
     (iokit-property "oled-display") ;; <rdar://problem/51322072>
     (iokit-property "product-description") ;; <rdar://problem/49497788>
     (iokit-property "product-id")
-    (iokit-property "region-info") ;; <rdar://problem/52903475>
-    (iokit-property "regulatory-model-number") ;; <rdar://problem/52903475>
     (iokit-property "soc-generation") ;; <rdar://problem/52903476>
     (iokit-property "software-behavior")
     (iokit-property "vendor-id")
     (iokit-property "udid-version") ;; <rdar://problem/52903475>
     (iokit-property "ui-pip") ;; <rdar://problem/48867037>
+)
+
+; IOPlatformExpertDevice
+(with-filter (iokit-registry-entry-class "IOPlatformExpertDevice")
+    (allow iokit-get-properties
+        (iokit-property
+            "model"
+            "model-number"
+            "platform-name" ;; <rdar://problem/79334360>
+            "region-info" ;; <rdar://problem/52903475>
+            "regulatory-model-number" ;; <rdar://problem/52903475>
+        )
+    )
 )
 
 ;; Read-only preferences and data

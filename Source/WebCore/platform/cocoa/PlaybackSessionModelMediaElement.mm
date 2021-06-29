@@ -47,13 +47,6 @@
 
 namespace WebCore {
 
-// This is the rate which we report to our clients, namely AVKit, when playback has stalled.
-// The value must be non-zero, so as to differentiate "playing-but-stalled" from "paused". But
-// the value also must be very small, so there is no visible movement in the system provided
-// timeline slider when stalled. The value below will cause the slider to move 1 second every
-// 3 years, so meets both goals.
-static const float StalledPlaybackRate = 0.00000001f;
-
 PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)
 {
@@ -162,11 +155,16 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         || eventName == eventNames().ratechangeEvent
         || eventName == eventNames().waitingEvent
         || eventName == eventNames().canplayEvent) {
-        bool isPlaying = this->isPlaying();
-        float playbackRate = isStalled() ? StalledPlaybackRate : this->playbackRate();
-        float defaultPlaybackRate = this->defaultPlaybackRate();
+        OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
+        if (isPlaying())
+            playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
+        if (isStalled())
+            playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
+
+        double playbackRate =  this->playbackRate();
+        double defaultPlaybackRate = this->defaultPlaybackRate();
         for (auto client : m_clients)
-            client->rateChanged(isPlaying, playbackRate, defaultPlaybackRate);
+            client->rateChanged(playbackState, playbackRate, defaultPlaybackRate);
     }
 
     if (all
@@ -302,13 +300,13 @@ void PlaybackSessionModelMediaElement::endScanning()
         m_mediaElement->endScanning();
 }
 
-void PlaybackSessionModelMediaElement::setDefaultPlaybackRate(float defaultPlaybackRate)
+void PlaybackSessionModelMediaElement::setDefaultPlaybackRate(double defaultPlaybackRate)
 {
     if (m_mediaElement)
         m_mediaElement->setDefaultPlaybackRate(defaultPlaybackRate);
 }
 
-void PlaybackSessionModelMediaElement::setPlaybackRate(float playbackRate)
+void PlaybackSessionModelMediaElement::setPlaybackRate(double playbackRate)
 {
     if (m_mediaElement)
         m_mediaElement->setPlaybackRate(playbackRate);
@@ -481,12 +479,12 @@ bool PlaybackSessionModelMediaElement::isStalled() const
     return m_mediaElement && m_mediaElement->readyState() <= HTMLMediaElement::HAVE_CURRENT_DATA;
 }
 
-float PlaybackSessionModelMediaElement::defaultPlaybackRate() const
+double PlaybackSessionModelMediaElement::defaultPlaybackRate() const
 {
     return m_mediaElement ? m_mediaElement->defaultPlaybackRate() : 0;
 }
 
-float PlaybackSessionModelMediaElement::playbackRate() const
+double PlaybackSessionModelMediaElement::playbackRate() const
 {
     return m_mediaElement ? m_mediaElement->playbackRate() : 0;
 }

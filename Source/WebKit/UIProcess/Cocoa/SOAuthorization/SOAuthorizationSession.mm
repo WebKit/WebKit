@@ -235,7 +235,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
 
     if (!m_page)
         return;
-    m_page->websiteDataStore().cookieStore().setCookies(cookies, [this, weakThis = makeWeakPtr(*this), response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
+    m_page->websiteDataStore().cookieStore().setCookies(WTFMove(cookies), [this, weakThis = makeWeakPtr(*this), response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
         if (!weakThis)
             return;
 

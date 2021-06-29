@@ -317,7 +317,8 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
     saveEditedData()
     {
         console.assert(this.representedObject.editable, this.representedObject);
-        this.representedObject.setup = this._setupCodeMirror.getValue().trim();
+        if (this._setupCodeMirror)
+            this.representedObject.setup = this._setupCodeMirror.getValue().trim();
     }
 
     showRunningPlaceholder()

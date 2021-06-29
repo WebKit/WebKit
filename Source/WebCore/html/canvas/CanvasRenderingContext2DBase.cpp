@@ -1434,14 +1434,6 @@ static inline FloatSize size(TypedOMCSSImageValue& image)
 }
 #endif
 
-static inline FloatRect normalizeRect(const FloatRect& rect)
-{
-    return FloatRect(std::min(rect.x(), rect.maxX()),
-        std::min(rect.y(), rect.maxY()),
-        std::max(rect.width(), -rect.width()),
-        std::max(rect.height(), -rect.height()));
-}
-
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasImageSource&& image, float dx, float dy)
 {
     return WTF::switchOn(image,

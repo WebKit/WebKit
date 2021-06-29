@@ -25,7 +25,6 @@
 
 #import "WebPDFDocumentExtras.h"
 
-#import "WebTypesInternal.h"
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
 

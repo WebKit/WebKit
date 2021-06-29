@@ -45,8 +45,8 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WKQuickLookPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
-#import "WKVisualSearchPreviewController.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
 #import "WebPreferencesKeys.h"
@@ -725,14 +725,14 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
 void WebPageProxy::beginPreviewPanelControl(QLPreviewPanel *panel)
 {
 #if ENABLE(IMAGE_ANALYSIS)
-    [m_visualSearchPreviewController beginControl:panel];
+    [m_quickLookPreviewController beginControl:panel];
 #endif
 }
 
 void WebPageProxy::endPreviewPanelControl(QLPreviewPanel *panel)
 {
 #if ENABLE(IMAGE_ANALYSIS)
-    if (auto controller = std::exchange(m_visualSearchPreviewController, nil))
+    if (auto controller = std::exchange(m_quickLookPreviewController, nil))
         [controller endControl:panel];
 #endif
 }
@@ -740,13 +740,22 @@ void WebPageProxy::endPreviewPanelControl(QLPreviewPanel *panel)
 void WebPageProxy::closeSharedPreviewPanelIfNecessary()
 {
 #if ENABLE(IMAGE_ANALYSIS)
-    [m_visualSearchPreviewController closePanelIfNecessary];
+    [m_quickLookPreviewController closePanelIfNecessary];
 #endif
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::showImageInVisualSearchPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL)
+void WebPageProxy::handleContextMenuLookUpImage()
+{
+    auto& result = m_activeContextMenuContextData.webHitTestResultData();
+    if (!result.imageBitmap)
+        return;
+
+    showImageInQuickLookPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL }, QuickLookPreviewActivity::VisualSearch);
+}
+
+void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL, QuickLookPreviewActivity activity)
 {
     if (!PAL::isQuickLookUIFrameworkAvailable() || !PAL::getQLPreviewPanelClass() || ![PAL::getQLItemClass() instancesRespondToSelector:@selector(initWithDataProvider:contentType:previewTitle:)])
         return;
@@ -764,7 +773,7 @@ void WebPageProxy::showImageInVisualSearchPreviewPanel(ShareableBitmap& imageBit
     if (!CGImageDestinationFinalize(destination.get()))
         return;
 
-    m_visualSearchPreviewController = adoptNS([[WKVisualSearchPreviewController alloc] initWithPage:*this imageData:(__bridge NSData *)imageData.get() title:tooltip imageURL:imageURL]);
+    m_quickLookPreviewController = adoptNS([[WKQuickLookPreviewController alloc] initWithPage:*this imageData:(__bridge NSData *)imageData.get() title:tooltip imageURL:imageURL activity:activity]);
 
     // When presenting the shared QLPreviewPanel, QuickLook will search the responder chain for a suitable panel controller.
     // Make sure that we (by default) start the search at the web view, which knows how to vend the Visual Search preview
@@ -774,11 +783,11 @@ void WebPageProxy::showImageInVisualSearchPreviewPanel(ShareableBitmap& imageBit
     auto previewPanel = [PAL::getQLPreviewPanelClass() sharedPreviewPanel];
     [previewPanel makeKeyAndOrderFront:nil];
 
-    if (![m_visualSearchPreviewController isControlling:previewPanel]) {
+    if (![m_quickLookPreviewController isControlling:previewPanel]) {
         // The WebKit client may have overridden QLPreviewPanelController methods on the view without calling into the superclass.
         // In this case, hand over control to the client and clear out our state eagerly, since we don't expect any further delegate
         // calls once the preview panel is dismissed.
-        m_visualSearchPreviewController.clear();
+        m_quickLookPreviewController.clear();
     }
 }
 

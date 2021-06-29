@@ -241,7 +241,7 @@ void ThreadedScrollingTree::reportExposedUnfilledArea(MonotonicTime timestamp, u
 }
 
 #if PLATFORM(COCOA)
-void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
+void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
 {
     if (!m_scrollingCoordinator)
         return;
@@ -263,7 +263,7 @@ void ThreadedScrollingTree::handleWheelEventPhase(ScrollingNodeID nodeID, Platfo
     });
 }
 
-void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, unsigned horizontalIndex, unsigned verticalIndex)
+void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex)
 {
     if (!m_scrollingCoordinator)
         return;

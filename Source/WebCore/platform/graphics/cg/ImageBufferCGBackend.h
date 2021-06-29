@@ -51,6 +51,8 @@ public:
 
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
+    static constexpr bool isOriginAtBottomLeftCorner = true;
+
 protected:
     using ImageBufferBackend::ImageBufferBackend;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,7 +107,7 @@ bool CSSGradientValue::hasColorDerivedFromElement() const
     return *m_hasColorDerivedFromElement;
 }
 
-Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(Style::BuilderState& builderState)
+Ref<CSSGradientValue> CSSGradientValue::valueWithStylesResolved(Style::BuilderState& builderState)
 {
     auto result = hasColorDerivedFromElement() ? clone(*this) : makeRef(*this);
     resolveStopColors(result->m_stops, [&](const CSSPrimitiveValue& colorValue) {

@@ -93,10 +93,10 @@ static const char base64URLDecMap[decodeMapSize] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-template<typename CharacterType> static void base64EncodeInternal(const uint8_t* inputDataBuffer, unsigned inputLength, CharacterType* destinationDataBuffer, unsigned destinationLength, Base64EncodePolicy policy, Base64EncodeMap map)
+template<typename CharacterType> static void base64EncodeInternal(Span<const uint8_t> inputDataBuffer, Span<CharacterType> destinationDataBuffer, Base64EncodePolicy policy, Base64EncodeMap map)
 {
-    ASSERT(destinationLength > 0);
-    ASSERT(calculateBase64EncodedSize(inputLength, policy) == destinationLength);
+    ASSERT(destinationDataBuffer.size() > 0);
+    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), policy) == destinationDataBuffer.size());
 
     auto encodeMap = (map == Base64EncodeMap::URL) ? base64URLEncMap : base64EncMap;
 
@@ -104,10 +104,10 @@ template<typename CharacterType> static void base64EncodeInternal(const uint8_t*
     unsigned didx = 0;
     unsigned count = 0;
 
-    bool insertLFs = (policy == Base64EncodePolicy::InsertLFs && destinationLength > maximumBase64LineLengthWhenInsertingLFs);
+    bool insertLFs = (policy == Base64EncodePolicy::InsertLFs && destinationDataBuffer.size() > maximumBase64LineLengthWhenInsertingLFs);
 
-    if (inputLength > 1) {
-        while (sidx < inputLength - 2) {
+    if (inputDataBuffer.size() > 1) {
+        while (sidx < inputDataBuffer.size() - 2) {
             if (insertLFs) {
                 if (count && !(count % maximumBase64LineLengthWhenInsertingLFs))
                     destinationDataBuffer[didx++] = '\n';
@@ -122,71 +122,76 @@ template<typename CharacterType> static void base64EncodeInternal(const uint8_t*
         }
     }
 
-    if (sidx < inputLength) {
+    if (sidx < inputDataBuffer.size()) {
         if (insertLFs && (count > 0) && !(count % maximumBase64LineLengthWhenInsertingLFs))
             destinationDataBuffer[didx++] = '\n';
 
         destinationDataBuffer[didx++] = encodeMap[(inputDataBuffer[sidx] >> 2) & 077];
-        if (sidx < inputLength - 1) {
+        if (sidx < inputDataBuffer.size() - 1) {
             destinationDataBuffer[didx++] = encodeMap[((inputDataBuffer[sidx + 1] >> 4) & 017) | ((inputDataBuffer[sidx] << 4) & 077)];
             destinationDataBuffer[didx++] = encodeMap[ (inputDataBuffer[sidx + 1] << 2) & 077];
         } else
             destinationDataBuffer[didx++] = encodeMap[ (inputDataBuffer[sidx    ] << 4) & 077];
     }
 
-    ASSERT(policy != Base64EncodePolicy::URL || didx == destinationLength);
+    ASSERT(policy != Base64EncodePolicy::URL || didx == destinationDataBuffer.size());
 
-    while (didx < destinationLength)
+    while (didx < destinationDataBuffer.size())
         destinationDataBuffer[didx++] = '=';
 }
 
-static Vector<uint8_t> base64EncodeInternal(const uint8_t* inputDataBuffer, unsigned inputLength, Base64EncodePolicy policy, Base64EncodeMap map)
+template<typename CharacterType> static void base64EncodeInternal(Span<const std::byte> input, Span<CharacterType> destinationDataBuffer, Base64EncodePolicy policy, Base64EncodeMap map)
 {
-    auto destinationLength = calculateBase64EncodedSize(inputLength, policy);
+    base64EncodeInternal(Span { reinterpret_cast<const uint8_t*>(input.data()), input.size() }, destinationDataBuffer, policy, map);
+}
+
+static Vector<uint8_t> base64EncodeInternal(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
+{
+    auto destinationLength = calculateBase64EncodedSize(input.size(), policy);
     if (!destinationLength)
         return { };
 
     Vector<uint8_t> destinationVector(destinationLength);
-    base64EncodeInternal(inputDataBuffer, inputLength, destinationVector.data(), destinationLength, policy, map);
+    base64EncodeInternal(input, Span { destinationVector }, policy, map);
     return destinationVector;
 }
 
-void base64Encode(const void* inputDataBuffer, unsigned inputLength, UChar* destinationDataBuffer, unsigned destinationLength, Base64EncodePolicy policy, Base64EncodeMap map)
+void base64Encode(Span<const std::byte> input, Span<UChar> destination, Base64EncodePolicy policy, Base64EncodeMap map)
 {
-    if (!destinationLength)
+    if (!destination.size())
         return;
-    base64EncodeInternal(static_cast<const uint8_t*>(inputDataBuffer), inputLength, destinationDataBuffer, destinationLength, policy, map);
+    base64EncodeInternal(input, destination, policy, map);
 }
 
-void base64Encode(const void* inputDataBuffer, unsigned inputLength, LChar* destinationDataBuffer, unsigned destinationLength, Base64EncodePolicy policy, Base64EncodeMap map)
+void base64Encode(Span<const std::byte> input, Span<LChar> destination, Base64EncodePolicy policy, Base64EncodeMap map)
 {
-    if (!destinationLength)
+    if (!destination.size())
         return;
-    base64EncodeInternal(static_cast<const uint8_t*>(inputDataBuffer), inputLength, destinationDataBuffer, destinationLength, policy, map);
+    base64EncodeInternal(input, destination, policy, map);
 }
 
-Vector<uint8_t> base64EncodeToVector(const void* inputDataBuffer, unsigned inputLength, Base64EncodePolicy policy, Base64EncodeMap map)
+Vector<uint8_t> base64EncodeToVector(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
 {
-    return base64EncodeInternal(static_cast<const uint8_t*>(inputDataBuffer), inputLength, policy, map);
+    return base64EncodeInternal(input, policy, map);
 }
 
-String base64EncodeToString(const void* inputDataBuffer, unsigned inputLength, Base64EncodePolicy policy, Base64EncodeMap map)
+String base64EncodeToString(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
 {
-    return makeString(base64Encoded(inputDataBuffer, inputLength, policy, map));
+    return makeString(base64Encoded(input, policy, map));
 }
 
-template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(const T* inputDataBuffer, unsigned inputLength, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(Span<const T> inputDataBuffer, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
-    if (!inputLength)
+    if (!inputDataBuffer.size())
         return Vector<uint8_t> { };
 
     auto decodeMap = (map == Base64DecodeMap::URL) ? base64URLDecMap : base64DecMap;
 
-    Vector<uint8_t> destination(inputLength);
+    Vector<uint8_t> destination(inputDataBuffer.size());
 
     unsigned equalsSignCount = 0;
     unsigned destinationLength = 0;
-    for (unsigned idx = 0; idx < inputLength; ++idx) {
+    for (unsigned idx = 0; idx < inputDataBuffer.size(); ++idx) {
         unsigned ch = inputDataBuffer[idx];
         if (ch == '=') {
             ++equalsSignCount;
@@ -254,84 +259,19 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
     return destination;
 }
 
-std::optional<Vector<uint8_t>> base64Decode(const String& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(Span<const std::byte> input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
-    unsigned length = input.length();
-    if (!length || input.is8Bit())
-        return base64DecodeInternal(input.characters8(), length, options, map);
-    return base64DecodeInternal(input.characters16(), length, options, map);
+    if (input.size() > std::numeric_limits<unsigned>::max())
+        return std::nullopt;
+    return base64DecodeInternal(Span { reinterpret_cast<const uint8_t*>(input.data()), input.size() }, options, map);
 }
 
 std::optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
-        return base64DecodeInternal(input.characters8(), length, options, map);
-    return base64DecodeInternal(input.characters16(), length, options, map);
-}
-
-std::optional<Vector<uint8_t>> base64Decode(const Vector<uint8_t>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
-{
-    if (input.size() > std::numeric_limits<unsigned>::max())
-        return std::nullopt;
-    return base64DecodeInternal(input.data(), input.size(), options, map);
-}
-
-std::optional<Vector<uint8_t>> base64Decode(const Vector<char>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
-{
-    if (input.size() > std::numeric_limits<unsigned>::max())
-        return std::nullopt;
-    return base64DecodeInternal(reinterpret_cast<const uint8_t*>(input.data()), input.size(), options, map);
-}
-
-std::optional<Vector<uint8_t>> base64Decode(const uint8_t* data, unsigned length, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
-{
-    return base64DecodeInternal(data, length, options, map);
-}
-
-std::optional<Vector<uint8_t>> base64Decode(const char* data, unsigned length, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
-{
-    return base64DecodeInternal(reinterpret_cast<const LChar*>(data), length, options, map);
-}
-
-std::optional<Vector<uint8_t>> base64URLDecode(const String& input)
-{
-    unsigned length = input.length();
-    if (!length || input.is8Bit())
-        return base64DecodeInternal(input.characters8(), length, { }, Base64DecodeMap::URL);
-    return base64DecodeInternal(input.characters16(), length, { }, Base64DecodeMap::URL);
-}
-
-std::optional<Vector<uint8_t>> base64URLDecode(StringView input)
-{
-    unsigned length = input.length();
-    if (!length || input.is8Bit())
-        return base64DecodeInternal(input.characters8(), length, { }, Base64DecodeMap::URL);
-    return base64DecodeInternal(input.characters16(), length, { }, Base64DecodeMap::URL);
-}
-
-std::optional<Vector<uint8_t>> base64URLDecode(const Vector<uint8_t>& input)
-{
-    if (input.size() > std::numeric_limits<unsigned>::max())
-        return std::nullopt;
-    return base64DecodeInternal(input.data(), input.size(), { }, Base64DecodeMap::URL);
-}
-
-std::optional<Vector<uint8_t>> base64URLDecode(const Vector<char>& input)
-{
-    if (input.size() > std::numeric_limits<unsigned>::max())
-        return std::nullopt;
-    return base64DecodeInternal(reinterpret_cast<const uint8_t*>(input.data()), input.size(), { }, Base64DecodeMap::URL);
-}
-
-std::optional<Vector<uint8_t>> base64URLDecode(const uint8_t* data, unsigned length)
-{
-    return base64DecodeInternal(data, length, { }, Base64DecodeMap::URL);
-}
-
-std::optional<Vector<uint8_t>> base64URLDecode(const char* data, unsigned length)
-{
-    return base64DecodeInternal(reinterpret_cast<const uint8_t*>(data), length, { }, Base64DecodeMap::URL);
+        return base64DecodeInternal(Span { input.characters8(), length }, options, map);
+    return base64DecodeInternal(Span { input.characters16(), length }, options, map);
 }
 
 } // namespace WTF

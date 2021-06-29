@@ -34,7 +34,7 @@
 namespace JSC { namespace FTL {
 
 template<typename OperationType, typename ResultType, typename Arguments, size_t... ArgumentsIndex>
-static void dispatch(CCallHelpers& jit, FTL::State* state, const B3::StackmapGenerationParams& params, DFG::Node* node, Box<CCallHelpers::JumpList> exceptions, CCallHelpers::JumpList from, OperationType operation, ResultType result, Arguments arguments, std::index_sequence<ArgumentsIndex...>)
+static void dispatch(CCallHelpers& jit, FTL::State* state, const B3::StackmapGenerationParams& params, CodeOrigin semanticNodeOrigin, Box<CCallHelpers::JumpList> exceptions, CCallHelpers::JumpList from, OperationType operation, ResultType result, Arguments arguments, std::index_sequence<ArgumentsIndex...>)
 {
     CCallHelpers::Label done = jit.label();
     params.addLatePath([=] (CCallHelpers& jit) {
@@ -42,7 +42,7 @@ static void dispatch(CCallHelpers& jit, FTL::State* state, const B3::StackmapGen
 
         from.link(&jit);
         callOperation(
-            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+            *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
             exceptions.get(), operation, extractResult(result), std::get<ArgumentsIndex>(arguments)...);
         jit.jump().linkTo(done, &jit);
     });
@@ -51,7 +51,7 @@ static void dispatch(CCallHelpers& jit, FTL::State* state, const B3::StackmapGen
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) \
     void SnippetParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
     { \
-        dispatch(jit, &m_state, m_params, m_node, m_exceptions, from, operation, result, args, std::make_index_sequence<std::tuple_size<decltype(args)>::value>()); \
+        dispatch(jit, &m_state, m_params, m_semanticNodeOrigin, m_exceptions, from, operation, result, args, std::make_index_sequence<std::tuple_size<decltype(args)>::value>()); \
     } \
 
 SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)

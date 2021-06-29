@@ -110,16 +110,13 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(innerURL.protocol().toStringWithoutCopying()))
         return true;
 
-#if PLATFORM(COCOA)
-    if (!linkedOnOrAfter(SDKVersion::FirstWithNullOriginForNonSpecialSchemedURLs))
-        return false;
-#endif
-
     // https://url.spec.whatwg.org/#origin with some additions
     if (url.hasSpecialScheme()
 #if PLATFORM(COCOA)
+        || !linkedOnOrAfter(SDKVersion::FirstWithNullOriginForNonSpecialSchemedURLs)
         || url.protocolIs("applewebdata")
         || url.protocolIs("x-apple-ql-id")
+        || url.protocolIs("x-apple-ql-id2")
         || url.protocolIs("x-apple-ql-magic")
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)

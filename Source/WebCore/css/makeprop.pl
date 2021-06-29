@@ -67,10 +67,36 @@ my %settingsFlags;
 my $numPredefinedProperties = 2;
 my %nameIsColorProperty;
 my %nameIsDescriptorOnly;
-my %nameIsDirectionAwareProperty;
 my %nameIsHighPriority;
 my %nameIsInherited;
 my %namePriorityShouldSink;
+my %logicalPropertyGroups;
+my %resolverKinds = (
+    "logical" => {
+        "block" => "axis",
+        "inline" => "axis",
+        "block-start" => "side",
+        "block-end" => "side",
+        "inline-start" => "side",
+        "inline-end" => "side",
+        "start-start" => "corner",
+        "start-end" => "corner",
+        "end-start" => "corner",
+        "end-end" => "corner",
+    },
+    "physical" => {
+        "horizontal" => "axis",
+        "vertical" => "axis",
+        "top" => "side",
+        "right" => "side",
+        "bottom" => "side",
+        "left" => "side",
+        "top-left" => "corner",
+        "top-right" => "corner",
+        "bottom-right" => "corner",
+        "bottom-left" => "corner",
+    },
+);
 my %propertiesWithStyleBuilderOptions;
 my %styleBuilderOptions = (
     "animatable" => 1, # Defined in Source/WebCore/style/StyleBuilderConverter.h
@@ -104,6 +130,22 @@ for my $name (@allNames) {
         }
     } else {
         die "$name does not have a supported value type. Only dictionary types are supported.";
+    }
+}
+
+while (my ($groupName, $logicalPropertyGroup) = each %logicalPropertyGroups) {
+    for my $logic (keys %resolverKinds) {
+        my $properties = $logicalPropertyGroup->{$logic};
+        if (!$properties) {
+            die "Logical property group \"$groupName\" has no \"$logic\" property.";
+        }
+        while (my ($resolver, $kind) = each %{ $resolverKinds{$logic} }) {
+            if ($kind eq $logicalPropertyGroup->{"kind"}) {
+                if (!$properties->{$resolver}) {
+                    die "Logical property group \"$groupName\" requires a \"$resolver\" property.";
+                }
+            }
+        }
     }
 }
 
@@ -223,15 +265,20 @@ sub isPropertyEnabled($$)
     return matchEnableFlags($codegen_properties->{"enable-if"});
 }
 
+sub nameToId
+{
+    my $name = shift;
+    $name =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
+    return $name;
+}
+
 sub addProperty($$)
 {
     my ($name, $optionsHashRef) = @_;
 
     push @names, $name;
 
-    my $id = $name;
-    $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
-    $nameToId{$name} = $id;
+    $nameToId{$name} = nameToId($name);
 
     for my $optionName (keys %{$optionsHashRef}) {
         if ($optionName eq "codegen-properties") {
@@ -262,8 +309,28 @@ sub addProperty($$)
                     $settingsFlags{$name} = $codegenProperties->{"settings-flag"};
                 } elsif ($codegenOptionName eq "color-property") {
                     $nameIsColorProperty{$name} = 1;
-                } elsif ($codegenOptionName eq "direction-aware-property") {
-                    $nameIsDirectionAwareProperty{$name} = 1;
+                } elsif ($codegenOptionName eq "logical-property-group") {
+                    my $groupName = $codegenProperties->{$codegenOptionName}{"name"};
+                    my $resolver = $codegenProperties->{$codegenOptionName}{"resolver"};
+                    my $kind;
+                    my $logic;
+                    if ($kind = $resolverKinds{"logical"}{$resolver}) {
+                        $logic = "logical";
+                    } elsif ($kind = $resolverKinds{"physical"}{$resolver}) {
+                        $logic = "physical";
+                    } else {
+                        die "Unrecognized resolver \"$resolver\" for codegen property \"$codegenOptionName\" for $name property.";
+                    }
+                    my $otherKind = $logicalPropertyGroups{$groupName}{"kind"};
+                    if ($otherKind && $otherKind ne $kind) {
+                        die "Logical property group \"$groupName\" has resolvers of different kinds: $kind and $otherKind.";
+                    }
+                    $logicalPropertyGroups{$groupName}{"kind"} = $kind;
+                    my $otherName = $logicalPropertyGroups{$groupName}{$logic}{$resolver};
+                    if ($otherName) {
+                        die "Logical property group \"$groupName\" has multiple \"$resolver\" properties: $name and $otherName.";
+                    }
+                    $logicalPropertyGroups{$groupName}{$logic}{$resolver} = $name;
                 } elsif ($codegenOptionName eq "descriptor-only") {
                     $nameIsDescriptorOnly{$name} = 1;
                 } else {
@@ -578,17 +645,103 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)
 {
     switch (id) {
 EOF
-for my $name (@names) {
-    if (!$nameIsDirectionAwareProperty{$name}) {
-        next;
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    for my $name (values %{ $logicalPropertyGroup->{"logical"} }) {
+        print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
     }
-    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
 }
 
 print GPERF << "EOF";
         return true;
     default:
         return false;
+    }
+}
+
+bool CSSProperty::isInLogicalPropertyGroup(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    for my $kind ("logical", "physical") {
+        for my $name (values %{ $logicalPropertyGroup->{$kind} }) {
+            print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+        }
+    }
+}
+
+print GPERF << "EOF";
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID id1, CSSPropertyID id2)
+{
+    switch (id1) {
+EOF
+
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    my $logical = $logicalPropertyGroup->{"logical"};
+    my $physical = $logicalPropertyGroup->{"physical"};
+    for my $first ($logical, $physical) {
+        my $second = $first eq $logical ? $physical : $logical;
+        while (my ($resolver, $name) = each %{ $first }) {
+            print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+        }
+        print GPERF "        switch (id2) {\n";
+        while (my ($resolver, $name) = each %{ $second }) {
+            print GPERF "        case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+        }
+        print GPERF << "EOF";
+            return true;
+        default:
+            return false;
+        }
+EOF
+    }
+}
+
+print GPERF << "EOF";
+    default:
+        return false;
+    }
+}
+
+CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
+{
+    const TextFlow& textflow = makeTextFlow(writingMode, direction);
+    switch (propertyID) {
+EOF
+
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    while (my ($resolver, $name) = each %{ $logicalPropertyGroup->{"logical"} }) {
+        my $kind = $logicalPropertyGroup->{"kind"};
+        my $kindId = nameToId($kind);
+        my $resolverEnum = "LogicalBox" . $kindId . "::" . nameToId($resolver);
+        my @physicals;
+        if ($kind eq "side") {
+            @physicals = ("top", "right", "bottom", "left");
+        } elsif ($kind eq "corner") {
+            @physicals = ("top-left", "top-right", "bottom-right", "bottom-left");
+        } elsif ($kind eq "axis") {
+            @physicals = ("horizontal", "vertical");
+        } else {
+            die "Property \"$name\" belongs to a logical property group of unrecognized kind \"$kind\".";
+        }
+        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @physicals;
+        print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ": {\n";
+        print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
+        print GPERF "        return properties[static_cast<size_t>(mapLogical" . $kindId . "ToPhysical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
+        print GPERF "    }\n";
+    }
+}
+
+print GPERF << "EOF";
+    default:
+        return propertyID;
     }
 }
 

@@ -292,6 +292,20 @@
             }
         }
     },
+    "TestContextMenu": {
+        "subtests": {
+            "/webkit/WebKitWebPage/context-menu": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/227020"}
+                }
+            },
+            "/webkit/WebKitWebPage/context-menu-node": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/227020"}
+                }
+            }
+        }
+    },
     "TestResources": {
         "subtests": {
             "/webkit/WebKitWebResource/get-data-error": {

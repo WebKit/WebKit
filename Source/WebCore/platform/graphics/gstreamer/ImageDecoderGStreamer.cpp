@@ -238,7 +238,15 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
 {
     auto padCaps = adoptGRef(gst_pad_query_caps(pad, nullptr));
     GST_DEBUG_OBJECT(m_pipeline.get(), "New decodebin pad %" GST_PTR_FORMAT " caps: %" GST_PTR_FORMAT, pad, padCaps.get());
-    RELEASE_ASSERT(doCapsHaveType(padCaps.get(), "video"));
+
+    // Decodebin3 in GStreamer <= 1.16 does not respect user-supplied select-stream events. So we
+    // need to relax the release assert for these versions. This bug was fixed in:
+    // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/-/commit/b41b87522f59355bb21c001e9e2df96dc6956928
+    bool isVideo = doCapsHaveType(padCaps.get(), "video");
+    if (webkitGstCheckVersion(1, 18, 0))
+        RELEASE_ASSERT(isVideo);
+    else if (!isVideo)
+        return;
 
     GstElement* sink = makeGStreamerElement("appsink", nullptr);
     static GstAppSinkCallbacks callbacks = {
@@ -365,7 +373,6 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
         {
             Locker locker { decoder.m_messageLock };
             decoder.m_messageDispatched = false;
-            decoder.m_messageCondition.notifyOne();
         }
         if (&decoder.m_runLoop == &RunLoop::current())
             decoder.handleMessage(message);
@@ -376,10 +383,11 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
                 if (weakThis)
                     weakThis->handleMessage(protectedMessage.get());
             });
-        }
-        if (!decoder.m_messageDispatched) {
-            Locker locker { decoder.m_messageLock };
-            decoder.m_messageCondition.wait(decoder.m_messageLock);
+            {
+                Locker locker { decoder.m_messageLock };
+                if (!decoder.m_messageDispatched)
+                    decoder.m_messageCondition.wait(decoder.m_messageLock);
+            }
         }
         gst_message_unref(message);
         return GST_BUS_DROP;

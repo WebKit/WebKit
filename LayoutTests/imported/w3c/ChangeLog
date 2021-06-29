@@ -1,3 +1,240 @@
+2021-06-21  Rob Buis  <rbuis@igalia.com>
+
+        CSSOM test for serializing font-variant fails
+        https://bugs.webkit.org/show_bug.cgi?id=226770
+
+        Reviewed by Darin Adler.
+
+        Update improved test result.
+
+        * web-platform-tests/css/css-fonts/parsing/font-variant-east-asian-invalid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variant-valid-expected.txt:
+        * web-platform-tests/css/cssom/serialize-values-expected.txt:
+
+2021-06-19  Darin Adler  <darin@apple.com>
+
+        Fix CSS serialization issues affecting css-counter-styles tests
+        https://bugs.webkit.org/show_bug.cgi?id=226708
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-counter-styles/counter-style-additive-symbols-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-symbols-syntax-expected.txt:
+        * web-platform-tests/css/css-syntax/url-whitespace-consumption-expected.txt:
+        Updated to reflect progressions.
+
+2021-06-18  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Assigning a value outside the float range to a 'float' attribute should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=227146
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT test that is now fully passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-setposition-throws-expected.txt:
+
+2021-06-18  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Fix cssom "set a CSS declaration" for logical properties
+        https://bugs.webkit.org/show_bug.cgi?id=226461
+
+        Reviewed by Antti Koivisto.
+
+        This test is now passing.
+
+        * web-platform-tests/css/cssom/cssstyledeclaration-setter-logical-expected.txt:
+
+2021-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Add support for IDBCursor.request
+        https://bugs.webkit.org/show_bug.cgi?id=227152
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline some WPT tests now that they are passing.
+
+        * web-platform-tests/IndexedDB/idbcursor-request.any-expected.txt:
+        * web-platform-tests/IndexedDB/idbcursor-request.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+
+2021-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Resync DOM WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227144
+
+        Reviewed by Geoffrey Garen.
+
+        Resync DOM WPT tests from upstream ec5c1fc86b65142e7b.
+
+        * resources/resource-files.json:
+        * web-platform-tests/dom/*: Updated.
+        * web-platform-tests/interfaces/dom.idl:
+
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Resync FileAPI tests from upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227089
+
+        Reviewed by Darin Adler.
+
+        Resync FileAPI tests from upstream WPT b5949c67c948bc452e3.
+
+        * web-platform-tests/FileAPI/*: Updated.
+
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Resync webaudio tests from upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227091
+
+        Reviewed by Geoffrey Garen.
+
+        Resync webaudio tests from upstream WPT b5949c67c948bc452e3.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-cancel-and-hold-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-cancel-and-hold.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-nominal-range-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-nominal-range.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-throw-onmessage.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-throw-onmessage.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation.html:
+        * web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/test-constantsourcenode.html:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-setposition-throws-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-setposition-throws.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-periodicwave-interface/periodicWave.html:
+
+2021-06-16  Ada Chan  <ada.chan@apple.com>
+
+        Allow WebXR tests to be run on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=227054
+
+        Reviewed by Sam Weinig.
+
+        Updated expected results.
+
+        * web-platform-tests/webxr/events_input_source_recreation.https-expected.txt:
+        * web-platform-tests/webxr/events_input_sources_change.https-expected.txt:
+        * web-platform-tests/webxr/events_referenceSpace_reset_immersive.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_referenceSpace_reset_inline.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_select.https-expected.txt:
+        * web-platform-tests/webxr/events_session_select_subframe.https-expected.txt:
+        * web-platform-tests/webxr/events_session_squeeze.https-expected.txt:
+        * web-platform-tests/webxr/exclusive_requestFrame_nolayer.https-expected.txt:
+        * web-platform-tests/webxr/getInputPose_handedness.https-expected.txt:
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/navigator_xr_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/render_state_update.https-expected.txt:
+        * web-platform-tests/webxr/render_state_vertical_fov_immersive.https-expected.txt:
+        * web-platform-tests/webxr/render_state_vertical_fov_inline.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https-expected.txt:
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_disconnect_ends.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrFrame_lifetime.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_end.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_input_events_end.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestSessionDuringEnd.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https-expected.txt:
+        * web-platform-tests/webxr/xrView_eyes.https-expected.txt:
+        * web-platform-tests/webxr/xrView_match.https-expected.txt:
+        * web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt:
+        * web-platform-tests/webxr/xrView_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrViewport_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https-expected.txt:
+        * web-platform-tests/webxr/xr_viewport_scale.https-expected.txt: Added.
+
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Check for "xn--" in any subdomain when parsing URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=226912
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/resources/urltestdata.json:
+        * web-platform-tests/url/toascii.window-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+
+2021-06-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        logged in GitHub issue pages have bad layout for "Notifications Customize" link
+        https://bugs.webkit.org/show_bug.cgi?id=226859
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002-expected.html: Added.
+        * web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002.html: Added.
+
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Import WPT webrtc-extensions
+        https://bugs.webkit.org/show_bug.cgi?id=226961
+
+        Reviewed by Eric Carlson.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webrtc-extensions/: Added.
+
+2021-06-14  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r278842.
+
+        introduced a failing test
+
+        Reverted changeset:
+
+        "Fix RTCDataChannelInit::decode"
+        https://bugs.webkit.org/show_bug.cgi?id=226968
+        https://commits.webkit.org/r278842
+
 2021-06-14  Youenn Fablet  <youenn@apple.com>
 
         Fix RTCDataChannelInit::decode

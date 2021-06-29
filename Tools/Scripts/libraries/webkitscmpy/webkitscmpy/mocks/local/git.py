@@ -253,7 +253,7 @@ nothing to commit, working tree clean
                         'AuthorDate: {date}\n'
                         'Commit:     {author} <{email}>\n'
                         'CommitDate: {date}\n'
-                        '\n{log}'.format(
+                        '\n{log}\n'.format(
                             hash=commit.hash,
                             author=commit.author.name,
                             email=commit.author.email,
@@ -353,7 +353,7 @@ nothing to commit, working tree clean
                     return self.commits[self.default_branch][found.branch_point - difference - 1]
                 return None
 
-        something = str(something)
+        something = str(something).replace('remotes/', '')
         if '..' in something:
             a, b = something.split('..')
             a = self.find(a)
@@ -501,28 +501,43 @@ nothing to commit, working tree clean
         )
 
     def commits_in_range(self, begin, end):
+        begin = begin.replace('remotes/', '') if begin else begin
+        end = end.replace('remotes/', '') if end else end
+
+        if begin and self.remotes.get(begin):
+            begin = self.remotes.get(begin).hash
+        if end and self.remotes.get(end):
+            end = self.remotes.get(end).hash
+
         branches = [self.default_branch]
-        for branch, commits in self.commits.items():
-            if branch == self.default_branch:
-                continue
-            for commit in commits:
-                if commit.hash == end:
-                    branches.insert(0, branch)
+        if end in self.commits.keys() and end != self.default_branch:
+            branches.append(end)
+        else:
+            for branch, commits in self.commits.items():
+                if branch == self.default_branch:
+                    continue
+                for commit in commits:
+                    if commit.hash.startswith(end):
+                        branches.insert(0, branch)
+                        break
+                if len(branches) > 1:
                     break
-            if len(branches) > 1:
-                break
 
         in_range = False
         previous = None
         for branch in branches:
             for commit in reversed(self.commits[branch]):
-                if commit.hash == end:
+                if branch == begin:
+                    break
+                if commit.hash.startswith(end) or end == branch:
                     in_range = True
                 if in_range and (not previous or commit.hash != previous.hash):
                     yield commit
                 previous = commit
-                if commit.hash == begin:
+                if begin and commit.hash.startswith(begin):
                     in_range = False
+                    break
+
             in_range = False
             if not previous or branch == self.default_branch:
                 continue

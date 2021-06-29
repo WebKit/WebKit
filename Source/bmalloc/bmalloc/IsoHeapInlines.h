@@ -136,7 +136,7 @@ public: \
     void operator delete[](void* p) = delete; \
 using webkitFastMalloced = int; \
 private: \
-using __makeBisoMallocedInlineMacroSemicolonifier = int
+using __makeBisoMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 #define MAKE_BISO_MALLOCED_IMPL(isoType) \
 ::bmalloc::api::IsoHeap<isoType>& isoType::bisoHeap() \

@@ -91,6 +91,7 @@
           (children 1
             (GraphicsLayer
               (bounds 256.00 500.00)
+              (clips 1)
               (backingStoreAttached 1)
               (children 3
                 (GraphicsLayer
@@ -273,6 +274,7 @@
           (children 1
             (GraphicsLayer
               (bounds 444.00 500.00)
+              (clips 1)
               (backingStoreAttached 1)
               (children 3
                 (GraphicsLayer

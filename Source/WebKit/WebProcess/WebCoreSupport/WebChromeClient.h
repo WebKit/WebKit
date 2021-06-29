@@ -334,6 +334,10 @@ private:
     void pageExtendedBackgroundColorDidChange() const final;
     void sampledPageTopColorChanged() const final;
     
+#if ENABLE(APP_HIGHLIGHTS)
+    WebCore::HighlightVisibility appHighlightsVisiblility() const final;
+#endif
+    
     void wheelEventHandlersChanged(bool) final;
 
     String plugInStartLabelTitle(const String& mimeType) const final;

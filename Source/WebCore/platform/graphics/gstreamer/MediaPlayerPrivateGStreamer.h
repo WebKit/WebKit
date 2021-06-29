@@ -298,9 +298,7 @@ protected:
 
     void readyTimerFired();
 
-    void notifyPlayerOfVideo();
-    void notifyPlayerOfAudio();
-    void notifyPlayerOfText();
+    template <typename TrackPrivateType> void notifyPlayerOfTrack();
 
     void ensureAudioSourceProvider();
     void setAudioStreamProperties(GObject*);
@@ -459,10 +457,6 @@ private:
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*);
 
-    void purgeInvalidAudioTracks(Vector<String> validTrackIds);
-    void purgeInvalidVideoTracks(Vector<String> validTrackIds);
-    void purgeInvalidTextTracks(Vector<String> validTrackIds);
-
     String engineDescription() const override { return "GStreamer"; }
     bool didPassCORSAccessCheck() const override;
     bool canSaveMediaData() const override;
@@ -518,6 +512,7 @@ private:
 #endif
     bool m_isBuffering { false };
     int m_bufferingPercentage { 0 };
+    bool m_hasWebKitWebSrcSentEOS { false };
     mutable unsigned long long m_totalBytes { 0 };
     URL m_url;
     bool m_shouldPreservePitch { false };

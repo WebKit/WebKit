@@ -417,11 +417,6 @@ Document* StyleSheetContents::singleOwnerDocument() const
     return ownerNode ? &ownerNode->document() : 0;
 }
 
-URL StyleSheetContents::completeURL(const String& url) const
-{
-    return m_parserContext.completeURL(url);
-}
-
 static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, const WTF::Function<bool (const StyleRuleBase&)>& handler)
 {
     for (auto& rule : rules) {

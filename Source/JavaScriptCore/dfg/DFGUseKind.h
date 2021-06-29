@@ -192,7 +192,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case NotDoubleUse:
         return ~SpecFullDouble;
     case NeitherDoubleNorHeapBigIntNorStringUse:
-        return ~SpecFullDouble & ~SpecHeapBigInt & ~SpecString;
+        return ~(SpecFullDouble | SpecHeapBigInt | SpecString);
     case KnownOtherUse:
     case OtherUse:
         return SpecOther;

@@ -51,8 +51,10 @@ void ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, cons
 
     m_momentumCalculator = ScrollingMomentumCalculator::create(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
     auto predictedScrollTarget = m_momentumCalculator->predictedDestinationOffset();
-    float targetOffsetX = targetOffsetForStartOffset(ScrollEventAxis::Horizontal, viewportSize, contentSize.width() - viewportSize.width(), initialOffset.x(), predictedScrollTarget.width(), pageScale, initialDelta.width(), m_activeSnapIndexX);
-    float targetOffsetY = targetOffsetForStartOffset(ScrollEventAxis::Vertical, viewportSize, contentSize.height() - viewportSize.height(), initialOffset.y(), predictedScrollTarget.height(), pageScale, initialDelta.height(), m_activeSnapIndexY);
+
+    float targetOffsetX, targetOffsetY;
+    std::tie(targetOffsetX, m_activeSnapIndexX) = targetOffsetForStartOffset(ScrollEventAxis::Horizontal, viewportSize, contentSize.width() - viewportSize.width(), initialOffset.x(), predictedScrollTarget.width(), pageScale, initialDelta.width());
+    std::tie(targetOffsetY, m_activeSnapIndexY) = targetOffsetForStartOffset(ScrollEventAxis::Vertical, viewportSize, contentSize.height() - viewportSize.height(), initialOffset.y(), predictedScrollTarget.height(), pageScale, initialDelta.height());
     m_momentumCalculator->setRetargetedScrollOffset({ targetOffsetX, targetOffsetY });
     m_startTime = MonotonicTime::now();
     m_currentState = state;
@@ -91,19 +93,14 @@ FloatPoint ScrollSnapAnimatorState::currentAnimatedScrollOffset(MonotonicTime cu
     return m_momentumCalculator->scrollOffsetAfterElapsedTime(elapsedTime);
 }
 
-float ScrollSnapAnimatorState::targetOffsetForStartOffset(ScrollEventAxis axis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta, unsigned& outActiveSnapIndex) const
+std::pair<float, std::optional<unsigned>> ScrollSnapAnimatorState::targetOffsetForStartOffset(ScrollEventAxis axis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta) const
 {
     const auto& snapOffsets = m_snapOffsetsInfo.offsetsForAxis(axis);
-    if (snapOffsets.isEmpty()) {
-        outActiveSnapIndex = invalidSnapOffsetIndex;
-        return clampTo<float>(predictedOffset, 0, maxScrollOffset);
-    }
+    if (snapOffsets.isEmpty())
+        return std::make_pair(clampTo<float>(predictedOffset, 0, maxScrollOffset), std::nullopt);
 
-    float targetOffset = m_snapOffsetsInfo.closestSnapOffset(axis, LayoutSize { viewportSize }, LayoutUnit(predictedOffset / pageScale), initialDelta, LayoutUnit(startOffset / pageScale)).first;
-    float minimumTargetOffset = std::max<float>(0, snapOffsets.first().offset);
-    float maximumTargetOffset = std::min<float>(maxScrollOffset, snapOffsets.last().offset);
-    targetOffset = clampTo<float>(targetOffset, minimumTargetOffset, maximumTargetOffset);
-    return pageScale * targetOffset;
+    auto [targetOffset, snapIndex] = m_snapOffsetsInfo.closestSnapOffset(axis, LayoutSize { viewportSize }, LayoutUnit(predictedOffset / pageScale), initialDelta, LayoutUnit(startOffset / pageScale));
+    return std::make_pair(pageScale * clampTo<float>(float { targetOffset }, 0, maxScrollOffset), snapIndex);
 }
 
 TextStream& operator<<(TextStream& ts, const ScrollSnapAnimatorState& state)

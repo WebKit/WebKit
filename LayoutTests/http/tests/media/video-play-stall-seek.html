@@ -6,20 +6,20 @@
 
     var waitingCount = 0;
 
-    video.addEventListener('waiting', function () {
-
+    video.addEventListener('waiting', function onWaiting() {
         // Skip the first 'waiting' event because it is fired when we call play() 
         // and there isn't enough media to begin playback immediately.
         if (++waitingCount == 1)
             return;
 
         consoleWrite("EVENT(waiting)");
+        video.removeEventListener('waiting', onWaiting);
 
         // now that playback has paused to wait for data, seek back and verify that we
         // get a 'canplay' event
         waitForEvent('canplay' , function () {
             testExpected("video.readyState", HTMLMediaElement.HAVE_CURRENT_DATA, ">=");
-            testExpected("video.networkState", HTMLMediaElement.NETWORK_LOADING);
+            setTimeout(1, function() { video.pause(); });
             endTest();
         } );
         testExpected("video.readyState", HTMLMediaElement.HAVE_CURRENT_DATA);

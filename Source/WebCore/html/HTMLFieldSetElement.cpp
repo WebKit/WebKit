@@ -160,7 +160,8 @@ const AtomString& HTMLFieldSetElement::formControlType() const
 
 RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return RenderElement::createFor(*this, WTFMove(style), RenderElement::OnlyCreateBlockAndFlexboxRenderers);
+    // Fieldsets should make a block flow if display: inline or table types are set.
+    return RenderElement::createFor(*this, WTFMove(style), { RenderElement::ConstructBlockLevelRendererFor::Inline, RenderElement::ConstructBlockLevelRendererFor::TableOrTablePart });
 }
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const

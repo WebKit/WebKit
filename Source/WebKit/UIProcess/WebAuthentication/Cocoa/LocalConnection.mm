@@ -152,7 +152,15 @@ void LocalConnection::verifyUser(SecAccessControlRef accessControl, LAContext *c
         reply(@{ @"UserPresence": @YES }, nullptr);
         return;
     }
+
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    // Simulator doesn't support LAAccessControlOperationUseKeySign, but does support alternate attributes.
+    if (shouldUseAlternateAttributes()) {
+        reply(@{ }, nullptr);
+        return;
+    }
 #endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
     [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
 }

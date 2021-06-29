@@ -280,6 +280,15 @@ struct ScratchBuffer {
 #pragma warning(pop)
 #endif
 
+class ActiveScratchBufferScope {
+public:
+    ActiveScratchBufferScope(VM&, size_t activeScratchBufferSizeInJSValues);
+    ~ActiveScratchBufferScope();
+
+private:
+    ScratchBuffer* m_scratchBuffer;
+};
+
 class VM : public ThreadSafeRefCounted<VM>, public DoublyLinkedListNode<VM> {
 public:
     // WebCore has a one-to-one mapping of threads to VMs;

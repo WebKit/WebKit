@@ -24,6 +24,8 @@ messages -> AuxiliaryProcess NotRefCounted {
     ShutDown()
     SetProcessSuppressionEnabled(bool flag)
 
+    MainThreadPing() -> () Async
+
 #if OS(LINUX)
     void DidReceiveMemoryPressureEvent(bool isCritical)
 #endif

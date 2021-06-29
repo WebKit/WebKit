@@ -136,7 +136,7 @@ public:
     HTMLElement* containerElement() const;
     
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
-    RenderStyle createInnerTextStyle(const RenderStyle&) override;
+    RenderStyle createInnerTextStyle(const RenderStyle&) final;
 
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
@@ -269,7 +269,7 @@ public:
     void addSearchResult();
     void onSearch();
 
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() final;
 
 #if ENABLE(DATALIST_ELEMENT)
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;
@@ -348,12 +348,10 @@ public:
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
-    void defaultEventHandler(Event&) override;
+    void defaultEventHandler(Event&) final;
 
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
-
-    void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     void willChangeForm() final;
     void didChangeForm() final;
@@ -361,6 +359,8 @@ private:
     void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+
+    void createShadowSubtreeAndUpdateInnerTextElementEditability();
 
     int defaultTabIndex() const final;
     bool hasCustomFocusLogic() const final;

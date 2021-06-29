@@ -184,14 +184,19 @@ bool ScrollAnimator::activeScrollSnapIndexDidChange() const
     return m_scrollController.activeScrollSnapIndexDidChange();
 }
 
-unsigned ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
+std::optional<unsigned> ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
 {
     return m_scrollController.activeScrollSnapIndexForAxis(axis);
 }
 
-void ScrollAnimator::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
+void ScrollAnimator::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, std::optional<unsigned> index)
 {
     return m_scrollController.setActiveScrollSnapIndexForAxis(axis, index);
+}
+
+void ScrollAnimator::resnapAfterLayout()
+{
+    m_scrollController.resnapAfterLayout();
 }
 #endif
 
@@ -273,8 +278,7 @@ void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 {
 #if ENABLE(CSS_SCROLL_SNAP)
-    auto scrollOffset = m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition()));
-    m_scrollController.setActiveScrollSnapIndicesForOffset(scrollOffset);
+    m_scrollController.updateActiveScrollSnapIndexForClientOffset();
 #endif
 }
 

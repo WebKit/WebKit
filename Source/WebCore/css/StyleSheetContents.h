@@ -86,7 +86,6 @@ public:
 
     bool loadCompleted() const { return m_loadCompleted; }
 
-    URL completeURL(const String& url) const;
     bool traverseRules(const WTF::Function<bool (const StyleRuleBase&)>& handler) const;
     bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 

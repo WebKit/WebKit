@@ -66,6 +66,7 @@
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
+SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
 
 #if ENABLE(NOTIFY_FILTERING)
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_notify)
@@ -697,6 +698,8 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
 #endif
     if (mbr_close_connectionsPtr())
         mbr_close_connectionsPtr()();
+    if (lookup_close_connectionsPtr())
+        lookup_close_connectionsPtr()();
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)

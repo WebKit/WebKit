@@ -83,7 +83,7 @@ static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Ty
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
-CachedResource::CachedResource(CachedResourceRequest&& request, Type type, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : m_options(request.options())
     , m_resourceRequest(request.releaseResourceRequest())
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
@@ -121,7 +121,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, const
 }
 
 // FIXME: For this constructor, we should probably mandate that the URL has no fragment identifier.
-CachedResource::CachedResource(const URL& url, Type type, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : m_resourceRequest(url)
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
@@ -904,7 +904,7 @@ void CachedResource::Callback::timerFired()
     m_resource.didAddClient(m_client);
 }
 
-#if USE(FOUNDATION) || USE(SOUP)
+#if ENABLE(SHAREABLE_RESOURCE)
 
 void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
 {

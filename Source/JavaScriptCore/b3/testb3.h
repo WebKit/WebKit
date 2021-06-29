@@ -416,6 +416,12 @@ inline double modelLoad<double, double>(double value) { return value; }
 
 void run(const char* filter);
 void testBitAndSExt32(int32_t value, int64_t mask);
+void testUbfx32();
+void testUbfx32PatternMatch();
+void testUbfx64();
+void testUbfx64PatternMatch();
+void testBitAndZeroShiftRightArgImmMask32();
+void testBitAndZeroShiftRightArgImmMask64();
 void testBasicSelect();
 void testSelectTest();
 void testSelectCompareDouble();
@@ -870,6 +876,7 @@ void testMulSubArgsLeft();
 void testMulSubArgsRight();
 void testMulSubArgsLeft32();
 void testMulSubArgsRight32();
+void testMulSubSignExtend32Args();
 void testMulNegArgs();
 void testMulNegArgs32();
 void testMulArgDouble(double);
@@ -1027,6 +1034,7 @@ void testSubMemArg(int64_t, int64_t);
 void testSubImmMem(int64_t, int64_t);
 void testSubMemImm(int64_t, int64_t);
 void testSubArgs32(int, int);
+void testSubArgs32ZeroExtend(int, int);
 void testSubArgImm32(int, int);
 void testSubImmArg32(int, int);
 void testSubMemArg32(int32_t, int32_t);

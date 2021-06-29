@@ -52,5 +52,5 @@ public: \
         ::bmalloc::api::freeOutOfLine(p); \
     } \
 private: \
-typedef int __thisIsHereToForceASemicolonAfterThisMacro
+typedef int __thisIsHereToForceASemicolonAfterThisMacro BUNUSED_TYPE_ALIAS
 

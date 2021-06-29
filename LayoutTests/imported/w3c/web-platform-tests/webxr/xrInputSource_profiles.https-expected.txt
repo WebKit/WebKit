@@ -1,4 +1,4 @@
 
 PASS WebXR InputSource's profiles list can be set - webgl
-FAIL WebXR InputSource's profiles list can be set - webgl2 assert_implements: webgl2 not supported. undefined
+PASS WebXR InputSource's profiles list can be set - webgl2
 

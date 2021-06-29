@@ -206,6 +206,7 @@ protected:
     
     bool isDetached() const override { return !m_renderer; }
 
+    bool shouldIgnoreAttributeRole() const override;
     AccessibilityRole determineAccessibilityRole() override;
     bool computeAccessibilityIsIgnored() const override;
 

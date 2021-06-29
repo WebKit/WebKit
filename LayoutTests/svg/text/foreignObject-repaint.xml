@@ -6,7 +6,6 @@
   </foreignObject>
   <script>
     if (window.eventSender) {
-      document.execCommand("SelectAll");
       eventSender.mouseMoveTo(200, 200);
       eventSender.mouseDown();
       eventSender.mouseUp();

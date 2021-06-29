@@ -14,6 +14,7 @@
                     { "name": "bot140", "platform": "mac-bigsur" },
                     { "name": "bot141", "platform": "mac-bigsur" },
                     { "name": "bot142", "platform": "mac-bigsur" },
+                    { "name": "bot165", "platform": "mac-bigsur" },
                     { "name": "bot302", "platform": "mac-bigsur" },
                     { "name": "bot603", "platform": "mac-bigsur" },
                     { "name": "bot632", "platform": "mac-bigsur" },
@@ -134,10 +135,14 @@
                     { "name": "Apple-BigSur-Release-Build", "factory": "BuildFactory", "builddir": "bigsur-release",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": [
-                          "bigsur-release-tests-test262", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2", "bigsur-release-applesilicon-tests-wk1",
-                          "bigsur-release-applesilicon-tests-wk2", "bigsur-applesilicon-release-tests-jsc", "bigsur-release-tests-wk2-webgl"
+                          "bigsur-applesilicon-release-tests-test262" ,"bigsur-release-tests-test262", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2",
+                          "bigsur-release-applesilicon-tests-wk1", "bigsur-release-applesilicon-tests-wk2", "bigsur-applesilicon-release-tests-jsc", "bigsur-release-tests-wk2-webgl"
                       ],
                       "workernames": ["bot121", "bot124"]
+                    },
+                    { "name": "Apple-BigSur-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory", "builddir": "bigsur-applesilicon-release-tests-test262",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot165"]
                     },
                     { "name": "Apple-BigSur-Release-Test262-Tests", "factory": "Test262Factory", "builddir": "bigsur-release-tests-test262",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -586,6 +591,9 @@
                     },
                     { "type": "Triggerable", "name": "bigsur-release-tests-test262",
                       "builderNames": ["Apple-BigSur-Release-Test262-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-applesilicon-release-tests-test262",
+                      "builderNames": ["Apple-BigSur-AppleSilicon-Release-Test262-Tests"]
                     },
                     { "type": "Triggerable", "name": "bigsur-applesilicon-debug-tests-jsc",
                       "builderNames": ["Apple-BigSur-AppleSilicon-Debug-JSC-Tests"]

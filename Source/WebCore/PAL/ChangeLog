@@ -1,3 +1,56 @@
+2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Rename WKVisualSearchPreviewController to WKQuickLookPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=227193
+
+        Reviewed by Sam Weinig.
+
+        Fix up some compiler flags in this SPI header. Instead of using `HAVE(VK_IMAGE_ANALYSIS)` to guard SPI
+        declarations, use the new `HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)`, `HAVE(QUICKLOOK_ITEM_PREVIEW_OPTIONS)`
+        and `HAVE(QUICKLOOK_PREVIEW_ACTIVITY)` flags.
+
+        * pal/spi/mac/QuickLookMacSPI.h:
+
+2021-06-17  Said Abou-Hallawa  <said@apple.com>
+
+        [Cocoa] Disable hardware decoding in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=226869
+        <rdar://77548905>
+
+        Reviewed by Per Arne Vollan and Simon Fraser.
+
+        SoftLink
+        1. VTRestrictVideoDecoders from VideoToolbox
+        2. FigPhotoSupportsHEVCHWDecode from MediaToobox
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h:
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h:
+        * pal/spi/cg/ImageIOSPI.h:
+        * pal/spi/cocoa/VideoToolboxSPI.h: Added.
+
+2021-06-16  Said Abou-Hallawa  <said@apple.com>
+
+        takeSnapshotWithConfiguration() should wait for the next flush before it does callSnapshotRect()
+        https://bugs.webkit.org/show_bug.cgi?id=226257
+        <rdar://76411685>
+
+        Reviewed by Simon Fraser and Tim Horton.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/ios/QuickLookSPI.h:
+
 2021-06-14  Jonathan Bedard  <jbedard@apple.com>
 
         [Monterey] Support building WebKit (Part 2)

@@ -109,6 +109,7 @@ FileInputType::FileInputType(HTMLInputElement& element)
     : BaseClickableWithKeyInputType(Type::File, element)
     , m_fileList(FileList::create())
 {
+    ASSERT(needsShadowSubtree());
 }
 
 FileInputType::~FileInputType()
@@ -275,6 +276,7 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
 
 void FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
+    ASSERT(needsShadowSubtree());
     ASSERT(element());
     ASSERT(element()->shadowRoot());
     element()->userAgentShadowRoot()->appendChild(source, element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()));

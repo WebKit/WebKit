@@ -1,0 +1,4 @@
+
+PASS XRRigidTransform position and orientation meet [SameObject] requirements - webgl
+FAIL XRRigidTransform position and orientation meet [SameObject] requirements - webgl2 assert_implements: webgl2 not supported. undefined
+

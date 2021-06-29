@@ -1703,6 +1703,7 @@ imported/w3c/web-platform-tests/webaudio [ Skip ]
 imported/w3c/web-platform-tests/webmessaging [ Skip ]
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]
+imported/w3c/web-platform-tests/webrtc-extensions [ Skip ]
 imported/w3c/web-platform-tests/webrtc-priority [ Skip ]
 imported/w3c/web-platform-tests/websockets [ Skip ]
 imported/w3c/web-platform-tests/webstorage [ Skip ]
@@ -1784,7 +1785,7 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
 [ Release ] editing/selection/caret-rtl-2-left.html [ Pass Failure ]
 [ Release ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
-[ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Failure ]
+[ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Crash Failure ]
 accessibility/canvas-fallback-content.html [ Timeout ]
 animations/steps-transform-rendering-updates.html [ Pass Failure ]
 crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text.html [ Timeout ]
@@ -2163,3 +2164,5 @@ webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
 workers/bomb.html [ Skip ] # Timeout
+
+webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.

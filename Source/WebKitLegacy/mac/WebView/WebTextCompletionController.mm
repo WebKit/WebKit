@@ -32,7 +32,6 @@
 #import "DOMRangeInternal.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLViewInternal.h"
-#import "WebTypesInternal.h"
 #import "WebView.h"
 #import <WebCore/Frame.h>
 #import <WebCore/SimpleRange.h>

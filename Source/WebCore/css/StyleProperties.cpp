@@ -237,6 +237,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getAlignmentShorthandValue(placeSelfShorthand());
     case CSSPropertyFont:
         return fontValue();
+    case CSSPropertyFontVariant:
+        return fontVariantValue();
     case CSSPropertyInset:
         return get4Values(insetShorthand());
     case CSSPropertyInsetBlock:
@@ -362,7 +364,12 @@ void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID
     case CSSPropertyFontStyle:
         break; // No prefix.
     case CSSPropertyFontFamily:
+    case CSSPropertyFontVariantAlternates:
     case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontVariantLigatures:
+    case CSSPropertyFontVariantNumeric:
+    case CSSPropertyFontVariantPosition:
+    case CSSPropertyFontVariantEastAsian:
     case CSSPropertyFontWeight:
     case CSSPropertyFontStretch:
         prefix = ' ';
@@ -409,6 +416,21 @@ String StyleProperties::fontValue() const
     result.append(fontFamilyProperty.value()->cssText());
     if (isCSSWideValueKeyword(commonValue))
         return commonValue;
+    return result.toString();
+}
+
+String StyleProperties::fontVariantValue() const
+{
+    String commonValue;
+    StringBuilder result;
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantLigatures, result, commonValue);
+    if (isCSSWideValueKeyword(result.toString()))
+        return result.toString();
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantAlternates, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantEastAsian, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantNumeric, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantPosition, result, commonValue);
     return result.toString();
 }
 
@@ -918,6 +940,23 @@ void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSVal
         m_propertyVector.append(CSSProperty(longhand, value.copyRef(), important));
 }
 
+bool MutableStyleProperties::canUpdateInPlace(const CSSProperty& property, CSSProperty* toReplace) const
+{
+    // If the property is in a logical property group, we can't just update the value in-place,
+    // because afterwards there might be another property of the same group but different mapping logic.
+    // In that case the latter might override the former, so setProperty would have no effect.
+    CSSPropertyID id = property.id();
+    if (CSSProperty::isInLogicalPropertyGroup(id)) {
+        ASSERT(toReplace >= m_propertyVector.begin());
+        ASSERT(toReplace < m_propertyVector.end());
+        for (CSSProperty* it = toReplace + 1; it != m_propertyVector.end(); ++it) {
+            if (CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(id, it->id()))
+                return false;
+        }
+    }
+    return true;
+}
+
 bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSProperty* slot)
 {
     if (!removeShorthandProperty(property.id())) {
@@ -931,11 +970,15 @@ bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSPropert
         }
         
         if (toReplace) {
-            if (*toReplace == property)
-                return false;
+            if (canUpdateInPlace(property, toReplace)) {
+                if (*toReplace == property)
+                    return false;
 
-            *toReplace = property;
-            return true;
+                *toReplace = property;
+                return true;
+            }
+            m_propertyVector.remove(toReplace - m_propertyVector.begin());
+            toReplace = nullptr;
         }
     }
 

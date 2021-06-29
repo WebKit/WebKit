@@ -1261,12 +1261,14 @@ void RenderStyle::setClip(Length&& top, Length&& right, Length&& bottom, Length&
     data.clip.left() = WTFMove(left);
 }
 
-void RenderStyle::addCursor(RefPtr<StyleImage>&& image, const IntPoint& hotSpot)
+void RenderStyle::addCursor(RefPtr<StyleImage>&& image, const std::optional<IntPoint>& hotSpot)
 {
     auto& cursorData = m_rareInheritedData.access().cursorData;
     if (!cursorData)
         cursorData = CursorList::create();
-    cursorData->append(CursorData(WTFMove(image), hotSpot));
+    // Point outside the image is how we tell the cursor machinery there is no hot spot, and it should generate one (done in the Cursor class).
+    // FIXME: Would it be better to extend the concept of "no hot spot" deeper, into CursorData and beyond, rather than using -1/-1 for it?
+    cursorData->append(CursorData(WTFMove(image), hotSpot.value_or(IntPoint { -1, -1 })));
 }
 
 void RenderStyle::setCursorList(RefPtr<CursorList>&& list)

@@ -1400,6 +1400,19 @@ Color RenderTheme::platformAppHighlightColor(OptionSet<StyleColor::Options>) con
 }
 #endif
 
+Color RenderTheme::defaultButtonTextColor(OptionSet<StyleColor::Options> options) const
+{
+    auto& cache = colorCache(options);
+    if (!cache.defaultButtonTextColor.isValid())
+        cache.defaultButtonTextColor = platformDefaultButtonTextColor(options);
+    return cache.defaultButtonTextColor;
+}
+
+Color RenderTheme::platformDefaultButtonTextColor(OptionSet<StyleColor::Options> options) const
+{
+    return systemColor(CSSValueActivebuttontext, options);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 
 Color RenderTheme::tapHighlightColor()

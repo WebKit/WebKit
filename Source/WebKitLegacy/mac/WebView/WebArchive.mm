@@ -32,7 +32,6 @@
 #import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"
 #import "WebResourceInternal.h"
-#import "WebTypesInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>

@@ -120,7 +120,6 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const Token& token
 
 void SharedRoutingArbitrator::endRoutingArbitrationForToken(const Token& token)
 {
-    ASSERT(isInRoutingArbitrationForToken(token) || m_setupArbitrationOngoing);
     m_tokens.remove(token);
 
     if (!m_tokens.computesEmpty())

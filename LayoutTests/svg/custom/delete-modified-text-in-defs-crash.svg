@@ -7,7 +7,6 @@
   </defs>
   <g><rect id="legendbox"/></g>
   <script><![CDATA[
-    document.execCommand("SelectAll");
     elem = document.getElementById("tspan1");
     elem.removeAttribute("x");
     range = document.createRange();

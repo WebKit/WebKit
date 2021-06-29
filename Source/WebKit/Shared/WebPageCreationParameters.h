@@ -38,6 +38,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/MediaProducer.h>
@@ -255,6 +256,11 @@ struct WebPageCreationParameters {
 #if PLATFORM(IOS)
     bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload { false };
 #endif
+    
+#if ENABLE(APP_HIGHLIGHTS)
+    WebCore::HighlightVisibility appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
+#endif
+    
 };
 
 } // namespace WebKit

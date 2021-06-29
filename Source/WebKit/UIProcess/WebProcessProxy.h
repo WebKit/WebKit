@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,7 +118,7 @@ using WebProcessWithAudibleMediaCounter = RefCounter<WebProcessWithAudibleMediaC
 using WebProcessWithAudibleMediaToken = WebProcessWithAudibleMediaCounter::Token;
 enum class CheckBackForwardList : bool { No, Yes };
 
-class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, private ProcessThrottlerClient {
+class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
 public:
     typedef HashMap<WebCore::FrameIdentifier, RefPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<WebPageProxyIdentifier, WebPageProxy*> WebPageProxyMap;
@@ -243,10 +243,6 @@ public:
 
     void requestTermination(ProcessTerminationReason);
 
-    enum class UseLazyStop : bool { No, Yes };
-    void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);
-    void stopResponsivenessTimer();
-
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
 
@@ -263,7 +259,6 @@ public:
 
     void isResponsive(CompletionHandler<void(bool isWebProcessResponsive)>&&);
     void isResponsiveWithLazyStop();
-    void didReceiveMainThreadPing();
     void didReceiveBackgroundResponsivenessPing();
 
     void memoryPressureStatusChanged(bool isUnderMemoryPressure) { m_isUnderMemoryPressure = isUnderMemoryPressure; }
@@ -351,9 +346,6 @@ public:
 #endif
 
     void updateAudibleMediaAssertions();
-
-    void ref() final { ThreadSafeRefCounted::ref(); }
-    void deref() final { ThreadSafeRefCounted::deref(); }
 
 #if ENABLE(SERVICE_WORKER)
     void establishServiceWorkerContext(const WebPreferencesStore&, CompletionHandler<void()>&&);
@@ -471,12 +463,10 @@ private:
     void getWebAuthnProcessConnection(Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
 #endif
 
-    bool platformIsBeingDebugged() const;
     bool shouldAllowNonValidInjectedCode() const;
 
     static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& platformPathsWithAssumedReadAccess();
 
-    ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     void updateBackgroundResponsivenessTimer();
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
@@ -493,7 +483,6 @@ private:
     void didBecomeResponsive() override;
     void willChangeIsResponsive() override;
     void didChangeIsResponsive() override;
-    bool mayBecomeUnresponsive() override;
 
     // Implemented in generated WebProcessProxyMessageReceiver.cpp
     void didReceiveWebProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
@@ -525,6 +514,10 @@ private:
     
 #if PLATFORM(MAC)
     void isAXAuthenticated(audit_token_t, CompletionHandler<void(bool)>&&);
+#endif
+
+#if PLATFORM(COCOA)
+    bool hasCorrectPACEntitlement();
 #endif
 
     enum class IsWeak { No, Yes };
@@ -559,7 +552,6 @@ private:
         RefPtr<T> m_strongObject;
     };
 
-    ResponsivenessTimer m_responsivenessTimer;
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
@@ -622,7 +614,6 @@ private:
 #if PLATFORM(IOS)
     bool m_hasManagedSessionSandboxAccess { false };
 #endif
-    std::optional<UseLazyStop> m_shouldStartResponsivenessTimerWhenLaunched;
 
 #if PLATFORM(WATCHOS)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForFullscreenFormControls;

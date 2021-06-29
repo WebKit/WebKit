@@ -65,7 +65,8 @@ HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& d
 
 RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return RenderElement::createFor(*this, WTFMove(style), RenderElement::OnlyCreateBlockAndFlexboxRenderers);
+    // <summary> elements with display:list-item should not be rendered as list items because they'd end up with two markers before the text (one from summary element and the other as a list item).
+    return RenderElement::createFor(*this, WTFMove(style), { RenderElement::ConstructBlockLevelRendererFor::ListItem, RenderElement::ConstructBlockLevelRendererFor::Inline, RenderElement::ConstructBlockLevelRendererFor::TableOrTablePart });
 }
 
 void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot& root)

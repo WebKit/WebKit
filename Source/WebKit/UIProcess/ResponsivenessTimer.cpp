@@ -70,7 +70,7 @@ void ResponsivenessTimer::timerFired()
 
     auto protectedClient = makeRef(m_client);
 
-    if (!m_client.mayBecomeUnresponsive()) {
+    if (!mayBecomeUnresponsive()) {
         m_waitingForTimer = true;
         m_timer.startOneShot(responsivenessTimeout);
         return;
@@ -102,6 +102,26 @@ void ResponsivenessTimer::start()
         m_restartFireTime = MonotonicTime();
         m_timer.startOneShot(responsivenessTimeout);
     }
+}
+
+bool ResponsivenessTimer::mayBecomeUnresponsive() const
+{
+#if !defined(NDEBUG) || ASAN_ENABLED
+    return false;
+#else
+    static bool isLibgmallocEnabled = [] {
+        char* variable = getenv("DYLD_INSERT_LIBRARIES");
+        if (!variable)
+            return false;
+        if (!strstr(variable, "libgmalloc"))
+            return false;
+        return true;
+    }();
+    if (isLibgmallocEnabled)
+        return false;
+
+    return m_client.mayBecomeUnresponsive();
+#endif
 }
 
 void ResponsivenessTimer::startWithLazyStop()

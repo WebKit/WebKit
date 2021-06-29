@@ -1,3 +1,808 @@
+2021-06-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of test failures
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2021-06-21  Rob Buis  <rbuis@igalia.com>
+
+        CSSOM test for serializing font-variant fails
+        https://bugs.webkit.org/show_bug.cgi?id=226770
+
+        Reviewed by Darin Adler.
+
+        * css3/font-variant-parsing-expected.txt:
+        * css3/font-variant-parsing.html:
+
+2021-06-20  Darin Adler  <darin@apple.com>
+
+        CSS counter style improvements for Armenian, Tamil, and some CJK styles
+        https://bugs.webkit.org/show_bug.cgi?id=227190
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Remove failure expectations for 26 tests.
+
+        * fast/lists/w3-css3-list-styles-fallback-style-expected.txt: Expect 9999 limit instead
+        of 99999999 for Armenian, and success rather than failure for Tamil.
+        * fast/lists/w3-css3-list-styles-fallback-style.html: Ditto.
+
+2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Skip shadow-root creation for input element if it is not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=227189
+
+        Reviewed by Maciej Stachowiak.
+
+        * fast/forms/checkbox-and-pseudo-expected.txt: Added.
+        * fast/forms/checkbox-and-pseudo.html: Added.
+        * fast/forms/checkbox-child-hidden-expected.html: Added.
+        * fast/forms/checkbox-child-hidden.html: Added.
+
+2021-06-19  Darin Adler  <darin@apple.com>
+
+        Fix CSS serialization issues affecting css-counter-styles tests
+        https://bugs.webkit.org/show_bug.cgi?id=226708
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/parse-border-image-repeat-null-crash-expected.txt: Update to reflect correct
+        path; the path is not really relevant to what was being tested here either way.
+
+        * fast/css/uri-token-parsing-expected.txt: Updated to expect behavior that is sensible
+        and also matches Firefox.
+        * fast/css/uri-token-parsing.html: Ditto.
+
+        * fast/fast/css/url-with-multi-byte-unicode-escape-expected.txt: Updated to expect that
+        URL is still encoded as UTF-8, not yet re-URL-encoded as it will be for loading. The
+        one that will be used for loading can still be seen in computed style. The test still
+        covers correclty parsig this URL.
+        * fast/fast/css/url-with-multi-byte-unicode-escape.html: Ditto.
+
+        * fast/filter-image/parse-filter-image-expected.txt: Updated to no longer test addition
+        of trailing slashes to peculiar URLs that are made by using filenames as host names.
+        Now this checks URLs that just contain filenames, which makes more logical sense, and
+        no trailing slash addition is expected.
+        * fast/filter-image/parse-filter-image.html: Ditto.
+
+        * fast/innerHTML/innerHTML-uri-resolution.html: Updated test to use computed style so
+        it no longer depends on WebKit-only behavior to run correctly.
+
+2021-06-18  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Assigning a value outside the float range to a 'float' attribute should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=227146
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/dom/webidl-type-mapping.html:
+
+2021-06-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS 14-Simulator WK2] editing/deleting/smart-delete-paragraph-004.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=226906
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+
+2021-06-18  Eleni Maria Stea  <estea@igalia.com>
+
+        Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=227168
+
+        Updated glib baseline/expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003-expected.txt: Removed.
+
+2021-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html is failing since r273645
+        https://bugs.webkit.org/show_bug.cgi?id=223508
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Unflag and add glib baseline for test now passing.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: Added.
+
+2021-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] fast/mediastream/MediaStream-video-element-remove-track.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191886
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag test now passing.
+
+2021-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add Timing-Allow-Origin checks to NetworkDataTaskSoup
+        https://bugs.webkit.org/show_bug.cgi?id=227008
+        <rdar://problem/79384792>
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/glib/TestExpectations:
+
+2021-06-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening. Update baselines after r278974.
+
+        There are GTK and WPE tests that have the same text baseline but the
+        corresponding PNG image is different. In this case, I have preferred
+        to keep a specific text baseline for each port, instead of
+        promoting the text baseline to GLIB.
+
+        * platform/gtk/svg/text/foreignObject-repaint-expected.txt: Copied from LayoutTests/platform/glib/svg/text/foreignObject-repaint-expected.txt.
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.png:
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/gtk/svg/text/text-align-01-b-expected.png:
+        * platform/gtk/svg/text/text-align-01-b-expected.txt:
+        * platform/gtk/svg/text/text-align-02-b-expected.png:
+        * platform/gtk/svg/text/text-align-02-b-expected.txt:
+        * platform/gtk/svg/text/text-align-03-b-expected.png:
+        * platform/gtk/svg/text/text-align-03-b-expected.txt:
+        * platform/gtk/svg/text/text-align-04-b-expected.png:
+        * platform/gtk/svg/text/text-align-04-b-expected.txt:
+        * platform/gtk/svg/text/text-align-05-b-expected.png:
+        * platform/gtk/svg/text/text-align-05-b-expected.txt:
+        * platform/gtk/svg/text/text-align-06-b-expected.png:
+        * platform/gtk/svg/text/text-align-06-b-expected.txt:
+        * platform/gtk/svg/text/text-deco-01-b-expected.png:
+        * platform/gtk/svg/text/text-deco-01-b-expected.txt:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.png:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.txt:
+        * platform/gtk/svg/text/text-fonts-02-t-expected.png:
+        * platform/gtk/svg/text/text-fonts-02-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-fonts-02-t-expected.txt.
+        * platform/gtk/svg/text/text-intro-05-t-expected.png:
+        * platform/gtk/svg/text/text-intro-05-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-intro-05-t-expected.txt.
+        * platform/gtk/svg/text/text-path-01-b-expected.png:
+        * platform/gtk/svg/text/text-path-01-b-expected.txt:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.png:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.txt:
+        * platform/gtk/svg/text/text-text-01-b-expected.png:
+        * platform/gtk/svg/text/text-text-01-b-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-text-01-b-expected.txt.
+        * platform/gtk/svg/text/text-text-03-b-expected.png:
+        * platform/gtk/svg/text/text-text-03-b-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-text-03-b-expected.txt.
+        * platform/gtk/svg/text/text-text-05-t-expected.png:
+        * platform/gtk/svg/text/text-text-05-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-text-05-t-expected.txt.
+        * platform/gtk/svg/text/text-text-07-t-expected.png:
+        * platform/gtk/svg/text/text-text-07-t-expected.txt:
+        * platform/gtk/svg/text/text-text-08-b-expected.png:
+        * platform/gtk/svg/text/text-text-08-b-expected.txt:
+        * platform/gtk/svg/text/text-tref-01-b-expected.png:
+        * platform/gtk/svg/text/text-tref-01-b-expected.txt:
+        * platform/gtk/svg/text/text-tselect-01-b-expected.png:
+        * platform/gtk/svg/text/text-tselect-01-b-expected.txt:
+        * platform/gtk/svg/text/text-tspan-01-b-expected.png:
+        * platform/gtk/svg/text/text-tspan-01-b-expected.txt:
+        * platform/gtk/svg/text/text-ws-01-t-expected.png:
+        * platform/gtk/svg/text/text-ws-01-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-ws-01-t-expected.txt.
+        * platform/gtk/svg/text/text-ws-02-t-expected.png:
+        * platform/gtk/svg/text/text-ws-02-t-expected.txt: Copied from LayoutTests/platform/glib/svg/text/text-ws-02-t-expected.txt.
+        * platform/gtk/svg/text/textPathBoundsBug-expected.txt: Copied from LayoutTests/platform/glib/svg/text/textPathBoundsBug-expected.txt.
+        * platform/wpe/svg/text/foreignObject-repaint-expected.png: Added.
+        * platform/wpe/svg/text/foreignObject-repaint-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/foreignObject-repaint-expected.txt.
+        * platform/wpe/svg/text/foreignObject-text-clipping-bug-expected.png: Added.
+        * platform/wpe/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/wpe/svg/text/text-align-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-01-b-expected.txt:
+        * platform/wpe/svg/text/text-align-02-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-02-b-expected.txt:
+        * platform/wpe/svg/text/text-align-03-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-03-b-expected.txt:
+        * platform/wpe/svg/text/text-align-04-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-04-b-expected.txt:
+        * platform/wpe/svg/text/text-align-05-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-05-b-expected.txt:
+        * platform/wpe/svg/text/text-align-06-b-expected.png: Added.
+        * platform/wpe/svg/text/text-align-06-b-expected.txt:
+        * platform/wpe/svg/text/text-deco-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-deco-01-b-expected.txt:
+        * platform/wpe/svg/text/text-fonts-01-t-expected.png: Added.
+        * platform/wpe/svg/text/text-fonts-01-t-expected.txt:
+        * platform/wpe/svg/text/text-fonts-02-t-expected.png: Added.
+        * platform/wpe/svg/text/text-fonts-02-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-fonts-02-t-expected.txt.
+        * platform/wpe/svg/text/text-intro-05-t-expected.png: Added.
+        * platform/wpe/svg/text/text-intro-05-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-intro-05-t-expected.txt.
+        * platform/wpe/svg/text/text-path-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-path-01-b-expected.txt:
+        * platform/wpe/svg/text/text-spacing-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-spacing-01-b-expected.txt:
+        * platform/wpe/svg/text/text-text-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-text-01-b-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-text-01-b-expected.txt.
+        * platform/wpe/svg/text/text-text-03-b-expected.png: Added.
+        * platform/wpe/svg/text/text-text-03-b-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-text-03-b-expected.txt.
+        * platform/wpe/svg/text/text-text-05-t-expected.png: Added.
+        * platform/wpe/svg/text/text-text-05-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-text-05-t-expected.txt.
+        * platform/wpe/svg/text/text-text-07-t-expected.png: Added.
+        * platform/wpe/svg/text/text-text-07-t-expected.txt:
+        * platform/wpe/svg/text/text-text-08-b-expected.png: Added.
+        * platform/wpe/svg/text/text-text-08-b-expected.txt:
+        * platform/wpe/svg/text/text-tref-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-tref-01-b-expected.txt: Copied from LayoutTests/platform/gtk/svg/text/text-tref-01-b-expected.txt.
+        * platform/wpe/svg/text/text-tselect-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-tselect-01-b-expected.txt:
+        * platform/wpe/svg/text/text-tspan-01-b-expected.png: Added.
+        * platform/wpe/svg/text/text-tspan-01-b-expected.txt:
+        * platform/wpe/svg/text/text-ws-01-t-expected.png: Added.
+        * platform/wpe/svg/text/text-ws-01-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-ws-01-t-expected.txt.
+        * platform/wpe/svg/text/text-ws-02-t-expected.png: Added.
+        * platform/wpe/svg/text/text-ws-02-t-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/text-ws-02-t-expected.txt.
+        * platform/wpe/svg/text/textPathBoundsBug-expected.png: Added.
+        * platform/wpe/svg/text/textPathBoundsBug-expected.txt: Renamed from LayoutTests/platform/glib/svg/text/textPathBoundsBug-expected.txt.
+        * platform/wpe/tables/mozilla/bugs/bug106795-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug82946-2-expected.png: Added.
+
+2021-06-17  Said Abou-Hallawa  <said@apple.com>
+
+        [Cocoa] Disable hardware decoding in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=226869
+        <rdar://77548905>
+
+        Reviewed by Per Arne Vollan and Simon Fraser.
+
+        Add a reference test for rendering the HEIF images.
+
+        * TestExpectations:
+        * fast/images/heic-as-background-image-expected.html: Added.
+        * fast/images/heic-as-background-image.html: Added.
+        * fast/images/resources/green-400x400.heic: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2021-06-17  Ada Chan  <ada.chan@apple.com>
+
+        Skip WebXR tests on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=227151
+
+        Reviewed by Tim Horton.
+
+        * platform/ios/TestExpectations:
+
+2021-06-17  John Cunningham  <johncunningham@apple.com>
+
+        [Metal ANGLE] Shaders with reserved metal keywords do not translate, nor do shaders with struct and variable names that are the same except prefixed by an underscore
+        https://bugs.webkit.org/show_bug.cgi?id=226660
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/shader-with-reserved-keyword-expected.txt: Added.
+        * fast/canvas/webgl/shader-with-reserved-keyword.html: Added.
+
+2021-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Resync DOM WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227144
+
+        Reviewed by Geoffrey Garen.
+
+        * TestExpectations:
+        * tests-options.json:
+
+2021-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WebCore::SlotAssignment::assignedNodesForSlot
+        https://bugs.webkit.org/show_bug.cgi?id=224408
+        <rdar://problem/76805764>
+
+        Reviewed by Michael Catanzaro.
+
+        Added a regression test.
+
+        * fast/shadow-dom/insert-slot-child-of-shadow-host-render-tree-invalidation-crash-expected.txt: Added.
+        * fast/shadow-dom/insert-slot-child-of-shadow-host-render-tree-invalidation-crash.html: Added.
+
+2021-06-17  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Unexpected timeout in http/tests/media/video-play-stall-seek.html
+        https://bugs.webkit.org/show_bug.cgi?id=196198
+
+        Reviewed by Philippe Normand.
+
+        Make test more stable and don't expect NETWORK_LOADING, because some network implementations,
+        like libsoup, just report end-of-stream and finish the download.
+
+        * http/tests/media/video-play-stall-seek-expected.txt: Removed NETWORK_LOADING expectation.
+        * http/tests/media/video-play-stall-seek.html: Stabilize the test by not listening to waiting events once the relevant one has been handled, and by pausing the video after the test has finished. Also re
+move the NETWORK_LOADING check.
+        * platform/glib/TestExpectations: Unskipped test.
+        * platform/gtk-wayland/TestExpectations: Ditto.
+
+2021-06-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GStreamer mediastream gardening
+
+        * platform/glib/TestExpectations: Unflag fast/mediastream/media-stream-renders-first-frame.html
+        * platform/wpe/TestExpectations: Move getDisplayMedia expectations to glib file.
+
+2021-06-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GStreamer mediastream gardening
+
+        * platform/glib/TestExpectations: Unflag 3 tests consistently passing.
+
+2021-06-17  Youenn Fablet  <youenn@apple.com>
+
+        Fix RTCDataChannelInit::decode
+        https://bugs.webkit.org/show_bug.cgi?id=226968
+        <rdar://problem/79300038>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/transfer-datachannel-service-worker.https-expected.txt: Added.
+        * http/wpt/webrtc/transfer-datachannel-service-worker.https.html: Added.
+        * http/wpt/webrtc/transfer-datachannel-service-worker.js: Added.
+        (onmessage):
+        * platform/mac-wk1/TestExpectations:
+
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Document's execCommand() / queryCommand*() should throw an exception on non-HTML/XHTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=227016
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Document/document-execcommand-expected.txt: Added.
+        * fast/dom/Document/document-execcommand.html: Added.
+        Add layout test coverage.
+
+        * editing/pasteboard/createMarkup-assert-expected.txt: Removed.
+        * editing/pasteboard/createMarkup-assert.xml: Removed.
+        * platform/mac/svg/text/foreignObject-repaint-expected.txt:
+        * platform/mac/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/mac/svg/text/text-align-01-b-expected.txt:
+        * platform/mac/svg/text/text-align-02-b-expected.txt:
+        * platform/mac/svg/text/text-align-03-b-expected.txt:
+        * platform/mac/svg/text/text-align-04-b-expected.txt:
+        * platform/mac/svg/text/text-align-05-b-expected.txt:
+        * platform/mac/svg/text/text-align-06-b-expected.txt:
+        * platform/mac/svg/text/text-deco-01-b-expected.txt:
+        * platform/mac/svg/text/text-fonts-01-t-expected.txt:
+        * platform/mac/svg/text/text-fonts-02-t-expected.txt:
+        * platform/mac/svg/text/text-intro-05-t-expected.txt:
+        * platform/mac/svg/text/text-path-01-b-expected.txt:
+        * platform/mac/svg/text/text-spacing-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-03-b-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-07-t-expected.txt:
+        * platform/mac/svg/text/text-text-08-b-expected.txt:
+        * platform/mac/svg/text/text-tref-01-b-expected.txt:
+        * platform/mac/svg/text/text-tselect-01-b-expected.txt:
+        * platform/mac/svg/text/text-tselect-02-f-expected.txt:
+        * platform/mac/svg/text/text-tspan-01-b-expected.txt:
+        * svg/custom/bug78838-expected.txt:
+        * svg/custom/bug79798-expected.txt:
+        * svg/custom/delete-modified-text-in-defs-crash.svg:
+        * svg/custom/layout-loop-expected.txt:
+        * svg/text/text-positioning-remove-child-crash.svg:
+        Rebaseline / update existing tests due to behavior change.
+
+2021-06-16  Cameron McCormack  <heycam@apple.com>
+
+        Make RenderLayer::hitTestLayer not assume its renderer is a RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=227004
+        <rdar://79265788>
+
+        Reviewed by Simon Fraser.
+
+        * css3/masking/clip-path-hit-test-on-inline-iframe-parent-expected.txt: Added.
+        * css3/masking/clip-path-hit-test-on-inline-iframe-parent.html: Added.
+
+2021-06-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Skip another WebGL 2 test.
+        https://bugs.webkit.org/show_bug.cgi?id=227093
+
+        * platform/glib/TestExpectations:
+
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Resync FileAPI tests from upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227089
+
+        Reviewed by Darin Adler.
+
+        * tests-options.json:
+
+2021-06-16  Ada Chan  <ada.chan@apple.com>
+
+        Allow WebXR tests to be run on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=227054
+
+        Reviewed by Sam Weinig.
+
+        Updated expected results and TestExpectations.
+        Copied old versions of expected results that were in imported/w3c/web-platform-tests/webxr
+        to platform/wpe/imported/w3c/web-platform-tests/webxr so test runs on wpe should not be
+        affected.
+
+        * TestExpectations:
+        * http/wpt/webxr/xrSession_end_device_reports_shutdown.https-expected.txt:
+        * http/wpt/webxr/xrSession_ended_by_system.https-expected.txt:
+        * http/wpt/webxr/xrSession_reject_multiple_end.https-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xrSession_visibilityState.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https-expected.txt: Added.
+        * platform/wpe/http/wpt/webxr/xrSession_end_device_reports_shutdown.https-expected.txt: Copied from LayoutTests/http/wpt/webxr/xrSession_end_device_reports_shutdown.https-expected.txt.
+        * platform/wpe/http/wpt/webxr/xrSession_ended_by_system.https-expected.txt: Copied from LayoutTests/http/wpt/webxr/xrSession_ended_by_system.https-expected.txt.
+        * platform/wpe/http/wpt/webxr/xrSession_reject_multiple_end.https-expected.txt: Copied from LayoutTests/http/wpt/webxr/xrSession_reject_multiple_end.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/events_input_source_recreation.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/events_input_source_recreation.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/events_input_sources_change.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/events_input_sources_change.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_immersive.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_inline.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/events_session_select.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/events_session_select.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/events_session_select_subframe.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/events_session_select_subframe.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/events_session_squeeze.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/events_session_squeeze.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/getInputPose_handedness.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/getInputPose_handedness.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/render_state_update.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_update.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_inline.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_inline.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrDevice_disconnect_ends.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrFrame_getPose.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getPose.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrFrame_lifetime.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_lifetime.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrPose_transform_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrPose_transform_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrRigidTransform_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_end.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_end.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_input_events_end.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_input_events_end.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrView_eyes.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_eyes.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrView_match.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_match.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrView_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrViewerPose_views_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrViewerPose_views_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrViewport_valid.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrViewport_valid.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https-expected.txt.
+
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        FileReader.readAsArrayBuffer misses checking for the type of blob param
+        https://bugs.webkit.org/show_bug.cgi?id=226640
+        <rdar://problem/79193198>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage. I have verified that this test is passing in Firefox and Chrome as well.
+
+        * fast/files/filereader-invalid-blob-expected.txt: Added.
+        * fast/files/filereader-invalid-blob.html: Added.
+
+2021-06-16  Amir Mark Jr  <amir_mark@apple.com>
+
+        [EWS MacOS WK1] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=227085
+
+        Unreviewed test gardening.
+
+        Updating test expectations to clear EWS warning.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-06-16  Amir Mark Jr  <amir_mark@apple.com>
+
+        Fix test expectations for plugin tests on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=226783
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-06-16  Tim Nguyen  <ntim@apple.com>
+
+        Make CSS.supports() return false for internal CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=224930
+
+        Reviewed by Antti Koivisto.
+
+        Test: LayoutTests/fast/backgrounds/background-repeat-x-y-parse.html
+
+        Examples that are now rejected:
+
+        CSS.supports("background-repeat-x: inherit")
+        CSS.supports("background-repeat-x", "inherit")
+        CSS.supports("background-repeat-y: inherit")
+        CSS.supports("background-repeat-y", "inherit")
+
+        * fast/backgrounds/background-repeat-x-y-parse-expected.txt:
+        * fast/backgrounds/background-repeat-x-y-parse.html:
+        * fast/css/webkit-mask-crash-implicit-expected.txt:
+        * fast/css/webkit-mask-crash-implicit.html:
+
+2021-06-16  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] Crash when getting audioTracks, videoTracks, textTracks of sourceBuffer after executing MediaSource::removeSourceBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=227018
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-get-tracks-crash-expected.txt: Added.
+        * media/media-source/media-source-get-tracks-crash.html: Added.
+
+2021-06-16  Alan Bujtas  <zalan@apple.com>
+
+        Content moves up when hovering over a link on Hacker News
+        https://bugs.webkit.org/show_bug.cgi?id=226852
+        <rdar://78537231>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/hidpi-legacy-integral-rounding-on-inline-boxes-expected.html: Added.
+        * fast/inline/hidpi-legacy-integral-rounding-on-inline-boxes.html: Added.
+
+2021-06-16  Frederic Wang  <fwang@igalia.com>
+
+        Nullptr crash in positionInParentBeforeNode via InsertTextCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=226870
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * fast/editing/insert-text-orphaned-summary-crash-expected.txt: Added.
+        * fast/editing/insert-text-orphaned-summary-crash.html: Added.
+
+2021-06-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening, add some new Timing-Allow-Origin failures
+        https://bugs.webkit.org/show_bug.cgi?id=227008
+
+        * platform/glib/TestExpectations:
+
+2021-06-15  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] ConcreteImageBuffer::baseTransform() returns incorrect transform for unaccelerated ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=227044
+        <rdar://78642742>
+
+        Reviewed by Simon Fraser.
+
+        The large size of the canvas in this layout test will force creating 
+        unaccelerated ImageBufferBackend.
+
+        * fast/canvas/canvas-large-dimensions-drawing-expected.html: Added.
+        * fast/canvas/canvas-large-dimensions-drawing.html: Added.
+
+2021-06-15  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION: MSE: Netflix playback sometimes fails when going to "next episode" in series
+        https://bugs.webkit.org/show_bug.cgi?id=226952
+        rdar://77583769
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-seek-unbuffered-expected.txt: Added.
+        * media/media-source/media-source-seek-unbuffered.html: Added.
+
+2021-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Updated test expectations after r277896.
+
+        Two tests are now failing:
+          - fast/canvas/canvas-imageSmoothingEnabled.html.
+          - fast/canvas/canvas-imageSmoothingQuality.html.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/fast/canvas/canvas-imageSmoothingQuality-expected.txt: Removed.
+
+2021-06-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
+2021-06-15  Chris Lord  <clord@igalia.com>
+
+        Scrollbars are not clipped to layer bounds in RenderLayerBacking
+        https://bugs.webkit.org/show_bug.cgi?id=226823
+
+        Reviewed by Simon Fraser.
+
+        Adjust test expectations due to clipping on overflow controls container.
+
+        * compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt:
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/nested-scrollers-backing-attachment-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/overflow-controls-container-clips-scrollbars-expected.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/overflow-controls-container-clips-scrollbars.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/visibility-hidden-scrollers-expected.txt:
+        * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+        * compositing/tiling/perspective-on-scroller-tile-coverage-expected.txt:
+        * platform/mac-wk1/compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-tile-coverage-expected.txt:
+
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Check for "xn--" in any subdomain when parsing URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=226912
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/DOMURL/parsing-expected.txt:
+        * fast/dom/DOMURL/parsing.html:
+        Update the test I added in r236527 to reflect this relaxation.
+        This matches the behavior of Chrome Canary.
+
+2021-06-15  Youenn Fablet  <youenn@apple.com>
+
+        (r278359) fast/mediastream/mediaElement-gc.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=226991
+        <rdar://problem/79309901>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediaElement-gc.html:
+        Call GC several times if needed to collect the media element.
+
+2021-06-15  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GTK] Unreviewed test gardening: add expected failure
+
+        The fast/text/letter-spacing-produces-nan-width.html test crashes on debug.
+
+        * platform/gtk/TestExpectations:
+
+2021-06-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for preferred width computation when mixed width types are present
+        https://bugs.webkit.org/show_bug.cgi?id=227010
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-space-distribution-mixed-width-type-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-space-distribution-mixed-width-type-simple.html: Added.
+
+2021-06-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Scroll snap offsets are interpreted as scroll positions in ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=226572
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Mark test as newly passing.
+        * css3/scroll-snap/scroll-snap-right-to-left-initial-snapping-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-right-to-left-initial-snapping.html: Added.
+
+2021-06-15  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] media/video-seek-after-end.html is no longer flakey
+        https://bugs.webkit.org/show_bug.cgi?id=203079
+        <rdar://problem/56366173>
+
+        Reviewed by Philippe Normand.
+
+        Increased test timeout to something higher than 1300ms to prevent the test failure.
+
+        * media/video-seek-after-end.html: Increased timeout.
+        * platform/glib/TestExpectations: Unskipped the test.
+
+2021-06-15  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] New snap containers always snap to the first scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=226630
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Mark two WPT tests as passing.
+
+2021-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Import WPT webrtc-extensions
+        https://bugs.webkit.org/show_bug.cgi?id=226961
+
+        Reviewed by Eric Carlson.
+
+        * tests-options.json:
+
+2021-06-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GStreamer] media/track/audio/audio-track-mkv-vorbis-language.html and media/track/video/video-track-mkv-theora-language.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=226864
+
+        Reviewed by Eric Carlson.
+
+        These tests were failing due to an apparently incorrect order of
+        languages in audio and video tracks.
+
+        Examining the video container with tools like mediasource or VLC shows
+        that the order expected by GStreamer ports is correct. To make these
+        tests pass I changed the tests to make them language order independent
+        by fetching audio or video tracks by id.
+
+        * media/in-band-tracks.js:
+        (canplaythrough):
+        (testAttribute): values' can be also an Object. In that case, fetch tracks by 'id'.
+        * media/track/audio/audio-track-mkv-vorbis-language-expected.txt: Updated.
+        * media/track/audio/audio-track-mkv-vorbis-language.html: Pass language expected results as a map indexed by track id.
+        * media/track/video/video-track-mkv-theora-language-expected.txt: Updated.
+        * media/track/video/video-track-mkv-theora-language.html: Pass language expected results as a map indexed by track id.
+
+2021-06-14  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r278842.
+
+        introduced a failing test
+
+        Reverted changeset:
+
+        "Fix RTCDataChannelInit::decode"
+        https://bugs.webkit.org/show_bug.cgi?id=226968
+        https://commits.webkit.org/r278842
+
+2021-06-14  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: CSS variables not handled as case sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=226875
+
+        Reviewed by Devin Rousso.
+
+        Add a test to make sure that CSS variable declarations that vary only in case do not override each other.
+
+        * inspector/css/overridden-property-expected.txt:
+        * inspector/css/overridden-property.html:
+
 2021-06-14  Youenn Fablet  <youenn@apple.com>
 
         Fix RTCDataChannelInit::decode
@@ -96,6 +901,15 @@
         * media/modern-media-controls/overflow-support/chapters.html:
         * media/modern-media-controls/overflow-support/chapters-expected.txt:
         It may take a moment for the `currentTime` to updating after selecting a chapter.
+
+2021-06-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r274461): [macOS wk1] fast/repaint/canvas-object-fit.html is flakey text failing
+        https://bugs.webkit.org/show_bug.cgi?id=223283
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Re-add a flaky expectation.
 
 2021-06-11  Robert Jenner  <jenner@apple.com>
 

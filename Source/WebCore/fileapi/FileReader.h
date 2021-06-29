@@ -62,10 +62,10 @@ public:
         DONE = 2
     };
 
-    ExceptionOr<void> readAsArrayBuffer(Blob*);
-    ExceptionOr<void> readAsBinaryString(Blob*);
-    ExceptionOr<void> readAsText(Blob*, const String& encoding);
-    ExceptionOr<void> readAsDataURL(Blob*);
+    ExceptionOr<void> readAsArrayBuffer(Blob&);
+    ExceptionOr<void> readAsBinaryString(Blob&);
+    ExceptionOr<void> readAsText(Blob&, const String& encoding);
+    ExceptionOr<void> readAsDataURL(Blob&);
     void abort();
 
     void doAbort();

@@ -57,6 +57,9 @@ private:
 
     Lock m_mutex;
     T m_data WTF_GUARDED_BY_LOCK(m_mutex);
+#if ENABLE_DATA_MUTEX_CHECKS
+    Thread* m_currentMutexHolder { nullptr };
+#endif
 };
 
 template <typename T>
@@ -65,15 +68,13 @@ public:
     explicit DataMutexLocker(DataMutex<T>& dataMutex) WTF_ACQUIRES_LOCK(m_dataMutex.m_mutex)
         : m_dataMutex(dataMutex)
     {
-        mutex().lock();
-        m_isLocked = true;
+        lock();
     }
 
     ~DataMutexLocker() WTF_RELEASES_LOCK()
     {
         if (m_isLocked) {
-            assertIsHeld(m_dataMutex.m_mutex);
-            mutex().unlock();
+            unlock();
         }
     }
 
@@ -101,9 +102,8 @@ public:
     // Run-time checks are still performed if enabled.
     void unlockEarly() WTF_RELEASES_LOCK(m_dataMutex.m_mutex)
     {
-        DATA_MUTEX_CHECK(mutex().isHeld());
-        m_isLocked = false;
-        mutex().unlock();
+        assertIsHeld(m_dataMutex.m_mutex);
+        unlock();
     }
 
     // Used to avoid excessive brace scoping when only small parts of the code need to be run unlocked.
@@ -111,16 +111,35 @@ public:
     // It's helpful to use a minimal lambda capture to be conscious of what data you're having access to in these sections.
     void runUnlocked(const Function<void()>& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
-        DATA_MUTEX_CHECK(mutex().isHeld());
-        assertIsHeld(m_dataMutex.m_mutex);
-        mutex().unlock();
+        unlock();
         callback();
-        mutex().lock();
+        lock();
     }
 
 private:
     DataMutex<T>& m_dataMutex;
     bool m_isLocked { false };
+
+    void lock() WTF_ACQUIRES_LOCK(m_dataMutex.m_mutex)
+    {
+        DATA_MUTEX_CHECK(m_dataMutex.m_currentMutexHolder != &Thread::current()); // Thread attempted recursive lock on non-recursive lock.
+        mutex().lock();
+        m_isLocked = true;
+#if ENABLE_DATA_MUTEX_CHECKS
+        m_dataMutex.m_currentMutexHolder = &Thread::current();
+#endif
+    }
+
+    void unlock() WTF_RELEASES_LOCK(m_dataMutex.m_mutex)
+    {
+        DATA_MUTEX_CHECK(mutex().isHeld());
+        assertIsHeld(m_dataMutex.m_mutex);
+#if ENABLE_DATA_MUTEX_CHECKS
+        m_dataMutex.m_currentMutexHolder = nullptr;
+#endif
+        m_isLocked = false;
+        mutex().unlock();
+    }
 };
 
 } // namespace WTF

@@ -78,10 +78,11 @@ void DisplayList::Iterator::updateCurrentItem()
         return;
     }
 
+    auto remainingCapacityInBuffer = static_cast<uint64_t>(m_currentEndOfBuffer - m_cursor);
     auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
     m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : static_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
     if (isInlineItem(itemType)) {
-        if (UNLIKELY(static_cast<uint64_t>(m_currentEndOfBuffer - m_cursor) < paddedSizeOfTypeAndItem)) {
+        if (UNLIKELY(remainingCapacityInBuffer < paddedSizeOfTypeAndItem)) {
             m_isValid = false;
             return;
         }
@@ -96,6 +97,12 @@ void DisplayList::Iterator::updateCurrentItem()
         auto* client = items.m_readingClient;
         RELEASE_ASSERT(client);
         constexpr auto sizeOfTypeAndDataLength = 2 * sizeof(uint64_t);
+
+        if (UNLIKELY(remainingCapacityInBuffer < sizeOfTypeAndDataLength)) {
+            m_isValid = false;
+            return;
+        }
+
         auto dataLength = reinterpret_cast<uint64_t*>(m_cursor)[1];
         if (UNLIKELY(dataLength >= std::numeric_limits<uint32_t>::max() - alignof(uint64_t) - sizeOfTypeAndDataLength)) {
             m_isValid = false;
@@ -103,7 +110,7 @@ void DisplayList::Iterator::updateCurrentItem()
         }
 
         auto itemSizeInBuffer = roundUpToMultipleOf<alignof(uint64_t)>(dataLength) + sizeOfTypeAndDataLength;
-        if (UNLIKELY(static_cast<uint64_t>(m_currentEndOfBuffer - m_cursor) < itemSizeInBuffer)) {
+        if (UNLIKELY(remainingCapacityInBuffer < itemSizeInBuffer)) {
             m_isValid = false;
             return;
         }

@@ -39,7 +39,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebNSObjectExtras.h"
-#import "WebTypesInternal.h"
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/RegularExpression.h>

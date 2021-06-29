@@ -250,7 +250,7 @@ void LineLayout::prepareLayoutState()
 
     auto& rootGeometry = m_layoutState.ensureGeometryForBox(rootLayoutBox());
     rootGeometry.setContentBoxWidth(flow().contentSize().width());
-    rootGeometry.setPadding({ { } });
+    rootGeometry.setPadding({ });
     rootGeometry.setBorder({ });
     rootGeometry.setHorizontalMargin({ });
     rootGeometry.setVerticalMargin({ });

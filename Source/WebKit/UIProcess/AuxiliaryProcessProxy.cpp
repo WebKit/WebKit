@@ -32,10 +32,17 @@
 #include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
 
+#if PLATFORM(COCOA)
+#include "SandboxUtilities.h"
+#include <sys/sysctl.h>
+#include <wtf/spi/darwin/SandboxSPI.h>
+#endif
+
 namespace WebKit {
 
 AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority)
-    : m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
+    : m_responsivenessTimer(*this)
+    , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
 {
 }
 
@@ -252,6 +259,11 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
             IPC::addAsyncReplyHandler(*connection(), pendingMessage.asyncReplyInfo->second, WTFMove(pendingMessage.asyncReplyInfo->first));
         m_connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
+
+    if (m_shouldStartResponsivenessTimerWhenLaunched) {
+        auto useLazyStop = *std::exchange(m_shouldStartResponsivenessTimerWhenLaunched, std::nullopt);
+        startResponsivenessTimer(useLazyStop);
+    }
 }
 
 void AuxiliaryProcessProxy::replyToPendingMessages()
@@ -292,6 +304,7 @@ void AuxiliaryProcessProxy::shutDownProcess()
 
     m_connection->invalidate();
     m_connection = nullptr;
+    m_responsivenessTimer.invalidate();
 }
 
 void AuxiliaryProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
@@ -313,6 +326,69 @@ void AuxiliaryProcessProxy::connectionWillOpen(IPC::Connection&)
 void AuxiliaryProcessProxy::logInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
     RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from the %" PUBLIC_LOG_STRING " process.", description(messageName), processName().characters());
+}
+
+bool AuxiliaryProcessProxy::platformIsBeingDebugged() const
+{
+#if PLATFORM(COCOA)
+    // If the UI process is sandboxed and lacks 'process-info-pidinfo', it cannot find out whether other processes are being debugged.
+    if (currentProcessIsSandboxed() && !!sandbox_check(getpid(), "process-info-pidinfo", SANDBOX_CHECK_NO_REPORT))
+        return false;
+
+    struct kinfo_proc info;
+    int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processIdentifier() };
+    size_t size = sizeof(info);
+    if (sysctl(mib, WTF_ARRAY_LENGTH(mib), &info, &size, nullptr, 0) == -1)
+        return false;
+
+    return info.kp_proc.p_flag & P_TRACED;
+#else
+    return false;
+#endif
+}
+
+void AuxiliaryProcessProxy::stopResponsivenessTimer()
+{
+    responsivenessTimer().stop();
+}
+
+void AuxiliaryProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
+{
+    if (isLaunching()) {
+        m_shouldStartResponsivenessTimerWhenLaunched = useLazyStop;
+        return;
+    }
+
+    if (useLazyStop == UseLazyStop::Yes)
+        responsivenessTimer().startWithLazyStop();
+    else
+        responsivenessTimer().start();
+}
+
+bool AuxiliaryProcessProxy::mayBecomeUnresponsive()
+{
+    return !platformIsBeingDebugged();
+}
+
+void AuxiliaryProcessProxy::didBecomeUnresponsive()
+{
+    RELEASE_LOG_ERROR(Process, "AuxiliaryProcessProxy::didBecomeUnresponsive: %" PUBLIC_LOG_STRING " process with PID %d became unresponsive", processName().characters(), processIdentifier());
+}
+
+void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& responsivenessHandler, UseLazyStop useLazyStop)
+{
+    startResponsivenessTimer(useLazyStop);
+    sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), [weakThis = makeWeakPtr(*this), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+        // Schedule an asynchronous task because our completion handler may have been called as a result of the AuxiliaryProcessProxy
+        // being in the middle of destruction.
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+            if (weakThis)
+                weakThis->stopResponsivenessTimer();
+
+            if (responsivenessHandler)
+                responsivenessHandler();
+        });
+    });
 }
 
 } // namespace WebKit

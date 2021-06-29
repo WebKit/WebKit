@@ -28,14 +28,9 @@ HitTestLocation::HitTestLocation() = default;
 
 HitTestLocation::HitTestLocation(const LayoutPoint& point)
     : m_point(point)
-    , m_boundingBox(rectForPoint(point, 0, 0, 0, 0))
+    , m_boundingBox(LayoutRect { flooredIntPoint(point), LayoutSize { 1, 1 } })
     , m_transformedPoint(point)
     , m_transformedRect(m_boundingBox)
-{
-}
-
-HitTestLocation::HitTestLocation(const FloatPoint& point)
-    : HitTestLocation::HitTestLocation { flooredLayoutPoint(point) }
 {
 }
 
@@ -55,15 +50,6 @@ HitTestLocation::HitTestLocation(const LayoutRect& rect)
     , m_transformedPoint { rect.center() }
     , m_transformedRect { FloatQuad { m_boundingBox } }
     , m_isRectBased { true }
-{
-}
-
-HitTestLocation::HitTestLocation(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
-    : m_point(centerPoint)
-    , m_boundingBox(rectForPoint(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding))
-    , m_transformedPoint(centerPoint)
-    , m_transformedRect(FloatQuad { m_boundingBox })
-    , m_isRectBased(topPadding || rightPadding || bottomPadding || leftPadding)
 {
 }
 
@@ -145,19 +131,6 @@ bool HitTestLocation::intersects(const FloatRect& rect) const
 bool HitTestLocation::intersects(const RoundedRect& rect) const
 {
     return rect.intersectsQuad(m_transformedRect);
-}
-
-IntRect HitTestLocation::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
-{
-    IntPoint actualPoint(flooredIntPoint(point));
-    actualPoint -= IntSize(leftPadding, topPadding);
-
-    IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);
-    // As IntRect is left inclusive and right exclusive (seeing IntRect::contains(x, y)), adding "1".
-    // FIXME: Remove this once non-rect based hit-detection stops using IntRect:intersects.
-    actualPadding += IntSize(1, 1);
-
-    return IntRect(actualPoint, actualPadding);
 }
 
 } // namespace WebCore

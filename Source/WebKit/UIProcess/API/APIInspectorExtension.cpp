@@ -31,6 +31,7 @@
 #include "InspectorExtensionTypes.h"
 #include "WebInspectorUIExtensionControllerProxy.h"
 #include <WebCore/ExceptionDetails.h>
+#include <wtf/UniqueRef.h>
 
 namespace API {
 

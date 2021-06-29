@@ -62,6 +62,10 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
     if (domain == "docs.google.com")
         return true;
 
+    // soundcloud.com serves broken MSE audio fragments with WebKitGTK's standard user agent.
+    if (baseDomain == "soundcloud.com")
+        return true;
+
     return false;
 }
 

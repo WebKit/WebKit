@@ -144,6 +144,7 @@ typedef enum {
 
 @interface CATransaction ()
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
++ (void)activate;
 + (CATransactionPhase)currentPhase;
 + (void)synchronize;
 + (uint32_t)currentState;

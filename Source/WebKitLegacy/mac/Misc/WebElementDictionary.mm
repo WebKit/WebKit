@@ -33,7 +33,6 @@
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
 #import "WebKitLogging.h"
-#import "WebTypesInternal.h"
 #import "WebView.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>

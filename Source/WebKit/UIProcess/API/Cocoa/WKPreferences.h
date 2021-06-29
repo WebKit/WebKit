@@ -62,7 +62,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 /*! @abstract A Boolean value indicating whether text interaction is disabled.
 */
-@property (nonatomic, getter=isTextInteractionEnabled) BOOL textInteractionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, getter=isTextInteractionEnabled) BOOL textInteractionEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 @end
 

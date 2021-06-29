@@ -36,7 +36,27 @@
 #include <wtf/dtoa.h>
 #include <wtf/text/StringConcatenate.h>
 
+#include "KeywordLookup.h"
+
 namespace JSC {
+
+template<typename CharType>
+ALWAYS_INLINE bool compare3Chars(const CharType* source, CharType c0, CharType c1, CharType c2)
+{
+    if constexpr (sizeof(CharType) == 1)
+        return COMPARE_3CHARS(source, c0, c1, c2);
+    else
+        return COMPARE_3UCHARS(source, c0, c1, c2);
+}
+
+template<typename CharType>
+ALWAYS_INLINE bool compare4Chars(const CharType* source, CharType c0, CharType c1, CharType c2, CharType c3)
+{
+    if constexpr (sizeof(CharType) == 1)
+        return COMPARE_4CHARS(source, c0, c1, c2, c3);
+    else
+        return COMPARE_4UCHARS(source, c0, c1, c2, c3);
+}
 
 template <typename CharType>
 static ALWAYS_INLINE bool isJSONWhiteSpace(const CharType& c)
@@ -131,45 +151,42 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
 }
     
 template <typename CharType>
-ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const LChar* characters, size_t length)
+template <typename LiteralCharType>
+ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(const LiteralCharType* characters, size_t length)
 {
     VM& vm = m_globalObject->vm();
     if (!length)
         return vm.propertyNames->emptyIdentifier;
-    if (characters[0] >= MaximumCachableCharacter)
+
+    auto firstCharacter = characters[0];
+    if (length == 1) {
+        if constexpr (sizeof(LiteralCharType) == 1)
+            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter));
+        if (firstCharacter <= maxSingleCharacterString)
+            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter));
+        return Identifier::fromString(vm, characters, length);
+    }
+
+    if (firstCharacter >= maximumCachableCharacter)
         return Identifier::fromString(vm, characters, length);
 
-    if (length == 1) {
-        if (!m_shortIdentifiers[characters[0]].isNull())
-            return m_shortIdentifiers[characters[0]];
-        m_shortIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-        return m_shortIdentifiers[characters[0]];
+    // 0 means no entry since m_recentIdentifiersIndex is zero-filled initially.
+    uint8_t indexPlusOne = m_recentIdentifiersIndex[firstCharacter];
+    if (indexPlusOne) {
+        uint8_t index = indexPlusOne - 1;
+        auto& ident = m_recentIdentifiers[index];
+        if (Identifier::equal(ident.impl(), characters, length))
+            return ident;
+        auto result = Identifier::fromString(vm, characters, length);
+        m_recentIdentifiers[index] = result;
+        return result;
     }
-    if (!m_recentIdentifiers[characters[0]].isNull() && Identifier::equal(m_recentIdentifiers[characters[0]].impl(), characters, length))
-        return m_recentIdentifiers[characters[0]];
-    m_recentIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-    return m_recentIdentifiers[characters[0]];
-}
 
-template <typename CharType>
-ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const UChar* characters, size_t length)
-{
-    VM& vm = m_globalObject->vm();
-    if (!length)
-        return vm.propertyNames->emptyIdentifier;
-    if (characters[0] >= MaximumCachableCharacter)
-        return Identifier::fromString(vm, characters, length);
-
-    if (length == 1) {
-        if (!m_shortIdentifiers[characters[0]].isNull())
-            return m_shortIdentifiers[characters[0]];
-        m_shortIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-        return m_shortIdentifiers[characters[0]];
-    }
-    if (!m_recentIdentifiers[characters[0]].isNull() && Identifier::equal(m_recentIdentifiers[characters[0]].impl(), characters, length))
-        return m_recentIdentifiers[characters[0]];
-    m_recentIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
-    return m_recentIdentifiers[characters[0]];
+    auto result = Identifier::fromString(vm, characters, length);
+    m_recentIdentifiers.uncheckedAppend(result);
+    indexPlusOne = m_recentIdentifiers.size();
+    m_recentIdentifiersIndex[firstCharacter] = indexPlusOne;
+    return result;
 }
 
 // 256 Latin-1 codes
@@ -725,7 +742,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
         case TokIdentifier: {
             switch (character) {
             case 't':
-                if (m_end - m_ptr >= 4 && m_ptr[1] == 'r' && m_ptr[2] == 'u' && m_ptr[3] == 'e') {
+                if (m_end - m_ptr >= 4 && compare3Chars<CharType>(m_ptr + 1, 'r', 'u', 'e')) {
                     m_ptr += 4;
                     token.type = TokTrue;
                     token.end = m_ptr;
@@ -733,7 +750,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
                 }
                 break;
             case 'f':
-                if (m_end - m_ptr >= 5 && m_ptr[1] == 'a' && m_ptr[2] == 'l' && m_ptr[3] == 's' && m_ptr[4] == 'e') {
+                if (m_end - m_ptr >= 5 && compare4Chars<CharType>(m_ptr + 1, 'a', 'l', 's', 'e')) {
                     m_ptr += 5;
                     token.type = TokFalse;
                     token.end = m_ptr;
@@ -741,7 +758,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
                 }
                 break;
             case 'n':
-                if (m_end - m_ptr >= 4 && m_ptr[1] == 'u' && m_ptr[2] == 'l' && m_ptr[3] == 'l') {
+                if (m_end - m_ptr >= 4 && compare3Chars<CharType>(m_ptr + 1, 'u', 'l', 'l')) {
                     m_ptr += 4;
                     token.type = TokNull;
                     token.end = m_ptr;

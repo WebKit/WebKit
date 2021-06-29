@@ -1,3 +1,86 @@
+2021-06-21  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Fix consistency check during stack splitting in Wasm::LLIntGenerator::addLoop
+        https://bugs.webkit.org/show_bug.cgi?id=226012
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/wasm-loop-consistency.js: Added.
+        (vm.isWasmSupported):
+
+2021-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Release assert memory in JSC::Wasm::Memory::growShared(JSC::Wasm::PageCount)::<lambda()>
+        https://bugs.webkit.org/show_bug.cgi?id=227180
+
+        Reviewed by Keith Miller.
+
+        * stress/shared-wasm-memory-with-zero-byte.js: Added.
+
+2021-06-21  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Reenable ChakraCore/test/Math/max.js on ARMv7 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=227209
+
+        Reviewed by Adrian Perez de Castro.
+
+        * ChakraCore.yaml: reenable the test, should be working fine now.
+
+2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add ValueOf fast path in toPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=226948
+
+        Reviewed by Ross Kirsling.
+
+        * microbenchmarks/valueof-via-toprimitive.js: Added.
+
+2021-06-17  Saam Barati  <sbarati@apple.com>
+
+        Make microbenchmarks/delete-property-from-prototype-chain not time out on debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=227148
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/delete-property-from-prototype-chain.js:
+
+2021-06-16  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AssemblyHelpers should save/restore callee save FPRs
+        https://bugs.webkit.org/show_bug.cgi?id=227052
+        <rdar://77080162>
+
+        Reviewed by Mark Lam.
+
+        * stress/callee-save-fpr.js: Added.
+        (_f):
+        (_g):
+        (_h):
+        (_i):
+        (assertEqual):
+
+2021-06-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize JSON.parse with small content by dropping single character Identifier pool
+        https://bugs.webkit.org/show_bug.cgi?id=227057
+
+        Reviewed by Sam Weinig.
+
+        * microbenchmarks/flight-todomvc-json.js: Added.
+        (test):
+
+2021-06-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Workaround ICU uloc_addLikelySubtags / uloc_minimizeSubtags bugs
+        https://bugs.webkit.org/show_bug.cgi?id=226996
+        rdar://79250513
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-long-locale-id-maximize-minimize.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+
 2021-06-13  Saam Barati  <sbarati@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=226576

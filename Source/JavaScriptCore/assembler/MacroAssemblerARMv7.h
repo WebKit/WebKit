@@ -1795,23 +1795,6 @@ public:
         return branchAdd32(cond, dest, imm, dest);
     }
 
-    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, Address dest)
-    {
-        load32(dest, dataTempRegister);
-
-        // Do the add.
-        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
-        if (armImm.isValid())
-            m_assembler.add_S(dataTempRegister, dataTempRegister, armImm);
-        else {
-            move(imm, addressTempRegister);
-            m_assembler.add_S(dataTempRegister, dataTempRegister, addressTempRegister);
-        }
-
-        store32(dataTempRegister, dest);
-        return Jump(makeBranch(cond));
-    }
-
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
     {
         // Move the high bits of the address into addressTempRegister,

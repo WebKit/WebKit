@@ -117,6 +117,7 @@ public:
     static Identifier fromString(VM&, const UChar*, int length);
     static Identifier fromString(VM&, const String&);
     static Identifier fromString(VM&, AtomStringImpl*);
+    static Identifier fromString(VM&, Ref<AtomStringImpl>&&);
     static Identifier fromString(VM&, const AtomString&);
     static Identifier fromString(VM& vm, SymbolImpl*);
     static Identifier fromString(VM&, const char*);
@@ -159,7 +160,7 @@ public:
     static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
     // Only to be used with string literals.
-    JS_EXPORT_PRIVATE static Ref<StringImpl> add(VM&, const char*);
+    JS_EXPORT_PRIVATE static Ref<AtomStringImpl> add(VM&, const char*);
 
     void dump(PrintStream&) const;
 
@@ -177,10 +178,13 @@ private:
     Identifier(VM& vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM& vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtom()); }
 
+    Identifier(VM&, Ref<AtomStringImpl>&& impl)
+        : m_string(WTFMove(impl))
+    { }
+
     Identifier(SymbolImpl& uid)
         : m_string(&uid)
-    {
-    }
+    { }
 
     template <typename CharType>
     ALWAYS_INLINE static uint32_t toUInt32FromCharacters(const CharType* characters, unsigned length, bool& ok);
@@ -188,11 +192,11 @@ private:
     static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
     static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 
-    template <typename T> static Ref<StringImpl> add(VM&, const T*, int length);
-    static Ref<StringImpl> add8(VM&, const UChar*, int length);
-    template <typename T> ALWAYS_INLINE static bool canUseSingleCharacterString(T);
+    template <typename T> static Ref<AtomStringImpl> add(VM&, const T*, int length);
+    static Ref<AtomStringImpl> add8(VM&, const UChar*, int length);
+    template <typename T> ALWAYS_INLINE static constexpr bool canUseSingleCharacterString(T);
 
-    static Ref<StringImpl> add(VM&, StringImpl*);
+    static Ref<AtomStringImpl> add(VM&, StringImpl*);
 
 #ifndef NDEBUG
     JS_EXPORT_PRIVATE static void checkCurrentAtomStringTable(VM&);
@@ -201,19 +205,19 @@ private:
 #endif
 };
 
-template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(LChar)
+template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString(LChar)
 {
-    ASSERT(maxSingleCharacterString == 0xff);
+    static_assert(maxSingleCharacterString == 0xff);
     return true;
 }
 
-template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(UChar c)
+template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString(UChar c)
 {
     return (c <= maxSingleCharacterString);
 }
 
 template <typename T>
-Ref<StringImpl> Identifier::add(VM& vm, const T* s, int length)
+Ref<AtomStringImpl> Identifier::add(VM& vm, const T* s, int length)
 {
     if (length == 1) {
         T c = s[0];
@@ -221,7 +225,7 @@ Ref<StringImpl> Identifier::add(VM& vm, const T* s, int length)
             return vm.smallStrings.singleCharacterStringRep(c);
     }
     if (!length)
-        return *StringImpl::empty();
+        return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
     return *AtomStringImpl::add(s, length);
 }

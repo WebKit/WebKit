@@ -307,7 +307,6 @@ UIProcess/API/Cocoa/_WKWebsiteDataStore.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/Cocoa/APIAttachmentCocoa.mm
 UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm
-UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm
 UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
 UIProcess/API/Cocoa/LegacyBundleForClass.mm
 UIProcess/API/Cocoa/NSAttributedString.mm
@@ -454,7 +453,6 @@ UIProcess/ios/forms/WKFormSelectPicker.mm
 UIProcess/ios/forms/WKFormSelectPopover.mm
 UIProcess/ios/forms/WKNumberPadView.mm
 UIProcess/ios/forms/WKNumberPadViewController.mm
-UIProcess/ios/forms/WKQuickboardListViewController.mm
 UIProcess/ios/forms/WKSelectMenuListViewController.mm
 UIProcess/ios/forms/WKTextInputListViewController.mm
 UIProcess/ios/forms/WKTimePickerViewController.mm
@@ -516,7 +514,6 @@ UIProcess/mac/ViewGestureControllerMac.mm
 UIProcess/mac/ViewSnapshotStoreMac.mm
 UIProcess/mac/WebColorPickerMac.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
-UIProcess/mac/WebCookieManagerProxyMac.mm
 UIProcess/mac/WebDataListSuggestionsDropdownMac.mm
 UIProcess/mac/WebDateTimePickerMac.mm
 UIProcess/mac/WebPageProxyMac.mm
@@ -526,12 +523,12 @@ UIProcess/mac/WindowServerConnection.mm
 UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKPrintingView.mm
+UIProcess/mac/WKQuickLookPreviewController.mm
 UIProcess/mac/WKRevealItemPresenter.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
 UIProcess/mac/WKTextInputWindowController.mm
 UIProcess/mac/WKViewLayoutStrategy.mm
-UIProcess/mac/WKVisualSearchPreviewController.mm
 
 UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm
 UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm

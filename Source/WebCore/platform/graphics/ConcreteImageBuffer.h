@@ -104,7 +104,7 @@ protected:
 
     AffineTransform baseTransform() const override
     {
-        if (BackendType::isOriginAtUpperLeftCorner)
+        if (BackendType::isOriginAtBottomLeftCorner)
             return AffineTransform(1, 0, 0, -1, 0, logicalSize().height());
         return { };
     }

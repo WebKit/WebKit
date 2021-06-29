@@ -37,7 +37,6 @@
 #import "WebKitVersionChecks.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferencesPrivate.h"
-#import "WebTypesInternal.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/BackForwardCache.h>

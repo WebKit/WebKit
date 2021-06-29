@@ -34,8 +34,12 @@ promise_test(async (test) => {
     if (!window.internals)
         return;
     await createMediaElement(true);
-    gc();
-    assert_equals(internals.mediaElementCount, 1);
+    let counter = 0;
+    while (++counter < 100 && internals.mediaElementCount !== 1) {
+        gc();
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert_true(counter < 100);
 }, "GC a video element with a live srcObject, then srcObject set to null");
     </script>
 </head>

@@ -609,7 +609,8 @@ void Caches::removeCacheEntry(const NetworkCache::Key& key)
         m_volatileStorage.remove(key);
         return;
     }
-    m_storage->remove(key);
+    if (m_storage)
+        m_storage->remove(key);
 }
 
 void Caches::clearMemoryRepresentation()

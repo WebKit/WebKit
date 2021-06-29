@@ -157,6 +157,7 @@ webkit.org/b/218510 fast/dom/Range/getBoundingClientRect.html [ Failure ]
 webkit.org/b/218930 fast/inline/simple-line-layout-16bit-content.html [ ImageOnlyFailure ]
 webkit.org/b/218930 fast/text/simple-lines-hover.html [ ImageOnlyFailure ]
 webkit.org/b/225293 fast/inline/incorrect-middle-baseline-alignment-with-line-height.html [ ImageOnlyFailure ]
+webkit.org/b/226474 [ Debug ] fast/text/letter-spacing-produces-nan-width.html [ Crash ]
 
 # Media - GTK-X11 flaky crash
 
@@ -1964,6 +1965,22 @@ webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-varyings.html
 webkit.org/b/224062 webgl/1.0.3/conformance/rendering/gl-scissor-test.html [ Failure ]
 
 webkit.org/b/224076 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-006.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-007.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-008.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-009.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-010.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-011.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-012.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-014.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-111.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-115.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-107.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-108.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-109.html [ ImageOnlyFailure ]
+webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-110.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

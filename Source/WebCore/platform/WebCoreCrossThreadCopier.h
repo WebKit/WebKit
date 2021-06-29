@@ -45,7 +45,7 @@ namespace WTF {
 
 template<> struct CrossThreadCopierBase<false, false, PAL::SessionID> {
     typedef PAL::SessionID Type;
-    static Type copy(const PAL::SessionID&);
+    static Type copy(PAL::SessionID);
 };
 
 template<> struct CrossThreadCopierBase<false, false, WebCore::ThreadSafeDataBuffer> {

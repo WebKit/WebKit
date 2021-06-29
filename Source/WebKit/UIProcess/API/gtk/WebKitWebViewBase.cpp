@@ -329,8 +329,6 @@ struct _WebKitWebViewBasePrivate {
 #endif
 
     // Touch gestures state
-    double initialZoomScale;
-    IntPoint initialZoomPoint;
     FloatPoint dragOffset;
     bool isLongPressed;
     bool isBeingDragged;
@@ -1849,16 +1847,6 @@ static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direc
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus(widget, direction);
 }
 
-static void webkitWebViewBaseZoomBegin(WebKitWebViewBase* webViewBase, GdkEventSequence* sequence, GtkGesture* gesture)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    priv->initialZoomScale = priv->pageProxy->pageScaleFactor();
-
-    double x, y;
-    gtk_gesture_get_bounding_box_center(gesture, &x, &y);
-    priv->pageProxy->getCenterForZoomGesture(IntPoint(x, y), priv->initialZoomPoint);
-}
-
 static void webkitWebViewBaseZoomChanged(WebKitWebViewBase* webViewBase, gdouble scale, GtkGesture* gesture)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -1867,16 +1855,30 @@ static void webkitWebViewBaseZoomChanged(WebKitWebViewBase* webViewBase, gdouble
 
     gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_CLAIMED);
 
-    auto pageScale = clampTo<double>(priv->initialZoomScale * scale, 1, 3);
-
-    FloatPoint scaledZoomCenter(priv->initialZoomPoint);
-    scaledZoomCenter.scale(pageScale);
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
+    if (!controller)
+        return;
 
     double x, y;
     gtk_gesture_get_bounding_box_center(gesture, &x, &y);
-    FloatPoint viewPoint = FloatPoint(x, y);
+    FloatPoint origin = FloatPoint(x, y);
 
-    priv->pageProxy->scalePage(pageScale, WebCore::roundedIntPoint(FloatPoint(scaledZoomCenter - viewPoint)));
+    controller->setMagnification(scale, origin);
+}
+
+static void webkitWebViewBaseZoomEnd(WebKitWebViewBase* webViewBase, GdkEventSequence* sequence, GtkGesture* gesture)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->pageGrabbedTouch)
+        return;
+
+    gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_CLAIMED);
+
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
+    if (!controller)
+        return;
+
+    controller->endMagnification();
 }
 
 static void webkitWebViewBaseTouchLongPress(WebKitWebViewBase* webViewBase, gdouble x, gdouble y, GtkGesture*)
@@ -2059,8 +2061,8 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->touchGestureGroup = gtk_gesture_zoom_new(viewWidget);
     g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-zoom-gesture", priv->touchGestureGroup, g_object_unref);
 #endif
-    g_signal_connect_object(priv->touchGestureGroup, "begin", G_CALLBACK(webkitWebViewBaseZoomBegin), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->touchGestureGroup, "scale-changed", G_CALLBACK(webkitWebViewBaseZoomChanged), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->touchGestureGroup, "end", G_CALLBACK(webkitWebViewBaseZoomEnd), viewWidget, G_CONNECT_SWAPPED);
 
 #if USE(GTK4)
     gesture = gtk_gesture_long_press_new();

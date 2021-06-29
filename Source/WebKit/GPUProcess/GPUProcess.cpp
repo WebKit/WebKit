@@ -91,6 +91,19 @@ GPUProcess::~GPUProcess()
 {
 }
 
+void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (messageReceiverMap().dispatchMessage(connection, decoder))
+        return;
+
+    if (decoder.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
+        AuxiliaryProcess::didReceiveMessage(connection, decoder);
+        return;
+    }
+
+    didReceiveGPUProcessMessage(connection, decoder);
+}
+
 void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Attachment>&&)>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());

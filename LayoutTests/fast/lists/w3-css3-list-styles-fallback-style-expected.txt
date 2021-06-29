@@ -7,8 +7,8 @@ armenian
 PASS list marker is -1.
 PASS list marker is 0.
 PASS list marker is Ա.
-PASS list marker is Ք̂Ջ̂Ղ̂Թ̂ՔՋՂԹ.
-PASS list marker is 100000000.
+PASS list marker is ՔՋՂԹ.
+PASS list marker is 10000.
 cjk-ideographic
 
 PASS list marker is -1.
@@ -72,9 +72,9 @@ PASS list marker is 0.
 PASS list marker is 1.
 tamil
 
-PASS list marker is -1.
-PASS list marker is 0.
-PASS list marker is 1.
+PASS list marker is -௧.
+PASS list marker is ௦.
+PASS list marker is ௧.
 trad-chinese-formal
 
 PASS list marker is -1.

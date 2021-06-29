@@ -617,8 +617,8 @@ enum class ListStyleType : uint8_t {
     EthiopicHalehameAmEt,
     AmharicAbegede,
     EthiopicAbegedeAmEt,
-    CjkEarthlyBranch,
-    CjkHeavenlyStem,
+    CJKEarthlyBranch,
+    CJKHeavenlyStem,
     Ethiopic,
     EthiopicHalehameGez,
     EthiopicAbegede,
@@ -656,6 +656,8 @@ enum class ListStyleType : uint8_t {
     Katakana,
     HiraganaIroha,
     KatakanaIroha,
+    CJKDecimal,
+    Tamil,
     String,
     None
 };

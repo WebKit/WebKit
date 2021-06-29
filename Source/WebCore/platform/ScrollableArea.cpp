@@ -490,26 +490,26 @@ void ScrollableArea::clearSnapOffsets()
         return scrollAnimator->setSnapOffsetsInfo(LayoutScrollSnapOffsetsInfo());
 }
 
-unsigned ScrollableArea::currentHorizontalSnapPointIndex() const
+std::optional<unsigned> ScrollableArea::currentHorizontalSnapPointIndex() const
 {
     if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal);
-    return 0; // FIXME: This should really be invalidSnapOffsetIndex.
+    return std::nullopt;
 }
 
-unsigned ScrollableArea::currentVerticalSnapPointIndex() const
+std::optional<unsigned> ScrollableArea::currentVerticalSnapPointIndex() const
 {
     if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical);
-    return 0; // FIXME: This should really be invalidSnapOffsetIndex.
+    return std::nullopt;
 }
 
-void ScrollableArea::setCurrentHorizontalSnapPointIndex(unsigned index)
+void ScrollableArea::setCurrentHorizontalSnapPointIndex(std::optional<unsigned> index)
 {
     scrollAnimator().setActiveScrollSnapIndexForAxis(ScrollEventAxis::Horizontal, index);
 }
 
-void ScrollableArea::setCurrentVerticalSnapPointIndex(unsigned index)
+void ScrollableArea::setCurrentVerticalSnapPointIndex(std::optional<unsigned> index)
 {
     scrollAnimator().setActiveScrollSnapIndexForAxis(ScrollEventAxis::Vertical, index);
 }
@@ -518,28 +518,31 @@ void ScrollableArea::resnapAfterLayout()
 {
     LOG_WITH_STREAM(ScrollSnap, stream << *this << " updateScrollSnapState: isScrollSnapInProgress " << isScrollSnapInProgress() << " isUserScrollInProgress " << isUserScrollInProgress());
 
-    if (!existingScrollAnimator() || isScrollSnapInProgress() || isUserScrollInProgress())
+    ScrollAnimator* scrollAnimator = existingScrollAnimator();
+    if (!scrollAnimator || isScrollSnapInProgress() || isUserScrollInProgress())
         return;
+
+    scrollAnimator->resnapAfterLayout();
 
     const auto* info = snapOffsetsInfo();
     if (!info)
         return;
 
-    IntPoint currentPosition = scrollPosition();
-    IntPoint correctedPosition = currentPosition;
+    auto currentOffset = scrollOffset();
+    auto correctedOffset = currentOffset;
     const auto& horizontal = info->horizontalSnapOffsets;
     auto activeHorizontalIndex = currentHorizontalSnapPointIndex();
-    if (activeHorizontalIndex < horizontal.size())
-        correctedPosition.setX(horizontal[activeHorizontalIndex].offset.toInt());
+    if (activeHorizontalIndex)
+        correctedOffset.setX(horizontal[*activeHorizontalIndex].offset.toInt());
 
     const auto& vertical = info->verticalSnapOffsets;
     auto activeVerticalIndex = currentVerticalSnapPointIndex();
-    if (activeVerticalIndex < vertical.size())
-        correctedPosition.setY(vertical[activeVerticalIndex].offset.toInt());
+    if (activeVerticalIndex)
+        correctedOffset.setY(vertical[*activeVerticalIndex].offset.toInt());
 
-    if (correctedPosition != currentPosition) {
-        LOG_WITH_STREAM(ScrollSnap, stream << " adjusting position from " << currentPosition << " to " << correctedPosition);
-        scrollToPositionWithoutAnimation(correctedPosition);
+    if (correctedOffset != currentOffset) {
+        LOG_WITH_STREAM(ScrollSnap, stream << " adjusting offset from " << currentOffset << " to " << correctedOffset);
+        scrollToOffsetWithoutAnimation(correctedOffset);
     }
 }
 

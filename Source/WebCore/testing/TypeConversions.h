@@ -105,6 +105,11 @@ public:
     unsigned long long testClampUnsignedLongLong() { return m_unsignedLongLong; }
     void setTestClampUnsignedLongLong(unsigned long long value) { m_unsignedLongLong = value; }
 
+    float testFloat() const { return m_float; }
+    void setTestFloat(float testFloat) { m_float = testFloat; }
+    float testUnrestrictedFloat() const { return m_unrestrictedFloat; }
+    void setTestUnrestrictedFloat(float unrestrictedFloat) { m_unrestrictedFloat = unrestrictedFloat; }
+
     const String& testString() const { return m_string; }
     void setTestString(const String& string) { m_string = string; }
     const String& testUSVString() const { return m_usvstring; }
@@ -157,6 +162,8 @@ private:
     unsigned m_unsignedLong { 0 };
     long long m_longLong { 0 };
     unsigned long long m_unsignedLongLong { 0 };
+    float m_float { 0 };
+    float m_unrestrictedFloat { 0 };
     String m_string;
     String m_usvstring;
     String m_byteString;

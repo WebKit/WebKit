@@ -25,11 +25,9 @@ messages -> ViewGestureGeometryCollector NotRefCounted {
     CollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin)
 #endif
 
-#if PLATFORM(MAC)
-    CollectGeometryForMagnificationGesture()
-#endif
-
 #if !PLATFORM(IOS_FAMILY)
+    CollectGeometryForMagnificationGesture()
+
     SetRenderTreeSizeNotificationThreshold(uint64_t size)
 #endif
 }

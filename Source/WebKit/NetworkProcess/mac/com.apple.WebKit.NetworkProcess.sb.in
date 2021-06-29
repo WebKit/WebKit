@@ -46,7 +46,8 @@
        (subpath "/System/Library/PrivateFrameworks")
        (subpath "/usr/lib")
        (subpath "/usr/local/lib/sanitizers") ;; FIXME(209820)
-       (subpath "/usr/appleinternal/lib/sanitizers"))
+       (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
+)
 
 (allow file-read-metadata
        (literal "/etc")
@@ -89,7 +90,8 @@
 
 (allow file-read*
        (subpath "/usr/local/lib/sanitizers") ;; FIXME(209820)
-       (subpath "/usr/appleinternal/lib/sanitizers"))
+       (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
+)
 
 (allow file-write-create
        (require-all (prefix "/cores/")

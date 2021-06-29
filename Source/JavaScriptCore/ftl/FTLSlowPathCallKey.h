@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "HashableRegisterSet.h"
 #include "MacroAssemblerCodeRef.h"
-#include "RegisterSet.h"
 
 namespace JSC { namespace FTL {
 
@@ -77,12 +77,12 @@ public:
     enum DeletedValueTag { DeletedValue };
     
     SlowPathCallKey(EmptyValueTag)
-        : m_usedRegisters(RegisterSet::EmptyValue)
+        : m_usedRegisters(HashableRegisterSet::EmptyValue)
     {
     }
     
     SlowPathCallKey(DeletedValueTag)
-        : m_usedRegisters(RegisterSet::DeletedValue)
+        : m_usedRegisters(HashableRegisterSet::DeletedValue)
     {
     }
     
@@ -102,7 +102,7 @@ public:
     }
 
 private:
-    RegisterSet m_usedRegisters;
+    HashableRegisterSet m_usedRegisters;
     FunctionPtr<OperationPtrTag> m_callTarget;
     RegisterSet m_argumentRegisters;
     ptrdiff_t m_offset { 0 };

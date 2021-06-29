@@ -88,6 +88,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
@@ -451,6 +452,11 @@ bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, 
     if (!rate)
         rate = 1.0;
 
+    if (m_hasWebKitWebSrcSentEOS && m_downloadBuffer) {
+        GST_DEBUG_OBJECT(pipeline(), "Setting high-percent=0 on GstDownloadBuffer to force 100%% buffered reporting");
+        g_object_set(m_downloadBuffer.get(), "high-percent", 0, nullptr);
+    }
+
     GST_DEBUG_OBJECT(pipeline(), "[Seek] Performing actual seek to %" GST_TIME_FORMAT " (endTime: %" GST_TIME_FORMAT ") at rate %f", GST_TIME_ARGS(toGstClockTime(startTime)), GST_TIME_ARGS(toGstClockTime(endTime)), rate);
     return gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekFlags,
         GST_SEEK_TYPE_SET, toGstClockTime(startTime), GST_SEEK_TYPE_SET, toGstClockTime(endTime));
@@ -460,6 +466,11 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
 {
     if (!m_pipeline || m_didErrorOccur)
         return;
+
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return;
+#endif
 
     GST_INFO_OBJECT(pipeline(), "[Seek] seek attempt to %s", toString(mediaTime).utf8().data());
 
@@ -514,6 +525,11 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
 
 void MediaPlayerPrivateGStreamer::updatePlaybackRate()
 {
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return;
+#endif
+
     if (!m_isChangingRate)
         return;
 
@@ -632,6 +648,11 @@ void MediaPlayerPrivateGStreamer::setPreservesPitch(bool preservesPitch)
 
 void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 {
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return;
+#endif
+
     GST_DEBUG_OBJECT(pipeline(), "Setting preload to %s", convertEnumerationToString(preload).utf8().data());
     if (preload == MediaPlayer::Preload::Auto && m_isLiveStream)
         return;
@@ -688,6 +709,11 @@ MediaTime MediaPlayerPrivateGStreamer::maxMediaTimeSeekable() const
 
     if (m_isLiveStream)
         return MediaTime::zeroTime();
+
+#if ENABLE(MEDIA_STREAM)
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
+        return MediaTime::zeroTime();
+#endif
 
     MediaTime duration = durationMediaTime();
     GST_DEBUG_OBJECT(pipeline(), "maxMediaTimeSeekable, duration: %s", toString(duration).utf8().data());
@@ -861,6 +887,8 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
         webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC_CAST(m_source.get()), m_player, m_referrer);
         g_signal_connect(GST_ELEMENT_PARENT(m_source.get()), "element-added", G_CALLBACK(uriDecodeBinElementAddedCallback), this);
+        // This will set the multiqueue size to the default value.
+        g_object_set(GST_ELEMENT_PARENT(m_source.get()), "buffer-size", 2 * MB, nullptr);
 #if ENABLE(MEDIA_STREAM)
     } else if (WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
         auto stream = m_streamPrivate.get();
@@ -962,31 +990,64 @@ void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
     setSyncOnClock(audioSink(), sync);
 }
 
-void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
+template <typename TrackPrivateType>
+void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
 {
     if (UNLIKELY(!m_pipeline || !m_source))
         return;
 
     ASSERT(m_isLegacyPlaybin || isMediaSource());
 
+    enum TrackType { Audio = 0, Video = 1, Text = 2 };
+    Variant<HashMap<AtomString, RefPtr<AudioTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<VideoTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(0);
+    auto type(static_cast<TrackType>(variantTracks.index()));
+    const char* typeName;
+    bool* hasType;
+    switch (type) {
+    case Audio:
+        typeName = "audio";
+        hasType = &m_hasAudio;
+        variantTracks = &m_audioTracks;
+        break;
+    case Video:
+        typeName = "video";
+        hasType = &m_hasVideo;
+        variantTracks = &m_videoTracks;
+        break;
+    case Text:
+        typeName = "text";
+        hasType = nullptr;
+        variantTracks = &m_textTracks;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    HashMap<AtomString, RefPtr<TrackPrivateType>>& tracks = *get<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(variantTracks);
+
     // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
-    if (m_isEndReached)
+    if (m_isEndReached && (type == Audio || type == Video))
         return;
 
-    unsigned numTracks = 0;
+    unsigned numberOfTracks = 0;
     bool useMediaSource = isMediaSource();
+
+    StringPrintStream numberOfTracksProperty;
+    numberOfTracksProperty.printf("n-%s", typeName);
+
     GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
-    g_object_get(element, "n-video", &numTracks, nullptr);
+    g_object_get(element, numberOfTracksProperty.toCString().data(), &numberOfTracks, nullptr);
 
-    GST_INFO_OBJECT(pipeline(), "Media has %d video tracks", numTracks);
+    GST_INFO_OBJECT(pipeline(), "Media has %d %s tracks", numberOfTracks, typeName);
 
-    bool oldHasVideo = m_hasVideo;
-    m_hasVideo = numTracks > 0;
-    if (oldHasVideo != m_hasVideo)
-        m_player->characteristicChanged();
+    if (hasType) {
+        bool oldHasType = *hasType;
+        *hasType = numberOfTracks > 0;
+        if (oldHasType != *hasType)
+            m_player->characteristicChanged();
 
-    if (m_hasVideo)
-        m_player->sizeChanged();
+        if (*hasType && type == Video)
+            m_player->sizeChanged();
+    }
 
     if (useMediaSource) {
         GST_DEBUG_OBJECT(pipeline(), "Tracks managed by source element. Bailing out now.");
@@ -994,16 +1055,20 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
         return;
     }
 
-    Vector<String> validVideoStreams;
-    for (unsigned i = 0; i < numTracks; ++i) {
+    Vector<String> validStreams;
+    StringPrintStream getPadProperty;
+    getPadProperty.printf("get-%s-pad", typeName);
+
+    for (unsigned i = 0; i < numberOfTracks; ++i) {
         GRefPtr<GstPad> pad;
-        g_signal_emit_by_name(m_pipeline.get(), "get-video-pad", i, &pad.outPtr(), nullptr);
+        g_signal_emit_by_name(m_pipeline.get(), getPadProperty.toCString().data(), i, &pad.outPtr(), nullptr);
         ASSERT(pad);
 
-        String streamId = "V" + String::number(i);
-        validVideoStreams.append(streamId);
-        if (i < m_videoTracks.size()) {
-            RefPtr<VideoTrackPrivateGStreamer> existingTrack = m_videoTracks.get(streamId);
+        String streamId = String(typeName).substring(0, 1).convertToASCIIUppercase() + String::number(i);
+        validStreams.append(streamId);
+
+        if (i < tracks.size()) {
+            RefPtr<TrackPrivateType> existingTrack = tracks.get(streamId);
             if (existingTrack) {
                 existingTrack->setIndex(i);
                 // If the video has been played twice, the track is still there, but we need
@@ -1014,18 +1079,28 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
             }
         }
 
-        auto track = VideoTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
-        if (!track->trackIndex())
+        auto track = TrackPrivateType::create(makeWeakPtr(*this), i, pad);
+        if (!track->trackIndex() && (type == Audio || type == Video))
             track->setActive(true);
         ASSERT(streamId == track->id());
-        m_videoTracks.add(streamId, track.copyRef());
-        m_player->addVideoTrack(track.get());
+        tracks.add(streamId, track.copyRef());
+
+        Variant<AudioTrackPrivate&, VideoTrackPrivate&, InbandTextTrackPrivate&> variantTrack(track.get());
+        switch (variantTrack.index()) {
+        case Audio: m_player->addAudioTrack(get<AudioTrackPrivate&>(variantTrack)); break;
+        case Video: m_player->addVideoTrack(get<VideoTrackPrivate&>(variantTrack)); break;
+        case Text: m_player->addTextTrack(get<InbandTextTrackPrivate&>(variantTrack)); break;
+        }
     }
 
-    purgeInvalidVideoTracks(validVideoStreams);
+    // Purge invalid tracks
+    tracks.removeIf([validStreams](auto& keyAndValue) {
+        return !validStreams.contains(keyAndValue.key);
+    });
 
     m_player->mediaEngineUpdated();
 }
+
 bool MediaPlayerPrivateGStreamer::hasFirstVideoSampleReachedSink() const
 {
     Locker sampleLocker { m_sampleMutex };
@@ -1060,125 +1135,15 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
 void MediaPlayerPrivateGStreamer::audioChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
     player->m_notifier->notify(MainThreadNotification::AudioChanged, [player] {
-        player->notifyPlayerOfAudio();
+        player->notifyPlayerOfTrack<AudioTrackPrivateGStreamer>();
     });
-}
-
-void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
-{
-    if (UNLIKELY(!m_pipeline || !m_source))
-        return;
-
-    ASSERT(m_isLegacyPlaybin || isMediaSource());
-
-    // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
-    if (m_isEndReached)
-        return;
-
-    unsigned numTracks = 0;
-    bool useMediaSource = isMediaSource();
-    GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
-    g_object_get(element, "n-audio", &numTracks, nullptr);
-
-    GST_INFO_OBJECT(pipeline(), "Media has %d audio tracks", numTracks);
-    bool oldHasAudio = m_hasAudio;
-    m_hasAudio = numTracks > 0;
-    if (oldHasAudio != m_hasAudio)
-        m_player->characteristicChanged();
-
-    if (useMediaSource) {
-        GST_DEBUG_OBJECT(pipeline(), "Tracks managed by source element. Bailing out now.");
-        m_player->mediaEngineUpdated();
-        return;
-    }
-
-    Vector<String> validAudioStreams;
-    for (unsigned i = 0; i < numTracks; ++i) {
-        GRefPtr<GstPad> pad;
-        g_signal_emit_by_name(m_pipeline.get(), "get-audio-pad", i, &pad.outPtr(), nullptr);
-        ASSERT(pad);
-
-        String streamId = "A" + String::number(i);
-        validAudioStreams.append(streamId);
-        if (i < m_audioTracks.size()) {
-            RefPtr<AudioTrackPrivateGStreamer> existingTrack = m_audioTracks.get(streamId);
-            if (existingTrack) {
-                existingTrack->setIndex(i);
-                // If the video has been played twice, the track is still there, but we need
-                // to update the pad pointer.
-                if (existingTrack->pad() != pad)
-                    existingTrack->setPad(GRefPtr(pad));
-                continue;
-            }
-        }
-
-        auto track = AudioTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
-        if (!track->trackIndex())
-            track->setActive(true);
-        ASSERT(streamId == track->id());
-        m_audioTracks.add(streamId, track.copyRef());
-        m_player->addAudioTrack(track.get());
-    }
-
-    purgeInvalidAudioTracks(validAudioStreams);
-
-    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateGStreamer::textChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
     player->m_notifier->notify(MainThreadNotification::TextChanged, [player] {
-        player->notifyPlayerOfText();
+        player->notifyPlayerOfTrack<InbandTextTrackPrivateGStreamer>();
     });
-}
-
-void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
-{
-    if (UNLIKELY(!m_pipeline || !m_source))
-        return;
-
-    ASSERT(m_isLegacyPlaybin || isMediaSource());
-
-    unsigned numTracks = 0;
-    bool useMediaSource = isMediaSource();
-    GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
-    g_object_get(element, "n-text", &numTracks, nullptr);
-
-    GST_INFO_OBJECT(pipeline(), "Media has %d text tracks", numTracks);
-
-    if (useMediaSource) {
-        GST_DEBUG_OBJECT(pipeline(), "Tracks managed by source element. Bailing out now.");
-        return;
-    }
-
-    Vector<String> validTextStreams;
-    for (unsigned i = 0; i < numTracks; ++i) {
-        GRefPtr<GstPad> pad;
-        g_signal_emit_by_name(m_pipeline.get(), "get-text-pad", i, &pad.outPtr(), nullptr);
-        ASSERT(pad);
-
-        // We can't assume the pad has a sticky event here like implemented in
-        // InbandTextTrackPrivateGStreamer because it might be emitted after the
-        // track was created. So fallback to a dummy stream ID like in the Audio
-        // and Video tracks.
-        String streamId = "T" + String::number(i);
-
-        validTextStreams.append(streamId);
-        if (i < m_textTracks.size()) {
-            RefPtr<InbandTextTrackPrivateGStreamer> existingTrack = m_textTracks.get(streamId);
-            if (existingTrack) {
-                existingTrack->setIndex(i);
-                if (existingTrack->pad() == pad)
-                    continue;
-            }
-        }
-
-        auto track = InbandTextTrackPrivateGStreamer::create(i, pad);
-        m_textTracks.add(streamId, track.copyRef());
-        m_player->addTextTrack(track.get());
-    }
-
-    purgeInvalidTextTracks(validTextStreams);
 }
 
 void MediaPlayerPrivateGStreamer::handleTextSample(GstSample* sample, const char* streamId)
@@ -1538,7 +1503,7 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
 void MediaPlayerPrivateGStreamer::videoChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
     player->m_notifier->notify(MainThreadNotification::VideoChanged, [player] {
-        player->notifyPlayerOfVideo();
+        player->notifyPlayerOfTrack<VideoTrackPrivateGStreamer>();
     });
 }
 
@@ -1956,6 +1921,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             m_fillTimer.stop();
             m_bufferingPercentage = 100;
             updateStates();
+        } else if (gst_structure_has_name(structure, "webkit-web-src-has-eos")) {
+            GST_DEBUG_OBJECT(pipeline(), "WebKitWebSrc has EOS");
+            m_hasWebKitWebSrcSentEOS = true;
         } else
             GST_DEBUG_OBJECT(pipeline(), "Unhandled element message: %" GST_PTR_FORMAT, structure);
         break;
@@ -2153,27 +2121,6 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
         processTableOfContentsEntry(static_cast<GstTocEntry*>(i->data));
 }
 
-void MediaPlayerPrivateGStreamer::purgeInvalidAudioTracks(Vector<String> validTrackIds)
-{
-    m_audioTracks.removeIf([validTrackIds](auto& keyAndValue) {
-        return !validTrackIds.contains(keyAndValue.key);
-    });
-}
-
-void MediaPlayerPrivateGStreamer::purgeInvalidVideoTracks(Vector<String> validTrackIds)
-{
-    m_videoTracks.removeIf([validTrackIds](auto& keyAndValue) {
-        return !validTrackIds.contains(keyAndValue.key);
-    });
-}
-
-void MediaPlayerPrivateGStreamer::purgeInvalidTextTracks(Vector<String> validTrackIds)
-{
-    m_textTracks.removeIf([validTrackIds](auto& keyAndValue) {
-        return !validTrackIds.contains(keyAndValue.key);
-    });
-}
-
 void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, GstElement* element, MediaPlayerPrivateGStreamer* player)
 {
     if (g_strcmp0(G_OBJECT_TYPE_NAME(element), "GstDownloadBuffer"))
@@ -2182,6 +2129,9 @@ void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, 
     player->m_downloadBuffer = element;
     g_signal_handlers_disconnect_by_func(bin, reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), player);
     g_signal_connect_swapped(element, "notify::temp-location", G_CALLBACK(downloadBufferFileCreatedCallback), player);
+
+    // Set the GstDownloadBuffer size to our preferred value controls the thresholds for buffering events.
+    g_object_set(element, "max-size-bytes", 100 * KB, nullptr);
 
     GUniqueOutPtr<char> oldDownloadTemplate;
     g_object_get(element, "temp-template", &oldDownloadTemplate.outPtr(), nullptr);
@@ -2202,7 +2152,6 @@ void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerP
 
     GUniqueOutPtr<char> downloadFile;
     g_object_get(player->m_downloadBuffer.get(), "temp-location", &downloadFile.outPtr(), nullptr);
-    player->m_downloadBuffer = nullptr;
 
     if (UNLIKELY(!FileSystem::deleteFile(downloadFile.get()))) {
         GST_WARNING("Couldn't unlink media temporary file %s after creation", downloadFile.get());

@@ -97,7 +97,6 @@ Test that viewer has the basic capability to handle different font families </de
 <script>
 if (window.testRunner)
     window.testRunner.dumpSelectionRect();
-document.execCommand("SelectAll");
 </script>
 </svg>
 

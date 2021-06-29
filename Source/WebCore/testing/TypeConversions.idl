@@ -61,6 +61,9 @@
     readonly attribute unrestricted double testQuietNaNUnrestrictedDouble;
     readonly attribute unrestricted double testPureNaNUnrestrictedDouble;
 
+    attribute float testFloat;
+    attribute unrestricted float testUnrestrictedFloat;
+
     attribute DOMString testString;
     attribute ByteString testByteString;
     attribute USVString testUSVString;

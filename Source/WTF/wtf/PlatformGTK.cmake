@@ -37,12 +37,12 @@ list(APPEND WTF_SOURCES
     glib/SocketConnection.cpp
     glib/URLGLib.cpp
 
+    posix/CPUTimePOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
 
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 
-    unix/CPUTimeUnix.cpp
     unix/LanguageUnix.cpp
     unix/UniStdExtrasUnix.cpp
 )

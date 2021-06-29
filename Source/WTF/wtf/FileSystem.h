@@ -213,8 +213,6 @@ WTF_EXPORT_PRIVATE String realPath(const String&);
 WTF_EXPORT_PRIVATE bool isSafeToUseMemoryMapForPath(const String&);
 WTF_EXPORT_PRIVATE void makeSafeToUseMemoryMapForPath(const String&);
 
-WTF_EXPORT_PRIVATE bool unmapViewOfFile(void* buffer, size_t);
-
 class MappedFileData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -230,13 +228,21 @@ public:
     const void* data() const { return m_fileData; }
     unsigned size() const { return m_fileSize; }
 
+#if !OS(WINDOWS)
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }
+#endif
+#if OS(WINDOWS)
+    HANDLE fileMapping() const { return m_fileMapping; }
+#endif
 
 private:
     WTF_EXPORT_PRIVATE bool mapFileHandle(PlatformFileHandle, FileOpenMode, MappedFileMode);
 
     void* m_fileData { nullptr };
     unsigned m_fileSize { 0 };
+#if OS(WINDOWS)
+    HANDLE m_fileMapping { nullptr };
+#endif
 };
 
 inline MappedFileData::MappedFileData(PlatformFileHandle handle, MappedFileMode mapMode, bool& success)
@@ -252,6 +258,9 @@ inline MappedFileData::MappedFileData(PlatformFileHandle handle, FileOpenMode op
 inline MappedFileData::MappedFileData(MappedFileData&& other)
     : m_fileData(std::exchange(other.m_fileData, nullptr))
     , m_fileSize(std::exchange(other.m_fileSize, 0))
+#if OS(WINDOWS)
+    , m_fileMapping(std::exchange(other.m_fileMapping, nullptr))
+#endif
 {
 }
 
@@ -259,6 +268,9 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
 {
     m_fileData = std::exchange(other.m_fileData, nullptr);
     m_fileSize = std::exchange(other.m_fileSize, 0);
+#if OS(WINDOWS)
+    m_fileMapping = std::exchange(other.m_fileMapping, nullptr);
+#endif
     return *this;
 }
 

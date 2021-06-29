@@ -36,6 +36,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
 static bool readyToContinue;
@@ -341,6 +342,18 @@ TEST(WKWebsiteDataStore, SessionSetCount)
         EXPECT_EQ(countSessionSets(), 2u);
     }
     while (countSessionSets()) { }
+}
+
+TEST(WKWebsiteDataStore, ReferenceCycle)
+{
+    WeakObjCPtr<WKWebsiteDataStore> dataStore;
+    WeakObjCPtr<WKHTTPCookieStore> cookieStore;
+    @autoreleasepool {
+        dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        cookieStore = [dataStore httpCookieStore];
+    }
+    while (dataStore.get() || cookieStore.get())
+        TestWebKitAPI::Util::spinRunLoop();
 }
 
 TEST(WebKit, ClearCustomDataStoreNoWebViews)

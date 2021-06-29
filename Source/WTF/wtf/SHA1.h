@@ -31,7 +31,7 @@
 #pragma once
 
 #include <array>
-#include <wtf/Vector.h>
+#include <wtf/Span.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
@@ -45,15 +45,22 @@ class SHA1 {
 public:
     WTF_EXPORT_PRIVATE SHA1();
 
-    void addBytes(const Vector<uint8_t>& input)
+    WTF_EXPORT_PRIVATE void addBytes(Span<const std::byte>);
+
+    void addBytes(Span<const uint8_t> input)
     {
-        addBytes(input.data(), input.size());
+        addBytes(asBytes(input));
     }
+
     void addBytes(const CString& input)
     {
-        addBytes(input.dataAsUInt8Ptr(), input.length());
+        addBytes(input.bytes());
     }
-    WTF_EXPORT_PRIVATE void addBytes(const uint8_t* input, size_t length);
+
+    void addBytes(const uint8_t* input, size_t length)
+    {
+        addBytes(Span { input, length });
+    }
 
     // Size of the SHA1 hash
     WTF_EXPORT_PRIVATE static constexpr size_t hashSize = 20;

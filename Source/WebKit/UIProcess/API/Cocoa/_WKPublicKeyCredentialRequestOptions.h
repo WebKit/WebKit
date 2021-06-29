@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class _WKAuthenticationExtensionsClientInputs;
 @class _WKPublicKeyCredentialDescriptor;
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKPublicKeyCredentialRequestOptions : NSObject
 
 @property (nullable, nonatomic, copy) NSNumber *timeout;

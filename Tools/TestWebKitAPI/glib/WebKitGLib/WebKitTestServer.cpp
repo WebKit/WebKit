@@ -32,14 +32,17 @@ WebKitTestServer::WebKitTestServer(ServerOptionsBitSet options)
         m_queue = WorkQueue::create("WebKitTestServer");
     }
 
-    m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitTestServer ", nullptr));
-
+    GRefPtr<GTlsCertificate> certificate;
     if (options[ServerHTTPS]) {
+        GUniqueOutPtr<GError> error;
         CString resourcesDir = Test::getResourcesDir();
         GUniquePtr<char> sslCertificateFile(g_build_filename(resourcesDir.data(), "test-cert.pem", nullptr));
         GUniquePtr<char> sslKeyFile(g_build_filename(resourcesDir.data(), "test-key.pem", nullptr));
-        g_assert_true(soup_server_set_ssl_cert_file(m_soupServer.get(), sslCertificateFile.get(), sslKeyFile.get(), nullptr));
+        certificate = adoptGRef(g_tls_certificate_new_from_files(sslCertificateFile.get(), sslKeyFile.get(), &error.outPtr()));
+        g_assert_no_error(error.get());
     }
+
+    m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitTestServer ", "tls-certificate", certificate.get(), nullptr));
 }
 
 void WebKitTestServer::run(SoupServerCallback serverCallback)

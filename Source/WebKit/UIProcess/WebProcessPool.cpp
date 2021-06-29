@@ -162,66 +162,10 @@ constexpr Seconds resetGPUProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
-static uint64_t generateListenerIdentifier()
-{
-    static uint64_t nextIdentifier = 1;
-    return nextIdentifier++;
-}
-
-static HashMap<uint64_t, Function<void(WebProcessPool&)>>& processPoolCreationListenerFunctionMap()
-{
-    static NeverDestroyed<HashMap<uint64_t, Function<void(WebProcessPool&)>>> map;
-    return map;
-}
-
-uint64_t WebProcessPool::registerProcessPoolCreationListener(Function<void(WebProcessPool&)>&& function)
-{
-    ASSERT(function);
-
-    auto identifier = generateListenerIdentifier();
-    processPoolCreationListenerFunctionMap().set(identifier, WTFMove(function));
-    return identifier;
-}
-
-void WebProcessPool::unregisterProcessPoolCreationListener(uint64_t identifier)
-{
-    processPoolCreationListenerFunctionMap().remove(identifier);
-}
-
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
     return adoptRef(*new WebProcessPool(configuration));
-}
-
-void WebProcessPool::notifyThisWebProcessPoolWasCreated()
-{
-    auto& listenerMap = processPoolCreationListenerFunctionMap();
-
-    Vector<uint64_t> identifiers;
-    identifiers.reserveInitialCapacity(listenerMap.size());
-    for (auto identifier : listenerMap.keys())
-        identifiers.uncheckedAppend(identifier);
-
-    for (auto identifier : identifiers) {
-        auto iterator = listenerMap.find(identifier);
-        if (iterator == listenerMap.end())
-            continue;
-
-        // To make sure the Function object stays alive until after the function call has been made,
-        // we temporarily move it out of the map.
-        // This protects it from the Function calling unregisterProcessPoolCreationListener thereby
-        // removing itself from the map of listeners.
-        // If the identifier still exists in the map later, we move it back in.
-        Function<void(WebProcessPool&)> function = WTFMove(iterator->value);
-        function(*this);
-
-        iterator = listenerMap.find(identifier);
-        if (iterator != listenerMap.end()) {
-            ASSERT(!iterator->value);
-            iterator->value = WTFMove(function);
-        }
-    }
 }
 
 static Vector<WebProcessPool*>& processPools()
@@ -314,12 +258,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
 
     ASSERT(RunLoop::isMain());
-    RunLoop::main().dispatch([weakPtr = makeWeakPtr(*this)] {
-        if (!weakPtr)
-            return;
-
-        weakPtr->notifyThisWebProcessPoolWasCreated();
-    });
 
     updateBackForwardCacheCapacity();
 
@@ -502,14 +440,14 @@ void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminatio
     WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%u", identifier, static_cast<unsigned>(reason));
     m_gpuProcess = nullptr;
 
-    if (reason == GPUProcessTerminationReason::Crash)
+    if (reason == GPUProcessTerminationReason::Crash || reason == GPUProcessTerminationReason::Unresponsive)
         m_client.gpuProcessDidCrash(this, identifier);
 
     Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)
         process->gpuProcessExited(reason);
 
-    if (reason == GPUProcessTerminationReason::Crash) {
+    if (reason == GPUProcessTerminationReason::Crash || reason == GPUProcessTerminationReason::Unresponsive) {
         if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessDidExit: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
             m_resetGPUProcessCrashCountTimer.stop();
@@ -1905,6 +1843,10 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         sourceURL = URL { { }, page.configuration().relatedPage()->pageLoadState().url() };
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForNavigationInternal: Using related page's URL as source URL for process swap decision (page=%p)", page.configuration().relatedPage());
     }
+
+    // For non-HTTP(s) URLs, we only swap when navigating to a new scheme, unless processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol is set.
+    if (!m_configuration->processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() && !sourceURL.protocolIsInHTTPFamily() && sourceURL.protocol() == targetURL.protocol())
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Navigation within the same non-HTTP(s) protocol"_s);
 
     if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || targetRegistrableDomain.matches(sourceURL))
         return completionHandler(WTFMove(sourceProcess), nullptr, "Navigation is same-site"_s);

@@ -64,7 +64,7 @@
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
-#import "WKQuickboardListViewController.h"
+#import "WKQuickboardViewControllerDelegate.h"
 #import "WKSelectMenuListViewController.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
 #import "WKTextInputListViewController.h"
@@ -172,6 +172,10 @@
 
 #if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
+#endif
+
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+#import <WebKitAdditions/WKHoverGestureRecognizer.h>
 #endif
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
@@ -884,6 +888,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpMouseGestureRecognizer];
 #endif
 
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [self setUpHoverGestureRecognizer];
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
@@ -1066,6 +1074,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [_hoverGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [_lookupGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1211,6 +1224,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
@@ -1235,6 +1251,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
+#endif
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1703,6 +1722,11 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         return YES;
 #endif
 
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    if (gestureRecognizer == _hoverGestureRecognizer)
+        return NO;
+#endif
+
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
@@ -1734,6 +1758,10 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 {
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer == _mouseGestureRecognizer)
+        return NO;
+#endif
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    if (gestureRecognizer == _hoverGestureRecognizer)
         return NO;
 #endif
     return YES;
@@ -2351,6 +2379,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if ([gestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]])
+        return YES;
+#endif
+
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+    if ([gestureRecognizer isKindOfClass:[WKHoverGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKHoverGestureRecognizer class]])
         return YES;
 #endif
 
@@ -6666,22 +6699,24 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [self setInputDelegate:nil];
 }
 
+- (RetainPtr<PUICTextInputContext>)createQuickboardTextInputContext
+{
+    auto context = adoptNS([[PUICTextInputContext alloc] init]);
+    [self _updateTextInputTraits:context.get()];
+    [context setInitialText:_focusedElementInformation.value];
+#if HAVE(QUICKBOARD_CONTROLLER)
+    [context setAcceptsEmoji:YES];
+    [context setShouldPresentModernTextInputUI:YES];
+#endif
+    return context;
+}
+
 #if HAVE(QUICKBOARD_CONTROLLER)
 
 - (RetainPtr<PUICQuickboardController>)_createQuickboardController:(UIViewController *)presentingViewController
 {
     auto quickboardController = adoptNS([[PUICQuickboardController alloc] init]);
-
-    auto suggestions = adoptNS([[NSMutableArray<NSString *> alloc] initWithCapacity:[_formInputSession suggestions].count]);
-    for (UITextSuggestion *suggestion in [_formInputSession suggestions])
-        [suggestions addObject:suggestion.inputText];
-
-    auto context = adoptNS([[PUICTextInputContext alloc] init]);
-    [self _updateTextInputTraits:context.get()];
-    [context setSuggestions:suggestions.get()];
-    [context setInitialText:_focusedElementInformation.value];
-    [context setAcceptsEmoji:YES];
-    [context setShouldPresentModernTextInputUI:YES];
+    auto context = self.createQuickboardTextInputContext;
     [quickboardController setQuickboardPresentingViewController:presentingViewController];
     [quickboardController setExcludedFromScreenCapture:[context isSecureTextEntry]];
     [quickboardController setTextInputContext:context.get()];
@@ -6692,7 +6727,6 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 static bool canUseQuickboardControllerFor(UITextContentType type)
 {
-    // We can remove this restriction once PUICQuickboardController supports displaying text suggestion strings that are not login credentials.
     return [type isEqualToString:UITextContentTypeUsername] || [type isEqualToString:UITextContentTypePassword] || [type isEqualToString:UITextContentTypeEmailAddress];
 }
 
@@ -6931,7 +6965,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     if (_isBlurringFocusedElement || ![_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         return;
 
-    [(WKTextInputListViewController *)_presentedFullScreenInputViewController reloadTextSuggestions];
+    [(WKTextInputListViewController *)_presentedFullScreenInputViewController updateTextSuggestions:[_focusedFormControlView suggestions]];
 }
 
 #pragma mark - WKSelectMenuListViewControllerDelegate
@@ -9196,16 +9230,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #pragma mark - WKQuickboardViewControllerDelegate
 
-- (CGFloat)viewController:(PUICQuickboardViewController *)controller inputContextViewHeightForSize:(CGSize)size
-{
-    id <_WKInputDelegate> delegate = self.webView._inputDelegate;
-    if (![delegate respondsToSelector:@selector(_webView:focusedElementContextViewHeightForFittingSize:inputSession:)])
-        return 0;
-
-    return [delegate _webView:self.webView focusedElementContextViewHeightForFittingSize:size inputSession:_formInputSession.get()];
-}
-
-- (BOOL)allowsLanguageSelectionMenuForListViewController:(PUICQuickboardViewController *)controller
+- (BOOL)allowsLanguageSelectionForListViewController:(PUICQuickboardViewController *)controller
 {
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::ContentEditable:
@@ -9272,20 +9297,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     }
 }
 
-- (NSString *)textContentTypeForListViewController:(WKTextInputListViewController *)controller
+- (PUICTextInputContext *)textInputContextForListViewController:(WKTextInputListViewController *)controller
 {
-    return self.textContentTypeForQuickboard;
-}
-
-- (NSArray<UITextSuggestion *> *)textSuggestionsForListViewController:(WKTextInputListViewController *)controller
-{
-    return [_focusedFormControlView suggestions];
-}
-
-- (void)listViewController:(WKTextInputListViewController *)controller didSelectTextSuggestion:(UITextSuggestion *)suggestion
-{
-    [self insertTextSuggestion:suggestion];
-    [self dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:controller];
+    return self.createQuickboardTextInputContext.autorelease();
 }
 
 - (BOOL)allowsDictationInputForListViewController:(PUICQuickboardViewController *)controller
@@ -9303,10 +9317,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 #endif
 
-
-
-
 #if ENABLE(APP_HIGHLIGHTS)
+
 - (void)setUpAppHighlightMenusIfNeeded
 {
     if (!_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
@@ -9440,6 +9452,29 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 }
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+#if ENABLE(HOVER_GESTURE_RECOGNIZER)
+
+- (void)setUpHoverGestureRecognizer
+{
+    _hoverGestureRecognizer = adoptNS([[WKHoverGestureRecognizer alloc] initWithTarget:self action:@selector(hoverGestureRecognizerChanged:)]);
+    [_hoverGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
+}
+
+- (void)hoverGestureRecognizerChanged:(WKHoverGestureRecognizer *)gestureRecognizer
+{
+    if (!_page->hasRunningProcess())
+        return;
+
+    auto event = gestureRecognizer.lastMouseEvent;
+    if (!event)
+        return;
+
+    _page->handleMouseEvent(*event);
+}
+
+#endif // ENABLE(HOVER_GESTURE_RECOGNIZER)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
@@ -10363,7 +10398,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
 #if HAVE(PEPPER_UI_CORE)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
-        return [self textContentTypeForListViewController:(WKTextInputListViewController *)_presentedFullScreenInputViewController.get()];
+        return [(WKTextInputListViewController *)_presentedFullScreenInputViewController textInputContext].textContentType;
 #if HAVE(QUICKBOARD_CONTROLLER)
     if (_presentedQuickboardController)
         return [_presentedQuickboardController textInputContext].textContentType;

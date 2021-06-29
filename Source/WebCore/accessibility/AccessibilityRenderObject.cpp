@@ -2791,6 +2791,14 @@ bool AccessibilityRenderObject::supportsExpandedTextValue() const
     return false;
 }
 
+bool AccessibilityRenderObject::shouldIgnoreAttributeRole() const
+{
+    if (m_ariaRole == AccessibilityRole::Document
+        && hasContentEditableAttributeSet())
+        return true;
+    return false;
+}
+
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
     AXTRACE("AccessibilityRenderObject::determineAccessibilityRole");

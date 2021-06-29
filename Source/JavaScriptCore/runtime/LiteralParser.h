@@ -175,12 +175,13 @@ private:
         String getErrorMessage() { return m_lexErrorMessage; }
         
     private:
-        String m_lexErrorMessage;
         TokenType lex(LiteralParserToken<CharType>&);
         ALWAYS_INLINE TokenType lexIdentifier(LiteralParserToken<CharType>&);
         ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&, CharType terminator);
         TokenType lexStringSlow(LiteralParserToken<CharType>&, const CharType* runStart, CharType terminator);
         ALWAYS_INLINE TokenType lexNumber(LiteralParserToken<CharType>&);
+
+        String m_lexErrorMessage;
         LiteralParserToken<CharType> m_currentToken;
         ParserMode m_mode;
         const CharType* m_ptr;
@@ -194,16 +195,17 @@ private:
     class StackGuard;
     JSValue parse(ParserState);
 
+    template<typename LiteralCharType>
+    ALWAYS_INLINE Identifier makeIdentifier(const LiteralCharType* characters, size_t length);
+
     JSGlobalObject* m_globalObject;
     CodeBlock* m_nullOrCodeBlock;
     typename LiteralParser<CharType>::Lexer m_lexer;
     ParserMode m_mode;
     String m_parseErrorMessage;
-    static unsigned const MaximumCachableCharacter = 128;
-    std::array<Identifier, MaximumCachableCharacter> m_shortIdentifiers;
-    std::array<Identifier, MaximumCachableCharacter> m_recentIdentifiers;
-    ALWAYS_INLINE const Identifier makeIdentifier(const LChar* characters, size_t length);
-    ALWAYS_INLINE const Identifier makeIdentifier(const UChar* characters, size_t length);
+    static constexpr unsigned maximumCachableCharacter = 128;
+    std::array<uint8_t, maximumCachableCharacter> m_recentIdentifiersIndex { };
+    Vector<Identifier, maximumCachableCharacter> m_recentIdentifiers;
 };
 
 } // namespace JSC

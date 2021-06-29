@@ -328,7 +328,6 @@ UIProcess/WebContextInjectedBundleClient.cpp
 UIProcess/WebContextMenuListenerProxy.cpp
 UIProcess/WebContextMenuProxy.cpp
 UIProcess/WebCookieManagerProxy.cpp
-UIProcess/WebCookieManagerProxyClient.cpp
 UIProcess/WebDataListSuggestionsDropdown.cpp
 UIProcess/WebDateTimePicker.cpp
 UIProcess/WebEditCommandProxy.cpp

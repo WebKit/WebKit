@@ -455,7 +455,6 @@ private:
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
-    void mainThreadPing();
     void backgroundResponsivenessPing();
 
 #if ENABLE(GAMEPAD)

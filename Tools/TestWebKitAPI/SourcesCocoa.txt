@@ -37,3 +37,4 @@ cocoa/UserMediaCaptureUIDelegate.mm
 Tests/WebKitCocoa/EventAttribution.mm
 Tests/WebKitCocoa/TestAwakener.mm
 Tests/WebKitCocoa/TLSDeprecation.mm
+Tests/WebKitCocoa/WebSocket.mm

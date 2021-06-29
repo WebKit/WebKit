@@ -34,8 +34,6 @@ fast/zooming/ios [ Pass ]
 http/tests/preload/viewport [ Pass ]
 http/tests/gzip-content-encoding [ Pass ]
 
-imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html [ Pass ]
-
 imported/w3c/web-platform-tests/speech-api/ [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -3035,6 +3033,7 @@ fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
 # <rdar://problem/48781098> HEIF and HEICS images are supported only on iOS 13
 fast/images/animated-heics-draw.html [ Pass ]
 fast/images/animated-heics-verify.html [ Pass ]
+fast/images/heic-as-background-image.html [ Pass ]
 
 # <rdar://problem/40172428> REGRESSION: LayoutTests fast/text/font-collection.html and fast/text/woff2.html are failing
 webkit.org/b/212172 fast/text/font-collection.html [ ImageOnlyFailure ]
@@ -3354,6 +3353,8 @@ webkit.org/b/219105 platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ F
 
 webkit.org/b/219460 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Skip ]
 
+webkit.org/b/226906 editing/deleting/smart-delete-paragraph-004.html [ Pass Failure ]
+
 # The system font does not handle all the various width values on iOS.
 fast/text/system-font-width-4.html [ ImageOnlyFailure ]
 fast/text/system-font-width-6.html [ ImageOnlyFailure ]
@@ -3384,3 +3385,7 @@ webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-backgr
 webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
+
+# Skip WebXR tests on iOS
+imported/w3c/web-platform-tests/webxr [ Skip ]
+http/wpt/webxr [ Skip ]

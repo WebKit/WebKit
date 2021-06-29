@@ -110,7 +110,7 @@ void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID no
     applyScrollUpdate(nodeID, scrollPosition, std::nullopt, ScrollType::User, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
 }
 
-void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
+void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
 {
     setActiveScrollSnapIndices(nodeID, horizontal, vertical);
 }

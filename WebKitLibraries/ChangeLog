@@ -1,3 +1,74 @@
+2021-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Reenable modern text input UI for non-numeric text input types
+        https://bugs.webkit.org/show_bug.cgi?id=226988
+        rdar://78102953
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/watchos/7/PepperUICore.framework/PepperUICore.tbd:
+        * WebKitPrivateFrameworkStubs/watchos/8/PepperUICore.framework/PepperUICore.tbd:
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [tvOS 15] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227037
+        <rdar://problem/79354143>
+
+        Reviewed by Alex Christensen.
+
+        * WebKitPrivateFrameworkStubs/appletvos/15/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/15/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Alex Christensen.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [watchOS 8] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227050
+        <rdar://problem/79365320>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/watchos/8/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/PepperUICore.framework/PepperUICore.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/8/URLFormatting.framework/URLFormatting.tbd: Added.
+
+2021-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+       [iOS 15] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/BackBoardServices.framework/BackBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/15/URLFormatting.framework/URLFormatting.tbd: Added.
+
 2021-01-04  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2021

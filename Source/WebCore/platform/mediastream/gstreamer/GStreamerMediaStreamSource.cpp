@@ -352,15 +352,30 @@ enum {
     PROP_LAST
 };
 
+static void webkitMediaStreamSrcTrackEnded(WebKitMediaStreamSrc*, InternalSource&);
+
 void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
 {
     if (!m_src)
         return;
 
     auto* element = WEBKIT_MEDIA_STREAM_SRC_CAST(m_src);
-    element->priv->sources.removeFirstMatching([&](auto& item) {
+    auto* priv = element->priv;
+
+    // Lookup the corresponding InternalSource and take it from the storage.
+    auto index = priv->sources.findMatching([&](auto& item) {
         return item->track().id() == track.id();
     });
+    std::unique_ptr<InternalSource> source = WTFMove(priv->sources[index]);
+    priv->sources.remove(index);
+
+    // Remove track from internal storage, so that the new stream collection will not reference it.
+    priv->tracks.removeFirstMatching([&](auto& item) {
+        return item->id() == track.id();
+    });
+
+    // Remove corresponding source pad, emit new stream collection.
+    webkitMediaStreamSrcTrackEnded(element, *source);
 }
 
 static GstURIType webkitMediaStreamSrcUriGetType(GType)

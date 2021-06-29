@@ -37,6 +37,10 @@ void ArgumentCoder<WebKit::AccessibilityPreferences>::encode(Encoder& encoder, c
     encoder << preferences.darkenSystemColors;
     encoder << preferences.invertColorsEnabled;
 #endif
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    encoder << preferences.captionDisplayMode;
+    encoder << preferences.preferredLanguages;
+#endif
 }
 
 std::optional<WebKit::AccessibilityPreferences> ArgumentCoder<WebKit::AccessibilityPreferences>::decode(Decoder& decoder)
@@ -52,6 +56,12 @@ std::optional<WebKit::AccessibilityPreferences> ArgumentCoder<WebKit::Accessibil
     if (!decoder.decode(preferences.darkenSystemColors))
         return std::nullopt;
     if (!decoder.decode(preferences.invertColorsEnabled))
+        return std::nullopt;
+#endif
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    if (!decoder.decode(preferences.captionDisplayMode))
+        return std::nullopt;
+    if (!decoder.decode(preferences.preferredLanguages))
         return std::nullopt;
 #endif
     return preferences;

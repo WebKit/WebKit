@@ -218,6 +218,9 @@ void GraphicsContextCG::save()
 
 void GraphicsContextCG::restore()
 {
+    if (!stackSize())
+        return;
+
     GraphicsContext::restore();
 
     // Note: Do not use this function within this class implementation, since we want to avoid the extra
@@ -230,84 +233,93 @@ void GraphicsContextCG::restore()
 void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     auto image = nativeImage.platformImage();
+    auto imageRect = FloatRect { { }, imageSize };
+    auto normalizedSrcRect = normalizeRect(srcRect);
+    auto normalizedDestRect = normalizeRect(destRect);
+
+    if (!image || !imageRect.intersects(normalizedSrcRect))
+        return;
 
 #if !LOG_DISABLED
     MonotonicTime startTime = MonotonicTime::now();
 #endif
-    RetainPtr<CGImageRef> subImage(image);
 
-    auto logicalHeight = [&](CGImageRef image) {
-        return options.orientation().usesWidthAsHeight() ? CGImageGetWidth(image) : CGImageGetHeight(image);
+    auto shouldUseSubimage = [](CGInterpolationQuality interpolationQuality, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& transform) -> bool {
+        if (interpolationQuality == kCGInterpolationNone)
+            return false;
+        if (transform.isRotateOrShear())
+            return true;
+        auto xScale = destRect.width() * transform.xScale() / srcRect.width();
+        auto yScale = destRect.height() * transform.yScale() / srcRect.height();
+        return !WTF::areEssentiallyEqual(xScale, yScale) || xScale > 1;
     };
 
-    float currHeight = logicalHeight(subImage.get());
-    if (currHeight <= srcRect.y())
-        return;
+    auto getSubimage = [](CGImageRef image, const FloatSize& imageSize, const FloatRect& subimageRect, const ImagePaintingOptions& options) -> RetainPtr<CGImageRef> {
+        auto physicalSubimageRect = subimageRect;
 
-    CGContextRef context = platformContext();
-    CGAffineTransform transform = CGContextGetCTM(context);
-    CGContextStateSaver stateSaver(context, false);
-    
-    bool shouldUseSubimage = false;
-
-    // If the source rect is a subportion of the image, then we compute an inflated destination rect that will hold the entire image
-    // and then set a clip to the portion that we want to display.
-    FloatRect adjustedDestRect = destRect;
-
-    if (srcRect.size() != imageSize) {
-        CGInterpolationQuality interpolationQuality = CGContextGetInterpolationQuality(context);
-        // When the image is scaled using high-quality interpolation, we create a temporary CGImage
-        // containing only the portion we want to display. We need to do this because high-quality
-        // interpolation smoothes sharp edges, causing pixels from outside the source rect to bleed
-        // into the destination rect. See <rdar://problem/6112909>.
-        const float minimumAreaForInterpolation = 40 * 40;
-        float xScale = srcRect.width() / destRect.width();
-        float yScale = srcRect.height() / destRect.height();
-        shouldUseSubimage = (interpolationQuality != kCGInterpolationNone) && (xScale < 0 || yScale < 0 || destRect.area() >= minimumAreaForInterpolation) && (srcRect.size() != destRect.size() || !getCTM().isIdentityOrTranslationOrFlipped());
-        if (shouldUseSubimage) {
-            FloatRect subimageRect = srcRect;
-            float leftPadding = srcRect.x() - floorf(srcRect.x());
-            float topPadding = srcRect.y() - floorf(srcRect.y());
-
-            subimageRect.move(-leftPadding, -topPadding);
-            adjustedDestRect.move(-leftPadding / xScale, -topPadding / yScale);
-
-            subimageRect.setWidth(ceilf(subimageRect.width() + leftPadding));
-            adjustedDestRect.setWidth(subimageRect.width() / xScale);
-
-            subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
-            adjustedDestRect.setHeight(subimageRect.height() / yScale);
-
+        if (options.orientation() != ImageOrientation::None) {
             // subimageRect is in logical coordinates. getSubimage() deals with none-oriented
             // image. We need to convert subimageRect to physical image coordinates.
-            if (options.orientation() != ImageOrientation::None) {
-                if (auto transform = options.orientation().transformFromDefault(imageSize).inverse())
-                    subimageRect = transform.value().mapRect(subimageRect);
-            }
-
-#if CACHE_SUBIMAGES
-            subImage = SubimageCacheWithTimer::getSubimage(subImage.get(), subimageRect);
-#else
-            subImage = adoptCF(CGImageCreateWithImageInRect(subImage.get(), subimageRect));
-#endif
-            if (currHeight < srcRect.maxY()) {
-                ASSERT(logicalHeight(subImage.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
-                adjustedDestRect.setHeight(logicalHeight(subImage.get()) / yScale);
-            }
-        } else {
-            adjustedDestRect.setLocation(FloatPoint(destRect.x() - srcRect.x() / xScale, destRect.y() - srcRect.y() / yScale));
-            adjustedDestRect.setSize(FloatSize(imageSize.width() / xScale, imageSize.height() / yScale));
+            if (auto transform = options.orientation().transformFromDefault(imageSize).inverse())
+                physicalSubimageRect = transform.value().mapRect(physicalSubimageRect);
         }
 
-        if (!destRect.contains(adjustedDestRect)) {
+#if CACHE_SUBIMAGES
+        return SubimageCacheWithTimer::getSubimage(image, physicalSubimageRect);
+#else
+        return adoptCF(CGImageCreateWithImageInRect(image, physicalSubimageRect));
+#endif
+    };
+
+    auto imageLogicalSize = [](CGImageRef image, const ImagePaintingOptions& options) -> FloatSize {
+        FloatSize size = FloatSize(CGImageGetWidth(image), CGImageGetHeight(image));
+        return options.orientation().usesWidthAsHeight() ? size.transposedSize() : size;
+    };
+    
+    auto context = platformContext();
+    CGContextStateSaver stateSaver(context, false);
+    auto transform = CGContextGetCTM(context);
+
+    auto subImage = image;
+    auto currentImageSize = imageLogicalSize(image.get(), options);
+
+    auto adjustedDestRect = normalizedDestRect;
+
+    if (normalizedSrcRect != imageRect) {
+        CGInterpolationQuality interpolationQuality = CGContextGetInterpolationQuality(context);
+        auto scale = normalizedDestRect.size() / normalizedSrcRect.size();
+
+        if (shouldUseSubimage(interpolationQuality, normalizedDestRect, normalizedSrcRect, transform)) {
+            auto subimageRect = enclosingIntRect(normalizedSrcRect);
+
+            // When the image is scaled using high-quality interpolation, we create a temporary CGImage
+            // containing only the portion we want to display. We need to do this because high-quality
+            // interpolation smoothes sharp edges, causing pixels from outside the source rect to bleed
+            // into the destination rect. See <rdar://problem/6112909>.
+            subImage = getSubimage(subImage.get(), imageSize, subimageRect, options);
+            adjustedDestRect = enclosingIntRect(adjustedDestRect);
+
+            // If the image is only partially loaded, then shrink the destination rect that we're drawing
+            // into accordingly.
+            if (currentImageSize.height() < normalizedSrcRect.maxY()) {
+                auto currentSubimageSize = imageLogicalSize(subImage.get(), options);
+                adjustedDestRect.setHeight(currentSubimageSize.height() * scale.height());
+            }
+        } else {
+            // If the source rect is a subportion of the image, then we compute an inflated destination rect
+            // that will hold the entire image and then set a clip to the portion that we want to display.
+            adjustedDestRect = { adjustedDestRect.location() - toFloatSize(normalizedSrcRect.location()) * scale, imageSize * scale };
+        }
+
+        if (!normalizedDestRect.contains(adjustedDestRect)) {
             stateSaver.save();
-            CGContextClipToRect(context, destRect);
+            CGContextClipToRect(context, normalizedDestRect);
         }
     }
 
     // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
-    if (!shouldUseSubimage && currHeight < imageSize.height())
-        adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / imageSize.height());
+    if (subImage == image && currentImageSize.height() < imageSize.height())
+        adjustedDestRect.setHeight(adjustedDestRect.height() * currentImageSize.height() / imageSize.height());
 
 #if PLATFORM(IOS_FAMILY)
     bool wasAntialiased = CGContextGetShouldAntialias(context);
@@ -322,17 +334,17 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     auto oldBlendMode = blendModeOperation();
     setCompositeOperation(options.compositeOperator(), options.blendMode());
 
-    // ImageOrientation expects the origin to be at (0, 0)
+    // Make the origin be at adjustedDestRect.location()
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
-    adjustedDestRect.setLocation(FloatPoint());
+    adjustedDestRect.setLocation(FloatPoint::zero());
 
     if (options.orientation() != ImageOrientation::None) {
         CGContextConcatCTM(context, options.orientation().transformFromDefault(adjustedDestRect.size()));
-        if (options.orientation().usesWidthAsHeight()) {
-            // The destination rect will have its width and height already reversed for the orientation of
-            // the image, as it was needed for page layout, so we need to reverse it back here.
-            adjustedDestRect = FloatRect(adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.height(), adjustedDestRect.width());
-        }
+
+        // The destination rect will have its width and height already reversed for the orientation of
+        // the image, as it was needed for page layout, so we need to reverse it back here.
+        if (options.orientation().usesWidthAsHeight())
+            adjustedDestRect = adjustedDestRect.transposedRect();
     }
     
     // Flip the coords.
@@ -341,7 +353,7 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
 
     // Draw the image.
     CGContextDrawImage(context, adjustedDestRect, subImage.get());
-    
+
     if (!stateSaver.didSave()) {
         CGContextSetCTM(context, transform);
 #if PLATFORM(IOS_FAMILY)
@@ -543,6 +555,9 @@ void GraphicsContextCG::drawEllipse(const FloatRect& rect)
 
 void GraphicsContextCG::applyStrokePattern()
 {
+    if (!m_state.strokePattern)
+        return;
+
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
@@ -559,6 +574,9 @@ void GraphicsContextCG::applyStrokePattern()
 
 void GraphicsContextCG::applyFillPattern()
 {
+    if (!m_state.fillPattern)
+        return;
+
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 

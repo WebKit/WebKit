@@ -42,6 +42,7 @@
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
 #include <wtf/HashMap.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace B3 {
 
@@ -633,7 +634,7 @@ private:
                         Add, m_value->origin(), m_value->child(0), negatedConstant);
                     break;
                 }
-                
+
                 // Turn this: Sub(0, value)
                 // Into this: Neg(value)
                 if (m_value->child(0)->isInt(0)) {
@@ -1033,6 +1034,23 @@ private:
             if (m_value->child(1)->isInt(0)) {
                 replaceWithIdentity(m_value->child(1));
                 break;
+            }
+
+            // Turn this: BitAnd(ZShr(value, shiftAmount), mask)
+            // - shiftAmount >= 0 and mask is contiguous ones from LSB, example 0b01111111
+            // - shiftAmount + bitCount(mask) == maxBitWidth
+            // Into this: ZShr(value, shiftAmount)
+            if (m_value->child(0)->opcode() == ZShr
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(1)->hasInt()) {
+                int64_t shiftAmount = m_value->child(0)->child(1)->asInt();
+                uint64_t mask = m_value->child(1)->asInt();
+                bool isValid = mask && !(mask & (mask + 1));
+                uint64_t maxBitWidth = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                if (shiftAmount >= 0 && isValid && static_cast<uint64_t>(shiftAmount + WTF::bitCount(mask)) == maxBitWidth) {
+                    replaceWithIdentity(m_value->child(0));
+                    break;
+                }
             }
 
             // Turn this: BitAnd(value, all-ones)

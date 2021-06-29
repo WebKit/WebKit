@@ -887,8 +887,6 @@ webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/219470 fast/visual-viewport/visual-viewport-resize-subframe-in-rendering-update.html [ Timeout Pass ]
 
-webkit.org/b/219473 fast/mediastream/media-stream-renders-first-frame.html [ Timeout Pass ]
-
 webkit.org/b/219474 svg/custom/animate-initial-pause-unpause.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1328,11 +1326,6 @@ webkit.org/b/188976 fast/css/pseudo-visited-background-color-on-input.html [ Ima
 webkit.org/b/188977 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 webkit.org/b/188979 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
-
-# No support for screen capture
-webkit.org/b/79203 fast/mediastream/screencapture-user-gesture.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
 
 webkit.org/b/192891 fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
 

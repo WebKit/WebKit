@@ -306,8 +306,6 @@ struct EraAndYear {
     _statusBarAssertion = [[PUICApplication sharedPUICApplication] _takeStatusBarGlobalContextAssertionAnimated:NO];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleStatusBarNavigation) name:PUICStatusBarNavigationBackButtonPressedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleStatusBarNavigation) name:PUICStatusBarTitleTappedNotification object:nil];
-
-    configureStatusBarForController(self, self.delegate);
 }
 
 - (void)viewDidAppear:(BOOL)animated

@@ -402,22 +402,20 @@ bool URL::setProtocol(StringView newProtocol)
 // Return value of false means error in encoding.
 static bool appendEncodedHostname(Vector<UChar, 512>& buffer, StringView string)
 {
-    // Needs to be big enough to hold an IDN-encoded name.
+    // hostnameBuffer needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
-    const unsigned hostnameBufferLength = 2048;
-
-    if (string.length() > hostnameBufferLength || string.isAllASCII()) {
+    if (string.length() > URLParser::hostnameBufferLength || string.isAllASCII()) {
         append(buffer, string);
         return true;
     }
 
-    UChar hostnameBuffer[hostnameBufferLength];
+    UChar hostnameBuffer[URLParser::hostnameBufferLength];
     UErrorCode error = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
     int32_t numCharactersConverted = uidna_nameToASCII(&URLParser::internationalDomainNameTranscoder(),
-        string.upconvertedCharacters(), string.length(), hostnameBuffer, hostnameBufferLength, &processingDetails, &error);
+        string.upconvertedCharacters(), string.length(), hostnameBuffer, URLParser::hostnameBufferLength, &processingDetails, &error);
 
-    if (U_SUCCESS(error) && !processingDetails.errors) {
+    if (U_SUCCESS(error) && !(processingDetails.errors & ~URLParser::allowedNameToASCIIErrors) && numCharactersConverted) {
         buffer.append(hostnameBuffer, numCharactersConverted);
         return true;
     }

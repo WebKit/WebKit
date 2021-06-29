@@ -66,6 +66,7 @@
             (GraphicsLayer
               (position 12.00 12.00)
               (bounds 296.00 296.00)
+              (clips 1)
               (children 1
                 (GraphicsLayer
                   (position 281.00 0.00)

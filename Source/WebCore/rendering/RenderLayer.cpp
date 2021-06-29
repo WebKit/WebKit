@@ -4111,7 +4111,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
-    if (renderer().hasClipPath() && !downcast<RenderBox>(renderer()).hitTestClipPath(hitTestLocation, toLayoutPoint(location() - renderBoxLocation())))
+    // FIXME: We need to correctly hit test the clip-path when we have a RenderInline too.
+    if (renderer().hasClipPath() && is<RenderBox>(renderer()) && !downcast<RenderBox>(renderer()).hitTestClipPath(hitTestLocation, toLayoutPoint(location() - renderBoxLocation())))
         return nullptr;
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
@@ -4276,7 +4277,7 @@ RenderLayer* RenderLayer::hitTestLayerByApplyingTransform(RenderLayer* rootLayer
     if (hitTestLocation.isRectBasedTest())
         newHitTestLocation = HitTestLocation(localPoint, localPointQuad);
     else
-        newHitTestLocation = HitTestLocation(localPoint);
+        newHitTestLocation = HitTestLocation(flooredLayoutPoint(localPoint));
 
     // Now do a hit test with the root layer shifted to be us.
     return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestLocation, true, newTransformState.ptr(), zOffset);

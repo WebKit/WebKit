@@ -75,6 +75,7 @@ using namespace HTMLNames;
 TextFieldInputType::TextFieldInputType(Type type, HTMLInputElement& element)
     : InputType(type, element)
 {
+    ASSERT(needsShadowSubtree());
 }
 
 TextFieldInputType::~TextFieldInputType()
@@ -316,6 +317,7 @@ bool TextFieldInputType::shouldHaveCapsLockIndicator() const
 
 void TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool isInnerTextElementEditable)
 {
+    ASSERT(needsShadowSubtree());
     ASSERT(element());
     ASSERT(element()->shadowRoot());
 

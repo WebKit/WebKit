@@ -2181,6 +2181,8 @@ GCGLenum WebGL2RenderingContext::clientWaitSync(WebGLSync& sync, GCGLbitfield fl
 
     if (sync.isSignaled())
         return GraphicsContextGL::ALREADY_SIGNALED;
+    if (flags & GraphicsContextGL::SYNC_FLUSH_COMMANDS_BIT)
+        flush();
     sync.updateCache(*this);
     if (sync.isSignaled())
         return GraphicsContextGL::CONDITION_SATISFIED;

@@ -41,12 +41,10 @@
     const unsigned short DONE = 2;
     readonly attribute unsigned short readyState;
 
-    // FIXME: In all four methods found below, the blob parameter should not be nullable.
-    // async read methods
-    undefined readAsArrayBuffer(Blob? blob);
-    undefined readAsBinaryString(Blob? blob);
-    undefined readAsText(Blob? blob, optional DOMString encoding);
-    undefined readAsDataURL(Blob? blob);
+    undefined readAsArrayBuffer(Blob blob);
+    undefined readAsBinaryString(Blob blob);
+    undefined readAsText(Blob blob, optional DOMString encoding);
+    undefined readAsDataURL(Blob blob);
 
     undefined abort();
 

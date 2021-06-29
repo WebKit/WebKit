@@ -1,3 +1,1063 @@
+2021-06-21  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Fix consistency check during stack splitting in Wasm::LLIntGenerator::addLoop
+        https://bugs.webkit.org/show_bug.cgi?id=226012
+
+        Reviewed by Tadeu Zagallo.
+
+        It is possible for the wasm llint generator to call
+        checkConsistency() on a stack that is only halfway through being
+        properly setup. Specifically, when generating a loop block, we use
+        splitStack() to pop the arguments for the loop into a new stack,
+        and materializeConstantsAndLocals() to materialize the constants
+        and aliases in the loop arguments, but the arguments won't be
+        added back to the stack until the very end of the loop code
+        generation. Since materializeConstantsAndLocals() will check the
+        correctness of the expression stack, which isn't yet fully formed,
+        we'll fail its ASSERT. To workaround this, we create a variant of
+        materializeConstantsAndLocals() that does not check for
+        correctness (similar to what we do in push()), and manually check
+        the correctness of the new split stack in
+        Wasm::LLIntGenerator::addLoop(), which is the place that knows the
+        details of this intermediate state.
+
+        For more details, see: https://bugs.webkit.org/show_bug.cgi?id=226012#c8
+
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::checkConsistencyOfExpressionStack):
+        (JSC::Wasm::LLIntGenerator::checkConsistency):
+        (JSC::Wasm::LLIntGenerator::materializeConstantsAndLocals):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+
+2021-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Release assert memory in JSC::Wasm::Memory::growShared(JSC::Wasm::PageCount)::<lambda()>
+        https://bugs.webkit.org/show_bug.cgi?id=227180
+
+        Reviewed by Keith Miller.
+
+        When Wasm.Memory is shared, we should allocate bound growable memory even if initial size is 0 bytes,
+        since this range can be later extended by mprotect. If maximum size is also 0 byte, we already have
+        a path that does not allocate anything.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::tryCreate):
+
+2021-06-21  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to utilize SMSUBL supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227195
+
+        Reviewed by Keith Miller.
+
+        Signed Multiply-Subtract Long(SMSUBL), supported by ARM64, multiplies two 
+        32-bit register values, subtracts the product from a 64-bit register value, 
+        and writes the result 64-bit destination register. The instruction selector 
+        can utilize this to lowering certain patterns in B3 IR before further Air 
+        optimization. Given the operation:
+
+        smsubl d, n, m, a
+
+        The equivalent pattern would be:
+
+        d = a - SExt32(n) * SExt32(m)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = SExt32(Trunc(ArgumentReg(%x1)))
+        Int @2 = SExt32(Trunc(ArgumentReg(%x2)))
+        Int @3 = Mul(@1, @2)
+        Int @4 = Sub(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        Before Adding SMSUBL:
+        // Old optimized AIR
+        SignExtend32ToPtr  %x1, %x1,           @1
+        SignExtend32ToPtr  %x2, %x2,           @2
+        MultiplySub64      %x1, %x2, %x0, %x0, @4
+        Ret64              %x0,                @5
+
+        After Adding SMSUBL:
+        // New optimized AIR
+        MultiplySubSignExtend32 %x1, %x2, %x0, %x0, @4
+        Ret64                   %x0,                @5
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::multiplySubSignExtend32):
+        * assembler/testmasm.cpp:
+        (JSC::testMulSubSignExtend32):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testMulSubArgsLeft):
+        (testMulSubArgsRight):
+        (testMulSubArgsLeft32):
+        (testMulSubArgsRight32):
+        (testMulSubSignExtend32Args):
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
+2021-06-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        makeUnique cannot be used to instantiate function-local classes
+        https://bugs.webkit.org/show_bug.cgi?id=227163
+
+        Reviewed by Antti Koivisto.
+
+        Make JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED
+        consistent with WTF_MAKE_FAST_ALLOCATED behavior
+        with respect to unused typedefs inside the macro.
+
+        * parser/Nodes.h:
+
+2021-06-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add ValueOf fast path in toPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=226948
+
+        Reviewed by Ross Kirsling.
+
+        Add fast path for Object.prototype.valueOf function call since we
+        sometimes encounter this case in Speedometer2/EmberJS-Debug-TodoMVC.
+
+                                       ToT                     Patched
+
+            value-of-call        65.7169+-0.6192     ^     45.0986+-0.0830        ^ definitely 1.4572x faster
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toStringSlowCase const):
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+
+2021-06-20  Robin Morisset  <rmorisset@apple.com>
+
+        Fix speculated type in the one-argument overload of speculateNeitherDoubleNorHeapBigIntNorString
+        https://bugs.webkit.org/show_bug.cgi?id=227119
+
+        Reviewed by Yusuke Suzuki.
+
+        Same problem as bug 226786: a missing check for HeapBigInt in the speculateNeitherDoubleNorHeapBigIntNorString function introduced in 226676.
+
+        I also rewrote the SpeculatedType for NeitherDoubleNorHeapBigIntNorString in typeFilterFor for readability. The old and the new SpeculatedType are perfectly identical, it is just a different (and in my view more readable) way of writing it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+
+2021-06-19  Mark Lam  <mark.lam@apple.com>
+
+        [Revert r278576] Put the Baseline JIT prologue and op_loop_hint code in JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=226375
+
+        Not reviewed.
+
+        Suspect regresses Speedometer2.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::untagReturnAddress):
+        (JSC::AbstractMacroAssembler::untagReturnAddressWithoutExtraValidation): Deleted.
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagReturnAddress):
+        (JSC::MacroAssemblerARM64E::untagReturnAddressWithoutExtraValidation): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addressOfNumParameters):
+        (JSC::CodeBlock::offsetOfNumParameters):
+        (JSC::CodeBlock::offsetOfInstructionsRawPointer):
+        (JSC::CodeBlock::offsetOfNumCalleeLocals): Deleted.
+        (JSC::CodeBlock::offsetOfNumVars): Deleted.
+        (JSC::CodeBlock::offsetOfArgumentValueProfiles): Deleted.
+        (JSC::CodeBlock::offsetOfShouldAlwaysBeInlined): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesForBaselineJIT): Deleted.
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesForBaselineJIT): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        (JSC::prologueGeneratorSelector): Deleted.
+        (JSC::JIT::prologueGenerator): Deleted.
+        (JSC::JIT::arityFixupPrologueGenerator): Deleted.
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::op_enter_Generator): Deleted.
+        (JSC::JIT::op_enter_canBeOptimized_Generator): Deleted.
+        (JSC::JIT::op_enter_cannotBeOptimized_Generator): Deleted.
+        (JSC::JIT::op_loop_hint_Generator): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/ThunkGenerators.cpp:
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+
+2021-06-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r278699.
+        https://bugs.webkit.org/show_bug.cgi?id=227174
+
+        Regressed JetStream2/WSL
+
+        Reverted changeset:
+
+        "[JSC] Remove useDataICInOptimizingJIT option"
+        https://bugs.webkit.org/show_bug.cgi?id=226862
+        https://trac.webkit.org/changeset/278699
+
+2021-06-18  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to B3ReduceStrength based on Bug 226984
+        https://bugs.webkit.org/show_bug.cgi?id=227138
+
+        Reviewed by Filip Pizlo.
+
+        In the previous patch bug 226984, a new pattern could be introduced to 
+        B3ReduceStrength.cpp for further optimization, which is that:
+
+        dest = (src >> shiftAmount) & mask
+
+        is equivalent to
+
+        src >> shiftAmount
+
+        under these constraints:
+
+        1. shiftAmount >= 0 
+        2. mask has a binary format in contiguous ones starting from the 
+           least significant bit.
+        3. shiftAmount + bitCount(mask) == maxBitWidth
+
+        For instance (32-bit):
+
+        (src >> 12) & 0x000fffff == src >> 12
+
+        This reduction is more beneficial than UBFX in this case.  
+
+        // B3 IR
+        Int @0 = ArgumentReg(%0)
+        Int @1 = 12
+        Int @2 = ZShr(@0, @1)
+        Int @3 = 0x000fffff
+        Int @4 = BitAnd(@2, @3))
+        Void@5 = Return(@4, Terminal)    
+
+        w/o the pattern:
+        // Old optimized AIR
+        Ubfx %0, $12, $20, %0, @4
+        Ret  %0,               @5
+
+        w/ the pattern:
+        // New optimized AIR
+        Urshift %0, $12, %0, @3
+        Ret32   %0,          @6
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testBitAndZeroShiftRightImmMask32):
+        (testBitAndZeroShiftRightImmMask64):
+        (addBitTests):
+
+2021-06-18  Robin Morisset  <rmorisset@apple.com>
+
+        [DFG] Untyped branches should eliminate checks based on results from the AbstractInterpreter
+        https://bugs.webkit.org/show_bug.cgi?id=227159
+
+        Reviewed by Filip Pizlo.
+
+        We currently emit a ton of code for Untyped branches, as we use branchIfTruthy which does not know anything about the abstract interpreter.
+        Even worse: we call branchIfTruthy after emitting some fast paths, and branchIfTruthy replicates these fast paths (Int32 and Booleans).
+        While I plan to reduce the number of Untyped branches in some separate patches, there is a very long tail of predicted types visible in benchmarks, so I expect some of them to remain no matter what, justifying making the code emitted in that case more reasonable.
+
+        The implementation in this patch is fairly straightforward, as it follows very closely branchOnValue() from AssemblyHelpers (which was previously called through branchIfTruthy).
+
+        It was tested on the JSC stress tests, as well as on JetStream2.
+
+        On JetStream2, it reduced the average number of bytes emitted for Branch by the DFG from 30.1 to 27.5 (highly significant, it only changes by about 0.1 between runs).
+        Since only about 1.5k branches are untyped out of 34k in that benchmark, it means that this patch reduces the amount of code emitted for untyped branches by about 50 bytes on average.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::branchDoubleZeroOrNaN):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitUntypedBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+
+2021-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Rename numberOfPACBits to maxNumberOfAllowedPACBits.
+        https://bugs.webkit.org/show_bug.cgi?id=227156
+
+        Reviewed by Saam Barati.
+
+        Just renaming the constant to better describe what it represents.  There are no
+        behavior changes.
+
+        * assembler/MacroAssemblerARM64E.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::cageWithoutUntagging):
+        (JSC::AssemblyHelpers::cageConditionallyAndUntag):
+        * llint/LowLevelInterpreter64.asm:
+
+2021-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Define MacroAssemblerARM64E::numberOfPACBits based on OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH).
+        https://bugs.webkit.org/show_bug.cgi?id=227147
+        rdar://78785309
+
+        Reviewed by Saam Barati.
+
+        * assembler/MacroAssemblerARM64E.h:
+        * bytecode/CodeOrigin.h:
+        * runtime/JSString.h:
+        * runtime/OptionsList.h:
+
+2021-06-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Reimplement JSC::CachePayload without FileSystem::unmapViewOfFile and FileSystem::MappedFileData::leakHandle
+        https://bugs.webkit.org/show_bug.cgi?id=227014
+
+        Reviewed by Yusuke Suzuki.
+
+        r247542 (Bug 199759) added FileSystem::unmapViewOfFile and
+        FileSystem::MappedFileData::leakHandle for JSC::CachePayload to
+        get the mapped address and to free the address.
+
+        However, Bug 227011 is going to add a file mapping handle to
+        FileSystem::MappedFileData for Windows port to create a
+        SharedMemory from a MappedFileData. Destruction of MappedFileData
+        should be done only by MappedFileData dtor.
+
+        * runtime/CachePayload.cpp:
+        (JSC::CachePayload::makeMappedPayload):
+        (JSC::CachePayload::makeMallocPayload):
+        (JSC::CachePayload::makeEmptyPayload):
+        (JSC::CachePayload::CachePayload):
+        (JSC::CachePayload::data const):
+        (JSC::CachePayload::size const):
+        (JSC::CachePayload::~CachePayload): Deleted.
+        (JSC::CachePayload::operator=): Deleted.
+        (JSC::CachePayload::freeData): Deleted.
+        * runtime/CachePayload.h: Use Variant for data.
+        (JSC::CachePayload::data const): Deleted.
+        (JSC::CachePayload::size const): Deleted.
+        (JSC::CachePayload::CachePayload): Deleted.
+
+2021-06-17  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to utilize UBFX supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=226984
+
+        Reviewed by Filip Pizlo.
+
+        UBFX, supported by ARM64, copies adjacent bits from the source register into 
+        the least significant bits of a destination register in zero extension. The 
+        instruction selector can utilize this to lowering certain patterns in B3 IR 
+        before further Air optimization.
+
+        ubfx dest, src, lsb, width
+           tmp, tmp, imm, imm
+
+        This is equivalent to "dest = (src >> lsb) & ((1 << width) - 1)". Since wasm 
+        introduces constant folding, then the pattern would be:
+
+        dest = (src >> lsb) & mask
+
+        where the mask should have a binary format in contiguous ones starting from 
+        the least significant bit. For example:
+
+        0b00111111
+
+        To make the pattern matching in instruction selection beneficial to JIT, these 
+        constraints should be introduced:
+
+        1. lsb >= 0 
+        2. width > 0
+        3. lsb + width <= bit field limit (32 or 64)
+
+        Given:
+        // B3 IR
+        Int @0 = ArgumentReg(%0)
+        Int @1 = lsb
+        Int @2 = 0b0011
+        Int @3 = ZShr(@0, @1)
+        Int @4 = BitAnd(@3, @2)  
+        Void@5 = Return(@4, Terminal)      
+
+        w/o UBFX Pattern:
+        // Old optimized AIR
+        Urshift %x0, lsb, %x0, @3
+        And  0b0011, %x0, %x0, @4
+        Ret     %x0,           @5
+
+        w/ UBFX Pattern:
+        // New optimized AIR
+        Ubfx %x0, lsb, 2, %x0, @4
+        Ret  %x0,              @5
+
+        Note:
+        Suppose a 32-bit version of (src >> 20) & 0x0FFF, it is equivalent to src >> 20. 
+        In this case, Logical Shift Right should be utilized instead when:
+
+        lsb + width == bit field limit (32 or 64)
+
+        This case/pattern should be added and upadated in the future patch.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::ubfx32):
+        (JSC::MacroAssemblerARM64::ubfx64):
+        * assembler/testmasm.cpp:
+        (JSC::testUbfx32):
+        (JSC::testUbfx64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testUbfx64PatternMatch):
+        (testUbfx32PatternMatch):
+        (addBitTests):
+
+2021-06-17  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Work around apparent miscompilation on ARM/GCC >=8.4
+        https://bugs.webkit.org/show_bug.cgi?id=227125
+
+        Reviewed by Filip Pizlo.
+
+        This seems to be a GCC miscompilation, revealed by
+        https://bugs.webkit.org/show_bug.cgi?id=227078.  Introduce a
+        workaround for the GCC versions that seem to be affected.
+
+        * jit/RegisterSet.h:
+
+2021-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize JSON.parse with small data by changing Identifier pool mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=227101
+
+        Reviewed by Mark Lam.
+
+        Found that std::array<Identifier, 128> pool in LiteralParser is too costly for construction and destruction
+        if JSON.parse is invoked for small data. This patch changes this pool mechanism so that we do not waste effort
+        allocating null Identifiers to pre-populate the recent identifiers pool. Instead, we now use a m_recentIdentifiersIndex
+        uint8_t array to indicate whether there's a cached recent identifier for each given first character.
+
+        We also use KeywordLookup.h's COMPARE_XCHARS to perform "true" / "false" / "null" lexing in JSON parser.
+        Roughly 20% improvement in microbenchmark. And roughly 2-3% improvement in Speedometer2/Flight-TodoMVC.
+
+                                            ToT                     Patched
+
+            flight-todomvc-json       67.8755+-1.1202     ^     56.7114+-0.5048        ^ definitely 1.1969x faster
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::add8):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        (JSC::Identifier::add):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::add):
+        (JSC::Identifier::fromString):
+        * runtime/LiteralParser.cpp:
+        (JSC::compare3Chars):
+        (JSC::compare4Chars):
+        (JSC::LiteralParser<CharType>::makeIdentifier):
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        * runtime/LiteralParser.h:
+
+2021-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Adopt com.apple.security.cs.jit-write-allowlist on internal builds.
+        https://bugs.webkit.org/show_bug.cgi?id=222148
+        rdar://74284026
+
+        Reviewed by Per Arne Vollan.
+
+        This will prevent various pthread permissions switching APIs from working.
+        We only want to adopt this for internal builds where we use the fast permission
+        switching macro instead.  We can't adopt it for open source builds, where we
+        still rely on the pthread API.
+
+        * Scripts/process-entitlements.sh:
+
+2021-06-16  Robin Morisset  <rmorisset@apple.com>
+
+        Don't look at the (non-existent) child2 of DelById
+        https://bugs.webkit.org/show_bug.cgi?id=227095
+
+        Reviewed by Mark Lam.
+
+        Trivial fix to a broken rebase: while it is ok to share most code between DelById and DelByVal, only the latter has a child2(), so it should not be accessed if we are compiling the former.
+        No new test, as it was caught by one of our existing tests.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+
+2021-06-16  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Air opcode sub32/64(Reg, Imm, Reg) form for ARM64 and select this instruction in Air
+        https://bugs.webkit.org/show_bug.cgi?id=226937
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, Air arm64 sub32/64 utilize sub(Imm, Tmp) at optlevel = 0 and 
+        add(Tmp, -Imm) at optlevel > 0 to perform and optimize sub(Tmp, Imm, Tmp).
+        The issue with this is that we were not eliding redundant operations. 
+
+        For example:
+        // B3 IR
+        @0 = Trunc(ArgumentReg(0))
+        @1 = Const
+        @2 = Sub(@0, @1)
+        @3 = Return(@2)
+
+        // Old optimized Air IR
+        // OptLevel = 0
+        Move    %x0, %tmp1, @0
+        Move $Const, %tmp2, @1
+        Move  %tmp1, %tmp0, @2 // Redundant
+        Sub  $Const, %tmp0, @2
+        Move  %tmp0,   %x0, @3
+        Ret32   %x0,        @3
+
+        To remove those redundant instructions, Air arm64 sub32/64 opcode should 
+        indicate a new form sub(Tmp, Imm, Tmp).
+
+        // New optimized Air IR
+        // OptLevel = 0
+        Move    %x0,  %tmp1,        @0
+        Move $Const,  %tmp2,        @1
+        Sub   %tmp1, $Const, %tmp0, @2
+        Move  %tmp0,    %x0,        @3
+        Ret32   %x0,                @3
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::sub32):
+        (JSC::MacroAssemblerARM64::sub64):
+        * assembler/testmasm.cpp:
+        (JSC::testSub32Args):
+        (JSC::testSub32Imm):
+        (JSC::testSub32ArgImm):
+        (JSC::testSub64Imm32):
+        (JSC::testSub64ArgImm32):
+        (JSC::testSub64Imm64):
+        (JSC::testSub64ArgImm64):
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testSubArgs32ZeroExtend):
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
+2021-06-16  Robin Morisset  <rmorisset@apple.com>
+
+        Drop the FTL(DFG) graph after lowering to B3
+        https://bugs.webkit.org/show_bug.cgi?id=226556
+
+        Reviewed by Phil Pizlo.
+
+        This patch originally landed as r278463, was reverted in r278463.
+        I believe that the bug for which it was reverted actually comes from r278371, which was also reverted at the same time. So I am now relanding this.
+
+        The challenge in this patch was dealing with all of the Patchpoints created by FTLLowerDFGToB3: they get a lambda at that time, which they execute at the end of Air, and many of these lambdas were capturing a pointer to some parts of the DFG graph and reading through it when being executed.
+        In all cases but one it was easily fixed: they were only reading a few bits from a given node, so I just read these bits in FTLLowerDFGToB3, and captured them (by value) instead of the pointer to the node.
+        The exception was compileCallOrConstructVarargsSpread(): its patchpoint generator was walking through the graph, flattening a tree of PhantomSpread/PhantomNewArrayWithSpread/PhantomNewArrayBuffer/PhantomCreateRest, emitting some code along the way.
+        We now do this flattening of the tree in FTLLowerDFGToB3, store just enough information to later emit the required code in a vector, and capture that vector in the lambda (through a move capture, which is allowed since C++14). See `struct VarargsSpreadArgumentToEmit` for the information that we need to store in that vector.
+
+        I tested this change by completing a full run of JetStream2 with ASAN.
+        I also ran the stress tests with "spread" in their name in Debug mode.
+
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::clearAll):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::freeDFGIRAfterLowering):
+        * dfg/DFGGraph.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::getPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePrivateBrandAccess):
+        (JSC::FTL::DFG::LowerDFGToB3::cachedPutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::VarargsSpreadArgumentToEmit::VarargsSpreadArgumentToEmit):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::getByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+
+2021-06-16  Filip Pizlo  <fpizlo@apple.com>
+
+        RegisterSet should be smaller
+        https://bugs.webkit.org/show_bug.cgi?id=227078
+
+        Reviewed by Geoff Garen.
+
+        Previously, every RegisterSet would have an extra 64-bit word in it just to hold state
+        relevant to hashtable keys.
+
+        But RegisterSet is almost never used as a hashtable key.
+
+        This patch moves the hashtable key support into a subclass, HashableRegisterSet. That class
+        ends up only being used in one place.
+
+        On ARM64, this makes RegisterSet use 64 bits instead of 128 bits.
+
+        On X86_64, this makes RegisterSet use 32 bits instead of 64 bits.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLSlowPathCallKey.h:
+        (JSC::FTL::SlowPathCallKey::SlowPathCallKey):
+        * jit/HashableRegisterSet.h: Added.
+        (JSC::HashableRegisterSet::HashableRegisterSet):
+        (JSC::HashableRegisterSet::isEmptyValue const):
+        (JSC::HashableRegisterSet::isDeletedValue const):
+        (JSC::RegisterSetHash::hash):
+        (JSC::RegisterSetHash::equal):
+        * jit/RegisterSet.h:
+        (): Deleted.
+        (JSC::RegisterSet::isEmptyValue const): Deleted.
+        (JSC::RegisterSet::isDeletedValue const): Deleted.
+        (JSC::RegisterSetHash::hash): Deleted.
+        (JSC::RegisterSetHash::equal): Deleted.
+
+2021-06-16  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AssemblyHelpers should save/restore callee save FPRs
+        https://bugs.webkit.org/show_bug.cgi?id=227052
+        <rdar://77080162>
+
+        Reviewed by Mark Lam.
+
+        We have 3 functions in AssemblyHelpers to save and restore callee save registers that were filtering
+        out any FPRs. This is an issue since we do have callee save FPRs in arm64 and these functions can be
+        called from the FTL, and FTL uses those callee saves. The test case shows how that's an issue with tail
+        calls on FTL: the callee saves are correctly stored in the prologue and restored in the epilogue, but
+        when emitting a tail call we use AssemblyHelpers::emitRestoreCalleeSaves to restore the callee saves,
+        which doesn't restore FPRs. This results in the callee save FPRs being trashed. To fix this we just need
+        to stop filtering out the FPRs, if they are listed as used by the code block they should be saved/restored
+        accordingly. I also changed DFGOSREntry to stop filtering out the callee save FPRs and instead assert
+        there aren't any, since they aren't currently used in the DFG, but it could help avoid the same issue in
+        the future.
+
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitSaveOrCopyCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor):
+
+2021-06-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r278846.
+        https://bugs.webkit.org/show_bug.cgi?id=227060
+
+        Speculative revert based on failure history of Speedometer2
+
+        Reverted changeset:
+
+        "Add Air opcode sub32/64(Reg, Imm, Reg) form for ARM64 and
+        select this instruction in Air"
+        https://bugs.webkit.org/show_bug.cgi?id=226937
+        https://trac.webkit.org/changeset/278846
+
+2021-06-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize JSON.parse with small content by dropping single character Identifier pool
+        https://bugs.webkit.org/show_bug.cgi?id=227057
+
+        Reviewed by Sam Weinig.
+
+        Profiler results and investigation suggest interesting things.
+
+            1. Sampling profiler says Flight-TodoMVC is mostly JSON.parse benchmark.
+            2. Each JSON data of Flight-TodoMVC is small. And JSON.parse is super frequently called.
+            3. In the case of JSON.parse with small data, LiteralParser's construction / destruction costs much since
+               it has large Identifier pool with std::array<>.
+
+        As a simple first step, this patch removes single character Identifier pool from LiteralParser since
+        the exact same Identifier data can be retrieved from VM's SmallStrings.
+
+        We created a microbenchmark from Flight-TodoMVC's data, and the result is roughly 20% better.
+        And we observed 0.6% improvement in Speedometer2.
+
+                                            ToT                     Patched
+
+            flight-todomvc-json       81.0552+-0.8403     ^     67.5756+-0.6221        ^ definitely 1.1995x faster
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |128.991667   |128.450000   |0.995801  | 0.278228                                         |
+            | VueJS-TodoMVC                        |28.487500    |27.925000    |0.980254  | 0.139315                                         |
+            | EmberJS-TodoMVC                      |133.950000   |134.175000   |1.001680  | 0.685021                                         |
+            | BackboneJS-TodoMVC                   |51.670833    |51.537500    |0.997420  | 0.628993                                         |
+            | Preact-TodoMVC                       |21.783333    |21.754167    |0.998661  | 0.944237                                         |
+            | AngularJS-TodoMVC                    |143.820833   |143.770833   |0.999652  | 0.933953                                         |
+            | Vanilla-ES2015-TodoMVC               |71.608333    |71.416667    |0.997323  | 0.500591                                         |
+            | Inferno-TodoMVC                      |69.179167    |69.525000    |1.004999  | 0.412406                                         |
+            | Flight-TodoMVC                       |81.354167    |79.020833    |0.971319  | 0.000053 (significant)                           |
+            | Angular2-TypeScript-TodoMVC          |42.654167    |41.887500    |0.982026  | 0.086053                                         |
+            | VanillaJS-TodoMVC                    |57.054167    |56.633333    |0.992624  | 0.176804                                         |
+            | jQuery-TodoMVC                       |274.595833   |275.670833   |1.003915  | 0.148812                                         |
+            | EmberJS-Debug-TodoMVC                |358.387500   |357.595833   |0.997791  | 0.323387                                         |
+            | React-TodoMVC                        |93.804167    |93.329167    |0.994936  | 0.113410                                         |
+            | React-Redux-TodoMVC                  |157.954167   |157.266667   |0.995647  | 0.131298                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |68.687500    |68.054167    |0.990779  | 0.002155 (significant)                           |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 235.28964
+            b mean = 236.72163
+            pValue = 0.0121265559
+            (Bigger means are better.)
+            1.006 times better
+            Results ARE significant
+
+        * runtime/Identifier.h:
+        (JSC::Identifier::canUseSingleCharacterString):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::makeIdentifier):
+        * runtime/LiteralParser.h:
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::singleCharacterStringRep):
+        * runtime/SmallStrings.h:
+
+2021-06-15  Keith Miller  <keith_miller@apple.com>
+
+        Shouldn't drain the micro task queue when calling out to ObjC
+        https://bugs.webkit.org/show_bug.cgi?id=161942
+
+        Unreviewed, relanding r278734.
+
+        * API/tests/testapi.cpp:
+        (TestAPI::promiseDrainDoesNotEatExceptions):
+        (testCAPIViaCpp):
+        * API/tests/testapi.mm:
+        (testMicrotaskWithFunction):
+        (testObjectiveCAPI):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::willReleaseLock):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::isPokerBros):
+        * runtime/VM.cpp:
+        (JSC::VM::didExhaustMicrotaskQueue):
+
+2021-06-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Warray-bounds warning in Packed.h
+        https://bugs.webkit.org/show_bug.cgi?id=226557
+        <rdar://problem/79103658>
+
+        Reviewed by Darin Adler.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+
+2021-06-15  Mark Lam  <mark.lam@apple.com>
+
+        Move setting of scratch buffer active lengths to the runtime functions.
+        https://bugs.webkit.org/show_bug.cgi?id=227013
+        rdar://79325068
+
+        Reviewed by Keith Miller.
+
+        We previously emit JIT'ed code to set and unset the ScratchBuffer active length
+        around calls into C++ runtime functions.  This was needed because the runtime
+        functions may allow GC to run, and GC needs to be able to scan the values stored
+        in the ScratchBuffer.
+
+        In this patch, we change it so that the runtime functions that need it will
+        declare an ActiveScratchBufferScope RAII object that will set the ScratchBuffer
+        active length, and unset it on exit.  This allows us to:
+
+        1. Emit less JIT code.  The runtime function can take care of it.
+        2. Elide setting the ScratchBuffer active length if not needed.  The runtime
+           functions know whether they can GC or not.  They only need to set the active
+           length if they can GC.
+
+        Note that scanning of the active ScratchBuffer is done synchronously on the
+        mutator thread via Heap::gatherScratchBufferRoots(), which is called as part of
+        the GC conservative root scan.  This means there is no urgency / sequencing that
+        requires that the active length be set before calling into the runtime function.
+        Setting it in the runtime function itself is fine as long as it is done before
+        the function executes any operations that can GC.
+
+        This patch also made the following changes:
+
+        1. Introduce ActiveScratchBufferScope RAII object used to set/unset the
+           ScratchBuffer length in the runtime functions.  ActiveScratchBufferScope takes
+           the active length in units of number of stack slots / Registers / JSValues
+           instead of bytes.
+
+        2. Deleted ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall()
+           and ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall().
+           These functions are unused.
+
+        The reasoning behind what values to pass to ActiveScratchBufferScope, is any:
+
+        1. AssemblyHelpers::debugCall() in AssemblyHelpers.cpp:
+           The ScratchBuffer is only used for operationDebugPrintSpeculationFailure(),
+           which now declares an ActiveScratchBufferScope.
+
+           The active length is GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters.
+           See scratchSize in AssemblyHelpers::debugCall().
+
+        2. genericGenerationThunkGenerator() in FTLThunks.cpp:
+           The scratch buffer size for determining the active length is
+           requiredScratchMemorySizeInBytes().  
+
+           However, genericGenerationThunkGenerator() generates code to call either
+           operationCompileFTLOSRExit() or operationCompileFTLLazySlowPath().  Both of
+           these functions will DeferGCForAWhile.  Hence, GC cannot run, and we don't need
+           to set the active length here.
+
+        3. compileArrayPush() in FTLLowerDFGToB3.cpp:
+
+           Cases Array::Int32, Array::Contiguous, or Array::Double calls
+           operationArrayPushMultiple() or operationArrayPushDoubleMultiple().
+
+           For operationArrayPushMultiple(), the active length is elementCount.  See
+           computation of scratchSize.
+
+           For operationArrayPushDoubleMultiple(), we don't need to set the active length
+           because the ScratchBuffer only contains double values.  The GC does not need
+           to scan those.
+
+           Case Array::ArrayStorage calls operationArrayPushMultiple().
+           The active length is elementCount.  See computation of scratchSize.
+
+           compileNewArray() in FTLLowerDFGToB3.cpp:
+
+           Calls operationNewArray().  Active length is m_node->numChildren(), which is
+           passed to operationNewArray() as the size parameter.  See computation of
+           scratchSize.
+
+           compileNewArrayWithSpread() in FTLLowerDFGToB3.cpp:
+
+           Calls operationNewArrayWithSpreadSlow().  Active length is m_node->numChildren(),
+           which is passes to operationNewArrayWithSpreadSlow() as the numItems parameter.
+           See computation of scratchSize.
+
+        4. osrExitGenerationThunkGenerator() in DFGThunks.cpp:
+
+           Calls operationCompileOSRExit().  Active length is GPRInfo::numberOfRegisters +
+           FPRInfo::numberOfRegisters.  See computation of scratchSize.
+
+        5. compileNewArray() in DFGSpeculativeJIT.cpp:
+
+           Calls operationNewArray().  Active length is node->numChildren(), which is
+           passed in as the size parameter.
+
+           compileNewArrayWithSpread() in DFGSpeculativeJIT.cpp:
+
+           Calls operationNewArrayWithSpreadSlow().  Active length is node->numChildren(),
+           which is passed in as the numItems parameter.
+
+           compileArrayPush() in DFGSpeculativeJIT.cpp:
+
+           Calls operationArrayPushMultiple().  Active length is elementCount, which is
+           passed in as the elementCount parameter.
+
+           Calls operationArrayPushDoubleMultiple().  Active length is elementCount, but
+           we don't need to set it because the ScratchBuffer only contains double values.
+
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+        (JSC::DFG::SpeculativeJIT::compileArrayPush):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall): Deleted.
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall): Deleted.
+        * jit/ScratchRegisterAllocator.h:
+        * runtime/VM.h:
+        * runtime/VMInlines.h:
+        (JSC::ActiveScratchBufferScope::ActiveScratchBufferScope):
+        (JSC::ActiveScratchBufferScope::~ActiveScratchBufferScope):
+
+2021-06-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Workaround ICU uloc_addLikelySubtags / uloc_minimizeSubtags bugs
+        https://bugs.webkit.org/show_bug.cgi?id=226996
+        rdar://79250513
+
+        Reviewed by Ross Kirsling.
+
+        ICU has bugs that uloc_addLikelySubtags / uloc_minimizeSubtags cannot handle very long locale ID that exceeds ULOC_FULLNAME_CAPACITY,
+        while these functions can take arbitrary sized buffer for output. This can be achieved simply by (1) attaching many unicode extensions,
+        or (2) having many variants.
+
+        In this patch, we add a workaround: if uloc_addLikelySubtags / uloc_minimizeSubtags failed, we perform them without having locale ID
+        keywords part. After performing the operations, we append these keywords back.
+
+        This is workaround, and still this workaround is not complete since we could have many variants. In that case, uloc_addLikelySubtags / uloc_minimizeSubtags
+        still fails, and in that case, for now, we give up performing uloc_addLikelySubtags / uloc_minimizeSubtags. Fixing this needs to be
+        done in ICU side: https://unicode-org.atlassian.net/browse/ICU-21639
+
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::keywordValue const):
+        (JSC::IntlLocale::maximal):
+        (JSC::IntlLocale::minimal):
+        (JSC::IntlLocale::baseName):
+
+2021-06-14  Mark Lam  <mark.lam@apple.com>
+
+        Add ldp and stp support for FP registers, plus some bug fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=226998
+        rdar://79313717
+
+        Reviewed by Robin Morisset.
+
+        This patch does the following:
+        1. Add ldp and stp support for FP registers.
+           This simply entails providing wrappers that take FPRegisterID and passing true
+           for the V bit to the underlying loadStoreRegisterPairXXX encoding function.
+           V is for vector (aka floating point).  This will cause bit 26 in the instruction
+           to be set indicating that it's loading / storing floating point registers.
+
+        2. Add ARM64 disassembler support ldp and stp for FP registers.
+           This includes fixing A64DOpcodeLoadStoreRegisterPair::mask to not exclude the
+           FP versions of the instructions.
+
+        3. Add ARM64Assembler query methods for determining if an immediate is encodable
+           as the signed 12 bit immediate of ldp and stp instructions.
+
+        4. Fix ldp and stp offset form to take an int instead of an unsigned.  The
+           immediate it takes is a 12-bit signed int, not unsigned.
+
+        5. In loadStoreRegisterPairXXX encoding functions used by the forms of ldp and stp,
+           RELEASE_ASSERT that the passed in immediate is encodable.  Unlike ldur / stur,
+           there is no form of ldp / stp that takes the offset in a register that can be
+           used as a fail over.  Hence, if the immediate is not encodable, this is a
+           non-recoverable event.  The client is responsible for ensuring that the offset
+           is encodable.
+
+        6. Added some testmasm tests for testing the offset form (as opposed to PreIndex
+           and PostIndex forms) of ldp and stp.  We currently only use the offset form
+           in our JITs.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::isValidLDPImm):
+        (JSC::ARM64Assembler::isValidLDPFPImm):
+        (JSC::ARM64Assembler::ldp):
+        (JSC::ARM64Assembler::ldnp):
+        (JSC::ARM64Assembler::isValidSTPImm):
+        (JSC::ARM64Assembler::isValidSTPFPImm):
+        (JSC::ARM64Assembler::stp):
+        (JSC::ARM64Assembler::stnp):
+        (JSC::ARM64Assembler::loadStoreRegisterPairPostIndex):
+        (JSC::ARM64Assembler::loadStoreRegisterPairPreIndex):
+        (JSC::ARM64Assembler::loadStoreRegisterPairOffset):
+        (JSC::ARM64Assembler::loadStoreRegisterPairNonTemporal):
+        * assembler/AssemblerCommon.h:
+        (JSC::isValidSignedImm7):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadPair64):
+        (JSC::MacroAssemblerARM64::storePair64):
+        * assembler/testmasm.cpp:
+        (JSC::testLoadStorePair64Int64):
+        (JSC::testLoadStorePair64Double):
+        * disassembler/ARM64/A64DOpcode.cpp:
+        (JSC::ARM64Disassembler::A64DOpcodeLoadStoreRegisterPair::format):
+        * disassembler/ARM64/A64DOpcode.h:
+
+2021-06-14  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Air opcode sub32/64(Reg, Imm, Reg) form for ARM64 and select this instruction in Air
+        https://bugs.webkit.org/show_bug.cgi?id=226937
+
+        Reviewed by Saam Barati.
+
+        Previously, Air arm64 sub32/64 utilize sub(Imm, Tmp) at optlevel = 0 and 
+        add(Tmp, -Imm) at optlevel > 0 to perform and optimize sub(Tmp, Imm, Tmp).
+        The issue with this is that we were not eliding redundant operations. 
+
+        For example:
+        // B3 IR
+        @0 = Trunc(ArgumentReg(0))
+        @1 = Const
+        @2 = Sub(@0, @1)
+        @3 = Return(@2)
+
+        // Old optimized Air IR
+        // OptLevel = 0
+        Move    %x0, %tmp1, @0
+        Move $Const, %tmp2, @1
+        Move  %tmp1, %tmp0, @2 // Redundant
+        Sub  $Const, %tmp0, @2
+        Move  %tmp0,   %x0, @3
+        Ret32   %x0,        @3
+
+        To remove those redundant instructions, Air arm64 sub32/64 opcode should 
+        indicate a new form sub(Tmp, Imm, Tmp).
+
+        // New optimized Air IR
+        // OptLevel = 0
+        Move    %x0,  %tmp1,        @0
+        Move $Const,  %tmp2,        @1
+        Sub   %tmp1, $Const, %tmp0, @2
+        Move  %tmp0,    %x0,        @3
+        Ret32   %x0,                @3
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::sub32):
+        (JSC::MacroAssemblerARM64::sub64):
+        * assembler/testmasm.cpp:
+        (JSC::testSub32Args):
+        (JSC::testSub32Imm):
+        (JSC::testSub32ArgImm):
+        (JSC::testSub64Imm32):
+        (JSC::testSub64ArgImm32):
+        (JSC::testSub64Imm64):
+        (JSC::testSub64ArgImm64):
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testSubArgs32ZeroExtend):
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
 2021-06-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278734.

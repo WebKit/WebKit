@@ -42,7 +42,12 @@ namespace WebCore {
 class ColorInputType final : public BaseClickableWithKeyInputType, private ColorChooserClient {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit ColorInputType(HTMLInputElement& element) : BaseClickableWithKeyInputType(Type::Color, element) { }
+    explicit ColorInputType(HTMLInputElement& element)
+        : BaseClickableWithKeyInputType(Type::Color, element)
+    {
+        ASSERT(needsShadowSubtree());
+    }
+
     virtual ~ColorInputType();
 
 private:

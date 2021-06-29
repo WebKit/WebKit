@@ -1,3 +1,48 @@
+2021-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        Remove empty header WebTypesInternal.h
+        https://bugs.webkit.org/show_bug.cgi?id=227094
+
+        Reviewed by Fujii Hironori.
+
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        * History/WebBackForwardList.mm:
+        * History/WebHistory.mm:
+        * History/WebHistoryItem.mm:
+        * Misc/WebDownload.mm:
+        * Misc/WebElementDictionary.mm:
+        * Misc/WebNSDataExtras.h:
+        * Misc/WebTypesInternal.h: Removed.
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginPackage.mm:
+        * WebView/WebArchive.mm:
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPDFDocumentExtras.mm:
+        * WebView/WebPDFRepresentation.mm:
+        * WebView/WebTextCompletionController.mm:
+        * WebView/WebTextIterator.mm:
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
+2021-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Document's execCommand() / queryCommand*() should throw an exception on non-HTML/XHTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=227016
+
+        Reviewed by Darin Adler.
+
+        Update ObjC bindings since the WebCore API now returns ExceptionOr<> types.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument execCommand:userInterface:value:]):
+        (-[DOMDocument queryCommandEnabled:]):
+        (-[DOMDocument queryCommandIndeterm:]):
+        (-[DOMDocument queryCommandState:]):
+        (-[DOMDocument queryCommandSupported:]):
+        (-[DOMDocument queryCommandValue:]):
+
 2021-06-11  Megan Gardner  <megan_gardner@apple.com>
 
         Rename AppHighlight group to QuickNote to correctly reflect feature.

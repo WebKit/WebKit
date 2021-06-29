@@ -169,10 +169,7 @@ public:
     unsigned numTmps() const { return m_unlinkedCode->hasCheckpoints() * maxNumCheckpointTmps; }
 
     unsigned* addressOfNumParameters() { return &m_numParameters; }
-
-    static ptrdiff_t offsetOfNumCalleeLocals() { return OBJECT_OFFSETOF(CodeBlock, m_numCalleeLocals); }
     static ptrdiff_t offsetOfNumParameters() { return OBJECT_OFFSETOF(CodeBlock, m_numParameters); }
-    static ptrdiff_t offsetOfNumVars() { return OBJECT_OFFSETOF(CodeBlock, m_numVars); }
 
     CodeBlock* alternative() const { return static_cast<CodeBlock*>(m_alternative.get()); }
     void setAlternative(VM&, CodeBlock*);
@@ -493,8 +490,6 @@ public:
         ValueProfile& result = m_argumentValueProfiles[argumentIndex];
         return result;
     }
-
-    static ptrdiff_t offsetOfArgumentValueProfiles() { return OBJECT_OFFSETOF(CodeBlock, m_argumentValueProfiles); }
 
     ValueProfile& valueProfileForBytecodeIndex(BytecodeIndex);
     SpeculatedType valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
@@ -829,7 +824,7 @@ public:
     }
 
     bool wasCompiledWithDebuggingOpcodes() const { return m_unlinkedCode->wasCompiledWithDebuggingOpcodes(); }
-
+    
     // This is intentionally public; it's the responsibility of anyone doing any
     // of the following to hold the lock:
     //
@@ -916,7 +911,6 @@ public:
 
     static ptrdiff_t offsetOfMetadataTable() { return OBJECT_OFFSETOF(CodeBlock, m_metadata); }
     static ptrdiff_t offsetOfInstructionsRawPointer() { return OBJECT_OFFSETOF(CodeBlock, m_instructionsRawPointer); }
-    static ptrdiff_t offsetOfShouldAlwaysBeInlined() { return OBJECT_OFFSETOF(CodeBlock, m_shouldAlwaysBeInlined); }
 
     bool loopHintsAreEligibleForFuzzingEarlyReturn()
     {

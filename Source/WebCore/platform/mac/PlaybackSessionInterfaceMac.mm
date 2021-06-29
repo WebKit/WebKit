@@ -92,9 +92,10 @@ void PlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double 
 #endif
 }
 
-void PlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate)
+void PlaybackSessionInterfaceMac::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    auto isPlaying = playbackState.contains(PlaybackSessionModel::PlaybackState::Playing);
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
     [controlsManager setRate:isPlaying ? playbackRate : 0.];
     [controlsManager setDefaultPlaybackRate:defaultPlaybackRate];

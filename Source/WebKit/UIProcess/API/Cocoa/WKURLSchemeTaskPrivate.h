@@ -43,7 +43,7 @@ WK_API_AVAILABLE(macos(10.13), ios(11.0))
  An exception will be thrown if you make any other callbacks to the WKURLSchemeTask while this completionHandler is pending, other than didFailWithError:.
  An exception will be thrown if your app has been told to stop loading this task via the registered WKURLSchemeHandler object.
  */
-- (void)_willPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_willPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_didPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request;
 
 @property (nonatomic, readonly) BOOL _requestOnlyIfCached WK_API_AVAILABLE(macos(10.15), ios(13.0));

@@ -44,7 +44,7 @@ else ()
         )
     else ()
         list(APPEND WTF_SOURCES
-            unix/CPUTimeUnix.cpp
+            posix/CPUTimePOSIX.cpp
         )
     endif ()
 

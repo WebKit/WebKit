@@ -30,10 +30,10 @@
 @class WKWebView;
 @class WKDownload;
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKDownload", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKDownload", macos(10.10, 12.0), ios(8.0, 15.0))
 @interface _WKDownload : NSObject <NSCopying>
 
-+ (instancetype)downloadWithDownload:(WKDownload *)download WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (instancetype)downloadWithDownload:(WKDownload *)download WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 - (void)cancel;
 - (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macos(10.14.4), ios(12.2));

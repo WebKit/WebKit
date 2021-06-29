@@ -80,6 +80,8 @@ public:
     static bool isInheritedProperty(CSSPropertyID);
     static Vector<String> aliasesForProperty(CSSPropertyID);
     static bool isDirectionAwareProperty(CSSPropertyID);
+    static bool isInLogicalPropertyGroup(CSSPropertyID);
+    static bool areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID, CSSPropertyID);
     static bool isDescriptorOnly(CSSPropertyID);
     static bool isColorProperty(CSSPropertyID);
 

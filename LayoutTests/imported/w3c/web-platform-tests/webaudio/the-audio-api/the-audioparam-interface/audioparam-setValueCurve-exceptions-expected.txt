@@ -1,6 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "setValueCurve"
+PASS Executing "value setter"
 PASS Executing "automations"
 PASS Executing "catch-exception"
 PASS Executing "start-end"
@@ -15,6 +16,10 @@ PASS   exponentialRampToValueAtTime(1, 0.018750) threw NotSupportedError: "Event
 PASS   setTargetAtTime(1, 0.018750, 1) threw NotSupportedError: "Events are overlapping".
 PASS   setValueAtTime(1, 0.026250) did not throw an exception.
 PASS < [setValueCurve] All assertions passed. (total 6 assertions)
+PASS > [value setter]
+PASS   setValueCurveAtTime(curve, 0, 0.025) did not throw an exception.
+PASS   value setter threw NotSupportedError: "Events are overlapping".
+PASS < [value setter] All assertions passed. (total 2 assertions)
 PASS > [automations]
 PASS   linearRampToValueAtTime(1, 0.0125) did not throw an exception.
 PASS   exponentialRampToValueAtTime(1, 0.025) did not throw an exception.
@@ -59,5 +64,5 @@ PASS   setValueCurveAtTime([], 0, 0.01) threw InvalidStateError: "Array must hav
 PASS   setValueCurveAtTime([1], 0, 0.01) threw InvalidStateError: "Array must have a length of at least 2".
 PASS   setValueCurveAtTime([1,2], 0, 0.01) did not throw an exception.
 PASS < [curve lengths] All assertions passed. (total 3 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully.
 

@@ -202,6 +202,7 @@ fast/harness/uiscriptcontroller [ Skip ]
 
 # Only iOS has an implementation of UIScriptController::sendEventStream().
 imported/w3c/web-platform-tests/dom/events/scrolling [ Skip ]
+imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.tentative.html [ Skip ]
 
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
@@ -1024,7 +1025,6 @@ imported/w3c/web-platform-tests/web-share [ Skip ]
 fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
 
 # Only supported on iOS
-imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 pointerevents [ Skip ]
 
@@ -1898,6 +1898,7 @@ fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 # HEIF images are only supported on macOS and iOS post Mojave
 fast/images/animated-heics-draw.html [ Skip ]
 fast/images/animated-heics-verify.html [ Skip ]
+fast/images/heic-as-background-image.html [ Skip ]
 
 # WebP images are only supported on macOS and iOS post Catalina
 fast/images/webp-as-image.html [ Skip ]
@@ -2638,8 +2639,6 @@ fast/forms/range/range-remove-on-drag.html [ Skip ]
 # FileAPI
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ Failure ]
-# Test output contains WebKitFormBoundary lines with randomly generated text.
-imported/w3c/web-platform-tests/FileAPI/file/send-file-formdata-controls.tentative.html [ Failure ]
 
 # Secure Contexts tests that timeout
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Skip ]
@@ -2931,7 +2930,6 @@ webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_get
 webkit.org/b/210731 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html [ Skip ]
 webkit.org/b/210731 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html [ Skip ]
 
-webkit.org/b/186848 imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.html [ Pass Failure ]
 webkit.org/b/179176 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
 
 webkit.org/b/172864 imported/blink/storage/indexeddb/blob-delete-objectstore-db.html [ Pass Timeout ]
@@ -2941,8 +2939,6 @@ webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Skip ]
 [ Debug ] fast/multicol/crash-in-vertical-writing-mode.html [ Skip ]
 
 webkit.org/b/202805 [ Debug ] fast/multicol/fragflow-gains-new-in-flow-descendant-crash.html [ Skip ]
-
-webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html [ Skip ]
 
 # This newly imported test crashes in debug and flakily times out.
 webkit.org/b/189917 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.html [ Skip ]
@@ -4553,9 +4549,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-002.html
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000.html [ ImageOnlyFailure ]
 webkit.org/b/218325 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-001.html [ Pass ImageOnlyFailure ]
 webkit.org/b/218325 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
@@ -4754,16 +4747,6 @@ webkit.org/b/224357 imported/w3c/web-platform-tests/css/css-writing-modes/sizing
 webkit.org/b/224357 imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl.html [ ImageOnlyFailure ]
 
 # @counter-style ref tests that currently fail
-imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-008.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-201.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-202.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-203.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-204.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-205.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-206.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid.html [ ImageOnlyFailure ]
@@ -4784,12 +4767,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-033.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-034.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-035.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-030.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-031.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-032.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-048.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049.html [ ImageOnlyFailure ]
@@ -4800,12 +4777,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-co
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-044.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-045.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-046.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-039.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-040.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-041.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-036.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-037.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-038.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-052.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-053.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054.html [ ImageOnlyFailure ]
@@ -4836,9 +4807,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css
 imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-074.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-075.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-146.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-147.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-148.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-086.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-087.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088.html [ ImageOnlyFailure ]
@@ -4849,7 +4817,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-083.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-084.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-085.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-109.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
@@ -4885,9 +4852,42 @@ imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceeded
 # This webstorage test has timed out since it was imported.
 imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]
 
-# Skip WebXR while flakey
-imported/w3c/web-platform-tests/webxr [ Skip ]
-http/wpt/webxr [ Skip ]
+# WebXR - Missing modules.
+imported/w3c/web-platform-tests/webxr/anchors [ Skip ]
+imported/w3c/web-platform-tests/webxr/ar-module [ Skip ]
+imported/w3c/web-platform-tests/webxr/depth-sensing [ Skip ]
+imported/w3c/web-platform-tests/webxr/dom-overlay [ Skip ]
+imported/w3c/web-platform-tests/webxr/gamepads-module [ Skip ]
+imported/w3c/web-platform-tests/webxr/hand-input [ Skip ]
+imported/w3c/web-platform-tests/webxr/hit-test [ Skip ]
+imported/w3c/web-platform-tests/webxr/layers [ Skip ]
+imported/w3c/web-platform-tests/webxr/light-estimation [ Skip ]
+
+# WebXR - These currently timeout due to missing features.
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_inline.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_disconnect_ends.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_visibilityState.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Skip ]
+
+# WebXR - Currently failing and needs more investigation.
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_input_events_end.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html [ Skip ]
+
+# rdar://79306047
+webkit.org/b/227084 http/wpt/webxr/xrSession_ended_by_system.https.html [ Skip ]
+
+# rdar://79367325
+webkit.org/b/227086 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Skip ]
 
 # Invalid test. Tests color(lab ...) which has been removed from the standard.
 imported/w3c/web-platform-tests/css/css-color/predefined-013.html [ Skip ]

@@ -29,6 +29,7 @@
 #include "CachedResourceClient.h"
 #include "Font.h"
 #include "TextFlags.h"
+#include <pal/SessionID.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ typedef FontTaggedSettings<int> FontFeatureSettings;
 
 class CachedFont : public CachedResource {
 public:
-    CachedFont(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*, Type = Type::FontResource);
+    CachedFont(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, Type = Type::FontResource);
     virtual ~CachedFont();
 
     void beginLoadIfNeeded(CachedResourceLoader&);

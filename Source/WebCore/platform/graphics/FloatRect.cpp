@@ -231,6 +231,14 @@ void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const Fl
     setLocationAndSizeFromEdges(left, top, right, bottom);
 }
 
+FloatRect normalizeRect(const FloatRect& rect)
+{
+    return FloatRect(std::min(rect.x(), rect.maxX()),
+        std::min(rect.y(), rect.maxY()),
+        std::max(rect.width(), -rect.width()),
+        std::max(rect.height(), -rect.height()));
+}
+
 FloatRect encloseRectToDevicePixels(const FloatRect& rect, float deviceScaleFactor)
 {
     FloatPoint location = floorPointToDevicePixels(rect.minXMinYCorner(), deviceScaleFactor);

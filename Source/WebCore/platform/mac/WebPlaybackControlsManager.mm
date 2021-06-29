@@ -48,8 +48,6 @@ using WebCore::PlaybackSessionInterfaceMac;
 @synthesize seekToTime = _seekToTime;
 @synthesize hasEnabledAudio = _hasEnabledAudio;
 @synthesize hasEnabledVideo = _hasEnabledVideo;
-@synthesize defaultPlaybackRate = _defaultPlaybackRate;
-@synthesize rate = _rate;
 @synthesize canTogglePlayback = _canTogglePlayback;
 @synthesize allowsPictureInPicturePlayback;
 @synthesize pictureInPictureActive;
@@ -329,6 +327,59 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
 - (BOOL)isPlaying
 {
     return _playing;
+}
+
+- (double)defaultPlaybackRate
+{
+    return _defaultPlaybackRate;
+}
+
+- (void)setDefaultPlaybackRate:(double)defaultPlaybackRate
+{
+    if (defaultPlaybackRate == _defaultPlaybackRate)
+        return;
+
+    _defaultPlaybackRate = defaultPlaybackRate;
+
+    if (_playbackSessionInterfaceMac) {
+        if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel(); model && model->defaultPlaybackRate() != _defaultPlaybackRate)
+            model->setDefaultPlaybackRate(_defaultPlaybackRate);
+    }
+
+    if ([self isPlaying])
+        [self setRate:_defaultPlaybackRate];
+}
+
+- (float)rate
+{
+    return _rate;
+}
+
+- (void)setRate:(float)rate
+{
+    if (rate == _rate)
+        return;
+
+    _rate = rate;
+
+    // AVKit doesn't have a separate variable for "paused", instead representing it by a `rate` of
+    // `0`. Unfortunately, `HTMLMediaElement::play` doesn't call `HTMLMediaElement::setPlaybackRate`
+    // so if we propagate a `rate` of `0` along to the `HTMLMediaElement` then any attempt to
+    // `HTMLMediaElement::play` will effectively be a no-op since the `playbackRate` will be `0`.
+    if (!_rate)
+        return;
+
+    // In AVKit, the `defaultPlaybackRate` is used when playback starts, such as resuming after
+    // pausing. In WebKit, however, `defaultPlaybackRate` is only used when first loading and after
+    // ending scanning, with the `playbackRate` being used in all other cases, including when
+    // resuming after pausing. As such, WebKit should return the `playbackRate` instead of the
+    // `defaultPlaybackRate` in these cases when communicating with AVKit.
+    [self setDefaultPlaybackRate:_rate];
+
+    if (_playbackSessionInterfaceMac) {
+        if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel(); model && model->playbackRate() != _rate)
+            model->setPlaybackRate(_rate);
+    }
 }
 
 - (void)togglePictureInPicture

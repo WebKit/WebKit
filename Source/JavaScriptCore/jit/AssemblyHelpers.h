@@ -326,19 +326,14 @@ public:
         ASSERT(codeBlock);
 
         const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
-        emitSaveCalleeSavesFor(calleeSaves);
-    }
-
-    void emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
-    {
-        RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
+        RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
         unsigned registerCount = calleeSaves->size();
 
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset entry = calleeSaves->at(i);
             if (dontSaveRegisters.get(entry.reg()))
                 continue;
-            storePtr(entry.reg().gpr(), Address(framePointerRegister, entry.offset()));
+            storeReg(entry.reg(), Address(framePointerRegister, entry.offset()));
         }
     }
     
@@ -347,9 +342,10 @@ public:
     void emitSaveOrCopyCalleeSavesFor(CodeBlock* codeBlock, VirtualRegister offsetVirtualRegister, RestoreTagRegisterMode tagRegisterMode, GPRReg temp)
     {
         ASSERT(codeBlock);
+        ASSERT(JITCode::isBaselineCode(codeBlock->jitType()));
         
         const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
-        RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
+        RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
         unsigned registerCount = calleeSaves->size();
 
 #if USE(JSVALUE64)
@@ -360,9 +356,10 @@ public:
             RegisterAtOffset entry = calleeSaves->at(i);
             if (dontSaveRegisters.get(entry.reg()))
                 continue;
-            
+            RELEASE_ASSERT(entry.reg().isGPR());
+
             GPRReg registerToWrite;
-            
+
 #if USE(JSVALUE32_64)
             UNUSED_PARAM(tagRegisterMode);
             UNUSED_PARAM(temp);
@@ -388,25 +385,20 @@ public:
 
     void emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
     {
-        RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
+        RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters());
         unsigned registerCount = calleeSaves->size();
         
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset entry = calleeSaves->at(i);
             if (dontRestoreRegisters.get(entry.reg()))
                 continue;
-            loadPtr(Address(framePointerRegister, entry.offset()), entry.reg().gpr());
+            loadReg(Address(framePointerRegister, entry.offset()), entry.reg());
         }
     }
 
     void emitSaveCalleeSaves()
     {
         emitSaveCalleeSavesFor(codeBlock());
-    }
-
-    void emitSaveCalleeSavesForBaselineJIT()
-    {
-        emitSaveCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
     }
 
     void emitSaveThenMaterializeTagRegisters()
@@ -425,11 +417,6 @@ public:
     void emitRestoreCalleeSaves()
     {
         emitRestoreCalleeSavesFor(codeBlock());
-    }
-
-    void emitRestoreCalleeSavesForBaselineJIT()
-    {
-        emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
     }
 
     void emitRestoreSavedTagRegisters()

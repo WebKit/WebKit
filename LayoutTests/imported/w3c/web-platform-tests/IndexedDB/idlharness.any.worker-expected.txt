@@ -164,7 +164,7 @@ PASS IDBCursor interface: attribute source
 PASS IDBCursor interface: attribute direction
 PASS IDBCursor interface: attribute key
 PASS IDBCursor interface: attribute primaryKey
-FAIL IDBCursor interface: attribute request assert_true: The prototype object must have a property "request" expected true got false
+PASS IDBCursor interface: attribute request
 PASS IDBCursor interface: operation advance(unsigned long)
 PASS IDBCursor interface: operation continue(optional any)
 PASS IDBCursor interface: operation continuePrimaryKey(any, any)

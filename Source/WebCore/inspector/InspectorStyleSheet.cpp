@@ -645,7 +645,7 @@ Ref<Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() const
         auto status = it->disabled ? Protocol::CSS::CSSPropertyStatus::Disabled : Protocol::CSS::CSSPropertyStatus::Active;
 
         auto property = Protocol::CSS::CSSProperty::create()
-            .setName(name.convertToASCIILowercase())
+            .setName(lowercasePropertyName(name))
             .setValue(propertyEntry.value)
             .release();
 

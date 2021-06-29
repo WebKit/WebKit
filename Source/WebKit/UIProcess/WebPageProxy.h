@@ -228,7 +228,7 @@ OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS SYNotesActivationObserver;
 OBJC_CLASS WKQLThumbnailLoadOperation;
-OBJC_CLASS WKVisualSearchPreviewController;
+OBJC_CLASS WKQuickLookPreviewController;
 OBJC_CLASS WKWebView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 #endif
@@ -405,6 +405,7 @@ struct WebSpeechSynthesisVoice;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
+enum class QuickLookPreviewActivity : uint8_t;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
 
@@ -884,10 +885,6 @@ public:
     void deleteSurrounding(int64_t offset, unsigned characterCount);
 
     void setInputMethodState(std::optional<InputMethodState>&&);
-#endif
-
-#if PLATFORM(GTK)
-    void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& center);
 #endif
 
 #if PLATFORM(COCOA)
@@ -1941,7 +1938,7 @@ public:
     bool isRunningModalJavaScriptDialog() const { return m_isRunningModalJavaScriptDialog; }
 
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
-    WKVisualSearchPreviewController *visualSearchPreviewController() const { return m_visualSearchPreviewController.get(); }
+    WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
 private:
@@ -2493,7 +2490,7 @@ private:
     void runModalJavaScriptDialog(RefPtr<WebFrameProxy>&&, FrameInfoData&&, const String& message, CompletionHandler<void(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, const String&, CompletionHandler<void()>&&)>&&);
 
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
-    void showImageInVisualSearchPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL);
+    void showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL, QuickLookPreviewActivity);
 #endif
         
 #if ENABLE(APP_HIGHLIGHTS)
@@ -3052,7 +3049,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
-    RetainPtr<WKVisualSearchPreviewController> m_visualSearchPreviewController;
+    RetainPtr<WKQuickLookPreviewController> m_quickLookPreviewController;
 #endif
 };
 

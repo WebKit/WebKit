@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import os
+import sys
+
+import resultsdbpy
+from webkitcorepy import AutoInstall
+
+libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if sys.platform == 'darwin':
+    is_root = not os.getuid()
+    does_own_libraries = os.stat(libraries).st_uid == os.getuid()
+    if (is_root or not does_own_libraries):
+        libraries = os.path.expanduser('~/Library/webkitpy')
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
+
+from resultsdbpy.model.docker import Docker
+
+
+def start():
+    Docker.start()
+    Docker.start_project(Docker.DEFAULT_PROJECT)
+    return 0
+
+
+def stop():
+    if not Docker.is_running():
+        print('Docker is not running')
+        return 1
+    Docker.stop_project(Docker.DEFAULT_PROJECT)
+    Docker.stop()
+    return 0
+
+
+def restart():
+    if not Docker.is_running():
+        Docker.start()
+    Docker.stop_project(Docker.DEFAULT_PROJECT)
+    Docker.start_project(Docker.DEFAULT_PROJECT)
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Manage resultsdbpy container instance inside Docker')
+    subparsers = parser.add_subparsers(help='sub-command help')
+
+    start_parser = subparsers.add_parser('start', help='Start the container inside Docker')
+    start_parser.set_defaults(function=start)
+
+    start_parser = subparsers.add_parser('stop', help='Stop the container inside Docker')
+    start_parser.set_defaults(function=stop)
+
+    start_parser = subparsers.add_parser('restart', help='Restart the container inside Docker')
+    start_parser.set_defaults(function=restart)
+
+    return getattr(parser.parse_args(), 'function', lambda: parser.print_help())()
+
+
+if __name__ == '__main__':
+    sys.exit(main())

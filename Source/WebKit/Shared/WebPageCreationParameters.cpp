@@ -185,6 +185,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS)
     encoder << allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
 #endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+    encoder << appHighlightsVisible;
+#endif
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -596,6 +600,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
 #if PLATFORM(IOS)
     if (!decoder.decode(parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload))
+        return std::nullopt;
+#endif
+    
+#if ENABLE(APP_HIGHLIGHTS)
+    if (!decoder.decode(parameters.appHighlightsVisible))
         return std::nullopt;
 #endif
 

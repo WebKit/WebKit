@@ -436,6 +436,8 @@ void Options::recomputeDependentOptions()
 
     if (!isARM64())
         Options::useDataIC() = false;
+    if (!Options::useDataIC())
+        Options::useDataICInOptimizingJIT() = false;
 
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,

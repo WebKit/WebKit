@@ -164,7 +164,6 @@ if (window.testRunner)
     testRunner.dumpSelectionRect();
 
 function repaintTest() {
-    document.execCommand("SelectAll");
 }
 </script>
 </svg>

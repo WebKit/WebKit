@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  console.log('The test PASS if it does not crash.')
+  onload = () => {
+    let summary0 = document.createElement('summary');
+    document.body.appendChild(summary0);
+    summary0.appendChild(document.createElement('body'));
+    summary0.appendChild(document.createElement('q'));
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('InsertText');
+  };
+</script>

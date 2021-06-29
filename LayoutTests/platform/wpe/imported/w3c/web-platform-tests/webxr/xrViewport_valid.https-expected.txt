@@ -1,0 +1,4 @@
+
+PASS XRViewport attributes are valid - webgl
+FAIL XRViewport attributes are valid - webgl2 assert_implements: webgl2 not supported. undefined
+

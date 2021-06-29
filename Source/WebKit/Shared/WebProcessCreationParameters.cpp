@@ -165,6 +165,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mobileGestaltExtensionHandle;
     encoder << launchServicesExtensionHandle;
 
+#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
+    encoder << trustdAgentExtensionHandle;
+#endif
+
     encoder << diagnosticsExtensionHandles;
 #if PLATFORM(IOS_FAMILY)
     encoder << dynamicMachExtensionHandles;
@@ -459,6 +463,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!launchServicesExtensionHandle)
         return false;
     parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
+
+#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
+    std::optional<std::optional<SandboxExtension::Handle>> trustdAgentExtensionHandle;
+    decoder >> trustdAgentExtensionHandle;
+    if (!trustdAgentExtensionHandle)
+        return false;
+    parameters.trustdAgentExtensionHandle = WTFMove(*trustdAgentExtensionHandle);
+#endif
 
     std::optional<SandboxExtension::HandleArray> diagnosticsExtensionHandles;
     decoder >> diagnosticsExtensionHandles;

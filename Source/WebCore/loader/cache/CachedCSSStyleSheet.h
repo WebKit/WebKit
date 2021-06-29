@@ -34,7 +34,7 @@ struct CSSParserContext;
 
 class CachedCSSStyleSheet final : public CachedResource {
 public:
-    CachedCSSStyleSheet(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*);
+    CachedCSSStyleSheet(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
     virtual ~CachedCSSStyleSheet();
 
     enum class MIMETypeCheckHint { Strict, Lax };

@@ -96,18 +96,30 @@ class Package(object):
 
         def download(self):
             AutoInstall._verify_index()
-            response = AutoInstall._request(self.link)
-            try:
-                if response.code != 200:
-                    raise IOError('Failed to retrieve Python module with response code {}'.format(response.code))
-                with open(self.path, 'wb') as file:
-                    while True:
-                        data = response.read(2 ** 13)
-                        if not data:
-                            break
-                        file.write(data)
-            finally:
-                response.close()
+            count = 0
+            while count <= (AutoInstall.times_to_retry or 0):
+                response = None
+                try:
+                    response = AutoInstall._request(self.link)
+                    if not response or response.code != 200:
+                        raise IOError('Failed to retrieve Python module with response code {}'.format(response.code))
+                    with open(self.path, 'wb') as file:
+                        while True:
+                            data = response.read(2 ** 13)
+                            if not data:
+                                break
+                            file.write(data)
+                    return
+                except (IOError, URLError) as e:
+                    if count > (AutoInstall.times_to_retry or 0):
+                        raise
+                    else:
+                        AutoInstall.log(str(e))
+                        AutoInstall.log('Failed to download {}, retrying'.format(self.name))
+                finally:
+                    if response:
+                        response.close()
+                    count += 1
 
         def unpack(self, target):
             if not os.path.isfile(self.path):
@@ -378,6 +390,7 @@ class AutoInstall(object):
     directory = None
     index = _default_pypi_index()
     timeout = 30
+    times_to_retry = 1
     version = Version(sys.version_info[0], sys.version_info[1], sys.version_info[2])
     packages = defaultdict(list)
     manifest = {}

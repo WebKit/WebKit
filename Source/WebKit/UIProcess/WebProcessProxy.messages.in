@@ -53,8 +53,6 @@ messages -> WebProcessProxy LegacyReceiver {
     DidExceedCPULimit()
 
     StopResponsivenessTimer()
-
-    DidReceiveMainThreadPing()
     DidReceiveBackgroundResponsivenessPing()
 
     MemoryPressureStatusChanged(bool isUnderMemoryPressure)

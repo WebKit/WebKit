@@ -37,11 +37,11 @@ public:
     static Ref<AccessibilityTreeItem> create(RenderObject*);
     virtual ~AccessibilityTreeItem();
 
-    bool shouldIgnoreAttributeRole() const override { return !m_isTreeItemValid; }
     bool supportsCheckedState() const override;
 
 private:
     explicit AccessibilityTreeItem(RenderObject*);
+    bool shouldIgnoreAttributeRole() const final { return !m_isTreeItemValid; }
     AccessibilityRole determineAccessibilityRole() override;
     bool m_isTreeItemValid;
 };

@@ -404,6 +404,12 @@ Color RenderThemeMac::platformAppHighlightColor(OptionSet<StyleColor::Options>) 
 }
 #endif
 
+Color RenderThemeMac::platformDefaultButtonTextColor(OptionSet<StyleColor::Options> options) const
+{
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    return colorFromNSColor([NSColor alternateSelectedControlTextColor]);
+}
+
 static Color activeButtonTextColor()
 {
     // FIXME: <rdar://problem/77572622> There is no single corresponding NSColor for ActiveButtonText.

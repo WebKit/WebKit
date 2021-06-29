@@ -1,3 +1,41 @@
+2021-06-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        makeUnique cannot be used to instantiate function-local classes
+        https://bugs.webkit.org/show_bug.cgi?id=227163
+
+        Reviewed by Antti Koivisto.
+
+        Make WTF_MAKE_FAST_ALLOCATED and similar macros work in function
+        local classes. Mark the typedef that is used to enforce semicolon
+        after the macro as unused to avoid unused typedef warning.
+        Fixes cases where the compiler is able to prove that it sees all the
+        use sites of the class and the typedef is not used.
+
+        * bmalloc/BCompiler.h:
+        * bmalloc/BMalloced.h:
+        * bmalloc/IsoHeap.h:
+        * bmalloc/IsoHeapInlines.h:
+
+2021-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Define MacroAssemblerARM64E::numberOfPACBits based on OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH).
+        https://bugs.webkit.org/show_bug.cgi?id=227147
+        rdar://78785309
+
+        Reviewed by Saam Barati.
+
+        For OS(DARWIN), define BOS_EFFECTIVE_ADDRESS_WIDTH in terms of MACH_VM_MAX_ADDRESS,
+        which is provided by the SDK.  This ensures that it is correct for each target
+        OS(DARWIN) platform.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::clzConstexpr):
+        (bmalloc::getMSBSetConstexpr):
+        * bmalloc/BPlatform.h:
+        * bmalloc/Gigacage.h:
+        * bmalloc/ObjectTypeTable.h:
+        * bmalloc/Packed.h:
+
 2021-06-03  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling out r278278.

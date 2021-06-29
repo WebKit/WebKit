@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKProcessPool;
 @protocol WKURLSchemeHandler;
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
+WK_CLASS_AVAILABLE(macos(12.0))
 @interface _WKInspectorConfiguration : NSObject <NSCopying>
 /**
  * @abstract Sets the URL scheme handler object for the given URL scheme.

@@ -376,7 +376,7 @@ imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interc
 imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html [ Skip ]
 imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-interception.https.html [ Skip ]
 imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Skip ]
-imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Skip ]
+http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Skip ]
 
 # Quota check missing in WK1
 http/tests/IndexedDB/storage-limit.https.html [ Skip ]
@@ -1236,6 +1236,8 @@ webkit.org/b/223193 imported/w3c/web-platform-tests/html/canvas/element/path-obj
 
 webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/send-response-event-order.htm [ Pass Failure ]
 
+webkit.org/b/223283 fast/repaint/canvas-object-fit.html [ Pass Failure ]
+
 webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
 
 webkit.org/b/222686 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html [ Pass Failure ]
@@ -1285,3 +1287,12 @@ webkit.org/b/226360 imported/w3c/web-platform-tests/mathml/presentation-markup/m
 webkit.org/b/226377 [ BigSur ] imported/w3c/web-platform-tests/css/css-contain/contain-paint-ignored-cases-ruby-stacking-and-clipping-001.html [ Pass Failure ]
 
 webkit.org/b/226517 [ BigSur ] media/media-event-listeners.html [ Pass Timeout ]
+
+# webkit.org/b/226783 Disable plug-in tests on Apple Silicon
+[ arm64 ] fast/frames/sandboxed-iframe-plugins.html [ Skip ]
+[ arm64 ] http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
+[ arm64 ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
+[ arm64 ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
+[ arm64 ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
+
+webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ Pass Failure ]

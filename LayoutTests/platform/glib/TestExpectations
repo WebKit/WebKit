@@ -544,13 +544,8 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
-webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
-webkit.org/b/216716 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Pass ]
-webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout Pass ]
-webkit.org/b/210528 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Crash Pass ]
 
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
-
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 webkit.org/b/211995 fast/images/animated-image-mp4-crash.html [ Timeout Pass ]
@@ -683,6 +678,7 @@ webkit.org/b/215217 [ Debug ] imported/w3c/web-platform-tests/mathml/presentatio
 webkit.org/b/215217 [ Debug ] imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006.html [ Crash ]
 
 webkit.org/b/216871 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/227122 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
 
 webkit.org/b/224111 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002.html [ ImageOnlyFailure Pass ]
 
@@ -1091,7 +1087,6 @@ webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-ou
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
-webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Failure ]
 webkit.org/b/79203 webkit.org/b/186678 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Failure Crash ]
 
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
@@ -1138,7 +1133,6 @@ webkit.org/b/224074 webrtc/concurrentVideoPlayback.html [ Timeout Pass ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
-webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -1524,6 +1518,8 @@ fast/mediastream/screencapture-user-gesture.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
+webkit.org/b/210926 fast/mediastream/get-display-media-muted.html [ Skip ]
+webkit.org/b/210926 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
 webkit.org/b/191007 http/tests/media/media-stream/get-display-media-prompt.html [ Skip ]
 
 # Modern-media-controls support
@@ -1684,6 +1680,7 @@ inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 
 # WebGL2
 webkit.org/b/166536 fast/canvas/webgl/webgl-transformed-varying-name-crash.html [ Skip ]
+webkit.org/b/166536 fast/canvas/webgl/shader-mix-with-bool.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-vec-array-deref-no-crash.html [ Skip ]
 
 # LFC (LayoutFormatingContext is disabled by default).
@@ -2204,8 +2201,6 @@ webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Cra
 
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure ]
 
-webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
-
 webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Timeout ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-language.html [ Failure ]
@@ -2263,8 +2258,6 @@ webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-vali
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
-webkit.org/b/196198 [ Release ] http/tests/media/video-play-stall-seek.html [ Timeout Failure Pass ]
-webkit.org/b/196198 [ Debug ] http/tests/media/video-play-stall-seek.html [ Timeout Failure ]
 webkit.org/b/198118 media/playlist-inherits-user-gesture.html [ Timeout ]
 
 webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Crash Timeout ]
@@ -2322,6 +2315,39 @@ webkit.org/b/225466 imported/w3c/web-platform-tests/css/css-color-adjust/renderi
 
 # Failing since r277091.
 webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/227053 fast/canvas/canvas-imageSmoothingEnabled.html [ Failure ]
+webkit.org/b/227053 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
+
+# Require expect file for dumped render tree.
+webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ]
+
+webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003a.html [ ImageOnlyFailure Pass ]
+webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003b.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/227233 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
+webkit.org/b/227233 imported/w3c/web-platform-tests/webrtc-priority/RTCPeerConnection-ondatachannel.html [ Failure ]
+webkit.org/b/227233 inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Timeout ]
+webkit.org/b/227233 webrtc/calling-peerconnection-once-closed.html [ Failure ]
+webkit.org/b/227233 webrtc/candidate-stats.html [ Failure ]
+webkit.org/b/227233 webrtc/closing-peerconnection.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/basic.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/binary.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/bufferedAmount-afterClose.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/bufferedAmountLowThreshold.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-gc.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-page-cache.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-page-cache-send.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/datachannel-stats.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/dtls10.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/filter-ice-candidate.html [ Timeout ]
+webkit.org/b/227233 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Failure ]
+webkit.org/b/227233 webrtc/datachannel/multi-channel.html [ Failure ]
+webkit.org/b/227233 webrtc/filtering-ice-candidate-after-reload.html [ Timeout ]
+webkit.org/b/227233 webrtc/legacy-api.html [ Failure ]
+webkit.org/b/227233 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

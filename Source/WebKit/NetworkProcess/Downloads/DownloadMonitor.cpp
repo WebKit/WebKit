@@ -29,8 +29,7 @@
 #include "Download.h"
 #include "Logging.h"
 
-#undef RELEASE_LOG_IF_ALLOWED
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_download.isAlwaysOnLoggingAllowed(), Network, "%p - DownloadMonitor::" fmt, this, ##__VA_ARGS__)
+#define DOWNLOAD_MONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - DownloadMonitor::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -93,14 +92,14 @@ void DownloadMonitor::downloadReceivedBytes(uint64_t bytesReceived)
 
 void DownloadMonitor::applicationWillEnterForeground()
 {
-    RELEASE_LOG_IF_ALLOWED("applicationWillEnterForeground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+    DOWNLOAD_MONITOR_RELEASE_LOG("applicationWillEnterForeground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
     m_timer.stop();
     m_interval = 0;
 }
 
 void DownloadMonitor::applicationDidEnterBackground()
 {
-    RELEASE_LOG_IF_ALLOWED("applicationDidEnterBackground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+    DOWNLOAD_MONITOR_RELEASE_LOG("applicationDidEnterBackground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
     ASSERT(!m_timer.isActive());
     ASSERT(!m_interval);
     m_timer.startOneShot(throughputIntervals[0].time / testSpeedMultiplier());
@@ -117,13 +116,13 @@ void DownloadMonitor::timerFired()
 
     RELEASE_ASSERT(m_interval < WTF_ARRAY_LENGTH(throughputIntervals));
     if (measuredThroughputRate() < throughputIntervals[m_interval].bytesPerSecond) {
-        RELEASE_LOG_IF_ALLOWED("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
         m_download.cancel([](auto&) { }, Download::IgnoreDidFailCallback::No);
     } else if (m_interval + 1 < WTF_ARRAY_LENGTH(throughputIntervals)) {
-        RELEASE_LOG_IF_ALLOWED("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
         m_timer.startOneShot(timeUntilNextInterval(m_interval++) / testSpeedMultiplier());
     } else
-        RELEASE_LOG_IF_ALLOWED("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
 }
 
 } // namespace WebKit

@@ -59,6 +59,7 @@
 #include "B3WasmAddressValue.h"
 #include <wtf/IndexMap.h>
 #include <wtf/IndexSet.h>
+#include <wtf/StdLibExtras.h>
 
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
@@ -2582,24 +2583,51 @@ private:
                 && isValidForm(multiplySubOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 Value* left = m_value->child(0);
                 Value* right = m_value->child(1);
-                if (!imm(right) || m_valueToTmp[right]) {
-                    auto tryAppendMultiplySub = [&] () -> bool {
-                        if (right->opcode() != Mul || !canBeInternal(right))
-                            return false;
+                auto tryMultiply = [&] (Value* v) -> bool {
+                    if (v->opcode() != Mul || !canBeInternal(v))
+                        return false;
+                    if (m_locked.contains(v->child(0)) || m_locked.contains(v->child(1)))
+                        return false;
+                    return true;
+                };
 
-                        Value* multiplyLeft = right->child(0);
-                        Value* multiplyRight = right->child(1);
-                        if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
-                            return false;
+                // MSUB: d = a - n * m
+                if ((!imm(right) || m_valueToTmp[right]) && tryMultiply(right)) {
+                    Value* multiplyLeft = right->child(0);
+                    Value* multiplyRight = right->child(1);
 
-                        append(multiplySubOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
-                        commitInternal(right);
+                    // SMSUBL: d = a - SExt32(n) *  SExt32(m)
+                    if (multiplySubOpcode == MultiplySub64
+                        && isValidForm(MultiplySubSignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                        auto trySExt32 = [&] (Value* v) {
+                            if (v->opcode() != SExt32 || !canBeInternal(v))
+                                return false;
+                            if (m_locked.contains(v->child(0)))
+                                return false;
+                            return true;
+                        };
 
-                        return true;
-                    };
+                        auto tryAppendMultiplySubSignExtend32 = [&] () -> bool {
+                            if (!trySExt32(multiplyLeft) || !trySExt32(multiplyRight))
+                                return false;
+                            append(MultiplySubSignExtend32, 
+                                tmp(multiplyLeft->child(0)), 
+                                tmp(multiplyRight->child(0)), 
+                                tmp(left), 
+                                tmp(m_value));
+                            commitInternal(right);
+                            commitInternal(multiplyLeft);
+                            commitInternal(multiplyRight);
+                            return true;
+                        };
 
-                    if (tryAppendMultiplySub())
-                        return;
+                        if (tryAppendMultiplySubSignExtend32())
+                            return;
+                    }
+
+                    append(multiplySubOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
+                    commitInternal(right);
+                    return;
                 }
             }
 
@@ -2694,23 +2722,46 @@ private:
         }
 
         case BitAnd: {
-            if (m_value->child(1)->isInt(0xff)) {
-                appendUnOp<ZeroExtend8To32, ZeroExtend8To32>(m_value->child(0));
-                return;
-            }
-            
-            if (m_value->child(1)->isInt(0xffff)) {
-                appendUnOp<ZeroExtend16To32, ZeroExtend16To32>(m_value->child(0));
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
+
+            if (right->isInt(0xff)) {
+                appendUnOp<ZeroExtend8To32, ZeroExtend8To32>(left);
                 return;
             }
 
-            if (m_value->child(1)->isInt64(0xffffffff) || m_value->child(1)->isInt32(0xffffffff)) {
-                appendUnOp<Move32, Move32>(m_value->child(0));
+            if (right->isInt(0xffff)) {
+                appendUnOp<ZeroExtend16To32, ZeroExtend16To32>(left);
                 return;
             }
-            
-            appendBinOp<And32, And64, AndDouble, AndFloat, Commutative>(
-                m_value->child(0), m_value->child(1));
+
+            if (right->isInt64(0xffffffff) || right->isInt32(0xffffffff)) {
+                appendUnOp<Move32, Move32>(left);
+                return;
+            }
+
+            // UBFX Pattern: dest = (src >> lsb) & ((1 << width) - 1)
+            if (canBeInternal(left) && left->opcode() == ZShr) {
+                Value* srcValue = left->child(0);
+                Value* lsbValue = left->child(1);
+                if (!imm(srcValue) && imm(lsbValue) && right->hasInt()) {
+                    int64_t lsb = lsbValue->asInt();
+                    uint64_t mask = right->asInt();
+                    uint8_t width = static_cast<uint8_t>(!(mask & (mask + 1))) * WTF::bitCount(mask);
+                    Air::Opcode opcode = opcodeForType(Ubfx32, Ubfx64, srcValue->type());
+                    if (opcode
+                        && lsb >= 0
+                        && width > 0
+                        && lsb + width <= (32 << (opcode == Ubfx64))
+                        && isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))  {
+                        append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
+                        commitInternal(left);
+                        return;
+                    }
+                }
+            }
+
+            appendBinOp<And32, And64, AndDouble, AndFloat, Commutative>(left, right);
             return;
         }
 

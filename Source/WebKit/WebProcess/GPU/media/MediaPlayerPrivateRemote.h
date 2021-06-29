@@ -110,7 +110,7 @@ public:
     void setVideoInlineSizeFenced(const WebCore::FloatSize&, const WTF::MachSendRight&);
 #endif
 
-    void currentTimeChanged(const MediaTime&, const MonotonicTime&);
+    void currentTimeChanged(const MediaTime&, const MonotonicTime&, bool);
 
     void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(TrackPrivateRemoteIdentifier);
@@ -437,6 +437,7 @@ private:
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_invalid { false };
     bool m_waitingForKey { false };
+    bool m_timeIsProgressing { false };
 };
 
 } // namespace WebKit

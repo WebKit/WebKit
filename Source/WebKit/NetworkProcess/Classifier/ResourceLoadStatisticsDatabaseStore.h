@@ -108,7 +108,7 @@ public:
     void setGrandfathered(const RegistrableDomain&, bool value) override;
     bool isGrandfathered(const RegistrableDomain&) const override;
 
-    void setIsScheduledForAllButCookieDataRemoval(const RegistrableDomain&, bool value);
+    void setIsScheduledForAllButCookieDataRemoval(const WebCore::SQLiteTransaction&, const RegistrableDomain&, bool value);
     void setSubframeUnderTopFrameDomain(const SubFrameDomain&, const TopFrameDomain&) override;
     void setSubresourceUnderTopFrameDomain(const SubResourceDomain&, const TopFrameDomain&) override;
     void setSubresourceUniqueRedirectTo(const SubResourceDomain&, const RedirectDomain&) override;
@@ -177,18 +177,21 @@ private:
     void destroyStatements();
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral, const String&) const;
 
+    void setPrevalentResource(const WebCore::SQLiteTransaction&, const RegistrableDomain&);
+    void setVeryPrevalentResource(const WebCore::SQLiteTransaction&, const RegistrableDomain&);
+    void setGrandfathered(const WebCore::SQLiteTransaction&, const RegistrableDomain&, bool value);
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndUpdateSchemaIfNecessary();
     String getDomainStringFromDomainID(unsigned) const;
     ASCIILiteral getSubStatisticStatement(const String&) const;
     void appendSubStatisticList(StringBuilder&, const String& tableName, const String& domain) const;
-    void mergeStatistic(const ResourceLoadStatistics&);
-    void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
+    void mergeStatistic(const WebCore::SQLiteTransaction&, const ResourceLoadStatistics&);
+    void merge(const WebCore::SQLiteTransaction&, WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void clearDatabaseContents();
     bool insertObservedDomain(const ResourceLoadStatistics&) WARN_UNUSED_RETURN;
-    void insertDomainRelationships(const ResourceLoadStatistics&);
-    void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
+    void insertDomainRelationships(const WebCore::SQLiteTransaction&, const ResourceLoadStatistics&);
+    void insertDomainRelationshipList(const WebCore::SQLiteTransaction&, const String&, const HashSet<RegistrableDomain>&, unsigned);
     bool relationshipExists(WebCore::SQLiteStatementAutoResetScope&, std::optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
     std::optional<unsigned> domainID(const RegistrableDomain&) const;
     bool domainExists(const RegistrableDomain&) const;
@@ -235,10 +238,10 @@ private:
     bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) override;
     CookieAccess cookieAccess(const SubResourceDomain&, const TopFrameDomain&);
 
-    void setPrevalentResource(const RegistrableDomain&, ResourceLoadPrevalence);
+    void setPrevalentResource(const WebCore::SQLiteTransaction&, const RegistrableDomain&, ResourceLoadPrevalence);
     unsigned recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(unsigned primaryDomainID, StdSet<unsigned>& nonPrevalentRedirectionSources, unsigned numberOfRecursiveCalls);
     void setDomainsAsPrevalent(StdSet<unsigned>&&);
-    void grantStorageAccessInternal(SubFrameDomain&&, TopFrameDomain&&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&);
+    void grantStorageAccessInternal(const WebCore::SQLiteTransaction&, SubFrameDomain&&, TopFrameDomain&&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&);
     void markAsPrevalentIfHasRedirectedToPrevalent();
     Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() override;
     void removeDataRecords(CompletionHandler<void()>&&);
@@ -253,7 +256,7 @@ private:
 
     bool createUniqueIndices();
     bool createSchema();
-    String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
+    String ensureAndMakeDomainList(const WebCore::SQLiteTransaction&, const HashSet<RegistrableDomain>&);
     std::optional<WallTime> mostRecentUserInteractionTime(const DomainData&);
     
     void removeUnattributed(WebCore::PrivateClickMeasurement&);

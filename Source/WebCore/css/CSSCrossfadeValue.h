@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,8 @@ public:
 
     bool equals(const CSSCrossfadeValue&) const;
     bool equalInputImages(const CSSCrossfadeValue&) const;
+
+    Ref<CSSCrossfadeValue> valueWithStylesResolved(Style::BuilderState&);
 
 private:
     CSSCrossfadeValue(Ref<CSSValue>&& fromValue, Ref<CSSValue>&& toValue, Ref<CSSPrimitiveValue>&& percentageValue, bool prefixed);

@@ -70,6 +70,7 @@ public:
         removeMessageReceiver(messageReceiverName, destinationID.toUInt64());
     }
 
+    void mainThreadPing(CompletionHandler<void()>&&);
     void setProcessSuppressionEnabled(bool);
 
 #if PLATFORM(COCOA)

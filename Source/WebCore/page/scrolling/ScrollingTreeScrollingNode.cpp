@@ -339,6 +339,26 @@ const FloatScrollSnapOffsetsInfo& ScrollingTreeScrollingNode::snapOffsetsInfo() 
 {
     return m_snapOffsetsInfo;
 }
+
+std::optional<unsigned> ScrollingTreeScrollingNode::currentHorizontalSnapPointIndex() const
+{
+    return m_currentHorizontalSnapPointIndex;
+}
+
+std::optional<unsigned> ScrollingTreeScrollingNode::currentVerticalSnapPointIndex() const
+{
+    return m_currentVerticalSnapPointIndex;
+}
+
+void ScrollingTreeScrollingNode::setCurrentHorizontalSnapPointIndex(std::optional<unsigned> index)
+{
+    m_currentHorizontalSnapPointIndex = index;
+}
+
+void ScrollingTreeScrollingNode::setCurrentVerticalSnapPointIndex(std::optional<unsigned> index)
+{
+    m_currentVerticalSnapPointIndex = index;
+}
 #endif
 
 } // namespace WebCore

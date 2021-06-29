@@ -36,6 +36,7 @@
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "Logging.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

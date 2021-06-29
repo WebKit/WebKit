@@ -192,7 +192,7 @@ bool RenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, Hit
         return false;
 
     // FOs establish a stacking context, so we need to hit-test all layers.
-    HitTestLocation hitTestLocation(localPoint);
+    HitTestLocation hitTestLocation(flooredLayoutPoint(localPoint));
     return RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestForeground)
         || RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestFloat)
         || RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestChildBlockBackgrounds);

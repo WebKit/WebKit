@@ -27,6 +27,6 @@
 
 @interface WKContentRuleList (WKPrivate)
 
-+ (BOOL)_supportsRegularExpression:(NSString *)regex WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (BOOL)_supportsRegularExpression:(NSString *)regex WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 @end

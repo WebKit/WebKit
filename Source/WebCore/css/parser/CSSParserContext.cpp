@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSParserContext.h"
 
+#include "CSSImageValue.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Page.h"
@@ -220,22 +221,21 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     }
 }
 
-URL CSSParserContext::completeURL(const String& url) const
+ResolvedURL CSSParserContext::completeURL(const String& string) const
 {
-    auto completedURL = [&] {
-        if (url.isNull())
-            return URL();
+    auto result = [&] () -> ResolvedURL {
+        if (string.isNull())
+            return { };
         if (charset.isEmpty())
-            return URL(baseURL, url);
-        TextEncoding encoding(charset);
-        auto& encodingForURLParsing = encoding.encodingForFormSubmissionOrURLParsing();
-        return URL(baseURL, url, encodingForURLParsing == UTF8Encoding() ? nullptr : &encodingForURLParsing);
+            return { string, { baseURL, string } };
+        auto encodingForURLParsing = TextEncoding { charset }.encodingForFormSubmissionOrURLParsing();
+        return { string, { baseURL, string, encodingForURLParsing == UTF8Encoding() ? nullptr : &encodingForURLParsing } };
     }();
 
-    if (mode == WebVTTMode && !completedURL.protocolIsData())
-        return URL();
+    if (mode == WebVTTMode && !result.resolvedURL.protocolIsData())
+        return { };
 
-    return completedURL;
+    return result;
 }
 
 }

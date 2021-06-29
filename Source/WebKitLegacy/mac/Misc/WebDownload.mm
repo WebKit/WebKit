@@ -29,7 +29,6 @@
 #import <WebKitLegacy/WebDownload.h>
 
 #import "NetworkStorageSessionMap.h"
-#import "WebTypesInternal.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/Credential.h>

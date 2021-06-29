@@ -1,0 +1,12 @@
+
+FAIL the video transceiver.headerExtensionsToOffer() includes mandatory extensions undefined is not an object (evaluating 'capabilities.find')
+FAIL the audio transceiver.headerExtensionsToOffer() includes mandatory extensions undefined is not an object (evaluating 'capabilities.find')
+FAIL setOfferedRtpHeaderExtensions throws TypeError on encountering missing URI undefined is not an object (evaluating 'capabilities[0]')
+FAIL setOfferedRtpHeaderExtensions throws NotSupported on encountering unknown URI undefined is not an object (evaluating 'capabilities[0]')
+FAIL setOfferedRtpHeaderExtensions throws InvalidModificationError when setting a mandatory header extension's direction to something else than "sendrecv" undefined is not an object (evaluating 'capabilities.find')
+FAIL modified direction set by setOfferedRtpHeaderExtensions is visible in headerExtensionsOffered undefined is not an object (evaluating 'capabilities.find')
+FAIL unstopped extensions turn up in offer promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (near '....join("\n");...')"
+FAIL stopped extensions do not turn up in offers promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'capabilities.find')"
+FAIL the set of negotiated extensions grows with subsequent offers promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'capabilities.find')"
+FAIL the set of negotiated extensions is the set of unstopped extensions promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'capabilities.find')"
+

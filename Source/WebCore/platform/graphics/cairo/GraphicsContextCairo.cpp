@@ -106,6 +106,9 @@ void GraphicsContextCairo::save()
 
 void GraphicsContextCairo::restore()
 {
+    if (!stackSize())
+        return;
+
     GraphicsContext::restore();
     Cairo::restore(*platformContext());
 }

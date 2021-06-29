@@ -76,10 +76,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     char* buffer = static_cast<char*>(scratchBuffer->dataBuffer());
     
     saveAllRegisters(jit, buffer);
-    
-    // Tell GC mark phase how much of the scratch buffer is active during call.
-    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::nonArgGPR1);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
 
     jit.loadPtr(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     jit.peek(
@@ -94,11 +90,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     // return address "slot" (be it a register or the stack).
     
     jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0);
-    
-    // Make sure we tell the GC that we're not using the scratch buffer anymore.
-    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT1);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(nullptr), GPRInfo::regT1);
-    
+
     // Prepare for tail call.
     while (numberOfRequiredPops--)
         jit.popToRestore(GPRInfo::regT1);

@@ -146,6 +146,9 @@
     "imported/w3c/web-animations/timing-model/timelines/update-and-send-events.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/FileAPI/file/send-file-form-iso-2022-jp.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html": [
         "slow"
     ],
@@ -711,6 +714,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization-1.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization-2.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html": [
@@ -2952,6 +2961,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html": [

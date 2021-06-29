@@ -301,6 +301,10 @@
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #include "RemoteMediaSessionCoordinatorProxy.h"
 
+#if ENABLE(APP_HIGHLIGHTS)
+#include <WebCore/HighlightVisibility.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKCoordinatorAdditions.h>
 #else
@@ -1649,6 +1653,14 @@ void WebPageProxy::stopLoading()
 RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> options)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "reload:");
+
+    // Make sure the Network & GPU processes are still responsive. This is so that reload() gets us out of the bad state if one of these
+    // processes is hung.
+    websiteDataStore().networkProcess().checkForResponsiveness();
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = process().processPool().gpuProcess())
+        gpuProcess->checkForResponsiveness();
+#endif
 
     SandboxExtension::Handle sandboxExtensionHandle;
 
@@ -8190,9 +8202,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
-    if (m_preferences->attachmentElementEnabled() && !m_process->hasIssuedAttachmentElementRelatedSandboxExtensions()) {
+    if (m_preferences->attachmentElementEnabled() && !process.hasIssuedAttachmentElementRelatedSandboxExtensions()) {
         parameters.attachmentElementExtensionHandles = SandboxExtension::createHandlesForMachLookup(attachmentElementServices(), std::nullopt);
-        m_process->setHasIssuedAttachmentElementRelatedSandboxExtensions();
+        process.setHasIssuedAttachmentElementRelatedSandboxExtensions();
     }
 #endif
 
@@ -8201,6 +8213,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if PLATFORM(IOS)
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload = allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
+#endif
+    
+#if ENABLE(APP_HIGHLIGHTS)
+    parameters.appHighlightsVisible = appHighlightsVisibility() ? HighlightVisibility::Visible : HighlightVisibility::Hidden;
 #endif
 
     return parameters;

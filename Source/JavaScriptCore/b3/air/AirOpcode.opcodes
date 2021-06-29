@@ -179,6 +179,7 @@ Sub32 U:G:32, UZD:G:32
 
 arm64: Sub32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
+    Tmp, Imm, Tmp
 
 64: Sub64 U:G:64, UD:G:64
     Tmp, Tmp
@@ -192,6 +193,7 @@ arm64: Sub32 U:G:32, U:G:32, ZD:G:32
 
 arm64: Sub64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
+    Tmp, Imm, Tmp
 
 SubDouble U:F:64, U:F:64, D:F:64
     arm64: Tmp, Tmp, Tmp
@@ -253,6 +255,9 @@ arm64: MultiplySub32 U:G:32, U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp, Tmp
 
 arm64: MultiplySub64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp, Tmp
+
+arm64: MultiplySubSignExtend32 U:G:32, U:G:32, U:G:64, D:G:64
     Tmp, Tmp, Tmp, Tmp
 
 arm64: MultiplyNeg32 U:G:32, U:G:32, ZD:G:32
@@ -354,6 +359,12 @@ And32 U:G:32, UZD:G:32
     x86: Index, Tmp
     x86: Imm, Addr
     x86: Imm, Index
+
+arm64: Ubfx32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: Ubfx64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
 
 64: And64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp

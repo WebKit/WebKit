@@ -340,6 +340,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
     }
 
     Vector<std::optional<float>> columnPercentList(columnList.size());
+    auto hasColumnWithPercentWidth = false;
     for (auto& cell : grid.cells()) {
         auto& cellBox = cell->box();
         ASSERT(cellBox.establishesBlockFormattingContext());
@@ -366,6 +367,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
         if (cellLogicalWidth.isPercent()) {
             // FIXME: Add support for column spanning distribution.
             columnPercentList[cellPosition.column] = std::max(cellLogicalWidth.percent(), columnPercentList[cellPosition.column].value_or(0.0f));
+            hasColumnWithPercentWidth = true;
         }
     }
 
@@ -418,25 +420,40 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
         }
     }
 
-    // 5. Resolve the percent values.
-    auto remainingPercent = 100.0f;
-    auto percentMaximumConstraint = LayoutUnit { };
-    for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
-        auto percent = columnPercentList[columnIndex];
-        // FIXME: Add support for mixed content with and without percent values.
-        if (!percent)
-            continue;
-        ASSERT(*percent > 0);
-        columnList[columnIndex].setPercent(std::min(remainingPercent, *percent));
-        percentMaximumConstraint = std::max(percentMaximumConstraint, LayoutUnit { columnIntrinsicWidths[columnIndex].maximum * 100.0f / *columnList[columnIndex].percent() });
-        remainingPercent -= *columnList[columnIndex].percent();
-    }
-
-    // 6. The final table min/max widths is just the accumulated column constraints.
+    // 5. The table min/max widths is just the accumulated column constraints with the percent adjustment.
     auto tableWidthConstraints = IntrinsicWidthConstraints { };
     for (auto& columnIntrinsicWidth : columnIntrinsicWidths)
         tableWidthConstraints += columnIntrinsicWidth;
-    tableWidthConstraints.maximum = std::max(tableWidthConstraints.maximum, percentMaximumConstraint);
+
+    // 6. Adjust the table max width with the percent column values if applicable.
+    if (hasColumnWithPercentWidth) {
+        auto remainingPercent = 100.0f;
+        auto percentMaximumWidth = LayoutUnit { };
+        auto nonPercentColumnsWidth = LayoutUnit { };
+        // Resolve the percent values as follows
+        // - the percent value is resolved against the column maximum width (fixed or content based) as if the max value represented the percentage value
+        //   e.g 50% with the maximum width of 100px produces a resolved width of 200px for the column.
+        // - find the largest resolved value across the columns and used that as the maxiumum width for the precent based columns.
+        // - Compute the non-percent based columns width by using the remaining percent value (e.g 50% and 10% columns would leave 40% for the rest of the columns)
+        for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
+            auto percent = columnPercentList[columnIndex];
+            if (!percent) {
+                nonPercentColumnsWidth += columnIntrinsicWidths[columnIndex].maximum;
+                continue;
+            }
+            ASSERT(*percent > 0);
+            columnList[columnIndex].setPercent(std::min(remainingPercent, *percent));
+            percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { columnIntrinsicWidths[columnIndex].maximum * 100.0f / *columnList[columnIndex].percent() });
+            remainingPercent -= *columnList[columnIndex].percent();
+        }
+
+        ASSERT(remainingPercent >= 0.f);
+        auto adjustedMaximumWidth = percentMaximumWidth;
+        if (remainingPercent)
+            adjustedMaximumWidth = std::max(adjustedMaximumWidth, LayoutUnit { nonPercentColumnsWidth * 100.0f / remainingPercent });
+        tableWidthConstraints.maximum = std::max(tableWidthConstraints.maximum, adjustedMaximumWidth);
+    }
+
     // Expand the preferred width with leading and trailing cell spacing (note that column spanners count as one cell).
     tableWidthConstraints += (numberOfActualColumns + 1) * grid.horizontalSpacing();
     return tableWidthConstraints;

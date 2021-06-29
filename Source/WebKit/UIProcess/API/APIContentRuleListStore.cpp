@@ -388,6 +388,10 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
 
+    // Try and delete any files at the destination instead of overwriting them
+    // in case there is already a file there and it is mmapped.
+    deleteFile(finalFilePath);
+
     if (!moveFile(temporaryFilePath, finalFilePath)) {
         WTFLogAlways("Content Rule List compiling failed: Moving file failed.");
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
@@ -461,8 +465,20 @@ void ContentRuleListStore::lookupContentRuleList(const WTF::String& identifier, 
     m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto path = constructedPath(storePath, identifier, false);
         auto legacyPath = constructedPath(storePath, identifier, true);
-        if (fileExists(legacyPath))
-            moveFile(legacyPath, path);
+        if (fileExists(legacyPath)) {
+            // Try and delete any files at the destination instead of overwriting them
+            // in case there is already a file there and it is mmapped.
+            deleteFile(path);
+            if (!moveFile(legacyPath, path)) {
+                WTFLogAlways("Content Rule List lookup failed: Moving a legacy file failed.");
+                if (!deleteFile(legacyPath))
+                    WTFLogAlways("Content Rule List lookup failed: Deleting a legacy file failed.");
+                RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+                    completionHandler(nullptr, Error::LookupFailed);
+                });
+                return;
+            }
+        }
 
         auto contentRuleList = openAndMapContentRuleList(path);
         if (!contentRuleList) {

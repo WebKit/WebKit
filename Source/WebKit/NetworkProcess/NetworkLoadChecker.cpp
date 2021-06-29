@@ -39,8 +39,7 @@
 #include <WebCore/LegacySchemeRegistry.h>
 #include <wtf/Scope.h>
 
-#undef RELEASE_LOG_IF_ALLOWED
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkLoadChecker::" fmt, this, ##__VA_ARGS__)
+#define LOAD_CHECKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkLoadChecker::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -310,7 +309,7 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
     }
 
     if (isRedirected()) {
-        RELEASE_LOG_IF_ALLOWED("checkRequest - Redirect requires CORS checks");
+        LOAD_CHECKER_RELEASE_LOG("checkRequest - Redirect requires CORS checks");
         checkCORSRedirectedRequest(WTFMove(request), WTFMove(handler));
         return;
     }
@@ -371,7 +370,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
 
     m_isSimpleRequest = false;
     if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(m_sessionID, m_origin->toString(), request.url(), m_storedCredentialsPolicy, request.httpMethod(), m_originalRequestHeaders)) {
-        RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - preflight can be skipped thanks to cached result");
+        LOAD_CHECKER_RELEASE_LOG("checkCORSRequestWithPreflight - preflight can be skipped thanks to cached result");
         updateRequestForAccessControl(request, *m_origin, m_storedCredentialsPolicy);
         handler(WTFMove(request));
         return;
@@ -391,7 +390,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         m_storedCredentialsPolicy
     };
     m_corsPreflightChecker = makeUnique<NetworkCORSPreflightChecker>(m_networkProcess.get(), m_networkResourceLoader.get(), WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
-        RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success=%d forRedirect=%d", error.isNull(), isRedirected);
+        LOAD_CHECKER_RELEASE_LOG("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success=%d forRedirect=%d", error.isNull(), isRedirected);
 
         if (!error.isNull()) {
             handler(WTFMove(error));
@@ -463,4 +462,4 @@ void NetworkLoadChecker::storeRedirectionIfNeeded(const ResourceRequest& request
 
 } // namespace WebKit
 
-#undef RELEASE_LOG_IF_ALLOWED
+#undef LOAD_CHECKER_RELEASE_LOG

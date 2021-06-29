@@ -64,7 +64,7 @@ public: \
         return location; \
     } \
 private: \
-typedef int __thisIsHereToForceASemicolonAfterThisMacro
+typedef int __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS
 
 
 struct JSValueMalloc {

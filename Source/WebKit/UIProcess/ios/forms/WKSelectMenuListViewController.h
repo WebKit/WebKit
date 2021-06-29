@@ -25,7 +25,7 @@
 
 #if HAVE(PEPPER_UI_CORE)
 
-#import "WKQuickboardListViewController.h"
+#import "WKQuickboardViewControllerDelegate.h"
 
 @class WKSelectMenuListViewController;
 
@@ -41,9 +41,11 @@
 
 @end
 
-@interface WKSelectMenuListViewController : WKQuickboardListViewController
+@interface WKSelectMenuListViewController : PUICQuickboardListViewController
 
 - (instancetype)initWithDelegate:(id <WKSelectMenuListViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDelegate:(id <PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
 @property (nonatomic, weak) id <WKSelectMenuListViewControllerDelegate> delegate;
 

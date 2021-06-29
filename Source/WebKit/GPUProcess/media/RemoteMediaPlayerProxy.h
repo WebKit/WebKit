@@ -293,6 +293,7 @@ private:
     void createAudioSourceProvider();
     void setShouldEnableAudioSourceProvider(bool);
 
+    bool mediaPlayerPausedOrStalled() const;
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)

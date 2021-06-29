@@ -1,3 +1,74 @@
+2021-06-17  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Shaders with reserved metal keywords do not translate, nor do shaders with struct and variable names that are the same except prefixed by an underscore
+        https://bugs.webkit.org/show_bug.cgi?id=226660
+
+        Fix keyword translation problem by correcting symbol space. This avoids renaming structs unnecessarily 
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/RewriteKeywords.cpp:
+        (sh::Rewriter::createRenamed):
+
+2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal gl sync objects do not work in case of listener being needed
+        https://bugs.webkit.org/show_bug.cgi?id=227024
+
+        Reviewed by Per Arne Vollan.
+
+        Add an assert to notice when MTLSharedEventListener instantiation
+        fails. Without this, the fence implementation would not signal
+        the completion until the timeout would pass.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::getOrCreateSharedEventListener):
+
+2021-06-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal AutoObjCPtr == nullptr comparison is inverted
+        https://bugs.webkit.org/show_bug.cgi?id=227026
+
+        Reviewed by Anders Carlsson.
+
+        Make it more correct and add != nullptr variant for
+        consistency.
+
+        Use std::nullptr_t instead of const std::nullptr_t &
+        in all functions for consistency.
+
+        * src/libANGLE/renderer/metal/mtl_common.h:
+        (rx::mtl::AutoObjCPtr::operator== const):
+        (rx::mtl::AutoObjCPtr::operator!= const):
+
+2021-06-15  Kyle Piddington  <kpiddington@apple.com>
+
+        Tensorflow.js Broken in Safari 15
+        https://bugs.webkit.org/show_bug.cgi?id=226953
+
+        Tensorflow shaders use a 'NAN' uniform. This is a reserved keyword
+        in metal. Add NAN to the reserved list.
+
+        'inf' constants need to be replaced with INFINITY, much like nan constants need to be replaced with NAN
+        Reviewed by Kenneth Russell.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::GetMslKeywords):
+
+2021-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix typo in r276318
+        https://bugs.webkit.org/show_bug.cgi?id=227041
+        <rdar://76284889>
+
+        Reviewed by Chris Dumez.
+
+        @ uses the string @(DYLIB_INSTALL_NAME_BASE)
+        $ uses the value of the environment variable.
+        This turns out to be an important difference.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2021-06-11  Eleni Maria Stea  <estea@igalia.com>
 
         ANGLE EGL and GLES libraries should link with lib dl.

@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-Ref<StringImpl> Identifier::add(VM& vm, const char* c)
+Ref<AtomStringImpl> Identifier::add(VM& vm, const char* c)
 {
     ASSERT(c);
     ASSERT(c[0]);
@@ -37,7 +37,7 @@ Ref<StringImpl> Identifier::add(VM& vm, const char* c)
     return *AtomStringImpl::add(c);
 }
 
-Ref<StringImpl> Identifier::add8(VM& vm, const UChar* s, int length)
+Ref<AtomStringImpl> Identifier::add8(VM& vm, const UChar* s, int length)
 {
     if (length == 1) {
         UChar c = s[0];
@@ -46,7 +46,7 @@ Ref<StringImpl> Identifier::add8(VM& vm, const UChar* s, int length)
             return vm.smallStrings.singleCharacterStringRep(c);
     }
     if (!length)
-        return *StringImpl::empty();
+        return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
     return *AtomStringImpl::add(s, length);
 }

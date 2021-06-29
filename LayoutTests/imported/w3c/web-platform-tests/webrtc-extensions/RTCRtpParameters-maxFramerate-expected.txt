@@ -1,0 +1,10 @@
+
+FAIL addTransceiver() with sendEncoding.maxFramerate field set to less than 0 should reject with RangeError assert_throws_js: function "() => pc.addTransceiver('video', {
+    sendEncodings: [{
+      maxFramerate: -10
+    }]
+  })" did not throw
+FAIL setParameters() with encoding.maxFramerate field set to less than 0 should reject with RangeError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS setParameters() with modified encoding.maxFramerate should succeed with RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.maxFramerate should succeed without RTCRtpTransceiverInit
+

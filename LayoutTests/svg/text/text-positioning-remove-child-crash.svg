@@ -7,7 +7,6 @@
     <text><a id="a"><tspan>FAIL</tspan></a></text>
 
 <script><![CDATA[
-document.execCommand("SelectAll");
 document.getElementById("a").textContent = "PASS";
 ]]></script>
 </svg>

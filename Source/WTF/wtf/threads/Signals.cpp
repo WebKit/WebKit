@@ -44,8 +44,13 @@ extern "C" {
 #include <mach/thread_act.h>
 #endif
 
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
+
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/ThreadGroup.h>

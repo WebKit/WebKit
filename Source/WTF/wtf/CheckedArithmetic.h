@@ -326,7 +326,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
                 if (lhs > std::numeric_limits<ResultType>::max() + rhs)
                     return false;
             } else {
-                if (rhs > std::numeric_limits<ResultType>::max() + lhs)
+                if (lhs < std::numeric_limits<ResultType>::min() + rhs)
                     return false;
             }
         } // if the signs match this operation can't overflow

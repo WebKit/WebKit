@@ -82,6 +82,7 @@ static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimu
 RangeInputType::RangeInputType(HTMLInputElement& element)
     : InputType(Type::Range, element)
 {
+    ASSERT(needsShadowSubtree());
 }
 
 const AtomString& RangeInputType::formControlType() const
@@ -244,6 +245,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 
 void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
+    ASSERT(needsShadowSubtree());
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());
 

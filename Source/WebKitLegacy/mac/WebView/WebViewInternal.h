@@ -31,7 +31,6 @@
 
 #import "WebPreferences.h"
 #import "WebViewPrivate.h"
-#import "WebTypesInternal.h"
 #import "WebUIDelegate.h"
 
 #ifdef __cplusplus

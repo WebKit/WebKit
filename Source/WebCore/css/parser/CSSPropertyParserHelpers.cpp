@@ -3502,9 +3502,9 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
 
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<AllowedImageType> allowedImageTypes)
 {
-    if ((range.peek().type() == StringToken) && (allowedImageTypes.contains(AllowedImageType::RawStringAsURL))) {
-        auto urlStringView = range.consumeIncludingWhitespace().value();
-        return CSSImageValue::create(completeURL(context, urlStringView.toAtomString()), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    if (range.peek().type() == StringToken && allowedImageTypes.contains(AllowedImageType::RawStringAsURL)) {
+        return CSSImageValue::create(context.completeURL(range.consumeIncludingWhitespace().value().toAtomString().string()),
+            context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
     }
 
     if (range.peek().type() == FunctionToken) {
@@ -3521,9 +3521,10 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext
     }
 
     if (allowedImageTypes.contains(AllowedImageType::URLFunction)) {
-        auto uri = consumeUrlAsStringView(range);
-        if (!uri.isNull())
-            return CSSImageValue::create(completeURL(context, uri.toAtomString()), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+        if (auto string = consumeUrlAsStringView(range); !string.isNull()) {
+            return CSSImageValue::create(context.completeURL(string.toAtomString().string()),
+                context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+        }
     }
 
     return nullptr;
@@ -3532,7 +3533,7 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext
 // https://www.w3.org/TR/css-counter-styles-3/#predefined-counters
 bool isPredefinedCounterStyle(CSSValueID valueID)
 {
-    return valueID >= CSSValueDisc && valueID <= CSSValueKatakanaIroha;
+    return valueID >= CSSValueDisc && valueID <= CSSValueTamil;
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#typedef-counter-style-name

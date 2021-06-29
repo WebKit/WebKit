@@ -38,6 +38,9 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
+#if PLATFORM(GTK)
+#include <WebCore/CoordinatedGraphicsLayer.h>
+#endif
 
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
 
@@ -98,6 +101,10 @@ public:
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
 
+#if PLATFORM(GTK)
+    void adjustTransientZoom(double, WebCore::FloatPoint);
+    void commitTransientZoom(double, WebCore::FloatPoint);
+#endif
 private:
 #if USE(COORDINATED_GRAPHICS)
     void layerFlushTimerFired();
@@ -119,6 +126,12 @@ private:
     void didRenderFrame();
     void requestDisplayRefreshMonitorUpdate();
     void handleDisplayRefreshMonitorUpdate(bool);
+
+#if PLATFORM(GTK)
+    WebCore::FloatPoint constrainTransientZoomOrigin(double, WebCore::FloatPoint) const;
+    WebCore::CoordinatedGraphicsLayer* layerForTransientZoom() const;
+    void applyTransientZoomToLayers(double, WebCore::FloatPoint);
+#endif
 
     class CompositorClient final : public ThreadedCompositor::Client, public ThreadedDisplayRefreshMonitor::Client  {
         WTF_MAKE_NONCOPYABLE(CompositorClient);
@@ -200,6 +213,12 @@ private:
     CompositingCoordinator m_coordinator;
 #endif // USE(COORDINATED_GRAPHICS)
     WebCore::PlatformDisplayID m_displayID;
+
+#if PLATFORM(GTK)
+    bool m_transientZoom { false };
+    double m_transientZoomScale { 1 };
+    WebCore::FloatPoint m_transientZoomOrigin;
+#endif
 };
 
 #if !USE(COORDINATED_GRAPHICS)

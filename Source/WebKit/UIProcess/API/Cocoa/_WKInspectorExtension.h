@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol _WKInspectorExtensionDelegate;
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
+WK_CLASS_AVAILABLE(macos(12.0))
 @interface _WKInspectorExtension : NSObject
 
 - (instancetype)new NS_UNAVAILABLE;
@@ -80,7 +80,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
  * @abstract Allows the client to receive extension lifecycle events that
  * arise from within Web Inspector.
  */
-@property (nonatomic, weak) id <_WKInspectorExtensionDelegate> delegate WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, weak) id <_WKInspectorExtensionDelegate> delegate WK_API_AVAILABLE(macos(12.0));
 
 @end
 

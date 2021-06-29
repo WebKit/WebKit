@@ -810,7 +810,7 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
     if (range.consume().type() != ColonToken)
         return; // Parse error
 
-    if (m_context.isPropertyRuntimeDisabled(propertyID))
+    if (m_context.isPropertyRuntimeDisabled(propertyID) || isInternalCSSProperty(propertyID))
         propertyID = CSSPropertyInvalid;
 
     bool important = false;

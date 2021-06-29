@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +36,6 @@
 #include "RenderElement.h"
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -171,6 +171,18 @@ bool CSSFilterImageValue::equals(const CSSFilterImageValue& other) const
 bool CSSFilterImageValue::equalInputImages(const CSSFilterImageValue& other) const
 {
     return compareCSSValue(m_imageValue, other.m_imageValue);
+}
+
+Ref<CSSFilterImageValue> CSSFilterImageValue::valueWithStylesResolved(Style::BuilderState& state)
+{
+    auto imageValue = state.resolveImageStyles(m_imageValue.get());
+    if (imageValue.ptr() == m_imageValue.ptr()) {
+        createFilterOperations(state);
+        return *this;
+    }
+    auto filterImageValue = create(WTFMove(imageValue), Ref { m_filterValue });
+    filterImageValue->createFilterOperations(state);
+    return filterImageValue;
 }
 
 } // namespace WebCore

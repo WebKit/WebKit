@@ -199,6 +199,16 @@ class JSONCSSPropertiesChecker(JSONChecker):
         else:
             self.check_codegen_properties(property_name, value)
 
+    def validate_logical_property_group(self, property_name, property_key, key, value):
+        self.validate_type(property_name, property_key, key, value, dict)
+
+        for subKey, value in value.items():
+            if subKey in ('name', 'resolver'):
+                self.validate_string(property_name, key, subKey, value)
+            else:
+                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for "%s" of property "%s" has unexpected key "%s".' % (key, property_name, subKey))
+                return
+
     def validate_status(self, property_name, property_key, key, value):
         if isinstance(value, dict):
             keys_and_validators = {
@@ -279,7 +289,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'converter': self.validate_string,
             'custom': self.validate_string,
             'descriptor-only': self.validate_boolean,
-            'direction-aware-property': self.validate_boolean,
             'enable-if': self.validate_string,
             'fill-layer-property': self.validate_boolean,
             'font-property': self.validate_boolean,
@@ -287,6 +296,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'high-priority': self.validate_boolean,
             'initial': self.validate_string,
             'internal-only': self.validate_boolean,
+            'logical-property-group': self.validate_logical_property_group,
             'longhands': self.validate_array,
             'name-for-methods': self.validate_string,
             'no-default-color': self.validate_boolean,

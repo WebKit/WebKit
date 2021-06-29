@@ -7,6 +7,5 @@ EXPECTED (video.readyState == '2') OK
 RUN(video.currentTime = 0.1)
 EVENT(canplay)
 EXPECTED (video.readyState >= '2') OK
-EXPECTED (video.networkState == '2') OK
 END OF TEST
 

@@ -31,7 +31,7 @@
 @class NSImage;
 #endif
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKAppHighlight : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

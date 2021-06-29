@@ -25,7 +25,6 @@
 
 #include "InProcessIDBServer.h"
 
-#include "StorageThread.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/IDBConnectionToClient.h>
 #include <WebCore/IDBConnectionToServer.h>
@@ -61,12 +60,14 @@ InProcessIDBServer::~InProcessIDBServer()
 {
     BinarySemaphore semaphore;
     dispatchTask([this, &semaphore] {
-        m_server = nullptr;
+        {
+            Locker locker { m_serverLock };
+            m_server = nullptr;
+        }
         m_connectionToClient = nullptr;
         semaphore.signal();
     });
     semaphore.wait();
-    m_thread->terminate();
 }
 
 StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin)
@@ -89,11 +90,10 @@ static inline IDBServer::IDBServer::StorageQuotaManagerSpaceRequester storageQuo
 }
 
 InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath)
-    : m_thread(makeUnique<StorageThread>(StorageThread::Type::IndexedDB))
+    : m_queue(WorkQueue::create("com.apple.WebKit.IndexedDBServer"))
 {
     ASSERT(isMainThread());
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
-    m_thread->start();
     dispatchTask([this, protectedThis = makeRef(*this), sessionID, directory = databaseDirectoryPath.isolatedCopy(), spaceRequester = storageQuotaManagerSpaceRequester(*this)] () mutable {
         m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
 
@@ -500,7 +500,7 @@ void InProcessIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificat
 void InProcessIDBServer::dispatchTask(Function<void()>&& function)
 {
     ASSERT(isMainThread());
-    m_thread->dispatch(WTFMove(function));
+    m_queue->dispatch(WTFMove(function));
 }
 
 void InProcessIDBServer::dispatchTaskReply(Function<void()>&& function)

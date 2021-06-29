@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,6 +100,7 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 
 namespace WebKit {
 using namespace WebCore;
@@ -192,7 +193,6 @@ private:
 
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
-    , m_responsivenessTimer(*this)
     , m_backgroundResponsivenessTimer(*this)
     , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
@@ -460,7 +460,6 @@ void WebProcessProxy::shutDown()
         m_webConnection = nullptr;
     }
 
-    m_responsivenessTimer.invalidate();
     m_backgroundResponsivenessTimer.invalidate();
     m_activityForHoldingLockedFiles = nullptr;
     m_audibleMediaActivity = std::nullopt;
@@ -478,6 +477,10 @@ void WebProcessProxy::shutDown()
 
 #if ENABLE(ROUTING_ARBITRATION)
     m_routingArbitrator->processDidTerminate();
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    m_hasIssuedAttachmentElementRelatedSandboxExtensions = false;
 #endif
 
     m_processPool->disconnectProcess(*this);
@@ -800,14 +803,8 @@ void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 #if ENABLE(WEB_AUTHN)
 void WebProcessProxy::getWebAuthnProcessConnection(Messages::WebProcessProxy::GetWebAuthnProcessConnection::DelayedReply&& reply)
 {
+    MESSAGE_CHECK_COMPLETION(hasCorrectPACEntitlement(), reply({ }));
     m_processPool->getWebAuthnProcessConnection(*this, WTFMove(reply));
-}
-#endif
-
-#if !PLATFORM(COCOA)
-bool WebProcessProxy::platformIsBeingDebugged() const
-{
-    return false;
 }
 #endif
 
@@ -868,6 +865,10 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_userMediaCaptureManagerProxy->clear();
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    m_hasIssuedAttachmentElementRelatedSandboxExtensions = false;
 #endif
 
     if (auto* webConnection = this->webConnection())
@@ -978,30 +979,6 @@ void WebProcessProxy::didChangeIsResponsive()
         page->didChangeProcessIsResponsive();
 }
 
-bool WebProcessProxy::mayBecomeUnresponsive()
-{
-#if !defined(NDEBUG) || ASAN_ENABLED
-    // Disable responsiveness checks in slow builds to avoid false positives.
-    return false;
-#else
-    if (platformIsBeingDebugged())
-        return false;
-
-    static bool isLibgmallocEnabled = [] {
-        char* variable = getenv("DYLD_INSERT_LIBRARIES");
-        if (!variable)
-            return false;
-        if (!strstr(variable, "libgmalloc"))
-            return false;
-        return true;
-    }();
-    if (isLibgmallocEnabled)
-        return false;
-
-    return true;
-#endif
-}
-
 #if ENABLE(IPC_TESTING_API)
 void WebProcessProxy::setIgnoreInvalidMessageForTesting()
 {
@@ -1053,11 +1030,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     enableRemoteInspectorIfNeeded();
 #endif
 #endif
-
-    if (m_shouldStartResponsivenessTimerWhenLaunched) {
-        auto useLazyStop = *std::exchange(m_shouldStartResponsivenessTimerWhenLaunched, std::nullopt);
-        startResponsivenessTimer(useLazyStop);
-    }
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(FrameIdentifier frameID) const
@@ -1129,7 +1101,7 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t
 
 bool WebProcessProxy::isResponsive() const
 {
-    return m_responsivenessTimer.isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
+    return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
 }
 
 void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
@@ -1283,24 +1255,6 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
     AuxiliaryProcessProxy::terminate();
 
     processDidTerminateOrFailedToLaunch(reason);
-}
-
-void WebProcessProxy::stopResponsivenessTimer()
-{
-    responsivenessTimer().stop();
-}
-
-void WebProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
-{
-    if (isLaunching()) {
-        m_shouldStartResponsivenessTimerWhenLaunched = useLazyStop;
-        return;
-    }
-
-    if (useLazyStop == UseLazyStop::Yes)
-        responsivenessTimer().startWithLazyStop();
-    else
-        responsivenessTimer().start();
 }
 
 void WebProcessProxy::enableSuddenTermination()
@@ -1531,8 +1485,13 @@ void WebProcessProxy::isResponsive(CompletionHandler<void(bool isWebProcessRespo
     if (callback)
         m_isResponsiveCallbacks.append(WTFMove(callback));
 
-    startResponsivenessTimer();
-    send(Messages::WebProcess::MainThreadPing(), 0);
+    checkForResponsiveness([weakThis = makeWeakPtr(*this)]() mutable {
+        if (!weakThis)
+            return;
+
+        for (auto& isResponsive : std::exchange(weakThis->m_isResponsiveCallbacks, { }))
+            isResponsive(true);
+    });
 }
 
 void WebProcessProxy::isResponsiveWithLazyStop()
@@ -1543,8 +1502,13 @@ void WebProcessProxy::isResponsiveWithLazyStop()
     if (!responsivenessTimer().hasActiveTimer()) {
         // We do not send a ping if we are already waiting for the WebProcess.
         // Spamming pings on a slow web process is not helpful.
-        responsivenessTimer().startWithLazyStop();
-        send(Messages::WebProcess::MainThreadPing(), 0);
+        checkForResponsiveness([weakThis = makeWeakPtr(*this)]() mutable {
+            if (!weakThis)
+                return;
+
+            for (auto& isResponsive : std::exchange(weakThis->m_isResponsiveCallbacks, { }))
+                isResponsive(true);
+        }, UseLazyStop::Yes);
     }
 }
 
@@ -1558,16 +1522,6 @@ bool WebProcessProxy::isJITEnabled() const
     return processPool().configuration().isJITEnabled();
 }
 
-void WebProcessProxy::didReceiveMainThreadPing()
-{
-    responsivenessTimer().stop();
-
-    auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
-    bool isWebProcessResponsive = true;
-    for (auto& callback : isResponsiveCallbacks)
-        callback(isWebProcessResponsive);
-}
-
 void WebProcessProxy::didReceiveBackgroundResponsivenessPing()
 {
     m_backgroundResponsivenessTimer.didReceiveBackgroundResponsivenessPong();
@@ -1575,7 +1529,6 @@ void WebProcessProxy::didReceiveBackgroundResponsivenessPing()
 
 void WebProcessProxy::processTerminated()
 {
-    m_responsivenessTimer.processTerminated();
     m_backgroundResponsivenessTimer.processTerminated();
 }
 
@@ -1672,6 +1625,13 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
 
     if (url.protocolIsAbout())
         return;
+
+    if (!url.protocolIsInHTTPFamily() && !processPool().configuration().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol()) {
+        // Unless the processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol flag is set, we don't process swap on navigations withing the same
+        // non HTTP(s) protocol. For this reason, we ignore the registrable domain and processes are not eligible for the process cache.
+        m_registrableDomain = WebCore::RegistrableDomain { };
+        return;
+    }
 
     auto registrableDomain = WebCore::RegistrableDomain { url };
     if (m_registrableDomain && *m_registrableDomain != registrableDomain) {
@@ -1998,3 +1958,4 @@ void WebProcessProxy::systemBeep()
 
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_URL
+#undef MESSAGE_CHECK_COMPLETION

@@ -29,13 +29,11 @@
 #include <WebCore/Cookie.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 struct Cookie;
-#if PLATFORM(COCOA)
-class CookieStorageObserver;
-#endif
 enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 
@@ -59,14 +57,14 @@ public:
 
     void cookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
     void cookiesForURL(WTF::URL&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
-    void setCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void()>&&);
+    void setCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
     
     void deleteAllCookies(CompletionHandler<void()>&&);
     void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
     void flushCookies(CompletionHandler<void()>&&);
 
-    class Observer {
+    class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer() { }
         virtual void cookiesDidChange(HTTPCookieStore&) = 0;
@@ -76,35 +74,16 @@ public:
     void unregisterObserver(Observer&);
 
     void cookiesDidChange();
-    void cookieManagerDestroyed();
 
-    void filterAppBoundCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+    void filterAppBoundCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
-
-    void flushDefaultUIProcessCookieStore();
-    static Vector<WebCore::Cookie> getAllDefaultUIProcessCookieStoreCookies();
-    static void setCookieInDefaultUIProcessCookieStore(const WebCore::Cookie&);
-    static void deleteCookieFromDefaultUIProcessCookieStore(const WebCore::Cookie&);
-    void startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&);
-    void stopObservingChangesToDefaultUIProcessCookieStore();
-    void deleteCookiesInDefaultUIProcessCookieStore();
-    void setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebCore::HTTPCookieAcceptPolicy);
     
-    // FIXME: This is a reference cycle.
-    Ref<WebKit::WebsiteDataStore> m_owningDataStore;
-    HashSet<Observer*> m_observers;
-
-    WebKit::WebCookieManagerProxy* m_observedCookieManagerProxy { nullptr };
+    WeakPtr<WebKit::WebsiteDataStore> m_owningDataStore;
+    WeakHashSet<Observer> m_observers;
+    WeakPtr<WebKit::WebCookieManagerProxy> m_observedCookieManagerProxy;
     std::unique_ptr<APIWebCookieManagerProxyObserver> m_cookieManagerProxyObserver;
-    bool m_observingUIProcessCookies { false };
-
-    uint64_t m_processPoolCreationListenerIdentifier { 0 };
-
-#if PLATFORM(COCOA)
-    std::unique_ptr<WebCore::CookieStorageObserver> m_defaultUIProcessObserver;
-#endif
 };
 
 }

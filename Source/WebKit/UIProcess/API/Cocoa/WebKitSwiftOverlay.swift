@@ -55,3 +55,24 @@ extension WKWebView {
         __find(string, with: configuration, completionHandler: completionHandler)
     }
 }
+
+#if swift(>=5.5)
+@available(iOS 15.0, macOS 12.0, *)
+extension WKWebView {
+    public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, contentWorld: WKContentWorld) async throws -> Any? {
+        return try await __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld)
+    }
+
+    public func pdf(configuration: WKPDFConfiguration = .init()) async throws -> Data {
+        try await __createPDF(with: configuration)
+    }
+
+    public func evaluateJavaScript(_ javaScript: String, in frame: WKFrameInfo? = nil, contentWorld: WKContentWorld) async throws -> Any? {
+        try await __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld)
+    }
+
+    public func find(_ string: String, configuration: WKFindConfiguration = .init()) async throws -> WKFindResult {
+        await __find(string, with: configuration)
+    }
+}
+#endif

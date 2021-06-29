@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebProcessPlugInBrowserContextController._groupIdentifier", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebProcessPlugInBrowserContextController._groupIdentifier", macos(10.10, 12.0), ios(8.0, 15.0))
 @interface WKWebProcessPlugInPageGroup : NSObject
 
 @property (readonly) NSString *identifier;

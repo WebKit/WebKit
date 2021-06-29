@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2008 Apple Inc. All right reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,12 +27,8 @@
 
 namespace WebCore {
 
-class CachedImage;
-class CachedResourceLoader;
 class Document;
-class Element;
 class SVGCursorElement;
-class SVGElement;
 
 struct ImageWithScale;
 
@@ -42,21 +38,10 @@ class BuilderState;
 
 class CSSCursorImageValue final : public CSSValue {
 public:
-    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot, LoadedFromOpaqueSource loadedFromOpaqueSource)
-    {
-        return adoptRef(*new CSSCursorImageValue(WTFMove(imageValue), hasHotSpot, hotSpot, loadedFromOpaqueSource));
-    }
-
+    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource);
     ~CSSCursorImageValue();
 
-    bool hasHotSpot() const { return m_hasHotSpot; }
-
-    IntPoint hotSpot() const
-    {
-        if (m_hasHotSpot)
-            return m_hotSpot;
-        return IntPoint(-1, -1);
-    }
+    std::optional<IntPoint> hotSpot() const { return m_hotSpot; }
 
     const URL& imageURL() const { return m_originalURL; }
 
@@ -64,23 +49,21 @@ public:
 
     ImageWithScale selectBestFitImage(const Document&);
 
-    void removeReferencedElement(SVGElement*);
-
     bool equals(const CSSCursorImageValue&) const;
 
     void cursorElementRemoved(SVGCursorElement&);
     void cursorElementChanged(SVGCursorElement&);
 
+    Ref<CSSCursorImageValue> valueWithStylesResolved(Style::BuilderState&);
+
 private:
-    CSSCursorImageValue(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot, LoadedFromOpaqueSource);
+    CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource);
 
     SVGCursorElement* updateCursorElement(const Document&);
 
     URL m_originalURL;
     Ref<CSSValue> m_imageValue;
-
-    bool m_hasHotSpot;
-    IntPoint m_hotSpot;
+    std::optional<IntPoint> m_hotSpot;
     HashSet<SVGCursorElement*> m_cursorElements;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 };

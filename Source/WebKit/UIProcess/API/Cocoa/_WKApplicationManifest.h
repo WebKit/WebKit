@@ -52,9 +52,9 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
 
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly, nullable, copy) UIColor *themeColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly, nullable, copy) UIColor *themeColor WK_API_AVAILABLE(ios(15.0));
 #else
-@property (nonatomic, readonly, nullable, copy) NSColor *themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readonly, nullable, copy) NSColor *themeColor WK_API_AVAILABLE(macos(12.0));
 #endif
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(nullable NSURL *)manifestURL documentURL:(nullable NSURL *)documentURL;
