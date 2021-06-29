@@ -41,6 +41,9 @@ OESTextureFloat::OESTextureFloat(WebGLRenderingContextBase& context)
     context.graphicsContextGL()->getExtensions().ensureEnabled("GL_OES_texture_float"_s);
     context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
     context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
+    // https://github.com/KhronosGroup/WebGL/pull/2830
+    // Spec requires EXT_float_blend to be turned on implicitly here.
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_float_blend"_s);
 }
 
 OESTextureFloat::~OESTextureFloat() = default;
