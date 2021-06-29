@@ -1,3 +1,18 @@
+2021-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bubblewrap: allow to set DBus proxy logging per proxy
+        https://bugs.webkit.org/show_bug.cgi?id=227447
+
+        Reviewed by Michael Catanzaro.
+
+        It's currently global using env var WEBKIT_ENABLE_DBUS_PROXY_LOGGING. Add WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING
+        to enable logging only on a11y bus.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::XDGDBusProxyLauncher::launch):
+        (WebKit::bindA11y):
+        (WebKit::bubblewrapSpawn):
+
 2021-06-29  Youenn Fablet  <youenn@apple.com>
 
         Remove RemoteAudioMediaStreamTrackRenderer and RemoteAudioMediaStreamTrackRendererManager

@@ -182,7 +182,7 @@ public:
         m_permissions = WTFMove(permissions);
     };
 
-    void launch()
+    void launch(bool enableLogging)
     {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isRunning());
 
@@ -202,7 +202,7 @@ public:
             syncFdStr.get(),
         };
 
-        if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"))
+        if (enableLogging)
             proxyArgs.append("--log");
 
         proxyArgs.appendVector(m_permissions);
@@ -504,7 +504,7 @@ static void bindA11y(Vector<CString>& args)
             "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
         });
 
-        proxy.launch();
+        proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"));
     }
 
     if (proxy.proxyPath().data()) {
@@ -890,7 +890,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
                 permissions.append("--talk=org.freedesktop.portal.Desktop");
             }
             proxy.setPermissions(WTFMove(permissions));
-            proxy.launch();
+            proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"));
         }
     } else {
         // Only X11 users need this for XShm which is only the Web process.
