@@ -1,5 +1,21 @@
 2021-06-29  Rob Buis  <rbuis@igalia.com>
 
+        Nullptr crash in HTMLStackItem::create via DocumentFragment::parseHTML
+        https://bugs.webkit.org/show_bug.cgi?id=227390
+
+        Reviewed by Ryosuke Niwa.
+
+        DOM manipulation can mean document.body() can return null, causing the
+        crash/ASSERT in DocumentFragment::parseHTML in the test case. Since the
+        only use of it was to force InBody insertion mode, instead use a fake body element.
+
+        Test: editing/pasteboard/paste-create-fragment-crash.html
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragment):
+
+2021-06-29  Rob Buis  <rbuis@igalia.com>
+
         Crash in SharedBuffer::data
         https://bugs.webkit.org/show_bug.cgi?id=227173
 
