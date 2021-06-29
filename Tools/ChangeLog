@@ -1,3 +1,19 @@
+2021-06-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add MeasureTime python tool
+        https://bugs.webkit.org/show_bug.cgi?id=227313
+        <rdar://problem/79689588>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Export MeasureTime object.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/measure_time.py: Added.
+        (MeasureTime): Provide class which logs time elapsed in context.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/measure_time_unittest.py: Added.
+        (MeasureTimeTests):
+
 2021-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r279310): Occasional crash when focusing login fields on iPad with a software keyboard

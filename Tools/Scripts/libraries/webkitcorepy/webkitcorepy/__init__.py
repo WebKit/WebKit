@@ -36,8 +36,9 @@ from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.credentials import credentials
+from webkitcorepy.measure_time import MeasureTime
 
-version = Version(0, 6, 0)
+version = Version(0, 6, 1)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

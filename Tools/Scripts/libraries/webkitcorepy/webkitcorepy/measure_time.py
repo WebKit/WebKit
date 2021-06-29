@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,44 +20,34 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
+import time
+
+from webkitcorepy import log
 
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+class MeasureTime(object):
+    def __init__(self, log=False, name=None):
+        self.started = None
+        self.ended = None
+        self.log = log
+        self.name = name
 
+    @property
+    def elapsed(self):
+        if not self.started:
+            return None
+        if not self.ended:
+            return time.time() - self.started
+        return self.ended - self.started
 
-setup(
-    name='webkitcorepy',
-    version='0.6.1',
-    description='Library containing various Python support classes and functions.',
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: Other/Proprietary License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    keywords='python unicode',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitcorepy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitcorepy',
-        'webkitcorepy.mocks',
-        'webkitcorepy.tests',
-        'webkitcorepy.tests.mocks',
-    ],
-    install_requires=[
-        'mock',
-        'requests',
-        'six',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-)
+    def __enter__(self):
+        self.ended = None
+        self.started = time.time()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        self.ended = time.time()
+        if self.log and self.name:
+            log.critical('{}: {} seconds elapsed'.format(self.name, self.elapsed or 'No'))
+        elif self.log:
+            log.critical('{} seconds elapsed'.format(self.elapsed or 'No'))
