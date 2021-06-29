@@ -1451,6 +1451,125 @@ void testOrNot64()
         CHECK_EQ(invoke<int64_t>(test, 0ULL, mask), ~mask);
     }
 }
+
+void testInsertSignedBitfieldInZero32()
+{
+    uint32_t src = 0xf0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto insertSignedBitfieldInZero32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.insertSignedBitfieldInZero32(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t bf = src;
+                int32_t mask1 = (1 << width) - 1;
+                int32_t mask2 = 1 << (width - 1);
+                int32_t bfsx = ((bf & mask1) ^ mask2) - mask2;
+
+                CHECK_EQ(invoke<int32_t>(insertSignedBitfieldInZero32, src), bfsx << lsb);
+            }
+        }
+    }
+}
+
+void testInsertSignedBitfieldInZero64()
+{
+    int64_t src = 0xf0f0f0f0f0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+                auto insertSignedBitfieldInZero64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.insertSignedBitfieldInZero64(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t bf = src;
+                int64_t amount = CHAR_BIT * sizeof(bf) - width;
+                int64_t bfsx = (bf << amount) >> amount;
+
+                CHECK_EQ(invoke<int64_t>(insertSignedBitfieldInZero64, src), bfsx << lsb);
+            }
+        }
+    }
+}
+
+void testExtractSignedBitfield32()
+{
+    int32_t src = 0xf0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto extractSignedBitfield32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.extractSignedBitfield32(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t bf = src >> lsb;
+                int32_t mask1 = (1 << width) - 1;
+                int32_t mask2 = 1 << (width - 1);
+                int32_t bfsx = ((bf & mask1) ^ mask2) - mask2;
+
+                CHECK_EQ(invoke<int32_t>(extractSignedBitfield32, src), bfsx);
+            }
+        }
+    }
+}
+
+void testExtractSignedBitfield64()
+{
+    int64_t src = 0xf0f0f0f0f0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+                auto extractSignedBitfield64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.extractSignedBitfield64(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t bf = src >> lsb;
+                int64_t amount = CHAR_BIT * sizeof(bf) - width;
+                int64_t bfsx = (bf << amount) >> amount;
+
+                CHECK_EQ(invoke<int64_t>(extractSignedBitfield64, src), bfsx);
+            }
+        }
+    }
+}
+
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)
@@ -3636,6 +3755,11 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     RUN(testOrNot32());
     RUN(testOrNot64());
+
+    RUN(testInsertSignedBitfieldInZero32());
+    RUN(testInsertSignedBitfieldInZero64());
+    RUN(testExtractSignedBitfield32());
+    RUN(testExtractSignedBitfield64());
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)

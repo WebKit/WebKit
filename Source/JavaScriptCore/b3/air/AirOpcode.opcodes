@@ -854,6 +854,18 @@ arm64: ExtractInsertBitfieldAtLowEnd32 U:G:32, U:G:32, U:G:32, ZD:G:32
 arm64: ExtractInsertBitfieldAtLowEnd64 U:G:64, U:G:32, U:G:32, D:G:64
     Tmp, Imm, Imm, Tmp
 
+arm64: InsertSignedBitfieldInZero32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: InsertSignedBitfieldInZero64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
+
+arm64: ExtractSignedBitfield32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: ExtractSignedBitfield64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
+
 # The first operand is rax.
 # FIXME: This formulation means that the boolean result cannot be put in eax, even though all users
 # of this would be OK with that.

@@ -4599,6 +4599,10 @@ void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testBIC64());
     RUN(testOrNot32());
     RUN(testOrNot64());
+    RUN(testInsertSignedBitfieldInZero32());
+    RUN(testInsertSignedBitfieldInZero64());
+    RUN(testExtractSignedBitfield32());
+    RUN(testExtractSignedBitfield64());
     RUN(testBitAndZeroShiftRightArgImmMask32());
     RUN(testBitAndZeroShiftRightArgImmMask64());
     RUN(testBitAndArgs(43, 43));

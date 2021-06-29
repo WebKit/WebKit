@@ -619,6 +619,33 @@ private:
             break;
 
         case Sub:
+            // Turn this: Sub(BitXor(BitAnd(value, mask1), mask2), mask2)
+            // Into this: SShr(Shl(value, amount), amount)
+            // Conditions: 
+            // 1. mask1 = (1 << width) - 1
+            // 2. mask2 = 1 << (width - 1)
+            // 3. amount = datasize - width
+            // 4. 0 < width < datasize
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(0)->child(0)->opcode() == BitAnd
+                && m_value->child(0)->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(1)->hasInt()) {
+                uint64_t mask1 = m_value->child(0)->child(0)->child(1)->asInt();
+                uint64_t mask2 = m_value->child(0)->child(1)->asInt();
+                uint64_t mask3 = m_value->child(1)->asInt();
+                uint64_t width = WTF::bitCount(mask1);
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                bool isValidMask1 = mask1 && !(mask1 & (mask1 + 1)) && width < datasize;
+                bool isValidMask2 = mask2 == mask3 && ((mask2 << 1) - 1) == mask1;
+                if (isValidMask1 && isValidMask2) {
+                    Value* amount = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), datasize - width);
+                    Value* shlValue = m_insertionSet.insert<Value>(m_index, Shl, m_value->origin(), m_value->child(0)->child(0)->child(0), amount);
+                    replaceWithNew<Value>(SShr, m_value->origin(), shlValue, amount);
+                    break;
+                }
+            }
+
             // Turn this: Sub(constant1, constant2)
             // Into this: constant1 - constant2
             if (Value* constantSub = m_value->child(0)->subConstant(m_proc, m_value->child(1))) {

@@ -1,3 +1,155 @@
+2021-06-29  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to use SBX and SBFIZ supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227203
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes two modifications:
+            1. Introduce a strength reduction rule for sign extending bitfield.
+            2. Add Signed Bitfield Extract (SBFX) and Signed Bitfield Insert 
+               in Zero (SBFIZ) to Air opcode to serve instruction selector.
+
+        -------------------------------------------------------
+        ### Part A Sign extending from a variable bit-width ###
+        -------------------------------------------------------
+        According to Bit Twiddling Hacks, there are two ways to sign extend bitfield.
+        (https://graphics.stanford.edu/~seander/bithacks.html#VariableSignExtend)
+
+        int bf;    // sign extend this width-bit number to bfsx
+        int width; // number of bits representing the number in bf
+        int bfsx;  // resulting sign-extended number
+
+        Approach 1
+        mask1 = (1 << width) - 1
+        mask2 = 1 << (width - 1)
+        bf    = bf & mask1      // zero bits in bf above position width  
+        bfsx  = (bf ^ mask2) - mask2
+
+        Approach 2
+        amount = CHAR_BIT * sizeof(bf) - width
+        bfsx   = (bf << amount) >> amount
+
+        Then, a new strength reduction rule is introduced:
+            Turn this: ((bf & mask1) ^ mask2) - mask2 
+            Into this: (bf << amount) >> amount
+
+        -------------------
+        ### Part B SBFX ###
+        -------------------
+        Given instruction:
+        sbfx Rd, Rn, lsb, width
+
+        Signed Bitfield Extract (SBFX) extracts width number of adjacent bits at lsb position 
+        from a register Rn, sign-extends them to the size of the register, and writes the 
+        result to the destination register Rd.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            bf    = src >> lsb
+            dst   = ((bf & mask1) ^ mask2) - mask2
+            mask1 = (1 << width) - 1
+            mask2 = 1 << (width - 1) // (mask2 << 1) - 1 = mask1
+
+        Pattern 2:
+            bf     = src >> lsb
+            amount = CHAR_BIT * sizeof(bf) - width
+            dst    = (bf << amount) >> amount
+        
+        Then, (bf << amount) >> amount is selected as the canonical form with the strength reduction 
+        rule introduced above.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = lsb
+        Int @2 = amount
+        Int @3 = ZShr(@0, @1)
+        Int @4 = Shl(@3, @2)
+        Int @5 = SShr(@4, @2)
+        Void@6 = Return(@5, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Urshift %x0,    lsb, %x0, @3
+        Lshift  %x0, amount, %x0, @4
+        Rshift  %x0, amount, %x0, @5
+        Ret     %x0,              @6
+
+        After Adding BIC:
+        // New optimized AIR
+        ExtractSignedBitfield %x0, lsb, width, %x0, @5
+        Ret                   %x0,                  @6
+    
+        --------------------
+        ### Part B SBFIZ ###
+        --------------------
+        Given instruction:
+        sbfiz Rd, Rn, lsb, width
+
+        Signed Bitfield Insert in Zero (SBFIZ) zeroes the destination register Rd and copies 
+        width number of contiguous bits from a source register Rn into lsb position in the 
+        destination register, sign-extending the most significant bit of the transferred value.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            bfsx  = ((src & mask1) ^ mask2) - mask2
+            dst   = bfsx << lsb
+            mask1 = (1 << width) - 1
+            mask2 = 1 << (width - 1) // (mask2 << 1) - 1 = mask1
+
+        Pattern 2:
+            amount = CHAR_BIT * sizeof(bf) - width
+            bfsx   = (src << amount) >> amount
+            dst    = bfsx << lsb
+        
+        Then, ((src << amount) >> amount) << lsb is selected as the canonical form with the 
+        strength reduction rule introduced above.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = lsb
+        Int @2 = amount
+        Int @3 = Shl(@0, @2)
+        Int @4 = SShr(@3, @2)
+        Int @5 = Shl(@4, @1)
+        Void@6 = Return(@5, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Lshift %x0, amount, %x0, @3
+        Rshift %x0, amount, %x0, @4
+        Lshift %x0,    lsb, %x0, @5
+        Ret    %x0,              @6
+
+        After Adding BIC:
+        // New optimized AIR
+        InsertSignedBitfieldInZero %x0, lsb, width, %x0, @5
+        Ret                        %x0,                  @6
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::insertSignedBitfieldInZero32):
+        (JSC::MacroAssemblerARM64::insertSignedBitfieldInZero64):
+        (JSC::MacroAssemblerARM64::extractSignedBitfield32):
+        (JSC::MacroAssemblerARM64::extractSignedBitfield64):
+        * assembler/testmasm.cpp:
+        (JSC::testInsertSignedBitfieldInZero32):
+        (JSC::testInsertSignedBitfieldInZero64):
+        (JSC::testExtractSignedBitfield32):
+        (JSC::testExtractSignedBitfield64):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (addBitTests):
+        * b3/testb3_3.cpp:
+        (testInsertSignedBitfieldInZero32):
+        (testInsertSignedBitfieldInZero64):
+        (testExtractSignedBitfield32):
+        (testExtractSignedBitfield64):
+
 2021-06-28  Yijia Huang  <yijia_huang@apple.com>
 
         Add a new pattern to instruction selector to use BIC supported by ARM64
@@ -6,7 +158,7 @@
         Reviewed by Filip Pizlo.
 
         This patch includes three modifications:
-            1. Add bit clear (BIC), or not (ORN), and extract and insert bitfield at lower end (FBXIL) 
+            1. Add bit clear (BIC), or not (ORN), and extract and insert bitfield at lower end (BFXIL) 
                to Air opcode to serve intruciton selector.
             2. Add bitfield clear (BFC) to MacroAssembler.
             4. Do refactoring - rename Air opcodes added in the previous patches.
@@ -97,13 +249,13 @@
         Ret %x0,           @5
 
         --------------------
-        ### Part A FBXIL ###
+        ### Part A BFXIL ###
         --------------------
         Given the operation:
 
         bfxil Rd, Rn, lsb, width
 
-        Bitfield extract and insert at low end(FBXIL) copies any number of low-order bits 
+        Bitfield extract and insert at low end(BFXIL) copies any number of low-order bits 
         from a source register into the same number of adjacent bits at the low end in 
         the destination register, leaving other bits unchanged.
 
@@ -130,7 +282,7 @@
         4. 0 < width < datasize
         5. shiftAmount + width <= datasize
 
-        The canonical form to match FBXIL is d = ((n >> lsb) & mask1) | (d & mask2).
+        The canonical form to match BFXIL is d = ((n >> lsb) & mask1) | (d & mask2).
         
         Given B3 IR:
         Int @0 = ArgumentReg(%x0)

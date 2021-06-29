@@ -2998,7 +2998,7 @@ private:
 
             // UBFIZ Pattern: d = (n & mask) << lsb 
             // Where: mask = (1 << width) - 1
-            auto tryAppendUBFZ = [&] () -> bool {
+            auto tryAppendUBFIZ = [&] () -> bool {
                 Air::Opcode opcode = opcodeForType(InsertUnsignedBitfieldInZero32, InsertUnsignedBitfieldInZero64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
@@ -3024,7 +3024,46 @@ private:
                 return true;
             };
 
-            if (tryAppendUBFZ())
+            if (tryAppendUBFIZ())
+                return;
+
+            // SBFIZ Pattern: d = ((src << amount) >> amount) << lsb
+            // where: amount = datasize - width
+            auto tryAppendSBFIZ = [&] () -> bool {
+                Air::Opcode opcode = opcodeForType(InsertSignedBitfieldInZero32, InsertSignedBitfieldInZero64, m_value->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
+                    return false;
+                if (left->opcode() != SShr || !canBeInternal(left))
+                    return false;
+                if (left->child(0)->opcode() != Shl || !canBeInternal(left->child(0)))
+                    return false;
+
+                Value* srcValue = left->child(0)->child(0);
+                Value* amount1Value = left->child(0)->child(1);
+                Value* amount2Value = left->child(1);
+                Value* lsbValue = right;
+                if (m_locked.contains(srcValue))
+                    return false;
+                if (!imm(amount1Value) || !imm(amount2Value) || !imm(lsbValue))
+                    return false;
+                if (amount1Value->asInt() < 0 || amount2Value->asInt() < 0 || lsbValue->asInt() < 0)
+                    return false;
+
+                uint64_t amount1 = amount1Value->asInt();
+                uint64_t amount2 = amount2Value->asInt();
+                uint64_t lsb = lsbValue->asInt();
+                uint64_t datasize = opcode == InsertSignedBitfieldInZero32 ? 32 : 64;
+                uint64_t width = datasize - amount1;
+                if (amount1 != amount2 || !width || lsb + width > datasize)
+                    return false;
+
+                append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
+                commitInternal(left->child(0));
+                commitInternal(left);
+                return true;
+            };
+
+            if (tryAppendSBFIZ())
                 return;
 
             if (right->isInt32(1)) {
@@ -3037,7 +3076,49 @@ private:
         }
 
         case SShr: {
-            appendShift<Rshift32, Rshift64>(m_value->child(0), m_value->child(1));
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
+
+            // SBFX Pattern: ((src >> lsb) << amount) >> amount
+            // Where: amount = datasize - width
+            auto tryAppendSBFX = [&] () -> bool {
+                Air::Opcode opcode = opcodeForType(ExtractSignedBitfield32, ExtractSignedBitfield64, m_value->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
+                    return false;
+                if (left->opcode() != Shl || !canBeInternal(left))
+                    return false;
+                if ((left->child(0)->opcode() != ZShr && left->child(0)->opcode() != SShr) || !canBeInternal(left->child(0)))
+                    return false;
+
+                Value* srcValue = left->child(0)->child(0);
+                Value* lsbValue = left->child(0)->child(1);
+                Value* amount1Value = left->child(1);
+                Value* amount2Value = right;
+                if (m_locked.contains(srcValue))
+                    return false;
+                if (!imm(lsbValue) || !imm(amount1Value) || !imm(amount2Value))
+                    return false;
+                if (lsbValue->asInt() < 0 || amount1Value->asInt() < 0 || amount2Value->asInt() < 0)
+                    return false;
+
+                uint64_t amount1 = amount1Value->asInt();
+                uint64_t amount2 = amount2Value->asInt();
+                uint64_t lsb = lsbValue->asInt();
+                uint64_t datasize = opcode == ExtractSignedBitfield32 ? 32 : 64;
+                uint64_t width = datasize - amount1;
+                if (amount1 != amount2 || !width || lsb + width > datasize)
+                    return false;
+
+                append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
+                commitInternal(left->child(0));
+                commitInternal(left);
+                return true;
+            };
+
+            if (tryAppendSBFX())
+                return;
+
+            appendShift<Rshift32, Rshift64>(left, right);
             return;
         }
 

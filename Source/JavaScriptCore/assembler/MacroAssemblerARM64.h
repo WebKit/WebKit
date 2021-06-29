@@ -448,7 +448,7 @@ public:
         m_assembler.and_<64>(dest, dest, dataTempRegister);
     }
 
-    // Bit Operations:
+    // Bit operations:
     void extractUnsignedBitfield32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
         m_assembler.ubfx<32>(dest, src, lsb.m_value, width.m_value);
@@ -518,6 +518,26 @@ public:
     {
         m_assembler.bfxil<64>(dest, src, lsb.m_value, width.m_value);
     }
+
+    void insertSignedBitfieldInZero32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfiz<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void insertSignedBitfieldInZero64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfiz<64>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void extractSignedBitfield32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfx<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void extractSignedBitfield64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfx<64>(dest, src, lsb.m_value, width.m_value);
+    }    
 
     void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
     {
