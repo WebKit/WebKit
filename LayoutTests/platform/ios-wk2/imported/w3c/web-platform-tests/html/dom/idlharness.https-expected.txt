@@ -80,6 +80,9 @@ PASS Partial interface Window: member names are unique
 PASS Partial interface Document[3]: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique
 PASS Partial interface UIEvent: member names are unique
+PASS Partial interface MouseEvent: member names are unique
+PASS Partial interface UIEvent[2]: member names are unique
+PASS Partial dictionary UIEventInit: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
 PASS Document includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
@@ -255,6 +258,7 @@ PASS HTMLElement interface: attribute draggable
 PASS HTMLElement interface: attribute spellcheck
 PASS HTMLElement interface: attribute autocapitalize
 PASS HTMLElement interface: attribute innerText
+PASS HTMLElement interface: attribute outerText
 FAIL HTMLElement interface: operation attachInternals() assert_own_property: interface prototype object missing non-static operation expected property "attachInternals" missing
 PASS HTMLElement interface: attribute onabort
 FAIL HTMLElement interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
@@ -349,6 +353,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "spellcheck" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "outerText" with the proper type
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "attachInternals()" with the proper type assert_inherits: property "attachInternals" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type assert_inherits: property "onauxclick" not found in prototype chain
@@ -864,6 +869,8 @@ PASS HTMLSourceElement interface: attribute type
 PASS HTMLSourceElement interface: attribute srcset
 PASS HTMLSourceElement interface: attribute sizes
 PASS HTMLSourceElement interface: attribute media
+PASS HTMLSourceElement interface: attribute width
+PASS HTMLSourceElement interface: attribute height
 PASS HTMLSourceElement must be primary interface of document.createElement("source")
 PASS Stringification of document.createElement("source")
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "src" with the proper type
@@ -871,6 +878,8 @@ PASS HTMLSourceElement interface: document.createElement("source") must inherit 
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "srcset" with the proper type
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "sizes" with the proper type
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "media" with the proper type
+PASS HTMLSourceElement interface: document.createElement("source") must inherit property "width" with the proper type
+PASS HTMLSourceElement interface: document.createElement("source") must inherit property "height" with the proper type
 PASS HTMLImageElement interface: existence and properties of interface object
 PASS HTMLImageElement interface object length
 PASS HTMLImageElement interface object name
@@ -1015,7 +1024,6 @@ PASS HTMLObjectElement interface: existence and properties of interface prototyp
 PASS HTMLObjectElement interface: attribute data
 PASS HTMLObjectElement interface: attribute type
 PASS HTMLObjectElement interface: attribute name
-PASS HTMLObjectElement interface: attribute useMap
 PASS HTMLObjectElement interface: attribute form
 PASS HTMLObjectElement interface: attribute width
 PASS HTMLObjectElement interface: attribute height
@@ -1037,13 +1045,13 @@ PASS HTMLObjectElement interface: attribute standby
 PASS HTMLObjectElement interface: attribute vspace
 PASS HTMLObjectElement interface: attribute codeBase
 PASS HTMLObjectElement interface: attribute codeType
+PASS HTMLObjectElement interface: attribute useMap
 PASS HTMLObjectElement interface: attribute border
 PASS HTMLObjectElement must be primary interface of document.createElement("object")
 PASS Stringification of document.createElement("object")
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "data" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "type" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "name" with the proper type
-PASS HTMLObjectElement interface: document.createElement("object") must inherit property "useMap" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "form" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "width" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "height" with the proper type
@@ -1066,6 +1074,7 @@ PASS HTMLObjectElement interface: document.createElement("object") must inherit 
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "vspace" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "codeBase" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "codeType" with the proper type
+PASS HTMLObjectElement interface: document.createElement("object") must inherit property "useMap" with the proper type
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "border" with the proper type
 PASS HTMLParamElement interface: existence and properties of interface object
 PASS HTMLParamElement interface object length
@@ -3825,6 +3834,7 @@ PASS HTMLSlotElement interface: existence and properties of interface prototype 
 PASS HTMLSlotElement interface: attribute name
 PASS HTMLSlotElement interface: operation assignedNodes(optional AssignedNodesOptions)
 PASS HTMLSlotElement interface: operation assignedElements(optional AssignedNodesOptions)
+FAIL HTMLSlotElement interface: operation assign((Element or Text)...) assert_own_property: interface prototype object missing non-static operation expected property "assign" missing
 PASS HTMLSlotElement must be primary interface of document.createElement("slot")
 PASS Stringification of document.createElement("slot")
 PASS HTMLSlotElement interface: document.createElement("slot") must inherit property "name" with the proper type
@@ -3832,6 +3842,8 @@ PASS HTMLSlotElement interface: document.createElement("slot") must inherit prop
 PASS HTMLSlotElement interface: calling assignedNodes(optional AssignedNodesOptions) on document.createElement("slot") with too few arguments must throw TypeError
 PASS HTMLSlotElement interface: document.createElement("slot") must inherit property "assignedElements(optional AssignedNodesOptions)" with the proper type
 PASS HTMLSlotElement interface: calling assignedElements(optional AssignedNodesOptions) on document.createElement("slot") with too few arguments must throw TypeError
+FAIL HTMLSlotElement interface: document.createElement("slot") must inherit property "assign((Element or Text)...)" with the proper type assert_inherits: property "assign" not found in prototype chain
+FAIL HTMLSlotElement interface: calling assign((Element or Text)...) on document.createElement("slot") with too few arguments must throw TypeError assert_inherits: property "assign" not found in prototype chain
 PASS HTMLCanvasElement interface: existence and properties of interface object
 PASS HTMLCanvasElement interface object length
 PASS HTMLCanvasElement interface object name
@@ -3865,6 +3877,7 @@ PASS CanvasRenderingContext2D interface: attribute canvas
 PASS CanvasRenderingContext2D interface: operation getContextAttributes()
 PASS CanvasRenderingContext2D interface: operation save()
 PASS CanvasRenderingContext2D interface: operation restore()
+FAIL CanvasRenderingContext2D interface: operation reset() assert_own_property: interface prototype object missing non-static operation expected property "reset" missing
 PASS CanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation rotate(unrestricted double)
 PASS CanvasRenderingContext2D interface: operation translate(unrestricted double, unrestricted double)
@@ -3881,6 +3894,7 @@ PASS CanvasRenderingContext2D interface: attribute strokeStyle
 PASS CanvasRenderingContext2D interface: attribute fillStyle
 PASS CanvasRenderingContext2D interface: operation createLinearGradient(double, double, double, double)
 PASS CanvasRenderingContext2D interface: operation createRadialGradient(double, double, double, double, double, double)
+PASS CanvasRenderingContext2D interface: operation createConicGradient(double, double, double)
 PASS CanvasRenderingContext2D interface: operation createPattern(CanvasImageSource, DOMString)
 PASS CanvasRenderingContext2D interface: attribute shadowOffsetX
 PASS CanvasRenderingContext2D interface: attribute shadowOffsetY
@@ -3911,9 +3925,9 @@ PASS CanvasRenderingContext2D interface: operation measureText(DOMString)
 PASS CanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-PASS CanvasRenderingContext2D interface: operation createImageData(long, long)
+PASS CanvasRenderingContext2D interface: operation createImageData(long, long, optional ImageDataSettings)
 PASS CanvasRenderingContext2D interface: operation createImageData(ImageData)
-PASS CanvasRenderingContext2D interface: operation getImageData(long, long, long, long)
+PASS CanvasRenderingContext2D interface: operation getImageData(long, long, long, long, optional ImageDataSettings)
 PASS CanvasRenderingContext2D interface: operation putImageData(ImageData, long, long)
 PASS CanvasRenderingContext2D interface: operation putImageData(ImageData, long, long, long, long, long, long)
 PASS CanvasRenderingContext2D interface: attribute lineWidth
@@ -3927,6 +3941,12 @@ PASS CanvasRenderingContext2D interface: attribute font
 PASS CanvasRenderingContext2D interface: attribute textAlign
 PASS CanvasRenderingContext2D interface: attribute textBaseline
 PASS CanvasRenderingContext2D interface: attribute direction
+FAIL CanvasRenderingContext2D interface: attribute textLetterSpacing assert_true: The prototype object must have a property "textLetterSpacing" expected true got false
+FAIL CanvasRenderingContext2D interface: attribute textWordSpacing assert_true: The prototype object must have a property "textWordSpacing" expected true got false
+FAIL CanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
+FAIL CanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
+FAIL CanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
+FAIL CanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
 PASS CanvasRenderingContext2D interface: operation closePath()
 PASS CanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)
@@ -3942,6 +3962,7 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getContextAttributes()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "save()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "restore()" with the proper type
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "reset()" with the proper type assert_inherits: property "reset" not found in prototype chain
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scale(unrestricted double, unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling scale(unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "rotate(unrestricted double)" with the proper type
@@ -3966,6 +3987,8 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling createLinearGradient(double, double, double, double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createRadialGradient(double, double, double, double, double, double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling createRadialGradient(double, double, double, double, double, double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createConicGradient(double, double, double)" with the proper type
+PASS CanvasRenderingContext2D interface: calling createConicGradient(double, double, double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createPattern(CanvasImageSource, DOMString)" with the proper type
 PASS CanvasRenderingContext2D interface: calling createPattern(CanvasImageSource, DOMString) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowOffsetX" with the proper type
@@ -4018,12 +4041,12 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createImageData(long, long)" with the proper type
-PASS CanvasRenderingContext2D interface: calling createImageData(long, long) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createImageData(long, long, optional ImageDataSettings)" with the proper type
+PASS CanvasRenderingContext2D interface: calling createImageData(long, long, optional ImageDataSettings) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createImageData(ImageData)" with the proper type
 PASS CanvasRenderingContext2D interface: calling createImageData(ImageData) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getImageData(long, long, long, long)" with the proper type
-PASS CanvasRenderingContext2D interface: calling getImageData(long, long, long, long) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getImageData(long, long, long, long, optional ImageDataSettings)" with the proper type
+PASS CanvasRenderingContext2D interface: calling getImageData(long, long, long, long, optional ImageDataSettings) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "putImageData(ImageData, long, long)" with the proper type
 PASS CanvasRenderingContext2D interface: calling putImageData(ImageData, long, long) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "putImageData(ImageData, long, long, long, long, long, long)" with the proper type
@@ -4040,6 +4063,12 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textAlign" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textBaseline" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "direction" with the proper type
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textLetterSpacing" with the proper type assert_inherits: property "textLetterSpacing" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textWordSpacing" with the proper type assert_inherits: property "textWordSpacing" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontKerning" with the proper type assert_inherits: property "fontKerning" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontStretch" with the proper type assert_inherits: property "fontStretch" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontVariantCaps" with the proper type assert_inherits: property "fontVariantCaps" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textRendering" with the proper type assert_inherits: property "textRendering" not found in prototype chain
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "closePath()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "moveTo(unrestricted double, unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling moveTo(unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
@@ -4098,11 +4127,13 @@ PASS ImageData interface: existence and properties of interface prototype object
 PASS ImageData interface: attribute width
 PASS ImageData interface: attribute height
 PASS ImageData interface: attribute data
+PASS ImageData interface: attribute colorSpace
 PASS ImageData must be primary interface of new ImageData(10, 10)
 PASS Stringification of new ImageData(10, 10)
 PASS ImageData interface: new ImageData(10, 10) must inherit property "width" with the proper type
 PASS ImageData interface: new ImageData(10, 10) must inherit property "height" with the proper type
 FAIL ImageData interface: new ImageData(10, 10) must inherit property "data" with the proper type assert_inherits: property "data" found on object expected in prototype chain
+PASS ImageData interface: new ImageData(10, 10) must inherit property "colorSpace" with the proper type
 PASS Path2D interface: existence and properties of interface object
 PASS Path2D interface object length
 PASS Path2D interface object name
@@ -4148,6 +4179,7 @@ FAIL OffscreenCanvasRenderingContext2D interface: operation commit() assert_own_
 FAIL OffscreenCanvasRenderingContext2D interface: attribute canvas assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation save() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation restore() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation reset() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation rotate(unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation translate(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
@@ -4164,6 +4196,7 @@ FAIL OffscreenCanvasRenderingContext2D interface: attribute strokeStyle assert_o
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fillStyle assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation createLinearGradient(double, double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation createRadialGradient(double, double, double, double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation createConicGradient(double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation createPattern(CanvasImageSource, DOMString) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetX assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetY assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
@@ -4190,9 +4223,9 @@ FAIL OffscreenCanvasRenderingContext2D interface: operation measureText(DOMStrin
 FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation createImageData(long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation createImageData(long, long, optional ImageDataSettings) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation createImageData(ImageData) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation getImageData(long, long, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation getImageData(long, long, long, long, optional ImageDataSettings) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long, long, long, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute lineWidth assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
@@ -4206,6 +4239,12 @@ FAIL OffscreenCanvasRenderingContext2D interface: attribute font assert_own_prop
 FAIL OffscreenCanvasRenderingContext2D interface: attribute textAlign assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute textBaseline assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute direction assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute textLetterSpacing assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute textWordSpacing assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute fontKerning assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute fontStretch assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute textRendering assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation closePath() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
@@ -4319,8 +4358,7 @@ PASS Window interface: attribute parent
 PASS Window interface: attribute frameElement
 PASS Window interface: operation open(optional USVString, optional DOMString, optional DOMString)
 PASS Window interface: attribute navigator
-PASS Window interface: attribute applicationCache
-FAIL Window interface: attribute originIsolated assert_own_property: The global object must have a property "originIsolated" expected property "originIsolated" missing
+FAIL Window interface: attribute originAgentCluster assert_own_property: The global object must have a property "originAgentCluster" expected property "originAgentCluster" missing
 PASS Window interface: operation alert()
 PASS Window interface: operation alert(DOMString)
 PASS Window interface: operation confirm(optional DOMString)
@@ -4465,8 +4503,7 @@ PASS Window interface: window must inherit property "frameElement" with the prop
 PASS Window interface: window must inherit property "open(optional USVString, optional DOMString, optional DOMString)" with the proper type
 PASS Window interface: calling open(optional USVString, optional DOMString, optional DOMString) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "navigator" with the proper type
-PASS Window interface: window must inherit property "applicationCache" with the proper type
-FAIL Window interface: window must inherit property "originIsolated" with the proper type assert_own_property: expected property "originIsolated" missing
+FAIL Window interface: window must inherit property "originAgentCluster" with the proper type assert_own_property: expected property "originAgentCluster" missing
 PASS Window interface: window must inherit property "alert()" with the proper type
 PASS Window interface: window must inherit property "alert(DOMString)" with the proper type
 PASS Window interface: calling alert(DOMString) on window with too few arguments must throw TypeError
@@ -4681,56 +4718,6 @@ PASS BeforeUnloadEvent interface: existence and properties of interface prototyp
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS BeforeUnloadEvent interface: attribute returnValue
-PASS ApplicationCache interface: existence and properties of interface object
-PASS ApplicationCache interface object length
-PASS ApplicationCache interface object name
-PASS ApplicationCache interface: existence and properties of interface prototype object
-PASS ApplicationCache interface: existence and properties of interface prototype object's "constructor" property
-PASS ApplicationCache interface: existence and properties of interface prototype object's @@unscopables property
-PASS ApplicationCache interface: constant UNCACHED on interface object
-PASS ApplicationCache interface: constant UNCACHED on interface prototype object
-PASS ApplicationCache interface: constant IDLE on interface object
-PASS ApplicationCache interface: constant IDLE on interface prototype object
-PASS ApplicationCache interface: constant CHECKING on interface object
-PASS ApplicationCache interface: constant CHECKING on interface prototype object
-PASS ApplicationCache interface: constant DOWNLOADING on interface object
-PASS ApplicationCache interface: constant DOWNLOADING on interface prototype object
-PASS ApplicationCache interface: constant UPDATEREADY on interface object
-PASS ApplicationCache interface: constant UPDATEREADY on interface prototype object
-PASS ApplicationCache interface: constant OBSOLETE on interface object
-PASS ApplicationCache interface: constant OBSOLETE on interface prototype object
-PASS ApplicationCache interface: attribute status
-PASS ApplicationCache interface: operation update()
-PASS ApplicationCache interface: operation abort()
-PASS ApplicationCache interface: operation swapCache()
-PASS ApplicationCache interface: attribute onchecking
-PASS ApplicationCache interface: attribute onerror
-PASS ApplicationCache interface: attribute onnoupdate
-PASS ApplicationCache interface: attribute ondownloading
-PASS ApplicationCache interface: attribute onprogress
-PASS ApplicationCache interface: attribute onupdateready
-PASS ApplicationCache interface: attribute oncached
-PASS ApplicationCache interface: attribute onobsolete
-PASS ApplicationCache must be primary interface of window.applicationCache
-PASS Stringification of window.applicationCache
-PASS ApplicationCache interface: window.applicationCache must inherit property "UNCACHED" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "IDLE" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "CHECKING" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "DOWNLOADING" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "UPDATEREADY" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "OBSOLETE" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "status" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "update()" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "abort()" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "swapCache()" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "onchecking" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "onerror" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "onnoupdate" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "ondownloading" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "onprogress" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "onupdateready" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "oncached" with the proper type
-PASS ApplicationCache interface: window.applicationCache must inherit property "onobsolete" with the proper type
 PASS ErrorEvent interface: existence and properties of interface object
 PASS ErrorEvent interface object length
 PASS ErrorEvent interface object name
@@ -4813,47 +4800,6 @@ PASS Navigator interface: window.navigator must inherit property "plugins" with 
 PASS Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type
 PASS Navigator interface: window.navigator must inherit property "javaEnabled()" with the proper type
 FAIL Navigator interface: window.navigator must inherit property "hardwareConcurrency" with the proper type assert_inherits: property "hardwareConcurrency" not found in prototype chain
-PASS PluginArray interface: existence and properties of interface object
-PASS PluginArray interface object length
-PASS PluginArray interface object name
-PASS PluginArray interface: existence and properties of interface prototype object
-PASS PluginArray interface: existence and properties of interface prototype object's "constructor" property
-PASS PluginArray interface: existence and properties of interface prototype object's @@unscopables property
-PASS PluginArray interface: operation refresh(optional boolean)
-PASS PluginArray interface: attribute length
-PASS PluginArray interface: operation item(unsigned long)
-PASS PluginArray interface: operation namedItem(DOMString)
-PASS MimeTypeArray interface: existence and properties of interface object
-PASS MimeTypeArray interface object length
-PASS MimeTypeArray interface object name
-PASS MimeTypeArray interface: existence and properties of interface prototype object
-PASS MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property
-PASS MimeTypeArray interface: existence and properties of interface prototype object's @@unscopables property
-PASS MimeTypeArray interface: attribute length
-PASS MimeTypeArray interface: operation item(unsigned long)
-PASS MimeTypeArray interface: operation namedItem(DOMString)
-PASS Plugin interface: existence and properties of interface object
-PASS Plugin interface object length
-PASS Plugin interface object name
-PASS Plugin interface: existence and properties of interface prototype object
-PASS Plugin interface: existence and properties of interface prototype object's "constructor" property
-PASS Plugin interface: existence and properties of interface prototype object's @@unscopables property
-PASS Plugin interface: attribute name
-PASS Plugin interface: attribute description
-PASS Plugin interface: attribute filename
-PASS Plugin interface: attribute length
-PASS Plugin interface: operation item(unsigned long)
-PASS Plugin interface: operation namedItem(DOMString)
-PASS MimeType interface: existence and properties of interface object
-PASS MimeType interface object length
-PASS MimeType interface object name
-PASS MimeType interface: existence and properties of interface prototype object
-PASS MimeType interface: existence and properties of interface prototype object's "constructor" property
-PASS MimeType interface: existence and properties of interface prototype object's @@unscopables property
-PASS MimeType interface: attribute type
-PASS MimeType interface: attribute description
-PASS MimeType interface: attribute suffixes
-PASS MimeType interface: attribute enabledPlugin
 PASS ImageBitmap interface: existence and properties of interface object
 PASS ImageBitmap interface object length
 PASS ImageBitmap interface object name
@@ -5122,9 +5068,6 @@ PASS HTMLMarqueeElement interface: attribute scrollDelay
 PASS HTMLMarqueeElement interface: attribute trueSpeed
 PASS HTMLMarqueeElement interface: attribute vspace
 PASS HTMLMarqueeElement interface: attribute width
-FAIL HTMLMarqueeElement interface: attribute onbounce assert_true: The prototype object must have a property "onbounce" expected true got false
-FAIL HTMLMarqueeElement interface: attribute onfinish assert_true: The prototype object must have a property "onfinish" expected true got false
-FAIL HTMLMarqueeElement interface: attribute onstart assert_true: The prototype object must have a property "onstart" expected true got false
 PASS HTMLMarqueeElement interface: operation start()
 PASS HTMLMarqueeElement interface: operation stop()
 PASS HTMLMarqueeElement must be primary interface of document.createElement("marquee")
@@ -5140,9 +5083,6 @@ PASS HTMLMarqueeElement interface: document.createElement("marquee") must inheri
 PASS HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "trueSpeed" with the proper type
 PASS HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "vspace" with the proper type
 PASS HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "width" with the proper type
-FAIL HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "onbounce" with the proper type assert_inherits: property "onbounce" not found in prototype chain
-FAIL HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "onfinish" with the proper type assert_inherits: property "onfinish" not found in prototype chain
-FAIL HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "onstart" with the proper type assert_inherits: property "onstart" not found in prototype chain
 PASS HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "start()" with the proper type
 PASS HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "stop()" with the proper type
 PASS HTMLFrameSetElement interface: existence and properties of interface object
@@ -5253,6 +5193,47 @@ FAIL External must be primary interface of window.external assert_equals: wrong 
 FAIL Stringification of window.external assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL External interface: window.external must inherit property "AddSearchProvider()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL External interface: window.external must inherit property "IsSearchProviderInstalled()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS PluginArray interface: existence and properties of interface object
+PASS PluginArray interface object length
+PASS PluginArray interface object name
+PASS PluginArray interface: existence and properties of interface prototype object
+PASS PluginArray interface: existence and properties of interface prototype object's "constructor" property
+PASS PluginArray interface: existence and properties of interface prototype object's @@unscopables property
+PASS PluginArray interface: operation refresh()
+PASS PluginArray interface: attribute length
+PASS PluginArray interface: operation item(unsigned long)
+PASS PluginArray interface: operation namedItem(DOMString)
+PASS MimeTypeArray interface: existence and properties of interface object
+PASS MimeTypeArray interface object length
+PASS MimeTypeArray interface object name
+PASS MimeTypeArray interface: existence and properties of interface prototype object
+PASS MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property
+PASS MimeTypeArray interface: existence and properties of interface prototype object's @@unscopables property
+PASS MimeTypeArray interface: attribute length
+PASS MimeTypeArray interface: operation item(unsigned long)
+PASS MimeTypeArray interface: operation namedItem(DOMString)
+PASS Plugin interface: existence and properties of interface object
+PASS Plugin interface object length
+PASS Plugin interface object name
+PASS Plugin interface: existence and properties of interface prototype object
+PASS Plugin interface: existence and properties of interface prototype object's "constructor" property
+PASS Plugin interface: existence and properties of interface prototype object's @@unscopables property
+PASS Plugin interface: attribute name
+PASS Plugin interface: attribute description
+PASS Plugin interface: attribute filename
+PASS Plugin interface: attribute length
+PASS Plugin interface: operation item(unsigned long)
+PASS Plugin interface: operation namedItem(DOMString)
+PASS MimeType interface: existence and properties of interface object
+PASS MimeType interface object length
+PASS MimeType interface object name
+PASS MimeType interface: existence and properties of interface prototype object
+PASS MimeType interface: existence and properties of interface prototype object's "constructor" property
+PASS MimeType interface: existence and properties of interface prototype object's @@unscopables property
+PASS MimeType interface: attribute type
+PASS MimeType interface: attribute description
+PASS MimeType interface: attribute suffixes
+PASS MimeType interface: attribute enabledPlugin
 PASS SVGElement interface: attribute onabort
 FAIL SVGElement interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
 PASS SVGElement interface: attribute onblur

@@ -16,6 +16,7 @@ PASS Partial interface Window[2]: member names are unique
 PASS ProcessingInstruction includes LinkStyle: member names are unique
 PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes ElementCSSInlineStyle: member names are unique
+PASS MathMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
 PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
 PASS SVGElement includes SVGElementInstance: member names are unique
@@ -46,6 +47,9 @@ PASS Element includes ChildNode: member names are unique
 PASS CharacterData includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
+PASS MathMLElement includes GlobalEventHandlers: member names are unique
+PASS MathMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS MathMLElement includes HTMLOrSVGElement: member names are unique
 PASS MediaList interface: existence and properties of interface object
 PASS MediaList interface object length
 PASS MediaList interface object name
@@ -442,4 +446,5 @@ PASS Document interface: new Document() must inherit property "styleSheets" with
 PASS ShadowRoot interface: attribute styleSheets
 PASS ProcessingInstruction interface: attribute sheet
 PASS ProcessingInstruction interface: xmlss_pi must inherit property "sheet" with the proper type
+PASS MathMLElement interface: attribute style
 

@@ -113,6 +113,20 @@ PASS MediaStreamTrackEvent interface: attribute track
 PASS MediaStreamTrackEvent must be primary interface of trackEvent
 PASS Stringification of trackEvent
 PASS MediaStreamTrackEvent interface: trackEvent must inherit property "track" with the proper type
+FAIL OverconstrainedError interface: existence and properties of interface object assert_equals: prototype of OverconstrainedError is not DOMException expected function "function DOMException() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
+FAIL OverconstrainedError interface object length assert_equals: wrong value for OverconstrainedError.length expected 1 but got 0
+PASS OverconstrainedError interface object name
+FAIL OverconstrainedError interface: existence and properties of interface prototype object assert_equals: prototype of OverconstrainedError.prototype is not DOMException.prototype expected [stringifying object threw TypeError: The DOMException.name getter can only be used on instances of DOMException with type object] but got object "Error"
+PASS OverconstrainedError interface: existence and properties of interface prototype object's "constructor" property
+PASS OverconstrainedError interface: existence and properties of interface prototype object's @@unscopables property
+PASS OverconstrainedError interface: attribute constraint
+PASS OverconstrainedError must be primary interface of new OverconstrainedError("constraint")
+PASS Stringification of new OverconstrainedError("constraint")
+PASS OverconstrainedError interface: new OverconstrainedError("constraint") must inherit property "constraint" with the proper type
 PASS MediaDevices interface: existence and properties of interface object
 PASS MediaDevices interface object length
 PASS MediaDevices interface object name

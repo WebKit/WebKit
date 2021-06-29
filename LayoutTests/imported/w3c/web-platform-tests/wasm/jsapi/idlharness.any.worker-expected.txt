@@ -58,9 +58,9 @@ PASS Table interface object name
 PASS Table interface: existence and properties of interface prototype object
 PASS Table interface: existence and properties of interface prototype object's "constructor" property
 PASS Table interface: existence and properties of interface prototype object's @@unscopables property
-PASS Table interface: operation grow(unsigned long)
+PASS Table interface: operation grow(unsigned long, optional any)
 PASS Table interface: operation get(unsigned long)
-PASS Table interface: operation set(unsigned long, Function?)
+FAIL Table interface: operation set(unsigned long, optional any) assert_equals: property has wrong .length expected 1 but got 2
 PASS Table interface: attribute length
 PASS Global interface: existence and properties of interface object
 PASS Global interface object length

@@ -1,13 +1,14 @@
 // GENERATED CONTENT - DO NOT EDIT
-// Content was automatically extracted by Reffy into reffy-reports
-// (https://github.com/tidoust/reffy-reports)
-// Source: Font Metrics API Level 1 (https://drafts.css-houdini.org/font-metrics-api/)
+// Content was automatically extracted by Reffy into webref
+// (https://github.com/w3c/webref)
+// Source: Font Metrics API Level 1 (https://drafts.css-houdini.org/font-metrics-api-1/)
 
 partial interface Document {
     FontMetrics measureElement(Element element);
     FontMetrics measureText(DOMString text, StylePropertyMapReadOnly styleMap);
 };
 
+[Exposed=Window]
 interface FontMetrics {
   readonly attribute double width;
   readonly attribute FrozenArray<double> advances;
@@ -28,11 +29,13 @@ interface FontMetrics {
   readonly attribute FrozenArray<Font> fonts;
 };
 
+[Exposed=Window]
 interface Baseline {
   readonly attribute DOMString name;
   readonly attribute double value;
 };
 
+[Exposed=Window]
 interface Font {
   readonly attribute DOMString name;
   readonly attribute unsigned long glyphsRendered;

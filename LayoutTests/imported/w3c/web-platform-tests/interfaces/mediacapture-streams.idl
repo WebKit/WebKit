@@ -143,6 +143,12 @@ dictionary MediaStreamTrackEventInit : EventInit {
   required MediaStreamTrack track;
 };
 
+[Exposed=Window]
+interface OverconstrainedError : DOMException {
+  constructor(DOMString constraint, optional DOMString message = "");
+  readonly attribute DOMString constraint;
+};
+
 partial interface Navigator {
   [SameObject, SecureContext] readonly attribute MediaDevices mediaDevices;
 };
@@ -191,9 +197,7 @@ dictionary MediaStreamConstraints {
 
 callback NavigatorUserMediaSuccessCallback = undefined (MediaStream stream);
 
-callback NavigatorUserMediaErrorCallback = undefined (MediaStreamError error);
-
-typedef object MediaStreamError;
+callback NavigatorUserMediaErrorCallback = undefined (DOMException error);
 
 dictionary DoubleRange {
   double max;
@@ -234,13 +238,3 @@ typedef (boolean or ConstrainBooleanParameters) ConstrainBoolean;
 typedef (DOMString or
 sequence<DOMString> or
 ConstrainDOMStringParameters) ConstrainDOMString;
-
-dictionary Capabilities {};
-
-dictionary Settings {};
-
-dictionary ConstraintSet {};
-
-dictionary Constraints : ConstraintSet {
-  sequence<ConstraintSet> advanced;
-};

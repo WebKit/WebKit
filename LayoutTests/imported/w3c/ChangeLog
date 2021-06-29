@@ -1,5 +1,38 @@
 2021-06-29  Chris Dumez  <cdumez@apple.com>
 
+        Resync IDL interfaces from upstream web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=227485
+
+        Reviewed by Sam Weinig.
+
+        Resync IDL interfaces from upstream web-platform-tests a38612f39e7752c353208.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window-expected.txt:
+        * web-platform-tests/css/css-images/idlharness.html:
+        * web-platform-tests/css/cssom/idlharness-expected.txt:
+        * web-platform-tests/css/cssom/idlharness.html:
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any-expected.txt: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.html: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.js: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.worker.html: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/w3c-import.log: Removed.
+        * web-platform-tests/geolocation-API/idlharness.https.window-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * web-platform-tests/mediacapture-streams/idlharness.https.window-expected.txt:
+        * web-platform-tests/mediacapture-streams/idlharness.https.window.js:
+        (async idl_array):
+        * web-platform-tests/payment-request/idlharness.https.window-expected.txt:
+        * web-platform-tests/pointerevents/idlharness.window-expected.txt:
+        * web-platform-tests/uievents/idlharness.window-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any.worker-expected.txt:
+        Update / rebaseline a few tests due to IDL interface changes.
+
+        * web-platform-tests/interfaces/*: Updated.
+
+2021-06-29  Chris Dumez  <cdumez@apple.com>
+
         Resync intersection-observer WPT tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=227500
 

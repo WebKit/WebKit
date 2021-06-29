@@ -19,7 +19,7 @@ FAIL CSPViolationReportBody interface: attribute statusCode assert_own_property:
 FAIL CSPViolationReportBody interface: attribute lineNumber assert_own_property: self does not have own property "CSPViolationReportBody" expected property "CSPViolationReportBody" missing
 FAIL CSPViolationReportBody interface: attribute columnNumber assert_own_property: self does not have own property "CSPViolationReportBody" expected property "CSPViolationReportBody" missing
 PASS SecurityPolicyViolationEvent interface: existence and properties of interface object
-FAIL SecurityPolicyViolationEvent interface object length assert_equals: wrong value for SecurityPolicyViolationEvent.length expected 0 but got 1
+PASS SecurityPolicyViolationEvent interface object length
 PASS SecurityPolicyViolationEvent interface object name
 PASS SecurityPolicyViolationEvent interface: existence and properties of interface prototype object
 PASS SecurityPolicyViolationEvent interface: existence and properties of interface prototype object's "constructor" property

@@ -38,8 +38,7 @@ dictionary MediaKeySystemMediaCapability {
 
 enum MediaKeySessionType {
     "temporary",
-    "persistent-license",
-    "persistent-usage-record"
+    "persistent-license"
 };
 
 [Exposed=Window, SecureContext] interface MediaKeys {
@@ -65,7 +64,7 @@ enum MediaKeySessionType {
     iterable<BufferSource,MediaKeyStatus>;
     readonly        attribute unsigned long size;
     boolean has (BufferSource keyId);
-    any     get (BufferSource keyId);
+    (MediaKeyStatus or undefined)     get (BufferSource keyId);
 };
 
 enum MediaKeyStatus {
