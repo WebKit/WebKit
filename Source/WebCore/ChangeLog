@@ -1,3 +1,17 @@
+2021-06-29  Rob Buis  <rbuis@igalia.com>
+
+        Crash in SharedBuffer::data
+        https://bugs.webkit.org/show_bug.cgi?id=227173
+
+        Reviewed by Ryosuke Niwa.
+
+        Null check data in openFunc.
+
+        Test: fast/xsl/xslt-transformToDocument-crash.html
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+
 2021-06-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         OES_texture_float should implicitly enable EXT_float_blend
