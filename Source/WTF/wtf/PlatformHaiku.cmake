@@ -3,8 +3,8 @@ LIST(APPEND WTF_SOURCES
     generic/MainThreadGeneric.cpp
 
     unix/MemoryPressureHandlerUnix.cpp
-    unix/CPUTimeUnix.cpp
 
+	posix/CPUTimePOSIX.cpp
     posix/FileSystemPOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
