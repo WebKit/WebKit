@@ -1,3 +1,16 @@
+2021-06-29  Cameron McCormack  <heycam@apple.com>
+
+        Don't null check destination in the RemoteRenderingBackend::nextDestinationImageBufferAfterApply main loop
+        https://bugs.webkit.org/show_bug.cgi?id=227475
+
+        Reviewed by Wenson Hsieh.
+
+        We already null check it and return early as part of the
+        MESSAGE_CHECK_WITH_RETURN_VALUE call just above.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+
 2021-06-24  Jer Noble  <jer.noble@apple.com>
 
         Loading WebM hangs if server sends only small amount of data
