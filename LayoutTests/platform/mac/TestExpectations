@@ -2303,3 +2303,5 @@ webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timin
 webkit.org/b/226520 media/video-played-collapse.html [ Pass Timeout Failure ]
 
 webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
+
+webkit.org/b/215335 [ BigSur Release ] webanimations/css-transition-retargeting-during-ready-promise.html [ Pass Failure ]
