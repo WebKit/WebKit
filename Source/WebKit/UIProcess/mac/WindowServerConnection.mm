@@ -43,7 +43,7 @@ void WindowServerConnection::applicationWindowModificationsStopped(bool stopped)
 
 void WindowServerConnection::windowServerConnectionStateChanged()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->windowServerConnectionStateChanged();
 }
 

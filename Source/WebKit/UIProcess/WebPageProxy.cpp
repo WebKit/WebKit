@@ -5444,11 +5444,7 @@ WebPageProxy* WebPageProxy::nonEphemeralWebPageProxy()
     if (processPools.isEmpty())
         return nullptr;
     
-    auto processPool = processPools[0];
-    if (!processPool)
-        return nullptr;
-    
-    for (auto& webProcess : processPool->processes()) {
+    for (auto& webProcess : processPools[0]->processes()) {
         for (auto& page : webProcess->pages()) {
             if (page->sessionID().isEphemeral())
                 continue;

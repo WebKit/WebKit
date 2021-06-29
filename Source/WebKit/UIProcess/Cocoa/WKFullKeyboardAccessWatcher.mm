@@ -64,7 +64,7 @@ static inline BOOL platformIsFullKeyboardAccessEnabled()
 
 - (void)notifyAllProcessPools
 {
-    for (auto* processPool : WebKit::WebProcessPool::allProcessPools())
+    for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
         processPool->fullKeyboardAccessModeChanged(fullKeyboardAccessEnabled);
 }
 

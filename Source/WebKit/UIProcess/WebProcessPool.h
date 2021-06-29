@@ -138,7 +138,7 @@ public:
 
     API::ProcessPoolConfiguration& configuration() { return m_configuration.get(); }
 
-    static const Vector<WebProcessPool*>& allProcessPools();
+    static Vector<Ref<WebProcessPool>> allProcessPools();
 
     template <typename T>
     T* supplement()

@@ -180,7 +180,7 @@
         if (encodedValue)
             encodedString = String(encodedValue.get());
 
-        for (auto* processPool : WebKit::WebProcessPool::allProcessPools())
+        for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
             processPool->notifyPreferencesChanged(domain.get(), key.get(), encodedString);
     });
 #endif

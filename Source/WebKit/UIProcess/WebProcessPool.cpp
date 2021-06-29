@@ -174,9 +174,11 @@ static Vector<WebProcessPool*>& processPools()
     return processPools;
 }
 
-const Vector<WebProcessPool*>& WebProcessPool::allProcessPools()
+Vector<Ref<WebProcessPool>> WebProcessPool::allProcessPools()
 {
-    return processPools();
+    return WTF::map(processPools(), [] (auto&& v) -> Ref<WebProcessPool> {
+        return *v;
+    });
 }
 
 static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProtocolHandlers()
@@ -2041,11 +2043,8 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
     WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "setUseSeparateServiceWorkerProcess: (useSeparateServiceWorkerProcess=%d)", useSeparateServiceWorkerProcess);
 
     s_useSeparateServiceWorkerProcess = useSeparateServiceWorkerProcess;
-    auto processPools = WTF::map(WebProcessPool::allProcessPools(), [](auto* pool) { return makeWeakPtr(pool); });
-    for (auto& processPool : processPools) {
-        if (processPool)
-            processPool->terminateServiceWorkers();
-    }
+    for (auto& processPool : allProcessPools())
+        processPool->terminateServiceWorkers();
 }
 
 #if ENABLE(SERVICE_WORKER)

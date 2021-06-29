@@ -913,7 +913,7 @@ void WebProcessPool::applicationIsAboutToSuspend()
 
 void WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend()
 {
-    for (auto* processPool : allProcessPools())
+    for (auto& processPool : allProcessPools())
         processPool->applicationIsAboutToSuspend();
 }
 #endif

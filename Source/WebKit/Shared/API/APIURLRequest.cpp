@@ -48,7 +48,7 @@ void URLRequest::setDefaultTimeoutInterval(double timeoutInterval)
 {
     ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);
 
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->setDefaultRequestTimeoutInterval(timeoutInterval);
 }
 

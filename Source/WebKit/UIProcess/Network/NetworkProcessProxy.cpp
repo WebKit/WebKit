@@ -172,7 +172,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 
 static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->alwaysRunsAtBackgroundPriority())
             return true;
     }
@@ -181,7 +181,7 @@ static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
 
 static bool anyProcessPoolShouldTakeUIBackgroundAssertion()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->shouldTakeUIBackgroundAssertion())
             return true;
     }
@@ -323,7 +323,7 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
     if (defaultNetworkProcess() == this)
         defaultNetworkProcess() = nullptr;
 
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->networkProcessDidTerminate(*this, reason);
     for (auto& websiteDataStore : copyToVectorOf<Ref<WebsiteDataStore>>(m_websiteDataStores))
         websiteDataStore->networkProcessDidTerminate(*this);
@@ -1218,7 +1218,7 @@ void NetworkProcessProxy::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sess
 
 void NetworkProcessProxy::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)
 {
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> { domains });
 }
 
@@ -1226,7 +1226,7 @@ void NetworkProcessProxy::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameD
 {    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain> { domains }, [callbackAggregator] { });
 }
 
@@ -1511,7 +1511,7 @@ void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIde
 
 static bool anyProcessPoolHasForegroundWebProcesses()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->hasForegroundWebProcesses())
             return true;
     }
@@ -1520,7 +1520,7 @@ static bool anyProcessPoolHasForegroundWebProcesses()
 
 static bool anyProcessPoolHasBackgroundWebProcesses()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->hasBackgroundWebProcesses())
             return true;
     }
