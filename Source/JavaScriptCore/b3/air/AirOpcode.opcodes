@@ -363,24 +363,6 @@ And32 U:G:32, UZD:G:32
     x86: Imm, Addr
     x86: Imm, Index
 
-arm64: Ubfx32 U:G:32, U:G:32, U:G:32, ZD:G:32
-    Tmp, Imm, Imm, Tmp
-
-arm64: Ubfx64 U:G:64, U:G:32, U:G:32, D:G:64
-    Tmp, Imm, Imm, Tmp
-
-arm64: Ubfiz32 U:G:32, U:G:32, U:G:32, ZD:G:32
-    Tmp, Imm, Imm, Tmp
-
-arm64: Ubfiz64 U:G:64, U:G:32, U:G:32, D:G:64
-    Tmp, Imm, Imm, Tmp
-
-arm64: BitFieldInsert32 U:G:32, U:G:32, U:G:32, ZD:G:32
-    Tmp, Imm, Imm, Tmp
-
-arm64: BitFieldInsert64 U:G:64, U:G:32, U:G:32, D:G:64
-    Tmp, Imm, Imm, Tmp
-
 64: And64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
     arm64: BitImm64, Tmp, Tmp
@@ -829,6 +811,48 @@ x86: Xchg32 UD:G:32, UD:G:32 /effects
 x86_64: Xchg64 UD:G:64, UD:G:64 /effects
     Tmp, Addr
     Tmp, Index
+
+arm64: ExtractUnsignedBitfield32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: ExtractUnsignedBitfield64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
+
+arm64: InsertUnsignedBitfieldInZero32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: InsertUnsignedBitfieldInZero64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
+
+arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: InsertBitField64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
+
+arm64: ClearBitField32 U:G:32, U:G:32, ZD:G:32
+    Imm, Imm, Tmp
+
+arm64: ClearBitField64 U:G:32, U:G:32, D:G:64
+    Imm, Imm, Tmp
+
+arm64: ClearBitsWithMask32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+
+arm64: ClearBitsWithMask64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+
+arm64: OrNot32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+
+arm64: OrNot64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+
+arm64: ExtractInsertBitfieldAtLowEnd32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Imm, Imm, Tmp
+
+arm64: ExtractInsertBitfieldAtLowEnd64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Imm, Imm, Tmp
 
 # The first operand is rax.
 # FIXME: This formulation means that the boolean result cannot be put in eax, even though all users

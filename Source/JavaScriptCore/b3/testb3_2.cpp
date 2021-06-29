@@ -3158,13 +3158,13 @@ void testUbfiz64AndShift()
     }
 }
 
-void testBitFieldInsert32()
+void testInsertBitField32()
 {
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     uint32_t d = 0xf0f0f0f0;
     uint32_t n = 0xffffffff;
-    Vector<uint32_t> lsbs = { 1, 2, 14, 30, 30 };
+    Vector<uint32_t> lsbs = { 2, 2, 14, 30, 30 };
     Vector<uint32_t> widths = { 30, 3, 17, 1, 2 };
 
     // Test Pattern: d = ((n & mask1) << lsb) | (d & mask2)
@@ -3236,13 +3236,13 @@ void testBitFieldInsert32()
     }
 }
 
-void testBitFieldInsert64()
+void testInsertBitField64()
 {
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     uint64_t d = 0xf0f0f0f0f0f0f0f0;
     uint64_t n = 0xffffffffffffffff;
-    Vector<uint64_t> lsbs = { 1, 30, 14, 62, 62 };
+    Vector<uint64_t> lsbs = { 2, 30, 14, 62, 62 };
     Vector<uint64_t> widths = { 62, 33, 17, 1, 2 };
 
     // Test Pattern: d = ((n & mask1) << lsb) | (d & mask2)
@@ -3303,6 +3303,399 @@ void testBitFieldInsert64()
         uint64_t mask2 = ~(mask1 << lsb);
         CHECK(test1(lsb, mask1, mask2) == (((n & mask1) << lsb) | (d & mask2)));
         CHECK(test2(lsb, mask1, mask2) == ((d & mask2) | ((n & mask1) << lsb)));
+    }
+}
+
+void testExtractInsertBitfieldAtLowEnd32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint32_t d = 0xf0f0f0f0;
+    uint32_t n = 0xffffffff;
+    Vector<uint32_t> lsbs = { 1, 10, 14, 30 };
+    Vector<uint32_t> widths = { 30, 11, 17, 1 };
+
+    // BFXIL Pattern: d = ((n >> lsb) & mask1) | (d & mask2)
+    // Where: mask1 = ((1 << width) - 1)
+    //        mask2 = ~mask1
+    auto test1 = [&] (uint32_t lsb, uint32_t mask1, uint32_t mask2) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const32Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const32Value>(proc, Origin(), mask2);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), nValue, lsbValue);
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), shiftValue, maskValue1);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitOr, Origin(), leftAndValue, rightAndValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfxil");
+        return invoke<uint32_t>(*code, d, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask1 = (1U << widths.at(i)) - 1U;
+        uint32_t mask2 = ~mask1;
+        CHECK(test1(lsb, mask1, mask2) == (((n >> lsb) & mask1) | (d & mask2)));
+    }
+
+    // BFXIL Pattern: d = ((n & mask1) >> lsb) | (d & mask2)
+    // Where: mask1 = ((1 << width) - 1) << lsb
+    //        mask2 = ~(mask1 >> lsb)
+    auto test2 = [&] (uint32_t lsb, uint32_t mask1, uint32_t mask2) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const32Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const32Value>(proc, Origin(), mask2);
+
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, maskValue1);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), leftAndValue, lsbValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitOr, Origin(), shiftValue, rightAndValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfxil");
+        return invoke<uint32_t>(*code, d, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask1 = ((1U << widths.at(i)) - 1U) << lsb;
+        uint32_t mask2 = ~(mask1 >> lsb);
+        CHECK(test2(lsb, mask1, mask2) == (((n & mask1) >> lsb) | (d & mask2)));
+    }
+}
+
+void testExtractInsertBitfieldAtLowEnd64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    uint64_t d = 0xf0f0f0f0f0f0f0f0;
+    uint64_t n = 0xffffffffffffffff;
+    Vector<uint64_t> lsbs = { 1, 30, 14, 62 };
+    Vector<uint64_t> widths = { 62, 33, 17, 1 };
+
+    // BFXIL Pattern: d = ((n >> lsb) & mask1) | (d & mask2)
+    // Where: mask1 = ((1 << width) - 1)
+    //        mask2 = ~mask1
+    auto test1 = [&] (uint64_t lsb, uint64_t mask1, uint64_t mask2) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const64Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const64Value>(proc, Origin(), mask2);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), nValue, lsbValue);
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), shiftValue, maskValue1);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitOr, Origin(), leftAndValue, rightAndValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfxil");
+        return invoke<uint64_t>(*code, d, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t mask1 = (1ULL << widths.at(i)) - 1ULL;
+        uint64_t mask2 = ~mask1;
+        CHECK(test1(lsb, mask1, mask2) == (((n >> lsb) & mask1) | (d & mask2)));
+    }
+
+    // BFXIL Pattern: d = ((n & mask1) >> lsb) | (d & mask2)
+    // Where: mask1 = ((1 << width) - 1) << lsb
+    //        mask2 = ~(mask1 >> lsb)
+    auto test2 = [&] (uint64_t lsb, uint64_t mask1, uint64_t mask2) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const64Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const64Value>(proc, Origin(), mask2);
+
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, maskValue1);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), leftAndValue, lsbValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, BitOr, Origin(), shiftValue, rightAndValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfxil");
+        return invoke<uint64_t>(*code, d, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t mask1 = ((1ULL << widths.at(i)) - 1ULL) << lsb;
+        uint64_t mask2 = ~(mask1 >> lsb);
+        CHECK(test2(lsb, mask1, mask2) == (((n & mask1) >> lsb) | (d & mask2)));
+    }
+}
+
+void testBIC32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    // Test Pattern: d = n & (-m - 1)
+    auto test1 = [&] (int32_t n, int32_t m) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* const1 = root->appendNew<Const32Value>(proc, Origin(), 1);
+
+        Value* negValue = root->appendNew<Value>(proc, Neg, Origin(), mValue);
+        Value* subValue = root->appendNew<Value>(proc, Sub, Origin(), negValue, const1);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, subValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bic");
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    // Test Pattern: d = n & (m ^ -1)
+    auto test2 = [&] (int32_t n, int32_t m) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* minusOneValue = root->appendNew<Const32Value>(proc, Origin(), -1);
+
+        Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), mValue, minusOneValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, xorValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bic");
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            CHECK(test1(n.value, m.value) == (n.value & (-m.value - 1)));
+            CHECK(test2(n.value, m.value) == (n.value & (m.value ^ -1)));
+        }
+    }
+}
+
+void testBIC64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    // Test Pattern: d = n & (-m - 1)
+    auto test1 = [&] (int64_t n, int64_t m) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* const1 = root->appendNew<Const64Value>(proc, Origin(), 1);
+
+        Value* negValue = root->appendNew<Value>(proc, Neg, Origin(), mValue);
+        Value* subValue = root->appendNew<Value>(proc, Sub, Origin(), negValue, const1);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, subValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bic");
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    // Test Pattern: d = n & (m ^ -1)
+    auto test2 = [&] (int64_t n, int64_t m) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* minusOneValue = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), mValue, minusOneValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, xorValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bic");
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            CHECK(test1(n.value, m.value) == (n.value & (-m.value - 1LL)));
+            CHECK(test2(n.value, m.value) == (n.value & (m.value ^ -1LL)));
+        }
+    }
+}
+
+void testOrNot32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    // Test Pattern: d = n | (-m - 1)
+    auto test1 = [&] (int32_t n, int32_t m) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* const1 = root->appendNew<Const32Value>(proc, Origin(), 1);
+
+        Value* negValue = root->appendNew<Value>(proc, Neg, Origin(), mValue);
+        Value* subValue = root->appendNew<Value>(proc, Sub, Origin(), negValue, const1);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, subValue));
+
+        auto code = compileProc(proc);
+
+        if (isARM64())
+            checkUsesInstruction(*code, "orn");
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    // Test Pattern: d = n | (m ^ -1)
+    auto test2 = [&] (int32_t n, int32_t m) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* minusOneValue = root->appendNew<Const32Value>(proc, Origin(), -1);
+
+        Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), mValue, minusOneValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, xorValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "orn");
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            CHECK(test1(n.value, m.value) == (n.value | (-m.value - 1)));
+            CHECK(test2(n.value, m.value) == (n.value | (m.value ^ -1)));
+        }
+    }
+}
+
+void testOrNot64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    // Test Pattern: d = n | (-m - 1)
+    auto test1 = [&] (int64_t n, int64_t m) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* const1 = root->appendNew<Const64Value>(proc, Origin(), 1);
+
+        Value* negValue = root->appendNew<Value>(proc, Neg, Origin(), mValue);
+        Value* subValue = root->appendNew<Value>(proc, Sub, Origin(), negValue, const1);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, subValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "orn");
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    // Test Pattern: d = n | (m ^ -1)
+    auto test2 = [&] (int64_t n, int64_t m) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* minusOneValue = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), mValue, minusOneValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, xorValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "orn");
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            CHECK(test1(n.value, m.value) == (n.value | (-m.value - 1LL)));
+            CHECK(test2(n.value, m.value) == (n.value | (m.value ^ -1LL)));
+        }
     }
 }
 
@@ -4198,8 +4591,14 @@ void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testUbfiz64AndShiftMaskValue());
     RUN(testUbfiz64ShiftAnd());
     RUN(testUbfiz64AndShift());
-    RUN(testBitFieldInsert32());
-    RUN(testBitFieldInsert64());
+    RUN(testInsertBitField32());
+    RUN(testInsertBitField64());
+    RUN(testExtractInsertBitfieldAtLowEnd32());
+    RUN(testExtractInsertBitfieldAtLowEnd64());
+    RUN(testBIC32());
+    RUN(testBIC64());
+    RUN(testOrNot32());
+    RUN(testOrNot64());
     RUN(testBitAndZeroShiftRightArgImmMask32());
     RUN(testBitAndZeroShiftRightArgImmMask64());
     RUN(testBitAndArgs(43, 43));

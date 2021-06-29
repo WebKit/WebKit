@@ -833,6 +833,12 @@ public:
     }
 
     template<int datasize>
+    ALWAYS_INLINE void bfc(RegisterID rd, int lsb, int width)
+    {
+        bfi<datasize>(rd, ARM64Registers::zr, lsb, width);
+    }
+
+    template<int datasize>
     ALWAYS_INLINE void bfi(RegisterID rd, RegisterID rn, int lsb, int width)
     {
         bfm<datasize>(rd, rn, (datasize - lsb) & (datasize - 1), width - 1);

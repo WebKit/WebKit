@@ -1,3 +1,248 @@
+2021-06-28  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to use BIC supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227202
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes three modifications:
+            1. Add bit clear (BIC), or not (ORN), and extract and insert bitfield at lower end (FBXIL) 
+               to Air opcode to serve intruciton selector.
+            2. Add bitfield clear (BFC) to MacroAssembler.
+            4. Do refactoring - rename Air opcodes added in the previous patches.
+
+        ------------------
+        ### Part A BIC ###
+        ------------------
+        Given the operation:
+
+        bic Rd, Rn, Rm
+
+        The BIC (Bit Clear) instruction performs an AND operation on the bits in Rn with the 
+        complements of the corresponding bits in the value of Rm. The instruction selector can 
+        utilize this to lowering certain patterns in B3 IR before further Air optimization. 
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            d = n & (-m - 1)
+
+        Pattern 2:
+            d = n & (m ^ -1)
+
+        In order to get benefits for complement operation, current instruction selector uses 
+        mvn instruction to lower the pattern value ^ -1. Then, a new strength reduction rule is 
+        introduced:
+            Turn this: -value - 1 
+            Into this: value ^ -1
+
+        So, d = n & (m ^ -1) is selected as the canonical form.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = -1
+        Int @3 = BitXor(@1, @2)
+        Int @4 = BitAnd(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Not %x1, %x1,      @3
+        And %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        After Adding BIC:
+        // New optimized AIR
+        Bic %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        ------------------
+        ### Part A ORN ###
+        ------------------
+        Given the operation:
+
+        orn Rd, Rn, Rm
+
+        Bitwise OR NOT (shifted register) performs a bitwise (inclusive) OR of a register value 
+        Rn and the complement of an optionally-shifted register value Rm, and writes the result 
+        to the destination register Rd.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            d = n | (-m - 1)
+
+        Pattern 2:
+            d = n | (m ^ -1)
+
+        Then, d = n | (m ^ -1) is selected as the canonical form.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = -1
+        Int @3 = BitXor(@1, @2)
+        Int @4 = BitOr(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Not %x1, %x1,      @3
+        Or  %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        After Adding BIC:
+        // New optimized AIR
+        Orn %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        --------------------
+        ### Part A FBXIL ###
+        --------------------
+        Given the operation:
+
+        bfxil Rd, Rn, lsb, width
+
+        Bitfield extract and insert at low end(FBXIL) copies any number of low-order bits 
+        from a source register into the same number of adjacent bits at the low end in 
+        the destination register, leaving other bits unchanged.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+        mask1 = (1 << width) - 1
+        mask2 = ~mask1
+        ((n >> lsb) & mask1) | (d & mask2)
+
+        Pattern 2:
+        mask1 = ((1 << width) - 1) << lsb
+        mask2 = ~(mask1 >> lsb)
+        ((n & mask1) >> lsb) | (d & mask2)
+
+        Then, introduce a strength reduction rule for easier recognization.
+        Turn this: (v & maskShift) >> shiftAmount
+        Into this: (v >> shiftAmount) & mask
+
+        with constraints:
+        1. maskShift = mask << lsb
+        2. mask = (1 << width) - 1
+        3. 0 <= shiftAmount < datasize
+        4. 0 < width < datasize
+        5. shiftAmount + width <= datasize
+
+        The canonical form to match FBXIL is d = ((n >> lsb) & mask1) | (d & mask2).
+        
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = lsb
+        Int @3 = mask1
+        Int @4 = mask2
+        Int @5 = BitAnd(@1, @3)
+        Int @6 = BitAnd(@0, @4))
+        Int @7 = ZShr(@5, @2)
+        Int @8 = BitOr(@7, @6)
+        Void@9 = Return(@8, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        And                      mask2, %x0,   %x0,      @6
+        ExtractUnsignedBitfield    %x1, lsb, width, %x1, @7
+        Or                         %x0, %x1,   %x0,      @8
+        Ret                        %x0,                  @9
+
+        After Adding BIC:
+        // New optimized AIR
+        ExtractInsertBitfieldAtLowEnd %x1, lsb, width, %x0, @8
+        Ret64                         %x0,                  @9
+
+        --------------
+        ### Part B ###
+        --------------
+        The Bitfield Clear (BFC), leaving other bits unchanged, is similar to BFI which is an 
+        alias of BFM. Given the operation:
+
+        bfc Rd, lsb, width
+
+        The equivalent pattern of this instruction is:
+
+        mask = ((1 << width) - 1) << lsb
+        d = d & ~mask
+
+        Since mask is a constant and B3 performs constant fold in the optimization phase, this 
+        pattern will directly lower to the BitAnd binary operation. So, no need to match this pattern.
+
+        --------------
+        ### Part C ###
+        --------------
+        At MacroAssembler level, the emitters are exepected to be expressed in english 
+        (e.g. something like clearBitField for BFC). Do refactoring to rename Air opcode for 
+        UBFX, UBFIZ, BFI, and BIC.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::bfc):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::extractUnsignedBitfield32):
+        (JSC::MacroAssemblerARM64::extractUnsignedBitfield64):
+        (JSC::MacroAssemblerARM64::insertUnsignedBitfieldInZero32):
+        (JSC::MacroAssemblerARM64::insertUnsignedBitfieldInZero64):
+        (JSC::MacroAssemblerARM64::insertBitField32):
+        (JSC::MacroAssemblerARM64::insertBitField64):
+        (JSC::MacroAssemblerARM64::clearBitField32):
+        (JSC::MacroAssemblerARM64::clearBitField64):
+        (JSC::MacroAssemblerARM64::clearBitsWithMask32):
+        (JSC::MacroAssemblerARM64::clearBitsWithMask64):
+        (JSC::MacroAssemblerARM64::orNot32):
+        (JSC::MacroAssemblerARM64::orNot64):
+        (JSC::MacroAssemblerARM64::ubfx32): Deleted.
+        (JSC::MacroAssemblerARM64::ubfx64): Deleted.
+        (JSC::MacroAssemblerARM64::ubfiz32): Deleted.
+        (JSC::MacroAssemblerARM64::ubfiz64): Deleted.
+        (JSC::MacroAssemblerARM64::bitFieldInsert32): Deleted.
+        (JSC::MacroAssemblerARM64::bitFieldInsert64): Deleted.
+        * assembler/testmasm.cpp:
+        (JSC::testMultiplySignExtend32):
+        (JSC::testMultiplySubSignExtend32):
+        (JSC::testExtractUnsignedBitfield32):
+        (JSC::testExtractUnsignedBitfield64):
+        (JSC::testInsertUnsignedBitfieldInZero32):
+        (JSC::testInsertUnsignedBitfieldInZero64):
+        (JSC::testInsertBitField32):
+        (JSC::testInsertBitField64):
+        (JSC::testClearBitField32):
+        (JSC::testClearBitField64):
+        (JSC::testClearBitsWithMask32):
+        (JSC::testClearBitsWithMask64):
+        (JSC::testOrNot32):
+        (JSC::testOrNot64):
+        (JSC::testMul32SignExtend): Deleted.
+        (JSC::testMulSubSignExtend32): Deleted.
+        (JSC::testUbfx32): Deleted.
+        (JSC::testUbfx64): Deleted.
+        (JSC::testUbfiz32): Deleted.
+        (JSC::testUbfiz64): Deleted.
+        (JSC::testBitFieldInsert32): Deleted.
+        (JSC::testBitFieldInsert64): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testInsertBitField32):
+        (testInsertBitField64):
+        (testBIC32):
+        (testBIC64):
+        (testOrNot32):
+        (testOrNot64):
+        (addBitTests):
+        (testBitFieldInsert32): Deleted.
+        (testBitFieldInsert64): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::cageWithoutUntagging):
+        (JSC::AssemblyHelpers::cageConditionallyAndUntag):
+
 2021-06-28  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Add LLInt fast path for less, lesseq, greater and greatereq
