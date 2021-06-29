@@ -1057,6 +1057,7 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const SQL
         || insertRelationshipStatement->bindInt(1, domainID) != SQLITE_OK) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
+            return;
     }
     
     if (statement.contains("REPLACE")) {
@@ -3504,6 +3505,7 @@ Vector<WebCore::PrivateClickMeasurement> ResourceLoadStatisticsDatabaseStore::al
     if (!attributedScopedStatement) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return { };
     }
 
     Vector<WebCore::PrivateClickMeasurement> attributions;

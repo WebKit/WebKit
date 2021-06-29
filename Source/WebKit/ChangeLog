@@ -1,3 +1,17 @@
+2021-06-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Nullptr crash in ResourceLoadStatisticsDatabaseStore::allAttributedPrivateClickMeasurement
+        https://bugs.webkit.org/show_bug.cgi?id=227462
+        rdar://50772934
+
+        Reviewed by Chris Dumez.
+
+        Return early if statement cannot be created.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::allAttributedPrivateClickMeasurement):
+
 2021-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r279305) [Mac DEBUG] 4 SOAuthorizationRedirect Tests are Crashing with Assert: !m_sheetWindow
