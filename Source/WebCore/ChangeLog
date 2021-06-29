@@ -1,3 +1,76 @@
+2021-06-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Fix resources release when a MediaKeySession is closed
+        https://bugs.webkit.org/show_bug.cgi?id=227403
+
+        Reviewed by Philippe Normand.
+
+        Thunder sessions should be a BoxPtr, already when stored at the
+        CDMInstanceSessionThunder, it does not make sense to store then in
+        a unique_ptr. This way the same session lives in the
+        MediaKeySession wrapper (CDMInstanceSessionThunder) and inside the
+        KeyStores.
+
+        Removed the CDMInstanceProxy key store. It is not needed.
+
+        When a session is closed in Thunder, there should be a cascade to
+        remove it from the other synced stores, that's why we introduce
+        the removeAllKeysFrom logic.
+
+        Regular key stores do not manage key session references
+        anymore. They are only needed in the CDMProxy class, which is
+        where the keys are shared among different sessions. We were
+        managing key session references in other stores and they were
+        messing up with the key references in the CDMProxy class. In
+        those cases, a key kept in a local store could have a reference
+        that would prevent the CDMProxy key store from removing it when
+        asked from it. There were also cases of removing keys from local
+        stores that were creating negative reference numbers, which
+        created the opposite effect, this is, leaving in place keys in the
+        CDMProxy store that should be released.
+
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::KeyStore::merge): Simplified to just add keys.
+        (WebCore::KeyStore::add): Adds references (if needed) and merges
+        if needed.
+        (WebCore::KeyStore::unrefAllKeys): Renamed. Unrefs all keys from a
+        store by copying itself and calling unrefAllKeysFrom that copy.
+        (WebCore::KeyStore::unref): Renamed. Uses proper refefencing.
+        (WebCore::CDMProxy::unrefAllKeysFrom): Method to unref all keys
+        that are contained in some other store.
+        (WebCore::CDMInstanceProxy::mergeKeysFrom): There is no more key
+        store in this class.
+        (WebCore::CDMInstanceProxy::unrefAllKeysFrom): Renamed. Calls the
+        CDMproxy to unref the keys from there.
+        * platform/encryptedmedia/CDMProxy.h:
+        (WebCore::KeyHandle::mergeKeyInto): Merges one key into self by
+        copying status, data and summing reference count.
+        (WebCore::KeyHandle::numSessionReferences const): Turn int.
+        (WebCore::KeyHandle::hasReferences const): Added.
+        (WebCore::KeyStore::addSessionReferenceTo const):
+        (WebCore::KeyStore::removeSessionReferenceFrom const): Helpers to
+        check if the store is reference counted or not. Default is do
+        nothing and but the ReferenceAwareKeyStore redefines them to do
+        reference counting.
+        (WebCore::KeyStore::unrefAllKeys): Deleted.
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceSessionClearKey::updateLicense):
+        (WebCore::CDMInstanceSessionClearKey::removeSessionData): Use
+        renamed methods.
+        * platform/graphics/gstreamer/eme/CDMThunder.h:
+        * platform/graphics/gstreamer/eme/CDMThunder.cpp:
+        (WebCore::CDMInstanceSessionThunder::status const):
+        (WebCore::CDMInstanceSessionThunder::keyUpdatedCallback):
+        (WebCore::CDMInstanceSessionThunder::requestLicense):
+        (WebCore::CDMInstanceSessionThunder::updateLicense):
+        (WebCore::CDMInstanceSessionThunder::removeSessionData):
+        (WebCore::CDMInstanceSessionThunder::loadSession): Use BoxPtr in
+        the session.
+        (WebCore::CDMInstanceSessionThunder::closeSession): Close the
+        current session, release the BoxPtr, notify the instance and
+        therefore the proxy to unref all they key IDs in this session and
+        empty the local key store.
+
 2021-06-28  Darin Adler  <darin@apple.com>
 
         CSS parser "consume declaration" algorithm does not handle whitespace correctly
