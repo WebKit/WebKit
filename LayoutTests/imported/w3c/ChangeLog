@@ -1,3 +1,16 @@
+2021-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync intersection-observer WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227500
+
+        Reviewed by Sam Weinig.
+
+        Resync intersection-observer WPT tests from upstream a38612f39e7752c353208.
+
+        * web-platform-tests/intersection-observer/target-is-root-expected.txt: Added.
+        * web-platform-tests/intersection-observer/target-is-root.html: Added.
+        * web-platform-tests/intersection-observer/w3c-import.log:
+
 2021-06-29  Darin Adler  <darin@apple.com>
 
         CSS style sheets loaded by HTMLLinkElement do not fall back correctly when charset is an invalid encoding name
