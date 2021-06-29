@@ -264,6 +264,7 @@ set(WTF_PUBLIC_HEADERS
     StringPrintStream.h
     SynchronizedFixedQueue.h
     SystemFree.h
+    SystemMalloc.h
     SystemTracing.h
     TaggedArrayStoragePtr.h
     ThreadAssertions.h

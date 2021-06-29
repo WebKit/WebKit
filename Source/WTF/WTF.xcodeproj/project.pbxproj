@@ -760,6 +760,7 @@
 		E4A0AD371A96245500536DF6 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		E4A0AD381A96245500536DF6 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueCocoa.cpp; sourceTree = "<group>"; };
+		E4D2AE4D268A4C7F00DFEA02 /* SystemMalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemMalloc.h; sourceTree = "<group>"; };
 		EB2C86D8267B275C0052CB9A /* CPUTimePOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTimePOSIX.cpp; sourceTree = "<group>"; };
 		EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTracingCocoa.cpp; sourceTree = "<group>"; };
 		EB95E1EF161A72410089A2F5 /* ByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteOrder.h; sourceTree = "<group>"; };
@@ -1292,6 +1293,7 @@
 				0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */,
 				5597F82C1D94B9970066BC21 /* SynchronizedFixedQueue.h */,
 				E3E158251EADA53C004A079D /* SystemFree.h */,
+				E4D2AE4D268A4C7F00DFEA02 /* SystemMalloc.h */,
 				0FB317C31C488001007E395A /* SystemTracing.h */,
 				DEF7FE5F22581AC800C15129 /* TaggedArrayStoragePtr.h */,
 				7B2739F12632A8940040F182 /* ThreadAssertions.h */,

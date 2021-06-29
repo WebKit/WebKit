@@ -186,7 +186,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 
     for (auto& nameAndMatch : selectorFeatures.classes) {
         classRules.ensure(nameAndMatch.first, [] {
-            return makeUnique<Vector<RuleFeature>>();
+            return makeUnique<RuleFeatureVector>();
         }).iterator->value->append({ ruleData, nameAndMatch.second });
         if (nameAndMatch.second == MatchElement::Host)
             classesAffectingHost.add(nameAndMatch.first);
@@ -202,7 +202,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     }
     for (auto& keyAndMatch : selectorFeatures.pseudoClasses) {
         pseudoClassRules.ensure(keyAndMatch.first, [] {
-            return makeUnique<Vector<RuleFeature>>();
+            return makeUnique<RuleFeatureVector>();
         }).iterator->value->append({ ruleData, keyAndMatch.second });
         if (keyAndMatch.second == MatchElement::Host)
             pseudoClassesAffectingHost.add(keyAndMatch.first);
@@ -220,7 +220,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
     for (auto& keyValuePair : other.classRules) {
         classRules.ensure(keyValuePair.key, [] {
-            return makeUnique<Vector<RuleFeature>>();
+            return makeUnique<RuleFeatureVector>();
         }).iterator->value->appendVector(*keyValuePair.value);
     }
     classesAffectingHost.add(other.classesAffectingHost.begin(), other.classesAffectingHost.end());
@@ -234,7 +234,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 
     for (auto& keyValuePair : other.pseudoClassRules) {
         pseudoClassRules.ensure(keyValuePair.key, [] {
-            return makeUnique<Vector<RuleFeature>>();
+            return makeUnique<RuleFeatureVector>();
         }).iterator->value->appendVector(*keyValuePair.value);
     }
     pseudoClassesAffectingHost.add(other.pseudoClassesAffectingHost.begin(), other.pseudoClassesAffectingHost.end());
