@@ -1,3 +1,97 @@
+2021-06-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r279361. rdar://problem/79923766
+
+    REGRESSION (r279310): Occasional crash when focusing login fields on iPad with a software keyboard
+    https://bugs.webkit.org/show_bug.cgi?id=227472
+    rdar://79876040
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    I added a mechanism in r279310 to defer calling `-[WKContentView _setSuppressSoftwareKeyboard:NO]` until we've
+    gotten a response from the web process containing an up-to-date autocorrection context. However, in the case
+    where the WKWebView client sets `_suppressSoftwareKeyboard` to `YES` and then immediately to `NO` underneath the
+    scope of a call to `-_webView:willStartInputSession:`, we'll end up calling into `-_setSuppressSoftwareKeyboard:`
+    inside the scope of `-requestAutocorrectionContextWithCompletionHandler:`, when we've received an
+    autocorrection context while sync-waiting. This is problematic because it breaks UIKeyboardTaskQueue's state,
+    since the call to `-_setSuppressSoftwareKeyboard:` will attempt to enqueue a new task after the previous task's
+    context has already returned execution to the parent.
+    
+    To fix this, we instead invoke `self._suppressSoftwareKeyboard = NO;` *before* calling the completion block in
+    `-_handleAutocorrectionContext:`. This allows the request for an autocorrection context underneath
+    `-_setSuppressSoftwareKeyboard:` to be handled (and completed) as a child task of the previous task, which keeps
+    UIKeyboardTaskQueue in a valid state.
+    
+    Test: fast/forms/ios/suppress-software-keyboard-while-focusing-input.html
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _handleAutocorrectionContext:]):
+    
+    Tools:
+    
+    Make it possible to induce the crash (prior to the fix) by introducing two new testing primitives on iOS:
+    
+    -   `UIScriptController.suppressSoftwareKeyboard`, a readwrite attribute that can be used to suppress the
+        appearance of the software keyboard on iOS by calling `-[WKWebView _setSuppressSoftwareKeyboard:]`.
+    
+    -   `UIScriptController.willStartInputSessionCallback`, a callback that is invoked when we're about to start a
+        UI-process-side input session. On iOS, this corresponds to
+        `-[_WKInputDelegate _webView:willStartInputSession:`].
+    
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    (WTR::UIScriptController::suppressSoftwareKeyboard const):
+    (WTR::UIScriptController::setSuppressSoftwareKeyboard):
+    * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp:
+    (WTR::UIScriptController::setWillStartInputSessionCallback):
+    (WTR::UIScriptController::willStartInputSessionCallback const):
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+    (-[TestRunnerWKWebView initWithFrame:configuration:]):
+    (-[TestRunnerWKWebView resetInteractionCallbacks]):
+    (-[TestRunnerWKWebView _webView:willStartInputSession:]):
+    * WebKitTestRunner/ios/TestControllerIOS.mm:
+    (WTR::TestController::platformResetStateToConsistentValues):
+    
+    Make sure that we revert `_suppressSoftwareKeyboard` to `NO`, in case a layout test ends while leaving this on,
+    to prevent subsequent layout tests from behaving in unexpected ways.
+    
+    * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+    * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+    (WTR::UIScriptControllerIOS::setWillStartInputSessionCallback):
+    (WTR::UIScriptControllerIOS::suppressSoftwareKeyboard const):
+    (WTR::UIScriptControllerIOS::setSuppressSoftwareKeyboard):
+    
+    LayoutTests:
+    
+    Add a new layout test to exercise the crash. See Tools and Source/WebKit ChangeLogs for more information.
+    This new test suppresses and then immediately un-suppresses the software keyboard inside the
+    `-_webView:willStartInputSession:` input delegate hook while focusing a regular text field.
+    
+    * fast/forms/ios/suppress-software-keyboard-while-focusing-input-expected.txt: Added.
+    * fast/forms/ios/suppress-software-keyboard-while-focusing-input.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279361 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION (r279310): Occasional crash when focusing login fields on iPad with a software keyboard
+            https://bugs.webkit.org/show_bug.cgi?id=227472
+            rdar://79876040
+
+            Reviewed by Tim Horton.
+
+            Add a new layout test to exercise the crash. See Tools and Source/WebKit ChangeLogs for more information.
+            This new test suppresses and then immediately un-suppresses the software keyboard inside the
+            `-_webView:willStartInputSession:` input delegate hook while focusing a regular text field.
+
+            * fast/forms/ios/suppress-software-keyboard-while-focusing-input-expected.txt: Added.
+            * fast/forms/ios/suppress-software-keyboard-while-focusing-input.html: Added.
+
 2021-06-27  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for shrinking over-constrained columns based on the width type priority list

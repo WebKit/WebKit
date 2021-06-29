@@ -207,6 +207,9 @@ public:
     virtual bool windowIsKey() const { notImplemented(); return false; }
     virtual void setWindowIsKey(bool) { notImplemented(); }
 
+    virtual bool suppressSoftwareKeyboard() const { notImplemented(); return false; }
+    virtual void setSuppressSoftwareKeyboard(bool) { notImplemented(); }
+
     // Stylus
 
     virtual void stylusDownAtPoint(long, long, float, float, float, JSValueRef) { notImplemented(); }
@@ -335,6 +338,9 @@ public:
 
     virtual void setDidHideKeyboardCallback(JSValueRef);
     JSValueRef didHideKeyboardCallback() const;
+
+    virtual void setWillStartInputSessionCallback(JSValueRef);
+    JSValueRef willStartInputSessionCallback() const;
 
     virtual void setDidHideMenuCallback(JSValueRef);
     JSValueRef didHideMenuCallback() const;

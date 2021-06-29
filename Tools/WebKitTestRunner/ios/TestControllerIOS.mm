@@ -204,6 +204,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     BOOL shouldRestoreFirstResponder = NO;
     if (PlatformWebView* platformWebView = mainWebView()) {
         TestRunnerWKWebView *webView = platformWebView->platformView();
+        webView._suppressSoftwareKeyboard = NO;
         webView._stableStateOverride = nil;
         webView._scrollingUpdatesDisabledForTesting = NO;
         webView.usesSafariLikeRotation = NO;

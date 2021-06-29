@@ -4662,8 +4662,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
 {
     _lastAutocorrectionContext = context;
-    [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
     [self unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded];
+    [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
 }
 
 - (void)updateSoftwareKeyboardSuppressionStateFromWebView

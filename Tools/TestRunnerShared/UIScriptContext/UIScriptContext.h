@@ -67,6 +67,7 @@ typedef enum  {
     CallbackTypeWindowTapRecognized,
     CallbackTypeDidShowContactPicker,
     CallbackTypeDidHideContactPicker,
+    CallbackTypeWillStartInputSession,
     CallbackTypeNonPersistent = firstNonPersistentCallbackID
 } CallbackType;
 
