@@ -1,3 +1,14 @@
+2021-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        CSS scroll snap should allow scrolling to the middle of snap areas that overflow the snapport
+        https://bugs.webkit.org/show_bug.cgi?id=223021
+        <rdar://problem/75518606>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/overflowing-snap-areas-expected.txt: Update test
+        expectations to reflect newly passing tests.
+
 2021-06-28  Darin Adler  <darin@apple.com>
 
         CSS parser "consume declaration" algorithm does not handle whitespace correctly

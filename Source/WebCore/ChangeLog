@@ -1,3 +1,20 @@
+2021-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        CSS scroll snap should allow scrolling to the middle of snap areas that overflow the snapport
+        https://bugs.webkit.org/show_bug.cgi?id=223021
+        <rdar://problem/75518606>
+
+        Reviewed by Simon Fraser.
+
+        No new tests. This is covered by existing tests and, in particular, a WPT test:
+            - web-platform-tests/css/css-scroll-snap/overflowing-snap-areas.html
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::searchForPotentialSnapPoints): Record when the target snap offset happens to
+        fall in the interior of a snap area that overflows the snap port.
+        (WebCore::closestSnapOffsetWithInfoAndAxis): When this happens and we are in a spec-compliant
+        sitaution, just snap to the original target offset.
+
 2021-06-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Fix resources release when a MediaKeySession is closed

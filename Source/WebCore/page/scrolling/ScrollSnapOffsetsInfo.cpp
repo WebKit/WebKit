@@ -45,13 +45,15 @@ struct PotentialSnapPointSearchResult {
     std::optional<std::pair<UnitType, unsigned>> previous;
     std::optional<std::pair<UnitType, unsigned>> next;
     std::optional<std::pair<UnitType, unsigned>> snapStop;
+    bool landedInsideSnapAreaThatConsumesViewport;
 };
 
 template <typename InfoType, typename UnitType>
-static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(const InfoType& info, ScrollEventAxis axis, UnitType destinationOffset, std::optional<UnitType> originalOffset)
+static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(const InfoType& info, ScrollEventAxis axis, UnitType viewportLength, UnitType destinationOffset, std::optional<UnitType> originalOffset)
 {
     const auto& snapOffsets = info.offsetsForAxis(axis);
     std::optional<std::pair<UnitType, unsigned>> previous, next, exact, snapStop;
+    bool landedInsideSnapAreaThatConsumesViewport = false;
 
     // A particular snap stop is better if it's between the original offset and destination offset and closer original
     // offset than the previously selected snap stop. We always want to stop at the snap stop closest to the original offset.
@@ -66,6 +68,12 @@ static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(con
 
     for (unsigned i = 0; i < snapOffsets.size(); i++) {
         UnitType potentialSnapOffset = snapOffsets[i].offset;
+
+        const auto& snapArea = info.snapAreas[snapOffsets[i].snapAreaIndex];
+        auto snapAreaMin = axis == ScrollEventAxis::Horizontal ? snapArea.x() : snapArea.y();
+        auto snapAreaMax = axis == ScrollEventAxis::Horizontal ? snapArea.maxX() : snapArea.maxY();
+        landedInsideSnapAreaThatConsumesViewport |= snapAreaMin <= destinationOffset && snapAreaMax >= (destinationOffset + viewportLength);
+
         if (potentialSnapOffset == destinationOffset)
             exact = std::make_pair(potentialSnapOffset, i);
         else if (potentialSnapOffset < destinationOffset)
@@ -78,8 +86,8 @@ static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(con
     }
 
     if (exact)
-        return { exact, exact, snapStop };
-    return { previous, next, snapStop };
+        return { exact, exact, snapStop, landedInsideSnapAreaThatConsumesViewport };
+    return { previous, next, snapStop, landedInsideSnapAreaThatConsumesViewport };
 }
 
 template <typename InfoType, typename SizeType, typename LayoutType>
@@ -90,11 +98,20 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
     if (snapOffsets.isEmpty())
         return pairForNoSnapping;
 
-    auto [previous, next, snapStop] = searchForPotentialSnapPoints(info, axis, scrollDestinationOffset, originalOffsetForDirectionalSnapping);
+    auto viewportLength = axis == ScrollEventAxis::Horizontal ? viewportSize.width() : viewportSize.height();
+    auto [previous, next, snapStop, landedInsideSnapAreaThatConsumesViewport] = searchForPotentialSnapPoints(info, axis, viewportLength, scrollDestinationOffset, originalOffsetForDirectionalSnapping);
     if (snapStop)
         return *snapStop;
 
-    auto viewportLength = axis == ScrollEventAxis::Horizontal ? viewportSize.width() : viewportSize.height();
+    // From https://www.w3.org/TR/css-scroll-snap-1/#snap-overflow
+    // "If the snap area is larger than the snapport in a particular axis, then any scroll position
+    // in which the snap area covers the snapport, and the distance between the geometrically
+    // previous and subsequent snap positions in that axis is larger than size of the snapport in
+    // that axis, is a valid snap position in that axis. The UA may use the specified alignment as a
+    // more precise target for certain scroll operations (e.g. explicit paging)."
+    if (landedInsideSnapAreaThatConsumesViewport && (!previous || !next || ((*next).first - (*previous).first) >= viewportLength))
+        return pairForNoSnapping;
+
     auto isNearEnoughToOffsetForProximity = [&](LayoutType candidateSnapOffset) {
         if (info.strictness != ScrollSnapStrictness::Proximity)
             return true;
