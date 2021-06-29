@@ -139,13 +139,15 @@ static int createFlatpakInfo()
         // xdg-desktop-portal relates your name to certain permissions so we want
         // them to be application unique which is best done via GApplication.
         GApplication* app = g_application_get_default();
-        if (!app) {
-            g_warning("GApplication is required for xdg-desktop-portal access in the WebKit sandbox. Actions that require xdg-desktop-portal will be broken.");
-            return -1;
-        }
+        if (!app)
+            g_error("GApplication is required for xdg-desktop-portal access in the WebKit sandbox.");
+
+        const char* appID = g_application_get_application_id(app);
+        if (!appID)
+            g_error("GApplication must have a valid ID for xdg-desktop-portal access in the WebKit sandbox.");
 
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
-        g_key_file_set_string(keyFile.get(), "Application", "name", g_application_get_application_id(app));
+        g_key_file_set_string(keyFile.get(), "Application", "name", appID);
         data->reset(g_key_file_to_data(keyFile.get(), &size, nullptr));
     }
 

@@ -1,5 +1,17 @@
 2021-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Check GApplication has a valid ID before trying to create the flatpack info
+        https://bugs.webkit.org/show_bug.cgi?id=227344
+
+        Reviewed by Michael Catanzaro.
+
+        Show a warning if GApplication is used but app ID is nullptr.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::createFlatpakInfo):
+
+2021-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Bubblewrap: allow to set DBus proxy logging per proxy
         https://bugs.webkit.org/show_bug.cgi?id=227447
 
