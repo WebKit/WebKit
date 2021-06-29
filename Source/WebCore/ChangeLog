@@ -1,3 +1,19 @@
+2021-06-29  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Encoding specified in the 'charset' attribute should have precedence over 'content' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=227464
+
+        Reviewed by Geoffrey Garen.
+
+        Puts precedence on 'charset' attribute by breaking out of the parsing process.
+
+        This test passes Firefox and Chrome. Tested using
+        http://wpt.live/html/syntax/parsing/meta-inhead-insertion-mode.html
+
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::encodingFromMetaAttributes):
+
+
 2021-06-29  Darin Adler  <darin@apple.com>
 
         CSS style sheets loaded by HTMLLinkElement do not fall back correctly when charset is an invalid encoding name

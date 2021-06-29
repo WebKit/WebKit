@@ -109,15 +109,15 @@ TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const AttributeLi
         if (attributeName == http_equivAttr) {
             if (equalLettersIgnoringASCIICase(attributeValue, "content-type"))
                 gotPragma = true;
-        } else if (charset.isEmpty()) {
-            if (attributeName == charsetAttr) {
-                charset = attributeValue;
-                mode = Charset;
-            } else if (attributeName == contentAttr) {
-                charset = extractCharset(attributeValue);
-                if (charset.length())
-                    mode = Pragma;
-            }
+        } else if (attributeName == charsetAttr) {
+            charset = attributeValue;
+            mode = Charset;
+            // Charset attribute takes precedence
+            break;
+        } else if (attributeName == contentAttr) {
+            charset = extractCharset(attributeValue);
+            if (charset.length())
+                mode = Pragma;
         }
     }
 
