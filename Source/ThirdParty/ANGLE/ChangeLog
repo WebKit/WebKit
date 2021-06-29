@@ -1,5 +1,36 @@
 2021-06-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        ANGLE Metal primitive restart range computation could index with size_t
+        https://bugs.webkit.org/show_bug.cgi?id=227449
+
+        Reviewed by Kenneth Russell.
+
+        Make the `calculateRestartRanges()` a bit simpler in order
+        for it to be easier to understand.
+
+        * src/libANGLE/renderer/metal/BufferMtl.h:
+        (rx::IndexRange::IndexRange):
+        Add documentation what the mtl::IndexRange is.
+        Add constructor so that `std::vector::emplace_back()` works.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::calculateRestartRanges):
+        Index with size_t to make it simpler to understand if the index
+        overflows or not.
+        Use reinterpret_cast in order to not accidentally cast away
+        const from `mtl::BufferRef::mapReadOnly()`.
+        Skip the non-marker elements with `continue` to avoid deep nesting.
+        Give a name to the restart range marker value.
+        Remove intermediate variable `value = bufferData[i]` as it is never
+        used more than once. This simplifies the code as the do-while loop
+        does not need to check the if condition as the loop ending condition
+        already checks.
+        Make the array a returned result instead of out variable.
+
+        (rx::BufferMtl::getRestartIndices):
+
+2021-06-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         ANGLE Metal primitive restart range computation should not be done unless primitive restart is enabled
         https://bugs.webkit.org/show_bug.cgi?id=227452
 
