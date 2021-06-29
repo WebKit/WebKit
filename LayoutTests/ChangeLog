@@ -1,3 +1,19 @@
+2021-06-28  Cameron McCormack  <heycam@apple.com>
+
+        Fix canvas color stroke test stroke widths
+        https://bugs.webkit.org/show_bug.cgi?id=223005
+        <rdar://75239330>
+
+        Reviewed by Simon Fraser.
+
+        The lineWidth should be the same in both test and reference.
+
+        * fast/text/canvas-color-fonts/stroke-color-COLR.html:
+        * fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html:
+        * http/tests/canvas/color-fonts/stroke-color-sbix.html:
+        * http/tests/canvas/color-fonts/stroke-color-shadow-sbix.html:
+        * platform/mac/TestExpectations:
+
 2021-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Live Text selections inside images is misaligned when "object-fit" is not "fill"
