@@ -47,6 +47,7 @@ class SecurityOrigin;
 class SharedBuffer;
 class TextResourceDecoder;
 class ThreadableLoader;
+class URLSearchParams;
 class XMLHttpRequestUpload;
 struct OwnedString;
 
@@ -70,7 +71,7 @@ public:
     EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
-    using SendTypes = Variant<RefPtr<Document>, RefPtr<Blob>, RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<DOMFormData>, String>;
+    using SendTypes = Variant<RefPtr<Document>, RefPtr<Blob>, RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<DOMFormData>, String, RefPtr<URLSearchParams>>;
 
     const URL& url() const { return m_url; }
     String statusText() const;
@@ -166,6 +167,7 @@ private:
     void notifyIsDone(bool) final;
 
     std::optional<ExceptionOr<void>> prepareToSend();
+    ExceptionOr<void> send(const URLSearchParams&);
     ExceptionOr<void> send(Document&);
     ExceptionOr<void> send(const String& = { });
     ExceptionOr<void> send(Blob&);

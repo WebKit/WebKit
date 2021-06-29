@@ -1,3 +1,12 @@
+2021-06-29  Alex Christensen  <achristensen@webkit.org>
+
+        xhr.send(URLSearchParams) should align default Content-Type header field with Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=227477
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/xhr/setrequestheader-content-type-expected.txt:
+
 2021-06-29  Martin Robinson  <mrobinson@igalia.com>
 
         CSS scroll snap should allow scrolling to the middle of snap areas that overflow the snapport

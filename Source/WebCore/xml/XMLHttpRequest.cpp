@@ -52,6 +52,7 @@
 #include "StringAdaptors.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
+#include "URLSearchParams.h"
 #include "XMLDocument.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
@@ -453,6 +454,7 @@ ExceptionOr<void> XMLHttpRequest::send(std::optional<SendTypes>&& sendType)
             [this] (const RefPtr<JSC::ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> { return send(*arrayBufferView); },
             [this] (const RefPtr<JSC::ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> { return send(*arrayBuffer); },
             [this] (const RefPtr<DOMFormData>& formData) -> ExceptionOr<void> { return send(*formData); },
+            [this] (const RefPtr<URLSearchParams>& searchParams) -> ExceptionOr<void> { return send(*searchParams); },
             [this] (const String& string) -> ExceptionOr<void> { return send(string); }
         );
     }
@@ -534,6 +536,13 @@ ExceptionOr<void> XMLHttpRequest::send(Blob& body)
     }
 
     return createRequest();
+}
+
+ExceptionOr<void> XMLHttpRequest::send(const URLSearchParams& params)
+{
+    if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
+        m_requestHeaders.set(HTTPHeaderName::ContentType, "application/x-www-form-urlencoded;charset=UTF-8"_s);
+    return send(params.toString());
 }
 
 ExceptionOr<void> XMLHttpRequest::send(DOMFormData& body)

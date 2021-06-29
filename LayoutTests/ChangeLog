@@ -1,3 +1,15 @@
+2021-06-29  Alex Christensen  <achristensen@webkit.org>
+
+        xhr.send(URLSearchParams) should align default Content-Type header field with Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=227477
+
+        Reviewed by Chris Dumez.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/xhr/setrequestheader-content-type-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/setrequestheader-content-type-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
 2021-06-24  Jer Noble  <jer.noble@apple.com>
 
         Loading WebM hangs if server sends only small amount of data
