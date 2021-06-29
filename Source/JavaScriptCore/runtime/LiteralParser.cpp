@@ -189,6 +189,16 @@ ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(const LiteralCh
     return result;
 }
 
+static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(UChar)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 // 256 Latin-1 codes
 static constexpr const TokenType tokenTypesOfLatin1Characters[256] = {
 /*   0 - Null               */ TokError,

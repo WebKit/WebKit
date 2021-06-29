@@ -1,3 +1,16 @@
+2021-06-29  Joonghun Park  <jh718.park@samsung.com>
+
+        Remove "function declared ‘static’ but never defined" build warnings since r278971.
+        https://bugs.webkit.org/show_bug.cgi?id=227436
+
+        This patch removes the build warnings below.
+        warning: ‘bool JSC::cannotBeIdentPartOrEscapeStart(LChar)’ declared ‘static’ but never defined [-Wunused-function]
+
+        Reviewed by Michael Catanzaro.
+
+        * runtime/LiteralParser.cpp: Add definitions for cannotBeIdentPartOrEscapeStart.
+        (JSC::cannotBeIdentPartOrEscapeStart):
+
 2021-06-29  Yijia Huang  <yijia_huang@apple.com>
 
         Add a new pattern to instruction selector to use SBX and SBFIZ supported by ARM64
