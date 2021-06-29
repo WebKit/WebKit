@@ -2204,9 +2204,7 @@ webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Cra
 
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure ]
 
-webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Timeout ]
-webkit.org/b/134576 media/track/video/video-track-mkv-theora-language.html [ Failure ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure ]
 
 webkit.org/b/145051 webkit.org/b/198830 [ Release ] media/video-rtl.html [ ImageOnlyFailure Pass Crash ]
