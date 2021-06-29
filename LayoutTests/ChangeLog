@@ -1,3 +1,19 @@
+2021-06-29  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        P-384 EC public JWK key in layout tests is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=227432
+
+        Reviewed by Chris Dumez.
+
+        Fix the y value of the JWK keys. The y value was derived from the x value with openssl,
+        using EC_POINT_set_compressed_coordinates_GFp() and EC_POINT_get_affine_coordinates_GFp(),
+        and was verified with EC_KEY_check_key().
+
+        * crypto/subtle/ec-import-key-malformed-parameters.html:
+        * crypto/subtle/ecdh-import-jwk-public-key-p384.html:
+        * crypto/subtle/ecdsa-import-jwk-public-key-alg-384.html:
+        * crypto/workers/subtle/resources/ec-import-jwk-key-public.js:
+
 2021-06-29  Rob Buis  <rbuis@igalia.com>
 
         Nullptr crash in HTMLStackItem::create via DocumentFragment::parseHTML
