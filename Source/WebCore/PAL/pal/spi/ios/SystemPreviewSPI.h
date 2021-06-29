@@ -29,7 +29,9 @@
 #import <AssetViewer/ARQuickLookWebKitItem.h>
 #endif
 
+#if PLATFORM(IOS)
 #import <AssetViewer/ASVThumbnailView.h>
+#endif
 
 #if HAVE(ARKIT_INLINE_PREVIEW_IOS)
 #import <AssetViewer/ASVInlinePreview.h>
@@ -39,6 +41,7 @@
 
 #import <UIKit/UIKit.h>
 
+#if PLATFORM(IOS)
 @class ASVThumbnailView;
 @class QLItem;
 @class QLPreviewController;
@@ -52,6 +55,7 @@
 @property (nonatomic, assign) QLItem *thumbnailItem;
 @property (nonatomic) CGSize maxThumbnailSize;
 @end
+#endif
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 #import <ARKit/ARKit.h>
