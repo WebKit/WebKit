@@ -1,3 +1,13 @@
+2021-06-30  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Styles: Autocomplete should support function completions
+        https://bugs.webkit.org/show_bug.cgi?id=227097
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/css-keyword-completions-expected.txt: Added.
+        * inspector/unit-tests/css-keyword-completions.html: Added.
+
 2021-06-30  Eric Hutchison  <ehutchison@apple.com>
 
         [MacOS wk1] fast/shadow-dom/style-resolver-sharing.html is a flaky failure

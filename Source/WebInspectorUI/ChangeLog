@@ -1,3 +1,25 @@
+2021-06-30  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Styles: Autocomplete should support function completions
+        https://bugs.webkit.org/show_bug.cgi?id=227097
+
+        Reviewed by Devin Rousso.
+
+        Covered by new test:
+        - inspector/unit-tests/css-keyword-completions.html
+
+        Add support for completing autocompleting values as part of a CSS function in the Styles sidebar panel.
+        
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forPartialPropertyName):
+        (WI.CSSKeywordCompletions.forPartialPropertyValue):
+        Tokenize the provided partial value text to correct provide completion for functions, like `env(`.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._nameCompletionDataProvider):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+        Moved logic to `WI.CSSKeywordCompletions`.
+
 2021-06-25  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Sources: Scope Chain sidebar panel is stripping repeating whitespace from strings

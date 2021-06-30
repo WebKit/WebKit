@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,6 +30,90 @@
  */
 
 WI.CSSKeywordCompletions = {};
+
+WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition, allowEmptyPrefix} = {})
+{
+    caretPosition ??= text.length;
+    allowEmptyPrefix ??= false;
+
+    // FIXME: <webkit.org/b/227157> Styles: Support completions mid-token.
+    if (caretPosition !== caretPosition)
+        return {prefix: text, completions: []};
+
+    if (!text.length && allowEmptyPrefix)
+        return {prefix: text, completions: WI.CSSCompletions.cssNameCompletions.values};
+    return {prefix: text, completions:WI.CSSCompletions.cssNameCompletions.startsWith(text)};
+};
+
+WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, {caretPosition} = {})
+{
+    caretPosition ??= text.length;
+
+    console.assert(caretPosition >= 0 && caretPosition <= text.length, text, caretPosition);
+    if (caretPosition < 0 || caretPosition > text.length)
+        return {prefix: "", completions: []};
+
+    if (!text.length)
+        return {prefix: "", completions: WI.CSSKeywordCompletions.forProperty(propertyName).values};
+
+    let tokens = WI.tokenizeCSSValue(text);
+
+    // Find the token that the cursor is either in or at the end of.
+    let indexOfTokenAtCaret = -1;
+    let passedCharacters = 0;
+    for (let i = 0; i < tokens.length; ++i) {
+        passedCharacters += tokens[i].value.length;
+        if (passedCharacters >= caretPosition) {
+            indexOfTokenAtCaret = i;
+            break;
+        }
+    }
+
+    let tokenAtCaret = tokens[indexOfTokenAtCaret];
+    console.assert(tokenAtCaret, text, caretPosition);
+    if (!tokenAtCaret)
+        return {prefix: "", completions: []};
+
+    if (tokenAtCaret.type && /\b(comment|string)\b/.test(tokenAtCaret.type))
+        return {prefix: "", completions: []};
+
+    let currentTokenValue = tokenAtCaret.value.trim();
+    let caretIsInMiddleOfToken = caretPosition !== passedCharacters;
+
+    // FIXME: <webkit.org/b/227157 Styles: Support completions mid-token.
+    // If the cursor was in middle of a token or the next token starts with a valid character for a value, we are effectively mid-token.
+    let tokenAfterCaret = tokens[indexOfTokenAtCaret + 1];
+    if ((caretIsInMiddleOfToken && currentTokenValue.length) || (!caretIsInMiddleOfToken && tokenAfterCaret && /[a-zA-Z0-9-]/.test(tokenAfterCaret.value[0])))
+        return {prefix: "", completions: []};
+
+    // If the current token value is a comma or opening parenthesis, treat it as if we are at the start of a new token.
+    if (currentTokenValue === "(" || currentTokenValue === ",")
+        currentTokenValue = "";
+
+    let functionName = null;
+    let preceedingFunctionDepth = 0;
+    for (let i = indexOfTokenAtCaret; i >= 0; --i) {
+        let value = tokens[i].value;
+
+        // There may be one or more complete functions between the cursor and the current scope's functions name.
+        if (value === ")")
+            ++preceedingFunctionDepth;
+        else if (value === "(") {
+            if (preceedingFunctionDepth)
+                --preceedingFunctionDepth;
+            else {
+                functionName = tokens[i - 1]?.value;
+                break;
+            }
+        }
+    }
+
+    // FIXME: <webkit.org/b/227098> Styles sidebar panel should autocomplete `var()` values.
+    if (functionName)
+        return {prefix: currentTokenValue, completions: WI.CSSKeywordCompletions.forFunction(functionName).startsWith(currentTokenValue)};
+
+    return {prefix: currentTokenValue, completions: WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(currentTokenValue)};
+};
 
 WI.CSSKeywordCompletions.forProperty = function(propertyName)
 {

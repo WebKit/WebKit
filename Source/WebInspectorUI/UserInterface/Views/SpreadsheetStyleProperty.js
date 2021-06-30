@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -886,14 +886,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
     }
 
-    _nameCompletionDataProvider(prefix, options = {})
+    _nameCompletionDataProvider(text, {allowEmptyPrefix} = {})
     {
-        let completions;
-        if (!prefix && options.allowEmptyPrefix)
-            completions = WI.CSSCompletions.cssNameCompletions.values;
-        else
-            completions = WI.CSSCompletions.cssNameCompletions.startsWith(prefix);
-        return {prefix, completions};
+        return WI.CSSKeywordCompletions.forPartialPropertyName(text, {allowEmptyPrefix});
     }
 
     _handleValueBeforeInput(event)
@@ -915,21 +910,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this.spreadsheetTextFieldDidCommit(this._valueTextField, {direction: "forward"});
     }
 
-    _valueCompletionDataProvider(prefix)
+    _valueCompletionDataProvider(text, {allowEmptyPrefix} = {})
     {
-        // For "border: 1px so|", we want to suggest "solid" based on "so" prefix.
-        let match = prefix.match(/[a-z0-9()-]+$/i);
-
-        // Clicking on the value of `height: 100%` shouldn't show any completions.
-        if (!match && prefix)
-            return {completions: [], prefix: ""};
-
-        prefix = match ? match[0] : "";
-        let propertyName = this._nameElement.textContent.trim();
-        return {
-            prefix,
-            completions: WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(prefix)
-        };
+        // FIXME: <webkit.org/b/227098> Styles sidebar panel should autocomplete `var()` values.
+        // FIXME: <webkit.org/b/227411> Styles sidebar panel should support midline and multiline completions.
+        return WI.CSSKeywordCompletions.forPartialPropertyValue(text, this._nameElement.textContent.trim());
     }
 
     _setupJumpToSymbol(element)
