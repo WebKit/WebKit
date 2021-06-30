@@ -601,7 +601,7 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
         return;
 
     double elapsedFinishTime;
-    if (networkLoadMetrics.isComplete())
+    if (networkLoadMetrics.responseEnd)
         elapsedFinishTime = m_environment.executionStopwatch().elapsedTimeSince(networkLoadMetrics.responseEnd).seconds();
     else
         elapsedFinishTime = timestamp();

@@ -1,3 +1,22 @@
+2021-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r278391) Sometimes load durations show up as large negative numbers in WebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=227413
+        <rdar://79801896>
+
+        Reviewed by Chris Dumez.
+
+        In r278391 I changed the meaning of members of NetworkLoadMetrics from Seconds deltas from fetchStart
+        to the MonotonicTime at which each event occurred.  I also changed InspectorNetworkAgent::didFinishLoading
+        accordingly, but I overlooked the fact that sometimes we get empty NetworkLoadMetrics that have been marked as complete,
+        such as from NetworkResourceLoader::didFinishWithRedirectResponse which indicates that it is complete but
+        members such as responseEnd are still 0.  Rather than check if it is complete, check if the member is nonzero.
+
+        The layout test http/tests/inspector/network/resource-timing.html would fail on AS Macs when run after other tests before this change.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+
 2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use WeakHashMap and WeakPtr with Node in more places
