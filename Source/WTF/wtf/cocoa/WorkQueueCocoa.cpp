@@ -31,23 +31,37 @@
 
 namespace WTF {
 
+namespace {
+
+struct DispatchWorkItem {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    Ref<WorkQueue> m_workQueue;
+    Function<void()> m_function;
+    void operator()() { m_function(); }
+};
+
+}
+
+template<typename T> static void dispatchWorkItem(void* dispatchContext)
+{
+    T* item = reinterpret_cast<T*>(dispatchContext);
+    (*item)();
+    delete item;
+}
+
 void WorkQueue::dispatch(Function<void()>&& function)
 {
-    dispatch_async(m_dispatchQueue.get(), makeBlockPtr([protectedThis = makeRef(*this), function = WTFMove(function)] {
-        function();
-    }).get());
+    dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { makeRef(*this), WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), makeBlockPtr([protectedThis = makeRef(*this), function = WTFMove(function)] {
-        function();
-    }).get());
+    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { makeRef(*this),  WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueue::dispatchSync(Function<void()>&& function)
 {
-    dispatch_sync(m_dispatchQueue.get(), makeBlockPtr(WTFMove(function)).get());
+    dispatch_sync_f(m_dispatchQueue.get(), new Function<void()> { WTFMove(function) }, dispatchWorkItem<Function<void()>>);
 }
 
 Ref<WorkQueue> WorkQueue::constructMainWorkQueue()

@@ -837,12 +837,22 @@ void WebProcessPool::prewarmProcess()
 
 void WebProcessPool::enableProcessTermination()
 {
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "enableProcessTermination:");
     m_processTerminationEnabled = true;
     Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes) {
         if (shouldTerminate(process))
             process->terminate();
     }
+}
+
+void WebProcessPool::disableProcessTermination()
+{
+    if (!m_processTerminationEnabled)
+        return;
+
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "disableProcessTermination:");
+    m_processTerminationEnabled = false;
 }
 
 bool WebProcessPool::shouldTerminate(WebProcessProxy& process)

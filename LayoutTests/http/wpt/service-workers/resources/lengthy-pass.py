@@ -3,10 +3,10 @@ import time
 def main(request, response):
     delay = 0.05
     headers = []
-    if "delay" in request.GET:
-        delay = float(request.GET.first("delay"))
-    response.headers.set("Content-type", "text/javascript")
-    response.headers.append("Access-Control-Allow-Origin", "*")
+    if b"delay" in request.GET:
+        delay = float(request.GET.first(b"delay"))
+    response.headers.set(b"Content-type", b"text/javascript")
+    response.headers.append(b"Access-Control-Allow-Origin", b"*")
     response.write_status_headers()
     time.sleep(delay);
     response.writer.write_content("document")

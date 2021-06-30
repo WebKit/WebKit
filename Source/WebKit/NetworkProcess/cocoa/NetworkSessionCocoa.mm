@@ -66,12 +66,10 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)
 #import <Symptoms/SymptomAnalytics.h>
 #import <Symptoms/SymptomPresentationFeed.h>
-#endif
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
 SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(Symptoms, SymptomAnalytics);
 SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(Symptoms, SymptomPresentationFeed);
 SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(Symptoms, SymptomPresentationLite);
@@ -1787,7 +1785,7 @@ void NetworkSessionCocoa::clearAlternativeServices(WallTime modifiedSince)
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
+#if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)
 static bool isActingOnBehalfOfAFullWebBrowser(const String& bundleID)
 {
     return bundleID == "com.apple.webbookmarksd";
@@ -1796,7 +1794,7 @@ static bool isActingOnBehalfOfAFullWebBrowser(const String& bundleID)
 
 void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modifiedSince, std::optional<HashSet<WebCore::RegistrableDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
+#if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)
     auto bundleID = WebCore::applicationBundleIdentifier();
     if (!isParentProcessAFullWebBrowser(networkProcess()) && !isActingOnBehalfOfAFullWebBrowser(bundleID))
         return completionHandler();

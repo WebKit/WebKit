@@ -27,6 +27,7 @@
 #define Test_h
 
 #include <type_traits>
+#include <wtf/ASCIICType.h>
 
 namespace TestWebKitAPI {
 
@@ -53,6 +54,23 @@ static inline ::testing::AssertionResult assertStrongEnum(const char* expected_e
 #define EXPECT_STRONG_ENUM_EQ(expected, actual) \
     EXPECT_PRED_FORMAT2(TestWebKitAPI::assertStrongEnum, expected, actual)
 
+// Test parameter formatter for the parameter-generated part of the
+// name of value-parametrized tests.
+// Clients should implement `void PrintTo(TheParameterType value, ::std::ostream* o)`
+// in the same namespace as the TheParameterType.
+struct TestParametersToStringFormatter {
+    template <class ParamType>
+    std::string operator()(const testing::TestParamInfo<ParamType> &info) const
+    {
+        std::string name = testing::PrintToStringParamName()(info);
+        std::string sanitized;
+        for (const char c : name) {
+            if (isASCIIAlphanumeric(c))
+                sanitized += c;
+        }
+        return sanitized;
+    }
+};
 
 } // namespace TestWebKitAPI
 

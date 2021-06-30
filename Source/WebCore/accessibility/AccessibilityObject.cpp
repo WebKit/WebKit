@@ -1160,7 +1160,7 @@ static String listMarkerTextForNode(Node* node)
     // If this is in a list item, we need to manually add the text for the list marker
     // because a RenderListMarker does not have a Node equivalent and thus does not appear
     // when iterating text.
-    return listItem->markerTextWithSuffix();
+    return listItem->markerTextWithSuffix().toString();
 }
 
 // Returns the text associated with a list marker if this node is contained within a list item.

@@ -2756,42 +2756,44 @@ IDBObjectStoreInfo* SQLiteIDBBackingStore::infoForObjectStore(uint64_t objectSto
 
 void SQLiteIDBBackingStore::deleteBackingStore()
 {
-    String dbFilename = fullDatabasePath();
+    String databasePath = fullDatabasePath();
 
-    LOG(IndexedDB, "SQLiteIDBBackingStore::deleteBackingStore deleting file '%s' on disk", dbFilename.utf8().data());
+    LOG(IndexedDB, "SQLiteIDBBackingStore::deleteBackingStore deleting file '%s' on disk", databasePath.utf8().data());
 
-    Vector<String> blobFiles;
-    {
-        bool errored = true;
+    if (FileSystem::fileExists(databasePath) && !m_sqliteDB) {
+        m_sqliteDB = makeUnique<SQLiteDatabase>();
+        if (!m_sqliteDB->open(databasePath))
+            closeSQLiteDB();
+    }
 
-        if (m_sqliteDB) {
+    if (m_sqliteDB) {
+        Vector<String> blobFiles;
+        {
             auto sql = m_sqliteDB->prepareStatement("SELECT fileName FROM BlobFiles;"_s);
-            if (sql) {
+            if (!sql)
+                LOG_ERROR("Error preparing statement to get blob filenames (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            else {
                 int result = sql->step();
                 while (result == SQLITE_ROW) {
                     blobFiles.append(sql->columnText(0));
                     result = sql->step();
                 }
 
-                if (result == SQLITE_DONE)
-                    errored = false;
+                if (result != SQLITE_DONE)
+                    LOG_ERROR("Error getting blob filenames (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             }
         }
 
-        if (errored)
-            LOG_ERROR("Error getting all blob filenames to be deleted");
-    }
+        for (auto& file : blobFiles) {
+            String blobPath = FileSystem::pathByAppendingComponent(m_databaseDirectory, file);
+            if (!FileSystem::deleteFile(blobPath))
+                LOG_ERROR("Error deleting blob file '%s'", blobPath.utf8().data());
+        }
 
-    for (auto& file : blobFiles) {
-        String fullPath = FileSystem::pathByAppendingComponent(m_databaseDirectory, file);
-        if (!FileSystem::deleteFile(fullPath))
-            LOG_ERROR("Error deleting blob file %s", fullPath.utf8().data());
-    }
-
-    if (m_sqliteDB)
         closeSQLiteDB();
+    }
 
-    SQLiteFileSystem::deleteDatabaseFile(dbFilename);
+    SQLiteFileSystem::deleteDatabaseFile(databasePath);
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory));
 }

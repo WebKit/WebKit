@@ -55,7 +55,7 @@ private:
 
     // MessageReceivers.
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&);
-    void playSession(std::optional<double>, std::optional<double>, CompletionHandler<void(bool)>&&);
+    void playSession(std::optional<double>, std::optional<MonotonicTime>, CompletionHandler<void(bool)>&&);
     void pauseSession(CompletionHandler<void(bool)>&&);
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&);
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);

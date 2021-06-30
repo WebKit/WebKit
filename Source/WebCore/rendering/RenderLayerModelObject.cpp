@@ -163,7 +163,6 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             renderLayer->updateScrollbarSteps();
     }
 
-#if ENABLE(CSS_SCROLL_SNAP)
     bool scrollMarginChanged = oldStyle && oldStyle->scrollMargin() != newStyle.scrollMargin();
     bool scrollAlignChanged = oldStyle && oldStyle->scrollSnapAlign() != newStyle.scrollSnapAlign();
     bool scrollSnapStopChanged = oldStyle && oldStyle->scrollSnapStop() != newStyle.scrollSnapStop();
@@ -171,7 +170,6 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         if (auto* scrollSnapBox = enclosingScrollableContainerForSnapping())
             scrollSnapBox->setNeedsLayout();
     }
-#endif
 }
 
 bool RenderLayerModelObject::shouldPlaceVerticalScrollbarOnLeft() const

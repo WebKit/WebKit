@@ -37,6 +37,8 @@ PASS Parsing origin: <?> against <http://example.org/foo/bar>
 PASS Parsing origin: </> against <http://example.org/foo/bar>
 PASS Parsing origin: <:23> against <http://example.org/foo/bar>
 PASS Parsing origin: </:23> against <http://example.org/foo/bar>
+PASS Parsing origin: <\x> against <http://example.org/foo/bar>
+PASS Parsing origin: <\\x\hello> against <http://example.org/foo/bar>
 PASS Parsing origin: <::> against <http://example.org/foo/bar>
 PASS Parsing origin: <::23> against <http://example.org/foo/bar>
 PASS Parsing origin: <foo://> against <http://example.org/foo/bar>
@@ -262,7 +264,7 @@ PASS Parsing origin: <sc::a@example.net> against <about:blank>
 PASS Parsing origin: <wow:%NBD> against <about:blank>
 PASS Parsing origin: <wow:%1G> against <about:blank>
 PASS Parsing origin: <wow:￿> against <about:blank>
-PASS Parsing origin: <http://example.com/U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿?U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
+PASS Parsing origin: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
 PASS Parsing origin: <http://!"$&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing origin: <sc://!"$&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing origin: <ftp://%e2%98%83> against <about:blank>
@@ -319,4 +321,16 @@ PASS Parsing origin: <tag:joe@example.org,2001:foo/bar> against <about:blank>
 PASS Parsing origin: <non-special:cannot-be-a-base-url-\0~> against <about:blank>
 PASS Parsing origin: <https://www.example.com/path{path.html?query'=query#fragment<fragment> against <about:blank>
 PASS Parsing origin: <https://user:pass[@foo/bar> against <http://example.org>
+PASS Parsing origin: <foo:// !"$%&'()*+,-.;<=>@[\]^_`{|}~@host/> against <about:blank>
+PASS Parsing origin: <wss:// !"$%&'()*+,-.;<=>@[]^_`{|}~@host/> against <about:blank>
+PASS Parsing origin: <foo://joe: !"$%&'()*+,-.:;<=>@[\]^_`{|}~@host/> against <about:blank>
+PASS Parsing origin: <wss://joe: !"$%&'()*+,-.:;<=>@[]^_`{|}~@host/> against <about:blank>
+PASS Parsing origin: <foo://!"$%&'()*+,-.;=_`{}~/> against <about:blank>
+PASS Parsing origin: <wss://!"$&'()*+,-.;=_`{}~/> against <about:blank>
+PASS Parsing origin: <foo://host/ !"$%&'()*+,-./:;<=>@[\]^_`{|}~> against <about:blank>
+PASS Parsing origin: <wss://host/ !"$%&'()*+,-./:;<=>@[\]^_`{|}~> against <about:blank>
+PASS Parsing origin: <foo://host/dir/? !"$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
+PASS Parsing origin: <wss://host/dir/? !"$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
+PASS Parsing origin: <foo://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
+PASS Parsing origin: <wss://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> against <about:blank>
 

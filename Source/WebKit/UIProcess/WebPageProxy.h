@@ -402,6 +402,7 @@ struct WebNavigationDataStore;
 struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
 
+enum class ImageAnalysisType : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -1659,7 +1660,7 @@ public:
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void updateWithTextRecognitionResult(WebCore::TextRecognitionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
-    void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
+    void computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -1906,6 +1907,7 @@ public:
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(CONTEXT_MENUS)
     void handleContextMenuLookUpImage();
+    void handleContextMenuQuickLookImage(QuickLookPreviewActivity);
 #endif
 
 #if USE(APPKIT)

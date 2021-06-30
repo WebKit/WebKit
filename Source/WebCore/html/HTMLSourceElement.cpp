@@ -205,4 +205,13 @@ const MediaQuerySet* HTMLSourceElement::parsedMediaAttribute(Document& document)
     return m_cachedParsedMediaAttribute.value().get();
 }
 
+void HTMLSourceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+{
+    if (name == widthAttr || name == heightAttr) {
+        if (RefPtr parent = parentNode(); is<HTMLPictureElement>(parent))
+            downcast<HTMLPictureElement>(*parent).sourceDimensionAttributesChanged(*this);
+    }
+    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
+}
+
 }

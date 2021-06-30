@@ -64,7 +64,4 @@ PASS Notification interface: notification must inherit property "close()" with t
 PASS NotificationEvent interface: existence and properties of interface object
 FAIL ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "showNotification" missing
 FAIL ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "getNotifications" missing
-PASS ServiceWorkerGlobalScope interface: existence and properties of interface object
-PASS ExtendableEvent interface: existence and properties of interface object
-PASS WorkerGlobalScope interface: existence and properties of interface object
 

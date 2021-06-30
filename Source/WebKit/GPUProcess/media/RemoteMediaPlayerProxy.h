@@ -62,6 +62,10 @@
 #include "SharedRingBufferStorage.h"
 #endif
 
+#if USE(AVFOUNDATION)
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WTF {
 class MachSendRight;
 }
@@ -70,6 +74,10 @@ namespace WebCore {
 class AudioTrackPrivate;
 class VideoTrackPrivate;
 }
+
+#if USE(AVFOUNDATION)
+typedef struct __CVBuffer* CVPixelBufferRef;
+#endif
 
 namespace WebKit {
 
@@ -298,7 +306,9 @@ private:
 
 #if PLATFORM(COCOA)
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&&);
-    void pixelBufferForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&&);
+#endif
+#if USE(AVFOUNDATION)
+    void pixelBufferForCurrentTime(CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&&);
 #endif
 
 #if !RELEASE_LOG_DISABLED

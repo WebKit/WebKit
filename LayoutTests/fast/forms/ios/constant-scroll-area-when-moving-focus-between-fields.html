@@ -22,8 +22,8 @@
         await UIHelper.activateElementAndWaitForInputSession(text);
         await UIHelper.activateElementAndWaitForInputSession(date);
 
-        document.activeElement.blur();
         await UIHelper.waitForKeyboardToHide();
+        document.activeElement.blur();
 
         await UIHelper.dragFromPointToPoint(160, 150, 160, 50, 0.1);
         await UIHelper.ensureStablePresentationUpdate();

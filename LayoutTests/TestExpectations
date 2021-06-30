@@ -393,6 +393,7 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 imported/w3c/web-platform-tests/eventsource/format-utf-8.htm [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html [ DumpJSConsoleLogInStdErr ]
@@ -935,6 +936,8 @@ imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure 
 imported/w3c/web-platform-tests/mediacapture-fromelement/ended.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/font-timestamps.html [ Failure ]
+imported/w3c/web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/resource_timing_content_length.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/SO-XO-SO-redirect-chain-tao.https.html [ Failure ]
 imported/w3c/web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain.html [ Failure ]
@@ -1433,9 +1436,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html [ Failure Pass ]
-
-# Newly importing aspect ratio test is flaky.
-imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio.html [ Failure Pass ]
 
 # Newly importing W3C tests needed support for reftest-wait.
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html [ Skip ]
@@ -2252,10 +2252,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwr
 
 # WebCryptoAPI tests that take too long to complete
 imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
-
-# Imported Beacon test that is flaky because its last check is very slow.
-webkit.org/b/175202 imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Pass Failure ]
-
 
 # WebCryptoAPI features that haven't been enabled for current OS
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Skip ]
@@ -4746,7 +4742,18 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-002.htm
 webkit.org/b/224357 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vrl-in-htb-013.xht [ ImageOnlyFailure ]
 webkit.org/b/224357 imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl.html [ ImageOnlyFailure ]
 
-# @counter-style ref tests that currently fail
+# Counter style tests that fail on some platforms because of subtle character positioning differences, presumably from subpixel rounding.
+# These failures are slightly different per-platform, but it seems unwise to move the expectations into platform-specific expectations files.
+imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-114.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
+
+# Tests that fail because @counter-style is not implemented yet. Could skip the entire directory instead.
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid.html [ ImageOnlyFailure ]
@@ -4766,60 +4773,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-sette
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-048.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-051.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-042.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-043.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-044.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-045.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-046.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-052.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-053.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-055.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-056.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-062.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-063.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-064.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-065.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-066.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-057.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-058.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-060.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-061.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-114.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-019.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020b.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-076.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-077.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-078.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-079.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-080.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-071.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-072.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-074.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-075.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-086.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-087.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-089.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-090.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-081.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-082.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-083.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-084.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-085.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
 
 # CSS will-change failures
 webkit.org/b/224928 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html [ ImageOnlyFailure ]

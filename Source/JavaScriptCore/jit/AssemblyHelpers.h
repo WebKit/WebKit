@@ -295,85 +295,33 @@ public:
         store32(TrustedImm32(value.payload()), address.withOffset(PayloadOffset));
 #endif
     }
-    
+
+    template<typename Op> class Spooler;
+    class LoadRegSpooler;
+    class StoreRegSpooler;
+    class CopySpooler;
+
     Address addressFor(const RegisterAtOffset& entry)
     {
         return Address(GPRInfo::callFrameRegister, entry.offset());
     }
-    
-    void emitSave(const RegisterAtOffsetList& list)
-    {
-        for (const RegisterAtOffset& entry : list) {
-            if (entry.reg().isGPR())
-                storePtr(entry.reg().gpr(), addressFor(entry));
-            else
-                storeDouble(entry.reg().fpr(), addressFor(entry));
-        }
-    }
-    
-    void emitRestore(const RegisterAtOffsetList& list)
-    {
-        for (const RegisterAtOffset& entry : list) {
-            if (entry.reg().isGPR())
-                loadPtr(addressFor(entry), entry.reg().gpr());
-            else
-                loadDouble(addressFor(entry), entry.reg().fpr());
-        }
-    }
+
+    void emitSave(const RegisterAtOffsetList&);
+    void emitRestore(const RegisterAtOffsetList&);
 
     void emitSaveCalleeSavesFor(CodeBlock* codeBlock)
     {
         ASSERT(codeBlock);
 
         const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
-        RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
-        unsigned registerCount = calleeSaves->size();
-
-        for (unsigned i = 0; i < registerCount; i++) {
-            RegisterAtOffset entry = calleeSaves->at(i);
-            if (dontSaveRegisters.get(entry.reg()))
-                continue;
-            storeReg(entry.reg(), Address(framePointerRegister, entry.offset()));
-        }
+        emitSaveCalleeSavesFor(calleeSaves);
     }
+
+    void emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves);
     
     enum RestoreTagRegisterMode { UseExistingTagRegisterContents, CopyBaselineCalleeSavedRegistersFromBaseFrame };
 
-    void emitSaveOrCopyCalleeSavesFor(CodeBlock* codeBlock, VirtualRegister offsetVirtualRegister, RestoreTagRegisterMode tagRegisterMode, GPRReg temp)
-    {
-        ASSERT(codeBlock);
-        ASSERT(JITCode::isBaselineCode(codeBlock->jitType()));
-        
-        const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
-        RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
-        unsigned registerCount = calleeSaves->size();
-
-#if USE(JSVALUE64)
-        RegisterSet baselineCalleeSaves = RegisterSet::llintBaselineCalleeSaveRegisters();
-#endif
-        
-        for (unsigned i = 0; i < registerCount; i++) {
-            RegisterAtOffset entry = calleeSaves->at(i);
-            if (dontSaveRegisters.get(entry.reg()))
-                continue;
-            RELEASE_ASSERT(entry.reg().isGPR());
-
-            GPRReg registerToWrite;
-
-#if USE(JSVALUE32_64)
-            UNUSED_PARAM(tagRegisterMode);
-            UNUSED_PARAM(temp);
-#else
-            if (tagRegisterMode == CopyBaselineCalleeSavedRegistersFromBaseFrame && baselineCalleeSaves.get(entry.reg())) {
-                registerToWrite = temp;
-                loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, entry.offset()), registerToWrite);
-            } else
-#endif
-                registerToWrite = entry.reg().gpr();
-
-            storePtr(registerToWrite, Address(framePointerRegister, offsetVirtualRegister.offsetInBytes() + entry.offset()));
-        }
-    }
+    void emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock*, VirtualRegister offsetVirtualRegister, RestoreTagRegisterMode, GPRReg temp1, GPRReg temp2, GPRReg temp3);
     
     void emitRestoreCalleeSavesFor(CodeBlock* codeBlock)
     {
@@ -383,18 +331,7 @@ public:
         emitRestoreCalleeSavesFor(calleeSaves);
     }
 
-    void emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
-    {
-        RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters());
-        unsigned registerCount = calleeSaves->size();
-        
-        for (unsigned i = 0; i < registerCount; i++) {
-            RegisterAtOffset entry = calleeSaves->at(i);
-            if (dontRestoreRegisters.get(entry.reg()))
-                continue;
-            loadReg(Address(framePointerRegister, entry.offset()), entry.reg());
-        }
-    }
+    void emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves);
 
     void emitSaveCalleeSaves()
     {
@@ -465,58 +402,7 @@ public:
 
     void restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*&);
 
-    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
-    {
-#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-        GPRReg temp1 = usedRegisters.getFreeGPR(0);
-        GPRReg temp2 = usedRegisters.getFreeGPR(1);
-        FPRReg fpTemp = usedRegisters.getFreeFPR();
-        ASSERT(temp2 != InvalidGPRReg);
-
-        // Copy saved calleeSaves on stack or unsaved calleeSaves in register to vm calleeSave buffer
-        loadPtr(&topEntryFrame, temp1);
-        addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), temp1);
-
-        RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
-        const RegisterAtOffsetList* currentCalleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
-        RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
-        unsigned registerCount = allCalleeSaves->size();
-
-        for (unsigned i = 0; i < registerCount; i++) {
-            RegisterAtOffset entry = allCalleeSaves->at(i);
-            if (dontCopyRegisters.get(entry.reg()))
-                continue;
-            RegisterAtOffset* currentFrameEntry = currentCalleeSaves->find(entry.reg());
-
-            if (entry.reg().isGPR()) {
-                GPRReg regToStore;
-                if (currentFrameEntry) {
-                    // Load calleeSave from stack into temp register
-                    regToStore = temp2;
-                    loadPtr(Address(framePointerRegister, currentFrameEntry->offset()), regToStore);
-                } else
-                    // Just store callee save directly
-                    regToStore = entry.reg().gpr();
-
-                storePtr(regToStore, Address(temp1, entry.offset()));
-            } else {
-                FPRReg fpRegToStore;
-                if (currentFrameEntry) {
-                    // Load calleeSave from stack into temp register
-                    fpRegToStore = fpTemp;
-                    loadDouble(Address(framePointerRegister, currentFrameEntry->offset()), fpRegToStore);
-                } else
-                    // Just store callee save directly
-                    fpRegToStore = entry.reg().fpr();
-
-                storeDouble(fpRegToStore, Address(temp1, entry.offset()));
-            }
-        }
-#else
-        UNUSED_PARAM(topEntryFrame);
-        UNUSED_PARAM(usedRegisters);
-#endif
-    }
+    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() });
 
     void emitMaterializeTagCheckRegisters()
     {

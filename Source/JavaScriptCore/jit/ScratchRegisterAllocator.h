@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,12 @@
 
 #if ENABLE(JIT)
 
-#include "MacroAssembler.h"
 #include "RegisterSet.h"
 #include "TempRegisterSet.h"
 
 namespace JSC {
 
+class AssemblyHelpers;
 struct ScratchBuffer;
 
 // This class provides a low-level register allocator for use in stubs.
@@ -84,15 +84,15 @@ public:
         ExtraStackSpace extraStackSpaceRequirement;
     };
 
-    PreservedState preserveReusedRegistersByPushing(MacroAssembler& jit, ExtraStackSpace);
-    void restoreReusedRegistersByPopping(MacroAssembler& jit, const PreservedState&);
+    PreservedState preserveReusedRegistersByPushing(AssemblyHelpers& jit, ExtraStackSpace);
+    void restoreReusedRegistersByPopping(AssemblyHelpers& jit, const PreservedState&);
     
     RegisterSet usedRegistersForCall() const;
     
     unsigned desiredScratchBufferSizeForCall() const;
-    
-    static unsigned preserveRegistersToStackForCall(MacroAssembler& jit, const RegisterSet& usedRegisters, unsigned extraPaddingInBytes);
-    static void restoreRegistersFromStackForCall(MacroAssembler& jit, const RegisterSet& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraPaddingInBytes);
+
+    static unsigned preserveRegistersToStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, unsigned extraPaddingInBytes);
+    static void restoreRegistersFromStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraPaddingInBytes);
 
 private:
     RegisterSet m_usedRegisters;

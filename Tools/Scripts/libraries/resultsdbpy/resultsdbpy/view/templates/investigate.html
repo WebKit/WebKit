@@ -30,7 +30,7 @@
 <script type="module">
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {CommitBank} from '/assets/js/commit.js';
-import {ErrorDisplay, QueryModifier, paramsToQuery, queryToParams, percentage, elapsedTime} from '/assets/js/common.js';
+import {ErrorDisplay, QueryModifier, paramsToQuery, queryToParams, percentage, elapsedTime, escapeHTML} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {Expectations} from '/assets/js/expectations.js';
 import {Drawer, BranchSelector, ConfigurationSelectors} from '/assets/js/drawer.js';
@@ -262,7 +262,7 @@ class SuiteFailuresView {
                                         <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
                                     </div>
                                     <a class="text block" style="width: calc(100% - var(--mediumSize) - 16px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" href="/?suite=${this.suite}&test=${test}" target="_blank">
-                                        ${test}
+                                        ${escapeHTML(test)}
                                     </a>
                                 </div>`;
                             }).join('');
@@ -392,7 +392,7 @@ class SuiteFailuresView {
     toString() {
         return `<div class="section" ref="${this.ref}">
                 <div class="header row">
-                    <div class="col-s-4 title">${this.suite}</div>
+                    <div class="col-s-4 title">${escapeHTML(this.suite)}</div>
                     <div class="col-s-8">
                         <div class="input">
                             <select required ref="${this.selectConfigurations}"></select>

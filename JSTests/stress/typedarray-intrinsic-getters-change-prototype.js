@@ -18,7 +18,7 @@
 
     let array = new Int32Array(15);
 
-    while(numberOfDFGCompiles(foo) < 1) {
+    for (let i = 0; i < 5000; ++i) {
         foo(array);
         bar(array);
         baz(array);

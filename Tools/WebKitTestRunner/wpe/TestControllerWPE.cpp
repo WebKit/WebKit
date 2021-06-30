@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TestController.h"
 
+#include "PlatformWebView.h"
 #include <glib.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -130,6 +131,7 @@ const char* TestController::platformLibraryPathForTesting()
 
 void TestController::platformConfigureViewForTest(const TestInvocation&)
 {
+    WKPageSetApplicationNameForUserAgent(mainWebView()->page(), WKStringCreateWithUTF8CString("WebKitTestRunnerWPE"));
 }
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions&)

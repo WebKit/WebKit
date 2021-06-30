@@ -1,7 +1,8 @@
-import pytest
-import py
+import os.path
 
-mydir = py.path.local(__file__).dirpath()
+import pytest
+
+mydir = os.path.dirname(__file__)
 
 
 def pytest_runtest_setup(item):
@@ -10,4 +11,4 @@ def pytest_runtest_setup(item):
             return
         mod = item.getparent(pytest.Module).obj
         if hasattr(mod, "hello"):
-            print("mod.hello %r" % (mod.hello,))
+            print("mod.hello {!r}".format(mod.hello))

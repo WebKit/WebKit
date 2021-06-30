@@ -1162,7 +1162,7 @@ public:
     };
 
     void addLoopHintExecutionCounter(const Instruction*);
-    uint64_t* getLoopHintExecutionCounter(const Instruction*);
+    uintptr_t* getLoopHintExecutionCounter(const Instruction*);
     void removeLoopHintExecutionCounter(const Instruction*);
 
 private:
@@ -1286,7 +1286,7 @@ private:
     bool m_executionForbidden { false };
 
     Lock m_loopHintExecutionCountLock;
-    HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uint64_t>>> m_loopHintExecutionCounts;
+    HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
 
     VM* m_prev; // Required by DoublyLinkedListNode.
     VM* m_next; // Required by DoublyLinkedListNode.

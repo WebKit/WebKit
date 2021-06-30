@@ -205,7 +205,6 @@ list(APPEND WebCore_SOURCES
     platform/audio/cocoa/WebAudioBufferList.cpp
 
     platform/audio/mac/AudioBusMac.mm
-    platform/audio/mac/AudioFileReaderMac.cpp
     platform/audio/mac/AudioHardwareListenerMac.cpp
     platform/audio/mac/FFTFrameMac.cpp
 

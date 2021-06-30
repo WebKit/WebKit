@@ -2410,8 +2410,6 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
     return CSSPrimitiveValue::create(*perspective, CSSUnitType::CSS_PX);
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 static RefPtr<CSSValueList> consumeScrollSnapAlign(CSSParserTokenRange& range)
 {
     auto firstValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range);
@@ -2449,8 +2447,6 @@ static RefPtr<CSSValueList> consumeScrollSnapType(CSSParserTokenRange& range)
 
     return typeValue;
 }
-
-#endif
 
 static RefPtr<CSSPrimitiveValue> consumeScrollBehavior(CSSParserTokenRange& range)
 {
@@ -4115,14 +4111,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyScrollPaddingBlockStart:
     case CSSPropertyScrollPaddingBlockEnd:
         return consumeScrollPadding(m_range, m_context.mode);
-#if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollSnapAlign:
         return consumeScrollSnapAlign(m_range);
     case CSSPropertyScrollSnapStop:
         return consumeIdent<CSSValueAlways, CSSValueNormal>(m_range);
     case CSSPropertyScrollSnapType:
         return consumeScrollSnapType(m_range);
-#endif
     case CSSPropertyScrollBehavior:
         if (!m_context.scrollBehaviorEnabled)
             return nullptr;

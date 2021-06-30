@@ -400,6 +400,16 @@ public:
         m_assembler.ubfx<64>(dest, src, lsb.m_value, width.m_value);
     }
 
+    void ubfiz32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfiz<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void ubfiz64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfiz<64>(dest, src, lsb.m_value, width.m_value);
+    }
+
     void and64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         m_assembler.and_<64>(dest, src1, src2);
@@ -625,6 +635,11 @@ public:
     void multiplyAdd64(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
     {
         m_assembler.madd<64>(dest, mulLeft, mulRight, summand);
+    }
+
+    void multiplyAddSignExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        m_assembler.smaddl(dest, mulLeft, mulRight, summand);
     }
 
     void multiplySub64(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
@@ -2519,7 +2534,7 @@ public:
         storeDouble(src, stackPointerRegister);
     }
 
-    static ptrdiff_t pushToSaveByteOffset() { return 16; }
+    static constexpr ptrdiff_t pushToSaveByteOffset() { return 16; }
 
     // Register move operations:
 
@@ -2738,12 +2753,15 @@ public:
     }
 
     // Bit field operations:
+    void bitFieldInsert32(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfi<32>(dest, source, lsb.m_value, width.m_value);
+    }
 
     // destBitOffset is the top bit of the destination where the bits should be copied to. Zero is the lowest order bit.
-    void bitFieldInsert64(RegisterID source, unsigned destBitOffset, unsigned width, RegisterID dest)
+    void bitFieldInsert64(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
-        ASSERT(width <= 64 - destBitOffset && destBitOffset < 64);
-        m_assembler.bfi<64>(dest, source, destBitOffset, width);
+        m_assembler.bfi<64>(dest, source, lsb.m_value, width.m_value);
     }
 
     // Forwards / external control flow operations:

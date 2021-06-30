@@ -957,6 +957,8 @@ bool portAllowed(const URL& url)
         587,  // ESMTP
         601,  // syslog-conn
         636,  // LDAP+SSL
+        989,  // ftps-data
+        990,  // ftps
         993,  // IMAP+SSL
         995,  // POP3+SSL
         1719, // H323 (RAS)

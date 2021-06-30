@@ -190,7 +190,7 @@ void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHan
         completionHandler(false);
 }
 
-void RemoteMediaSessionCoordinator::playSession(std::optional<double> atTime, std::optional<double> hostTime, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMediaSessionCoordinator::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (auto coordinatorClient = client())

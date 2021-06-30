@@ -830,35 +830,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_constructor)
     RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isConstructor(vm)));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_private_name)
-{
-    BEGIN();
-
-    auto bytecode = pc->as<OpHasPrivateName>();
-    auto baseValue = GET_C(bytecode.m_base).jsValue();
-    if (!baseValue.isObject())
-        THROW(createInvalidInParameterError(globalObject, baseValue));
-
-    auto propertyValue = GET_C(bytecode.m_property).jsValue();
-    ASSERT(propertyValue.isSymbol());
-    auto property = propertyValue.toPropertyKey(globalObject);
-    EXCEPTION_ASSERT(!throwScope.exception());
-
-    RETURN(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property)));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_private_brand)
-{
-    BEGIN();
-
-    auto bytecode = pc->as<OpHasPrivateBrand>();
-    auto baseValue = GET_C(bytecode.m_base).jsValue();
-    if (!baseValue.isObject())
-        THROW(createInvalidInParameterError(globalObject, baseValue));
-
-    RETURN(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, GET_C(bytecode.m_brand).jsValue())));
-}
-
 template<OpcodeSize width>
 ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, const Instruction* pc)
 {

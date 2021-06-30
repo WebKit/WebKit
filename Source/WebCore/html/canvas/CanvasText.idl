@@ -25,10 +25,8 @@
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvastext
 interface mixin CanvasText {
-    // FIXME: All the unrestricted float parameters below should be unrestricted doubles.
-
     // text (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
-    undefined fillText(DOMString text, unrestricted float x, unrestricted float y, optional unrestricted float maxWidth);
-    undefined strokeText(DOMString text, unrestricted float x, unrestricted float y, optional unrestricted float maxWidth);
+    undefined fillText(DOMString text, unrestricted double x, unrestricted double y, optional unrestricted double maxWidth);
+    undefined strokeText(DOMString text, unrestricted double x, unrestricted double y, optional unrestricted double maxWidth);
     TextMetrics measureText(DOMString text);
 };

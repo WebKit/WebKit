@@ -24,12 +24,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/failure.html
 /LayoutTests/imported/w3c/web-platform-tests/url/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/percent-encoding.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/toascii.window.js
-/LayoutTests/imported/w3c/web-platform-tests/url/url-constructor.html
-/LayoutTests/imported/w3c/web-platform-tests/url/url-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/url/url-constructor.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/url-origin.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-searchparams.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/url-setters-a-area.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters-stripping.any.js
-/LayoutTests/imported/w3c/web-platform-tests/url/url-setters.html
+/LayoutTests/imported/w3c/web-platform-tests/url/url-setters.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-tojson.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlencoded-parser.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-append.any.js

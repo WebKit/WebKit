@@ -192,7 +192,6 @@ protected:
     bool m_wirelessVideoPlaybackDisabled { true };
     bool m_shouldReturnToFullscreenWhenStoppingPictureInPicture { false };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
-    bool m_restoringFullscreenForPictureInPictureStop { false };
     bool m_returningToStandby { false };
 
     bool m_setupNeedsInlineRect { false };

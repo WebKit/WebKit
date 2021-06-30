@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,21 +29,24 @@
 namespace IPC {
 
 enum class ReceiverName : uint8_t {
-    TestWithIfMessage = 1
-    , TestWithImageData = 2
-    , TestWithLegacyReceiver = 3
-    , TestWithSemaphore = 4
-    , TestWithStream = 5
-    , TestWithStreamBuffer = 6
-    , TestWithSuperclass = 7
-    , TestWithoutAttributes = 8
-    , IPC = 9
-    , AsyncReply = 10
-    , Invalid = 11
+    TestWithCVPixelBuffer = 1
+    , TestWithIfMessage = 2
+    , TestWithImageData = 3
+    , TestWithLegacyReceiver = 4
+    , TestWithSemaphore = 5
+    , TestWithStream = 6
+    , TestWithStreamBuffer = 7
+    , TestWithSuperclass = 8
+    , TestWithoutAttributes = 9
+    , IPC = 10
+    , AsyncReply = 11
+    , Invalid = 12
 };
 
 enum class MessageName : uint16_t {
-    TestWithIfMessage_LoadURL
+    TestWithCVPixelBuffer_ReceiveCVPixelBuffer
+    , TestWithCVPixelBuffer_SendCVPixelBuffer
+    , TestWithIfMessage_LoadURL
     , TestWithImageData_ReceiveImageData
     , TestWithImageData_SendImageData
     , TestWithLegacyReceiver_AddEvent

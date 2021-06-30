@@ -1,0 +1,82 @@
+Name
+
+    ANGLE_metal_texture_client_buffer
+
+Name Strings
+
+    EGL_ANGLE_metal_texture_client_buffer
+
+Contributors
+
+    Le Hoang Quyen
+
+Contacts
+
+    Jamie Madill, Google (jmadill 'at' google 'dot' com)
+    Le Hoang Quyen (lehoangq 'at' gmail.com)
+
+Status
+
+    Draft
+
+Version
+    Version 1, Jul 19, 2020
+
+Number
+
+    EGL Extension #??
+
+Dependencies
+
+    This extension is written against the wording of the EGL 1.4
+    Specification.
+
+Overview
+
+    This extension allows creating EGL images from external metal texture objects.
+
+New Types
+
+    None
+
+New Procedures and Functions
+
+    None
+
+New Tokens
+
+    Accepted in the <target> parameter of eglCreateImageKHR:
+
+        EGL_METAL_TEXTURE_ANGLE               0x34A7
+
+Additions to Chapter 2 of the EGL 1.2 Specification (EGL Operation)
+
+    Add to section 2.5.1 "EGLImage Specification" (as defined by the
+    EGL_KHR_image_base specification), in the description of
+    eglCreateImageKHR:
+
+   "Values accepted for <target> are listed in Table aaa, below.
+
+      +----------------------------+-----------------------------------------+
+      |  <target>                  |  Notes                                  |
+      +----------------------------+-----------------------------------------+
+      |  EGL_METAL_TEXTURE_ANGLE   |  Used for Metal texture objects         |
+      +----------------------------+-----------------------------------------+
+       Table aaa.  Legal values for eglCreateImageKHR <target> parameter
+
+    ...
+
+    If <target> is EGL_METAL_TEXTURE_ANGLE, <dpy> must be a valid display, <ctx>
+    must be EGL_NO_CONTEXT, <buffer> must be a pointer to a valid MTLTexture
+    object (cast into the type EGLClientBuffer), and attributes are ignored.
+    The width and height of the pbuffer are determined by the width and height
+    of <buffer>."
+
+    If the EGL_ANGLE_device_metal extension is present, the provided Metal texture
+    object must have been created by the same Metal device queried from the
+    display. If these requirements are not met, an EGL_BAD_PARAMETER error is
+    generated."
+
+Revision History
+
+    Version 1, 2020/19/07 - First draft

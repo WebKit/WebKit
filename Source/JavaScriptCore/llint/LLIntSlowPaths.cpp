@@ -378,7 +378,7 @@ inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeInd
     
     JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(vm, JITCompilationKey(codeBlock, JITCompilationMode::Baseline));
 
-    if (codeBlock->jitType() == JITType::BaselineJIT || worklistState == JITWorklist::Compiled) {
+    if (codeBlock->jitType() == JITType::BaselineJIT) {
         dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
         codeBlock->jitSoon();
         return true;
@@ -464,7 +464,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
             codeBlock->llintExecuteCounter());
 
     if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
-        uint64_t* ptr = vm.getLoopHintExecutionCounter(pc);
+        uintptr_t* ptr = vm.getLoopHintExecutionCounter(pc);
         *ptr += codeBlock->llintExecuteCounter().m_activeThreshold;
         if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit())
             LLINT_RETURN_TWO(LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint().code().executableAddress(), callFrame->topOfFrame());
@@ -483,7 +483,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     
     CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at ", loopOSREntryBytecodeIndex));
 
-    ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
+    RELEASE_ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
 
     const JITCodeMap& codeMap = codeBlock->jitCodeMap();
     CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(loopOSREntryBytecodeIndex);
@@ -1430,6 +1430,35 @@ LLINT_SLOW_PATH_DECL(slow_path_in_by_val)
     auto bytecode = pc->as<OpInByVal>();
     auto& metadata = bytecode.metadata(codeBlock);
     LLINT_RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, getOperand(callFrame, bytecode.m_base), getOperand(callFrame, bytecode.m_property), &metadata.m_arrayProfile)));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_has_private_name)
+{
+    LLINT_BEGIN();
+
+    auto bytecode = pc->as<OpHasPrivateName>();
+    auto baseValue = getOperand(callFrame, bytecode.m_base);
+    if (!baseValue.isObject())
+        LLINT_THROW(createInvalidInParameterError(globalObject, baseValue));
+
+    auto propertyValue = getOperand(callFrame, bytecode.m_property);
+    ASSERT(propertyValue.isSymbol());
+    auto property = propertyValue.toPropertyKey(globalObject);
+    EXCEPTION_ASSERT(!throwScope.exception());
+
+    LLINT_RETURN(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property)));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_has_private_brand)
+{
+    LLINT_BEGIN();
+
+    auto bytecode = pc->as<OpHasPrivateBrand>();
+    auto baseValue = getOperand(callFrame, bytecode.m_base);
+    if (!baseValue.isObject())
+        LLINT_THROW(createInvalidInParameterError(globalObject, baseValue));
+
+    LLINT_RETURN(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, getOperand(callFrame, bytecode.m_brand))));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_id)

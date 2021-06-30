@@ -41,5 +41,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookies-samesite_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/simple_handshake_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/sleep_10_v13_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/stash_responder_blocking_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/stash_responder_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/wrong_accept_key_wsh.py

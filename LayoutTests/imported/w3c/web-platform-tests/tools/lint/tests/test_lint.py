@@ -1,10 +1,7 @@
-from __future__ import unicode_literals
-
+import io
 import os
 import sys
-
-import mock
-import six
+from unittest import mock
 
 from ...localpaths import repo_root
 from .. import lint as lint_mod
@@ -54,7 +51,7 @@ def test_filter_ignorelist_errors():
 
 
 def test_parse_ignorelist():
-    input_buffer = six.StringIO("""
+    input_buffer = io.StringIO("""
 # Comment
 CR AT EOL: svg/import/*
 CR AT EOL: streams/resources/test-utils.js

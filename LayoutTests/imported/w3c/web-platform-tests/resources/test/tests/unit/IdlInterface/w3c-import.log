@@ -17,13 +17,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/default_to_json_operation.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/do_member_unscopable_asserts.html
-/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/get_inheritance_stack.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/get_interface_object.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/get_interface_object_owner.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/get_legacy_namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/get_qualified_name.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/get_reverse_inheritance_stack.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/has_default_to_json_regular_operation.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/has_to_json_regular_operation.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/should_have_interface_object.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/test_primary_interface_of_undefined.html
-/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/unit/IdlInterface/traverse_inherited_and_consequential_interfaces.html

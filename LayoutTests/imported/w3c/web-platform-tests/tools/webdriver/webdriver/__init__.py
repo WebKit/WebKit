@@ -6,6 +6,7 @@ from .client import (
     Find,
     Frame,
     Session,
+    ShadowRoot,
     Timeouts,
     Window)
 from .error import (
@@ -34,3 +35,5 @@ from .error import (
     UnknownMethodException,
     UnsupportedOperationException,
     WebDriverException)
+from .bidi import (
+    BidiSession)

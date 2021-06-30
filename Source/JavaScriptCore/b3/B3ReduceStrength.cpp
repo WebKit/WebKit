@@ -42,6 +42,7 @@
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
 #include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace B3 {
@@ -1037,18 +1038,55 @@ private:
             }
 
             // Turn this: BitAnd(ZShr(value, shiftAmount), mask)
-            // - shiftAmount >= 0 and mask is contiguous ones from LSB, example 0b01111111
-            // - shiftAmount + bitCount(mask) == maxBitWidth
+            // Conditions:
+            // 1. mask = (1 << width) - 1
+            // 2. 0 <= shiftAmount < datasize
+            // 3. 0 < width < datasize
+            // 4. shiftAmount + width >= datasize
             // Into this: ZShr(value, shiftAmount)
             if (m_value->child(0)->opcode() == ZShr
                 && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->asInt() >= 0
                 && m_value->child(1)->hasInt()) {
-                int64_t shiftAmount = m_value->child(0)->child(1)->asInt();
+                uint64_t shiftAmount = m_value->child(0)->child(1)->asInt();
                 uint64_t mask = m_value->child(1)->asInt();
-                bool isValid = mask && !(mask & (mask + 1));
-                uint64_t maxBitWidth = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
-                if (shiftAmount >= 0 && isValid && static_cast<uint64_t>(shiftAmount + WTF::bitCount(mask)) == maxBitWidth) {
+                bool isValidMask = mask && !(mask & (mask + 1));
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                uint64_t width = WTF::bitCount(mask);
+                if (shiftAmount < datasize && isValidMask && shiftAmount + width >= datasize) {
                     replaceWithIdentity(m_value->child(0));
+                    break;
+                }
+            }
+
+            // Turn this: BitAnd(Shl(value, shiftAmount), maskShift)
+            // Conditions:
+            // 1. maskShift = mask << shiftAmount
+            // 2. mask = (1 << width) - 1
+            // 3. 0 <= shiftAmount < datasize
+            // 4. 0 < width < datasize
+            // 5. shiftAmount + width <= datasize
+            // Into this: Shl(BitAnd(value, mask), shiftAmount)
+            if (m_value->child(0)->opcode() == Shl
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->asInt() >= 0
+                && m_value->child(1)->hasInt()) {
+                uint64_t shiftAmount = m_value->child(0)->child(1)->asInt();
+                uint64_t maskShift = m_value->child(1)->asInt();
+                uint64_t maskShiftAmount = WTF::countTrailingZeros(maskShift);
+                uint64_t mask = maskShift >> maskShiftAmount;
+                uint64_t width = WTF::bitCount(mask);
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                bool isValidShiftAmount = shiftAmount == maskShiftAmount && shiftAmount < datasize;
+                bool isValidMask = mask && !(mask & (mask + 1)) && width < datasize;
+                if (isValidShiftAmount && isValidMask && shiftAmount + width <= datasize) {
+                    Value* maskValue;
+                    if (datasize == 32)
+                        maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask);
+                    else
+                        maskValue = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), mask);
+                    Value* bitAnd = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), m_value->child(0)->child(0), maskValue);
+                    replaceWithNew<Value>(Shl, m_value->origin(), bitAnd, m_value->child(0)->child(1));
                     break;
                 }
             }

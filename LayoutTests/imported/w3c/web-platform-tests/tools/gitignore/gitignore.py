@@ -1,7 +1,6 @@
 import re
 import os
 import itertools
-from six import ensure_binary, itervalues, iteritems
 from collections import defaultdict
 
 MYPY = False
@@ -155,7 +154,10 @@ class PathFilter(object):
         self.literals_dir = defaultdict(dict)  # type: Dict[Optional[bytes], Dict[bytes, List[Tuple[bool, Pattern[bytes]]]]]
         self.patterns_file = []  # type: List[Tuple[Tuple[bool, Pattern[bytes]], List[Tuple[bool, Pattern[bytes]]]]]
         self.patterns_dir = []  # type: List[Tuple[Tuple[bool, Pattern[bytes]], List[Tuple[bool, Pattern[bytes]]]]]
-        self.cache = cache or {}  # type: MutableMapping[bytes, bool]
+
+        if cache is None:
+            cache = {}
+        self.cache = cache  # type: MutableMapping[bytes, bool]
 
         if extras is None:
             extras = []
@@ -191,13 +193,13 @@ class PathFilter(object):
                 rule = cast(Tuple[bool, Pattern[bytes]], rule)
             if not dir_only:
                 rules_iter = itertools.chain(
-                    itertools.chain(*(iteritems(item) for item in itervalues(self.literals_dir))),
-                    itertools.chain(*(iteritems(item) for item in itervalues(self.literals_file))),
+                    itertools.chain(*(item.items() for item in self.literals_dir.values())),
+                    itertools.chain(*(item.items() for item in self.literals_file.values())),
                     self.patterns_dir,
                     self.patterns_file)  # type: Iterable[Tuple[Any, List[Tuple[bool, Pattern[bytes]]]]]
             else:
                 rules_iter = itertools.chain(
-                    itertools.chain(*(iteritems(item) for item in itervalues(self.literals_dir))),
+                    itertools.chain(*(item.items() for item in self.literals_dir.values())),
                     self.patterns_dir)
 
             for rules in rules_iter:
@@ -227,8 +229,9 @@ class PathFilter(object):
         empty = {}  # type: Dict[Any, Any]
         for dirpath, dirnames, filenames in iterator:
             orig_dirpath = dirpath
-            if ensure_binary(os.path.sep) != b"/":
-                dirpath = dirpath.replace(ensure_binary(os.path.sep), b"/")
+            path_sep = os.path.sep.encode()
+            if path_sep != b"/":
+                dirpath = dirpath.replace(path_sep, b"/")
 
             keep_dirs = []  # type: List[Tuple[bytes, T]]
             keep_files = []  # type: List[Tuple[bytes, T]]
@@ -246,7 +249,7 @@ class PathFilter(object):
                         if not self.cache[path]:
                             target.append(item)
                         continue
-                    for rule_dir in [None, dirpath]:
+                    for rule_dir in [None, dirpath if dirpath != b"." else b""]:
                         if name in literals.get(rule_dir, empty):
                             exclude = literals[rule_dir][name]
                             if not any(rule.match(name if name_only else path)

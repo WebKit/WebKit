@@ -625,15 +625,15 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
     return { };
 }
 
-void HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle(MutableStyleProperties& style)
+void HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle(StringView widthAttribute, StringView heightAttribute, MutableStyleProperties& style)
 {
     if (!document().settings().aspectRatioOfImgFromWidthAndHeightEnabled())
         return;
 
-    auto dimensionWidth = parseHTMLDimension(attributeWithoutSynchronization(widthAttr));
+    auto dimensionWidth = parseHTMLDimension(widthAttribute);
     if (!dimensionWidth || dimensionWidth->type != HTMLDimension::Type::Pixel)
         return;
-    auto dimensionHeight = parseHTMLDimension(attributeWithoutSynchronization(heightAttr));
+    auto dimensionHeight = parseHTMLDimension(heightAttribute);
     if (!dimensionHeight || dimensionHeight->type != HTMLDimension::Type::Pixel)
         return;
 

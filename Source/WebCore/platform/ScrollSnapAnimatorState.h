@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "LayoutPoint.h"
@@ -102,5 +100,3 @@ private:
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_SCROLL_SNAP)

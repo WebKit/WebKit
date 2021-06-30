@@ -28,6 +28,8 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include <initializer_list>
+
 #include "ARMv7Assembler.h"
 #include "AbstractMacroAssembler.h"
 
@@ -43,9 +45,10 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<Assembler> {
     inline ARMRegisters::FPSingleRegisterID fpTempRegisterAsSingle() { return ARMRegisters::asSingle(fpTempRegister); }
 
 public:
-    static constexpr unsigned numGPRs = 16;
-    static constexpr unsigned numFPRs = 16;
-    
+#define DUMMY_REGISTER_VALUE(id, name, r, cs) 0,
+    static constexpr unsigned numGPRs = std::initializer_list<int>({ FOR_EACH_GP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
+    static constexpr unsigned numFPRs = std::initializer_list<int>({ FOR_EACH_FP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
+#undef DUMMY_REGISTER_VALUE
     RegisterID scratchRegister() { return dataTempRegister; }
 
     MacroAssemblerARMv7()

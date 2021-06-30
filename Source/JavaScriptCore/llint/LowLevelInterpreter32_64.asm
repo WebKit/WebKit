@@ -2993,7 +2993,9 @@ end)
 
 
 op(fuzzer_return_early_from_loop_hint, macro ()
-    notSupported()
+    move UndefinedTag, r1
+    move 0, r0
+    doReturn()
 end)
 
 

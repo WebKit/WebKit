@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <Availability.h>
+#include <TargetConditionals.h>
 #include "WebKitUtilities.h"
 #include "api/video/encoded_image.h"
 #include "api/video_codecs/video_decoder_factory.h"
@@ -33,6 +35,12 @@
 typedef struct __CVBuffer* CVPixelBufferRef;
 
 namespace webrtc {
+
+#if (TARGET_OS_OSX || TARGET_OS_MACCATALYST) && TARGET_CPU_X86_64
+    #define CMBASE_OBJECT_NEEDS_ALIGNMENT 1
+#else
+    #define CMBASE_OBJECT_NEEDS_ALIGNMENT 0
+#endif
 
 struct SdpVideoFormat;
 class VideoDecoderFactory;
@@ -47,7 +55,6 @@ void setVideoDecoderCallbacks(VideoDecoderCreateCallback, VideoDecoderReleaseCal
 
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265, WebKitVP9, WebKitVP9VTB);
 void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, CVPixelBufferRef, uint32_t timeStampRTP);
-
 
 using LocalDecoder = void*;
 using LocalDecoderCallback = void (^)(CVPixelBufferRef, uint32_t timeStamp, uint32_t timeStampNs);

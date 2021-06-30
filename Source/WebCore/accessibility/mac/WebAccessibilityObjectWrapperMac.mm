@@ -543,6 +543,10 @@ using namespace WebCore;
 #define NSAccessibilityEmbeddedImageDescriptionAttribute @"AXEmbeddedImageDescription"
 #endif
 
+#ifndef NSAccessibilityImageOverlayElementsAttribute
+#define NSAccessibilityImageOverlayElementsAttribute @"AXImageOverlayElements"
+#endif
+
 extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 @implementation WebAccessibilityObjectWrapper
@@ -1560,8 +1564,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityVerticalScrollBarAttribute];
         return tempArray;
     }());
-    static auto imageAttrs =  makeNeverDestroyed([] {
+    static auto imageAttrs = makeNeverDestroyed([] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        [tempArray addObject:NSAccessibilityImageOverlayElementsAttribute];
         [tempArray addObject:NSAccessibilityEmbeddedImageDescriptionAttribute];
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
@@ -2366,6 +2371,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [self position];
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
         return [self path];
+
+    if ([attributeName isEqualToString:NSAccessibilityImageOverlayElementsAttribute]) {
+        auto imageOverlayElements = backingObject->imageOverlayElements();
+        return imageOverlayElements ? convertToNSArray(*imageOverlayElements) : nil;
+    }
+
     if ([attributeName isEqualToString:NSAccessibilityEmbeddedImageDescriptionAttribute])
         return backingObject->embeddedImageDescription();
 

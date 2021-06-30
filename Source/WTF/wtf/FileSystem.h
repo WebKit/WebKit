@@ -228,7 +228,7 @@ public:
     const void* data() const { return m_fileData; }
     unsigned size() const { return m_fileSize; }
 
-#if !OS(WINDOWS)
+#if PLATFORM(COCOA)
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }
 #endif
 #if OS(WINDOWS)

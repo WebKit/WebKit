@@ -471,6 +471,9 @@ private:
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
+    void platformSuspendProcess();
+    void platformResumeProcess();
+
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

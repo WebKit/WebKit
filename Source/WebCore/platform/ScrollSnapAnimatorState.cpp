@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ScrollSnapAnimatorState.h"
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -116,5 +114,3 @@ TextStream& operator<<(TextStream& ts, const ScrollSnapAnimatorState& state)
 }
 
 } // namespace WebCore
-
-#endif // CSS_SCROLL_SNAP

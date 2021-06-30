@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2284,10 +2284,7 @@ auto B3IRGenerator::addReturn(const ControlData&, const Stack& returnValues) -> 
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
     patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         auto calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
-
-        for (RegisterAtOffset calleeSave : calleeSaves)
-            jit.load64ToReg(CCallHelpers::Address(GPRInfo::callFrameRegister, calleeSave.offset()), calleeSave.reg());
-
+        jit.emitRestore(calleeSaves);
         jit.emitFunctionEpilogue();
         jit.ret();
     });

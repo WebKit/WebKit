@@ -168,6 +168,7 @@ class WebProcessProxy;
 struct WebHitTestResultData;
 
 enum class ContinueUnsafeLoad : bool;
+enum class ImageAnalysisType : uint8_t;
 enum class UndoOrRedo : bool;
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
@@ -598,7 +599,7 @@ public:
 
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
-    void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
+    void computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType, CompletionHandler<void(bool)>&&);
 #endif
 
     bool acceptsPreviewPanelControl(QLPreviewPanel *);

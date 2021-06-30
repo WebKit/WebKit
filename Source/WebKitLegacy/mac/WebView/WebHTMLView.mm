@@ -615,7 +615,7 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
-    case ContextMenuItemTagLookUpImage:
+    case ContextMenuItemTagQuickLookImage:
         return std::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:

@@ -25,8 +25,6 @@
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasshadowstyles
 interface mixin CanvasShadowStyles {
-    // FIXME: All the unrestricted float attributes below should be unrestricted doubles.
-
     // shadows
     attribute unrestricted double shadowOffsetX; // (default 0)
     attribute unrestricted double shadowOffsetY; // (default 0)

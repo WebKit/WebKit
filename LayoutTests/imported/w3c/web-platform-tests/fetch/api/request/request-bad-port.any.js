@@ -20,7 +20,7 @@ var BLOCKED_PORTS_LIST = [
     42,   // name
     43,   // nicname
     53,   // domain
-    69,   // TFTP
+    69,   // tftp
     77,   // priv-rjs
     79,   // finger
     87,   // ttylink
@@ -38,10 +38,10 @@ var BLOCKED_PORTS_LIST = [
     119,  // nntp
     123,  // ntp
     135,  // loc-srv / epmap
-    137,  // netbios
-    139,  // netbios
+    137,  // netbios-ns
+    139,  // netbios-ssn
     143,  // imap2
-    161,  // SNMP
+    161,  // snmp
     179,  // bgp
     389,  // ldap
     427,  // afp (alternate)
@@ -62,18 +62,20 @@ var BLOCKED_PORTS_LIST = [
     587,  // smtp (outgoing)
     601,  // syslog-conn
     636,  // ldap+ssl
+    989,  // ftps-data
+    990,  // ftps
     993,  // ldap+ssl
     995,  // pop3+ssl
+    1719, // h323gatestat
+    1720, // h323hostcall
+    1723, // pptp
     2049, // nfs
-    1719, // H323 (RAS)
-    1720, // H323 (Q931)
-    1723, // H323 (H245)
     3659, // apple-sasl
     4045, // lockd
     5060, // sip
     5061, // sips
     6000, // x11
-    6566, // SANE
+    6566, // sane-port
     6665, // irc (alternate)
     6666, // irc (alternate)
     6667, // irc (default)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -245,11 +245,11 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
 
     if (m_ownerType == OwnerType::Document) {
         if (auto* frame = downcast<Document>(m_context).frame())
-            return frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode);
+            RELEASE_AND_RETURN(scope, frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
     } else {
         ASSERT(is<WorkerOrWorkletGlobalScope>(m_context));
         if (auto* script = downcast<WorkerOrWorkletGlobalScope>(m_context).script())
-            return script->evaluateModule(*moduleRecord, awaitedValue, resumeMode);
+            RELEASE_AND_RETURN(scope, script->evaluateModule(*moduleRecord, awaitedValue, resumeMode));
     }
     return JSC::jsUndefined();
 }

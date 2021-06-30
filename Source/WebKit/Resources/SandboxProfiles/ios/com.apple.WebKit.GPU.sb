@@ -608,6 +608,13 @@
 (allow file-read-metadata
        (literal "/private/var/run/syslog"))
 
+;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
+(with-filter (system-attribute apple-internal)
+    (allow network-outbound
+       (literal "/private/var/run/syslog")
+    )
+)
+
 (allow mach-lookup
        (global-name "com.apple.system.notification_center"))
 (allow ipc-posix-shm-read*

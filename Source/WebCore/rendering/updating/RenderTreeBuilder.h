@@ -89,6 +89,8 @@ private:
     void moveAllChildren(RenderBoxModelObject& from, RenderBoxModelObject& to, NormalizeAfterInsertion);
     void moveAllChildren(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* beforeChild, NormalizeAfterInsertion);
 
+    void removeFloatingObjects(RenderBlock&);
+
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject& originalBeforeChild);
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);

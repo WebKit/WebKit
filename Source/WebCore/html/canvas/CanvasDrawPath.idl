@@ -36,9 +36,8 @@ interface mixin CanvasDrawPath {
     // FIXME: Implement resetClip.
     // undefined resetClip();
 
-    // FIXME: All the unrestricted float parameters below should be unrestricted doubles.
-    boolean isPointInPath(unrestricted float x, unrestricted float y, optional CanvasFillRule fillRule = "nonzero");
-    boolean isPointInPath(Path2D path, unrestricted float x, unrestricted float y, optional CanvasFillRule fillRule = "nonzero");
-    boolean isPointInStroke(unrestricted float x, unrestricted float y);
-    boolean isPointInStroke(Path2D path, unrestricted float x, unrestricted float y);
+    boolean isPointInPath(unrestricted double x, unrestricted double y, optional CanvasFillRule fillRule = "nonzero");
+    boolean isPointInPath(Path2D path, unrestricted double x, unrestricted double y, optional CanvasFillRule fillRule = "nonzero");
+    boolean isPointInStroke(unrestricted double x, unrestricted double y);
+    boolean isPointInStroke(Path2D path, unrestricted double x, unrestricted double y);
 };

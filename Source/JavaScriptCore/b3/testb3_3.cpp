@@ -3196,6 +3196,8 @@ void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testMulAddArgsRight());
     RUN(testMulAddArgsLeft32());
     RUN(testMulAddArgsRight32());
+    RUN(testMulAddSignExtend32ArgsLeft());
+    RUN(testMulAddSignExtend32ArgsRight());
     RUN(testMulSubArgsLeft());
     RUN(testMulSubArgsRight());
     RUN(testMulSubArgsLeft32());

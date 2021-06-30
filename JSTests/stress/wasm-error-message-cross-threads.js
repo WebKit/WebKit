@@ -1,3 +1,5 @@
+//@ requireOptions("--useExecutableAllocationFuzz=false")
+
 if ($vm.isWasmSupported()) {
     var counter = 0;
     obj1 = {[Symbol.asyncIterator]:[-4.0,0x1e3],[Symbol.search]:[-5.0,4294967297,-5.0],"construct":Uint8ClampedArray.__proto__,[Symbol.replace]:WeakSet,[Symbol.species]:()=>null,9007199254740992:[0,64,"length",,"deleteProperty",2147483648,,"symbol",4294967297,"get",128,Symbol.toPrimitive],"Q":6};

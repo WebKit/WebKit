@@ -1,3 +1,159 @@
+2021-06-24  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Remove ENABLE_SCROLL_SNAP compile-time option
+        https://bugs.webkit.org/show_bug.cgi?id=227067
+
+        Reviewed by Simon Fraser.
+
+        Remove compile-time ENABLE_SCROLL_SNAP configuration option.
+
+        * wtf/PlatformEnable.h: Remove the global feature definition.
+
+2021-06-23  Mark Lam  <mark.lam@apple.com>
+
+        Base Options::useWebAssemblyFastMemory's default value on Gigacage::hasCapacityToUseLargeGigacage.
+        https://bugs.webkit.org/show_bug.cgi?id=227328
+
+        Reviewed by Saam Barati.
+
+        Provide a Gigacage::hasCapacityToUseLargeGigacage value for when !GIGACAGE_ENABLED.
+
+        * wtf/Gigacage.h:
+
+2021-06-23  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to utilize UBFIZ supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227204
+
+        Reviewed by Filip Pizlo.
+
+        Add functions to count the consecutive zero bits (trailing) on the 
+        right with modulus division and lookup. Reference: Bit Twiddling Hacks.
+
+        * wtf/MathExtras.h:
+        (WTF::countTrailingZeros):
+
+2021-06-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        Update compile flag naming to align with the App Privacy Report
+        feature. Added a new check for Symptoms for a simpler, more clear
+        check.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
+2021-06-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Adopt new date picker presentation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=227221
+        <rdar://problem/77930086>
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/PlatformHave.h:
+
+        Add HAVE(UIDATEPICKER_OVERLAY_PRESENTATION) and HAVE(UITOOLBAR_STANDARD_APPEARANCE).
+
+2021-06-21  Darin Adler  <darin@apple.com>
+
+        Improve more of the CSS list style implementations
+        https://bugs.webkit.org/show_bug.cgi?id=227206
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/unicode/CharacterNames.h: Added blackDown/Left/RightPointingSmallTriangle.
+
+2021-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] [macOS] Add an internal option to disable inline text selection in images
+        https://bugs.webkit.org/show_bug.cgi?id=227265
+        rdar://79460142
+
+        Reviewed by Tim Horton.
+
+        Add a new internal feature flag. See WebKit ChangeLog for more details.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-06-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GLib] Rewrite NetworkCache::Data::adoptMap without FileSystem::MappedFileData::leakHandle and munmap
+        https://bugs.webkit.org/show_bug.cgi?id=227017
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/FileSystem.h: MappedFileData::leakHandle is used only if PLATFORM(COCOA) now.
+
+2021-06-22  Saam Barati  <sbarati@apple.com>
+
+        jitCompileAndSetHeuristics shouldn't return true when we fail to compile
+        https://bugs.webkit.org/show_bug.cgi?id=227155
+
+        Reviewed by Tadeu Zagallo.
+
+        * wtf/WeakRandom.h:
+
+2021-06-22  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r279083.
+
+        Broke Mac Builds
+
+        Reverted changeset:
+
+        "Migrate App Privacy Report code from WebKitAdditions"
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        https://commits.webkit.org/r279083
+
+2021-06-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Functions dispatched to WorkQueue are sometimes destroyed in the calling thread due to block refcounting
+        https://bugs.webkit.org/show_bug.cgi?id=227160
+
+        Reviewed by Antti Koivisto.
+
+        WorkQueue::dispatch Function bodies always execute in the thread of target
+        queue. However, sometimes the Function destruction would happen in the
+        dispatched-from thread. This is not what the WorkQueue::dispatch callers
+        expect.
+
+        Implement some of the WorkQueue::dispatch* in terms of dispatch_..._f()
+        variants which take a function and context pointer instead of a block.
+
+        Blocks are reference counted objects without the ability to pass the
+        ownership of the reference. For dispatch case, it means that caller will
+        need to hold the reference while dispatch_...() returns. In thread
+        contention cases the called block might complete and reference be
+        dropped in the thread of the queue before the dispatched-from thread
+        would drop its reference to the block. This would cause the dispatched
+        Function to be destroyed in the dispatched-from thread.
+
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::dispatchWorkItem):
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        (WTF::WorkQueue::dispatchSync):
+
+2021-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Adjust `fetch` port blocking for ports 990, 989
+        https://bugs.webkit.org/show_bug.cgi?id=226971
+        <rdar://problem/79287147>
+
+        Reviewed by Geoffrey Garen.
+
+        Prevent connecting to ports 989 & 990 as per:
+        - https://github.com/whatwg/fetch/pull/1250
+
+        * wtf/URL.cpp:
+        (WTF::portAllowed):
+
 2021-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Turn ENABLE_SHAREABLE_RESOURCE on

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (0,20) width 34: "state."
       RenderBlock {DIV} at (0,56) size 784x41
         RenderInline {LABEL} at (0,0) size 356x19
-          RenderTextControl {INPUT} at (2,2) size 265x37 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+          RenderTextControl {INPUT} at (2,2) size 265x37 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
           RenderText {#text} at (268,12) size 88x19
             text run at (268,12) width 88: " Normal state"
       RenderBlock {DIV} at (0,97) size 784x41
@@ -30,7 +30,7 @@ layer at (21,153) size 241x25
     RenderText {#text} at (0,0) size 13x25
       text run at (0,0) width 13: "0"
 layer at (10,107) size 263x37
-  RenderTextControl {INPUT} at (2,2) size 263x37 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+  RenderTextControl {INPUT} at (2,2) size 263x37 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
 layer at (21,112) size 241x25
   RenderBlock {DIV} at (11,5) size 241x25 [color=#545454]
     RenderText {#text} at (0,0) size 13x25

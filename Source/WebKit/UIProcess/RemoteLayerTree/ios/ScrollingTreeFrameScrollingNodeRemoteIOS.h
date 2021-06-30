@@ -27,6 +27,8 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
 
+OBJC_CLASS UIScrollView;
+
 #include <WebCore/ScrollingTreeFrameScrollingNode.h>
 
 namespace WebKit {

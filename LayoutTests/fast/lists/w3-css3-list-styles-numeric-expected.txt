@@ -386,4 +386,23 @@ PASS list marker is 0.
 PASS list marker is 1.
 PASS list marker is -80000000.
 PASS list marker is -7FFFFFFF.
+ethiopic-numeric
+
+PASS list marker is ፩.
+PASS list marker is ፪.
+PASS list marker is ፫.
+PASS list marker is ፬.
+PASS list marker is ፭.
+PASS list marker is ፮.
+PASS list marker is ፯.
+PASS list marker is ፰.
+PASS list marker is ፱.
+PASS list marker is ፲.
+PASS list marker is ፲፩.
+PASS list marker is 0.
+PASS list marker is ፻.
+PASS list marker is ፩.
+PASS list marker is ፸፰፻፩፼፺፪.
+PASS list marker is -2147483648.
+PASS list marker is -2147483647.
 

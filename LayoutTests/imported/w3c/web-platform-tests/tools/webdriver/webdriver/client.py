@@ -2,8 +2,7 @@ from . import error
 from . import protocol
 from . import transport
 
-from six import string_types
-from six.moves.urllib import parse as urlparse
+from urllib import parse as urlparse
 
 
 def command(func):
@@ -116,14 +115,49 @@ class ActionSequence(object):
     def _key_action(self, subtype, value):
         self._actions.append({"type": subtype, "value": value})
 
-    def _pointer_action(self, subtype, button):
-        self._actions.append({"type": subtype, "button": button})
+    def _pointer_action(self, subtype, button=None, x=None, y=None, duration=None, origin=None, width=None,
+                        height=None, pressure=None, tangential_pressure=None, tilt_x=None,
+                        tilt_y=None, twist=None, altitude_angle=None, azimuth_angle=None):
+        action = {
+            "type": subtype
+        }
+        if button is not None:
+            action["button"] = button
+        if x is not None:
+            action["x"] = x
+        if y is not None:
+            action["y"] = y
+        if duration is not None:
+            action["duration"] = duration
+        if origin is not None:
+            action["origin"] = origin
+        if width is not None:
+            action["width"] = width
+        if height is not None:
+            action["height"] = height
+        if pressure is not None:
+            action["pressure"] = pressure
+        if tangential_pressure is not None:
+            action["tangentialPressure"] = tangential_pressure
+        if tilt_x is not None:
+            action["tiltX"] = tilt_x
+        if tilt_y is not None:
+            action["tiltY"] = tilt_y
+        if twist is not None:
+            action["twist"] = twist
+        if altitude_angle is not None:
+            action["altitudeAngle"] = altitude_angle
+        if azimuth_angle is not None:
+            action["azimuthAngle"] = azimuth_angle
+        self._actions.append(action)
 
     def pause(self, duration):
         self._actions.append({"type": "pause", "duration": duration})
         return self
 
-    def pointer_move(self, x, y, duration=None, origin=None):
+    def pointer_move(self, x, y, duration=None, origin=None, width=None, height=None,
+                     pressure=None, tangential_pressure=None, tilt_x=None, tilt_y=None,
+                     twist=None, altitude_angle=None, azimuth_angle=None):
         """Queue a pointerMove action.
 
         :param x: Destination x-axis coordinate of pointer in CSS pixels.
@@ -133,16 +167,10 @@ class ActionSequence(object):
         :param origin: Origin of coordinates, either "viewport", "pointer" or
                        an Element. If None, remote end defaults to "viewport".
         """
-        action = {
-            "type": "pointerMove",
-            "x": x,
-            "y": y
-        }
-        if duration is not None:
-            action["duration"] = duration
-        if origin is not None:
-            action["origin"] = origin
-        self._actions.append(action)
+        self._pointer_action("pointerMove", x=x, y=y, duration=duration, origin=origin,
+                             width=width, height=height, pressure=pressure,
+                             tangential_pressure=tangential_pressure, tilt_x=tilt_x, tilt_y=tilt_y,
+                             twist=twist, altitude_angle=altitude_angle, azimuth_angle=azimuth_angle)
         return self
 
     def pointer_up(self, button=0):
@@ -151,16 +179,21 @@ class ActionSequence(object):
         :param button: Pointer button to perform action with.
                        Default: 0, which represents main device button.
         """
-        self._pointer_action("pointerUp", button)
+        self._pointer_action("pointerUp", button=button)
         return self
 
-    def pointer_down(self, button=0):
+    def pointer_down(self, button=0, width=None, height=None, pressure=None,
+                     tangential_pressure=None, tilt_x=None, tilt_y=None,
+                     twist=None, altitude_angle=None, azimuth_angle=None):
         """Queue a pointerDown action for `button`.
 
         :param button: Pointer button to perform action with.
                        Default: 0, which represents main device button.
         """
-        self._pointer_action("pointerDown", button)
+        self._pointer_action("pointerDown", button=button, width=width, height=height,
+                             pressure=pressure, tangential_pressure=tangential_pressure,
+                             tilt_x=tilt_x, tilt_y=tilt_y, twist=twist, altitude_angle=altitude_angle,
+                             azimuth_angle=azimuth_angle)
         return self
 
     def click(self, element=None, button=0):
@@ -273,19 +306,22 @@ class Window(object):
 
         return handles
 
-    @property
+    # The many "type: ignore" comments here and below are to silence mypy's
+    # "Decorated property not supported" error, which is due to a limitation
+    # in mypy, see https://github.com/python/mypy/issues/1362.
+    @property  # type: ignore
     @command
     def rect(self):
         return self.session.send_session_command("GET", "window/rect")
 
-    @property
+    @property  # type: ignore
     @command
     def size(self):
         """Gets the window size as a tuple of `(width, height)`."""
         rect = self.rect
         return (rect["width"], rect["height"])
 
-    @size.setter
+    @size.setter  # type: ignore
     @command
     def size(self, new_size):
         """Set window size by passing a tuple of `(width, height)`."""
@@ -293,14 +329,14 @@ class Window(object):
         body = {"width": width, "height": height}
         self.session.send_session_command("POST", "window/rect", body)
 
-    @property
+    @property  # type: ignore
     @command
     def position(self):
         """Gets the window position as a tuple of `(x, y)`."""
         rect = self.rect
         return (rect["x"], rect["y"])
 
-    @position.setter
+    @position.setter  # type: ignore
     @command
     def position(self, new_position):
         """Set window position by passing a tuple of `(x, y)`."""
@@ -338,6 +374,42 @@ class Frame(object):
         return cls(uuid, session)
 
 
+class ShadowRoot(object):
+    identifier = "shadow-075b-4da1-b6ba-e579c2d3230a"
+
+    def __init__(self, session, id):
+        """
+        Construct a new shadow root representation.
+
+        :param id: Shadow root UUID which must be unique across
+            all browsing contexts.
+        :param session: Current ``webdriver.Session``.
+        """
+        self.id = id
+        self.session = session
+
+    @classmethod
+    def from_json(cls, json, session):
+        uuid = json[ShadowRoot.identifier]
+        return cls(uuid, session)
+
+    def send_shadow_command(self, method, uri, body=None):
+        url = "shadow/{}/{}".format(self.id, uri)
+        return self.session.send_session_command(method, url, body)
+
+    @command
+    def find_element(self, strategy, selector):
+        body = {"using": strategy,
+                "value": selector}
+        return self.send_shadow_command("POST", "element", body)
+
+    @command
+    def find_elements(self, strategy, selector):
+        body = {"using": strategy,
+                "value": selector}
+        return self.send_shadow_command("POST", "elements", body)
+
+
 class Find(object):
     def __init__(self, session):
         self.session = session
@@ -365,7 +437,7 @@ class Cookies(object):
         cookie = {"name": name,
                   "value": None}
 
-        if isinstance(name, string_types):
+        if isinstance(name, str):
             cookie["value"] = value
         elif hasattr(value, "value"):
             cookie["value"] = value.value
@@ -384,12 +456,12 @@ class UserPrompt(object):
     def accept(self):
         self.session.send_session_command("POST", "alert/accept")
 
-    @property
+    @property  # type: ignore
     @command
     def text(self):
         return self.session.send_session_command("GET", "alert/text")
 
-    @text.setter
+    @text.setter  # type: ignore
     @command
     def text(self, value):
         body = {"text": value}
@@ -436,6 +508,9 @@ class Session(object):
     def __del__(self):
         self.end()
 
+    def match(self, capabilities):
+        return self.requested_capabilities == capabilities
+
     def start(self):
         """Start a new WebDriver session.
 
@@ -470,7 +545,7 @@ class Session(object):
 
         try:
             self.send_command("DELETE", "session/%s" % self.session_id)
-        except error.InvalidSessionIdException:
+        except (OSError, error.InvalidSessionIdException):
             pass
         finally:
             self.session_id = None
@@ -545,12 +620,12 @@ class Session(object):
         url = urlparse.urljoin("session/%s/" % self.session_id, uri)
         return self.send_command(method, url, body, timeout)
 
-    @property
+    @property  # type: ignore
     @command
     def url(self):
         return self.send_session_command("GET", "url")
 
-    @url.setter
+    @url.setter  # type: ignore
     @command
     def url(self, url):
         if urlparse.urlsplit(url).netloc is None:
@@ -570,12 +645,12 @@ class Session(object):
     def refresh(self):
         return self.send_session_command("POST", "refresh")
 
-    @property
+    @property  # type: ignore
     @command
     def title(self):
         return self.send_session_command("GET", "title")
 
-    @property
+    @property  # type: ignore
     @command
     def source(self):
         return self.send_session_command("GET", "source")
@@ -587,12 +662,12 @@ class Session(object):
 
         return value["handle"]
 
-    @property
+    @property  # type: ignore
     @command
     def window_handle(self):
         return self.send_session_command("GET", "window")
 
-    @window_handle.setter
+    @window_handle.setter  # type: ignore
     @command
     def window_handle(self, handle):
         body = {"handle": handle}
@@ -608,12 +683,12 @@ class Session(object):
 
         return self.send_session_command("POST", url, body)
 
-    @property
+    @property  # type: ignore
     @command
     def handles(self):
         return self.send_session_command("GET", "window/handles")
 
-    @property
+    @property  # type: ignore
     @command
     def active_element(self):
         return self.send_session_command("GET", "element/active")
@@ -683,7 +758,6 @@ class Session(object):
     def screenshot(self):
         return self.send_session_command("GET", "screenshot")
 
-
 class Element(object):
     """
     Representation of a web element.
@@ -742,12 +816,12 @@ class Element(object):
     def send_keys(self, text):
         return self.send_element_command("POST", "value", {"text": text})
 
-    @property
+    @property  # type: ignore
     @command
     def text(self):
         return self.send_element_command("GET", "text")
 
-    @property
+    @property  # type: ignore
     @command
     def name(self):
         return self.send_element_command("GET", "name")
@@ -756,12 +830,12 @@ class Element(object):
     def style(self, property_name):
         return self.send_element_command("GET", "css/%s" % property_name)
 
-    @property
+    @property  # type: ignore
     @command
     def rect(self):
         return self.send_element_command("GET", "rect")
 
-    @property
+    @property  # type: ignore
     @command
     def selected(self):
         return self.send_element_command("GET", "selected")
@@ -769,6 +843,11 @@ class Element(object):
     @command
     def screenshot(self):
         return self.send_element_command("GET", "screenshot")
+
+    @property  # type: ignore
+    @command
+    def shadow_root(self):
+        return self.send_element_command("GET", "shadow")
 
     @command
     def attribute(self, name):

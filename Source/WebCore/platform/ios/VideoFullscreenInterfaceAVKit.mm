@@ -1166,7 +1166,7 @@ void VideoFullscreenInterfaceAVKit::willStopPictureInPicture()
     m_exitingPictureInPicture = true;
     m_shouldReturnToFullscreenWhenStoppingPictureInPicture = false;
 
-    if (m_currentMode.hasFullscreen() || m_restoringFullscreenForPictureInPictureStop)
+    if (m_currentMode.hasFullscreen())
         return;
 
     if (m_videoFullscreenModel)
@@ -1188,8 +1188,8 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
         return;
     }
 
-    if (m_currentMode.hasFullscreen() || m_restoringFullscreenForPictureInPictureStop) {
-        clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture, !m_exitFullscreenNeedsExitPictureInPicture && m_restoringFullscreenForPictureInPictureStop);
+    if (m_currentMode.hasFullscreen()) {
+        clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture, !m_exitFullscreenNeedsExitPictureInPicture);
         [m_window makeKeyWindow];
         [m_playerViewController setShowsPlaybackControls:YES];
 
@@ -1224,7 +1224,6 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletion
 
     if (m_shouldReturnToFullscreenWhenStoppingPictureInPicture) {
         m_shouldReturnToFullscreenWhenStoppingPictureInPicture = false;
-        m_restoringFullscreenForPictureInPictureStop = true;
 
         [m_window setHidden:NO];
         [[m_playerViewController view] setHidden:NO];
@@ -1494,7 +1493,7 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
         m_changingStandbyOnly = false;
     }
 
-    if (m_currentMode.hasPictureInPicture() && m_videoFullscreenModel && !m_restoringFullscreenForPictureInPictureStop)
+    if (m_currentMode.hasPictureInPicture() && m_videoFullscreenModel)
         m_videoFullscreenModel->didEnterPictureInPicture();
 }
 
@@ -1582,8 +1581,6 @@ void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError
         [m_playerViewController setShowsPlaybackControls:YES];
     } else
         [m_playerViewController setShowsPlaybackControls:NO];
-
-    m_restoringFullscreenForPictureInPictureStop = false;
 
     if (nextActions.contains(NextAction::NeedsEnterFullScreen))
         doEnterFullscreen();

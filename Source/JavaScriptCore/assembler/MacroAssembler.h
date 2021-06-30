@@ -337,7 +337,7 @@ public:
         addPtr(TrustedImm32(sizeof(double)), stackPointerRegister);
     }
     
-    static ptrdiff_t pushToSaveByteOffset() { return sizeof(void*); }
+    static constexpr ptrdiff_t pushToSaveByteOffset() { return sizeof(void*); }
 #endif // !CPU(ARM64)
 
 #if CPU(X86_64) || CPU(ARM64)

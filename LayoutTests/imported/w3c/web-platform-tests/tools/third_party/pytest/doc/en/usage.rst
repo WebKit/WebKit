@@ -10,9 +10,11 @@ Usage and Invocations
 Calling pytest through ``python -m pytest``
 -----------------------------------------------------
 
-.. versionadded:: 2.0
 
-You can invoke testing through the Python interpreter from the command line::
+
+You can invoke testing through the Python interpreter from the command line:
+
+.. code-block:: text
 
     python -m pytest [...]
 
@@ -31,25 +33,43 @@ Running ``pytest`` can result in six different exit codes:
 :Exit code 4: pytest command line usage error
 :Exit code 5: No tests were collected
 
+They are represented by the :class:`pytest.ExitCode` enum. The exit codes being a part of the public API can be imported and accessed directly using:
+
+.. code-block:: python
+
+    from pytest import ExitCode
+
+.. note::
+
+    If you would like to customize the exit code in some scenarios, specially when
+    no tests are collected, consider using the
+    `pytest-custom_exit_code <https://github.com/yashtodi94/pytest-custom_exit_code>`__
+    plugin.
+
+
 Getting help on version, option names, environment variables
 --------------------------------------------------------------
 
-::
+.. code-block:: bash
 
     pytest --version   # shows where pytest was imported from
     pytest --fixtures  # show available builtin function arguments
     pytest -h | --help # show help on command line and config file options
 
 
+The full command-line flags can be found in the :ref:`reference <command-line-flags>`.
+
 .. _maxfail:
 
 Stopping after the first (or N) failures
 ---------------------------------------------------
 
-To stop the testing process after the first (N) failures::
+To stop the testing process after the first (N) failures:
 
-    pytest -x            # stop after first failure
-    pytest --maxfail=2    # stop after two failures
+.. code-block:: bash
+
+    pytest -x           # stop after first failure
+    pytest --maxfail=2  # stop after two failures
 
 .. _select-tests:
 
@@ -60,24 +80,24 @@ Pytest supports several ways to run and select tests from the command-line.
 
 **Run tests in a module**
 
-::
+.. code-block:: bash
 
     pytest test_mod.py
 
 **Run tests in a directory**
 
-::
+.. code-block:: bash
 
     pytest testing/
 
 **Run tests by keyword expressions**
 
-::
+.. code-block:: bash
 
     pytest -k "MyClass and not method"
 
-This will run tests which contain names that match the given *string expression*, which can
-include Python operators that use filenames, class names and function names as variables.
+This will run tests which contain names that match the given *string expression* (case-insensitive),
+which can include Python operators that use filenames, class names and function names as variables.
 The example above will run ``TestMyClass.test_something``  but not ``TestMyClass.test_method_simple``.
 
 .. _nodeids:
@@ -87,18 +107,22 @@ The example above will run ``TestMyClass.test_something``  but not ``TestMyClass
 Each collected test is assigned a unique ``nodeid`` which consist of the module filename followed
 by specifiers like class names, function names and parameters from parametrization, separated by ``::`` characters.
 
-To run a specific test within a module::
+To run a specific test within a module:
+
+.. code-block:: bash
 
     pytest test_mod.py::test_func
 
 
-Another example specifying a test method in the command line::
+Another example specifying a test method in the command line:
+
+.. code-block:: bash
 
     pytest test_mod.py::TestClass::test_method
 
 **Run tests by marker expressions**
 
-::
+.. code-block:: bash
 
     pytest -m slow
 
@@ -108,7 +132,7 @@ For more information see :ref:`marks <mark>`.
 
 **Run tests from packages**
 
-::
+.. code-block:: bash
 
     pytest --pyargs pkg.testing
 
@@ -118,7 +142,9 @@ This will import ``pkg.testing`` and use its filesystem location to find and run
 Modifying Python traceback printing
 ----------------------------------------------
 
-Examples for modifying traceback printing::
+Examples for modifying traceback printing:
+
+.. code-block:: bash
 
     pytest --showlocals # show local variables in tracebacks
     pytest -l           # show local variables (shortcut)
@@ -140,6 +166,184 @@ will be shown (because KeyboardInterrupt is caught by pytest). By using this
 option you make sure a trace is shown.
 
 
+.. _`pytest.detailed_failed_tests_usage`:
+
+Detailed summary report
+-----------------------
+
+The ``-r`` flag can be used to display a "short test summary info" at the end of the test session,
+making it easy in large test suites to get a clear picture of all failures, skips, xfails, etc.
+
+It defaults to ``fE`` to list failures and errors.
+
+Example:
+
+.. code-block:: python
+
+    # content of test_example.py
+    import pytest
+
+
+    @pytest.fixture
+    def error_fixture():
+        assert 0
+
+
+    def test_ok():
+        print("ok")
+
+
+    def test_fail():
+        assert 0
+
+
+    def test_error(error_fixture):
+        pass
+
+
+    def test_skip():
+        pytest.skip("skipping this test")
+
+
+    def test_xfail():
+        pytest.xfail("xfailing this test")
+
+
+    @pytest.mark.xfail(reason="always xfail")
+    def test_xpass():
+        pass
+
+
+.. code-block:: pytest
+
+    $ pytest -ra
+    =========================== test session starts ============================
+    platform linux -- Python 3.x.y, pytest-6.x.y, py-1.x.y, pluggy-0.x.y
+    cachedir: $PYTHON_PREFIX/.pytest_cache
+    rootdir: $REGENDOC_TMPDIR
+    collected 6 items
+
+    test_example.py .FEsxX                                               [100%]
+
+    ================================== ERRORS ==================================
+    _______________________ ERROR at setup of test_error _______________________
+
+        @pytest.fixture
+        def error_fixture():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:6: AssertionError
+    ================================= FAILURES =================================
+    ________________________________ test_fail _________________________________
+
+        def test_fail():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:14: AssertionError
+    ========================= short test summary info ==========================
+    SKIPPED [1] test_example.py:22: skipping this test
+    XFAIL test_example.py::test_xfail
+      reason: xfailing this test
+    XPASS test_example.py::test_xpass always xfail
+    ERROR test_example.py::test_error - assert 0
+    FAILED test_example.py::test_fail - assert 0
+    == 1 failed, 1 passed, 1 skipped, 1 xfailed, 1 xpassed, 1 error in 0.12s ===
+
+The ``-r`` options accepts a number of characters after it, with ``a`` used
+above meaning "all except passes".
+
+Here is the full list of available characters that can be used:
+
+ - ``f`` - failed
+ - ``E`` - error
+ - ``s`` - skipped
+ - ``x`` - xfailed
+ - ``X`` - xpassed
+ - ``p`` - passed
+ - ``P`` - passed with output
+
+Special characters for (de)selection of groups:
+
+ - ``a`` - all except ``pP``
+ - ``A`` - all
+ - ``N`` - none, this can be used to display nothing (since ``fE`` is the default)
+
+More than one character can be used, so for example to only see failed and skipped tests, you can execute:
+
+.. code-block:: pytest
+
+    $ pytest -rfs
+    =========================== test session starts ============================
+    platform linux -- Python 3.x.y, pytest-6.x.y, py-1.x.y, pluggy-0.x.y
+    cachedir: $PYTHON_PREFIX/.pytest_cache
+    rootdir: $REGENDOC_TMPDIR
+    collected 6 items
+
+    test_example.py .FEsxX                                               [100%]
+
+    ================================== ERRORS ==================================
+    _______________________ ERROR at setup of test_error _______________________
+
+        @pytest.fixture
+        def error_fixture():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:6: AssertionError
+    ================================= FAILURES =================================
+    ________________________________ test_fail _________________________________
+
+        def test_fail():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:14: AssertionError
+    ========================= short test summary info ==========================
+    FAILED test_example.py::test_fail - assert 0
+    SKIPPED [1] test_example.py:22: skipping this test
+    == 1 failed, 1 passed, 1 skipped, 1 xfailed, 1 xpassed, 1 error in 0.12s ===
+
+Using ``p`` lists the passing tests, whilst ``P`` adds an extra section "PASSES" with those tests that passed but had
+captured output:
+
+.. code-block:: pytest
+
+    $ pytest -rpP
+    =========================== test session starts ============================
+    platform linux -- Python 3.x.y, pytest-6.x.y, py-1.x.y, pluggy-0.x.y
+    cachedir: $PYTHON_PREFIX/.pytest_cache
+    rootdir: $REGENDOC_TMPDIR
+    collected 6 items
+
+    test_example.py .FEsxX                                               [100%]
+
+    ================================== ERRORS ==================================
+    _______________________ ERROR at setup of test_error _______________________
+
+        @pytest.fixture
+        def error_fixture():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:6: AssertionError
+    ================================= FAILURES =================================
+    ________________________________ test_fail _________________________________
+
+        def test_fail():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:14: AssertionError
+    ================================== PASSES ==================================
+    _________________________________ test_ok __________________________________
+    --------------------------- Captured stdout call ---------------------------
+    ok
+    ========================= short test summary info ==========================
+    PASSED test_example.py::test_ok
+    == 1 failed, 1 passed, 1 skipped, 1 xfailed, 1 xpassed, 1 error in 0.12s ===
+
 .. _pdb-option:
 
 Dropping to PDB_ (Python Debugger) on failures
@@ -148,13 +352,17 @@ Dropping to PDB_ (Python Debugger) on failures
 .. _PDB: http://docs.python.org/library/pdb.html
 
 Python comes with a builtin Python debugger called PDB_.  ``pytest``
-allows one to drop into the PDB_ prompt via a command line option::
+allows one to drop into the PDB_ prompt via a command line option:
+
+.. code-block:: bash
 
     pytest --pdb
 
 This will invoke the Python debugger on every failure (or KeyboardInterrupt).
 Often you might only want to do this for the first failing test to understand
-a certain failure situation::
+a certain failure situation:
+
+.. code-block:: bash
 
     pytest -x --pdb   # drop to PDB on first failure, then end test session
     pytest --pdb --maxfail=3  # drop to PDB for first three failures
@@ -171,6 +379,20 @@ for example::
     >>> sys.last_value
     AssertionError('assert result == "ok"',)
 
+.. _trace-option:
+
+Dropping to PDB_ (Python Debugger) at the start of a test
+----------------------------------------------------------
+
+
+``pytest`` allows one to drop into the PDB_ prompt immediately at the start of each test via a command line option:
+
+.. code-block:: bash
+
+    pytest --trace
+
+This will invoke the Python debugger at the start of every test.
+
 .. _breakpoints:
 
 Setting breakpoints
@@ -184,10 +406,8 @@ in your code and pytest automatically disables its output capture for that test:
 * Output capture in other tests is not affected.
 * Any prior test output that has already been captured and will be processed as
   such.
-* Any later output produced within the same test will not be captured and will
-  instead get sent directly to ``sys.stdout``. Note that this holds true even
-  for test output occurring after you exit the interactive PDB_ tracing session
-  and continue with the regular test run.
+* Output capture gets resumed when ending the debugger session (via the
+  ``continue`` command).
 
 
 .. _`breakpoint-builtin`:
@@ -200,32 +420,69 @@ Pytest supports the use of ``breakpoint()`` with the following behaviours:
 
  - When ``breakpoint()`` is called and ``PYTHONBREAKPOINT`` is set to the default value, pytest will use the custom internal PDB trace UI instead of the system default ``Pdb``.
  - When tests are complete, the system will default back to the system ``Pdb`` trace UI.
- - If ``--pdb`` is called on execution of pytest, the custom internal Pdb trace UI is used on ``bothbreakpoint()`` and failed tests/unhandled exceptions.
- - If ``--pdbcls`` is used, the custom class debugger will be executed when a test fails (as expected within existing behaviour), but also when ``breakpoint()`` is called from within a test, the custom class debugger will be instantiated.
+ - With ``--pdb`` passed to pytest, the custom internal Pdb trace UI is used with both ``breakpoint()`` and failed tests/unhandled exceptions.
+ - ``--pdbcls`` can be used to specify a custom debugger class.
 
 .. _durations:
 
 Profiling test execution duration
 -------------------------------------
 
-.. versionadded: 2.2
+.. versionchanged:: 6.0
 
-To get a list of the slowest 10 test durations::
+To get a list of the slowest 10 test durations over 1.0s long:
 
-    pytest --durations=10
+.. code-block:: bash
+
+    pytest --durations=10 --durations-min=1.0
+
+By default, pytest will not show test durations that are too small (<0.005s) unless ``-vv`` is passed on the command-line.
+
+
+.. _faulthandler:
+
+Fault Handler
+-------------
+
+.. versionadded:: 5.0
+
+The `faulthandler <https://docs.python.org/3/library/faulthandler.html>`__ standard module
+can be used to dump Python tracebacks on a segfault or after a timeout.
+
+The module is automatically enabled for pytest runs, unless the ``-p no:faulthandler`` is given
+on the command-line.
+
+Also the :confval:`faulthandler_timeout=X<faulthandler_timeout>` configuration option can be used
+to dump the traceback of all threads if a test takes longer than ``X``
+seconds to finish (not available on Windows).
+
+.. note::
+
+    This functionality has been integrated from the external
+    `pytest-faulthandler <https://github.com/pytest-dev/pytest-faulthandler>`__ plugin, with two
+    small differences:
+
+    * To disable it, use ``-p no:faulthandler`` instead of ``--no-faulthandler``: the former
+      can be used with any plugin, so it saves one option.
+
+    * The ``--faulthandler-timeout`` command-line option has become the
+      :confval:`faulthandler_timeout` configuration option. It can still be configured from
+      the command-line using ``-o faulthandler_timeout=X``.
 
 
 Creating JUnitXML format files
 ----------------------------------------------------
 
 To create result files which can be read by Jenkins_ or other Continuous
-integration servers, use this invocation::
+integration servers, use this invocation:
+
+.. code-block:: bash
 
     pytest --junitxml=path
 
 to create an XML file at ``path``.
 
-.. versionadded:: 3.1
+
 
 To set the name of the root test suite xml item, you can configure the ``junit_suite_name`` option in your config file:
 
@@ -234,17 +491,24 @@ To set the name of the root test suite xml item, you can configure the ``junit_s
     [pytest]
     junit_suite_name = my_suite
 
+.. versionadded:: 4.0
+
+JUnit XML specification seems to indicate that ``"time"`` attribute
+should report total test execution times, including setup and teardown
+(`1 <http://windyroad.com.au/dl/Open%20Source/JUnit.xsd>`_, `2
+<https://www.ibm.com/support/knowledgecenter/en/SSQ2R2_14.1.0/com.ibm.rsar.analysis.codereview.cobol.doc/topics/cac_useresults_junit.html>`_).
+It is the default pytest behavior. To report just call durations
+instead, configure the ``junit_duration_report`` option like this:
+
+.. code-block:: ini
+
+    [pytest]
+    junit_duration_report = call
+
 .. _record_property example:
 
 record_property
 ^^^^^^^^^^^^^^^
-
-.. versionadded:: 2.8
-.. versionchanged:: 3.5
-
-   Fixture renamed from ``record_xml_property`` to ``record_property`` as user
-   properties are now available to all reporters.
-   ``record_xml_property`` is now deprecated.
 
 If you want to log additional information for a test, you can use the
 ``record_property`` fixture:
@@ -303,15 +567,13 @@ Will result in:
 
 .. warning::
 
-    ``record_property`` is an experimental feature and may change in the future.
-
-    Also please note that using this feature will break any schema verification.
+    Please note that using this feature will break schema verifications for the latest JUnitXML schema.
     This might be a problem when used with some CI servers.
 
 record_xml_attribute
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. versionadded:: 3.4
+
 
 To add an additional xml attribute to a testcase element, you can use
 ``record_xml_attribute`` fixture. This can also be used to override existing values:
@@ -368,43 +630,45 @@ Instead, this will add an attribute ``assertions="REQ-1234"`` inside the generat
             </xs:complexType>
         </xs:element>
 
-LogXML: add_global_property
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. warning::
 
-.. versionadded:: 3.0
+    Please note that using this feature will break schema verifications for the latest JUnitXML schema.
+    This might be a problem when used with some CI servers.
 
-If you want to add a properties node in the testsuite level, which may contains properties that are relevant
-to all testcases you can use ``LogXML.add_global_properties``
+.. _record_testsuite_property example:
+
+record_testsuite_property
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 4.5
+
+If you want to add a properties node at the test-suite level, which may contains properties
+that are relevant to all tests, you can use the ``record_testsuite_property`` session-scoped fixture:
+
+The ``record_testsuite_property`` session-scoped fixture can be used to add properties relevant
+to all tests.
 
 .. code-block:: python
 
     import pytest
 
 
-    @pytest.fixture(scope="session")
-    def log_global_env_facts(f):
-
-        if pytest.config.pluginmanager.hasplugin("junitxml"):
-            my_junit = getattr(pytest.config, "_xml", None)
-
-        my_junit.add_global_property("ARCH", "PPC")
-        my_junit.add_global_property("STORAGE_TYPE", "CEPH")
+    @pytest.fixture(scope="session", autouse=True)
+    def log_global_env_facts(record_testsuite_property):
+        record_testsuite_property("ARCH", "PPC")
+        record_testsuite_property("STORAGE_TYPE", "CEPH")
 
 
-    @pytest.mark.usefixtures(log_global_env_facts.__name__)
-    def start_and_prepare_env():
-        pass
-
-
-    class TestMe(object):
+    class TestMe:
         def test_foo(self):
             assert True
 
-This will add a property node below the testsuite node to the generated xml:
+The fixture is a callable which receives ``name`` and ``value`` of a ``<property>`` tag
+added at the test-suite level of the generated xml:
 
 .. code-block:: xml
 
-    <testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.006">
+    <testsuite errors="0" failures="0" name="pytest" skipped="0" tests="1" time="0.006">
       <properties>
         <property name="ARCH" value="PPC"/>
         <property name="STORAGE_TYPE" value="CEPH"/>
@@ -412,32 +676,34 @@ This will add a property node below the testsuite node to the generated xml:
       <testcase classname="test_me.TestMe" file="test_me.py" line="16" name="test_foo" time="0.000243663787842"/>
     </testsuite>
 
-.. warning::
+``name`` must be a string, ``value`` will be converted to a string and properly xml-escaped.
 
-    This is an experimental feature, and its interface might be replaced
-    by something more powerful and general in future versions. The
-    functionality per-se will be kept.
+The generated XML is compatible with the latest ``xunit`` standard, contrary to `record_property`_
+and `record_xml_attribute`_.
+
 
 Creating resultlog format files
 ----------------------------------------------------
 
-.. deprecated:: 3.0
 
-    This option is rarely used and is scheduled for removal in 4.0.
+To create plain-text machine-readable result files you can issue:
 
-    An alternative for users which still need similar functionality is to use the
-    `pytest-tap <https://pypi.org/project/pytest-tap/>`_ plugin which provides
-    a stream of test data.
-
-    If you have any concerns, please don't hesitate to
-    `open an issue <https://github.com/pytest-dev/pytest/issues>`_.
-
-To create plain-text machine-readable result files you can issue::
+.. code-block:: bash
 
     pytest --resultlog=path
 
 and look at the content at the ``path`` location.  Such files are used e.g.
 by the `PyPy-test`_ web page to show test results over several revisions.
+
+.. warning::
+
+    This option is rarely used and is scheduled for removal in pytest 6.0.
+
+    If you use this option, consider using the new `pytest-reportlog <https://github.com/pytest-dev/pytest-reportlog>`__ plugin instead.
+
+    See `the deprecation docs <https://docs.pytest.org/en/stable/deprecations.html#result-log-result-log>`__
+    for more information.
+
 
 .. _`PyPy-test`: http://buildbot.pypy.org/summary
 
@@ -445,7 +711,9 @@ by the `PyPy-test`_ web page to show test results over several revisions.
 Sending test report to online pastebin service
 -----------------------------------------------------
 
-**Creating a URL for each test failure**::
+**Creating a URL for each test failure**:
+
+.. code-block:: bash
 
     pytest --pastebin=failed
 
@@ -453,11 +721,34 @@ This will submit test run information to a remote Paste service and
 provide a URL for each failure.  You may select tests as usual or add
 for example ``-x`` if you only want to send one particular failure.
 
-**Creating a URL for a whole test session log**::
+**Creating a URL for a whole test session log**:
+
+.. code-block:: bash
 
     pytest --pastebin=all
 
 Currently only pasting to the http://bpaste.net service is implemented.
+
+.. versionchanged:: 5.2
+
+If creating the URL fails for any reason, a warning is generated instead of failing the
+entire test suite.
+
+Early loading plugins
+---------------------
+
+You can early-load plugins (internal and external) explicitly in the command-line with the ``-p`` option::
+
+    pytest -p mypluginmodule
+
+The option receives a ``name`` parameter, which can be:
+
+* A full module dotted name, for example ``myproject.plugins``. This dotted name must be importable.
+* The entry-point name of a plugin. This is the name passed to ``setuptools`` when the plugin is
+  registered. For example to early-load the `pytest-cov <https://pypi.org/project/pytest-cov/>`__ plugin you can use::
+
+    pytest -p pytest_cov
+
 
 Disabling plugins
 -----------------
@@ -466,7 +757,9 @@ To disable loading specific plugins at invocation time, use the ``-p`` option
 together with the prefix ``no:``.
 
 Example: to disable loading the plugin ``doctest``, which is responsible for
-executing doctest tests from text files, invoke pytest like this::
+executing doctest tests from text files, invoke pytest like this:
+
+.. code-block:: bash
 
     pytest -p no:doctest
 
@@ -475,34 +768,65 @@ executing doctest tests from text files, invoke pytest like this::
 Calling pytest from Python code
 ----------------------------------------------------
 
-.. versionadded:: 2.0
 
-You can invoke ``pytest`` from Python code directly::
+
+You can invoke ``pytest`` from Python code directly:
+
+.. code-block:: python
 
     pytest.main()
 
 this acts as if you would call "pytest" from the command line.
 It will not raise ``SystemExit`` but return the exitcode instead.
-You can pass in options and arguments::
+You can pass in options and arguments:
 
-    pytest.main(['-x', 'mytestdir'])
+.. code-block:: python
 
-You can specify additional plugins to ``pytest.main``::
+    pytest.main(["-x", "mytestdir"])
+
+You can specify additional plugins to ``pytest.main``:
+
+.. code-block:: python
 
     # content of myinvoke.py
     import pytest
-    class MyPlugin(object):
+
+
+    class MyPlugin:
         def pytest_sessionfinish(self):
             print("*** test run reporting finishing")
+
 
     pytest.main(["-qq"], plugins=[MyPlugin()])
 
 Running it will show that ``MyPlugin`` was added and its
-hook was invoked::
+hook was invoked:
+
+.. code-block:: pytest
 
     $ python myinvoke.py
-    .                                                                    [100%]*** test run reporting finishing
+    .FEsxX.                                                              [100%]*** test run reporting finishing
 
+    ================================== ERRORS ==================================
+    _______________________ ERROR at setup of test_error _______________________
+
+        @pytest.fixture
+        def error_fixture():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:6: AssertionError
+    ================================= FAILURES =================================
+    ________________________________ test_fail _________________________________
+
+        def test_fail():
+    >       assert 0
+    E       assert 0
+
+    test_example.py:14: AssertionError
+    ========================= short test summary info ==========================
+    FAILED test_example.py::test_fail - assert 0
+    ERROR test_example.py::test_error - assert 0
 
 .. note::
 
@@ -513,5 +837,4 @@ hook was invoked::
     multiple calls to ``pytest.main()`` from the same process (in order to re-run
     tests, for example) is not recommended.
 
-
-.. include:: links.inc
+.. _jenkins: http://jenkins-ci.org/

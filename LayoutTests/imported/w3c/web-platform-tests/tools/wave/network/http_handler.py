@@ -1,8 +1,4 @@
-from __future__ import unicode_literals
-try:
-    import http.client as httplib
-except ImportError:
-    import httplib
+import http.client as httplib
 import sys
 import traceback
 

@@ -315,7 +315,7 @@ public:
 
     bool shouldTerminate(WebProcessProxy&);
 
-    void disableProcessTermination() { m_processTerminationEnabled = false; }
+    void disableProcessTermination();
     void enableProcessTermination();
 
     void updateAutomationCapabilities() const;

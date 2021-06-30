@@ -1,5 +1,5 @@
 import sys
-import urlparse
+import urllib.parse
 
 def main(request, response):
     """
@@ -17,10 +17,10 @@ def main(request, response):
     < Date: Tue, 04 Oct 2016 18:16:06 GMT
     < Content-Length: 80
     """
-    params = urlparse.parse_qs(request.url_parts.query)
+    params = urllib.parse.parse_qs(request.url_parts.query)
     headers = [
-        ("Content-Type", "application/json"),
-        ("Set-Cookie", "{name[0]}=1; Path={path[0]}; Expires=Wed, 09 Jun 2021 10:18:14 GMT".format(**params))
+        (b"Content-Type", b"application/json"),
+        (b"Set-Cookie", b"{name[0]}=1; Path={path[0]}; Expires=Wed, 09 Jun 2021 10:18:14 GMT".format(**params))
     ]
     body = "{}"
     return headers, body

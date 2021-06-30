@@ -595,6 +595,9 @@ webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html 
 
 webkit.org/b/199617 http/tests/media/hls/hls-video-resize.html [ Skip ]
 
+webkit.org/b/227258 media/media-source/media-source-has-audio-video.html [ Timeout ]
+webkit.org/b/227258 media/media-source/media-source-seek-unbuffered.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1122,9 +1125,6 @@ webkit.org/b/218221 webrtc/vp9-profile2.html [ Timeout Failure ]
 # Release timing out.
 webkit.org/b/219825 [ Release ] webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/219825 [ Debug ] webrtc/sframe-keys.html [ Failure ]
-
-webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute2.html  [ Failure ]
-webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute.html  [ Failure Timeout ]
 
 webkit.org/b/222794 webrtc/multi-video.html [ Failure ]
 
@@ -1682,6 +1682,7 @@ inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/webgl-transformed-varying-name-crash.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-mix-with-bool.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-vec-array-deref-no-crash.html [ Skip ]
+webkit.org/b/166536 fast/canvas/webgl/shader-with-reserved-keyword.html [ Skip ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]
@@ -2324,30 +2325,6 @@ webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ]
 
 webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003a.html [ ImageOnlyFailure Pass ]
 webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003b.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/227233 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
-webkit.org/b/227233 imported/w3c/web-platform-tests/webrtc-priority/RTCPeerConnection-ondatachannel.html [ Failure ]
-webkit.org/b/227233 inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Timeout ]
-webkit.org/b/227233 webrtc/calling-peerconnection-once-closed.html [ Failure ]
-webkit.org/b/227233 webrtc/candidate-stats.html [ Failure ]
-webkit.org/b/227233 webrtc/closing-peerconnection.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/basic.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/binary.html [ Failure ]
-webkit.org/b/227233 webrtc/datachannel/bufferedAmount-afterClose.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure ]
-webkit.org/b/227233 webrtc/datachannel/bufferedAmountLowThreshold.html [ Failure ]
-webkit.org/b/227233 webrtc/datachannel/datachannel-gc.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/datachannel-page-cache.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/datachannel-page-cache-send.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/datachannel-stats.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/dtls10.html [ Failure ]
-webkit.org/b/227233 webrtc/datachannel/filter-ice-candidate.html [ Timeout ]
-webkit.org/b/227233 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Failure ]
-webkit.org/b/227233 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Failure ]
-webkit.org/b/227233 webrtc/datachannel/multi-channel.html [ Failure ]
-webkit.org/b/227233 webrtc/filtering-ice-candidate-after-reload.html [ Timeout ]
-webkit.org/b/227233 webrtc/legacy-api.html [ Failure ]
-webkit.org/b/227233 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

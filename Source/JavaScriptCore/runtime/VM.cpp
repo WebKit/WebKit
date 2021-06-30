@@ -1687,16 +1687,16 @@ void VM::setCrashOnVMCreation(bool shouldCrash)
 void VM::addLoopHintExecutionCounter(const Instruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
-    auto addResult = m_loopHintExecutionCounts.add(instruction, std::pair<unsigned, std::unique_ptr<uint64_t>>(0, nullptr));
+    auto addResult = m_loopHintExecutionCounts.add(instruction, std::pair<unsigned, std::unique_ptr<uintptr_t>>(0, nullptr));
     if (addResult.isNewEntry) {
-        auto ptr = WTF::makeUniqueWithoutFastMallocCheck<uint64_t>();
+        auto ptr = WTF::makeUniqueWithoutFastMallocCheck<uintptr_t>();
         *ptr = 0;
         addResult.iterator->value.second = WTFMove(ptr);
     }
     ++addResult.iterator->value.first;
 }
 
-uint64_t* VM::getLoopHintExecutionCounter(const Instruction* instruction)
+uintptr_t* VM::getLoopHintExecutionCounter(const Instruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);

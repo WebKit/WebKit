@@ -440,7 +440,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     }
 
     if (is<RenderListMarker>(o)) {
-        String text = downcast<RenderListMarker>(o).text();
+        String text = downcast<RenderListMarker>(o).textWithoutSuffix().toString();
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);
@@ -957,7 +957,7 @@ String markerTextForListItem(Element* element)
     if (!is<RenderListItem>(renderer))
         return String();
 
-    return downcast<RenderListItem>(*renderer).markerText();
+    return downcast<RenderListItem>(*renderer).markerTextWithoutSuffix().toString();
 }
 
 } // namespace WebCore

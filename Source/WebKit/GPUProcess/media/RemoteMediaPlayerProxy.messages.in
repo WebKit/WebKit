@@ -124,7 +124,9 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
 #if PLATFORM(COCOA)
     NativeImageForCurrentTime() -> (std::optional<MachSendRight> sendRight) Synchronous
-    PixelBufferForCurrentTime() -> (std::optional<MachSendRight> sendRight) Synchronous
+#endif
+#if USE(AVFOUNDATION)
+    PixelBufferForCurrentTime() -> (RetainPtr<CVPixelBufferRef> pixelBuffer) Synchronous
 #endif
 }
 

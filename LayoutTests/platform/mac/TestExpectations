@@ -57,7 +57,7 @@ fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
 fast/forms/search/search-results-hidden-crash.html [ Pass ]
 
 fast/url/user-visible [ Pass ]
-fast/images/eps-as-image.html [ Pass ]
+fast/images/eps-as-image.html [ Skip ]
 
 fast/text-autosizing/ios/programmatic-text-size-adjust.html [ Skip ]
 fast/text-autosizing/ios/text-size-adjust-inline-style.html [ Skip ]
@@ -1776,6 +1776,9 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 [ Catalina Mojave ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
 [ Catalina Mojave ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
 
+# These tests require macOS Monterey.
+[ Catalina Mojave BigSur ] platform/mac/media/media-source/media-vorbis-partial.html [ Skip ]
+
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
 webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass ]
@@ -2163,10 +2166,6 @@ webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 # @counter-style WPT failures specific to Mac platforms
 [ Mojave Catalina ] imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ ImageOnlyFailure ]
 
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 

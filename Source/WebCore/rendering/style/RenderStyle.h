@@ -755,12 +755,10 @@ public:
     const Length& scrollPaddingLeft() const;
     const Length& scrollPaddingRight() const;
 
-#if ENABLE(CSS_SCROLL_SNAP)
     bool hasSnapPosition() const;
     const ScrollSnapType scrollSnapType() const;
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
     Color tapHighlightColor() const { return m_rareInheritedData->tapHighlightColor; }
@@ -1315,11 +1313,9 @@ public:
     void setScrollPaddingLeft(Length&&);
     void setScrollPaddingRight(Length&&);
 
-#if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(const ScrollSnapType);
     void setScrollSnapAlign(const ScrollSnapAlign&);
     void setScrollSnapStop(const ScrollSnapStop);
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
     void setTapHighlightColor(const Color& c) { SET_VAR(m_rareInheritedData, tapHighlightColor, c); }
@@ -1727,11 +1723,9 @@ public:
     static Length initialScrollMargin() { return Length(LengthType::Fixed); }
     static Length initialScrollPadding() { return Length(LengthType::Auto); }
 
-#if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
-#endif
 
 #if ENABLE(CSS_TRAILING_WORD)
     static TrailingWord initialTrailingWord() { return TrailingWord::Auto; }

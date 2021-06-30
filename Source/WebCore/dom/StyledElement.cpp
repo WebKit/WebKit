@@ -37,6 +37,7 @@
 #include "DOMTokenList.h"
 #include "ElementRareData.h"
 #include "HTMLElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"
@@ -292,15 +293,21 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
 void StyledElement::rebuildPresentationalHintStyle()
 {
-    RefPtr<StyleProperties> style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
+    auto style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
     for (const Attribute& attribute : attributesIterator())
-        collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), static_cast<MutableStyleProperties&>(*style));
+        collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
+
+    if (is<HTMLImageElement>(*this))
+        collectExtraStyleForPresentationalHints(style);
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
     UniqueElementData& elementData = ensureUniqueElementData();
 
     elementData.setPresentationalHintStyleIsDirty(false);
-    elementData.m_presentationalHintStyle = style->isEmpty() ? nullptr : WTFMove(style);
+    if (style->isEmpty())
+        elementData.m_presentationalHintStyle = nullptr;
+    else
+        elementData.m_presentationalHintStyle = WTFMove(style);
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)

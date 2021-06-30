@@ -51,6 +51,10 @@ public:
     virtual void speak(const String&) = 0;
     virtual void stopSpeaking() = 0;
 
+#if ENABLE(IMAGE_ANALYSIS)
+    virtual bool supportsLookUpInImages() = 0;
+#endif
+
 #if HAVE(TRANSLATION_UI_SERVICES)
     virtual void handleTranslation(const TranslationContextMenuInfo&) = 0;
 #endif

@@ -13,10 +13,12 @@ var y = {};
 f(x, 42);
 f(y, {});
 
-while (!numberOfDFGCompiles(g)) {
+for (let i = 0; i < 1000; ++i) {
     optimizeNextInvocation(g);
     if (typeof g(x) !== 'number')
         throw 'failed warming up';
+    if (numberOfDFGCompiles(g))
+        break;
 }
 
 if (typeof g(y) !== 'string')

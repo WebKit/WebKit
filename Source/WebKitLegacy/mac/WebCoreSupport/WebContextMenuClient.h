@@ -60,6 +60,10 @@ public:
     void searchWithSpotlight() override;
     void showContextMenu() override;
 
+#if ENABLE(IMAGE_ANALYSIS)
+    bool supportsLookUpInImages() final { return false; }
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     // WebSharingServicePickerClient
     void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;

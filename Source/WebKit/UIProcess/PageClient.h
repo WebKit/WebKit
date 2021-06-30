@@ -160,6 +160,10 @@ class WebProcessProxy;
 
 enum class ContinueUnsafeLoad : bool { No, Yes };
 
+#if ENABLE(IMAGE_ANALYSIS)
+enum class ImageAnalysisType : uint8_t { Text, VisualSearch };
+#endif
+
 struct FocusedElementInformation;
 struct FrameInfoData;
 struct InteractionInformationAtPosition;
@@ -540,7 +544,7 @@ public:
 
 #if ENABLE(IMAGE_ANALYSIS)
     virtual void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
-    virtual void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
+    virtual void computeHasImageAnalysisResults(const URL&, ShareableBitmap&, ImageAnalysisType, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

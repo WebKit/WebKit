@@ -232,7 +232,6 @@ struct LogArgument<AVPlayerTimeControlStatus> {
 }; // namespace WTF
 
 namespace WebCore {
-using namespace PAL;
 
 static NSArray *assetMetadataKeyNames();
 static NSArray *itemKVOProperties();
@@ -572,7 +571,6 @@ void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 
 void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
 {
-    using namespace PAL;
     INFO_LOG(LOGIDENTIFIER);
 
     if (!m_avAsset || m_imageGenerator)
@@ -582,8 +580,8 @@ void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
 
     [m_imageGenerator.get() setApertureMode:AVAssetImageGeneratorApertureModeCleanAperture];
     [m_imageGenerator.get() setAppliesPreferredTrackTransform:YES];
-    [m_imageGenerator.get() setRequestedTimeToleranceBefore:kCMTimeZero];
-    [m_imageGenerator.get() setRequestedTimeToleranceAfter:kCMTimeZero];
+    [m_imageGenerator.get() setRequestedTimeToleranceBefore:PAL::kCMTimeZero];
+    [m_imageGenerator.get() setRequestedTimeToleranceAfter:PAL::kCMTimeZero];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
@@ -671,7 +669,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::getStartDate() const
     if (!date)
         return MediaTime::invalidTime();
 
-    double currentTime = CMTimeGetSeconds([m_avPlayerItem currentTime]) * 1000;
+    double currentTime = PAL::CMTimeGetSeconds([m_avPlayerItem currentTime]) * 1000;
 
     // Rounding due to second offset error when subtracting.
     return MediaTime::createWithDouble(round(date - currentTime));
@@ -1088,8 +1086,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
     ASSERT(!m_currentTimeObserver);
-    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[this] (CMTime time) {
-        currentMediaTimeDidChange(PAL::toMediaTime(time));
+    auto weakThis = makeWeakPtr(*this);
+    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis] (CMTime time) {
+        if (weakThis)
+            weakThis->currentMediaTimeDidChange(PAL::toMediaTime(time));
     }];
 
     setDelayCallbacks(false);
@@ -1421,7 +1421,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::currentMediaTime() const
         return MediaTime::zeroTime();
 
     if (!m_wallClockAtCachedCurrentTime)
-        currentMediaTimeDidChange(toMediaTime([m_avPlayerItem.get() currentTime]));
+        currentMediaTimeDidChange(PAL::toMediaTime([m_avPlayerItem.get() currentTime]));
     ASSERT(m_wallClockAtCachedCurrentTime);
 
     auto itemTime = m_cachedCurrentMediaTime;
@@ -1466,8 +1466,8 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
     CMTime cmAfter = PAL::toCMTime(positiveTolerance);
 
     // [AVPlayerItem seekToTime] will throw an exception if toleranceBefore is negative.
-    if (CMTimeCompare(cmBefore, kCMTimeZero) < 0)
-        cmBefore = kCMTimeZero;
+    if (PAL::CMTimeCompare(cmBefore, PAL::kCMTimeZero) < 0)
+        cmBefore = PAL::kCMTimeZero;
     
     auto weakThis = makeWeakPtr(*this);
 
@@ -1584,6 +1584,8 @@ void MediaPlayerPrivateAVFoundationObjC::setPitchCorrectionAlgorithm(MediaPlayer
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
 {
+    using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
+
     auto timeRanges = makeUnique<PlatformTimeRanges>();
 
     if (!m_avPlayerItem)
@@ -1592,13 +1594,15 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platform
     for (NSValue *thisRangeValue in m_cachedLoadedRanges.get()) {
         CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
         if (CMTIMERANGE_IS_VALID(timeRange) && !CMTIMERANGE_IS_EMPTY(timeRange))
-            timeRanges->add(PAL::toMediaTime(timeRange.start), PAL::toMediaTime(CMTimeRangeGetEnd(timeRange)));
+            timeRanges->add(PAL::toMediaTime(timeRange.start), PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange)));
     }
     return timeRanges;
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable() const
 {
+    using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
+
     if (!m_cachedSeekableRanges || ![m_cachedSeekableRanges count])
         return MediaTime::zeroTime();
 
@@ -1619,6 +1623,8 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable() const
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
 {
+    using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
+
     if (!m_cachedSeekableRanges)
         m_cachedSeekableRanges = [m_avPlayerItem seekableTimeRanges];
 
@@ -1631,7 +1637,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
         if (!CMTIMERANGE_IS_VALID(timeRange) || CMTIMERANGE_IS_EMPTY(timeRange))
             continue;
         
-        MediaTime endOfRange = PAL::toMediaTime(CMTimeRangeGetEnd(timeRange));
+        MediaTime endOfRange = PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange));
         if (maxTimeSeekable < endOfRange)
             maxTimeSeekable = endOfRange;
     }
@@ -1640,6 +1646,8 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded() const
 {
+    using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
+
     if (!m_cachedLoadedRanges)
         return MediaTime::zeroTime();
 
@@ -1649,7 +1657,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded() const
         if (!CMTIMERANGE_IS_VALID(timeRange) || CMTIMERANGE_IS_EMPTY(timeRange))
             continue;
         
-        MediaTime endOfRange = PAL::toMediaTime(CMTimeRangeGetEnd(timeRange));
+        MediaTime endOfRange = PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange));
         if (maxTimeLoaded < endOfRange)
             maxTimeLoaded = endOfRange;
     }
@@ -1801,7 +1809,7 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
     MonotonicTime start = MonotonicTime::now();
 
     [m_imageGenerator.get() setMaximumSize:CGSize(rect.size())];
-    RetainPtr<CGImageRef> rawImage = adoptCF([m_imageGenerator.get() copyCGImageAtTime:CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
+    RetainPtr<CGImageRef> rawImage = adoptCF([m_imageGenerator.get() copyCGImageAtTime:PAL::CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
     RetainPtr<CGImageRef> image = adoptCF(CGImageCreateCopyWithColorSpace(rawImage.get(), sRGBColorSpaceRef()));
 
     INFO_LOG(LOGIDENTIFIER, "creating image took ", (MonotonicTime::now() - start).seconds());
@@ -1987,7 +1995,7 @@ void MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest(AVAssetResourceLo
 
 bool MediaPlayerPrivateAVFoundationObjC::isAvailable()
 {
-    return PAL::isAVFoundationFrameworkAvailable() && isCoreMediaFrameworkAvailable();
+    return PAL::isAVFoundationFrameworkAvailable() && PAL::isCoreMediaFrameworkAvailable();
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(const MediaTime& timeValue) const
@@ -2899,7 +2907,7 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayer *player)
     if (!PAL::isAVFoundationFrameworkAvailable())
         return nil;
 
-    if (auto context = OutputContext::sharedAudioPresentationOutputContext())
+    if (auto context = PAL::OutputContext::sharedAudioPresentationOutputContext())
         return context->deviceName();
 
     if (player.externalPlaybackType != AVPlayerExternalPlaybackTypeAirPlay)
@@ -3233,9 +3241,9 @@ void MediaPlayerPrivateAVFoundationObjC::metadataGroupDidArrive(const RetainPtr<
         for (AVMetadataItem *item in group.items) {
             RetainPtr<AVMutableMetadataItem> itemCopy = adoptNS([item mutableCopy]);
             if (!CMTIME_IS_VALID(itemCopy.get().time))
-                itemCopy.get().time = CMTimeMakeWithSeconds(groupStartTime, MediaTime::DefaultTimeScale);
+                itemCopy.get().time = PAL::CMTimeMakeWithSeconds(groupStartTime, MediaTime::DefaultTimeScale);
             if (!CMTIME_IS_VALID(itemCopy.get().duration))
-                itemCopy.get().duration = toCMTime(groupDuration);
+                itemCopy.get().duration = PAL::toCMTime(groupDuration);
             [groupCopy addObject:itemCopy.get()];
         }
 
@@ -3277,7 +3285,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(const RetainPtr<NSArr
 
         MediaTime end = MediaTime::positiveInfiniteTime();
         auto duration = item.duration;
-        if (CMTIME_IS_VALID(duration) && CMTimeGetSeconds(duration) > 0.001)
+        if (CMTIME_IS_VALID(duration) && PAL::CMTimeGetSeconds(duration) > 0.001)
             end = start + PAL::toMediaTime(duration);
 
         AtomString type = nullAtom();
@@ -3456,7 +3464,7 @@ bool MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime(WTF::Function<vo
     if (m_timeObserver)
         [m_avPlayer removeTimeObserver:m_timeObserver.get()];
 
-    m_timeObserver = [m_avPlayer addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:toCMTime(time)]] queue:dispatch_get_main_queue() usingBlock:^{
+    m_timeObserver = [m_avPlayer addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(time)]] queue:dispatch_get_main_queue() usingBlock:^{
         taskIn();
     }];
     return true;

@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import json
 import os
 import socket
@@ -6,7 +5,7 @@ import threading
 import time
 import traceback
 import uuid
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 from .base import (CallbackHandler,
                    CrashtestExecutor,
@@ -20,13 +19,14 @@ from .protocol import (BaseProtocolPart,
                        Protocol,
                        SelectorProtocolPart,
                        ClickProtocolPart,
+                       CookiesProtocolPart,
                        SendKeysProtocolPart,
                        ActionSequenceProtocolPart,
                        TestDriverProtocolPart,
                        GenerateTestReportProtocolPart,
                        SetPermissionProtocolPart,
-                       VirtualAuthenticatorProtocolPart)
-from ..testrunner import Stop
+                       VirtualAuthenticatorProtocolPart,
+                       DebugProtocolPart)
 
 import webdriver as client
 from webdriver import error
@@ -190,6 +190,15 @@ class WebDriverClickProtocolPart(ClickProtocolPart):
         return element.click()
 
 
+class WebDriverCookiesProtocolPart(CookiesProtocolPart):
+    def setup(self):
+        self.webdriver = self.parent.webdriver
+
+    def delete_all_cookies(self):
+        self.logger.info("Deleting all cookies")
+        return self.webdriver.send_session_command("DELETE", "cookie")
+
+
 class WebDriverSendKeysProtocolPart(SendKeysProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
@@ -283,17 +292,24 @@ class WebDriverVirtualAuthenticatorProtocolPart(VirtualAuthenticatorProtocolPart
         return self.webdriver.send_session_command("POST", "webauthn/authenticator/%s/uv" % authenticator_id, uv)
 
 
+class WebDriverDebugProtocolPart(DebugProtocolPart):
+    def load_devtools(self):
+        raise NotImplementedError()
+
+
 class WebDriverProtocol(Protocol):
     implements = [WebDriverBaseProtocolPart,
                   WebDriverTestharnessProtocolPart,
                   WebDriverSelectorProtocolPart,
                   WebDriverClickProtocolPart,
+                  WebDriverCookiesProtocolPart,
                   WebDriverSendKeysProtocolPart,
                   WebDriverActionSequenceProtocolPart,
                   WebDriverTestDriverProtocolPart,
                   WebDriverGenerateTestReportProtocolPart,
                   WebDriverSetPermissionProtocolPart,
-                  WebDriverVirtualAuthenticatorProtocolPart]
+                  WebDriverVirtualAuthenticatorProtocolPart,
+                  WebDriverDebugProtocolPart]
 
     def __init__(self, executor, browser, capabilities, **kwargs):
         super(WebDriverProtocol, self).__init__(executor, browser)
@@ -344,8 +360,9 @@ class WebDriverRun(TimedRunner):
         try:
             self.protocol.base.set_timeout(self.timeout + self.extra_timeout)
         except client.UnknownErrorException:
-            self.logger.error("Lost WebDriver connection")
-            return Stop
+            msg = "Lost WebDriver connection"
+            self.logger.error(msg)
+            return ("INTERNAL-ERROR", msg)
 
     def run_func(self):
         try:
@@ -497,7 +514,7 @@ class WebDriverRefTestExecutor(RefTestExecutor):
 
     def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  screenshot_cache=None, close_after_done=True,
-                 debug_info=None, capabilities=None, **kwargs):
+                 debug_info=None, capabilities=None, debug_test=False, **kwargs):
         """WebDriver-based executor for reftests"""
         RefTestExecutor.__init__(self,
                                  logger,
@@ -512,6 +529,7 @@ class WebDriverRefTestExecutor(RefTestExecutor):
         self.implementation = RefTestImplementation(self)
         self.close_after_done = close_after_done
         self.has_window = False
+        self.debug_test = debug_test
 
         with open(os.path.join(here, "test-wait.js")) as f:
             self.wait_script = f.read() % {"classname": "reftest-wait"}
@@ -535,6 +553,9 @@ class WebDriverRefTestExecutor(RefTestExecutor):
         self.protocol.webdriver.window.size = (800 + width_offset, 600 + height_offset)
 
         result = self.implementation.run_test(test)
+
+        if self.debug_test and result["status"] in ["PASS", "FAIL", "ERROR"] and "extra" in result:
+            self.protocol.debug.load_reftest_analyzer(test, result)
 
         return self.convert_result(test, result)
 

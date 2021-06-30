@@ -7,10 +7,10 @@ PASS Partial interface Window: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
 PASS Window includes WindowEventHandlers: member names are unique
 PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 PASS Performance interface: existence and properties of interface object
 PASS Performance interface object length
 PASS Performance interface object name
@@ -26,7 +26,6 @@ PASS Performance interface: performance must inherit property "now()" with the p
 PASS Performance interface: performance must inherit property "timeOrigin" with the proper type
 PASS Performance interface: performance must inherit property "toJSON()" with the proper type
 PASS Performance interface: default toJSON operation on performance
-PASS Window interface: existence and properties of interface object
 PASS WorkerGlobalScope interface: attribute performance
 PASS WorkerGlobalScope interface: self must inherit property "performance" with the proper type
 

@@ -8,19 +8,19 @@ PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
 PASS Partial interface Document[2]: member names are unique
 PASS Partial interface Document[3]: member names are unique
 PASS Element includes Animatable: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
-PASS Document includes NonElementParentNode: member names are unique
-PASS Document includes DocumentOrShadowRoot: member names are unique
-PASS Document includes ParentNode: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
 PASS Document includes DocumentAndElementEventHandlers: member names are unique
-PASS DocumentFragment includes NonElementParentNode: member names are unique
-PASS DocumentFragment includes ParentNode: member names are unique
-PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
 PASS AnimationTimeline interface: existence and properties of interface object
 PASS AnimationTimeline interface object length
 PASS AnimationTimeline interface object name

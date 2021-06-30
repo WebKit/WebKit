@@ -36,6 +36,7 @@ public:
     virtual ~HTMLPictureElement();
 
     void sourcesChanged();
+    void sourceDimensionAttributesChanged(const HTMLSourceElement&);
 
 #if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreviewImage();

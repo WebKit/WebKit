@@ -31,6 +31,7 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
+#include "StyleBuilderState.h"
 
 namespace WebCore {
 

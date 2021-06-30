@@ -200,7 +200,7 @@ class ClearUtils final : angle::NonCopyable
   private:
     void ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx, uint32_t numColorAttachments);
 
-    void setupClearWithDraw(const gl::Context *context,
+    angle::Result setupClearWithDraw(const gl::Context *context,
                             RenderCommandEncoder *cmdEncoder,
                             const ClearRectParams &params);
     id<MTLDepthStencilState> getClearDepthStencilState(const gl::Context *context,
@@ -236,7 +236,7 @@ class ColorBlitUtils final : angle::NonCopyable
                                                    int sourceTextureType,
                                                    RenderPipelineCache *cacheOut);
 
-    void setupColorBlitWithDraw(const gl::Context *context,
+    angle::Result setupColorBlitWithDraw(const gl::Context *context,
                                 RenderCommandEncoder *cmdEncoder,
                                 const ColorBlitParams &params);
 
@@ -280,7 +280,7 @@ class DepthStencilBlitUtils final : angle::NonCopyable
                                                    int sourceStencilTextureType,
                                                    RenderPipelineCache *cacheOut);
 
-    void setupDepthStencilBlitWithDraw(const gl::Context *context,
+    angle::Result setupDepthStencilBlitWithDraw(const gl::Context *context,
                                        RenderCommandEncoder *cmdEncoder,
                                        const DepthStencilBlitParams &params);
 

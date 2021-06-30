@@ -1,12 +1,9 @@
-import sys
 from os.path import dirname, join
 
 from collections import OrderedDict
 
 from xml.parsers import expat
 import xml.etree.ElementTree as etree  # noqa: N813
-
-from six import text_type
 
 MYPY = False
 if MYPY:
@@ -39,11 +36,7 @@ def _fixname(key):
     return name
 
 
-if sys.version_info[0:2] >= (3, 2):
-    _undefined_entity_code = expat.errors.codes[expat.errors.XML_ERROR_UNDEFINED_ENTITY]  # type: int
-else:
-    _codes = {expat.ErrorString(i): i for i in range(0x100)}  # type: Dict[str, int]
-    _undefined_entity_code = _codes[expat.errors.XML_ERROR_UNDEFINED_ENTITY]
+_undefined_entity_code = expat.errors.codes[expat.errors.XML_ERROR_UNDEFINED_ENTITY]  # type: int
 
 
 class XMLParser(object):
@@ -65,9 +58,6 @@ class XMLParser(object):
         self._parser.SetParamEntityParsing(expat.XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE)
         # parser callbacks
         self._parser.XmlDeclHandler = self._xml_decl
-        # mypy generates a type error in py2 because it wants
-        # StartElementHandler to take str, List[str]. But the code
-        # seems to always pass in Text to this function
         self._parser.StartElementHandler = self._start
         self._parser.EndElementHandler = self._end
         self._parser.CharacterDataHandler = self._data
@@ -83,7 +73,7 @@ class XMLParser(object):
 
     def _start(self, tag, attrib_in):
         # type: (Text, List[str]) -> etree.Element
-        assert isinstance(tag, text_type)
+        assert isinstance(tag, str)
         self._fed_data = None
         tag = _fixname(tag)
         attrib = OrderedDict()  # type: Dict[Union[bytes, Text], Union[bytes, Text]]

@@ -10,5 +10,5 @@ function test() {
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; i++)
+for (var i = 0; i < 1e4; i++)
   test();

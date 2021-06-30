@@ -1,24 +1,24 @@
 import socket
-import sys
 
-from six import binary_type, text_type
+
+from .logger import get_logger
 
 
 def isomorphic_decode(s):
     """Decodes a binary string into a text string using iso-8859-1.
 
-    Returns `unicode` in Python 2 and `str` in Python 3. The function is a
-    no-op if the argument already has a text type. iso-8859-1 is chosen because
-    it is an 8-bit encoding whose code points range from 0x0 to 0xFF and the
-    values are the same as the binary representations, so any binary string can
-    be decoded into and encoded from iso-8859-1 without any errors or data
-    loss. Python 3 also uses iso-8859-1 (or latin-1) extensively in http:
+    Returns `str`. The function is a no-op if the argument already has a text
+    type. iso-8859-1 is chosen because it is an 8-bit encoding whose code
+    points range from 0x0 to 0xFF and the values are the same as the binary
+    representations, so any binary string can be decoded into and encoded from
+    iso-8859-1 without any errors or data loss. Python 3 also uses iso-8859-1
+    (or latin-1) extensively in http:
     https://github.com/python/cpython/blob/273fc220b25933e443c82af6888eb1871d032fb8/Lib/http/client.py#L213
     """
-    if isinstance(s, text_type):
+    if isinstance(s, str):
         return s
 
-    if isinstance(s, binary_type):
+    if isinstance(s, bytes):
         return s.decode("iso-8859-1")
 
     raise TypeError("Unexpected value (expecting string-like): %r" % s)
@@ -27,14 +27,13 @@ def isomorphic_decode(s):
 def isomorphic_encode(s):
     """Encodes a text-type string into binary data using iso-8859-1.
 
-    Returns `str` in Python 2 and `bytes` in Python 3. The function is a no-op
-    if the argument already has a binary type. This is the counterpart of
-    isomorphic_decode.
+    Returns `bytes`. The function is a no-op if the argument already has a
+    binary type. This is the counterpart of isomorphic_decode.
     """
-    if isinstance(s, binary_type):
+    if isinstance(s, bytes):
         return s
 
-    if isinstance(s, text_type):
+    if isinstance(s, str):
         return s.encode("iso-8859-1")
 
     raise TypeError("Unexpected value (expecting string-like): %r" % s)
@@ -87,6 +86,7 @@ def is_bad_port(port):
         42,    # name
         43,    # nicname
         53,    # domain
+        69,    # tftp
         77,    # priv-rjs
         79,    # finger
         87,    # ttylink
@@ -104,8 +104,10 @@ def is_bad_port(port):
         119,   # nntp
         123,   # ntp
         135,   # loc-srv / epmap
-        139,   # netbios
+        137,   # netbios-ns
+        139,   # netbios-ssn
         143,   # imap2
+        161,   # snmp
         179,   # bgp
         389,   # ldap
         427,   # afp (alternate)
@@ -120,25 +122,33 @@ def is_bad_port(port):
         532,   # netnews
         540,   # uucp
         548,   # afp
+        554,   # rtsp
         556,   # remotefs
         563,   # nntp+ssl
         587,   # smtp (outgoing)
         601,   # syslog-conn
         636,   # ldap+ssl
+        989,   # ftps-data
+        999,   # ftps
         993,   # ldap+ssl
         995,   # pop3+ssl
+        1719,  # h323gatestat
+        1720,  # h323hostcall
+        1723,  # pptp
         2049,  # nfs
         3659,  # apple-sasl
         4045,  # lockd
         5060,  # sip
         5061,  # sips
         6000,  # x11
+        6566,  # sane-port
         6665,  # irc (alternate)
         6666,  # irc (alternate)
         6667,  # irc (default)
         6668,  # irc (alternate)
         6669,  # irc (alternate)
         6697,  # irc+tls
+        10080,  # amanda
     ]
 
 
@@ -154,9 +164,17 @@ def get_port(host=''):
     return port
 
 def http2_compatible():
-    # Currently, the HTTP/2.0 server is only working in python 2.7.10+ or 3.6+ and OpenSSL 1.0.2+
+    # The HTTP/2.0 server requires OpenSSL 1.0.2+.
+    #
+    # For systems using other SSL libraries (e.g. LibreSSL), we assume they
+    # have the necessary support.
     import ssl
+    if not ssl.OPENSSL_VERSION.startswith("OpenSSL"):
+        logger = get_logger()
+        logger.warning(
+            'Skipping HTTP/2.0 compatibility check as system is not using '
+            'OpenSSL (found: %s)' % ssl.OPENSSL_VERSION)
+        return True
+
     ssl_v = ssl.OPENSSL_VERSION_INFO
-    py_v = sys.version_info
-    return (((py_v[0] == 2 and py_v[1] == 7 and py_v[2] >= 10) or (py_v[0] == 3 and py_v[1] >= 6)) and
-        (ssl_v[0] == 1 and (ssl_v[1] == 1 or (ssl_v[1] == 0 and ssl_v[2] >= 2))))
+    return ssl_v[0] == 1 and (ssl_v[1] == 1 or (ssl_v[1] == 0 and ssl_v[2] >= 2))

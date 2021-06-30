@@ -7,7 +7,7 @@ layer at (0,0) size 800x641
         RenderText {#text} at (0,0) size 344x19
           text run at (0,0) width 344: "This tests the selection methods on the new text field."
       RenderBlock {P} at (0,36) size 784x25
-        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,77) size 784x540
         RenderBR {BR} at (0,0) size 0x19

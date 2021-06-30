@@ -584,6 +584,19 @@ PreferFasterClickOverDoubleTap:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)": true
       default: false
 
+PreferInlineTextSelectionInImages:
+  type: bool
+  humanReadableName: "Inline Text Selection in Images"
+  humanReadableDescription: "Prefer inline text selection in images over using the context menu"
+  condition: ENABLE(IMAGE_ANALYSIS)
+  defaultValue:
+    WebCore:
+      default: true
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
 PreferPageRenderingUpdatesNear60FPSEnabled:
   type: bool
   humanReadableName: "Prefer Page Rendering Updates near 60fps"

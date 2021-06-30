@@ -74,7 +74,6 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollOrigin))
         m_scrollOrigin = state.scrollOrigin();
 
-#if ENABLE(CSS_SCROLL_SNAP)
     if (state.hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo))
         m_snapOffsetsInfo = state.snapOffsetsInfo();
 
@@ -83,7 +82,6 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex))
         m_currentVerticalSnapPointIndex = state.currentVerticalSnapPointIndex();
-#endif
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams))
         m_scrollableAreaParameters = state.scrollableAreaParameters();
@@ -311,7 +309,6 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
     if (m_scrollOrigin != IntPoint())
         ts.dumpProperty("scroll origin", m_scrollOrigin);
 
-#if ENABLE(CSS_SCROLL_SNAP)
     if (m_snapOffsetsInfo.horizontalSnapOffsets.size())
         ts.dumpProperty("horizontal snap offsets", m_snapOffsetsInfo.horizontalSnapOffsets);
 
@@ -323,8 +320,6 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
 
     if (m_currentVerticalSnapPointIndex)
         ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);
-    
-#endif
 
     ts.dumpProperty("scrollable area parameters", m_scrollableAreaParameters);
 
@@ -334,7 +329,6 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
 #endif
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 const FloatScrollSnapOffsetsInfo& ScrollingTreeScrollingNode::snapOffsetsInfo() const
 {
     return m_snapOffsetsInfo;
@@ -359,7 +353,6 @@ void ScrollingTreeScrollingNode::setCurrentVerticalSnapPointIndex(std::optional<
 {
     m_currentVerticalSnapPointIndex = index;
 }
-#endif
 
 } // namespace WebCore
 

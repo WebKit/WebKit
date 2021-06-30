@@ -115,12 +115,10 @@ struct MapWrapper {
 
     ~MapWrapper()
     {
-        munmap(map, size);
         FileSystem::closeFile(fileDescriptor);
     }
 
-    void* map;
-    size_t size;
+    FileSystem::MappedFileData mappedFile;
     FileSystem::PlatformFileHandle fileDescriptor;
 };
 
@@ -132,10 +130,10 @@ static void deleteMapWrapper(MapWrapper* wrapper)
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
 {
     size_t size = mappedFile.size();
-    void* map = mappedFile.leakHandle();
+    const void* map = mappedFile.data();
     ASSERT(map);
     ASSERT(map != MAP_FAILED);
-    MapWrapper* wrapper = new MapWrapper { map, size, fd };
+    MapWrapper* wrapper = new MapWrapper { WTFMove(mappedFile), fd };
     return { adoptGRef(g_bytes_new_with_free_func(map, size, reinterpret_cast<GDestroyNotify>(deleteMapWrapper), wrapper)), fd };
 }
 

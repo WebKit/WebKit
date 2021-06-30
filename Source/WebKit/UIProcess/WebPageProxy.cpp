@@ -212,6 +212,7 @@
 
 #if PLATFORM(COCOA)
 #include "InsertTextOptions.h"
+#include "QuickLookPreviewActivity.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "UserMediaCaptureManagerProxy.h"
@@ -300,18 +301,14 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #include "RemoteMediaSessionCoordinatorProxy.h"
+#endif
+
+#if HAVE(GROUP_ACTIVITIES)
+#include "GroupActivitiesSessionNotifier.h"
+#endif
 
 #if ENABLE(APP_HIGHLIGHTS)
 #include <WebCore/HighlightVisibility.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKCoordinatorAdditions.h>
-#else
-#define WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
-#define WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
-#define WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
-#endif
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -571,8 +568,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         process.setIgnoreInvalidMessageForTesting();
 #endif
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
+#if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
+    GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
 #endif
 }
 
@@ -612,8 +609,8 @@ WebPageProxy::~WebPageProxy()
 
     websiteDataStore().networkProcess().send(Messages::NetworkProcess::RemoveWebPageNetworkParameters(sessionID(), m_identifier), 0);
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
+#if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
+    GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
 }
 
@@ -1493,6 +1490,10 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
 RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequest&& simulatedRequest, WebCore::ResourceResponse&& simulatedResponse, const IPC::DataReference& data)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadSimulatedRequest:");
+
+#if PLATFORM(COCOA)
+    setLastNavigationWasAppBound(simulatedRequest);
+#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (simulatedResponse.mimeType() == "text/html"_s && !isFullWebBrowser())
@@ -4919,8 +4920,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #endif
     }
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
+#if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
+    if (frame->isMainFrame())
+        GroupActivitiesSessionNotifier::sharedNotifier().webPageURLChanged(*this);
 #endif
 }
 
@@ -6908,9 +6910,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         ++m_pendingLearnOrIgnoreWordMessageCount;
         break;
 
-    case ContextMenuItemTagLookUpImage:
+    case ContextMenuItemTagQuickLookImage:
 #if ENABLE(IMAGE_ANALYSIS)
-        handleContextMenuLookUpImage();
+        if (m_activeContextMenu)
+            handleContextMenuQuickLookImage(m_activeContextMenu->quickLookPreviewActivity());
 #endif
         return;
 
@@ -7946,7 +7949,6 @@ static const Vector<ASCIILiteral>& gpuMachServices()
         "com.apple.MTLCompilerService"_s,
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.cvmsServ"_s,
-        "com.apple.print.normalizerd"_s,
 #endif
     });
     return services;
@@ -8503,14 +8505,15 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 
 
 #if ENABLE(IMAGE_ANALYSIS)
+
 void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completionHandler)
 {
     pageClient().requestTextRecognition(imageURL, imageData, WTFMove(completionHandler));
 }
 
-void WebPageProxy::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+void WebPageProxy::computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType type, CompletionHandler<void(bool)>&& completion)
 {
-    pageClient().computeHasVisualSearchResults(imageURL, imageBitmap, WTFMove(completion));
+    pageClient().computeHasImageAnalysisResults(imageURL, imageBitmap, type, WTFMove(completion));
 }
 
 void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
@@ -8522,7 +8525,8 @@ void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& resul
 
     sendWithAsyncReply(Messages::WebPage::UpdateWithTextRecognitionResult(WTFMove(results), context, location), WTFMove(completionHandler));
 }
-#endif
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(ENCRYPTED_MEDIA)
 MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermissionRequestManager()

@@ -272,6 +272,7 @@ private:
     String brailleLabel() const override { return stringAttributeValue(AXPropertyName::BrailleLabel); }
     String brailleRoleDescription() const override { return stringAttributeValue(AXPropertyName::BrailleRoleDescription); }
     String embeddedImageDescription() const override { return stringAttributeValue(AXPropertyName::EmbeddedImageDescription); }
+    std::optional<AccessibilityChildrenVector> imageOverlayElements() override { return std::nullopt; }
 
     String computedRoleString() const override { return stringAttributeValue(AXPropertyName::ComputedRoleString); }
     bool isValueAutofilled() const override { return boolAttributeValue(AXPropertyName::IsValueAutofilled); }
@@ -465,6 +466,7 @@ private:
     bool isAccessibilityRenderObject() const override;
     bool isAccessibilityScrollbar() const override;
     bool isAccessibilityScrollViewInstance() const override;
+    bool isAXImageInstance() const override;
     bool isAccessibilitySVGRoot() const override;
     bool isAccessibilitySVGElement() const override;
     bool isAccessibilityTableInstance() const override;

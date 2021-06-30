@@ -70,7 +70,6 @@ public:
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     WEBCORE_EXPORT void setScrollOrigin(const IntPoint&);
 
-#if ENABLE(CSS_SCROLL_SNAP)
     const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const { return m_snapOffsetsInfo; }
     WEBCORE_EXPORT void setSnapOffsetsInfo(const FloatScrollSnapOffsetsInfo& newOffsetsInfo);
 
@@ -79,7 +78,6 @@ public:
 
     std::optional<unsigned> currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }
     WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
-#endif
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
     WEBCORE_EXPORT void setScrollableAreaParameters(const ScrollableAreaParameters& params);
@@ -129,11 +127,9 @@ private:
     FloatPoint m_scrollPosition;
     IntPoint m_scrollOrigin;
 
-#if ENABLE(CSS_SCROLL_SNAP)
     FloatScrollSnapOffsetsInfo m_snapOffsetsInfo;
     std::optional<unsigned> m_currentHorizontalSnapPointIndex;
     std::optional<unsigned> m_currentVerticalSnapPointIndex;
-#endif
 
     LayerRepresentation m_scrollContainerLayer;
     LayerRepresentation m_scrolledContentsLayer;

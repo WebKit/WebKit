@@ -64,8 +64,8 @@
     undefined setLineCap(optional DOMString cap);
     undefined setLineJoin(optional DOMString join);
     undefined setMiterLimit(optional unrestricted float limit = NaN);
-    attribute sequence<unrestricted float> webkitLineDash;
-    [ImplementedAs=lineDashOffset] attribute unrestricted float webkitLineDashOffset;
+    attribute sequence<unrestricted double> webkitLineDash;
+    [ImplementedAs=lineDashOffset] attribute unrestricted double webkitLineDashOffset;
 
     // Non-standard legacy aliases (CanvasShadowStyles).
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, optional DOMString color, optional unrestricted float alpha);

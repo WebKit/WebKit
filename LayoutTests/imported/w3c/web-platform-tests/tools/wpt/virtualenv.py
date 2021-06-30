@@ -55,13 +55,9 @@ class Virtualenv(object):
 
     @property
     def pip_path(self):
-        if sys.version_info.major >= 3:
-            pip_executable = "pip3"
-        else:
-            pip_executable = "pip2"
-        path = find_executable(pip_executable, self.bin_path)
+        path = find_executable("pip3", self.bin_path)
         if path is None:
-            raise ValueError("%s not found" % pip_executable)
+            raise ValueError("pip3 not found")
         return path
 
     @property
@@ -95,6 +91,13 @@ class Virtualenv(object):
         return self._working_set
 
     def activate(self):
+        if sys.platform == 'darwin':
+            # The default Python on macOS sets a __PYVENV_LAUNCHER__ environment
+            # variable which affects invocation of python (e.g. via pip) in a
+            # virtualenv. Unset it if present to avoid this. More background:
+            # https://github.com/web-platform-tests/wpt/issues/27377
+            # https://github.com/python/cpython/pull/9516
+            os.environ.pop('__PYVENV_LAUNCHER__', None)
         path = os.path.join(self.bin_path, "activate_this.py")
         with open(path) as f:
             exec(f.read(), {"__file__": path})

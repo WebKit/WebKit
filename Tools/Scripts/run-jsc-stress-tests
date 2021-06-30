@@ -556,6 +556,7 @@ B3O1_OPTIONS = ["--defaultB3OptLevel=1", "--useDataICInOptimizingJIT=1"]
 B3O0_OPTIONS = ["--maxDFGNodesInBasicBlockForPreciseAnalysis=100", "--defaultB3OptLevel=0"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
+EXECUTABLE_FUZZER_OPTIONS = ["--useExecutableAllocationFuzz=true", "--fireExecutableAllocationFuzzRandomly=true"]
 
 require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
 
@@ -828,7 +829,7 @@ def runFTLEagerWatchdog(*optionalTestSpecificOptions)
 end
 
 def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit", "--validateGraph=true", "--validateBCE=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-eager-no-cjit", "--validateGraph=true", "--validateBCE=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + EXECUTABLE_FUZZER_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEagerNoCJITB3O1(*optionalTestSpecificOptions)

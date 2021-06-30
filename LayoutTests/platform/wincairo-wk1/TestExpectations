@@ -393,7 +393,6 @@ webkit.org/b/179296 fast/css/object-fit/object-fit-object.html [ ImageOnlyFailur
 webkit.org/b/179296 fast/css/object-position/object-position-embed.html [ ImageOnlyFailure ]
 webkit.org/b/179296 fast/css/object-position/object-position-object.html [ ImageOnlyFailure ]
 
-fast/css/parse-border-image-repeat-null-crash.html [ Failure ]
 fast/css/parsing-color-contrast.html [ Failure ]
 fast/css/parsing-color-mix.html [ Failure ]
 fast/css/parsing-relative-color-syntax.html [ Failure ]
@@ -447,3 +446,4 @@ editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.ht
 editing/pasteboard/smart-paste-paragraph-003.html [ Failure ]
 
 fast/events/contextmenu-actions-in-selected-text.html [ ImageOnlyFailure ]
+fast/events/contextmenu-lookup-action-for-image.html [ Failure ]

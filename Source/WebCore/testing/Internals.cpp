@@ -4712,8 +4712,6 @@ MockContentFilterSettings& Internals::mockContentFilterSettings()
 
 #endif
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 static void appendOffsets(StringBuilder& builder, const Vector<SnapOffset<LayoutUnit>>& snapOffsets)
 {
     bool justStarting = true;
@@ -4776,7 +4774,6 @@ ExceptionOr<bool> Internals::isScrollSnapInProgress(Element& element)
 
     return scrollableArea->isScrollSnapInProgress();
 }
-#endif
 
 bool Internals::testPreloaderSettingViewport()
 {
@@ -4839,6 +4836,19 @@ void Internals::setMediaControlsHidePlaybackRates(HTMLMediaElement& mediaElement
 }
 
 #endif // ENABLE(VIDEO)
+
+void Internals::setPageMediaVolume(float volume)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+
+    Page* page = document->page();
+    if (!page)
+        return;
+
+    page->setMediaVolume(volume);
+}
 
 #if !PLATFORM(COCOA)
 

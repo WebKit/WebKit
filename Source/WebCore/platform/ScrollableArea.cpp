@@ -467,7 +467,6 @@ String ScrollableArea::verticalScrollbarStateForTesting() const
     return scrollAnimator().verticalScrollbarStateForTesting();
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 const LayoutScrollSnapOffsetsInfo* ScrollableArea::snapOffsetsInfo() const
 {
     return existingScrollAnimator() ? existingScrollAnimator()->snapOffsetsInfo() : nullptr;
@@ -563,15 +562,6 @@ void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
 
     scrollAnimator->scrollToOffsetWithAnimation(newOffset);
 }
-#else
-void ScrollableArea::resnapAfterLayout()
-{
-}
-
-void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation)
-{
-}
-#endif
 
 bool ScrollableArea::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis axis) const
 {

@@ -1,22 +1,22 @@
 def main(request, response):
-    response.headers.set("Access-Control-Allow-Origin", "*")
-    response.headers.set("Access-Control-Allow-Headers", "If-Modified-Since")
+    response.headers.set(b"Access-Control-Allow-Origin", b"*")
+    response.headers.set(b"Access-Control-Allow-Headers", b"If-Modified-Since")
 
     # Just return 304 for any request with If-Modified-Since.
-    modifiedSince = request.headers.get("If-Modified-Since", None)
+    modifiedSince = request.headers.get(b"If-Modified-Since", None)
     if modifiedSince is not None:
         response.status = (304, "Not Modified")
         return ""
 
     # Otherwise return content from parameters.
-    content = request.GET.first("content", None)
-    mime = request.GET.first("mime", "text/plain")
-    date = request.GET.first("date", None)
-    tao = request.GET.first("tao", None)
+    content = request.GET.first(b"content", None)
+    mime = request.GET.first(b"mime", b"text/plain")
+    date = request.GET.first(b"date", None)
+    tao = request.GET.first(b"tao", None)
 
-    if tao == "true":
-        response.headers.set("Timing-Allow-Origin", "*")
-    response.headers.set("Last-Modified", date)
+    if tao == b"true":
+        response.headers.set(b"Timing-Allow-Origin", b"*")
+    response.headers.set(b"Last-Modified", date)
     response.status = (200, "OK")
-    response.headers.set("Content-Type", mime)
+    response.headers.set(b"Content-Type", mime)
     return content

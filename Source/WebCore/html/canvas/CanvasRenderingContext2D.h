@@ -49,8 +49,8 @@ public:
 
     CanvasDirection direction() const;
 
-    void fillText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
-    void strokeText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
+    void fillText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
+    void strokeText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
     Ref<TextMetrics> measureText(const String& text);
 
 private:
@@ -61,7 +61,7 @@ private:
 
     void setFontWithoutUpdatingStyle(const String&);
 
-    void drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
+    void drawTextInternal(const String& text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
 
     void drawFocusIfNeededInternal(const Path&, Element&);
 

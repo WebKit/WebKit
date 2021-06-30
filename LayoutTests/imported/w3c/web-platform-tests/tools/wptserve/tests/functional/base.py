@@ -1,15 +1,12 @@
-from __future__ import print_function
-
 import base64
 import logging
 import os
 import pytest
 import unittest
 
-from six.moves.urllib.parse import urlencode, urlunsplit
-from six.moves.urllib.request import Request as BaseRequest
-from six.moves.urllib.request import urlopen
-from six import binary_type, iteritems, PY3
+from urllib.parse import urlencode, urlunsplit
+from urllib.request import Request as BaseRequest
+from urllib.request import urlopen
 
 from hyper import HTTP20Connection, tls
 import ssl
@@ -18,8 +15,6 @@ from localpaths import repo_root
 wptserve = pytest.importorskip("wptserve")
 
 logging.basicConfig()
-
-wptserve.logger.set_logger(logging.getLogger())
 
 here = os.path.dirname(__file__)
 doc_root = os.path.join(here, "docroot")
@@ -37,7 +32,7 @@ class Request(BaseRequest):
         if hasattr(data, "items"):
             data = urlencode(data).encode("ascii")
 
-        assert isinstance(data, binary_type)
+        assert isinstance(data, bytes)
 
         if hasattr(BaseRequest, "add_data"):
             BaseRequest.add_data(self, data)
@@ -54,7 +49,7 @@ class TestUsingServer(unittest.TestCase):
                                                    use_ssl=False,
                                                    certificate=None,
                                                    doc_root=doc_root)
-        self.server.start(False)
+        self.server.start()
 
     def tearDown(self):
         self.server.stop()
@@ -68,7 +63,7 @@ class TestUsingServer(unittest.TestCase):
         if headers is None:
             headers = {}
 
-        for name, value in iteritems(headers):
+        for name, value in headers.items():
             req.add_header(name, value)
 
         if body is not None:
@@ -80,13 +75,10 @@ class TestUsingServer(unittest.TestCase):
         return urlopen(req)
 
     def assert_multiple_headers(self, resp, name, values):
-        if PY3:
-            assert resp.info().get_all(name) == values
-        else:
-            assert resp.info()[name] == ", ".join(values)
+        assert resp.info().get_all(name) == values
 
 
-@pytest.mark.skipif(not wptserve.utils.http2_compatible(), reason="h2 server only works in python 2.7.10+ and Python 3.6+")
+@pytest.mark.skipif(not wptserve.utils.http2_compatible(), reason="h2 server requires OpenSSL 1.0.2+")
 class TestUsingH2Server:
     def setup_method(self, test_method):
         self.server = wptserve.server.WebTestHttpd(host="localhost",
@@ -97,7 +89,7 @@ class TestUsingH2Server:
                                                    certificate=os.path.join(repo_root, "tools", "certs", "web-platform.test.pem"),
                                                    handler_cls=wptserve.server.Http2WebTestRequestHandler,
                                                    http2=True)
-        self.server.start(False)
+        self.server.start()
 
         context = tls.init_context()
         context.check_hostname = False

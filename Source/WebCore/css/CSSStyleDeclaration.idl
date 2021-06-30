@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+typedef USVString CSSOMString;
+
 [
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable,
@@ -26,18 +28,15 @@
     SkipVTableValidation,
     Exposed=Window,
 ] interface CSSStyleDeclaration {
-    // FIXME: These attributes and functions should use CSSOMString not DOMString.
-
-    [CEReactions] attribute DOMString cssText;
+    [CEReactions] attribute CSSOMString cssText;
     readonly attribute unsigned long length;
-    getter DOMString item(unsigned long index);
-    DOMString getPropertyValue(DOMString property);
-    // FIXME: The return value of 'getPropertyPriority' should not be nullable.
-    DOMString? getPropertyPriority(DOMString property);
-    [CEReactions] undefined setProperty(DOMString property, [LegacyNullToEmptyString] DOMString value, optional [LegacyNullToEmptyString] DOMString priority = "");
-    [CEReactions] DOMString removeProperty(DOMString property);
+    getter CSSOMString item(unsigned long index);
+    CSSOMString getPropertyValue(CSSOMString property);
+    CSSOMString getPropertyPriority(CSSOMString property);
+    [CEReactions] undefined setProperty(CSSOMString property, [LegacyNullToEmptyString] CSSOMString value, optional [LegacyNullToEmptyString] CSSOMString priority = "");
+    [CEReactions] CSSOMString removeProperty(CSSOMString property);
     readonly attribute CSSRule? parentRule;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString cssFloat;
+    [CEReactions] attribute [LegacyNullToEmptyString] CSSOMString cssFloat;
 
     // Non-standard.
     DOMString? getPropertyShorthand(optional DOMString propertyName);

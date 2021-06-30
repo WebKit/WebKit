@@ -21,6 +21,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+import {escapeHTML} from '/assets/js/common.js';
+
 class _ArchiveRouter {
     constructor() {
         this.routes = {};
@@ -71,7 +73,7 @@ class _ArchiveRouter {
         if (!this.hasArchive(suite))
             return null;
 
-        return this._determineArgumentFromAncestry('label', 'Result archive', suite, mode);
+        return escapeHTML(this._determineArgumentFromAncestry('label', 'Result archive', suite, mode));
     }
 };
 

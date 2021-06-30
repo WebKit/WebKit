@@ -72,6 +72,7 @@ enum {
 - (NSInteger)accessibilityElementCount;
 - (id)accessibilityElementAtIndex:(NSInteger)index;
 - (NSInteger)indexOfAccessibilityElement:(id)element;
+- (NSArray *)accessibilityElements;
 @end
 
 @interface WebAccessibilityObjectWrapper (AccessibilityPrivate)
@@ -427,6 +428,29 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     if (auto* cache = self.axBackingObject->axObjectCache())
         cache->stopCachingComputedObjectAttributes();
+}
+
+- (NSArray *)accessibilityElements
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    if ([self isAttachment]) {
+        if (id attachmentView = [self attachmentView])
+            return [attachmentView accessibilityElements];
+    }
+
+    auto array = adoptNS([[NSMutableArray alloc] init]);
+    for (const auto& child : self.axBackingObject->children()) {
+        auto* wrapper = child->wrapper();
+        if (child->isAttachment()) {
+            if (id attachmentView = [wrapper attachmentView])
+                [array addObject:attachmentView];
+        } else
+            [array addObject:wrapper];
+    }
+
+    return array.autorelease();
 }
 
 - (NSInteger)accessibilityElementCount
@@ -1852,6 +1876,15 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
     
     return self.axBackingObject->embeddedImageDescription();
+}
+
+- (NSArray *)accessibilityImageOverlayElements
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    auto imageOverlayElements = self.axBackingObject->imageOverlayElements();
+    return imageOverlayElements ? accessibleElementsForObjects(*imageOverlayElements) : nil;
 }
 
 - (NSString *)accessibilityLinkRelationshipType

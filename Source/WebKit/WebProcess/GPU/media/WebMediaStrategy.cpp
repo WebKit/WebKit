@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "RemoteAudioDestinationProxy.h"
 #include "RemoteCDMFactory.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
@@ -67,7 +68,7 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
                     connection->connection().send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfo { }, 0);
             }
 
-            void setNowPlayingInfoPrivate(const NowPlayingInfo& nowPlayingInfo) final
+            void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo) final
             {
                 auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
                 connection.send(Messages::GPUConnectionToWebProcess::SetNowPlayingInfo { nowPlayingInfo }, 0);

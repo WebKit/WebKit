@@ -43,6 +43,7 @@ namespace JSC {
 #endif
 
 JS_EXPORT_PRIVATE bool canUseJITCage();
+bool canUseWebAssemblyFastMemory();
 
 // How do JSC VM options work?
 // ===========================
@@ -398,6 +399,8 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useExecutableAllocationFuzz, false, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAt, 0, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, Normal, nullptr) \
+    v(Bool, fireExecutableAllocationFuzzRandomly, false, Normal, nullptr) \
+    v(Double, fireExecutableAllocationFuzzRandomlyProbability, 0.1, Normal, nullptr) \
     v(Bool, verboseExecutableAllocationFuzz, false, Normal, nullptr) \
     \
     v(Bool, useOSRExitFuzz, false, Normal, nullptr) \
@@ -475,7 +478,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Int32, omgTierUpCounterIncrementForLoop, 1, Normal, "The amount the tier up counter is incremented on each loop backedge.") \
     v(Int32, omgTierUpCounterIncrementForEntry, 15, Normal, "The amount the tier up counter is incremented on each function entry.") \
     /* FIXME: enable fast memories on iOS and pre-allocate them. https://bugs.webkit.org/show_bug.cgi?id=170774 */ \
-    v(Bool, useWebAssemblyFastMemory, OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) >= 48, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
+    v(Bool, useWebAssemblyFastMemory, canUseWebAssemblyFastMemory(), Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
     v(Bool, logWebAssemblyMemory, false, Normal, nullptr) \
     v(Unsigned, webAssemblyFastMemoryRedzonePages, 128, Normal, "WebAssembly fast memories use 4GiB virtual allocations, plus a redzone (counted as multiple of 64KiB WebAssembly pages) at the end to catch reg+imm accesses which exceed 32-bit, anything beyond the redzone is explicitly bounds-checked") \
     v(Bool, crashIfWebAssemblyCantFastMemory, false, Normal, "If true, we will crash if we can't obtain fast memory for wasm.") \
@@ -529,7 +532,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, usePrivateStaticClassFields, true, Normal, "If true, the parser will understand private static data fields inside classes.") \
     v(Bool, usePrivateClassFields, true, Normal, "If true, the parser will understand private data fields inside classes.") \
     v(Bool, usePrivateMethods, true, Normal, "If true, the parser will understand private methods inside classes.") \
-    v(Bool, usePrivateIn, false, Normal, "If true, the parser will understand private member existence checks with the `in` operator.") \
+    v(Bool, usePrivateIn, true, Normal, "If true, the parser will understand private member existence checks with the `in` operator.") \
     v(Bool, useWebAssemblyStreaming, true, Normal, "Allow to run WebAssembly's Streaming API") \
     v(Bool, useWebAssemblyReferences, true, Normal, "Allow types from the wasm references spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \

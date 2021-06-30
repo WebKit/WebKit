@@ -57,6 +57,8 @@ enum class AccessType : int8_t {
     Put,
     InById,
     InByVal,
+    HasPrivateName,
+    HasPrivateBrand,
     InstanceOf,
     DeleteByID,
     DeleteByVal,

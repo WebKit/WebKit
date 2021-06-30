@@ -8,7 +8,9 @@ Installing and Using plugins
 This section talks about installing and using third party plugins.
 For writing your own plugins, please refer to :ref:`writing-plugins`.
 
-Installing a third party plugin can be easily done with ``pip``::
+Installing a third party plugin can be easily done with ``pip``:
+
+.. code-block:: bash
 
     pip install pytest-NAME
     pip uninstall pytest-NAME
@@ -27,7 +29,7 @@ Here is a little annotated list for some popular plugins:
   for `twisted <http://twistedmatrix.com>`_ apps, starting a reactor and
   processing deferreds from test functions.
 
-* `pytest-cov <https://pypi.org/project/pytest-cov/>`_:
+* `pytest-cov <https://pypi.org/project/pytest-cov/>`__:
   coverage reporting, compatible with distributed testing
 
 * `pytest-xdist <https://pypi.org/project/pytest-xdist/>`_:
@@ -39,8 +41,7 @@ Here is a little annotated list for some popular plugins:
 * `pytest-instafail <https://pypi.org/project/pytest-instafail/>`_:
   to report failures while the test run is happening.
 
-* `pytest-bdd <https://pypi.org/project/pytest-bdd/>`_ and
-  `pytest-konira <https://pypi.org/project/pytest-konira/>`_
+* `pytest-bdd <https://pypi.org/project/pytest-bdd/>`_:
   to write tests using behaviour-driven testing.
 
 * `pytest-timeout <https://pypi.org/project/pytest-timeout/>`_:
@@ -59,9 +60,9 @@ To see a complete list of all plugins with their latest testing
 status against different pytest and Python versions, please visit
 `plugincompat <http://plugincompat.herokuapp.com/>`_.
 
-You may also discover more plugins through a `pytest- pypi.python.org search`_.
+You may also discover more plugins through a `pytest- pypi.org search`_.
 
-.. _`pytest- pypi.python.org search`: https://pypi.org/search/?q=pytest-
+.. _`pytest- pypi.org search`: https://pypi.org/search/?q=pytest-
 
 
 .. _`available installable plugins`:
@@ -69,22 +70,26 @@ You may also discover more plugins through a `pytest- pypi.python.org search`_.
 Requiring/Loading plugins in a test module or conftest file
 -----------------------------------------------------------
 
-You can require plugins in a test module or a conftest file like this::
+You can require plugins in a test module or a conftest file using :globalvar:`pytest_plugins`:
 
-    pytest_plugins = "myapp.testsupport.myplugin",
+.. code-block:: python
+
+    pytest_plugins = ("myapp.testsupport.myplugin",)
 
 When the test module or conftest plugin is loaded the specified plugins
 will be loaded as well.
 
-    pytest_plugins = "myapp.testsupport.myplugin"
-
-which will import the specified module as a ``pytest`` plugin.
-
 .. note::
+
     Requiring plugins using a ``pytest_plugins`` variable in non-root
     ``conftest.py`` files is deprecated. See
     :ref:`full explanation <requiring plugins in non-root conftests>`
     in the Writing plugins section.
+
+.. note::
+   The name ``pytest_plugins`` is reserved and should not be used as a
+   name for a custom plugin module.
+
 
 .. _`findpluginname`:
 
@@ -92,7 +97,9 @@ Finding out which plugins are active
 ------------------------------------
 
 If you want to find out which plugins are active in your
-environment you can type::
+environment you can type:
+
+.. code-block:: bash
 
     pytest --trace-config
 
@@ -105,7 +112,9 @@ and their names. It will also print local plugins aka
 Deactivating / unregistering a plugin by name
 ---------------------------------------------
 
-You can prevent plugins from loading or unregister them::
+You can prevent plugins from loading or unregister them:
+
+.. code-block:: bash
 
     pytest -p no:NAME
 

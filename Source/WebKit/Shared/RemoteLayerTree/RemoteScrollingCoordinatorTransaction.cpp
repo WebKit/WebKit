@@ -212,11 +212,9 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ReachableContentsSize, reachableContentsSize)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ScrollPosition, scrollPosition)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ScrollOrigin, scrollOrigin)
-#if ENABLE(CSS_SCROLL_SNAP)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::SnapOffsetsInfo, snapOffsetsInfo)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex, currentHorizontalSnapPointIndex)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex, currentVerticalSnapPointIndex)
-#endif
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ScrollableAreaParams, scrollableAreaParameters)
     // UI-side compositing can't do synchronous scrolling so don't encode synchronousScrollingReasons.
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::RequestedScrollPosition, requestedScrollData)
@@ -309,11 +307,9 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ReachableContentsSize, FloatSize, setReachableContentsSize);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollPosition, FloatPoint, setScrollPosition);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollOrigin, IntPoint, setScrollOrigin);
-#if ENABLE(CSS_SCROLL_SNAP)
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::SnapOffsetsInfo, FloatScrollSnapOffsetsInfo, setSnapOffsetsInfo);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex, std::optional<unsigned>, setCurrentHorizontalSnapPointIndex);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex, std::optional<unsigned>, setCurrentVerticalSnapPointIndex);
-#endif
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollableAreaParams, ScrollableAreaParameters, setScrollableAreaParameters);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::RequestedScrollPosition, RequestedScrollData, setRequestedScrollData);
 
@@ -736,14 +732,12 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
         ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
 
-#if ENABLE(CSS_SCROLL_SNAP)
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo)) {
         ts.dumpProperty("horizontal snap offsets", node.snapOffsetsInfo().horizontalSnapOffsets);
         ts.dumpProperty("vertical snap offsets", node.snapOffsetsInfo().verticalSnapOffsets);
         ts.dumpProperty("current horizontal snap point index", node.currentHorizontalSnapPointIndex());
         ts.dumpProperty("current vertical snap point index", node.currentVerticalSnapPointIndex());
     }
-#endif
 }
 
 static void dump(TextStream& ts, const ScrollingStateFrameHostingNode& node, bool changedPropertiesOnly)

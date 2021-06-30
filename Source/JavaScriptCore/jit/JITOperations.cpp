@@ -508,43 +508,110 @@ JSC_DEFINE_JIT_OPERATION(operationInByValGeneric, EncodedJSValue, (JSGlobalObjec
     return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, JSValue::decode(base), JSValue::decode(key), arrayProfile)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationHasPrivateName, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue key))
+JSC_DEFINE_JIT_OPERATION(operationHasPrivateNameOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedProperty))
 {
     SuperSamplerScope superSamplerScope(false);
-    
+
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (!base->isObject()) {
-        throwException(globalObject, scope, createInvalidInParameterError(globalObject, base));
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    if (!baseValue.isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
         return encodedJSValue();
     }
+    JSObject* baseObject = asObject(baseValue);
 
-    JSValue propertyValue = JSValue::decode(key);
+    JSValue propertyValue = JSValue::decode(encodedProperty);
     ASSERT(propertyValue.isSymbol());
     auto property = propertyValue.toPropertyKey(globalObject);
     EXCEPTION_ASSERT(!scope.exception());
 
-    return JSValue::encode(jsBoolean(asObject(base)->hasPrivateField(globalObject, property)));
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
+    bool found = JSObject::getPrivateFieldSlot(baseObject, globalObject, property, slot);
+
+    ASSERT(CacheableIdentifier::isCacheableIdentifierCell(propertyValue));
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    CacheableIdentifier identifier = CacheableIdentifier::createFromCell(propertyValue.asCell());
+    if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
+        repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::PrivateName);
+
+    return JSValue::encode(jsBoolean(found));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationHasPrivateBrand, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue brand))
+JSC_DEFINE_JIT_OPERATION(operationHasPrivateNameGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedProperty))
 {
     SuperSamplerScope superSamplerScope(false);
-    
+
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (!base->isObject()) {
-        throwException(globalObject, scope, createInvalidInParameterError(globalObject, base));
+
+    stubInfo->tookSlowPath = true;
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    if (!baseValue.isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
         return encodedJSValue();
     }
 
-    return JSValue::encode(jsBoolean(asObject(base)->hasPrivateBrand(globalObject, JSValue::decode(brand))));
+    JSValue propertyValue = JSValue::decode(encodedProperty);
+    ASSERT(propertyValue.isSymbol());
+    auto property = propertyValue.toPropertyKey(globalObject);
+    EXCEPTION_ASSERT(!scope.exception());
+
+    return JSValue::encode(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationHasPrivateBrandOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedBrand))
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    if (!baseValue.isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
+        return encodedJSValue();
+    }
+    JSObject* baseObject = asObject(baseValue);
+
+    JSValue brand = JSValue::decode(encodedBrand);
+    bool found = asObject(baseValue)->hasPrivateBrand(globalObject, brand);
+
+    ASSERT(CacheableIdentifier::isCacheableIdentifierCell(brand));
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    CacheableIdentifier identifier = CacheableIdentifier::createFromCell(brand.asCell());
+    if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
+        repatchHasPrivateBrand(globalObject, codeBlock, baseObject, identifier, found, *stubInfo);
+
+    return JSValue::encode(jsBoolean(found));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationHasPrivateBrandGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedBrand))
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    stubInfo->tookSlowPath = true;
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    if (!baseValue.isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
+        return encodedJSValue();
+    }
+
+    return JSValue::encode(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, JSValue::decode(encodedBrand))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdStrict, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier))

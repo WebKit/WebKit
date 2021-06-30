@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import {queryToParams} from '/assets/js/common.js';
+import {queryToParams, escapeHTML} from '/assets/js/common.js';
 
 // These are flipped delibrately, it makes the fromQuery function return configurations in an
 // intuitive order.
@@ -186,7 +186,7 @@ class Configuration {
             result += ' (' + this.sdk + ')';
 
         if (result)
-            return result.substr(1);
+            return escapeHTML(result.substr(1));
         return 'All';
     }
     compare(configuration) {

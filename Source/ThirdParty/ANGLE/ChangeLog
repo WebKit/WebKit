@@ -1,3 +1,156 @@
+2021-06-24  John Cunningham  <johncunningham@apple.com>
+
+        [ANGLE Metal] - Set barriers on transform feedback buffers only up to the in use buffer count
+        https://bugs.webkit.org/show_bug.cgi?id=227272
+        <rdar://79587861>
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::onEndTransformFeedback):
+
+2021-06-23  Kyle Piddington  <kpiddington@apple.com>
+
+        Fix incorrect indexing / out of bounds access in getRestartIndices
+        https://bugs.webkit.org/show_bug.cgi?id=227274
+        <rdar://79244789>
+
+        In the case where a restart index is present in the last element of an index array, we can accidently
+        access out of bounds. Fix this by checking boundaries, and fixing other indexing errors
+
+        Tests: Ran deqp/functional/gles3/primitiverestart suite. Passed 8 tests.
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::calculateRestartRanges):
+
+2021-06-23  Kyle Piddington  <kpiddington@apple.com>
+
+        Guard against compile failures of the default libraries
+        https://bugs.webkit.org/show_bug.cgi?id=227239
+        <rdar://79037623>
+
+        Under certain events (High memory usage), the MTLCompilerService can fail when creating the default library.
+        Guard against nil pipelines by failing GL calls instead, if this happens. While this can create rendering artifacts
+        due to missing blits / conversions, this can at least avoid crashing the process.
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/mtl_render_utils.h:
+        * src/libANGLE/renderer/metal/mtl_render_utils.mm:
+        (rx::mtl::ClearUtils::setupClearWithDraw):
+        (rx::mtl::ClearUtils::clearWithDraw):
+        (rx::mtl::ColorBlitUtils::setupColorBlitWithDraw):
+        (rx::mtl::ColorBlitUtils::blitColorWithDraw):
+        (rx::mtl::DepthStencilBlitUtils::setupDepthStencilBlitWithDraw):
+        (rx::mtl::DepthStencilBlitUtils::blitDepthStencilWithDraw):
+        (rx::mtl::VertexFormatConversionUtils::setupCommonConvertVertexFormatToFloat):
+        (rx::mtl::VertexFormatConversionUtils::expandVertexFormatComponentsVS):
+        (rx::mtl::VertexFormatConversionUtils::setupCommonExpandVertexFormatComponents):
+
+2021-06-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        rAF driven WebGL submits excessive amount of GPU work when frames are slow
+        https://bugs.webkit.org/show_bug.cgi?id=227059
+        <rdar://problem/79385858>
+
+        Reviewed by Kenneth Russell.
+
+        Advertise GL_ARB_sync for the Metal backend.
+        Since GL_ARB_sync is core in OpenGL ES 3.0 and the Metal backend advertises OpenGL ES 3.0,
+        the API must be working already.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeExtensions const):
+
+2021-06-22  Dean Jackson  <dino@apple.com>
+
+        [ANGLE] Support importing external MTLTextures
+        https://bugs.webkit.org/show_bug.cgi?id=226690
+
+        Reviewed by Tim Horton.
+
+        Support MTLTextures as GL textures.
+        Merge https://chromium-review.googlesource.com/c/angle/angle/+/2820178
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * extensions/EGL_ANGLE_metal_texture_client_buffer.txt: Added.
+        * include/EGL/eglext_angle.h:
+        * src/common/utilities.cpp:
+        (egl::IsExternalImageTarget):
+        * src/libANGLE/Caps.cpp:
+        (egl::DisplayExtensions::getStrings const):
+        * src/libANGLE/Caps.h:
+        * src/libANGLE/renderer/metal/BUILD.gn:
+        * src/libANGLE/renderer/metal/DisplayMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::createImage):
+        (rx::DisplayMtl::createExternalImageSibling):
+        (rx::DisplayMtl::generateExtensions const):
+        (rx::DisplayMtl::validateImageClientBuffer const):
+        (rx::DisplayMtl::initializeExtensions const):
+        * src/libANGLE/renderer/metal/ImageMtl.h: Added.
+        (rx::TextureImageSiblingMtl::getTexture const):
+        (rx::TextureImageSiblingMtl::getFormatMtl const):
+        (rx::ImageMtl::getTexture const):
+        (rx::ImageMtl::getImageTextureType const):
+        (rx::ImageMtl::getImageLevel const):
+        (rx::ImageMtl::getImageLayer const):
+        * src/libANGLE/renderer/metal/ImageMtl.mm: Added.
+        (rx::TextureImageSiblingMtl::TextureImageSiblingMtl):
+        (rx::TextureImageSiblingMtl::~TextureImageSiblingMtl):
+        (rx::TextureImageSiblingMtl::ValidateClientBuffer):
+        (rx::TextureImageSiblingMtl::initialize):
+        (rx::TextureImageSiblingMtl::initImpl):
+        (rx::TextureImageSiblingMtl::onDestroy):
+        (rx::TextureImageSiblingMtl::getFormat const):
+        (rx::TextureImageSiblingMtl::isRenderable const):
+        (rx::TextureImageSiblingMtl::isTexturable const):
+        (rx::TextureImageSiblingMtl::getSize const):
+        (rx::TextureImageSiblingMtl::getSamples const):
+        (rx::ImageMtl::ImageMtl):
+        (rx::ImageMtl::~ImageMtl):
+        (rx::ImageMtl::onDestroy):
+        (rx::ImageMtl::initialize):
+        (rx::ImageMtl::orphan):
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::setStorageEGLImageTarget):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::setEGLImageTarget):
+        * src/libANGLE/renderer/metal/gen_mtl_format_table.py:
+        (gen_image_map_switch_mac_case.gen_format_assign_code):
+        (gen_image_mtl_to_angle_switch_string):
+        (main):
+        * src/libANGLE/renderer/metal/mtl_common.h:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::MetalToAngleFormatID):
+        * src/libANGLE/renderer/metal/mtl_format_utils.h:
+        * src/libANGLE/validationEGL.cpp:
+        (egl::ValidateCreateImage):
+        * src/tests/BUILD.gn:
+        * src/tests/gl_tests/ImageTest.cpp:
+        (angle::TEST_P):
+        * src/tests/gl_tests/ImageTestMetal.mm: Added.
+        (angle::ScopeMetalTextureRef::ScopeMetalTextureRef):
+        (angle::ScopeMetalTextureRef::~ScopeMetalTextureRef):
+        (angle::ScopeMetalTextureRef::get const):
+        (angle::ScopeMetalTextureRef::operator id<MTLTexture> const):
+        (angle::ScopeMetalTextureRef::operator=):
+        (angle::ScopeMetalTextureRef::release):
+        (angle::CreateMetalTexture2D):
+        (angle::ImageTestMetal::ImageTestMetal):
+        (angle::ImageTestMetal::getMtlDevice):
+        (angle::ImageTestMetal::createMtlTexture2D):
+        (angle::ImageTestMetal::verifyResultsTexture):
+        (angle::ImageTestMetal::verifyResults2D):
+        (angle::ImageTestMetal::reinterpretHelper):
+        (angle::ImageTestMetal::hasImageNativeMetalTextureExt const):
+        (angle::ImageTestMetal::hasOESExt const):
+        (angle::ImageTestMetal::hasBaseExt const):
+        (angle::ImageTestMetal::sourceMetalTarget2D_helper):
+        (angle::TEST_P):
+
 2021-06-17  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE] Shaders with reserved metal keywords do not translate, nor do shaders with struct and variable names that are the same except prefixed by an underscore

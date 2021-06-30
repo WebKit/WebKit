@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-class MacroAssembler;
+class AssemblyHelpers;
 
 namespace FTL {
 
@@ -46,9 +46,9 @@ size_t offsetOfFPR(FPRReg);
 // Assumes that top-of-stack can be used as a pointer-sized scratchpad. Saves all of
 // the registers into the scratch buffer such that RegisterID * sizeof(int64_t) is the
 // offset of every register.
-void saveAllRegisters(MacroAssembler& jit, char* scratchMemory);
+void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory);
 
-void restoreAllRegisters(MacroAssembler& jit, char* scratchMemory);
+void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory);
 
 } } // namespace JSC::FTL
 

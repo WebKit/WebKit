@@ -32,6 +32,7 @@
 #include "MediaSessionCoordinatorState.h"
 #include "MediaSessionPlaybackState.h"
 #include "MediaSessionReadyState.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -45,7 +46,7 @@ public:
     virtual ~MediaSessionCoordinatorClient() = default;
 
     virtual void seekSessionToTime(double, CompletionHandler<void(bool)>&&) = 0;
-    virtual void playSession(std::optional<double> atTime, std::optional<double> hostTime, CompletionHandler<void(bool)>&&) = 0;
+    virtual void playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&&) = 0;
     virtual void pauseSession(CompletionHandler<void(bool)>&&) = 0;
     virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) = 0;
     virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) = 0;

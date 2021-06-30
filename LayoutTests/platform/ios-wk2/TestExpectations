@@ -1144,6 +1144,7 @@ imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-
 
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 imported/w3c/web-platform-tests/uievents/click/click_events_on_input.html [ Pass Failure ]
+imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Pass Failure ]
 
 # rdar://problem/26477855
 http/tests/xmlhttprequest/logout.html [ Failure ]
@@ -1939,3 +1940,5 @@ webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-s
 webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/226826 http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
+
+webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout ]

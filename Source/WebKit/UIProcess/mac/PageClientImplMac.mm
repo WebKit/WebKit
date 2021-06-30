@@ -485,12 +485,12 @@ void PageClientImpl::requestTextRecognition(const URL& imageURL, const Shareable
     m_impl->requestTextRecognition(imageURL, imageData, WTFMove(completion));
 }
 
-void PageClientImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+void PageClientImpl::computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType type, CompletionHandler<void(bool)>&& completion)
 {
-    m_impl->computeHasVisualSearchResults(imageURL, imageBitmap, WTFMove(completion));
+    m_impl->computeHasImageAnalysisResults(imageURL, imageBitmap, type, WTFMove(completion));
 }
 
-#endif
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {

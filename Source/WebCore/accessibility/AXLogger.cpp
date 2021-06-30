@@ -372,6 +372,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXIdAttributeChanged:
         stream << "AXIdAttributeChanged";
         break;
+    case AXObjectCache::AXNotification::AXImageOverlayChanged:
+        stream << "AXImageOverlayChanged";
+        break;
     case AXObjectCache::AXNotification::AXLanguageChanged:
         stream << "AXLanguageChanged";
         break;

@@ -17,4 +17,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/code/test_code.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/code/test_excinfo.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/code/test_source.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/code/test_source_multiline_block.py

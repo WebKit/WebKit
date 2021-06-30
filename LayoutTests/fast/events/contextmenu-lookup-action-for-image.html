@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+addEventListener("load", () => {
+    let image = document.querySelector("img");
+    eventSender.mouseMoveTo(130, 130);
+    testRunner.dumpAsText();
+
+    let foundLookUpItem = eventSender.contextClick().some((item) => (item.title || item).includes?.("Look Up"));
+    document.querySelector("pre").textContent = `Found lookup item? ${foundLookUpItem}`;
+});
+</script>
+</head>
+<body>
+<img src="../images/resources/green-256x256.png">
+<pre></pre>
+</body>
+</html>

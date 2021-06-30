@@ -29,6 +29,7 @@
 #include "TestRunnerUtils.h"
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
+#include <wtf/WeakRandom.h>
 
 namespace JSC {
 
@@ -41,6 +42,22 @@ unsigned numberOfExecutableAllocationFuzzChecks()
 ExecutableAllocationFuzzResult doExecutableAllocationFuzzing()
 {
     ASSERT(Options::useExecutableAllocationFuzz());
+
+    if (Options::fireExecutableAllocationFuzzRandomly()) {
+        static LazyNeverDestroyed<WeakRandom> random;
+        static std::once_flag once;
+        std::call_once(once, [] () {
+            random.construct();
+        });
+
+        static Lock fuzzingLock;
+        Locker locker { fuzzingLock };
+        
+        if (random->returnTrueWithProbability(Options::fireExecutableAllocationFuzzRandomlyProbability()))
+            return PretendToFailExecutableAllocation;
+
+        return AllowNormalExecutableAllocation;
+    }
     
     unsigned oldValue;
     unsigned newValue;

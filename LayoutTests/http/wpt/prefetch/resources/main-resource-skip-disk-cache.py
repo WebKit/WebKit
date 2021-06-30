@@ -1,5 +1,7 @@
+from wptserve.utils import isomorphic_decode
+
 def main(request, response):
-    headers = [("Content-Type", "text/html")]
+    headers = [(b"Content-Type", b"text/html")]
 
     document = """
 <!DOCTYPE html>
@@ -18,4 +20,4 @@ def main(request, response):
 <body onload="test()">
 """
 
-    return headers, document % {'prefetch': request.headers.get("Purpose", ""), 'url': request.url }
+    return headers, document % {'prefetch': isomorphic_decode(request.headers.get(b"Purpose", b"")), 'url': request.url }

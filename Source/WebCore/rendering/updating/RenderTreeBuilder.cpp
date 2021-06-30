@@ -516,23 +516,9 @@ void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelO
     // anonymous blocks which can no longer carry positioned objects (see r120761)
     // or when fullRemoveInsert is false.
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && is<RenderBlock>(from)) {
-        downcast<RenderBlock>(from).removePositionedObjects(nullptr);
-        auto removeFloatingObjectsIfApplicable = [&] {
-            if (from.renderTreeBeingDestroyed())
-                return;
-            if (!is<RenderBlockFlow>(from))
-                return;
-            auto* floatingObjects = downcast<RenderBlockFlow>(from).floatingObjectSet();
-            if (!floatingObjects)
-                return;
-            // Here we remove the floating objects from the descendants as well.
-            auto copyOfFloatingObjects = WTF::map(*floatingObjects, [](auto& floatingObject) { 
-                return floatingObject.get();
-            });
-            for (auto* floatingObject : copyOfFloatingObjects)
-                floatingObject->renderer().removeFloatingOrPositionedChildFromBlockLists();
-        };
-        removeFloatingObjectsIfApplicable();
+        auto& blockFlow = downcast<RenderBlock>(from);
+        blockFlow.removePositionedObjects(nullptr);
+        removeFloatingObjects(blockFlow);
     }
 
     ASSERT(!beforeChild || &to == beforeChild->parent());
@@ -1035,6 +1021,24 @@ void RenderTreeBuilder::markBoxForRelayoutAfterSplit(RenderBox& box)
         downcast<RenderTableSection>(box).setNeedsCellRecalc();
 
     box.setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+void RenderTreeBuilder::removeFloatingObjects(RenderBlock& renderer)
+{
+    if (renderer.renderTreeBeingDestroyed())
+        return;
+    if (!is<RenderBlockFlow>(renderer))
+        return;
+    auto& blockFlow = downcast<RenderBlockFlow>(renderer);
+    auto* floatingObjects = blockFlow.floatingObjectSet();
+    if (!floatingObjects)
+        return;
+    // Here we remove the floating objects from the descendants as well.
+    auto copyOfFloatingObjects = WTF::map(*floatingObjects, [](auto& floatingObject) {
+        return floatingObject.get();
+    });
+    for (auto* floatingObject : copyOfFloatingObjects)
+        floatingObject->renderer().removeFloatingOrPositionedChildFromBlockLists();
 }
 
 }

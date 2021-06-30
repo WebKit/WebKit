@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import json
 import os
 import socket
@@ -6,7 +5,7 @@ import threading
 import time
 import traceback
 import uuid
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 from .base import (CallbackHandler,
                    RefTestExecutor,
@@ -19,10 +18,10 @@ from .protocol import (BaseProtocolPart,
                        Protocol,
                        SelectorProtocolPart,
                        ClickProtocolPart,
+                       CookiesProtocolPart,
                        SendKeysProtocolPart,
                        ActionSequenceProtocolPart,
                        TestDriverProtocolPart)
-from ..testrunner import Stop
 
 here = os.path.dirname(__file__)
 
@@ -183,6 +182,15 @@ class SeleniumClickProtocolPart(ClickProtocolPart):
         return element.click()
 
 
+class SeleniumCookiesProtocolPart(CookiesProtocolPart):
+    def setup(self):
+        self.webdriver = self.parent.webdriver
+
+    def delete_all_cookies(self):
+        self.logger.info("Deleting all cookies")
+        return self.webdriver.delete_all_cookies()
+
+
 class SeleniumSendKeysProtocolPart(SendKeysProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
@@ -219,6 +227,7 @@ class SeleniumProtocol(Protocol):
                   SeleniumTestharnessProtocolPart,
                   SeleniumSelectorProtocolPart,
                   SeleniumClickProtocolPart,
+                  SeleniumCookiesProtocolPart,
                   SeleniumSendKeysProtocolPart,
                   SeleniumTestDriverProtocolPart,
                   SeleniumActionSequenceProtocolPart]
@@ -267,8 +276,9 @@ class SeleniumRun(TimedRunner):
         try:
             self.protocol.base.set_timeout(timeout + self.extra_timeout)
         except exceptions.ErrorInResponseException:
-            self.logger.error("Lost WebDriver connection")
-            return Stop
+            msg = "Lost WebDriver connection"
+            self.logger.error(msg)
+            return ("INTERNAL-ERROR", msg)
 
     def run_func(self):
         try:

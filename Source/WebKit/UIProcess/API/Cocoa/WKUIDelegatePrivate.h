@@ -221,6 +221,7 @@ struct UIEdgeInsets;
 - (BOOL)_webView:(WKWebView *)webView gestureRecognizerCouldPinch:(UIGestureRecognizer *)gestureRecognizer WK_API_AVAILABLE(ios(13.0));
 
 - (BOOL)_webViewCanBecomeFocused:(WKWebView *)webView WK_API_AVAILABLE(ios(15.0));
+- (BOOL)_webView:(WKWebView *)webView touchEventsMustRequireGestureRecognizerToFail:(UIGestureRecognizer *)gestureRecognizer WK_API_AVAILABLE(ios(15.0));
 
 #else // !TARGET_OS_IPHONE
 

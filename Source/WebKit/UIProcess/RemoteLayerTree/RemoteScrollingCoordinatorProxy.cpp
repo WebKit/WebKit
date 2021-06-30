@@ -302,10 +302,8 @@ void RemoteScrollingCoordinatorProxy::sendUIStateChangedIfNecessary()
 
 void RemoteScrollingCoordinatorProxy::resetStateAfterProcessExited()
 {
-#if ENABLE(CSS_SCROLL_SNAP)
     m_currentHorizontalSnapPointIndex = 0;
     m_currentVerticalSnapPointIndex = 0;
-#endif
     m_uiState.reset();
 }
 

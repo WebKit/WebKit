@@ -1,5 +1,5 @@
 def main(request, response):
-    if "prefetch" in request.headers.get("Purpose"):
-        headers = [("Cache-Control", "max-age=3600"), ("Location", "/WebKit/prefetch/resources/main-resource-redirect-no-prefetch.py")]
+    if b"prefetch" in request.headers.get(b"Purpose"):
+        headers = [(b"Cache-Control", b"max-age=3600"), (b"Location", b"/WebKit/prefetch/resources/main-resource-redirect-no-prefetch.py")]
         return 302, headers, ""
     return 200, [], "FAIL"

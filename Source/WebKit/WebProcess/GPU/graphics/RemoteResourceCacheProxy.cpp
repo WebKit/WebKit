@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ArgumentCoders.h"
 #include "RemoteRenderingBackendProxy.h"
 
 namespace WebKit {
@@ -155,6 +156,7 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
     }
     m_nativeImages.clear();
     m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
+    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
 }
 
 void RemoteResourceCacheProxy::releaseMemory()

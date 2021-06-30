@@ -42,6 +42,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/promise-with-sync.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/promise.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/queue.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/setup-function-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/setup-worker-service.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/single-page-test-fail.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/single-page-test-no-assertions.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/single-page-test-no-body.html

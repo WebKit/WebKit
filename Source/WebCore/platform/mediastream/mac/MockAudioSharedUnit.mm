@@ -44,14 +44,10 @@
 #import <AudioToolbox/AudioConverter.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
+#import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 
-SOFT_LINK_FRAMEWORK(AudioToolbox)
-
-SOFT_LINK(AudioToolbox, AudioConverterNew, OSStatus, (const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverterRef* outAudioConverter), (inSourceFormat, inDestinationFormat, outAudioConverter))
-
 namespace WebCore {
-using namespace PAL;
 
 static inline size_t alignTo16Bytes(size_t size)
 {
@@ -221,7 +217,7 @@ void MockAudioSharedUnit::reconfigure()
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamFormat, m_maximiumFrameCount);
 
     CMFormatDescriptionRef formatDescription;
-    CMAudioFormatDescriptionCreate(NULL, &m_streamFormat, 0, NULL, 0, NULL, NULL, &formatDescription);
+    PAL::CMAudioFormatDescriptionCreate(NULL, &m_streamFormat, 0, NULL, 0, NULL, NULL, &formatDescription);
     m_formatDescription = adoptCF(formatDescription);
 
     size_t sampleCount = 2 * rate;
@@ -243,7 +239,7 @@ void MockAudioSharedUnit::emitSampleBuffers(uint32_t frameCount)
     ASSERT(!isMainThread());
     ASSERT(m_formatDescription);
 
-    CMTime startTime = CMTimeMake(m_samplesEmitted, sampleRate());
+    CMTime startTime = PAL::CMTimeMake(m_samplesEmitted, sampleRate());
     m_samplesEmitted += frameCount;
 
     audioSamplesAvailable(PAL::toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);

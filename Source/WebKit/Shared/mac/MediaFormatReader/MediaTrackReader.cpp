@@ -47,7 +47,6 @@ WTF_DECLARE_CF_TYPE_TRAIT(MTPluginTrackReader);
 
 namespace WebKit {
 
-using namespace PAL;
 using namespace WebCore;
 
 CMBaseClassID MediaTrackReader::wrapperClassID()
@@ -203,9 +202,7 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
 void MediaTrackReader::finalize()
 {
     Locker locker { m_sampleStorageLock };
-    storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)]() mutable {
-        sampleStorage = nullptr;
-    });
+    storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)] { });
     CoreMediaWrapped<MediaTrackReader>::finalize();
 }
 

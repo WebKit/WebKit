@@ -31,7 +31,7 @@
 
 namespace WebKit {
 class WebPageProxy;
-enum class QuickLookPreviewActivity : uint8_t { None, VisualSearch };
+enum class QuickLookPreviewActivity : uint8_t;
 }
 
 @class QLPreviewPanel;

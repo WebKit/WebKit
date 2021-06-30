@@ -511,6 +511,28 @@ bool nodeHasRole(Node* node, const String& role)
     return SpaceSplitString(roleValue, true).contains(role);
 }
 
+static bool isSimpleImage(const RenderObject& renderer)
+{
+    if (!is<RenderImage>(renderer))
+        return false;
+
+    // Exclude ImageButtons because they are treated as buttons, not as images.
+    auto* node = renderer.node();
+    if (is<HTMLInputElement>(node))
+        return false;
+
+    // ImageMaps are not simple images.
+    if (downcast<RenderImage>(renderer).imageMap()
+        || (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(node)->hasAttributeWithoutSynchronization(usemapAttr)))
+        return false;
+
+    // Exclude video and audio elements.
+    if (is<HTMLMediaElement>(node))
+        return false;
+
+    return true;
+}
+
 static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
@@ -549,6 +571,9 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
     
     if (is<SVGElement>(node))
         return AccessibilitySVGElement::create(renderer);
+
+    if (isSimpleImage(*renderer))
+        return AXImage::create(downcast<RenderImage>(renderer));
 
 #if ENABLE(MATHML)
     // The mfenced element creates anonymous RenderMathMLOperators which should be treated

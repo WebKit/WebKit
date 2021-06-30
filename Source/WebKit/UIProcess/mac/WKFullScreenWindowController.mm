@@ -698,6 +698,11 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     [self finishedExitFullScreenAnimation:YES];
+
+    if (auto* videoFullscreenManager = self._videoFullscreenManager) {
+        ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient);
+        videoFullscreenManager->setClient(nullptr);
+    }
 }
 
 - (NSWindow *)destinationWindowToExitFullScreenForWindow:(NSWindow *)window

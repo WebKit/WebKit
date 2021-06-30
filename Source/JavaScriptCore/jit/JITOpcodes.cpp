@@ -1430,23 +1430,26 @@ void JIT::emitSlow_op_instanceof_custom(const Instruction* currentInstruction, V
 
 void JIT::emit_op_loop_hint(const Instruction* instruction)
 {
-#if USE(JSVALUE64)
     if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && m_codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
-        uint64_t* ptr = vm().getLoopHintExecutionCounter(instruction);
-        load64(ptr, regT0);
-        auto skipEarlyReturn = branch64(Below, regT0, TrustedImm64(Options::earlyReturnFromInfiniteLoopsLimit()));
+        uintptr_t* ptr = vm().getLoopHintExecutionCounter(instruction);
+        loadPtr(ptr, regT0);
+        auto skipEarlyReturn = branchPtr(Below, regT0, TrustedImmPtr(Options::earlyReturnFromInfiniteLoopsLimit()));
 
-        moveValue(m_codeBlock->globalObject(), JSValueRegs { GPRInfo::returnValueGPR });
+#if USE(JSVALUE64)
+        JSValueRegs resultRegs(GPRInfo::returnValueGPR);
+#else
+        JSValueRegs resultRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+#endif
+        moveValue(m_codeBlock->globalObject(), resultRegs);
         checkStackPointerAlignment();
         emitRestoreCalleeSaves();
         emitFunctionEpilogue();
         ret();
 
         skipEarlyReturn.link(this);
-        add64(TrustedImm32(1), regT0);
-        store64(regT0, ptr);
+        addPtr(TrustedImm32(1), regT0);
+        storePtr(regT0, ptr);
     }
-#endif
 
     // Emit the JIT optimization check: 
     if (canBeOptimized()) {

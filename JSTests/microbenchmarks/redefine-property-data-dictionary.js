@@ -1,4 +1,3 @@
-//@ skip if $memoryLimited and ["arm", "mips"].include?($architecture)
 const obj = {};
 for (let i = 0; i < 100; ++i)
     obj["k" + i] = i;

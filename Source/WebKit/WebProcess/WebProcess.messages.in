@@ -105,7 +105,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
     SetHasSuspendedPageProxy(bool hasSuspendedPageProxy);
-    SetIsInProcessCache(bool isInProcessCache)
+    SetIsInProcessCache(bool isInProcessCache) -> () Async
     MarkIsNoLongerPrewarmed()
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins) Async
 

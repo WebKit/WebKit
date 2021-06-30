@@ -28,8 +28,6 @@
     Exposed=(Window,Worker),
     ImplementationLacksVTable
 ] interface CanvasGradient {
-    // FIXME: The float parameters below should be a double.
-
     // opaque object
-    undefined addColorStop(float offset, DOMString color);
+    undefined addColorStop(double offset, DOMString color);
 };

@@ -28,7 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "AssemblyHelpers.h"
+#include "AssemblyHelpersSpoolers.h"
 #include "DFGOSRExitCompilerCommon.h"
 #include "FTLOSRExitCompiler.h"
 #include "FTLOperations.h"
@@ -56,31 +56,34 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     }
     
     // Note that the "return address" will be the ID that we pass to the generation function.
-    
-    ptrdiff_t stackMisalignment = MacroAssembler::pushToSaveByteOffset();
-    
+
+    constexpr GPRReg stackPointerRegister = MacroAssembler::stackPointerRegister;
+    constexpr GPRReg framePointerRegister = MacroAssembler::framePointerRegister;
+    constexpr ptrdiff_t pushToSaveByteOffset = MacroAssembler::pushToSaveByteOffset();
+    ptrdiff_t stackMisalignment = pushToSaveByteOffset;
+
     // Pretend that we're a C call frame.
-    jit.pushToSave(MacroAssembler::framePointerRegister);
-    jit.move(MacroAssembler::stackPointerRegister, MacroAssembler::framePointerRegister);
-    stackMisalignment += MacroAssembler::pushToSaveByteOffset();
-    
+    jit.pushToSave(framePointerRegister);
+    jit.move(stackPointerRegister, framePointerRegister);
+    stackMisalignment += pushToSaveByteOffset;
+
     // Now create ourselves enough stack space to give saveAllRegisters() a scratch slot.
     unsigned numberOfRequiredPops = 0;
     do {
-        jit.pushToSave(GPRInfo::regT0);
-        stackMisalignment += MacroAssembler::pushToSaveByteOffset();
+        stackMisalignment += pushToSaveByteOffset;
         numberOfRequiredPops++;
     } while (stackMisalignment % stackAlignmentBytes());
-    
+    jit.subPtr(MacroAssembler::TrustedImm32(numberOfRequiredPops * pushToSaveByteOffset), stackPointerRegister);
+
     ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(requiredScratchMemorySizeInBytes());
     char* buffer = static_cast<char*>(scratchBuffer->dataBuffer());
     
     saveAllRegisters(jit, buffer);
 
-    jit.loadPtr(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    jit.loadPtr(framePointerRegister, GPRInfo::argumentGPR0);
     jit.peek(
         GPRInfo::argumentGPR1,
-        (stackMisalignment - MacroAssembler::pushToSaveByteOffset()) / sizeof(void*));
+        (stackMisalignment - pushToSaveByteOffset) / sizeof(void*));
     jit.prepareCallOperation(vm);
     MacroAssembler::Call functionCall = jit.call(OperationPtrTag);
 
@@ -92,14 +95,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0);
 
     // Prepare for tail call.
-    while (numberOfRequiredPops--)
-        jit.popToRestore(GPRInfo::regT1);
-    jit.popToRestore(MacroAssembler::framePointerRegister);
 
-    // When we came in here, there was an additional thing pushed to the stack. Some clients want it
-    // popped before proceeding.
-    while (extraPopsToRestore--)
-        jit.popToRestore(GPRInfo::regT1);
+    jit.loadPtr(MacroAssembler::Address(stackPointerRegister, numberOfRequiredPops * pushToSaveByteOffset), framePointerRegister);
+
+    // When we came in here, there was an additional thing pushed to the stack (extraPopsToRestore).
+    // Some clients want it popped before proceeding. Also add 1 for the pushToSave of the framePointerRegister.
+    numberOfRequiredPops += 1 + extraPopsToRestore;
+    jit.addPtr(MacroAssembler::TrustedImm32(numberOfRequiredPops * pushToSaveByteOffset), stackPointerRegister);
 
     // Put the return address wherever the return instruction wants it. On all platforms, this
     // ensures that the return address is out of the way of register restoration.
@@ -177,21 +179,25 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
 #if CPU(X86_64)
     currentOffset += sizeof(void*);
 #endif
-    
+
+    AssemblyHelpers::StoreRegSpooler storeSpooler(jit, MacroAssembler::stackPointerRegister);
+
     for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1)) {
         if (!key.usedRegisters().get(reg))
             continue;
-        jit.storePtr(reg, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset));
+        storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         currentOffset += sizeof(void*);
     }
-    
+    storeSpooler.finalizeGPR();
+
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1)) {
         if (!key.usedRegisters().get(reg))
             continue;
-        jit.storeDouble(reg, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset));
+        storeSpooler.storeFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         currentOffset += sizeof(double);
     }
-    
+    storeSpooler.finalizeFPR();
+
     jit.preserveReturnAddressAfterCall(GPRInfo::nonArgGPR1);
     jit.storePtr(GPRInfo::nonArgGPR1, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()));
     jit.prepareCallOperation(vm);
@@ -210,24 +216,28 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()), GPRInfo::nonPreservedNonReturnGPR);
     jit.restoreReturnAddressBeforeReturn(GPRInfo::nonPreservedNonReturnGPR);
     
+    AssemblyHelpers::LoadRegSpooler loadSpooler(jit, MacroAssembler::stackPointerRegister);
+
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::lastFPRegister(); ; reg = static_cast<MacroAssembler::FPRegisterID>(reg - 1)) {
         if (key.usedRegisters().get(reg)) {
             currentOffset -= sizeof(double);
-            jit.loadDouble(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset), reg);
+            loadSpooler.loadFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         }
         if (reg == MacroAssembler::firstFPRegister())
             break;
     }
-    
+    loadSpooler.finalizeFPR();
+
     for (MacroAssembler::RegisterID reg = MacroAssembler::lastRegister(); ; reg = static_cast<MacroAssembler::RegisterID>(reg - 1)) {
         if (key.usedRegisters().get(reg)) {
             currentOffset -= sizeof(void*);
-            jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset), reg);
+            loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         }
         if (reg == MacroAssembler::firstRegister())
             break;
     }
-    
+    loadSpooler.finalizeGPR();
+
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::FTLThunk);

@@ -6,13 +6,13 @@ PASS Partial interface Element: member names are unique
 PASS Partial interface Range: original interface defined
 PASS Partial interface Range: member names are unique
 PASS Element includes InnerHTML: member names are unique
+PASS ShadowRoot includes InnerHTML: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
-PASS ShadowRoot includes InnerHTML: member names are unique
-PASS DocumentFragment includes NonElementParentNode: member names are unique
-PASS DocumentFragment includes ParentNode: member names are unique
 PASS XMLSerializer interface: existence and properties of interface object
 PASS XMLSerializer interface object length
 PASS XMLSerializer interface object name

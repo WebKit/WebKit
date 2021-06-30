@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/a-element-origin.js
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/a-element.js
+/LayoutTests/imported/w3c/web-platform-tests/url/resources/percent-encoding.json
+/LayoutTests/imported/w3c/web-platform-tests/url/resources/percent-encoding.py
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/setters_tests.json
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/toascii.json
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/urltestdata.json

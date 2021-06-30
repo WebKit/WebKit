@@ -383,9 +383,7 @@ public:
 
     void updateRootContentLayerClipping();
 
-#if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPropertiesWithFrameView(const FrameView&) const;
-#endif
 
     // For testing.
     void startTrackingLayerFlushes() { m_layerFlushCount = 0; }

@@ -605,7 +605,7 @@ void WebProcess::setHasSuspendedPageProxy(bool hasSuspendedPageProxy)
     m_hasSuspendedPageProxy = hasSuspendedPageProxy;
 }
 
-void WebProcess::setIsInProcessCache(bool isInProcessCache)
+void WebProcess::setIsInProcessCache(bool isInProcessCache, CompletionHandler<void()>&& completionHandler)
 {
 #if PLATFORM(COCOA)
     if (isInProcessCache) {
@@ -620,6 +620,8 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache)
 #else
     UNUSED_PARAM(isInProcessCache);
 #endif
+
+    completionHandler();
 }
 
 void WebProcess::markIsNoLongerPrewarmed()

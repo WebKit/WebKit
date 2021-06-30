@@ -58,12 +58,14 @@ PASS Request on bad port 563 should throw TypeError.
 PASS Request on bad port 587 should throw TypeError.
 PASS Request on bad port 601 should throw TypeError.
 PASS Request on bad port 636 should throw TypeError.
+PASS Request on bad port 989 should throw TypeError.
+PASS Request on bad port 990 should throw TypeError.
 PASS Request on bad port 993 should throw TypeError.
 PASS Request on bad port 995 should throw TypeError.
-PASS Request on bad port 2049 should throw TypeError.
 PASS Request on bad port 1719 should throw TypeError.
 PASS Request on bad port 1720 should throw TypeError.
 PASS Request on bad port 1723 should throw TypeError.
+PASS Request on bad port 2049 should throw TypeError.
 PASS Request on bad port 3659 should throw TypeError.
 PASS Request on bad port 4045 should throw TypeError.
 PASS Request on bad port 5060 should throw TypeError.

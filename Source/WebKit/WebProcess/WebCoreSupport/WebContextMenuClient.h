@@ -52,6 +52,10 @@ private:
     void speak(const String&) override;
     void stopSpeaking() override;
 
+#if ENABLE(IMAGE_ANALYSIS)
+    bool supportsLookUpInImages() final { return true; }
+#endif
+
 #if PLATFORM(COCOA)
     void searchWithSpotlight() override;
 #endif

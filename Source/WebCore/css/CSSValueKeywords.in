@@ -446,6 +446,18 @@ hiragana-iroha
 katakana-iroha
 cjk-decimal
 tamil
+disclosure-open
+disclosure-closed
+japanese-informal
+japanese-formal
+korean-hangul-formal
+korean-hanja-informal
+korean-hanja-formal
+simp-chinese-informal
+simp-chinese-formal
+trad-chinese-informal
+trad-chinese-formal
+ethiopic-numeric
 //none
 //
 // CSS_PROP_DISPLAY:
@@ -1145,7 +1157,6 @@ at
 // closest-side
 // farthest-side
 
-#if defined(ENABLE_CSS_SCROLL_SNAP)
 // -webkit-scroll-snap-points-x
 // -webkit-scroll-snap-points-y
 elements
@@ -1155,7 +1166,6 @@ mandatory
 proximity
 // x
 // y
-#endif
 
 break
 

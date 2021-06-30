@@ -4207,9 +4207,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case PhantomLocal:
-    case LoopHint:
         // This is a no-op.
         noResult(node);
+        break;
+    case LoopHint:
+        compileLoopHint(node);
         break;
         
     case MaterializeNewObject:

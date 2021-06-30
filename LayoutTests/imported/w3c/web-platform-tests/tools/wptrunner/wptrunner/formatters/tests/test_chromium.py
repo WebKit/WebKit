@@ -1,7 +1,7 @@
 import json
 import sys
 from os.path import dirname, join
-from six.moves import cStringIO as StringIO
+from io import StringIO
 
 from mozlog import handlers, structuredlog
 
@@ -157,16 +157,23 @@ def test_subtest_messages(capfd):
     output_json = json.load(output)
 
     t1_artifacts = output_json["tests"]["t1"]["artifacts"]
-    assert t1_artifacts["log"] == [
+    assert t1_artifacts["wpt_actual_metadata"] == [
         "[t1]\n  expected: PASS\n",
-        "  [t1_a]\n    expected: FAIL\n    message: t1_a_message\n",
-        "  [t1_b]\n    expected: PASS\n    message: t1_b_message\n",
+        "  [t1_a]\n    expected: FAIL\n",
+        "  [t1_b]\n    expected: PASS\n",
+    ]
+    assert t1_artifacts["wpt_log"] == [
+        "t1_a: t1_a_message\n",
+        "t1_b: t1_b_message\n",
     ]
     assert t1_artifacts["wpt_subtest_failure"] == ["true"]
     t2_artifacts = output_json["tests"]["t2"]["artifacts"]
-    assert t2_artifacts["log"] == [
-        "[t2]\n  expected: TIMEOUT\n  message: t2_message\n",
+    assert t2_artifacts["wpt_actual_metadata"] == [
+        "[t2]\n  expected: TIMEOUT\n",
         "  [t2_a]\n    expected: PASS\n",
+    ]
+    assert t2_artifacts["wpt_log"] == [
+        "Harness: t2_message\n"
     ]
     assert "wpt_subtest_failure" not in t2_artifacts.keys()
 
@@ -210,11 +217,17 @@ def test_subtest_failure(capfd):
 
     test_obj = output_json["tests"]["t1"]
     t1_artifacts = test_obj["artifacts"]
-    assert t1_artifacts["log"] == [
-        "[t1]\n  expected: PASS\n  message: top_message\n",
-        "  [t1_a]\n    expected: FAIL\n    message: t1_a_message\n",
-        "  [t1_b]\n    expected: PASS\n    message: t1_b_message\n",
-        "  [t1_c]\n    expected: TIMEOUT\n    message: t1_c_message\n",
+    assert t1_artifacts["wpt_actual_metadata"] == [
+        "[t1]\n  expected: PASS\n",
+        "  [t1_a]\n    expected: FAIL\n",
+        "  [t1_b]\n    expected: PASS\n",
+        "  [t1_c]\n    expected: TIMEOUT\n",
+    ]
+    assert t1_artifacts["wpt_log"] == [
+        "Harness: top_message\n",
+        "t1_a: t1_a_message\n",
+        "t1_b: t1_b_message\n",
+        "t1_c: t1_c_message\n",
     ]
     assert t1_artifacts["wpt_subtest_failure"] == ["true"]
     # The status of the test in the output is a failure because subtests failed,
@@ -266,13 +279,16 @@ def test_expected_subtest_failure(capfd):
     output_json = json.load(output)
 
     test_obj = output_json["tests"]["t1"]
-    t1_log = test_obj["artifacts"]["log"]
-    print("Lpz t1log=%s" % t1_log)
-    assert t1_log == [
+    assert test_obj["artifacts"]["wpt_actual_metadata"] == [
         "[t1]\n  expected: OK\n",
-        "  [t1_a]\n    expected: FAIL\n    message: t1_a_message\n",
-        "  [t1_b]\n    expected: PASS\n    message: t1_b_message\n",
-        "  [t1_c]\n    expected: TIMEOUT\n    message: t1_c_message\n",
+        "  [t1_a]\n    expected: FAIL\n",
+        "  [t1_b]\n    expected: PASS\n",
+        "  [t1_c]\n    expected: TIMEOUT\n",
+    ]
+    assert test_obj["artifacts"]["wpt_log"] == [
+        "t1_a: t1_a_message\n",
+        "t1_b: t1_b_message\n",
+        "t1_c: t1_c_message\n",
     ]
     # The status of the test in the output is a pass because the subtest
     # failures were all expected.
@@ -316,9 +332,12 @@ def test_unexpected_subtest_pass(capfd):
 
     test_obj = output_json["tests"]["t1"]
     t1_artifacts = test_obj["artifacts"]
-    assert t1_artifacts["log"] == [
+    assert t1_artifacts["wpt_actual_metadata"] == [
         "[t1]\n  expected: PASS\n",
-        "  [t1_a]\n    expected: PASS\n    message: t1_a_message\n",
+        "  [t1_a]\n    expected: PASS\n",
+    ]
+    assert t1_artifacts["wpt_log"] == [
+        "t1_a: t1_a_message\n",
     ]
     assert t1_artifacts["wpt_subtest_failure"] == ["true"]
     # Since the subtest status is unexpected, we fail the test. But we report
@@ -426,8 +445,8 @@ def test_flaky_test_expected(capfd):
     test_obj = output_json["tests"]["t1"]
     # The test's statuses are all mapped, changing ERROR->FAIL and OK->PASS
     assert test_obj["actual"] == "FAIL"
-    # All the possible statuses are concatenated together into expected.
-    assert test_obj["expected"] == "PASS FAIL TIMEOUT"
+    # All the possible statuses are merged and sorted together into expected.
+    assert test_obj["expected"] == "FAIL PASS TIMEOUT"
     # ...this is not a regression or unexpected because the actual status is one
     # of the expected ones
     assert "is_regression" not in test_obj
@@ -462,7 +481,7 @@ def test_flaky_test_unexpected(capfd):
     test_obj = output_json["tests"]["t1"]
     # The test's statuses are all mapped, changing ERROR->FAIL and OK->PASS
     assert test_obj["actual"] == "FAIL"
-    # All the possible statuses are concatenated together into expected.
+    # All the possible statuses are merged and sorted together into expected.
     assert test_obj["expected"] == "PASS TIMEOUT"
     # ...this is a regression and unexpected because the actual status is not
     # one of the expected ones
@@ -534,6 +553,39 @@ def test_known_intermittent_empty(capfd):
     # anywhere.
     assert test_obj["actual"] == "PASS"
     assert test_obj["expected"] == "PASS"
+
+
+def test_known_intermittent_duplicate(capfd):
+    # We don't want to have duplicate statuses in the final "expected" field.
+
+    # Set up the handler.
+    output = StringIO()
+    logger = structuredlog.StructuredLogger("test_a")
+    logger.add_handler(handlers.StreamHandler(output, ChromiumFormatter()))
+
+    # There are two duplications in this input:
+    # 1. known_intermittent already contains expected;
+    # 2. both statuses in known_intermittent map to FAIL in Chromium.
+    # In the end, we should only get one FAIL in Chromium "expected".
+    logger.suite_start(["t1"], run_info={}, time=123)
+    logger.test_start("t1")
+    logger.test_end("t1", status="ERROR", expected="ERROR", known_intermittent=["FAIL", "ERROR"])
+    logger.suite_end()
+
+    # Check nothing got output to stdout/stderr.
+    # (Note that mozlog outputs exceptions during handling to stderr!)
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+    # Check the actual output of the formatter.
+    output.seek(0)
+    output_json = json.load(output)
+
+    test_obj = output_json["tests"]["t1"]
+    assert test_obj["actual"] == "FAIL"
+    # No duplicate "FAIL" in "expected".
+    assert test_obj["expected"] == "FAIL"
 
 
 def test_reftest_screenshots(capfd):

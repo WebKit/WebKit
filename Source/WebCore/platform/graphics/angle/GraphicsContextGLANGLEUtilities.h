@@ -204,6 +204,42 @@ private:
     GLuint m_object { 0 };
 };
 
+class ScopedGLFence {
+    WTF_MAKE_NONCOPYABLE(ScopedGLFence);
+public:
+    ScopedGLFence() = default;
+    ScopedGLFence(ScopedGLFence&& other)
+        : m_object(std::exchange(other.m_object, { }))
+    {
+    }
+    ~ScopedGLFence() { reset(); }
+    ScopedGLFence& operator=(ScopedGLFence&& other)
+    {
+        if (this != &other) {
+            reset();
+            m_object = std::exchange(other.m_object, { });
+        }
+        return *this;
+    }
+    void reset()
+    {
+        if (m_object) {
+            gl::DeleteSync(m_object);
+            m_object = { };
+        }
+    }
+    void abandon() { m_object = { }; }
+    void fenceSync()
+    {
+        reset();
+        m_object = gl::FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    }
+    operator GLsync() const { return m_object; }
+    operator bool() const { return m_object; }
+private:
+    GLsync m_object { };
+};
+
 }
 
 #endif

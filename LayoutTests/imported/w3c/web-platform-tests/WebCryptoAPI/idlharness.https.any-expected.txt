@@ -7,10 +7,10 @@ PASS Partial interface Window: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
 PASS Window includes WindowEventHandlers: member names are unique
 PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 PASS Crypto interface: existence and properties of interface object
 PASS Crypto interface object length
 PASS Crypto interface object name
@@ -79,5 +79,4 @@ PASS SubtleCrypto interface: calling wrapKey(KeyFormat, CryptoKey, CryptoKey, Al
 PASS SubtleCrypto interface: crypto.subtle must inherit property "unwrapKey(KeyFormat, BufferSource, CryptoKey, AlgorithmIdentifier, AlgorithmIdentifier, boolean, sequence<KeyUsage>)" with the proper type
 PASS SubtleCrypto interface: calling unwrapKey(KeyFormat, BufferSource, CryptoKey, AlgorithmIdentifier, AlgorithmIdentifier, boolean, sequence<KeyUsage>) on crypto.subtle with too few arguments must throw TypeError
 PASS Window interface: attribute crypto
-PASS WorkerGlobalScope interface: existence and properties of interface object
 

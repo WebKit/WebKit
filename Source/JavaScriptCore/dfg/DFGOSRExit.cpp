@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "AssemblyHelpers.h"
+#include "AssemblyHelpersSpoolers.h"
 #include "BytecodeStructs.h"
 #include "CheckpointOSRExitSideState.h"
 #include "DFGGraph.h"
@@ -562,13 +562,19 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // do this even for state that's already in the right place on the stack.
     // It makes things simpler later.
 
+    bool inlineStackContainsActiveCheckpoint = exit.m_codeOrigin.inlineStackContainsActiveCheckpoint();
+    size_t firstTmpToRestoreEarly = operands.size() - operands.numberOfTmps();
+    if (!inlineStackContainsActiveCheckpoint)
+        firstTmpToRestoreEarly = operands.size(); // Don't eagerly restore.
+
     // The tag registers are needed to materialize recoveries below.
     jit.emitMaterializeTagCheckRegisters();
 
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
 
-        switch (recovery.technique()) {
+        auto currentTechnique = recovery.technique();
+        switch (currentTechnique) {
         case DisplacedInJSStack:
 #if USE(JSVALUE64)
         case CellDisplacedInJSStack:
@@ -594,9 +600,12 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
         case Constant: {
 #if USE(JSVALUE64)
-            jit.move(AssemblyHelpers::TrustedImm64(JSValue::encode(recovery.constant())), GPRInfo::regT0);
-            jit.store64(GPRInfo::regT0, scratch + index);
-#else
+            if (index >= firstTmpToRestoreEarly) {
+                ASSERT(operands.operandForIndex(index).isTmp());
+                jit.move(AssemblyHelpers::TrustedImm64(JSValue::encode(recovery.constant())), GPRInfo::regT0);
+                jit.store64(GPRInfo::regT0, scratch + index);
+            }
+#else // not USE(JSVALUE64)
             jit.store32(
                 AssemblyHelpers::TrustedImm32(recovery.constant().tag()),
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
@@ -766,7 +775,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     if (exit.isExceptionHandler())
         jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
 
-    if (exit.m_codeOrigin.inlineStackContainsActiveCheckpoint()) {
+    if (inlineStackContainsActiveCheckpoint) {
         EncodedJSValue* tmpScratch = scratch + operands.tmpIndex(0);
         jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(&vm, &exit, tmpScratch);
         jit.prepareCallOperation(vm);
@@ -776,6 +785,16 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
     // Do all data format conversions and store the results into the stack.
 
+#if USE(JSVALUE64)
+    constexpr GPRReg srcBufferGPR = GPRInfo::regT2;
+    constexpr GPRReg destBufferGPR = GPRInfo::regT3;
+    constexpr GPRReg undefinedGPR = GPRInfo::regT4;
+    bool undefinedGPRIsInitialized = false;
+
+    jit.move(CCallHelpers::TrustedImmPtr(scratch), srcBufferGPR);
+    jit.move(CCallHelpers::framePointerRegister, destBufferGPR);
+    CCallHelpers::CopySpooler spooler(CCallHelpers::CopySpooler::BufferRegs::AllowModification, jit, srcBufferGPR, destBufferGPR, GPRInfo::regT0, GPRInfo::regT1);
+#endif
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
         Operand operand = operands.operandForIndex(index);
@@ -786,6 +805,23 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             continue;
 
         switch (recovery.technique()) {
+        case Constant: {
+#if USE(JSVALUE64)
+            EncodedJSValue currentConstant = JSValue::encode(recovery.constant());
+            if (currentConstant == encodedJSUndefined()) {
+                if (!undefinedGPRIsInitialized) {
+                    jit.move(CCallHelpers::TrustedImm64(encodedJSUndefined()), undefinedGPR);
+                    undefinedGPRIsInitialized = true;
+                }
+                spooler.copyGPR(undefinedGPR);
+            } else
+                spooler.moveConstant(currentConstant);
+            spooler.storeGPR(operand.virtualRegister().offset() * sizeof(CPURegister));
+            break;
+#else
+            FALLTHROUGH;
+#endif
+        }
         case DisplacedInJSStack:
         case BooleanDisplacedInJSStack:
         case Int32DisplacedInJSStack:
@@ -795,7 +831,6 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case UnboxedInt32InGPR:
         case UnboxedCellInGPR:
         case UnboxedDoubleInFPR:
-        case Constant:
         case InFPR:
 #if USE(JSVALUE64)
         case InGPR:
@@ -803,8 +838,8 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case Int52DisplacedInJSStack:
         case UnboxedStrictInt52InGPR:
         case StrictInt52DisplacedInJSStack:
-            jit.load64(scratch + index, GPRInfo::regT0);
-            jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
+            spooler.loadGPR(index * sizeof(CPURegister));
+            spooler.storeGPR(operand.virtualRegister().offset() * sizeof(CPURegister));
             break;
 #else // not USE(JSVALUE64)
         case InPair:
@@ -833,6 +868,9 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             break;
         }
     }
+#if USE(JSVALUE64)
+    spooler.finalizeGPR();
+#endif
 
     // Now that things on the stack are recovered, do the arguments recovery. We assume that arguments
     // recoveries don't recursively refer to each other. But, we don't try to assume that they only

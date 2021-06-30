@@ -438,6 +438,13 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ valueIndexForData(convertEnumerationToString(argument)), RecordingSwizzleType::String }};
 }
 
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(std::optional<double>& argument)
+{
+    if (!argument)
+        return std::nullopt;
+    return {{ JSON::Value::create(*argument), RecordingSwizzleType::Number }};
+}
+
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(std::optional<float>& argument)
 {
     if (!argument)
@@ -534,6 +541,11 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
         return indexForData(item);
     });
     return {{ buildArrayForVector(WTFMove(deduplicated)), RecordingSwizzleType::String }};
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Vector<double>& argument)
+{
+    return {{ buildArrayForVector(argument), RecordingSwizzleType::Array }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Vector<float>& argument)

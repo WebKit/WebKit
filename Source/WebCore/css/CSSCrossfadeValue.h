@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+namespace Style {
+class BuilderState;
+}
+
 struct BlendingContext;
 class CSSPrimitiveValue;
 

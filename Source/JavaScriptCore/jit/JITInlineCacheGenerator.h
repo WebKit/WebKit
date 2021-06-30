@@ -202,7 +202,7 @@ public:
     JITInByValGenerator() { }
 
     JITInByValGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR);
 
     MacroAssembler::Jump slowPathJump() const

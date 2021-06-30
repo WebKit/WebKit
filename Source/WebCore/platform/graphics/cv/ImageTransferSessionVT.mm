@@ -42,7 +42,6 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
-using namespace PAL;
 
 static inline CFStringRef cvPixelFormatOpenGLKey()
 {
@@ -138,7 +137,7 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
 
 RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(CMSampleBufferRef sourceBuffer, const IntSize& size)
 {
-    return convertPixelBuffer(CMSampleBufferGetImageBuffer(sourceBuffer), size);
+    return convertPixelBuffer(PAL::CMSampleBufferGetImageBuffer(sourceBuffer), size);
 }
 
 RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSampleBufferRef sourceBuffer, const IntSize& size)
@@ -146,9 +145,9 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
     if (!sourceBuffer)
         return nullptr;
 
-    auto description = CMSampleBufferGetFormatDescription(sourceBuffer);
-    auto sourceSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(description, true, true));
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sourceBuffer));
+    auto description = PAL::CMSampleBufferGetFormatDescription(sourceBuffer);
+    auto sourceSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(description, true, true));
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sourceBuffer));
     if (size == expandedIntSize(sourceSize) && m_pixelFormat == CVPixelBufferGetPixelFormatType(pixelBuffer))
         return retainPtr(sourceBuffer);
 
@@ -160,7 +159,7 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
         return nullptr;
 
     CMItemCount itemCount = 0;
-    auto status = CMSampleBufferGetSampleTimingInfoArray(sourceBuffer, 1, nullptr, &itemCount);
+    auto status = PAL::CMSampleBufferGetSampleTimingInfoArray(sourceBuffer, 1, nullptr, &itemCount);
     if (status != noErr) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertCMSampleBuffer: CMSampleBufferGetSampleTimingInfoArray failed with error code: %d", static_cast<int>(status));
         return nullptr;
@@ -169,7 +168,7 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
     CMSampleTimingInfo* timeingInfoPtr = nullptr;
     if (itemCount) {
         timingInfoArray.grow(itemCount);
-        status = CMSampleBufferGetSampleTimingInfoArray(sourceBuffer, itemCount, timingInfoArray.data(), nullptr);
+        status = PAL::CMSampleBufferGetSampleTimingInfoArray(sourceBuffer, itemCount, timingInfoArray.data(), nullptr);
         if (status != noErr) {
             RELEASE_LOG(Media, "ImageTransferSessionVT::convertCMSampleBuffer: CMSampleBufferGetSampleTimingInfoArray failed with error code: %d", static_cast<int>(status));
             return nullptr;
@@ -178,14 +177,14 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
     }
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
-    status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, convertedPixelBuffer.get(), &formatDescription);
+    status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, convertedPixelBuffer.get(), &formatDescription);
     if (status != noErr) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertCMSampleBuffer: CMVideoFormatDescriptionCreateForImageBuffer returned: %d", static_cast<int>(status));
         return nullptr;
     }
 
     CMSampleBufferRef resizedSampleBuffer;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, convertedPixelBuffer.get(), formatDescription, timeingInfoPtr, &resizedSampleBuffer);
+    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, convertedPixelBuffer.get(), formatDescription, timeingInfoPtr, &resizedSampleBuffer);
     CFRelease(formatDescription);
     if (status != noErr) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertCMSampleBuffer: failed to create CMSampleBuffer with error code: %d", static_cast<int>(status));
@@ -237,16 +236,16 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CVPixe
     }
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
-    auto status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)inputBuffer.get(), &formatDescription);
+    auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)inputBuffer.get(), &formatDescription);
     if (status) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertPixelBuffer: failed to initialize CMVideoFormatDescription with error code: %d", static_cast<int>(status));
         return nullptr;
     }
 
     CMSampleBufferRef sampleBuffer;
-    auto cmTime = toCMTime(sampleTime);
-    CMSampleTimingInfo timingInfo = { kCMTimeInvalid, cmTime, cmTime };
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)inputBuffer.get(), formatDescription, &timingInfo, &sampleBuffer);
+    auto cmTime = PAL::toCMTime(sampleTime);
+    CMSampleTimingInfo timingInfo = { PAL::kCMTimeInvalid, cmTime, cmTime };
+    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)inputBuffer.get(), formatDescription, &timingInfo, &sampleBuffer);
     CFRelease(formatDescription);
     if (status) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertPixelBuffer: failed to initialize CMSampleBuffer with error code: %d", static_cast<int>(status));

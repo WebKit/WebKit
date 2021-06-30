@@ -456,6 +456,7 @@ fast/events/click-range-slider.html [ Skip ]
 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
 fast/events/context-onmousedown-event.html [ Skip ]
 fast/events/contextmenu-actions-in-selected-text.html [ Skip ]
+fast/events/contextmenu-lookup-action-for-image.html [ Skip ]
 fast/events/contextmenu-scrolled-page-with-frame.html [ Skip ]
 fast/events/data-transfer-files-attribute-identity.html [ Skip ]
 fast/events/dblclick-addEventListener.html [ Skip ]
@@ -807,9 +808,6 @@ webkit.org/b/164888 fast/shadow-dom/focus-navigation-passes-shadow-host.html [ S
 webkit.org/b/164888 fast/shadow-dom/focus-navigation-passes-svg-use-element.html [ Skip ]
 webkit.org/b/202497 imported/w3c/web-platform-tests/shadow-dom/focus/ [ Skip ]
 imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html [ Pass ]
-imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1.html [ Pass ]
-imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2.html [ Pass ]
-imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3.html [ Pass ]
 
 # This test needs to be rewritten to use runUIScript to work on iOS
 webkit.org/b/152993 http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html [ Skip ]
@@ -2119,6 +2117,9 @@ accessibility/attachment-element.html [ Pass ]
 # Enable Text marker tests for iOS
 webkit.org/b/153292 accessibility/text-marker [ Pass ]
 
+# Skip accessibility text recognition tests on iOS 14 and earlier.
+accessibility/ios-simulator/image-overlay-elements.html
+
 # More flaky tests (Sept 18, 2015)
 
 fast/forms/select-element-focus-ring.html [ Failure Pass ]
@@ -3179,8 +3180,6 @@ webkit.org/b/202003 imported/w3c/web-platform-tests/websockets/bufferedAmount-un
 
 webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.html [ Pass Failure ]
 webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.worker.html [ Pass Failure ]
-webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.html [ Pass Failure ]
-webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.worker.html [ Pass Failure ]
 
 webkit.org/b/207762 http/wpt/service-workers/check-service-worker-header.https.html [ Pass Failure ]
 

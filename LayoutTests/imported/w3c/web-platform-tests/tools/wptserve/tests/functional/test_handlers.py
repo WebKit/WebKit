@@ -5,7 +5,7 @@ import unittest
 import uuid
 
 import pytest
-from six.moves.urllib.error import HTTPError
+from urllib.error import HTTPError
 
 wptserve = pytest.importorskip("wptserve")
 from .base import TestUsingServer, TestUsingH2Server, doc_root
@@ -436,12 +436,12 @@ class TestServiceWorkersHandler(TestWrapperHandlerUsingServer):
                               'text/html', serve.ServiceWorkersHandler)
 
 
-class TestAnyWorkerHandler(TestWrapperHandlerUsingServer):
+class TestClassicWorkerHandler(TestWrapperHandlerUsingServer):
     dummy_files = {'bar.any.js': b''}
 
     def test_any_work_js(self):
         self.run_wrapper_test('bar.any.worker.js', 'text/javascript',
-                              serve.AnyWorkerHandler)
+                              serve.ClassicWorkerHandler)
 
 
 if __name__ == '__main__':

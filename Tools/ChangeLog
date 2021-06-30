@@ -1,3 +1,232 @@
+2021-06-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView loadSimulatedRequest does not set attribution value for url requests within html content
+        https://bugs.webkit.org/show_bug.cgi?id=227266
+        <rdar://problem/79316911>
+
+        Reviewed by Brent Fulgham.
+
+        API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
+2021-06-24  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB prints error log about blob files when there is no error
+        https://bugs.webkit.org/show_bug.cgi?id=227092
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StoreBlobThenDelete.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/StoreBlobToBeDeleted.html:
+
+2021-06-24  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Uninstalled Cog now requires a COG_MODULEDIR environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=227351
+
+        Reviewed by Adrian Perez de Castro.
+
+        Renamed the cog_path() method to cog_path_to() which requires a file_or_directory argument.
+        This is useful when setting the COG_MODULEDIR environment variable.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.cog_path_to):
+        (WPEPort.browser_name):
+        (WPEPort.browser_env):
+        (WPEPort.run_minibrowser):
+        (WPEPort.cog_path): Deleted.
+
+2021-06-24  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Remove ENABLE_SCROLL_SNAP compile-time option
+        https://bugs.webkit.org/show_bug.cgi?id=227067
+
+        Reviewed by Simon Fraser.
+
+        Remove compile-time ENABLE_SCROLL_SNAP configuration option.
+
+        * Scripts/webkitperl/FeatureList.pm: Remove the option from the list of features.
+
+2021-06-24  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] media/muted-video-is-playing-audio.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=208321
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Set the WebKitTestRunnerWPE application name on user-agent to ease the
+        detection of the WPE port from the layout tests using the isWPE()
+        function in platform-helper.js.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformConfigureViewForTest): Set WebKitTestRunnerWPE application name on user-agent.
+
+2021-06-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] WebKitGLibAPITestsCore should more explicitly link against library dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=227288
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/glib/CMakeLists.txt: Set up the WebKitGLibAPITestsCore_LIBRARIES
+        variable, use that for the target_link_libraries() call for the
+        WebKitGLibAPITestsCore target.
+        * TestWebKitAPI/glib/PlatformWPE.cmake: Extent the new variable to also
+        explicitly include Cairo and WPEToolingBackends libraries.
+
+2021-06-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App Privacy Report code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        <rdar://problem/74333287>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
+2021-06-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility support for image text recognition.
+        https://bugs.webkit.org/show_bug.cgi?id=224280
+        rdar://76348740
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::children const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::children const):
+        (WTR::AccessibilityUIElement::imageOverlayElements const):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::children const):
+        (WTR::AccessibilityUIElement::imageOverlayElements const):
+
+2021-06-23  Chris Dumez  <cdumez@apple.com>
+
+        Update WPT tools from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227255
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__):
+        The WPT server requires Python v3 to run so fallback to python3 executable if
+        the python executable is v2.
+
+2021-06-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [results.webkit.org] XSS vulnerability in configuration
+        https://bugs.webkit.org/show_bug.cgi?id=227267
+        <rdar://problem/74876210>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/drawer.js: Escape configuration specification.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
+2021-06-22  Saam Barati  <sbarati@apple.com>
+
+        jitCompileAndSetHeuristics shouldn't return true when we fail to compile
+        https://bugs.webkit.org/show_bug.cgi?id=227155
+
+        Reviewed by Tadeu Zagallo.
+
+        * Scripts/run-jsc-stress-tests:
+
+2021-06-22  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r279083.
+
+        Broke Mac Builds
+
+        Reverted changeset:
+
+        "Migrate App Privacy Report code from WebKitAdditions"
+        https://bugs.webkit.org/show_bug.cgi?id=227045
+        https://commits.webkit.org/r279083
+
+2021-06-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Functions dispatched to WorkQueue are sometimes destroyed in the calling thread due to block refcounting
+        https://bugs.webkit.org/show_bug.cgi?id=227160
+
+        Reviewed by Antti Koivisto.
+
+        Test that the Function passed to WorkQueue::dispatch
+        is always destroyed in the WorkQueue. Test by using the
+        knowledge that WorkQueues use threads.
+        Start up many WorkQueues to create more thread contention
+        to ensure that the dispatched-from thread is sometimes not
+        run while the thread of the queue finishes processing
+        the dispatch.
+
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+        (TestWebKitAPI::TEST):
+
+2021-06-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Test runner parses the names of value parametrised GTEST tests wrong
+        https://bugs.webkit.org/show_bug.cgi?id=227207
+
+        Reviewed by Jonathan Bedard.
+
+        Fix the parsing of test names.
+        * Scripts/webkitpy/api_tests/manager_unittest.py:
+        Add a test for the parsing.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager._test_list_from_output):
+        Fix the test name parsing.
+        The name is printed as:
+          ValueParametrizedTestsSupported/DogGreen  # GetParam() = (Dog, Green)
+
+        * TestWebKitAPI/Test.h:
+        (TestWebKitAPI::TestParametersToStringFormatter::operator() const):
+        Add a general-purpose formatter for all value-parametrized tests
+        to use.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/Misc/TestRunnerTests.cpp: Added.
+        (TestWebKitAPI::TEST_P):
+        Add a value-parametrized test testing the test runner.
+
+2021-06-21  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Don't process-swap on navigations within the same non-HTTP(s) protocol
+        https://bugs.webkit.org/show_bug.cgi?id=227220
+        <rdar://79106461>
+
+        Unreviewed follow-up to fix GTK test that started failing after the behavior
+        change in r279079.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionPageID):
+
+2021-06-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [results.webkit.org] XSS vulnerability in test name
+        https://bugs.webkit.org/show_bug.cgi?id=227235
+        <rdar://problem/77851775>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/archiveRouter.js:
+        (_ArchiveRouter.prototype.labelFor): Escape any HTML in a potential label.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/common.js:
+        (escapeHTML): If an object is undefined, don't attempt to escape it.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/configuration.js:
+        (Configuration.prototype.toString): Escape configuration parameters.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/investigate.html:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/search.html:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/suite_results.html:
+        * Scripts/libraries/resultsdbpy/setup.py:
+
 2021-06-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App Privacy Report code from WebKitAdditions

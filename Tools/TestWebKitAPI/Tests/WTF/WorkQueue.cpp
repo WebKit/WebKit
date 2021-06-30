@@ -30,6 +30,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -41,7 +42,7 @@ static const char* simpleTestLabel = "simpleTest";
 static const char* longTestLabel = "longTest";
 static const char* thirdTestLabel = "thirdTest";
 static const char* dispatchAfterLabel = "dispatchAfter";
-    
+
 TEST(WTF_WorkQueue, Simple)
 {
     Lock m_lock;
@@ -80,7 +81,7 @@ TEST(WTF_WorkQueue, Simple)
         EXPECT_TRUE(calledSimpleTest);
         EXPECT_TRUE(calledLongTest);
         EXPECT_TRUE(calledThirdTest);
-        
+
         m_testCompleted.notifyOne();
     });
 
@@ -107,7 +108,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     bool calledSimpleTest = false;
     bool calledLongTest = false;
     bool calledThirdTest = false;
-    
+
     auto queue1 = WorkQueue::create("com.apple.WebKit.Test.twoQueues1");
     auto queue2 = WorkQueue::create("com.apple.WebKit.Test.twoQueues2");
 
@@ -115,7 +116,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     EXPECT_EQ(1U, queue2->refCount());
 
     Locker locker { m_lock };
-    
+
     queue1->dispatch([&](void) {
         m_functionCallOrder.append(simpleTestLabel);
         calledSimpleTest = true;
@@ -138,7 +139,7 @@ TEST(WTF_WorkQueue, TwoQueues)
         Locker locker { m_lock };
         m_functionCallOrder.append(thirdTestLabel);
         calledThirdTest = true;
-        
+
         m_testQueue1Completed.notifyOne();
     });
 
@@ -191,7 +192,7 @@ TEST(WTF_WorkQueue, DispatchAfter)
 
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_FALSE(calledDispatchAfterTest);
-    
+
     m_dispatchAfterTestCompleted.wait(m_lock);
 
     EXPECT_TRUE(calledSimpleTest);
@@ -274,4 +275,40 @@ TEST(WTF_WorkQueue, DispatchSync)
     EXPECT_TRUE(secondSyncTaskTaskRan);
 }
 
+// Tests that the Function passed to WorkQueue::dispatch is destructed on the thread that
+// runs the Function. It is a common pattern to capture a owning reference into a Function
+// and dispatch that to a queue to ensure ordering (or thread affinity) of the object destruction.
+TEST(WTF_WorkQueue, DestroyDispatchedOnDispatchQueue)
+{
+    std::atomic<size_t> counter = 0;
+    class DestructionWorkQueueTester {
+    public:
+        DestructionWorkQueueTester(std::atomic<size_t>& counter)
+            : m_counter(counter)
+        {
+        }
+        ~DestructionWorkQueueTester()
+        {
+            EXPECT_NE(m_createdInThread, Thread::current().uid());
+            m_counter++;
+        }
+    private:
+        uint32_t m_createdInThread = Thread::current().uid();
+        std::atomic<size_t>& m_counter;
+    };
+    constexpr size_t queueCount = 50;
+    constexpr size_t iterationCount = 10000;
+    RefPtr<WorkQueue> queue[queueCount];
+    for (size_t i = 0; i < queueCount; ++i)
+        queue[i] = WorkQueue::create("com.apple.WebKit.Test.destroyDispatchedOnDispatchQueue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive);
+
+    for (size_t i = 0; i < iterationCount; ++i) {
+        for (size_t j = 0; j < queueCount; ++j)
+            queue[j]->dispatch([instance = std::make_unique<DestructionWorkQueueTester>(counter)]() { }); // NOLINT
+    }
+    for (size_t j = 0; j < queueCount; ++j)
+        queue[j]->dispatchSync([] { });
+    EXPECT_EQ(queueCount * iterationCount, counter);
+
+}
 } // namespace TestWebKitAPI

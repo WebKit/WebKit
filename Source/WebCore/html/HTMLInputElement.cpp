@@ -714,12 +714,12 @@ void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedNam
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyWidth, value);
         if (isImageButton())
-            applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+            applyAspectRatioFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
     } else if (name == heightAttr) {
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyHeight, value);
         if (isImageButton())
-            applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+            applyAspectRatioFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
     } else if (name == borderAttr && isImageButton())
         applyBorderAttributeToStyle(value, style);
     else

@@ -136,6 +136,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     BOOL _scrollEnabledInternal;
     BOOL _zoomEnabledByClient;
     BOOL _zoomEnabledInternal;
+    std::optional<UIEdgeInsets> _contentScrollInsetFromClient;
+    std::optional<UIEdgeInsets> _contentScrollInsetInternal;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -422,6 +424,35 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 }
 
 #endif // PLATFORM(WATCHOS)
+
+- (void)_setContentScrollInset:(UIEdgeInsets)insets
+{
+    _contentScrollInsetFromClient = insets;
+    [self _updateContentScrollInset];
+}
+
+- (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets
+{
+    if (_contentScrollInsetFromClient)
+        return NO;
+
+    if (_contentScrollInsetInternal && UIEdgeInsetsEqualToEdgeInsets(*_contentScrollInsetInternal, insets))
+        return NO;
+
+    _contentScrollInsetInternal = insets;
+    [self _updateContentScrollInset];
+    return YES;
+}
+
+- (void)_updateContentScrollInset
+{
+    if (auto insets = _contentScrollInsetFromClient)
+        super.contentScrollInset = *insets;
+    else if (auto insets = _contentScrollInsetInternal)
+        super.contentScrollInset = *insets;
+    else
+        ASSERT_NOT_REACHED();
+}
 
 #if HAVE(PEPPER_UI_CORE)
 

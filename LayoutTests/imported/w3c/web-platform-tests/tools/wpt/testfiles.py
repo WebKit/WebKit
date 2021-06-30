@@ -2,10 +2,10 @@ import argparse
 import logging
 import os
 import re
+import subprocess
 import sys
 
 from collections import OrderedDict
-from six import ensure_text, ensure_str, iteritems
 
 try:
     from ..manifest import manifest
@@ -37,7 +37,7 @@ if MYPY:
 
 DEFAULT_IGNORE_RULERS = ("resources/testharness*", "resources/testdriver*")
 
-here = ensure_text(os.path.dirname(__file__))
+here = os.path.dirname(__file__)
 wpt_root = os.path.abspath(os.path.join(here, os.pardir, os.pardir))
 
 logger = logging.getLogger()
@@ -76,8 +76,19 @@ def branch_point():
                      if item and item != "^%s" % head]
 
         # get all commits on HEAD but not reachable from anything in not_heads
-        commits = git("rev-list", "--topo-order", "--parents", "HEAD", *not_heads)
+        cmd = ["git", "rev-list", "--topo-order", "--parents", "--stdin", "HEAD"]
+        proc = subprocess.Popen(cmd,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                cwd=wpt_root)
+        commits_bytes, _ = proc.communicate(b"\n".join(item.encode("ascii") for item in not_heads))
+        if proc.returncode != 0:
+            raise subprocess.CalledProcessError(proc.returncode,
+                                                cmd,
+                                                commits_bytes)
+
         commit_parents = OrderedDict()  # type: Dict[Text, List[Text]]
+        commits = commits_bytes.decode("ascii")
         if commits:
             for line in commits.split("\n"):
                 line_commits = line.split(" ")
@@ -86,7 +97,7 @@ def branch_point():
         branch_point = None
 
         # if there are any commits, take the first parent that is not in commits
-        for commit, parents in iteritems(commit_parents):
+        for commit, parents in commit_parents.items():
             for parent in parents:
                 if parent not in commit_parents:
                     branch_point = parent
@@ -124,7 +135,7 @@ def branch_point():
 
 def compile_ignore_rule(rule):
     # type: (Text) -> Pattern[Text]
-    rule = rule.replace(ensure_text(os.path.sep), u"/")
+    rule = rule.replace(os.path.sep, u"/")
     parts = rule.split(u"/")
     re_parts = []
     for part in parts:
@@ -239,7 +250,7 @@ def affected_testfiles(files_changed,  # type: Iterable[Text]
     nontests_changed = set(files_changed)
     wpt_manifest = load_manifest(manifest_path, manifest_update)
 
-    test_types = ["crashtest", "testharness", "reftest", "wdspec"]
+    test_types = ["crashtest", "print-reftest", "reftest", "testharness", "wdspec"]
     support_files = {os.path.join(wpt_root, path)
                      for _, path, _ in wpt_manifest.itertypes("support")}
     wdspec_test_files = {os.path.join(wpt_root, path)
@@ -371,7 +382,7 @@ def get_revish(**kwargs):
     revish = kwargs.get("revish")
     if revish is None:
         revish = u"%s..HEAD" % branch_point()
-    return ensure_text(revish).strip()
+    return revish.strip()
 
 
 def run_changed_files(**kwargs):
@@ -386,7 +397,7 @@ def run_changed_files(**kwargs):
 
     for item in sorted(changed):
         line = os.path.relpath(item, wpt_root) + separator
-        sys.stdout.write(ensure_str(line))
+        sys.stdout.write(line)
 
 
 def run_tests_affected(**kwargs):

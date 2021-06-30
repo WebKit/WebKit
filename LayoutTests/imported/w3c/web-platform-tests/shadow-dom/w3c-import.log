@@ -68,3 +68,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-outside-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/user-agent-shadow-root-crash.html

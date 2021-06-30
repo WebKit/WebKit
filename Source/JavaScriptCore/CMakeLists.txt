@@ -757,6 +757,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     interpreter/VMEntryRecord.h
 
     jit/AssemblyHelpers.h
+    jit/AssemblyHelpersSpoolers.h
     jit/CCallHelpers.h
     jit/ExecutableAllocator.h
     jit/FPRInfo.h

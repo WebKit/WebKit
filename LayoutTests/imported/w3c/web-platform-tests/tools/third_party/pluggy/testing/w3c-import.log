@@ -16,10 +16,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/benchmark.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/conftest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_deprecations.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_details.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_helpers.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_hookrelay.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_method_ordering.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_hookcaller.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_invocations.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_multicall.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_pluginmanager.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_tracer.py

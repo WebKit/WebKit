@@ -1631,6 +1631,17 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 #endif
 }
 
+- (BOOL)_touchEventsMustRequireGestureRecognizerToFail:(UIGestureRecognizer *)gestureRecognizer
+{
+    auto webView = self.webView;
+    if ([webView _isNavigationSwipeGestureRecognizer:gestureRecognizer])
+        return YES;
+
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([webView UIDelegate]);
+    return gestureRecognizer.view == webView && [uiDelegate respondsToSelector:@selector(_webView:touchEventsMustRequireGestureRecognizerToFail:)]
+        && [uiDelegate _webView:webView touchEventsMustRequireGestureRecognizerToFail:gestureRecognizer];
+}
+
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     if (!_page->hasRunningProcess())
@@ -2442,7 +2453,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    if (gestureRecognizer == _touchEventGestureRecognizer && [_webView _isNavigationSwipeGestureRecognizer:otherGestureRecognizer])
+    if (gestureRecognizer == _touchEventGestureRecognizer && [self _touchEventsMustRequireGestureRecognizerToFail:otherGestureRecognizer])
         return YES;
 
     if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
@@ -7895,7 +7906,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    if ([_webView _isNavigationSwipeGestureRecognizer:gestureRecognizer])
+    if ([self _touchEventsMustRequireGestureRecognizerToFail:gestureRecognizer])
         return NO;
 
     auto webView = _webView.getAutoreleased();

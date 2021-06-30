@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioFileReader_h
-#define AudioFileReader_h
+#pragma once
 
 #include <stdlib.h>
 #include <wtf/RefPtr.h>
@@ -36,18 +35,10 @@ namespace WebCore {
 
 class AudioBus;
 
-// For both create functions:
 // Pass in 0.0 for sampleRate to use the file's sample-rate, otherwise a sample-rate conversion to the requested
 // sampleRate will be made (if it doesn't already match the file's sample-rate).
 // The created buffer will have its sample-rate set correctly to the result.
 
 RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
 
-RefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate);
-                                
-// May pass in 0.0 for sampleRate in which case it will use the AudioBus's sampleRate                               
-void writeBusToAudioFile(AudioBus* bus, const char* filePath, double fileSampleRate);
-
 } // namespace WebCore
-
-#endif // AudioFileReader_h

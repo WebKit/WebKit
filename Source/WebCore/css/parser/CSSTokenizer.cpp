@@ -1,5 +1,5 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -35,18 +35,20 @@
 #include "CSSParserTokenRange.h"
 #include "CSSTokenizerInputStream.h"
 #include "HTMLParserIdioms.h"
+#include "JSDOMConvertStrings.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
-// See: http://dev.w3.org/csswg/css-syntax/#input-preprocessing
+// https://drafts.csswg.org/css-syntax/#input-preprocessing
 static String preprocessString(String string)
 {
-    // According to the specification, we should replace '\r' and '\f' with '\n' but we do not need to
-    // because our CSSTokenizer treats all of them as new lines.
-    return string.replace('\0', replacementCharacter);
+    // We don't replace '\r' and '\f' with '\n' as the specification suggests, instead
+    // we treat them all the same in the isNewLine function below.
+    string.replace('\0', replacementCharacter);
+    return stringToUSVString(WTFMove(string));
 }
 
 std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string)

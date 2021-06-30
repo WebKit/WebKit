@@ -580,11 +580,33 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (_haveSetObscuredInsets)
         return _obscuredInsets;
 
-#if PLATFORM(IOS)
     return UIEdgeInsetsAdd(UIEdgeInsetsZero, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
-#else
+}
+
+- (UIEdgeInsets)_contentInsetsFromSystemMinimumLayoutMargins
+{
+    if (auto controller = [UIViewController _viewControllerForFullScreenPresentationFromView:self]) {
+        auto margins = controller.systemMinimumLayoutMargins;
+        auto insets = UIEdgeInsetsMake(margins.top, margins.leading, margins.bottom, margins.trailing);
+        if (_page && _page->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL)
+            std::swap(insets.left, insets.right);
+
+        if (auto view = controller.viewIfLoaded) {
+            auto adjustInsetEdge = [](CGFloat& insetEdge, CGFloat distanceFromEdge) {
+                insetEdge -= std::max<CGFloat>(0, distanceFromEdge);
+                insetEdge = std::max<CGFloat>(0, insetEdge);
+            };
+
+            auto viewBounds = view.bounds;
+            auto webViewBoundsInView = [self convertRect:self.bounds toView:view];
+            adjustInsetEdge(insets.top, CGRectGetMinY(webViewBoundsInView) - CGRectGetMinY(viewBounds));
+            adjustInsetEdge(insets.left, CGRectGetMinX(webViewBoundsInView) - CGRectGetMinX(viewBounds));
+            adjustInsetEdge(insets.bottom, CGRectGetMaxY(viewBounds) - CGRectGetMaxY(webViewBoundsInView));
+            adjustInsetEdge(insets.right, CGRectGetMaxX(viewBounds) - CGRectGetMaxX(webViewBoundsInView));
+        }
+        return insets;
+    }
     return UIEdgeInsetsZero;
-#endif
 }
 
 - (UIEdgeInsets)_computedObscuredInset
@@ -598,10 +620,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (_haveSetObscuredInsets)
         return _obscuredInsets;
 
-#if PLATFORM(IOS)
     if (self._safeAreaShouldAffectObscuredInsets)
         return UIEdgeInsetsAdd(UIEdgeInsetsZero, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
-#endif
 
     return UIEdgeInsetsZero;
 }
@@ -613,10 +633,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
     UIEdgeInsets insets = [_scrollView contentInset];
 
-#if PLATFORM(IOS)
     if (self._safeAreaShouldAffectObscuredInsets)
         insets = UIEdgeInsetsAdd(insets, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
-#endif
 
     return insets;
 }
@@ -626,10 +644,13 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (_haveSetUnobscuredSafeAreaInsets)
         return _unobscuredSafeAreaInsets;
 
-#if PLATFORM(IOS)
-    if (!self._safeAreaShouldAffectObscuredInsets)
-        return self.safeAreaInsets;
+    if (!self._safeAreaShouldAffectObscuredInsets) {
+        auto safeAreaInsets = self.safeAreaInsets;
+#if PLATFORM(WATCHOS)
+        safeAreaInsets = UIEdgeInsetsAdd(safeAreaInsets, self._contentInsetsFromSystemMinimumLayoutMargins, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
 #endif
+        return safeAreaInsets;
+    }
 
     return UIEdgeInsetsZero;
 }
@@ -1540,7 +1561,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_contentView scrollViewWillStartPanOrPinchGesture];
 
     [_contentView willStartZoomOrScroll];
-#if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
+
+#if ENABLE(ASYNC_SCROLLING)
     // FIXME: We will want to detect whether snapping will occur before beginning to drag. See WebPageProxy::didCommitLayerTree.
     WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
     ASSERT(scrollView == _scrollView.get());
@@ -1571,7 +1593,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         if ([_contentView preventsPanningInYAxis])
             targetContentOffset->y = scrollView.contentOffset.y;
     }
-#if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy()) {
         // FIXME: Here, I'm finding the maximum horizontal/vertical scroll offsets. There's probably a better way to do this.
         CGSize maxScrollOffsets = CGSizeMake(scrollView.contentSize.width - scrollView.bounds.size.width, scrollView.contentSize.height - scrollView.bounds.size.height);
@@ -1586,7 +1608,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
         CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, obscuredInset);
 
-        coordinator->adjustTargetContentOffsetForSnapping(maxScrollOffsets, velocity, unobscuredRect.origin.y, targetContentOffset);
+        coordinator->adjustTargetContentOffsetForSnapping(maxScrollOffsets, velocity, unobscuredRect.origin.y, scrollView.contentOffset, targetContentOffset);
     }
 #endif
 }
@@ -1807,12 +1829,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_viewLayoutSizeOverride)
         return WebCore::FloatSize(_viewLayoutSizeOverride.value());
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), self._scrollViewSystemContentInset).size);
-#else
-    return WebCore::FloatSize { bounds.size };
-#endif
 }
 
 - (void)_dispatchSetViewLayoutSize:(WebCore::FloatSize)viewLayoutSize
@@ -1841,6 +1858,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     _page->setDeviceOrientation(deviceOrientation);
     _lastSentDeviceOrientation = deviceOrientation;
+}
+
+- (BOOL)_updateScrollViewContentInsetsIfNecessary
+{
+#if PLATFORM(WATCHOS)
+    return [_scrollView _setContentScrollInsetInternal:self._safeAreaShouldAffectObscuredInsets ? self._contentInsetsFromSystemMinimumLayoutMargins : UIEdgeInsetsZero];
+#else
+    return NO;
+#endif
 }
 
 - (void)_frameOrBoundsChanged
@@ -2107,6 +2133,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     _didDeferUpdateVisibleContentRectsForUnstableScrollView = NO;
     _didDeferUpdateVisibleContentRectsForAnyReason = NO;
 
+    [self _updateScrollViewContentInsetsIfNecessary];
+
     CGRect visibleRectInContentCoordinates = [self _visibleContentRect];
 
     UIEdgeInsets computedContentInsetUnadjustedForKeyboard = [self _computedObscuredInset];
@@ -2120,7 +2148,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
     auto contentInsets = [self currentlyVisibleContentInsetsWithScale:scaleFactor obscuredInsets:computedContentInsetUnadjustedForKeyboard];
 
-#if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (viewStability.isEmpty()) {
         WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
         if (coordinator && coordinator->hasActiveSnapPoint()) {
@@ -2470,6 +2498,9 @@ static int32_t activeOrientation(WKWebView *webView)
         return;
 
     _avoidsUnsafeArea = avoidsUnsafeArea;
+
+    if ([self _updateScrollViewContentInsetsIfNecessary] && _dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing && !_viewLayoutSizeOverride)
+        [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
 
     [self _updateScrollViewInsetAdjustmentBehavior];
     [self _scheduleVisibleContentRectUpdate];

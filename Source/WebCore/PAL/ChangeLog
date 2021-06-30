@@ -1,3 +1,47 @@
+2021-06-23  Jean-Yves Avenard  <jya@apple.com>
+
+        Not all uses of AudioToolbox framework use soft linking
+        https://bugs.webkit.org/show_bug.cgi?id=227250
+        <rdar://problem/79606090>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add methods whose definitions were scattered across
+        the code.
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Same as above.
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add missing methods
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h: Add missing methods
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h: Add missing methods and fix some spelling in define names
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Add missing methods
+
+2021-06-23  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make the hostTime parameter to playSession a Monotonic time
+        https://bugs.webkit.org/show_bug.cgi?id=226515
+
+        Reviewed by Youenn Fablet.
+
+        SoftLink CMClockConvertHostTimeToSystemUnits.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+
+2021-06-22  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] iOS device steals BT headphones from other devices during silent playback
+        https://bugs.webkit.org/show_bug.cgi?id=227227
+        <rdar://78792479>
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
 2021-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Rename WKVisualSearchPreviewController to WKQuickLookPreviewController

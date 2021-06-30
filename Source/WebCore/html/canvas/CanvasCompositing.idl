@@ -25,9 +25,7 @@
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvascompositing
 interface mixin CanvasCompositing {
-    // FIXME: All the unrestricted float attributes below should be unrestricted doubles.
-
     // compositing
-    attribute unrestricted float globalAlpha; // (default 1.0)
+    attribute unrestricted double globalAlpha; // (default 1.0)
     attribute DOMString globalCompositeOperation; // (default source-over)
 };

@@ -1149,6 +1149,7 @@
 		65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B8392C1BACA92A0044E824 /* CachedRecovery.h */; };
 		6A38CFAA1E32B5AB0060206F /* AsyncStackTrace.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A38CFA81E32B58B0060206F /* AsyncStackTrace.h */; };
 		6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6B767E7B26791F270017F8D1 /* AssemblyHelpersSpoolers.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B767E7A26791F270017F8D1 /* AssemblyHelpersSpoolers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6BCCEC0425D1FA27000F391D /* VerifierSlotVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BCCEC0325D1FA27000F391D /* VerifierSlotVisitorInlines.h */; };
 		70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 70113D4A1A8DB093003848C4 /* IteratorOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7013CA8C1B491A9400CAE613 /* JSMicrotask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7013CA8A1B491A9400CAE613 /* JSMicrotask.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3999,6 +4000,7 @@
 		6A38CFA81E32B58B0060206F /* AsyncStackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncStackTrace.h; sourceTree = "<group>"; };
 		6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerEvalEnabler.h; sourceTree = "<group>"; };
 		6B731CC02647A8370014646F /* SlowPathCall.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SlowPathCall.cpp; sourceTree = "<group>"; };
+		6B767E7A26791F270017F8D1 /* AssemblyHelpersSpoolers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblyHelpersSpoolers.h; sourceTree = "<group>"; };
 		6BA93C9590484C5BAD9316EA /* JSScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetcher.h; sourceTree = "<group>"; };
 		6BCCEC0325D1FA27000F391D /* VerifierSlotVisitorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerifierSlotVisitorInlines.h; sourceTree = "<group>"; };
 		70113D491A8DB093003848C4 /* IteratorOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorOperations.cpp; sourceTree = "<group>"; };
@@ -6200,6 +6202,7 @@
 				0FB57068267A642E0080FA8B /* HashableRegisterSet.h */,
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
+				6B767E7A26791F270017F8D1 /* AssemblyHelpersSpoolers.h */,
 				723998F6265DBCDB0057867F /* BaselineJITPlan.cpp */,
 				723998F5265DBCDB0057867F /* BaselineJITPlan.h */,
 				0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */,
@@ -9154,6 +9157,7 @@
 				FE912B5125311AD100FABDDF /* AbstractSlotVisitorInlines.h in Headers */,
 				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,
 				E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */,
+				6B767E7B26791F270017F8D1 /* AssemblyHelpersSpoolers.h in Headers */,
 				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
 				9168BD872447BA4E0080FFB4 /* AggregateError.h in Headers */,
 				918E15C32447B22700447A56 /* AggregateErrorConstructor.h in Headers */,

@@ -3,12 +3,12 @@ import os
 import platform
 import sys
 from distutils.spawn import find_executable
-from six.moves import input
+from typing import ClassVar, Type
 
 wpt_root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
 sys.path.insert(0, os.path.abspath(os.path.join(wpt_root, "tools")))
 
-from . import browser, install, testfiles, utils, virtualenv
+from . import browser, install, testfiles, virtualenv
 from ..serve import serve
 
 logger = None
@@ -68,10 +68,16 @@ def exit(msg=None):
 
 
 def args_general(kwargs):
-    kwargs.set_if_none("tests_root", wpt_root)
-    kwargs.set_if_none("metadata_root", wpt_root)
-    kwargs.set_if_none("manifest_update", True)
-    kwargs.set_if_none("manifest_download", True)
+
+    def set_if_none(name, value):
+        if kwargs.get(name) is None:
+            kwargs[name] = value
+            logger.info("Set %s to %s" % (name, value))
+
+    set_if_none("tests_root", wpt_root)
+    set_if_none("metadata_root", wpt_root)
+    set_if_none("manifest_update", True)
+    set_if_none("manifest_download", True)
 
     if kwargs["ssl_type"] in (None, "pregenerated"):
         cert_root = os.path.join(wpt_root, "tools", "certs")
@@ -147,8 +153,8 @@ in PowerShell with Administrator privileges.""" % (wpt_path, hosts_path)
 
 
 class BrowserSetup(object):
-    name = None
-    browser_cls = None
+    name = None  # type: ClassVar[str]
+    browser_cls = None  # type: ClassVar[Type[browser.Browser]]
 
     def __init__(self, venv, prompt=True):
         self.browser = self.browser_cls(logger)
@@ -248,7 +254,7 @@ Consider installing certutil via your OS package manager or directly.""")
                                                     channel=kwargs["browser_channel"])
             kwargs["prefs_root"] = prefs_root
 
-        if kwargs["headless"] is None:
+        if kwargs["headless"] is None and not kwargs["debug_test"]:
             kwargs["headless"] = True
             logger.info("Running in headless mode, pass --no-headless to disable")
 
@@ -427,10 +433,12 @@ class ChromeiOS(BrowserSetup):
 class AndroidWeblayer(BrowserSetup):
     name = "android_weblayer"
     browser_cls = browser.AndroidWeblayer
+    experimental_channels = ("dev", "canary")
 
     def setup_kwargs(self, kwargs):
         if kwargs.get("device_serial"):
             self.browser.device_serial = kwargs["device_serial"]
+        browser_channel = kwargs["browser_channel"]
         if kwargs["webdriver_binary"] is None:
             webdriver_binary = None
             if not kwargs["install_webdriver"]:
@@ -443,7 +451,7 @@ class AndroidWeblayer(BrowserSetup):
                     logger.info("Downloading chromedriver")
                     webdriver_binary = self.browser.install_webdriver(
                         dest=self.venv.bin_path,
-                        channel=kwargs["browser_channel"])
+                        channel=browser_channel)
             else:
                 logger.info("Using webdriver binary %s" % webdriver_binary)
 
@@ -451,6 +459,9 @@ class AndroidWeblayer(BrowserSetup):
                 kwargs["webdriver_binary"] = webdriver_binary
             else:
                 raise WptrunError("Unable to locate or install chromedriver binary")
+        if browser_channel in self.experimental_channels:
+            logger.info("Automatically turning on experimental features for WebLayer Dev/Canary")
+            kwargs["binary_args"].append("--enable-experimental-web-platform-features")
 
 
 class AndroidWebview(BrowserSetup):
@@ -752,9 +763,8 @@ def setup_logging(kwargs, default_config=None, formatter_defaults=None):
 
 def setup_wptrunner(venv, **kwargs):
     from wptrunner import wptcommandline
-    from six import iteritems
 
-    kwargs = utils.Kwargs(iteritems(kwargs))
+    kwargs = kwargs.copy()
 
     kwargs["product"] = kwargs["product"].replace("-", "_")
 
@@ -857,13 +867,13 @@ def main():
 
         return run(venv, vars(args))
     except WptrunError as e:
-        exit(e.message)
+        exit(e)
 
 
 if __name__ == "__main__":
     import pdb
     from tools import localpaths  # noqa: F401
     try:
-        main()
+        main()  # type: ignore
     except Exception:
         pdb.post_mortem()

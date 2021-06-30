@@ -55,11 +55,9 @@ public:
     void willDoProgrammaticScroll(const FloatPoint&);
     void currentScrollPositionChanged();
 
-#if ENABLE(CSS_SCROLL_SNAP)
     bool activeScrollSnapIndexDidChange() const;
     std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     bool isScrollSnapInProgress() const;
-#endif
 
     bool isRubberBandInProgress() const;
 
@@ -94,7 +92,6 @@ private:
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
     void scrollControllerAnimationTimerFired();
 
-#if ENABLE(CSS_SCROLL_SNAP)
     FloatPoint scrollOffset() const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     float pageScaleFactor() const override;
@@ -102,7 +99,6 @@ private:
     void didStopScrollSnapAnimation() final;
     LayoutSize scrollExtent() const override;
     FloatSize viewportSize() const override;
-#endif
 
     void releaseReferencesToScrollerImpsOnTheMainThread();
 

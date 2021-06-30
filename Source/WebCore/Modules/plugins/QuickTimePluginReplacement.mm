@@ -58,7 +58,6 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
-using namespace PAL;
 
 #if PLATFORM(IOS_FAMILY)
 static JSValue *jsValueWithValueInContext(id, JSContext *);

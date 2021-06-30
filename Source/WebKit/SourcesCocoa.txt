@@ -374,6 +374,10 @@ UIProcess/Automation/ios/WebAutomationSessionIOS.mm
 
 UIProcess/Automation/mac/WebAutomationSessionMac.mm
 
+UIProcess/Cocoa/GroupActivities/GroupActivitiesCoordinator.mm
+UIProcess/Cocoa/GroupActivities/GroupActivitiesSession.mm
+UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm
+
 UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm
 UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm
 UIProcess/Cocoa/SOAuthorization/RedirectSOAuthorizationSession.mm

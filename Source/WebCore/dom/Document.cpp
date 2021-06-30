@@ -350,7 +350,6 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
 
 using namespace HTMLNames;
-using namespace PAL;
 using namespace WTF::Unicode;
 
 static const unsigned cMaxWriteRecursionDepth = 21;
