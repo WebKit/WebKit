@@ -68,6 +68,9 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
+    void* opaqueRootConcurrently() const;
+    Node* ownerNode() const;
+
 private:
     explicit RemotePlayback(HTMLMediaElement&);
 

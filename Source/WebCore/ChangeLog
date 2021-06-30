@@ -1,3 +1,68 @@
+2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        RemotePlayback must keep its media element alive when there is a pending activity
+        https://bugs.webkit.org/show_bug.cgi?id=227471
+        <rdar://79694015>
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed the bug that the media element's JS wrapper can be collected while there is still
+        a pending activity for RemotePlayback. In fact, the newly added test demonstrates that
+        the media element can be deleted without this patch.
+
+        This patch also introduces new extended IDL interface attribute GenerateAddOpaqueRoot
+        to make adding an opaque root as a part of visitChildren easy in the DOM code.
+
+        Test: media/remoteplayback-watch-availability-gc.html
+
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::ownerNode const):
+        * Modules/remoteplayback/RemotePlayback.h:
+        * Modules/remoteplayback/RemotePlayback.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceNeedsVisitChildren):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/JSTestGenerateAddOpaqueRoot.cpp: Added.
+        (WebCore::JSTestGenerateAddOpaqueRootDOMConstructor::prototypeForStructure):
+        (WebCore::JSTestGenerateAddOpaqueRootDOMConstructor::initializeProperties):
+        (WebCore::JSTestGenerateAddOpaqueRootPrototype::finishCreation):
+        (WebCore::JSTestGenerateAddOpaqueRoot::JSTestGenerateAddOpaqueRoot):
+        (WebCore::JSTestGenerateAddOpaqueRoot::finishCreation):
+        (WebCore::JSTestGenerateAddOpaqueRoot::createPrototype):
+        (WebCore::JSTestGenerateAddOpaqueRoot::prototype):
+        (WebCore::JSTestGenerateAddOpaqueRoot::getConstructor):
+        (WebCore::JSTestGenerateAddOpaqueRoot::destroy):
+        (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+        (WebCore::jsTestGenerateAddOpaqueRoot_someAttributeGetter):
+        (WebCore::JSTestGenerateAddOpaqueRoot::subspaceForImpl):
+        (WebCore::JSTestGenerateAddOpaqueRoot::visitChildrenImpl):
+        (WebCore::JSTestGenerateAddOpaqueRoot::analyzeHeap):
+        (WebCore::JSTestGenerateAddOpaqueRootOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestGenerateAddOpaqueRootOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestGenerateAddOpaqueRoot::toWrapped):
+        * bindings/scripts/test/JS/JSTestGenerateAddOpaqueRoot.h: Added.
+        (WebCore::JSTestGenerateAddOpaqueRoot::create):
+        (WebCore::JSTestGenerateAddOpaqueRoot::createStructure):
+        (WebCore::JSTestGenerateAddOpaqueRoot::subspaceFor):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperKey):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObject_TestGenerateAddOpaqueRootConstructorGetter):
+        (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestGenerateAddOpaqueRoot.idl: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::isElementAlive const):
+        (WebCore::Internals::mediaElementCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-06-30  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r278391) Sometimes load durations show up as large negative numbers in WebInspector

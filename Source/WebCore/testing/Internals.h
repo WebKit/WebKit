@@ -484,6 +484,8 @@ public:
     uint64_t storageAreaMapCount() const;
 
     uint64_t elementIdentifier(Element&) const;
+    bool isElementAlive(Document&, uint64_t documentIdentifier) const;
+
     uint64_t frameIdentifier(const Document&) const;
     uint64_t pageIdentifier(const Document&) const;
 
@@ -644,6 +646,7 @@ public:
     String getImageSourceURL(Element&);
 
 #if ENABLE(VIDEO)
+    unsigned mediaElementCount();
     Vector<String> mediaResponseSources(HTMLMediaElement&);
     Vector<String> mediaResponseContentRanges(HTMLMediaElement&);
     void simulateAudioInterruption(HTMLMediaElement&);

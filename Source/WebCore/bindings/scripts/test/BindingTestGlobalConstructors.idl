@@ -13,6 +13,7 @@ partial interface TestGlobalObject {
     attribute TestEventConstructorConstructor TestEventConstructor;
     attribute TestEventTargetConstructor TestEventTarget;
     attribute TestExceptionConstructor TestException;
+    attribute TestGenerateAddOpaqueRootConstructor TestGenerateAddOpaqueRoot;
     attribute TestGenerateIsReachableConstructor TestGenerateIsReachable;
     attribute TestGlobalObjectConstructor TestGlobalObject;
     attribute TestIndexedSetterNoIdentifierConstructor TestIndexedSetterNoIdentifier;

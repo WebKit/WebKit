@@ -875,6 +875,7 @@ enum TreeType {
     readonly attribute unsigned long long storageAreaMapCount;
 
     unsigned long long elementIdentifier(Element element);
+    [CallWith=Document] boolean isElementAlive(unsigned long long documentIdentifier);
     unsigned long long frameIdentifier(Document document);
     unsigned long long pageIdentifier(Document document);
 

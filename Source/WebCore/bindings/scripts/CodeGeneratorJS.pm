@@ -2195,6 +2195,7 @@ sub InstanceNeedsVisitChildren
     }
 
     return 1 if $interface->extendedAttributes->{JSCustomMarkFunction};
+    return 1 if $interface->extendedAttributes->{GenerateAddOpaqueRoot};
     return 1 if $interface->extendedAttributes->{Plugin};
     return 1 if $interface->extendedAttributes->{ReportExtraMemoryCost};
     return 0;
@@ -4886,6 +4887,10 @@ sub GenerateImplementation
             push(@implContent, "#if PLATFORM(COCOA)\n");
             push(@implContent, "    thisObject->wrapped().pluginReplacementScriptObject().visit(visitor);\n");
             push(@implContent, "#endif\n");
+        }
+        if ($interface->extendedAttributes->{GenerateAddOpaqueRoot}) {
+            my $functionName = $interface->extendedAttributes->{GenerateAddOpaqueRoot};
+            push(@implContent, "    visitor.addOpaqueRoot(thisObject->wrapped().${functionName}());\n");
         }
         if ($interface->extendedAttributes->{ReportExtraMemoryCost}) {
             push(@implContent, "    visitor.reportExtraMemoryVisited(thisObject->wrapped().memoryCost());\n");

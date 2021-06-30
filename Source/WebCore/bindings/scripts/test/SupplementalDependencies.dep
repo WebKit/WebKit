@@ -110,6 +110,9 @@ WebDOMTestEventTarget.h:
 JSTestException.h: 
 DOMTestException.h: 
 WebDOMTestException.h: 
+JSTestGenerateAddOpaqueRoot.h: 
+DOMTestGenerateAddOpaqueRoot.h: 
+WebDOMTestGenerateAddOpaqueRoot.h: 
 JSTestGenerateIsReachable.h: 
 DOMTestGenerateIsReachable.h: 
 WebDOMTestGenerateIsReachable.h: 

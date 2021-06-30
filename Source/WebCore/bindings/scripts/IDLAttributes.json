@@ -223,6 +223,10 @@
             "contextsAllowed": ["interface"],
             "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplCanvasBase", "ImplDocument", "ImplElementRoot", "ImplOwnerNodeRoot", "ImplScriptExecutionContext", "ReachableFromDOMWindow", "ReachableFromNavigator"]
         },
+        "GenerateAddOpaqueRoot": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
         "Global": {
             "contextsAllowed": ["interface"],
             "values": ["*"],

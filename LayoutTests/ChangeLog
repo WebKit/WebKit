@@ -1,3 +1,16 @@
+2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        RemotePlayback must keep its media element alive when there is a pending activity
+        https://bugs.webkit.org/show_bug.cgi?id=227471
+        <rdar://79694015>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a GC test.
+
+        * media/remoteplayback-watch-availability-gc-expected.txt: Added.
+        * media/remoteplayback-watch-availability-gc.html: Added.
+
 2021-06-30  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS wk1 ] crypto/workers/subtle/hrsa-postMessage-worker.html is flaky failing.

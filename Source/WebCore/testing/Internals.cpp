@@ -2706,6 +2706,11 @@ uint64_t Internals::elementIdentifier(Element& element) const
     return element.document().identifierForElement(element).toUInt64();
 }
 
+bool Internals::isElementAlive(Document& document, uint64_t elementIdentifier) const
+{
+    return document.searchForElementByIdentifier(makeObjectIdentifier<ElementIdentifierType>(elementIdentifier));
+}
+
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())
@@ -3864,6 +3869,11 @@ String Internals::getImageSourceURL(Element& element)
 }
 
 #if ENABLE(VIDEO)
+
+unsigned Internals::mediaElementCount()
+{
+    return HTMLMediaElement::allMediaElements().size();
+}
 
 Vector<String> Internals::mediaResponseSources(HTMLMediaElement& media)
 {
