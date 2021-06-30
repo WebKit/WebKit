@@ -1,3 +1,10 @@
+2021-06-30  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * wtf/PlatformHave.h:
+        This is not available on the simulator; disable it.
+
 2021-06-30  Youenn Fablet  <youenn@apple.com>
 
         [Cocoa] Migrate WebRTC UDP socket handling to NW API

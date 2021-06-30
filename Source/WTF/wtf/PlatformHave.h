@@ -1011,7 +1011,7 @@
 #endif
 
 #if defined __has_include && __has_include(<AssetViewer/ASVInlinePreview.h>)
-#if (PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 150000
+#if (PLATFORM(IOS) || PLATFORM(MACCATALYST)) && !PLATFORM(IOS_SIMULATOR) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 150000
 #define HAVE_ARKIT_INLINE_PREVIEW_IOS 1
 #endif
 #endif
