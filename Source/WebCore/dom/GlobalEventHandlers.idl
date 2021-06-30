@@ -39,8 +39,7 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler oncanplaythrough;
     attribute EventHandler onchange;
     attribute EventHandler onclick;
-    // FIXME: Implement 'onclose'.
-    // attribute EventHandler onclose;
+    attribute EventHandler onclose;
     attribute EventHandler oncontextmenu;
     attribute EventHandler oncuechange;
     attribute EventHandler ondblclick;

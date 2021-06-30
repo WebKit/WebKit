@@ -134,7 +134,7 @@ PASS HTMLElement interface: attribute oncanplay
 PASS HTMLElement interface: attribute oncanplaythrough
 PASS HTMLElement interface: attribute onchange
 PASS HTMLElement interface: attribute onclick
-FAIL HTMLElement interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
+PASS HTMLElement interface: attribute onclose
 PASS HTMLElement interface: attribute oncontextmenu
 PASS HTMLElement interface: attribute oncuechange
 PASS HTMLElement interface: attribute ondblclick
@@ -224,7 +224,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplaythrough" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onchange" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onclick" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onclose" with the proper type assert_inherits: property "onclose" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onclose" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncontextmenu" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncuechange" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondblclick" with the proper type
@@ -4193,7 +4193,7 @@ PASS Window interface: attribute oncanplay
 PASS Window interface: attribute oncanplaythrough
 PASS Window interface: attribute onchange
 PASS Window interface: attribute onclick
-FAIL Window interface: attribute onclose assert_own_property: The global object must have a property "onclose" expected property "onclose" missing
+PASS Window interface: attribute onclose
 PASS Window interface: attribute oncontextmenu
 PASS Window interface: attribute oncuechange
 PASS Window interface: attribute ondblclick
@@ -4337,7 +4337,7 @@ PASS Window interface: window must inherit property "oncanplay" with the proper 
 PASS Window interface: window must inherit property "oncanplaythrough" with the proper type
 PASS Window interface: window must inherit property "onchange" with the proper type
 PASS Window interface: window must inherit property "onclick" with the proper type
-FAIL Window interface: window must inherit property "onclose" with the proper type assert_own_property: expected property "onclose" missing
+PASS Window interface: window must inherit property "onclose" with the proper type
 PASS Window interface: window must inherit property "oncontextmenu" with the proper type
 PASS Window interface: window must inherit property "oncuechange" with the proper type
 PASS Window interface: window must inherit property "ondblclick" with the proper type
@@ -5038,7 +5038,7 @@ PASS SVGElement interface: attribute oncanplay
 PASS SVGElement interface: attribute oncanplaythrough
 PASS SVGElement interface: attribute onchange
 PASS SVGElement interface: attribute onclick
-FAIL SVGElement interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
+PASS SVGElement interface: attribute onclose
 PASS SVGElement interface: attribute oncontextmenu
 PASS SVGElement interface: attribute oncuechange
 PASS SVGElement interface: attribute ondblclick
@@ -5180,7 +5180,7 @@ PASS Document interface: attribute oncanplay
 PASS Document interface: attribute oncanplaythrough
 PASS Document interface: attribute onchange
 PASS Document interface: attribute onclick
-FAIL Document interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
+PASS Document interface: attribute onclose
 PASS Document interface: attribute oncontextmenu
 PASS Document interface: attribute oncuechange
 PASS Document interface: attribute ondblclick
@@ -5301,7 +5301,7 @@ PASS Document interface: iframe.contentDocument must inherit property "oncanplay
 PASS Document interface: iframe.contentDocument must inherit property "oncanplaythrough" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onchange" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onclick" with the proper type
-FAIL Document interface: iframe.contentDocument must inherit property "onclose" with the proper type assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onclose" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oncontextmenu" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oncuechange" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "ondblclick" with the proper type
@@ -5422,7 +5422,7 @@ PASS Document interface: new Document() must inherit property "oncanplay" with t
 PASS Document interface: new Document() must inherit property "oncanplaythrough" with the proper type
 PASS Document interface: new Document() must inherit property "onchange" with the proper type
 PASS Document interface: new Document() must inherit property "onclick" with the proper type
-FAIL Document interface: new Document() must inherit property "onclose" with the proper type assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onclose" with the proper type
 PASS Document interface: new Document() must inherit property "oncontextmenu" with the proper type
 PASS Document interface: new Document() must inherit property "oncuechange" with the proper type
 PASS Document interface: new Document() must inherit property "ondblclick" with the proper type
@@ -5543,7 +5543,7 @@ PASS Document interface: documentWithHandlers must inherit property "oncanplay" 
 PASS Document interface: documentWithHandlers must inherit property "oncanplaythrough" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onchange" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onclick" with the proper type
-FAIL Document interface: documentWithHandlers must inherit property "onclose" with the proper type assert_inherits: property "onclose" found on object expected in prototype chain
+PASS Document interface: documentWithHandlers must inherit property "onclose" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oncontextmenu" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oncuechange" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "ondblclick" with the proper type

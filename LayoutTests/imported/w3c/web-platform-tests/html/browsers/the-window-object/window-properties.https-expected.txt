@@ -85,7 +85,7 @@ PASS Window attribute: oncanplay
 PASS Window attribute: oncanplaythrough
 PASS Window attribute: onchange
 PASS Window attribute: onclick
-FAIL Window attribute: onclose assert_true: onclose in window expected true got false
+PASS Window attribute: onclose
 PASS Window attribute: oncontextmenu
 PASS Window attribute: oncuechange
 PASS Window attribute: ondblclick

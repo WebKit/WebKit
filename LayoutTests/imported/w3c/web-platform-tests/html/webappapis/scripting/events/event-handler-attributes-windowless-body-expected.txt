@@ -50,7 +50,7 @@ PASS canplay is unaffected on a windowless body
 PASS canplaythrough is unaffected on a windowless body
 PASS change is unaffected on a windowless body
 PASS click is unaffected on a windowless body
-FAIL close is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
+PASS close is unaffected on a windowless body
 PASS contextmenu is unaffected on a windowless body
 PASS cuechange is unaffected on a windowless body
 PASS dblclick is unaffected on a windowless body
@@ -157,7 +157,7 @@ PASS canplay is unaffected on a windowless frameset
 PASS canplaythrough is unaffected on a windowless frameset
 PASS change is unaffected on a windowless frameset
 PASS click is unaffected on a windowless frameset
-FAIL close is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+PASS close is unaffected on a windowless frameset
 PASS contextmenu is unaffected on a windowless frameset
 PASS cuechange is unaffected on a windowless frameset
 PASS dblclick is unaffected on a windowless frameset

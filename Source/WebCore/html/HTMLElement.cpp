@@ -270,6 +270,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &oncanplaythroughAttr.get(),
         &onchangeAttr.get(),
         &onclickAttr.get(),
+        &oncloseAttr.get(),
         &oncontextmenuAttr.get(),
         &oncopyAttr.get(),
         &oncutAttr.get(),

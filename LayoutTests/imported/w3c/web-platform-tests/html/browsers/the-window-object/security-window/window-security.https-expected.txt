@@ -23,7 +23,7 @@ PASS A SecurityError exception must be thrown when window.oncanplay is accessed 
 PASS A SecurityError exception must be thrown when window.oncanplaythrough is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.onchange is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.onclick is accessed from a different origin.
-FAIL A SecurityError exception must be thrown when window.onclose is accessed from a different origin. assert_true: window.onclose should exist. expected true got false
+PASS A SecurityError exception must be thrown when window.onclose is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.oncontextmenu is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.oncuechange is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.ondblclick is accessed from a different origin.
