@@ -151,7 +151,11 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     set(WebKit_LIBRARY_TYPE SHARED)
     set(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 
-    set(CMAKE_POSITION_INDEPENDENT_CODE True)
+    # note: PIE is not available on haiku, but this will try to use it
+    #       this should be fixed in gcc, but for now this will make webkit compile.
+    if (NOT HAIKU)
+        set(CMAKE_POSITION_INDEPENDENT_CODE True)
+    endif()
 
     # -----------------------------------------------------------------------------
     # Install JavaScript shell
