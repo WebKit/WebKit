@@ -54,8 +54,7 @@ void LibWebRTCSocketFactory::setConnection(RefPtr<IPC::Connection>&& connection)
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::NetworkRTCProvider::SetPlatformTCPSocketsEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformTCPSocketsEnabled()), 0);
-    m_connection->send(Messages::NetworkRTCProvider::SetPlatformUDPSocketsEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformUDPSocketsEnabled()), 0);
+    m_connection->send(Messages::NetworkRTCProvider::SetPlatformSocketsEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformSocketsEnabled()), 0);
 
     while (!m_pendingMessageTasks.isEmpty())
         m_pendingMessageTasks.takeFirst()(*m_connection);

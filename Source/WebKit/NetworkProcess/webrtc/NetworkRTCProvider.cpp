@@ -46,8 +46,7 @@
 
 #if PLATFORM(COCOA)
 #include "NetworkRTCResolverCocoa.h"
-#include "NetworkRTCTCPSocketCocoa.h"
-#include "NetworkRTCUDPSocketCocoa.h"
+#include "NetworkRTCSocketCocoa.h"
 #endif
 
 namespace WebKit {
@@ -134,15 +133,6 @@ void NetworkRTCProvider::createSocket(LibWebRTCSocketIdentifier identifier, std:
 
 void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
 {
-#if PLATFORM(COCOA)
-    if (m_platformUDPSocketsEnabled) {
-        if (auto socket = NetworkRTCUDPSocketCocoa::createUDPSocket(identifier, *this, address.value, minPort, maxPort, m_ipcConnection.copyRef())) {
-            addSocket(identifier, WTFMove(socket));
-            return;
-        }
-    }
-#endif
-
     ASSERT(m_rtcNetworkThread.IsCurrent());
     std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateUdpSocket(address.value, minPort, maxPort));
     createSocket(identifier, WTFMove(socket), Socket::Type::UDP, m_ipcConnection.copyRef());
@@ -187,8 +177,8 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         }
         callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
 #if PLATFORM(COCOA)
-            if (m_platformTCPSocketsEnabled) {
-                if (auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress, options, m_ipcConnection.copyRef())) {
+            if (m_platformSocketsEnabled) {
+                if (auto socket = NetworkRTCSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress, options, m_ipcConnection.copyRef())) {
                     addSocket(identifier, WTFMove(socket));
                     return;
                 }

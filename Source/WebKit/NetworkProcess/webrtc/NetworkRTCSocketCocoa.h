@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,12 @@ class SocketAddress;
 
 namespace WebKit {
 
-class NetworkRTCTCPSocketCocoa final : public NetworkRTCProvider::Socket {
+class NetworkRTCSocketCocoa final : public NetworkRTCProvider::Socket {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<NetworkRTCProvider::Socket> createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, Ref<IPC::Connection>&&);
 
-    NetworkRTCTCPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, Ref<IPC::Connection>&&);
+    NetworkRTCSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, Ref<IPC::Connection>&&);
 
 private:
     // NetworkRTCProvider::Socket.

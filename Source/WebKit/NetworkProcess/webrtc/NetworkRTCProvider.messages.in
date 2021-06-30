@@ -28,8 +28,7 @@ messages -> NetworkRTCProvider {
     CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, String userAgent, int options)
     WrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier)
 
-    void SetPlatformTCPSocketsEnabled(bool enabled)
-    void SetPlatformUDPSocketsEnabled(bool enabled)
+    void SetPlatformSocketsEnabled(bool enabled)
 
     CreateResolver(WebKit::LibWebRTCResolverIdentifier identifier, String address)
     StopResolver(WebKit::LibWebRTCResolverIdentifier identifier)

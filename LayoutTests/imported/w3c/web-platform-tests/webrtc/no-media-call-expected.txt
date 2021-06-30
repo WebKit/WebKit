@@ -2,5 +2,5 @@
 PASS Can set up a basic WebRTC call with no data.
 iceConnectionState info
 
-First: connected
+First: completed
 Second: connected

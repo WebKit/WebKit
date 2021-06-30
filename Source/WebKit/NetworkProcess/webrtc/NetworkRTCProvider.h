@@ -101,8 +101,6 @@ public:
 
     IPC::Connection& connection() { return m_ipcConnection.get(); }
 
-    void closeSocket(WebCore::LibWebRTCSocketIdentifier);
-
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
     void startListeningForIPC();
@@ -112,9 +110,9 @@ private:
     void createServerTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t minPort, uint16_t maxPort, int);
     void wrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier);
     void sendToSocket(WebCore::LibWebRTCSocketIdentifier, const IPC::DataReference&, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);
+    void closeSocket(WebCore::LibWebRTCSocketIdentifier);
     void setSocketOption(WebCore::LibWebRTCSocketIdentifier, int option, int value);
-    void setPlatformTCPSocketsEnabled(bool enabled) { m_platformTCPSocketsEnabled = enabled; }
-    void setPlatformUDPSocketsEnabled(bool enabled) { m_platformUDPSocketsEnabled = enabled; }
+    void setPlatformSocketsEnabled(bool enabled) { m_platformSocketsEnabled = enabled; }
 
     void createResolver(LibWebRTCResolverIdentifier, String&&);
     void stopResolver(LibWebRTCResolverIdentifier);
@@ -143,8 +141,7 @@ private:
 
     HashMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>> m_pendingIncomingSockets;
     bool m_isListeningSocketAuthorized { true };
-    bool m_platformTCPSocketsEnabled { false };
-    bool m_platformUDPSocketsEnabled { false };
+    bool m_platformSocketsEnabled { false };
 };
 
 } // namespace WebKit

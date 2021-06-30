@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,12 @@
  */
 
 #import "config.h"
-#import "NetworkRTCTCPSocketCocoa.h"
+#import "NetworkRTCSocketCocoa.h"
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
-#include "Logging.h"
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
 #include <wtf/BlockPtr.h>
@@ -39,22 +38,22 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static dispatch_queue_t tcpSocketQueue()
+static dispatch_queue_t socketQueue()
 {
     static dispatch_queue_t queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        queue = dispatch_queue_create("WebRTC TCP socket queue", DISPATCH_QUEUE_CONCURRENT);
+        queue = dispatch_queue_create("WebRTC socket queue", DISPATCH_QUEUE_CONCURRENT);
     });
     return queue;
 }
 
-std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int tcpOptions, Ref<IPC::Connection>&& connection)
+std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int tcpOptions, Ref<IPC::Connection>&& connection)
 {
     // FIXME: We should migrate ssltcp candidates, maybe support OPT_TLS_INSECURE as well.
     if ((tcpOptions & rtc::PacketSocketFactory::OPT_TLS_FAKE) || (tcpOptions & rtc::PacketSocketFactory::OPT_TLS_INSECURE))
         return nullptr;
-    return makeUnique<NetworkRTCTCPSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, WTFMove(connection));
+    return makeUnique<NetworkRTCSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, WTFMove(connection));
 }
 
 static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection, Function<Vector<uint8_t>(Vector<uint8_t>&&)>&& processData, Vector<uint8_t>&& buffer = { })
@@ -71,15 +70,13 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
         }
         if (isComplete && context && nw_content_context_get_is_final(context))
             return;
-        if (error) {
-            RELEASE_LOG_ERROR(WebRTC, "NetworkRTCTCPSocketCocoa processIncomingData failed with error %d", nw_error_get_error_code(error));
+        if (error)
             return;
-        }
         processIncomingData(WTFMove(nwConnection), WTFMove(processData), WTFMove(buffer));
     }).get());
 }
 
-NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int options, Ref<IPC::Connection>&& connection)
+NetworkRTCSocketCocoa::NetworkRTCSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int options, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)
     , m_rtcProvider(rtcProvider)
     , m_connection(WTFMove(connection))
@@ -97,7 +94,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
 
     m_nwConnection = adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 
-    nw_connection_set_queue(m_nwConnection.get(), tcpSocketQueue());
+    nw_connection_set_queue(m_nwConnection.get(), socketQueue());
     nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([identifier = m_identifier, rtcProvider = makeRef(rtcProvider), connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
         ASSERT_UNUSED(error, !error);
         switch (state) {
@@ -110,7 +107,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
             return;
         case nw_connection_state_failed:
             rtcProvider->callOnRTCNetworkThread([rtcProvider, identifier] {
-                rtcProvider->closeSocket(identifier);
+                rtcProvider->takeSocket(identifier);
             });
             connection->send(Messages::LibWebRTCNetwork::SignalClose(identifier, -1), 0);
             return;
@@ -129,7 +126,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     nw_connection_start(m_nwConnection.get());
 }
 
-void NetworkRTCTCPSocketCocoa::close()
+void NetworkRTCSocketCocoa::close()
 {
     if (!m_nwConnection)
         return;
@@ -137,7 +134,7 @@ void NetworkRTCTCPSocketCocoa::close()
     m_rtcProvider.takeSocket(m_identifier);
 }
 
-void NetworkRTCTCPSocketCocoa::setOption(int, int)
+void NetworkRTCSocketCocoa::setOption(int, int)
 {
     // FIXME: Validate this is not needed.
 }
@@ -151,7 +148,7 @@ static RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&& v)
     }));
 }
 
-Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(const uint8_t* data, size_t size)
+Vector<uint8_t> NetworkRTCSocketCocoa::createMessageBuffer(const uint8_t* data, size_t size)
 {
     if (size >= std::numeric_limits<uint16_t>::max())
         return { };
@@ -183,7 +180,7 @@ Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(const uint8_t* dat
     return buffer;
 }
 
-void NetworkRTCTCPSocketCocoa::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress&, const rtc::PacketOptions& options)
+void NetworkRTCSocketCocoa::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress&, const rtc::PacketOptions& options)
 {
     auto buffer = createMessageBuffer(data, size);
     if (buffer.isEmpty())
