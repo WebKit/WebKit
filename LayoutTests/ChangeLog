@@ -1,3 +1,12 @@
+2021-06-30  Eric Hutchison  <ehutchison@apple.com>
+
+        [MacOS wk1] fast/shadow-dom/style-resolver-sharing.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=227516
+
+        Unreviewed test gardening
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-06-30  Tim Nguyen  <ntim@apple.com>
 
         Add modal dialog UA styles
