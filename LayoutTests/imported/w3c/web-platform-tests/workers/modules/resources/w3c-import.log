@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-dynamic-import-script.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-load-script.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-load-script.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-load-script.py
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-static-import-script.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-static-import-script.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-referrer-checker.py
@@ -46,9 +47,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/post-message-on-load-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/postmessage-credentials.py
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/postmessage-referrer-checker.py
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-and-then-dynamic-import-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-data-url-block-cross-origin.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-non-existent-script-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-redirect-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-remote-origin-credentials-checker-worker.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-remote-origin-referrer-checker-worker.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-remote-origin-script-worker.sub.js
@@ -58,3 +61,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-syntax-error.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/syntax-error.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/throw.js

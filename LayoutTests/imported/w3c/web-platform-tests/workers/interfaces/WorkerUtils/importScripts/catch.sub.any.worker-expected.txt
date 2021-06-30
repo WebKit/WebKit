@@ -1,0 +1,20 @@
+
+PASS Same-origin syntax error
+PASS Same-origin throw
+FAIL Cross-origin syntax error assert_throws_dom: function "function () {
+    importScripts(crossOrigin +
+                  "/workers/modules/resources/syntax-error.js");
+  }" threw object "Error: Script error." that is not a DOMException NetworkError: property "code" is equal to undefined, expected 19
+FAIL Cross-origin throw assert_throws_dom: function "function () {
+    importScripts(crossOrigin +
+                  "/workers/modules/resources/throw.js");
+  }" threw object "Error: Script error." that is not a DOMException NetworkError: property "code" is equal to undefined, expected 19
+FAIL Redirect-to-cross-origin syntax error assert_throws_dom: function "function () {
+    importScripts(redirectToCrossOrigin +
+                  "/workers/modules/resources/syntax-error.js");
+  }" threw object "Error: Script error." that is not a DOMException NetworkError: property "code" is equal to undefined, expected 19
+FAIL Redirect-to-Cross-origin throw assert_throws_dom: function "function () {
+    importScripts(redirectToCrossOrigin +
+                  "/workers/modules/resources/throw.js");
+  }" threw object "Error: Script error." that is not a DOMException NetworkError: property "code" is equal to undefined, expected 19
+

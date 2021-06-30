@@ -38,7 +38,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/012.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/1
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/1.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/catch.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/null
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/null.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-cross-origin.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-redirect-to-cross-origin.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-same-origin.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-setTimeout-cross-origin.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-setTimeout-redirect-to-cross-origin.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-setTimeout-same-origin.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/undefined
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/undefined.headers

@@ -2760,6 +2760,8 @@
         "web-platform-tests/websockets/unload-a-document/002-2.html",
         "web-platform-tests/websockets/unload-a-document/005-1.html",
         "web-platform-tests/workers/data-url-shared-window.html",
+        "web-platform-tests/workers/multi-globals/current/current.html",
+        "web-platform-tests/workers/multi-globals/incumbent/incumbent.html",
         "web-platform-tests/workers/non-automated/application-cache-dedicated.html",
         "web-platform-tests/workers/non-automated/infinite-nested.html",
         "web-platform-tests/workers/non-automated/infinite-sibling-and-nested.html",

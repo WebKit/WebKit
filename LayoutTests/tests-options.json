@@ -3158,6 +3158,9 @@
     "imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/workers/Worker_terminate_event_queue.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/workers/constructors/SharedWorker/same-origin.html": [
         "slow"
     ],

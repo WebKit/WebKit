@@ -26,6 +26,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-common.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-create-common.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-messageport.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-run-forever-during-dynamic-import.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-run-forever-during-importScripts.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-run-forever-during-nested-importScripts.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-run-forever-during-top-level-await.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-run-forever.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-structure-message.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-termination-with-port-messages.js

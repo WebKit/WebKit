@@ -1,3 +1,15 @@
+2021-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Resync workers WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227512
+
+        Reviewed by Sam Weinig.
+
+        Resync workers WPT tests from upstream a38612f39e7752c353208.
+
+        * resources/resource-files.json:
+        * web-platform-tests/workers/*: Updated.
+
 2021-06-30  Tim Nguyen  <ntim@apple.com>
 
         Add modal dialog UA styles

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected token ';'
+
+PASS WorkerGlobalScope error event: error
+PASS WorkerGlobalScope error event: message
+PASS WorkerGlobalScope error event: filename
+PASS WorkerGlobalScope error event: lineno
+
