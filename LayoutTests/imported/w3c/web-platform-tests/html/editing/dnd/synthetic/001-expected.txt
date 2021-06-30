@@ -1,8 +1,5 @@
 
 PASS window.DragEvent should be exposed
-FAIL createEvent should not be able to create a DragEvent assert_throws_dom: function "function () {
-    var evt = document.createEvent('DragEvent');
-  }" did not throw
 PASS DragEvent should have all of the inherited init*Event methods
 PASS initMouseEvent should not throw
 PASS initUIEvent should not throw

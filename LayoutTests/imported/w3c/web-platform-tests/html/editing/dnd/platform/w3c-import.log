@@ -17,15 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/alttab.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/cancel-middle-click.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/cancel-right-click.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-001.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-002.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-003.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-004.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-005.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-006.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/drag-keypress.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/drag-link.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/drag-to-title.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/file-drop-position.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/file-os-to-os.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/file-to-system.html

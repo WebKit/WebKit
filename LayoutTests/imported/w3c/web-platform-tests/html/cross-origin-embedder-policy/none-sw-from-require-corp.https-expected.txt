@@ -17,4 +17,5 @@ FAIL making a cross-origin request for no CORP [PASS THROUGH] assert_unreached: 
 PASS making a cross-origin request for CORP: cross-origin [PASS THROUGH]
 PASS making a cross-origin request with CORS without ACAO
 PASS making a cross-origin request with CORS
+PASS making a cross-origin request with CORS-preflight
 

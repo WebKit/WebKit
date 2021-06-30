@@ -23,6 +23,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/modifiers/move.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/modifiers/onlydropzone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/modifiers/onlydropzoneevents.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/modifiers/releasemodifiersdrag.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/modifiers/releasemodifiersdrop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/modifiers/scriptmodified.html

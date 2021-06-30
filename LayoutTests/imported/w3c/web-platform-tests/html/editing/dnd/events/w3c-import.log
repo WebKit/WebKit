@@ -59,8 +59,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/038-proposed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-cross-document-suite-HELPER-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-cross-document-suite-HELPER-2.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-non-draggable-001.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-non-draggable-002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-input-with-circle.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-link-with-circle.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-p-with-circle.xhtml

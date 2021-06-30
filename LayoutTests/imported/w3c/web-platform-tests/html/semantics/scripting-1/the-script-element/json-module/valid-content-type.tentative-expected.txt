@@ -1,10 +1,14 @@
-CONSOLE MESSAGE: TypeError: 'text/json' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'application/json' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'text/html json' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'image/svg json' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
 
 FAIL text/json assert_unreached: [object Event] Reached unreachable code
 FAIL application/json assert_unreached: [object Event] Reached unreachable code
 FAIL text/html+json assert_unreached: [object Event] Reached unreachable code
 FAIL image/svg+json assert_unreached: [object Event] Reached unreachable code
+FAIL text/json;boundary=something assert_unreached: [object Event] Reached unreachable code
+FAIL text/json;foo=bar assert_unreached: [object Event] Reached unreachable code
 

@@ -15,6 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/button-style.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-placeholder-line-height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-placeholder-line-height.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/placeholder-opacity-default.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html

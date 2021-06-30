@@ -1,0 +1,11 @@
+three
+
+three
+three
+three
+
+FAIL The popup should be bottom left positioned assert_equals: expected 0 but got 20
+FAIL The popup should be top left positioned assert_equals: expected 600 but got 580
+FAIL The popup should be bottom right positioned assert_equals: expected 0 but got 20
+FAIL The popup should be top right positioned assert_equals: expected 600 but got 580
+

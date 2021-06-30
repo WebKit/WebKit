@@ -1,0 +1,3 @@
+
+PASS <link rel="icon"> doesn't fire an error event
+

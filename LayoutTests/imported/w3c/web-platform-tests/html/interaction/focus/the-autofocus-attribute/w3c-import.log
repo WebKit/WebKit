@@ -16,6 +16,10 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/autofocus-in-not-fully-active-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/autofocus-on-stable-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-nonexistent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-top.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/first-reconnected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/first-when-later-but-before.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/first-when-later.html
@@ -28,7 +32,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/queue-non-focusable.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/same-origin-autofocus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/skip-another-top-level-browsing-context.html
-/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/skip-document-with-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/skip-non-focusable.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/skip-not-fully-active.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/spin-by-blocking-style-sheet.html

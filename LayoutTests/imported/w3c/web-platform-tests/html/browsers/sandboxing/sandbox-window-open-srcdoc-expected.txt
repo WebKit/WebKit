@@ -1,0 +1,5 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+
+
+FAIL window.open('about:srcdoc') from sandboxed srcdoc doesn't crash. step_wait_func: Timed out waiting on condition
+

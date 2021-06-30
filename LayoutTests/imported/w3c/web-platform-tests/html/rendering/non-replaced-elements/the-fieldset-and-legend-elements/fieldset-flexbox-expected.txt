@@ -38,4 +38,5 @@
 
 FAIL Flex assert_equals: offsetTop expected 26 but got 8
 FAIL Inline flex assert_equals: offsetTop expected 116 but got 98
+PASS Dynamic change of flex-direction
 

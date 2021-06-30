@@ -311,6 +311,7 @@
     _assertGreen(ctx, 100, 50);
     t.done();
   expected: green
+  timeout: long
 
 - name: 2d.text.draw.fill.maxWidth.negative
   desc: fillText handles maxWidth correctly
@@ -769,7 +770,6 @@
   - 2d.text.align.left
   fonts:
   - CanvasTest
-  canvas: width="100" height="50" dir="ltr"
   code: |
     var f = new FontFace("CanvasTest", "url('/fonts/CanvasTest.ttf')");
     let fonts = (self.fonts ? self.fonts : document.fonts);
@@ -777,6 +777,7 @@
     fonts.add(f);
     fonts.ready.then(function() {
         ctx.font = '50px CanvasTest';
+        ctx.direction = 'ltr';
         ctx.fillStyle = '#f00';
         ctx.fillRect(0, 0, 100, 50);
         ctx.fillStyle = '#0f0';
@@ -798,7 +799,6 @@
   - 2d.text.draw.direction
   fonts:
   - CanvasTest
-  canvas: width="100" height="50" dir="rtl"
   code: |
     var f = new FontFace("CanvasTest", "url('/fonts/CanvasTest.ttf')");
     let fonts = (self.fonts ? self.fonts : document.fonts);
@@ -806,6 +806,7 @@
     fonts.add(f);
     fonts.ready.then(function() {
         ctx.font = '50px CanvasTest';
+        ctx.direction = 'rtl';
         ctx.fillStyle = '#f00';
         ctx.fillRect(0, 0, 100, 50);
         ctx.fillStyle = '#0f0';
@@ -826,7 +827,6 @@
   - 2d.text.align.right
   fonts:
   - CanvasTest
-  canvas: width="100" height="50" dir="ltr"
   code: |
     var f = new FontFace("CanvasTest", "url('/fonts/CanvasTest.ttf')");
     let fonts = (self.fonts ? self.fonts : document.fonts);
@@ -834,6 +834,7 @@
     fonts.add(f);
     fonts.ready.then(function() {
         ctx.font = '50px CanvasTest';
+        ctx.direction = 'ltr';
         ctx.fillStyle = '#f00';
         ctx.fillRect(0, 0, 100, 50);
         ctx.fillStyle = '#0f0';
@@ -855,7 +856,6 @@
   - 2d.text.draw.direction
   fonts:
   - CanvasTest
-  canvas: width="100" height="50" dir="rtl"
   code: |
     var f = new FontFace("CanvasTest", "url('/fonts/CanvasTest.ttf')");
     let fonts = (self.fonts ? self.fonts : document.fonts);
@@ -863,6 +863,7 @@
     fonts.add(f);
     fonts.ready.then(function() {
         ctx.font = '50px CanvasTest';
+        ctx.direction = 'rtl';
         ctx.fillStyle = '#f00';
         ctx.fillRect(0, 0, 100, 50);
         ctx.fillStyle = '#0f0';
@@ -1257,6 +1258,24 @@
     @assert ctx.textWordSpacing === -1;
     t.done();
 
+- name: 2d.text.drawing.style.nonfinite.spacing
+  desc: Testing letter spacing and word spacing with nonfinite inputs
+  testing:
+  - 2d.text.drawing.style.spacing
+  code: |
+    @assert ctx.textLetterSpacing === 0;
+    @assert ctx.textWordSpacing === 0;
+
+    function test_word_spacing(value) {
+      ctx.textWordSpacing = value;
+      ctx.textLetterSpacing = value;
+      @assert ctx.textWordSpacing === 0;
+      @assert ctx.textLetterSpacing === 0;
+    }
+    @nonfinite test_word_spacing(<0 NaN Infinity -Infinity>);
+
+    t.done();
+
 - name: 2d.text.drawing.style.spacing.measure
   desc: Testing letter spacing and word spacing
   testing:
@@ -1397,6 +1416,84 @@
     // Setting fontVariantCaps with non-existing font variant.
     ctx.fontVariantCaps = "abcd";
     @assert ctx.fontVariantCaps === "TitlingCaps";
+    t.done();
+
+- name: 2d.text.drawing.style.textRendering.settings
+  desc: Testing basic functionalities of textRendering in Canvas
+  testing:
+  - 2d.text.drawing.style.textRendering
+  code: |
+    // Setting textRendering with lower cases
+    @assert ctx.textRendering === "Auto";
+
+    ctx.textRendering = "auto";
+    @assert ctx.textRendering === "Auto";
+
+    ctx.textRendering = "optimizespeed";
+    @assert ctx.textRendering === "OptimizeSpeed";
+
+    ctx.textRendering = "optimizelegibility";
+    @assert ctx.textRendering === "OptimizeLegibility";
+
+    ctx.textRendering = "geometricprecision";
+    @assert ctx.textRendering === "GeometricPrecision";
+
+    // Setting textRendering with lower cases and upper cases word.
+    ctx.textRendering = "aUto";
+    @assert ctx.textRendering === "Auto";
+
+    ctx.textRendering = "OPtimizeSpeed";
+    @assert ctx.textRendering === "OptimizeSpeed";
+
+    ctx.textRendering = "OPtimizELEgibility";
+    @assert ctx.textRendering === "OptimizeLegibility";
+
+    ctx.textRendering = "GeometricPrecision";
+    @assert ctx.textRendering === "GeometricPrecision";
+
+    // Setting textRendering with non-existing font variant.
+    ctx.textRendering = "abcd";
+    @assert ctx.textRendering === "GeometricPrecision";
+    t.done();
+
+- name: 2d.text.drawing.style.measure.rtl.text
+  desc: Measurement should follow canvas direction instead text direction
+  testing:
+  - 2d.text.drawing.style.textRendering
+  code: |
+    metrics = ctx.measureText('اَلْعَرَبِيَّةُ');
+    @assert metrics.actualBoundingBoxLeft < metrics.actualBoundingBoxRight;
+
+    metrics = ctx.measureText('hello');
+    @assert metrics.actualBoundingBoxLeft < metrics.actualBoundingBoxRight;
+    t.done();
+
+- name: 2d.text.drawing.style.measure.textAlign
+  desc: Measurement should be related to textAlignment
+  testing:
+  - 2d.text.drawing.style.measure.textAlign
+  code: |
+    ctx.textAlign = "right";
+    metrics = ctx.measureText('hello');
+    @assert metrics.actualBoundingBoxLeft > metrics.actualBoundingBoxRight;
+
+    ctx.textAlign = "left"
+    metrics = ctx.measureText('hello');
+    @assert metrics.actualBoundingBoxLeft < metrics.actualBoundingBoxRight;
+    t.done();
+
+- name: 2d.text.drawing.style.measure.direction
+  desc: Measurement should follow text direction
+  testing:
+  - 2d.text.drawing.style.measure.direction
+  code: |
+    ctx.direction = "ltr";
+    metrics = ctx.measureText('hello');
+    @assert metrics.actualBoundingBoxLeft < metrics.actualBoundingBoxRight;
+
+    ctx.direction = "rtl";
+    metrics = ctx.measureText('hello');
+    @assert metrics.actualBoundingBoxLeft > metrics.actualBoundingBoxRight;
     t.done();
 
 # TODO: shadows, alpha, composite, clip

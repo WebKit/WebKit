@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_seek_to_eos.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_volume_check.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html
@@ -25,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-supported-by-feature-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-with-broken-track.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/controlsList.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough.html

@@ -1,5 +1,5 @@
 
 
 
-FAIL Posting a File in a navigation handled by a service worker assert_equals: expected "foobar" but got "FieldStorage('testinput', 'name', 'foobar')"
+PASS Posting a File in a navigation handled by a service worker
 

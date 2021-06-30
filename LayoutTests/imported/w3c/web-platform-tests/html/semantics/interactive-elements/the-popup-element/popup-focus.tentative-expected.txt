@@ -1,0 +1,55 @@
+This is a popup
+
+first button
+This is a popup
+
+This is a popup
+
+button
+This is a popup
+
+autofocus button
+This is a popup with autofocus on a tabindex=0 element
+
+button
+This is a popup
+
+autofocus button  second autofocus button
+This is a popup
+
+autofocus button  second autofocus button
+This is a popup
+
+first button should be focused  second button
+This is a popup
+
+first button  autofocus button should NOT be focused
+This is a popup
+
+first button  autofocus button should NOT be focused
+This is a popup
+
+first button
+This is a popup
+
+ Contained popup button  first button  autofocus button should NOT be focused
+This is a popup
+
+first button  autofocus button should NOT be focused
+
+FAIL Popup focus test: default behavior - popup is not focused assert_false: expected false got undefined
+FAIL Popup focus test: autofocus popup assert_false: expected false got undefined
+FAIL Popup focus test: autofocus empty popup assert_false: expected false got undefined
+FAIL Popup focus test: autofocus popup with button assert_false: expected false got undefined
+FAIL Popup focus test: autofocus child assert_false: expected false got undefined
+FAIL Popup focus test: autofocus on tabindex=0 element assert_false: expected false got undefined
+FAIL Popup focus test: autofocus multiple children assert_false: expected false got undefined
+FAIL Popup focus test: autofocus popup and multiple autofocus children assert_false: expected false got undefined
+FAIL Popup focus test: delegatesfocus popup assert_false: expected false got undefined
+FAIL Popup focus test: delegatesfocus takes precedence over autofocus assert_false: expected false got undefined
+FAIL Popup focus test: delegatesfocus takes precedence over autofocus 2 assert_false: expected false got undefined
+FAIL Popup focus test: delegatesfocus on empty popup has no effect assert_false: expected false got undefined
+FAIL Popup focus test: delegatesfocus on child has no effect assert_false: expected false got undefined
+FAIL Popup focus test: delegatesfocus skips contained popups assert_false: expected false got undefined
+FAIL Popup focus test: delegatesfocus skips contained dialogs assert_false: expected false got undefined
+

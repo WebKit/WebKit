@@ -2,8 +2,8 @@
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
 <script src="/common/utils.js"></script> <!-- Use token() to allow running tests in parallel -->
-<script src="../resources/dispatcher.js"></script>
-<script src="../resources/reporting-common.js"></script>
+<script src="/html/cross-origin-opener-policy/resources/dispatcher.js"></script>
+<script src="/html/cross-origin-opener-policy/reporting/resources/reporting-common.js"></script>
 
 <script>
 
@@ -54,10 +54,9 @@ promise_test( async t => {
       "report": {
         "body": {
           "disposition": "enforce",
-          "document-uri": RegExp(`uuid=${noCoopToken}$`),
-          "effective-policy": "unsafe-none",
-          "navigation-uri": RegExp(`uuid=${coopToken}$`),
-          "violation-type": "navigation-from-document"
+          "effectivePolicy": "unsafe-none",
+          "nextResponseURL": RegExp(`uuid=${coopToken}$`),
+          "type": "navigation-from-response"
         },
         "url": RegExp(`uuid=${noCoopToken}$`),
         "type": "coop"
@@ -68,10 +67,10 @@ promise_test( async t => {
       "report": {
         "body": {
           "disposition": "enforce",
-          "document-uri": RegExp(`uuid=${coopToken}$`),
-          "effective-policy": "same-origin",
-          "navigation-uri": RegExp(`uuid=${noCoopToken}$`),
-          "violation-type": "navigation-to-document"
+          "effectivePolicy": "same-origin",
+          "previousResponseURL": RegExp(`uuid=${noCoopToken}$`),
+          "referrer": RegExp(`uuid=${noCoopToken}$`),
+          "type": "navigation-to-response"
         },
         "url": RegExp(`uuid=${coopToken}$`),
         "type": "coop"

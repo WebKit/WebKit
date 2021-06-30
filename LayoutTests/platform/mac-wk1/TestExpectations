@@ -362,6 +362,9 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-shared-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/coep-on-response-from-service-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.tentative.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.tentative.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker-cache-storage.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw.https.html [ Skip ]
@@ -534,6 +537,8 @@ fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
 # This newly imported test times out on WK1 but passes on WK2.
 webkit.org/b/172222 imported/w3c/web-platform-tests/notifications/event-onclose.html [ Skip ]
 
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Pass Failure ]
 
@@ -646,8 +651,6 @@ webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
-
-imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure ]
 
 # webkit.org/b/163585
 media/track/track-cues-enter-exit.html [ Pass Crash ]

@@ -1,0 +1,62 @@
+
+PASS multipart/form-data: Basic test (normal form)
+FAIL multipart/form-data: Basic test (formdata event) assert_equals: expected "------WebKitFormBoundarynjiR7TaBakpm0h1K--\r\nContent-Disposition: form-data; name=\"basic\"\r\n\r\ntest\r\n------WebKitFormBoundarynjiR7TaBakpm0h1K----\r\n" but got "------WebKitFormBoundarynjiR7TaBakpm0h1K--\r\n"
+PASS multipart/form-data: Basic File test (normal form)
+FAIL multipart/form-data: Basic File test (formdata event) assert_equals: expected "------WebKitFormBoundaryNRn1GiAW66Uilr5X--\r\nContent-Disposition: form-data; name=\"basic\"; filename=\"file-test.txt\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundaryNRn1GiAW66Uilr5X----\r\n" but got "------WebKitFormBoundaryNRn1GiAW66Uilr5X--\r\n"
+PASS multipart/form-data: 0x00 in name (normal form)
+FAIL multipart/form-data: 0x00 in name (formdata event) assert_equals: expected "------WebKitFormBoundaryUH5pP6oBi6oy58SD--\r\nContent-Disposition: form-data; name=\"a\0b\"\r\n\r\nc\r\n------WebKitFormBoundaryUH5pP6oBi6oy58SD----\r\n" but got "------WebKitFormBoundaryUH5pP6oBi6oy58SD--\r\n"
+PASS multipart/form-data: 0x00 in value (normal form)
+FAIL multipart/form-data: 0x00 in value (formdata event) assert_equals: expected "------WebKitFormBoundaryZvQJAEcaIq0wJdkx--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb\0c\r\n------WebKitFormBoundaryZvQJAEcaIq0wJdkx----\r\n" but got "------WebKitFormBoundaryZvQJAEcaIq0wJdkx--\r\n"
+PASS multipart/form-data: 0x00 in filename (normal form)
+FAIL multipart/form-data: 0x00 in filename (formdata event) assert_equals: expected "------WebKitFormBoundaryJ7qdlvwc74X8vkKf--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b\0c\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundaryJ7qdlvwc74X8vkKf----\r\n" but got "------WebKitFormBoundaryJ7qdlvwc74X8vkKf--\r\n"
+PASS multipart/form-data: \n in name (normal form)
+FAIL multipart/form-data: \n in name (formdata event) assert_equals: expected "------WebKitFormBoundaryPZ6tK5UMxD7m7hjv--\r\nContent-Disposition: form-data; name=\"a%0D%0Ab\"\r\n\r\nc\r\n------WebKitFormBoundaryPZ6tK5UMxD7m7hjv----\r\n" but got "------WebKitFormBoundaryPZ6tK5UMxD7m7hjv--\r\n"
+PASS multipart/form-data: \r in name (normal form)
+FAIL multipart/form-data: \r in name (formdata event) assert_equals: expected "------WebKitFormBoundary59DV7JNhbzEW8KqG--\r\nContent-Disposition: form-data; name=\"a%0D%0Ab\"\r\n\r\nc\r\n------WebKitFormBoundary59DV7JNhbzEW8KqG----\r\n" but got "------WebKitFormBoundary59DV7JNhbzEW8KqG--\r\n"
+PASS multipart/form-data: \r\n in name (normal form)
+FAIL multipart/form-data: \r\n in name (formdata event) assert_equals: expected "------WebKitFormBoundaryY5QKPAQ4t1MIkWJt--\r\nContent-Disposition: form-data; name=\"a%0D%0Ab\"\r\n\r\nc\r\n------WebKitFormBoundaryY5QKPAQ4t1MIkWJt----\r\n" but got "------WebKitFormBoundaryY5QKPAQ4t1MIkWJt--\r\n"
+PASS multipart/form-data: \n\r in name (normal form)
+FAIL multipart/form-data: \n\r in name (formdata event) assert_equals: expected "------WebKitFormBoundaryESB3Xhq2jBUfhTum--\r\nContent-Disposition: form-data; name=\"a%0D%0A%0D%0Ab\"\r\n\r\nc\r\n------WebKitFormBoundaryESB3Xhq2jBUfhTum----\r\n" but got "------WebKitFormBoundaryESB3Xhq2jBUfhTum--\r\n"
+PASS multipart/form-data: \n in value (normal form)
+FAIL multipart/form-data: \n in value (formdata event) assert_equals: expected "------WebKitFormBoundaryO8NYabErjP8wY0Mp--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb\r\nc\r\n------WebKitFormBoundaryO8NYabErjP8wY0Mp----\r\n" but got "------WebKitFormBoundaryO8NYabErjP8wY0Mp--\r\n"
+PASS multipart/form-data: \r in value (normal form)
+FAIL multipart/form-data: \r in value (formdata event) assert_equals: expected "------WebKitFormBoundaryQPpr3z8r8Yti6xxw--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb\r\nc\r\n------WebKitFormBoundaryQPpr3z8r8Yti6xxw----\r\n" but got "------WebKitFormBoundaryQPpr3z8r8Yti6xxw--\r\n"
+PASS multipart/form-data: \r\n in value (normal form)
+FAIL multipart/form-data: \r\n in value (formdata event) assert_equals: expected "------WebKitFormBoundaryni1FlfMhEBxoyjrT--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb\r\nc\r\n------WebKitFormBoundaryni1FlfMhEBxoyjrT----\r\n" but got "------WebKitFormBoundaryni1FlfMhEBxoyjrT--\r\n"
+PASS multipart/form-data: \n\r in value (normal form)
+FAIL multipart/form-data: \n\r in value (formdata event) assert_equals: expected "------WebKitFormBoundarytSZLBnDX6uiEp4JQ--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb\r\n\r\nc\r\n------WebKitFormBoundarytSZLBnDX6uiEp4JQ----\r\n" but got "------WebKitFormBoundarytSZLBnDX6uiEp4JQ--\r\n"
+PASS multipart/form-data: \n in filename (normal form)
+FAIL multipart/form-data: \n in filename (formdata event) assert_equals: expected "------WebKitFormBoundaryrodrO1TvJdSDw8Bt--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b%0Ac\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundaryrodrO1TvJdSDw8Bt----\r\n" but got "------WebKitFormBoundaryrodrO1TvJdSDw8Bt--\r\n"
+PASS multipart/form-data: \r in filename (normal form)
+FAIL multipart/form-data: \r in filename (formdata event) assert_equals: expected "------WebKitFormBoundaryRyPyjzbXQgCkJOyk--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b%0Dc\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundaryRyPyjzbXQgCkJOyk----\r\n" but got "------WebKitFormBoundaryRyPyjzbXQgCkJOyk--\r\n"
+PASS multipart/form-data: \r\n in filename (normal form)
+FAIL multipart/form-data: \r\n in filename (formdata event) assert_equals: expected "------WebKitFormBoundary6M5AKQox3Prcwauf--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b%0D%0Ac\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundary6M5AKQox3Prcwauf----\r\n" but got "------WebKitFormBoundary6M5AKQox3Prcwauf--\r\n"
+PASS multipart/form-data: \n\r in filename (normal form)
+FAIL multipart/form-data: \n\r in filename (formdata event) assert_equals: expected "------WebKitFormBoundaryeQ3y7OOX3nDoTcYZ--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b%0A%0Dc\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundaryeQ3y7OOX3nDoTcYZ----\r\n" but got "------WebKitFormBoundaryeQ3y7OOX3nDoTcYZ--\r\n"
+PASS multipart/form-data: double quote in name (normal form)
+FAIL multipart/form-data: double quote in name (formdata event) assert_equals: expected "------WebKitFormBoundaryM4pPBcQ7rCBGL06X--\r\nContent-Disposition: form-data; name=\"a%22b\"\r\n\r\nc\r\n------WebKitFormBoundaryM4pPBcQ7rCBGL06X----\r\n" but got "------WebKitFormBoundaryM4pPBcQ7rCBGL06X--\r\n"
+PASS multipart/form-data: double quote in value (normal form)
+FAIL multipart/form-data: double quote in value (formdata event) assert_equals: expected "------WebKitFormBoundaryoCGNm4SvJJJ3AWRL--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb\"c\r\n------WebKitFormBoundaryoCGNm4SvJJJ3AWRL----\r\n" but got "------WebKitFormBoundaryoCGNm4SvJJJ3AWRL--\r\n"
+PASS multipart/form-data: double quote in filename (normal form)
+FAIL multipart/form-data: double quote in filename (formdata event) assert_equals: expected "------WebKitFormBoundaryvzRAEgEb0sxtiaFp--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b%22c\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundaryvzRAEgEb0sxtiaFp----\r\n" but got "------WebKitFormBoundaryvzRAEgEb0sxtiaFp--\r\n"
+PASS multipart/form-data: single quote in name (normal form)
+FAIL multipart/form-data: single quote in name (formdata event) assert_equals: expected "------WebKitFormBoundaryqTJiQeRBPVLoPtbK--\r\nContent-Disposition: form-data; name=\"a'b\"\r\n\r\nc\r\n------WebKitFormBoundaryqTJiQeRBPVLoPtbK----\r\n" but got "------WebKitFormBoundaryqTJiQeRBPVLoPtbK--\r\n"
+PASS multipart/form-data: single quote in value (normal form)
+FAIL multipart/form-data: single quote in value (formdata event) assert_equals: expected "------WebKitFormBoundaryI6kPsYGh2Ua8Jbpq--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb'c\r\n------WebKitFormBoundaryI6kPsYGh2Ua8Jbpq----\r\n" but got "------WebKitFormBoundaryI6kPsYGh2Ua8Jbpq--\r\n"
+PASS multipart/form-data: single quote in filename (normal form)
+FAIL multipart/form-data: single quote in filename (formdata event) assert_equals: expected "------WebKitFormBoundary7gqBy3gRSA2DuAo7--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b'c\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundary7gqBy3gRSA2DuAo7----\r\n" but got "------WebKitFormBoundary7gqBy3gRSA2DuAo7--\r\n"
+PASS multipart/form-data: backslash in name (normal form)
+FAIL multipart/form-data: backslash in name (formdata event) assert_equals: expected "------WebKitFormBoundarymkBQLThzwZMLHSrl--\r\nContent-Disposition: form-data; name=\"a\\b\"\r\n\r\nc\r\n------WebKitFormBoundarymkBQLThzwZMLHSrl----\r\n" but got "------WebKitFormBoundarymkBQLThzwZMLHSrl--\r\n"
+PASS multipart/form-data: backslash in value (normal form)
+FAIL multipart/form-data: backslash in value (formdata event) assert_equals: expected "------WebKitFormBoundaryMo0gK2r8UqDPOQXp--\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nb\\c\r\n------WebKitFormBoundaryMo0gK2r8UqDPOQXp----\r\n" but got "------WebKitFormBoundaryMo0gK2r8UqDPOQXp--\r\n"
+PASS multipart/form-data: backslash in filename (normal form)
+FAIL multipart/form-data: backslash in filename (formdata event) assert_equals: expected "------WebKitFormBoundary3Y6buLanKtt5fqZZ--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"b\\c\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundary3Y6buLanKtt5fqZZ----\r\n" but got "------WebKitFormBoundary3Y6buLanKtt5fqZZ--\r\n"
+PASS multipart/form-data: non-ASCII in name and value (normal form)
+FAIL multipart/form-data: non-ASCII in name and value (formdata event) assert_equals: expected "------WebKitFormBoundaryoQwvCofwVew1381o--\r\nContent-Disposition: form-data; name=\"Ã¡b\"\r\n\r\nÃ§\r\n------WebKitFormBoundaryoQwvCofwVew1381o----\r\n" but got "------WebKitFormBoundaryoQwvCofwVew1381o--\r\n"
+PASS multipart/form-data: non-ASCII in filename (normal form)
+FAIL multipart/form-data: non-ASCII in filename (formdata event) assert_equals: expected "------WebKitFormBoundarypyZxm9Q5rtI0Bf5R--\r\nContent-Disposition: form-data; name=\"a\"; filename=\"É.txt\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundarypyZxm9Q5rtI0Bf5R----\r\n" but got "------WebKitFormBoundarypyZxm9Q5rtI0Bf5R--\r\n"
+PASS multipart/form-data: characters not in encoding in name and value (normal form)
+FAIL multipart/form-data: characters not in encoding in name and value (formdata event) assert_equals: expected "------WebKitFormBoundaryV5tAbmjaTHZTZfUc--\r\nContent-Disposition: form-data; name=\"a&#601;b\"\r\n\r\nc&#65533;d\r\n------WebKitFormBoundaryV5tAbmjaTHZTZfUc----\r\n" but got "------WebKitFormBoundaryV5tAbmjaTHZTZfUc--\r\n"
+PASS multipart/form-data: character not in encoding in filename (normal form)
+FAIL multipart/form-data: character not in encoding in filename (formdata event) assert_equals: expected "------WebKitFormBoundaryOIa63rRLxE7HhTpq--\r\nContent-Disposition: form-data; name=\"á\"; filename=\"&#128169;\"\r\nContent-Type: text/plain\r\n\r\n\r\n------WebKitFormBoundaryOIa63rRLxE7HhTpq----\r\n" but got "------WebKitFormBoundaryOIa63rRLxE7HhTpq--\r\n"
+

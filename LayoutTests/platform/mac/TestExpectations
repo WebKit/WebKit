@@ -1237,8 +1237,6 @@ webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass T
 
 webkit.org/b/173560 inspector/css/add-rule.html [ Pass Timeout ]
 
-webkit.org/b/173780 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-settimeout.html [ Pass Failure ]
-
 # Missing support for 521-bit elliptic curves.
 crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html
 crypto/subtle/ec-import-spki-key-export-spki-key-p521.html
@@ -1260,8 +1258,6 @@ crypto/subtle/ecdsa-import-key-verify-p521.html
 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
 
 webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Pass Failure ]
-
-webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
 
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
 svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]

@@ -1,6 +1,4 @@
-Autofocus should work in the same origin grand child iframe.
 
 
-
-PASS Autofocus should work in the same origin grand child iframe
+FAIL Autofocus should not work in the same origin grand child iframe assert_unreached: The grandchild iframe shouldn't get focus Reached unreachable code
 

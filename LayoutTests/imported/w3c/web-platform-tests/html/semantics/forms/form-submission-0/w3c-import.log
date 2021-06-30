@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/FormDataEvent.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/SubmitEvent.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/constructing-form-data-set.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/enctypes-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-empty-file.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-form.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv.html
@@ -33,8 +34,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/jsurl-form-submit.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/jsurl-navigation-then-form-submit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/multipart-formdata.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/newline-normalization.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/reparent-form-during-planned-navigation-task.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/request-submit-activation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submission-checks.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-file.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/text-plain.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/urlencoded2.window.js

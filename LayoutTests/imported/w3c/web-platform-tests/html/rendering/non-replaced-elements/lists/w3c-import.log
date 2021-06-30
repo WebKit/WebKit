@@ -28,6 +28,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/lists-presentational-hints-ascii-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/lists-styles.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-display-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-reversed-display-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-reversed-display-contents.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-supported-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-supported-xhtml-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-supported-xhtml.xhtml

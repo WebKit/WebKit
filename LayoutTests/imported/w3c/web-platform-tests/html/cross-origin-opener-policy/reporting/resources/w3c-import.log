@@ -14,9 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/resources/dispatcher.js
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/resources/dispatcher.py
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/resources/executor.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/resources/report.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/resources/reporting-common.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/resources/test-access-property.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/resources/try-access.js

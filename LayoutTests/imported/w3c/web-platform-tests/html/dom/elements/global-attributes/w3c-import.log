@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dataset-prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dataset-set.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dataset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-slots-directionality.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-R-expected.html

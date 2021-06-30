@@ -1,0 +1,6 @@
+Header
+
+Legend
+
+PASS The rendered LEGEND should work well for :hover.
+

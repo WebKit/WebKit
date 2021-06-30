@@ -23,7 +23,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-handler.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-ignored-in-media-element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-in-display-none-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-in-object-fallback-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-remove-param-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-setcustomvalidity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test0.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test1.html

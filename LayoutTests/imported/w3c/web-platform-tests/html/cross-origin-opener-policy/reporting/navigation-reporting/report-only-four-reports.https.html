@@ -5,9 +5,9 @@
 <script src=/resources/testharnessreport.js></script>
 <script src="/common/get-host-info.sub.js"></script>
 <script src="/common/utils.js"></script>
-<script src="../../resources/common.js"></script>
-<script src="../resources/dispatcher.js"></script>
-<script src="../resources/reporting-common.js"></script>
+<script src="/html/cross-origin-opener-policy/resources/common.js"></script>
+<script src="/html/cross-origin-opener-policy/resources/dispatcher.js"></script>
+<script src="/html/cross-origin-opener-policy/reporting/resources/reporting-common.js"></script>
 
 <script>
 
@@ -28,10 +28,9 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": `${location.href}`,
-            "effective-policy": "same-origin-allow-popups",
-            "navigation-uri": /uuid=EXECUTOR_UUID$/, // next document URL
-            "violation-type": "navigation-from-document"
+            "effectivePolicy": "same-origin-allow-popups",
+            "nextResponseURL": /uuid=EXECUTOR_UUID$/, // next document URL
+            "type": "navigation-from-response"
           },
           "url": `${location.href}`,
           "type": "coop"
@@ -42,10 +41,9 @@ let tests = [
         "report": {
           "body": {
             "disposition": "reporting",
-            "document-uri": `${location.href}`,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": /uuid=EXECUTOR_UUID$/, // next document URL
-            "violation-type": "navigation-from-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "nextResponseURL": /uuid=EXECUTOR_UUID$/, // next document URL
+            "type": "navigation-from-response"
           },
           "url": `${location.href}`,
           "type": "coop"
@@ -56,10 +54,10 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": /uuid=EXECUTOR_UUID$/,
-            "effective-policy": "same-origin-allow-popups",
-            "navigation-uri": `${location.origin}/`, // referrer
-            "violation-type": "navigation-to-document"
+            "effectivePolicy": "same-origin-allow-popups",
+            "previousResponseURL": "",
+            "referrer": `${location.origin}/`, // referrer
+            "type": "navigation-to-response"
           },
           "url": /uuid=EXECUTOR_UUID$/,
           "type": "coop"
@@ -70,10 +68,10 @@ let tests = [
         "report": {
           "body": {
             "disposition": "reporting",
-            "document-uri": /uuid=EXECUTOR_UUID$/,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": `${location.origin}/`, // referrer
-            "violation-type": "navigation-to-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "previousResponseURL": "",
+            "referrer": `${location.origin}/`, // referrer
+            "type": "navigation-to-response"
           },
           "url": /uuid=EXECUTOR_UUID$/,
           "type": "coop"

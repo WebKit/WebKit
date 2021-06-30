@@ -23,12 +23,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/cross_origin_joined_frame.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/document_location.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-non-configurable-toString-valueOf.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-pathname-setter-question-mark.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prevent-extensions.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-with-colon.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prototype-no-toString-valueOf.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-cross-origin-domain.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-cross-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-goes-cross-origin-domain.sub.html

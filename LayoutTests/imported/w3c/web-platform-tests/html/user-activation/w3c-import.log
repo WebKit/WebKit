@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-thru-contextmenu-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html
@@ -22,5 +23,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-init.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-crossorigin.sub.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.tentative.html

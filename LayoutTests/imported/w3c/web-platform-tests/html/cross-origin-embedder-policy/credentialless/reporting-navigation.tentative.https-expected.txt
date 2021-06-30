@@ -1,0 +1,15 @@
+
+PASS parent: (none), target: (none),
+PASS parent: (none), target: |header(cross-origin-embedder-policy,credentialless),
+FAIL parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-embedder-policy,credentialless),  undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy,credentialless), target: (none),  undefined is not a constructor (evaluating 'new global.ReportingObserver')
+PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin),
+FAIL parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-resource-policy,cross-origin),  undefined is not a constructor (evaluating 'new global.ReportingObserver')
+PASS parent: (none), target: |header(cross-origin-embedder-policy,credentialless)|header(cross-origin-resource-policy,cross-origin),
+PASS parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-embedder-policy,credentialless)|header(cross-origin-resource-policy,cross-origin),
+FAIL parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: |header(cross-origin-embedder-policy,credentialless),  undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: (none),  undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: |header(cross-origin-resource-policy,cross-origin),  undefined is not a constructor (evaluating 'new global.ReportingObserver')
+PASS parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: |header(cross-origin-embedder-policy,credentialless)|header(cross-origin-resource-policy,cross-origin),
+FAIL parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-embedder-policy-report-only,credentialless)|header(cross-origin-resource-policy,cross-origin),  undefined is not a constructor (evaluating 'new global.ReportingObserver')
+

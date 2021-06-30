@@ -1,0 +1,4 @@
+This is a popup, which should be open upon load This is a second popup with initiallyopen, which should NOT be open upon load Also not visible
+
+FAIL The initiallyopen attribute should affect page load only assert_true: initiallyopen should open the popup expected true got undefined
+

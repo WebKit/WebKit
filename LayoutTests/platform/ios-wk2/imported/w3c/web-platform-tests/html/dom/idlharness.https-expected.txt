@@ -993,6 +993,27 @@ PASS HTMLIFrameElement interface: attribute frameBorder
 PASS HTMLIFrameElement interface: attribute longDesc
 PASS HTMLIFrameElement interface: attribute marginHeight
 PASS HTMLIFrameElement interface: attribute marginWidth
+PASS HTMLIFrameElement must be primary interface of document.createElement("iframe")
+PASS Stringification of document.createElement("iframe")
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "src" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "srcdoc" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "name" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "sandbox" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "allow" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "allowFullscreen" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "width" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "height" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "referrerPolicy" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "loading" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "contentDocument" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "contentWindow" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "getSVGDocument()" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "align" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "scrolling" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "frameBorder" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "longDesc" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "marginHeight" with the proper type
+PASS HTMLIFrameElement interface: document.createElement("iframe") must inherit property "marginWidth" with the proper type
 PASS HTMLEmbedElement interface: existence and properties of interface object
 PASS HTMLEmbedElement interface object length
 PASS HTMLEmbedElement interface object name

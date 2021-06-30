@@ -1,0 +1,7 @@
+Blocked access to external URL http://www.127.0.0.1:8800/html/webappapis/user-prompts/cannot-show-simple-dialogs/support/prompt.html
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN prompt-different-origin-frame
+

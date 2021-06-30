@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/document-getters-return-null-for-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-change-src.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-dimension.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document-under-content-visibility.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document.html

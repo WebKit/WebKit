@@ -14,6 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.CSSHSL.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.CSSRGB.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.colorObject.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.colorObject.transparency.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.get.semitransparent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.get.solid.html
@@ -221,7 +225,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.transparent-1.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.transparent-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.transparent-2.png
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.toStringFunctionCallback.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic.invalid.inputs.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic.negative.rotation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic.positive.rotation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.alpha.png
@@ -336,4 +343,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.identity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.infinity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.strokeStyle.colorObject.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.strokeStyle.colorObject.transparency.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.strokeStyle.default.html

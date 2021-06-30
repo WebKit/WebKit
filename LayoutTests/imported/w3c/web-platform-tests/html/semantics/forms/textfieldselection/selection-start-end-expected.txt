@@ -27,6 +27,7 @@ NOTRUN onselect should fire when selectionStart is changed on textarea-appended
 NOTRUN onselect should fire when selectionStart is changed on textarea-not-appended
 NOTRUN onselect should fire when selectionStart is changed on textarea-appended-prefocused
 NOTRUN onselect should fire when selectionStart is changed on textarea-not-appended-prefocused
+NOTRUN onselect should fire when selectionStart is changed on
 PASS onselect should fire when selectionEnd is changed
 NOTRUN onselect should fire when selectionEnd is changed on input-appended
 NOTRUN onselect should fire when selectionEnd is changed on input-not-appended
@@ -36,9 +37,13 @@ NOTRUN onselect should fire when selectionEnd is changed on textarea-appended
 NOTRUN onselect should fire when selectionEnd is changed on textarea-not-appended
 NOTRUN onselect should fire when selectionEnd is changed on textarea-appended-prefocused
 NOTRUN onselect should fire when selectionEnd is changed on textarea-not-appended-prefocused
+NOTRUN onselect should fire when selectionEnd is changed on
 PASS Setting selectionStart to a value larger than selectionEnd should increase selectionEnd
 PASS Setting selectionEnd to a value smaller than selectionStart should decrease selectionStart
 FAIL selectionStart edge-case values assert_equals: selectionStart setter on input-appended should convert -1 to 2^32-1 expected 10 but got 0
 FAIL selectionEnd edge-case values assert_equals: selectionEnd setter on input-appended should convert -1 to 2^32-1 expected 10 but got 0
+FAIL selectionStart should be clamped by the current value length assert_equals: expected 10 but got 200
+FAIL selectionEnd should be clamped by the current value length assert_equals: expected 10 but got 300
+FAIL setSelectionRange should be clamped by the current value length assert_equals: expected 10 but got 200
 PASS selectionStart and selectionEnd should remain the same when selectionDirection is changed
 

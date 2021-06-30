@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: TypeError: Cannot load script http://localhost:8800/html/semantics/scripting-1/the-script-element/css-module/resources/integrity-mismatches.js. Failed integrity metadata check. Content length: 147, Expected content length: 147, Expected metadata: sha384-doesnotmatch
+
+FAIL The integrity attribute must be verified on the top-level of a module loading a CSS module and allow it to execute when it matches assert_array_equals: The module and its dependency must have executed lengths differ, expected array ["integrity-matches,css:#test { background-color: rgb(255, 0, 0); }"] length 1, got [] length 0
+PASS The integrity attribute must be verified on the top-level of a module loading a CSS module and not allow it to execute when there's a mismatch
+

@@ -8,4 +8,5 @@ PASS Window.name is not reset at the same-origin navigation with window.opener s
 PASS Window.name is reset at the first first cross-origin navigation with window.opener set to null
 PASS Window.name is set by the window
 PASS Window.name is reset at the first cross-origin navigation
+PASS window.name is not reset after navigating to an about:blank page from a non-about:blank page
 

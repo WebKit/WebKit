@@ -42,14 +42,34 @@ async_test(t => {
 }, `"none" top-level: navigating a frame from "require-corp" to "none" should succeed`);
 
 async_test(t => {
-  const w = window.open(`resources/navigate-none.sub.html?to=navigate-require-corp.sub.html`, "window_name");
-  t.add_cleanup(() => w.close());
+  Promise.resolve().then(async () => {
+    const bc = new BroadcastChannel(token());
+    const futureMessage = () => {
+      return new Promise(resolve => {
+        bc.onmessage = event => resolve(event.data);
+      });
+    };
 
-  w.onload = t.step_func(() => {
-    assert_true(w.location.href.endsWith("?to=navigate-require-corp.sub.html"));
+    const prefix = document.URL.substr(0, document.URL.lastIndexOf('/'))
+    const attribute = `?channelName=${bc.name}`;
+    const url_1 = prefix + "/resources/navigate-none.sub.html" + attribute;
+    const url_2 = prefix + "/resources/navigate-require-corp.sub.html" + attribute;
+
+    const w = window.open(url_1, "window_name");
+    t.add_cleanup(() => w.close());
+    assert_equals(await futureMessage(), "loaded");
+    assert_equals(w.location.href, url_1);
+
+    w.location.href = url_2;
+    assert_equals(await futureMessage(), "loaded");
+    assert_equals(w.location.href, url_2);
+
     w.history.back();
-    t.step_wait_func_done(() => w.location.href.endsWith("/navigate-require-corp.sub.html"));
-  });
+    assert_equals(await futureMessage(), "loaded");
+    assert_equals(w.location.href, url_1);
+
+    t.done();
+  }).catch((e) => t.unreached_func(e));
 }, `"none" top-level: navigating a frame back from "require-corp" should succeed`);
 
 async_test(t => {

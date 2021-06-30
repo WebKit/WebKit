@@ -1,0 +1,11 @@
+
+FAIL div.innerHTML assert_equals: Serialization should NOT re-escape <noscript> contents expected "& <>" but got "&amp;&nbsp;&lt;&gt;"
+FAIL div.insertAdjacentHTML assert_equals: Serialization should NOT re-escape <noscript> contents expected "& <>" but got "&amp;&nbsp;&lt;&gt;"
+FAIL document.write on main document assert_equals: Serialization should NOT re-escape <noscript> contents expected "& <>" but got "&amp;&nbsp;&lt;&gt;"
+PASS DOMParser.parseFromString
+PASS template.innerHTML
+PASS document.implementation.createHTMLDocument and innerHTML
+PASS document.implementation.createHTMLDocument and createContextualFragment
+PASS document.implementation.createHTMLDocument and document.write
+PASS XMLHttpRequest
+

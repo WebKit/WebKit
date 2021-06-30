@@ -50,7 +50,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.off.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.x.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.y.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.filter.value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.gradient.alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.gradient.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.gradient.basic.html
