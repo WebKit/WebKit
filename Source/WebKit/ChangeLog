@@ -1,3 +1,19 @@
+2021-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [Live Text] "Text from Camera" should not be shown in callout bar when selecting text
+        https://bugs.webkit.org/show_bug.cgi?id=227535
+        rdar://79936981
+
+        Reviewed by Devin Rousso.
+
+        Match new system behavior in rdar://79758142 by not showing the "Text from Camera" item in the callout bar when
+        the selection is a (non-collapsed) range.
+
+        Test: WebKit.CaptureTextFromCamera
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2021-06-30  Antoine Quint  <graouts@webkit.org>
 
         [Model] [iOS] Add support for displaying <model> in fullscreen

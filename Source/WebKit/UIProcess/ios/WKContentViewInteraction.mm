@@ -3881,7 +3881,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (action == @selector(captureTextFromCamera:) && !editorState.isContentEditable)
+    if (action == @selector(captureTextFromCamera:) && (!editorState.isContentEditable || editorState.selectionIsRange))
         return NO;
 #endif
 
