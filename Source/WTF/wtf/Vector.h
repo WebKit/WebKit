@@ -784,8 +784,8 @@ public:
 
     template<typename U> ALWAYS_INLINE void append(const U* u, size_t size) { append<FailureAction::Crash>(u, size); }
     template<typename U> ALWAYS_INLINE bool tryAppend(const U* u, size_t size) { return append<FailureAction::Report>(u, size); }
-    template<typename U, size_t otherCapacity> void appendVector(const Vector<U, otherCapacity>&);
-    template<typename U, size_t otherCapacity> void appendVector(Vector<U, otherCapacity>&&);
+    template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
+    template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
 
     void insert(size_t position, ValueType&& value) { insert<ValueType>(position, std::forward<ValueType>(value)); }
     template<typename U> void insert(size_t position, const U*, size_t);
@@ -1383,15 +1383,15 @@ ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U, size_t otherCapacity>
-inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendVector(const Vector<U, otherCapacity>& val)
+template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>& val)
 {
     append(val.begin(), val.size());
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U, size_t otherCapacity>
-inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendVector(Vector<U, otherCapacity>&& val)
+template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&& val)
 {
     size_t newSize = m_size + val.size();
     if (newSize > capacity())

@@ -1,3 +1,66 @@
+2021-06-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r279365. rdar://problem/79969742
+
+    Enable Probabilistic Guard Malloc for RuleData and RuleFeature vectors
+    https://bugs.webkit.org/show_bug.cgi?id=227446
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    Help for catching a crash.
+    
+    * style/RuleFeature.cpp:
+    (WebCore::Style::RuleFeatureSet::collectFeatures):
+    (WebCore::Style::RuleFeatureSet::add):
+    * style/RuleFeature.h:
+    * style/RuleSet.h:
+    * style/StyleScopeRuleSets.cpp:
+    (WebCore::Style::makeRuleSet):
+    (WebCore::Style::ensureInvalidationRuleSets):
+    
+    Source/WTF:
+    
+    Add SystemMalloc type that can be used with containers like Vector and
+    ProbabilisticGuardMalloc alias for it on Mac/iOS platforms.
+    
+    * WTF.xcodeproj/project.pbxproj:
+    * wtf/CMakeLists.txt:
+    * wtf/SystemMalloc.h: Added.
+    (WTF::SystemMalloc::malloc):
+    (WTF::SystemMalloc::tryMalloc):
+    (WTF::SystemMalloc::zeroedMalloc):
+    (WTF::SystemMalloc::tryZeroedMalloc):
+    (WTF::SystemMalloc::realloc):
+    (WTF::SystemMalloc::tryRealloc):
+    (WTF::SystemMalloc::free):
+    * wtf/Vector.h:
+    (WTF::Malloc>::appendVector):
+    
+    Include all template parameters for the appendVector argument.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279365 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-29  Antti Koivisto  <antti@apple.com>
+
+            Enable Probabilistic Guard Malloc for RuleData and RuleFeature vectors
+            https://bugs.webkit.org/show_bug.cgi?id=227446
+
+            Reviewed by Geoffrey Garen.
+
+            Help for catching a crash.
+
+            * style/RuleFeature.cpp:
+            (WebCore::Style::RuleFeatureSet::collectFeatures):
+            (WebCore::Style::RuleFeatureSet::add):
+            * style/RuleFeature.h:
+            * style/RuleSet.h:
+            * style/StyleScopeRuleSets.cpp:
+            (WebCore::Style::makeRuleSet):
+            (WebCore::Style::ensureInvalidationRuleSets):
+
 2021-06-28  Jean-Yves Avenard  <jya@apple.com>
 
         Not all uses of AudioToolbox framework use soft linking
