@@ -3160,6 +3160,8 @@ void testUbfiz64AndShift()
 
 void testInsertBitField32()
 {
+    if (!JSC::Options::useBFI())
+        return;
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     uint32_t d = 0xf0f0f0f0;
@@ -3238,6 +3240,8 @@ void testInsertBitField32()
 
 void testInsertBitField64()
 {
+    if (!JSC::Options::useBFI())
+        return;
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     uint64_t d = 0xf0f0f0f0f0f0f0f0;

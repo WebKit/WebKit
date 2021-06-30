@@ -1,3 +1,19 @@
+2021-06-30  Mark Lam  <mark.lam@apple.com>
+
+        ARM64: Disable selection of BFI instruction variants by default.
+        https://bugs.webkit.org/show_bug.cgi?id=227554
+        rdar://79978150
+
+        Reviewed by Saam Barati.
+
+        We suspect that this may have caused some hangs.  Disabling while we investigate.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/testb3_2.cpp:
+        (testInsertBitField32):
+        (testInsertBitField64):
+        * runtime/OptionsList.h:
+
 2021-06-29  Joonghun Park  <jh718.park@samsung.com>
 
         Remove "function declared ‘static’ but never defined" build warnings since r278971.
