@@ -1,3 +1,15 @@
+2021-06-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r278884): [Nicosia] Fix empty stack check in CairoOperationRecorder::restore()
+        https://bugs.webkit.org/show_bug.cgi?id=227525
+
+        Reviewed by Myles C. Maxfield.
+
+        We keep our own state stack, with a state added at construction, so we should check our stack instead.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::restore):
+
 2021-06-30  Tim Nguyen  <ntim@apple.com>
 
         Support -internal- prefix for pseudo classes and rename :-webkit-direct-focus to :-internal-direct-focus

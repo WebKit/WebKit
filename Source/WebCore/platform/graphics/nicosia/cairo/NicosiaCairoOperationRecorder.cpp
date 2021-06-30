@@ -734,7 +734,7 @@ void CairoOperationRecorder::save()
 
 void CairoOperationRecorder::restore()
 {
-    if (!stackSize())
+    if (m_stateStack.isEmpty())
         return;
 
     struct Restore final : PaintingOperation, OperationData<> {
@@ -753,7 +753,6 @@ void CairoOperationRecorder::restore()
 
     append(createCommand<Restore>());
 
-    ASSERT(!m_stateStack.isEmpty());
     m_stateStack.removeLast();
     if (m_stateStack.isEmpty())
         m_stateStack.clear();
