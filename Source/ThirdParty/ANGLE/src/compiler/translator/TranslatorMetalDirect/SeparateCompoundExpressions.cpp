@@ -234,7 +234,7 @@ class Separator : public TIntermRebuild
             return;
         }
         auto &bindingMap = getCurrBindingMap();
-        const Name name  = mIdGen.createNewName("");
+        const Name name = mIdGen.createNewName();
         auto *var =
             new TVariable(&mSymbolTable, name.rawName(), &newExpr.getType(), name.symbolType());
         auto *decl = new TIntermDeclaration(var, &newExpr);
@@ -398,7 +398,7 @@ class Separator : public TIntermRebuild
 
         if (op == TOperator::EOpLogicalAnd || op == TOperator::EOpLogicalOr)
         {
-            const Name name = mIdGen.createNewName("");
+            const Name name = mIdGen.createNewName();
             auto *var = new TVariable(&mSymbolTable, name.rawName(), new TType(TBasicType::EbtBool),
                                       name.symbolType());
 
@@ -469,7 +469,7 @@ class Separator : public TIntermRebuild
         TIntermTyped *then  = node.getTrueExpression();
         TIntermTyped *else_ = node.getFalseExpression();
 
-        const Name name = mIdGen.createNewName("");
+        const Name name = mIdGen.createNewName();
         auto *var =
             new TVariable(&mSymbolTable, name.rawName(), &node.getType(), name.symbolType());
 

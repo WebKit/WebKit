@@ -1,3 +1,21 @@
+2021-06-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ASSERT in  webgl/1.0.x/conformance/glsl/misc/uninitialized-local-global-variables.html   IdGen ASSERT(*base != '_');
+        https://bugs.webkit.org/show_bug.cgi?id=227482
+
+        Reviewed by Kenneth Russell.
+
+        Give unnamed structs normal "_<number>" name.
+        The original code thought it gave "ANGLE__unnamed<number>", but in reality it
+        gave "__unnamed<number>".
+        Since other constructs already create names of form "_<number>", it is unwarranted to
+        special case this particular case to give "_unnamed<number>" or "ANGLE_unnamed<number" or
+        "ANGLE_<number>".
+
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.cpp:
+        * src/tests/compiler_tests/MSLOutput_test.cpp:
+        (TEST_F):
+
 2021-06-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal primitive restart range computation could index with size_t
