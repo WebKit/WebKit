@@ -284,13 +284,10 @@ public:
     Status Read(std::size_t numToRead, uint8_t* outputBuffer, uint64_t* numActuallyRead) final
     {
         ASSERT(outputBuffer && numActuallyRead);
-        if (!numActuallyRead)
+        if (!outputBuffer || !numActuallyRead)
             return Status(Status::kNotEnoughMemory);
 
         *numActuallyRead = 0;
-        if (!outputBuffer)
-            return Status(Status::kNotEnoughMemory);
-
         while (numToRead && m_currentSegment != m_data.end()) {
             auto& currentSegment = *m_currentSegment;
 
@@ -629,12 +626,6 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
         m_status = m_parser->Feed(this, &m_reader);
         if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock) {
             m_reader->reclaimSegments();
-
-            // Audio tracks are grouped into meta-samples of a duration no more than m_minimumSampleDuration.
-            // But at the end of a file, no more audio data may be incoming, so flush and emit any pending
-            // audio buffers.
-            flushPendingAudioBuffers();
-
             completionHandler();
             return;
         }
@@ -1226,16 +1217,15 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
     ASSERT(sampleCount);
 
     if (m_packetDescriptions.isEmpty()) {
-        m_packetBytesRead = m_partialBytesRead;
+        m_packetBytesRead = 0;
         m_byteOffset = metadata.position;
         m_samplePresentationTime = presentationTime;
     }
 
-    if (!m_currentPacketSize)
+    if (!m_currentPacketSize) {
         m_currentPacketSize = metadata.size;
-
-    if (m_packetData.size() < m_packetBytesRead + metadata.size)
-        m_packetData.grow(m_packetBytesRead + metadata.size);
+        m_packetData.grow(m_packetData.size() + metadata.size);
+    }
 
     if (!m_currentPacketByteOffset)
         m_currentPacketByteOffset = m_packetBytesRead;
@@ -1256,9 +1246,6 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
             m_partialBytesRead += bytesRead;
             return status;
         }
-
-        if (!status.ok())
-            return status;
 
         m_partialBytesRead = 0;
     }
@@ -1334,17 +1321,15 @@ void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(std::optional<si
 
     ASSERT(!m_packetData.isEmpty());
 
-    auto fullPacketBytesRead = m_packetBytesRead - m_partialBytesRead;
-
     CMBlockBufferRef blockBuffer = nullptr;
-    auto err = PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, fullPacketBytesRead, kCFAllocatorDefault, nullptr, 0, fullPacketBytesRead, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
+    auto err = PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, m_packetData.sizeInBytes(), kCFAllocatorDefault, nullptr, 0, m_packetData.sizeInBytes(), kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferCreateWithMemoryBlock failed with %d", err);
         return;
     }
     auto buffer = adoptCF(blockBuffer);
 
-    err = PAL::CMBlockBufferReplaceDataBytes(m_packetData.data(), buffer.get(), 0, fullPacketBytesRead);
+    err = PAL::CMBlockBufferReplaceDataBytes(m_packetData.data(), buffer.get(), 0, m_packetData.sizeInBytes());
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferReplaceDataBytes failed with %d", err);
         return;
@@ -1358,7 +1343,7 @@ void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(std::optional<si
     }
     auto sampleBuffer = adoptCF(rawSampleBuffer);
 
-    m_packetData.remove(0, fullPacketBytesRead);
+    m_packetData.clear();
     m_packetDescriptions.clear();
 
     auto trackID = track().track_uid.value();
