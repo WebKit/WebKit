@@ -2089,8 +2089,8 @@ webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.
 webkit.org/b/217620 inspector/audit/basic-async.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Skip ]
-imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation-succeeds.html [ Skip ]
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html [ Skip ]
+webkit.org/b/227501 [ Debug ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
 
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
 
