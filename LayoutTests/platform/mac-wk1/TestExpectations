@@ -1312,3 +1312,5 @@ webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 webkit.org/b/227366 [ BigSur ] http/tests/preload/onload_event.html [ Pass Timeout ]
 
 webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]
+
+webkit.org/b/227540 [ Debug ] crypto/workers/subtle/hrsa-postMessage-worker.html [ Pass Failure ]
