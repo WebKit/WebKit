@@ -32,6 +32,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -87,8 +88,8 @@ private:
     HashMap<const RenderLayer*, Inspector::Protocol::LayerTree::LayerId> m_documentLayerToIdMap;
     HashMap<Inspector::Protocol::LayerTree::LayerId, const RenderLayer*> m_idToLayer;
 
-    HashMap<PseudoElement*, Inspector::Protocol::LayerTree::PseudoElementId> m_pseudoElementToIdMap;
-    HashMap<Inspector::Protocol::LayerTree::PseudoElementId, PseudoElement*> m_idToPseudoElement;
+    WeakHashMap<PseudoElement, Inspector::Protocol::LayerTree::PseudoElementId> m_pseudoElementToIdMap;
+    HashMap<Inspector::Protocol::LayerTree::PseudoElementId, WeakPtr<PseudoElement>> m_idToPseudoElement;
 
     bool m_suppressLayerChangeEvents { false };
 };

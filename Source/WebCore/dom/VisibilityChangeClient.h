@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class VisibilityChangeClient {
+class VisibilityChangeClient : public CanMakeWeakPtr<VisibilityChangeClient> {
 public:
     virtual ~VisibilityChangeClient() = default;
 

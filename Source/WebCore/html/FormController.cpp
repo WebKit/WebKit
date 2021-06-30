@@ -25,6 +25,7 @@
 #include "HTMLInputElement.h"
 #include "ScriptDisallowedScope.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -272,10 +273,8 @@ public:
     void willDeleteForm(HTMLFormElement*);
 
 private:
-    typedef HashMap<HTMLFormElement*, AtomString> FormToKeyMap;
-    typedef HashMap<String, unsigned> FormSignatureToNextIndexMap;
-    FormToKeyMap m_formToKeyMap;
-    FormSignatureToNextIndexMap m_formSignatureToNextIndexMap;
+    WeakHashMap<HTMLFormElement, AtomString> m_formToKeyMap;
+    HashMap<String, unsigned> m_formSignatureToNextIndexMap;
 };
 
 static inline void recordFormStructure(const HTMLFormElement& form, StringBuilder& builder)
@@ -323,7 +322,7 @@ AtomString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& cont
         return formKeyForNoOwner;
     }
 
-    return m_formToKeyMap.ensure(form.get(), [this, &form] {
+    return m_formToKeyMap.ensure(*form, [this, &form] {
         auto signature = formSignature(*form);
         auto nextIndex = m_formSignatureToNextIndexMap.add(signature, 0).iterator->value++;
         // FIXME: Would be nice to have makeAtomString to use to optimize the case where the string already exists.
@@ -333,8 +332,8 @@ AtomString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& cont
 
 void FormKeyGenerator::willDeleteForm(HTMLFormElement* form)
 {
-    ASSERT(form);
-    m_formToKeyMap.remove(form);
+    RELEASE_ASSERT(form);
+    m_formToKeyMap.remove(*form);
 }
 
 // ----------------------------------------------------------------------------

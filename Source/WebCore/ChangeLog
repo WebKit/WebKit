@@ -1,3 +1,44 @@
+2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use WeakHashMap and WeakPtr with Node in more places
+        https://bugs.webkit.org/show_bug.cgi?id=227192
+        <rdar://problem/79828322>
+
+        Reviewed by Geoffrey Garen.
+
+        Deploy WeakHashMap and WeakPtr with Node/Element in more places.
+
+        * dom/Document.cpp:
+        (WebCore::Document::elementForAccessKey):
+        (WebCore::Document::buildAccessKeyCache):
+        (WebCore::Document::registerForVisibilityStateChangedCallbacks):
+        (WebCore::Document::unregisterForVisibilityStateChangedCallbacks):
+        (WebCore::Document::visibilityStateChanged):
+        * dom/Document.h:
+        * dom/VisibilityChangeClient.h:
+        * html/FormController.cpp:
+        (WebCore::FormKeyGenerator::formKey):
+        (WebCore::FormKeyGenerator::willDeleteForm):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::rootEditableElementMap):
+        (WebCore::HTMLAnchorElement::rootEditableElementForSelectionOnMouseDown const):
+        (WebCore::HTMLAnchorElement::clearRootEditableElementForSelectionOnMouseDown):
+        (WebCore::HTMLAnchorElement::setRootEditableElementForSelectionOnMouseDown):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::bind):
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::nodeForId):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::boundNodeId):
+        (WebCore::InspectorDOMAgent::willDestroyDOMNode):
+        (WebCore::InspectorDOMAgent::mediaMetricsTimerFired):
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::bindPseudoElement):
+        (WebCore::InspectorLayerTreeAgent::unbindPseudoElement):
+        * inspector/agents/InspectorLayerTreeAgent.h:
+        * style/StyleSharingResolver.h:
+
 2021-06-30  venky dass  <yaranamavenkataramana@apple.com>
 
         Updated to use smart pointers in MutationObserver.

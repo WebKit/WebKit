@@ -31,14 +31,6 @@
 
 namespace WTF {
 
-template<typename Counter> struct HashTraits<Ref<WeakPtrImpl<Counter>>> : RefHashTraits<WeakPtrImpl<Counter>> {
-    static constexpr bool hasIsReleasedWeakValueFunction = true;
-    static bool isReleasedWeakValue(const Ref<WeakPtrImpl<Counter>>& value)
-    {
-        return !value.isHashTableDeletedValue() && !value.isHashTableEmptyValue() && !value.get();
-    }
-};
-
 template<typename T, typename Counter = EmptyCounter>
 class WeakHashSet final {
     WTF_MAKE_FAST_ALLOCATED;

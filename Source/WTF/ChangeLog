@@ -1,3 +1,22 @@
+2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use WeakHashMap and WeakPtr with Node in more places
+        https://bugs.webkit.org/show_bug.cgi?id=227192
+        <rdar://problem/79828322>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/WeakHashMap.h:
+        (WTF::WeakHashMap::WeakHashMapIteratorBase::makePeek): Fixed type mismatch errors.
+        (WTF::WeakHashMap::ensure): Made this function return AddResult like HashMap::ensure.
+        (WTF::WeakHashMap::take): Added.
+        (WTF::WeakHashMap::removeIf): Fixed the bug that the callback was called with the iterator
+        of m_impl and not WeakHashMapIterator.
+        * wtf/WeakHashSet.h:
+        (WTF::HashTraits<Ref<WeakPtrImpl<Counter>>>::isReleasedWeakValue): Moved to WeakPtr.h
+        * wtf/WeakPtr.h:
+        (WTF::HashTraits<Ref<WeakPtrImpl<Counter>>>::isReleasedWeakValue): Moved from WeakHashSet.h
+
 2021-06-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r279405.
