@@ -43,6 +43,7 @@
 #include "StaticRange.h"
 #include "TextIndicator.h"
 #include "TextIterator.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 
@@ -203,7 +204,10 @@ static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& rang
 {
     auto text = plainText(range);
     text.truncate(textPreviewLength);
+    auto identifier = createCanonicalUUIDString();
+
     return {
+        identifier,
         text,
         makeNodePath(&range.startContainer()),
         range.startOffset(),

@@ -1,3 +1,19 @@
+2021-06-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Add ID and versioning support for AppHighlights
+        https://bugs.webkit.org/show_bug.cgi?id=227279
+
+        Reviewed by Tim Horton.
+
+        Reformat the storage of Highlight Data to allow for accurate deletion of active
+        highlights, as well as making them more robust and future-proof.
+
+        Also found an issue with creating SharedBuffers from the memory map, in that the ipcHandle size
+        should be used instead of the sharedMemory->size(). 
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreAppHighlightsAndScrollToIndex):
+
 2021-06-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r279405.

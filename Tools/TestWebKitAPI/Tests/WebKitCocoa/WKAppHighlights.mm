@@ -56,92 +56,163 @@
 
 namespace TestWebKitAPI {
 
-TEST(AppHighlights, AppHighlightCreateAndRestore)
+RetainPtr<_WKAppHighlight> createAppHighlightWithHTML(NSString *HTMLString, NSString *javaScript, NSString *highlightText)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto delegate = adoptNS([[AppHighlightDelegate alloc] init]);
     auto webViewCreate = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
-    auto webViewRestore = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
     [webViewCreate _setAppHighlightDelegate:delegate.get()];
-    [webViewCreate synchronouslyLoadHTMLString:@"Test"];
-    [webViewCreate stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
-    __block bool finished = NO;
+    [webViewCreate synchronouslyLoadHTMLString:HTMLString];
+    [webViewCreate stringByEvaluatingJavaScript:javaScript];
+    __block RetainPtr<_WKAppHighlight> resultHighlight;
+    __block bool done = false;
     [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup, BOOL requestOriginatedInApp) {
         EXPECT_EQ(delegateWebView, webViewCreate.get());
         EXPECT_NOT_NULL(highlight);
-        EXPECT_WK_STREQ(highlight.text, @"Test");
+        EXPECT_WK_STREQ(highlight.text, highlightText);
         EXPECT_NOT_NULL(highlight.highlight);
-        
-        [webViewRestore synchronouslyLoadHTMLString:@"Test"];
-        [webViewRestore _restoreAppHighlights:@[ highlight.highlight ]];
-        
-        TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
-            return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
-        }, 2, @"Expected Highlights to be populated.");
-        
-        finished = YES;
+        resultHighlight = highlight;
+        done = true;
     }];
     [webViewCreate _addAppHighlight];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&done);
+    return resultHighlight;
+}
+
+RetainPtr<WKWebView> createWebViewForAppHighlightsWithHTML(NSString *HTMLString)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webViewRestore = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webViewRestore synchronouslyLoadHTMLString:HTMLString];
+    
+    return webViewRestore;
+}
+
+TEST(AppHighlights, AppHighlightCreateAndRestore)
+{
+    auto highlight = createAppHighlightWithHTML(@"Test", @"document.execCommand('SelectAll')", @"Test");
+    auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"Test");
+    
+    [webViewRestore _restoreAppHighlights:@[[highlight highlight]]];
+    
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
+    }, 2, @"Expected Highlights to be populated.");
 }
 
 TEST(AppHighlights, AppHighlightCreateAndRestoreAndScroll)
 {
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    auto delegate = adoptNS([[AppHighlightDelegate alloc] init]);
-    auto webViewCreate = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
-    auto webViewRestore = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
-    [webViewCreate _setAppHighlightDelegate:delegate.get()];
-    [webViewCreate synchronouslyLoadHTMLString:@"<div style='height: 1000px'></div>Test"];
-    [webViewCreate stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
-    __block bool finished = NO;
-    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup, BOOL requestOriginatedInApp) {
-        EXPECT_EQ(delegateWebView, webViewCreate.get());
-        EXPECT_NOT_NULL(highlight);
-        EXPECT_WK_STREQ(highlight.text, @"Test");
-        EXPECT_NOT_NULL(highlight.highlight);
-        
-        [webViewRestore synchronouslyLoadHTMLString:@"<div style='height: 1000px'></div>Test"];
-        [webViewRestore _restoreAndScrollToAppHighlight:highlight.highlight];
-        
-        TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
-            return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
-        }, 2, @"Expected Highlights to be populated.");
-        EXPECT_NE(0, [[webViewRestore objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
-        
-        finished = YES;
-    }];
-    [webViewCreate _addAppHighlight];
-    TestWebKitAPI::Util::run(&finished);
+    auto highlight = createAppHighlightWithHTML(@"<div style='height: 10000px'></div>Test", @"document.execCommand('SelectAll')", @"Test");
+    auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"<div style='height: 10000px'></div>Test");
+
+    [webViewRestore _restoreAndScrollToAppHighlight:[highlight highlight]];
+
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
+    }, 2, @"Expected Highlights to be populated.");
+    EXPECT_NE(0, [[webViewRestore objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
 }
 
 TEST(AppHighlights, AppHighlightRestoreFailure)
 {
+    auto highlight = createAppHighlightWithHTML(@"Test", @"document.execCommand('SelectAll')", @"Test");
+    auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"Not The Same");
+    
+    [webViewRestore _restoreAppHighlights:@[[highlight highlight]]];
+    
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return ![webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue;
+    }, 2, @"Expected Highlights not to be populated.");
+}
+
+// Ensure that future versions of the blob format can add additional data and still be decoded successfully by version of WebKit that only know about the current format.
+TEST(AppHighlights, AppHighlightCreateAndRestoreWithExtraBytes)
+{
+    auto highlight = createAppHighlightWithHTML(@"Test", @"document.execCommand('SelectAll')", @"Test");
+    auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"Test");
+        
+    NSMutableData *modifiedHighlightData = [NSMutableData dataWithData: [highlight highlight] ];
+    [modifiedHighlightData appendData:[@"TestV2Data" dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [webViewRestore synchronouslyLoadHTMLString:@"Test"];
+    [webViewRestore _restoreAppHighlights:@[ modifiedHighlightData ]];
+    
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
+    }, 2, @"Expected Highlights to be populated.");
+}
+
+// Older versions of WebKit need to be able to decode blobs encoded on newer versions of WebKit, so ensure that is possible.
+TEST(AppHighlights, AppHighlightCreateAndRestoreWithLaterVersion)
+{
+    auto highlight = createAppHighlightWithHTML(@"Test", @"document.execCommand('SelectAll')", @"Test");
+    auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"Test");
+        
+    uint64_t maximumVersion = std::numeric_limits<uint64_t>::max();
+    NSData *versionData = [NSData dataWithBytes:&maximumVersion length:sizeof(maximumVersion)];
+    NSMutableData *modifiedHighlightData = [NSMutableData dataWithData:[highlight highlight]];
+
+    [modifiedHighlightData replaceBytesInRange:NSMakeRange(sizeof(uint64_t), sizeof(maximumVersion)) withBytes:versionData];
+
+    [webViewRestore synchronouslyLoadHTMLString:@"Test"];
+    [webViewRestore _restoreAppHighlights:@[ modifiedHighlightData ]];
+    
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
+    }, 2, @"Expected Highlights to be populated.");
+}
+
+// Ensure that shorter data blobs will correctly fail to decode.
+TEST(AppHighlights, AppHighlightCreateAndRestoreAndDropBytes)
+{
+    auto highlight = createAppHighlightWithHTML(@"Test", @"document.execCommand('SelectAll')", @"Test");
+    auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"Test");
+        
+    NSMutableData *modifiedHighlightData = [NSMutableData dataWithBytes:[highlight highlight].bytes length:[highlight highlight].length / 2];
+
+    [webViewRestore synchronouslyLoadHTMLString:@"Test"];
+    [webViewRestore _restoreAppHighlights:@[ modifiedHighlightData ]];
+    
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return ![webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue;
+    }, 2, @"Expected Highlights not to be populated.");
+}
+
+// Ensure that the original data format will always be able to be decoded in the future.
+TEST(AppHighlights, AppHighlightRestoreFromStorageV0)
+{
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    auto delegate = adoptNS([[AppHighlightDelegate alloc] init]);
-    auto webViewCreate = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    const unsigned char bytes[] = {0x04, 0x00, 0x00, 0x00, 0x01, 0x54, 0x65, 0x73, 0x74, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x05, 0x00, 0x00, 0x00, 0x01, 0x23, 0x74, 0x65, 0x78, 0x74, 0x04, 0x00, 0x00, 0x00, 0x01, 0x54, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x05, 0x00, 0x00, 0x00, 0x01, 0x23, 0x74, 0x65, 0x78, 0x74, 0x04, 0x00, 0x00, 0x00, 0x01, 0x54, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00};
+    
+    NSData *storedData = [NSData dataWithBytes:&bytes length:87];
+
     auto webViewRestore = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
-    [webViewCreate _setAppHighlightDelegate:delegate.get()];
-    [webViewCreate synchronouslyLoadHTMLString:@"Test"];
-    [webViewCreate stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
-    __block bool finished = NO;
-    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup, BOOL requestOriginatedInApp) {
-        EXPECT_EQ(delegateWebView, webViewCreate.get());
-        EXPECT_NOT_NULL(highlight);
-        EXPECT_WK_STREQ(highlight.text, @"Test");
-        EXPECT_NOT_NULL(highlight.highlight);
-        
-        [webViewRestore synchronouslyLoadHTMLString:@"Not the same"];
-        [webViewRestore _restoreAppHighlights:@[ highlight.highlight ]];
-        
-        TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
-            return ![webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue;
-        }, 2, @"Expected Highlights to be populated.");
-        
-        finished = YES;
-    }];
-    [webViewCreate _addAppHighlight];
-    TestWebKitAPI::Util::run(&finished);
+
+    [webViewRestore synchronouslyLoadHTMLString:@"Test"];
+    [webViewRestore _restoreAppHighlights:@[ storedData ]];
+    
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
+    }, 2, @"Expected Highlights to be populated.");
+}
+
+
+// Ensure that the V1 data format will always be able to be decoded in the future.
+TEST(AppHighlights, AppHighlightRestoreFromStorageV1)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    const unsigned char bytes[] = {0x31, 0x32, 0x30, 0x32, 0x48, 0x50, 0x41, 0x41, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x00, 0x00, 0x00, 0x01, 0x31, 0x36, 0x30, 0x61, 0x36, 0x30, 0x31, 0x62, 0x2d, 0x31, 0x62, 0x37, 0x32, 0x2d, 0x34, 0x31, 0x31, 0x38, 0x2d, 0x62, 0x36, 0x64, 0x31, 0x2d, 0x39, 0x30, 0x32, 0x62, 0x37, 0x34, 0x66, 0x65, 0x61, 0x36, 0x36, 0x31, 0x04, 0x00, 0x00, 0x00, 0x01, 0x54, 0x65, 0x73, 0x74, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x05, 0x00, 0x00, 0x00, 0x01, 0x23, 0x74, 0x65, 0x78, 0x74, 0x04, 0x00, 0x00, 0x00, 0x01, 0x54, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x05, 0x00, 0x00, 0x00, 0x01, 0x23, 0x74, 0x65, 0x78, 0x74, 0x04, 0x00, 0x00, 0x00, 0x01, 0x54, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00};
+    
+    NSData *storedData = [NSData dataWithBytes:&bytes length:144];
+
+    auto webViewRestore = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+
+    [webViewRestore synchronouslyLoadHTMLString:@"Test"];
+    [webViewRestore _restoreAppHighlights:@[ storedData ]];
+    
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
+    }, 2, @"Expected Highlights to be populated.");
 }
 
 #if PLATFORM(IOS_FAMILY)

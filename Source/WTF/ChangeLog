@@ -1,3 +1,17 @@
+2021-06-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Add ID and versioning support for AppHighlights
+        https://bugs.webkit.org/show_bug.cgi?id=227279
+
+        Reviewed by Tim Horton.
+
+        Allow PersistentDecoders to rewind, to help support v0 highlight data.
+
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::Decoder):
+        (WTF::Persistence::Decoder::rewind):
+        * wtf/persistence/PersistentDecoder.h:
+
 2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use WeakHashMap and WeakPtr with Node in more places

@@ -1,3 +1,34 @@
+2021-06-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Add ID and versioning support for AppHighlights
+        https://bugs.webkit.org/show_bug.cgi?id=227279
+
+        Reviewed by Tim Horton.
+
+        AppHighlights.AppHighlightRestoreFromStorage
+        AppHighlights.AppHighlightCreateAndRestoreAndDropBytes
+        AppHighlights.AppHighlightCreateAndRestoreWithLaterVersion
+        AppHighlights.AppHighlightCreateAndRestoreWithExtraBytes
+        AppHighlights.AppHighlightRestoreFromStorageV0
+        AppHighlights.AppHighlightRestoreFromStorageV1
+
+        Reformat the storage of Highlight Data to allow for accurate deletion of active
+        highlights, as well as making them more robust and future-proof. Support decoding v0 
+        highlights as well.
+
+        * Modules/highlight/AppHighlightRangeData.cpp:
+        (WebCore::AppHighlightRangeData::NodePathComponent::decode):
+        (WebCore::AppHighlightRangeData::encode const):
+        (WebCore::AppHighlightRangeData::decode):
+        * Modules/highlight/AppHighlightRangeData.h:
+        (WebCore::AppHighlightRangeData::NodePathComponent::NodePathComponent):
+        (WebCore::AppHighlightRangeData::AppHighlightRangeData):
+        (WebCore::AppHighlightRangeData::identifier const):
+        (WebCore::AppHighlightRangeData::startOffset const):
+        (WebCore::AppHighlightRangeData::endOffset const):
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::createAppHighlightRangeData):
+
 2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         RemotePlayback must keep its media element alive when there is a pending activity

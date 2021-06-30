@@ -68,6 +68,15 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
     return true;
 }
 
+bool Decoder::rewind(size_t size)
+{
+    if (m_bufferPosition - size >= m_buffer) {
+        m_bufferPosition -= size;
+        return true;
+    }
+    return false;
+}
+
 template<typename T>
 Decoder& Decoder::decodeNumber(std::optional<T>& optional)
 {
