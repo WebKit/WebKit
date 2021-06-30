@@ -297,6 +297,7 @@ UIProcess/GeolocationPermissionRequestProxy.cpp
 UIProcess/LegacyGlobalSettings.cpp
 UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp
 UIProcess/MediaKeySystemPermissionRequestProxy.cpp
+UIProcess/ModelElementController.cpp
 UIProcess/PageLoadState.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp

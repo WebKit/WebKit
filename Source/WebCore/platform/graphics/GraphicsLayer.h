@@ -524,6 +524,7 @@ public:
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
 #if ENABLE(MODEL_ELEMENT)
     virtual void setContentsToModel(RefPtr<Model>&&) { }
+    virtual PlatformLayerID contentsLayerIDForModel() const { return 0; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
 

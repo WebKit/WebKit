@@ -1515,4 +1515,11 @@ void WebChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent()
     m_page.didHandleOrPreventMouseDownOrMouseUpEvent();
 }
 
+#if ENABLE(MODEL_ELEMENT)
+void WebChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId) const
+{
+    m_page.takeModelElementFullscreen(contentLayerId);
+}
+#endif
+
 } // namespace WebKit

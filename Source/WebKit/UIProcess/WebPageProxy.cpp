@@ -1023,6 +1023,11 @@ void WebPageProxy::didAttachToRunningProcess()
     m_systemPreviewController = makeUnique<SystemPreviewController>(*this);
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    ASSERT(!m_modelElementController);
+    m_modelElementController = makeUnique<ModelElementController>(*this);
+#endif
+
 #if ENABLE(WEB_AUTHN)
     ASSERT(!m_credentialsMessenger);
     m_credentialsMessenger = makeUnique<WebAuthenticatorCoordinatorProxy>(*this);
@@ -7771,6 +7776,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_systemPreviewController = nullptr;
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    m_modelElementController = nullptr;
+#endif
+
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = nullptr;
 #endif
@@ -10677,6 +10686,15 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 #endif
 }
 
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+void WebPageProxy::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
+{
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+    modelElementController()->takeModelElementFullscreen(contentLayerId);
+#endif
+}
 #endif
 
 #if !PLATFORM(COCOA)

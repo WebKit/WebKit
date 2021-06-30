@@ -592,4 +592,8 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     ChangeUniversalAccessZoomFocus(WebCore::IntRect viewRect, WebCore::IntRect caretRect)
 #endif
+
+#if ENABLE(MODEL_ELEMENT)
+    TakeModelElementFullscreen(uint64_t contentLayerID)
+#endif
 }

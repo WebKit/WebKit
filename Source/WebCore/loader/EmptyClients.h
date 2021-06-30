@@ -216,6 +216,10 @@ class EmptyChromeClient : public ChromeClient {
     void didAssociateFormControls(const Vector<RefPtr<Element>>&, Frame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
+#if ENABLE(MODEL_ELEMENT)
+    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const final;
+#endif
+
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
 };
 

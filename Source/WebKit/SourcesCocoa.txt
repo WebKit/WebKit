@@ -400,6 +400,7 @@ UIProcess/Cocoa/IconLoadingDelegate.mm
 UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm
 UIProcess/Cocoa/MediaUtilities.mm
 UIProcess/Cocoa/MediaPermissionUtilities.mm
+UIProcess/Cocoa/ModelElementControllerCocoa.mm
 UIProcess/Cocoa/NavigationState.mm
 UIProcess/Cocoa/PageClientImplCocoa.mm
 UIProcess/Cocoa/PlatformXRSystem.mm

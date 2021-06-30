@@ -7669,6 +7669,13 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 {
     send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
 }
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+void WebPage::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
+{
+    send(Messages::WebPageProxy::TakeModelElementFullscreen(contentLayerId));
+}
 
 #endif
 

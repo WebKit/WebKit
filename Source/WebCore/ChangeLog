@@ -1,3 +1,34 @@
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for displaying <model> in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=227443
+        <rdar://problem/79859937>
+
+        Reviewed by Sam Weinig.
+
+        Expose a new enterFullscreen() method on HTMLModelElement allowing to enter a fullscreen AR experience
+        where the resource may be displayed in the user's environment. This differs from the existing
+        Element.requestFullscreen() method since the experience is provided by the platform and we're not
+        presenting the inline <model> element in a fullscreen window.
+
+        From the WebProcess side, this requires obtaining a reference to the content layer for the <model> element
+        and sending it in an IPC message to the UIProcess.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        (WebCore::HTMLModelElement::enterFullscreen):
+        * Modules/model-element/HTMLModelElement.h:
+        * Modules/model-element/HTMLModelElement.idl:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::takeModelElementFullscreen const):
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::takeModelElementFullscreen const):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::contentsLayerIDForModel const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::contentsLayerIDForModel const):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2021-06-30  Tim Nguyen  <ntim@apple.com>
 
         Add modal dialog UA styles

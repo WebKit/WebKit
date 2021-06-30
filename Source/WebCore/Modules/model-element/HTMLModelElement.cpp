@@ -37,9 +37,21 @@
 #include "JSEventTarget.h"
 #include "JSHTMLModelElement.h"
 #include "Model.h"
+#include "RenderLayerModelObject.h"
 #include "RenderModel.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
+
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Document.h"
+#include "GraphicsLayer.h"
+#include "GraphicsLayerCA.h"
+#include "Page.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
+#endif
 
 namespace WebCore {
 
@@ -212,6 +224,29 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     invalidateResourceHandleAndUpdateRenderer();
 
     m_readyPromise->resolve(*this);
+}
+
+void HTMLModelElement::enterFullscreen()
+{
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+    auto* page = document().page();
+    if (!page)
+        return;
+
+    if (!is<RenderLayerModelObject>(this->renderer()))
+        return;
+
+    auto& renderLayerModelObject = downcast<RenderLayerModelObject>(*this->renderer());
+    if (!renderLayerModelObject.isComposited() || !renderLayerModelObject.layer() || !renderLayerModelObject.layer()->backing())
+        return;
+
+    auto* graphicsLayer = renderLayerModelObject.layer()->backing()->graphicsLayer();
+    if (!graphicsLayer)
+        return;
+
+    if (auto contentLayerId = graphicsLayer->contentsLayerIDForModel())
+        page->chrome().client().takeModelElementFullscreen(contentLayerId);
+#endif
 }
 
 }

@@ -59,6 +59,8 @@ public:
     WEBCORE_EXPORT static void setModelElementCacheDirectory(const String&);
     WEBCORE_EXPORT static const String& modelElementCacheDirectory();
 
+    void enterFullscreen();
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 

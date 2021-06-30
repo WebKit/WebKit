@@ -452,6 +452,10 @@ private:
     void enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&&) final;
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId) const final;
+#endif
+
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 

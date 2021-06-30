@@ -1,3 +1,42 @@
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for displaying <model> in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=227443
+        <rdar://problem/79859937>
+
+        Reviewed by Sam Weinig.
+
+        Displaying a model element in fullscreen requires making some calls on the ASVInlinePreview object
+        created by a WKModelView. We send the content layer ID we receive through an IPC call from the
+        WebProcess to the new ModelElementController. We then look at the remote layer tree for a node
+        matching that ID and find its related UIView. If we find a WKModelView, as expected, we can carry 
+        on and call -[ASVInlinePreview createFullscreenInstanceWithInitialFrame:previewOptions:completionHandler:]
+        to enter fullscreen using the presentingViewController provided by the UI client, and then observe
+        when we exit fullscreen using -[ASVInlinePreview observeDismissFullscreenWithCompletionHandler:]
+        to make sure the presenting view controller is removed.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm: Added.
+        (WebKit::ModelElementController::takeModelElementFullscreen):
+        * UIProcess/ModelElementController.cpp: Added.
+        (WebKit::ModelElementController::ModelElementController):
+        * UIProcess/ModelElementController.h: Added.
+        (WebKit::ModelElementController::page):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::takeModelElementFullscreen):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::takeModelElementFullscreen const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeModelElementFullscreen):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-06-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r276969.

@@ -1322,6 +1322,7 @@
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		711725A9228D564300018514 /* WebsiteLegacyOverflowScrollingTouchPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 711725A8228D563A00018514 /* WebsiteLegacyOverflowScrollingTouchPolicy.h */; };
 		7134A3DA2603B92500624BD3 /* WKModelInteractionGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134A3D92603B80E00624BD3 /* WKModelInteractionGestureRecognizer.h */; };
+		7137BA8025F1542000914EE3 /* ModelElementController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7137BA7F25F1540C00914EE3 /* ModelElementController.h */; };
 		71A676A622C62325007D6295 /* WKTouchActionGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A676A422C62318007D6295 /* WKTouchActionGestureRecognizer.h */; };
 		71BAA73325FFD09800D7CD5D /* WKModelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 71BAA73125FFCCBA00D7CD5D /* WKModelView.h */; };
 		71FB810B2260627E00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */; };
@@ -4575,6 +4576,9 @@
 		711725A8228D563A00018514 /* WebsiteLegacyOverflowScrollingTouchPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteLegacyOverflowScrollingTouchPolicy.h; sourceTree = "<group>"; };
 		7134A3D82603B80E00624BD3 /* WKModelInteractionGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKModelInteractionGestureRecognizer.mm; path = ios/WKModelInteractionGestureRecognizer.mm; sourceTree = "<group>"; };
 		7134A3D92603B80E00624BD3 /* WKModelInteractionGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKModelInteractionGestureRecognizer.h; path = ios/WKModelInteractionGestureRecognizer.h; sourceTree = "<group>"; };
+		7137BA7D25F153E900914EE3 /* ModelElementControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelElementControllerCocoa.mm; sourceTree = "<group>"; };
+		7137BA7E25F1540B00914EE3 /* ModelElementController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModelElementController.cpp; sourceTree = "<group>"; };
+		7137BA7F25F1540C00914EE3 /* ModelElementController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelElementController.h; sourceTree = "<group>"; };
 		71A676A422C62318007D6295 /* WKTouchActionGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKTouchActionGestureRecognizer.h; path = ios/WKTouchActionGestureRecognizer.h; sourceTree = "<group>"; };
 		71A676A522C62318007D6295 /* WKTouchActionGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTouchActionGestureRecognizer.mm; path = ios/WKTouchActionGestureRecognizer.mm; sourceTree = "<group>"; };
 		71BAA73125FFCCBA00D7CD5D /* WKModelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKModelView.h; path = ios/WKModelView.h; sourceTree = "<group>"; };
@@ -7044,6 +7048,7 @@
 				9342588F2555DCA50059EEDD /* MediaPermissionUtilities.mm */,
 				411286EF21C8A90C003A8550 /* MediaUtilities.h */,
 				411286F021C8A90D003A8550 /* MediaUtilities.mm */,
+				7137BA7D25F153E900914EE3 /* ModelElementControllerCocoa.mm */,
 				1ABC3DF41899E437004F0626 /* NavigationState.h */,
 				1ABC3DF31899E437004F0626 /* NavigationState.mm */,
 				5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */,
@@ -9987,6 +9992,8 @@
 				9ACC07B225C815F300DC6386 /* MediaKeySystemPermissionRequestManagerProxy.h */,
 				9ACC07B425C8160B00DC6386 /* MediaKeySystemPermissionRequestProxy.h */,
 				93425898255B534B0059EEDD /* MediaPermissionUtilities.h */,
+				7137BA7E25F1540B00914EE3 /* ModelElementController.cpp */,
+				7137BA7F25F1540C00914EE3 /* ModelElementController.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,
@@ -12085,6 +12092,7 @@
 				57DCEDC7214F18300016B847 /* MockLocalConnection.h in Headers */,
 				57DCEDC3214F114C0016B847 /* MockLocalService.h in Headers */,
 				57B8264C230603C100B72EB0 /* MockNfcService.h in Headers */,
+				7137BA8025F1542000914EE3 /* ModelElementController.h in Headers */,
 				C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */,
 				2D50366B1BCDE17900E20BB3 /* NativeWebGestureEvent.h in Headers */,
 				263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */,

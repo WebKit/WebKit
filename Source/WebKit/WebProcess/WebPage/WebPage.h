@@ -1461,6 +1461,10 @@ public:
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
+#endif
+
     void didHandleOrPreventMouseDownOrMouseUpEvent();
     void prepareToRunModalJavaScriptDialog();
 

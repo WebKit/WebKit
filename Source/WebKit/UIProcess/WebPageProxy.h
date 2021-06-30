@@ -189,6 +189,10 @@ interface ID3D11Device1;
 #include "PlatformXRSystem.h"
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+#include "ModelElementController.h"
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -567,6 +571,11 @@ public:
 #if USE(SYSTEM_PREVIEW)
     SystemPreviewController* systemPreviewController() { return m_systemPreviewController.get(); }
     void systemPreviewActionTriggered(const WebCore::SystemPreviewInfo&, const String&);
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    ModelElementController* modelElementController() { return m_modelElementController.get(); }
+    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -2595,6 +2604,10 @@ private:
 
 #if USE(SYSTEM_PREVIEW)
     std::unique_ptr<SystemPreviewController> m_systemPreviewController;
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    std::unique_ptr<ModelElementController> m_modelElementController;
 #endif
 
 #if ENABLE(WEB_AUTHN)

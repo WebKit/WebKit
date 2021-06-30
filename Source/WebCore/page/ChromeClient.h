@@ -596,6 +596,10 @@ public:
     virtual void textAutosizingUsesIdempotentModeChanged() { }
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    virtual void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const { }
+#endif
+
 protected:
     virtual ~ChromeClient() = default;
 };
