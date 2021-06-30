@@ -1,4 +1,5 @@
 -internal-direct-focus
+-internal-modal-dialog
 -khtml-drag
 -webkit-any
 -webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown

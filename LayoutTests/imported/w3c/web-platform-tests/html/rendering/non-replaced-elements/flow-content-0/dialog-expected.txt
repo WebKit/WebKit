@@ -3,8 +3,8 @@
 
 PASS Closed dialog in width: 540px iframe
 PASS Open dialog in width: 540px iframe
-FAIL Modal dialog in width: 540px iframe assert_equals: top expected "56px" but got "8px"
+FAIL Modal dialog in width: 540px iframe assert_equals: top expected "56px" but got "0px"
 PASS Closed dialog in width: 538px iframe
 PASS Open dialog in width: 538px iframe
-FAIL Modal dialog in width: 538px iframe assert_equals: top expected "56px" but got "8px"
+FAIL Modal dialog in width: 538px iframe assert_equals: top expected "56px" but got "0px"
 

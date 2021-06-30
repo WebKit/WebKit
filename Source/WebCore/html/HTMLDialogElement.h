@@ -49,6 +49,8 @@ public:
 
     void dispatchPendingEvent(DialogEventSender*);
 
+    bool isModal() const;
+
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 
@@ -57,6 +59,7 @@ private:
     void setOpen(bool);
 
     String m_returnValue;
+    bool m_isModal { false };
     bool m_isOpen { false };
 };
 

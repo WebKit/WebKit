@@ -88,6 +88,8 @@ ExceptionOr<void> HTMLDialogElement::showModal()
         return Exception { InvalidStateError };
 
     setOpen(true);
+    m_isModal = true;
+
     return { };
 }
 
@@ -115,6 +117,7 @@ void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomStri
 
         // Emit close event
         if (oldValue != m_isOpen && !m_isOpen) {
+            m_isModal = false;
             dialogCloseEventSender().cancelEvent(*this);
             dialogCloseEventSender().dispatchEventSoon(*this);
         }
@@ -127,6 +130,11 @@ void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomStri
 void HTMLDialogElement::setOpen(bool value)
 {
     setAttributeWithoutSynchronization(HTMLNames::openAttr, value ? emptyAtom() : nullAtom());
+}
+
+bool HTMLDialogElement::isModal() const
+{
+    return m_isModal;
 }
 
 }
