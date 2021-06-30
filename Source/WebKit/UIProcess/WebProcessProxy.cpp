@@ -289,13 +289,7 @@ void WebProcessProxy::setIsInProcessCache(bool value)
     ASSERT(m_isInProcessCache != value);
     m_isInProcessCache = value;
 
-    if (!m_isInProcessCache)
-        platformResumeProcess();
-
-    sendWithAsyncReply(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), [weakThis = makeWeakPtr(*this), isEnteringProcessCache = value]() mutable {
-        if (isEnteringProcessCache && weakThis && weakThis->m_isInProcessCache)
-            weakThis->platformSuspendProcess();
-    });
+    send(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), 0);
 
     if (m_isInProcessCache) {
         // WebProcessProxy objects normally keep the process pool alive but we do not want this to be the case
@@ -2008,16 +2002,6 @@ void WebProcessProxy::systemBeep()
 {
     PAL::systemBeep();
 }
-
-#if !PLATFORM(MAC)
-void WebProcessProxy::platformSuspendProcess()
-{
-}
-
-void WebProcessProxy::platformResumeProcess()
-{
-}
-#endif
 
 } // namespace WebKit
 

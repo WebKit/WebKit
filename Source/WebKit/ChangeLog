@@ -1,3 +1,31 @@
+2021-06-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r279411. rdar://problem/79970312
+
+    Unreviewed, reverting r279155.
+    
+    Caused a PLT5 regression
+    
+    Reverted changeset:
+    
+    "[macOS] Suspend WebProcesses that are in the process cache"
+    https://bugs.webkit.org/show_bug.cgi?id=227269
+    https://commits.webkit.org/r279155
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279411 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-30  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, reverting r279155.
+
+            Caused a PLT5 regression
+
+            Reverted changeset:
+
+            "[macOS] Suspend WebProcesses that are in the process cache"
+            https://bugs.webkit.org/show_bug.cgi?id=227269
+            https://commits.webkit.org/r279155
+
 2021-06-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r279361. rdar://problem/79923766
