@@ -1375,3 +1375,5 @@ webkit.org/b/227273 [ Catalina Debug ] fast/css-custom-paint/out-of-memory-while
 webkit.org/b/227467 [ BigSur arm64 Release ] fast/css/sticky/sticky-left.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/227504 [ BigSur Debug ] accessibility/table-title.html [ Pass Timeout ]
+
+webkit.org/b/227536 [ BigSur ] imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Pass Failure ]
