@@ -1,3 +1,20 @@
+2021-06-30  Darin Adler  <darin@apple.com>
+
+        CSS specification prohibits numbers with trailing decimal point (e.g. "1.px"), but we allow them
+        https://bugs.webkit.org/show_bug.cgi?id=227517
+
+        Reviewed by Sam Weinig.
+
+        Test: imported/w3c/web-platform-tests/css/css-syntax/decimal-points-in-numbers.html
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseCSSNumber): Added. Checks for the trailing decimal point. Also uses
+        std::optional instead of a bool plus an out argument; should refactor the other functions
+        to work that way at some point.
+        (WebCore::parseSimpleLength): Use parseCSSNumber and isASCIIAlphaCaselessEqual.
+        (WebCore::parseSimpleAngle): Ditto.
+        (WebCore::parseTransformNumberArguments): Ditto.
+
 2021-06-30  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         toDataURL image upside down if premultipliedAlpha=false
