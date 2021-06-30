@@ -1,5 +1,9 @@
 2021-06-30  Alan Coon  <alancoon@apple.com>
 
+        Revert r279249. rdar://problem/79987808
+
+2021-06-30  Alan Coon  <alancoon@apple.com>
+
         Revert r279253. rdar://problem/79987808
 
 2021-06-25  Commit Queue  <commit-queue@webkit.org>
