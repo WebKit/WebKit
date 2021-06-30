@@ -1,5 +1,31 @@
 2021-06-30  Tim Nguyen  <ntim@apple.com>
 
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227523
+
+        Reviewed by Antti Koivisto.
+
+        WPT Revision: https://github.com/web-platform-tests/wpt/commit/616577e3962171d2ffe41472e13f6353e6ea43ef
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-iframe.sub.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-audio-video-crash.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-not-in-tree-crash.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-scrolled-viewport-expected.txt: Removed.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-scrolled-viewport.html: Removed.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+
+2021-06-30  Tim Nguyen  <ntim@apple.com>
+
         Implement support for <dialog> element close event
         https://bugs.webkit.org/show_bug.cgi?id=227493
 

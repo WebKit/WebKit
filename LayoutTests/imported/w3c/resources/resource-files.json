@@ -2572,6 +2572,8 @@
         "web-platform-tests/html/semantics/forms/the-label-element/iframe-label-attributes.html",
         "web-platform-tests/html/semantics/forms/the-textarea-element/wrap-enumerated-ascii-case-insensitive-child.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-iframe.sub.html",
+        "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-audio-video-crash.html",
+        "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-not-in-tree-crash.html",
         "web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/support/noopener-popup.html",
         "web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/support/noopener-target-1.html",
         "web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/support/noopener-target-2.html",

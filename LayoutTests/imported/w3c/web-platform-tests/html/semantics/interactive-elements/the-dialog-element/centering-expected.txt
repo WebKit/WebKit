@@ -1,17 +1,25 @@
 
-FAIL horizontal-tb: tall viewport assert_equals: expected "45px" but got "8px"
-FAIL horizontal-tb: wide viewport assert_equals: expected "15px" but got "8px"
-FAIL horizontal-tb: square viewport assert_equals: expected "45px" but got "8px"
-FAIL horizontal-tb: dialog and viewport match assert_equals: expected "0px" but got "8px"
-FAIL horizontal-tb: dialog bigger than viewport assert_equals: expected "0px" but got "8px"
-FAIL vertical-rl: tall viewport assert_equals: expected "10px" but got "12px"
-FAIL vertical-lr: tall viewport assert_equals: expected "10px" but got "12px"
-FAIL vertical-lr: dialog bigger than viewport assert_equals: expected "0px" but got "-18px"
-FAIL vertical-rl (dialog horizontal-tb): tall viewport assert_equals: expected "10px" but got "0px"
-FAIL vertical-lr (dialog horizontal-tb): tall viewport assert_equals: expected "10px" but got "0px"
-PASS vertical-lr (dialog horizontal-tb): dialog bigger than viewport
-FAIL horizontal-tb (container vertical-rl): tall viewport assert_equals: expected "10px" but got "8px"
-FAIL vertical-rl (container horizontal-tb): tall viewport assert_equals: expected "45px" but got "8px"
-FAIL horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport assert_equals: expected "10px" but got "0px"
-FAIL vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport assert_equals: expected "45px" but got "0px"
+FAIL horizontal-tb: tall viewport, default-sizes: true assert_approx_equals: expected 41 +/- 0.016666666666666666 but got 8
+FAIL horizontal-tb: tall viewport, default-sizes: false assert_equals: expected 45 but got 8
+FAIL horizontal-tb: wide viewport, default-sizes: true assert_approx_equals: expected 11 +/- 0.016666666666666666 but got 8
+FAIL horizontal-tb: wide viewport, default-sizes: false assert_equals: expected 15 but got 8
+FAIL horizontal-tb: square viewport, default-sizes: true assert_approx_equals: expected 41 +/- 0.016666666666666666 but got 8
+FAIL horizontal-tb: square viewport, default-sizes: false assert_equals: expected 45 but got 8
+FAIL horizontal-tb: dialog and viewport match, default-sizes: false assert_equals: expected 0 but got 8
+FAIL vertical-rl: tall viewport, default-sizes: true assert_approx_equals: expected 11 +/- 0.016666666666666666 but got 14
+FAIL vertical-rl: tall viewport, default-sizes: false assert_equals: expected 10 but got 12
+FAIL vertical-lr: tall viewport, default-sizes: true assert_approx_equals: expected 11 +/- 0.016666666666666666 but got 8
+FAIL vertical-lr: tall viewport, default-sizes: false assert_equals: expected 10 but got 8
+FAIL vertical-rl (dialog horizontal-tb): tall viewport, default-sizes: true assert_approx_equals: expected 41 +/- 0.016666666666666666 but got 8
+FAIL vertical-rl (dialog horizontal-tb): tall viewport, default-sizes: false assert_equals: expected 45 but got 8
+FAIL vertical-lr (dialog horizontal-tb): tall viewport, default-sizes: true assert_approx_equals: expected 41 +/- 0.016666666666666666 but got 8
+FAIL vertical-lr (dialog horizontal-tb): tall viewport, default-sizes: false assert_equals: expected 45 but got 8
+FAIL horizontal-tb (container vertical-rl): tall viewport, default-sizes: true assert_approx_equals: expected 11 +/- 0.016666666666666666 but got 14
+FAIL horizontal-tb (container vertical-rl): tall viewport, default-sizes: false assert_equals: expected 10 but got 12
+FAIL vertical-rl (container horizontal-tb): tall viewport, default-sizes: true assert_approx_equals: expected 41 +/- 0.016666666666666666 but got 8
+FAIL vertical-rl (container horizontal-tb): tall viewport, default-sizes: false assert_equals: expected 45 but got 8
+FAIL horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport, default-sizes: true assert_approx_equals: expected 41 +/- 0.016666666666666666 but got 8
+FAIL horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport, default-sizes: false assert_equals: expected 45 but got 8
+FAIL vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport, default-sizes: true assert_approx_equals: expected 11 +/- 0.016666666666666666 but got 14
+FAIL vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport, default-sizes: false assert_equals: expected 10 but got 12
 

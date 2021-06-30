@@ -300,6 +300,7 @@
     "web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html": "skip", 
     "web-platform-tests/html/semantics/forms/the-textarea-element": "import", 
     "web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html": "skip", 
+    "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/": "import", 
     "web-platform-tests/html/semantics/interactive-elements/the-summary-element": "skip", 
     "web-platform-tests/html/semantics/links/downloading-resources": "import", 
     "web-platform-tests/html/semantics/links/following-hyperlinks": "skip", 

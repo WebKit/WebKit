@@ -1,5 +1,18 @@
 2021-06-30  Tim Nguyen  <ntim@apple.com>
 
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227523
+
+        Reviewed by Antti Koivisto.
+
+        WPT Revision: https://github.com/web-platform-tests/wpt/commit/616577e3962171d2ffe41472e13f6353e6ea43ef
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission-expected.txt:
+
+2021-06-30  Tim Nguyen  <ntim@apple.com>
+
         Support -internal- prefix for pseudo classes and rename :-webkit-direct-focus to :-internal-direct-focus
         https://bugs.webkit.org/show_bug.cgi?id=227522
 
