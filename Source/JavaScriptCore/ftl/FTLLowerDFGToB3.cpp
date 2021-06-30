@@ -16754,7 +16754,7 @@ private:
             merge->appendSomeRegister(ptr);
             merge->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 jit.move(params[2].gpr(), params[0].gpr());
-                jit.bitFieldInsert64(params[1].gpr(), CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(64 - MacroAssembler::maxNumberOfAllowedPACBits), params[0].gpr());
+                jit.bitFieldInsert64(params[1].gpr(), 0, 64 - MacroAssembler::maxNumberOfAllowedPACBits, params[0].gpr());
             });
 
             result = doUntagArrayPtr(merge);

@@ -1111,7 +1111,7 @@ void AssemblyHelpers::cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage)
     addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
 #if CPU(ARM64E)
     if (kind == Gigacage::Primitive)
-        bitFieldInsert64(storage, TrustedImm32(0), TrustedImm32(64 - maxNumberOfAllowedPACBits), tempReg);
+        bitFieldInsert64(storage, 0, 64 - maxNumberOfAllowedPACBits, tempReg);
     if (skip.isSet())
         skip.link(this);
 #endif
@@ -1148,7 +1148,7 @@ void AssemblyHelpers::cageConditionallyAndUntag(Gigacage::Kind kind, GPRReg stor
             ASSERT(LogicalImmediate::create64(Gigacage::mask(kind)).isValid());
             andPtr(TrustedImmPtr(Gigacage::mask(kind)), tempReg);
             addPtr(scratch, tempReg);
-            bitFieldInsert64(tempReg, TrustedImm32(0), TrustedImm32(64 - maxNumberOfAllowedPACBits), storage);
+            bitFieldInsert64(tempReg, 0, 64 - maxNumberOfAllowedPACBits, storage);
 #else
             andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
             addPtr(scratch, storage);
