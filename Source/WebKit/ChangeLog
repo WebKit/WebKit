@@ -1,3 +1,9 @@
+2021-06-30  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+
 2021-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [Live Text] "Text from Camera" should not be shown in callout bar when selecting text

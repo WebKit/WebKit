@@ -36,6 +36,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
 
 using WebKit::ProcessAndUIAssertion;
