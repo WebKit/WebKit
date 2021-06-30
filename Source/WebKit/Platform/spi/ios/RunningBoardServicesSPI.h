@@ -55,14 +55,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (RBSTarget *)currentProcess;
 @end
 
-@class RBSAssertion;
 @protocol RBSAssertionObserving;
-typedef void (^RBSAssertionInvalidationHandler)(RBSAssertion *assertion, NSError *error);
 
 @interface RBSAssertion : NSObject
 - (instancetype)initWithExplanation:(NSString *)explanation target:(RBSTarget *)target attributes:(NSArray <RBSAttribute *> *)attributes;
 - (BOOL)acquireWithError:(NSError **)error;
-- (void)acquireWithInvalidationHandler:(nullable RBSAssertionInvalidationHandler)handler;
 - (void)invalidate;
 - (void)addObserver:(id <RBSAssertionObserving>)observer;
 - (void)removeObserver:(id <RBSAssertionObserving>)observer;

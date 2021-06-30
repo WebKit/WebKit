@@ -1,5 +1,18 @@
 2021-06-30  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, reverting r276969.
+
+        Causes previous assertion to get released before the new one
+        is taken (asynchronously)
+
+        Reverted changeset:
+
+        "[iOS] Use async API to take RunningBoard assertions"
+        https://bugs.webkit.org/show_bug.cgi?id=225324
+        https://commits.webkit.org/r276969
+
+2021-06-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r279155.
 
         Caused a PLT5 regression

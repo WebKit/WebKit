@@ -38,6 +38,7 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS RBSAssertion;
+OBJC_CLASS WKRBSAssertionDelegate;
 #endif // PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
@@ -73,7 +74,7 @@ private:
     const ProcessID m_pid;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<RBSAssertion> m_rbsAssertion;
-    bool m_wasInvalidated { false };
+    RetainPtr<WKRBSAssertionDelegate> m_delegate;
 #endif
     Function<void()> m_invalidationHandler;
 };
