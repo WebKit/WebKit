@@ -1,3 +1,35 @@
+2021-06-28  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for manipulating <model> inline
+        https://bugs.webkit.org/show_bug.cgi?id=227448
+        <rdar://problem/79863579>
+
+        Reviewed by Tim Horton.
+
+        ASVInlinePreview instances allow for UITouch and UIEvent objects to be forwarded in order to manipulate
+        the object inline. We create a UIGestureRecognizer subclass that is attached to WKModelView and forwards
+        touchesBegan: and similar UIResponder messages over to the ASVInlinePreview managed by the WKModelView.
+        This allows multiple <model> elements to be manipulated at once.
+
+        We will add support for disallowing such interaction with an attribute and/or a call to preventDefault()
+        at a later time.
+
+        * SourcesCocoa.txt:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsAtPoint):
+        (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+        * UIProcess/ios/WKModelInteractionGestureRecognizer.h: Added.
+        * UIProcess/ios/WKModelInteractionGestureRecognizer.mm: Added.
+        (-[WKModelInteractionGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKModelInteractionGestureRecognizer touchesMoved:withEvent:]):
+        (-[WKModelInteractionGestureRecognizer touchesEnded:withEvent:]):
+        (-[WKModelInteractionGestureRecognizer touchesCancelled:withEvent:]):
+        * UIProcess/ios/WKModelView.h:
+        * UIProcess/ios/WKModelView.mm:
+        (-[WKModelView initWithModel:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-29  Cameron McCormack  <heycam@apple.com>
 
         Don't null check destination in the RemoteRenderingBackend::nextDestinationImageBufferAfterApply main loop

@@ -69,6 +69,9 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
             if (![view pointInside:subviewPoint withEvent:event])
                 return false;
 
+            if ([view conformsToProtocol:@protocol(WKNativelyInteractible)])
+                return true;
+
             if (![view isKindOfClass:[WKCompositingView class]])
                 return true;
             auto* node = RemoteLayerTreeNode::forCALayer(view.layer);

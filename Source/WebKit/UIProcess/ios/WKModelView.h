@@ -33,7 +33,7 @@ class Model;
 
 OBJC_CLASS ASVInlinePreview;
 
-@interface WKModelView : WKCompositingView
+@interface WKModelView : WKCompositingView <WKNativelyInteractible>
 
 - (instancetype)initWithModel:(WebCore::Model&)model NS_DESIGNATED_INITIALIZER;
 

@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "RemoteLayerTreeViews.h"
+#import "WKModelInteractionGestureRecognizer.h"
 #import "WebsiteDataStore.h"
 #import <WebCore/Model.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -45,6 +46,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 
 @implementation WKModelView {
     RetainPtr<ASVInlinePreview> _preview;
+    RetainPtr<WKModelInteractionGestureRecognizer> _modelInteractionGestureRecognizer;
     String _filePath;
     CGRect _lastBounds;
 }
@@ -94,6 +96,9 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
             [self updateBounds];
         }];
     }];
+
+    _modelInteractionGestureRecognizer = adoptNS([[WKModelInteractionGestureRecognizer alloc] init]);
+    [self addGestureRecognizer:_modelInteractionGestureRecognizer.get()];
 
     return self;
 }
@@ -154,6 +159,14 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
         [self.layer.context addFence:fenceHandle];
         [fenceHandle invalidate];
     }];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    // The layer of this view is empty and the sublayer is rendered remotely, so the basic implementation
+    // of hitTest:withEvent: will return nil due to ignoring empty subviews. So we can simply check whether
+    // the hit-testing point is within bounds.
+    return [self pointInside:point withEvent:event] ? self : nil;
 }
 
 @end

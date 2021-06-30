@@ -1,3 +1,15 @@
+2021-06-28  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for manipulating <model> inline
+        https://bugs.webkit.org/show_bug.cgi?id=227448
+        <rdar://problem/79863579>
+
+        Reviewed by Tim Horton.
+
+        Declare additional ASVInlinePreview methods.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
 2021-06-29  Antoine Quint  <graouts@webkit.org>
 
         WebKit_iosmac build failure: SystemPreviewSPI.h:29:9: fatal error: 'AssetViewer/ARQuickLookWebKitItem.h' file not found
