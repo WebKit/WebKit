@@ -1,3 +1,29 @@
+2021-06-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        toDataURL image upside down if premultipliedAlpha=false
+        https://bugs.webkit.org/show_bug.cgi?id=156129
+        <rdar://problem/53942867>
+
+        Reviewed by Kenneth Russell.
+
+        Flip the result `PixelBuffer` of `GraphicsContextGL::paintRenderingResultsToPixelBuffer()`
+        along the y-axis manually with memcpy.
+        ReadPixels returns the pixels upside down.
+        The `PixelBuffer` code-path is only used for reading unpremultiplied
+        image contents so that `toDataURL()` can encode the premultipliedAlpha=false
+        WebGL content as was rendered.
+
+        Other code-paths, such as Context2D.drawImage and drawing to the document,
+        use `GraphicsContextGL::paintRenderingResultsToCanvas()`.
+        In those cases y-flip is done by constructing a `ImageBuffer` for the PixelBuffer
+        and then using y-flip transform to draw the `ImageBuffer` to the target `ImageBuffer`
+        using `GraphicsContext`.
+
+        Fixes webgl/1.0.x/conformance/canvas/to-data-url-test.html
+
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer):
+
 2021-06-30  Antoine Quint  <graouts@webkit.org>
 
         [Model] [iOS] Add support for displaying <model> in fullscreen

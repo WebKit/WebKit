@@ -3502,8 +3502,14 @@ fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
 # WebGL conformance test suite 1.0.x is skipped until 1.0.3 is retired.
 webgl/1.0.x [ Skip ]
 
+# Explicitly enable tests which we have fixed and do not have corresponding 1.0.3 test functionality.
+webgl/1.0.x/conformance/canvas/to-data-url-test.html [ Pass ]
+
 # WebGL conformance test suite 2.0.1 is skipped until 2.0.0 is retired.
 webgl/2.0.y [ Skip ]
+
+# Explicitly enable tests which we have fixed and do not have corresponding 2.0.y test functionality.
+webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Pass ]
 
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
