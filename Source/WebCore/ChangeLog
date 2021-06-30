@@ -1,3 +1,17 @@
+2021-06-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Implement CertificateInfo::summary
+        https://bugs.webkit.org/show_bug.cgi?id=227484
+
+        Reviewed by Michael Catanzaro.
+
+        GLib now provides API to get the information required to fill the CertificateSummary.
+
+        * platform/network/soup/CertificateInfo.h:
+        (WebCore::CertificateInfo::summary const): Deleted.
+        * platform/network/soup/CertificateInfoSoup.cpp:
+        (WebCore::CertificateInfo::summary const):
+
 2021-06-29  Tim Nguyen  <ntim@apple.com>
 
         Implement form[method=dialog]
