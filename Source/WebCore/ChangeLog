@@ -1,3 +1,20 @@
+2021-06-30  venky dass  <yaranamavenkataramana@apple.com>
+
+        Updated to use smart pointers in MutationObserver.
+        https://bugs.webkit.org/show_bug.cgi?id=227518
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::~MutationObserver):
+        (WebCore::MutationObserver::disconnect):
+        (WebCore::MutationObserver::observationStarted):
+        (WebCore::MutationObserver::observationEnded):
+        (WebCore::MutationObserver::isReachableFromOpaqueRoots const):
+        (WebCore::MutationObserver::deliver):
+        * dom/MutationObserver.h:
+        * dom/MutationObserverRegistration.h:
+
 2021-06-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r279405.

@@ -37,6 +37,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace JSC {
 class AbstractSlotVisitor;
@@ -122,7 +123,7 @@ private:
     Ref<MutationCallback> m_callback;
     Vector<Ref<MutationRecord>> m_records;
     HashSet<GCReachableRef<Node>> m_pendingTargets;
-    HashSet<MutationObserverRegistration*> m_registrations;
+    WeakHashSet<MutationObserverRegistration> m_registrations;
     unsigned m_priority;
 };
 

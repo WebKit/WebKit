@@ -33,6 +33,7 @@
 #include "GCReachableRef.h"
 #include "MutationObserver.h"
 #include <wtf/HashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -44,7 +45,7 @@ namespace WebCore {
 
 class QualifiedName;
 
-class MutationObserverRegistration {
+class MutationObserverRegistration : public CanMakeWeakPtr<MutationObserverRegistration> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const HashSet<AtomString>& attributeFilter);
