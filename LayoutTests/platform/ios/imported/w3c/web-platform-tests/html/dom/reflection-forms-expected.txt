@@ -1150,7 +1150,7 @@ PASS form.method: setAttribute() to "ost" followed by IDL get
 PASS form.method: setAttribute() to "POST" followed by getAttribute()
 PASS form.method: setAttribute() to "POST" followed by IDL get
 PASS form.method: setAttribute() to "dialog" followed by getAttribute()
-FAIL form.method: setAttribute() to "dialog" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS form.method: setAttribute() to "dialog" followed by IDL get
 PASS form.method: setAttribute() to "xdialog" followed by getAttribute()
 PASS form.method: setAttribute() to "xdialog" followed by IDL get
 PASS form.method: setAttribute() to "dialog\0" followed by getAttribute()
@@ -1158,7 +1158,7 @@ PASS form.method: setAttribute() to "dialog\0" followed by IDL get
 PASS form.method: setAttribute() to "ialog" followed by getAttribute()
 PASS form.method: setAttribute() to "ialog" followed by IDL get
 PASS form.method: setAttribute() to "DIALOG" followed by getAttribute()
-FAIL form.method: setAttribute() to "DIALOG" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS form.method: setAttribute() to "DIALOG" followed by IDL get
 PASS form.method: IDL set to "" should not throw
 PASS form.method: IDL set to "" followed by getAttribute()
 PASS form.method: IDL set to "" followed by IDL get
@@ -1235,7 +1235,7 @@ PASS form.method: IDL set to "POST" followed by getAttribute()
 PASS form.method: IDL set to "POST" followed by IDL get
 PASS form.method: IDL set to "dialog" should not throw
 PASS form.method: IDL set to "dialog" followed by getAttribute()
-FAIL form.method: IDL set to "dialog" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS form.method: IDL set to "dialog" followed by IDL get
 PASS form.method: IDL set to "xdialog" should not throw
 PASS form.method: IDL set to "xdialog" followed by getAttribute()
 PASS form.method: IDL set to "xdialog" followed by IDL get
@@ -1247,7 +1247,7 @@ PASS form.method: IDL set to "ialog" followed by getAttribute()
 PASS form.method: IDL set to "ialog" followed by IDL get
 PASS form.method: IDL set to "DIALOG" should not throw
 PASS form.method: IDL set to "DIALOG" followed by getAttribute()
-FAIL form.method: IDL set to "DIALOG" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS form.method: IDL set to "DIALOG" followed by IDL get
 PASS form.name: typeof IDL attribute
 PASS form.name: IDL get with DOM attribute unset
 PASS form.name: setAttribute() to "" followed by getAttribute()
@@ -8272,7 +8272,7 @@ PASS button.formMethod: setAttribute() to "ost" followed by IDL get
 PASS button.formMethod: setAttribute() to "POST" followed by getAttribute()
 PASS button.formMethod: setAttribute() to "POST" followed by IDL get
 PASS button.formMethod: setAttribute() to "dialog" followed by getAttribute()
-FAIL button.formMethod: setAttribute() to "dialog" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS button.formMethod: setAttribute() to "dialog" followed by IDL get
 PASS button.formMethod: setAttribute() to "xdialog" followed by getAttribute()
 PASS button.formMethod: setAttribute() to "xdialog" followed by IDL get
 PASS button.formMethod: setAttribute() to "dialog\0" followed by getAttribute()
@@ -8280,7 +8280,7 @@ PASS button.formMethod: setAttribute() to "dialog\0" followed by IDL get
 PASS button.formMethod: setAttribute() to "ialog" followed by getAttribute()
 PASS button.formMethod: setAttribute() to "ialog" followed by IDL get
 PASS button.formMethod: setAttribute() to "DIALOG" followed by getAttribute()
-FAIL button.formMethod: setAttribute() to "DIALOG" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS button.formMethod: setAttribute() to "DIALOG" followed by IDL get
 PASS button.formMethod: IDL set to "" should not throw
 PASS button.formMethod: IDL set to "" followed by getAttribute()
 PASS button.formMethod: IDL set to "" followed by IDL get
@@ -8357,7 +8357,7 @@ PASS button.formMethod: IDL set to "POST" followed by getAttribute()
 PASS button.formMethod: IDL set to "POST" followed by IDL get
 PASS button.formMethod: IDL set to "dialog" should not throw
 PASS button.formMethod: IDL set to "dialog" followed by getAttribute()
-FAIL button.formMethod: IDL set to "dialog" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS button.formMethod: IDL set to "dialog" followed by IDL get
 PASS button.formMethod: IDL set to "xdialog" should not throw
 PASS button.formMethod: IDL set to "xdialog" followed by getAttribute()
 PASS button.formMethod: IDL set to "xdialog" followed by IDL get
@@ -8369,7 +8369,7 @@ PASS button.formMethod: IDL set to "ialog" followed by getAttribute()
 PASS button.formMethod: IDL set to "ialog" followed by IDL get
 PASS button.formMethod: IDL set to "DIALOG" should not throw
 PASS button.formMethod: IDL set to "DIALOG" followed by getAttribute()
-FAIL button.formMethod: IDL set to "DIALOG" followed by IDL get assert_equals: expected "dialog" but got "get"
+PASS button.formMethod: IDL set to "DIALOG" followed by IDL get
 PASS button.formNoValidate: typeof IDL attribute
 PASS button.formNoValidate: IDL get with DOM attribute unset
 PASS button.formNoValidate: setAttribute() to "" followed by getAttribute()

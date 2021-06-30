@@ -143,6 +143,8 @@ private:
 
     void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger, HTMLFormControlElement* submitter = nullptr);
 
+    void submitDialog(Ref<FormSubmission>&&);
+
     unsigned formElementIndexWithFormAttribute(Element*, unsigned rangeStart, unsigned rangeEnd);
     unsigned formElementIndex(FormAssociatedElement*);
 

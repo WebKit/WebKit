@@ -2150,4 +2150,9 @@ void HTMLInputElement::capsLockStateMayHaveChanged()
     m_inputType->capsLockStateMayHaveChanged();
 }
 
+String HTMLInputElement::resultForDialogSubmit() const
+{
+    return m_inputType->resultForDialogSubmit();
+}
+
 } // namespace

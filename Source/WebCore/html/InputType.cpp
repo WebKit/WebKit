@@ -1083,4 +1083,10 @@ RefPtr<TextControlInnerTextElement> InputType::innerTextElement() const
     return nullptr;
 }
 
+String InputType::resultForDialogSubmit() const
+{
+    ASSERT(element());
+    return element()->value();
+}
+
 } // namespace WebCore

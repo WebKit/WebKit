@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTMLDialogElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLImageElement.h"
@@ -51,6 +52,7 @@
 #include "Page.h"
 #include "RadioNodeList.h"
 #include "RenderTextControl.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
@@ -399,13 +401,31 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
         m_plannedFormSubmission->cancel();
 
     m_plannedFormSubmission = makeWeakPtr(formSubmission.get());
-    frame->loader().submitForm(WTFMove(formSubmission));
+    
+    if (RuntimeEnabledFeatures::sharedFeatures().dialogElementEnabled() && formSubmission->method() == FormSubmission::Method::Dialog)
+        submitDialog(WTFMove(formSubmission));
+    else
+        frame->loader().submitForm(WTFMove(formSubmission));
 
     if (firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
 
     m_shouldSubmit = false;
     m_isSubmittingOrPreparingForSubmission = false;
+}
+
+// https://html.spec.whatwg.org/#submit-dialog
+void HTMLFormElement::submitDialog(Ref<FormSubmission>&& formSubmission)
+{
+    // Let subject be the nearest ancestor dialog element of form, if any.
+    RefPtr dialog = ancestorsOfType<HTMLDialogElement>(*this).first();
+
+    // If there isn't one, or if it does not have an open attribute, do nothing.
+    if (!dialog || !dialog->isOpen())
+        return;
+
+    // Then, close the dialog subject. If there is a result, let that be the return value.
+    dialog->close(formSubmission->returnValue());
 }
 
 void HTMLFormElement::reset()
