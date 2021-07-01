@@ -128,18 +128,25 @@ public final class WKGroupSessionWrapper : NSObject {
 public class WKGroupSessionObserver : NSObject {
     @objc public var newSessionCallback: ((WKGroupSessionWrapper) -> Void)?
 
-    private var observer = GroupSessionObserver(for: URLActivity.self)
-    private var cancellables: Set<AnyCancellable> = []
+    private var incomingSessionsTask: Task.Handle<Void, Never>?
 
     @objc public override init() {
         super.init()
 
-        observer
-            .sink { [unowned self] in self.recievedSession($0) }
-            .store(in: &cancellables)
+        incomingSessionsTask = detach { [weak self] in
+            for await newSession in URLActivity.self.sessions() {
+                DispatchQueue.main.async { [weak self] in
+                    self?.receivedSession(newSession)
+                }
+            }
+        }
     }
 
-    private func recievedSession(_ session: GroupSession<URLActivity>) {
+    deinit {
+        incomingSessionsTask?.cancel()
+    }
+
+    private func receivedSession(_ session: GroupSession<URLActivity>) {
         guard let callback = newSessionCallback else {
             return
         }

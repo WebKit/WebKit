@@ -1,3 +1,21 @@
+2021-07-01  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Adopt async GroupActivity.sessions() iterable instead of GroupSessionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=227548
+        <rdar://78240035>
+
+        Reviewed by Sam Weinig.
+
+        Rather than adopting GroupSessionObserver, which requires Combine, GroupActivity.sessions()
+        uses AsyncSequence, a new Swift 5.5 feature, to allow clients to be notified that new
+        sessions are avaliable.
+
+        * UIProcess/Cocoa/GroupActivities/WKGroupSession.swift:
+        (WKGroupSessionObserver.incomingSessionsTask):
+        (WKGroupSessionObserver.receivedSession(_:)):
+        (WKGroupSessionObserver.cancellables): Deleted.
+        (WKGroupSessionObserver.recievedSession(_:)): Deleted.
+
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
         [Cocoa] Migrate WebRTC UDP socket handling to NW API
