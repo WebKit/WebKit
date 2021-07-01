@@ -225,7 +225,7 @@ class TestGit(testing.PathTestCase):
 
     def test_tag(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mock:
+            with mock, LoggerCapture():
                 mock.tags['tag-1'] = mock.commits['branch-a'][-1]
 
                 self.assertEqual(
@@ -235,7 +235,7 @@ class TestGit(testing.PathTestCase):
 
     def test_checkout(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mock:
+            with mock, LoggerCapture():
                 mock.tags['tag-1'] = mock.commits['branch-a'][-1]
 
                 repository = local.Git(self.path)
@@ -251,7 +251,7 @@ class TestGit(testing.PathTestCase):
 
     def test_no_log(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mock:
+            with mock, LoggerCapture():
                 self.assertIsNone(local.Git(self.path).commit(identifier='4@main', include_log=False).message)
 
     def test_alternative_default_branch(self):
@@ -267,7 +267,7 @@ class TestGit(testing.PathTestCase):
 
     def test_order(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mock:
+            with mock, LoggerCapture():
                 self.assertEqual(0, local.Git(self.path).commit(hash='bae5d1e90999').order)
                 self.assertEqual(1, local.Git(self.path).commit(hash='d8bce26fa65c').order)
 
@@ -364,6 +364,32 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
     git-svn-id: https://svn.example.org/repository/repository/trunk@3 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''
             )
+
+    def test_cache(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock, OutputCapture():
+                repo = local.Git(self.path)
+
+                self.assertEqual(repo.cache.to_hash(identifier='1@main'), '9b8311f25a77ba14923d9d5a6532103f54abefcb')
+                self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c'), '5@main')
+                self.assertEqual(repo.cache.to_hash(identifier='2.3@branch-b'), '790725a6d79e28db2ecdde29548d2262c0bd059d')
+                self.assertEqual(repo.cache.to_hash(identifier='2.1@branch-a'), 'a30ce8494bf1ac2807a69844f726be4a9843ca55')
+                self.assertEqual(repo.cache.to_identifier(hash='a30ce8494bf1'), '2.1@branch-a')
+
+                self.assertEqual(repo.cache.to_identifier(hash='badc0dd1f'), None)
+                self.assertEqual(repo.cache.to_hash(identifier='6@main'), None)
+
+    def test_revision_cache(self):
+        with mocks.local.Git(self.path, git_svn=True), OutputCapture():
+            repo = local.Git(self.path)
+
+            self.assertEqual(repo.cache.to_revision(identifier='1@main'), 1)
+            self.assertEqual(repo.cache.to_identifier(revision='r9'), '5@main')
+            self.assertEqual(repo.cache.to_hash(revision='r9'), 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
+
+            self.assertEqual(repo.cache.to_identifier(revision=100), None)
+            self.assertEqual(repo.cache.to_revision(hash='badc0dd1f'), None)
+            self.assertEqual(repo.cache.to_revision(identifier='6@main'), None)
 
 
 class TestGitHub(testing.TestCase):

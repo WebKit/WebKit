@@ -23,6 +23,7 @@
 import calendar
 import logging
 import os
+import json
 import re
 import six
 import subprocess
@@ -31,12 +32,223 @@ import time
 
 from datetime import datetime, timedelta
 
-from webkitcorepy import run, decorators
+from webkitcorepy import run, decorators, NestedFuzzyDict
 from webkitscmpy.local import Scm
 from webkitscmpy import Commit, Contributor, log
 
 
 class Git(Scm):
+    class Cache(object):
+        def __init__(self, repo, guranteed_for=10):
+            self.repo = repo
+            self._ordered_commits = {}
+            self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
+            self._ordered_revisions = {}
+            self._revisions_to_identifiers = {}
+            self._last_populated = {}
+            self._guranteed_for = guranteed_for
+
+            if not os.path.exists(self.path):
+                return
+
+            try:
+                with open(self.path) as file:
+                    content = json.load(file)
+                    self._ordered_commits = content['hashes']
+                    self._ordered_revisions = content['revisions']
+
+                self._fill(self.repo.default_branch)
+                for branch in self._ordered_commits.keys():
+                    if branch == self.repo.default_branch:
+                        continue
+                    self._fill(branch)
+            except BaseException:
+                pass
+
+        @property
+        def path(self):
+            return os.path.join(self.repo.root_path, '.git', 'identifiers.json')
+
+        def _fill(self, branch):
+            default_branch = self.repo.default_branch
+            if branch == default_branch:
+                branch_point = None
+            else:
+                branch_point = int(self._hash_to_identifiers[self._ordered_commits[branch][0]].split('@')[0])
+
+            index = len(self._ordered_commits[branch]) - 1
+            while index:
+                identifier = self._hash_to_identifiers.get(self._ordered_commits[branch][index])
+
+                if identifier:
+                    id_branch = identifier.split('@')[-1]
+                    if branch in (default_branch, id_branch):
+                        break
+                    if branch != self.repo.prioritize_branches((branch, id_branch)):
+                        break
+
+                identifier = '{}@{}'.format('{}.{}'.format(branch_point, index) if branch_point else index, branch)
+                self._hash_to_identifiers[self._ordered_commits[branch][index]] = identifier
+                if self._ordered_revisions[branch][index]:
+                    self._revisions_to_identifiers[self._ordered_revisions[branch][index]] = identifier
+                index -= 1
+
+        def populate(self, branch=None):
+            branch = branch or self.repo.branch
+            if not branch:
+                return
+            if self._last_populated.get(branch, 0) + self._guranteed_for > time.time():
+                return
+            default_branch = self.repo.default_branch
+            is_default_branch = branch == default_branch
+            if branch not in self._ordered_commits:
+                self._ordered_commits[branch] = [''] if is_default_branch else []
+                self._ordered_revisions[branch] = [0] if is_default_branch else []
+
+            # If we aren't on the default branch, we will need the default branch to determine when
+            # our  branch  intersects with the default branch.
+            if not is_default_branch:
+                self.populate(branch=self.repo.default_branch)
+            hashes = []
+            revisions = []
+
+            def _append(branch, hash, revision=None):
+                hashes.append(hash)
+                revisions.append(revision)
+                identifier = self._hash_to_identifiers.get(hash, '')
+                return identifier.endswith(default_branch) or identifier.endswith(branch)
+
+            intersected = False
+            log = None
+            try:
+                kwargs = dict()
+                if sys.version_info >= (3, 0):
+                    kwargs = dict(encoding='utf-8')
+                self._last_populated[branch] = time.time()
+                log = subprocess.Popen(
+                    [self.repo.executable(), 'log', branch],
+                    cwd=self.repo.root_path,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    ** kwargs
+                )
+                if log.poll():
+                    raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
+
+                hash = None
+                revision = None
+
+                line = log.stdout.readline()
+                while line:
+                    if line.startswith('    git-svn-id: '):
+                        match = self.repo.GIT_SVN_REVISION.match(line.lstrip())
+                        if match:
+                            revision = int(match.group('revision'))
+                    if not line.startswith('commit '):
+                        line = log.stdout.readline()
+                        continue
+
+                    if hash and _append(branch, hash, revision=revision):
+                        hash = None
+                        intersected = True
+                        break
+
+                    hash = line.split(' ')[1].rstrip()
+                    revision = None
+                    line = log.stdout.readline()
+
+                if hash:
+                    intersected = _append(branch, hash, revision=revision)
+
+            finally:
+                if log:
+                    log.kill()
+
+            if not hashes or intersected and len(hashes) <= 1:
+                return
+
+            hashes.reverse()
+            revisions.reverse()
+
+            order = len(self._ordered_commits[branch]) - 1
+            while order > 0:
+                if hashes[0] == self._ordered_commits[branch][order]:
+                    order -= 1
+                    break
+                order -= 1
+
+            self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
+            self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
+            self._fill(branch)
+
+            try:
+                with open(self.path, 'w') as file:
+                    json.dump(dict(
+                        hashes=self._ordered_commits,
+                        revisions=self._ordered_revisions,
+                    ), file, indent=4)
+            except (IOError, OSError):
+                self.repo.log("Failed to write identifier cache to '{}'".format(self.path))
+
+        def to_hash(self, revision=None, identifier=None, populate=True, branch=None):
+            if revision:
+                identifier = self.to_identifier(revision=revision, populate=populate, branch=branch)
+            parts = Commit._parse_identifier(identifier, do_assert=False)
+            if not parts:
+                return None
+
+            _, b_count, branch = parts
+            if b_count < 0:
+                return None
+            if branch not in self._ordered_commits or len(self._ordered_commits[branch]) <= b_count:
+                if populate:
+                    self.populate(branch=branch)
+                    return self.to_hash(identifier=identifier, populate=False)
+                return None
+            return self._ordered_commits[branch][b_count]
+
+        def to_revision(self, hash=None, identifier=None, populate=True, branch=None):
+            if hash:
+                identifier = self.to_identifier(hash=hash, populate=populate, branch=branch)
+            parts = Commit._parse_identifier(identifier, do_assert=False)
+            if not parts:
+                return None
+
+            _, b_count, branch = parts
+            if b_count < 0:
+                return None
+            if branch not in self._ordered_revisions or len(self._ordered_revisions[branch]) <= b_count:
+                if populate:
+                    self.populate(branch=branch)
+                    return self.to_revision(identifier=identifier, populate=False)
+                return None
+            return self._ordered_revisions[branch][b_count]
+
+        def to_identifier(self, hash=None, revision=None, populate=True, branch=None):
+            revision = Commit._parse_revision(revision, do_assert=False)
+            if revision:
+                if revision in self._revisions_to_identifiers:
+                    return self._revisions_to_identifiers[revision]
+                if populate:
+                    self.populate(branch=branch)
+                    return self.to_identifier(revision=revision, populate=False)
+                return None
+
+            hash = Commit._parse_hash(hash, do_assert=False)
+            if hash:
+                try:
+                    candidate = self._hash_to_identifiers.get(hash)
+                except KeyError:  # Means the hash wasn't specific enough
+                    return None
+
+                if candidate:
+                    return candidate
+                if populate:
+                    self.populate(branch=branch)
+                    return self.to_identifier(hash=hash, populate=False)
+            return None
+
+
     GIT_COMMIT = re.compile(r'commit (?P<hash>[0-9a-f]+)')
 
     @classmethod
@@ -51,6 +263,7 @@ class Git(Scm):
     def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):
         super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
         self._branch = None
+        self.cache = self.Cache(self) if self.root_path else None
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
@@ -163,12 +376,18 @@ class Git(Scm):
         return sorted(set(['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]))
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
-        # Only git-svn checkouts can convert revisions to fully qualified commits
-        if revision and not self.is_svn:
+        # Only git-svn checkouts can convert revisions to fully qualified commits, unless we happen to have a SVN cache built
+        if revision:
+            if hash:
+                raise ValueError('Cannot define both hash and revision')
+            hash = self.cache.to_hash(revision=revision, branch=branch) if self.cache else None
+
+        # If we don't have an SVN cache built, and we're not git-svn, we can't reason about revisions
+        if revision and not hash and not self.is_svn:
             raise self.Exception('This git checkout does not support SVN revisions')
 
         # Determine the hash for a provided Subversion revision
-        elif revision:
+        elif revision and not hash:
             if hash:
                 raise ValueError('Cannot define both hash and revision')
 
@@ -206,33 +425,47 @@ class Git(Scm):
                         ),
                     )
                 branch = parsed_branch
+                hash = self.cache.to_hash(identifier='{}@{}'.format(identifier, parsed_branch), branch=branch) if self.cache else None
 
-            baseline = branch or 'HEAD'
-            is_default = baseline == default_branch
-            if baseline == 'HEAD':
-                is_default = default_branch in self._branches_for(baseline)
+            # If the cache managed to convert the identifier to a hash, we can skip some computation
+            if hash:
+                log = run(
+                    [self.executable(), 'log', hash] + log_format,
+                    cwd=self.root_path,
+                    capture_output=True,
+                    encoding='utf-8',
+                )
+                if log.returncode:
+                    raise self.Exception("Failed to retrieve commit information for '{}'".format(hash))
 
-            if is_default and parsed_branch_point:
-                raise self.Exception('Cannot provide a branch point for a commit on the default branch')
+            # The cache has failed to convert the identifier, we need to do it the expensive way
+            else:
+                baseline = branch or 'HEAD'
+                is_default = baseline == default_branch
+                if baseline == 'HEAD':
+                    is_default = default_branch in self._branches_for(baseline)
 
-            base_count = self._commit_count(baseline if is_default else '{}..{}'.format(default_branch, baseline))
+                if is_default and parsed_branch_point:
+                    raise self.Exception('Cannot provide a branch point for a commit on the default branch')
 
-            if identifier > base_count:
-                raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
-            log = run(
-                [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format,
-                cwd=self.root_path,
-                capture_output=True,
-                encoding='utf-8',
-            )
-            if log.returncode:
-                raise self.Exception("Failed to retrieve commit information for 'i{}@{}'".format(identifier, branch or 'HEAD'))
+                base_count = self._commit_count(baseline if is_default else '{}..{}'.format(default_branch, baseline))
 
-            # Negative identifiers are actually commits on the default branch, we will need to re-compute the identifier
-            if identifier < 0 and is_default:
-                raise self.Exception('Illegal negative identifier on the default branch')
-            if identifier < 0:
-                identifier = None
+                if identifier > base_count:
+                    raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
+                log = run(
+                    [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format,
+                    cwd=self.root_path,
+                    capture_output=True,
+                    encoding='utf-8',
+                )
+                if log.returncode:
+                    raise self.Exception("Failed to retrieve commit information for 'i{}@{}'".format(identifier, branch or 'HEAD'))
+
+                # Negative identifiers are actually commits on the default branch, we will need to re-compute the identifier
+                if identifier < 0 and is_default:
+                    raise self.Exception('Illegal negative identifier on the default branch')
+                if identifier < 0:
+                    identifier = None
 
         # Determine the `git log` output for a given branch or tag
         elif branch or tag:
@@ -258,15 +491,23 @@ class Git(Scm):
             raise self.Exception('Invalid commit hash in git log')
         hash = match.group('hash')
 
+        branch_point = None
         # A commit is often on multiple branches, the canonical branch is the one with the highest priority
-        branch = self.prioritize_branches(self._branches_for(hash))
+        if branch != default_branch:
+            branch = self.prioritize_branches(self._branches_for(hash))
+
+        if not identifier and include_identifier:
+            cached_identifier = self.cache.to_identifier(hash=hash, branch=branch) if self.cache else None
+            if cached_identifier:
+                branch_point, identifier, branch = Commit._parse_identifier(cached_identifier)
 
         # Compute the identifier if the function did not receive one and we were asked to
         if not identifier and include_identifier:
             identifier = self._commit_count(hash if branch == default_branch else '{}..{}'.format(default_branch, hash))
 
         # Only compute the branch point we're on something other than the default branch
-        branch_point = None if not include_identifier or branch == default_branch else self._commit_count(hash) - identifier
+        if not branch_point and include_identifier and branch != default_branch:
+            branch_point = self._commit_count(hash) - identifier
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 

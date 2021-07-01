@@ -329,7 +329,7 @@ class PortTest(unittest.TestCase):
             self.assertEqual([{'repository_id': 'webkit', 'id': '6', 'branch': 'trunk'}], port.commits_for_upload())
 
     def test_commits_for_upload_git_svn(self):
-        with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True):
+        with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True), OutputCapture():
             port = self.make_port(port_name='foo')
             self.assertEqual([{
                 'repository_id': 'webkit',
