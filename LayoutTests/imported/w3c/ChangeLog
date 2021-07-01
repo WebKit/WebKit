@@ -1,3 +1,16 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        Rebasing tests as timing changes a bit.
+        This aligns with Chrome and Firefox behavior.
+
+        * web-platform-tests/webrtc/no-media-call-expected.txt:
+        * web-platform-tests/webrtc/promises-call-expected.txt:
+
 2021-07-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Support unprefixed :autofill pseudo-class.

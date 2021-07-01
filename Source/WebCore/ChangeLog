@@ -1,3 +1,18 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        Add infrastructure to new experimental feature flag for NW backed UDP sockets.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webRTCPlatformTCPSocketsEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCPlatformTCPSocketsEnabled):
+        (WebCore::RuntimeEnabledFeatures::webRTCPlatformUDPSocketsEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCPlatformUDPSocketsEnabled):
+
 2021-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Cairo] Simplify GraphicsContextCairo creation

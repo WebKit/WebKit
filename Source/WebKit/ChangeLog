@@ -1,3 +1,67 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        Migrate UDP socket handling from WebRTC physical socket server to nw API for Cocoa ports.
+
+        For each UDP socket opened, we open a nw_listener that will listen to inbound connections.
+        On inbound connection, we receive a nw_connection that we store in a address -> connection map.
+
+        Whenever sending a packet, we look at the remote address.
+        If needed, we create a nw_connection to that particular remote address and store it in the address -> connection map.
+        We then use the pre-existing or newly created nw_connection to send the packet.
+
+        Make sure to cancel NW connection in case of failure before releasing the socket.
+
+        Covered by existing tests
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::setPlatformTCPSocketsEnabled):
+        (WebKit::NetworkRTCProvider::setPlatformUDPSocketsEnabled):
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.h: Copied from Source/WebKit/NetworkProcess/webrtc/NetworkRTCSocketCocoa.h.
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm: Renamed from Source/WebKit/NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm.
+        (WebKit::tcpSocketQueue):
+        (WebKit::NetworkRTCTCPSocketCocoa::createClientTCPSocket):
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        (WebKit::NetworkRTCTCPSocketCocoa::close):
+        (WebKit::NetworkRTCTCPSocketCocoa::setOption):
+        (WebKit::NetworkRTCTCPSocketCocoa::createMessageBuffer):
+        (WebKit::NetworkRTCTCPSocketCocoa::sendTo):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.h: Added.
+        (WTF::DefaultHash<rtc::SocketAddress>::hash):
+        (WTF::DefaultHash<rtc::SocketAddress>::equal):
+        (WTF::HashTraits<rtc::SocketAddress>::emptyValue):
+        (WTF::HashTraits<rtc::SocketAddress>::constructDeletedValue):
+        (WTF::HashTraits<rtc::SocketAddress>::isDeletedValue):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm: Added.
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::create):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::WTF_GUARDED_BY_LOCK):
+        (WebKit::udpSocketQueue):
+        (WebKit::NetworkRTCUDPSocketCocoa::createUDPSocket):
+        (WebKit::NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa):
+        (WebKit::NetworkRTCUDPSocketCocoa::~NetworkRTCUDPSocketCocoa):
+        (WebKit::NetworkRTCUDPSocketCocoa::close):
+        (WebKit::NetworkRTCUDPSocketCocoa::setOption):
+        (WebKit::NetworkRTCUDPSocketCocoa::sendTo):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::close):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::setOption):
+        (WebKit::processUDPData):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::createNWConnection):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::setupNWConnection):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::sendTo):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::setConnection):
+
 2021-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Cairo] Simplify GraphicsContextCairo creation

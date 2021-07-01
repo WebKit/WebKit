@@ -1297,15 +1297,25 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
     WebCore:
       default: false
 
-WebRTCPlatformSocketsEnabled:
+WebRTCPlatformTCPSocketsEnabled:
   type: bool
-  humanReadableName: "WebRTC Platform Sockets"
-  humanReadableDescription: "Enable WebRTC Platform Sockets"
+  humanReadableName: "WebRTC Platform TCP Sockets"
+  humanReadableDescription: "Enable WebRTC Platform TCP Sockets"
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKit:
       default: true
+
+WebRTCPlatformUDPSocketsEnabled:
+  type: bool
+  humanReadableName: "WebRTC Platform UDP Sockets"
+  humanReadableDescription: "Enable WebRTC Platform UDP Sockets"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKit:
+      default: false
 
 WebRTCVP9Profile0CodecEnabled:
   type: bool

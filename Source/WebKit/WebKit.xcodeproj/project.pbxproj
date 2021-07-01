@@ -3707,8 +3707,8 @@
 		4103FBA22061BDB800C2EAF8 /* NetworkLoadChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkLoadChecker.cpp; sourceTree = "<group>"; };
 		410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNetwork.cpp; sourceTree = "<group>"; };
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
-		410BA139257135F2002E2F8A /* NetworkRTCSocketCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCSocketCocoa.mm; sourceTree = "<group>"; };
-		410BA13A257135F2002E2F8A /* NetworkRTCSocketCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCSocketCocoa.h; sourceTree = "<group>"; };
+		410BA139257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCTCPSocketCocoa.mm; sourceTree = "<group>"; };
+		410BA13A257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCTCPSocketCocoa.h; sourceTree = "<group>"; };
 		4111436320F677B10026F912 /* InjectUserScriptImmediately.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectUserScriptImmediately.h; sourceTree = "<group>"; };
 		411223B72602152B00B0A0B6 /* RTCDataChannelRemoteManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = RTCDataChannelRemoteManager.messages.in; path = Network/webrtc/RTCDataChannelRemoteManager.messages.in; sourceTree = "<group>"; };
 		411223BB26024E8000B0A0B6 /* RTCDataChannelRemoteManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelRemoteManagerProxy.h; sourceTree = "<group>"; };
@@ -3841,6 +3841,8 @@
 		41DC45991E3DBB2400B11F51 /* LibWebRTCSocketClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LibWebRTCSocketClient.cpp; sourceTree = "<group>"; };
 		41DC459A1E3DBB2400B11F51 /* LibWebRTCSocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibWebRTCSocketClient.h; sourceTree = "<group>"; };
 		41DC45A01E3DC53C00B11F51 /* WebRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebRTCResolver.cpp; path = Network/webrtc/WebRTCResolver.cpp; sourceTree = "<group>"; };
+		41DD72A6267B8C3000A90C71 /* NetworkRTCUDPSocketCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCUDPSocketCocoa.mm; sourceTree = "<group>"; };
+		41DD72A7267B8C3100A90C71 /* NetworkRTCUDPSocketCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCUDPSocketCocoa.h; sourceTree = "<group>"; };
 		41E0A7C623B6397800561060 /* LibWebRTCCodecsProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibWebRTCCodecsProxy.h; sourceTree = "<group>"; };
 		41E0A7C723B6397900561060 /* LibWebRTCCodecsProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LibWebRTCCodecsProxy.messages.in; sourceTree = "<group>"; };
 		41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibWebRTCCodecsProxy.mm; sourceTree = "<group>"; };
@@ -8416,8 +8418,10 @@
 				4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */,
 				4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */,
 				4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */,
-				410BA13A257135F2002E2F8A /* NetworkRTCSocketCocoa.h */,
-				410BA139257135F2002E2F8A /* NetworkRTCSocketCocoa.mm */,
+				410BA13A257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.h */,
+				410BA139257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.mm */,
+				41DD72A7267B8C3100A90C71 /* NetworkRTCUDPSocketCocoa.h */,
+				41DD72A6267B8C3000A90C71 /* NetworkRTCUDPSocketCocoa.mm */,
 				411223BC26024E8100B0A0B6 /* RTCDataChannelRemoteManagerProxy.cpp */,
 				411223BB26024E8000B0A0B6 /* RTCDataChannelRemoteManagerProxy.h */,
 				411223BD26024E8100B0A0B6 /* RTCDataChannelRemoteManagerProxy.messages.in */,

@@ -1,3 +1,14 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2021-06-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r279405.

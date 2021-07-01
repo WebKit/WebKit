@@ -163,8 +163,10 @@ public:
     void setWebRTCMDNSICECandidatesEnabled(bool isEnabled) { m_isWebRTCMDNSICECandidatesEnabled = isEnabled; }
     bool webRTCH264SimulcastEnabled() const { return m_isWebRTCH264SimulcastEnabled; }
     void setWebRTCH264SimulcastEnabled(bool isEnabled) { m_isWebRTCH264SimulcastEnabled = isEnabled; }
-    bool webRTCPlatformSocketsEnabled() const { return m_isWebRTCPlatformSocketsEnabled; }
-    void setWebRTCPlatformSocketsEnabled(bool isEnabled) { m_isWebRTCPlatformSocketsEnabled = isEnabled; }
+    bool webRTCPlatformTCPSocketsEnabled() const { return m_isWebRTCPlatformTCPSocketsEnabled; }
+    void setWebRTCPlatformTCPSocketsEnabled(bool isEnabled) { m_isWebRTCPlatformTCPSocketsEnabled = isEnabled; }
+    bool webRTCPlatformUDPSocketsEnabled() const { return m_isWebRTCPlatformUDPSocketsEnabled; }
+    void setWebRTCPlatformUDPSocketsEnabled(bool isEnabled) { m_isWebRTCPlatformUDPSocketsEnabled = isEnabled; }
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -319,7 +321,8 @@ private:
     bool m_isWebRTCVP9Profile0CodecEnabled { false };
     bool m_isWebRTCVP9Profile2CodecEnabled { false };
     bool m_isWebRTCH264LowLatencyEncoderEnabled { false };
-    bool m_isWebRTCPlatformSocketsEnabled { false };
+    bool m_isWebRTCPlatformTCPSocketsEnabled { false };
+    bool m_isWebRTCPlatformUDPSocketsEnabled { false };
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
