@@ -1,3 +1,24 @@
+2021-07-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] <select> menus should scroll to the selected option
+        https://bugs.webkit.org/show_bug.cgi?id=227562
+        <rdar://problem/77887668>
+
+        Reviewed by Wenson Hsieh.
+
+        Before iOS 15, <select> pickers were implemented using UIPickerView on
+        iPhone and UITableView on iPad. Both these views gave WebKit the ability
+        to scroll the view to the currently selected option.
+
+        In iOS 15, <select> options are displayed in a context menu. WebKit does
+        not have access to the menu's view hierarchy, and must rely on UIKit to
+        perform the scrolling behavior.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker createMenu]):
+
+        Adopt UIMenuOptionsSingleSelection to obtain UIKit behaviors for popup menus.
+
 2021-07-01  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt async GroupActivity.sessions() iterable instead of GroupSessionObserver
