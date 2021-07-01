@@ -11,6 +11,7 @@
 active
 after, PseudoClassUnknown, PseudoElementAfter
 any-link
+autofill
 before, PseudoClassUnknown, PseudoElementBefore
 checked
 corner-present

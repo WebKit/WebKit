@@ -414,7 +414,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 builder.append(":-webkit-any-link");
                 break;
             case CSSSelector::PseudoClassAutofill:
-                builder.append(":-webkit-autofill");
+                builder.append(":autofill");
                 break;
             case CSSSelector::PseudoClassAutofillStrongPassword:
                 builder.append(":-webkit-autofill-strong-password");
