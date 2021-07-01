@@ -1,5 +1,22 @@
 2021-06-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Stop generating default parameter code if class constructor is called without 'new'
+        https://bugs.webkit.org/show_bug.cgi?id=227547
+        rdar://78821453
+
+        Reviewed by Mark Lam.
+
+        We already do not generate body bytecode when class constructor is called without 'new' because many features including "super()" assume
+        that they generate bytecode only when it is called as a constructor. But we are not doing that for default parameters' bytecode generation.
+        This patch stops generating bytecode for default parameters if class constructor is called without 'new'.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * runtime/ConstructorKind.h:
+
+2021-06-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Private names should be handled by usedVariables mechanism
         https://bugs.webkit.org/show_bug.cgi?id=227476
         rdar://76049469
