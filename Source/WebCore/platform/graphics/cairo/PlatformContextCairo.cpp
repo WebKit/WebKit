@@ -46,8 +46,8 @@ public:
     } m_mask;
 };
 
-PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
-    : m_cr(cr)
+PlatformContextCairo::PlatformContextCairo(RefPtr<cairo_t>&& cr)
+    : m_cr(WTFMove(cr))
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();

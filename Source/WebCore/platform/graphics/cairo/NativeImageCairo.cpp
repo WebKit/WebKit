@@ -30,7 +30,6 @@
 
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
-#include "PlatformContextCairo.h"
 #include <cairo.h>
 
 namespace WebCore {

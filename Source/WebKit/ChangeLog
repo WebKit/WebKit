@@ -1,3 +1,17 @@
+2021-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Simplify GraphicsContextCairo creation
+        https://bugs.webkit.org/show_bug.cgi?id=227575
+
+        Reviewed by Žan Doberšek.
+
+        Use the new GraphicsContextCairo constructors.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+
 2021-07-01  Jer Noble  <jer.noble@apple.com>
 
         [Mac] (Re-)enable GroupActivities after upstreaming

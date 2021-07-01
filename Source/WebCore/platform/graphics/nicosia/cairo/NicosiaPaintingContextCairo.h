@@ -39,7 +39,6 @@ typedef struct _cairo_surface cairo_surface_t;
 
 namespace WebCore {
 class GraphicsContext;
-class PlatformContextCairo;
 }
 
 namespace Nicosia {
@@ -55,11 +54,7 @@ public:
         WebCore::GraphicsContext& graphicsContext() override;
         void replay(const PaintingOperations&) override;
 
-        struct {
-            RefPtr<cairo_surface_t> surface;
-            RefPtr<cairo_t> context;
-        } m_cairo;
-        std::unique_ptr<WebCore::PlatformContextCairo> m_platformContext;
+        RefPtr<cairo_surface_t> m_surface;
         std::unique_ptr<WebCore::GraphicsContext> m_graphicsContext;
 
 #ifndef NDEBUG

@@ -1,3 +1,41 @@
+2021-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Simplify GraphicsContextCairo creation
+        https://bugs.webkit.org/show_bug.cgi?id=227575
+
+        Reviewed by Žan Doberšek.
+
+        Remove the constructors taking a PlatformContextCairo and add two that receive a RefPtr<cairo_t>&& and
+        cairo_surface_t*. In both cases the PlatformContextCairo is created, so it's now always owned and callers don't
+        need to create it.
+
+        No change in behavior, covered by existing tests.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        (WebCore::GraphicsContextCairo::drawLine):
+        * platform/graphics/cairo/GraphicsContextCairo.h:
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend):
+        (WebCore::ImageBufferCairoSurfaceBackend::context const):
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.h:
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::PlatformContextCairo):
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        (WebCore::PlatformContextCairo::cr const):
+        (WebCore::PlatformContextCairo::cr): Deleted.
+        (WebCore::PlatformContextCairo::setCr): Deleted.
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp:
+        (Nicosia::PaintingContextCairo::ForPainting::ForPainting):
+        (Nicosia::PaintingContextCairo::ForPainting::~ForPainting):
+        (Nicosia::PaintingContextCairo::ForPainting::replay):
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.h:
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
         RealtimeIncomingAudioSourceCocoa should support other sample rate than 48000
