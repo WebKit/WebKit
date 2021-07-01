@@ -1,9 +1,7 @@
 
 PASS Running templatedRSEmpty with ReadableStream (empty)
 PASS ReadableStream (empty): instances have the correct methods and properties
-FAIL ReadableStream (empty): calling getReader with invalid arguments should throw appropriate errors assert_throws_js: empty string mode should throw function "() => rs.getReader({ mode: '' })" threw object "RangeError: Invalid mode is specified" ("RangeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS ReadableStream (empty): calling getReader with invalid arguments should throw appropriate errors
 PASS Running templatedRSEmptyReader with ReadableStream (empty) reader
 PASS ReadableStream (empty) reader: instances have the correct methods and properties
 PASS ReadableStream (empty) reader: locked should be true

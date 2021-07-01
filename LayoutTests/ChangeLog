@@ -1,3 +1,15 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        ReadableStream.getReader do not throw a proper exception when parameter is of wrong type
+        https://bugs.webkit.org/show_bug.cgi?id=226220
+        <rdar://problem/78711382>
+
+        Reviewed by Chris Dumez.
+
+        * streams/readable-stream-getReader-expected.txt:
+        * streams/readable-stream-getReader.html:
+        Update test to match latest spec.
+
 2021-07-01  Alan Bujtas  <zalan@apple.com>
 
         VisiblePosition::absoluteSelectionBoundsForLine fails on multiline vertical-rl content

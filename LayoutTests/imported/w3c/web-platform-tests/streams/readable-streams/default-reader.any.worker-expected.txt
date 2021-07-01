@@ -29,8 +29,6 @@ PASS Reading twice on a stream that gets closed
 PASS Reading twice on a closed stream
 PASS Reading twice on an errored stream
 PASS Reading twice on a stream that gets errored
-FAIL getReader() should call ToString() on mode assert_throws_js: getReader() should throw function "() => rs.getReader({ mode })" threw object "RangeError: Invalid mode is specified" ("RangeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS getReader() should call ToString() on mode
 PASS controller.close() should clear the list of pending read requests
 
