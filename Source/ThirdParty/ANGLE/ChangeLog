@@ -1,3 +1,20 @@
+2021-07-01  Kyle Piddington  <kpiddington@apple.com>
+
+        BabylonJS Under water demo is slower than it should be on Intel
+        https://bugs.webkit.org/show_bug.cgi?id=227226
+
+        Remove fastMath restriction on Intel
+        Removing fastmath in all scenarios leads to unacceptable performance on integrated graphics
+        Currently, webgl conformance tests and the Safari tests don't have any invariance tests that show invariance issues. deQP tests are similarly passing.
+        In Metal-ANGLE, gl_position and gl_fragcoord are valid attributes to be marked as invariant. All others will be ignored.
+
+        Reviewed by Kenneth Russell.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitPostQualifier):
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::CreateShaderLibrary):
+
 2021-06-30  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ASSERT in  webgl/1.0.x/conformance/glsl/misc/uninitialized-local-global-variables.html   IdGen ASSERT(*base != '_');

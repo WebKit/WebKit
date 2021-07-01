@@ -596,12 +596,6 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
         options.fastMathEnabled = false;
 #endif
         options.languageVersion = GetUserSetOrHighestMSLVersion(options.languageVersion);
-        // TODO(jcunningham): workaround for intel driver not preserving invariance on all shaders
-        const uint32_t vendor_id = GetDeviceVendorId(metalDevice);
-        if (vendor_id == angle::kVendorID_Intel)
-        {
-            options.fastMathEnabled = false;
-        }
         options.preprocessorMacros = substitutionMacros;
         auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
         if (angle::GetEnvironmentVar(kANGLEPrintMSLEnv)[0] == '1')
