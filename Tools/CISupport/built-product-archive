@@ -246,9 +246,9 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         cogDirectory = os.path.join('Tools', 'cog-prefix', 'src', 'cog-build')
         absoluteCogDirectory = os.path.join(_configurationBuildDirectory, cogDirectory)
         if platform == 'wpe' and os.path.isdir(absoluteCogDirectory):
-            contents.extend([os.path.join(cogDirectory, filename) for filename in ['cog', 'cogctl']])
+            contents.extend([os.path.join(cogDirectory, filename_or_directory) for filename_or_directory in ['cog', 'cogctl', 'modules']])
             for filename in os.listdir(absoluteCogDirectory):
-                if filename.startswith('libcogcore') or filename.startswith('libcogplatform'):
+                if filename.startswith('libcogcore'):
                     contents.append(os.path.join(cogDirectory, filename))
 
         # When debug fission is enabled the directories below contain dwo files

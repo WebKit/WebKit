@@ -1,3 +1,13 @@
+2021-07-01  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Pack Cog modules in built-product archive
+        https://bugs.webkit.org/show_bug.cgi?id=227527
+
+        Reviewed by Žan Doberšek.
+
+        * CISupport/built-product-archive: Cog now ships its platform plugins in a dedicated modules
+        directory, which we need to include in the zip archive.
+
 2021-06-30  Chris Dumez  <cdumez@apple.com>
 
         Regression(r278737): WebContent crash when calling [WKWebView loadHTMLString:] with an invalid URL
