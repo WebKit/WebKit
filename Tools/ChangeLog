@@ -1,3 +1,14 @@
+2021-07-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [clean-webkit] Exclude autoinstalled directory
+        https://bugs.webkit.org/show_bug.cgi?id=227588
+        <rdar://problem/80033943>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.discard_untracked_files): Never discard the autoinstalled directory.
+
 2021-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Selecting or dragging images that contain recognizable text is difficult in Mail compose
