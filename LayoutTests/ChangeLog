@@ -1,3 +1,15 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeIncomingAudioSourceCocoa should support other sample rate than 48000
+        https://bugs.webkit.org/show_bug.cgi?id=227439
+
+        Reviewed by Eric Carlson.
+
+        Improve test to validate received audio is not silence.
+
+        * webrtc/audio-peer-connection-g722-expected.txt:
+        * webrtc/audio-peer-connection-g722.html:
+
 2021-07-01  Tim Nguyen  <ntim@apple.com>
 
         Unreviewed, unskip web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html

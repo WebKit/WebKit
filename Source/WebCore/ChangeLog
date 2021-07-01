@@ -1,3 +1,19 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeIncomingAudioSourceCocoa should support other sample rate than 48000
+        https://bugs.webkit.org/show_bug.cgi?id=227439
+
+        Reviewed by Eric Carlson.
+
+        We reduced memory allocations by early allocating buffers for the most often used sample rate (48000), but this broke other sample rates, like for G722.
+        Make sure to update sample rate and buffers if it is not 48000.
+        Since the initial OnData call is often with a sample rate of 16000 and switches to 48000 after a few calls, early return for a few initial calls (20) or if sample rate is not 16000.
+        Covered by updated test.
+
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.h:
+
 2021-07-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Support unprefixed :autofill pseudo-class.

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <title>Testing G722 webrtc support</title>
     <script src="../resources/testharness.js"></script>
     <script src="../resources/testharnessreport.js"></script>
     <script src ="routines.js"></script>
@@ -10,34 +10,9 @@
 var context = new AudioContext();
 var remoteStream;
 
-async function checkForHumBipBop(stream, previousResults, counter)
-{
-    if (!previousResults)
-        previousResults = {
-            heardHum : false,
-            heardBip : false,
-            heardBop : false
-    };
-    if (!counter)
-        counter = 1;
-    else if (++counter > 4)
-        return Promise.resolve(false);
-    results = await analyseAudio(stream, 1000, context);
-    previousResults.heardHum |= results.heardHum;
-    previousResults.heardBip |= results.heardBip;
-    previousResults.heardBop |= results.heardBop;
-    if (previousResults.heardHum && previousResults.heardBip && previousResults.heardBop)
-        return Promise.resolve(true);
-    var results = await checkForHumBipBop(stream, previousResults, counter);
-    return results;
-}
-
 promise_test(async (test) => {
-    if (window.testRunner)
-        testRunner.setUserMediaPermission(true);
-
     const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-    const remoteStream = new Promise((resolve, reject) => {
+    remoteStream = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
             firstConnection.addTrack(stream.getAudioTracks()[0], stream);
         }, (secondConnection) => {
@@ -50,10 +25,22 @@ promise_test(async (test) => {
         setTimeout(() => reject("Test timed out"), 5000);
     });
 
-    const results = await checkForHumBipBop(stream);
-    assert_true(results, "heard hum bip bop");
-    context.close();
+    const result = await doHumAnalysis(remoteStream, true);
+    assert_true(result, "heard hum bip bop");
 }, "Basic G722 audio playback through a peer connection");
+
+promise_test(async (test) => {
+    remoteStream.getAudioTracks()[0].enabled = false;
+    const result = await doHumAnalysis(remoteStream, false);
+    assert_true(result, "did not hear hum");
+}, "Mute remote track");
+
+promise_test(async (test) => {
+    remoteStream.getAudioTracks()[0].enabled = true;
+    const result = await doHumAnalysis(remoteStream, true);
+    assert_true(result, "heard hum");
+    context.close();
+}, "Unmute remote track");
     </script>
 </head>
 <body>
