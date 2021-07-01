@@ -229,6 +229,21 @@ class LayoutNode
             this._updateDirtyState();
     }
 
+    computedValueForStyleProperty(propertyName)
+    {
+        return window.getComputedStyle(this.element).getPropertyValue(propertyName);
+    }
+
+    computedValueForStylePropertyInPx(propertyName)
+    {
+        const value = this.computedValueForStyleProperty(propertyName);
+        if (!value)
+            return 0;
+        if (!value.endsWith("px"))
+            return 0;
+        return parseFloat(value);
+    }
+
     // Protected
 
     layout()
