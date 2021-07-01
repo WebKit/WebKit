@@ -1,5 +1,35 @@
 2021-07-01  Yijia Huang  <yijia_huang@apple.com>
 
+        Remove unnecessary canBeInternal invocations to mitigate the cost of potential unmatched patterns in B3LowerToAir
+        https://bugs.webkit.org/show_bug.cgi?id=227508
+
+        Reviewed by Filip Pizlo.
+
+        The bit pattern doesn't cause worse code generation in the all-internals-are-captured 
+        case. So, they don't need canBeInternal checks which might terminate potential matched 
+        scenarios.
+
+        The equivalent pattern of SBFIZ is ((src << amount) >> amount) << lsb. Given the code:
+
+        a = x << C
+        b = a >> C
+        c = b << D
+
+        print(a)
+        print(b)
+        print(c)
+
+        The pattern won't match because of !canBeInternal for a and b (useCounts > 1). 
+        So, this would emit three separate instructions. But if we removed canBeInternal, 
+        it would still be just three separate instructions, and they wouldn't be any more 
+        expensive. Suppose the print(b) is removed, above. Then, with the canBeInternal check, 
+        it is emitting three instructions. Without the canBeInternal check, it would emit only 
+        two (x << C and SBFIZ to compute c). And that would be less expensive.
+
+        * b3/B3LowerToAir.cpp:
+
+2021-07-01  Yijia Huang  <yijia_huang@apple.com>
+
         Add a new pattern to instruction selector to use EXTR supported by ARM64
         https://bugs.webkit.org/show_bug.cgi?id=227171
 

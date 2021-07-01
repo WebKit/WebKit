@@ -2769,7 +2769,7 @@ private:
                 Air::Opcode opcode = opcodeForType(ExtractUnsignedBitfield32, ExtractUnsignedBitfield64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
                     return false;
-                if (left->opcode() != ZShr || !canBeInternal(left))
+                if (left->opcode() != ZShr)
                     return false;
 
                 Value* srcValue = left->child(0);
@@ -2787,7 +2787,6 @@ private:
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
-                commitInternal(left);
                 return true;
             };
 
@@ -2799,7 +2798,7 @@ private:
                 Air::Opcode opcode = opcodeForType(ClearBitsWithMask32, ClearBitsWithMask64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) 
                     return false;
-                if (right->opcode() != BitXor || !canBeInternal(right))
+                if (right->opcode() != BitXor)
                     return false;
 
                 Value* nValue = left;
@@ -2809,7 +2808,6 @@ private:
                     return false;
 
                 append(opcode, tmp(nValue), tmp(mValue), tmp(m_value));
-                commitInternal(right);
                 return true;
             };
 
@@ -2872,11 +2870,7 @@ private:
                 Air::Opcode opcode = opcodeForType(InsertBitField32, InsertBitField64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
                     return false;
-                if (left->opcode() != Shl || !canBeInternal(left))
-                    return false;
-                if (right->opcode() != BitAnd || !canBeInternal(right))
-                    return false;
-                if (left->child(0)->opcode() != BitAnd || !canBeInternal(left->child(0)))
+                if (left->opcode() != Shl || right->opcode() != BitAnd || left->child(0)->opcode() != BitAnd)
                     return false;
 
                 Value* nValue = left->child(0)->child(0);
@@ -2913,9 +2907,6 @@ private:
                 Tmp result = tmp(m_value);
                 append(relaxedMoveForType(m_value->type()), tmp(dValue), result);
                 append(opcode, tmp(nValue), imm(lsbValue), imm(width), result);
-                commitInternal(left->child(0));
-                commitInternal(left);
-                commitInternal(right);
                 return true;
             };
 
@@ -2929,11 +2920,7 @@ private:
                 Air::Opcode opcode = opcodeForType(ExtractInsertBitfieldAtLowEnd32, ExtractInsertBitfieldAtLowEnd64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
                     return false;
-                if (left->opcode() != BitAnd || !canBeInternal(left))
-                    return false;
-                if (left->child(0)->opcode() != ZShr || !canBeInternal(left->child(0)))
-                    return false;
-                if (right->opcode() != BitAnd || !canBeInternal(right))
+                if (left->opcode() != BitAnd || left->child(0)->opcode() != ZShr || right->opcode() != BitAnd)
                     return false;
 
                 Value* nValue = left->child(0)->child(0);
@@ -2969,9 +2956,6 @@ private:
                 Tmp result = tmp(m_value);
                 append(relaxedMoveForType(m_value->type()), tmp(dValue), result);
                 append(opcode, tmp(nValue), imm(lsbValue), imm(width), result);
-                commitInternal(left->child(0));
-                commitInternal(left);
-                commitInternal(right);
                 return true;
             };
 
@@ -2983,7 +2967,7 @@ private:
                 Air::Opcode opcode = opcodeForType(OrNot32, OrNot64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) 
                     return false;
-                if (right->opcode() != BitXor || !canBeInternal(right))
+                if (right->opcode() != BitXor)
                     return false;
 
                 Value* nValue = left;
@@ -2993,7 +2977,6 @@ private:
                     return false;
 
                 append(opcode, tmp(nValue), tmp(mValue), tmp(m_value));
-                commitInternal(right);
                 return true;
             };
 
@@ -3045,7 +3028,7 @@ private:
                 Air::Opcode opcode = opcodeForType(InsertUnsignedBitfieldInZero32, InsertUnsignedBitfieldInZero64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
-                if (left->opcode() != BitAnd || !canBeInternal(left))
+                if (left->opcode() != BitAnd)
                     return false;
 
                 Value* nValue = left->child(0);
@@ -3063,7 +3046,6 @@ private:
                     return false;
 
                 append(opcode, tmp(nValue), imm(right), imm(width), tmp(m_value));
-                commitInternal(left);
                 return true;
             };
 
@@ -3078,9 +3060,7 @@ private:
                 Air::Opcode opcode = opcodeForType(InsertSignedBitfieldInZero32, InsertSignedBitfieldInZero64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
-                if (left->opcode() != SShr || !canBeInternal(left))
-                    return false;
-                if (left->child(0)->opcode() != Shl || !canBeInternal(left->child(0)))
+                if (left->opcode() != SShr || left->child(0)->opcode() != Shl)
                     return false;
 
                 Value* srcValue = left->child(0)->child(0);
@@ -3103,8 +3083,6 @@ private:
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
-                commitInternal(left->child(0));
-                commitInternal(left);
                 return true;
             };
 
@@ -3130,9 +3108,7 @@ private:
                 Air::Opcode opcode = opcodeForType(ExtractSignedBitfield32, ExtractSignedBitfield64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
-                if (left->opcode() != Shl || !canBeInternal(left))
-                    return false;
-                if ((left->child(0)->opcode() != ZShr && left->child(0)->opcode() != SShr) || !canBeInternal(left->child(0)))
+                if (left->opcode() != Shl || (left->child(0)->opcode() != ZShr && left->child(0)->opcode() != SShr))
                     return false;
 
                 Value* srcValue = left->child(0)->child(0);
@@ -3155,8 +3131,6 @@ private:
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
-                commitInternal(left->child(0));
-                commitInternal(left);
                 return true;
             };
 
