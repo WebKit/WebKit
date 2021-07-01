@@ -1,3 +1,17 @@
+2021-07-01  Tim Nguyen  <ntim@apple.com>
+
+        Merge LayoutTests/imported/blink/fast/dom/HTMLDialogElement and LayoutTests/imported/blink/dialog
+        https://bugs.webkit.org/show_bug.cgi?id=227566
+
+        Reviewed by Antti Koivisto.
+
+        They're only one directory in the Chromium codebase: https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/web_tests/html/dialog/;drc=d154f7938274ffda2e51690404522117533be62a
+        Keep only LayoutTests/imported/blink/dialog.
+
+        * TestExpectations:
+        * imported/blink/dialog/dont-share-style-to-top-layer-expected.html: Renamed from LayoutTests/imported/blink/fast/dom/HTMLDialogElement/dont-share-style-to-top-layer-expected.html.
+        * imported/blink/dialog/dont-share-style-to-top-layer.html: Renamed from LayoutTests/imported/blink/fast/dom/HTMLDialogElement/dont-share-style-to-top-layer.html.
+
 2021-06-30  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r279427) [ Mac ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html is failing
