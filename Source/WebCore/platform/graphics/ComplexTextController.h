@@ -32,7 +32,11 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(HAIKU)
+typedef unsigned int CGGlyph;
+#else
 typedef unsigned short CGGlyph;
+#endif
 
 typedef const struct __CTRun * CTRunRef;
 typedef const struct __CTLine * CTLineRef;
