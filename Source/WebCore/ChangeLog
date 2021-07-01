@@ -1,3 +1,16 @@
+2021-07-01  Amir Mark Jr  <amir_mark@apple.com>
+
+        Unreviewed, reverting r279452.
+
+        Broke MacOS build
+
+        Reverted changeset:
+
+        "PCM: Change import from CryptoKitCBridging to
+        CryptoKitPrivate"
+        https://bugs.webkit.org/show_bug.cgi?id=227556
+        https://commits.webkit.org/r279452
+
 2021-07-01  Alan Bujtas  <zalan@apple.com>
 
         VisiblePosition::absoluteSelectionBoundsForLine fails on multiline vertical-rl content

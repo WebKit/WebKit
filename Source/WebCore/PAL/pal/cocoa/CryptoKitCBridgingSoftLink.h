@@ -23,14 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
 #if HAVE(RSA_BSSA)
 
+#import <pal/spi/cocoa/CryptoKitCBridgingSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, CryptoKitPrivate, PAL_EXPORT);
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CryptoKitCBridging);
 
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, CryptoKitPrivate, RSABSSATokenBlinder, PAL_EXPORT);
+SOFT_LINK_CLASS_FOR_HEADER(PAL, RSABSSATokenBlinder);
 
 #endif

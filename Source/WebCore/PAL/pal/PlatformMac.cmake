@@ -11,7 +11,7 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     cocoa/AppSSOSoftLink.h
     cocoa/AVFoundationSoftLink.h
-    cocoa/CryptoKitPrivateSoftLink.h
+    cocoa/CryptoKitCBridgingSoftLink.h
     cocoa/DataDetectorsCoreSoftLink.h
     cocoa/MediaToolboxSoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h

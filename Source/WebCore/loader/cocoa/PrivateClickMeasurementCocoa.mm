@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PrivateClickMeasurement.h"
 
-#import <pal/cocoa/CryptoKitPrivateSoftLink.h>
+#import <pal/cocoa/CryptoKitCBridgingSoftLink.h>
 
 namespace WebCore {
 
