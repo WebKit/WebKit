@@ -175,3 +175,26 @@ TEST(WKWebView, LoadHTMLStringOrigin)
     [webView loadHTMLString:[NSString stringWithFormat:html, server.port()] baseURL:[NSURL URLWithString:@"custom-scheme://"]];
     Util::run(&done);
 }
+
+TEST(WebKit, LoadHTMLStringWithInvalidBaseURL)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect]);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool didCrash = false;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *view) {
+        didCrash = true;
+    };
+
+    __block bool didFinishNavigation = false;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *view, WKNavigation *navigation) {
+        didFinishNavigation = true;
+    };
+
+    [webView loadHTMLString:@"test" baseURL:[NSURL URLWithString:@"invalid"]];
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+
+    EXPECT_FALSE(didCrash);
+}

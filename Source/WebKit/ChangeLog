@@ -1,3 +1,18 @@
+2021-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r278737): WebContent crash when calling [WKWebView loadHTMLString:] with an invalid URL
+        https://bugs.webkit.org/show_bug.cgi?id=227560
+        <rdar://79815425>
+
+        Reviewed by Alex Christensen.
+
+        Make sure the parsed URL is valid in WebPage::loadData() before getting its protocol and calling
+        LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler() with it. Passing a null String
+        to LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler() causes crashes.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+
 2021-06-30  Megan Gardner  <megan_gardner@apple.com>
 
         Add ID and versioning support for AppHighlights

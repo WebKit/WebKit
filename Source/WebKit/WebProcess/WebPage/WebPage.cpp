@@ -1744,8 +1744,11 @@ void WebPage::loadData(LoadParameters&& loadParameters)
         baseURL = aboutBlankURL();
     else {
         baseURL = URL(URL(), loadParameters.baseURLString);
-        if (!baseURL.protocolIsInHTTPFamily())
-            LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(baseURL.protocol().toString());
+        if (baseURL.isValid()) {
+            if (!baseURL.protocolIsInHTTPFamily())
+                LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(baseURL.protocol().toString());
+        } else
+            baseURL = aboutBlankURL();
     }
 
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, loadParameters.shouldOpenExternalURLsPolicy);
