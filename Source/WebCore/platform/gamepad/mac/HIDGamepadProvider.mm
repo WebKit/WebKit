@@ -43,7 +43,7 @@
 namespace WebCore {
 
 static const Seconds connectionDelayInterval { 500_ms };
-static const Seconds hidInputNotificationDelay { 50_ms };
+static const Seconds hidInputNotificationDelay { 1_ms };
 
 static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, uint32_t usage)
 {

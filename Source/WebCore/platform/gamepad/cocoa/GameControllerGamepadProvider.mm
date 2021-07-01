@@ -68,7 +68,7 @@ bool GameControllerGamepadProvider::willHandleVendorAndProduct(uint16_t vendorID
 
 #endif // !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 
-static const Seconds inputNotificationDelay { 16_ms };
+static const Seconds inputNotificationDelay { 1_ms };
 
 GameControllerGamepadProvider& GameControllerGamepadProvider::singleton()
 {
