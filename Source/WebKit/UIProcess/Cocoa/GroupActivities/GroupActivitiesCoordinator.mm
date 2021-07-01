@@ -102,6 +102,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 Ref<GroupActivitiesCoordinator> GroupActivitiesCoordinator::create(GroupActivitiesSession& session)
 {
     return adoptRef(*new GroupActivitiesCoordinator(session));
