@@ -350,6 +350,8 @@ enum TreeType {
     sequence<DOMString> formControlStateOfPreviousHistoryItem();
     undefined setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
+    DOMRect absoluteLineRectFromPoint(long x, long y);
+
     DOMRect absoluteCaretBounds();
     boolean isCaretBlinkingSuspended();
 

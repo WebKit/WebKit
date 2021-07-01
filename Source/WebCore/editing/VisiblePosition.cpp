@@ -663,7 +663,7 @@ FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
     auto localRect = FloatRect { FloatPoint { line->contentLogicalLeft(), line->selectionTop() }, FloatPoint { line->contentLogicalRight(), line->selectionBottom() } };
     if (!line->isHorizontal())
         localRect = localRect.transposedRect();
-
+    line->containingBlock().flipForWritingMode(localRect);
     return line->containingBlock().localToAbsoluteQuad(localRect).boundingBox();
 }
 

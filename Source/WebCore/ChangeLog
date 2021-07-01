@@ -1,3 +1,22 @@
+2021-07-01  Alan Bujtas  <zalan@apple.com>
+
+        VisiblePosition::absoluteSelectionBoundsForLine fails on multiline vertical-rl content
+        https://bugs.webkit.org/show_bug.cgi?id=227543
+        <rdar://79887141>
+
+        Reviewed by Simon Fraser.
+
+        absoluteSelectionBoundsForLine flips the line's logical rect for the writing mode (horizontal vs. vertical)
+        but not for the block flow direction (ltr vs. rtl).
+        This adjustment is very similar to what we do in absoluteCaretBounds (see absoluteBoundsForLocalCaretRect).
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::absoluteLineRectFromPoint):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r278062): [Nicosia] Threaded rendering is broken since r278062

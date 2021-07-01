@@ -272,6 +272,8 @@ public:
     ExceptionOr<Vector<String>> formControlStateOfPreviousHistoryItem();
     ExceptionOr<void> setFormControlStateOfPreviousHistoryItem(const Vector<String>&);
 
+    ExceptionOr<Ref<DOMRect>> absoluteLineRectFromPoint(int x, int y);
+
     ExceptionOr<Ref<DOMRect>> absoluteCaretBounds();
     ExceptionOr<bool> isCaretBlinkingSuspended();
 

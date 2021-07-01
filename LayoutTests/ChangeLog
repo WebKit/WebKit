@@ -1,3 +1,14 @@
+2021-07-01  Alan Bujtas  <zalan@apple.com>
+
+        VisiblePosition::absoluteSelectionBoundsForLine fails on multiline vertical-rl content
+        https://bugs.webkit.org/show_bug.cgi?id=227543
+        <rdar://79887141>
+
+        Reviewed by Simon Fraser.
+
+        * fast/inline/line-rect-from-point-expected.txt: Added.
+        * fast/inline/line-rect-from-point.html: Added.
+
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
         [Cocoa] Migrate WebRTC UDP socket handling to NW API
