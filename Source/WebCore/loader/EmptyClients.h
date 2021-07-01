@@ -221,6 +221,10 @@ class EmptyChromeClient : public ChromeClient {
 #endif
 
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
+
+#if ENABLE(MODEL_ELEMENT)
+    void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const final;
+#endif
 };
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();

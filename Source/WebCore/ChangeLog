@@ -1,3 +1,44 @@
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227530
+        <rdar://problem/79968206>
+
+        Reviewed by Dean Jackson.
+
+        On macOS, ASVInlinePreview requires an instance in both the WebProcess and the UIProcess to exist with a matching UUID.
+
+        On the WebCore side, in the WebProcess, after writing the model resource as a file to disk, we create an instance when a
+        <model> element is created and message the UIProcess through the ChromeClient providing the UUID generated for it. When
+        the UIProcess is done processing this message, it will reply with another message which calls into
+        HTMLModelElement::inlinePreviewDidObtainContextId() with the matching UUID and a context ID for the remote context.
+        We can then set that remote context ID on our ASVInlinePreview instance.
+
+        We also introduce a HTMLModelElement::platformLayer() method such that RenderLayerBacking::updateConfiguration() can call
+        it to host the ASVInlinePreview layer.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        (WebCore::HTMLModelElement::~HTMLModelElement):
+        (WebCore::HTMLModelElement::setSourceURL):
+        (WebCore::HTMLModelElement::notifyFinished):
+        * Modules/model-element/HTMLModelElement.h:
+        * Modules/model-element/HTMLModelElementCocoa.mm: Added.
+        (WebCore::HTMLModelElement::createFile):
+        (WebCore::HTMLModelElement::clearFile):
+        (WebCore::HTMLModelElement::modelDidChange):
+        (WebCore::HTMLModelElement::inlinePreviewDidObtainContextId):
+        (WebCore::HTMLModelElement::platformLayer const):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::modelElementDidCreatePreview const):
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::modelElementDidCreatePreview const):
+        * platform/Logging.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+
 2021-06-30  Megan Gardner  <megan_gardner@apple.com>
 
         Add ID and versioning support for AppHighlights

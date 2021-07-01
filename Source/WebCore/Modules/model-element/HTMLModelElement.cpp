@@ -69,6 +69,10 @@ HTMLModelElement::~HTMLModelElement()
         m_resource->removeClient(*this);
         m_resource = nullptr;
     }
+
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    clearFile();
+#endif
 }
 
 Ref<HTMLModelElement> HTMLModelElement::create(const QualifiedName& tagName, Document& document)
@@ -131,8 +135,12 @@ void HTMLModelElement::setSourceURL(const URL& url)
 
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve);
 
-    if (m_sourceURL.isEmpty())
+    if (m_sourceURL.isEmpty()) {
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+        clearFile();
+#endif
         return;
+    }
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.destination = FetchOptions::Destination::Model;
@@ -224,6 +232,10 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     invalidateResourceHandleAndUpdateRenderer();
 
     m_readyPromise->resolve(*this);
+
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    modelDidChange();
+#endif
 }
 
 void HTMLModelElement::enterFullscreen()

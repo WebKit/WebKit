@@ -78,6 +78,10 @@ class WAKResponder;
 #include "MediaUsageInfo.h"
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+class HTMLModelElement;
+#endif
+
 #if ENABLE(WEBXR)
 #include "PlatformXR.h"
 #endif
@@ -598,6 +602,7 @@ public:
 
 #if ENABLE(MODEL_ELEMENT)
     virtual void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const { }
+    virtual void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const { };
 #endif
 
 protected:

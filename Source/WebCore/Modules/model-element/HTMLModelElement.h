@@ -35,6 +35,11 @@
 #include "SharedBuffer.h"
 #include <wtf/UniqueRef.h>
 
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#include "PlatformLayer.h"
+OBJC_CLASS ASVInlinePreview;
+#endif
+
 namespace WebCore {
 
 class Model;
@@ -59,6 +64,11 @@ public:
     WEBCORE_EXPORT static void setModelElementCacheDirectory(const String&);
     WEBCORE_EXPORT static const String& modelElementCacheDirectory();
 
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    PlatformLayer* platformLayer() const;
+    WEBCORE_EXPORT void inlinePreviewDidObtainContextId(const String& uuid, uint32_t contextId);
+#endif
+
     void enterFullscreen();
 
 private:
@@ -66,6 +76,12 @@ private:
 
     void setSourceURL(const URL&);
     HTMLModelElement& readyPromiseResolve();
+
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    void clearFile();
+    void createFile();
+    void modelDidChange();
+#endif
 
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
@@ -83,6 +99,11 @@ private:
     RefPtr<Model> m_model;
     UniqueRef<ReadyPromise> m_readyPromise;
     bool m_dataComplete { false };
+
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    String m_filePath;
+    RetainPtr<ASVInlinePreview> m_inlinePreview;
+#endif
 };
 
 } // namespace WebCore

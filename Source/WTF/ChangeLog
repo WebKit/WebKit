@@ -1,3 +1,17 @@
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227530
+        <rdar://problem/79968206>
+
+        Reviewed by Dean Jackson.
+
+        Add a new compile-time flag indicating the availability of the ASVInlinePreview SPI on macOS.
+        We only define it when the header itself is present for now to avoid issues with older macOS
+        12 SDKs, but ultimately we will only use the macOS version check.
+
+        * wtf/PlatformHave.h:
+
 2021-06-30  Megan Gardner  <megan_gardner@apple.com>
 
         Add ID and versioning support for AppHighlights

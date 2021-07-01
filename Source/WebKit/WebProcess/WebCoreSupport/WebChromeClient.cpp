@@ -1516,10 +1516,17 @@ void WebChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent()
 }
 
 #if ENABLE(MODEL_ELEMENT)
+
 void WebChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId) const
 {
     m_page.takeModelElementFullscreen(contentLayerId);
 }
+
+void WebChromeClient::modelElementDidCreatePreview(WebCore::HTMLModelElement& element, const URL& url, const String& uuid, const WebCore::FloatSize& size) const
+{
+    m_page.modelElementDidCreatePreview(element, url, uuid, size);
+}
+
 #endif
 
 } // namespace WebKit

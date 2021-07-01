@@ -595,5 +595,6 @@ messages -> WebPageProxy {
 
 #if ENABLE(MODEL_ELEMENT)
     TakeModelElementFullscreen(uint64_t contentLayerID)
+    ModelElementDidCreatePreview(struct WebCore::ElementContext elementContext, URL url, String uuid, WebCore::FloatSize size)
 #endif
 }

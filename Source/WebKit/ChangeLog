@@ -1,3 +1,36 @@
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227530
+        <rdar://problem/79968206>
+
+        Reviewed by Dean Jackson.
+
+        On macOS, ASVInlinePreview requires an instance in both the WebProcess and the UIProcess to exist with a matching UUID.
+
+        On the WebKit side, in the UIProcess, we receive a message from the WebProcess when the ASVInlinePreview in that process
+        was created with its generated UUID. We provide this to the ModelElementController, set the remote connection up and load
+        the file. When those tasks complete successfully we message back the WebProcess with the UUID and the provided ElementContext
+        to talk back to the HTMLModelElement instance that initiated the message to the UIProcess in the first place.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementDidCreatePreview):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementDidCreatePreview):
+        (WebKit::WebPageProxy::modelElementPreviewDidObtainContextId):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::modelElementDidCreatePreview const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::modelElementDidCreatePreview):
+        (WebKit::WebPage::modelElementPreviewDidObtainContextId):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-06-30  Chris Dumez  <cdumez@apple.com>
 
         Regression(r278737): WebContent crash when calling [WKWebView loadHTMLString:] with an invalid URL

@@ -52,8 +52,15 @@ public:
     void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
 #endif
 
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    void modelElementDidCreatePreview(const WebCore::ElementContext&, const URL&, const String&, const WebCore::FloatSize&);
+#endif
+
 private:
     WebPageProxy& m_webPageProxy;
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    HashMap<String, RetainPtr<ASVInlinePreview>> m_inlinePreviews;
+#endif
 };
 
 }

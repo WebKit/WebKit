@@ -10689,12 +10689,27 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
+
 void WebPageProxy::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
 #if HAVE(ARKIT_INLINE_PREVIEW_IOS)
     modelElementController()->takeModelElementFullscreen(contentLayerId);
 #endif
 }
+
+void WebPageProxy::modelElementDidCreatePreview(const WebCore::ElementContext& context, const URL& url, const String& uuid, const FloatSize& size)
+{
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    modelElementController()->modelElementDidCreatePreview(context, url, uuid, size);
+#endif
+}
+
+void WebPageProxy::modelElementPreviewDidObtainContextId(const WebCore::ElementContext& context, const String& uuid, uint32_t contextId)
+{
+    if (hasRunningProcess())
+        send(Messages::WebPage::ModelElementPreviewDidObtainContextId(context, uuid, contextId));
+}
+
 #endif
 
 #if !PLATFORM(COCOA)

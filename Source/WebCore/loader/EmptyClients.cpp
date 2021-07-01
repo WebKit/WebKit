@@ -579,9 +579,15 @@ void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandle
 }
 
 #if ENABLE(MODEL_ELEMENT)
+
 void EmptyChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const
 {
 }
+
+void EmptyChromeClient::modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const
+{
+}
+
 #endif
 
 void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&)

@@ -576,6 +576,8 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     ModelElementController* modelElementController() { return m_modelElementController.get(); }
     void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
+    void modelElementDidCreatePreview(const WebCore::ElementContext&, const URL&, const String&, const WebCore::FloatSize&);
+    void modelElementPreviewDidObtainContextId(const WebCore::ElementContext&, const String&, uint32_t);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

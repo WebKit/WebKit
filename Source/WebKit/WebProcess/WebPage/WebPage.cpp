@@ -269,6 +269,10 @@
 #include <WebCore/AppHighlightStorage.h>
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+#include <WebCore/HTMLModelElement.h>
+#endif
+
 #if ENABLE(DATA_DETECTION)
 #include "DataDetectionResult.h"
 #endif
@@ -7675,9 +7679,29 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
+
 void WebPage::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
     send(Messages::WebPageProxy::TakeModelElementFullscreen(contentLayerId));
+}
+
+void WebPage::modelElementDidCreatePreview(WebCore::HTMLModelElement& element, const URL& url, const String& uuid, const WebCore::FloatSize& size)
+{
+    if (auto elementContext = contextForElement(element))
+        send(Messages::WebPageProxy::ModelElementDidCreatePreview(*elementContext, url, uuid, size));
+}
+
+void WebPage::modelElementPreviewDidObtainContextId(const WebCore::ElementContext& elementContext, const String& uuid, uint32_t contextId)
+{
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    auto element = elementForContext(elementContext);
+    if (is<WebCore::HTMLModelElement>(element))
+        downcast<WebCore::HTMLModelElement>(*element).inlinePreviewDidObtainContextId(uuid, contextId);
+#else
+    UNUSED_PARAM(elementContext);
+    UNUSED_PARAM(uuid);
+    UNUSED_PARAM(contextId);
+#endif
 }
 
 #endif

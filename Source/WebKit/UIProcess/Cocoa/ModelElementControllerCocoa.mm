@@ -28,16 +28,22 @@
 
 #if ENABLE(MODEL_ELEMENT)
 
-#import "APIUIClient.h"
 #import "Logging.h"
+#import "WebPageProxy.h"
+
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#import "APIUIClient.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeViews.h"
 #import "WKModelView.h"
-#import "WebPageProxy.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
 #import <pal/spi/ios/SystemPreviewSPI.h>
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#import <pal/spi/mac/SystemPreviewSPI.h>
+#import <wtf/MainThread.h>
 #endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
@@ -46,6 +52,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 namespace WebKit {
 
 #if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+
 void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
     if (!is<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea()))
@@ -109,6 +116,51 @@ void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::
         });
     }];
 }
+
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+
+void ModelElementController::modelElementDidCreatePreview(const WebCore::ElementContext& context, const URL& fileURL, const String& uuid, const WebCore::FloatSize& size)
+{
+    auto preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, size.width(), size.height()) UUID:[[NSUUID alloc] initWithUUIDString:uuid]]);
+
+    LOG(ModelElement, "Created remote preview with UUID %s.", uuid.utf8().data());
+
+    auto iterator = m_inlinePreviews.find(uuid);
+    if (iterator == m_inlinePreviews.end())
+        m_inlinePreviews.set(uuid, preview);
+    else
+        iterator->value = preview;
+
+    RELEASE_ASSERT(isMainRunLoop());
+    auto weakThis = makeWeakPtr(*this);
+    auto elementContextCopy = context;
+    auto uuidCopy = uuid;
+    NSURL *url = [NSURL fileURLWithPath:fileURL.fileSystemPath()];
+    [preview setupRemoteConnectionWithCompletionHandler:^(NSError * _Nullable contextError) {
+        if (contextError) {
+            LOG(ModelElement, "Unable to create remote connection for uuid %s: %@.", uuidCopy.utf8().data(), [contextError localizedDescription]);
+            return;
+        }
+
+        LOG(ModelElement, "Established remote connection with UUID %s.", uuidCopy.utf8().data());
+
+        [preview preparePreviewOfFileAtURL:url completionHandler:^(NSError * _Nullable loadError) {
+            if (loadError) {
+                LOG(ModelElement, "Unable to load file for uuid %s: %@.", uuidCopy.utf8().data(), [loadError localizedDescription]);
+                return;
+            }
+
+            LOG(ModelElement, "Loaded file with UUID %s.", uuidCopy.utf8().data());
+
+            callOnMainRunLoop([weakThis, elementContextCopy, uuidCopy, contextId = [preview contextId]]() mutable {
+                weakThis->m_webPageProxy.modelElementPreviewDidObtainContextId(elementContextCopy, uuidCopy, contextId);
+            });
+        }];
+    }];
+}
+
 #endif
 
 }

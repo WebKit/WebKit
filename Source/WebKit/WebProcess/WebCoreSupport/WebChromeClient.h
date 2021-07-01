@@ -454,6 +454,7 @@ private:
 
 #if ENABLE(MODEL_ELEMENT)
     void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId) const final;
+    void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const final;
 #endif
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };

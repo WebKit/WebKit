@@ -99,6 +99,7 @@ Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
 Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm
 Modules/async-clipboard/mac/ClipboardImageReaderMac.mm
 Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp
+Modules/model-element/HTMLModelElementCocoa.mm
 Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/speech/cocoa/SpeechRecognizerCocoa.mm
