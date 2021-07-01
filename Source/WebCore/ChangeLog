@@ -1,3 +1,23 @@
+2021-07-01  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Restrict IPC calls to ARKit SPI availability and runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227581
+
+        Reviewed by Tim Horton.
+
+        Guard all IPC calls related to <model> by the most appropriate platform-specific flag
+        and also ensure that those calls don't do anything unless the runtime flag is also
+        enabled.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        * Modules/model-element/HTMLModelElement.h:
+        * Modules/model-element/HTMLModelElementCocoa.mm:
+        (WebCore::HTMLModelElement::inlinePreviewDidObtainContextId):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::modelElementDidCreatePreview const):
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
         ReadableStream.getReader do not throw a proper exception when parameter is of wrong type

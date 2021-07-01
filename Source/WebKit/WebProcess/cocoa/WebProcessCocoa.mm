@@ -481,7 +481,7 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
     SandboxExtension::consumePermanently(parameters.mediaCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaKeyStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.javaScriptConfigurationDirectoryExtensionHandle);
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     SandboxExtension::consumePermanently(parameters.modelElementCacheDirectoryExtensionHandle);
 #endif
 #endif

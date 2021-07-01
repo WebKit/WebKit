@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
 
 #include <WebCore/ElementContext.h>
 #include <WebCore/GraphicsLayer.h>
@@ -51,7 +51,6 @@ public:
 #if HAVE(ARKIT_INLINE_PREVIEW_IOS)
     void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
 #endif
-
 #if HAVE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(const WebCore::ElementContext&, const URL&, const String&, const WebCore::FloatSize&);
 #endif

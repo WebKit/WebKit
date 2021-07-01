@@ -1,3 +1,53 @@
+2021-07-01  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Restrict IPC calls to ARKit SPI availability and runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227581
+
+        Reviewed by Tim Horton.
+
+        Guard all IPC calls related to <model> by the most appropriate platform-specific flag
+        and also ensure that those calls don't do anything unless the runtime flag is also
+        enabled.
+
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::takeModelElementFullscreen):
+        (WebKit::ModelElementController::modelElementDidCreatePreview):
+        * UIProcess/ModelElementController.cpp:
+        * UIProcess/ModelElementController.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::takeModelElementFullscreen):
+        (WebKit::WebPageProxy::modelElementDidCreatePreview):
+        (WebKit::WebPageProxy::modelElementPreviewDidObtainContextId):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::modelElementDidCreatePreview const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::modelElementPreviewDidObtainContextId):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetWebsiteDataStoreParameters):
+
 2021-07-01  Per Arne  <pvollan@apple.com>
 
         [macOS] Fix sandbox violations related to IOKit filtering

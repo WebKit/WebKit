@@ -132,10 +132,6 @@ struct PromisedAttachmentInfo;
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 struct TranslationContextMenuInfo;
 #endif
-
-#if ENABLE(MODEL_ELEMENT)
-struct ElementContext;
-#endif
 }
 
 namespace WebKit {

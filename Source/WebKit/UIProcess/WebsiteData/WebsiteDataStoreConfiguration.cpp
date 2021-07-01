@@ -47,7 +47,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
         setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory());
         setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory());
         setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory());
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
         setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
 #endif
     }
@@ -100,7 +100,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));
 #endif
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     copy->m_modelElementCacheDirectory = this->m_modelElementCacheDirectory;
 #endif
 

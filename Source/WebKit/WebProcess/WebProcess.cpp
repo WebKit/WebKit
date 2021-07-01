@@ -141,7 +141,7 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
 #include <WebCore/HTMLModelElement.h>
 #endif
 
@@ -572,7 +572,7 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     if (!parameters.modelElementCacheDirectory.isEmpty())
         WebCore::HTMLModelElement::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
 #endif

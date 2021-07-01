@@ -321,7 +321,7 @@ WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
     return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug", ShouldCreateDirectory::No);
 }
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
 WTF::String WebsiteDataStore::defaultModelElementCacheDirectory()
 {
     return tempDirectoryFileSystemRepresentation("ModelElement", ShouldCreateDirectory::No);

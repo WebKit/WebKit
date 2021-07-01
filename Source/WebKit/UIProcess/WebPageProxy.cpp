@@ -1023,9 +1023,11 @@ void WebPageProxy::didAttachToRunningProcess()
     m_systemPreviewController = makeUnique<SystemPreviewController>(*this);
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
-    ASSERT(!m_modelElementController);
-    m_modelElementController = makeUnique<ModelElementController>(*this);
+#if HAVE(ARKIT_INLINE_PREVIEW)
+    if (m_preferences->modelElementEnabled()) {
+        ASSERT(!m_modelElementController);
+        m_modelElementController = makeUnique<ModelElementController>(*this);
+    }
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -7776,7 +7778,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_systemPreviewController = nullptr;
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     m_modelElementController = nullptr;
 #endif
 
@@ -10688,20 +10690,17 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
-
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
 void WebPageProxy::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
     modelElementController()->takeModelElementFullscreen(contentLayerId);
-#endif
 }
+#endif
 
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
 void WebPageProxy::modelElementDidCreatePreview(const WebCore::ElementContext& context, const URL& url, const String& uuid, const FloatSize& size)
 {
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
     modelElementController()->modelElementDidCreatePreview(context, url, uuid, size);
-#endif
 }
 
 void WebPageProxy::modelElementPreviewDidObtainContextId(const WebCore::ElementContext& context, const String& uuid, uint32_t contextId)
@@ -10709,7 +10708,6 @@ void WebPageProxy::modelElementPreviewDidObtainContextId(const WebCore::ElementC
     if (hasRunningProcess())
         send(Messages::WebPage::ModelElementPreviewDidObtainContextId(context, uuid, contextId));
 }
-
 #endif
 
 #if !PLATFORM(COCOA)

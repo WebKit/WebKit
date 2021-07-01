@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ModelElementController.h"
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
 
 #import "Logging.h"
 #import "WebPageProxy.h"
@@ -55,6 +55,9 @@ namespace WebKit {
 
 void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
+    if (!m_webPageProxy->preferences().modelElementEnabled())
+        return;
+
     if (!is<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea()))
         return;
 
@@ -123,6 +126,9 @@ void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::
 
 void ModelElementController::modelElementDidCreatePreview(const WebCore::ElementContext& context, const URL& fileURL, const String& uuid, const WebCore::FloatSize& size)
 {
+    if (!m_webPageProxy.preferences().modelElementEnabled())
+        return;
+
     auto preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, size.width(), size.height()) UUID:[[NSUUID alloc] initWithUUIDString:uuid]]);
 
     LOG(ModelElement, "Created remote preview with UUID %s.", uuid.utf8().data());

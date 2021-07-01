@@ -167,6 +167,7 @@ HTMLModelElement& HTMLModelElement::readyPromiseResolve()
     return *this;
 }
 
+#if HAVE(ARKIT_INLINE_PREVIEW)
 static String& sharedModelElementCacheDirectory()
 {
     static NeverDestroyed<String> sharedModelElementCacheDirectory;
@@ -182,6 +183,7 @@ const String& HTMLModelElement::modelElementCacheDirectory()
 {
     return sharedModelElementCacheDirectory();
 }
+#endif
 
 // MARK: - DOM overrides.
 

@@ -253,7 +253,7 @@ public:
     const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
     const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
     const String& resolvedHSTSStorageDirectory() const { return m_resolvedConfiguration->hstsStorageDirectory(); }
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     const String& resolvedModelElementCacheDirectory() const { return m_resolvedConfiguration->modelElementCacheDirectory(); }
 #endif
 
@@ -332,7 +332,7 @@ public:
 #if USE(GLIB)
     static WTF::String defaultHSTSDirectory();
 #endif
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     static WTF::String defaultModelElementCacheDirectory();
 #endif
     static WTF::String defaultIndexedDBDatabaseDirectory();

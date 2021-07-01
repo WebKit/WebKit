@@ -695,7 +695,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     if (!javaScriptConfigurationDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, javaScriptConfigurationDirectoryExtensionHandle);
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     auto modelElementCacheDirectory = websiteDataStore.resolvedModelElementCacheDirectory();
     SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
     if (!modelElementCacheDirectory.isEmpty())
@@ -718,7 +718,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         m_domainsWithUserInteraction,
         m_domainsWithCrossPageStorageAccessQuirk,
 #endif
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
         WTFMove(modelElementCacheDirectory),
         WTFMove(modelElementCacheDirectoryExtensionHandle),
 #endif

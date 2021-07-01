@@ -189,7 +189,7 @@ interface ID3D11Device1;
 #include "PlatformXRSystem.h"
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
 #include "ModelElementController.h"
 #endif
 
@@ -573,9 +573,13 @@ public:
     void systemPreviewActionTriggered(const WebCore::SystemPreviewInfo&, const String&);
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     ModelElementController* modelElementController() { return m_modelElementController.get(); }
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
     void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(const WebCore::ElementContext&, const URL&, const String&, const WebCore::FloatSize&);
     void modelElementPreviewDidObtainContextId(const WebCore::ElementContext&, const String&, uint32_t);
 #endif
@@ -2608,7 +2612,7 @@ private:
     std::unique_ptr<SystemPreviewController> m_systemPreviewController;
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW)
     std::unique_ptr<ModelElementController> m_modelElementController;
 #endif
 

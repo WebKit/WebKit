@@ -34,6 +34,7 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
+#include "Settings.h"
 #include <pal/spi/mac/SystemPreviewSPI.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RetainPtr.h>
@@ -107,6 +108,9 @@ void HTMLModelElement::modelDidChange()
 
 void HTMLModelElement::inlinePreviewDidObtainContextId(const String& uuid, uint32_t contextId)
 {
+    if (!document().settings().modelElementEnabled())
+        return;
+
     if (uuid != (String)[m_inlinePreview uuid].UUIDString) {
         LOG(ModelElement, "HTMLModelElement::inlinePreviewDidObtainContextId() UUID mismatch, received %s but expected %s.", uuid.utf8().data(), ((String)[m_inlinePreview uuid].UUIDString).utf8().data());
         return;

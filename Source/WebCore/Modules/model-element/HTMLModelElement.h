@@ -61,8 +61,10 @@ public:
     RefPtr<SharedBuffer> modelData() const;
     RefPtr<Model> model() const;
 
+#if HAVE(ARKIT_INLINE_PREVIEW)
     WEBCORE_EXPORT static void setModelElementCacheDirectory(const String&);
     WEBCORE_EXPORT static const String& modelElementCacheDirectory();
+#endif
 
 #if HAVE(ARKIT_INLINE_PREVIEW_MAC)
     PlatformLayer* platformLayer() const;

@@ -644,7 +644,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     UpdateWithTextRecognitionResult(struct WebCore::TextRecognitionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (enum:uint8_t WebKit::TextRecognitionUpdateResult result) Async
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
     ModelElementPreviewDidObtainContextId(struct WebCore::ElementContext elementContext, String uuid, uint32_t contextId)
 #endif
 }

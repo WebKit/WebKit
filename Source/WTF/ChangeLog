@@ -1,3 +1,14 @@
+2021-07-01  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Restrict IPC calls to ARKit SPI availability and runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227581
+
+        Reviewed by Tim Horton.
+
+        Define a new compile-time flag when either of the iOS or macOS ARKit SPIs are available.
+
+        * wtf/PlatformHave.h:
+
 2021-07-01  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] <select> menus should scroll to the selected option
