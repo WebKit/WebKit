@@ -23,14 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
 #if HAVE(RSA_BSSA)
 
-#import <wtf/SoftLinking.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, CryptoKitCBridging, PAL_EXPORT);
+#import <CryptoKitPrivate/RSABSSA.h>
 
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, CryptoKitCBridging, RSABSSATokenBlinder, PAL_EXPORT);
+#else
 
+@interface RSABSSATokenWaitingActivation : NSObject
+#if HAVE(RSA_BSSA)
+- (RSABSSATokenReady*)activateTokenWithServerResponse:(NSData*)serverResponse error:(NSError* __autoreleasing *)error;
 #endif
+@property (nonatomic, retain, readonly) NSData* blindedMessage;
+@end
+
+@interface RSABSSATokenReady : NSObject
+@property (nonatomic, retain, readonly) NSData* tokenContent;
+@property (nonatomic, retain, readonly) NSData* keyId;
+@property (nonatomic, retain, readonly) NSData* signature;
+@end
+
+#if HAVE(RSA_BSSA)
+@interface RSABSSATokenBlinder : NSObject
+- (instancetype)initWithPublicKey:(NSData*)spkiBytes error:(NSError* __autoreleasing *)error;
+- (RSABSSATokenWaitingActivation*)tokenWaitingActivationWithContent:(NSData*)content error:(NSError* __autoreleasing *)error;
+@property (nonatomic, retain, readonly) NSData* keyId;
+@end
+#endif
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // HAVE(RSA_BSSA)

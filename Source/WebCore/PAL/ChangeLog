@@ -1,3 +1,19 @@
+2021-06-30  John Wilander  <wilander@apple.com>
+
+        PCM: Change import from CryptoKitCBridging to CryptoKitPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=227556
+        <rdar://79992592>
+
+        Reviewed by Alex Christensen.
+
+        Patch by Frederic Jacobs.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/CryptoKitPrivateSoftLink.h: Renamed from Source/WebCore/PAL/pal/cocoa/CryptoKitCBridgingSoftLink.h.
+        * pal/cocoa/CryptoKitPrivateSoftLink.mm: Renamed from Source/WebCore/PAL/pal/cocoa/CryptoKitCBridgingSoftLink.mm.
+        * pal/spi/cocoa/CryptoKitPrivateSPI.h: Renamed from Source/WebCore/PAL/pal/spi/cocoa/CryptoKitCBridgingSPI.h.
+
 2021-06-30  Antoine Quint  <graouts@webkit.org>
 
         [Model] [macOS] Add support for rendering model resources
