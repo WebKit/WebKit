@@ -37,6 +37,10 @@
 #include <type_traits>
 #include <wtf/text/TextStream.h>
 
+#if PLATFORM(WPE) || PLATFORM(GTK)
+#include "ThemeAdwaita.h"
+#endif
+
 namespace Nicosia {
 using namespace WebCore;
 
@@ -381,6 +385,9 @@ void CairoOperationRecorder::fillPath(const Path& path)
         }
     };
 
+    if (path.isEmpty())
+        return;
+
     auto& state = this->state();
     append(createCommand<FillPath>(path, Cairo::FillSource(state), Cairo::ShadowState(state)));
 }
@@ -442,6 +449,9 @@ void CairoOperationRecorder::strokePath(const Path& path)
             ts << indent << "StrokePath<>\n";
         }
     };
+
+    if (path.isEmpty())
+        return;
 
     auto& state = this->state();
     append(createCommand<StrokePath>(path, Cairo::StrokeSource(state), Cairo::ShadowState(state)));
@@ -608,6 +618,9 @@ void CairoOperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint
         }
     };
 
+    if (strokeStyle() == NoStroke)
+        return;
+
     auto& state = this->state();
     append(createCommand<DrawLine>(point1, point2, state.strokeStyle, state.strokeColor, state.strokeThickness, state.shouldAntialias));
 }
@@ -627,6 +640,9 @@ void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, float thi
             ts << indent << "DrawLinesForText<>\n";
         }
     };
+
+    if (widths.isEmpty())
+        return;
 
     auto& state = this->state();
     append(createCommand<DrawLinesForText>(point, thickness, widths, printing, doubleUnderlines, state.strokeColor));
@@ -673,6 +689,10 @@ void CairoOperationRecorder::drawEllipse(const FloatRect& rect)
 
 void CairoOperationRecorder::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    ThemeAdwaita::paintFocus(*this, path, color);
+    UNUSED_PARAM(width);
+#else
     struct DrawFocusRing final : PaintingOperation, OperationData<Path, float, Color> {
         virtual ~DrawFocusRing() = default;
 
@@ -687,12 +707,17 @@ void CairoOperationRecorder::drawFocusRing(const Path& path, float width, float 
         }
     };
 
-    UNUSED_PARAM(offset);
     append(createCommand<DrawFocusRing>(path, width, color));
+#endif
+    UNUSED_PARAM(offset);
 }
 
 void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    ThemeAdwaita::paintFocus(*this, rects, color);
+    UNUSED_PARAM(width);
+#else
     struct DrawFocusRing final : PaintingOperation, OperationData<Vector<FloatRect>, float, Color> {
         virtual ~DrawFocusRing() = default;
 
@@ -707,8 +732,9 @@ void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float
         }
     };
 
-    UNUSED_PARAM(offset);
     append(createCommand<DrawFocusRing>(rects, width, color));
+#endif
+    UNUSED_PARAM(offset);
 }
 
 void CairoOperationRecorder::save()
@@ -727,6 +753,8 @@ void CairoOperationRecorder::save()
         }
     };
 
+    GraphicsContext::save();
+
     append(createCommand<Save>());
 
     m_stateStack.append(m_stateStack.last());
@@ -734,9 +762,6 @@ void CairoOperationRecorder::save()
 
 void CairoOperationRecorder::restore()
 {
-    if (m_stateStack.isEmpty())
-        return;
-
     struct Restore final : PaintingOperation, OperationData<> {
         virtual ~Restore() = default;
 
@@ -750,6 +775,14 @@ void CairoOperationRecorder::restore()
             ts << indent << "Restore<>\n";
         }
     };
+
+    if (!stackSize())
+        return;
+
+    GraphicsContext::restore();
+
+    if (m_stateStack.isEmpty())
+        return;
 
     append(createCommand<Restore>());
 
@@ -917,6 +950,8 @@ void CairoOperationRecorder::beginTransparencyLayer(float opacity)
         }
     };
 
+    GraphicsContext::beginTransparencyLayer(opacity);
+
     append(createCommand<BeginTransparencyLayer>(opacity));
 }
 
@@ -935,6 +970,8 @@ void CairoOperationRecorder::endTransparencyLayer()
             ts << indent << "EndTransparencyLayer<>\n";
         }
     };
+
+    GraphicsContext::endTransparencyLayer();
 
     append(createCommand<EndTransparencyLayer>());
 }

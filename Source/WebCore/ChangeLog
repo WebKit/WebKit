@@ -1,3 +1,24 @@
+2021-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r278062): [Nicosia] Threaded rendering is broken since r278062
+        https://bugs.webkit.org/show_bug.cgi?id=227578
+
+        Reviewed by Žan Doberšek.
+
+        Since r278062 NicosiaCairoOperationRecorder is a GraphicsContext class, so we need to bring back things
+        previously done by the base class and chain up to base class save/restore and being/end transparency.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::fillPath):
+        (Nicosia::CairoOperationRecorder::strokePath):
+        (Nicosia::CairoOperationRecorder::drawLine):
+        (Nicosia::CairoOperationRecorder::drawLinesForText):
+        (Nicosia::CairoOperationRecorder::drawFocusRing):
+        (Nicosia::CairoOperationRecorder::save):
+        (Nicosia::CairoOperationRecorder::restore):
+        (Nicosia::CairoOperationRecorder::beginTransparencyLayer):
+        (Nicosia::CairoOperationRecorder::endTransparencyLayer):
+
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
         [Cocoa] Migrate WebRTC UDP socket handling to NW API
