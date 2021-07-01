@@ -1992,6 +1992,16 @@ void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, ScopeTyp
         *constantSymbolTableResult = constantSymbolTableResultTemp;
 }
 
+void BytecodeGenerator::pushClassHeadLexicalScope(VariableEnvironment& environment)
+{
+    pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNested, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
+}
+
+void BytecodeGenerator::popClassHeadLexicalScope(VariableEnvironment& environment)
+{
+    popLexicalScopeInternal(environment);
+}
+
 void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environment, TDZCheckOptimization tdzCheckOptimization, NestedScopeType nestedScopeType,
     RegisterID** constantSymbolTableResult, TDZRequirement tdzRequirement, ScopeType scopeType, ScopeRegisterType scopeRegisterType)
 {

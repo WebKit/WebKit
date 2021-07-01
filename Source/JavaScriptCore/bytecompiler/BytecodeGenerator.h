@@ -986,6 +986,9 @@ namespace JSC {
         void emitOutOfLineCatchHandler(RegisterID* thrownValueRegister, RegisterID* completionTypeRegister, TryData*);
         void emitOutOfLineFinallyHandler(RegisterID* exceptionRegister, RegisterID* completionTypeRegister, TryData*);
 
+        void pushClassHeadLexicalScope(VariableEnvironment&);
+        void popClassHeadLexicalScope(VariableEnvironment&);
+
     private:
         static constexpr int CurrentLexicalScopeIndex = -2;
         static constexpr int OutermostLexicalScopeIndex = -1;

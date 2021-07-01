@@ -23,6 +23,7 @@
 #pragma once
 
 #include "ExecutableInfo.h"
+#include "IterationStatus.h"
 #include "Lexer.h"
 #include "ModuleScopeData.h"
 #include "Nodes.h"
@@ -319,15 +320,16 @@ public:
     const HashSet<UniquedStringImpl*>& closedVariableCandidates() const { return m_closedVariableCandidates; }
     VariableEnvironment& declaredVariables() { return m_declaredVariables; }
     VariableEnvironment& lexicalVariables() { return m_lexicalVariables; }
-    VariableEnvironment& finalizeLexicalEnvironment() 
-    { 
+    void finalizeLexicalEnvironment()
+    {
         if (m_usesEval || m_needsFullActivation)
             m_lexicalVariables.markAllVariablesAsCaptured();
         else
             computeLexicallyCapturedVariablesAndPurgeCandidates();
-
-        return m_lexicalVariables;
     }
+
+    VariableEnvironment takeLexicalEnvironment() { return WTFMove(m_lexicalVariables); }
+    VariableEnvironment takeDeclaredVariables() { return WTFMove(m_declaredVariables); }
 
     void computeLexicallyCapturedVariablesAndPurgeCandidates()
     {
@@ -421,7 +423,7 @@ public:
         ASSERT(node);
         m_functionDeclarations.append(node);
     }
-    DeclarationStacks::FunctionStack&& takeFunctionDeclarations() { return WTFMove(m_functionDeclarations); }
+    DeclarationStacks::FunctionStack takeFunctionDeclarations() { return WTFMove(m_functionDeclarations); }
     
 
     DeclarationResultMask declareLexicalVariable(const Identifier* ident, bool isConstant, DeclarationImportType importType = DeclarationImportType::NotImported)
@@ -478,28 +480,6 @@ public:
     bool hasPrivateName(const Identifier& ident)
     {
         return m_lexicalVariables.hasPrivateName(ident);
-    }
-
-    void copyUndeclaredPrivateNamesTo(Scope& other)
-    {
-        m_lexicalVariables.copyUndeclaredPrivateNamesTo(other.m_lexicalVariables);
-    }
-
-    bool hasUsedButUndeclaredPrivateNames() const
-    {
-        if (m_lexicalVariables.privateNamesSize() > 0) {
-            for (auto entry : m_lexicalVariables.privateNames()) {
-                if (entry.value.isUsed() && !entry.value.isDeclared())
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    void usePrivateName(const Identifier& ident)
-    {
-        ASSERT(m_allowsLexicalDeclarations);
-        m_lexicalVariables.usePrivateName(ident);
     }
 
     DeclarationResultMask declarePrivateMethod(const Identifier& ident, ClassElementTag tag)
@@ -611,8 +591,10 @@ public:
     void forEachUsedVariable(const Func& func)
     {
         for (const UniquedStringImplPtrSet& set : m_usedVariables) {
-            for (UniquedStringImpl* impl : set)
-                func(impl);
+            for (UniquedStringImpl* impl : set) {
+                if (func(impl) == IterationStatus::Done)
+                    return;
+            }
         }
     }
     void useVariable(const Identifier* ident, bool isEval)
@@ -624,10 +606,14 @@ public:
         m_usesEval |= isEval;
         m_usedVariables.last().add(impl);
     }
+    void usePrivateName(const Identifier& ident)
+    {
+        ASSERT(m_allowsLexicalDeclarations);
+        useVariable(&ident, false);
+    }
 
     void pushUsedVariableSet() { m_usedVariables.append(UniquedStringImplPtrSet()); }
     size_t currentUsedVariablesSize() { return m_usedVariables.size(); }
-
     void revertToPreviousUsedVariables(size_t size) { m_usedVariables.resize(size); }
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }
@@ -1280,31 +1266,6 @@ private:
         return std::nullopt;
     }
 
-    ScopeRef privateNameScope()
-    {
-        ASSERT(m_scopeStack.size());
-        unsigned i = m_scopeStack.size() - 1;
-        while (i && !m_scopeStack[i].isPrivateNameScope())
-            i--;
-
-        ASSERT(m_scopeStack[i].isPrivateNameScope());
-        return ScopeRef(&m_scopeStack, i);
-    }
-
-    bool copyUndeclaredPrivateNamesToOuterScope()
-    {
-        ScopeRef current = privateNameScope();
-        unsigned i = current.index() - 1;
-        while (i && !m_scopeStack[i].isPrivateNameScope())
-            i--;
-
-        if (!i)
-            return !current->hasUsedButUndeclaredPrivateNames();
-
-        current->copyUndeclaredPrivateNamesTo(m_scopeStack[i]);
-        return true;
-    }
-
     ScopeRef closestParentOrdinaryFunctionNonLexicalScope()
     {
         unsigned i = m_scopeStack.size() - 1;
@@ -1342,40 +1303,46 @@ private:
         return currentScope();
     }
 
-    void popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
+    std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
     {
         EXCEPTION_ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
         ASSERT(m_scopeStack.size() > 1);
-        m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackClosedVariables);
-        
-        if (m_scopeStack.last().isArrowFunction())
-            m_scopeStack.last().setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded();
-        
-        if (!(m_scopeStack.last().isFunctionBoundary() && !m_scopeStack.last().isArrowFunctionBoundary()))
-            m_scopeStack[m_scopeStack.size() - 2].mergeInnerArrowFunctionFeatures(m_scopeStack.last().innerArrowFunctionFeatures());
+        Scope& lastScope = m_scopeStack.last();
 
-        if (!m_scopeStack.last().isFunctionBoundary() && m_scopeStack.last().needsFullActivation())
+        // Finalize lexical variables.
+        lastScope.finalizeLexicalEnvironment();
+        m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&lastScope, shouldTrackClosedVariables);
+        
+        if (lastScope.isArrowFunction())
+            lastScope.setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded();
+        
+        if (!(lastScope.isFunctionBoundary() && !lastScope.isArrowFunctionBoundary()))
+            m_scopeStack[m_scopeStack.size() - 2].mergeInnerArrowFunctionFeatures(lastScope.innerArrowFunctionFeatures());
+
+        if (!lastScope.isFunctionBoundary() && lastScope.needsFullActivation())
             m_scopeStack[m_scopeStack.size() - 2].setNeedsFullActivation();
+        std::tuple result { lastScope.takeLexicalEnvironment(), lastScope.takeFunctionDeclarations() };
         m_scopeStack.removeLast();
+        return result;
     }
     
-    ALWAYS_INLINE void popScope(ScopeRef& scope, bool shouldTrackClosedVariables)
+    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(ScopeRef& scope, bool shouldTrackClosedVariables)
     {
-        popScopeInternal(scope, shouldTrackClosedVariables);
+        return popScopeInternal(scope, shouldTrackClosedVariables);
     }
     
-    ALWAYS_INLINE void popScope(AutoPopScopeRef& scope, bool shouldTrackClosedVariables)
+    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoPopScopeRef& scope, bool shouldTrackClosedVariables)
     {
         scope.setPopped();
-        popScopeInternal(scope, shouldTrackClosedVariables);
+        return popScopeInternal(scope, shouldTrackClosedVariables);
     }
 
-    ALWAYS_INLINE void popScope(AutoCleanupLexicalScope& cleanupScope, bool shouldTrackClosedVariables)
+    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoCleanupLexicalScope& cleanupScope, bool shouldTrackClosedVariables)
     {
         RELEASE_ASSERT(cleanupScope.isValid());
         ScopeRef& scope = cleanupScope.scope();
         cleanupScope.setPopped();
-        popScopeInternal(scope, shouldTrackClosedVariables);
+        return popScopeInternal(scope, shouldTrackClosedVariables);
     }
 
     NEVER_INLINE DeclarationResultMask declareHoistedVariable(const Identifier* ident)
@@ -1509,6 +1476,7 @@ private:
         SourceElements* sourceElements;
         DeclarationStacks::FunctionStack functionDeclarations;
         VariableEnvironment varDeclarations;
+        VariableEnvironment lexicalVariables;
         UniquedStringImplPtrSet sloppyModeHoistedFunctions;
         CodeFeatures features;
         int numConstants;
@@ -1839,8 +1807,6 @@ private:
 
     template <class TreeBuilder> ALWAYS_INLINE bool isSimpleAssignmentTarget(TreeBuilder&, TreeExpression);
 
-    ALWAYS_INLINE bool usePrivateName(const Identifier*);
-
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();
     
@@ -2123,8 +2089,9 @@ private:
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DebuggerParseData* m_debuggerParseData;
     CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
-    bool m_seenTaggedTemplate { false };
     bool m_isInsideOrdinaryFunction;
+    bool m_seenTaggedTemplateInNonReparsingFunctionMode { false };
+    bool m_seenPrivateNameUseInNonReparsingFunctionMode { false };
 };
 
 
@@ -2172,9 +2139,9 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     startColumn,
                                     endColumn,
                                     parseResult.value().sourceElements,
-                                    parseResult.value().varDeclarations,
+                                    WTFMove(parseResult.value().varDeclarations),
                                     WTFMove(parseResult.value().functionDeclarations),
-                                    currentScope()->finalizeLexicalEnvironment(),
+                                    WTFMove(parseResult.value().lexicalVariables),
                                     WTFMove(parseResult.value().sloppyModeHoistedFunctions),
                                     parseResult.value().parameters,
                                     *m_source,

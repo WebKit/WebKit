@@ -273,12 +273,9 @@ namespace JSC {
     public:
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        VariableEnvironmentNode()
-        {
-        }
-
-        VariableEnvironmentNode(VariableEnvironment& lexicalDeclaredVariables);
-        VariableEnvironmentNode(VariableEnvironment& lexicalDeclaredVariables, FunctionStack&&);
+        VariableEnvironmentNode() = default;
+        VariableEnvironmentNode(VariableEnvironment&& lexicalDeclaredVariables);
+        VariableEnvironmentNode(VariableEnvironment&& lexicalDeclaredVariables, FunctionStack&&);
 
         VariableEnvironment& lexicalVariables() { return m_lexicalVariables; }
         FunctionStack& functionStack() { return m_functionStack; }
@@ -1624,7 +1621,7 @@ namespace JSC {
     class BlockNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(BlockNode);
     public:
-        BlockNode(const JSTokenLocation&, SourceElements*, VariableEnvironment&, FunctionStack&&);
+        BlockNode(const JSTokenLocation&, SourceElements*, VariableEnvironment&&, FunctionStack&&);
 
         StatementNode* singleStatement() const;
         StatementNode* lastStatement() const;
@@ -1746,7 +1743,7 @@ namespace JSC {
     class ForNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ForNode);
     public:
-        ForNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode*, VariableEnvironment&);
+        ForNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode*, VariableEnvironment&&);
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -1762,7 +1759,7 @@ namespace JSC {
     class EnumerationNode : public StatementNode, public ThrowableExpressionData, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(EnumerationNode);
     public:
-        EnumerationNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
+        EnumerationNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&&);
 
         ExpressionNode* lexpr() const { return m_lexpr; }
         ExpressionNode* expr() const { return m_expr; }
@@ -1776,7 +1773,7 @@ namespace JSC {
     class ForInNode final : public EnumerationNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ForInNode);
     public:
-        ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
+        ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&&);
 
     private:
         RegisterID* tryGetBoundLocal(BytecodeGenerator&);
@@ -1788,7 +1785,7 @@ namespace JSC {
     class ForOfNode final : public EnumerationNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ForOfNode);
     public:
-        ForOfNode(bool, const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
+        ForOfNode(bool, const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&&);
         bool isForOfNode() const final { return true; }
         bool isForAwait() const { return m_isForAwait; }
 
@@ -1878,7 +1875,7 @@ namespace JSC {
     class TryNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(TryNode);
     public:
-        TryNode(const JSTokenLocation&, StatementNode* tryBlock, DestructuringPatternNode* catchPattern, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock);
+        TryNode(const JSTokenLocation&, StatementNode* tryBlock, DestructuringPatternNode* catchPattern, StatementNode* catchBlock, VariableEnvironment&& catchEnvironment, StatementNode* finallyBlock);
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -1898,7 +1895,7 @@ namespace JSC {
         using ParserArenaRoot::operator new;
 
         ScopeNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, LexicalScopeFeatures);
-        ScopeNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, const SourceCode&, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
+        ScopeNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, const SourceCode&, SourceElements*, VariableEnvironment&&, FunctionStack&&, VariableEnvironment&&, UniquedStringImplPtrSet&&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
 
         const SourceCode& source() const { return m_source; }
         intptr_t sourceID() const { return m_source.providerID(); }
@@ -1974,7 +1971,7 @@ namespace JSC {
 
     class ProgramNode final : public ScopeNode {
     public:
-        ProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
+        ProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&&, FunctionStack&&, VariableEnvironment&&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
@@ -1989,7 +1986,7 @@ namespace JSC {
 
     class EvalNode final : public ScopeNode {
     public:
-        EvalNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
+        EvalNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&&, FunctionStack&&, VariableEnvironment&&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         ALWAYS_INLINE unsigned startColumn() const { return 0; }
         unsigned endColumn() const { return m_endColumn; }
@@ -2004,7 +2001,7 @@ namespace JSC {
 
     class ModuleProgramNode final : public ScopeNode {
     public:
-        ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
+        ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&&, FunctionStack&&, VariableEnvironment&&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
@@ -2262,7 +2259,7 @@ namespace JSC {
 
     class FunctionNode final : public ScopeNode {
     public:
-        FunctionNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
+        FunctionNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&&, FunctionStack&&, VariableEnvironment&&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, LexicalScopeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         FunctionParameters* parameters() const { return m_parameters; }
 
@@ -2378,7 +2375,7 @@ namespace JSC {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ClassExprNode);
     public:
         ClassExprNode(const JSTokenLocation&, const Identifier&, const SourceCode& classSource,
-            VariableEnvironment& classEnvironment, ExpressionNode* constructorExpresssion,
+            VariableEnvironment&& classHeadEnvironment, VariableEnvironment&& classEnvironment, ExpressionNode* constructorExpresssion,
             ExpressionNode* parentClass, PropertyListNode* classElements);
 
         const Identifier& name() { return m_name; }
@@ -2393,6 +2390,7 @@ namespace JSC {
 
         bool isClassExprNode() const final { return true; }
 
+        VariableEnvironment m_classHeadEnvironment;
         SourceCode m_classSource;
         const Identifier& m_name;
         const Identifier* m_ecmaName;
@@ -2675,7 +2673,7 @@ namespace JSC {
     class SwitchNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(SwitchNode);
     public:
-        SwitchNode(const JSTokenLocation&, ExpressionNode*, CaseBlockNode*, VariableEnvironment&, FunctionStack&&);
+        SwitchNode(const JSTokenLocation&, ExpressionNode*, CaseBlockNode*, VariableEnvironment&&, FunctionStack&&);
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;

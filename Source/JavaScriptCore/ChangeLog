@@ -1,3 +1,122 @@
+2021-06-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Private names should be handled by usedVariables mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=227476
+        rdar://76049469
+
+        Reviewed by Saam Barati.
+
+        Private name handling in the current parser has many problems.
+
+            1. The parser backtracks when it sees destructuring assignment, arrow function etc. In that case, the discarded code
+               must not have any effect on the outside of that code. However, private name handling is annotating "used" of the
+               upper scopes, which is wrong.
+            2. In class expression, private name lookup intentionally skips the class-scope when parsing class heritage. But this
+               is not correct since CodeBlock will perform lookup on the normal scope chain and this will look into the class-scope
+               inconsistently. This means that we could encounter different private name at runtime. (it is tested in the added test).
+            3. We skip inner function parsing when it is parsed previously. At that case, we must preserve private name annotation,
+               but restored function information does not preserve that.
+
+        This patch changes how private name is handled.
+
+            1. We were anyway defining #XXX variables which holds private symbols. So we track "use" information by the mechanism used
+               for usual variables. We remove Used / Declared bits from PrivateNameEntry since they are not necessary at runtime, and
+               these information is handled / tracked in Parser's Scope. For backtracking, we already have a mechanism to roll-back
+               m_usedVariables, so using variable mechanism automatically fixes the problem.
+            2. We define class-head-scope separately from class-scope. class-heritage expression can see class name, but it cannot use
+               private names. Previously, our implementation attempted to achieve that by hacky way: skipping this class-scope for private
+               names only while parsing class-heritage. But this was wrong since it does not consider CodeBlock's linking phase as described
+               in the problem (2). Instead, we just define class-head-scope which holds class constructor name.
+            3. We clean up popScopeInternal to populate lexical-variables and function-stack. Previously, we are stealing them before popping
+               the scope when necessary, but this is a hack and a bit wrong since scope's popping operation needs to access these information
+               in some cases. Instead, popScopeInternal populates them after popping the scope.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushClassHeadLexicalScope):
+        (JSC::BytecodeGenerator::popClassHeadLexicalScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createClassExpr):
+        (JSC::ASTBuilder::createBlockStatement):
+        (JSC::ASTBuilder::createForLoop):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createForOfLoop):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createSwitchStatement):
+        * parser/NodeConstructors.h:
+        (JSC::ForNode::ForNode):
+        (JSC::TryNode::TryNode):
+        (JSC::ClassExprNode::ClassExprNode):
+        (JSC::SwitchNode::SwitchNode):
+        (JSC::BlockNode::BlockNode):
+        (JSC::EnumerationNode::EnumerationNode):
+        (JSC::ForInNode::ForInNode):
+        (JSC::ForOfNode::ForOfNode):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+        * parser/Nodes.h:
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode): Deleted.
+        * parser/Parser.cpp:
+        (JSC::isPrivateFieldName):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseSwitchStatement):
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseFunctionDeclarationStatement):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::usePrivateName): Deleted.
+        * parser/Parser.h:
+        (JSC::Scope::finalizeLexicalEnvironment):
+        (JSC::Scope::takeLexicalEnvironment):
+        (JSC::Scope::takeDeclaredVariables):
+        (JSC::Scope::takeFunctionDeclarations):
+        (JSC::Scope::forEachUsedVariable):
+        (JSC::Scope::usePrivateName):
+        (JSC::Scope::currentUsedVariablesSize):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser::popScope):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::Scope::copyUndeclaredPrivateNamesTo): Deleted.
+        (JSC::Scope::hasUsedButUndeclaredPrivateNames const): Deleted.
+        (JSC::Parser::privateNameScope): Deleted.
+        (JSC::Parser::copyUndeclaredPrivateNamesToOuterScope): Deleted.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createClassExpr):
+        (JSC::SyntaxChecker::createBlockStatement):
+        (JSC::SyntaxChecker::createForLoop):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createForOfLoop):
+        (JSC::SyntaxChecker::createTryStatement):
+        (JSC::SyntaxChecker::createSwitchStatement):
+        * parser/VariableEnvironment.cpp:
+        (JSC::VariableEnvironmentEntry::dump const):
+        (JSC::VariableEnvironment::declarePrivateField):
+        (JSC::VariableEnvironment::declarePrivateAccessor):
+        (JSC::VariableEnvironment::declarePrivateMethod):
+        (JSC::VariableEnvironment::dump const):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironment::declarePrivateField):
+        (JSC::VariableEnvironment::privateNameEnvironment):
+        (JSC::VariableEnvironment::addPrivateNamesFrom):
+        (JSC::PrivateNameEntry::isUsed const): Deleted.
+        (JSC::PrivateNameEntry::isDeclared const): Deleted.
+        (JSC::PrivateNameEntry::setIsUsed): Deleted.
+        (JSC::PrivateNameEntry::setIsDeclared): Deleted.
+        (JSC::VariableEnvironment::usePrivateName): Deleted.
+        (JSC::VariableEnvironment::copyPrivateNamesTo const): Deleted.
+        (JSC::VariableEnvironment::copyUndeclaredPrivateNamesTo const): Deleted.
+
 2021-06-30  Mark Lam  <mark.lam@apple.com>
 
         ARM64: Disable selection of BFI instruction variants by default.
