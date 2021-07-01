@@ -1,3 +1,16 @@
+2021-07-01  Tim Nguyen  <ntim@apple.com>
+
+        Change `typedef EventSender<X> Y` to `using Y = EventSender<X>`
+        https://bugs.webkit.org/show_bug.cgi?id=227570
+
+        Reviewed by Antti Koivisto.
+
+        This is for consistency with HTMLDialogElement.h, HTMLStyleElement.h and SVGSMILElement.h.
+
+        * html/HTMLDetailsElement.h:
+        * html/HTMLLinkElement.h:
+        * loader/ImageLoader.h:
+
 2021-06-30  John Wilander  <wilander@apple.com>
 
         PCM: Change import from CryptoKitCBridging to CryptoKitPrivate

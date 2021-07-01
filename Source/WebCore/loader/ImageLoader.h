@@ -38,7 +38,7 @@ class Page;
 class RenderImageResource;
 
 template<typename T> class EventSender;
-typedef EventSender<ImageLoader> ImageEventSender;
+using ImageEventSender = EventSender<ImageLoader>;
 
 enum class RelevantMutation : bool { Yes, No };
 
