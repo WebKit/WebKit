@@ -1,3 +1,14 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        Disable relay for UDP sockets when not needed
+        https://bugs.webkit.org/show_bug.cgi?id=227253
+        <rdar://problem/79912154>
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+        Add a macro for new NW methods.
+
 2021-07-01  Antoine Quint  <graouts@webkit.org>
 
         [Model] Restrict IPC calls to ARKit SPI availability and runtime flag

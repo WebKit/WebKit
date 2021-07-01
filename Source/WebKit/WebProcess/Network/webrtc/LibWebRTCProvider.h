@@ -52,7 +52,7 @@ public:
     explicit LibWebRTCProvider(WebPage&);
 
 private:
-    std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */) final;
+    std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, bool /* isFirstParty */, WebCore::RegistrableDomain&&) final;
 
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 

@@ -31,10 +31,21 @@
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
+#include "NWParametersSPI.h"
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+#if HAVE(NWPARAMETERS_TRACKER_API)
+SOFT_LINK_LIBRARY(libnetworkextension)
+SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDisposition_t)
+SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerAppInfoRef)
+SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDomainContextRef)
+SOFT_LINK(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDisposition_t*, (NEHelperTrackerAppInfoRef *app_info_ref, CFArrayRef domains, NEHelperTrackerDomainContextRef *trackerDomainContextRef, CFIndex *trackerDomainIndex), (app_info_ref, domains, trackerDomainContextRef, trackerDomainIndex))
+#endif
 
 namespace WebKit {
 
@@ -42,20 +53,26 @@ using namespace WebCore;
 
 class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCounted<NetworkRTCUDPSocketCocoaConnections> {
 public:
-    static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTFMove(connection))); }
+    static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTFMove(connection), isFirstParty, isRelayDisabled, domain)); }
 
     void close();
     void setOption(int option, int value);
     void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&);
 
 private:
-    NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&);
+    NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
 
     RetainPtr<nw_connection_t> createNWConnection(const rtc::SocketAddress&);
     void setupNWConnection(nw_connection_t, const rtc::SocketAddress&);
+    void configureParameters(nw_parameters_t, nw_ip_version_t);
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
+#if HAVE(NWPARAMETERS_TRACKER_API)
+    bool m_isFirstParty { false };
+    bool m_isKnownTracker { false };
+#endif
+    bool m_shouldBypassRelay { false };
     rtc::SocketAddress m_address;
     RetainPtr<nw_listener_t> m_nwListener;
     Lock m_nwConnectionsLock;
@@ -73,16 +90,15 @@ static dispatch_queue_t udpSocketQueue()
     return queue;
 }
 
-std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCUDPSocketCocoa::createUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&& connection)
+std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCUDPSocketCocoa::createUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
 {
-    // FIXME: Decide how to use minPort/maxPort.
-    return makeUnique<NetworkRTCUDPSocketCocoa>(identifier, rtcProvider, address, WTFMove(connection));
+    return makeUnique<NetworkRTCUDPSocketCocoa>(identifier, rtcProvider, address, WTFMove(connection), isFirstParty, isRelayDisabled, domain);
 }
 
-NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection)
+NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
     : m_rtcProvider(rtcProvider)
     , m_identifier(identifier)
-    , m_nwConnections(NetworkRTCUDPSocketCocoaConnections::create(identifier, rtcProvider, address, WTFMove(connection)))
+    , m_nwConnections(NetworkRTCUDPSocketCocoaConnections::create(identifier, rtcProvider, address, WTFMove(connection), isFirstParty, isRelayDisabled, domain))
 {
 }
 
@@ -119,9 +135,24 @@ static rtc::SocketAddress socketAddressFromIncomingConnection(nw_connection_t co
     return rtc::SocketAddress { nw_endpoint_get_hostname(endpoint.get()), nw_endpoint_get_port(endpoint.get()) };
 }
 
-NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection)
+#if HAVE(NWPARAMETERS_TRACKER_API)
+static bool isKnownTracker(const WebCore::RegistrableDomain& domain)
+{
+    NSArray<NSString *> *domains = @[domain.string()];
+    NEHelperTrackerDomainContextRef *context = nil;
+    CFIndex index = 0;
+    return !!NEHelperTrackerGetDisposition(nullptr, (CFArrayRef)domains, context, &index);
+}
+#endif
+
+NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
     : m_identifier(identifier)
     , m_connection(WTFMove(connection))
+#if HAVE(NWPARAMETERS_TRACKER_API)
+    , m_isFirstParty(isFirstParty)
+    , m_isKnownTracker(isKnownTracker(domain))
+#endif
+    , m_shouldBypassRelay(isRelayDisabled)
 {
     auto parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     {
@@ -132,11 +163,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
         m_address = { nw_endpoint_get_hostname(localEndpoint.get()), nw_endpoint_get_port(localEndpoint.get()) };
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
-    {
-        auto protocolStack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
-        auto options = adoptNS(nw_protocol_stack_copy_internet_protocol(protocolStack.get()));
-        nw_ip_options_set_version(options.get(), address.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
-    }
+    configureParameters(parameters.get(), address.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
 
     m_nwListener = adoptNS(nw_listener_create(parameters.get()));
     nw_listener_set_queue(m_nwListener.get(), udpSocketQueue());
@@ -175,6 +202,20 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     }).get());
 
     nw_listener_start(m_nwListener.get());
+}
+
+void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t parameters, nw_ip_version_t version)
+{
+    auto protocolStack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters));
+    auto options = adoptNS(nw_protocol_stack_copy_internet_protocol(protocolStack.get()));
+    nw_ip_options_set_version(options.get(), version);
+
+    if (m_shouldBypassRelay)
+        nw_parameters_set_account_id(parameters, "com.apple.safari.peertopeer");
+#if HAVE(NWPARAMETERS_TRACKER_API)
+    nw_parameters_set_is_third_party_web_content(parameters, m_isFirstParty);
+    nw_parameters_set_is_known_tracker(parameters, m_isKnownTracker);
+#endif
 }
 
 void NetworkRTCUDPSocketCocoaConnections::close()
@@ -225,11 +266,7 @@ RetainPtr<nw_connection_t> NetworkRTCUDPSocketCocoaConnections::createNWConnecti
         auto localEndpoint = adoptNS(nw_endpoint_create_host(hostAddress.c_str(), String::number(m_address.port()).utf8().data()));
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
-    {
-        auto protocolStack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
-        auto options = adoptNS(nw_protocol_stack_copy_internet_protocol(protocolStack.get()));
-        nw_ip_options_set_version(options.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
-    }
+    configureParameters(parameters.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
 
     auto remoteHostAddress = remoteAddress.ipaddr().ToString();
     if (remoteAddress.ipaddr().IsNil())

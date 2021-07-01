@@ -51,7 +51,7 @@ public:
     LibWebRTCSocket* socket(WebCore::LibWebRTCSocketIdentifier identifier) { return m_sockets.get(identifier); }
 
     void forSocketInGroup(const void* socketGroup, const Function<void(LibWebRTCSocket&)>&);
-    rtc::AsyncPacketSocket* createUdpSocket(const void* socketGroup, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort);
+    rtc::AsyncPacketSocket* createUdpSocket(const void* socketGroup, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
     rtc::AsyncPacketSocket* createServerTcpSocket(const void* socketGroup, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options);
     rtc::AsyncPacketSocket* createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions&);
     rtc::AsyncPacketSocket* createNewConnectionSocket(LibWebRTCSocket&, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier, const rtc::SocketAddress&);

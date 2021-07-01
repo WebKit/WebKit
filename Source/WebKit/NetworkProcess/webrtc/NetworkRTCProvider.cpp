@@ -132,11 +132,11 @@ void NetworkRTCProvider::createSocket(LibWebRTCSocketIdentifier identifier, std:
     addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), type, WTFMove(connection)));
 }
 
-void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
+void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&& domain)
 {
 #if PLATFORM(COCOA)
     if (m_platformUDPSocketsEnabled) {
-        if (auto socket = NetworkRTCUDPSocketCocoa::createUDPSocket(identifier, *this, address.value, minPort, maxPort, m_ipcConnection.copyRef())) {
+        if (auto socket = NetworkRTCUDPSocketCocoa::createUDPSocket(identifier, *this, address.value, minPort, maxPort, m_ipcConnection.copyRef(), isFirstParty, isRelayDisabled, WTFMove(domain))) {
             addSocket(identifier, WTFMove(socket));
             return;
         }

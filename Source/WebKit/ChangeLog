@@ -1,3 +1,31 @@
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        Disable relay for UDP sockets when not needed
+        https://bugs.webkit.org/show_bug.cgi?id=227253
+
+        Reviewed by Eric Carlson.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::create):
+        (WebKit::NetworkRTCUDPSocketCocoa::createUDPSocket):
+        (WebKit::NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::createNWConnection):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::RTCSocketFactory::RTCSocketFactory):
+        (WebKit::RTCSocketFactory::CreateUdpSocket):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2021-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Selecting or dragging images that contain recognizable text is difficult in Mail compose

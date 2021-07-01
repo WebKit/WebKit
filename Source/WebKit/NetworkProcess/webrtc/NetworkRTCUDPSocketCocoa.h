@@ -60,9 +60,9 @@ class NetworkRTCUDPSocketCocoaConnections;
 class NetworkRTCUDPSocketCocoa final : public NetworkRTCProvider::Socket {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<NetworkRTCProvider::Socket> createUDPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&&);
+    static std::unique_ptr<NetworkRTCProvider::Socket> createUDPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&&, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
 
-    NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&);
+    NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
     ~NetworkRTCUDPSocketCocoa();
 
 private:
