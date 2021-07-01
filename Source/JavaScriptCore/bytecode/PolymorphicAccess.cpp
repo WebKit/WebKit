@@ -522,7 +522,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
 
     bool doesCalls = false;
     bool doesJSGetterSetterCalls = false;
-    bool canBeShared = true;
+    bool canBeShared = Options::useDataICSharing();
     Vector<JSCell*> cellsToMark;
     FixedVector<RefPtr<AccessCase>> keys(cases.size());
     unsigned index = 0;
