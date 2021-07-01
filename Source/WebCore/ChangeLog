@@ -1,3 +1,23 @@
+2021-07-01  Dean Jackson  <dino@apple.com>
+
+        Add a layoutTrait for an additional controls scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=227561
+        <rdar://problem/79997951>
+
+        Reviewed by Anders Carlsson.
+
+        Allow controls with different layout traits to apply
+        a scale factor to their buttons.
+
+        No change in behaviour.
+
+        * Modules/modern-media-controls/controls/button.js:
+        (Button.prototype._updateImageMetrics):
+        (Button):
+        * Modules/modern-media-controls/controls/layout-traits.js:
+        (LayoutTraits.prototype.additionalControlScaleFactor):
+        (LayoutTraits):
+
 2021-07-01  Antoine Quint  <graouts@webkit.org>
 
         [Model] Restrict IPC calls to ARKit SPI availability and runtime flag

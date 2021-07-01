@@ -202,8 +202,8 @@ class Button extends LayoutItem
 
     _updateImageMetrics()
     {
-        let width = this._imageSource.width * this._scaleFactor;
-        let height = this._imageSource.height * this._scaleFactor;
+        let width = this._imageSource.width * this._scaleFactor * this.layoutTraits.additionalControlScaleFactor();
+        let height = this._imageSource.height * this._scaleFactor * this.layoutTraits.additionalControlScaleFactor();
 
         if (this._iconName.type === "png" || this._iconName.type === "pdf") {
             width /= window.devicePixelRatio;

@@ -75,20 +75,25 @@ class LayoutTraits
     {
         throw "Derived class must implement this function.";
     }
-    
+
     playPauseButtonScaleFactor()
     {
         throw "Derived class must implement this function.";
     }
-    
+
     controlsDependOnPageScaleFactor()
     {
         throw "Derived class must implement this function.";
     }
-    
+
     promoteSubMenusWhenShowingMediaControlsContextMenu()
     {
         throw "Derived class must implement this function.";
+    }
+
+    additionalControlScaleFactor()
+    {
+        return 1;
     }
 }
 
