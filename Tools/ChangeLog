@@ -9,6 +9,21 @@
         * Scripts/webkitpy/common/checkout/scm/scm.py:
         (SCM.discard_untracked_files): Never discard the autoinstalled directory.
 
+2021-07-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Stress Test EWS] Temporarily disable GuardMalloc test mode to avoid false positives
+        https://bugs.webkit.org/show_bug.cgi?id=227595
+
+        Reviewed by Aakash Jain.
+
+        Since the infrastructure issue in webkit.org/b/227365 is causing false positives on this queue,
+        disable it until we can investigate and address the root cause.
+
+        * CISupport/ews-build/factories.py:
+        (StressTestFactory.__init__):
+        * CISupport/ews-build/factories_unittest.py:
+        (TestStressTestFactory.test_stress_test_factory):
+
 2021-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Selecting or dragging images that contain recognizable text is difficult in Mail compose

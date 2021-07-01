@@ -154,7 +154,6 @@ class StressTestFactory(TestFactory):
         self.addStep(WaitForCrashCollection())
         self.addStep(KillOldProcesses())
         self.addStep(RunWebKitTestsInStressMode())
-        self.addStep(RunWebKitTestsInStressGuardmallocMode())
         self.addStep(TriggerCrashLogSubmission())
         self.addStep(SetBuildSummary())
 

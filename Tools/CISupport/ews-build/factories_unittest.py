@@ -611,7 +611,6 @@ class TestStressTestFactory(TestCase):
             _BuildStepFactory(steps.WaitForCrashCollection),
             _BuildStepFactory(steps.KillOldProcesses),
             _BuildStepFactory(steps.RunWebKitTestsInStressMode),
-            _BuildStepFactory(steps.RunWebKitTestsInStressGuardmallocMode),
             _BuildStepFactory(steps.TriggerCrashLogSubmission),
             _BuildStepFactory(steps.SetBuildSummary),
         ])
