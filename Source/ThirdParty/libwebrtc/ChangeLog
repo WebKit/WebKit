@@ -1,5 +1,17 @@
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
+        Disable ABSL_HAVE_THREAD_LOCAL in libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=227577
+        <rdar://79915864>
+
+        Reviewed by Eric Carlson.
+
+        We do no want to resort on thread local yet so disable ABSL_HAVE_THREAD_LOCAL until we can use it properly.
+
+        * Source/third_party/abseil-cpp/absl/base/config.h:
+
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
         [Cocoa] Migrate WebRTC UDP socket handling to NW API
         https://bugs.webkit.org/show_bug.cgi?id=227210
 
