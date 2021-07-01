@@ -486,7 +486,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-doub
 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/select-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/referrer-policies.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/relative-urls.html [ Skip ]

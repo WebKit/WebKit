@@ -1,3 +1,13 @@
+2021-07-01  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed, unskip web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html
+        https://bugs.webkit.org/show_bug.cgi?id=227574
+
+        This was unskipped in https://trac.webkit.org/changeset/279401/webkit, before it was (accidentally?) re-skipped
+        again in https://trac.webkit.org/changeset/279427/webkit.
+
+        * TestExpectations:
+
 2021-07-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Support unprefixed :autofill pseudo-class.
