@@ -2824,6 +2824,45 @@ private:
             Value* left = m_value->child(0);
             Value* right = m_value->child(1);
 
+            // EXTR Pattern: d = ((n & mask) << highWidth) | (m >> lowWidth)
+            // Where: highWidth = datasize - lowWidth
+            //        mask = (1 << lowWidth) - 1
+            auto tryAppendEXTR = [&] (Value* left, Value* right) -> bool {
+                Air::Opcode opcode = opcodeForType(ExtractRegister32, ExtractRegister64, m_value->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                    return false;
+                if (left->opcode() != Shl || left->child(0)->opcode() != BitAnd || right->opcode() != ZShr)
+                    return false;
+
+                Value* nValue = left->child(0)->child(0);
+                Value* maskValue = left->child(0)->child(1);
+                Value* highWidthValue = left->child(1);
+                Value* mValue = right->child(0);
+                Value* lowWidthValue = right->child(1);
+                if (m_locked.contains(nValue) || m_locked.contains(mValue) || !maskValue->hasInt())
+                    return false;
+                if (!imm(highWidthValue) || highWidthValue->asInt() < 0)
+                    return false;
+                if (!imm(lowWidthValue) || lowWidthValue->asInt() < 0)
+                    return false;
+
+                uint64_t mask = maskValue->asInt();
+                if (!mask || mask & (mask + 1))
+                    return false;
+                uint64_t maskBitCount = WTF::bitCount(mask);
+                uint64_t highWidth = highWidthValue->asInt();
+                uint64_t lowWidth = lowWidthValue->asInt();
+                uint64_t datasize = opcode == ExtractRegister32 ? 32 : 64;
+                if (lowWidth + highWidth != datasize || maskBitCount != lowWidth)
+                    return false;
+
+                append(opcode, tmp(nValue), tmp(mValue), imm(lowWidthValue), tmp(m_value));
+                return true;
+            };
+
+            if (tryAppendEXTR(left, right) || tryAppendEXTR(right, left))
+                return;           
+
             // BFI Pattern: d = ((n & mask1) << lsb) | (d & mask2)
             // Where: mask1 = ((1 << width) - 1)
             //        mask2 = ~(mask1 << lsb)

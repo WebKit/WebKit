@@ -539,6 +539,16 @@ public:
         m_assembler.sbfx<64>(dest, src, lsb.m_value, width.m_value);
     }    
 
+    void extractRegister32(RegisterID n, RegisterID m, TrustedImm32 lsb, RegisterID d)
+    {
+        m_assembler.extr<32>(d, n, m, lsb.m_value);
+    }
+
+    void extractRegister64(RegisterID n, RegisterID m, TrustedImm32 lsb, RegisterID d)
+    {
+        m_assembler.extr<64>(d, n, m, lsb.m_value);
+    } 
+
     void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
     {
         if (scratchForMask == InvalidGPRReg)

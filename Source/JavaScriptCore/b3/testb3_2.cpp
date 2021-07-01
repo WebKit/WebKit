@@ -3703,6 +3703,200 @@ void testOrNot64()
     }
 }
 
+void testBitfieldZeroExtend32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> amounts = { 0, 14, 31 };
+
+    // Turn this: ZShr(Shl(n, amount)), amount)
+    // Into this: BitAnd(n, mask)
+    // Conditions:
+    // 1. 0 <= amount < datasize
+    // 2. width = datasize - amount
+    // 3. mask is !(mask & (mask + 1)) where bitCount(mask) == width
+    auto test = [&] (uint32_t n, uint32_t amount) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* shlValue = root->appendNew<Value>(proc, Shl, Origin(), nValue, amountValue);
+        Value* zshrValue = root->appendNew<Value>(proc, ZShr, Origin(), shlValue, amountValue);
+        root->appendNewControlValue(proc, Return, Origin(), zshrValue);
+
+        auto code = compileProc(proc);
+        if (isARM64() && amount > 0)
+            checkUsesInstruction(*code, "and");
+        return invoke<uint32_t>(*code, n, amount);
+    };
+
+    uint32_t datasize = CHAR_BIT * sizeof(uint32_t);
+    for (auto nOperand : int32Operands()) {
+        for (auto amount : amounts) {
+            uint32_t n = nOperand.value;
+            uint32_t width = datasize - amount;
+            uint32_t mask = width == datasize ? std::numeric_limits<uint32_t>::max() : (1U << width) - 1U;
+            uint32_t lhs = test(n, amount);
+            uint32_t rhs = (n & mask);
+            CHECK(lhs == rhs);
+        }
+    }
+}
+
+void testBitfieldZeroExtend64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint64_t> amounts = { 0, 34, 63 };
+
+    auto test = [&] (uint64_t n, uint64_t amount) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* shlValue = root->appendNew<Value>(proc, Shl, Origin(), nValue, amountValue);
+        Value* zshrValue = root->appendNew<Value>(proc, ZShr, Origin(), shlValue, amountValue);
+        root->appendNewControlValue(proc, Return, Origin(), zshrValue);
+
+        auto code = compileProc(proc);
+        if (isARM64() && amount > 0)
+            checkUsesInstruction(*code, "and");
+        return invoke<uint64_t>(*code, n, amount);
+    };
+
+    uint64_t datasize = CHAR_BIT * sizeof(uint64_t);
+    for (auto nOperand : int64Operands()) {
+        for (auto amount : amounts) {
+            uint64_t n = nOperand.value;
+            uint64_t width = datasize - amount;
+            uint64_t mask = width == datasize ? std::numeric_limits<uint64_t>::max() : (1ULL << width) - 1ULL;
+            uint64_t lhs = test(n, amount);
+            uint64_t rhs = (n & mask);
+            CHECK(lhs == rhs);
+        }
+    }
+}
+
+void testExtractRegister32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;    
+    Vector<uint32_t> lowWidths = { 0, 17, 31 };
+
+    // Test Pattern: ((n & mask1) << highWidth) | ((m & mask2) >> lowWidth)
+    // Where: highWidth = datasize - lowWidth
+    //        mask1 = (1 << lowWidth) - 1
+    //        mask2 = ~mask1
+    auto test = [&] (uint32_t n, uint32_t m, uint32_t mask1, uint32_t mask2, uint32_t highWidth, uint32_t lowWidth) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* mask1Value = root->appendNew<Const32Value>(proc, Origin(), mask1);
+        Value* mask2Value = root->appendNew<Const32Value>(proc, Origin(), mask2);
+        Value* highWidthValue = root->appendNew<Const32Value>(proc, Origin(), highWidth);
+        Value* lowWidthValue = root->appendNew<Const32Value>(proc, Origin(), lowWidth);
+
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, mask1Value);
+        Value* left = root->appendNew<Value>(proc, Shl, Origin(), leftAndValue, highWidthValue);
+
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), mValue, mask2Value);
+        Value* right = root->appendNew<Value>(proc, ZShr, Origin(), rightAndValue, lowWidthValue);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), left, right));
+
+        auto code = compileProc(proc);
+        if (isARM64() && lowWidth > 0)
+            checkUsesInstruction(*code, "extr");
+        return invoke<uint32_t>(*code, n, m);
+    };
+
+    uint32_t datasize = CHAR_BIT * sizeof(uint32_t);
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto lowWidth : lowWidths) {
+                uint32_t n = nOperand.value;
+                uint32_t m = mOperand.value;
+                uint32_t highWidth = datasize - lowWidth;
+                uint32_t mask1 = (1U << lowWidth) - 1U;
+                uint32_t mask2 = ~mask1;
+                uint32_t left = highWidth == datasize ? 0U : ((n & mask1) << highWidth);
+                uint32_t right = ((m & mask2) >> lowWidth);
+                uint32_t rhs = left | right;
+                uint32_t lhs = test(n, m, mask1, mask2, highWidth, lowWidth);
+                CHECK(lhs == rhs);
+            }
+        }
+    }
+}
+
+void testExtractRegister64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;    
+    Vector<uint64_t> lowWidths = { 0, 34, 63 };
+
+    // Test Pattern: ((n & mask1) << highWidth) | ((m & mask2) >> lowWidth)
+    // Where: highWidth = datasize - lowWidth
+    //        mask1 = (1 << lowWidth) - 1
+    //        mask2 = ~mask1
+    auto test = [&] (uint64_t n, uint64_t m, uint64_t mask1, uint64_t mask2, uint64_t highWidth, uint64_t lowWidth) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* mask1Value = root->appendNew<Const64Value>(proc, Origin(), mask1);
+        Value* mask2Value = root->appendNew<Const64Value>(proc, Origin(), mask2);
+        Value* highWidthValue = root->appendNew<Const32Value>(proc, Origin(), highWidth);
+        Value* lowWidthValue = root->appendNew<Const32Value>(proc, Origin(), lowWidth);
+
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, mask1Value);
+        Value* left = root->appendNew<Value>(proc, Shl, Origin(), leftAndValue, highWidthValue);
+
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), mValue, mask2Value);
+        Value* right = root->appendNew<Value>(proc, ZShr, Origin(), rightAndValue, lowWidthValue);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), left, right));
+
+        auto code = compileProc(proc);
+        if (isARM64() && lowWidth > 0)
+            checkUsesInstruction(*code, "extr");
+        return invoke<uint64_t>(*code, n, m);
+    };
+
+    uint64_t datasize = CHAR_BIT * sizeof(uint64_t);
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto lowWidth : lowWidths) {
+                uint64_t n = nOperand.value;
+                uint64_t m = mOperand.value;
+                uint64_t highWidth = datasize - lowWidth;
+                uint64_t mask1 = (1ULL << lowWidth) - 1ULL;
+                uint64_t mask2 = ~mask1;
+                uint64_t left = highWidth == datasize ? 0ULL : ((n & mask1) << highWidth);
+                uint64_t right = ((m & mask2) >> lowWidth);
+                uint64_t rhs = left | right;
+                uint64_t lhs = test(n, m, mask1, mask2, highWidth, lowWidth);
+                CHECK(lhs == rhs);
+            }
+        }
+    }
+}
+
 void testBitAndZeroShiftRightArgImmMask32()
 {
     // Turn this: (tmp >> imm) & mask 
@@ -4603,6 +4797,10 @@ void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testBIC64());
     RUN(testOrNot32());
     RUN(testOrNot64());
+    RUN(testBitfieldZeroExtend32());
+    RUN(testBitfieldZeroExtend64());
+    RUN(testExtractRegister32());
+    RUN(testExtractRegister64());
     RUN(testInsertSignedBitfieldInZero32());
     RUN(testInsertSignedBitfieldInZero64());
     RUN(testExtractSignedBitfield32());

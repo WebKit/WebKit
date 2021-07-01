@@ -1463,6 +1463,33 @@ private:
                 break;
             }
 
+            // Turn this: ZShr(Shl(value, amount)), amount)
+            // Into this: BitAnd(value, mask)
+            // Conditions:
+            // 1. 0 <= amount < datasize
+            // 2. width = datasize - amount
+            // 3. mask is !(mask & (mask + 1)) where bitCount(mask) == width
+            if (m_value->child(0)->opcode() == Shl
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->asInt() >= 0
+                && m_value->child(1)->hasInt()
+                && m_value->child(1)->asInt() >= 0) {
+                uint64_t amount1 = m_value->child(0)->child(1)->asInt();
+                uint64_t amount2 = m_value->child(1)->asInt();
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                if (amount1 == amount2 && amount1 < datasize) {
+                    uint64_t width = datasize - amount1;
+                    uint64_t mask = (1ULL << width) - 1ULL;
+                    Value* maskValue;
+                    if (datasize == 32)
+                        maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask);
+                    else
+                        maskValue = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), mask);
+                    replaceWithNew<Value>(BitAnd, m_value->origin(), m_value->child(0)->child(0), maskValue);
+                    break;
+                }
+            }
+
             // Turn this: ZShr(BitAnd(value, maskShift), shiftAmount)
             // Into this: BitAnd(ZShr(value, shiftAmount), mask)
             // Conditions:

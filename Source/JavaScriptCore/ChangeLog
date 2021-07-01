@@ -1,3 +1,85 @@
+2021-07-01  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to use EXTR supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227171
+
+        Reviewed by Robin Morisset.
+
+        This patch includes two modifications:
+            1. Introduce a strength reduction rule to zero extend bitfield.
+            2. Add Extract Register (EXTR) to Air opcode to serve instruction selector.
+
+        -------------------------------------------------------
+        ### Part A zero extend bitfield ###
+        -------------------------------------------------------
+        A new strength reduction rule is added for the canonical form of the zero-extend 
+        bitfield.
+
+        Turn this: ZShr(Shl(value, amount)), amount)
+        Into this: BitAnd(value, mask)
+
+        with constraints:
+        1. 0 <= amount < datasize
+        2. width = datasize - amount
+        3. mask is !(mask & (mask + 1)) where bitCount(mask) == width
+
+        -------------------
+        ### Part B EXTR ###
+        -------------------
+
+        Given instruction:
+        extr Rd, Rn, Rm, lowWidth
+
+        Extract register (EXTR) extracts a register from a pair of registers, where 
+        concat = Rn:Rm and Rd = concat<lowWidth + datasize - 1:lowWidth>.
+
+        The equivalent pattern of this instruction is:
+
+        d = ((n & mask) << highWidth) | (m >> lowWidth)
+        highWidth = datasize - lowWidth
+        mask = (1 << lowWidth) - 1
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = mask
+        Int @3 = BitAnd(@0, @2)
+        Int @4 = highWidth
+        Int @5 = Shl(@3, @4)
+        Int @6 = lowWidth
+        Int @7 = ZShr(@1, @6)
+        Int @8 = BitOr(@7, @5)
+        Void@9 = Return(@10, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        InsertUnsignedBitfieldInZero %x0, highWidth, lowWidth, %x0, @5
+        Urshift                      %x1,  lowWidth,      %x1,      @7
+        Or                           %x0,       %x1,      %x0,      @8
+        Ret                          %x0,                           @9
+
+        After Adding BIC:
+        // New optimized AIR
+        ExtractRegister   %x0, %x1, lowWidth, %x0, @8
+        Ret               %x0,                     @9
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::extractRegister32):
+        (JSC::MacroAssemblerARM64::extractRegister64):
+        * assembler/testmasm.cpp:
+        (JSC::testExtractRegister32):
+        (JSC::testExtractRegister64):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testBitfieldZeroExtend32):
+        (testBitfieldZeroExtend64):
+        (testExtractRegister32):
+        (testExtractRegister64):
+        (addBitTests):
+
 2021-06-30  Saam Barati  <sbarati@apple.com>
 
         Turn off data ICs by default
@@ -347,8 +429,8 @@
         Reviewed by Filip Pizlo.
 
         This patch includes three modifications:
-            1. Add bit clear (BIC), or not (ORN), and extract and insert bitfield at lower end (BFXIL) 
-               to Air opcode to serve intruciton selector.
+            1. Add bit clear (BIC), or not (ORN), and extract and insert bitfield at the 
+               lower end (BFXIL) to Air opcode to serve instruction selector.
             2. Add bitfield clear (BFC) to MacroAssembler.
             4. Do refactoring - rename Air opcodes added in the previous patches.
 
@@ -370,7 +452,7 @@
         Pattern 2:
             d = n & (m ^ -1)
 
-        In order to get benefits for complement operation, current instruction selector uses 
+        In order to get benefits for complement operation, the current instruction selector uses 
         mvn instruction to lower the pattern value ^ -1. Then, a new strength reduction rule is 
         introduced:
             Turn this: -value - 1 
@@ -1202,7 +1284,7 @@
             A) Add UBFIZ to instruction selector.
             B) Fix UBFX, introduced in https://bugs.webkit.org/show_bug.cgi?id=226984, 
                to match all patterns. 
-            C) Fix error condition in one strength reduction introduced 
+            C) Fix error condition in one strength reduction rule introduced 
                in https://bugs.webkit.org/show_bug.cgi?id=227138.
 
         Part A
