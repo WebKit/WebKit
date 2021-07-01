@@ -1,3 +1,47 @@
+2021-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Selecting or dragging images that contain recognizable text is difficult in Mail compose
+        https://bugs.webkit.org/show_bug.cgi?id=227544
+
+        Reviewed by Devin Rousso.
+
+        Long pressing images in editable content on iOS initiates dragging, and a tap-and-half gesture over the image
+        selects the entire image. Both of these are common interactions for image attachments in Mail compose that
+        take precedence over new Live Text interactions, so there's no advantage to triggering image analysis on images
+        in editable content.
+
+        Avoid doing this extra work by adjusting `-imageAnalysisGestureDidBegin:` to bail early if the image is inside
+        editable content.
+
+        Tests:  ImageAnalysisTests.DoNotAnalyzeImagesInEditableContent
+                ImageAnalysisTests.HandleImageAnalyzerError
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Add an `isContentEditable` flag.
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _imageAnalysisGestureRecognizer]):
+
+        Add a testing hook to return the gesture recognizer used to trigger image analysis.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView imageAnalysisGestureRecognizer]):
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+
+        Pull logic for avoiding image analysis out into a separate lambda, and add a check for `isContentEditable`.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::positionInformation):
+
+        Populate the `isContentEditable` flag based on whether or not the node found by the position information request
+        is editable.
+
 2021-07-01  Antoine Quint  <graouts@webkit.org>
 
         [Model] Restrict IPC calls to ARKit SPI availability and runtime flag

@@ -2030,6 +2030,15 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return [_highlightView frame];
 }
 
+- (UIGestureRecognizer *)imageAnalysisGestureRecognizer
+{
+#if ENABLE(IMAGE_ANALYSIS)
+    return _imageAnalysisGestureRecognizer.get();
+#else
+    return nil;
+#endif
+}
+
 - (void)_showTapHighlight
 {
     auto shouldPaintTapHighlight = [&](const WebCore::FloatRect& rect) {
@@ -10109,8 +10118,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return NO;
 }
 
-#pragma mark - WKImageAnalysisGestureRecognizerDelegate
-
 - (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
 {
     auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
@@ -10136,6 +10143,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         completion(WebKit::makeTextRecognitionResult(result));
     }).get()];
 }
+
+#pragma mark - WKImageAnalysisGestureRecognizerDelegate
 
 - (void)imageAnalysisGestureDidBegin:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
 {
@@ -10164,7 +10173,25 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
             return;
 
-        bool shouldAnalyzeImageAtLocation = information.isImage && information.image && information.imageElementContext && !information.isAnimatedImage;
+        bool shouldAnalyzeImageAtLocation = ([&] {
+            if (!information.isImage)
+                return false;
+
+            if (!information.image)
+                return false;
+
+            if (!information.imageElementContext)
+                return false;
+
+            if (information.isAnimatedImage)
+                return false;
+
+            if (information.isContentEditable)
+                return false;
+
+            return true;
+        })();
+
         if (!strongSelf->_pendingImageAnalysisRequestIdentifier || !shouldAnalyzeImageAtLocation) {
             [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
             return;

@@ -1,3 +1,30 @@
+2021-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Selecting or dragging images that contain recognizable text is difficult in Mail compose
+        https://bugs.webkit.org/show_bug.cgi?id=227544
+
+        Reviewed by Devin Rousso.
+
+        See WebKit/ChangeLog for more details.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+
+        Link against VisionKitCore on iOS 15+ and macOS 12+.
+
+        * TestWebKitAPI/Configurations/WebKitTargetConditionals.xcconfig:
+
+        Update WebKitTargetConditionals to be consistent with the other target conditions in WebKit, so that we can use
+        `IOS_SINCE_15` in TestWebKitAPI.xcconfig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm: Added.
+
+        Add new API tests that trigger the image analysis gesture recognizer and check whether or not we requested image
+        analysis from VisionKit.
+
+        (TestWebKitAPI::swizzledLocationInView):
+        (TestWebKitAPI::swizzledProcessRequest):
+
 2021-07-01  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Pack Cog modules in built-product archive

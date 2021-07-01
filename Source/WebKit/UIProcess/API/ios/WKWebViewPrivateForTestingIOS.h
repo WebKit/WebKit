@@ -30,6 +30,7 @@
 
 @class _WKTextInputContext;
 @class UIEventAttribution;
+@class UIGestureRecognizer;
 @class UIWKDocumentContext;
 @class UIWKDocumentRequest;
 
@@ -45,6 +46,7 @@
 @property (nonatomic, readonly) CGRect _dragCaretRect;
 @property (nonatomic, readonly, getter=_isAnimatingDragCancel) BOOL _animatingDragCancel;
 @property (nonatomic, readonly) CGRect _tapHighlightViewRect;
+@property (nonatomic, readonly) UIGestureRecognizer *_imageAnalysisGestureRecognizer;
 
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;
