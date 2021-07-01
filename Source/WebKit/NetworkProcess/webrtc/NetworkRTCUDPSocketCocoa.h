@@ -29,6 +29,7 @@
 
 #include "NetworkRTCProvider.h"
 #include <Network/Network.h>
+#include <limits>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 
@@ -46,8 +47,8 @@ template<> struct DefaultHash<rtc::SocketAddress> {
 
 template<> struct HashTraits<rtc::SocketAddress> : GenericHashTraits<rtc::SocketAddress> {
     static rtc::SocketAddress emptyValue() { return rtc::SocketAddress { }; }
-    static void constructDeletedValue(rtc::SocketAddress& address) { address = { }; address.SetScopeID(-1); }
-    static bool isDeletedValue(const rtc::SocketAddress& address) { return address.scope_id() == -1; }
+    static void constructDeletedValue(rtc::SocketAddress& address) { address.SetScopeID(std::numeric_limits<int>::min()); }
+    static bool isDeletedValue(const rtc::SocketAddress& address) { return address.scope_id() == std::numeric_limits<int>::min(); }
 };
 
 }

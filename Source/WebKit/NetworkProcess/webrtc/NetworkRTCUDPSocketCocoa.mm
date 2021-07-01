@@ -168,6 +168,8 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
             return;
 
         auto remoteAddress = socketAddressFromIncomingConnection(connection);
+        ASSERT(remoteAddress != HashTraits<rtc::SocketAddress>::emptyValue() && !HashTraits<rtc::SocketAddress>::isDeletedValue(remoteAddress));
+
         protectedThis->m_nwConnections.set(remoteAddress, connection);
         protectedThis->setupNWConnection(connection, remoteAddress);
     }).get());
@@ -253,6 +255,11 @@ void NetworkRTCUDPSocketCocoaConnections::setupNWConnection(nw_connection_t nwCo
 
 void NetworkRTCUDPSocketCocoaConnections::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress& remoteAddress, const rtc::PacketOptions& options)
 {
+    bool isInCorrectValue = (remoteAddress == HashTraits<rtc::SocketAddress>::emptyValue()) || HashTraits<rtc::SocketAddress>::isDeletedValue(remoteAddress);
+    ASSERT(!isInCorrectValue);
+    if (isInCorrectValue)
+        return;
+
     nw_connection_t nwConnection;
     {
         Locker locker { m_nwConnectionsLock };

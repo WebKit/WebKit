@@ -2,6 +2,20 @@
 
         [Cocoa] Migrate WebRTC UDP socket handling to NW API
         https://bugs.webkit.org/show_bug.cgi?id=227210
+        <rdar://problem/79859045>
+
+        Unreviewed, post commit fix.
+
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.h:
+        (WTF::HashTraits<rtc::SocketAddress>::constructDeletedValue):
+        (WTF::HashTraits<rtc::SocketAddress>::isDeletedValue):
+        No need to set all deleted value slots, instead just rely on scope id being equal to numeric_limits<int>::min.
+        Also ensure we do not add an empty/deleted address to the map.
+
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
 
         Reviewed by Eric Carlson.
 
