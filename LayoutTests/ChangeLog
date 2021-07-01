@@ -1,3 +1,26 @@
+2021-07-01  Cameron McCormack  <heycam@apple.com>
+
+        Move some Mac MathML test expectation files around
+        https://bugs.webkit.org/show_bug.cgi?id=227520
+        <rdar://79749198>
+
+        Reviewed by Frédéric Wang.
+
+        This should make it so that the same test expectation files are used
+        for Monterey as for Big Sur, without needing to add Monterey-specific
+        files.
+
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt: Copied from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt: Renamed from LayoutTests/platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt:
+
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
         ReadableStream.getReader do not throw a proper exception when parameter is of wrong type
