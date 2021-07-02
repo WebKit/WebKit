@@ -1377,3 +1377,5 @@ webkit.org/b/227467 [ BigSur arm64 Release ] fast/css/sticky/sticky-left.html [ 
 webkit.org/b/227504 [ BigSur Debug ] accessibility/table-title.html [ Pass Timeout ]
 
 webkit.org/b/227536 [ BigSur ] imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Pass Failure ]
+
+webkit.org/b/227639 [ BigSur Release ] fast/history/visited-href-mutation.html [ Pass ImageOnlyFailure ]
