@@ -1,3 +1,14 @@
+2021-07-02  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r279477): WebKit_iosmac failed to build in : ModelElementControllerCocoa.mm:58:24: member reference type 'WebKit::WebPageProxy' is not a pointer; did you mean to use '.'?
+        https://bugs.webkit.org/show_bug.cgi?id=227612
+        <rdar://problem/80054936>
+
+        Reviewed by Alan Bujtas.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::takeModelElementFullscreen):
+
 2021-07-01  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Suspend WebProcesses that are in the process cache

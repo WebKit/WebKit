@@ -55,7 +55,7 @@ namespace WebKit {
 
 void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
-    if (!m_webPageProxy->preferences().modelElementEnabled())
+    if (!m_webPageProxy.preferences().modelElementEnabled())
         return;
 
     if (!is<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea()))
