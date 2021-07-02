@@ -1,3 +1,21 @@
+2021-07-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Set software_variant from runtime
+        https://bugs.webkit.org/show_bug.cgi?id=227600
+        <rdar://problem/80052263>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/xcode/device_type.py:
+        (DeviceType._define_software_variant_from_hardware_family):
+        (DeviceType.check_consistency):
+        (DeviceType.__contains__):
+        * Scripts/webkitpy/xcode/device_type_unittest.py:
+        (DeviceTypeTest.test_from_string):
+        (DeviceTypeTest.test_contained_in):
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._create_device_with_runtime):
+
 2021-07-01  Alex Christensen  <achristensen@webkit.org>
 
         loadSimulatedRequest: should do same delegate callbacks as loadHTMLString and loadData
