@@ -54,12 +54,8 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
         if (character == iterator.end())
             break;
 
-        if (!haveGlyphs[i])
-            setGlyphForIndex(i, 0);
-        else {
-            hasOneGlyph = true;
-            setGlyphForIndex(i, character);
-        }
+        hasOneGlyph = true;
+        setGlyphForIndex(i, character);
     }
 
     return hasOneGlyph;
