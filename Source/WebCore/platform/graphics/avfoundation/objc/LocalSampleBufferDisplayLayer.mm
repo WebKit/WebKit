@@ -156,6 +156,7 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
     , m_frameRateMonitor([this](auto info) { onIrregularFrameRateNotification(info.frameTime, info.lastFrameTime); })
 #endif
 {
+    ASSERT(isMainThread());
 }
 
 void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, CompletionHandler<void(bool didSucceed)>&& callback)
@@ -186,6 +187,8 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
 
 LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 {
+    ASSERT(isMainThread());
+
     m_processingQueue->dispatchSync([] { });
 
     m_processingQueue = nullptr;
@@ -391,20 +394,22 @@ void LocalSampleBufferDisplayLayer::clearEnqueuedSamples()
 void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
 {
     auto weakThis = makeWeakPtr(*this);
-    [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:m_processingQueue->dispatchQueue() usingBlock:^{
+    [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
         if (!weakThis)
             return;
 
-        [m_sampleBufferDisplayLayer stopRequestingMediaData];
+        m_processingQueue->dispatch([this] {
+            [m_sampleBufferDisplayLayer stopRequestingMediaData];
 
-        while (!m_pendingVideoSampleQueue.isEmpty()) {
-            if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
-                requestNotificationWhenReadyForVideoData();
-                return;
+            while (!m_pendingVideoSampleQueue.isEmpty()) {
+                if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
+                    requestNotificationWhenReadyForVideoData();
+                    return;
+                }
+                auto sample = m_pendingVideoSampleQueue.takeFirst();
+                enqueueSampleBuffer(sample);
             }
-            auto sample = m_pendingVideoSampleQueue.takeFirst();
-            enqueueSampleBuffer(sample);
-        }
+        });
     }];
 }
 
