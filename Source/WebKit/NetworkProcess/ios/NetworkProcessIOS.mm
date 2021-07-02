@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+#if PLATFORM(IOS_FAMILY)
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
@@ -41,6 +41,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+#if !PLATFORM(MACCATALYST)
 
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
@@ -96,6 +98,8 @@ void NetworkProcess::clearServiceWorkerEntitlementOverride(CompletionHandler<voi
     disableServiceWorkerEntitlementTestingOverride = false;
     completionHandler();
 }
+
+#endif // !PLATFORM(MACCATALYST)
 
 void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {

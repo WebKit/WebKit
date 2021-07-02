@@ -1,5 +1,11 @@
 2021-07-02  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed Mac Catalyst build fix after r279514.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
         Take a process assertion in the network process when holding locked files
         https://bugs.webkit.org/show_bug.cgi?id=227552
 
