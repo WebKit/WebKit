@@ -39,26 +39,16 @@ namespace WebCore {
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 {
-    bool haveGlyphs[bufferLength];
-    bool hasOneGlyph = false;
-
-    const BFont* font = m_font.platformData().font();
-
-    // Unfortunately our API expects utf-8 as input...
-    StringView v(buffer, bufferLength);
-    font->GetHasGlyphs(v.utf8().data(), bufferLength, haveGlyphs);
-
     UTF16UChar32Iterator iterator(buffer, bufferLength);
     for (unsigned i = 0;; i++) {
         UChar32 character = iterator.next();
         if (character == iterator.end())
             break;
 
-        hasOneGlyph = true;
         setGlyphForIndex(i, character);
     }
 
-    return hasOneGlyph;
+    return true;
 }
 
 } // namespace WebCore
