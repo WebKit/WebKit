@@ -2182,7 +2182,6 @@ webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
 webkit.org/b/143702 media/progress-events-generated-correctly.html [ Failure ]
 webkit.org/b/198830 media/context-menu-actions.html [ Pass Crash Failure ]
 webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
-webkit.org/b/201266 media/audio-playback-restriction-play-muted.html [ Failure ]
 webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ Failure ]
 webkit.org/b/160119 media/video-object-fit-change.html [ Pass Crash ImageOnlyFailure ]
 
@@ -2208,7 +2207,6 @@ webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure ]
 webkit.org/b/145051 webkit.org/b/198830 [ Release ] media/video-rtl.html [ ImageOnlyFailure Pass Crash ]
 
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
-webkit.org/b/158914 webkit.org/b/198830 media/restore-from-page-cache.html [ Failure ]
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure  ]
 
 webkit.org/b/186638 media/video-remote-control-playpause.html [ Failure Timeout Pass ]
@@ -2216,7 +2214,6 @@ webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
 webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout ]
 
-webkit.org/b/198830 media/event-attributes.html [ Crash Failure ]
 webkit.org/b/198830 media/track/track-cue-css.html [ ImageOnlyFailure Failure Pass ]
 webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Failure ]
 webkit.org/b/198830 http/tests/media/autoplay-if-audio-is-playing.html [ Pass Timeout ]
@@ -2231,15 +2228,9 @@ webkit.org/b/198830 [ Release ] media/video-defaultplaybackrate-before-load.html
 # GLX error in gst_gl_context_glx_create_context
 webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Pass Timeout ]
 
-webkit.org/b/208293 media/video-restricted-invisible-autoplay-allowed-if-audible.html [ Failure ]
-
 http/tests/media/video-preload.html [ Pass Slow ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
-
-webkit.org/b/131545 media/media-event-listeners.html [ Timeout ]
-webkit.org/b/131545 media/video-volume.html [ Failure ]
-webkit.org/b/131545 media/audio-playback-volume-changes-with-restrictions.html [ Failure ]
 
 webkit.org/b/135086 media/video-seek-with-negative-playback.html [ Timeout Pass ]
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
