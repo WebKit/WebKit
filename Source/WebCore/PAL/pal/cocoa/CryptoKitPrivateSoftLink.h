@@ -27,33 +27,11 @@
 
 #if HAVE(RSA_BSSA)
 
-#if USE(APPLE_INTERNAL_SDK)
+#import <pal/spi/cocoa/CryptoKitPrivateSPI.h>
+#import <wtf/SoftLinking.h>
 
-#import <CryptoKitCBridging/RSABSSA.h>
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CryptoKitPrivate);
 
-#else
+SOFT_LINK_CLASS_FOR_HEADER(PAL, RSABSSATokenBlinder);
 
-@interface RSABSSATokenWaitingActivation : NSObject
-#if HAVE(RSA_BSSA)
-- (RSABSSATokenReady*)activateTokenWithServerResponse:(NSData*)serverResponse error:(NSError* __autoreleasing *)error;
 #endif
-@property (nonatomic, retain, readonly) NSData* blindedMessage;
-@end
-
-@interface RSABSSATokenReady : NSObject
-@property (nonatomic, retain, readonly) NSData* tokenContent;
-@property (nonatomic, retain, readonly) NSData* keyId;
-@property (nonatomic, retain, readonly) NSData* signature;
-@end
-
-#if HAVE(RSA_BSSA)
-@interface RSABSSATokenBlinder : NSObject
-- (instancetype)initWithPublicKey:(NSData*)spkiBytes error:(NSError* __autoreleasing *)error;
-- (RSABSSATokenWaitingActivation*)tokenWaitingActivationWithContent:(NSData*)content error:(NSError* __autoreleasing *)error;
-@property (nonatomic, retain, readonly) NSData* keyId;
-@end
-#endif
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // HAVE(RSA_BSSA)
