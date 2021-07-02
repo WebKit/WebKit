@@ -1,5 +1,18 @@
 2021-07-02  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Keep track of both the fixed and percent maximum values for each column
+        https://bugs.webkit.org/show_bug.cgi?id=227491
+
+        Reviewed by Antti Koivisto.
+
+        This patch is in preparation for supporting mixed column width types when each row
+        has diffrent type of widths (e.g <tr><td style="width: 100px;"></td></tr><tr><td style="width: 10%;"></td></tr>)
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+
+2021-07-02  Alan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] TableGrid::Column holds both the computed and the used width values
         https://bugs.webkit.org/show_bug.cgi?id=227488
 

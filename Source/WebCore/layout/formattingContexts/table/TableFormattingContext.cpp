@@ -339,8 +339,10 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             column.setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
     }
 
-    Vector<std::optional<float>> columnPercentList(columnList.size());
     auto hasColumnWithPercentWidth = false;
+    auto hasColumnWithFixedWidth = false;
+    Vector<std::optional<LayoutUnit>> maximumFixedColumnWidths(columnList.size());
+    Vector<std::optional<float>> maximumPercentColumnWidths(columnList.size());
     for (auto& cell : grid.cells()) {
         auto& cellBox = cell->box();
         ASSERT(cellBox.establishesBlockFormattingContext());
@@ -351,25 +353,34 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
         auto cellPosition = cell->position();
+        auto& cellStyle = cellBox.style();
         // Expand it with border and padding.
         auto horizontalBorderAndPaddingWidth = formattingGeometry.computedCellBorder(*cell).width()
-            + formattingGeometry.fixedValue(cellBox.style().paddingLeft()).value_or(0)
-            + formattingGeometry.fixedValue(cellBox.style().paddingRight()).value_or(0);
+            + formattingGeometry.fixedValue(cellStyle.paddingLeft()).value_or(0)
+            + formattingGeometry.fixedValue(cellStyle.paddingRight()).value_or(0);
         intrinsicWidth->expand(horizontalBorderAndPaddingWidth);
         // Spanner cells put their intrinsic widths on the initial slots.
         grid.slot(cellPosition)->setWidthConstraints(*intrinsicWidth);
-        if (auto fixedWidth = formattingGeometry.fixedValue(cellBox.style().logicalWidth())) {
-            *fixedWidth += horizontalBorderAndPaddingWidth;
-            auto& column = columnList[cellPosition.column];
-            if (*fixedWidth > column.computedLogicalWidth().value())
-                column.setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
+
+        auto cellLogicalWidth = cellStyle.logicalWidth();
+        auto columnIndex = cellPosition.column;
+        switch (cellLogicalWidth.type()) {
+        case LengthType::Fixed: {
+            auto fixedWidth = LayoutUnit { cellLogicalWidth.value() } + horizontalBorderAndPaddingWidth;
+            maximumFixedColumnWidths[columnIndex] = std::max(maximumFixedColumnWidths[columnIndex].value_or(0_lu), fixedWidth);
+            hasColumnWithFixedWidth = true;
+            break;
         }
-        // Collect the percent values so that we can compute the maximum values per column.
-        auto& cellLogicalWidth = cellBox.style().logicalWidth();
-        if (cellLogicalWidth.isPercent()) {
-            // FIXME: Add support for column spanning distribution.
-            columnPercentList[cellPosition.column] = std::max(cellLogicalWidth.percent(), columnPercentList[cellPosition.column].value_or(0.0f));
+        case LengthType::Percent: {
+            maximumPercentColumnWidths[columnIndex] = std::max(maximumPercentColumnWidths[columnIndex].value_or(0.f), cellLogicalWidth.percent());
             hasColumnWithPercentWidth = true;
+            break;
+        }
+        case LengthType::Relative:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        default:
+            break;
         }
     }
 
@@ -389,8 +400,8 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
                 continue;
             }
             auto widthConstraints = slot.widthConstraints();
-            if (auto columnLogicalWidth = columnList[columnIndex].computedLogicalWidth(); columnLogicalWidth.isFixed())
-                widthConstraints.maximum = std::max(LayoutUnit { columnLogicalWidth.value() }, widthConstraints.minimum);
+            if (auto fixedColumnWidth = maximumFixedColumnWidths[columnIndex])
+                widthConstraints.maximum = std::max(*fixedColumnWidth, widthConstraints.minimum);
 
             columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
             columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
@@ -428,7 +439,12 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
         tableWidthConstraints += columnIntrinsicWidth;
 
     // 6. Adjust the table max width with the percent column values if applicable.
-    if (hasColumnWithPercentWidth) {
+    if (hasColumnWithFixedWidth && !hasColumnWithPercentWidth) {
+        for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
+            if (auto fixedWidth = maximumFixedColumnWidths[columnIndex])
+                columnList[columnIndex].setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
+        }
+    } else if (hasColumnWithPercentWidth) {
         auto remainingPercent = 100.0f;
         auto percentMaximumWidth = LayoutUnit { };
         auto nonPercentColumnsWidth = LayoutUnit { };
@@ -438,25 +454,27 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
         // - find the largest resolved value across the columns and used that as the maxiumum width for the precent based columns.
         // - Compute the non-percent based columns width by using the remaining percent value (e.g 50% and 10% columns would leave 40% for the rest of the columns)
         for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
-            auto percent = columnPercentList[columnIndex];
-            if (!percent) {
-                nonPercentColumnsWidth += columnIntrinsicWidths[columnIndex].maximum;
+            auto nonPercentColumnWidth = columnIntrinsicWidths[columnIndex].maximum;
+            if (auto fixedWidth = maximumFixedColumnWidths[columnIndex]) {
+                columnList[columnIndex].setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
+                nonPercentColumnWidth = std::max(nonPercentColumnWidth, *fixedWidth);
+            }
+            if (!maximumPercentColumnWidths[columnIndex]) {
+                nonPercentColumnsWidth += nonPercentColumnWidth;
                 continue;
             }
-            ASSERT(*percent > 0);
-            percent = std::min(*percent, remainingPercent);
-            columnList[columnIndex].setComputedLogicalWidth({ *percent, LengthType::Percent });
-            percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { columnIntrinsicWidths[columnIndex].maximum * 100.0f / *percent });
-            remainingPercent -= *percent;
+            auto percent = std::min(*maximumPercentColumnWidths[columnIndex], remainingPercent);
+            ASSERT(percent > 0);
+            columnList[columnIndex].setComputedLogicalWidth({ percent, LengthType::Percent });
+            percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { nonPercentColumnWidth * 100.0f / percent });
+            remainingPercent -= percent;
         }
-
         ASSERT(remainingPercent >= 0.f);
         auto adjustedMaximumWidth = percentMaximumWidth;
         if (remainingPercent)
             adjustedMaximumWidth = std::max(adjustedMaximumWidth, LayoutUnit { nonPercentColumnsWidth * 100.0f / remainingPercent });
         tableWidthConstraints.maximum = std::max(tableWidthConstraints.maximum, adjustedMaximumWidth);
     }
-
     // Expand the preferred width with leading and trailing cell spacing (note that column spanners count as one cell).
     tableWidthConstraints += (numberOfActualColumns + 1) * grid.horizontalSpacing();
     return tableWidthConstraints;
