@@ -45,7 +45,7 @@ WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition,
     return {prefix: text, completions:WI.CSSCompletions.cssNameCompletions.startsWith(text)};
 };
 
-WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, {caretPosition} = {})
+WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider} = {})
 {
     caretPosition ??= text.length;
 
@@ -108,9 +108,12 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
         }
     }
 
-    // FIXME: <webkit.org/b/227098> Styles sidebar panel should autocomplete `var()` values.
-    if (functionName)
-        return {prefix: currentTokenValue, completions: WI.CSSKeywordCompletions.forFunction(functionName).startsWith(currentTokenValue)};
+    if (functionName) {
+        let completions = WI.CSSKeywordCompletions.forFunction(functionName);
+        let contextualValueCompletions = additionalFunctionValueCompletionsProvider?.(functionName) || [];
+        completions.addValues(contextualValueCompletions);
+        return {prefix: currentTokenValue, completions: completions.startsWith(currentTokenValue)};
+    }
 
     return {prefix: currentTokenValue, completions: WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(currentTokenValue)};
 };

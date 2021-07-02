@@ -51,3 +51,23 @@ PASS: All expected completions were present.
 PASS: Expected result prefix to be ""
 PASS: All expected completions were present.
 
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.AttributeFunction
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineAttributeFunction
+PASS: Expected result prefix to be "c"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunction
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionFiltered
+PASS: Expected result prefix to be "--o"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionInCalc
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+

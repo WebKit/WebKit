@@ -66,7 +66,7 @@ function test()
         expectedCompletions: ["range"],
     });
 
-    function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions}) {
+    function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions, additionalFunctionValueCompletionsProvider}) {
         suite.addTestCase({
             name,
             description,
@@ -74,8 +74,9 @@ function test()
                 caretPosition ??= text.length;
                 expectedPrefix ??= text;
                 expectedCompletions ??= [];
+                additionalFunctionValueCompletionsProvider ??= () => {};
 
-                let completionResults = WI.CSSKeywordCompletions.forPartialPropertyValue(text, propertyName, {caretPosition});
+                let completionResults = WI.CSSKeywordCompletions.forPartialPropertyValue(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider});
                 InspectorTest.expectEqual(completionResults.prefix, expectedPrefix, `Expected result prefix to be "${expectedPrefix}"`);
 
                 // Because expected completions could be added at any time, just make sure the list contains our expected completions, instead of enforcing an exact match between expectations and reality.
@@ -174,6 +175,58 @@ function test()
         caretPosition: 25,
         expectedPrefix: "",
         expectedCompletions: ["auto-fill", "auto-fit", "var()"],
+    });
+
+    // `attr(|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.AttributeFunction",
+        description: "Test that attribute function value completions from the custom provider are used.",
+        text: "attr(",
+        expectedPrefix: "",
+        expectedCompletions: ["class", "id", "var()"],
+        additionalFunctionValueCompletionsProvider: () => ["class", "id"],
+    });
+
+    // `attr(c|)`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineAttributeFunction",
+        description: "Test that attribute function value completions is inside a function with a closing parenthesis uses completions from the custom provider",
+        text: "attr(c)",
+        caretPosition: 6,
+        expectedPrefix: "c",
+        expectedCompletions: ["class"],
+        additionalFunctionValueCompletionsProvider: () => ["class", "id"],
+    });
+
+    // `var(|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunction",
+        description: "Test that variable function value completions from the custom provider are used.",
+        text: "var(",
+        expectedPrefix: "",
+        expectedCompletions: ["--one", "--two"],
+        additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
+    });
+
+    // `var(--o|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionFiltered",
+        description: "Test that variable function value completions from the custom provider are filtered.",
+        text: "var(--o",
+        expectedPrefix: "--o",
+        expectedCompletions: ["--one"],
+        additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
+    });
+
+    // `calc(1 + var(|))`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionInCalc",
+        description: "Test that variable function value completions from the custom provider are used when the var() is nested inside a calc()",
+        text: "calc(1 + var())",
+        caretPosition: 13,
+        expectedPrefix: "",
+        expectedCompletions: ["--one", "--two"],
+        additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
     });
 
     suite.runTestCasesAndFinish();

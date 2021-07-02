@@ -261,6 +261,16 @@ WI.CSSCompletions = class CSSCompletions
         return this._values;
     }
 
+    addValues(values)
+    {
+        console.assert(Array.isArray(values), values);
+        if (!values.length)
+            return;
+
+        this._values.pushAll(values);
+        this._values.sort();
+    }
+
     startsWith(prefix)
     {
         if (!prefix)

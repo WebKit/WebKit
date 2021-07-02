@@ -339,6 +339,19 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         return matches;
     }
 
+    additionalFunctionValueCompletionsProvider(functionName)
+    {
+        switch (functionName) {
+        case "var":
+            return Array.from(this._property.ownerStyle.nodeStyles.allCSSVariables);
+
+        case "attr":
+            return this._property.ownerStyle.node.attributes().map((attribute) => attribute.name);
+        }
+
+        return [];
+    }
+
     // SpreadsheetTextField delegate
 
     spreadsheetTextFieldWillStartEditing(textField)
@@ -912,9 +925,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _valueCompletionDataProvider(text, {allowEmptyPrefix} = {})
     {
-        // FIXME: <webkit.org/b/227098> Styles sidebar panel should autocomplete `var()` values.
         // FIXME: <webkit.org/b/227411> Styles sidebar panel should support midline and multiline completions.
-        return WI.CSSKeywordCompletions.forPartialPropertyValue(text, this._nameElement.textContent.trim());
+        return WI.CSSKeywordCompletions.forPartialPropertyValue(text, this._nameElement.textContent.trim(), {additionalFunctionValueCompletionsProvider: this.additionalFunctionValueCompletionsProvider.bind(this)});
     }
 
     _setupJumpToSymbol(element)

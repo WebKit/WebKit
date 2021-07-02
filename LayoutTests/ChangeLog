@@ -1,3 +1,16 @@
+2021-07-02  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles: should autocomplete `var()` and `attr()` values
+        https://bugs.webkit.org/show_bug.cgi?id=227098
+        <rdar://problem/79418247>
+
+        Reviewed by Devin Rousso.
+
+        Add test cases for contextual CSS function value completion.
+
+        * inspector/unit-tests/css-keyword-completions-expected.txt:
+        * inspector/unit-tests/css-keyword-completions.html:
+
 2021-07-02  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] media/event-attributes.html fails if mixer is not at 100%

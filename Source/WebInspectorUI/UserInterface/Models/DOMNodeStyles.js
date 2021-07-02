@@ -47,6 +47,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._propertyNameToEffectivePropertyMap = {};
         this._usedCSSVariables = new Set;
+        this._allCSSVariables = new Set;
 
         this._pendingRefreshTask = null;
         this.refresh();
@@ -131,6 +132,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     get orderedStyles() { return this._orderedStyles; }
     get computedPrimaryFont() { return this._computedPrimaryFont; }
     get usedCSSVariables() { return this._usedCSSVariables; }
+    get allCSSVariables() { return this._allCSSVariables; }
 
     get needsRefresh()
     {
@@ -769,7 +771,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._associateRelatedProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
         this._markOverriddenProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
-        this._collectUsedCSSVariables(cascadeOrderedStyleDeclarations);
+        this._collectCSSVariables(cascadeOrderedStyleDeclarations);
 
         for (let pseudoElementInfo of this._pseudoElements.values()) {
             pseudoElementInfo.orderedStyles = this._collectStylesInCascadeOrder(pseudoElementInfo.matchedRules, null, null);
@@ -945,12 +947,16 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
     }
 
-    _collectUsedCSSVariables(styles)
+    _collectCSSVariables(styles)
     {
+        this._allCSSVariables = new Set;
         this._usedCSSVariables = new Set;
 
         for (let style of styles) {
             for (let property of style.enabledProperties) {
+                if (property.isVariable)
+                    this._allCSSVariables.add(property.name);
+
                 let variables = WI.CSSProperty.findVariableNames(property.value);
 
                 if (!style.inherited) {

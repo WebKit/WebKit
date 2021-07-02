@@ -1,3 +1,26 @@
+2021-07-02  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles: should autocomplete `var()` and `attr()` values
+        https://bugs.webkit.org/show_bug.cgi?id=227098
+        <rdar://problem/79418247>
+
+        Reviewed by Devin Rousso.
+
+        Add support for completion suggestions in the Styles details sidebar panel
+        for CSS Variables for use with var() and DOM node attributes for use with attr().
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.prototype.addValues):
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles):
+        (WI.DOMNodeStyles.prototype.get allCSSVariables):
+        (WI.DOMNodeStyles.prototype._updateStyleCascade):
+        (WI.DOMNodeStyles.prototype._collectCSSVariables):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.getFunctionValueCompletions):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+
 2021-07-01  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Regression: r279271] Sources: Breakpoints section in navigation sidebar disappears when Web Inspector becomes taller than 650px
