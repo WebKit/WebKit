@@ -368,7 +368,7 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
     def test_cache(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
             with mock, OutputCapture():
-                repo = local.Git(self.path)
+                repo = local.Git(self.path, cached=True)
 
                 self.assertEqual(repo.cache.to_hash(identifier='1@main'), '9b8311f25a77ba14923d9d5a6532103f54abefcb')
                 self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c'), '5@main')
@@ -381,7 +381,7 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
 
     def test_revision_cache(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
-            repo = local.Git(self.path)
+            repo = local.Git(self.path, cached=True)
 
             self.assertEqual(repo.cache.to_revision(identifier='1@main'), 1)
             self.assertEqual(repo.cache.to_identifier(revision='r9'), '5@main')

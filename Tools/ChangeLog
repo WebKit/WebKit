@@ -1,5 +1,22 @@
 2021-07-01  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Cache identifiers in Git checkouts (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=225616
+        <rdar://problem/77789230>
+
+        Reviewed by Dewei Zhu.
+
+        Python 2's Subprocess is 10x slower than Python 3, which means generating
+        the cache is impractical in Python 2.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.__init__): Disable cache on Python 2 by default.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (test_cache): Force Git to use cache.
+        (test_revision_cache): Ditto.
+
+2021-07-01  Jonathan Bedard  <jbedard@apple.com>
+
         [clean-webkit] Exclude autoinstalled directory
         https://bugs.webkit.org/show_bug.cgi?id=227588
         <rdar://problem/80033943>

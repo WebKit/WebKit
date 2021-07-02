@@ -260,10 +260,10 @@ class Git(Scm):
     def is_checkout(cls, path):
         return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=sys.version_info > (3, 0)):
         super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
         self._branch = None
-        self.cache = self.Cache(self) if self.root_path else None
+        self.cache = self.Cache(self) if self.root_path and cached else None
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
