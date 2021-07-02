@@ -1,3 +1,13 @@
+2021-07-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Add new revision variable in pkgconfig file
+        https://bugs.webkit.org/show_bug.cgi?id=227629
+
+        Reviewed by Michael Catanzaro.
+
+        * javascriptcoregtk.pc.in: Include SVN_REVISION as revision variable, useful for apps to
+        know on which upstream SVN revision their WebKitGTK-based app is built on.
+
 2021-07-01  Yijia Huang  <yijia_huang@apple.com>
 
         Remove unnecessary canBeInternal invocations to mitigate the cost of potential unmatched patterns in B3LowerToAir

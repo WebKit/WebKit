@@ -1,3 +1,16 @@
+2021-07-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Add new revision variable in pkgconfig file
+        https://bugs.webkit.org/show_bug.cgi?id=227629
+
+        Reviewed by Michael Catanzaro.
+
+        Include SVN_REVISION as revision variable, useful for apps to know on which upstream SVN
+        revision their WebKitGTK-based app is built on.
+
+        * gtk/webkit2gtk-web-extension.pc.in:
+        * gtk/webkit2gtk.pc.in:
+
 2021-07-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279494.
