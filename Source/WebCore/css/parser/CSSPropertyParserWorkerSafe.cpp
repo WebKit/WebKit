@@ -1,5 +1,5 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
 // Copyright (C) 2021 Metrological Group B.V.
 // Copyright (C) 2021 Igalia S.L.
 //
@@ -393,23 +393,126 @@ RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange& range, CSSValuePoo
 }
 #endif
 
+static bool consumeOptionalDelimiter(CSSParserTokenRange& range, UChar value)
+{
+    if (!(range.peek().type() == DelimiterToken && range.peek().delimiter() == value))
+        return false;
+    range.consume();
+    return true;
+}
+
+static StringView consumeIdentifier(CSSParserTokenRange& range)
+{
+    if (range.peek().type() != IdentToken)
+        return { };
+    return range.consume().value();
+}
+
+static bool consumeAndAppendOptionalNumber(StringBuilder& builder, CSSParserTokenRange& range, CSSParserTokenType type = NumberToken)
+{
+    if (range.peek().type() != type)
+        return false;
+    auto originalText = range.consume().originalText();
+    if (originalText.isNull())
+        return false;
+    builder.append(originalText);
+    return true;
+}
+
+static bool consumeAndAppendOptionalDelimiter(StringBuilder& builder, CSSParserTokenRange& range, UChar value)
+{
+    if (!consumeOptionalDelimiter(range, value))
+        return false;
+    builder.append(value);
+    return true;
+}
+
+static void consumeAndAppendOptionalQuestionMarks(StringBuilder& builder, CSSParserTokenRange& range)
+{
+    while (consumeAndAppendOptionalDelimiter(builder, range, '?')) { }
+}
+
+static String consumeUnicodeRangeString(CSSParserTokenRange& range)
+{
+    if (!equalLettersIgnoringASCIICase(consumeIdentifier(range), "u"))
+        return { };
+    StringBuilder builder;
+    if (consumeAndAppendOptionalNumber(builder, range, DimensionToken))
+        consumeAndAppendOptionalQuestionMarks(builder, range);
+    else if (consumeAndAppendOptionalNumber(builder, range)) {
+        if (!(consumeAndAppendOptionalNumber(builder, range, DimensionToken) || consumeAndAppendOptionalNumber(builder, range)))
+            consumeAndAppendOptionalQuestionMarks(builder, range);
+    } else if (consumeOptionalDelimiter(range, '+')) {
+        builder.append('+');
+        if (auto identifier = consumeIdentifier(range); !identifier.isNull())
+            builder.append(identifier);
+        else if (!consumeAndAppendOptionalDelimiter(builder, range, '?'))
+            return { };
+        consumeAndAppendOptionalQuestionMarks(builder, range);
+    } else
+        return { };
+    return builder.toString();
+}
+
+struct UnicodeRange {
+    UChar32 start;
+    UChar32 end;
+};
+
+static std::optional<UnicodeRange> consumeUnicodeRange(CSSParserTokenRange& range)
+{
+    return readCharactersForParsing(consumeUnicodeRangeString(range), [&](auto buffer) -> std::optional<UnicodeRange> {
+        if (!skipExactly(buffer, '+'))
+            return std::nullopt;
+        UChar32 start = 0;
+        unsigned hexDigitCount = 0;
+        while (buffer.hasCharactersRemaining() && isASCIIHexDigit(*buffer)) {
+            if (++hexDigitCount > 6)
+                return std::nullopt;
+            start <<= 4;
+            start |= toASCIIHexValue(*buffer++);
+        }
+        auto end = start;
+        while (skipExactly(buffer, '?')) {
+            if (++hexDigitCount > 6)
+                return std::nullopt;
+            start <<= 4;
+            end <<= 4;
+            end |= 0xF;
+        }
+        if (!hexDigitCount)
+            return std::nullopt;
+        if (start == end && buffer.hasCharactersRemaining()) {
+            if (!skipExactly(buffer, '-'))
+                return std::nullopt;
+            end = 0;
+            hexDigitCount = 0;
+            while (buffer.hasCharactersRemaining() && isASCIIHexDigit(*buffer)) {
+                if (++hexDigitCount > 6)
+                    return std::nullopt;
+                end <<= 4;
+                end |= toASCIIHexValue(*buffer++);
+            }
+            if (!hexDigitCount)
+                return std::nullopt;
+        }
+        if (buffer.hasCharactersRemaining())
+            return std::nullopt;
+        return { { start, end } };
+    });
+}
+
 RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange& range)
 {
-    RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
-
+    auto values = CSSValueList::createCommaSeparated();
     do {
-        const CSSParserToken& token = range.consumeIncludingWhitespace();
-        if (token.type() != UnicodeRangeToken)
+        auto unicodeRange = consumeUnicodeRange(range);
+        range.consumeWhitespace();
+        if (!unicodeRange || unicodeRange->end > UCHAR_MAX_VALUE || unicodeRange->start > unicodeRange->end)
             return nullptr;
-
-        UChar32 start = token.unicodeRangeStart();
-        UChar32 end = token.unicodeRangeEnd();
-        if (start > end)
-            return nullptr;
-        values->append(CSSUnicodeRangeValue::create(start, end));
+        values->append(CSSUnicodeRangeValue::create(unicodeRange->start, unicodeRange->end));
     } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
-
-    return values;
+    return WTFMove(values);
 }
 
 static RefPtr<CSSFontFeatureValue> consumeFontFeatureTag(CSSParserTokenRange& range)

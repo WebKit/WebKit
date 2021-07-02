@@ -167,7 +167,6 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
         case SuffixMatchToken:
         case SubstringMatchToken:
         case ColumnToken:
-        case UnicodeRangeToken:
         case IdentToken:
         case CommaToken:
         case ColonToken:

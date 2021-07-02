@@ -355,16 +355,6 @@ CSSParserToken CSSTokenizer::asciiDigit(UChar cc)
     return consumeNumericToken();
 }
 
-CSSParserToken CSSTokenizer::letterU(UChar cc)
-{
-    if (m_input.peek(0) == '+' && (isASCIIHexDigit(m_input.peek(1)) || m_input.peek(1) == '?')) {
-        m_input.advance();
-        return consumeUnicodeRange();
-    }
-    reconsume(cc);
-    return consumeIdentLikeToken();
-}
-
 CSSParserToken CSSTokenizer::nameStart(UChar cc)
 {
     reconsume(cc);
@@ -467,7 +457,7 @@ const CSSTokenizer::CodePoint CSSTokenizer::codePoints[128] = {
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
-    &CSSTokenizer::letterU,
+    &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
@@ -499,7 +489,7 @@ const CSSTokenizer::CodePoint CSSTokenizer::codePoints[128] = {
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
-    &CSSTokenizer::letterU,
+    &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
     &CSSTokenizer::nameStart,
@@ -545,6 +535,8 @@ CSSParserToken CSSTokenizer::consumeNumber()
 {
     ASSERT(nextCharsAreNumber());
 
+    auto startOffset = m_input.offset();
+
     NumericValueType type = IntegerValueType;
     NumericSign sign = NoSign;
     unsigned numberLength = 0;
@@ -580,7 +572,7 @@ CSSParserToken CSSTokenizer::consumeNumber()
     double value = m_input.getDouble(0, numberLength);
     m_input.advance(numberLength);
 
-    return CSSParserToken(NumberToken, value, type, sign);
+    return CSSParserToken(value, type, sign, m_input.rangeAt(startOffset, m_input.offset() - startOffset));
 }
 
 // http://www.w3.org/TR/css3-syntax/#consume-a-numeric-token
@@ -650,37 +642,6 @@ CSSParserToken CSSTokenizer::consumeStringTokenUntil(UChar endingCodePoint)
         } else
             output.append(cc);
     }
-}
-
-CSSParserToken CSSTokenizer::consumeUnicodeRange()
-{
-    ASSERT(isASCIIHexDigit(m_input.peek(0)) || m_input.peek(0) == '?');
-    int lengthRemaining = 6;
-    UChar32 start = 0;
-
-    while (lengthRemaining && isASCIIHexDigit(m_input.peek(0))) {
-        start = start * 16 + toASCIIHexValue(consume());
-        --lengthRemaining;
-    }
-
-    UChar32 end = start;
-    if (lengthRemaining && consumeIfNext('?')) {
-        do {
-            start *= 16;
-            end = end * 16 + 0xF;
-            --lengthRemaining;
-        } while (lengthRemaining && consumeIfNext('?'));
-    } else if (m_input.peek(0) == '-' && isASCIIHexDigit(m_input.peek(1))) {
-        m_input.advance();
-        lengthRemaining = 6;
-        end = 0;
-        do {
-            end = end * 16 + toASCIIHexValue(consume());
-            --lengthRemaining;
-        } while (lengthRemaining && isASCIIHexDigit(m_input.peek(0)));
-    }
-
-    return CSSParserToken(UnicodeRangeToken, start, end);
 }
 
 // http://dev.w3.org/csswg/css-syntax/#non-printable-code-point

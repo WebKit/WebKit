@@ -634,7 +634,7 @@ static RefPtr<CSSPrimitiveValue> consumeResolutionCSSPrimitiveValueWithKnownToke
 
     if (auto unit = range.peek().unitType(); unit == CSSUnitType::CSS_DPPX || unit == CSSUnitType::CSS_DPI || unit == CSSUnitType::CSS_DPCM)
         return pool.createValue(range.consumeIncludingWhitespace().numericValue(), unit);
-    if (allowX == AllowXResolutionUnit::Allow && range.peek().value() == "x")
+    if (allowX == AllowXResolutionUnit::Allow && range.peek().unitString() == "x")
         return pool.createValue(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_DPPX);
 
     return nullptr;
@@ -2456,7 +2456,7 @@ static std::optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, b
             if (token.type() == NumberToken)
                 string = String::number(integerValue); // e.g. 112233
             else
-                string = makeString(integerValue, token.value()); // e.g. 0001FF
+                string = makeString(integerValue, token.unitString()); // e.g. 0001FF
             if (string.length() < 6)
                 string = makeString(&"000000"[string.length()], string);
 

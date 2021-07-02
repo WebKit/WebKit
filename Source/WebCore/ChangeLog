@@ -1,3 +1,80 @@
+2021-06-30  Darin Adler  <darin@apple.com>
+
+        CSS parser using a token for Unicode ranges, but recent CSS specification says it should not
+        https://bugs.webkit.org/show_bug.cgi?id=227569
+
+        Reviewed by Sam Weinig.
+
+        Tests: imported/w3c/web-platform-tests/css/css-syntax/unicode-range-selector.html
+               imported/w3c/web-platform-tests/css/css-syntax/urange-parsing.html
+
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::CSSParserToken): Change the NumberToken constructor to
+        take a StringView so we can recover the original text if we need to parse it as
+        part of a Unicode range.
+        (WebCore::mergeIfAdjacent): Added. Helper used by convertToDimensionWithUnit.
+        (WebCore::CSSParserToken::convertToDimensionWithUnit): If the number token string
+        is adjacent to the dimension, then store the string containing both, so it can
+        be used if we need to parse it as part of a Unicode range. If the string is long,
+        then don't bother because a long string can't be part of such a range anyway. We
+        use 4 bits for the length, so can handle lengths in the range [1,15].
+        (WebCore::CSSParserToken::originalText const): Added. Used to recover the original
+        text for Unicode range parsing.
+        (WebCore::CSSParserToken::unitString const): Added. Used to get just the unit part
+        of the string for DimensionToken, since the full string now can include the number
+        as well in some cases (see above).
+        (WebCore::CSSParserToken::copyWithUpdatedString const): Changed the argument type
+        to StringView instead of using const& and added an assertion since this is only
+        safe if we are moving the backing characters, not changing the string contents.
+        (WebCore::CSSParserToken::valueDataCharRawEqual const): Deleted.
+        (WebCore::CSSParserToken::operator== const): Use StringView == operator instead of
+        our own valueDataCharRawEqual function. Also use unitString for DimensionToken.
+        (WebCore::CSSParserToken::serialize const): Use unitString for DimensionToken.
+        * css/parser/CSSParserToken.h: Updated for the above. Also deleted
+        UnicodeRangeToken, unicodeRangeStart, unicodeRangeEnd, and m_unicodeRange.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeResolutionCSSPrimitiveValueWithKnownTokenTypeDimension):
+        Use unitString for DimensionToken.
+        (WebCore::CSSPropertyParserHelpers::parseHexColor): Ditto.
+
+        * css/parser/CSSPropertyParserWorkerSafe.cpp:
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeOptionalDelimiter): Added.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeIdentifier): Added.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeAndAppendOptionalNumber): Added.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeAndAppendOptionalDelimiter): Added.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeAndAppendOptionalQuestionMarks): Added.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeUnicodeRangeString): Added.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeUnicodeRange): Added. Along with the
+        functions above, this implements the CSS specification's algorithm for consuming a Unicode
+        range, based on existing tokens without requiring a <urange> token.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceUnicodeRange): Call
+        the new consumeUnicodeRange function from this file instead of the old one that
+        depended on a <urange> token. Also refactored to use auto and to do the validity
+        check for the range as specified.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::consumeANPlusB): Use unitString for DimensionToken.
+
+        * css/parser/CSSTokenizer.cpp:
+        (WebCore::CSSTokenizer::letterU): Deleted.
+        (WebCore::CSSTokenizer::consumeNumber): Added code to pass in the original text
+        when constructing a NumberToken.
+        (WebCore::CSSTokenizer::consumeUnicodeRange): Deleted.
+
+        * css/parser/CSSTokenizer.h: Deleted consumeUnicodeRange.
+
+        * css/parser/SizesCalcParser.cpp:
+        (WebCore::SizesCalcParser::calcToReversePolishNotation): Removed case for
+        UnicodeRangeToken.
+
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::variableDataForPositivePixelLength): Pass a null StringView for the
+        original text when constructing a NumberToken. This is OK for now since this token
+        won't ever be parsed as part of a Unicode range, and we can change it if we ever
+        need to support originalText for any other cases.
+        (WebCore::variableDataForPositiveDuration): Ditto.
+
 2021-07-01  Ben Nham  <nham@apple.com>
 
         Unreviewed, reverting r279172.

@@ -68,7 +68,6 @@ private:
     CSSParserToken consumeIdentLikeToken();
     CSSParserToken consumeNumber();
     CSSParserToken consumeStringTokenUntil(UChar);
-    CSSParserToken consumeUnicodeRange();
     CSSParserToken consumeUrlToken();
 
     void consumeBadUrlRemnants();

@@ -1,5 +1,5 @@
 
-FAIL "u/**/+/**/a/**/?" => "U+A0-AF" assert_equals: expected "U+A0-AF" but got "U+1357"
+PASS "u/**/+/**/a/**/?" => "U+A0-AF"
 PASS "u+abc" => "U+ABC"
 PASS "U+abc" => "U+ABC"
 PASS "u+ABC" => "U+ABC"
@@ -27,9 +27,9 @@ PASS "u+aaa????" is invalid
 PASS "u+aa?????" is invalid
 PASS "u+a??????" is invalid
 PASS "u+a?a" is invalid
-FAIL "u+aaaaaa" is invalid assert_equals: expected "U+1357" but got "U+AAAAAA"
-FAIL "u+a?????" is invalid assert_equals: expected "U+1357" but got "U+A00000-AFFFFF"
-FAIL "u/**/+0a/**/?" => "U+A0-AF" assert_equals: expected "U+A0-AF" but got "U+1357"
+PASS "u+aaaaaa" is invalid
+PASS "u+a?????" is invalid
+PASS "u/**/+0a/**/?" => "U+A0-AF"
 PASS "u+0a" => "U+A"
 PASS "U+0a0" => "U+A0"
 PASS "u+0aaaaa" => "U+AAAAA"
@@ -44,9 +44,9 @@ PASS "u+000000a" is invalid
 PASS "u+0a????" => "U+A0000-AFFFF"
 PASS "u+0a?????" is invalid
 PASS "u+00a????" is invalid
-FAIL "u+22222a" is invalid assert_equals: expected "U+1357" but got "U+22222A"
+PASS "u+22222a" is invalid
 PASS "u+1e9a" => "U+1E9A"
-FAIL "u/**/+0/**/?" => "U+0-F" assert_equals: expected "U+0-F" but got "U+1357"
+PASS "u/**/+0/**/?" => "U+0-F"
 PASS "u/**/0" is invalid
 PASS "u+0" => "U+0"
 PASS "u+00" => "U+0"
@@ -63,9 +63,9 @@ PASS "u+00000??" is invalid
 PASS "u+0??????" is invalid
 PASS "u+1e3" => "U+1E3"
 PASS "u+1e-20" => "U+1E-20"
-FAIL "u+222222" is invalid assert_equals: expected "U+1357" but got "U+222222"
-FAIL "u+2?????" is invalid assert_equals: expected "U+1357" but got "U+200000-2FFFFF"
-FAIL "u/**/+0/**/-0a" => "U+0-A" assert_equals: expected "U+0-A" but got "U+1357"
+PASS "u+222222" is invalid
+PASS "u+2?????" is invalid
+PASS "u/**/+0/**/-0a" => "U+0-A"
 PASS "u+0-0a" => "U+0-A"
 PASS "u+000000-0aaaaa" => "U+0-AAAAA"
 PASS "u+0000000-0a" is invalid
@@ -74,8 +74,8 @@ PASS "u+0-000000a" is invalid
 PASS "u+0+0a" is invalid
 PASS "u+0?-0a" is invalid
 PASS "u+0-0a?" is invalid
-FAIL "u+222222-22222a" is invalid assert_equals: expected "U+1357" but got "U+222222-22222A"
-FAIL "u/**/+0/**/-1" => "U+0-1" assert_equals: expected "U+0-1" but got "U+1357"
+PASS "u+222222-22222a" is invalid
+PASS "u/**/+0/**/-1" => "U+0-1"
 PASS "u+0-1" => "U+0-1"
 PASS "u-0-1" is invalid
 PASS "u-0+1" is invalid
@@ -83,12 +83,12 @@ PASS "u+0+1" is invalid
 PASS "u+000000-000001" => "U+0-1"
 PASS "u+0000000-1" is invalid
 PASS "u+0-0000001" is invalid
-FAIL "u+0-222222" is invalid assert_equals: expected "U+1357" but got "U+0-222222"
-FAIL "u/**/+/**/?" => "U+0-F" assert_equals: expected "U+0-F" but got "U+1357"
+PASS "u+0-222222" is invalid
+PASS "u/**/+/**/?" => "U+0-F"
 PASS "u+?" => "U+0-F"
 PASS "u+?????" => "u+0-FFFFF"
 PASS "u+???????" is invalid
 PASS "u+?a" is invalid
-FAIL "u+??????" is invalid assert_equals: expected "U+1357" but got "U+0-FFFFFF"
-FAIL u+a is a valid selector assert_equals: expected "u + a" but got ".error"
+PASS "u+??????" is invalid
+PASS u+a is a valid selector
 
