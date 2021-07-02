@@ -1202,11 +1202,14 @@ WebGLUsingMetal:
   condition: ENABLE(WEBGL) && PLATFORM(COCOA)
   defaultValue:
     WebKitLegacy:
-      default: true
+      "HAVE(WEBGL_COMPATIBLE_METAL)": true
+      default: false
     WebKit:
-      default: true
+      "HAVE(WEBGL_COMPATIBLE_METAL)": true
+      default: false
     WebCore:
-      default: true
+      "HAVE(WEBGL_COMPATIBLE_METAL)": true
+      default: false
 
 WebGPUEnabled:
   type: bool
