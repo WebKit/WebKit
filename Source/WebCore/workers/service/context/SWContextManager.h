@@ -107,6 +107,8 @@ public:
     static constexpr Seconds workerTerminationTimeout { 10_s };
     static constexpr Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by layout tests.
 
+    WEBCORE_EXPORT void whenTerminationRequestsAreDone(CompletionHandler<void()>&&);
+
 private:
     SWContextManager() = default;
 
@@ -128,6 +130,7 @@ private:
         Timer m_timeoutTimer;
     };
     HashMap<ServiceWorkerIdentifier, std::unique_ptr<ServiceWorkerTerminationRequest>> m_pendingServiceWorkerTerminationRequests;
+    Vector<CompletionHandler<void()>> m_whenTerminationRequestsAreDoneHandlers;
 };
 
 } // namespace WebCore

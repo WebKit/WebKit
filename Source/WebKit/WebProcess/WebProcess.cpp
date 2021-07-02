@@ -614,7 +614,7 @@ void WebProcess::setHasSuspendedPageProxy(bool hasSuspendedPageProxy)
     m_hasSuspendedPageProxy = hasSuspendedPageProxy;
 }
 
-void WebProcess::setIsInProcessCache(bool isInProcessCache)
+void WebProcess::setIsInProcessCache(bool isInProcessCache, CompletionHandler<void()>&& completionHandler)
 {
 #if PLATFORM(COCOA)
     if (isInProcessCache) {
@@ -629,6 +629,18 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache)
 #else
     UNUSED_PARAM(isInProcessCache);
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+    if (isInProcessCache) {
+        // When calling the completion handler, the parent process may suspend us. We do not want to get suspended until pending requests to
+        // stop service workers are processed because this would be wasteful from a memory standpoint. Also, service worker termination
+        // requests have a timeout and this timeout would be reached if we suspended while it is being processed.
+        SWContextManager::singleton().whenTerminationRequestsAreDone(WTFMove(completionHandler));
+        return;
+    }
+#endif
+
+    completionHandler();
 }
 
 void WebProcess::markIsNoLongerPrewarmed()

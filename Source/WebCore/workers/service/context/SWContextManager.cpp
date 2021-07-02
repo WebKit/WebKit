@@ -143,10 +143,23 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
         if (completionHandler)
             completionHandler();
 
+        if (m_pendingServiceWorkerTerminationRequests.isEmpty()) {
+            for (auto& handler : std::exchange(m_whenTerminationRequestsAreDoneHandlers, { }))
+                handler();
+        }
+
         // Spin the runloop before releasing the worker thread proxy, as there would otherwise be
         // a race towards its destruction.
         callOnMainThread([serviceWorker = WTFMove(serviceWorker)] { });
     });
+}
+
+void SWContextManager::whenTerminationRequestsAreDone(CompletionHandler<void()>&& completionHandler)
+{
+    if (m_pendingServiceWorkerTerminationRequests.isEmpty())
+        return completionHandler();
+
+    m_whenTerminationRequestsAreDoneHandlers.append(WTFMove(completionHandler));
 }
 
 void SWContextManager::forEachServiceWorkerThread(const WTF::Function<void(ServiceWorkerThreadProxy&)>& apply)
