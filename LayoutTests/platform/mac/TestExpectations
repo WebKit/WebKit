@@ -1281,7 +1281,6 @@ fast/canvas/set-colors.html [ Failure ]
 
 # WebCryptoAPI features that enabled only for High Sierra/iOS 11
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
@@ -1800,7 +1799,6 @@ fast/text/international/system-language/declarative-language.html [ Pass Failure
 
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Pass Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
 
 # <rdar://problem/59785942> [ iOS macOS ] imported/w3c/web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub.html is flaky failing
 imported/w3c/web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub.html [ Pass Failure ]

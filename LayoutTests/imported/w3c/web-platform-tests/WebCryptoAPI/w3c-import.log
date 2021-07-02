@@ -19,3 +19,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/randomUUID.https.any.js

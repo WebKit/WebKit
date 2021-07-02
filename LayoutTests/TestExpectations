@@ -2407,11 +2407,14 @@ workers/wasm-long-compile.html [ Slow ]
 # This one is so slow that we cannot use Slow for it anymore.
 workers/wasm-long-compile-many.html [ Pass Timeout ]
 
-# Flaky WebCrypto API tests
-imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
-
 # WebCryptoAPI tests that take too long to complete
 imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
+
+# Flaky WebCrypto API tests
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.html [ Failure Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.worker.html [ Failure Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.any.html [ Failure Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.any.worker.html [ Failure Pass ]
 
 # WebCryptoAPI features that haven't been enabled for current OS
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Skip ]

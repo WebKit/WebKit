@@ -1092,7 +1092,6 @@ css3/color-filters/color-filter-caret-color.html [ Skip ]
 css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
 
 # WebCryptoAPI features that enabled only for iOS 11/High Sierra+
-imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
@@ -3299,7 +3298,6 @@ fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
 
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Failure ]
 
 # <rdar://problem/57029120> Reenable crypto/workers/subtle/rsa-postMessage-worker.html and crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html for iOS
 crypto/workers/subtle/rsa-postMessage-worker.html [ Skip ]

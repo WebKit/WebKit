@@ -1,0 +1,5 @@
+
+FAIL namespace format self.crypto.randomUUID is not a function. (In 'self.crypto.randomUUID()', 'self.crypto.randomUUID' is undefined)
+FAIL version set self.crypto.randomUUID is not a function. (In 'self.crypto.randomUUID()', 'self.crypto.randomUUID' is undefined)
+FAIL variant set self.crypto.randomUUID is not a function. (In 'self.crypto.randomUUID()', 'self.crypto.randomUUID' is undefined)
+
