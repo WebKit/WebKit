@@ -49,6 +49,7 @@ enum class ProcessAssertionType {
     UnboundedNetworking,
     Foreground,
     MediaPlayback,
+    FinishTaskUninterruptable,
 };
 
 class ProcessAssertion : public CanMakeWeakPtr<ProcessAssertion> {
@@ -72,6 +73,7 @@ protected:
 private:
     const ProcessAssertionType m_assertionType;
     const ProcessID m_pid;
+    const String m_reason;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<RBSAssertion> m_rbsAssertion;
     RetainPtr<WKRBSAssertionDelegate> m_delegate;

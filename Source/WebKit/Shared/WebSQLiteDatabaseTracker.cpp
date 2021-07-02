@@ -26,10 +26,6 @@
 #include "config.h"
 #include "WebSQLiteDatabaseTracker.h"
 
-#include "NetworkProcess.h"
-#include "NetworkProcessProxyMessages.h"
-#include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
 #include <WebCore/SQLiteDatabaseTracker.h>
 
 namespace WebKit {
@@ -37,7 +33,6 @@ using namespace WebCore;
 
 WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(IsHoldingLockedFilesHandler&& isHoldingLockedFilesHandler)
     : m_isHoldingLockedFilesHandler(WTFMove(isHoldingLockedFilesHandler))
-    , m_hysteresis([this](PAL::HysteresisState state) { setIsHoldingLockedFiles(state == PAL::HysteresisState::Started); }, 1_s)
 {
     ASSERT(RunLoop::isMain());
     SQLiteDatabaseTracker::setClient(this);
@@ -48,36 +43,48 @@ WebSQLiteDatabaseTracker::~WebSQLiteDatabaseTracker()
     ASSERT(RunLoop::isMain());
     SQLiteDatabaseTracker::setClient(nullptr);
 
-    if (m_hysteresis.state() == PAL::HysteresisState::Started)
+    if (m_currentHystererisID)
         setIsHoldingLockedFiles(false);
 }
 
 void WebSQLiteDatabaseTracker::setIsSuspended(bool isSuspended)
 {
     ASSERT(RunLoop::isMain());
+
+    Locker locker { m_lock };
     m_isSuspended = isSuspended;
 }
 
 void WebSQLiteDatabaseTracker::willBeginFirstTransaction()
 {
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
-        if (weakThis)
-            weakThis->m_hysteresis.start();
-    });
+    Locker locker { m_lock };
+    if (m_currentHystererisID) {
+        // Cancel previous hysteresis task.
+        ++m_currentHystererisID;
+        return;
+    }
+
+    setIsHoldingLockedFiles(true);
 }
 
 void WebSQLiteDatabaseTracker::didFinishLastTransaction()
 {
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
-        if (weakThis)
-            weakThis->m_hysteresis.stop();
+    Locker locker { m_lock };
+    RunLoop::main().dispatchAfter(1_s, [this, weakThis = makeWeakPtr(*this), hystererisID = ++m_currentHystererisID] {
+        if (!weakThis)
+            return;
+
+        Locker locker { m_lock };
+        if (m_currentHystererisID != hystererisID)
+            return; // Cancelled.
+
+        m_currentHystererisID = 0;
+        setIsHoldingLockedFiles(false);
     });
 }
 
 void WebSQLiteDatabaseTracker::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
-    ASSERT(RunLoop::isMain());
-
     if (m_isSuspended)
         return;
 

@@ -316,8 +316,6 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
     m_customProtocolManagerProxy.invalidate();
 #endif
 
-    m_activityForHoldingLockedFiles = nullptr;
-
     m_uploadActivity = std::nullopt;
 
     if (defaultNetworkProcess() == this)
@@ -1255,19 +1253,6 @@ void NetworkProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
-}
-    
-void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
-{
-    if (!isHoldingLockedFiles) {
-        RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because the Network process is no longer holding locked files");
-        m_activityForHoldingLockedFiles = nullptr;
-        return;
-    }
-    if (!m_activityForHoldingLockedFiles) {
-        RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the Network process is holding locked files");
-        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s).moveToUniquePtr();
-    }
 }
 
 void NetworkProcessProxy::flushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)

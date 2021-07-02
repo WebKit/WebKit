@@ -1,5 +1,68 @@
 2021-07-02  Chris Dumez  <cdumez@apple.com>
 
+        Take a process assertion in the network process when holding locked files
+        https://bugs.webkit.org/show_bug.cgi?id=227552
+
+        Reviewed by Sihui Liu.
+
+        Take a process assertion in the network process when holding locked files. Previously, we'd
+        send an IPC to the UIProcess and the UIProcess would take the assertion on behalf of the
+        network process. However, our previous approach was racy and could cause the network process
+        to still get suspended while still holding locked files (which would get it killed).
+
+        We have evidence that the network process is getting killed a lot for this reason
+        (rdar://79787123).
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        Call setIsHoldingLockedFiles() when the "isHoldingLockedFiles" state changes instead of sending
+        an IPC to the UIProcess. setIsHoldingLockedFiles() takes care of taking or releasing a
+        RunningBoard assertion.
+
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        Stop calling setSuspended() on the WebSQLiteDatabaseTracker. The purpose was to avoid sending
+        the SetIsHoldingLockedFiles IPC to the UIProcess after receiving the PrepareToSuspend IPC.
+        However, it is now acceptable to take a process assertion after PrepareToSuspend IPC has been
+        received.
+
+        * NetworkProcess/NetworkProcess.h:
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::setIsHoldingLockedFiles):
+        When setIsHoldingLockedFiles(true) gets called, we take a runningboard assertion to prevent
+        suspension. Note that setIsHoldingLockedFiles(true) gets on the storage thread (which started
+        the SQLite transaction) so we take the assertion synchronously to make sure we cannot get
+        suspended during a SQLite transaction.
+        When setIsHoldingLockedFiles(false) gets called, we release the runningboard assertion.
+
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+        (WebKit::WebSQLiteDatabaseTracker::~WebSQLiteDatabaseTracker):
+        (WebKit::WebSQLiteDatabaseTracker::setIsSuspended):
+        (WebKit::WebSQLiteDatabaseTracker::willBeginFirstTransaction):
+        (WebKit::WebSQLiteDatabaseTracker::didFinishLastTransaction):
+        (WebKit::WebSQLiteDatabaseTracker::setIsHoldingLockedFiles):
+        * Shared/WebSQLiteDatabaseTracker.h:
+        Update WebSQLiteDatabaseTracker so that it called its isHoldingLockedFilesHandler lambda
+        directly on the storage thread when the first transaction starts, instead of dispatching
+        to the main thread. Dispatching to the main thread would be racy as it would mean taking
+        the process assertion asynchronously (on the main thread), after the SQLite transaction
+        has begun on the storage thread.
+        As a result, of this change, I am not using the HysterisActivity class anymore and using
+        my own thread-safe hysteresis activity using RunLoop::dispatchAfter() with an integer
+        and a lock.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessDidTerminate):
+        (WebKit::NetworkProcessProxy::sendProcessDidResume):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        Drop the SetIsHoldingLockedFiles IPC and its handling on UIProcess side since the network
+        process now takes the assertion by itself.
+
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
         Regression(r278786) LocalStorageDatabase's transaction may be remain active when process gets suspended
         https://bugs.webkit.org/show_bug.cgi?id=227632
 

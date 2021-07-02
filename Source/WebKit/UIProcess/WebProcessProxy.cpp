@@ -1476,6 +1476,7 @@ void WebProcessProxy::didSetAssertionType(ProcessAssertionType type)
     
     case ProcessAssertionType::MediaPlayback:
     case ProcessAssertionType::UnboundedNetworking:
+    case ProcessAssertionType::FinishTaskUninterruptable:
         ASSERT_NOT_REACHED();
     }
 

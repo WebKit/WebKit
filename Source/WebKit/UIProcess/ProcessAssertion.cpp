@@ -32,9 +32,10 @@
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(ProcessID pid, const String&, ProcessAssertionType assertionType)
+ProcessAssertion::ProcessAssertion(ProcessID pid, const String& reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
     , m_pid(pid)
+    , m_reason(reason)
 {
 }
 

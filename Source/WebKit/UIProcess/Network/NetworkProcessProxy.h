@@ -208,8 +208,6 @@ public:
     
     void synthesizeAppIsBackground(bool background);
 
-    void setIsHoldingLockedFiles(bool);
-
     void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
@@ -339,7 +337,6 @@ private:
 #endif
 
     ProcessThrottler m_throttler;
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 
 #if ENABLE(CONTENT_EXTENSIONS)

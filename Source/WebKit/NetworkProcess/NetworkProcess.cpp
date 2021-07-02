@@ -159,7 +159,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     , m_networkContentRuleListManager(*this)
 #endif
 #if PLATFORM(IOS_FAMILY)
-    , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::NetworkProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
+    , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { setIsHoldingLockedFiles(isHoldingLockedFiles); })
 #endif
     , m_messagePortChannelRegistry(createMessagePortChannelRegistry(*this))
 {
@@ -2219,10 +2219,6 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
         server->suspend();
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker.setIsSuspended(true);
-#endif
-
     lowMemoryHandler(Critical::Yes);
 
     RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create([this, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -2270,10 +2266,6 @@ void NetworkProcess::processDidResume()
 
 void NetworkProcess::resume()
 {
-#if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker.setIsSuspended(false);
-#endif
-
     for (auto& connection : m_webProcessConnections.values())
         connection->endSuspension();
 

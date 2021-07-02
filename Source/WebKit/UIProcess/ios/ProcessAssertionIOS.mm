@@ -291,12 +291,29 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
         return @"Foreground";
     case ProcessAssertionType::MediaPlayback:
         return @"MediaPlayback";
+    case ProcessAssertionType::FinishTaskUninterruptable:
+        return @"FinishTaskUninterruptable";
+    }
+}
+
+static NSString *runningBoardDomainForAssertionType(ProcessAssertionType assertionType)
+{
+    switch (assertionType) {
+    case ProcessAssertionType::Suspended:
+    case ProcessAssertionType::Background:
+    case ProcessAssertionType::UnboundedNetworking:
+    case ProcessAssertionType::Foreground:
+    case ProcessAssertionType::MediaPlayback:
+        return @"com.apple.webkit";
+    case ProcessAssertionType::FinishTaskUninterruptable:
+        return @"com.apple.common";
     }
 }
 
 ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
     , m_pid(pid)
+    , m_reason(reason)
 {
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
     ASSERT(runningBoardAssertionName);
@@ -306,7 +323,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     }
 
     RBSTarget *target = [RBSTarget targetWithPid:pid];
-    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.webkit" name:runningBoardAssertionName];
+    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(assertionType) name:runningBoardAssertionName];
     m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:reason target:target attributes:@[domainAttribute]]);
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
@@ -329,7 +346,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
 
 ProcessAssertion::~ProcessAssertion()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion() Releasing process assertion for process with PID=%d", this, m_pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion() Releasing process assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 
     if (m_rbsAssertion) {
         m_delegate.get().invalidationCallback = nil;
