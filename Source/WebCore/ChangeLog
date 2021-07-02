@@ -1,3 +1,31 @@
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
+        [MacOS wk1] crypto/workers/subtle/hrsa-postMessage-worker.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=227540
+        <rdar://problem/79977662>
+
+        Reviewed by Geoffrey Garen.
+
+        The test was sending 2 messages to the worker, the first one with the public key
+        and the second one for the private key. As the worker would receive those messages,
+        it would do some checks synchronously and post a message back to the main thread
+        script with the result. As we could see from the test's expected results, the
+        main thread script would usually (although flakily) receive the result for the
+        private key *before* the result for the public key, which was wrong.
+
+        The reason for this was that serializing / deserializing the crypto key would
+        spin the worker's run loop and the worker would thus process incoming messages
+        while serializing / deserializing a crypto key from a previous message.
+
+        To address the issue, we now use a BinarySemaphore to wait for the main thread
+        to finish the wrapping / unwrapping, instead of spinning the run loop.
+
+        No new tests, unskipped existing test.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::wrapCryptoKey):
+        (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+
 2021-07-02  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Keep track of both the fixed and percent maximum values for each column
