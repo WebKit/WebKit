@@ -44,7 +44,6 @@
 #include <algorithm>
 #include <cstring>
 #include <wtf/HexNumber.h>
-#include <wtf/Seconds.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -62,7 +61,10 @@ namespace WebCore {
 
 static const char* packedDepthStencilExtensionName = "GL_OES_packed_depth_stencil";
 
-static Seconds maxFrameDuration = 5_s;
+namespace {
+
+
+} // namespace anonymous
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
@@ -2843,27 +2845,6 @@ GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
     return m_cv.get();
 }
 #endif
-
-bool GraphicsContextGLOpenGL::waitAndUpdateOldestFrame()
-{
-    size_t oldestFrameCompletionFence = m_oldestFrameCompletionFence++ % maxPendingFrames;
-    bool success = true;
-    if (ScopedGLFence fence = WTFMove(m_frameCompletionFences[oldestFrameCompletionFence])) {
-        // Wait so that rendering does not get more than maxPendingFrames frames ahead.
-        GLbitfield flags = GL_SYNC_FLUSH_COMMANDS_BIT;
-#if PLATFORM(COCOA)
-        // Avoid using the GL_SYNC_FLUSH_COMMANDS_BIT because each each frame is ended with a flush
-        // due to external IOSurface access. This particular fence is maxPendingFrames behind.
-        // This means the creation of this fence has already been flushed.
-        flags = 0;
-#endif
-        GLenum result = gl::ClientWaitSync(fence, flags, maxFrameDuration.nanosecondsAs<GLuint64>());
-        ASSERT(result != GL_WAIT_FAILED);
-        success = result != GL_WAIT_FAILED && result != GL_TIMEOUT_EXPIRED;
-    }
-    m_frameCompletionFences[oldestFrameCompletionFence].fenceSync();
-    return success;
-}
 
 }
 

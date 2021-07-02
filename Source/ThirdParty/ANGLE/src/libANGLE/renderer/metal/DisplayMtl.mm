@@ -884,9 +884,6 @@ void DisplayMtl::initializeExtensions() const
 
         // GL_OES_EGL_sync
         mNativeExtensions.eglSyncOES = true;
-
-        // GL_ARB_sync
-        mNativeExtensions.glSyncARB = true;
     }
 }
 

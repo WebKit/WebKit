@@ -1,3 +1,15 @@
+2021-07-01  Ben Nham  <nham@apple.com>
+
+        Unreviewed, reverting r279172.
+
+        Broke WebGL context construction on some devices.
+
+        Reverted changeset:
+
+        "rAF driven WebGL submits excessive amount of GPU work when frames are slow"
+        https://bugs.webkit.org/show_bug.cgi?id=227059
+        https://commits.webkit.org/r279172
+
 2021-07-01  Jean-Yves Avenard  <jya@apple.com>
 
         [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
