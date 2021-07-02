@@ -1,3 +1,13 @@
+2021-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        loadSimulatedRequest: should do same delegate callbacks as loadHTMLString and loadData
+        https://bugs.webkit.org/show_bug.cgi?id=227599
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewLoadAPIs.mm:
+        (TEST):
+
 2021-07-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Cache identifiers in Git checkouts (Follow-up fix)

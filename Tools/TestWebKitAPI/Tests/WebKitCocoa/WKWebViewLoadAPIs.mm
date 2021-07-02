@@ -32,6 +32,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 static NSString *exampleURLString = @"https://example.com/";
@@ -80,6 +81,61 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [webView loadSimulatedRequest:loadRequest withResponse:response.get() responseData:data];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [delegate waitForDidFinishNavigation];
+}
+
+TEST(WKWebView, LoadSimulatedRequestDelegateCallbacks)
+{
+    enum class Callback : uint8_t {
+        NavigationAction,
+        NavigationResponse,
+        StartProvisional,
+        Commit,
+        Finish
+    };
+
+    auto checkCallbacks = [] (const Vector<Callback> vector) {
+        ASSERT_EQ(vector.size(), 4u);
+        EXPECT_EQ(vector[0], Callback::NavigationAction);
+        EXPECT_EQ(vector[1], Callback::StartProvisional);
+        EXPECT_EQ(vector[2], Callback::Commit);
+        EXPECT_EQ(vector[3], Callback::Finish);
+    };
+
+    __block Vector<Callback> callbacks;
+    __block bool finished = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^completionHandler)(WKNavigationActionPolicy)) {
+        callbacks.append(Callback::NavigationAction);
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        callbacks.append(Callback::NavigationResponse);
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+    delegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        callbacks.append(Callback::StartProvisional);
+    };
+    delegate.get().didCommitNavigation = ^(WKWebView *, WKNavigation *) {
+        callbacks.append(Callback::Commit);
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        callbacks.append(Callback::Finish);
+        finished = true;
+    };
+
+    auto webView = adoptNS([WKWebView new]);
+    webView.get().navigationDelegate = delegate.get();
+    NSURL *url = [NSURL URLWithString:@"https://webkit.org/"];
+    [webView loadHTMLString:@"hi!" baseURL:url];
+    TestWebKitAPI::Util::run(&finished);
+
+    checkCallbacks(callbacks);
+    callbacks = { };
+    finished = false;
+
+    [webView loadSimulatedRequest:[NSURLRequest requestWithURL:url] response:adoptNS([[NSURLResponse alloc] initWithURL:url MIMEType:@"text/html" expectedContentLength:3 textEncodingName:nil]).get() responseData:[NSData dataWithBytes:"hi!" length:3]];
+    TestWebKitAPI::Util::run(&finished);
+    checkCallbacks(callbacks);
 }
 
 TEST(WKWebView, LoadFileRequest)
