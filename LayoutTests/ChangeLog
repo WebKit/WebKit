@@ -1,5 +1,13 @@
 2021-07-02  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark imported/w3c/web-platform-tests/beacon/beacon-basic.https.window.html as flaky
+
+        It has been flaky since its import in r279225.
+
+        * TestExpectations:
+
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
         [MacOS wk1] crypto/workers/subtle/hrsa-postMessage-worker.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=227540
         <rdar://problem/79977662>
