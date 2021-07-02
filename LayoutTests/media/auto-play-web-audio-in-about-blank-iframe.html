@@ -1,0 +1,67 @@
+<head>
+    <style>
+        iframe {
+            width: 320px;
+            height: 240px;
+        }
+    </style>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    async function checkAutoPlay(state, allowed)
+    {
+        let message = allowed ? "AudioContext auto-played" : "AudioContext did not auto-play";
+        if (allowed === (event.data === "running"))
+            consoleWrite(`PASS: ${allowed ? "Video auto-played" : "Video did not auto-play"}`);
+        else
+            consoleWrite(`FAIL: ${allowed ? "Video did not auto-play" : "Video auto-played"}`);
+    }
+
+    async function loadVideo(policy, allow)
+    {
+        consoleWrite(`<br>*** Test with auto-play policy set to '${policy}'`);
+        
+        if (window.internals)
+            internals.setDocumentAutoplayPolicy(document, policy)
+
+        iframe.src = 'about:blank';
+        await waitForEventWithTimeout(iframe, 'load', 4000, '"about:blank" iframe failed to load!');
+
+        let script = iframe.contentDocument.head.appendChild(iframe.contentDocument.createElement('script'));
+        let code = `
+            let context = new AudioContext();
+            let node = context.createBufferSource();
+            node.connect(context.destination);
+            node.start();
+            setTimeout(() => {
+                window.parent.postMessage(context.state, '*');
+            }, 250)`;
+        script.appendChild(iframe.contentDocument.createTextNode(code));
+
+        let event = await waitForEventWithTimeout(window, 'message', 4000, 'iframe failed to send message!');
+        await checkAutoPlay(event.data, allow);
+    }
+    
+    window.addEventListener('load', async () => {
+        iframe = document.querySelector('iframe');
+
+        await loadVideo('Allow', true);
+
+        await loadVideo('AllowWithoutSound', false);
+
+        await loadVideo('Deny', false);
+
+        consoleWrite('');
+        endTest();
+    }, false);
+
+    </script>
+</head>
+<body>
+    <iframe ></iframe>
+</body>
