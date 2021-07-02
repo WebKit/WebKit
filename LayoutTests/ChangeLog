@@ -1,3 +1,15 @@
+2021-07-02  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r279485.
+
+        Broke expectations for 7 mathML test on Big Sur wk1
+
+        Reverted changeset:
+
+        "Move some Mac MathML test expectation files around"
+        https://bugs.webkit.org/show_bug.cgi?id=227520
+        https://commits.webkit.org/r279485
+
 2021-07-02  Eric Hutchison  <ehutchison@apple.com>
 
         [ BigSur Release Arm64 ] imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html is a flakey text failure
