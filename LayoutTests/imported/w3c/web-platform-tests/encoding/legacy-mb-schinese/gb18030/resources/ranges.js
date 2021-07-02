@@ -1,5 +1,5 @@
 // Based on https://encoding.spec.whatwg.org/index-gb18030-ranges.txt
-var ranges = [
+const ranges = [
 	[0, "\u0080"],
 	[36, "\u00A5"],
 	[38, "\u00A9"],

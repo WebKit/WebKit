@@ -1,3 +1,14 @@
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
+        Resync encoding web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227602
+
+        Reviewed by Alex Christensen.
+
+        Resync encoding web-platform-tests from upstream 2c19d6ee62676ac90146.
+
+        * web-platform-tests/encoding/*: Updated.
+
 2021-06-30  Darin Adler  <darin@apple.com>
 
         CSS parser using a token for Unicode ranges, but recent CSS specification says it should not
