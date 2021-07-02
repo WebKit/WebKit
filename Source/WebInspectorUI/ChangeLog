@@ -1,3 +1,89 @@
+2021-07-02  Harshil Ratnu  <hratnu@apple.com>
+
+        Web Inspector: add contextual documentation for CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=226883
+
+        Reviewed by Devin Rousso.
+
+        Overview: Add contextual documentation for all supported CSS properties in Styles and Computed panel within Web 
+        Inspector.
+        Details: Add an info button which appears next to the property field on Hover. Clicking on the info button shows
+        a popover with the documentation for the property. Tabbing out or clicking anywhere other than the value field 
+        dismisses the popover.
+        Architecture: Add a ContextualDocumentationButton in SpreadsheetStyleProperty and append that to the end of the 
+        property content. This Button, when clicked, creates an instance of the ContextualDocumentation.js which will 
+        search the ContextualDocumentationDB to find the related property and it's relevant details. Embed these details
+        in an instance of Popover.js and present next to the associated propertyName.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * Scripts/copy-user-interface-resources.pl:
+        Add details for the ContextualDocumentationDatabase from External Folder to build properly.
+
+        * UserInterface/Base/Setting.js:
+        Add setting to show syntax in documentation popover and define default state as false.
+
+        * UserInterface/External/ContextualDocumentationDatabase/ContextualDocumentationDatabase.js: Added.
+        * UserInterface/External/ContextualDocumentationDatabase/LICENSE: Added.
+        * UserInterface/Images/InfoIcon.svg: Added.
+        * UserInterface/Main.html:
+        Add and link new files.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property .go-to-arrow):
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property:not(:hover) .go-to-arrow):
+        Remove absolute positioning from go-to-arrow button to align it with rest of the text in line and style it 
+        similar to contextual-documentation-button. 
+        (.sidebar > .panel.details.css-style > .content > .computed .property .go-to-arrow): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed .property:not(:hover) .go-to-arrow): Deleted.
+        Change hover area to include white space on the side of computed variables.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property .go-to-arrow):
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property .go-to-arrow):
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .contextual-documentation-button):
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .contextual-documentation-button):
+        Add unifrom styling for go-to-arrow button and contextual-documentation-button for computed properties.
+
+        * UserInterface/Views/ContextualDocumentationPopover.css: Added.
+        (.popover .documentation-popover-content):
+        (.popover .documentation-popover-content > p):
+        (.popover .documentation-popover-content > .name-header):
+        (.popover .documentation-popover-content > .syntax):
+        (.popover .documentation-popover-content > .syntax > .syntax-title):
+        (.popover .documentation-popover-content > .reference-link):
+        * UserInterface/Views/ContextualDocumentationPopover.js: Added.
+        (WI.ContextualDocumentationPopover):
+        (WI.ContextualDocumentationPopover.prototype.show):
+        (WI.ContextualDocumentationPopover.prototype._presentOverTargetElement):
+        (WI.ContextualDocumentationPopover.prototype._getDocumentationDetails):
+        (WI.ContextualDocumentationPopover.prototype._createDocumentationElement):
+        Add new class that extends Popover.js and  handles fetching the values from VS Code documentation, puts relevant
+        information in the popover and presents the popover when the documentation-button is clicked.
+
+        * UserInterface/Views/Main.css:
+        (.contextual-documentation-button):
+        (.contextual-documentation-button:active):
+        (@media (prefers-color-scheme: dark) .contextual-documentation-button):
+        Add general styling for contextualDocumentationButton.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createElementsSettingsView):
+        Add a new setting in Elements Tab to show syntax.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.willDismissPopover):
+        Add a method - willDismissPopover to handle changes when the documentation popover is about to dismiss.
+        (WI.SpreadsheetStyleProperty.prototype.update):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        (WI.SpreadsheetStyleProperty.prototype._addContextualDocumentationButton):
+        Add a method which gets called for all property fields and also gets called when property name is changed and
+        updated by clicking out of the property name field or tabbing into the next value field and is responsible for
+        adding the info button add the end of the property.
+        (WI.SpreadsheetStyleProperty.prototype._handleContextualDocumentationButtonClicked):
+        (WI.SpreadsheetStyleProperty.prototype._presentContextualDocumentation):
+        Add a method which creates an instance of the ContextualDocumentationPopover.js class and shows it.
+
 2021-07-02  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Styles: should autocomplete `var()` and `attr()` values

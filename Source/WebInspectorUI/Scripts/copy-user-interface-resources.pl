@@ -167,12 +167,14 @@ my $workersDir = File::Spec->catdir($targetResourcePath, 'Workers');
 my $codeMirrorPath = File::Spec->catdir($uiRoot, 'External', 'CodeMirror');
 my $esprimaPath = File::Spec->catdir($uiRoot, 'External', 'Esprima');
 my $threejsPath = File::Spec->catdir($uiRoot, 'External', 'three.js');
+my $contextualDocumentationDatabasePath = File::Spec->catdir($uiRoot, 'External', 'ContextualDocumentationDatabase');
 
 $webInspectorUIAdditionsDir = &webInspectorUIAdditionsDir();
 
 my $codeMirrorLicense = readLicenseFile(File::Spec->catfile($codeMirrorPath, 'LICENSE'));
 my $esprimaLicense = readLicenseFile(File::Spec->catfile($esprimaPath, 'LICENSE'));
 my $threejsLicense = readLicenseFile(File::Spec->catfile($threejsPath, 'LICENSE'));
+my $contextualDocumentationDatabaseLicense = readLicenseFile(File::Spec->catfile($contextualDocumentationDatabasePath, 'LICENSE'));
 make_path($protocolDir, $targetResourcePath);
 
 $python = $ENV{"PYTHON"} if defined($ENV{"PYTHON"});
@@ -327,6 +329,15 @@ if ($shouldCombineMain) {
        '--output-dir', $derivedSourcesDir,
        '--output-script-name', 'CodeMirror.js',
        '--output-style-name', 'CodeMirror.css');
+    
+    # Combine the ContextualDocumentationDatabase JavaScript files in Production builds into a single file (ContextualDocumentationDatabase.js).
+    system($perl, $combineResourcesCmd,
+       '--input-dir', 'External/ContextualDocumentationDatabase',
+       '--input-html', $derivedSourcesMainHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'ContextualDocumentationDatabase.js');
 
     # Combine the Esprima JavaScript files in Production builds into a single file (Esprima.js).
     system($perl, $combineResourcesCmd,
@@ -395,6 +406,10 @@ if ($shouldCombineMain) {
     my $targetCodeMirrorCSS = File::Spec->catfile($targetResourcePath, 'CodeMirror.css');
     seedFile($targetCodeMirrorCSS, $codeMirrorLicense);
 
+    # Export the license into ContextualDocumentationDatabase.js.
+    my $targetContextualDocumentationDatabaseJS = File::Spec->catfile($targetResourcePath, 'ContextualDocumentationDatabase.js');
+    seedFile($targetContextualDocumentationDatabaseJS, $contextualDocumentationDatabaseLicense);
+
     # Export the license into Esprima.js.
     my $targetEsprimaJS = File::Spec->catfile($targetResourcePath, 'Esprima.js');
     seedFile($targetEsprimaJS, $esprimaLicense);
@@ -414,6 +429,10 @@ if ($shouldCombineMain) {
     my $derivedSourcesCodeMirrorCSS = File::Spec->catfile($derivedSourcesDir, 'CodeMirror.css');
     system(qq("$python" "$jsMinScript" < "$derivedSourcesCodeMirrorJS" >> "$targetCodeMirrorJS")) and die "Failed to minify $derivedSourcesCodeMirrorJS: $!";
     system(qq("$python" "$cssMinScript" < "$derivedSourcesCodeMirrorCSS" >> "$targetCodeMirrorCSS")) and die "Failed to minify $derivedSourcesCodeMirrorCSS: $!";
+
+    # Minify the ContextualDocumentationDatabase.js file, appending to the license that was exported above.
+    my $derivedSourcesContextualDocumentationDatabaseJS = File::Spec->catfile($derivedSourcesDir, 'ContextualDocumentationDatabase.js');
+    system(qq("$python" "$jsMinScript" < "$derivedSourcesContextualDocumentationDatabaseJS" >> "$targetContextualDocumentationDatabaseJS")) and die "Failed to minify $derivedSourcesContextualDocumentationDatabaseJS: $!";
 
     # Minify the Esprima.js file, appending to the license that was exported above.
     my $derivedSourcesEsprimaJS = File::Spec->catfile($derivedSourcesDir, 'Esprima.js');

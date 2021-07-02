@@ -50,13 +50,12 @@
     text-indent: -13px; /* width of "--" in `11px Menlo` */
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .property .go-to-arrow {
-    position: absolute;
-    bottom: 0;
-    width: var(--disclosure-button-size);
-    height: var(--disclosure-button-size);
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property .go-to-arrow {
+    vertical-align: -2px;
+    width: 1em;
+    height: 1em;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .property:not(:hover) .go-to-arrow {
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property:not(:hover) .go-to-arrow {
     display: none;
 }
