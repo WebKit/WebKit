@@ -1,0 +1,34 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Divide the first media segment in two.
+RUN(partial1 = loader.mediaSegment(0).slice(0, 14006))
+RUN(partial2 = loader.mediaSegment(0).slice(14006))
+Append a partial media segment.
+RUN(sourceBuffer.appendBuffer(partial1))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '3.621') OK
+Complete the partial media segment.
+RUN(sourceBuffer.appendBuffer(partial2))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '10.001') OK
+Clean sourcebuffer of all content.
+RUN(sourceBuffer.remove(0, 100))
+EVENT(update)
+Append the two media segment in reverse order.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '90.001') OK
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '10.001') OK
+EXPECTED (sourceBuffer.buffered.end(1) == '90.001') OK
+END OF TEST
+

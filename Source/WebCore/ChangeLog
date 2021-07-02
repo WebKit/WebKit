@@ -1,3 +1,70 @@
+2021-07-01  Jean-Yves Avenard  <jya@apple.com>
+
+        [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
+        https://bugs.webkit.org/show_bug.cgi?id=226069
+        rdar://79951528
+
+        Reviewed by Jer Noble.
+
+        Source/WebCore:
+
+        When parsing samples from a WebM file, the samples emitted by the parser can be very short in
+        duration, which is ineffecient both in storage costs in our SampleMap, as well as in decoding
+        CPU costs, as each sample must be fed into the decoder separately. So the parser will group
+        together these small samples into a larger "meta sample" with a duration no shorter than 2s.
+
+        However, at the end of a file, no more sample data will be appended, up to 2s of audio data
+        will not be emitted from the parser.
+
+        At the end of an append, always flush audio track data to ensure that all parsed samples are
+        emitted, regardless of their collective duration.
+
+        Drive-by Fixes:
+
+        - The logic to handle a partial frame was incorrect. libwebm will always progress and call
+        Callback's OnFrame even with partial content as soon as the frame size has been determined.
+        bytesRemaining actually contains how many bytes there are available to read and that the
+        Callback should attempt to fetch.
+        The Callback should then return Status::kOkPartial if the full frame hasn't been seen yet
+        or Status::kOkCompleted if it has. kWouldBlock indicates that we do not have information to
+        read. kOkPartial and kWouldBlock indicates that libwebm should
+        retry later to complete the current frame. All other codes indicate an error.
+        - createSampleBuffer() would use the entire m_packetsData to create a CMSampleBuffer, even if partial
+        data was read but not yet complete. Only use the fully parsed data to create the CMSampleBuffer.
+        When the fully parsed packets are removed from packetsData; adjust the offset of the start of the
+        current partial data (this was the primary cause for bug 227499 that caused the first backout)
+        - consumeFrameData() would only increase the size of m_packetsData when m_currentPacketSize was
+        unset, which would leave the buffer zeroed when partial sample data was present. Always grow
+        m_packetsData to be large enough to receive the read data.
+        - The Read() method would not return the correct number of bytes read (0) when a null destination
+        buffer was passed in.
+        - Bug 227382 - SourceBufferParserWebM::StreamingVectorReader Read() returns an incorrect value
+        for numActuallyRead when moving to the next segment.
+
+        Test: media/media-source/media-vorbis-partial.html
+              media/media-source/media-opus-partial.html
+
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::appendData):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::createSampleBuffer):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::createSampleBuffer):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h: Rename some members to better indicate what
+        they contain. Move some members to the base class as they are always used by Video and Audio.
+
+        LayoutTests:
+
+        * platform/mac/TestExpectations:
+        * media/media-source/content/test-vorbis-manifest.json: Added.
+        * media/media-source/content/test-vorbis.webm: Added.
+        * media/media-source/content/test-opus-manifest.json: Added.
+        * media/media-source/content/test-opus.webm: Added.
+        * media/media-source/media-vorbis-partial-expected.txt: Added.
+        * media/media-source/media-vorbis-partial.html: Added.
+        * media/media-source/media-opus-partial-expected.txt: Added.
+        * media/media-source/media-opus-partial.html: Added.
+
 2021-07-01  John Wilander  <wilander@apple.com>
 
         PCM: Change import from CryptoKitCBridging to CryptoKitPrivate

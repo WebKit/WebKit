@@ -1,0 +1,10 @@
+{
+    "url": "content/test-opus.webm",
+    "type": "audio/webm; codecs=\"opus\"",
+    "init": { "offset": 0, "size": 272 },
+    "duration": 169.001,
+    "media": [
+        { "offset": 272, "size": 142176, "timestamp": 0, "duration": 10.001 },
+        { "offset": 142448, "size": 207102, "timestamp": 80.001, "duration": 10 }
+    ]
+}

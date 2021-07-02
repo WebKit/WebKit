@@ -1,3 +1,19 @@
+2021-07-01  Jean-Yves Avenard  <jya@apple.com>
+
+        [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
+        https://bugs.webkit.org/show_bug.cgi?id=226069
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/content/test-vorbis-manifest.json: Added.
+        * media/media-source/media-vorbis-partial-expected.txt: Added.
+        * media/media-source/content/test-vorbis.webm: Added.
+        * media/media-source/content/test-opus-manifest.json: Added.
+        * media/media-source/media-opus-partial-expected.txt: Added.
+        * media/media-source/media-opus-partial.html: Added.
+        * media/media-source/content/test-opus.webm: Added.
+        * media/media-source/media-vorbis-partial.html: Added.
+
 2021-07-01  Eric Carlson  <eric.carlson@apple.com>
 
         WebAudio auto-play policy should come from top document

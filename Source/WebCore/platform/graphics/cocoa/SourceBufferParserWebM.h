@@ -160,6 +160,11 @@ public:
             return webm::Status(webm::Status::kInvalidElementId);
         }
 
+    protected:
+        std::optional<size_t> m_currentPacketSize;
+        // Size of the currently parsed packet, possibly incomplete.
+        size_t m_partialBytesRead { 0 };
+
     private:
         CodecType m_codec;
         webm::TrackEntry m_track;
@@ -189,7 +194,6 @@ public:
 #if ENABLE(VP9)
         vp9_parser::Vp9HeaderParser m_headerParser;
         RetainPtr<CMBlockBufferRef> m_currentBlockBuffer;
-        uint64_t m_currentBlockBufferPosition { 0 };
 #endif
     };
 
@@ -214,12 +218,11 @@ public:
 
         CMTime m_samplePresentationTime;
         CMTime m_packetDuration;
-        Vector<uint8_t> m_packetData;
+        Vector<uint8_t> m_packetsData;
         std::optional<size_t> m_currentPacketByteOffset;
-        std::optional<size_t> m_currentPacketSize;
-        size_t m_packetBytesRead { 0 };
+        // Size of the complete packets parsed so far.
+        size_t m_packetsBytesRead { 0 };
         size_t m_byteOffset { 0 };
-        size_t m_partialBytesRead { 0 };
         uint8_t m_framesPerPacket { 0 };
         Seconds m_frameDuration { 0_s };
         Vector<AudioStreamPacketDescription> m_packetDescriptions;
