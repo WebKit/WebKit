@@ -101,7 +101,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(*cell));
         cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
         cellBoxGeometry.setLogicalTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
-        cellBoxGeometry.setLogicalLeft(columnList[cell->startColumn()].logicalLeft());
+        cellBoxGeometry.setLogicalLeft(columnList[cell->startColumn()].usedLogicalLeft());
         cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(*cell));
 
         if (cellBox.hasInFlowOrFloatingChild()) {
@@ -336,7 +336,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             return formattingGeometry.computedColumnWidth(*columnBox);
         }();
         if (fixedWidth)
-            column.setFixedWidth(*fixedWidth);
+            column.setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
     }
 
     Vector<std::optional<float>> columnPercentList(columnList.size());
@@ -360,7 +360,9 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
         grid.slot(cellPosition)->setWidthConstraints(*intrinsicWidth);
         if (auto fixedWidth = formattingGeometry.fixedValue(cellBox.style().logicalWidth())) {
             *fixedWidth += horizontalBorderAndPaddingWidth;
-            columnList[cellPosition.column].setFixedWidth(std::max(*fixedWidth, columnList[cellPosition.column].fixedWidth().value_or(0)));
+            auto& column = columnList[cellPosition.column];
+            if (*fixedWidth > column.computedLogicalWidth().value())
+                column.setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
         }
         // Collect the percent values so that we can compute the maximum values per column.
         auto& cellLogicalWidth = cellBox.style().logicalWidth();
@@ -387,8 +389,8 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
                 continue;
             }
             auto widthConstraints = slot.widthConstraints();
-            if (auto columnFixedWidth = columnList[columnIndex].fixedWidth())
-                widthConstraints.maximum = std::max(*columnFixedWidth, widthConstraints.minimum);
+            if (auto columnLogicalWidth = columnList[columnIndex].computedLogicalWidth(); columnLogicalWidth.isFixed())
+                widthConstraints.maximum = std::max(LayoutUnit { columnLogicalWidth.value() }, widthConstraints.minimum);
 
             columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
             columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
@@ -442,9 +444,10 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
                 continue;
             }
             ASSERT(*percent > 0);
-            columnList[columnIndex].setPercent(std::min(remainingPercent, *percent));
-            percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { columnIntrinsicWidths[columnIndex].maximum * 100.0f / *columnList[columnIndex].percent() });
-            remainingPercent -= *columnList[columnIndex].percent();
+            percent = std::min(*percent, remainingPercent);
+            columnList[columnIndex].setComputedLogicalWidth({ *percent, LengthType::Percent });
+            percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { columnIntrinsicWidths[columnIndex].maximum * 100.0f / *percent });
+            remainingPercent -= *percent;
         }
 
         ASSERT(remainingPercent >= 0.f);
@@ -472,8 +475,8 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
     auto columnLogicalLeft = grid.horizontalSpacing();
     for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
         auto& column = columns[columnIndex];
-        column.setLogicalLeft(columnLogicalLeft);
-        column.setLogicalWidth(distributedHorizontalSpaces[columnIndex]);
+        column.setUsedLogicalLeft(columnLogicalLeft);
+        column.setUsedLogicalWidth(distributedHorizontalSpaces[columnIndex]);
         columnLogicalLeft += distributedHorizontalSpaces[columnIndex] + grid.horizontalSpacing();
     }
 

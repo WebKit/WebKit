@@ -1,3 +1,42 @@
+2021-07-02  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] TableGrid::Column holds both the computed and the used width values
+        https://bugs.webkit.org/show_bug.cgi?id=227488
+
+        Reviewed by Antti Koivisto.
+
+        This patch cleans up TableGrid::Column interface to ensure we don't confused
+        the computed and the used widths for columns.
+        This is also in prepartion for adding mixed width type support.
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraSpace):
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::horizontalSpaceForCellContent const):
+        * layout/formattingContexts/table/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Column::setLogicalWidth): Deleted.
+        (WebCore::Layout::TableGrid::Column::logicalWidth const): Deleted.
+        (WebCore::Layout::TableGrid::Column::setLogicalLeft): Deleted.
+        (WebCore::Layout::TableGrid::Column::logicalLeft const): Deleted.
+        * layout/formattingContexts/table/TableGrid.h:
+        (WebCore::Layout::TableGrid::Column::usedLogicalRight const):
+        (WebCore::Layout::TableGrid::Column::computedLogicalWidth const):
+        (WebCore::Layout::TableGrid::Columns::logicalWidth const):
+        (WebCore::Layout::TableGrid::Column::setComputedLogicalWidth):
+        (WebCore::Layout::TableGrid::Column::setUsedLogicalWidth):
+        (WebCore::Layout::TableGrid::Column::usedLogicalWidth const):
+        (WebCore::Layout::TableGrid::Column::setUsedLogicalLeft):
+        (WebCore::Layout::TableGrid::Column::usedLogicalLeft const):
+        (WebCore::Layout::TableGrid::Column::logicalRight const): Deleted.
+        (WebCore::Layout::TableGrid::Column::fixedWidth const): Deleted.
+        (WebCore::Layout::TableGrid::Column::percent const): Deleted.
+        (WebCore::Layout::TableGrid::Column::setFixedWidth): Deleted.
+        (WebCore::Layout::TableGrid::Column::setPercent): Deleted.
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace):
+
 2021-07-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279487.

@@ -294,12 +294,22 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         auto& column = m_grid.columns().list()[columnIndex];
         auto columnWidth = std::optional<float> { };
         auto type = GridSpace::Type::Auto;
-        if (auto fixedWidth = column.fixedWidth()) {
-            columnWidth = *fixedWidth;
+
+        auto& computedLogicalWidth = column.computedLogicalWidth();
+        switch (computedLogicalWidth.type()) {
+        case LengthType::Fixed:
+            columnWidth = computedLogicalWidth.value();
             type = GridSpace::Type::Fixed;
-        } else if (auto percent = column.percent()) {
-            columnWidth = *percent * availableHorizontalSpace / 100.0f;
+            break;
+        case LengthType::Percent:
+            columnWidth = computedLogicalWidth.value() * availableHorizontalSpace / 100.0f;
             type = GridSpace::Type::Percent;
+            break;
+        case LengthType::Relative:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        default:
+            break;
         }
 
         float minimumContentWidth = slot.widthConstraints().minimum;
