@@ -1793,8 +1793,7 @@ void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, R
     m_pendingNavigationID = loadParameters.navigationID;
     m_pendingWebsitePolicies = WTFMove(loadParameters.websitePolicies);
 
-    auto unreachableURL = loadParameters.unreachableURLString.isEmpty() ? URL() : URL(URL(), loadParameters.unreachableURLString);
-    SubstituteData substituteData(WTFMove(sharedBuffer), unreachableURL, simulatedResponse, SubstituteData::SessionHistoryVisibility::Visible);
+    SubstituteData substituteData(WTFMove(sharedBuffer), loadParameters.request.url(), simulatedResponse, SubstituteData::SessionHistoryVisibility::Visible);
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
