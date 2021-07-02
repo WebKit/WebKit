@@ -157,14 +157,20 @@ void StorageManagerSet::waitUntilSyncingLocalStorageFinished()
 
     BinarySemaphore semaphore;
     m_queue->dispatch([this, &semaphore] {
-        for (const auto& storageArea : m_storageAreas.values()) {
-            ASSERT(storageArea);
-            if (storageArea)
-                storageArea->syncToDatabase();
-        }
+        flushLocalStorage();
         semaphore.signal();
     });
     semaphore.wait();
+}
+
+void StorageManagerSet::flushLocalStorage()
+{
+    ASSERT(!RunLoop::isMain());
+    for (const auto& storageArea : m_storageAreas.values()) {
+        ASSERT(storageArea);
+        if (storageArea)
+            storageArea->syncToDatabase();
+    }
 }
 
 void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
@@ -185,6 +191,10 @@ void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
             RunLoop::main().dispatch(WTFMove(completionHandler));
             return;
         }
+
+        // Make sure we flush local storage to disk before we suspend the thread as we want to make sure any pending
+        // SQL transaction has been committed.
+        flushLocalStorage();
 
         m_state = State::Suspended;
         RunLoop::main().dispatch(WTFMove(completionHandler));

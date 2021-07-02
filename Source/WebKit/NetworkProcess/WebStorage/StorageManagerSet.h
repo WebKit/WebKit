@@ -80,6 +80,8 @@ public:
 private:
     StorageManagerSet();
 
+    void flushLocalStorage();
+
     // Message Handlers
     void connectToLocalStorageArea(IPC::Connection&, PAL::SessionID , StorageNamespaceIdentifier, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
     void connectToTransientLocalStorageArea(IPC::Connection&, PAL::SessionID , StorageNamespaceIdentifier, SecurityOriginData&&, SecurityOriginData&&, ConnectToStorageAreaCallback&&);

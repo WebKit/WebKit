@@ -1,3 +1,22 @@
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r278786) LocalStorageDatabase's transaction may be remain active when process gets suspended
+        https://bugs.webkit.org/show_bug.cgi?id=227632
+
+        Reviewed by Geoffrey Garen.
+
+        After r278786, LocalStorageDatabase has a SQL transaction that gets committed with a 500ms delay on the
+        storage thread. When the network process would receive the PrepareToSuspend IPC, it would suspend / hang
+        the storage thread, which would prevent the SQL transaction from getting committed and we would suspend
+        with a locked file and get killed. We now make sure to flush local storage to disk (i.e. commit that
+        transaction) before we suspend / hang the storage thread.
+
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::waitUntilSyncingLocalStorageFinished):
+        (WebKit::StorageManagerSet::flushLocalStorage):
+        (WebKit::StorageManagerSet::suspend):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+
 2021-07-02  Brady Eidson  <beidson@apple.com>
 
         WebPageProxy::setAppHighlightsVisibility might send message from a background thread, ASSERTing
