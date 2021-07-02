@@ -213,7 +213,7 @@ function waitForEventWithTimeout(element, type, time, message) {
         }
         
         consoleWrite(`EVENT(${result.type})`);
-        return Promise.resolve(result);
+        Promise.resolve(result);
     });
 }
 

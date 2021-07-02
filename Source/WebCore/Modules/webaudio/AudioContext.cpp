@@ -135,7 +135,7 @@ AudioContext::AudioContext(Document& document, const AudioContextOptions& contex
 void AudioContext::constructCommon()
 {
     ASSERT(document());
-    if (document()->topDocument().audioPlaybackRequiresUserGesture())
+    if (document()->audioPlaybackRequiresUserGesture())
         addBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
     else
         m_restrictions = NoRestrictions;
