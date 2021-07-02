@@ -1,9 +1,9 @@
 
 PASS /common/redirect.py does not support CORS
 PASS cross-origin, CORS-safelisted: type = string
-FAIL cross-origin, CORS-safelisted: type = arraybuffer assert_true: timeout expected true got false
+PASS cross-origin, CORS-safelisted: type = arraybuffer
 PASS cross-origin, CORS-safelisted: type = form
-FAIL cross-origin, CORS-safelisted: type = blob assert_true: timeout expected true got false
+PASS cross-origin, CORS-safelisted: type = blob
 PASS cross-origin, non-CORS-safelisted: failure case (with redirect)
 PASS cross-origin, non-CORS-safelisted: failure case (without redirect)
 PASS cross-origin, non-CORS-safelisted[credentials=false]

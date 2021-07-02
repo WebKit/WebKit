@@ -1,3 +1,16 @@
+2021-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Align beacon CORS mode with Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=227590
+
+        Reviewed by Chris Dumez.
+
+        This follows https://w3c.github.io/beacon/#sec-processing-model step 6.3.
+        Now we pass a WPT test that Chrome and Firefox already passed.
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+
 2021-07-01  Amir Mark Jr  <amir_mark@apple.com>
 
         Unreviewed, reverting r279481.
