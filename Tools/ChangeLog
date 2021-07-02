@@ -1,3 +1,12 @@
+2021-07-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete unused BuildSlaveSupport symlink
+        https://bugs.webkit.org/show_bug.cgi?id=227644
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport: Symlink removed.
+
 2021-07-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279494.
