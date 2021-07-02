@@ -1,3 +1,15 @@
+2021-07-02  Brady Eidson  <beidson@apple.com>
+
+        WebPageProxy::setAppHighlightsVisibility might send message from a background thread, ASSERTing
+        <rdar://80056481> and https://bugs.webkit.org/show_bug.cgi?id=227607
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setAppHighlightsVisibility):
+        (WebKit::WebPageProxy::setUpHighlightsObserver): The callback we get here is often on a background thread.
+          So bounce it to main.
+
 2021-07-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Add new revision variable in pkgconfig file
