@@ -1,5 +1,16 @@
 2021-07-02  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r279427):  [ Mac wk1 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=227637
+        <rdar://problem/80102396>
+
+        Unreviewed, Skip this newly imported WPT test on mac wk1 as it is timing out on this
+        platform.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
         Resync WebCryptoAPI web-platform-tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=227601
 
