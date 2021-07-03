@@ -1,0 +1,30 @@
+
+PASS Fetch with PUT with body
+PASS Fetch with POST with text body
+PASS Fetch with POST with URLSearchParams body
+PASS Fetch with POST with Blob body
+PASS Fetch with POST with ArrayBuffer body
+PASS Fetch with POST with Uint8Array body
+PASS Fetch with POST with Int8Array body
+PASS Fetch with POST with Float32Array body
+PASS Fetch with POST with Float64Array body
+PASS Fetch with POST with DataView body
+PASS Fetch with POST with Blob body with mime type
+FAIL Fetch with POST with ReadableStream containing String promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing null promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing number promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing ArrayBuffer promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing Blob promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with text body on 421 response should be retried once on new connection. assert_equals: expected "ok. Request was sent 2 times. 2 connections were created." but got "ok. Request was sent 2 times. 0 connections were created."
+FAIL Fetch with POST with ReadableStream on 421 response should return the response and not retry. promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+

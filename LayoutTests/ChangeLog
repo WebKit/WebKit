@@ -1,3 +1,96 @@
+2021-07-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of expected failures and update list of baselines.
+
+        Update list of expected failures, re-baseline imported WPT tests and clean some old expectation files.
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker-expected.txt: Copied from LayoutTests/platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-self-allow-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-csiso2022jp-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-nonascii.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-nonascii.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/fetch/api/headers/header-values-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/content-length/api-and-duplicate-headers.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/content-length/api-and-duplicate-headers.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/h1-parsing/status-code.window-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic.negative.rotation-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic.positive.rotation-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.basic-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/elements/the-innertext-and-outertext-properties/getter-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/links/manifest/link-relationship/link-rel-manifest-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-generated-content-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_seek_to_eos-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.tentative-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-cross-origin.https-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/service-workers/service-worker/registration-script-module.https-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.worker-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-65K-data.any-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-data.any-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/request/request-cache-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/interaction/focus/document-level-focus-apis/document-has-system-focus-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-light-dismiss.tentative-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/elements/the-innertext-and-outertext-properties/getter-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-light-dismiss.tentative-expected.txt: Added.
+
 2021-07-03  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r278377): incorrect hit-testing with clip-path()
