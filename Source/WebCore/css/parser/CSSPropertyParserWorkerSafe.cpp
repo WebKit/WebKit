@@ -512,7 +512,7 @@ RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange& range)
             return nullptr;
         values->append(CSSUnicodeRangeValue::create(unicodeRange->start, unicodeRange->end));
     } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
-    return WTFMove(values);
+    return values;
 }
 
 static RefPtr<CSSFontFeatureValue> consumeFontFeatureTag(CSSParserTokenRange& range)
