@@ -224,66 +224,101 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex)
         distributedSpaces[columnIndex] = LayoutUnit { resolvedItems[columnIndex]->preferredSize };
 
+    if (!spaceToDistribute) {
+        // Preferred size covers the spaces. There's nothing extra spaace to distribute.
+        return distributedSpaces;
+    }
+
+    // Setup the priority lists. We use these when expanding/shrinking slots.
+    Vector<size_t> autoColumnIndexes;
+    Vector<size_t> relativeColumnIndexes;
+    Vector<size_t> fixedColumnIndexes;
+    Vector<size_t> percentColumnIndexes;
+
+    for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
+        switch (resolvedItems[columnIndex]->type) {
+        case GridSpace::Type::Percent:
+            percentColumnIndexes.append(columnIndex);
+            break;
+        case GridSpace::Type::Fixed:
+            fixedColumnIndexes.append(columnIndex);
+            break;
+        case GridSpace::Type::Relative:
+            relativeColumnIndexes.append(columnIndex);
+            break;
+        case GridSpace::Type::Auto:
+            autoColumnIndexes.append(columnIndex);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
     if (spaceToDistribute > 0) {
         // Each column can get some extra space.
-        auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
-        for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
-            auto columnExtraSpace = columnsFlexBase * resolvedItems[columnIndex]->flexBase;
-            distributedSpaces[columnIndex] += LayoutUnit { columnExtraSpace };
-        }
-    } else if (spaceToDistribute < 0) {
-        // Can't accomodate the preferred width. Let's use the priority list to shrink columns.
-        Vector<size_t> autoColumnIndexes;
-        Vector<size_t> relativeColumnIndexes;
-        Vector<size_t> fixedColumnIndexes;
-        Vector<size_t> percentColumnIndexes;
+        auto hasSpaceToDistribute = [&] {
+            ASSERT(spaceToDistribute > -LayoutUnit::epsilon());
+            return spaceToDistribute > LayoutUnit::epsilon();
+        };
 
-        for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
-            switch (resolvedItems[columnIndex]->type) {
-            case GridSpace::Type::Percent:
-                percentColumnIndexes.append(columnIndex);
-                break;
-            case GridSpace::Type::Fixed:
-                fixedColumnIndexes.append(columnIndex);
-                break;
-            case GridSpace::Type::Relative:
-                relativeColumnIndexes.append(columnIndex);
-                break;
-            case GridSpace::Type::Auto:
-                autoColumnIndexes.append(columnIndex);
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-
-        auto spaceNeeded = -spaceToDistribute;
-        auto shrinkSpaceForType = [&](const auto& columnIndexes) {
+        auto expandSpace = [&](const auto& columnIndexes) {
             auto adjustabledSpace = GridSpace { };
             for (auto& columnIndex : columnIndexes)
                 adjustabledSpace += *resolvedItems[columnIndex];
 
-            auto columnsFlexBase = adjustabledSpace.flexBase ? spaceNeeded / adjustabledSpace.flexBase : 0.f;
+            auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
             for (auto& columnIndex : columnIndexes) {
-                auto& resolvedItem = *resolvedItems[columnIndex];
-                auto spaceToRemove = std::min(resolvedItem.preferredSize - resolvedItem.minimumSize, columnsFlexBase * resolvedItem.flexBase);
-                spaceToRemove = std::min(spaceToRemove, spaceNeeded);
-                distributedSpaces[columnIndex] -= spaceToRemove;
-                spaceNeeded -= spaceToRemove;
-                if (!spaceNeeded)
+                auto extraSpace = columnsFlexBase * resolvedItems[columnIndex]->flexBase;
+                distributedSpaces[columnIndex] += LayoutUnit { extraSpace };
+                spaceToDistribute -= extraSpace;
+                if (!hasSpaceToDistribute())
                     return;
             }
-            ASSERT(spaceNeeded > 0);
         };
-        shrinkSpaceForType(autoColumnIndexes);
-        if (spaceNeeded)
-            shrinkSpaceForType(relativeColumnIndexes);
-        if (spaceNeeded)
-            shrinkSpaceForType(fixedColumnIndexes);
-        if (spaceNeeded)
-            shrinkSpaceForType(percentColumnIndexes);
+        // We distribute the extra space among columns in the priority order as follows:
+        expandSpace(fixedColumnIndexes);
+        if (hasSpaceToDistribute())
+            expandSpace(percentColumnIndexes);
+        if (hasSpaceToDistribute())
+            expandSpace(relativeColumnIndexes);
+        if (hasSpaceToDistribute())
+            expandSpace(autoColumnIndexes);
+        ASSERT(!hasSpaceToDistribute());
+        return distributedSpaces;
     }
+    // Can't accomodate the preferred width. Let's use the priority list to shrink columns.
+    auto spaceNeeded = -spaceToDistribute;
+
+    auto needsMoreSpace = [&] {
+        ASSERT(spaceNeeded > -LayoutUnit::epsilon());
+        return spaceNeeded > LayoutUnit::epsilon();
+    };
+
+    auto shrinkSpace = [&](const auto& columnIndexes) {
+        auto adjustabledSpace = GridSpace { };
+        for (auto& columnIndex : columnIndexes)
+            adjustabledSpace += *resolvedItems[columnIndex];
+
+        auto columnsFlexBase = adjustabledSpace.flexBase ? spaceNeeded / adjustabledSpace.flexBase : 0.f;
+        for (auto& columnIndex : columnIndexes) {
+            auto& resolvedItem = *resolvedItems[columnIndex];
+            auto spaceToRemove = std::min(resolvedItem.preferredSize - resolvedItem.minimumSize, columnsFlexBase * resolvedItem.flexBase);
+            spaceToRemove = std::min(spaceToRemove, spaceNeeded);
+            distributedSpaces[columnIndex] -= spaceToRemove;
+            spaceNeeded -= spaceToRemove;
+            if (!needsMoreSpace())
+                return;
+        }
+    };
+    shrinkSpace(autoColumnIndexes);
+    if (needsMoreSpace())
+        shrinkSpace(relativeColumnIndexes);
+    if (needsMoreSpace())
+        shrinkSpace(fixedColumnIndexes);
+    if (needsMoreSpace())
+        shrinkSpace(percentColumnIndexes);
+    ASSERT(!needsMoreSpace());
     return distributedSpaces;
 }
 

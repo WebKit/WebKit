@@ -464,7 +464,6 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
                 continue;
             }
             auto percent = std::min(*maximumPercentColumnWidths[columnIndex], remainingPercent);
-            ASSERT(percent > 0);
             columnList[columnIndex].setComputedLogicalWidth({ percent, LengthType::Percent });
             percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { nonPercentColumnWidth * 100.0f / percent });
             remainingPercent -= percent;

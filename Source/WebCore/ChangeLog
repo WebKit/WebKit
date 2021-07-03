@@ -1,3 +1,20 @@
+2021-07-03  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for priority list of width types when expanding columns
+        https://bugs.webkit.org/show_bug.cgi?id=227627
+
+        Reviewed by Antti Koivisto.
+
+        When expanding the columns to use the extra space available, we need to prioritize certain columns
+        with specific width types: fixed > percent > relative > auto
+        This is _almost_ the reversed version of the shrinking priority list (but not quite).
+        Now we can have mixed column types across multiple rows with expanding and shrinking columns.
+
+        Test: fast/layoutformattingcontext/table-space-mixed-width-type-simple3.html
+
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::distributeAvailableSpace):
+
 2021-07-03  Jean-Yves Avenard  <jya@apple.com>
 
         SourceBuffer.abort() doesn't go back to state WAITING_FOR_SEGMENT properly
