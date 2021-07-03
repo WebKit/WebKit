@@ -1,5 +1,29 @@
 2021-07-03  Alan Bujtas  <zalan@apple.com>
 
+        REGRESSION (r278377): incorrect hit-testing with clip-path()
+        https://bugs.webkit.org/show_bug.cgi?id=227624
+        <rdar://problem/79845896>
+
+        Reviewed by Simon Fraser.
+
+        Use the correct coordinate space for clip-path based hittesting.
+
+        1. The hittest location is in the coordinate space of the painting root (hittesting is similar to painting in this context).
+        2. RenderBox::hitTestClipPath's accumulatedOffset (as the name implies) should include the offset from the (paint) hittest root.
+        3. The clip-path intersecting takes coordinates relative to the containing block.
+
+        Test: fast/clip/hit-test-with-clip-path.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hitTestVisualOverflow const):
+        (WebCore::RenderBox::hitTestClipPath const): Make the hittest root coordinates relative to the containing block.
+        (WebCore::RenderBox::hitTestBorderRadius const):
+        * rendering/RenderBox.h: Let's not use locationInContainer name as it is way too generic and misleading.
+        * rendering/RenderLayer.cpp: Compute and pass in proper accumulated offset value.
+        (WebCore::RenderLayer::hitTestLayer):
+
+2021-07-03  Alan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add support for priority list of width types when expanding columns
         https://bugs.webkit.org/show_bug.cgi?id=227627
 
