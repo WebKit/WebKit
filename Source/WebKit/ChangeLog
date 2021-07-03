@@ -1,5 +1,14 @@
 2021-07-02  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix Mac Catalyst build.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed Mac Catalyst build fix after r279514.
 
         * NetworkProcess/ios/NetworkProcessIOS.mm:

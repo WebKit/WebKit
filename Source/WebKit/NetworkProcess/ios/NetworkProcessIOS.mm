@@ -40,7 +40,6 @@
 #import <wtf/cocoa/Entitlements.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 #if !PLATFORM(MACCATALYST)
 
@@ -58,7 +57,7 @@ void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParam
 {
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
 {
     [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:host];
 }
