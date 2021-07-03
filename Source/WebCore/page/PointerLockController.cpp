@@ -181,11 +181,12 @@ void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& e
     if (!m_element || !m_element->document().frame())
         return;
 
-    m_element->dispatchMouseEvent(event, eventType, event.clickCount());
+    Ref protectedElement { *m_element };
+    protectedElement->dispatchMouseEvent(event, eventType, event.clickCount());
 
     // Create click events
     if (eventType == eventNames().mouseupEvent)
-        m_element->dispatchMouseEvent(event, eventNames().clickEvent, event.clickCount());
+        protectedElement->dispatchMouseEvent(event, eventNames().clickEvent, event.clickCount());
 }
 
 void PointerLockController::dispatchLockedWheelEvent(const PlatformWheelEvent& event)
