@@ -1,3 +1,23 @@
+2021-07-01  Dean Jackson  <dino@apple.com>
+
+        Move BottomControlsBarHeight and InsideMargin to be computed at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=227505
+        <rdar://problem/79932256>
+
+        Reviewed by Devin Rousso.
+
+        Rather than having two JS constants that have to be kept in sync
+        with CSS, simply retrieve the value from the computed style.
+
+        No change in behaviour.
+
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype.layout):
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (:host(audio), :host(video.media-document.audio), *):
+        * Modules/modern-media-controls/controls/layout-node.js: Add two helpers to
+        retrive computed style values.
+
 2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Rework runtime enabled properties leveraging PropertyCallback
