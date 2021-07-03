@@ -86,11 +86,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedDeleterWithIdentifierPrototype, JSTestNamedDeleterWithIdentifierPrototype::Base);
 
 using JSTestNamedDeleterWithIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedDeleterWithIdentifier>;
 
+template<> const unsigned JSTestNamedDeleterWithIdentifierDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestNamedDeleterWithIdentifierDOMConstructor::s_info = { "TestNamedDeleterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifierDOMConstructor) };
 
 template<> JSValue JSTestNamedDeleterWithIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -106,7 +109,15 @@ template<> void JSTestNamedDeleterWithIdentifierDOMConstructor::initializeProper
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestNamedDeleterWithIdentifierPrototypeTableIndex[4] = {
+    { -1, -1 },
+    { 0, -1 },
+    { 1, -1 },
+    { -1, -1 },
+};
+
 
 static const HashTableValue JSTestNamedDeleterWithIdentifierPrototypeTableValues[] =
 {
@@ -114,7 +125,8 @@ static const HashTableValue JSTestNamedDeleterWithIdentifierPrototypeTableValues
     { "namedDeleter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedDeleterWithIdentifierPrototypeFunction_namedDeleter), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestNamedDeleterWithIdentifierPrototype::s_info = { "TestNamedDeleterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifierPrototype) };
+static const HashTable JSTestNamedDeleterWithIdentifierPrototypeTable = { 2, 3, true, JSTestNamedDeleterWithIdentifier::info(), JSTestNamedDeleterWithIdentifierPrototypeTableValues, JSTestNamedDeleterWithIdentifierPrototypeTableIndex };
+const ClassInfo JSTestNamedDeleterWithIdentifierPrototype::s_info = { "TestNamedDeleterWithIdentifier", &Base::s_info, &JSTestNamedDeleterWithIdentifierPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifierPrototype) };
 
 void JSTestNamedDeleterWithIdentifierPrototype::finishCreation(VM& vm)
 {

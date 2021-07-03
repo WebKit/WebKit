@@ -99,11 +99,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestSetLikeWithOverriddenOperationsPrototype, JSTestSetLikeWithOverriddenOperationsPrototype::Base);
 
 using JSTestSetLikeWithOverriddenOperationsDOMConstructor = JSDOMConstructorNotConstructable<JSTestSetLikeWithOverriddenOperations>;
 
+template<> const unsigned JSTestSetLikeWithOverriddenOperationsDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestSetLikeWithOverriddenOperationsDOMConstructor::s_info = { "TestSetLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperationsDOMConstructor) };
 
 template<> JSValue JSTestSetLikeWithOverriddenOperationsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -119,29 +122,70 @@ template<> void JSTestSetLikeWithOverriddenOperationsDOMConstructor::initializeP
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestSetLikeWithOverriddenOperationsPrototypeTableIndex[34] = {
+    { 7, -1 },
+    { -1, -1 },
+    { 6, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { 3, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, 33 },
+    { -1, -1 },
+    { 0, 32 },
+    { -1, -1 },
+    { 9, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
+    { 8, -1 },
+};
+
 
 static const HashTableValue JSTestSetLikeWithOverriddenOperationsPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLikeWithOverriddenOperationsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "add", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLikeWithOverriddenOperations_add), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSetLikeWithOverriddenOperations_add) } },
-    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLikeWithOverriddenOperations_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "add", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLikeWithOverriddenOperations_add), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSetLikeWithOverriddenOperations_add) } },
+    { "size", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLikeWithOverriddenOperations_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
     { "delete", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_delete), (intptr_t) (0) } },
-    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_has), (intptr_t) (1) } },
-    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_entries), (intptr_t) (0) } },
-    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_keys), (intptr_t) (0) } },
-    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_values), (intptr_t) (0) } },
-    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_forEach), (intptr_t) (1) } },
-    { "clear", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_clear), (intptr_t) (0) } },
+    { "has", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_has), (intptr_t) (1) } },
+    { "entries", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_entries), (intptr_t) (0) } },
+    { "keys", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_keys), (intptr_t) (0) } },
+    { "values", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_values), (intptr_t) (0) } },
+    { "forEach", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_forEach), (intptr_t) (1) } },
+    { "clear", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_clear), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestSetLikeWithOverriddenOperationsPrototype::s_info = { "TestSetLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperationsPrototype) };
+static const HashTable JSTestSetLikeWithOverriddenOperationsPrototypeTable = { 10, 31, true, JSTestSetLikeWithOverriddenOperations::info(), JSTestSetLikeWithOverriddenOperationsPrototypeTableValues, JSTestSetLikeWithOverriddenOperationsPrototypeTableIndex };
+const ClassInfo JSTestSetLikeWithOverriddenOperationsPrototype::s_info = { "TestSetLikeWithOverriddenOperations", &Base::s_info, &JSTestSetLikeWithOverriddenOperationsPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperationsPrototype) };
 
 void JSTestSetLikeWithOverriddenOperationsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestSetLikeWithOverriddenOperations::info(), JSTestSetLikeWithOverriddenOperationsPrototypeTableValues, *this);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    auto& entries = vm.propertyNames->builtinNames().entriesPublicName();
+    reifyStaticProperty(vm, info(), entries, *info()->staticPropHashTable->entry(entries), *this);
+    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, entries), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

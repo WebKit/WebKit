@@ -99,24 +99,48 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyNoInterfaceObjectPrototype, JSTestLegacyNoInterfaceObjectPrototype::Base);
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestLegacyNoInterfaceObjectPrototypeTableIndex[17] = {
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { 5, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 7, -1 },
+    { -1, -1 },
+    { 3, 16 },
+    { 0, -1 },
+    { 6, -1 },
+};
+
 
 static const HashTableValue JSTestLegacyNoInterfaceObjectPrototypeTableValues[] =
 {
-    { "readonlyStringAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_readonlyStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "readWriteStringAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_readWriteStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_readWriteStringAttribute) } },
-    { "customGetterSetterStringAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_customGetterSetterStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttribute) } },
-    { "nodeAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_nodeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_nodeAttribute) } },
+    { "readonlyStringAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_readonlyStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "readWriteStringAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_readWriteStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_readWriteStringAttribute) } },
+    { "customGetterSetterStringAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_customGetterSetterStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttribute) } },
+    { "nodeAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_nodeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_nodeAttribute) } },
     { "voidOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperation), (intptr_t) (0) } },
     { "customOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperation), (intptr_t) (0) } },
-    { "CONSTANT1", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
-    { "CONSTANT2", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
+    { "CONSTANT1", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
+    { "CONSTANT2", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
 };
 
-const ClassInfo JSTestLegacyNoInterfaceObjectPrototype::s_info = { "TestLegacyNoInterfaceObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyNoInterfaceObjectPrototype) };
+static const HashTable JSTestLegacyNoInterfaceObjectPrototypeTable = { 8, 15, true, JSTestLegacyNoInterfaceObject::info(), JSTestLegacyNoInterfaceObjectPrototypeTableValues, JSTestLegacyNoInterfaceObjectPrototypeTableIndex };
+const ClassInfo JSTestLegacyNoInterfaceObjectPrototype::s_info = { "TestLegacyNoInterfaceObject", &Base::s_info, &JSTestLegacyNoInterfaceObjectPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestLegacyNoInterfaceObjectPrototype) };
 
 void JSTestLegacyNoInterfaceObjectPrototype::finishCreation(VM& vm)
 {

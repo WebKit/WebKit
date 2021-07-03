@@ -1,3 +1,97 @@
+2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Rework runtime enabled properties leveraging PropertyCallback
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+
+        Reviewed by Saam Barati.
+
+        This performance-neutral change makes implementation of runtime enabled properties independent
+        of eager property reification, slightly optimizing DOM global objects initialization.
+        A follow-up patch (webkit.org/b/158557) will remove eager property reification of WebIDL
+        constructors / prototypes, further reducing CPU usage and memory cost on page load.
+
+        Provided we reify properties without creating transitions and avoid conversion to a cacheable
+        dictionary, that should not regress performance & memory usage as well. Non-reified custom
+        accessors / values are inline-cached, even through JSProxy. DOM methods are reified on first
+        lookup; the same approach is used for multiple hot JSC built-ins (e.g. StringPrototype).
+
+        A huge refactoring was required to keep generation of lazy property callbacks within a single
+        function. Handling of private identifiers was decoupled from public ones, while hash table
+        generation for constructors / prototypes / instances was merged into GenerateHashTable.
+
+        This approach preserves HashTable's immutability while avoiding addition of extra checks to
+        entry lookup and memory usage increase. Another important advantage: a feature that was
+        enabled after its interface was created, immediately becomes usable (no page reload needed).
+
+        Also, this change removes all usages of DeletePropertyModeScope from WebCore, which was used
+        to disable non-configurable constants at runtime, allowing its complete removal in the future.
+
+        No new tests, no behavior change.
+
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        * bindings/js/JSDOMConstructor.h:
+        * bindings/js/JSDOMConstructorNotCallable.h:
+        * bindings/js/JSDOMConstructorNotConstructable.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Extract IDLInterface::className() to avoid passing $className as an argument.
+
+        (InstanceOperationCount): Deleted.
+        (PrototypeOperationCount): Deleted.
+        (InstancePropertyCount): Deleted.
+        (PrototypePropertyCount): Deleted.
+        (PrototypeHasStaticPropertyTable): Deleted.
+        (ConstructorHasProperties):
+        (PrototypeHasProperties):
+        (InstanceHasProperties):
+        Remove *Count helpers because they were incorrect with constants, overloads, private identifiers,
+        and Symbol.iterator. Instead, do the count in GeneratePropertiesHashTable to avoid duplicate checks.
+
+        (GeneratePropertiesHashTable):
+        (GenerateHashTableValueArray):
+        - Compute $hasSetterOrReadonlyProperties early because it's impossible to detect runtime enabled accessors,
+          which are concealed behind PropertyAttribute::PropertyCallback, in GenerateHashTableValueArray.
+        - Set HashTable.hasSetterOrReadonlyProperties to `true` if a read-only value (constant) was seen.
+
+        (GenerateRuntimeEnableConditionalString):
+        Always use provided $globalObjectPtr parameter.
+
+        (GenerateHashTable):
+        - Simplify name inference for HashTable's values / indices since hash table names never include ":".
+        - Nicely simplify generation of hash table kind comment.
+        - Set HashTable.classForThis to `nullptr` for constructors because they can't have DOMAttribute properties.
+
+        (GenerateImplementation):
+        - Set ReadOnly attribute for runtime read-only accessors that shadow setter from static hash table.
+        - Reify "entries" property of an iterable interface to ensure its identity with Symbol.iterator method.
+
+        (GeneratePrivateIdentifiers):
+        - Add support for accelerated DOM attributes, which are rather common.
+        - Add support for static operations, which we have a use case for (see @whenSignalAborted).
+
+        (GeneratePrototypeDeclaration):
+        Set HasStaticPropertyTable structure flag for global interfaces as well, progressing idlharness.js test.
+
+        (GenerateConstructorHelperMethods):
+        Ensure that HasStaticPropertyTable structure flag is set for constructors as well.
+
+        (StringifyJSCAttributes):
+        (GetJSCAttributesForAttribute):
+        (ShouldBeOnInstance):
+        (GenerateHeader):
+        (GetAttributeGetter):
+        (GetAttributeSetter):
+        (GetAttributeJSValue):
+        (GetOperationJSValue):
+        (GenerateLazyPropertyCallbacks):
+        (GenerateCallbackImplementationContent):
+        (GetRuntimeEnabledStaticProperties): Deleted.
+
+        * bindings/scripts/test/JS/*: Updated.
+        * bindings/scripts/test/DOMWindowConstructors.idl:
+        * bindings/scripts/test/TestEnabledBySetting.idl:
+        * bindings/scripts/test/TestObj.idl:
+        Cover [PrivateIdentifiers] with accelerated DOM attributes, static operations, and constructors.
+
 2021-07-03  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r278377): incorrect hit-testing with clip-path()

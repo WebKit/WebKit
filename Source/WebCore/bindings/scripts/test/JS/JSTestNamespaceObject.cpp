@@ -75,26 +75,86 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestNamespaceObjectConstructor_namespaceAttri
 
 using JSTestNamespaceObjectDOMConstructor = JSDOMConstructorNotCallable<JSTestNamespaceObject>;
 
-/* Hash table for constructor */
+#if ENABLE(Condition1)
+static JSValue createJSTestNamespaceObjectConstructor_namespaceAttributeFromPartial(VM& vm, JSObject*)
+{
+    return CustomGetterSetter::create(vm, jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial, nullptr);
+}
+
+static bool isEnabledJSTestNamespaceObjectConstructor_namespaceAttributeFromPartial(JSGlobalObject* globalObject)
+{
+    UNUSED_PARAM(globalObject);
+    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled;
+}
+#endif
+
+static JSValue createJSTestNamespaceObjectConstructor_enabledBySettingNamespaceOperation(VM& vm, JSObject* thisObject)
+{
+    return JSFunction::create(vm, thisObject->globalObject(), 0, "enabledBySettingNamespaceOperation"_s, jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation);
+}
+
+static bool isEnabledJSTestNamespaceObjectConstructor_enabledBySettingNamespaceOperation(JSGlobalObject* globalObject)
+{
+    UNUSED_PARAM(globalObject);
+    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
+}
+
+#if ENABLE(Condition1)
+static JSValue createJSTestNamespaceObjectConstructor_namespaceOperationFromPartial(VM& vm, JSObject* thisObject)
+{
+    return JSFunction::create(vm, thisObject->globalObject(), 0, "namespaceOperationFromPartial"_s, jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial);
+}
+
+static bool isEnabledJSTestNamespaceObjectConstructor_namespaceOperationFromPartial(JSGlobalObject* globalObject)
+{
+    UNUSED_PARAM(globalObject);
+    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled;
+}
+#endif
+
+/* Hash table for Constructor */
+
+static const struct CompactHashIndex JSTestNamespaceObjectConstructorTableIndex[17] = {
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { 3, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { 4, -1 },
+};
+
 
 static const HashTableValue JSTestNamespaceObjectConstructorTableValues[] =
 {
-    { "namespaceAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamespaceObjectConstructor_namespaceAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "namespaceAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamespaceObjectConstructor_namespaceAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
 #if ENABLE(Condition1)
-    { "namespaceAttributeFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "namespaceAttributeFromPartial", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestNamespaceObjectConstructor_namespaceAttributeFromPartial), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestNamespaceObjectConstructor_namespaceAttributeFromPartial) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
     { "overloadedNamespaceOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation), (intptr_t) (1) } },
-    { "enabledBySettingNamespaceOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation), (intptr_t) (0) } },
+    { "enabledBySettingNamespaceOperation", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestNamespaceObjectConstructor_enabledBySettingNamespaceOperation), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestNamespaceObjectConstructor_enabledBySettingNamespaceOperation) } },
 #if ENABLE(Condition1)
-    { "namespaceOperationFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial), (intptr_t) (0) } },
+    { "namespaceOperationFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestNamespaceObjectConstructor_namespaceOperationFromPartial), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestNamespaceObjectConstructor_namespaceOperationFromPartial) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
 
-template<> const ClassInfo JSTestNamespaceObjectDOMConstructor::s_info = { "TestInterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceObjectDOMConstructor) };
+static const HashTable JSTestNamespaceObjectConstructorTable = { 5, 15, true, nullptr, JSTestNamespaceObjectConstructorTableValues, JSTestNamespaceObjectConstructorTableIndex };
+template<> const unsigned JSTestNamespaceObjectDOMConstructor::StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
+template<> const ClassInfo JSTestNamespaceObjectDOMConstructor::s_info = { "TestInterfaceName", &Base::s_info, &JSTestNamespaceObjectConstructorTable, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceObjectDOMConstructor) };
 
 template<> JSValue JSTestNamespaceObjectDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -104,30 +164,9 @@ template<> JSValue JSTestNamespaceObjectDOMConstructor::prototypeForStructure(JS
 
 template<> void JSTestNamespaceObjectDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
+    UNUSED_PARAM(globalObject);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
-    reifyStaticProperties(vm, JSTestNamespaceObject::info(), JSTestNamespaceObjectConstructorTableValues, *this);
-#if ENABLE(Condition1)
-    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("namespaceAttributeFromPartial"), strlen("namespaceAttributeFromPartial"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, &globalObject, propertyName, slot);
-    }
-#endif
-    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingNamespaceOperation"), strlen("enabledBySettingNamespaceOperation"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, &globalObject, propertyName, slot);
-    }
-#if ENABLE(Condition1)
-    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("namespaceOperationFromPartial"), strlen("namespaceOperationFromPartial"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, &globalObject, propertyName, slot);
-    }
-#endif
+    reifyStaticProperties(vm, nullptr, JSTestNamespaceObjectConstructorTableValues, *this);
 }
 
 const ClassInfo JSTestNamespaceObject::s_info = { "TestInterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceObject) };

@@ -81,12 +81,15 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyFactoryFunctionPrototype, JSTestLegacyFactoryFunctionPrototype::Base);
 
 using JSTestLegacyFactoryFunctionDOMConstructor = JSDOMConstructorNotConstructable<JSTestLegacyFactoryFunction>;
 using JSTestLegacyFactoryFunctionLegacyFactoryFunction = JSDOMLegacyFactoryFunction<JSTestLegacyFactoryFunction>;
 
+template<> const unsigned JSTestLegacyFactoryFunctionDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestLegacyFactoryFunctionDOMConstructor::s_info = { "TestLegacyFactoryFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionDOMConstructor) };
 
 template<> JSValue JSTestLegacyFactoryFunctionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -150,14 +153,21 @@ template<> void JSTestLegacyFactoryFunctionLegacyFactoryFunction::initializeProp
     putDirect(vm, vm.propertyNames->length, jsNumber(1), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestLegacyFactoryFunctionPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
 
 static const HashTableValue JSTestLegacyFactoryFunctionPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyFactoryFunctionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestLegacyFactoryFunctionPrototype::s_info = { "TestLegacyFactoryFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionPrototype) };
+static const HashTable JSTestLegacyFactoryFunctionPrototypeTable = { 1, 1, true, JSTestLegacyFactoryFunction::info(), JSTestLegacyFactoryFunctionPrototypeTableValues, JSTestLegacyFactoryFunctionPrototypeTableIndex };
+const ClassInfo JSTestLegacyFactoryFunctionPrototype::s_info = { "TestLegacyFactoryFunction", &Base::s_info, &JSTestLegacyFactoryFunctionPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionPrototype) };
 
 void JSTestLegacyFactoryFunctionPrototype::finishCreation(VM& vm)
 {

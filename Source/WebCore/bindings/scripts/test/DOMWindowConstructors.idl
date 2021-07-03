@@ -5,7 +5,7 @@ partial interface DOMWindow {
     attribute TestConditionallyReadWriteConstructor TestConditionallyReadWrite;
     attribute TestDefaultToJSONConstructor TestDefaultToJSON;
     attribute TestDefaultToJSONFilteredByExposedConstructor TestDefaultToJSONFilteredByExposed;
-    attribute TestEnabledBySettingConstructor TestEnabledBySetting;
+    [PrivateIdentifier, PublicIdentifier] attribute TestEnabledBySettingConstructor TestEnabledBySetting;
     [EnabledForContext, SecureContext] attribute TestEnabledForContextConstructor TestEnabledForContext;
     [Conditional=Condition1|Condition2] attribute TestInterfaceConstructor TestInterface;
     attribute TestNodeConstructor TestNode;

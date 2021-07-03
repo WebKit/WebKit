@@ -92,11 +92,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReadOnlySetLikePrototype, JSTestReadOnlySetLikePrototype::Base);
 
 using JSTestReadOnlySetLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestReadOnlySetLike>;
 
+template<> const unsigned JSTestReadOnlySetLikeDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestReadOnlySetLikeDOMConstructor::s_info = { "TestReadOnlySetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLikeDOMConstructor) };
 
 template<> JSValue JSTestReadOnlySetLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -112,26 +115,51 @@ template<> void JSTestReadOnlySetLikeDOMConstructor::initializeProperties(VM& vm
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestReadOnlySetLikePrototypeTableIndex[18] = {
+    { 1, 17 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 6, -1 },
+    { -1, -1 },
+    { 0, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { 5, -1 },
+};
+
 
 static const HashTableValue JSTestReadOnlySetLikePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestReadOnlySetLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestReadOnlySetLike_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_has), (intptr_t) (1) } },
-    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_entries), (intptr_t) (0) } },
-    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_keys), (intptr_t) (0) } },
-    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_values), (intptr_t) (0) } },
-    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_forEach), (intptr_t) (1) } },
+    { "size", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestReadOnlySetLike_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "has", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_has), (intptr_t) (1) } },
+    { "entries", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_entries), (intptr_t) (0) } },
+    { "keys", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_keys), (intptr_t) (0) } },
+    { "values", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_values), (intptr_t) (0) } },
+    { "forEach", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_forEach), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestReadOnlySetLikePrototype::s_info = { "TestReadOnlySetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLikePrototype) };
+static const HashTable JSTestReadOnlySetLikePrototypeTable = { 7, 15, true, JSTestReadOnlySetLike::info(), JSTestReadOnlySetLikePrototypeTableValues, JSTestReadOnlySetLikePrototypeTableIndex };
+const ClassInfo JSTestReadOnlySetLikePrototype::s_info = { "TestReadOnlySetLike", &Base::s_info, &JSTestReadOnlySetLikePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLikePrototype) };
 
 void JSTestReadOnlySetLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestReadOnlySetLike::info(), JSTestReadOnlySetLikePrototypeTableValues, *this);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    auto& entries = vm.propertyNames->builtinNames().entriesPublicName();
+    reifyStaticProperty(vm, info(), entries, *info()->staticPropHashTable->entry(entries), *this);
+    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, entries), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

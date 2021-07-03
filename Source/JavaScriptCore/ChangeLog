@@ -1,3 +1,76 @@
+2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Rework runtime enabled properties leveraging PropertyCallback
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+
+        Reviewed by Saam Barati.
+
+        To make the implementation of WebIDL runtime enabled properties independent of eager
+        property reification, this change:
+
+        1. Introduces IsLazyPropertyEnabledCallback, which is needed separately from existing
+           value callback to maintain the invariant that reifyStaticProperty() always puts a
+           property, and to keep enumeration fast.
+
+           Calling disableCaching() isn't enough to achieve correct [[Get]] inline caching,
+           so isTaintedByOpaqueObject() is leveraged to prohibit caching of runtime disabled
+           properties, just like in operationTryGetByIdOptimize().
+
+           The only case that might seem weird is runtime disabled properties, which were
+           enabled after all static properties were reified via [[Delete]], are not appearing.
+           It's fixable, yet there is currently no demand for it.
+
+        2. Adds support for LazyPropertyCallback returning GetterSetter / CustomGetterSetter,
+           ensuring correct structure flags and slot initialization. Previously, the callback
+           was used to init only objects and constructors, using putDirect() unconditionally.
+
+           To avoid mixing other non-basic attributes with PropertyCallback, which would require
+           hoisting of checks against PropertyCallback and complicating attribute validation in
+           HashTableValue methods, this patch checks the type of callback's return value instead.
+
+           In the future, sticking to this approach will make returning CustomValue impossible
+           as it can't be distinguished from CustomAccessor. That's fine because all present
+           CustomValue usages merely do lazy init, which PropertyCallback is better suited for.
+
+        Also, this patch:
+
+        3. Expands setUpStaticFunctionSlot() to handle constant integers so the code using
+           `Node.ELEMENT_NODE` & friends doesn't regress (proven by attached microbenchmark).
+
+        4. Removes extra checks from setUpStaticPropertySlot(), which is called only on
+           non-reified properties.
+
+        5. Removes invariant that DOMJITAttribute property is read-only, which was broken
+           by `document.body` having a non-JIT custom setter. This aligns non-reified
+           properties with structure ones.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::tryAdd):
+        * runtime/JSObject.cpp:
+        (JSC::lookupPropertyForPut):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::reifyAllStaticProperties):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnNonIndexPropertySlot):
+        (JSC::JSObject::fillStructurePropertySlot):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getNonReifiedStaticPropertyNames):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticPropertySlot):
+        (JSC::setUpStaticFunctionSlot): Deleted.
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::isLazyPropertyEnabled const):
+        (JSC::getStaticPropertySlotFromTable):
+        (JSC::reifyStaticProperty):
+        (JSC::reifyStaticProperties):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
 2021-07-02  Keith Miller  <keith_miller@apple.com>
 
         Add 10 more unified source cpp files for JSC

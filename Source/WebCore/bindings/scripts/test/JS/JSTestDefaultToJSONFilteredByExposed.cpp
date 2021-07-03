@@ -89,11 +89,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONFilteredByExposedPrototype, JSTestDefaultToJSONFilteredByExposedPrototype::Base);
 
 using JSTestDefaultToJSONFilteredByExposedDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONFilteredByExposed>;
 
+template<> const unsigned JSTestDefaultToJSONFilteredByExposedDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestDefaultToJSONFilteredByExposedDOMConstructor::s_info = { "TestDefaultToJSONFilteredByExposed", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposedDOMConstructor) };
 
 template<> JSValue JSTestDefaultToJSONFilteredByExposedDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -109,40 +112,66 @@ template<> void JSTestDefaultToJSONFilteredByExposedDOMConstructor::initializePr
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+static JSValue createJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWindowAttribute(VM& vm, JSObject*)
+{
+    return DOMAttributeGetterSetter::create(vm, jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttribute, nullptr, DOMAttributeAnnotation { JSTestDefaultToJSONFilteredByExposed::info(), nullptr });
+}
+
+static bool isEnabledJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWindowAttribute(JSGlobalObject* globalObject)
+{
+    UNUSED_PARAM(globalObject);
+    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->isDocument();
+}
+
+static JSValue createJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWorkerAttribute(VM& vm, JSObject*)
+{
+    return DOMAttributeGetterSetter::create(vm, jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttribute, nullptr, DOMAttributeAnnotation { JSTestDefaultToJSONFilteredByExposed::info(), nullptr });
+}
+
+static bool isEnabledJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWorkerAttribute(JSGlobalObject* globalObject)
+{
+    UNUSED_PARAM(globalObject);
+    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->isWorkerGlobalScope();
+}
+
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestDefaultToJSONFilteredByExposedPrototypeTableIndex[16] = {
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { 0, -1 },
+    { 3, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+};
+
 
 static const HashTableValue JSTestDefaultToJSONFilteredByExposedPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposedConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "normalAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposed_normalAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "filteredByExposedWindowAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "filteredByExposedWorkerAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "normalAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposed_normalAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "filteredByExposedWindowAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWindowAttribute), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWindowAttribute) } },
+    { "filteredByExposedWorkerAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWorkerAttribute), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestDefaultToJSONFilteredByExposedPrototype_filteredByExposedWorkerAttribute) } },
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSON), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestDefaultToJSONFilteredByExposedPrototype::s_info = { "TestDefaultToJSONFilteredByExposed", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposedPrototype) };
+static const HashTable JSTestDefaultToJSONFilteredByExposedPrototypeTable = { 5, 15, true, JSTestDefaultToJSONFilteredByExposed::info(), JSTestDefaultToJSONFilteredByExposedPrototypeTableValues, JSTestDefaultToJSONFilteredByExposedPrototypeTableIndex };
+const ClassInfo JSTestDefaultToJSONFilteredByExposedPrototype::s_info = { "TestDefaultToJSONFilteredByExposed", &Base::s_info, &JSTestDefaultToJSONFilteredByExposedPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposedPrototype) };
 
 void JSTestDefaultToJSONFilteredByExposedPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestDefaultToJSONFilteredByExposed::info(), JSTestDefaultToJSONFilteredByExposedPrototypeTableValues, *this);
-    bool hasDisabledRuntimeProperties = false;
-    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("filteredByExposedWindowAttribute"), strlen("filteredByExposedWindowAttribute"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("filteredByExposedWorkerAttribute"), strlen("filteredByExposedWorkerAttribute"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    if (hasDisabledRuntimeProperties && structure()->isDictionary())
-        flattenDictionaryObject(vm);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

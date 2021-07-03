@@ -1,3 +1,16 @@
+2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Rework runtime enabled properties leveraging PropertyCallback
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+
+        Reviewed by Saam Barati.
+
+        * stress/lazy-property-cross-realm.js: Added.
+        * stress/lazy-property-get-cache.js: Added.
+        * stress/lazy-property-gopd.js: Added.
+        * stress/lazy-property-hasownproperty-cache.js: Added.
+        * stress/lazy-property-put-cache.js: Added.
+
 2021-06-30  Saam Barati  <sbarati@apple.com>
 
         Turn off data ICs by default

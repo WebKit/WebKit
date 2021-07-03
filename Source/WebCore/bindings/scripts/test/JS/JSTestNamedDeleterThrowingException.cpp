@@ -79,11 +79,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedDeleterThrowingExceptionPrototype, JSTestNamedDeleterThrowingExceptionPrototype::Base);
 
 using JSTestNamedDeleterThrowingExceptionDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedDeleterThrowingException>;
 
+template<> const unsigned JSTestNamedDeleterThrowingExceptionDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestNamedDeleterThrowingExceptionDOMConstructor::s_info = { "TestNamedDeleterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterThrowingExceptionDOMConstructor) };
 
 template<> JSValue JSTestNamedDeleterThrowingExceptionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -99,14 +102,21 @@ template<> void JSTestNamedDeleterThrowingExceptionDOMConstructor::initializePro
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestNamedDeleterThrowingExceptionPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
 
 static const HashTableValue JSTestNamedDeleterThrowingExceptionPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedDeleterThrowingExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestNamedDeleterThrowingExceptionPrototype::s_info = { "TestNamedDeleterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterThrowingExceptionPrototype) };
+static const HashTable JSTestNamedDeleterThrowingExceptionPrototypeTable = { 1, 1, true, JSTestNamedDeleterThrowingException::info(), JSTestNamedDeleterThrowingExceptionPrototypeTableValues, JSTestNamedDeleterThrowingExceptionPrototypeTableIndex };
+const ClassInfo JSTestNamedDeleterThrowingExceptionPrototype::s_info = { "TestNamedDeleterThrowingException", &Base::s_info, &JSTestNamedDeleterThrowingExceptionPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterThrowingExceptionPrototype) };
 
 void JSTestNamedDeleterThrowingExceptionPrototype::finishCreation(VM& vm)
 {

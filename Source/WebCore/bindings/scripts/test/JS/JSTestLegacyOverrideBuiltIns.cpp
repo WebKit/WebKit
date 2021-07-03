@@ -87,11 +87,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyOverrideBuiltInsPrototype, JSTestLegacyOverrideBuiltInsPrototype::Base);
 
 using JSTestLegacyOverrideBuiltInsDOMConstructor = JSDOMConstructorNotConstructable<JSTestLegacyOverrideBuiltIns>;
 
+template<> const unsigned JSTestLegacyOverrideBuiltInsDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltInsDOMConstructor) };
 
 template<> JSValue JSTestLegacyOverrideBuiltInsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -107,7 +110,15 @@ template<> void JSTestLegacyOverrideBuiltInsDOMConstructor::initializeProperties
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestLegacyOverrideBuiltInsPrototypeTableIndex[4] = {
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
 
 static const HashTableValue JSTestLegacyOverrideBuiltInsPrototypeTableValues[] =
 {
@@ -115,7 +126,8 @@ static const HashTableValue JSTestLegacyOverrideBuiltInsPrototypeTableValues[] =
     { "namedItem", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItem), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestLegacyOverrideBuiltInsPrototype::s_info = { "TestLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltInsPrototype) };
+static const HashTable JSTestLegacyOverrideBuiltInsPrototypeTable = { 2, 3, true, JSTestLegacyOverrideBuiltIns::info(), JSTestLegacyOverrideBuiltInsPrototypeTableValues, JSTestLegacyOverrideBuiltInsPrototypeTableIndex };
+const ClassInfo JSTestLegacyOverrideBuiltInsPrototype::s_info = { "TestLegacyOverrideBuiltIns", &Base::s_info, &JSTestLegacyOverrideBuiltInsPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltInsPrototype) };
 
 void JSTestLegacyOverrideBuiltInsPrototype::finishCreation(VM& vm)
 {

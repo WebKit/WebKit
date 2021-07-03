@@ -83,11 +83,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierPrototype, JSTestStringifierPrototype::Base);
 
 using JSTestStringifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestStringifier>;
 
+template<> const unsigned JSTestStringifierDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestStringifierDOMConstructor::s_info = { "TestStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierDOMConstructor) };
 
 template<> JSValue JSTestStringifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -103,7 +106,15 @@ template<> void JSTestStringifierDOMConstructor::initializeProperties(VM& vm, JS
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestStringifierPrototypeTableIndex[4] = {
+    { 1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { -1, -1 },
+};
+
 
 static const HashTableValue JSTestStringifierPrototypeTableValues[] =
 {
@@ -111,7 +122,8 @@ static const HashTableValue JSTestStringifierPrototypeTableValues[] =
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierPrototypeFunction_toString), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestStringifierPrototype::s_info = { "TestStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierPrototype) };
+static const HashTable JSTestStringifierPrototypeTable = { 2, 3, true, JSTestStringifier::info(), JSTestStringifierPrototypeTableValues, JSTestStringifierPrototypeTableIndex };
+const ClassInfo JSTestStringifierPrototype::s_info = { "TestStringifier", &Base::s_info, &JSTestStringifierPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestStringifierPrototype) };
 
 void JSTestStringifierPrototype::finishCreation(VM& vm)
 {

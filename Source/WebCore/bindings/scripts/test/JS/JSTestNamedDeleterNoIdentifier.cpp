@@ -79,11 +79,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedDeleterNoIdentifierPrototype, JSTestNamedDeleterNoIdentifierPrototype::Base);
 
 using JSTestNamedDeleterNoIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedDeleterNoIdentifier>;
 
+template<> const unsigned JSTestNamedDeleterNoIdentifierDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestNamedDeleterNoIdentifierDOMConstructor::s_info = { "TestNamedDeleterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterNoIdentifierDOMConstructor) };
 
 template<> JSValue JSTestNamedDeleterNoIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -99,14 +102,21 @@ template<> void JSTestNamedDeleterNoIdentifierDOMConstructor::initializeProperti
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestNamedDeleterNoIdentifierPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
 
 static const HashTableValue JSTestNamedDeleterNoIdentifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedDeleterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestNamedDeleterNoIdentifierPrototype::s_info = { "TestNamedDeleterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterNoIdentifierPrototype) };
+static const HashTable JSTestNamedDeleterNoIdentifierPrototypeTable = { 1, 1, true, JSTestNamedDeleterNoIdentifier::info(), JSTestNamedDeleterNoIdentifierPrototypeTableValues, JSTestNamedDeleterNoIdentifierPrototypeTableIndex };
+const ClassInfo JSTestNamedDeleterNoIdentifierPrototype::s_info = { "TestNamedDeleterNoIdentifier", &Base::s_info, &JSTestNamedDeleterNoIdentifierPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterNoIdentifierPrototype) };
 
 void JSTestNamedDeleterNoIdentifierPrototype::finishCreation(VM& vm)
 {

@@ -89,11 +89,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedAndIndexedSetterWithIdentifierPrototype, JSTestNamedAndIndexedSetterWithIdentifierPrototype::Base);
 
 using JSTestNamedAndIndexedSetterWithIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedAndIndexedSetterWithIdentifier>;
 
+template<> const unsigned JSTestNamedAndIndexedSetterWithIdentifierDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestNamedAndIndexedSetterWithIdentifierDOMConstructor::s_info = { "TestNamedAndIndexedSetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterWithIdentifierDOMConstructor) };
 
 template<> JSValue JSTestNamedAndIndexedSetterWithIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -109,7 +112,20 @@ template<> void JSTestNamedAndIndexedSetterWithIdentifierDOMConstructor::initial
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestNamedAndIndexedSetterWithIdentifierPrototypeTableIndex[9] = {
+    { -1, -1 },
+    { 0, 8 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
 
 static const HashTableValue JSTestNamedAndIndexedSetterWithIdentifierPrototypeTableValues[] =
 {
@@ -118,7 +134,8 @@ static const HashTableValue JSTestNamedAndIndexedSetterWithIdentifierPrototypeTa
     { "indexedSetter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunction_indexedSetter), (intptr_t) (2) } },
 };
 
-const ClassInfo JSTestNamedAndIndexedSetterWithIdentifierPrototype::s_info = { "TestNamedAndIndexedSetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterWithIdentifierPrototype) };
+static const HashTable JSTestNamedAndIndexedSetterWithIdentifierPrototypeTable = { 3, 7, true, JSTestNamedAndIndexedSetterWithIdentifier::info(), JSTestNamedAndIndexedSetterWithIdentifierPrototypeTableValues, JSTestNamedAndIndexedSetterWithIdentifierPrototypeTableIndex };
+const ClassInfo JSTestNamedAndIndexedSetterWithIdentifierPrototype::s_info = { "TestNamedAndIndexedSetterWithIdentifier", &Base::s_info, &JSTestNamedAndIndexedSetterWithIdentifierPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterWithIdentifierPrototype) };
 
 void JSTestNamedAndIndexedSetterWithIdentifierPrototype::finishCreation(VM& vm)
 {

@@ -319,7 +319,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             }
 
             if (slot.isUnset() || slot.slotBase() != baseValue) {
-                if (structure->typeInfo().prohibitsPropertyCaching())
+                if (structure->typeInfo().prohibitsPropertyCaching() || slot.isTaintedByOpaqueObject())
                     return GiveUpOnCache;
 
                 if (structure->isDictionary()) {

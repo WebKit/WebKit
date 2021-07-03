@@ -85,11 +85,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierReadOnlyAttributePrototype, JSTestStringifierReadOnlyAttributePrototype::Base);
 
 using JSTestStringifierReadOnlyAttributeDOMConstructor = JSDOMConstructorNotConstructable<JSTestStringifierReadOnlyAttribute>;
 
+template<> const unsigned JSTestStringifierReadOnlyAttributeDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestStringifierReadOnlyAttributeDOMConstructor::s_info = { "TestStringifierReadOnlyAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttributeDOMConstructor) };
 
 template<> JSValue JSTestStringifierReadOnlyAttributeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -105,16 +108,29 @@ template<> void JSTestStringifierReadOnlyAttributeDOMConstructor::initializeProp
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestStringifierReadOnlyAttributePrototypeTableIndex[8] = {
+    { 1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+};
+
 
 static const HashTableValue JSTestStringifierReadOnlyAttributePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "identifier", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttribute_identifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "identifier", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttribute_identifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierReadOnlyAttributePrototypeFunction_toString), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestStringifierReadOnlyAttributePrototype::s_info = { "TestStringifierReadOnlyAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttributePrototype) };
+static const HashTable JSTestStringifierReadOnlyAttributePrototypeTable = { 3, 7, true, JSTestStringifierReadOnlyAttribute::info(), JSTestStringifierReadOnlyAttributePrototypeTableValues, JSTestStringifierReadOnlyAttributePrototypeTableIndex };
+const ClassInfo JSTestStringifierReadOnlyAttributePrototype::s_info = { "TestStringifierReadOnlyAttribute", &Base::s_info, &JSTestStringifierReadOnlyAttributePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttributePrototype) };
 
 void JSTestStringifierReadOnlyAttributePrototype::finishCreation(VM& vm)
 {
