@@ -50,7 +50,7 @@ public:
     SourceBufferParserAVFObjC();
     virtual ~SourceBufferParserAVFObjC();
 
-    AVStreamDataParser* parser() const { return m_parser.get(); }
+    AVStreamDataParser* streamDataParser() const { return m_parser.get(); }
 
     Type type() const { return Type::AVFObjC; }
     void appendData(Segment&&, CompletionHandler<void()>&&, AppendFlags = AppendFlags::None) final;
@@ -77,7 +77,6 @@ private:
 
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
-    bool m_discardSamplesUntilNextInitializationSegment { false };
     bool m_parserStateWasReset { false };
 
 #if !RELEASE_LOG_DISABLED

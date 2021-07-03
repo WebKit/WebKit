@@ -96,7 +96,7 @@ CDMSessionAVStreamSession::~CDMSessionAVStreamSession()
     setStreamSession(nullptr);
 
     for (auto& sourceBuffer : m_sourceBuffers)
-        removeParser(sourceBuffer->parser());
+        removeParser(sourceBuffer->streamDataParser());
 }
 
 RefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
@@ -234,10 +234,10 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
 
         NSError* error = nil;
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        RetainPtr<NSData> request = [protectedSourceBuffer->parser() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() trackID:protectedSourceBuffer->protectedTrackID() options:options.get() error:&error];
+        RetainPtr<NSData> request = [protectedSourceBuffer->streamDataParser() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() trackID:protectedSourceBuffer->protectedTrackID() options:options.get() error:&error];
         ALLOW_DEPRECATED_DECLARATIONS_END
 
-        if (![protectedSourceBuffer->parser() respondsToSelector:@selector(contentProtectionSessionIdentifier)])
+        if (![protectedSourceBuffer->streamDataParser() respondsToSelector:@selector(contentProtectionSessionIdentifier)])
             m_sessionId = createCanonicalUUIDString();
 
         if (error) {
@@ -263,7 +263,7 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
     systemCode = 0;
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->data() length:key->length()]);
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [protectedSourceBuffer->parser() processContentKeyResponseData:keyData.get() forTrackID:protectedSourceBuffer->protectedTrackID()];
+    [protectedSourceBuffer->streamDataParser() processContentKeyResponseData:keyData.get() forTrackID:protectedSourceBuffer->protectedTrackID()];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     return true;

@@ -1,3 +1,21 @@
+2021-07-03  Jean-Yves Avenard  <jya@apple.com>
+
+        SourceBuffer.abort() doesn't go back to state WAITING_FOR_SEGMENT properly
+        https://bugs.webkit.org/show_bug.cgi?id=227559
+        <rdar://problem/79996056>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/content/test-fragmented-video-manifest.json: Added.
+        * media/media-source/content/test-fragmented-video.mp4: Added.
+        * media/media-source/media-mp4-h264-partial-abort-expected.txt: Added.
+        * media/media-source/media-mp4-h264-partial-abort.html: Added.
+        * media/media-source/media-webm-opus-partial-abort-expected.txt: Added.
+        * media/media-source/media-webm-opus-partial-abort.html: Added.
+        * media/media-source/media-webm-opus-partial.html: fix title.
+        * media/media-source/media-webm-vorbis-partial.html: fix title.
+        * platform/mac/TestExpectations:
+
 2021-07-02  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur Release wk2] fast/history/visited-href-mutation.html is a flaky image failure

@@ -120,7 +120,7 @@ CDMSessionAVContentKeySession::~CDMSessionAVContentKeySession()
     [m_contentKeySessionDelegate invalidate];
 
     for (auto& sourceBuffer : m_sourceBuffers)
-        removeParser(sourceBuffer->parser());
+        removeParser(sourceBuffer->streamDataParser());
 }
 
 bool CDMSessionAVContentKeySession::isAvailable()
