@@ -1,5 +1,24 @@
 2021-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        [WebIDL] Simplify generation of runtime conditionally read-write attributes
+        https://bugs.webkit.org/show_bug.cgi?id=227672
+
+        Reviewed by Sam Weinig.
+
+        This patch introduces HashTableValue::makeReadOnlyCopy() to avoid manually
+        generating & putting a JSValue for an attribute, which is non-trivial to
+        do right while supporting all kinds of accelerated / built-in attributes.
+
+        Also, removes incorrect `classForThis` argument from `entries` reification.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/*: Updated.
+
+2021-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         [WebIDL] Generate constructor's hash table in GenerateConstructorHelperMethods
         https://bugs.webkit.org/show_bug.cgi?id=227668
 

@@ -1,3 +1,13 @@
+2021-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Simplify generation of runtime conditionally read-write attributes
+        https://bugs.webkit.org/show_bug.cgi?id=227672
+
+        Reviewed by Sam Weinig.
+
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::makeReadOnlyCopy const):
+
 2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Rework runtime enabled properties leveraging PropertyCallback

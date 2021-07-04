@@ -4450,23 +4450,15 @@ sub GenerateImplementation
                 my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $attribute, "globalObject()");
 
                 my $attributeName = $attribute->name;
-                # FIXME: Simplify this by calling reifyStaticProperty() on a HashTableValue that has been transformed to read-only.
-                my $getter = GetAttributeGetterName($interface, $className, $attribute);
-                my $setter = "nullptr";
-                my $jscAttributes = StringifyJSCAttributes(GetJSCAttributesForAttribute($interface, $attribute)) . " | JSC::PropertyAttribute::ReadOnly";
                 assert("Being both runtime enabled and runtime conditionally read-write is not yet supported (used on the '${attributeName}' attribute of '${visibleInterfaceName}').") if NeedsRuntimeCheck($interface, $attribute);
 
                 my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
                 push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
                 push(@implContent, "    // Shadow read-write variant from the static hash table.\n");
                 push(@implContent, "    if (!${runtimeEnableConditionalString})\n");
-                if (IsAcceleratedDOMAttribute($interface, $attribute)) {
-                    my $classForThis = "${className}::info()";
-                    push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), JSC::DOMAttributeGetterSetter::create(vm, $getter, $setter, JSC::DOMAttributeAnnotation { $classForThis, nullptr }), attributesForStructure($jscAttributes));\n");
-                } else {
-                    assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
-                    push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
-                }
+
+                my $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames().${attributeName}PublicName()";
+                push(@implContent, "        reifyStaticProperty(vm, ${className}::info(), ${propertyName}, info()->staticPropHashTable->entry(${propertyName})->makeReadOnlyCopy(), *this);\n");
                 push(@implContent, "#endif\n") if $conditionalString;
             }
         }
@@ -4475,7 +4467,7 @@ sub GenerateImplementation
             AddToImplIncludes("<JavaScriptCore/BuiltinNames.h>");
             if (IsKeyValueIterableInterface($interface) or $interface->mapLike or $interface->setLike) {
                 push(@implContent, "    auto& entries = vm.propertyNames->builtinNames().entriesPublicName();\n");
-                push(@implContent, "    reifyStaticProperty(vm, info(), entries, *info()->staticPropHashTable->entry(entries), *this);\n");
+                push(@implContent, "    reifyStaticProperty(vm, nullptr, entries, *info()->staticPropHashTable->entry(entries), *this);\n");
                 push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, entries), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             } else {
                 push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");

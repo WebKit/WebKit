@@ -111,6 +111,15 @@ struct HashTableValue {
         auto isEnabledCallback = bitwise_cast<IsLazyPropertyEnabledCallback>(m_values.value2);
         return !isEnabledCallback || isEnabledCallback(globalObject);
     }
+
+    HashTableValue makeReadOnlyCopy() const
+    {
+        ASSERT(m_attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue);
+        HashTableValue copy = *this;
+        copy.m_attributes |= PropertyAttribute::ReadOnly;
+        copy.m_values.value2 = 0;
+        return copy;
+    }
 };
 
 struct HashTable {

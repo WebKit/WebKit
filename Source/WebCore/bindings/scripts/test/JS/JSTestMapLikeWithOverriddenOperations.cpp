@@ -185,7 +185,7 @@ void JSTestMapLikeWithOverriddenOperationsPrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestMapLikeWithOverriddenOperations::info(), JSTestMapLikeWithOverriddenOperationsPrototypeTableValues, *this);
     auto& entries = vm.propertyNames->builtinNames().entriesPublicName();
-    reifyStaticProperty(vm, info(), entries, *info()->staticPropHashTable->entry(entries), *this);
+    reifyStaticProperty(vm, nullptr, entries, *info()->staticPropHashTable->entry(entries), *this);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, entries), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
