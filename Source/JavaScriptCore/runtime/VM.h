@@ -260,6 +260,11 @@ struct ScratchBuffer {
         return result;
     }
 
+    static ScratchBuffer* fromData(void* buffer)
+    {
+        return bitwise_cast<ScratchBuffer*>(static_cast<char*>(buffer) - OBJECT_OFFSETOF(ScratchBuffer, m_buffer));
+    }
+
     static size_t allocationSize(Checked<size_t> bufferSize) { return sizeof(ScratchBuffer) + bufferSize; }
     void setActiveLength(size_t activeLength) { u.m_activeLength = activeLength; }
     size_t activeLength() const { return u.m_activeLength; };
@@ -282,7 +287,7 @@ struct ScratchBuffer {
 
 class ActiveScratchBufferScope {
 public:
-    ActiveScratchBufferScope(VM&, size_t activeScratchBufferSizeInJSValues);
+    ActiveScratchBufferScope(ScratchBuffer*, size_t activeScratchBufferSizeInJSValues);
     ~ActiveScratchBufferScope();
 
 private:
