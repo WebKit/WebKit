@@ -1,3 +1,23 @@
+2021-07-04  Ben Nham  <nham@apple.com>
+
+        Add support for parsing Competitive PLT results to compare-results
+        https://bugs.webkit.org/show_bug.cgi?id=227470
+
+        Reviewed by Per Arne Vollan.
+
+        Modify the script to understand the competitive PLT JSON results produced by the perf bots.
+
+        * Scripts/compare-results:
+        (plt5Breakdown):
+        (competitivePLTBreakdown):
+        (PLT5Results):
+        (detectCompetitivePLT):
+        (CompetitivePLTResults):
+        (CompetitivePLTResults.calculate_time_for_run):
+        (detectBenchmark):
+        (biggerIsBetter):
+        (main):
+
 2021-07-02  Aakash Jain  <aakash_jain@apple.com>
 
         Delete unused BuildSlaveSupport symlink

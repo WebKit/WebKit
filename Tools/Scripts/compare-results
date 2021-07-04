@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import collections
 import sys
 import argparse
 import json
@@ -55,6 +56,7 @@ def readJSONFile(path):
 Speedometer2 = "Speedometer2"
 JetStream2 = "JetStream2"
 PLT5 = "PLT5"
+CompetitivePLT = "CompetitivePLT"
 PLUM3 = "PLUM3"
 MotionMark = "MotionMark"
 MotionMark1_1 = "MotionMark-1.1"
@@ -119,6 +121,30 @@ def plt5Breakdown(jsonObject):
                 continue
             result["warm--" + nameMapping[test]].append(warmTests[test]["Geometric"])
             result["cold--" + nameMapping[test]].append(coldTests[test]["Geometric"])
+
+    return result
+
+def competitivePLTBreakdown(jsonObject):
+    result = collections.defaultdict(list)
+    result[unitMarker] = "sec"
+
+    safari_results = jsonObject.get('Safari', {})
+
+    cold_results = safari_results.get('cold', {})
+    warm_results = safari_results.get('warm', {})
+
+    cold_link_results = cold_results.get('add-and-click-link', {})
+    warm_link_results = warm_results.get('add-and-click-link', {})
+
+    for site_to_times in cold_link_results.values():
+        for site, times in site_to_times.items():
+            result["cold--fmp--" + site].append(times['first_meaningful_paint'])
+            result["cold--load-end--" + site].append(times['load_end'])
+
+    for site_to_times in warm_link_results.values():
+        for site, times in site_to_times.items():
+            result["warm--fmp--" + site].append(times['first_meaningful_paint'])
+            result["warm--load-end--" + site].append(times['load_end'])
 
     return result
 
@@ -319,6 +345,29 @@ def PLT5Results(payload):
         results.append(obj["Geometric"])
     return results
 
+def detectCompetitivePLT(payload):
+    return 'add-and-click-link' in payload.get('Safari', {}).get('cold', {})
+
+def CompetitivePLTResults(payload):
+    def calculate_time_for_run(run):
+        # We geomean all FMP and load_end times together to produce a result for the run.
+        fmp_vals = [obj['first_meaningful_paint'] for obj in run.values()]
+        load_end_vals = [obj['load_end'] for obj in run.values()]
+        return stats.gmean(fmp_vals + load_end_vals)
+
+    safari_results = payload.get('Safari', {})
+
+    cold_results = safari_results.get('cold', {})
+    warm_results = safari_results.get('warm', {})
+
+    cold_link_results = cold_results.get('add-and-click-link', {})
+    warm_link_results = warm_results.get('add-and-click-link', {})
+
+    cold_times = [calculate_time_for_run(run) for run in cold_link_results.values()]
+    warm_times = [calculate_time_for_run(run) for run in warm_link_results.values()]
+
+    return [stats.gmean((cold_time, warm_time)) for cold_time, warm_time in zip(cold_times, warm_times)]
+
 def detectPLUM3(payload):
     return "PLUM3-PhysFootprint" in payload
 
@@ -362,6 +411,8 @@ def detectBenchmark(payload):
         return Speedometer2
     if detectPLT5(payload):
         return PLT5
+    if detectCompetitivePLT(payload):
+        return CompetitivePLT
     if detectPLUM3(payload):
         return PLUM3
     if detectMotionMark(payload):
@@ -382,6 +433,8 @@ def biggerIsBetter(benchmarkType):
     if benchmarkType == MotionMark1_1:
         return True
     if benchmarkType == PLT5:
+        return False
+    if benchmarkType == CompetitivePLT:
         return False
     if benchmarkType == PLUM3:
         return False
@@ -499,6 +552,14 @@ def main():
 
         if args.csv:
             writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv)
+    elif typeA == CompetitivePLT:
+        if args.breakdown:
+            dumpBreakdowns(competitivePLTBreakdown(a), competitivePLTBreakdown(b))
+
+        ttest(typeA, CompetitivePLTResults(a), CompetitivePLTResults(b))
+
+        if args.csv:
+            writeCSV(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.csv)
     elif typeA == PLUM3:
         if args.breakdown:
             dumpBreakdowns(plum3Breakdown(a), plum3Breakdown(b))
