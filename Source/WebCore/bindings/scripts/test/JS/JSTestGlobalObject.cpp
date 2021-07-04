@@ -241,8 +241,8 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestTypedefsConstructor);
 
 using JSTestGlobalObjectDOMConstructor = JSDOMConstructorNotConstructable<JSTestGlobalObject>;
 
-template<> const unsigned JSTestGlobalObjectDOMConstructor::StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
-template<> const ClassInfo JSTestGlobalObjectDOMConstructor::s_info = { "TestGlobalObject", &Base::s_info, &JSTestGlobalObjectConstructorTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectDOMConstructor) };
+template<> const unsigned JSTestGlobalObjectDOMConstructor::StructureFlags = Base::StructureFlags;
+template<> const ClassInfo JSTestGlobalObjectDOMConstructor::s_info = { "TestGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectDOMConstructor) };
 
 template<> JSValue JSTestGlobalObjectDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -255,7 +255,6 @@ template<> void JSTestGlobalObjectDOMConstructor::initializeProperties(VM& vm, J
     putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestGlobalObject"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    reifyStaticProperties(vm, nullptr, JSTestGlobalObjectConstructorTableValues, *this);
 }
 
 /* Hash table for Prototype */

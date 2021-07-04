@@ -201,6 +201,34 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestInterfacePrototype, JSTestInterfacePro
 
 using JSTestInterfaceDOMConstructor = JSDOMConstructor<JSTestInterface>;
 
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestInterfaceDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* castedThis = jsCast<JSTestInterfaceDOMConstructor*>(callFrame->jsCallee());
+    ASSERT(castedThis);
+    if (UNLIKELY(callFrame->argumentCount() < 1))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto* context = castedThis->scriptExecutionContext();
+    if (UNLIKELY(!context))
+        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "TestInterface");
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    EnsureStillAliveScope argument1 = callFrame->argument(1);
+    auto str2 = argument1.value().isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
+    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestInterface>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    if constexpr (IsExceptionOr<decltype(object)>)
+        RETURN_IF_EXCEPTION(throwScope, { });
+    setSubclassStructureIfNeeded<TestInterface>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(jsValue);
+}
+JSC_ANNOTATE_HOST_FUNCTION(JSTestInterfaceDOMConstructorConstruct, JSTestInterfaceDOMConstructor::construct);
+
 /* Hash table for Constructor */
 
 static const struct CompactHashIndex JSTestInterfaceConstructorTableIndex[17] = {
@@ -284,34 +312,6 @@ static_assert(TestSupplemental::SUPPLEMENTALCONSTANT1 == 1, "SUPPLEMENTALCONSTAN
 #if ENABLE(Condition11) || ENABLE(Condition12)
 static_assert(TestSupplemental::CONST_IMPL == 2, "CONST_IMPL in TestSupplemental does not match value from IDL");
 #endif
-
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestInterfaceDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestInterfaceDOMConstructor*>(callFrame->jsCallee());
-    ASSERT(castedThis);
-    if (UNLIKELY(callFrame->argumentCount() < 1))
-        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto* context = castedThis->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "TestInterface");
-    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    EnsureStillAliveScope argument1 = callFrame->argument(1);
-    auto str2 = argument1.value().isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
-    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<TestInterface>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
-    if constexpr (IsExceptionOr<decltype(object)>)
-        RETURN_IF_EXCEPTION(throwScope, { });
-    setSubclassStructureIfNeeded<TestInterface>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
-    return JSValue::encode(jsValue);
-}
-JSC_ANNOTATE_HOST_FUNCTION(JSTestInterfaceDOMConstructorConstruct, JSTestInterfaceDOMConstructor::construct);
 
 template<> const unsigned JSTestInterfaceDOMConstructor::StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 template<> const ClassInfo JSTestInterfaceDOMConstructor::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceConstructorTable, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceDOMConstructor) };

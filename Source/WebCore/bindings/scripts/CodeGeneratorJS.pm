@@ -3296,16 +3296,6 @@ sub ShouldBeOnInstance
     assert("Unsupported argument: " . ref($context));
 }
 
-sub ConstructorHasProperties
-{
-    my $interface = shift;
-    return 1 if @{$interface->constants};
-    foreach my $operationOrAttribute (@{$interface->operations}, @{$interface->attributes}) {
-        return 1 if $operationOrAttribute->isStatic;
-    }
-    return 0;
-}
-
 sub PrototypeHasProperties
 {
     my $interface = shift;
@@ -4433,20 +4423,13 @@ sub GenerateImplementation
 
     GeneratePrototypeDeclaration(\@implContent, $className, $interface) if !HeaderNeedsPrototypeDeclaration($interface);
 
-    GenerateConstructorDeclaration(\@implContent, $className, $interface) if !$interface->extendedAttributes->{LegacyNoInterfaceObject};
-
     # - Add all interface object (aka constructor) properties (constants, static attributes, static operations).
     if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
-        # FIXME: Generate constructor's hash table in GenerateConstructorHelperMethods, removing ConstructorHasProperties and unused $protoClassName.
-        GenerateHashTable($interface, CONTEXT_NAME_CONSTRUCTOR);
+        GenerateConstructorDeclaration(\@implContent, $className, $interface);
 
-        push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
-
-        my $protoClassName = "${className}Prototype";
-        GenerateConstructorDefinitions(\@implContent, $className, $protoClassName, $visibleInterfaceName, $interface);
-
+        GenerateConstructorDefinitions(\@implContent, $className, $visibleInterfaceName, $interface);
         my $legacyFactoryFunction = $interface->extendedAttributes->{LegacyFactoryFunction};
-        GenerateConstructorDefinitions(\@implContent, $className, $protoClassName, $legacyFactoryFunction, $interface, "GeneratingLegacyFactoryFunction") if $legacyFactoryFunction;
+        GenerateConstructorDefinitions(\@implContent, $className, $legacyFactoryFunction, $interface, 1) if $legacyFactoryFunction;
     }
 
     if (!$interface->isNamespaceObject) {
@@ -6269,12 +6252,7 @@ sub GenerateCallbackImplementationContent
     my $numConstants = @{$constants};
     if ($numConstants > 0) {
         GenerateConstructorDeclaration($contentRef, $className, $interfaceOrCallback, $name);
-
-        GenerateHashTable($interfaceOrCallback, CONTEXT_NAME_CONSTRUCTOR);
-
-        push(@$contentRef, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interfaceOrCallback));
-
-        GenerateConstructorDefinitions($contentRef, $className, "", $visibleName, $interfaceOrCallback);
+        GenerateConstructorDefinitions($contentRef, $className, $visibleName, $interfaceOrCallback);
 
         AddToImplIncludes("JSDOMGlobalObjectInlines.h");
         push(@$contentRef, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
@@ -7409,13 +7387,13 @@ sub GenerateConstructorDeclaration
 
 sub GenerateConstructorDefinitions
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
+    my ($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
 
     if (IsConstructable($interface)) {
         my @constructors = @{$interface->constructors};
         if (@constructors > 1) {
             foreach my $constructor (@constructors) {
-                GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructor);
+                GenerateConstructorDefinition($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructor);
             }
 
             my $overloadFunctionPrefix = "construct${className}";
@@ -7431,18 +7409,18 @@ sub GenerateConstructorDefinitions
             push(@implContent, "}\n");
             push(@implContent, "JSC_ANNOTATE_HOST_FUNCTION(${className}ConstructorConstruct, ${className}DOMConstructor::construct);\n\n");
         } elsif (@constructors == 1) {
-            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructors[0]);
+            GenerateConstructorDefinition($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructors[0]);
         } else {
-            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
+            GenerateConstructorDefinition($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
         }
     }
 
-    GenerateConstructorHelperMethods($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
+    GenerateConstructorHelperMethods($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
 }
 
 sub GenerateConstructorDefinition
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $operation) = @_;
+    my ($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $operation) = @_;
 
     return if HasJSBuiltinConstructor($interface);
 
@@ -7518,7 +7496,7 @@ sub GenerateConstructorDefinition
 
 sub GenerateConstructorHelperMethods
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
+    my ($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
 
     my $constructorClassName = $generatingLegacyFactoryFunction ? "${className}LegacyFactoryFunction" : "${className}DOMConstructor";
     my $leastConstructorLength = 0;
@@ -7534,9 +7512,11 @@ sub GenerateConstructorHelperMethods
 
     my $constructorHashTable = "nullptr";
     unless ($generatingLegacyFactoryFunction) {
+        $constructorHashTable = GenerateHashTable($interface, CONTEXT_NAME_CONSTRUCTOR);
+        push(@$outputArray, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
+
         my $structureFlags = "Base::StructureFlags";
-        if (ConstructorHasProperties($interface)) {
-            $constructorHashTable = "&${className}ConstructorTable";
+        if ($constructorHashTable ne "nullptr") {
             $structureFlags .= " | JSC::HasStaticPropertyTable";
         }
 

@@ -1,3 +1,27 @@
+2021-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Generate constructor's hash table in GenerateConstructorHelperMethods
+        https://bugs.webkit.org/show_bug.cgi?id=227668
+
+        Reviewed by Sam Weinig.
+
+        This change moves generation of constructor's hash table to GenerateConstructorHelperMethods,
+        right before it is used to define the constructor's s_info, which is nicer than inferring
+        table's name and more precise than using ConstructorHasProperties.
+
+        Also, makes $generatingLegacyFactoryFunction bool-ish and removes unused $protoClassName parameter.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateCallbackImplementationContent):
+        (GenerateConstructorDefinitions):
+        (GenerateConstructorDefinition):
+        (GenerateConstructorHelperMethods):
+        (ConstructorHasProperties): Deleted.
+        * bindings/scripts/test/JS/*: Updated.
+
 2021-07-04  Eric Carlson  <eric.carlson@apple.com>
 
         WebAudio auto-play policy should come from top document

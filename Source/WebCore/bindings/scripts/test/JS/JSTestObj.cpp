@@ -1896,6 +1896,36 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestObjPrototype, JSTestObjPrototype::Base
 
 using JSTestObjDOMConstructor = JSDOMConstructor<JSTestObj>;
 
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestObjDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* castedThis = jsCast<JSTestObjDOMConstructor*>(callFrame->jsCallee());
+    ASSERT(castedThis);
+    if (UNLIKELY(callFrame->argumentCount() < 2))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto* context = castedThis->scriptExecutionContext();
+    if (UNLIKELY(!context))
+        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "TestObject");
+    ASSERT(context->isDocument());
+    auto& document = downcast<Document>(*context);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto testCallback = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument0.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 0, "testCallback", "TestObject", nullptr); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
+    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*lexicalGlobalObject, argument1.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 1, "testCallbackFunction", "TestObject", nullptr); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto object = TestObj::create(document, testCallback.releaseNonNull(), testCallbackFunction.releaseNonNull());
+    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    if constexpr (IsExceptionOr<decltype(object)>)
+        RETURN_IF_EXCEPTION(throwScope, { });
+    setSubclassStructureIfNeeded<TestObj>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(jsValue);
+}
+JSC_ANNOTATE_HOST_FUNCTION(JSTestObjDOMConstructorConstruct, JSTestObjDOMConstructor::construct);
+
 #if ENABLE(TEST_FEATURE)
 static JSValue createJSTestObjConstructor_enabledAtRuntimeAttributeStatic(VM& vm, JSObject*)
 {
@@ -2060,36 +2090,6 @@ static_assert(TestObj::CONST_VALUE_13 == 0X20, "CONST_VALUE_13 in TestObj does n
 static_assert(TestObj::CONST_VALUE_14 == 0x1abc, "CONST_VALUE_14 in TestObj does not match value from IDL");
 static_assert(TestObj::CONST_IMPL == 15, "CONST_IMPL in TestObj does not match value from IDL");
 static_assert(TestObj::readonly == 0, "readonly in TestObj does not match value from IDL");
-
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestObjDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestObjDOMConstructor*>(callFrame->jsCallee());
-    ASSERT(castedThis);
-    if (UNLIKELY(callFrame->argumentCount() < 2))
-        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto* context = castedThis->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "TestObject");
-    ASSERT(context->isDocument());
-    auto& document = downcast<Document>(*context);
-    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto testCallback = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument0.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 0, "testCallback", "TestObject", nullptr); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
-    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*lexicalGlobalObject, argument1.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 1, "testCallbackFunction", "TestObject", nullptr); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestObj::create(document, testCallback.releaseNonNull(), testCallbackFunction.releaseNonNull());
-    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
-    if constexpr (IsExceptionOr<decltype(object)>)
-        RETURN_IF_EXCEPTION(throwScope, { });
-    setSubclassStructureIfNeeded<TestObj>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
-    return JSValue::encode(jsValue);
-}
-JSC_ANNOTATE_HOST_FUNCTION(JSTestObjDOMConstructorConstruct, JSTestObjDOMConstructor::construct);
 
 template<> const unsigned JSTestObjDOMConstructor::StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 template<> const ClassInfo JSTestObjDOMConstructor::s_info = { "TestObject", &Base::s_info, &JSTestObjConstructorTable, nullptr, CREATE_METHOD_TABLE(JSTestObjDOMConstructor) };

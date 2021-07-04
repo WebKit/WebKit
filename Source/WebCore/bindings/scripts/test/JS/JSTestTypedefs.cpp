@@ -165,8 +165,8 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor:
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestTypedefsDOMConstructorConstruct, JSTestTypedefsDOMConstructor::construct);
 
-template<> const unsigned JSTestTypedefsDOMConstructor::StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
-template<> const ClassInfo JSTestTypedefsDOMConstructor::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsConstructorTable, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsDOMConstructor) };
+template<> const unsigned JSTestTypedefsDOMConstructor::StructureFlags = Base::StructureFlags;
+template<> const ClassInfo JSTestTypedefsDOMConstructor::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsDOMConstructor) };
 
 template<> JSValue JSTestTypedefsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -179,7 +179,6 @@ template<> void JSTestTypedefsDOMConstructor::initializeProperties(VM& vm, JSDOM
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestTypedefs"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(3), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    reifyStaticProperties(vm, nullptr, JSTestTypedefsConstructorTableValues, *this);
 }
 
 /* Hash table for Prototype */
