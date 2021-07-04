@@ -1,3 +1,17 @@
+2021-07-04  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] 100% percent width column(s) make the table stretch
+        https://bugs.webkit.org/show_bug.cgi?id=227667
+
+        Reviewed by Antti Koivisto.
+
+        This patch addresses the odd transition of going from 99% to 100% in accumulated percent width.
+
+        Test: fast/layoutformattingcontext/table-space-width-100-percent-quirk.html
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+
 2021-07-01  Dean Jackson  <dino@apple.com>
 
         Move BottomControlsBarHeight and InsideMargin to be computed at runtime

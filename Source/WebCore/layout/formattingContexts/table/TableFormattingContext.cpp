@@ -451,7 +451,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
         // Resolve the percent values as follows
         // - the percent value is resolved against the column maximum width (fixed or content based) as if the max value represented the percentage value
         //   e.g 50% with the maximum width of 100px produces a resolved width of 200px for the column.
-        // - find the largest resolved value across the columns and used that as the maxiumum width for the precent based columns.
+        // - find the largest resolved value across the columns and used that as the maximum width for the percent based columns.
         // - Compute the non-percent based columns width by using the remaining percent value (e.g 50% and 10% columns would leave 40% for the rest of the columns)
         for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
             auto nonPercentColumnWidth = columnIntrinsicWidths[columnIndex].maximum;
@@ -472,6 +472,15 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
         auto adjustedMaximumWidth = percentMaximumWidth;
         if (remainingPercent)
             adjustedMaximumWidth = std::max(adjustedMaximumWidth, LayoutUnit { nonPercentColumnsWidth * 100.0f / remainingPercent });
+        else {
+            // When the table has percent width column(s) and they add up to (or over) 100%, the maximum width is computed to
+            // only constrained by the available horizontal width.
+            // This is a very odd transition of going from 99.9% to 100%, where 99.9% computes normally (see above)
+            // but as soon as we hit the 100% mark, the table suddenly stretches all the way to the horizontal available space.
+            // It may very well be an ancient bug we need to support (it maps to the epsilon value in AutoTableLayout::computeIntrinsicLogicalWidths which is to avoid division by zero).
+            adjustedMaximumWidth = LayoutUnit::max();
+        }
+
         tableWidthConstraints.maximum = std::max(tableWidthConstraints.maximum, adjustedMaximumWidth);
     }
     // Expand the preferred width with leading and trailing cell spacing (note that column spanners count as one cell).

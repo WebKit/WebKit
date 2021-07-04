@@ -1,3 +1,13 @@
+2021-07-04  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] 100% percent width column(s) make the table stretch
+        https://bugs.webkit.org/show_bug.cgi?id=227667
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-space-width-100-percent-quirk-expected.html: Added.
+        * fast/layoutformattingcontext/table-space-width-100-percent-quirk.html: Added.
+
 2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Rework runtime enabled properties leveraging PropertyCallback
