@@ -1,3 +1,19 @@
+2021-07-04  Eric Carlson  <eric.carlson@apple.com>
+
+        WebAudio auto-play policy should come from top document
+        https://bugs.webkit.org/show_bug.cgi?id=227593
+        rdar://76920375
+
+        Reviewed by Chris Dumez.
+
+        * media/auto-play-video-in-about-blank-iframe-expected.txt: Added.
+        * media/auto-play-video-in-about-blank-iframe.html: Added.
+        * media/auto-play-web-audio-in-about-blank-iframe-expected.txt: Added.
+        * media/auto-play-web-audio-in-about-blank-iframe.html: Added.
+
+        * media/video-test.js:
+        (waitForEventWithTimeout): Return event.
+
 2021-07-04  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] 100% percent width column(s) make the table stretch
