@@ -1,3 +1,42 @@
+2021-07-04  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227657
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream c21b0b8ca7.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-020.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-021.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-028-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-028.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-029-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-029.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-030-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-030.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-031-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-031.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-032-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-032.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-033-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-033.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-034-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-034.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-035-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-035.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-036-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-036.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-037-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-037.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-038-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-038.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001-expected.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2021-07-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening of expected failures and update list of baselines.

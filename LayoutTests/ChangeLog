@@ -1,3 +1,12 @@
+2021-07-04  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227657
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+
 2021-07-04  Eric Carlson  <eric.carlson@apple.com>
 
         WebAudio auto-play policy should come from top document
