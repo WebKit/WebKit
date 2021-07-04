@@ -119,206 +119,219 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
 {
     auto& columns = grid.columns();
     auto& rows = grid.rows();
-    // 1. Collect the non-spanning spaces first. They are used for the final distribution as well as for distributing the spanning space.
     Vector<std::optional<GridSpace>> resolvedItems(SpanType::size(grid));
-    for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
-        for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
-            auto& slot = *grid.slot({ columnIndex, rowIndex });
-            if (SpanType::hasSpan(slot) || SpanType::isSpanned(slot))
-                continue;
-            auto index = SpanType::index(columnIndex, rowIndex);
-            auto currentSpace = slotSpace(slot, index);
-            if (!resolvedItems[index]) {
-                resolvedItems[index] = currentSpace;
-                continue;
-            }
-            auto& resolvedItem = resolvedItems[index];
-            // FIXME: Add support for mixed column/row types e.g. first row first column is fixed, while second row first column is percent.
-            ASSERT(resolvedItem->type == currentSpace.type);
-            resolvedItem->preferredSize = std::max(resolvedItem->preferredSize, currentSpace.preferredSize);
-            resolvedItem->flexBase = std::max(resolvedItem->flexBase, currentSpace.flexBase);
-        }
-    }
-
-    // 2. Collect the spanning cells.
-    struct SpanningCell {
-        SlotPosition position;
-        GridSpace unresolvedSpace;
-    };
-    Vector<SpanningCell> spanningCells;
-    for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+    auto collectNonSpanningCells = [&] {
+        // 1. Collect the non-spanning spaces first. They are used for the final distribution as well as for distributing the spanning space.
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
-            auto& slot = *grid.slot({ columnIndex, rowIndex });
-            if (SpanType::hasSpan(slot))
-                spanningCells.append({ { columnIndex, rowIndex }, slotSpace(slot, SpanType::index(columnIndex, rowIndex)) });
+            for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+                auto& slot = *grid.slot({ columnIndex, rowIndex });
+                if (SpanType::hasSpan(slot) || SpanType::isSpanned(slot))
+                    continue;
+                auto index = SpanType::index(columnIndex, rowIndex);
+                auto currentSpace = slotSpace(slot, index);
+                if (!resolvedItems[index]) {
+                    resolvedItems[index] = currentSpace;
+                    continue;
+                }
+                auto& resolvedItem = resolvedItems[index];
+                // FIXME: Add support for mixed column/row types e.g. first row first column is fixed, while second row first column is percent.
+                ASSERT(resolvedItem->type == currentSpace.type);
+                resolvedItem->preferredSize = std::max(resolvedItem->preferredSize, currentSpace.preferredSize);
+                resolvedItem->flexBase = std::max(resolvedItem->flexBase, currentSpace.flexBase);
+            }
         }
-    }
-    // We need these spanning cells in the order of the number of columns/rows they span so that
-    // we can resolve overlapping spans starting with the shorter ones e.g.
-    // <td colspan=4>#a</td><td>#b</td>
-    // <td colspan=2>#c</td><td colspan=3>#d</td>
-    std::sort(spanningCells.begin(), spanningCells.end(), [&] (auto& a, auto& b) {
-        return SpanType::spanCount(grid.slot(a.position)->cell()) < SpanType::spanCount(grid.slot(b.position)->cell());
-    });
+    };
+    collectNonSpanningCells();
 
-    // 3. Distribute the spanning cells' mimimum space across the columns/rows using the non-spanning spaces.
-    // e.g. [ 1 ][ 5 ][ 1 ]
-    //      [    9   ][ 1 ]
-    // The initial widths are: [ 2 ][ 7 ][ 1 ]
-    for (auto spanningCell : spanningCells) {
-        auto& cell = grid.slot(spanningCell.position)->cell();
-        auto unresolvedSpanningSpace = spanningCell.unresolvedSpace;
-        if (!resolvedItems[SpanType::startSpan(cell)] || !resolvedItems[SpanType::endSpan(cell) - 1]) {
-            // <td colspan=4>#a</td><td>#b</td>
-            // <td colspan=2>#c</td><td colspan=3>#d</td>
-            // Unresolved columns are: 1 2 3 4
-            // 1. Take colspan=2 (shortest span) and resolve column 1 and 2
-            // 2. Take colspan=3 and resolve column 3 and 4 (5 is resolved because it already has a non-spanning cell).
-            // 3. colspan=4 needs no resolving because all the spanned columns (1 2 3 4) have already been resolved.
-            auto unresolvedColumnCount = cell.columnSpan();
-            for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
-                if (!resolvedItems[spanIndex])
-                    continue;
-                ASSERT(unresolvedColumnCount);
-                --unresolvedColumnCount;
-                unresolvedSpanningSpace -= *resolvedItems[spanIndex];
-            }
-            ASSERT(unresolvedColumnCount);
-            auto equalSpaceForSpannedColumns = unresolvedSpanningSpace / unresolvedColumnCount;
-            for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
-                if (resolvedItems[spanIndex])
-                    continue;
-                resolvedItems[spanIndex] = equalSpaceForSpannedColumns;
-            }
-        } else {
-            // 1. Collect the non-spaning resolved spaces.
-            // 2. Distribute the extra space among the spanned columns/rows based on the resolved space values.
-            // e.g. spanning width: [   9   ]. Resolved widths for the spanned columns: [ 1 ] [ 2 ]
-            // New resolved widths: [ 3 ] [ 6 ].
-            auto resolvedSpanningSpace = GridSpace { };
-            for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                resolvedSpanningSpace += *resolvedItems[spanIndex];
-            if (resolvedSpanningSpace.preferredSize >= unresolvedSpanningSpace.preferredSize) {
-                // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
-                continue;
-            }
-            auto spacing = SpanType::spacing(grid) * (SpanType::spanCount(cell) - 1);
-            auto spaceToDistribute = unresolvedSpanningSpace - GridSpace { { }, spacing, spacing } - resolvedSpanningSpace;
-            if (!spaceToDistribute.isEmpty()) {
-                auto columnsFlexBase = spaceToDistribute.flexBase / resolvedSpanningSpace.flexBase;
-                for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                    *resolvedItems[spanIndex] += GridSpace { resolvedItems[spanIndex]->type, resolvedItems[spanIndex]->preferredSize * columnsFlexBase, resolvedItems[spanIndex]->flexBase * columnsFlexBase };
+    auto collectAndDistributeSpanningCells = [&] {
+        // 2. Collect the spanning cells.
+        struct SpanningCell {
+            SlotPosition position;
+            GridSpace unresolvedSpace;
+        };
+        Vector<SpanningCell> spanningCells;
+        for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+            for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+                auto& slot = *grid.slot({ columnIndex, rowIndex });
+                if (SpanType::hasSpan(slot))
+                    spanningCells.append({ { columnIndex, rowIndex }, slotSpace(slot, SpanType::index(columnIndex, rowIndex)) });
             }
         }
-    }
-    // 4. Distribute the extra space using the final resolved sizes.
+        // We need these spanning cells in the order of the number of columns/rows they span so that
+        // we can resolve overlapping spans starting with the shorter ones e.g.
+        // <td colspan=4>#a</td><td>#b</td>
+        // <td colspan=2>#c</td><td colspan=3>#d</td>
+        std::sort(spanningCells.begin(), spanningCells.end(), [&] (auto& a, auto& b) {
+            return SpanType::spanCount(grid.slot(a.position)->cell()) < SpanType::spanCount(grid.slot(b.position)->cell());
+        });
+
+        // 3. Distribute the spanning cells' mimimum space across the columns/rows using the non-spanning spaces.
+        // e.g. [ 1 ][ 5 ][ 1 ]
+        //      [    9   ][ 1 ]
+        // The initial widths are: [ 2 ][ 7 ][ 1 ]
+        for (auto spanningCell : spanningCells) {
+            auto& cell = grid.slot(spanningCell.position)->cell();
+            auto unresolvedSpanningSpace = spanningCell.unresolvedSpace;
+            if (!resolvedItems[SpanType::startSpan(cell)] || !resolvedItems[SpanType::endSpan(cell) - 1]) {
+                // <td colspan=4>#a</td><td>#b</td>
+                // <td colspan=2>#c</td><td colspan=3>#d</td>
+                // Unresolved columns are: 1 2 3 4
+                // 1. Take colspan=2 (shortest span) and resolve column 1 and 2
+                // 2. Take colspan=3 and resolve column 3 and 4 (5 is resolved because it already has a non-spanning cell).
+                // 3. colspan=4 needs no resolving because all the spanned columns (1 2 3 4) have already been resolved.
+                auto unresolvedColumnCount = cell.columnSpan();
+                for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
+                    if (!resolvedItems[spanIndex])
+                        continue;
+                    ASSERT(unresolvedColumnCount);
+                    --unresolvedColumnCount;
+                    unresolvedSpanningSpace -= *resolvedItems[spanIndex];
+                }
+                ASSERT(unresolvedColumnCount);
+                auto equalSpaceForSpannedColumns = unresolvedSpanningSpace / unresolvedColumnCount;
+                for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
+                    if (resolvedItems[spanIndex])
+                        continue;
+                    resolvedItems[spanIndex] = equalSpaceForSpannedColumns;
+                }
+            } else {
+                // 1. Collect the non-spanning resolved spaces.
+                // 2. Distribute the extra space among the spanned columns/rows based on the resolved space values.
+                // e.g. spanning width: [   9   ]. Resolved widths for the spanned columns: [ 1 ] [ 2 ]
+                // New resolved widths: [ 3 ] [ 6 ].
+                auto resolvedSpanningSpace = GridSpace { };
+                for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
+                    resolvedSpanningSpace += *resolvedItems[spanIndex];
+                if (resolvedSpanningSpace.preferredSize >= unresolvedSpanningSpace.preferredSize) {
+                    // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
+                    continue;
+                }
+                auto spacing = SpanType::spacing(grid) * (SpanType::spanCount(cell) - 1);
+                auto spaceToDistribute = unresolvedSpanningSpace - GridSpace { { }, spacing, spacing } - resolvedSpanningSpace;
+                if (!spaceToDistribute.isEmpty()) {
+                    auto columnsFlexBase = spaceToDistribute.flexBase / resolvedSpanningSpace.flexBase;
+                    for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
+                        *resolvedItems[spanIndex] += GridSpace { resolvedItems[spanIndex]->type, resolvedItems[spanIndex]->preferredSize * columnsFlexBase, resolvedItems[spanIndex]->flexBase * columnsFlexBase };
+                }
+            }
+        }
+    };
+    collectAndDistributeSpanningCells();
+
     Vector<LayoutUnit> distributedSpaces(resolvedItems.size());
-    float spaceToDistribute = availableSpace - (resolvedItems.size() + 1) * SpanType::spacing(grid);
-    auto adjustabledSpace = GridSpace { };
-    for (auto& resolvedItem : resolvedItems) {
-        ASSERT(resolvedItem);
-        adjustabledSpace += *resolvedItem;
-    }
-    spaceToDistribute -= adjustabledSpace.preferredSize;
+    auto spaceToDistribute = 0.f;
+    auto computeSpaceToDistribute = [&] {
+        // 4. Distribute the extra space using the final resolved sizes.
+        spaceToDistribute = availableSpace - (resolvedItems.size() + 1) * SpanType::spacing(grid);
+        auto adjustabledSpace = GridSpace { };
+        for (auto& resolvedItem : resolvedItems) {
+            ASSERT(resolvedItem);
+            adjustabledSpace += *resolvedItem;
+        }
+        spaceToDistribute -= adjustabledSpace.preferredSize;
+    };
+    computeSpaceToDistribute();
+
     // Let's start with the preferred size for each column.
     for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex)
         distributedSpaces[columnIndex] = LayoutUnit { resolvedItems[columnIndex]->preferredSize };
 
-    if (!spaceToDistribute) {
-        // Preferred size covers the spaces. There's nothing extra spaace to distribute.
-        return distributedSpaces;
-    }
+    auto distributeSpace = [&] {
+        if (!spaceToDistribute)
+            return;
+        // Setup the priority lists. We use these when expanding/shrinking slots.
+        Vector<size_t> autoColumnIndexes;
+        Vector<size_t> relativeColumnIndexes;
+        Vector<size_t> fixedColumnIndexes;
+        Vector<size_t> percentColumnIndexes;
 
-    // Setup the priority lists. We use these when expanding/shrinking slots.
-    Vector<size_t> autoColumnIndexes;
-    Vector<size_t> relativeColumnIndexes;
-    Vector<size_t> fixedColumnIndexes;
-    Vector<size_t> percentColumnIndexes;
-
-    for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
-        switch (resolvedItems[columnIndex]->type) {
-        case GridSpace::Type::Percent:
-            percentColumnIndexes.append(columnIndex);
-            break;
-        case GridSpace::Type::Fixed:
-            fixedColumnIndexes.append(columnIndex);
-            break;
-        case GridSpace::Type::Relative:
-            relativeColumnIndexes.append(columnIndex);
-            break;
-        case GridSpace::Type::Auto:
-            autoColumnIndexes.append(columnIndex);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
+        for (size_t columnIndex = 0; columnIndex < resolvedItems.size(); ++columnIndex) {
+            switch (resolvedItems[columnIndex]->type) {
+            case GridSpace::Type::Percent:
+                percentColumnIndexes.append(columnIndex);
+                break;
+            case GridSpace::Type::Fixed:
+                fixedColumnIndexes.append(columnIndex);
+                break;
+            case GridSpace::Type::Relative:
+                relativeColumnIndexes.append(columnIndex);
+                break;
+            case GridSpace::Type::Auto:
+                autoColumnIndexes.append(columnIndex);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
         }
-    }
 
-    if (spaceToDistribute > 0) {
-        // Each column can get some extra space.
-        auto hasSpaceToDistribute = [&] {
-            ASSERT(spaceToDistribute > -LayoutUnit::epsilon());
-            return spaceToDistribute > LayoutUnit::epsilon();
+        if (spaceToDistribute > 0) {
+            // Each column can get some extra space.
+            auto hasSpaceToDistribute = [&] {
+                ASSERT(spaceToDistribute > -LayoutUnit::epsilon());
+                return spaceToDistribute > LayoutUnit::epsilon();
+            };
+
+            auto expandSpace = [&](const auto& columnIndexes) {
+                auto adjustabledSpace = GridSpace { };
+                for (auto& columnIndex : columnIndexes)
+                    adjustabledSpace += *resolvedItems[columnIndex];
+
+                auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
+                for (auto& columnIndex : columnIndexes) {
+                    auto extraSpace = columnsFlexBase * resolvedItems[columnIndex]->flexBase;
+                    distributedSpaces[columnIndex] += LayoutUnit { extraSpace };
+                    spaceToDistribute -= extraSpace;
+                    if (!hasSpaceToDistribute())
+                        return;
+                }
+            };
+            // We distribute the extra space among columns in the priority order as follows:
+            expandSpace(fixedColumnIndexes);
+            if (hasSpaceToDistribute())
+                expandSpace(percentColumnIndexes);
+            if (hasSpaceToDistribute())
+                expandSpace(relativeColumnIndexes);
+            if (hasSpaceToDistribute())
+                expandSpace(autoColumnIndexes);
+            ASSERT(!hasSpaceToDistribute());
+            return;
+        }
+        // Can't accommodate the preferred width. Let's use the priority list to shrink columns.
+        auto spaceNeeded = -spaceToDistribute;
+
+        auto needsMoreSpace = [&] {
+            ASSERT(spaceNeeded > -LayoutUnit::epsilon());
+            return spaceNeeded > LayoutUnit::epsilon();
         };
 
-        auto expandSpace = [&](const auto& columnIndexes) {
+        auto shrinkSpace = [&](const auto& columnIndexes) {
             auto adjustabledSpace = GridSpace { };
             for (auto& columnIndex : columnIndexes)
                 adjustabledSpace += *resolvedItems[columnIndex];
 
-            auto columnsFlexBase = adjustabledSpace.flexBase ? spaceToDistribute / adjustabledSpace.flexBase : 0.f;
+            auto columnsFlexBase = adjustabledSpace.flexBase ? spaceNeeded / adjustabledSpace.flexBase : 0.f;
             for (auto& columnIndex : columnIndexes) {
-                auto extraSpace = columnsFlexBase * resolvedItems[columnIndex]->flexBase;
-                distributedSpaces[columnIndex] += LayoutUnit { extraSpace };
-                spaceToDistribute -= extraSpace;
-                if (!hasSpaceToDistribute())
+                auto& resolvedItem = *resolvedItems[columnIndex];
+                auto spaceToRemove = std::min(resolvedItem.preferredSize - resolvedItem.minimumSize, columnsFlexBase * resolvedItem.flexBase);
+                spaceToRemove = std::min(spaceToRemove, spaceNeeded);
+                distributedSpaces[columnIndex] -= spaceToRemove;
+                spaceNeeded -= spaceToRemove;
+                if (!needsMoreSpace())
                     return;
             }
         };
-        // We distribute the extra space among columns in the priority order as follows:
-        expandSpace(fixedColumnIndexes);
-        if (hasSpaceToDistribute())
-            expandSpace(percentColumnIndexes);
-        if (hasSpaceToDistribute())
-            expandSpace(relativeColumnIndexes);
-        if (hasSpaceToDistribute())
-            expandSpace(autoColumnIndexes);
-        ASSERT(!hasSpaceToDistribute());
-        return distributedSpaces;
-    }
-    // Can't accomodate the preferred width. Let's use the priority list to shrink columns.
-    auto spaceNeeded = -spaceToDistribute;
-
-    auto needsMoreSpace = [&] {
-        ASSERT(spaceNeeded > -LayoutUnit::epsilon());
-        return spaceNeeded > LayoutUnit::epsilon();
+        shrinkSpace(autoColumnIndexes);
+        if (needsMoreSpace())
+            shrinkSpace(relativeColumnIndexes);
+        if (needsMoreSpace())
+            shrinkSpace(fixedColumnIndexes);
+        if (needsMoreSpace())
+            shrinkSpace(percentColumnIndexes);
+        ASSERT(!needsMoreSpace());
     };
+    distributeSpace();
 
-    auto shrinkSpace = [&](const auto& columnIndexes) {
-        auto adjustabledSpace = GridSpace { };
-        for (auto& columnIndex : columnIndexes)
-            adjustabledSpace += *resolvedItems[columnIndex];
-
-        auto columnsFlexBase = adjustabledSpace.flexBase ? spaceNeeded / adjustabledSpace.flexBase : 0.f;
-        for (auto& columnIndex : columnIndexes) {
-            auto& resolvedItem = *resolvedItems[columnIndex];
-            auto spaceToRemove = std::min(resolvedItem.preferredSize - resolvedItem.minimumSize, columnsFlexBase * resolvedItem.flexBase);
-            spaceToRemove = std::min(spaceToRemove, spaceNeeded);
-            distributedSpaces[columnIndex] -= spaceToRemove;
-            spaceNeeded -= spaceToRemove;
-            if (!needsMoreSpace())
-                return;
-        }
-    };
-    shrinkSpace(autoColumnIndexes);
-    if (needsMoreSpace())
-        shrinkSpace(relativeColumnIndexes);
-    if (needsMoreSpace())
-        shrinkSpace(fixedColumnIndexes);
-    if (needsMoreSpace())
-        shrinkSpace(percentColumnIndexes);
-    ASSERT(!needsMoreSpace());
     return distributedSpaces;
 }
 

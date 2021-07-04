@@ -1,3 +1,17 @@
+2021-07-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Cleanup computedPreferredWidthForColumns and distributeAvailableSpace functions
+        https://bugs.webkit.org/show_bug.cgi?id=227669
+
+        Reviewed by Antti Koivisto.
+
+        Let's create some sub-scopes within these long functions to make them read better.
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::distributeAvailableSpace):
+
 2021-07-04  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] 100% percent width column(s) make the table stretch
