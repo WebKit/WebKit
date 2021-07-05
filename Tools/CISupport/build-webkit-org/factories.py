@@ -63,6 +63,9 @@ class BuildFactory(Factory):
             self.addStep(GenerateMiniBrowserBundle())
 
         if triggers:
+            if platform == "gtk":
+                self.addStep(InstallBuiltProduct())
+
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
             if platform.startswith('mac') or platform.startswith('ios-simulator') or platform.startswith('tvos-simulator') or platform.startswith('watchos-simulator'):

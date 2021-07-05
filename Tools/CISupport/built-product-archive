@@ -110,7 +110,7 @@ def copyBuildFiles(source, destination, patterns):
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns(*patterns))
 
 
-def createZipFromList(listToZip, configuration, excludePattern=None):
+def createZipFromList(listToZip, configuration, excludePatterns=None):
     global _topLevelBuildDirectory
     global _configurationBuildDirectory
     archiveDir = _topLevelBuildDirectory
@@ -124,8 +124,9 @@ def createZipFromList(listToZip, configuration, excludePattern=None):
 
     if sys.platform.startswith('linux'):
         zipCommand = ['zip', '-y', '-r', archiveFile] + listToZip
-        if excludePattern:
-            zipCommand += ['-x', excludePattern]
+        if excludePatterns:
+            for excludePattern in excludePatterns:
+                zipCommand += ['-x', excludePattern]
         return subprocess.call(zipCommand, cwd=_configurationBuildDirectory)
 
     raise NotImplementedError('Unsupported platform: {platform}'.format(platform=sys.platform))
@@ -251,13 +252,16 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
                 if filename.startswith('libcogcore'):
                     contents.append(os.path.join(cogDirectory, filename))
 
+        if platform == 'gtk':
+            contents.extend([os.path.join('install', directory) for directory in ['include', os.path.join('lib', 'pkgconfig')]])
+
         # When debug fission is enabled the directories below contain dwo files
         # with the debug information needed to generate backtraces with GDB.
         for objectDir in ['Tools', 'Source']:
             if dirContainsdwo(objectDir):
                 contents.append(objectDir)
 
-        if createZipFromList(contents, configuration, excludePattern='*.o'):
+        if createZipFromList(contents, configuration, excludePatterns=['*.o', '*.a']):
             return 1
 
 def unzipArchive(directoryToExtractTo, configuration):

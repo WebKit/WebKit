@@ -1,3 +1,29 @@
+2021-07-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Pack header and .pc files in the built-product archive
+        https://bugs.webkit.org/show_bug.cgi?id=227526
+
+        Reviewed by Michael Catanzaro.
+
+        The header files and pkg-config files needed to build WebKitGTK apps are now included in the
+        built product zip file. As they're text files the impact on the zip size should not be
+        significant. In order to support this, two changes are introduced for the GTK build bot:
+
+        - build-webkit is now called with a --prefix option
+        - a new build step has been added, which installs the built files in the given prefix directory
+
+        Then built-product-archive can simply pack files from the install prefix directory.
+
+        Additionally the .a (potentially big) files are now excluded from the zip archive.
+
+        * CISupport/build-webkit-org/factories.py:
+        (BuildFactory.__init__):
+        * CISupport/build-webkit-org/steps.py:
+        (CompileWebKit.start):
+        (InstallBuiltProduct):
+        * CISupport/built-product-archive:
+        * Scripts/install-built-product: Added.
+
 2021-07-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Augment -_webView:didNotHandleTapAsMeaningfulClickAtPoint: to include meaningful taps

@@ -312,6 +312,7 @@ class TestBuildFactory(TestCase):
             _BuildStepFactory(steps.KillOldProcesses),
             _BuildStepFactory(steps.InstallGtkDependencies),
             _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
+            _BuildStepFactory(steps.InstallBuiltProduct),
         ])
 
     def test_wpe_factory(self):

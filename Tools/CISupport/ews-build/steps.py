@@ -1559,6 +1559,9 @@ class CompileWebKit(shell.Compile):
             # this much faster than full debug info, and crash logs still have line numbers.
             self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
             self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=line-tables-only'])
+        if platform == 'gtk':
+            prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration"), "install")
+            self.setCommand(self.command + [f'--prefix={prefix}'])
 
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
@@ -2029,6 +2032,10 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
+
+class InstallBuiltProduct(shell.ShellCommand):
+    command = ["python3", "Tools/Scripts/install-built-product",
+               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
 class CleanBuild(shell.Compile):
     name = 'delete-WebKitBuild-directory'
