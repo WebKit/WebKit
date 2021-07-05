@@ -3,7 +3,8 @@ This test exercises the 'meaningful click' heuristic when dispatching clicks on 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS didDispatchClick became true
-PASS didDispatchNonMeaningfulClickCallback became true
+PASS didHandleTap became true
+PASS didHandleTapAsMeaningfulClick is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

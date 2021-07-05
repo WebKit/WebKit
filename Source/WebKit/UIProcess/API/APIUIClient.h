@@ -52,6 +52,7 @@ struct WindowFeatures;
 }
 
 namespace WebKit {
+enum class TapHandlingResult : uint8_t;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class UserMediaPermissionRequestProxy;
@@ -163,7 +164,7 @@ public:
 #endif
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return defaultActions; }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }
-    virtual void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&) { }
+    virtual void didTapAtPoint(const WebCore::IntPoint&, WebKit::TapHandlingResult) { }
     virtual UIViewController *presentingViewController() { return nullptr; }
 #endif
 #if PLATFORM(COCOA)

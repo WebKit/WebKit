@@ -34,21 +34,24 @@ addEventListener("load", async () => {
     if (!window.testRunner)
         return;
 
-    async function checkForNonMeaningfulClick(shouldPlay) {
-        didDispatchNonMeaningfulClickCallback = false;
-        testRunner.installDidNotHandleTapAsMeaningfulClickCallback(() => {
-            didDispatchNonMeaningfulClickCallback = true;
+    async function simulateTap(shouldPlay) {
+        didHandleTap = false;
+        didHandleTapAsMeaningfulClick = false;
+        testRunner.installDidHandleTapCallback(wasMeaningful => {
+            didHandleTap = true;
+            didHandleTapAsMeaningfulClick = wasMeaningful;
         });
 
         await UIHelper.activateElement(document.body);
         await UIHelper.waitForDoubleTapDelay();
         await new Promise(resolve => shouldBecomeEqual(shouldPlay ? "didPlayVideo" : "didPauseVideo", "true", resolve));
-        shouldBeFalse("didDispatchNonMeaningfulClickCallback");
+        shouldBeTrue("didHandleTap");
+        shouldBeTrue("didHandleTapAsMeaningfulClick");
         testRunner.clearTestRunnerCallbacks();
     }
 
-    await checkForNonMeaningfulClick(true);
-    await checkForNonMeaningfulClick(false);
+    await simulateTap(true);
+    await simulateTap(false);
     finishJSTest();
 });
 </script>

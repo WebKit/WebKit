@@ -399,9 +399,9 @@ IGNORE_WARNINGS_END
         self.didDismissPopoverCallback();
 }
 
-- (void)_didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point
+- (void)_didTapAtPoint:(CGPoint)point withResult:(_WKTapHandlingResult)result
 {
-    WTR::TestController::singleton().didNotHandleTapAsMeaningfulClick();
+    WTR::TestController::singleton().didHandleTap(result == _WKTapHandlingResultMeaningfulClick);
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view

@@ -1,3 +1,39 @@
+2021-07-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Augment -_webView:didNotHandleTapAsMeaningfulClickAtPoint: to include meaningful taps
+        https://bugs.webkit.org/show_bug.cgi?id=227666
+        rdar://80094962
+
+        Reviewed by Tim Horton.
+
+        Update the layout test harness to use the replacement SPI instead of the newly deprecated SPI. See
+        WebKit/ChangeLog for more details.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::installDidHandleTapCallback):
+        (WTR::TestRunner::callDidHandleTapCallback):
+        (WTR::TestRunner::installDidNotHandleTapAsMeaningfulClickCallback): Deleted.
+        (WTR::TestRunner::callDidNotHandleTapAsMeaningfulClickCallback): Deleted.
+
+        Rename this to just DidHandleTapCallback, and make it take a boolean argument indicating whether the tap was
+        handled as a meaningful click.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didHandleTap):
+        (WTR::TestController::didNotHandleTapAsMeaningfulClick): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didHandleTap):
+        (WTR::TestInvocation::didNotHandleTapAsMeaningfulClick): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _didTapAtPoint:withResult:]):
+        (-[TestRunnerWKWebView _didNotHandleTapAsMeaningfulClickAtPoint:]): Deleted.
+
 2021-07-04  Ben Nham  <nham@apple.com>
 
         Add support for parsing Competitive PLT results to compare-results

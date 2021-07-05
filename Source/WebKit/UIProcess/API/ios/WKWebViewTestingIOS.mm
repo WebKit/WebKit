@@ -96,7 +96,7 @@
 #endif
 }
 
-- (void)_didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point
+- (void)_didTapAtPoint:(CGPoint)point withResult:(_WKTapHandlingResult)result
 {
     // For subclasses to override.
 }
