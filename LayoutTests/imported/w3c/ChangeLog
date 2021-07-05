@@ -1,3 +1,15 @@
+2021-07-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use AbortSignal's [PrivateIdentifier] whenSignalAborted() static method
+        https://bugs.webkit.org/show_bug.cgi?id=227673
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/streams/piping/abort.any-expected.txt:
+        * web-platform-tests/streams/piping/abort.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any.worker-expected.txt:
+
 2021-07-04  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream

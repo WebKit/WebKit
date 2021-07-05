@@ -194,7 +194,7 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
                 return promiseCapability.@promise;
             }, error);
         };
-        if (@whenSignalAborted(signal, algorithm))
+        if (@AbortSignal.@whenSignalAborted(signal, algorithm))
             return pipeState.promiseCapability.@promise;
     }
 
