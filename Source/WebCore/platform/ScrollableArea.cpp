@@ -529,19 +529,28 @@ void ScrollableArea::resnapAfterLayout()
 
     auto currentOffset = scrollOffset();
     auto correctedOffset = currentOffset;
-    const auto& horizontal = info->horizontalSnapOffsets;
-    auto activeHorizontalIndex = currentHorizontalSnapPointIndex();
-    if (activeHorizontalIndex)
-        correctedOffset.setX(horizontal[*activeHorizontalIndex].offset.toInt());
 
-    const auto& vertical = info->verticalSnapOffsets;
-    auto activeVerticalIndex = currentVerticalSnapPointIndex();
-    if (activeVerticalIndex)
-        correctedOffset.setY(vertical[*activeVerticalIndex].offset.toInt());
+    if (!horizontalScrollbar() || horizontalScrollbar()->pressedPart() == ScrollbarPart::NoPart) {
+        const auto& horizontal = info->horizontalSnapOffsets;
+        auto activeHorizontalIndex = currentHorizontalSnapPointIndex();
+        if (activeHorizontalIndex)
+            correctedOffset.setX(horizontal[*activeHorizontalIndex].offset.toInt());
+    }
+
+    if (!verticalScrollbar() || verticalScrollbar()->pressedPart() == ScrollbarPart::NoPart) {
+        const auto& vertical = info->verticalSnapOffsets;
+        auto activeVerticalIndex = currentVerticalSnapPointIndex();
+        if (activeVerticalIndex)
+            correctedOffset.setY(vertical[*activeVerticalIndex].offset.toInt());
+    }
 
     if (correctedOffset != currentOffset) {
         LOG_WITH_STREAM(ScrollSnap, stream << " adjusting offset from " << currentOffset << " to " << correctedOffset);
-        scrollToOffsetWithoutAnimation(correctedOffset);
+        auto position = scrollPositionFromOffset(correctedOffset);
+        if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::NotInAnimation)
+            scrollToOffsetWithoutAnimation(correctedOffset);
+        else
+            scrollAnimator->retargetRunningAnimation(position);
     }
 }
 

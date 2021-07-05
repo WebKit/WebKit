@@ -1,0 +1,10 @@
+250
+180
+PASS dragging the horizontal scrollbar thumb snapped
+PASS relayouts should not have snapped back
+PASS dragging the vertical scrollbar thumb snapped
+PASS relayouts should not have snapped back
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

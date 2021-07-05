@@ -72,6 +72,7 @@ public:
 
     bool scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     virtual bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped);
+    virtual void retargetRunningAnimation(const FloatPoint&);
 
     bool scrollToOffsetWithAnimation(const FloatPoint&);
     virtual bool scrollToPositionWithAnimation(const FloatPoint&);

@@ -293,12 +293,12 @@ bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranulari
         data.desiredPosition = data.currentPosition;
         data.startTime = { };
     }
-    float newPosition = data.desiredPosition + delta;
 
+    float newPosition = data.currentPosition + delta;
     newPosition = std::max(std::min(newPosition, maxScrollPosition), minScrollPosition);
-
     if (newPosition == data.desiredPosition)
         return false;
+
 
     Seconds animationTime, repeatMinimumSustainTime, attackTime, releaseTime, maximumCoastTime;
     Curve coastTimeCurve;

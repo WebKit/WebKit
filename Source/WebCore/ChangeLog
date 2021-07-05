@@ -1,3 +1,33 @@
+2021-07-05  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Triggering a layout during scroll causes jittery scrolling on Mac when dragging the scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=227478
+
+        Reviewed by Simon Fraser.
+
+        When dragging the scrollbar thumb, wait to resnap after layout for a
+        given axis until the mouse button is up on the scrollbar. This prevents
+        the layout and the scrollbar from fighting to set the scroll position
+        which causes some pretty terrible jitter in this case.
+
+        Test: css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html
+
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::updatePerAxisData): Fix an issue where the new position
+        was calculated incorrectly. This did not cause the animation to land on the wrong place,
+        but did cause a very janky animation progression when retriggering animations to the
+        same location.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::retargetRunningAnimation): Added this helper, which retargets a
+        a running animation to allow for a smooth transition during relayouts.
+        * platform/ScrollAnimator.h: Added new method definition.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::resnapAfterLayout): Only snap after layout when the user is not
+        currently interacting with the scrollbar. Once the scrollbar isn't being interacted with,
+        snapping will occur already. When there is already some sort of animation in progress,
+        smoothly transition that animation to land on the new position instead of snapping there
+        immediately.
+
 2021-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Simplify generation of runtime conditionally read-write attributes
