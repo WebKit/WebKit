@@ -1,3 +1,12 @@
+2021-07-04  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] WPT progressions
+        https://bugs.webkit.org/show_bug.cgi?id=227675
+
+        Unreviewed.
+
+        * TestExpectations:
+
 2021-07-04  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
