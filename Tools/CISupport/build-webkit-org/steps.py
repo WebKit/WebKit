@@ -290,7 +290,7 @@ class CompileWebKit(shell.Compile):
             self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
             self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=line-tables-only'])
         if platform == 'gtk':
-            prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration"), "install")
+            prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration").title(), "install")
             self.setCommand(self.command + [f'--prefix={prefix}'])
 
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))

@@ -1,5 +1,21 @@
 2021-07-05  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK] Installs in wrong directory on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=227684
+
+        Reviewed by Aakash Jain.
+
+        The patch landed in r279563 induced a typo in the installation prefix path option passed to
+        build-webkit. Then the built-product-archive was failing to find the header andn pkgconfig
+        files to pack. This patch fixes the issue.
+
+        * CISupport/build-webkit-org/steps.py:
+        (CompileWebKit.start):
+        * CISupport/build-webkit-org/steps_unittest.py:
+        (TestCompileWebKit.test_success_gtk):
+
+2021-07-05  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] Pack header and .pc files in the built-product archive
         https://bugs.webkit.org/show_bug.cgi?id=227526
 
