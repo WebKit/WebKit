@@ -1,3 +1,21 @@
+2021-07-05  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Kinetic scrolling interferes with gestures
+        https://bugs.webkit.org/show_bug.cgi?id=226680
+
+        Reviewed by Michael Catanzaro.
+
+        Simulate scroll events that would stop scrolling when we're starting any touch
+        gesture. Since we don't have a way to do that on touchpad yet, just stop it when
+        starting a zoom or a navigation swipe gesture instead.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseZoomBegin):
+        (webkitWebViewBaseTouchDragBegin):
+        (webkitWebViewBaseConstructed):
+
 2021-07-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Augment -_webView:didNotHandleTapAsMeaningfulClickAtPoint: to include meaningful taps
