@@ -1,3 +1,28 @@
+2021-07-05  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for conditionally hanging glyph
+        https://bugs.webkit.org/show_bug.cgi?id=227676
+
+        Reviewed by Antti Koivisto.
+
+        When a glyph at the end edge of a line hangs, it is not considered when measuring the line’s contents alignment.
+        If white-space is set to pre-wrap, the UA must (unconditionally) hang the trailing sequence,
+        unless the sequence is followed by a forced line break, in which case it must conditionally hang the sequence instead
+        (hang only if it does not otherwise fit in the line prior to justification).
+        e.g.
+        <div style="white-space: pre-wrap; width: 5ch; text-align: center"> 0 </p>
+        We center the _0_ content as the trailing whitespace does not hang here. 
+
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::hangingGlyphWidth): No need for the struct. We can handle it by returning the hanging content width.
+        (WebCore::Layout::horizontalAlignmentOffset):
+        (WebCore::Layout::HangingTrailingWhitespaceContent::width const): Deleted.
+        (WebCore::Layout::HangingTrailingWhitespaceContent::isConditional const): Deleted.
+        (WebCore::Layout::HangingTrailingWhitespaceContent::setIsConditional): Deleted.
+        (WebCore::Layout::HangingTrailingWhitespaceContent::expand): Deleted.
+        (WebCore::Layout::HangingTrailingWhitespaceContent::reset): Deleted.
+        (WebCore::Layout::collectHangingTrailingWhitespaceContent): Deleted.
+
 2021-07-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Use AbortSignal's [PrivateIdentifier] whenSignalAborted() static method

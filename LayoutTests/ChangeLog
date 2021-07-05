@@ -1,3 +1,12 @@
+2021-07-05  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for conditionally hanging glyph
+        https://bugs.webkit.org/show_bug.cgi?id=227676
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: pre-wrap-12.html is sus. All browsers fail on this one.
+
 2021-07-05  Philippe Normand  <pnormand@igalia.com>
 
         [Media] test-webvtt.m3u8 is invalid

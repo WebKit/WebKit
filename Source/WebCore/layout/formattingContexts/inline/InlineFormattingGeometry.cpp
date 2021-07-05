@@ -83,37 +83,18 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
 };
 
-struct HangingTrailingWhitespaceContent {
-public:
-    void reset();
-
-    InlineLayoutUnit width() const { return m_width; }
-    bool isConditional() const { return m_isConditional; }
-
-    void setIsConditional() { m_isConditional = true; }
-    void expand(InlineLayoutUnit width) { m_width += width; }
-
-private:
-    bool m_isConditional { false };
-    InlineLayoutUnit m_width { 0 };
-};
-
-void HangingTrailingWhitespaceContent::reset()
+static InlineLayoutUnit hangingGlyphWidth(InlineLayoutUnit extraHorizontalSpace, const Line::RunList& runs, bool isLastLineWithInlineContent)
 {
-    m_isConditional = false;
-    m_width =  0;
-}
-
-static HangingTrailingWhitespaceContent collectHangingTrailingWhitespaceContent(const Line::RunList& runs, bool isLastLineWithInlineContent)
-{
-    auto hangingContent = HangingTrailingWhitespaceContent { };
-    if (isLastLineWithInlineContent)
-        hangingContent.setIsConditional();
+    // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit, alignment, or justification.
+    // Depending on the line’s alignment/justification, this can result in the mark being placed outside the line box.
+    // https://drafts.csswg.org/css-text-3/#hanging
+    auto isConditional = isLastLineWithInlineContent;
+    auto hangingWidth = InlineLayoutUnit { };
     for (auto& run : WTF::makeReversedRange(runs)) {
         if (run.isInlineBoxStart() || run.isInlineBoxEnd())
             continue;
         if (run.isLineBreak()) {
-            hangingContent.setIsConditional();
+            isConditional = true;
             continue;
         }
         if (!run.hasTrailingWhitespace())
@@ -122,17 +103,18 @@ static HangingTrailingWhitespaceContent collectHangingTrailingWhitespaceContent(
         if (run.style().whiteSpace() != WhiteSpace::PreWrap)
             break;
         // This is either a normal or conditionally hanging trailing whitespace.
-        hangingContent.expand(run.trailingWhitespaceWidth());
+        hangingWidth += run.trailingWhitespaceWidth();
     }
-    return hangingContent;
+    // In some cases, a glyph at the end of a line can conditionally hang: it hangs only if it does not otherwise fit in the line prior to justification.
+    return !isConditional || extraHorizontalSpace < 0 ? hangingWidth : InlineLayoutUnit { };
 }
 
 static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList& runs, TextAlignMode textAlign, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, bool isLastLine)
 {
-    auto availableWidth = lineLogicalWidth - contentLogicalWidth;
-    auto hangingTrailingWhitespaceContent = collectHangingTrailingWhitespaceContent(runs, isLastLine);
-    availableWidth += hangingTrailingWhitespaceContent.width();
-    if (availableWidth <= 0)
+    auto extraHorizontalSpace = lineLogicalWidth - contentLogicalWidth;
+    // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
+    extraHorizontalSpace += hangingGlyphWidth(extraHorizontalSpace, runs, isLastLine);
+    if (extraHorizontalSpace <= 0)
         return { };
 
     auto computedHorizontalAlignment = [&] {
@@ -154,10 +136,10 @@ static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::Run
     case TextAlignMode::Right:
     case TextAlignMode::WebKitRight:
     case TextAlignMode::End:
-        return availableWidth;
+        return extraHorizontalSpace;
     case TextAlignMode::Center:
     case TextAlignMode::WebKitCenter:
-        return availableWidth / 2;
+        return extraHorizontalSpace / 2;
     case TextAlignMode::Justify:
         // TextAlignMode::Justify is a run alignment (and we only do inline box alignment here)
         return { };
