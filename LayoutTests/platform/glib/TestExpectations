@@ -602,6 +602,8 @@ webkit.org/b/199617 http/tests/media/hls/hls-video-resize.html [ Skip ]
 webkit.org/b/227258 media/media-source/media-source-has-audio-video.html [ Timeout ]
 webkit.org/b/227258 media/media-source/media-source-seek-unbuffered.html [ Timeout ]
 
+webkit.org/b/227661 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1344,6 +1346,7 @@ webkit.org/b/205112 media/remoteplayback-cancel-invalid.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-prompt.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-target-availability.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-watch-disableremoteplayback.html [ Skip ]
+webkit.org/b/205112 media/remoteplayback-watch-availability-gc.html [ Skip ]
 
 # No support for descriptive audio tracks in HLS file
 http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
@@ -2314,12 +2317,8 @@ webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size
 webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003b.html [ ImageOnlyFailure Pass ]
 webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-003c.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/227661 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout ]
-
 webkit.org/b/227663 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Timeout Pass ]
 webkit.org/b/227663 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Timeout Pass ]
-
-webkit.org/b/227664 media/remoteplayback-watch-availability-gc.html [ Timeout ]
 
 webkit.org/b/227665 fast/css/parsing-relative-color-syntax.html [ Failure ]
 

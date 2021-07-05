@@ -1,3 +1,9 @@
+2021-07-05  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GLIB gardening triaging.
+
+        * platform/glib/TestExpectations:
+
 2021-07-05  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Triggering a layout during scroll causes jittery scrolling on Mac when dragging the scrollbar
