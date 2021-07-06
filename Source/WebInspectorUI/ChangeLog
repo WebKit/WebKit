@@ -1,3 +1,24 @@
+2021-07-06  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Elements Tab Details Sidebar navigation items sometime wrap to a second line
+        https://bugs.webkit.org/show_bug.cgi?id=227707
+
+        Reviewed by Devin Rousso.
+
+        When resizing a sidebar, it was possible that the cumulative widths of each navigation item could add up to just
+        less than the actual amount of space necessary to lay out each item in a single row, leading to wrapping items
+        to the next line. This resolves that issue by taking the ceiling of each item's width when calculating the
+        total amount of space needed to display all the items. Additionally, every time a panel is added or removed from
+        the sidebar, we need to recalculate the width of the sidebar to make sure the new navigation item, or the
+        removal thereof, is accommodated.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype.layout.calculateVisibleItemWidth):
+        (WI.NavigationBar.prototype._calculateMinimumWidth):
+        * UserInterface/Views/SingleSidebar.js:
+        (WI.SingleSidebar.prototype.didInsertSidebarPanel):
+        (WI.SingleSidebar.prototype.didRemoveSidebarPanel):
+
 2021-07-02  Harshil Ratnu  <hratnu@apple.com>
 
         Web Inspector: add contextual documentation for CSS properties

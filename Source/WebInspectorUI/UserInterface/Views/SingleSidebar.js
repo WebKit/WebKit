@@ -83,18 +83,24 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
 
     didInsertSidebarPanel(sidebarPanel, index)
     {
-        if (this._navigationBar) {
-            console.assert(sidebarPanel.navigationItem);
-            this._navigationBar.insertNavigationItem(sidebarPanel.navigationItem, index);
-        }
+        if (!this._navigationBar)
+            return;
+
+        console.assert(sidebarPanel.navigationItem);
+        this._navigationBar.insertNavigationItem(sidebarPanel.navigationItem, index);
+
+        this._recalculateWidth();   
     }
 
     didRemoveSidebarPanel(sidebarPanel)
     {
-        if (this._navigationBar) {
-            console.assert(sidebarPanel.navigationItem);
-            this._navigationBar.removeNavigationItem(sidebarPanel.navigationItem);
-        }
+        if (!this._navigationBar)
+            return;
+
+        console.assert(sidebarPanel.navigationItem);
+        this._navigationBar.removeNavigationItem(sidebarPanel.navigationItem);
+
+        this._recalculateWidth();
     }
 
     willSetSelectedSidebarPanel(sidebarPanel)
