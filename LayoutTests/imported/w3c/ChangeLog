@@ -1,3 +1,28 @@
+2021-07-06  Antti Koivisto  <antti@apple.com>
+
+        Import basic :has() tests
+        https://bugs.webkit.org/show_bug.cgi?id=227703
+
+        Reviewed by Alan Bujtas.
+
+        Along with some other updates to css/selectors.
+
+        * web-platform-tests/css/selectors/focus-visible-022.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-022.tentative.html: Added.
+        * web-platform-tests/css/selectors/has-basic-expected.txt: Added.
+        * web-platform-tests/css/selectors/has-basic.html: Added.
+        * web-platform-tests/css/selectors/has-relative-argument-expected.txt: Added.
+        * web-platform-tests/css/selectors/has-relative-argument.html: Added.
+        * web-platform-tests/css/selectors/is-where-parsing-expected.txt:
+        * web-platform-tests/css/selectors/is-where-parsing.html:
+        * web-platform-tests/css/selectors/parsing/parse-has-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-has.html: Added.
+        * web-platform-tests/css/selectors/parsing/w3c-import.log:
+        * web-platform-tests/css/selectors/user-invalid.html:
+        * web-platform-tests/css/selectors/user-valid-expected.txt: Added.
+        * web-platform-tests/css/selectors/user-valid.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
 2021-07-05  Cameron McCormack  <heycam@apple.com>
 
         Move some Mac MathML test expectation files around
