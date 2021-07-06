@@ -1,5 +1,26 @@
 2021-07-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [curl][Win] very high CPU load on page with WebSocket
+        https://bugs.webkit.org/show_bug.cgi?id=227428
+        <rdar://problem/80150503>
+
+        Reviewed by Don Olmstead.
+
+        curl_socket_t is UINT_PTR on Windows while it is int on other
+        platforms. CurlStream::appendMonitoringFd was failing to update
+        `maxfd` because the following condition can't be true on Windows.
+
+        > if (maxfd < *socket)
+        >     maxfd = *socket;
+
+        As the result, ::select was not called, and CurlStreamScheduler's
+        thread ran busy.
+
+        * platform/network/curl/CurlStream.cpp:
+        (WebCore::CurlStream::appendMonitoringFd): Added static_cast.
+
+2021-07-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [curl][Win] wss: WebSocket doesn't work since r271170
         https://bugs.webkit.org/show_bug.cgi?id=227694
 
