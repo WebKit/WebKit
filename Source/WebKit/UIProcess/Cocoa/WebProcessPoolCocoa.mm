@@ -168,6 +168,35 @@ NSMutableDictionary *WebProcessPool::ensureBundleParameters()
     return m_bundleParameters.get();
 }
 
+static AccessibilityPreferences accessibilityPreferences()
+{
+    AccessibilityPreferences preferences;
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+    auto appId = WebCore::applicationBundleIdentifier().createCFString();
+
+    preferences.reduceMotionEnabled = _AXSReduceMotionEnabledApp(appId.get());
+    preferences.increaseButtonLegibility = _AXSIncreaseButtonLegibilityApp(appId.get());
+    preferences.enhanceTextLegibility = _AXSEnhanceTextLegibilityEnabledApp(appId.get());
+    preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get());
+    preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
+#endif
+    return preferences;
+}
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakProcess = makeWeakPtr(process)] {
+        auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
+        auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
+        callOnMainRunLoop([weakProcess, captionDisplayMode, preferredLanguages] {
+            if (weakProcess)
+                weakProcess->send(Messages::WebProcess::SetMediaAccessibilityPreferences(captionDisplayMode, preferredLanguages), 0);
+        });
+    });
+}
+#endif
+
 void WebProcessPool::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
@@ -271,25 +300,6 @@ static bool requiresContainerManagerAccess()
 #else
     return false;
 #endif
-}
-
-static AccessibilityPreferences accessibilityPreferences()
-{
-    AccessibilityPreferences preferences;
-#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-    auto appId = WebCore::applicationBundleIdentifier().createCFString();
-
-    preferences.reduceMotionEnabled = _AXSReduceMotionEnabledApp(appId.get());
-    preferences.increaseButtonLegibility = _AXSIncreaseButtonLegibilityApp(appId.get());
-    preferences.enhanceTextLegibility = _AXSEnhanceTextLegibilityEnabledApp(appId.get());
-    preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get());
-    preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
-#endif
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    preferences.captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
-    preferences.preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
-#endif
-    return preferences;
 }
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
@@ -598,6 +608,16 @@ void WebProcessPool::accessibilityPreferencesChangedCallback(CFNotificationCente
     pool->sendToAllProcesses(Messages::WebProcess::AccessibilityPreferencesDidChange(accessibilityPreferences()));
 }
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+void WebProcessPool::mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
+{
+    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
+    auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
+    pool->sendToAllProcesses(Messages::WebProcess::SetMediaAccessibilityPreferences(captionDisplayMode, preferredLanguages));
+}
+#endif
+
 #if PLATFORM(MAC)
 void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
@@ -735,7 +755,7 @@ void WebProcessPool::registerNotificationObservers()
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif
 }
 

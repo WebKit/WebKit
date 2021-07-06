@@ -1,3 +1,32 @@
+2021-07-06  Per Arne  <pvollan@apple.com>
+
+        Collect Accessibility preferences on a background queue
+        https://bugs.webkit.org/show_bug.cgi?id=227617
+        <rdar://80055168>
+
+        Reviewed by Brent Fulgham.
+
+        To avoid blocking the main thread of the UI process, collect Media Accessibility preferences on a background thread,
+        and send them to the WebContent process(es).
+
+        * Shared/AccessibilityPreferences.cpp:
+        (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::encode):
+        (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::decode):
+        * Shared/AccessibilityPreferences.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::accessibilityPreferences):
+        (WebKit::WebProcessPool::setMediaAccessibilityPreferences):
+        (WebKit::WebProcessPool::mediaAccessibilityPreferencesChangedCallback):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::accessibilityPreferencesDidChange):
+        (WebKit::WebProcess::setMediaAccessibilityPreferences):
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: [iOS] ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
