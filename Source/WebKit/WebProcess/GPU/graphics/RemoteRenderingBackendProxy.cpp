@@ -86,7 +86,9 @@ GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnection& previousConnection)
 {
     previousConnection.removeClient(*this);
+    previousConnection.messageReceiverMap().removeMessageReceiver(*this);
     m_gpuProcessConnection = nullptr;
+
     m_remoteResourceCacheProxy.remoteResourceCacheWasDestroyed();
 
     m_identifiersOfReusableHandles.clear();

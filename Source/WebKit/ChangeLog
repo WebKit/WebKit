@@ -1,3 +1,32 @@
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: [iOS] ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
+        https://bugs.webkit.org/show_bug.cgi?id=226248
+        <rdar://problem/78481758>
+
+        Reviewed by Eric Carlson.
+
+        Make sure to remove message receiver on the same gpu process connection it was added.
+        Also make sure to recreate remote command listener every time we use a new connection.
+        Do the same thing for RemoteAudioHardwareListener.
+        Also make sure to remove message receiver in RemoteRenderingBackendProxy::gpuProcessConnectionDidClose
+
+        Covered by existing tests.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/media/RemoteAudioHardwareListener.cpp:
+        (WebKit::RemoteAudioHardwareListener::RemoteAudioHardwareListener):
+        (WebKit::RemoteAudioHardwareListener::~RemoteAudioHardwareListener):
+        * WebProcess/GPU/media/RemoteAudioHardwareListener.h:
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.cpp:
+        (WebKit::RemoteRemoteCommandListener::RemoteRemoteCommandListener):
+        (WebKit::RemoteRemoteCommandListener::~RemoteRemoteCommandListener):
+        (WebKit::RemoteRemoteCommandListener::ensureGPUProcessConnection):
+        (WebKit::RemoteRemoteCommandListener::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRemoteCommandListener::updateSupportedCommands):
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.h:
+
 2021-07-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r279495.
