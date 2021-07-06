@@ -35,7 +35,7 @@
 #elif OS(WINDOWS)
 #include <windows.h>
 #else
-#include <ucontext.h>
+#include <sys/ucontext.h>
 #endif
 
 namespace WTF {

@@ -34,7 +34,25 @@
 
 #if OS(LINUX)
 #include <asm/hwcap.h>
+#if __has_include(<sys/auxv.h>)
 #include <sys/auxv.h>
+#else
+#include <linux/auxvec.h>
+// Provide an implementation for C libraries which do not ship one.
+static unsigned long getauxval(unsigned long type)
+{
+    char** env = environ;
+    while (*env++) { /* no-op */ }
+
+    for (auto* auxv = reinterpret_cast<unsigned long*>(env); *auxv != AT_NULL; auxv += 2) {
+        if (*auxv == type)
+            return auxv[1];
+    }
+
+    errno = ENOENT;
+    return 0;
+}
+#endif
 #endif
 
 namespace JSC {
