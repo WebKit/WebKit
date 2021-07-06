@@ -32,6 +32,7 @@
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, VideoToolbox, PAL_EXPORT)
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_ExpectedFrameRate, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_MaxKeyFrameInterval, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_RealTime, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_AverageBitRate, CFStringRef)
