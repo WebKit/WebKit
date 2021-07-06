@@ -549,6 +549,9 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
         return;
     }
 
+    if (!m_storage)
+        return callback(WTF::nullopt);
+
     m_storage->store(Cache::encode(recordInformation, record), { }, [this, protectedThis = makeRef(*this), protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](int error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(CacheStorage, "Caches::writeRecord failed with error %d", error);
@@ -570,6 +573,9 @@ void Caches::readRecord(const NetworkCache::Key& key, WTF::Function<void(Expecte
             return callback(record->copy());
         return callback(makeUnexpected(Error::Internal));
     }
+
+    if (!m_storage)
+        return callback(makeUnexpected(Error::Internal));
 
     m_storage->retrieve(key, 4, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](std::unique_ptr<Storage::Record> storage, const Storage::Timings&) mutable {
         if (!storage) {

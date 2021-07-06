@@ -1,5 +1,19 @@
 2021-07-06  Alex Christensen  <achristensen@webkit.org>
 
+        Make Caches::writeRecord and Caches::readRecord more robust
+        https://bugs.webkit.org/show_bug.cgi?id=221620
+
+        Reviewed by Youenn Fablet.
+
+        I saw null dereferenced in EWS, and everywhere else we check m_storage for null.
+        Some events happen during teardown.  No reason to crash.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::writeRecord):
+        (WebKit::CacheStorage::Caches::readRecord):
+
+2021-07-06  Alex Christensen  <achristensen@webkit.org>
+
         loadSimulatedRequest: should do same delegate callbacks as loadHTMLString and loadData
         https://bugs.webkit.org/show_bug.cgi?id=227599
 
