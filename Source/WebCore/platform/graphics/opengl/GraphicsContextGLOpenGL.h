@@ -138,10 +138,10 @@ public:
     // Compile a shader without going through ANGLE.
     void compileShaderDirect(PlatformGLObject);
 
-#if !USE(ANGLE)
     // Equivalent to ::glTexImage2D(). Allows pixels==0 with no allocation.
     void texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels);
 
+#if !USE(ANGLE)
     // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
     // Return true if no GL error is synthesized.
     // By default, alignment is 4, the OpenGL default setting.

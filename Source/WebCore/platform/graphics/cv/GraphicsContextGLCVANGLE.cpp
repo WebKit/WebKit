@@ -428,6 +428,31 @@ static GCGLSpan<const GLfloat, 16> YCbCrToRGBMatrixForRangeAndTransferFunction(P
     return iterator->second;
 }
 
+namespace {
+
+// Scoped holder of a cleanup function. Calls the function at the end of the scope.
+// Note: Releases the reference to the function only after the scope, not
+// at the time of `reset()` call.
+template <typename F>
+class ScopedCleanup {
+public:
+    explicit ScopedCleanup(F&& function)
+        : m_function(WTFMove(function))
+    {
+    }
+    ~ScopedCleanup()
+    {
+        if (m_shouldCall)
+            m_function();
+    }
+    void reset() { m_shouldCall = false; }
+private:
+    bool m_shouldCall = true;
+    const F m_function;
+};
+
+}
+
 GraphicsContextGLCVANGLE::GraphicsContextGLCVANGLE(GraphicsContextGLOpenGL& context)
     : m_context(GraphicsContextGLOpenGL::createShared(context))
     , m_framebuffer(m_context->createFramebuffer())
@@ -603,13 +628,22 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
 
     m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer);
 
+    // The outputTexture might contain uninitialized content on early-outs. Clear it in cases
+    // autoClearTextureOnError is not reset.
+    auto autoClearTextureOnError = ScopedCleanup {
+        [outputTexture, level, internalFormat, format, type, context = m_context.ptr()] {
+            context->bindTexture(GraphicsContextGL::TEXTURE_2D, outputTexture);
+            context->texImage2DDirect(GL_TEXTURE_2D, level, internalFormat, 0, 0, 0, format, type, nullptr);
+            context->bindTexture(GraphicsContextGL::TEXTURE_2D, 0);
+        }
+    };
     // Allocate memory for the output texture.
     m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, outputTexture);
     m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_MAG_FILTER, GraphicsContextGL::LINEAR);
     m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_MIN_FILTER, GraphicsContextGL::LINEAR);
     m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_WRAP_S, GraphicsContextGL::CLAMP_TO_EDGE);
     m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_WRAP_T, GraphicsContextGL::CLAMP_TO_EDGE);
-    gl::TexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
+    m_context->texImage2DDirect(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
 
     m_context->framebufferTexture2D(GraphicsContextGL::FRAMEBUFFER, GraphicsContextGL::COLOR_ATTACHMENT0, GraphicsContextGL::TEXTURE_2D, outputTexture, level);
     GCGLenum status = m_context->checkFramebufferStatus(GraphicsContextGL::FRAMEBUFFER);
@@ -682,7 +716,7 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
     m_lastSurfaceSeed = newSurfaceSeed;
     m_lastTextureSeed.set(outputTexture, m_context->textureSeed(outputTexture));
     m_lastFlipY = flipY;
-
+    autoClearTextureOnError.reset();
     return true;
 }
 

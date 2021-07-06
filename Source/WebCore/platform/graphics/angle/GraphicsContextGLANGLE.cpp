@@ -930,6 +930,14 @@ void GraphicsContextGLOpenGL::compileShaderDirect(PlatformGLObject shader)
     gl::CompileShader(shader);
 }
 
+void GraphicsContextGLOpenGL::texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
+{
+    if (!makeContextCurrent())
+        return;
+    gl::TexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+}
+
 void GraphicsContextGLOpenGL::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
 {
     if (!makeContextCurrent())

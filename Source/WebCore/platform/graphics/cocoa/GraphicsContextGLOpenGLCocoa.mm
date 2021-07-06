@@ -267,10 +267,13 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         // context.
         eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
         eglContextAttributes.append(EGL_TRUE);
+        // WebGL requires that all resources are cleared at creation.
+        // FIXME: performing robust resource initialization in the VideoTextureCopier adds a large amount of overhead
+        // so it would be nice to avoid that there (we should always be touching every pixel as we copy).
+        eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
+        eglContextAttributes.append(EGL_TRUE);
     }
-    // WebGL requires that all resources are cleared at creation.
-    eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
-    eglContextAttributes.append(EGL_TRUE);
+
     // WebGL doesn't allow client arrays.
     eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
     eglContextAttributes.append(EGL_FALSE);
