@@ -1,3 +1,15 @@
+2021-07-06  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK4] Navigation swipe doesn't work when the page scrolls horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=226173
+
+        Reviewed by Michael Catanzaro.
+
+        There was a chunk of code that was never ported to GTK4. Port it.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         NetworkRTCUDPSocketCocoa should update the port of its m_address field

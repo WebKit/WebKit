@@ -422,11 +422,11 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     if (!event.nativeEvent())
         return;
 
-#if !USE(GTK4)
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     if (controller && controller->isSwipeGestureEnabled()) {
-        double deltaX;
-        gdk_event_get_scroll_deltas(event.nativeEvent(), &deltaX, nullptr);
+        // While we don't use deltaY, none of the params can be null in GTK4 so we have to pass something.
+        double deltaX, deltaY;
+        gdk_event_get_scroll_deltas(event.nativeEvent(), &deltaX, &deltaY);
 
         int32_t eventTime = static_cast<int32_t>(gdk_event_get_time(event.nativeEvent()));
 
@@ -441,6 +441,10 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     }
 
     webkitWebViewBaseForwardNextWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+
+#if USE(GTK4)
+    gdk_display_put_event(gtk_widget_get_display(m_viewWidget), event.nativeEvent());
+#else
     gtk_main_do_event(event.nativeEvent());
 #endif
 }
