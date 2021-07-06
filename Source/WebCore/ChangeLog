@@ -1,3 +1,23 @@
+2021-07-06  Chris Dumez  <cdumez@apple.com>
+
+        SubtleCrypto should only be exposed to secure contexts
+        https://bugs.webkit.org/show_bug.cgi?id=227725
+
+        Reviewed by Darin Adler.
+
+        SubtleCrypto should only be exposed to secure contexts:
+        - https://www.w3.org/TR/WebCryptoAPI/#dfn-Crypto
+
+        Gecko and Blink match the specification.
+
+        This was causing WebKit to fail the WebCryptoAPI/historical.any.html WPT test.
+
+        Test: http/wpt/crypto/historical.html
+
+        * crypto/CryptoKey.idl:
+        * crypto/SubtleCrypto.idl:
+        * page/Crypto.idl:
+
 2021-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy smart pointers in EventHandler and UserInputBridge
