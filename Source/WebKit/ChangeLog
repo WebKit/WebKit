@@ -1,3 +1,15 @@
+2021-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r279495.
+
+        Seems to have caused a ~2% PLT5 regression
+
+        Reverted changeset:
+
+        "[macOS] Suspend WebProcesses that are in the process cache"
+        https://bugs.webkit.org/show_bug.cgi?id=227269
+        https://commits.webkit.org/r279495
+
 2021-07-06  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK4] Navigation swipe doesn't work when the page scrolls horizontally
