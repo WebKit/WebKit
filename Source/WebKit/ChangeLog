@@ -1,3 +1,18 @@
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
+        UserMediaCaptureManagerProxy::SourceProxy destructor should remove itself as observer before invalidating its ring buffer storage
+        https://bugs.webkit.org/show_bug.cgi?id=227683
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::~SourceProxy):
+        Previously, we were invalidating the ring buffer storage before removing the source proxy as audio observer.
+        This created the risk for the ring buffer to be recreated before the end of SourceProxy destructor.
+        To fix this, we invalidate the storage just after stopping observing.
+
 2021-07-05  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Navigation swipe gesture can be triggered with mouse
