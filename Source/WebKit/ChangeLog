@@ -1,3 +1,15 @@
+2021-06-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Crash when dragging an account node above WebView
+        https://bugs.webkit.org/show_bug.cgi?id=226811
+
+        Reviewed by Adrian Perez de Castro.
+
+        When we receive empty drag data, this is indicated by length -1, not by 0.
+
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::dataReceived):
+
 2021-06-01  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Try harder to find initial WebKitWebView size
