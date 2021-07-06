@@ -1,3 +1,53 @@
+2021-07-06  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r279449. rdar://problem/80212096
+
+    Turn off data ICs by default
+    https://bugs.webkit.org/show_bug.cgi?id=227334
+    <rdar://problem/79802812>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * microbenchmarks/deltablue-varargs.js:
+    * microbenchmarks/richards-try-catch.js:
+    
+    Source/JavaScriptCore:
+    
+    There are GC crashes that are caused by access data IC sharing. This
+    patch is both turning off data IC sharing by default, and turning off data
+    ICs by default.
+    
+    We should re-enable this once we figure out the issue:
+    https://bugs.webkit.org/show_bug.cgi?id=227551
+    
+    Some of our testing modes are still running with data ICs on, so the code doesn't
+    bit rot. And a select few tests are running with data IC sharing on, for
+    similar reasons, even though we know it has issues. If those tests start
+    crashing, we'll just disable sharing completely until the issue is resolved.
+    
+    * bytecode/PolymorphicAccess.cpp:
+    (JSC::PolymorphicAccess::regenerate):
+    * runtime/OptionsList.h:
+    
+    Tools:
+    
+    * Scripts/run-jsc-stress-tests:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279449 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-30  Saam Barati  <sbarati@apple.com>
+
+            Turn off data ICs by default
+            https://bugs.webkit.org/show_bug.cgi?id=227334
+            <rdar://problem/79802812>
+
+            Reviewed by Yusuke Suzuki.
+
+            * microbenchmarks/deltablue-varargs.js:
+            * microbenchmarks/richards-try-catch.js:
+
 2021-06-25  Guillaume Emont  <guijemont@igalia.com>
 
         Unskip stress/call-apply-exponential-bytecode-size.js on most platforms
