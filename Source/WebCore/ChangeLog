@@ -1,3 +1,29 @@
+2021-07-06  Jer Noble  <jer.noble@apple.com>
+
+        MediaPlayer may be left in a non-visible state
+        https://bugs.webkit.org/show_bug.cgi?id=227711
+
+        Reviewed by Eric Carlson.
+
+        Prospective fix for possible edge-case behavior. MediaPlayer defaults to non-visible state
+        at creation time, but that visibility state is set to true in two places: 
+        - When the Page's visibility state changes
+        - During layout
+
+        If the MediaPlayer is created (or re-created) after the Page's visibility state, or (somehow)
+        layout does not occur, the MediaPlayer can be left thinking it is not visible, which could
+        cause downstream effects like a failure to render video content.
+
+        Rather than wait for layout to occur, or for the Page's visibility state to change, always
+        set the visibility state immediately after creating the MediaPlayer object.
+
+        No test, as it's unclear what edge case may cause this problem to occur; could be a result of
+        re-creating the remote MediaPlayer after a GPU process crash; could be a specific page behavior
+        when switching media sources; could only occur in fullscreen mode.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaPlayer:
+
 2021-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Extraneous spaces when copying or translating Chinese and Japanese text in WebKit

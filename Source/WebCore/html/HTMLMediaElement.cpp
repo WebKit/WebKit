@@ -6642,6 +6642,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_player->setBufferingPolicy(m_bufferingPolicy);
     m_player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.value_or(preferredDynamicRangeMode(document().view())));
     m_player->setMuted(effectiveMuted());
+    m_player->setVisible(!m_elementIsHidden);
     schedulePlaybackControlsManagerUpdate();
 
 #if ENABLE(WEB_AUDIO)
