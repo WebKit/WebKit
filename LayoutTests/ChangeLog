@@ -1,3 +1,11 @@
+2021-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address flakiness of imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.worker.html
+
+        This test has been flaky since its import. Silence its console logging to address the flakiness.
+
+        * TestExpectations:
+
 2021-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Extraneous spaces when copying or translating Chinese and Japanese text in WebKit
