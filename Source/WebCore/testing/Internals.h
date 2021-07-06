@@ -883,6 +883,7 @@ public:
         RefPtr<DOMPointReadOnly> topRight;
         RefPtr<DOMPointReadOnly> bottomRight;
         RefPtr<DOMPointReadOnly> bottomLeft;
+        bool hasLeadingWhitespace { true };
 
         ~ImageOverlayText();
     };

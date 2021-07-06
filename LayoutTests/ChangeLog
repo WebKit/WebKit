@@ -1,3 +1,17 @@
+2021-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Extraneous spaces when copying or translating Chinese and Japanese text in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227674
+        rdar://79669807
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to verify that no extraneous spaces are inserted when injecting recognized text into images
+        without leading whitespace.
+
+        * fast/images/text-recognition/image-overlay-text-without-leading-whitespace-expected.txt: Added.
+        * fast/images/text-recognition/image-overlay-text-without-leading-whitespace.html: Added.
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         Unable to use 'data:application/javascript' url for Worker

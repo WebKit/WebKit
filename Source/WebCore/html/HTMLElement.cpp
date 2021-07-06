@@ -1347,7 +1347,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
 
     struct TextRecognitionLineElements {
         Ref<HTMLDivElement> line;
-        Vector<Ref<HTMLDivElement>> children;
+        Vector<Ref<HTMLElement>> children;
     };
 
     struct TextRecognitionElements {
@@ -1435,7 +1435,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
                 auto textContainer = HTMLDivElement::create(document());
                 textContainer->classList().add(imageOverlayTextClass);
                 lineContainer->appendChild(textContainer);
-                textContainer->appendChild(Text::create(document(), makeString('\n', child.text)));
+                textContainer->appendChild(Text::create(document(), child.hasLeadingWhitespace ? makeString('\n', child.text) : child.text));
                 lineElements.children.uncheckedAppend(WTFMove(textContainer));
             }
 
@@ -1566,8 +1566,6 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
             if (!hasUserSelectNone || document().isImageDocument())
                 textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueAll);
         }
-
-        lineContainer->appendChild(HTMLBRElement::create(document()));
 
         if (document().isImageDocument())
             lineContainer->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);

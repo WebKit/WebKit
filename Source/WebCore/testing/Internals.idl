@@ -266,6 +266,7 @@ enum AutoplayPolicy {
     required DOMPointReadOnly topRight;
     required DOMPointReadOnly bottomRight;
     required DOMPointReadOnly bottomLeft;
+    boolean hasLeadingWhitespace = true;
 };
 
 [

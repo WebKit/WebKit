@@ -47,10 +47,6 @@
 @property (nonatomic, readonly) NSArray<id <VKWKDataDetectorInfo>> *textDataDetectors;
 @end
 
-@interface VKWKTextInfo (Staging_77086105)
-@property (nonatomic, readonly) NSArray<VKWKTextInfo *> *children;
-@end
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -73,16 +69,41 @@ TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
     NSArray<VKWKTextInfo *> *allLines = analysis.allLines;
     TextRecognitionResult result;
     result.lines.reserveInitialCapacity(allLines.count);
-    for (VKWKTextInfo *line in allLines) {
+
+    bool isFirstLine = true;
+    for (VKWKLineInfo *line in allLines) {
         Vector<TextRecognitionWordData> children;
-        if ([line respondsToSelector:@selector(children)]) {
-            NSArray<VKWKTextInfo *> *vkChildren = line.children;
-            children.reserveInitialCapacity(vkChildren.count);
-            for (VKWKTextInfo *child in vkChildren)
-                children.uncheckedAppend({ child.string, floatQuad(child.quad) });
-        } else
-            children.append({ line.string, floatQuad(line.quad) });
+        NSArray<VKWKTextInfo *> *vkChildren = line.children;
+        children.reserveInitialCapacity(vkChildren.count);
+
+        String lineText = line.string;
+        unsigned searchLocation = 0;
+        for (VKWKTextInfo *child in vkChildren) {
+            if (searchLocation >= lineText.length()) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+
+            String childText = child.string;
+            auto matchLocation = lineText.find(childText, searchLocation);
+            if (matchLocation == notFound) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+
+            bool hasLeadingWhitespace = ([&] {
+                if (matchLocation == searchLocation)
+                    return !isFirstLine && !searchLocation;
+
+                auto textBeforeMatch = lineText.substring(searchLocation, matchLocation - searchLocation);
+                return !textBeforeMatch.isEmpty() && isSpaceOrNewline(textBeforeMatch[0]);
+            })();
+
+            searchLocation = matchLocation + childText.length();
+            children.uncheckedAppend({ WTFMove(childText), floatQuad(child.quad), hasLeadingWhitespace });
+        }
         result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children) });
+        isFirstLine = false;
     }
 
 #if ENABLE(DATA_DETECTION)

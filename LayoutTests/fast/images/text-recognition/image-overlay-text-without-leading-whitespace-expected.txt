@@ -1,0 +1,5 @@
+PASS input.value is "foobar baz"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

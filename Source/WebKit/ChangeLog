@@ -1,3 +1,23 @@
+2021-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Extraneous spaces when copying or translating Chinese and Japanese text in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=227674
+        rdar://79669807
+
+        Reviewed by Tim Horton.
+
+        When injecting Live Text into images, we currently assume that all pieces of recognized text from VisionKit are
+        separated by spaces. Upon selecting Japanese or Chinese text, this causes text selections to include extraneous
+        spaces between words.
+
+        To fix this, we add a bit for each TextRecognitionWordData, to indicate whether that word should be followed by
+        whitespace in the image overlay. When converting VKWKTextInfo into TextRecognitionWordData, we then set this bit
+        to `true` only if the word is the first on a line of text that is preceded by another line, or there exists
+        whitespace between the word and the previous word on the same line.
+
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::makeTextRecognitionResult):
+
 2021-07-06  Alex Christensen  <achristensen@webkit.org>
 
         Make Caches::writeRecord and Caches::readRecord more robust

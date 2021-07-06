@@ -38,14 +38,16 @@ OBJC_CLASS DDScannerResult;
 namespace WebCore {
 
 struct TextRecognitionWordData {
-    TextRecognitionWordData(const String& theText, FloatQuad&& quad)
+    TextRecognitionWordData(const String& theText, FloatQuad&& quad, bool leadingWhitespace)
         : text(theText)
         , normalizedQuad(WTFMove(quad))
+        , hasLeadingWhitespace(leadingWhitespace)
     {
     }
 
     String text;
     FloatQuad normalizedQuad;
+    bool hasLeadingWhitespace { true };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<TextRecognitionWordData> decode(Decoder&);
@@ -55,6 +57,7 @@ template<class Encoder> void TextRecognitionWordData::encode(Encoder& encoder) c
 {
     encoder << text;
     encoder << normalizedQuad;
+    encoder << hasLeadingWhitespace;
 }
 
 template<class Decoder> std::optional<TextRecognitionWordData> TextRecognitionWordData::decode(Decoder& decoder)
@@ -69,7 +72,12 @@ template<class Decoder> std::optional<TextRecognitionWordData> TextRecognitionWo
     if (!normalizedQuad)
         return std::nullopt;
 
-    return {{ WTFMove(*text), WTFMove(*normalizedQuad) }};
+    std::optional<bool> hasLeadingWhitespace;
+    decoder >> hasLeadingWhitespace;
+    if (!hasLeadingWhitespace)
+        return std::nullopt;
+
+    return {{ WTFMove(*text), WTFMove(*normalizedQuad), *hasLeadingWhitespace }};
 }
 
 struct TextRecognitionLineData {
