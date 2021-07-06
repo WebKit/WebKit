@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/about-blank-nested.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/about-blank-subresource.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/form-get-blank-reload.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/form-get-blank.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/form-post-blank-reload.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/iframe-reload.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/img.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-subresource.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/setcookie-lax.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/window-open-reload.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/window-open.https.html

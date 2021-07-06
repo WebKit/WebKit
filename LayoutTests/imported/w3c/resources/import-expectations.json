@@ -70,7 +70,7 @@
     "web-platform-tests/compat": "import", 
     "web-platform-tests/console": "import", 
     "web-platform-tests/content-security-policy": "import", 
-    "web-platform-tests/cookies": "skip", 
+    "web-platform-tests/cookies": "import", 
     "web-platform-tests/cookies/resources": "import", 
     "web-platform-tests/cookies/secure": "import", 
     "web-platform-tests/core-aam": "skip", 

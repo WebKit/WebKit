@@ -1,3 +1,13 @@
+2021-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Resync cookies web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227641
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaStreamTrack.onconstrainederror

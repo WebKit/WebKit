@@ -1,0 +1,10 @@
+
+PASS Set cookie for Secure attribute
+PASS Set cookie for seCURe attribute
+PASS Set cookie for for Secure= attribute
+PASS Set cookie for Secure=aaaa
+PASS Set cookie for Secure space equals
+PASS Set cookie for Secure equals space
+PASS Set cookie for spaced Secure
+PASS Set cookie for space Secure with ;
+

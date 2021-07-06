@@ -614,6 +614,99 @@
     "imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/expires.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/invalid.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/max-age.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/path-redirect.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/path.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/resources/domain-child.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/resources/secure-non-secure-child.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/secure-non-secure.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/attributes/secure.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/encoding/charset.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/name/name-ctl.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/name/name.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/ordering/resources/ordering-child.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/path/match.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/form-get-blank.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/iframe-reload.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/iframe.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/img.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite/window-open.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/value/value-ctl.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/value/value.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/cors/304.htm": [
         "slow"
     ],
