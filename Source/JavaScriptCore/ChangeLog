@@ -1,3 +1,72 @@
+2021-07-06  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r279560. rdar://problem/80212171
+
+    ActiveScratchBufferScope should take the buffer as argument
+    https://bugs.webkit.org/show_bug.cgi?id=227670
+    rdar://80011612
+    
+    Reviewed by Mark Lam.
+    
+    https://bugs.webkit.org/show_bug.cgi?id=227013 created ActiveScratchBufferScope.
+    It is used by operations that can cause the GC to run, to mark as roots the contents of the scratch buffer that is live during that time (if any).
+    The bug is that it simply asks the VM for a scratch buffer of the right size, but this will always return the last scratch buffer, and not necessarily the one that the operation is actually using.
+    
+    A fairly simple fix is to pass it directly the scratch buffer, since the operation normally can get it easily enough.
+    In most cases the operation has access to the m_buffer field of the ScratchBuffer, but getting a pointer to the entire structure from that is fairly simple (I added ScratchBuffer::fromData() to do so).
+    
+    * dfg/DFGOSRExit.cpp:
+    (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+    * dfg/DFGOSRExit.h:
+    * dfg/DFGOperations.cpp:
+    (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileNewArray):
+    * dfg/DFGThunks.cpp:
+    (JSC::DFG::osrExitGenerationThunkGenerator):
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::haveABadTime):
+    * runtime/VM.h:
+    (JSC::ScratchBuffer::fromData):
+    * runtime/VMInlines.h:
+    (JSC::ActiveScratchBufferScope::ActiveScratchBufferScope):
+    (JSC::ActiveScratchBufferScope::~ActiveScratchBufferScope):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279560 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-04  Robin Morisset  <rmorisset@apple.com>
+
+            ActiveScratchBufferScope should take the buffer as argument
+            https://bugs.webkit.org/show_bug.cgi?id=227670
+            rdar://80011612
+
+            Reviewed by Mark Lam.
+
+            https://bugs.webkit.org/show_bug.cgi?id=227013 created ActiveScratchBufferScope.
+            It is used by operations that can cause the GC to run, to mark as roots the contents of the scratch buffer that is live during that time (if any).
+            The bug is that it simply asks the VM for a scratch buffer of the right size, but this will always return the last scratch buffer, and not necessarily the one that the operation is actually using.
+
+            A fairly simple fix is to pass it directly the scratch buffer, since the operation normally can get it easily enough.
+            In most cases the operation has access to the m_buffer field of the ScratchBuffer, but getting a pointer to the entire structure from that is fairly simple (I added ScratchBuffer::fromData() to do so).
+
+            * dfg/DFGOSRExit.cpp:
+            (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+            * dfg/DFGOSRExit.h:
+            * dfg/DFGOperations.cpp:
+            (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileNewArray):
+            * dfg/DFGThunks.cpp:
+            (JSC::DFG::osrExitGenerationThunkGenerator):
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::haveABadTime):
+            * runtime/VM.h:
+            (JSC::ScratchBuffer::fromData):
+            * runtime/VMInlines.h:
+            (JSC::ActiveScratchBufferScope::ActiveScratchBufferScope):
+            (JSC::ActiveScratchBufferScope::~ActiveScratchBufferScope):
+
 2021-06-30  Alan Coon  <alancoon@apple.com>
 
         Revert r279249. rdar://problem/79987808

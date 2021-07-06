@@ -9238,13 +9238,14 @@ void SpeculativeJIT::compileNewArray(Node* node)
     flushRegisters();
 
     GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
 
     callOperation(
-        operationNewArray, result.gpr(), TrustedImmPtr::weakPointer(m_graph, globalObject), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())),
+        operationNewArray, resultGPR, TrustedImmPtr::weakPointer(m_graph, globalObject), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())),
         static_cast<void*>(buffer), size_t(node->numChildren()));
     m_jit.exceptionCheck();
 
-    cellResult(result.gpr(), node, UseChildrenCalledExplicitly);
+    cellResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
 void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
