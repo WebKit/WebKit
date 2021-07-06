@@ -11,10 +11,10 @@ FAIL dedicated worker: scheme = https, value = undefined assert_equals: expected
 FAIL dedicated worker: scheme = https, value = * assert_equals: expected (boolean) true but got (undefined) undefined
 FAIL dedicated worker: scheme = https, value = self assert_equals: expected (boolean) true but got (undefined) undefined
 FAIL dedicated worker: scheme = https, value = (\) assert_equals: expected (boolean) false but got (undefined) undefined
-FAIL dedicated worker: scheme = data, value = undefined The operation is insecure.
-FAIL dedicated worker: scheme = data, value = * The operation is insecure.
-FAIL dedicated worker: scheme = data, value = self The operation is insecure.
-FAIL dedicated worker: scheme = data, value = (\) The operation is insecure.
+FAIL dedicated worker: scheme = data, value = undefined assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL dedicated worker: scheme = data, value = * assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL dedicated worker: scheme = data, value = self assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL dedicated worker: scheme = data, value = (\) assert_equals: expected (boolean) false but got (undefined) undefined
 FAIL dedicated worker: scheme = blob, value = undefined assert_equals: expected (boolean) true but got (undefined) undefined
 FAIL dedicated worker: scheme = blob, value = * assert_equals: expected (boolean) true but got (undefined) undefined
 FAIL dedicated worker: scheme = blob, value = self assert_equals: expected (boolean) true but got (undefined) undefined

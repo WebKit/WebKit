@@ -130,8 +130,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
         options.certificateInfoPolicy = CertificateInfoPolicy::IncludeCertificateInfo;
 
     // FIXME: We should drop the sameOriginDataURLFlag flag and implement the latest Fetch specification.
-    if (fetchOptions.destination != FetchOptions::Destination::Worker)
-        options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
     // A service worker job can be executed from a worker context or a document context.
     options.serviceWorkersMode = serviceWorkerMode;

@@ -1,3 +1,21 @@
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
+        Unable to use 'data:application/javascript' url for Worker
+        https://bugs.webkit.org/show_bug.cgi?id=225716
+        <rdar://problem/78222538>
+
+        Reviewed by Alex Christensen.
+
+        As per https://fetch.spec.whatwg.org/#main-fetch step 11, same origin fetch for data URL should succeed.
+        Update AbstractWorker to let such URLs trigger loads and update WorkerScriptLoader to enable those loads.
+
+        Covered by rebased tests.
+
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::resolveURL):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+
 2021-07-06  Alex Christensen  <achristensen@webkit.org>
 
         loadSimulatedRequest: should do same delegate callbacks as loadHTMLString and loadData
