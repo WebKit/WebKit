@@ -1,5 +1,17 @@
 2021-07-06  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed, reverting r279597.
+
+        Broke build
+
+        Reverted changeset:
+
+        "Make Caches::writeRecord and Caches::readRecord more robust"
+        https://bugs.webkit.org/show_bug.cgi?id=221620
+        https://commits.webkit.org/r279597
+
+2021-07-06  Alex Christensen  <achristensen@webkit.org>
+
         Make Caches::writeRecord and Caches::readRecord more robust
         https://bugs.webkit.org/show_bug.cgi?id=221620
 
