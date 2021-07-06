@@ -1,3 +1,13 @@
+2021-07-06  Sihui Liu  <sihui_liu@apple.com>
+
+        Don't interrupt database for WebResourceLoadStatisticsStore if it will not be suspended
+        https://bugs.webkit.org/show_bug.cgi?id=227708
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+
 2021-07-06  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r279597.
