@@ -398,6 +398,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
 
     m_storageManagerSet->addConnection(connection.connection());
+    webIDBServer(sessionID).addConnection(connection.connection(), identifier);
 }
 
 void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)
@@ -2217,6 +2218,7 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
 #if PLATFORM(IOS_FAMILY)
     for (auto& server : m_webIDBServers.values())
         server->suspend();
+    m_shouldSuspendIDBServer = true;
 #endif
 
     lowMemoryHandler(Critical::Yes);
@@ -2280,6 +2282,7 @@ void NetworkProcess::resume()
 #if PLATFORM(IOS_FAMILY)
     for (auto& server : m_webIDBServers.values())
         server->resume();
+    m_shouldSuspendIDBServer = false;
 #endif
 
     m_storageManagerSet->resume();
@@ -2342,7 +2345,11 @@ Ref<WebIDBServer> NetworkProcess::createWebIDBServer(PAL::SessionID sessionID)
     auto spaceRequester = [protectedThis = makeRef(*this), sessionID](const auto& origin, uint64_t spaceRequested) {
         return protectedThis->storageQuotaManager(sessionID, origin)->requestSpaceOnBackgroundThread(spaceRequested);
     };
-    return WebIDBServer::create(sessionID, path, WTFMove(spaceRequester));
+
+    auto result = WebIDBServer::create(sessionID, path, WTFMove(spaceRequester));
+    if (m_shouldSuspendIDBServer)
+        result->suspend();
+    return result;
 }
 
 WebIDBServer& NetworkProcess::webIDBServer(PAL::SessionID sessionID)
