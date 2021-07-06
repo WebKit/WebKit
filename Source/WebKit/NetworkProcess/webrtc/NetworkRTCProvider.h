@@ -103,6 +103,7 @@ public:
     IPC::Connection& connection() { return m_ipcConnection.get(); }
 
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
+    void doSocketTaskOnRTCNetworkThread(WebCore::LibWebRTCSocketIdentifier, Function<void(Socket&)>&&);
 
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);

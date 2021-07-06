@@ -230,6 +230,14 @@ void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)
     socket->close();
 }
 
+void NetworkRTCProvider::doSocketTaskOnRTCNetworkThread(LibWebRTCSocketIdentifier identifier, Function<void(Socket&)>&& callback)
+{
+    callOnRTCNetworkThread([this, identifier, callback = WTFMove(callback)]() mutable {
+        if (auto* socket = m_sockets.get(identifier))
+            callback(*socket);
+    });
+}
+
 void NetworkRTCProvider::setSocketOption(LibWebRTCSocketIdentifier identifier, int option, int value)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());

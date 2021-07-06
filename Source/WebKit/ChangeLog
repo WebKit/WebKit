@@ -1,5 +1,30 @@
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
+        NetworkRTCUDPSocketCocoa should update the port of its m_address field
+        https://bugs.webkit.org/show_bug.cgi?id=227622
+
+        Reviewed by Eric Carlson.
+
+        Make sure we set the port to m_address field as this is used for setting up nw_connections.
+        Then notify WebProcess to proceed. This will ensure that we create a nw_connection with the right listening port.
+        Also fix the value given to nw_parameters_set_is_third_party_web_content.
+
+        Set local address reuse to true with nw_parameters_set_reuse_local_address so that listeners and connections can share the same address and port.
+        This does not always work so, we temporarily resort to use a 0 port instead of m_address.port() when setting up nw_connections.
+
+        Manually tested.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::doSocketTaskOnRTCNetworkThread):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoa::setListeningPort):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::setListeningPort):
+
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
         UserMediaCaptureManagerProxy::SourceProxy destructor should remove itself as observer before invalidating its ring buffer storage
         https://bugs.webkit.org/show_bug.cgi?id=227683
 

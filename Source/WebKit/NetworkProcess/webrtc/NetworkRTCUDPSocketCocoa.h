@@ -65,6 +65,8 @@ public:
     NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
     ~NetworkRTCUDPSocketCocoa();
 
+    void setListeningPort(int);
+
 private:
     // NetworkRTCProvider::Socket.
     WebCore::LibWebRTCSocketIdentifier identifier() const final { return m_identifier; }

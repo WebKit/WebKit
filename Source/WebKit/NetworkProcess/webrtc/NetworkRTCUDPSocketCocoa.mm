@@ -58,6 +58,7 @@ public:
     void close();
     void setOption(int option, int value);
     void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&);
+    void setListeningPort(int);
 
 private:
     NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
@@ -110,6 +111,11 @@ void NetworkRTCUDPSocketCocoa::close()
 {
     m_nwConnections->close();
     m_rtcProvider.takeSocket(m_identifier);
+}
+
+void NetworkRTCUDPSocketCocoa::setListeningPort(int port)
+{
+    m_nwConnections->setListeningPort(port);
 }
 
 void NetworkRTCUDPSocketCocoa::setOption(int option, int value)
@@ -168,14 +174,16 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     m_nwListener = adoptNS(nw_listener_create(parameters.get()));
     nw_listener_set_queue(m_nwListener.get(), udpSocketQueue());
 
-    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener.get(), address = m_address, connection = m_connection.copyRef(), protectedRTCProvider = makeRef(rtcProvider), identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
+    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener.get(), connection = m_connection.copyRef(), protectedRTCProvider = makeRef(rtcProvider), identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
         switch (state) {
         case nw_listener_state_invalid:
         case nw_listener_state_waiting:
             break;
         case nw_listener_state_ready:
-            address.SetPort(nw_listener_get_port(nwListener));
-            connection->send(Messages::LibWebRTCNetwork::SignalAddressReady(identifier, RTCNetwork::SocketAddress(address)), 0);
+            protectedRTCProvider->doSocketTaskOnRTCNetworkThread(identifier, [port = nw_listener_get_port(nwListener)](auto& socket) mutable {
+                auto& udpSocket = static_cast<NetworkRTCUDPSocketCocoa&>(socket);
+                udpSocket.setListeningPort(port);
+            });
             break;
         case nw_listener_state_failed:
             RELEASE_LOG_ERROR(WebRTC, "NetworkRTCUDPSocketCocoaConnections failed with error %d", error ? nw_error_get_error_code(error) : 0);
@@ -204,6 +212,12 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     nw_listener_start(m_nwListener.get());
 }
 
+void NetworkRTCUDPSocketCocoaConnections::setListeningPort(int port)
+{
+    m_address.SetPort(port);
+    m_connection->send(Messages::LibWebRTCNetwork::SignalAddressReady(m_identifier, RTCNetwork::SocketAddress(m_address)), 0);
+}
+
 void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t parameters, nw_ip_version_t version)
 {
     auto protocolStack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters));
@@ -213,9 +227,11 @@ void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t pa
     if (m_shouldBypassRelay)
         nw_parameters_set_account_id(parameters, "com.apple.safari.peertopeer");
 #if HAVE(NWPARAMETERS_TRACKER_API)
-    nw_parameters_set_is_third_party_web_content(parameters, m_isFirstParty);
+    nw_parameters_set_is_third_party_web_content(parameters, !m_isFirstParty);
     nw_parameters_set_is_known_tracker(parameters, m_isKnownTracker);
 #endif
+
+    nw_parameters_set_reuse_local_address(parameters, true);
 }
 
 void NetworkRTCUDPSocketCocoaConnections::close()
@@ -249,7 +265,7 @@ static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Fun
         if (isComplete && context && nw_content_context_get_is_final(context))
             return;
         if (error) {
-            RELEASE_LOG_ERROR(WebRTC, "NetworkRTCUDPSocketCocoaConnections failed processing UDP data with error %d", error ? nw_error_get_error_code(error) : 0);
+            RELEASE_LOG_ERROR(WebRTC, "NetworkRTCUDPSocketCocoaConnections failed processing UDP data with error %d", nw_error_get_error_code(error));
             return;
         }
         processUDPData(WTFMove(nwConnection), WTFMove(processData));
@@ -263,7 +279,8 @@ RetainPtr<nw_connection_t> NetworkRTCUDPSocketCocoaConnections::createNWConnecti
         auto hostAddress = m_address.ipaddr().ToString();
         if (m_address.ipaddr().IsNil())
             hostAddress = m_address.hostname();
-        auto localEndpoint = adoptNS(nw_endpoint_create_host(hostAddress.c_str(), String::number(m_address.port()).utf8().data()));
+        // FIXME: We should use m_address.port() instead of using 0
+        auto localEndpoint = adoptNS(nw_endpoint_create_host(hostAddress.c_str(), "0"));
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
@@ -306,7 +323,8 @@ void NetworkRTCUDPSocketCocoaConnections::sendTo(const uint8_t* data, size_t siz
     }
 
     auto value = adoptNS(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
-    nw_connection_send(nwConnection, value.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, connection = m_connection.copyRef(), options](_Nullable nw_error_t) {
+    nw_connection_send(nwConnection, value.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, connection = m_connection.copyRef(), options](_Nullable nw_error_t error) {
+        RELEASE_LOG_ERROR_IF(error, WebRTC, "NetworkRTCUDPSocketCocoaConnections::sendTo failed with error %d", error ? nw_error_get_error_code(error) : 0);
         connection->send(Messages::LibWebRTCNetwork::SignalSentPacket { identifier, options.packet_id, rtc::TimeMillis() }, 0);
     }).get());
 }
