@@ -48,7 +48,7 @@ class PlatformCALayerClient;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
-class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer> {
+class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
 #if PLATFORM(COCOA)
     friend class PlatformCALayerCocoa;
 #elif PLATFORM(WIN)
