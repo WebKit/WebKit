@@ -85,12 +85,12 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe(Platform
 
 bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(PlatformGtkScrollData* event)
 {
-    return true;
+    return event->source == GDK_SOURCE_TOUCHPAD || event->source == GDK_SOURCE_TOUCHSCREEN;
 }
 
 static bool isTouchEvent(PlatformGtkScrollData* event)
 {
-    return event->isTouch;
+    return event->source == GDK_SOURCE_TOUCHSCREEN;
 }
 
 FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas(PlatformGtkScrollData* event)
@@ -638,14 +638,12 @@ bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirect
     if (!canSwipeInDirection(direction))
         return false;
 
-    m_isSimulatedSwipe = true;
-
     double delta = swipeTouchpadBaseWidth / gtkScrollDeltaMultiplier * 0.75;
 
     if (isPhysicallySwipingLeft(direction))
         delta = -delta;
 
-    PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = GDK_CURRENT_TIME, .isTouch = false, .isEnd = false };
+    PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = GDK_CURRENT_TIME, .source = GDK_SOURCE_TOUCHPAD, .isEnd = false };
     handleScrollWheelEvent(&scrollData);
 
     return true;
@@ -653,9 +651,8 @@ bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirect
 
 bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection)
 {
-    PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = GDK_CURRENT_TIME, .isTouch = false, .isEnd = true };
+    PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = GDK_CURRENT_TIME, .source = GDK_SOURCE_TOUCHPAD, .isEnd = true };
     handleScrollWheelEvent(&scrollData);
-    m_isSimulatedSwipe = false;
 
     return true;
 }

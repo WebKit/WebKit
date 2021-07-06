@@ -427,9 +427,15 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     if (controller && controller->isSwipeGestureEnabled()) {
         double deltaX;
         gdk_event_get_scroll_deltas(event.nativeEvent(), &deltaX, nullptr);
-        bool isEnd = gdk_event_is_scroll_stop_event(event.nativeEvent()) ? true : false;
+
         int32_t eventTime = static_cast<int32_t>(gdk_event_get_time(event.nativeEvent()));
-        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = false, .isEnd = isEnd };
+
+        GdkDevice* device = gdk_event_get_source_device(event.nativeEvent());
+        GdkInputSource source = gdk_device_get_source(device);
+
+        bool isEnd = gdk_event_is_scroll_stop_event(event.nativeEvent()) ? true : false;
+
+        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         controller->wheelEventWasNotHandledByWebCore(&scrollData);
         return;
     }

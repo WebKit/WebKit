@@ -82,7 +82,7 @@ typedef NSEvent* PlatformScrollEvent;
 typedef struct {
     double delta;
     int32_t eventTime;
-    bool isTouch;
+    GdkInputSource source;
     bool isEnd;
 } PlatformGtkScrollData;
 typedef PlatformGtkScrollData* PlatformScrollEvent;
@@ -472,9 +472,7 @@ private:
     int m_swipeOutlineSize;
     GRefPtr<GtkCssProvider> m_cssProvider;
 #endif
-
-    bool m_isSimulatedSwipe { false };
-#endif
+#endif // PLATFORM(GTK)
 
     bool m_isConnectedToProcess { false };
     bool m_didStartProvisionalLoad { false };

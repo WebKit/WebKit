@@ -1,5 +1,42 @@
 2021-07-05  Alexander Mikhaylenko  <alexm@gnome.org>
 
+        [GTK] Navigation swipe gesture can be triggered with mouse
+        https://bugs.webkit.org/show_bug.cgi?id=227678
+
+        Reviewed by Carlos Garcia Campos.
+
+        Originally, the navigation swipe gesture had a few checks to only make it possible to
+        trigger it with a touchpad or touchscreen, with an exception for simulated swipes
+        where we couldn't set the source easily.
+
+        During the rewrite in https://bugs.webkit.org/show_bug.cgi?id=212324, the check got
+        dropped, but it has a good reason to be there: not all devices are capable of
+        performing a gesture. Touchpads and touchscreens should be fine, trackpoints are
+        finicky, though can still technically work, but mouse are a no-go. While they can
+        start a swipe, they will never end it and the gesture will get stuck.
+
+        So, add the check back. Don't bother with the scroll direction this time though, while
+        that check made sense when it got added, at some point since then all scroll events
+        had GDK_SCROLL_SMOOTH direction and just set their deltas to (1, 0), (-1, 0), (0, 1)
+        or (0, -1), so that check stopped working, and the source type check should filter
+        mouse events anyway.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseHandleWheelEvent):
+        (webkitWebViewBaseScroll):
+        (webkitWebViewBaseTouchDragUpdate):
+        (webkitWebViewBaseTouchDragEnd):
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe):
+        (WebKit::isTouchEvent):
+        (WebKit::ViewGestureController::beginSimulatedSwipeInDirectionForTesting):
+        (WebKit::ViewGestureController::completeSimulatedSwipeInDirectionForTesting):
+
+2021-07-05  Alexander Mikhaylenko  <alexm@gnome.org>
+
         [GTK] Kinetic scrolling interferes with gestures
         https://bugs.webkit.org/show_bug.cgi?id=226680
 

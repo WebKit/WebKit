@@ -1266,9 +1266,15 @@ static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, Gd
     if (controller && controller->isSwipeGestureEnabled()) {
         double deltaX;
         gdk_event_get_scroll_deltas(event, &deltaX, nullptr);
-        bool isEnd = gdk_event_is_scroll_stop_event(event) ? true : false;
+
         int32_t eventTime = static_cast<int32_t>(gdk_event_get_time(event));
-        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = false, .isEnd = isEnd };
+
+        GdkDevice* device = gdk_event_get_source_device(event);
+        GdkInputSource source = gdk_device_get_source(device);
+
+        bool isEnd = gdk_event_is_scroll_stop_event(event) ? true : false;
+
+        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         if (controller->handleScrollWheelEvent(&scrollData))
             return;
     }
@@ -1329,9 +1335,14 @@ static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double d
 
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
     if (controller && controller->isSwipeGestureEnabled()) {
-        bool isEnd = gdk_scroll_event_is_stop(event) ? true : false;
         int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(eventController));
-        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = false, .isEnd = isEnd };
+
+        GdkDevice* device = gdk_event_get_device(event);
+        GdkInputSource source = gdk_device_get_source(device);
+
+        bool isEnd = gdk_scroll_event_is_stop(event) ? true : false;
+
+        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         if (controller->handleScrollWheelEvent(&scrollData))
             return GDK_EVENT_STOP;
     }
@@ -1971,7 +1982,7 @@ static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, dou
         ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
         if (controller && controller->isSwipeGestureEnabled()) {
             int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture)));
-            PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = true, .isEnd = false };
+            PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = GDK_SOURCE_TOUCHSCREEN, .isEnd = false };
             if (controller->handleScrollWheelEvent(&scrollData))
                 return;
         }
@@ -1995,7 +2006,7 @@ static void webkitWebViewBaseTouchDragEnd(WebKitWebViewBase* webViewBase, gdoubl
         ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
         if (controller && controller->isSwipeGestureEnabled()) {
             int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture)));
-            PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = eventTime, .isTouch = false, .isEnd = true };
+            PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = eventTime, .source = GDK_SOURCE_TOUCHSCREEN, .isEnd = true };
             controller->handleScrollWheelEvent(&scrollData);
         }
     }
