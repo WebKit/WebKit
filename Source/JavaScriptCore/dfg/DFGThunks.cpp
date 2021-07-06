@@ -89,8 +89,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     }
     storeSpooler.finalizeFPR();
 
-    // Set up one argument.
-    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    // This will implicitly pass GPRInfo::callFrameRegister as the first argument based on the operation type.
+    jit.setupArguments<decltype(operationCompileOSRExit)>(bufferGPR);
     jit.prepareCallOperation(vm);
 
     MacroAssembler::Call functionCall = jit.call(OperationPtrTag);
