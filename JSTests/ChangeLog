@@ -1,3 +1,12 @@
+2021-07-06  Saam Barati  <sbarati@apple.com>
+
+        Run microbenchmarks/memcpy-typed-loop-small.js for fewer iterations to avoid timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=227717
+
+        Reviewed by Robin Morisset.
+
+        * microbenchmarks/memcpy-typed-loop-small.js:
+
 2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize Object.assign and putDirectInternal

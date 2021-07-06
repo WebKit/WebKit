@@ -16,7 +16,7 @@ for (size of [1, 3, 8, 10, 12, 16]) {
         arr1[i] = i
     }
 
-    for (let i=0; i<50000000; ++i) doTest(arr1, arr2)
+    for (let i=0; i<1_000_000; ++i) doTest(arr1, arr2)
 
     arr2 = new Int32Array(arr1.length)
     doTest(arr1, arr2)
