@@ -1,3 +1,16 @@
+2021-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Live Text should not be visible in video thumbnail images behind "Skip Ad" button on YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=227692
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test to verify that specifying `text-shadow` on image elements does not cause Live Text to
+        become visible.
+
+        * fast/images/text-recognition/image-overlay-with-text-shadow-expected.html: Added.
+        * fast/images/text-recognition/image-overlay-with-text-shadow.html: Added.
+
 2021-07-05  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Test garderning for overflow-wrap:anywhere

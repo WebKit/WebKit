@@ -27,6 +27,7 @@ div#image-overlay {
     position: relative;
     overflow: hidden;
     color: transparent;
+    text-shadow: none;
     text-align: center;
     white-space: nowrap;
     line-height: 100%;

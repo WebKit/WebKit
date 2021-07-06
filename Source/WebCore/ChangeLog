@@ -1,3 +1,18 @@
+2021-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Live Text should not be visible in video thumbnail images behind "Skip Ad" button on YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=227692
+
+        Reviewed by Darin Adler.
+
+        Force `text-shadow: none;` for image overlay text, such that Live Text injected into image elements isn't
+        visible to the user when the containing image element has a text shadow.
+
+        Test: fast/images/text-recognition/image-overlay-with-text-shadow.html
+
+        * html/shadow/imageOverlay.css:
+        (div#image-overlay):
+
 2021-07-05  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for conditionally hanging glyph
