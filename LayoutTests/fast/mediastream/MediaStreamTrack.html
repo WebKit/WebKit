@@ -40,12 +40,6 @@
                 shouldBeEqualToString('videoTrack.readyState', 'live');
             }
 
-            function onTrackOverConstrained()
-            {
-                testPassed('Track onoverconstrained callback succeeded.');
-                finishJSTest();
-            }
-
             function onTrackUnmute()
             {
                 testPassed('Track onunmute callback succeeded.');
@@ -142,7 +136,6 @@
                 videoTrack.onunmute = onTrackUnmute;
                 videoTrack.onended = onTrackEnded;
                 videoTrack.onstarted = onTrackStarted;
-                videoTrack.onoverconstrained = onTrackOverConstrained;
             
                 debug("");
                 evalAndLog("videoTrack2 = videoTrack.clone()");

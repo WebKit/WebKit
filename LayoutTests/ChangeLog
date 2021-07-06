@@ -1,3 +1,14 @@
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
+        Remove MediaStreamTrack.onconstrainederror
+        https://bugs.webkit.org/show_bug.cgi?id=227696
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStreamTrack-clone-expected.txt:
+        * fast/mediastream/MediaStreamTrack-clone.html:
+        * fast/mediastream/MediaStreamTrack.html:
+
 2021-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Live Text should not be visible in video thumbnail images behind "Skip Ad" button on YouTube

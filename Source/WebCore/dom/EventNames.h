@@ -193,7 +193,6 @@ namespace WebCore {
     macro(online) \
     macro(open) \
     macro(orientationchange) \
-    macro(overconstrained) \
     macro(overflowchanged) \
     macro(pagehide) \
     macro(pageshow) \

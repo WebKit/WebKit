@@ -1,5 +1,18 @@
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
+        Remove MediaStreamTrack.onconstrainederror
+        https://bugs.webkit.org/show_bug.cgi?id=227696
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated tests.
+
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * dom/EventNames.h:
+        Remove never used/deprecated event handler.
+
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
         Set kVTCompressionPropertyKey_MaxKeyFrameInterval in VideoSampleBufferCompressor
         https://bugs.webkit.org/show_bug.cgi?id=227680
         <rdar://78027782>
