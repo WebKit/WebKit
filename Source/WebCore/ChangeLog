@@ -1,3 +1,17 @@
+2021-07-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl][Win] wss: WebSocket doesn't work since r271170
+        https://bugs.webkit.org/show_bug.cgi?id=227694
+
+        Reviewed by Don Olmstead.
+
+        r271170 started to use CURLSSLOPT_NATIVE_CA for https for Windows.
+        However, I forgot to set the flag to WebSocket curl handles.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::enableSSLForHost):
+        (WebCore::CurlHandle::enableHttp):
+
 2021-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Live Text should not be visible in video thumbnail images behind "Skip Ad" button on YouTube
