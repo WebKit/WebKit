@@ -79,18 +79,18 @@ void testInsertSignedBitfieldInZero64()
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     int64_t src = 0xffffffffffffffff;
-    Vector<int64_t> lsbs = { 1, 30, 62 };
-    Vector<int64_t> widths = { 62, 33, 1 };
+    Vector<int32_t> lsbs = { 1, 30, 62 };
+    Vector<int32_t> widths = { 62, 33, 1 };
 
     // Test Pattern: ((src << amount) >> amount) << lsb
     // where: amount = datasize - width
-    auto test = [&] (int64_t lsb, int64_t amount) -> int64_t {
+    auto test = [&] (int32_t lsb, int32_t amount) -> int64_t {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
 
         Value* srcValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
         Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
-        Value* amountValue = root->appendNew<Const64Value>(proc, Origin(), amount);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
 
         Value* signedRightShiftValue = root->appendNew<Value>(
             proc, SShr, Origin(), 
@@ -108,8 +108,8 @@ void testInsertSignedBitfieldInZero64()
     };
 
     for (size_t i = 0; i < lsbs.size(); ++i) {
-        int64_t lsb = lsbs.at(i);
-        int64_t width = widths.at(i);
+        int32_t lsb = lsbs.at(i);
+        int32_t width = widths.at(i);
         int64_t amount = CHAR_BIT * sizeof(src) - width;
         int64_t bfsx = (src << amount) >> amount;
         CHECK(test(lsb, amount) == (bfsx << lsb));
@@ -167,18 +167,18 @@ void testExtractSignedBitfield64()
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     int64_t src = 0xffffffffffffffff;
-    Vector<int64_t> lsbs = { 1, 30, 62 };
-    Vector<int64_t> widths = { 62, 33, 1 };
+    Vector<int32_t> lsbs = { 1, 30, 62 };
+    Vector<int32_t> widths = { 62, 33, 1 };
 
     // Test Pattern: ((src >> lsb) << amount) >> amount
     // where: amount = datasize - width
-    auto test = [&] (int64_t lsb, int64_t amount) -> int64_t {
+    auto test = [&] (int32_t lsb, int32_t amount) -> int64_t {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
 
         Value* srcValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
         Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
-        Value* amountValue = root->appendNew<Const64Value>(proc, Origin(), amount);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
 
         Value* rightShiftValue = root->appendNew<Value>(proc, ZShr, Origin(), srcValue, lsbValue);
         Value* leftShiftValue = root->appendNew<Value>(proc, Shl, Origin(), rightShiftValue, amountValue);
@@ -192,8 +192,8 @@ void testExtractSignedBitfield64()
     };
 
     for (size_t i = 0; i < lsbs.size(); ++i) {
-        int64_t lsb = lsbs.at(i);
-        int64_t width = widths.at(i);
+        int32_t lsb = lsbs.at(i);
+        int32_t width = widths.at(i);
         int64_t amount = CHAR_BIT * sizeof(src) - width;
         int64_t result = ((src >> lsb) << amount) >> amount;
         CHECK(test(lsb, amount) == result);
