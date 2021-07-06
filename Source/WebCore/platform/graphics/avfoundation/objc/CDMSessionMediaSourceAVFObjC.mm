@@ -83,7 +83,7 @@ void CDMSessionMediaSourceAVFObjC::addSourceBuffer(SourceBufferPrivateAVFObjC* s
     ASSERT(!m_sourceBuffers.contains(sourceBuffer));
     ASSERT(sourceBuffer);
 
-    addParser(sourceBuffer->streamDataParser());
+    addParser(sourceBuffer->parser());
 
     m_sourceBuffers.append(sourceBuffer);
     sourceBuffer->registerForErrorNotifications(this);
@@ -94,7 +94,7 @@ void CDMSessionMediaSourceAVFObjC::removeSourceBuffer(SourceBufferPrivateAVFObjC
     ASSERT(m_sourceBuffers.contains(sourceBuffer));
     ASSERT(sourceBuffer);
 
-    removeParser(sourceBuffer->streamDataParser());
+    removeParser(sourceBuffer->parser());
 
     sourceBuffer->unregisterForErrorNotifications(this);
     m_sourceBuffers.remove(m_sourceBuffers.find(sourceBuffer));

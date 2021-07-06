@@ -1768,9 +1768,7 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 
 # These tests require macOS Monterey.
 [ Catalina Mojave BigSur ] media/media-source/media-webm-vorbis-partial.html [ Skip ]
-[ Catalina Mojave BigSur ] media/media-source/media-source-webm-vorbis-partial.html [ Skip ]
 [ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
-[ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
@@ -2165,6 +2163,8 @@ webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-dur
 [ Mojave Catalina BigSur ] fast/text/mending-heart.html [ Failure ]
 
 webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
+
+webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
 
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
 

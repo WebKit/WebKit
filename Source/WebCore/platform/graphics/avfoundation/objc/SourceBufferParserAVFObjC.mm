@@ -241,6 +241,7 @@ bool SourceBufferParserAVFObjC::shouldProvideMediadataForTrackID(uint64_t trackI
 void SourceBufferParserAVFObjC::resetParserState()
 {
     m_parserStateWasReset = true;
+    m_discardSamplesUntilNextInitializationSegment = true;
 }
 
 void SourceBufferParserAVFObjC::invalidate()
@@ -260,7 +261,9 @@ void SourceBufferParserAVFObjC::setLogger(const Logger& logger, const void* logI
 
 void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
-    m_callOnClientThreadCallback([this, strongThis = makeRef(*this), asset = retainPtr(asset)] {
+    callOnMainThread([this, strongThis = makeRef(*this), asset = retainPtr(asset)] {
+        m_discardSamplesUntilNextInitializationSegment = false;
+
         if (!m_didParseInitializationDataCallback)
             return;
 
@@ -301,7 +304,7 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
 void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error)
 {
-    m_callOnClientThreadCallback([this, strongThis = makeRef(*this), error = retainPtr(error)] {
+    callOnMainThread([this, strongThis = makeRef(*this), error = retainPtr(error)] {
         if (m_didEncounterErrorDuringParsingCallback)
             m_didEncounterErrorDuringParsingCallback(error.get().code);
     });
@@ -310,8 +313,11 @@ void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error
 void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(uint64_t trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
 {
     UNUSED_PARAM(flags);
-    m_callOnClientThreadCallback([this, strongThis = makeRef(*this), sampleBuffer = retainPtr(sampleBuffer), trackID, mediaType = mediaType] {
+    callOnMainThread([this, strongThis = makeRef(*this), sampleBuffer = retainPtr(sampleBuffer), trackID, mediaType = mediaType] {
         if (!m_didProvideMediaDataCallback)
+            return;
+
+        if (m_discardSamplesUntilNextInitializationSegment)
             return;
 
         auto mediaSample = MediaSampleAVFObjC::create(sampleBuffer.get(), trackID);

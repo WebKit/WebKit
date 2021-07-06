@@ -82,11 +82,6 @@ public:
         > m_segment;
     };
 
-    using CallOnClientThreadCallback = WTF::Function<void(WTF::Function<void()>&&)>;
-    void setCallOnClientThreadCallback(CallOnClientThreadCallback&&);
-
-    // appendData will be called on the SourceBufferPrivateAVFObjC data parser queue.
-    // Other methods will be called on the main thread, but only once appendData has returned.
     virtual void appendData(Segment&&, CompletionHandler<void()>&& = [] { }, AppendFlags = AppendFlags::None) = 0;
     virtual void flushPendingMediaData() = 0;
     virtual void setShouldProvideMediaDataForTrackID(bool, uint64_t) = 0;
@@ -135,9 +130,8 @@ public:
     }
 
 protected:
-    SourceBufferParser();
+    SourceBufferParser() = default;
 
-    CallOnClientThreadCallback m_callOnClientThreadCallback;
     DidParseInitializationDataCallback m_didParseInitializationDataCallback;
     DidEncounterErrorDuringParsingCallback m_didEncounterErrorDuringParsingCallback;
     DidProvideMediaDataCallback m_didProvideMediaDataCallback;

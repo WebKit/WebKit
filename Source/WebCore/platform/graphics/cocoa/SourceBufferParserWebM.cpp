@@ -592,8 +592,16 @@ RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create(const ContentType&
     return nullptr;
 }
 
+static SourceBufferParserWebM::CallOnClientThreadCallback callOnMainThreadCallback()
+{
+    return [](Function<void()>&& function) {
+        callOnMainThread(WTFMove(function));
+    };
+}
+
 SourceBufferParserWebM::SourceBufferParserWebM()
     : m_reader(WTF::makeUniqueRef<StreamingVectorReader>())
+    , m_callOnClientThreadCallback(callOnMainThreadCallback())
 {
     if (isWebmParserAvailable())
         m_parser = WTF::makeUniqueWithoutFastMallocCheck<WebmParser>();
@@ -681,15 +689,14 @@ bool SourceBufferParserWebM::shouldProvideMediadataForTrackID(uint64_t)
 void SourceBufferParserWebM::resetParserState()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    flushPendingAudioBuffers();
     if (m_parser)
         m_parser->DidSeek();
-    m_reader->reset();
-    m_state = m_initializationSegmentProcessed ? State::ReadingSegment : State::None;
+    m_state = State::None;
+    m_tracks.clear();
     m_initializationSegment = nullptr;
     m_initializationSegmentEncountered = false;
     m_currentBlock.reset();
-    for (auto& track : m_tracks)
-        track->reset();
 }
 
 void SourceBufferParserWebM::invalidate()
@@ -786,7 +793,6 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
         }
         m_initializationSegmentEncountered = false;
         m_initializationSegment = nullptr;
-        m_initializationSegmentProcessed = true;
 
         if (!m_keyIds.isEmpty()) {
             for (auto& keyIdPair : m_keyIds)
@@ -808,12 +814,6 @@ Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebm
 
     m_initializationSegmentEncountered = true;
     m_initializationSegment = WTF::makeUniqueWithoutFastMallocCheck<InitializationSegment>();
-    // TODO: Setting this to false here, will prevent adding a new media segment should a
-    // partial init segment be encountered after a call to sourceBuffer.abort().
-    // It's probably fine as no-one in their right mind should send partial init segment only
-    // to immediately abort it. We do it this way mostly to avoid getting into a rabbit hole
-    // of ensuring that libwebm does something sane with rubbish input.
-    m_initializationSegmentProcessed = false;
 
     return Status(Status::kOkCompleted);
 }
@@ -1083,14 +1083,6 @@ void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampl
 
 #define PARSER_LOG_ERROR_IF_POSSIBLE(...) if (parser().loggerPtr()) parser().loggerPtr()->error(logChannel(), WTF::Logger::LogSiteIdentifier(logClassName(), __func__, parser().logIdentifier()), __VA_ARGS__)
 
-#if ENABLE(VP9)
-void SourceBufferParserWebM::VideoTrackData::reset()
-{
-    m_currentBlockBuffer = nullptr;
-    TrackData::reset();
-}
-#endif
-
 webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const CMTime& presentationTime, int sampleCount)
 {
 #if ENABLE(VP9)
@@ -1156,7 +1148,9 @@ webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Read
 
     createSampleBuffer(presentationTime, sampleCount, metadata);
 
-    reset();
+    m_currentBlockBuffer = nullptr;
+    m_partialBytesRead = 0;
+    m_currentPacketSize = std::nullopt;
 #else
     UNUSED_PARAM(metadata);
     UNUSED_PARAM(presentationTime);
@@ -1245,14 +1239,6 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     UNUSED_PARAM(sampleCount);
     UNUSED_PARAM(metadata);
 #endif // ENABLE(VP9)
-}
-
-void SourceBufferParserWebM::AudioTrackData::reset()
-{
-    m_packetDescriptions.clear();
-    m_packetsData.clear();
-    m_currentPacketByteOffset = std::nullopt;
-    TrackData::reset();
 }
 
 webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const CMTime& presentationTime, int sampleCount)
@@ -1413,6 +1399,12 @@ void SourceBufferParserWebM::flushPendingAudioBuffers()
 void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
 {
     m_minimumAudioSampleDuration = duration;
+}
+
+void SourceBufferParserWebM::setCallOnClientThreadCallback(CallOnClientThreadCallback&& callback)
+{
+    ASSERT(callback);
+    m_callOnClientThreadCallback = WTFMove(callback);
 }
 
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()

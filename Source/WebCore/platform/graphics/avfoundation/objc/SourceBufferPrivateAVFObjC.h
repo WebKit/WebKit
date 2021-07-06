@@ -102,7 +102,7 @@ public:
     FloatSize naturalSize();
 
     uint64_t protectedTrackID() const { return m_protectedTrackID; }
-    AVStreamDataParser* streamDataParser() const;
+    AVStreamDataParser* parser() const;
     void setCDMSession(CDMSessionMediaSourceAVFObjC*);
     void setCDMInstance(CDMInstance*);
     void attemptToDecrypt();
@@ -150,7 +150,6 @@ private:
 
     // SourceBufferPrivate overrides
     void append(Vector<unsigned char>&&) final;
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;
@@ -173,7 +172,7 @@ private:
 
     void didBecomeReadyForMoreSamples(uint64_t trackID);
     void appendCompleted();
-    void destroyStreamDataParser();
+    void destroyParser();
     void destroyRenderers();
     void clearTracks();
 
@@ -194,6 +193,7 @@ private:
     bool m_initializationSegmentIsHandled { false };
     bool m_hasPendingAppendCompletedCallback { false };
     Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
+    TaskCancellationGroup m_mediaSampleTaskCancellationGroup;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -227,7 +227,6 @@ private:
     uint64_t m_enabledVideoTrackID { notFound };
     uint64_t m_protectedTrackID { notFound };
     uint64_t m_mapID;
-    bool m_abortCalled { false };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
