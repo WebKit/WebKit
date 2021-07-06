@@ -1113,6 +1113,9 @@ private:
         case CreateArgumentsButterfly:
             compileCreateArgumentsButterfly();
             break;
+        case ObjectAssign:
+            compileObjectAssign();
+            break;
         case ObjectCreate:
             compileObjectCreate();
             break;
@@ -7074,6 +7077,12 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+
+    void compileObjectAssign()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        vmCall(Void, operationObjectAssignObject, weakPointer(globalObject), lowCell(m_node->child1()), lowCell(m_node->child2()));
     }
 
     void compileObjectCreate()

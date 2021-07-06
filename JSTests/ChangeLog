@@ -1,3 +1,15 @@
+2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize Object.assign and putDirectInternal
+        https://bugs.webkit.org/show_bug.cgi?id=227677
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/object-assign-replace.js: Added.
+        (test):
+        * microbenchmarks/object-assign-transition.js: Added.
+        (test):
+
 2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Rework runtime enabled properties leveraging PropertyCallback

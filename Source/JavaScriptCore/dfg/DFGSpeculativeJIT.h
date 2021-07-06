@@ -1552,6 +1552,7 @@ public:
     void compileNewTypedArray(Node*);
     void compileToThis(Node*);
     void compileObjectKeysOrObjectGetOwnPropertyNames(Node*);
+    void compileObjectAssign(Node*);
     void compileObjectCreate(Node*);
     void compileCreateThis(Node*);
     void compileCreatePromise(Node*);

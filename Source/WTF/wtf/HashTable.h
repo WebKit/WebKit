@@ -500,6 +500,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         template<typename HashTranslator, typename T> ValueType* lookup(const T&);
         template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&);
 
+        ALWAYS_INLINE bool isNullStorage() const { return !m_table; }
+
 #if ASSERT_ENABLED
         void checkTableConsistency() const;
 #else

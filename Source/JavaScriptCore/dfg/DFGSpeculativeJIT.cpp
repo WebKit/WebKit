@@ -14049,6 +14049,21 @@ void SpeculativeJIT::compileObjectKeysOrObjectGetOwnPropertyNames(Node* node)
     }
 }
 
+void SpeculativeJIT::compileObjectAssign(Node* node)
+{
+    SpeculateCellOperand target(this, node->child1());
+    SpeculateCellOperand source(this, node->child2());
+
+    GPRReg targetGPR = target.gpr();
+    GPRReg sourceGPR = source.gpr();
+
+    flushRegisters();
+    callOperation(operationObjectAssignObject, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), targetGPR, sourceGPR);
+    m_jit.exceptionCheck();
+
+    noResult(node);
+}
+
 void SpeculativeJIT::compileObjectCreate(Node* node)
 {
     switch (node->child1().useKind()) {

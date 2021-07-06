@@ -2930,6 +2930,27 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             return true;
         }
 
+        case ObjectAssignIntrinsic: {
+            if (argumentCountIncludingThis != 3)
+                return false;
+
+            insertChecks();
+
+            // ToObject is idempotent if it succeeds. Plus, it is non-observable except for the case that an exception is thrown. And when the exception is thrown,
+            // we exit from DFG / FTL. Plus, we keep ordering of these two ToObject because clobberizing rule says clobberTop. So,
+            // we can say exitOK for each ToObject.
+            unsigned errorStringIndex = UINT32_MAX;
+            Node* target = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
+            m_exitOK = true;
+            addToGraph(ExitOK);
+            Node* source = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
+            m_exitOK = true;
+            addToGraph(ExitOK);
+            addToGraph(ObjectAssign, Edge(target, KnownCellUse), Edge(source, KnownCellUse));
+            setResult(target);
+            return true;
+        }
+
         case ObjectGetPrototypeOfIntrinsic: {
             if (argumentCountIncludingThis < 2)
                 return false;

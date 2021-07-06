@@ -137,6 +137,8 @@ public:
     // Same as get(), but aggressively inlined.
     MappedPeekType inlineGet(const KeyType&) const;
 
+    ALWAYS_INLINE bool isNullStorage() const { return m_impl.isNullStorage(); }
+
     // Replaces the value but not the key if the key is already present.
     // Return value includes both an iterator to the key location,
     // and an isNewEntry boolean that's true if a new entry was added.

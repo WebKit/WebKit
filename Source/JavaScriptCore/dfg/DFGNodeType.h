@@ -292,6 +292,7 @@ namespace JSC { namespace DFG {
     macro(CheckNotJSCast, NodeMustGenerate) \
     macro(ParseInt, NodeMustGenerate | NodeResultJS) \
     macro(GetPrototypeOf, NodeMustGenerate | NodeResultJS) \
+    macro(ObjectAssign, NodeMustGenerate) \
     macro(ObjectCreate, NodeMustGenerate | NodeResultJS) \
     macro(ObjectKeys, NodeMustGenerate | NodeResultJS) \
     macro(ObjectGetOwnPropertyNames, NodeMustGenerate | NodeResultJS) \
