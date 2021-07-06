@@ -1,3 +1,71 @@
+2021-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy smart pointers in EventHandler and UserInputBridge
+        https://bugs.webkit.org/show_bug.cgi?id=227481
+        <rdar://problem/79906757>
+
+        Reviewed by Wenson Hsieh and Chris Dumez.
+
+        Deployed Ref/RefPtr in various places in EventHandler and UserInputBridge.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResult):
+        (WebCore::EventHandler::selectClosestContextualWordFromMouseEvent):
+        (WebCore::EventHandler::selectClosestContextualWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::selectionExtentRespectingEditingBoundary):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::eventMayStartDrag const):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::hitTestResultAtPoint const):
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::logicalScrollOverflow):
+        (WebCore::EventHandler::scrollRecursively):
+        (WebCore::EventHandler::logicalScrollRecursively):
+        (WebCore::EventHandler::updateCursor):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::contentFrameForNode): Renamed from targetIsFrame and made it return the node.
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::cancelDragAndDrop):
+        (WebCore::EventHandler::performDragAndDrop):
+        (WebCore::hierarchyHasCapturingEventListeners):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::notifyScrollableAreasOfMouseEvents):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::isInsideScrollbar const):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::handleWheelEventInternal):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+        (WebCore::EventHandler::hoverTimerFired):
+        (WebCore::EventHandler::handleAccessKey):
+        (WebCore::EventHandler::isKeyEventAllowedInFullScreen const):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::internalKeyEvent):
+        (WebCore::setInitialKeyboardSelection):
+        (WebCore::removeDraggedContentDocumentMarkersFromAllFramesInPage):
+        (WebCore::EventHandler::handleKeyboardScrolling):
+        (WebCore::EventHandler::handleTouchEvent):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * replay/UserInputBridge.cpp:
+        (WebCore::UserInputBridge::handleMousePressEvent):
+        (WebCore::UserInputBridge::handleMouseReleaseEvent):
+        (WebCore::UserInputBridge::handleMouseMoveEvent):
+        (WebCore::UserInputBridge::handleMouseMoveOnScrollbarEvent):
+        (WebCore::UserInputBridge::handleMouseForceEvent):
+        (WebCore::UserInputBridge::handleKeyEvent):
+        (WebCore::UserInputBridge::handleAccessKeyEvent):
+        (WebCore::UserInputBridge::handleWheelEvent):
+        (WebCore::UserInputBridge::scrollRecursively):
+        (WebCore::UserInputBridge::logicalScrollRecursively):
+        (WebCore::UserInputBridge::loadRequest):
+        (WebCore::UserInputBridge::tryClosePage):
+
 2021-07-06  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL video to texture upload spends time clearing the uploaded-to texture
