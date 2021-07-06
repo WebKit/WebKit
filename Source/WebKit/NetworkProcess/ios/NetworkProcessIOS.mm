@@ -112,7 +112,7 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
     // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
     // while holding a locked file. We would get killed if suspended while holding locked files.
-    m_holdingLockedFileAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskUninterruptable);
+    m_holdingLockedFileAssertion = ProcessAssertion::create(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskUninterruptable, ProcessAssertion::Mode::Sync);
 }
 
 } // namespace WebKit

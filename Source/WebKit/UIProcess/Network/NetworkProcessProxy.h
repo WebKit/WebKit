@@ -344,9 +344,9 @@ private:
 #endif
 
     struct UploadActivity {
-        std::unique_ptr<ProcessAssertion> uiAssertion;
-        std::unique_ptr<ProcessAssertion> networkAssertion;
-        HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> webProcessAssertions;
+        RefPtr<ProcessAssertion> uiAssertion;
+        RefPtr<ProcessAssertion> networkAssertion;
+        HashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>> webProcessAssertions;
     };
     std::optional<UploadActivity> m_uploadActivity;
 

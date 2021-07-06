@@ -129,20 +129,21 @@ void ProcessThrottler::setAssertionType(ProcessAssertionType newType)
 
     PROCESSTHROTTLER_RELEASE_LOG("setAssertionType: Updating process assertion type to %u (foregroundActivities=%u, backgroundActivities=%u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
 
-    // Keep the previous assertion around until after the new one has been created so that we always hold
-    // a process assertion for the process.
+    // Keep the previous assertion active until the new assertion is taken asynchronously.
     auto previousAssertion = std::exchange(m_assertion, nullptr);
     if (m_shouldTakeUIBackgroundAssertion) {
-        auto assertion = makeUnique<ProcessAndUIAssertion>(m_processIdentifier, assertionName(newType), newType);
-        assertion->setUIAssertionExpirationHandler([this] {
-            uiAssertionWillExpireImminently();
+        auto assertion = ProcessAndUIAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
+        assertion->setUIAssertionExpirationHandler([weakThis = makeWeakPtr(*this)] {
+            if (weakThis)
+                weakThis->uiAssertionWillExpireImminently();
         });
         m_assertion = WTFMove(assertion);
     } else
-        m_assertion = makeUnique<ProcessAssertion>(m_processIdentifier, assertionName(newType), newType);
+        m_assertion = ProcessAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
 
-    m_assertion->setInvalidationHandler([this] {
-        assertionWasInvalidated();
+    m_assertion->setInvalidationHandler([weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->assertionWasInvalidated();
     });
     m_process.didSetAssertionType(newType);
 }

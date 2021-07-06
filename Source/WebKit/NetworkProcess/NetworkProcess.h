@@ -577,7 +577,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-    std::unique_ptr<ProcessAssertion> m_holdingLockedFileAssertion;
+    RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
 
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;

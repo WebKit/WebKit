@@ -636,7 +636,7 @@ private:
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 
     struct AudibleMediaActivity {
-        UniqueRef<ProcessAssertion> assertion;
+        Ref<ProcessAssertion> assertion;
         WebProcessWithAudibleMediaToken token;
     };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;

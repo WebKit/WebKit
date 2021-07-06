@@ -771,9 +771,9 @@ private:
     WebProcessWithAudibleMediaCounter m_webProcessWithAudibleMediaCounter;
 
     struct AudibleMediaActivity {
-        UniqueRef<ProcessAssertion> uiProcessMediaPlaybackAssertion;
+        Ref<ProcessAssertion> uiProcessMediaPlaybackAssertion;
 #if ENABLE(GPU_PROCESS)
-        std::unique_ptr<ProcessAssertion> gpuProcessMediaPlaybackAssertion;
+        RefPtr<ProcessAssertion> gpuProcessMediaPlaybackAssertion;
 #endif
     };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;

@@ -75,8 +75,8 @@ private:
     HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
 
     bool m_shouldTakeAssertion { false };
-    std::unique_ptr<ProcessAssertion> m_downloadUIAssertion;
-    std::unique_ptr<ProcessAssertion> m_downloadNetworkingAssertion;
+    RefPtr<ProcessAssertion> m_downloadUIAssertion;
+    RefPtr<ProcessAssertion> m_downloadNetworkingAssertion;
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<id> m_backgroundObserver;

@@ -1,3 +1,70 @@
+2021-07-06  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Have ProcessAssertion take the RunningBoard assertion asynchronously by default
+        https://bugs.webkit.org/show_bug.cgi?id=225324
+        <rdar://76972252>
+
+        Reviewed by Geoffrey Garen.
+
+        Have ProcessAssertion take the RunningBoard assertion asynchronously (on a background thread) by
+        default as we have evidence that doing so on the main thread is bad for performance and may
+        negatively impact launch time.
+
+        When constructing a ProcessAssertion, the caller can now indicate if it wants the assertion to be
+        taken asynchronously (default) or not. Bug 227552 is an example of a case where we still want to
+        take the assertion synchronously (because we're not on the main thread and we need to make sure
+        we have the assertion before proceeding).
+
+        The caller can also provide a completion handler that will get called once the RunningBoard is
+        taken. Note that the RunningBoard async API ([RBSAssertion acquireWithInvalidationHandler]) does
+        not provide a way for us to know when the assertion is taken. For this reason, ProcessAssertion
+        keeps using the RunningBoard sync API ([RBSAssertion acquireWithError:]) but calls in on a
+        background queue.
+
+        For the UIProcess's background task though, we don't need to know when the assertion is taken
+        so we can use the RunningBoard async API.
+
+        Note that the previous iteration of this patch had a bug where the ProcessThrottler would release
+        its previous assertion before the new one is taken (asynchronously) when changing the assertion
+        type (e.g. foreground to background). This is addressed in this patch. ProcessThrottler now passes
+        an acquisition handler when constructing the ProcessAssertion and only releases its previous
+        assertion once the acquisition handler for the new one is taken.
+
+        * NetworkProcess/Downloads/DownloadMap.cpp:
+        (WebKit::DownloadMap::add):
+        * NetworkProcess/Downloads/DownloadMap.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setWebProcessHasUploads):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::create):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::setAssertionType):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::updateAudibleMediaAssertions):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateAudibleMediaAssertions):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (assertionsWorkQueue):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager assertion:didInvalidateWithError:]):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::acquireAsync):
+        (WebKit::ProcessAssertion::acquireSync):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+        (WebKit::ProcessAssertion::processAssertionWasInvalidated):
+        (WebKit::ProcessAssertion::isValid const):
+
 2021-07-06  Sihui Liu  <sihui_liu@apple.com>
 
         Don't interrupt database for WebResourceLoadStatisticsStore if it will not be suspended
