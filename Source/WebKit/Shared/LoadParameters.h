@@ -32,6 +32,7 @@
 #include "WebsitePoliciesData.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SubstituteData.h>
 
 OBJC_CLASS NSDictionary;
 
@@ -69,6 +70,7 @@ struct LoadParameters {
     UserData userData;
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
+    WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Visible };
     String clientRedirectSourceForHistory;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
 

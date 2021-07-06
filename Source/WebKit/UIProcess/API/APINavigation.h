@@ -36,6 +36,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/SubstituteData.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -50,23 +51,25 @@ class WebNavigationState;
 namespace API {
 
 struct SubstituteData {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, API::Object* userData)
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, API::Object* userData, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility = WebCore::SubstituteData::SessionHistoryVisibility::Hidden)
         : content(WTFMove(content))
         , MIMEType(MIMEType)
         , encoding(encoding)
         , baseURL(baseURL)
         , userData(userData)
+        , sessionHistoryVisibility(sessionHistoryVisibility)
     { }
 
-    SubstituteData(Vector<uint8_t>&& content, const WebCore::ResourceResponse&, API::Object* userData);
+    SubstituteData(Vector<uint8_t>&& content, const WebCore::ResourceResponse&, WebCore::SubstituteData::SessionHistoryVisibility);
 
     Vector<uint8_t> content;
     WTF::String MIMEType;
     WTF::String encoding;
     WTF::String baseURL;
     RefPtr<API::Object> userData;
+    WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Hidden };
 };
 
 class Navigation : public ObjectImpl<Object::Type::Navigation> {

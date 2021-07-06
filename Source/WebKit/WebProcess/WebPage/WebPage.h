@@ -83,6 +83,7 @@
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/SubstituteData.h>
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
@@ -1567,7 +1568,7 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& failingURL, const UserData&, std::optional<NavigatingToAppBoundDomain>, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, const URL& failingURL, const UserData&, std::optional<NavigatingToAppBoundDomain>, WebCore::SubstituteData::SessionHistoryVisibility, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);

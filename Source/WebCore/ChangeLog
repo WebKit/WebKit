@@ -1,3 +1,12 @@
+2021-07-06  Alex Christensen  <achristensen@webkit.org>
+
+        loadSimulatedRequest: should do same delegate callbacks as loadHTMLString and loadData
+        https://bugs.webkit.org/show_bug.cgi?id=227599
+
+        Reviewed by Chris Dumez.
+
+        * loader/SubstituteData.h:
+
 2021-07-06  Chris Dumez  <cdumez@apple.com>
 
         Add assertions in LayerPool to help debug <rdar://80184576>

@@ -1710,7 +1710,7 @@ NO_RETURN void WebPage::loadRequestWaitingForProcessLaunch(LoadParameters&&, URL
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&& websitePolicies, Ref<SharedBuffer>&& sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, const UserData& userData, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&& websitePolicies, Ref<SharedBuffer>&& sharedBuffer, ResourceRequest&& request, ResourceResponse&& response, const URL& unreachableURL, const UserData& userData, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
     setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain, &m_mainFrame.get());
@@ -1721,9 +1721,7 @@ void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLo
     m_pendingNavigationID = navigationID;
     m_pendingWebsitePolicies = WTFMove(websitePolicies);
 
-    ResourceRequest request(baseURL);
-    ResourceResponse response(URL(), MIMEType, sharedBuffer->size(), encodingName);
-    SubstituteData substituteData(WTFMove(sharedBuffer), unreachableURL, response, SubstituteData::SessionHistoryVisibility::Hidden);
+    SubstituteData substituteData(WTFMove(sharedBuffer), unreachableURL, response, sessionHistoryVisibility);
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
@@ -1755,7 +1753,8 @@ void WebPage::loadData(LoadParameters&& loadParameters)
             baseURL = aboutBlankURL();
     }
 
-    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, loadParameters.shouldOpenExternalURLsPolicy);
+    ResourceResponse response(URL(), loadParameters.MIMEType, sharedBuffer->size(), loadParameters.encodingName);
+    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), ResourceRequest(baseURL), WTFMove(response), URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, loadParameters.sessionHistoryVisibility, loadParameters.shouldOpenExternalURLsPolicy);
 }
 
 void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
@@ -1766,50 +1765,17 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
     URL unreachableURL = loadParameters.unreachableURLString.isEmpty() ? URL() : URL(URL(), loadParameters.unreachableURLString);
     URL provisionalLoadErrorURL = loadParameters.provisionalLoadErrorURLString.isEmpty() ? URL() : URL(URL(), loadParameters.provisionalLoadErrorURLString);
     auto sharedBuffer = SharedBuffer::create(loadParameters.data.data(), loadParameters.data.size());
-    m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);    
-    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, unreachableURL, loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain);
+    m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);
+
+    ResourceResponse response(URL(), loadParameters.MIMEType, sharedBuffer->size(), loadParameters.encodingName);
+    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), ResourceRequest(baseURL), WTFMove(response), unreachableURL, loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
     m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL({ });
 }
 
 void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, ResourceResponse&& simulatedResponse)
 {
-    ASSERT(simulatedResponse.url() == loadParameters.request.url());
-    ASSERT(simulatedResponse.mimeType() == loadParameters.MIMEType);
-    ASSERT(simulatedResponse.textEncodingName() == loadParameters.encodingName);
-    ASSERT(static_cast<size_t>(simulatedResponse.expectedContentLength()) == loadParameters.data.size());
-
-    setLastNavigationWasAppBound(loadParameters.request.isAppBound());
-
-    platformDidReceiveLoadParameters(loadParameters);
-
     auto sharedBuffer = SharedBuffer::create(loadParameters.data.data(), loadParameters.data.size());
-
-#if ENABLE(APP_BOUND_DOMAINS)
-    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
-#endif
-
-    SendStopResponsivenessTimer stopper;
-
-    m_pendingNavigationID = loadParameters.navigationID;
-    m_pendingWebsitePolicies = WTFMove(loadParameters.websitePolicies);
-
-    SubstituteData substituteData(WTFMove(sharedBuffer), loadParameters.request.url(), simulatedResponse, SubstituteData::SessionHistoryVisibility::Visible);
-
-    // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
-    // to all the client to set up any needed state.
-    m_loaderClient->willLoadDataRequest(*this, loadParameters.request, const_cast<SharedBuffer*>(substituteData.content()), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::singleton().transformHandlesToObjects(loadParameters.userData.object()).get());
-
-    // Initate the load in WebCore.
-    FrameLoadRequest frameLoadRequest(*m_mainFrame->coreFrame(), loadParameters.request, substituteData);
-    frameLoadRequest.setShouldOpenExternalURLsPolicy(loadParameters.shouldOpenExternalURLsPolicy);
-    frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);
-    frameLoadRequest.setLockHistory(loadParameters.lockHistory);
-    frameLoadRequest.setLockBackForwardList(loadParameters.lockBackForwardList);
-    frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
-    frameLoadRequest.setIsRequestFromClientOrUserInput();
-
-    // FIXME: Should this be "corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));"?
-    m_mainFrame->coreFrame()->loader().load(WTFMove(frameLoadRequest));
+    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), WTFMove(loadParameters.request), WTFMove(simulatedResponse), URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, SubstituteData::SessionHistoryVisibility::Visible);
 }
 
 void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)

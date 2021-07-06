@@ -1,3 +1,49 @@
+2021-07-06  Alex Christensen  <achristensen@webkit.org>
+
+        loadSimulatedRequest: should do same delegate callbacks as loadHTMLString and loadData
+        https://bugs.webkit.org/show_bug.cgi?id=227599
+
+        Reviewed by Chris Dumez.
+
+        Share more code with loadData and loadHTMLString to prevent such errors.
+
+        Before this change we set SubstituteData.failingURL, which in FrameLoader::PolicyChecker::checkNavigationPolicy
+        makes it behave more like _loadAlternateHTMLString which doesn't call decidePolicyForNavigationAction and does
+        add a back/forward entry. We want it to behave more like loadHTMLString, which does call decidePolicyForNavigationAction
+        and doesn't add a back/forward entry. Except we do want it to add a back/forward entry. This patch is to accomplish that.
+
+        In order to continue making a back/forward list item with loadSimulatedRequest, we need to use
+        WebCore::SubstituteData::SessionHistoryVisibility::Visible for its calls and also API::SubstituteData
+        needs to remember that we initially used that for when we go back to a back/forward list item from
+        that data.  In order to keep binary compatibility with existing apps, loadData and loadHTMLString
+        need to continue using WebCore::SubstituteData::SessionHistoryVisibility::Hidden.
+
+        Covered by existing and new API tests.
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * UIProcess/API/APINavigation.cpp:
+        (API::SubstituteData::SubstituteData):
+        * UIProcess/API/APINavigation.h:
+        (API::SubstituteData::SubstituteData):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadData):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::loadSimulatedRequest):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::loadSimulatedRequestAndResponse):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-07-06  Per Arne  <pvollan@apple.com>
 
         Collect Accessibility preferences on a background queue

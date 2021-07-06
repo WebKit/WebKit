@@ -39,10 +39,11 @@ using namespace WebKit;
 
 static constexpr Seconds navigationActivityTimeout { 30_s };
 
-SubstituteData::SubstituteData(Vector<uint8_t>&& content, const ResourceResponse& response, API::Object* userData)
-    : SubstituteData(WTFMove(content), response.mimeType(), response.textEncodingName(), response.url().string(), userData)
+SubstituteData::SubstituteData(Vector<uint8_t>&& content, const ResourceResponse& response, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
+    : SubstituteData(WTFMove(content), response.mimeType(), response.textEncodingName(), response.url().string(), nullptr, sessionHistoryVisibility)
 {
 }
+
 
 Navigation::Navigation(WebNavigationState& state)
     : m_navigationID(state.generateNavigationID())

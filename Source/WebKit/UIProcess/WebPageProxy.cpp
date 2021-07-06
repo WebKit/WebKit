@@ -1462,11 +1462,11 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
 
-    loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), std::nullopt, shouldOpenExternalURLsPolicy);
+    loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), std::nullopt, shouldOpenExternalURLsPolicy, SubstituteData::SessionHistoryVisibility::Hidden);
     return navigation;
 }
 
-void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadDataWithNavigation");
 
@@ -1477,6 +1477,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), !baseURL.isEmpty() ? baseURL : aboutBlankURL().string() });
 
     LoadParameters loadParameters;
+    loadParameters.sessionHistoryVisibility = sessionHistoryVisibility;
     loadParameters.navigationID = navigation.navigationID();
     loadParameters.data = data;
     loadParameters.MIMEType = MIMEType;
@@ -1515,7 +1516,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     if (!hasRunningProcess())
         launchProcess(RegistrableDomain { simulatedRequest.url() }, ProcessLaunchReason::InitialProcess);
 
-    auto navigation = m_navigationState->createSimulatedLoadWithDataNavigation(ResourceRequest(simulatedRequest), makeUnique<API::SubstituteData>(data.vector(), ResourceResponse(simulatedResponse), nullptr), m_backForwardList->currentItem());
+    auto navigation = m_navigationState->createSimulatedLoadWithDataNavigation(ResourceRequest(simulatedRequest), makeUnique<API::SubstituteData>(data.vector(), ResourceResponse(simulatedResponse), WebCore::SubstituteData::SessionHistoryVisibility::Visible), m_backForwardList->currentItem());
 
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
@@ -3610,7 +3611,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         // FIXME: Work out timing of responding with the last policy delegate, etc
         ASSERT(!navigation->currentRequest().isEmpty());
         if (auto& substituteData = navigation->substituteData())
-            m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData));
+            m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData), substituteData->sessionHistoryVisibility);
         else
             m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, nullptr, isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData));
     };
