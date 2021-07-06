@@ -3160,8 +3160,6 @@ void testUbfiz64AndShift()
 
 void testInsertBitField32()
 {
-    if (!JSC::Options::useBFI())
-        return;
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     uint32_t d = 0xf0f0f0f0;
@@ -3199,6 +3197,13 @@ void testInsertBitField32()
         return invoke<uint32_t>(*code, d, n);
     };
 
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask1 = (1U << widths.at(i)) - 1U;
+        uint32_t mask2 = ~(mask1 << lsb);
+        CHECK(test1(lsb, mask1, mask2) == (((n & mask1) << lsb) | (d & mask2)));
+    }
+
     // Test Pattern: d = (d & mask2) | ((n & mask1) << lsb) 
     // Where: mask1 = ((1 << width) - 1)
     //        mask2 = ~(mask1 << lsb)
@@ -3233,15 +3238,70 @@ void testInsertBitField32()
         uint32_t lsb = lsbs.at(i);
         uint32_t mask1 = (1U << widths.at(i)) - 1U;
         uint32_t mask2 = ~(mask1 << lsb);
-        CHECK(test1(lsb, mask1, mask2) == (((n & mask1) << lsb) | (d & mask2)));
         CHECK(test2(lsb, mask1, mask2) == ((d & mask2) | ((n & mask1) << lsb)));
+    }
+
+    // Test use role on destination register of BFI
+    uint32_t dA = 0x0000f0f0;
+    uint32_t dB = 0xf0f00000;
+
+    auto test3 = [&] (uint32_t lsb, uint32_t mask1, uint32_t mask2) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dAValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* dBValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const32Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const32Value>(proc, Origin(), mask2);
+
+        // d = dA + dB
+        Value* dValue = root->appendNew<Value>(proc, Add, Origin(), dAValue, dBValue);
+
+        // d = (d & mask2) | ((n & mask1) << lsb) 
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, maskValue1);
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), leftAndValue, lsbValue);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        Value* orValue = root->appendNew<Value>(proc, BitOr, Origin(), shiftValue, rightAndValue);
+
+        // v3 = ((mask1 + mask2) + dB) + dA
+        Value* value1 = root->appendNew<Value>(proc, Add, Origin(), maskValue1, maskValue2);
+        Value* value2 = root->appendNew<Value>(proc, Add, Origin(), value1, dBValue);
+        Value* value3 = root->appendNew<Value>(proc, Add, Origin(), value2, dAValue);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, Add, Origin(), value3, orValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfi");
+        return invoke<uint32_t>(*code, dA, dB, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask1 = (1U << widths.at(i)) - 1U;
+        uint32_t mask2 = ~(mask1 << lsb);
+
+        uint32_t lhs3 = test3(lsb, mask1, mask2);
+        uint32_t dv = dA + dB;
+        dv = (dv & mask2) | ((n & mask1) << lsb);
+        uint32_t v3 = ((mask1 + mask2) + dB) + dA;
+        uint32_t rhs3 = v3 + dv;
+        CHECK(lhs3 == rhs3);
     }
 }
 
 void testInsertBitField64()
 {
-    if (!JSC::Options::useBFI())
-        return;
     if (JSC::Options::defaultB3OptLevel() < 2)
         return;
     uint64_t d = 0xf0f0f0f0f0f0f0f0;
@@ -3307,6 +3367,58 @@ void testInsertBitField64()
         uint64_t mask2 = ~(mask1 << lsb);
         CHECK(test1(lsb, mask1, mask2) == (((n & mask1) << lsb) | (d & mask2)));
         CHECK(test2(lsb, mask1, mask2) == ((d & mask2) | ((n & mask1) << lsb)));
+    }
+
+    // Test use role on destination register of BFI
+    uint64_t dA = 0x00000000f0f0f0f0;
+    uint64_t dB = 0xf0f0f0f000000000;
+
+    auto test3 = [&] (uint64_t lsb, uint64_t mask1, uint64_t mask2) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dAValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* dBValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const64Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const64Value>(proc, Origin(), mask2);
+
+        // d = dA + dB
+        Value* dValue = root->appendNew<Value>(proc, Add, Origin(), dAValue, dBValue);
+
+        // d = (d & mask2) | ((n & mask1) << lsb) 
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), nValue, maskValue1);
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), leftAndValue, lsbValue);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        Value* orValue = root->appendNew<Value>(proc, BitOr, Origin(), shiftValue, rightAndValue);
+
+        // v3 = ((mask1 + mask2) + dB) + dA
+        Value* value1 = root->appendNew<Value>(proc, Add, Origin(), maskValue1, maskValue2);
+        Value* value2 = root->appendNew<Value>(proc, Add, Origin(), value1, dBValue);
+        Value* value3 = root->appendNew<Value>(proc, Add, Origin(), value2, dAValue);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, Add, Origin(), value3, orValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfi");
+        return invoke<uint64_t>(*code, dA, dB, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t mask1 = (1ULL << widths.at(i)) - 1ULL;
+        uint64_t mask2 = ~(mask1 << lsb);
+
+        uint64_t lhs3 = test3(lsb, mask1, mask2);
+        uint64_t dv = dA + dB;
+        dv = (dv & mask2) | ((n & mask1) << lsb);
+        uint64_t v3 = ((mask1 + mask2) + dB) + dA;
+        uint64_t rhs3 = v3 + dv;
+        CHECK(lhs3 == rhs3);
     }
 }
 
@@ -3392,6 +3504,64 @@ void testExtractInsertBitfieldAtLowEnd32()
         uint32_t mask2 = ~(mask1 >> lsb);
         CHECK(test2(lsb, mask1, mask2) == (((n & mask1) >> lsb) | (d & mask2)));
     }
+
+    // Test use role on destination register of BFXIL
+    uint32_t dA = 0x0000f0f0;
+    uint32_t dB = 0xf0f00000;
+
+    auto test3 = [&] (uint32_t lsb, uint32_t mask1, uint32_t mask2) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dAValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* dBValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const32Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const32Value>(proc, Origin(), mask2);
+
+        // d = dA + dB
+        Value* dValue = root->appendNew<Value>(proc, Add, Origin(), dAValue, dBValue);
+
+        // d = d = ((n >> lsb) & mask1) | (d & mask2)
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), nValue, lsbValue);
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), shiftValue, maskValue1);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        Value* orValue = root->appendNew<Value>(proc, BitOr, Origin(), leftAndValue, rightAndValue);
+
+        // v3 = ((mask1 + mask2) + dB) + dA
+        Value* value1 = root->appendNew<Value>(proc, Add, Origin(), maskValue1, maskValue2);
+        Value* value2 = root->appendNew<Value>(proc, Add, Origin(), value1, dBValue);
+        Value* value3 = root->appendNew<Value>(proc, Add, Origin(), value2, dAValue);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, Add, Origin(), value3, orValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfxil");
+        return invoke<uint32_t>(*code, dA, dB, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint32_t lsb = lsbs.at(i);
+        uint32_t mask1 = (1U << widths.at(i)) - 1U;
+        uint32_t mask2 = ~mask1;
+
+        uint32_t lhs3 = test3(lsb, mask1, mask2);
+        uint32_t dv = dA + dB;
+        dv = ((n >> lsb) & mask1) | (dv & mask2);
+        uint32_t v3 = ((mask1 + mask2) + dB) + dA;
+        uint32_t rhs3 = v3 + dv;
+        CHECK(lhs3 == rhs3);
+    }
 }
 
 void testExtractInsertBitfieldAtLowEnd64()
@@ -3467,6 +3637,58 @@ void testExtractInsertBitfieldAtLowEnd64()
         uint64_t mask1 = ((1ULL << widths.at(i)) - 1ULL) << lsb;
         uint64_t mask2 = ~(mask1 >> lsb);
         CHECK(test2(lsb, mask1, mask2) == (((n & mask1) >> lsb) | (d & mask2)));
+    }
+
+    // Test use role on destination register of BFXIL
+    uint64_t dA = 0x00000000f0f0f0f0;
+    uint64_t dB = 0xf0f0f0f000000000;
+
+    auto test3 = [&] (uint64_t lsb, uint64_t mask1, uint64_t mask2) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* dAValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* dBValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* maskValue1 = root->appendNew<Const64Value>(proc, Origin(), mask1);
+        Value* maskValue2 = root->appendNew<Const64Value>(proc, Origin(), mask2);
+
+        // d = dA + dB
+        Value* dValue = root->appendNew<Value>(proc, Add, Origin(), dAValue, dBValue);
+
+        // d = d = ((n >> lsb) & mask1) | (d & mask2)
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), nValue, lsbValue);
+        Value* leftAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), shiftValue, maskValue1);
+        Value* rightAndValue = root->appendNew<Value>(proc, BitAnd, Origin(), dValue, maskValue2);
+        Value* orValue = root->appendNew<Value>(proc, BitOr, Origin(), leftAndValue, rightAndValue);
+
+        // v3 = ((mask1 + mask2) + dB) + dA
+        Value* value1 = root->appendNew<Value>(proc, Add, Origin(), maskValue1, maskValue2);
+        Value* value2 = root->appendNew<Value>(proc, Add, Origin(), value1, dBValue);
+        Value* value3 = root->appendNew<Value>(proc, Add, Origin(), value2, dAValue);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, Add, Origin(), value3, orValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "bfxil");
+        return invoke<uint64_t>(*code, dA, dB, n);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        uint64_t lsb = lsbs.at(i);
+        uint64_t mask1 = (1ULL << widths.at(i)) - 1ULL;
+        uint64_t mask2 = ~mask1;
+
+        uint64_t lhs3 = test3(lsb, mask1, mask2);
+        uint64_t dv = dA + dB;
+        dv = ((n >> lsb) & mask1) | (dv & mask2);
+        uint64_t v3 = ((mask1 + mask2) + dB) + dA;
+        uint64_t rhs3 = v3 + dv;
+        CHECK(lhs3 == rhs3);
     }
 }
 

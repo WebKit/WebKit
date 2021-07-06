@@ -549,7 +549,6 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDataIC, false, Normal, nullptr) \
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
-    v(Bool, useBFI, false, Normal, "Allow ARM64 instruction selection of BFI") \
 
 
 enum OptionEquivalence {

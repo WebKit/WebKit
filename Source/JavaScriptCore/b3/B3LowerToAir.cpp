@@ -2764,8 +2764,6 @@ private:
             // UBFX Pattern: dest = (src >> lsb) & mask 
             // Where: mask = (1 << width) - 1
             auto tryAppendUBFX = [&] () -> bool {
-                if (!Options::useBFI())
-                    return false;
                 Air::Opcode opcode = opcodeForType(ExtractUnsignedBitfield32, ExtractUnsignedBitfield64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
                     return false;
@@ -2865,8 +2863,6 @@ private:
             // Where: mask1 = ((1 << width) - 1)
             //        mask2 = ~(mask1 << lsb)
             auto tryAppendBFI = [&] (Value* left, Value* right) -> bool {
-                if (!Options::useBFI())
-                    return false;
                 Air::Opcode opcode = opcodeForType(InsertBitField32, InsertBitField64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
                     return false;
@@ -3055,8 +3051,6 @@ private:
             // SBFIZ Pattern: d = ((src << amount) >> amount) << lsb
             // where: amount = datasize - width
             auto tryAppendSBFIZ = [&] () -> bool {
-                if (!Options::useBFI())
-                    return false;
                 Air::Opcode opcode = opcodeForType(InsertSignedBitfieldInZero32, InsertSignedBitfieldInZero64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;

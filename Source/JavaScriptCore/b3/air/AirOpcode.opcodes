@@ -824,10 +824,10 @@ arm64: InsertUnsignedBitfieldInZero32 U:G:32, U:G:32, U:G:32, ZD:G:32
 arm64: InsertUnsignedBitfieldInZero64 U:G:64, U:G:32, U:G:32, D:G:64
     Tmp, Imm, Imm, Tmp
 
-arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, ZD:G:32
+arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, UZD:G:32
     Tmp, Imm, Imm, Tmp
 
-arm64: InsertBitField64 U:G:64, U:G:32, U:G:32, D:G:64
+arm64: InsertBitField64 U:G:64, U:G:32, U:G:32, UD:G:64
     Tmp, Imm, Imm, Tmp
 
 arm64: ClearBitField32 U:G:32, U:G:32, ZD:G:32
@@ -848,10 +848,10 @@ arm64: OrNot32 U:G:32, U:G:32, ZD:G:32
 arm64: OrNot64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
 
-arm64: ExtractInsertBitfieldAtLowEnd32 U:G:32, U:G:32, U:G:32, ZD:G:32
+arm64: ExtractInsertBitfieldAtLowEnd32 U:G:32, U:G:32, U:G:32, UZD:G:32
     Tmp, Imm, Imm, Tmp
 
-arm64: ExtractInsertBitfieldAtLowEnd64 U:G:64, U:G:32, U:G:32, D:G:64
+arm64: ExtractInsertBitfieldAtLowEnd64 U:G:64, U:G:32, U:G:32, UD:G:64
     Tmp, Imm, Imm, Tmp
 
 arm64: InsertSignedBitfieldInZero32 U:G:32, U:G:32, U:G:32, ZD:G:32

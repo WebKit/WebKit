@@ -1,3 +1,82 @@
+2021-07-06  Yijia Huang  <yijia_huang@apple.com>
+
+        Fix instruction check failure of UBFX and SBFIZ in testb3 due to the speculative fix in bug 227554
+        https://bugs.webkit.org/show_bug.cgi?id=227563
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes two modifications to resolve rdar://79978150:
+            1. Fix the bug caused by the patch introducing BFI.
+            2. Discard the corresponding speculative fix in https://bugs.webkit.org/show_bug.cgi?id=227554.
+
+        The previous patch, added bit field insert (BFI) to AIR opcode, causes the Gmail page 
+        hanging issue on Safari. The root cause is the incorrect definition of register role in 
+        BFI's AIR opcode. Since BFI inserts a bit field at the low end of the destination register 
+        while keeping the high bit unchanged, the destination register should have both roles of 
+        use and define simultaneously, which is not (missing use) in the previous patch. 
+
+        This will result in the loss of preserving the value of the destination register, 
+        which does happen when browsing the Gmail page on Safari.
+
+            // B3 IR snippets from Gmail
+            Int32 b@23  = Add(b@104, b@111, D@100)
+            ...
+            Int32 b@55  = Const32(65535, D@50)
+            Int32 b@137 = BitAnd(b@118, $65535(b@55), D@160)
+            Int32 b@168 = Const32(16, D@40)
+            Int32 b@141 = Shl(b@137, $16(b@168), D@163)
+            Int32 b@143 = BitAnd(b@23, $65535(b@55), D@166)
+            Int32 b@144 = BitOr(b@141, b@143, D@169)
+
+        The pattern of BFI is d = ((n & mask1) << lsb) | (d & mask2). So, it is obvious that 
+        BFI can be utilized in b@144 where the d is b@23.
+
+            // Incorrect AIR opcode of BFI
+            arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, ZD:G:32
+                Tmp, Imm, Imm, Tmp
+
+            // Air w/o use role
+            Add32            %x3, %x7, %x7,      b@23
+            ...
+            InsertBitField32 %x3, $16, $16, %x4, b@144
+
+            // Generated code w/o use role
+            add      w7, w3,  w7
+            ...
+            bfi      w4, w3, #16, #16
+
+        In Air, the added value is stored in the w7. But the value is not preserved after 
+        lowering with BFI. To fix this, the use role should be enabled for the destination 
+        register.
+
+            // Correnct AIR opcode of BFI
+            arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, UZD:G:32
+                Tmp, Imm, Imm, Tmp
+
+            // Air w/ use role
+            Add32            %x3, %x7, %x7,      b@23
+            ...
+            Move32           %x7, %x4,           b@144
+            InsertBitField32 %x3, $16, $16, %x4, b@144
+
+            // Generated code w/ use role
+            add      w7, w3, w7
+            ...
+            ubfx     x4, x7,  #0, #32
+            bfi      w4, w3, #16, #16
+
+        In addition, BFXIL, which has pattern d = ((n >> lsb) & mask1) | (d & mask2), also needs 
+        the similar update.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3_2.cpp:
+        (testInsertBitField32):
+        (testInsertBitField64):
+        (testExtractInsertBitfieldAtLowEnd32):
+        (testExtractInsertBitfieldAtLowEnd64):
+        * runtime/OptionsList.h:
+
 2021-07-04  Robin Morisset  <rmorisset@apple.com>
 
         ActiveScratchBufferScope should take the buffer as argument
