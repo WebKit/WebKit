@@ -309,12 +309,6 @@
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
 
-#if BPLATFORM(MAC)
-#define BUSE_PARTIAL_SCAVENGE 1
-#else
-#define BUSE_PARTIAL_SCAVENGE 0
-#endif
-
 #if !defined(BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K)
 #define BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K 1
 #endif

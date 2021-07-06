@@ -1,3 +1,80 @@
+2021-07-06  Michael Saboff  <msaboff@apple.com>
+
+        [bmalloc] Make adaptive scavenging more precise
+        https://bugs.webkit.org/show_bug.cgi?id=226237
+
+        Reviewed by Geoffrey Garen.
+
+        Reland the adaptive scavenger change for macOS with fix.
+
+        The bug happens when decommitting large ranges that don't have physical pages.
+        We'd call Heap::decommitLargeRange(), but would only add the range to the
+        decommitter list if there were physical pages associated with the range.
+        We would still perform all the other processing of a decommitted range,
+        including setting the range as not elgible for allocation or merging.
+        Had the range been added to the decommitter list, we would have set the
+        range as elgible after the physical pages were released to the OS.
+        The result is that the range could never be allocated, either by itself or as a
+        larger range merged with adjacent ranges.
+
+        The fix is to only perform decommit processing of large ranges if they have
+        physical pages.  We now check for physical pages before calling Heap::decommitLargeRange().
+        For ranges that don't have physical pages, they can stay on the free list as
+        elgible without having to round trip through decommit processing.
+
+        Made a minor change to the calculation of the physical end of the LargeRange created
+        and added to the free list in Heap::deallocateSmallChunk.  If the last page in the chunk
+        has a physical page, we set the physical end of the range to the end of the chunk.
+        This is for the case where there is an unusable partial small page at the end of the chunk.
+
+        * bmalloc/BPlatform.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::deallocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::tryAllocateLargeChunk):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::scavengeToHighWatermark): Deleted.
+        * bmalloc/Heap.h:
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::scavengeToHighWatermark): Deleted.
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark): Deleted.
+        * bmalloc/IsoSharedHeapInlines.h:
+        (bmalloc::IsoSharedHeap::allocateSlow):
+        * bmalloc/LargeMap.cpp:
+        (bmalloc::LargeMap::add):
+        * bmalloc/LargeRange.h:
+        (bmalloc::LargeRange::LargeRange):
+        (bmalloc::LargeRange::physicalEnd const):
+        (bmalloc::LargeRange::setPhysicalEnd):
+        (bmalloc::LargeRange::clearPhysicalEnd):
+        (bmalloc::LargeRange::setUsedSinceLastScavenge):
+        (bmalloc::merge):
+        (bmalloc::LargeRange::split const):
+        (): Deleted.
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressure):
+        (bmalloc::Scavenger::schedule):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::threadRunLoop):
+        (bmalloc::Scavenger::didStartGrowing): Deleted.
+        (bmalloc::Scavenger::timeSinceLastPartialScavenge): Deleted.
+        (bmalloc::Scavenger::partialScavenge): Deleted.
+        * bmalloc/Scavenger.h:
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::setUsedSinceLastScavenge):
+
 2021-06-23  Mark Lam  <mark.lam@apple.com>
 
         Base Options::useWebAssemblyFastMemory's default value on Gigacage::hasCapacityToUseLargeGigacage.
