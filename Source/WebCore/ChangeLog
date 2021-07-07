@@ -1,3 +1,31 @@
+2021-07-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Inconsistent styling for input[type="submit"] and button[type="submit"]
+        https://bugs.webkit.org/show_bug.cgi?id=227043
+        <rdar://problem/79629354>
+
+        Reviewed by Wenson Hsieh.
+
+        In iOS 15, submit buttons have a different appearance from standard
+        buttons, matching UIKit's "preferred" button style.
+
+        Previously, all buttons had the same styling, which meant that
+        input[type="submit"] and button[type="submit"] had the same
+        appearance by default. The changes made for iOS 15 were applied to
+        input[type="submit"], but not button[type="submit"], leading to
+        inconsistent styling.
+
+        Test: fast/forms/ios/form-control-refresh/button/button-type-submit.html
+
+        * css/html.css:
+
+        Ensure the different style applied to input[type="submit"] also applies
+        to button[type="submit"].
+
+        Additionally, apply the new style to button[type="menu"]. This type is
+        unsupported, but should have the same appearance as a submit button,
+        according to the button-type-menu-historical.html web platform test.
+
 2021-07-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Cairo] Merge PlatformContextCairo into GraphicsContextCairo

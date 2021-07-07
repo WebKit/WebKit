@@ -852,7 +852,9 @@ input:is([type="button"], [type="submit"], [type="reset"]):active, input[type="f
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 
-input[type="submit"], input[type="submit"]:active {
+input[type="submit"], input[type="submit"]:active,
+button[type="submit"], button[type="submit"]:active,
+button[type="menu"], button[type="menu"]:active {
     background-color: -apple-system-blue;
     color: white;
     font-weight: bold;
