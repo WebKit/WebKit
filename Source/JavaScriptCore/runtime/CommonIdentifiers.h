@@ -61,6 +61,7 @@
     macro(SharedArrayBuffer) \
     macro(String) \
     macro(Symbol) \
+    macro(Temporal) \
     macro(WeakRef) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \

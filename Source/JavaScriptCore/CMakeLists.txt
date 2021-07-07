@@ -107,6 +107,7 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
+    runtime/TemporalObject.cpp
 
     wasm/js/JSWebAssembly.cpp
     wasm/js/JSToWasmICCallee.cpp
@@ -1086,6 +1087,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SymbolTable.h
     runtime/SymbolTableOrScopeDepth.h
     runtime/TemplateObjectDescriptor.h
+    runtime/TemporalNow.h
+    runtime/TemporalObject.h
     runtime/TestRunnerUtils.h
     runtime/ThrowScope.h
     runtime/ToNativeFromValue.h

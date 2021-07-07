@@ -1,3 +1,41 @@
+2021-07-06  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Implement Temporal
+        https://bugs.webkit.org/show_bug.cgi?id=223166
+
+        Reviewed by Yusuke Suzuki.
+
+        Intended to be the first patch in a stack. Adds boilerplate for
+        Temporal in order to unblock further parallelizable work on this bug.
+
+        This patch adds a feature flag for Temporal, and a toplevel Temporal
+        global containing only Temporal.now, which is itself an empty object.
+        These objects will be further populated in later patches.
+
+        * CMakeLists.txt: Add TemporalObject and TemporalNow. Property lookup
+          table in TemporalObject.
+        * DerivedSources.make: Add TemporalObject property lookup table header.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add new files.
+        * Sources.txt: Add TemporalObject and TemporalNow.
+        * runtime/CommonIdentifiers.h: Add 'Temporal' property key.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Create the Temporal global if the feature
+          flag is enabled.
+        * runtime/OptionsList.h: Add useTemporal feature flag.
+        * runtime/TemporalNow.cpp: Added.
+        (JSC::TemporalNow::TemporalNow):
+        (JSC::TemporalNow::create):
+        (JSC::TemporalNow::createStructure):
+        (JSC::TemporalNow::finishCreation):
+        * runtime/TemporalNow.h: Added.
+        * runtime/TemporalObject.cpp: Added.
+        (JSC::createNowObject):
+        (JSC::TemporalObject::TemporalObject):
+        (JSC::TemporalObject::create):
+        (JSC::TemporalObject::createStructure):
+        (JSC::TemporalObject::finishCreation):
+        * runtime/TemporalObject.h: Added.
+
 2021-07-06  Yijia Huang  <yijia_huang@apple.com>
 
         Fix type error in testb3

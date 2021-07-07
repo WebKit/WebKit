@@ -549,6 +549,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDataIC, false, Normal, nullptr) \
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
+    v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
 
 
 enum OptionEquivalence {
