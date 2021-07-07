@@ -217,7 +217,10 @@ class Separator : public TIntermRebuild
         {
             return true;
         }
-        ASSERT(expr.getType().getBasicType() != TBasicType::EbtVoid);
+        if((expr.getType().getBasicType() == TBasicType::EbtVoid))
+        {
+            return true;
+        }
         return false;
     }
 

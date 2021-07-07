@@ -1,3 +1,16 @@
+2021-07-07  Kyle Piddington  <kpiddington@apple.com>
+
+        WebGL shader link error in iOS 15 beta: "Internal error compiling shader with Metal backend"
+        https://bugs.webkit.org/show_bug.cgi?id=227723
+
+        The sequence operator can be used to combine statements. Our initial
+        logic did not account for this. 
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/shader-with-comma-op-expected.txt: Added.
+        * fast/canvas/webgl/shader-with-comma-op.html: Added.
+
 2021-07-07  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations after r279561
