@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,27 @@ public:
 
 private:
     Heap& m_heap;
+};
+
+class ReleaseHeapAccessIfNeededScope {
+public:
+    ReleaseHeapAccessIfNeededScope(Heap& heap)
+        : m_heap(heap)
+    {
+        hadHeapAccess = m_heap.hasAccess();
+        if (hadHeapAccess)
+            m_heap.releaseAccess();
+    }
+
+    ~ReleaseHeapAccessIfNeededScope()
+    {
+        if (hadHeapAccess)
+            m_heap.acquireAccess();
+    }
+
+private:
+    Heap& m_heap;
+    bool hadHeapAccess { false };
 };
 
 } // namespace JSC

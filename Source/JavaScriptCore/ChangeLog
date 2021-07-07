@@ -1,3 +1,23 @@
+2021-07-07  Michael Saboff  <msaboff@apple.com>
+
+        fitcored crashes at JavaScriptCore: JSC::Heap::releaseAccessSlow
+        https://bugs.webkit.org/show_bug.cgi?id=227767
+
+        Reviewed by Geoffrey Garen.
+
+        Speculative fix for this crash.  We are crashing while destroying the VM as we are about to
+        release the JSLock.  In JSLock::willReleaseLock(), we release heap access.  Therefore we don't
+        need to release it again when undertaking the various shutdown steps in the VM destructor.
+
+        Added a new scope class that will only release and then acquire heap access if the caller
+        currently has heap access.
+
+        * heap/ReleaseHeapAccessScope.h:
+        (JSC::ReleaseHeapAccessIfNeededScope::ReleaseHeapAccessIfNeededScope):
+        (JSC::ReleaseHeapAccessIfNeededScope::~ReleaseHeapAccessIfNeededScope):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::waitUntilAllPlansForVMAreReady):
+
 2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not allocate JITWorklist if JIT is disabled
