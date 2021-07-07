@@ -1,3 +1,15 @@
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        IDBObjectStore.keyPath should keep returning the same object
+        https://bugs.webkit.org/show_bug.cgi?id=227770
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/IndexedDB/idbobjectstore_keyPath.any-expected.txt:
+        * web-platform-tests/IndexedDB/idbobjectstore_keyPath.any.worker-expected.txt:
+
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
         DOMURL's href setter should use empty URL as base URL
