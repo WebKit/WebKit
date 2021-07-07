@@ -1,3 +1,17 @@
+2021-07-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279628.
+        https://bugs.webkit.org/show_bug.cgi?id=227737
+
+        Test does not work since it relies on r279546, which is
+        reverted due to Speedometer regression
+
+        Reverted changeset:
+
+        "SubtleCrypto should only be exposed to secure contexts"
+        https://bugs.webkit.org/show_bug.cgi?id=227725
+        https://commits.webkit.org/r279628
+
 2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, need CryptoKey and SubtleCrypto names
