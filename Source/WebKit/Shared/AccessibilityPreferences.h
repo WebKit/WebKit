@@ -27,10 +27,6 @@
 
 #include "ArgumentCoders.h"
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include <WebCore/CaptionUserPreferences.h>
-#endif
-
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
 #include "AccessibilitySupportSPI.h"
 #endif
@@ -44,10 +40,6 @@ struct AccessibilityPreferences {
     AXValueState enhanceTextLegibility { AXValueStateEmpty };
     AXValueState darkenSystemColors { AXValueStateEmpty };
     AXValueState invertColorsEnabled { AXValueStateEmpty };
-#endif
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode;
-    Vector<String> preferredLanguages;
 #endif
 };
 
