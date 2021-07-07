@@ -310,10 +310,20 @@ size_t Storage::approximateSize() const
     return m_approximateRecordsSize + m_blobStorage.approximateSize();
 }
 
-static size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount)
+uint32_t Storage::volumeBlockSize() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (!m_volumeBlockSize)
+        m_volumeBlockSize = FileSystem::volumeFileBlockSize(m_basePath).value_or(4 * KB);
+
+    return *m_volumeBlockSize;
+}
+
+size_t Storage::estimateRecordsSize(unsigned recordCount, unsigned blobCount) const
 {
     auto inlineBodyCount = recordCount - std::min(blobCount, recordCount);
-    auto headerSizes = recordCount * 4096;
+    auto headerSizes = recordCount * volumeBlockSize();
     auto inlineBodySizes = (maximumInlineBodySize() / 2) * inlineBodyCount;
     return headerSizes + inlineBodySizes;
 }

@@ -1,3 +1,17 @@
+2021-07-07  Christopher Reid  <chris.reid@sony.com>
+
+        [PlayStation] Don't assume 4KB block size when estimating Network Cache disk usage
+        https://bugs.webkit.org/show_bug.cgi?id=227502
+
+        Reviewed by Chris Dumez.
+
+        Add getVolumeFileBlockSize to fetch the block size from the filesystem.
+        Currently only implemented for Windows and POSIX filesystems.
+
+        * wtf/FileSystem.cpp:
+        * wtf/FileSystem.h:
+        * wtf/playstation/FileSystemPlayStation.cpp:
+
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Use more Span
