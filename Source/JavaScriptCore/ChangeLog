@@ -1,5 +1,24 @@
 2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        r270214 broke testb3 on arm64e
+        https://bugs.webkit.org/show_bug.cgi?id=227713
+
+        Reviewed by Saam Barati.
+
+        ARM64E CAS lacks isBranch case. This patch adds isBranch implementation.
+        We also adjust disasm scanning test to support CAS in ARM64E.
+
+        * assembler/testmasm.cpp:
+        (JSC::testAtomicStrongCASFill8):
+        (JSC::testAtomicStrongCASFill16):
+        * b3/B3LowerToAir.cpp:
+        * b3/testb3_8.cpp:
+        (testAtomicWeakCAS):
+        (testAtomicStrongCAS):
+        (testAtomicXchg):
+
+2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix after r279630
         https://bugs.webkit.org/show_bug.cgi?id=223166
 

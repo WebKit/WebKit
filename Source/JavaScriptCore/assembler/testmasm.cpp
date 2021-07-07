@@ -2448,6 +2448,52 @@ void testMoveDoubleConditionallyFloatSameArg(MacroAssembler::DoubleCondition con
 
 #endif // CPU(X86_64) || CPU(ARM64)
 
+#if CPU(ARM64E)
+
+void testAtomicStrongCASFill8()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.atomicStrongCAS8(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::Address(GPRInfo::argumentGPR2));
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    uint8_t data[] = {
+        0xff, 0xff,
+    };
+    uint32_t result = invoke<uint32_t>(test, 0xffffffffffffffffULL, 0, data);
+    CHECK_EQ(result, 0xff);
+    CHECK_EQ(data[0], 0);
+    CHECK_EQ(data[1], 0xff);
+}
+
+void testAtomicStrongCASFill16()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.atomicStrongCAS16(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::Address(GPRInfo::argumentGPR2));
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    uint16_t data[] = {
+        0xffff, 0xffff,
+    };
+    uint32_t result = invoke<uint32_t>(test, 0xffffffffffffffffULL, 0, data);
+    CHECK_EQ(result, 0xffff);
+    CHECK_EQ(data[0], 0);
+    CHECK_EQ(data[1], 0xffff);
+}
+
+#endif // CPU(ARM64)
+
 #if CPU(ARM64)
 void testLoadStorePair64Int64()
 {
@@ -3832,6 +3878,11 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testExtractSignedBitfield64());
     RUN(testExtractRegister32());
     RUN(testExtractRegister64());
+#endif
+
+#if CPU(ARM64E)
+    RUN(testAtomicStrongCASFill8());
+    RUN(testAtomicStrongCASFill16());
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)

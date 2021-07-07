@@ -41,12 +41,16 @@ void testAtomicWeakCAS()
             checkUsesInstruction(compilation, "lock");
             checkUsesInstruction(compilation, "cmpxchg");
         } else {
-            if (fenced) {
-                checkUsesInstruction(compilation, "ldax");
-                checkUsesInstruction(compilation, "stlx");
-            } else {
-                checkUsesInstruction(compilation, "ldx");
-                checkUsesInstruction(compilation, "stx");
+            if (isARM64E())
+                checkUsesInstruction(compilation, "casal");
+            else {
+                if (fenced) {
+                    checkUsesInstruction(compilation, "ldax");
+                    checkUsesInstruction(compilation, "stlx");
+                } else {
+                    checkUsesInstruction(compilation, "ldx");
+                    checkUsesInstruction(compilation, "stx");
+                }
             }
         }
     };
@@ -288,12 +292,16 @@ void testAtomicStrongCAS()
             checkUsesInstruction(compilation, "lock");
             checkUsesInstruction(compilation, "cmpxchg");
         } else {
-            if (fenced) {
-                checkUsesInstruction(compilation, "ldax");
-                checkUsesInstruction(compilation, "stlx");
-            } else {
-                checkUsesInstruction(compilation, "ldx");
-                checkUsesInstruction(compilation, "stx");
+            if (isARM64E())
+                checkUsesInstruction(compilation, "casal");
+            else {
+                if (fenced) {
+                    checkUsesInstruction(compilation, "ldax");
+                    checkUsesInstruction(compilation, "stlx");
+                } else {
+                    checkUsesInstruction(compilation, "ldx");
+                    checkUsesInstruction(compilation, "stx");
+                }
             }
         }
     };
@@ -544,6 +552,39 @@ void testAtomicStrongCAS()
         CHECK_EQ(value[1], 13);
         checkMyDisassembly(*code, true);
     }
+
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<AtomicValue>(
+                proc, AtomicStrongCAS, Origin(), width,
+                root->appendIntConstant(proc, Origin(), type, 0x0f00000000000000ULL + 42),
+                root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                ptr));
+
+        auto code = compileProc(proc);
+        T value[2];
+        T result;
+        value[0] = 42;
+        value[1] = 13;
+        result = invoke<T>(*code, value);
+        if (width == Width64)
+            CHECK_EQ(value[0], static_cast<T>(42));
+        else
+            CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        CHECK_EQ(result, static_cast<T>(42));
+        value[0] = static_cast<T>(300);
+        result = invoke<T>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        CHECK_EQ(result, static_cast<T>(300));
+        checkMyDisassembly(*code, true);
+    }
 }
 
 template<typename T>
@@ -594,12 +635,37 @@ void testAtomicXchg(B3::Opcode opcode)
             if (AtomicXchg != opcode)
                 checkUsesInstruction(compilation, "lock");
         } else {
-            if (fenced) {
-                checkUsesInstruction(compilation, "ldax");
-                checkUsesInstruction(compilation, "stlx");
+            if (isARM64E()) {
+                switch (opcode) {
+                case AtomicXchgAdd:
+                    checkUsesInstruction(compilation, "ldaddal");
+                    break;
+                case AtomicXchgAnd:
+                    checkUsesInstruction(compilation, "ldclral");
+                    break;
+                case AtomicXchgOr:
+                    checkUsesInstruction(compilation, "ldsetal");
+                    break;
+                case AtomicXchgSub:
+                    checkUsesInstruction(compilation, "ldaddal");
+                    break;
+                case AtomicXchgXor:
+                    checkUsesInstruction(compilation, "ldeoral");
+                    break;
+                case AtomicXchg:
+                    checkUsesInstruction(compilation, "swpal");
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
             } else {
-                checkUsesInstruction(compilation, "ldx");
-                checkUsesInstruction(compilation, "stx");
+                if (fenced) {
+                    checkUsesInstruction(compilation, "ldax");
+                    checkUsesInstruction(compilation, "stlx");
+                } else {
+                    checkUsesInstruction(compilation, "ldx");
+                    checkUsesInstruction(compilation, "stx");
+                }
             }
         }
     };

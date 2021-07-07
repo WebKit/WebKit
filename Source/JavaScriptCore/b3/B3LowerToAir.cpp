@@ -2256,11 +2256,34 @@ private:
         }
 
         if (isARM64E()) {
+            if (isBranch) {
+                switch (width) {
+                case Width8:
+                    append(Air::ZeroExtend8To32, expectedValueTmp, expectedValueTmp);
+                    break;
+                case Width16:
+                    append(Air::ZeroExtend16To32, expectedValueTmp, expectedValueTmp);
+                    break;
+                case Width32:
+                case Width64:
+                    break;
+                }
+            }
             append(relaxedMoveForType(atomic->accessType()), expectedValueTmp, valueResultTmp);
             appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), valueResultTmp, newValueTmp, address);
             if (returnsOldValue)
                 return;
             if (isBranch) {
+                switch (width) {
+                case Width8:
+                case Width16:
+                case Width32:
+                    appendTrapping(Air::Branch32, Arg::relCond(MacroAssembler::Equal), valueResultTmp, expectedValueTmp);
+                    break;
+                case Width64:
+                    appendTrapping(Air::Branch64, Arg::relCond(MacroAssembler::Equal), valueResultTmp, expectedValueTmp);
+                    break;
+                }
                 m_blockToBlock[m_block]->setSuccessors(success, failure);
                 return;
             }
