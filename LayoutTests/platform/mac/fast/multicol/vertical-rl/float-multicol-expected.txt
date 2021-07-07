@@ -137,7 +137,7 @@ layer at (-255,8) size 1032x479 backgroundClip at (0,0) size 785x1508 clip at (0
             text run at (0,291) width 44: "You've"
             text run at (18,291) width 48: "already"
             text run at (198,291) width 131: "downloaded a build."
-            text run at (216,291) width 135: "All you have to do is"
+            text run at (216,291) width 134: "All you have to do is"
             text run at (234,291) width 39: "use it "
             text run at (234,329) width 18: "as "
             text run at (234,347) width 30: "your"
@@ -178,34 +178,34 @@ layer at (-255,8) size 1032x479 backgroundClip at (0,0) size 785x1508 clip at (0
         RenderBlock {P} at (16,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 1"
-        RenderBlock {P} at (59,0) size 19x83
+        RenderBlock {P} at (60,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 2"
-        RenderBlock {P} at (93,0) size 19x83
+        RenderBlock {P} at (94,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 3"
-        RenderBlock {P} at (127,0) size 19x83
+        RenderBlock {P} at (128,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 4"
-        RenderBlock {P} at (161,0) size 19x83
+        RenderBlock {P} at (162,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 5"
-        RenderBlock {P} at (195,0) size 19x83
+        RenderBlock {P} at (196,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 6"
-        RenderBlock {P} at (229,0) size 19x83
+        RenderBlock {P} at (230,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 7"
-        RenderBlock {P} at (263,0) size 19x83
+        RenderBlock {P} at (264,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 8"
-        RenderBlock {P} at (297,0) size 19x83
+        RenderBlock {P} at (298,0) size 18x83
           RenderText {#text} at (0,0) size 18x75
             text run at (0,0) width 75: "Hola hola 9"
-        RenderBlock {P} at (331,0) size 19x83
+        RenderBlock {P} at (332,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hola hola 10"
-        RenderBlock {P} at (365,0) size 19x83
+        RenderBlock {P} at (366,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hola hola 11"
       RenderBlock {DT} at (536,0) size 19x479
@@ -225,17 +225,17 @@ layer at (-255,8) size 1032x479 backgroundClip at (0,0) size 785x1508 clip at (0
           RenderText {#text} at (0,190) size 116x368
             text run at (0,190) width 4: " "
             text run at (0,194) width 215: "dedicated to ways to get involved"
-            text run at (25,42) width 223: "with helping. This doesn't involve "
-            text run at (25,264) width 144: "knowing how to code,"
-            text run at (43,42) width 352: "although a little knowledge of HTML is helpful. Being"
-            text run at (61,42) width 135: "involved with QA is "
-            text run at (61,176) width 235: "good for people wanting to get more"
-            text run at (79,42) width 88: "familiar with "
-            text run at (79,129) width 278: "Mozilla, and there's a strong community. A"
-            text run at (97,42) width 246: "particularly good way to get involved "
-            text run at (97,287) width 81: "is to join the"
+            text run at (26,42) width 222: "with helping. This doesn't involve "
+            text run at (26,264) width 143: "knowing how to code,"
+            text run at (44,42) width 351: "although a little knowledge of HTML is helpful. Being"
+            text run at (62,42) width 134: "involved with QA is "
+            text run at (62,176) width 234: "good for people wanting to get more"
+            text run at (80,42) width 88: "familiar with "
+            text run at (80,129) width 277: "Mozilla, and there's a strong community. A"
+            text run at (98,42) width 245: "particularly good way to get involved "
+            text run at (98,287) width 80: "is to join the"
           RenderInline {A} at (0,0) size 18x71 [color=#0000EE]
-            RenderText {#text} at (115,42) size 19x71
-              text run at (115,42) width 72: "BugAThon"
-          RenderText {#text} at (115,112) size 19x5
-            text run at (115,112) width 5: "."
+            RenderText {#text} at (116,42) size 18x71
+              text run at (116,42) width 71: "BugAThon"
+          RenderText {#text} at (116,112) size 18x5
+            text run at (116,112) width 4: "."

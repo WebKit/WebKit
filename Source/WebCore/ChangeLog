@@ -1,3 +1,21 @@
+2021-07-07  Alan Bujtas  <zalan@apple.com>
+
+        [Legacy line layout] Inline content on subpixel position makes the table cell scroll
+        https://bugs.webkit.org/show_bug.cgi?id=227594
+        <rdar://74884402>
+
+        Reviewed by Simon Fraser.
+
+        The root inlinebox is supposed to fit the [top, top + maxHeight] space as it is computed based
+        on the inline level boxes. However due to the integral rounding on the root inlinebox's logical top,
+        it may accidentally leak out of the containing block and trigger unintended layout overflow.
+        This patch ensures that we don't stretch the line (top/bottom) with the integral positioned root inlinebox.
+
+        Test: fast/inline/hidpi-root-inlinebox-integral-rounding-table-simple.html
+
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::placeBoxesInBlockDirection):
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         IDBIndex.keyPath should keep returning the same object

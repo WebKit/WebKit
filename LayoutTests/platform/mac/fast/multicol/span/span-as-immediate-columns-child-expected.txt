@@ -300,7 +300,7 @@ layer at (13,2056) size 367x658
         text run at (0,162) width 333: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
         text run at (0,180) width 275: "dolor sit amet, consectetuer adipiscing elit."
 layer at (8,2511) size 760x435
-  RenderBlock {DIV} at (0,2495) size 760x436 [border: (5px solid #800000)]
+  RenderBlock {DIV} at (0,2495) size 760x435 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x329
     RenderBlock {H2} at (5,353) size 750x57 [bgcolor=#EEEEEE]
       RenderText {#text} at (0,0) size 709x56
@@ -350,7 +350,7 @@ layer at (13,2516) size 367x658
         text run at (0,180) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderMultiColumnSpannerPlaceholder at (0,658) size 0x0
 layer at (8,2962) size 760x452
-  RenderBlock {DIV} at (0,2946) size 760x452 [border: (5px solid #800000)]
+  RenderBlock {DIV} at (0,2945) size 760x453 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x222
     RenderBlock {H2} at (5,246) size 750x57 [bgcolor=#EEEEEE]
       RenderText {#text} at (0,0) size 743x56
