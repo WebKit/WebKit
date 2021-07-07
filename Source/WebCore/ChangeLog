@@ -1,3 +1,23 @@
+2021-07-07  Tim Nguyen  <ntim@apple.com>
+
+        Use setBooleanAttribute instead of setAttributeWithoutSynchronization(X, Y ? emptyAtom() : nullAtom());
+        https://bugs.webkit.org/show_bug.cgi?id=227745
+
+        Reviewed by Antti Koivisto.
+
+        It's easier to read and attribute sync doesn't make a difference here (it only does for style & SVG attributes).
+        Also clean up HTMLDialogElement to remove intermediary `setOpen` method.
+
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::show):
+        (WebCore::HTMLDialogElement::showModal):
+        (WebCore::HTMLDialogElement::close):
+        (WebCore::HTMLDialogElement::parseAttribute):
+        (WebCore::HTMLDialogElement::setOpen): Deleted.
+        * html/HTMLDialogElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setMultiple):
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         SubtleCrypto should only be exposed to secure contexts
