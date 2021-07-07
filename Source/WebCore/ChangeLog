@@ -1,3 +1,17 @@
+2021-07-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279271.
+        https://bugs.webkit.org/show_bug.cgi?id=227764
+
+        Gmail labels (folders) aren't visible on left side anymore
+
+        Reverted changeset:
+
+        "[css-flexbox] Do not clamp flex base size with
+        {min|max}-{height|width}"
+        https://bugs.webkit.org/show_bug.cgi?id=225590
+        https://commits.webkit.org/r279271
+
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Use more Span
