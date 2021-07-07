@@ -1,5 +1,20 @@
 2021-07-07  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Unexpected content wrap when the containing block width is fixed
+        https://bugs.webkit.org/show_bug.cgi?id=227746
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/inline/inline-content-should-fit-the-line.html
+
+        While we resolved the relative Length value, the float -> LayoutUnit conversion implicitly floors the return value.
+        This flooring causes unexpected content wrap when the type we use for the measured width does not match the precision of the LayoutUnit.
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::processInlineContent):
+
+2021-07-07  Alan Bujtas  <zalan@apple.com>
+
         [Legacy line layout] Inline content on subpixel position makes the table cell scroll
         https://bugs.webkit.org/show_bug.cgi?id=227594
         <rdar://74884402>

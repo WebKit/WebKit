@@ -115,16 +115,16 @@ layer at (0,0) size 785x1458
                   text run at (250,18) width 453: "The background color will make it easier to determine the edges of the"
                   text run at (0,36) width 367: "paragraph, and therefore allow you to calculate its center."
               RenderBlock {P} at (4,178) size 747x54 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 724x54
-                  text run at (0,0) width 724: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of"
-                  text run at (0,18) width 440: "the image should be fixed at the lower right corner of the paragraph. "
-                  text run at (439,18) width 281: "The background color will make it easier to"
+                RenderText {#text} at (0,0) size 748x54
+                  text run at (0,0) width 748: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of the"
+                  text run at (0,18) width 417: "image should be fixed at the lower right corner of the paragraph. "
+                  text run at (416,18) width 280: "The background color will make it easier to"
                   text run at (0,36) width 513: "determine the edges of the paragraph, and therefore allow you to see its corners."
               RenderBlock {P} at (4,248) size 747x54 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 724x54
-                  text run at (0,0) width 724: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of"
-                  text run at (0,18) width 440: "the image should be fixed at the lower right corner of the paragraph. "
-                  text run at (439,18) width 281: "The background color will make it easier to"
+                RenderText {#text} at (0,0) size 748x54
+                  text run at (0,0) width 748: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of the"
+                  text run at (0,18) width 417: "image should be fixed at the lower right corner of the paragraph. "
+                  text run at (416,18) width 280: "The background color will make it easier to"
                   text run at (0,36) width 513: "determine the edges of the paragraph, and therefore allow you to see its corners."
               RenderBlock {P} at (4,318) size 747x54 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 741x54
