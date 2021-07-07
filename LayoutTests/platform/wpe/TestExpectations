@@ -718,7 +718,7 @@ webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageO
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.html [ ImageOnlyFailure ]
-webkit.org/b/224596 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/227061 imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html [ ImageOnlyFailure ]
 
 # These tests are passing most of the times since r275515.
 webkit.org/b/224645 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-006.html [ ImageOnlyFailure Pass ]

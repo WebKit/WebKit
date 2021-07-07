@@ -5031,6 +5031,10 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     if (renderer().isTablePart())
         return false;
 
+    // A fieldset with a legend will have an irregular shape, so can't be treated as opaque.
+    if (renderer().isFieldset())
+        return false;
+
     // FIXME: We currently only check the immediate renderer,
     // which will miss many cases.
     if (renderer().backgroundIsKnownToBeOpaqueInRect(localRect))

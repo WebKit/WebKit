@@ -1,3 +1,18 @@
+2021-07-07  Chris Lord  <clord@igalia.com>
+
+        [WPE] Fieldset elements can incorrectly get treated as opaque with async scrolling overflow areas enabled
+        https://bugs.webkit.org/show_bug.cgi?id=227679
+
+        Reviewed by Simon Fraser.
+
+        Don't treat fieldset elements as opaque as their background shape is
+        determined by its children and can be non-rectangular.
+
+        No new tests, covered by existing tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::backgroundIsKnownToBeOpaqueInRect const):
+
 2021-07-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279628.
