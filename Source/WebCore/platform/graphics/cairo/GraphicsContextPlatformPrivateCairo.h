@@ -29,8 +29,6 @@
 
 #if USE(CAIRO)
 
-#include "PlatformContextCairo.h"
-
 namespace WebCore {
 
 class GraphicsContextPlatformPrivate {

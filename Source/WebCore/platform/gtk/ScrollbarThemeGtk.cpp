@@ -30,7 +30,7 @@
 #if !USE(GTK4)
 
 #include "GRefPtrGtk.h"
-#include "PlatformContextCairo.h"
+#include "GraphicsContextCairo.h"
 #include "PlatformMouseEvent.h"
 #include "RenderThemeScrollbar.h"
 #include "ScrollView.h"

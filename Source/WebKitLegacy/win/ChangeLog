@@ -1,3 +1,14 @@
+2021-07-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo] Merge PlatformContextCairo into GraphicsContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=227721
+
+        Reviewed by Don Olmstead.
+
+        * WebFrame.cpp:
+        (WebFrame::spoolPages):
+        * WebFrame.h:
+
 2021-06-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Remove unused GraphicsContext::shouldIncludeChildWindows()

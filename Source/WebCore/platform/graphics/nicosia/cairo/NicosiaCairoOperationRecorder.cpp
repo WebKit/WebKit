@@ -44,7 +44,7 @@
 namespace Nicosia {
 using namespace WebCore;
 
-PlatformContextCairo& contextForReplay(PaintingOperationReplay& operationReplay)
+GraphicsContextCairo& contextForReplay(PaintingOperationReplay& operationReplay)
 {
     return static_cast<PaintingOperationReplayCairo&>(operationReplay).platformContext;
 }

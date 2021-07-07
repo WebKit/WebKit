@@ -37,7 +37,6 @@
 #include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/PlatformContextCairo.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
 #include <gtk/gtk.h>

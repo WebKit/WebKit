@@ -36,7 +36,6 @@
 #include "NicosiaBuffer.h"
 #include "NicosiaCairoOperationRecorder.h"
 #include "NicosiaPaintingOperationReplayCairo.h"
-#include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
 #include <utility>

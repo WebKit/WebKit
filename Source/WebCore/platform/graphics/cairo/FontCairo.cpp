@@ -42,7 +42,6 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Pattern.h"
-#include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include "ShadowBlur.h"
 

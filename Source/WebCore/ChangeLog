@@ -1,3 +1,144 @@
+2021-07-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo] Merge PlatformContextCairo into GraphicsContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=227721
+
+        Reviewed by Don Olmstead.
+
+        PlatformContextCairo was introduced to separate Cairo specific
+        code from the platform-independent GraphicsContext class. However,
+        GraphicsContext is a abstract class since r278062. And,
+        GraphicsContextCairo is a Cairo specific concrete class.
+
+        Some modifications are needed to merge PlatformContextCairo into
+        GraphicsContextCairo. Renamed m_state to m_cairoState. Renamed
+        save() and restore() to saveInternal() and restoreInternal().
+
+        * platform/Cairo.cmake:
+        * platform/SourcesCairo.txt:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawShadowLayerBuffer):
+        (WebCore::Cairo::drawShadowImage):
+        (WebCore::Cairo::fillShadowBuffer):
+        (WebCore::Cairo::drawPathShadow):
+        (WebCore::Cairo::fillCurrentCairoPath):
+        (WebCore::Cairo::drawGlyphsShadow):
+        (WebCore::Cairo::computeLineBoundsAndAntialiasingModeForText):
+        (WebCore::Cairo::State::setStrokeThickness):
+        (WebCore::Cairo::State::setStrokeStyle):
+        (WebCore::Cairo::State::setCompositeOperation):
+        (WebCore::Cairo::State::setShouldAntialias):
+        (WebCore::Cairo::State::setCTM):
+        (WebCore::Cairo::State::getCTM):
+        (WebCore::Cairo::State::getClipBounds):
+        (WebCore::Cairo::State::roundToDevicePixels):
+        (WebCore::Cairo::State::isAcceleratedContext):
+        (WebCore::Cairo::ShadowState::isRequired const):
+        (WebCore::Cairo::setLineCap):
+        (WebCore::Cairo::setLineDash):
+        (WebCore::Cairo::setLineJoin):
+        (WebCore::Cairo::setMiterLimit):
+        (WebCore::Cairo::fillRect):
+        (WebCore::Cairo::fillRoundedRect):
+        (WebCore::Cairo::fillRectWithRoundedHole):
+        (WebCore::Cairo::fillPath):
+        (WebCore::Cairo::strokeRect):
+        (WebCore::Cairo::strokePath):
+        (WebCore::Cairo::clearRect):
+        (WebCore::Cairo::drawGlyphs):
+        (WebCore::Cairo::drawPlatformImage):
+        (WebCore::Cairo::drawPattern):
+        (WebCore::Cairo::drawSurface):
+        (WebCore::Cairo::drawRect):
+        (WebCore::Cairo::drawLine):
+        (WebCore::Cairo::drawLinesForText):
+        (WebCore::Cairo::drawDotsForDocumentMarker):
+        (WebCore::Cairo::drawEllipse):
+        (WebCore::Cairo::drawFocusRing):
+        (WebCore::Cairo::save):
+        (WebCore::Cairo::restore):
+        (WebCore::Cairo::translate):
+        (WebCore::Cairo::rotate):
+        (WebCore::Cairo::scale):
+        (WebCore::Cairo::concatCTM):
+        (WebCore::Cairo::beginTransparencyLayer):
+        (WebCore::Cairo::endTransparencyLayer):
+        (WebCore::Cairo::clip):
+        (WebCore::Cairo::clipOut):
+        (WebCore::Cairo::clipPath):
+        (WebCore::Cairo::clipToImageBuffer):
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        * platform/graphics/cairo/GradientCairo.cpp:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        (WebCore::GraphicsContextCairo::platformContext const):
+        (WebCore::GraphicsContextCairo::save):
+        (WebCore::GraphicsContextCairo::restore):
+        (WebCore::GraphicsContextCairo::drawRect):
+        (WebCore::GraphicsContextCairo::drawNativeImage):
+        (WebCore::GraphicsContextCairo::drawLine):
+        (WebCore::GraphicsContextCairo::drawEllipse):
+        (WebCore::GraphicsContextCairo::fillPath):
+        (WebCore::GraphicsContextCairo::strokePath):
+        (WebCore::GraphicsContextCairo::fillRect):
+        (WebCore::GraphicsContextCairo::clip):
+        (WebCore::GraphicsContextCairo::clipPath):
+        (WebCore::GraphicsContextCairo::clipToImageBuffer):
+        (WebCore::GraphicsContextCairo::drawFocusRing):
+        (WebCore::GraphicsContextCairo::drawLinesForText):
+        (WebCore::GraphicsContextCairo::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContextCairo::roundToDevicePixels):
+        (WebCore::GraphicsContextCairo::translate):
+        (WebCore::GraphicsContextCairo::updateState):
+        (WebCore::GraphicsContextCairo::concatCTM):
+        (WebCore::GraphicsContextCairo::setCTM):
+        (WebCore::GraphicsContextCairo::beginTransparencyLayer):
+        (WebCore::GraphicsContextCairo::endTransparencyLayer):
+        (WebCore::GraphicsContextCairo::clearRect):
+        (WebCore::GraphicsContextCairo::strokeRect):
+        (WebCore::GraphicsContextCairo::setLineCap):
+        (WebCore::GraphicsContextCairo::setLineDash):
+        (WebCore::GraphicsContextCairo::setLineJoin):
+        (WebCore::GraphicsContextCairo::setMiterLimit):
+        (WebCore::GraphicsContextCairo::clipOut):
+        (WebCore::GraphicsContextCairo::rotate):
+        (WebCore::GraphicsContextCairo::scale):
+        (WebCore::GraphicsContextCairo::fillRoundedRectImpl):
+        (WebCore::GraphicsContextCairo::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextCairo::drawPattern):
+        (WebCore::GraphicsContextCairo::drawGlyphs):
+        (WebCore::GraphicsContextCairo::cr const):
+        (WebCore::GraphicsContextCairo::layers):
+        (WebCore::GraphicsContextCairo::saveInternal):
+        (WebCore::GraphicsContextCairo::restoreInternal):
+        (WebCore::GraphicsContextCairo::pushImageMask):
+        (WebCore::GraphicsContextCairo::graphicsContextPrivate):
+        (WebCore::GraphicsContextCairo::~GraphicsContextCairo): Deleted.
+        * platform/graphics/cairo/GraphicsContextCairo.h:
+        * platform/graphics/cairo/GraphicsContextGLCairo.cpp:
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        * platform/graphics/cairo/PlatformContextCairo.cpp: Removed.
+        * platform/graphics/cairo/PlatformContextCairo.h: Removed.
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::contextForReplay):
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp:
+        * platform/graphics/nicosia/cairo/NicosiaPaintingOperationReplayCairo.h:
+        (Nicosia::PaintingOperationReplayCairo::PaintingOperationReplayCairo):
+        * platform/graphics/win/Direct2DOperations.h:
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        (WebCore::drawBitmapToContext):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::deallocContext):
+        (WebCore::allocImage):
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageFromImage):
+
 2021-07-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279271.

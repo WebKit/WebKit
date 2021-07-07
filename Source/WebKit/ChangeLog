@@ -1,3 +1,15 @@
+2021-07-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo] Merge PlatformContextCairo into GraphicsContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=227721
+
+        Reviewed by Don Olmstead.
+
+        * Shared/API/c/cairo/WKImageCairo.cpp:
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
         XPC services should release their os transaction when given a SIGTERM signal

@@ -72,7 +72,7 @@ GraphicsContextCairo::GraphicsContextCairo(HDC dc, bool hasAlpha)
 {
 }
 
-GraphicsContextCairo::GraphicsContextCairo(PlatformContextCairo* platformContext)
+GraphicsContextCairo::GraphicsContextCairo(GraphicsContextCairo* platformContext)
     : GraphicsContextCairo(platformContext->cr())
 {
 }
@@ -84,7 +84,7 @@ static void setRGBABitmapAlpha(unsigned char* bytes, size_t length, unsigned cha
         bytes[i + 3] = level;
 }
 
-static void drawBitmapToContext(PlatformContextCairo& platformContext, const DIBPixelData& pixelData, const IntSize& translate)
+static void drawBitmapToContext(GraphicsContextCairo& platformContext, const DIBPixelData& pixelData, const IntSize& translate)
 {
     // Need to make a cairo_surface_t out of the bitmap's pixel buffer and then draw
     // it into our context.

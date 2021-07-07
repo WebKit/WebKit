@@ -48,7 +48,6 @@ class FloatRect;
 class FloatRoundedRect;
 class FloatSize;
 class Path;
-class PlatformContextCairo;
 
 struct GraphicsContextState;
 

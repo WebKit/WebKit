@@ -54,9 +54,9 @@ class PlatformContextDirect2D;
 typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 namespace WebCore {
-class PlatformContextCairo;
+class GraphicsContextCairo;
 }
-typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
+typedef WebCore::GraphicsContextCairo PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
 #endif

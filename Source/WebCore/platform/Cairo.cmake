@@ -16,7 +16,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cairo/ImageBufferCairoBackend.h
     platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.h
     platform/graphics/cairo/ImageBufferCairoSurfaceBackend.h
-    platform/graphics/cairo/PlatformContextCairo.h
     platform/graphics/cairo/RefPtrCairo.h
 )
 
