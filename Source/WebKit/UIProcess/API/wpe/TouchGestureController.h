@@ -27,29 +27,44 @@
 
 #include "WebWheelEvent.h"
 #include <wpe/wpe.h>
+#include <wtf/Variant.h>
 
 namespace WebKit {
 
-class ScrollGestureController {
+class TouchGestureController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ScrollGestureController() = default;
+    TouchGestureController() = default;
 
-    struct wpe_input_axis_event* axisEvent()
-    {
+    enum class GesturedEvent {
+        None,
+        Click,
+        Axis,
+    };
+
+    struct NoEvent { };
+
+    struct ClickEvent {
+        struct wpe_input_pointer_event event;
+    };
+
+    struct AxisEvent {
 #if WPE_CHECK_VERSION(1, 5, 0)
-        return &m_axisEvent.base;
+        struct wpe_input_axis_2d_event event;
 #else
-        return &m_axisEvent;
+        struct wpe_input_axis_event event;
 #endif
-    }
+        WebWheelEvent::Phase phase;
+    };
 
-    WebWheelEvent::Phase phase() { return m_phase; }
+    using EventVariant = Variant<NoEvent, ClickEvent, AxisEvent>;
 
-    bool isHandling() const { return m_handling; }
-    bool handleEvent(const struct wpe_input_touch_event_raw*);
+    GesturedEvent gesturedEvent() const { return m_gesturedEvent; }
+    EventVariant handleEvent(const struct wpe_input_touch_event_raw*);
 
 private:
+    GesturedEvent m_gesturedEvent { GesturedEvent::None };
+
     struct {
         bool active { false };
         uint32_t time { 0 };
@@ -61,14 +76,6 @@ private:
         int32_t x { 0 };
         int32_t y { 0 };
     } m_offset;
-
-    bool m_handling { false };
-#if WPE_CHECK_VERSION(1, 5, 0)
-    struct wpe_input_axis_2d_event m_axisEvent;
-#else
-    struct wpe_input_axis_event m_axisEvent;
-#endif
-    WebWheelEvent::Phase m_phase { WebWheelEvent::Phase::PhaseNone };
 
     bool m_xAxisLockBroken { false };
     bool m_yAxisLockBroken { false };

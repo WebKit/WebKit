@@ -30,7 +30,7 @@
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "ScrollGestureController.h"
+#include "TouchGestureController.h"
 #include "WPEView.h"
 #include "WebContextMenuProxy.h"
 #include "WebContextMenuProxyWPE.h"
@@ -212,42 +212,44 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
         return;
 
     auto& page = m_view.page();
-    auto& scrollGestureController = m_view.scrollGestureController();
+    auto& touchGestureController = m_view.touchGestureController();
 
-    if (scrollGestureController.handleEvent(touchPoint)) {
-        struct wpe_input_axis_event* axisEvent = scrollGestureController.axisEvent();
-        if (axisEvent->type != wpe_input_axis_event_type_null)
-            page.handleWheelEvent(WebKit::NativeWebWheelEvent(axisEvent, m_view.page().deviceScaleFactor(), scrollGestureController.phase(), WebWheelEvent::Phase::PhaseNone));
-        return;
-    }
+    auto generatedEvent = touchGestureController.handleEvent(touchPoint);
+    WTF::switchOn(generatedEvent,
+        [](TouchGestureController::NoEvent&) { },
+        [&](TouchGestureController::ClickEvent& clickEvent)
+        {
+            auto* event = &clickEvent.event;
 
-    struct wpe_input_pointer_event pointerEvent {
-        wpe_input_pointer_event_type_null, touchPoint->time,
-        touchPoint->x, touchPoint->y,
-        1, 0, 0
-    };
+            // Mouse motion towards the point of the click.
+            event->type = wpe_input_pointer_event_type_motion;
+            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
 
-    switch (touchPoint->type) {
-    case wpe_input_touch_event_type_down:
-        pointerEvent.type = wpe_input_pointer_event_type_button;
-        pointerEvent.state = 1;
-        pointerEvent.modifiers |= wpe_input_pointer_modifier_button1;
-        break;
-    case wpe_input_touch_event_type_motion:
-        pointerEvent.type = wpe_input_pointer_event_type_motion;
-        pointerEvent.state = 1;
-        break;
-    case wpe_input_touch_event_type_up:
-        pointerEvent.type = wpe_input_pointer_event_type_button;
-        pointerEvent.state = 0;
-        pointerEvent.modifiers &= ~wpe_input_pointer_modifier_button1;
-        break;
-    case wpe_input_touch_event_type_null:
-        ASSERT_NOT_REACHED();
-        return;
-    }
+            event->type = wpe_input_pointer_event_type_button;
+            event->button = 1;
 
-    page.handleMouseEvent(NativeWebMouseEvent(&pointerEvent, page.deviceScaleFactor()));
+            // Mouse down on the point of the click.
+            event->state = 1;
+            event->modifiers |= wpe_input_pointer_modifier_button1;
+            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
+
+            // Mouse up on the same location.
+            event->state = 0;
+            event->modifiers &= ~wpe_input_pointer_modifier_button1;
+            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
+        },
+        [&](TouchGestureController::AxisEvent& axisEvent)
+        {
+#if WPE_CHECK_VERSION(1, 5, 0)
+            auto* event = &axisEvent.event.base;
+#else
+            auto* event = &axisEvent.event;
+#endif
+            if (event->type != wpe_input_axis_event_type_null) {
+                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
+                    axisEvent.phase, WebWheelEvent::Phase::PhaseNone));
+            }
+        });
 }
 #endif
 

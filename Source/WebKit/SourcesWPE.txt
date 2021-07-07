@@ -179,7 +179,7 @@ UIProcess/API/glib/WebKitWebsitePolicies.cpp @no-unify
 
 UIProcess/API/wpe/InputMethodFilterWPE.cpp @no-unify
 UIProcess/API/wpe/PageClientImpl.cpp @no-unify
-UIProcess/API/wpe/ScrollGestureController.cpp @no-unify
+UIProcess/API/wpe/TouchGestureController.cpp @no-unify
 UIProcess/API/wpe/WebKitColor.cpp @no-unify
 UIProcess/API/wpe/WebKitInputMethodContextWPE.cpp @no-unify
 UIProcess/API/wpe/WebKitPopupMenu.cpp @no-unify

@@ -1,3 +1,44 @@
+2021-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Rework touch-based gesture controller
+        https://bugs.webkit.org/show_bug.cgi?id=226456
+
+        Reviewed by Alejandro G. Castro.
+
+        Rename WPE's ScrollGestureController to TouchGestureController since now
+        it also handles production of touch-based click events.
+
+        TouchGestureController now internally manages all the related state,
+        tracking the touch interaction and determining whether it progresses
+        into a scrolling gesture or whether, upon finishing, it should be
+        translated into a simple click event.
+
+        In PageClientImpl, any unhandled event is pushed into
+        TouchGestureController and a variant of different outcomes is returned.
+        No-event result is ignored, and click or axis events are dispatched as
+        appropriate.
+
+        In WPEView, where the touch events arrive into the engine, we keep the
+        shortcut where touch events are piped directly into the controller if
+        said controller is already gesturing scrolling behavior. In that case
+        the touch events are not dispatched into the engine, with the exception
+        of touch-up events which are, to provide matching closure for the
+        touch-down events.
+
+        * SourcesWPE.txt:
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * UIProcess/API/wpe/TouchGestureController.cpp: Renamed from Source/WebKit/UIProcess/API/wpe/ScrollGestureController.cpp.
+        (WebKit::TouchGestureController::handleEvent):
+        * UIProcess/API/wpe/TouchGestureController.h: Renamed from Source/WebKit/UIProcess/API/wpe/ScrollGestureController.h.
+        (WebKit::TouchGestureController::gesturedEvent const):
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::View):
+        (WKWPE::m_backend):
+        * UIProcess/API/wpe/WPEView.h:
+        (WKWPE::View::touchGestureController const):
+        (WKWPE::View::scrollGestureController const): Deleted.
+
 2021-06-11  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Crash when dragging an account node above WebView
