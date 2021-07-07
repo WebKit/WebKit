@@ -647,7 +647,8 @@ void Heap::iterateExecutingAndCompilingCodeBlocks(Visitor& visitor, const Functi
 {
     m_codeBlocks->iterateCurrentlyExecuting(func);
 #if ENABLE(JIT)
-    JITWorklist::ensureGlobalWorklist().iterateCodeBlocksForGC(visitor, m_vm, func);
+    if (Options::useJIT())
+        JITWorklist::ensureGlobalWorklist().iterateCodeBlocksForGC(visitor, m_vm, func);
 #else
     UNUSED_PARAM(visitor);
 #endif // ENABLE(JIT)

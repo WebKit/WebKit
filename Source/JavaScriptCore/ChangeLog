@@ -1,3 +1,25 @@
+2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not allocate JITWorklist if JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=227734
+
+        Reviewed by Mark Lam.
+
+        Previously, this code was doing,
+
+            if (Options::useJIT())
+                DFG::iterateCodeBlocksForGC(visitor, m_vm, func);
+
+        But r278082 changed it to
+
+            JITWorklist::ensureGlobalWorklist().iterateCodeBlocksForGC(visitor, m_vm, func);
+
+        As a result, we are always allocating JITWorklist even JIT is not enabled.
+        This patch fixes the behavior not to allocate JITWorklist.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+
 2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         r270214 broke testb3 on arm64e
