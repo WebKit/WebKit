@@ -279,11 +279,11 @@ static AccessibilityPreferences accessibilityPreferences()
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     auto appId = WebCore::applicationBundleIdentifier().createCFString();
 
-    preferences.reduceMotionEnabled = _AXSReduceMotionEnabledApp(appId.get()) == AXValueStateOn;
-    preferences.increaseButtonLegibility = _AXSIncreaseButtonLegibilityApp(appId.get()) == AXValueStateOn;
-    preferences.enhanceTextLegibility = _AXSEnhanceTextLegibilityEnabledApp(appId.get()) == AXValueStateOn;
-    preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get()) == AXValueStateOn;
-    preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get()) == AXValueStateOn;
+    preferences.reduceMotionEnabled = _AXSReduceMotionEnabledApp(appId.get());
+    preferences.increaseButtonLegibility = _AXSIncreaseButtonLegibilityApp(appId.get());
+    preferences.enhanceTextLegibility = _AXSEnhanceTextLegibilityEnabledApp(appId.get());
+    preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get());
+    preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     preferences.captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
