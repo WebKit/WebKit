@@ -1,3 +1,13 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Update URL test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=172337
+
+        Before r225186 this test asserted, so it was marked as pass/fail for some reason instead of being skipped.
+        Now it's fine, though, so mark it as passing and update the expectations.
+
+        * TestExpectations:
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         SubtleCrypto should only be exposed to secure contexts
