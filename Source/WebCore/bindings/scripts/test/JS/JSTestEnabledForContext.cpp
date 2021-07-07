@@ -80,14 +80,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEnabledForContextPrototype, JSTestEnabledForContextPrototype::Base);
 
 using JSTestEnabledForContextDOMConstructor = JSDOMConstructorNotConstructable<JSTestEnabledForContext>;
 
-template<> const unsigned JSTestEnabledForContextDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestEnabledForContextDOMConstructor::s_info = { "TestEnabledForContext", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextDOMConstructor) };
 
 template<> JSValue JSTestEnabledForContextDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -103,21 +100,14 @@ template<> void JSTestEnabledForContextDOMConstructor::initializeProperties(VM& 
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestEnabledForContextPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestEnabledForContextPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEnabledForContextConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSTestEnabledForContextPrototypeTable = { 1, 1, true, JSTestEnabledForContext::info(), JSTestEnabledForContextPrototypeTableValues, JSTestEnabledForContextPrototypeTableIndex };
-const ClassInfo JSTestEnabledForContextPrototype::s_info = { "TestEnabledForContext", &Base::s_info, &JSTestEnabledForContextPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextPrototype) };
+const ClassInfo JSTestEnabledForContextPrototype::s_info = { "TestEnabledForContext", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextPrototype) };
 
 void JSTestEnabledForContextPrototype::finishCreation(VM& vm)
 {
@@ -126,32 +116,7 @@ void JSTestEnabledForContextPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-static JSValue createJSTestEnabledForContextInstance_TestSubObjEnabledForContext(VM& vm, JSObject*)
-{
-    return CustomGetterSetter::create(vm, jsTestEnabledForContext_TestSubObjEnabledForContextConstructor, nullptr);
-}
-
-static bool isEnabledJSTestEnabledForContextInstance_TestSubObjEnabledForContext(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return (jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled && TestSubObjEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()));
-}
-
-/* Hash table for Instance */
-
-static const struct CompactHashIndex JSTestEnabledForContextInstanceTableIndex[2] = {
-    { 0, -1 },
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestEnabledForContextInstanceTableValues[] =
-{
-    { "TestSubObjEnabledForContext", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestEnabledForContextInstance_TestSubObjEnabledForContext), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestEnabledForContextInstance_TestSubObjEnabledForContext) } },
-};
-
-static const HashTable JSTestEnabledForContextInstanceTable = { 1, 1, true, JSTestEnabledForContext::info(), JSTestEnabledForContextInstanceTableValues, JSTestEnabledForContextInstanceTableIndex };
-const ClassInfo JSTestEnabledForContext::s_info = { "TestEnabledForContext", &Base::s_info, &JSTestEnabledForContextInstanceTable, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContext) };
+const ClassInfo JSTestEnabledForContext::s_info = { "TestEnabledForContext", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContext) };
 
 JSTestEnabledForContext::JSTestEnabledForContext(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEnabledForContext>&& impl)
     : JSDOMWrapper<TestEnabledForContext>(structure, globalObject, WTFMove(impl))
@@ -165,6 +130,8 @@ void JSTestEnabledForContext::finishCreation(VM& vm)
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestEnabledForContext>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
+    if ((jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled && TestSubObjEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestSubObjEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsTestEnabledForContext_TestSubObjEnabledForContextConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
 }
 
 JSObject* JSTestEnabledForContext::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

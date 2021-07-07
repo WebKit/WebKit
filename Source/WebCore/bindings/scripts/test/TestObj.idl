@@ -180,10 +180,6 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=Condition4, JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
 
     // Private extended attribute
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] attribute long enabledAtRuntimePrivateAttr;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] readonly attribute DOMString enabledAtRuntimePrivateReadOnlyAttr;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] static readonly attribute TestObj enabledAtRuntimePrivateStaticReadOnlyAttr;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] static boolean enabledAtRuntimePrivateStaticMethod(long longArg);
     [PrivateIdentifier] DOMString privateMethod(DOMString argument);
     [PrivateIdentifier, PublicIdentifier] DOMString publicAndPrivateMethod(DOMString argument);
 

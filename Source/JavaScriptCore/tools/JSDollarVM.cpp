@@ -862,80 +862,6 @@ public:
     }
 };
 
-static inline bool getDirectBoolean(JSGlobalObject* globalObject, ASCIILiteral string)
-{
-    DollarVMAssertScope assertScope;
-    VM& vm = globalObject->vm();
-    JSValue isEnabled = globalObject->getDirect(vm, Identifier::fromString(vm, string));
-    if (!isEnabled || !isEnabled.isBoolean())
-        return false;
-    return isEnabled.asBoolean();
-}
-
-static JSC_DECLARE_HOST_FUNCTION(lazyAccessorGetter);
-JSC_DEFINE_HOST_FUNCTION(lazyAccessorGetter, (JSGlobalObject*, CallFrame* callFrame)) { return JSValue::encode(callFrame->thisValue()); }
-static JSValue createLazyCallbackAccessor(VM& vm, JSObject* thisObject) { return GetterSetter::create(vm, thisObject->globalObject(vm), JSFunction::create(vm, thisObject->globalObject(vm), 0, String(), lazyAccessorGetter), nullptr); }
-static bool isEnabledLazyCallbackAccessor(JSGlobalObject* globalObject) { return getDirectBoolean(globalObject, "isEnabledLazyCallbackAccessor"_s); }
-
-static JSValue createLazyCallbackCustomAccessor(VM& vm, JSObject*) { return CustomGetterSetter::create(vm, testStaticAccessorGetter, testStaticAccessorPutter); }
-static bool isEnabledLazyCallbackCustomAccessor(JSGlobalObject* globalObject) { return getDirectBoolean(globalObject, "isEnabledLazyCallbackCustomAccessor"_s); }
-
-static JSValue createLazyCallbackConstantInteger(VM&, JSObject*) { return jsNumber(42); }
-static bool isEnabledLazyCallbackConstantInteger(JSGlobalObject* globalObject) { return getDirectBoolean(globalObject, "isEnabledLazyCallbackConstantInteger"_s); }
-
-static const struct HashTableValue staticLazyPropertyTableValues[3] = {
-    { "testLazyCallbackAccessor", PropertyAttribute::ReadOnly | PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createLazyCallbackAccessor), (intptr_t)static_cast<IsLazyPropertyEnabledCallback>(isEnabledLazyCallbackAccessor) } },
-    { "testLazyCallbackCustomAccessor", PropertyAttribute::CustomAccessor | PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createLazyCallbackCustomAccessor), (intptr_t)static_cast<IsLazyPropertyEnabledCallback>(isEnabledLazyCallbackCustomAccessor) } },
-    { "testLazyCallbackConstantInteger", PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createLazyCallbackConstantInteger), (intptr_t)static_cast<IsLazyPropertyEnabledCallback>(isEnabledLazyCallbackConstantInteger) } },
-};
-
-static const struct CompactHashIndex staticLazyPropertyTableIndex[8] = {
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 0, -1 },
-    { 2, -1 },
-    { -1, -1 },
-    { 1, -1 },
-};
-
-static const struct HashTable staticLazyPropertyTable =
-    { 3, 7, true, nullptr, staticLazyPropertyTableValues, staticLazyPropertyTableIndex };
-
-class StaticLazyProperty : public JSNonFinalObject {
-    using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
-public:
-    StaticLazyProperty(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-        DollarVMAssertScope assertScope;
-    }
-
-    DECLARE_INFO;
-
-    template<typename CellType, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.cellSpace;
-    }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        DollarVMAssertScope assertScope;
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
-
-    static StaticLazyProperty* create(VM& vm, Structure* structure)
-    {
-        DollarVMAssertScope assertScope;
-        StaticLazyProperty* lazyProperty = new (NotNull, allocateCell<StaticLazyProperty>(vm.heap)) StaticLazyProperty(vm, structure);
-        lazyProperty->finishCreation(vm);
-        return lazyProperty;
-    }
-};
-
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
@@ -1786,7 +1712,6 @@ const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter",
 
 const ClassInfo StaticCustomAccessor::s_info = { "StaticCustomAccessor", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(StaticCustomAccessor) };
 const ClassInfo StaticCustomValue::s_info = { "StaticCustomValue", &Base::s_info, &staticCustomValueTable, nullptr, CREATE_METHOD_TABLE(StaticCustomValue) };
-const ClassInfo StaticLazyProperty::s_info = { "StaticLazyProperty", &Base::s_info, &staticLazyPropertyTable, nullptr, CREATE_METHOD_TABLE(StaticLazyProperty) };
 const ClassInfo ObjectDoingSideEffectPutWithoutCorrectSlotStatus::s_info = { "ObjectDoingSideEffectPutWithoutCorrectSlotStatus", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(ObjectDoingSideEffectPutWithoutCorrectSlotStatus) };
 
 ElementHandleOwner* Element::handleOwner()
@@ -2052,7 +1977,6 @@ static JSC_DECLARE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantia
 #endif
 static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticCustomAccessor);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticCustomValue);
-static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticLazyProperty);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateEmptyFunctionWithName);
 static JSC_DECLARE_HOST_FUNCTION(functionSetImpureGetterDelegate);
@@ -3055,16 +2979,6 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateStaticCustomValue, (JSGlobalObject* globa
     return JSValue::encode(result);
 }
 
-JSC_DEFINE_HOST_FUNCTION(functionCreateStaticLazyProperty, (JSGlobalObject* globalObject, CallFrame*))
-{
-    DollarVMAssertScope assertScope;
-    VM& vm = globalObject->vm();
-    JSLockHolder lock(vm);
-    Structure* structure = StaticLazyProperty::createStructure(vm, globalObject, jsNull());
-    auto* result = StaticLazyProperty::create(vm, structure);
-    return JSValue::encode(result);
-}
-
 JSC_DEFINE_HOST_FUNCTION(functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -3857,7 +3771,6 @@ void JSDollarVM::finishCreation(VM& vm)
 #endif
     addFunction(vm, "createStaticCustomAccessor", functionCreateStaticCustomAccessor, 0);
     addFunction(vm, "createStaticCustomValue", functionCreateStaticCustomValue, 0);
-    addFunction(vm, "createStaticLazyProperty", functionCreateStaticLazyProperty, 0);
     addFunction(vm, "createObjectDoingSideEffectPutWithoutCorrectSlotStatus", functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, 0);
     addFunction(vm, "createEmptyFunctionWithName", functionCreateEmptyFunctionWithName, 1);
     addFunction(vm, "getPrivateProperty", functionGetPrivateProperty, 2);

@@ -84,14 +84,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDelegateToSharedSyntheticAttributePrototype, JSTestDelegateToSharedSyntheticAttributePrototype::Base);
 
 using JSTestDelegateToSharedSyntheticAttributeDOMConstructor = JSDOMConstructorNotConstructable<JSTestDelegateToSharedSyntheticAttribute>;
 
-template<> const unsigned JSTestDelegateToSharedSyntheticAttributeDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestDelegateToSharedSyntheticAttributeDOMConstructor::s_info = { "TestDelegateToSharedSyntheticAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDelegateToSharedSyntheticAttributeDOMConstructor) };
 
 template<> JSValue JSTestDelegateToSharedSyntheticAttributeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -107,42 +104,19 @@ template<> void JSTestDelegateToSharedSyntheticAttributeDOMConstructor::initiali
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestDelegateToSharedSyntheticAttributePrototypeTableIndex[18] = {
-    { 5, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 4, -1 },
-    { 1, 16 },
-    { 0, 17 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { 3, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestDelegateToSharedSyntheticAttributePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "property1", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1) } },
-    { "property2", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1) } },
-    { "property3", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1) } },
-    { "property4", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute2) } },
-    { "property5", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute2) } },
+    { "property1", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1) } },
+    { "property2", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1) } },
+    { "property3", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1) } },
+    { "property4", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute2) } },
+    { "property5", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute2) } },
 };
 
-static const HashTable JSTestDelegateToSharedSyntheticAttributePrototypeTable = { 6, 15, true, JSTestDelegateToSharedSyntheticAttribute::info(), JSTestDelegateToSharedSyntheticAttributePrototypeTableValues, JSTestDelegateToSharedSyntheticAttributePrototypeTableIndex };
-const ClassInfo JSTestDelegateToSharedSyntheticAttributePrototype::s_info = { "TestDelegateToSharedSyntheticAttribute", &Base::s_info, &JSTestDelegateToSharedSyntheticAttributePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestDelegateToSharedSyntheticAttributePrototype) };
+const ClassInfo JSTestDelegateToSharedSyntheticAttributePrototype::s_info = { "TestDelegateToSharedSyntheticAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDelegateToSharedSyntheticAttributePrototype) };
 
 void JSTestDelegateToSharedSyntheticAttributePrototype::finishCreation(VM& vm)
 {

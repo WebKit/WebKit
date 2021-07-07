@@ -1,3 +1,32 @@
+2021-07-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279546, r279554, r279558 and r279567.
+        https://bugs.webkit.org/show_bug.cgi?id=227732
+
+        Speedometer/jQuery-TodoMVC 2-3% regression
+
+        Reverted changesets:
+
+        "[WebIDL] Rework runtime enabled properties leveraging
+        PropertyCallback"
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+        https://commits.webkit.org/r279546
+
+        "[WebIDL] Generate constructor's hash table in
+        GenerateConstructorHelperMethods"
+        https://bugs.webkit.org/show_bug.cgi?id=227668
+        https://commits.webkit.org/r279554
+
+        "[WebIDL] Simplify generation of runtime conditionally read-
+        write attributes"
+        https://bugs.webkit.org/show_bug.cgi?id=227672
+        https://commits.webkit.org/r279558
+
+        "Use AbortSignal's [PrivateIdentifier] whenSignalAborted()
+        static method"
+        https://bugs.webkit.org/show_bug.cgi?id=227673
+        https://commits.webkit.org/r279567
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         Unable to use 'data:application/javascript' url for Worker

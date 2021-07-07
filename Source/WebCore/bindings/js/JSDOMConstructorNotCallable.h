@@ -33,8 +33,8 @@ namespace WebCore {
 template<typename JSClass> class JSDOMConstructorNotCallable : public JSDOMObject {
 public:
     using Base = JSDOMObject;
-    static const unsigned StructureFlags;
 
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
     static constexpr bool needsDestruction = false;
     static JSDOMConstructorNotCallable* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);

@@ -171,7 +171,6 @@ public:
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
     bool getOwnPropertySlotInline(JSGlobalObject*, PropertyName, PropertySlot&);
-    bool fillStructurePropertySlot(VM&, Structure*, PropertyOffset, unsigned attributes, PropertySlot&);
 
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
     // currently returns incorrect results for the DOM window (with non-own properties)
@@ -649,7 +648,7 @@ public:
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
-    JS_EXPORT_PRIVATE bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
+    bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
     void putDirectNonIndexAccessorWithoutTransition(VM&, PropertyName, GetterSetter*, unsigned attributes);
     bool putDirectAccessor(JSGlobalObject*, PropertyName, GetterSetter*, unsigned attributes);
     JS_EXPORT_PRIVATE bool putDirectCustomAccessor(VM&, PropertyName, JSValue, unsigned attributes);
@@ -1392,12 +1391,6 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
     // getPropertySlot relies on this method never returning index properties!
     ASSERT(!parseIndex(propertyName));
 
-    fillStructurePropertySlot(vm, structure, offset, attributes, slot);
-    return true;
-}
-
-ALWAYS_INLINE bool JSObject::fillStructurePropertySlot(VM& vm, Structure* structure, PropertyOffset offset, unsigned attributes, PropertySlot& slot)
-{
     JSValue value = getDirect(offset);
     if (value.isCell()) {
         ASSERT(value);

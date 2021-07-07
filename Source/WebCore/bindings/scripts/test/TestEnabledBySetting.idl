@@ -24,8 +24,6 @@
  */
 
 [
-    PrivateIdentifier,
-    PublicIdentifier,
     Exposed=Window
 ] interface TestEnabledBySetting {
     [EnabledBySetting=TestSetting] attribute TestSubObjConstructor TestSubObjEnabledBySetting;

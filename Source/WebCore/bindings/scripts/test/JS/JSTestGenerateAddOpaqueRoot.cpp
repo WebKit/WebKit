@@ -80,14 +80,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestGenerateAddOpaqueRootPrototype, JSTestGenerateAddOpaqueRootPrototype::Base);
 
 using JSTestGenerateAddOpaqueRootDOMConstructor = JSDOMConstructorNotConstructable<JSTestGenerateAddOpaqueRoot>;
 
-template<> const unsigned JSTestGenerateAddOpaqueRootDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestGenerateAddOpaqueRootDOMConstructor::s_info = { "TestGenerateAddOpaqueRoot", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateAddOpaqueRootDOMConstructor) };
 
 template<> JSValue JSTestGenerateAddOpaqueRootDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -103,24 +100,15 @@ template<> void JSTestGenerateAddOpaqueRootDOMConstructor::initializeProperties(
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestGenerateAddOpaqueRootPrototypeTableIndex[4] = {
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestGenerateAddOpaqueRootPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateAddOpaqueRootConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "someAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateAddOpaqueRoot_someAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "someAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateAddOpaqueRoot_someAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSTestGenerateAddOpaqueRootPrototypeTable = { 2, 3, true, JSTestGenerateAddOpaqueRoot::info(), JSTestGenerateAddOpaqueRootPrototypeTableValues, JSTestGenerateAddOpaqueRootPrototypeTableIndex };
-const ClassInfo JSTestGenerateAddOpaqueRootPrototype::s_info = { "TestGenerateAddOpaqueRoot", &Base::s_info, &JSTestGenerateAddOpaqueRootPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestGenerateAddOpaqueRootPrototype) };
+const ClassInfo JSTestGenerateAddOpaqueRootPrototype::s_info = { "TestGenerateAddOpaqueRoot", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateAddOpaqueRootPrototype) };
 
 void JSTestGenerateAddOpaqueRootPrototype::finishCreation(VM& vm)
 {

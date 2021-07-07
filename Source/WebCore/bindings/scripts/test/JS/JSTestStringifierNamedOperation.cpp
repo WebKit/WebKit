@@ -84,14 +84,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierNamedOperationPrototype, JSTestStringifierNamedOperationPrototype::Base);
 
 using JSTestStringifierNamedOperationDOMConstructor = JSDOMConstructorNotConstructable<JSTestStringifierNamedOperation>;
 
-template<> const unsigned JSTestStringifierNamedOperationDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestStringifierNamedOperationDOMConstructor::s_info = { "TestStringifierNamedOperation", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierNamedOperationDOMConstructor) };
 
 template<> JSValue JSTestStringifierNamedOperationDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -107,19 +104,7 @@ template<> void JSTestStringifierNamedOperationDOMConstructor::initializePropert
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestStringifierNamedOperationPrototypeTableIndex[8] = {
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestStringifierNamedOperationPrototypeTableValues[] =
 {
@@ -128,8 +113,7 @@ static const HashTableValue JSTestStringifierNamedOperationPrototypeTableValues[
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierNamedOperationPrototypeFunction_toString), (intptr_t) (0) } },
 };
 
-static const HashTable JSTestStringifierNamedOperationPrototypeTable = { 3, 7, true, JSTestStringifierNamedOperation::info(), JSTestStringifierNamedOperationPrototypeTableValues, JSTestStringifierNamedOperationPrototypeTableIndex };
-const ClassInfo JSTestStringifierNamedOperationPrototype::s_info = { "TestStringifierNamedOperation", &Base::s_info, &JSTestStringifierNamedOperationPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestStringifierNamedOperationPrototype) };
+const ClassInfo JSTestStringifierNamedOperationPrototype::s_info = { "TestStringifierNamedOperation", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierNamedOperationPrototype) };
 
 void JSTestStringifierNamedOperationPrototype::finishCreation(VM& vm)
 {

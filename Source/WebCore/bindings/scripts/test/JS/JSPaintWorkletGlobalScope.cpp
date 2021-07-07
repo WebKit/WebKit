@@ -53,7 +53,20 @@ static JSC_DECLARE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_PaintWorkletGlobalSco
 
 using JSPaintWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSPaintWorkletGlobalScope>;
 
-template<> const unsigned JSPaintWorkletGlobalScopeDOMConstructor::StructureFlags = Base::StructureFlags;
+/* Hash table */
+
+static const struct CompactHashIndex JSPaintWorkletGlobalScopeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSPaintWorkletGlobalScopeTableValues[] =
+{
+    { "PaintWorkletGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+};
+
+static const HashTable JSPaintWorkletGlobalScopeTable = { 1, 1, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
 template<> const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
 
 template<> JSValue JSPaintWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -68,7 +81,7 @@ template<> void JSPaintWorkletGlobalScopeDOMConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
+/* Hash table for prototype */
 
 static const struct CompactHashIndex JSPaintWorkletGlobalScopePrototypeTableIndex[2] = {
     { -1, -1 },
@@ -91,21 +104,7 @@ void JSPaintWorkletGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-/* Hash table for Instance */
-
-static const struct CompactHashIndex JSPaintWorkletGlobalScopeInstanceTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
-static const HashTableValue JSPaintWorkletGlobalScopeInstanceTableValues[] =
-{
-    { "PaintWorkletGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
-};
-
-static const HashTable JSPaintWorkletGlobalScopeInstanceTable = { 1, 1, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeInstanceTableValues, JSPaintWorkletGlobalScopeInstanceTableIndex };
-const ClassInfo JSPaintWorkletGlobalScope::s_info = { "PaintWorkletGlobalScope", &Base::s_info, &JSPaintWorkletGlobalScopeInstanceTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScope) };
+const ClassInfo JSPaintWorkletGlobalScope::s_info = { "PaintWorkletGlobalScope", &Base::s_info, &JSPaintWorkletGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScope) };
 
 JSPaintWorkletGlobalScope::JSPaintWorkletGlobalScope(VM& vm, Structure* structure, Ref<PaintWorkletGlobalScope>&& impl)
     : JSWorkletGlobalScope(vm, structure, WTFMove(impl))

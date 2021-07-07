@@ -683,8 +683,6 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
     if (staticPropertiesReified(vm))
         return;
 
-    JSGlobalObject* globalObject = this->globalObject(vm);
-
     // Add properties from the static hashtables of properties
     for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
         const HashTable* table = info->staticPropHashTable;
@@ -692,11 +690,8 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if (mode == DontEnumPropertiesMode::Exclude && (iter->attributes() & PropertyAttribute::DontEnum))
-                continue;
-            if ((iter->attributes() & PropertyAttribute::PropertyCallback) && !iter->isLazyPropertyEnabled(globalObject))
-                continue;
-            propertyNames.add(Identifier::fromString(vm, iter.key()));
+            if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum))
+                propertyNames.add(Identifier::fromString(vm, iter.key()));
         }
     }
 }

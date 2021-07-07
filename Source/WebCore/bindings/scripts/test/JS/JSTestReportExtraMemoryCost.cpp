@@ -77,14 +77,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReportExtraMemoryCostPrototype, JSTestReportExtraMemoryCostPrototype::Base);
 
 using JSTestReportExtraMemoryCostDOMConstructor = JSDOMConstructorNotConstructable<JSTestReportExtraMemoryCost>;
 
-template<> const unsigned JSTestReportExtraMemoryCostDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestReportExtraMemoryCostDOMConstructor::s_info = { "TestReportExtraMemoryCost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostDOMConstructor) };
 
 template<> JSValue JSTestReportExtraMemoryCostDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -100,21 +97,14 @@ template<> void JSTestReportExtraMemoryCostDOMConstructor::initializeProperties(
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestReportExtraMemoryCostPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestReportExtraMemoryCostPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestReportExtraMemoryCostConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSTestReportExtraMemoryCostPrototypeTable = { 1, 1, true, JSTestReportExtraMemoryCost::info(), JSTestReportExtraMemoryCostPrototypeTableValues, JSTestReportExtraMemoryCostPrototypeTableIndex };
-const ClassInfo JSTestReportExtraMemoryCostPrototype::s_info = { "TestReportExtraMemoryCost", &Base::s_info, &JSTestReportExtraMemoryCostPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostPrototype) };
+const ClassInfo JSTestReportExtraMemoryCostPrototype::s_info = { "TestReportExtraMemoryCost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostPrototype) };
 
 void JSTestReportExtraMemoryCostPrototype::finishCreation(VM& vm)
 {

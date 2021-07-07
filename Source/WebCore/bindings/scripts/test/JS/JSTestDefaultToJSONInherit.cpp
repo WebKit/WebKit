@@ -103,14 +103,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONInheritPrototype, JSTestDefaultToJSONInheritPrototype::Base);
 
 using JSTestDefaultToJSONInheritDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONInherit>;
 
-template<> const unsigned JSTestDefaultToJSONInheritDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestDefaultToJSONInheritDOMConstructor::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritDOMConstructor) };
 
 template<> JSValue JSTestDefaultToJSONInheritDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -125,29 +122,16 @@ template<> void JSTestDefaultToJSONInheritDOMConstructor::initializeProperties(V
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestDefaultToJSONInheritPrototypeTableIndex[8] = {
-    { 2, -1 },
-    { 0, -1 },
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestDefaultToJSONInheritPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInheritConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "inheritLongAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInherit_inheritLongAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONInherit_inheritLongAttribute) } },
+    { "inheritLongAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInherit_inheritLongAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONInherit_inheritLongAttribute) } },
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDefaultToJSONInheritPrototypeFunction_toJSON), (intptr_t) (0) } },
 };
 
-static const HashTable JSTestDefaultToJSONInheritPrototypeTable = { 3, 7, true, JSTestDefaultToJSONInherit::info(), JSTestDefaultToJSONInheritPrototypeTableValues, JSTestDefaultToJSONInheritPrototypeTableIndex };
-const ClassInfo JSTestDefaultToJSONInheritPrototype::s_info = { "TestDefaultToJSONInherit", &Base::s_info, &JSTestDefaultToJSONInheritPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritPrototype) };
+const ClassInfo JSTestDefaultToJSONInheritPrototype::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritPrototype) };
 
 void JSTestDefaultToJSONInheritPrototype::finishCreation(VM& vm)
 {
