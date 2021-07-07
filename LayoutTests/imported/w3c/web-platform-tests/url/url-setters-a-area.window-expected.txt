@@ -378,8 +378,8 @@ PASS <a>: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path
 PASS <area>: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path
 PASS <a>: Setting <non-spec:/>.pathname = '/..//p'
 PASS <area>: Setting <non-spec:/>.pathname = '/..//p'
-FAIL <a>: Setting <non-spec:/>.pathname = '//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
-FAIL <area>: Setting <non-spec:/>.pathname = '//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+PASS <a>: Setting <non-spec:/>.pathname = '//p'
+PASS <area>: Setting <non-spec:/>.pathname = '//p'
 PASS <a>: Setting <non-spec:/.//>.pathname = 'p' Drop /. from path
 PASS <area>: Setting <non-spec:/.//>.pathname = 'p' Drop /. from path
 PASS <a>: Setting <https://example.net#nav>.search = 'lang=fr'

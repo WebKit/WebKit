@@ -189,7 +189,7 @@ PASS URL: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashe
 PASS URL: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes
 PASS URL: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path
 PASS URL: Setting <non-spec:/>.pathname = '/..//p'
-FAIL URL: Setting <non-spec:/>.pathname = '//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+PASS URL: Setting <non-spec:/>.pathname = '//p'
 PASS URL: Setting <non-spec:/.//>.pathname = 'p' Drop /. from path
 PASS URL: Setting <https://example.net#nav>.search = 'lang=fr'
 PASS URL: Setting <https://example.net?lang=en-US#nav>.search = 'lang=fr'

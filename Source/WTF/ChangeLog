@@ -1,3 +1,17 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        URL path setter should add "./" before non-empty path and after empty host for URLs with non-special schemes
+        https://bugs.webkit.org/show_bug.cgi?id=227750
+
+        Reviewed by Chris Dumez.
+
+        This is related to r267837 but in the path setter, too.
+        This helps preserve idempotence in parsed URLs.
+        This is an edge case that will rarely be hit in practice, but now the path setter matches the parser.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setPath):
+
 2021-07-07  Christopher Reid  <chris.reid@sony.com>
 
         [PlayStation] Don't assume 4KB block size when estimating Network Cache disk usage
