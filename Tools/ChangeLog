@@ -1,3 +1,12 @@
+2021-07-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Add unit-tests for RunWebKit1Tests
+        https://bugs.webkit.org/show_bug.cgi?id=227658
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/steps_unittest.py:
+
 2021-07-06  Harshil Ratnu  <hratnu@apple.com>
 
         Add myself (Harshil Ratnu) to contributors.json
