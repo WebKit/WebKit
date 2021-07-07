@@ -560,23 +560,22 @@ private:
         BackdropFiltersChanged                  = 1LLU << 29,
         BackdropFiltersRectChanged              = 1LLU << 30,
         TilingAreaChanged                       = 1LLU << 31,
-        TilesAdded                              = 1LLU << 32,
-        DebugIndicatorsChanged                  = 1LLU << 33,
-        CustomAppearanceChanged                 = 1LLU << 34,
-        BlendModeChanged                        = 1LLU << 35,
-        ShapeChanged                            = 1LLU << 36,
-        WindRuleChanged                         = 1LLU << 37,
-        UserInteractionEnabledChanged           = 1LLU << 38,
-        NeedsComputeVisibleAndCoverageRect      = 1LLU << 39,
-        EventRegionChanged                      = 1LLU << 40,
+        DebugIndicatorsChanged                  = 1LLU << 32,
+        CustomAppearanceChanged                 = 1LLU << 33,
+        BlendModeChanged                        = 1LLU << 34,
+        ShapeChanged                            = 1LLU << 35,
+        WindRuleChanged                         = 1LLU << 36,
+        UserInteractionEnabledChanged           = 1LLU << 37,
+        NeedsComputeVisibleAndCoverageRect      = 1LLU << 38,
+        EventRegionChanged                      = 1LLU << 39,
 #if ENABLE(SCROLLING_THREAD)
-        ScrollingNodeChanged                    = 1LLU << 41,
+        ScrollingNodeChanged                    = 1LLU << 40,
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-        SeparatedChanged                        = 1LLU << 42,
+        SeparatedChanged                        = 1LLU << 41,
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-        SeparatedPortalChanged                  = 1LLU << 43,
-        DescendentOfSeparatedPortalChanged      = 1LLU << 44,
+        SeparatedPortalChanged                  = 1LLU << 42,
+        DescendentOfSeparatedPortalChanged      = 1LLU << 43,
 #endif
 #endif
     };
