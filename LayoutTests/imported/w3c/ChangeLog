@@ -1,5 +1,15 @@
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
+        DOMURL's href setter should use empty URL as base URL
+        https://bugs.webkit.org/show_bug.cgi?id=227772
+
+        Reviewed by Yusuke Suzuki.
+
+        * web-platform-tests/url/historical.any-expected.txt:
+        * web-platform-tests/url/historical.any.worker-expected.txt:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
         URL host setter should pass host to URLParser instead of trying to encode it itself
         https://bugs.webkit.org/show_bug.cgi?id=227749
 

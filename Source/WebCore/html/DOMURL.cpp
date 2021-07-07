@@ -75,7 +75,7 @@ DOMURL::~DOMURL()
 
 ExceptionOr<void> DOMURL::setHref(const String& url)
 {
-    URL completeURL { m_baseURL, url };
+    URL completeURL { URL { }, url };
     if (!completeURL.isValid())
         return Exception { TypeError };
     m_url = WTFMove(completeURL);
