@@ -1,3 +1,12 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add WK1 URL expectations after r279646
+
+        navigator.sendBeacon isn't implemented for WK1.  It needs its own expectations.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/url: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/url/failure-expected.txt: Added.
+
 2021-07-07  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html is a flaky failure.
