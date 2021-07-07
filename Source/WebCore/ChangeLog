@@ -1,3 +1,9 @@
+2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, need CryptoKey and SubtleCrypto names
+
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2021-07-06  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r262237) Safari 14.x shows graphics artifacts when scrolling, using drop-down menus or just moving the mouse
