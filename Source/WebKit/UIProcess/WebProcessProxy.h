@@ -404,6 +404,11 @@ public:
     static bool shouldEnableRemoteInspector();
 #endif
 
+#if PLATFORM(MAC)
+    void platformSuspendProcess();
+    void platformResumeProcess();
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 

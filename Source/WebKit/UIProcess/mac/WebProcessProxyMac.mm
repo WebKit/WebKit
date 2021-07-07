@@ -31,6 +31,7 @@
 
 #import "WKFullKeyboardAccessWatcher.h"
 #import <Kernel/kern/cs_blobs.h>
+#import <signal.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
@@ -76,6 +77,24 @@ void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserver
 {
     ASSERT(connection());
     processPool().setDisplayLinkPreferredFramesPerSecond(*connection(), observerID, displayID, preferredFramesPerSecond);
+}
+
+void WebProcessProxy::platformSuspendProcess()
+{
+    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformSuspendProcess", this, processIdentifier());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (auto* connection = this->connection())
+        xpc_connection_kill(connection->xpcConnection(), SIGSTOP);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+void WebProcessProxy::platformResumeProcess()
+{
+    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformResumeProcess", this, processIdentifier());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (auto* connection = this->connection())
+        xpc_connection_kill(connection->xpcConnection(), SIGCONT);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 } // namespace WebKit

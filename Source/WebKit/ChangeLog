@@ -1,3 +1,27 @@
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Suspend WebProcesses that are in the process cache
+        https://bugs.webkit.org/show_bug.cgi?id=227269
+        <rdar://problem/79639863>
+
+        Reviewed by Geoffrey Garen.
+
+        Suspend WebProcesses that are in the process cache on macOS to make sure they use no CPU.
+        The suspension happens 30 seconds after the process enters the cache, giving the WebProcess
+        time to finish whatever clean up it needs to do before suspending.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::CachedProcess::CachedProcess):
+        (WebKit::WebProcessCache::CachedProcess::~CachedProcess):
+        (WebKit::WebProcessCache::CachedProcess::takeProcess):
+        (WebKit::WebProcessCache::suspensionTimerFired):
+        * UIProcess/WebProcessCache.h:
+        (WebKit::WebProcessCache::CachedProcess::isSuspended const):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::platformSuspendProcess):
+        (WebKit::WebProcessProxy::platformResumeProcess):
+
 2021-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy smart pointers in EventHandler and UserInputBridge
