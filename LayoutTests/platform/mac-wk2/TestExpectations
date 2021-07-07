@@ -1383,3 +1383,8 @@ webkit.org/b/227639 [ BigSur Release ] fast/history/visited-href-mutation.html [
 webkit.org/b/226054 [ BigSur Release ] imported/w3c/web-platform-tests/webrtc/RTCRtpSender-encode-same-track-twice.https.html [ Pass Failure ]
 
 webkit.org/b/224085 fullscreen/full-screen-remove-ancestor.html [ Skip ]
+
+webkit.org/b/227776 [ BigSur Release arm64 ] scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/227776 [ Catalina Release ] scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
+

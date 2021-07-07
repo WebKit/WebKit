@@ -1,3 +1,12 @@
+2021-07-07  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur Release wk2 arm64 ] scrollbars/corner-resizer-window-inactive.html is a flaky image-only failure.
+        https://bugs.webkit.org/show_bug.cgi?id=227776
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-07  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [OpenSSL] Implement CryptoAlgorithmEC*
