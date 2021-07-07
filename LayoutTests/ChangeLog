@@ -1,3 +1,26 @@
+2021-07-07  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement CryptoAlgorithmEC*
+        https://bugs.webkit.org/show_bug.cgi?id=227655
+
+        Reviewed by Don Olmstead.
+
+        Update test expectations of wincairo to enable ec* tests.
+
+        * platform/wincairo/TestExpectations:
+
+        Add expected results thats support the P-521 elliptic curve. Generic test
+        results expect that P-521 is unsupported.
+
+        * platform/wincairo/crypto/subtle/ec-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/wincairo/crypto/subtle/ecdh-derive-bits-length-limits-expected.txt: Added.
+        * platform/wincairo/crypto/subtle/ecdh-import-spki-key-ecdh-identifier-expected.txt: Added.
+
+        Use shouldRejectWithErrorName after r260579.
+
+        * crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html:
+        * crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html:
+
 2021-07-07  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Unexpected content wrap when the containing block width is relative

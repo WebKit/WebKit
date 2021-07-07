@@ -1,3 +1,64 @@
+2021-07-07  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement CryptoAlgorithmEC*
+        https://bugs.webkit.org/show_bug.cgi?id=227655
+
+        Reviewed by Don Olmstead.
+
+        Implement elliptic curve support in WebCrypto. This patch enables ECDH
+        and ECDSA algorithms as well as EC key import, export, and generation.
+
+        Note that low level ASN1 API is used in CryptoKeyEC.cpp to import
+        public EC keys in the SPKI format because currently OpenSSL doesn't
+        have the Object ID of the ecDH algorithm and it fails to load ecDH
+        keys with d2iPUBKEY().
+
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/openssl/CryptoAlgorithmECDHOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmECDH::platformDeriveBits):
+        * crypto/openssl/CryptoAlgorithmECDSAOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmECDSA::platformSign):
+        (WebCore::CryptoAlgorithmECDSA::platformVerify):
+        * crypto/openssl/CryptoAlgorithmRegistryOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/openssl/CryptoKeyECOpenSSL.cpp:
+        (WebCore::curveIdentifier):
+        (WebCore::curveSize):
+        (WebCore::createECKey):
+        (WebCore::verifyCurve):
+        (WebCore::CryptoKeyEC::keySizeInBits const):
+        (WebCore::CryptoKeyEC::platformSupportedCurve):
+        (WebCore::CryptoKeyEC::platformGeneratePair):
+        (WebCore::CryptoKeyEC::platformImportRaw):
+        (WebCore::CryptoKeyEC::platformImportJWKPublic):
+        (WebCore::CryptoKeyEC::platformImportJWKPrivate):
+        (WebCore::ecPublicKeyIdentifier):
+        (WebCore::ecDHIdentifier):
+        (WebCore::supportedAlgorithmIdentifier):
+        (WebCore::CryptoKeyEC::platformImportSpki):
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        (WebCore::CryptoKeyEC::platformExportRaw const):
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        (WebCore::CryptoKeyEC::platformExportSpki const):
+        (WebCore::CryptoKeyEC::platformExportPkcs8 const):
+        * crypto/openssl/CryptoKeyRSAOpenSSL.cpp:
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::exportSpki const):
+        (WebCore::CryptoKeyRSA::exportPkcs8 const):
+        (WebCore::CryptoKeyRSA::algorithm const):
+        (WebCore::CryptoKeyRSA::exportData const):
+        * crypto/openssl/OpenSSLCryptoUniquePtr.h:
+        (WebCore::OpenSSLCryptoPtrDeleter<EC_KEY>::operator() const):
+        (WebCore::OpenSSLCryptoPtrDeleter<EC_POINT>::operator() const):
+        (WebCore::OpenSSLCryptoPtrDeleter<ECDSA_SIG>::operator() const):
+        (WebCore::OpenSSLCryptoPtrDeleter<ASN1_SEQUENCE_ANY>::operator() const):
+        * crypto/openssl/OpenSSLUtilities.cpp:
+        (WebCore::convertToBytes):
+        (WebCore::convertToBytesExpand):
+        (WebCore::convertToBigNumber):
+        * crypto/openssl/OpenSSLUtilities.h:
+
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
         DOMURL's href setter should use empty URL as base URL
