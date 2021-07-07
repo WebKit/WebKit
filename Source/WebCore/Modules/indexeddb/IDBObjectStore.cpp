@@ -335,7 +335,11 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
     if (m_transaction.isReadOnly())
         return Exception { ReadonlyError, "Failed to store record in an IDBObjectStore: The transaction is read-only."_s };
 
+    // Transaction should be inactive during structured clone.
+    m_transaction.deactivate();
     auto serializedValue = SerializedScriptValue::create(state, value);
+    m_transaction.activate();
+
     if (UNLIKELY(scope.exception()))
         return Exception { DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_s };
 
