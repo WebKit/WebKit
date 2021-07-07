@@ -97,7 +97,7 @@ static unsigned countASCIIDigits(StringView string)
 void URLDecomposition::setHost(StringView value)
 {
     auto fullURL = this->fullURL();
-    if (value.isEmpty() && !fullURL.protocolIs("file"))
+    if (value.isEmpty() && !fullURL.protocolIs("file") && fullURL.hasSpecialScheme())
         return;
 
     size_t separator = value.reverseFind(':');
@@ -150,7 +150,7 @@ void URLDecomposition::setHostname(StringView value)
 {
     auto fullURL = this->fullURL();
     auto host = removeAllLeadingSolidusCharacters(value);
-    if (host.isEmpty() && !fullURL.protocolIs("file"))
+    if (host.isEmpty() && !fullURL.protocolIs("file") && fullURL.hasSpecialScheme())
         return;
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
         return;
@@ -229,9 +229,8 @@ void URLDecomposition::setSearch(const String& value)
 
 String URLDecomposition::hash() const
 {
-    // FIXME: Why convert this string to an atom here instead of just a string? Intentionally to save memory? An error?
     auto fullURL = this->fullURL();
-    return fullURL.fragmentIdentifier().isEmpty() ? emptyAtom() : fullURL.fragmentIdentifierWithLeadingNumberSign().toAtomString();
+    return fullURL.fragmentIdentifier().isEmpty() ? emptyString() : fullURL.fragmentIdentifierWithLeadingNumberSign().toString();
 }
 
 void URLDecomposition::setHash(StringView value)

@@ -1,3 +1,18 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Allow setting empty hosts of URLs with non-special schemes
+        https://bugs.webkit.org/show_bug.cgi?id=227752
+
+        Reviewed by Chris Dumez.
+
+        asdf:/// is fine.
+        http:/// is not fine.
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHost):
+        (WebCore::URLDecomposition::setHostname):
+        (WebCore::URLDecomposition::hash const):
+
 2021-07-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy smart pointers in DOMWindow
