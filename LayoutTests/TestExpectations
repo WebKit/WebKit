@@ -321,10 +321,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.h
 imported/w3c/web-platform-tests/service-workers/service-worker/nested-blob-url-workers.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck-cors-import.https.html [ Skip ]
 
-# Thee tests are crashing in Debug (https://bugs.webkit.org/show_bug.cgi?id=227310)
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic.any.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic.any.worker.html [ Skip ]
-
 # This test is a flaky timeout.
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html [ Skip ]
 webkit.org/b/201666 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-with-range-request.https.html [ Skip ]
