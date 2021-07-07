@@ -1,3 +1,11 @@
+2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix after r279630
+        https://bugs.webkit.org/show_bug.cgi?id=223166
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
 2021-07-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279546, r279554, r279558 and r279567.
