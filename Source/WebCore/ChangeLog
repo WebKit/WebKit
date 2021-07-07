@@ -1,3 +1,31 @@
+2021-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r262237) Safari 14.x shows graphics artifacts when scrolling, using drop-down menus or just moving the mouse
+        https://bugs.webkit.org/show_bug.cgi?id=220892
+        <rdar://73538454>
+
+        Reviewed by Alan Bujtas.
+
+        Fix an issue with backing sharing where a composited layer needs to interrupted a backing
+        sharing sequence. In some cases, a layer that became composited via an indirect reason
+        (like overflow positioning) would not interrupt a backing sharing sequence, leaving a dangling
+        layer that ended up painting into the wrong ancestor.
+
+        The fix is to ensure that BackingSharingState::updateBeforeDescendantTraversal() and
+        BackingSharingState::updateAfterDescendantTraversal() have the same behavior when a layer
+        becomes composited (thus interrupting the sequence). However, we also have ensure that 
+        updateAfterDescendantTraversal() doesn't erroeously interrupt the sequence when the sequence
+        was initiated by some descendant, hence the check against the preDescendantProviderCandidate.
+
+        Test: compositing/shared-backing/backing-sharing-compositing-change.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::BackingSharingState::endBackingSharingSequence):
+        (WebCore::RenderLayerCompositor::BackingSharingState::updateBeforeDescendantTraversal):
+        (WebCore::RenderLayerCompositor::BackingSharingState::updateAfterDescendantTraversal):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+
 2021-07-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279546, r279554, r279558 and r279567.
