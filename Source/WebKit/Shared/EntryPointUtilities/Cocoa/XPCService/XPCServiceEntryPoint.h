@@ -101,6 +101,10 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     // the UIProcess takes process assertions on behalf of its child processes.
 #if PLATFORM(MAC)
     osTransaction() = adoptOSObject(os_transaction_create("WebKit XPC Service"));
+    signal(SIGTERM, [] (int signal) {
+        RELEASE_ASSERT(signal == SIGTERM);
+        osTransaction() = nullptr;
+    });
 #endif
 
     InitializeWebKit2();

@@ -1,5 +1,19 @@
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
+        XPC services should release their os transaction when given a SIGTERM signal
+        https://bugs.webkit.org/show_bug.cgi?id=227747
+        <rdar://72430454>
+
+        Reviewed by Geoff Garen.
+
+        Apparently when you shut down your computer, processes are given a SIGTERM signal and expected to release their os_transaction_t
+        to indicate that they can now be terminated "cleanly".
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
         Use more Span
         https://bugs.webkit.org/show_bug.cgi?id=227606
 
