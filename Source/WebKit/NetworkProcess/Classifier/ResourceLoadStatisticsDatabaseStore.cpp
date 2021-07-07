@@ -1622,7 +1622,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& su
         ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
         if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
-            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+            ASSERT(hasHadUserInteraction(transaction, subFrameDomain, OperatingDatesWindow::Long));
 #endif
         insertDomainRelationshipList(transaction, storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
     }
@@ -1652,7 +1652,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(const SQLit
         ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
         if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
-            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+            ASSERT(hasHadUserInteraction(transaction, subFrameDomain, OperatingDatesWindow::Long));
 #endif
         ASSERT(hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
 #endif
@@ -1879,7 +1879,7 @@ void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomai
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logUserInteraction was not completed due to failed insert attempt", this);
         return;
     }
-    bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
+    bool didHavePreviousUserInteraction = hasHadUserInteraction(transaction, domain, OperatingDatesWindow::Long);
     setUserInteraction(domain, true, WallTime::now());
 
     transaction.commit();
@@ -1897,6 +1897,14 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
 
     SQLiteTransaction transaction(m_database);
     transaction.begin();
+    clearUserInteraction(transaction, domain, WTFMove(completionHandler));
+    transaction.commit();
+}
+
+void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const WebCore::SQLiteTransaction&, const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(m_database.transactionInProgress());
 
     auto targetResult = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!targetResult.second) {
@@ -1913,8 +1921,6 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
         ASSERT_NOT_REACHED();
     }
 
-    transaction.commit();
-
     // Update cookie blocking unconditionally since a call to hasHadUserInteraction()
     // to check the previous user interaction status could call clearUserInteraction(),
     // blowing the call stack.
@@ -1924,7 +1930,19 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
 bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
 {
     ASSERT(!RunLoop::isMain());
-    
+    SQLiteTransaction transaction(m_database);
+    transaction.begin();
+    bool result = hasHadUserInteraction(transaction, domain, operatingDatesWindow);
+    transaction.commit();
+    return result;
+}
+
+
+bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const WebCore::SQLiteTransaction& transaction, const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(m_database.transactionInProgress());
+
     auto scopedStatement = this->scopedStatement(m_hadUserInteractionStatement, hadUserInteractionQuery, "hasHadUserInteraction"_s);
     if (!scopedStatement
         || scopedStatement->bindText(1, domain.string()) != SQLITE_OK
@@ -1943,7 +1961,7 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const Registrabl
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
-        clearUserInteraction(domain, [] { });
+        clearUserInteraction(transaction, domain, [] { });
         hadUserInteraction = false;
     }
     return hadUserInteraction;

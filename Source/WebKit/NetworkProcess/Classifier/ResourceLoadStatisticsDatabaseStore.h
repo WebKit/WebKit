@@ -177,6 +177,8 @@ private:
     void destroyStatements();
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral, const String&) const;
 
+    bool hasHadUserInteraction(const WebCore::SQLiteTransaction&, const RegistrableDomain&, OperatingDatesWindow);
+    void clearUserInteraction(const WebCore::SQLiteTransaction&, const RegistrableDomain&, CompletionHandler<void()>&&);
     void setPrevalentResource(const WebCore::SQLiteTransaction&, const RegistrableDomain&);
     void setVeryPrevalentResource(const WebCore::SQLiteTransaction&, const RegistrableDomain&);
     void setGrandfathered(const WebCore::SQLiteTransaction&, const RegistrableDomain&, bool value);

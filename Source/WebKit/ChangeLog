@@ -1,3 +1,26 @@
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        [ITP] Potential assertion hit in ResourceLoadStatisticsDatabaseStore::clearUserInteraction()
+        https://bugs.webkit.org/show_bug.cgi?id=227763
+        <rdar://80231894>
+
+        Reviewed by Darin Adler.
+
+        ResourceLoadStatisticsDatabaseStore::clearUserInteraction() was starting a SQLite transaction
+        but one of its callers already starts one, causing us to hit this assertion (recursive
+        transactions are not supported).
+
+        To address the issue, add an overload that takes in an SQLiteTransaction, when the call
+        site already started a transaction.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+
 2021-07-07  Christopher Reid  <chris.reid@sony.com>
 
         [PlayStation] Don't assume 4KB block size when estimating Network Cache disk usage
