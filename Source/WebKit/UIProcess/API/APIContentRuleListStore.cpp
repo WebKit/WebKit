@@ -135,14 +135,14 @@ static WebKit::NetworkCache::Data encodeContentRuleListMetaData(const ContentRul
     return WebKit::NetworkCache::Data(encoder.buffer(), encoder.bufferSize());
 }
 
-template<typename T> void getData(const T&, const Function<bool(const uint8_t*, size_t)>&);
-template<> void getData(const WebKit::NetworkCache::Data& data, const Function<bool(const uint8_t*, size_t)>& function)
+template<typename T> void getData(const T&, const Function<bool(Span<const uint8_t>)>&);
+template<> void getData(const WebKit::NetworkCache::Data& data, const Function<bool(Span<const uint8_t>)>& function)
 {
     data.apply(function);
 }
-template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(const uint8_t*, size_t)>& function)
+template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(Span<const uint8_t>)>& function)
 {
-    function(data.data(), data.size());
+    function({ data.data(), data.size() });
 }
 
 template<typename T>
@@ -150,13 +150,13 @@ static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(cons
 {
     bool success = false;
     ContentRuleListMetaData metaData;
-    getData(fileData, [&metaData, &success, &fileData](const uint8_t* data, size_t size) {
+    getData(fileData, [&metaData, &success, &fileData](Span<const uint8_t> span) {
         // The file data should be mapped into one continuous memory segment so the size
         // passed to the applier should always equal the data size.
-        if (size != fileData.size())
+        if (span.size() != fileData.size())
             return false;
 
-        WTF::Persistence::Decoder decoder(data, size);
+        WTF::Persistence::Decoder decoder(span);
         
         std::optional<uint32_t> version;
         decoder >> version;
@@ -228,8 +228,8 @@ static std::optional<MappedData> openAndMapContentRuleList(const WTF::String& pa
 static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, PlatformFileHandle fd)
 {
     bool success = true;
-    fileData.apply([fd, &success](const uint8_t* data, size_t size) {
-        if (writeToFile(fd, data, size) == -1) {
+    fileData.apply([fd, &success](Span<const uint8_t> span) {
+        if (writeToFile(fd, span.data(), span.size()) == -1) {
             success = false;
             return false;
         }

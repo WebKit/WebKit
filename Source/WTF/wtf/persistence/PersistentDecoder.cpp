@@ -31,10 +31,9 @@
 namespace WTF {
 namespace Persistence {
 
-Decoder::Decoder(const uint8_t* buffer, size_t bufferSize)
-    : m_buffer(buffer)
-    , m_bufferPosition(buffer)
-    , m_bufferEnd(buffer + bufferSize)
+Decoder::Decoder(Span<const uint8_t> span)
+    : m_buffer(span)
+    , m_bufferPosition(span.begin())
 {
 }
 
@@ -44,7 +43,7 @@ Decoder::~Decoder()
 
 bool Decoder::bufferIsLargeEnoughToContain(size_t size) const
 {
-    return size <= static_cast<size_t>(m_bufferEnd - m_bufferPosition);
+    return size <= static_cast<size_t>(m_buffer.end() - m_bufferPosition);
 }
 
 const uint8_t* Decoder::bufferPointerForDirectRead(size_t size)
@@ -55,22 +54,22 @@ const uint8_t* Decoder::bufferPointerForDirectRead(size_t size)
     auto data = m_bufferPosition;
     m_bufferPosition += size;
 
-    Encoder::updateChecksumForData(m_sha1, data, size);
+    Encoder::updateChecksumForData(m_sha1, { data, size });
     return data;
 }
 
-bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
+bool Decoder::decodeFixedLengthData(Span<uint8_t> span)
 {
-    auto buffer = bufferPointerForDirectRead(size);
+    auto buffer = bufferPointerForDirectRead(span.size());
     if (!buffer)
         return false;
-    memcpy(data, buffer, size);
+    memcpy(span.data(), buffer, span.size());
     return true;
 }
 
 bool Decoder::rewind(size_t size)
 {
-    if (m_bufferPosition - size >= m_buffer) {
+    if (size <= static_cast<size_t>(m_bufferPosition - m_buffer.begin())) {
         m_bufferPosition -= size;
         return true;
     }
@@ -148,11 +147,11 @@ bool Decoder::verifyChecksum()
     m_sha1.computeHash(computedHash);
 
     SHA1::Digest savedHash;
-    if (!decodeFixedLengthData(savedHash.data(), sizeof(savedHash)))
+    if (!decodeFixedLengthData({ savedHash.data(), sizeof(savedHash) }))
         return false;
 
     return computedHash == savedHash;
 }
 
-}
-}
+} // namespace Persistence
+} // namespace WTF

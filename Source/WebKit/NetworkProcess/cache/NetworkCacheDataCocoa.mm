@@ -69,12 +69,12 @@ bool Data::isNull() const
     return !m_dispatchData;
 }
 
-bool Data::apply(const Function<bool (const uint8_t*, size_t)>& applier) const
+bool Data::apply(const Function<bool(Span<const uint8_t>)>& applier) const
 {
     if (!m_size)
         return false;
     return dispatch_data_apply(m_dispatchData.get(), [&applier](dispatch_data_t, size_t, const void* data, size_t size) {
-        return applier(static_cast<const uint8_t*>(data), size);
+        return applier({ static_cast<const uint8_t*>(data), size });
     });
 }
 

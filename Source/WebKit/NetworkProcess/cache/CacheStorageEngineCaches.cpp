@@ -112,7 +112,7 @@ void Caches::storeOrigin(CompletionCallback&& completionHandler)
 
 std::optional<WebCore::ClientOrigin> Caches::readOrigin(const Data& data)
 {
-    WTF::Persistence::Decoder decoder(data.data(), data.size());
+    WTF::Persistence::Decoder decoder(data.span());
 
     std::optional<WebCore::SecurityOriginData> topOrigin;
     decoder >> topOrigin;
@@ -409,7 +409,7 @@ static inline Data encodeCacheNames(const Vector<Cache>& caches)
 
 static inline Expected<Vector<std::pair<String, String>>, Error> decodeCachesNames(const Data& data)
 {
-    WTF::Persistence::Decoder decoder(data.data(), data.size());
+    WTF::Persistence::Decoder decoder(data.span());
     std::optional<uint64_t> count;
     decoder >> count;
     if (!count)

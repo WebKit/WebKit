@@ -1,3 +1,21 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use more Span
+        https://bugs.webkit.org/show_bug.cgi?id=227606
+
+        Reviewed by Darin Adler.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::showCertificate):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::decoder const):
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WTF::Persistence::encodeCFData):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/SWScriptStorage.cpp:
+        (WebCore::SWScriptStorage::store):
+
 2021-07-07  Tim Nguyen  <ntim@apple.com>
 
         Use setBooleanAttribute instead of setAttributeWithoutSynchronization(X, Y ? emptyAtom() : nullAtom());

@@ -73,14 +73,14 @@ bool Data::isNull() const
     return !m_buffer;
 }
 
-bool Data::apply(const Function<bool(const uint8_t*, size_t)>& applier) const
+bool Data::apply(const Function<bool(Span<const uint8_t>)>& applier) const
 {
     if (!m_size)
         return false;
 
     gsize length;
     const auto* data = g_bytes_get_data(m_buffer.get(), &length);
-    return applier(reinterpret_cast<const uint8_t*>(data), length);
+    return applier({ reinterpret_cast<const uint8_t*>(data), length });
 }
 
 Data Data::subrange(size_t offset, size_t size) const

@@ -111,7 +111,7 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
 {
     auto entry = makeUnique<Entry>(storageEntry);
 
-    WTF::Persistence::Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
+    WTF::Persistence::Decoder decoder(storageEntry.header.span());
     WebCore::ResourceResponse response;
     if (!WebCore::ResourceResponse::decode(decoder, response))
         return nullptr;

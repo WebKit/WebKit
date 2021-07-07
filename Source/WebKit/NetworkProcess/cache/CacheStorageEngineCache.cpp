@@ -630,7 +630,7 @@ static std::optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::
 
 std::optional<Cache::DecodedRecord> Cache::decodeRecordHeader(const Storage::Record& storage)
 {
-    WTF::Persistence::Decoder decoder(storage.header.data(), storage.header.size());
+    WTF::Persistence::Decoder decoder(storage.header.span());
 
     std::optional<double> insertionTime;
     decoder >> insertionTime;

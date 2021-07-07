@@ -40,7 +40,7 @@ void KeyedEncoderGeneric::encodeString(const String& key)
 {
     auto utf8 = key.utf8();
     m_encoder << utf8.length();
-    m_encoder.encodeFixedLengthData(utf8.dataAsUInt8Ptr(), utf8.length());
+    m_encoder.encodeFixedLengthData({ utf8.dataAsUInt8Ptr(), utf8.length() });
 }
 
 void KeyedEncoderGeneric::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
@@ -48,7 +48,7 @@ void KeyedEncoderGeneric::encodeBytes(const String& key, const uint8_t* bytes, s
     m_encoder << Type::Bytes;
     encodeString(key);
     m_encoder << size;
-    m_encoder.encodeFixedLengthData(bytes, size);
+    m_encoder.encodeFixedLengthData({ bytes, size });
 }
 
 void KeyedEncoderGeneric::encodeBool(const String& key, bool value)

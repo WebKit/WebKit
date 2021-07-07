@@ -58,7 +58,7 @@ static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
         return emptyString();
 
     Vector<uint8_t> buffer(size.value());
-    if (!decoder.decodeFixedLengthData(buffer.data(), size.value()))
+    if (!decoder.decodeFixedLengthData({ buffer.data(), size.value() }))
         return std::nullopt;
     auto result = String::fromUTF8(buffer.data(), size.value());
     if (result.isNull())
@@ -88,7 +88,7 @@ std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t 
 
 KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
 {
-    WTF::Persistence::Decoder decoder(data, size);
+    WTF::Persistence::Decoder decoder({ data, size });
 
     m_rootDictionary = makeUnique<Dictionary>();
     m_dictionaryStack.append(m_rootDictionary.get());
@@ -117,7 +117,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
             if (!ok)
                 break;
             Vector<uint8_t> buffer(*size);
-            ok = decoder.decodeFixedLengthData(buffer.data(), *size);
+            ok = decoder.decodeFixedLengthData({ buffer.data(), *size });
             if (!ok)
                 break;
             m_dictionaryStack.last()->add(*key, WTFMove(buffer));

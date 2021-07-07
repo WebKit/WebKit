@@ -1,3 +1,37 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use more Span
+        https://bugs.webkit.org/show_bug.cgi?id=227606
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::decodeRecordHeader):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::readOrigin):
+        (WebKit::CacheStorage::decodeCachesNames):
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::Data::mapToFile const):
+        (WebKit::NetworkCache::computeSHA1):
+        * NetworkProcess/cache/NetworkCacheData.h:
+        (WebKit::NetworkCache::Data::span const):
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::apply const):
+        * NetworkProcess/cache/NetworkCacheDataCurl.cpp:
+        (WebKit::NetworkCache::Data::apply const):
+        * NetworkProcess/cache/NetworkCacheDataGLib.cpp:
+        (WebKit::NetworkCache::Data::apply const):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::decodeRecordMetaData):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourcesEntry::decodeStorageRecord):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::getData):
+        (API::decodeContentRuleListMetaData):
+        (API::writeDataToFile):
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Suspend WebProcesses that are in the process cache

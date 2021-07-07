@@ -1,3 +1,39 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use more Span
+        https://bugs.webkit.org/show_bug.cgi?id=227606
+
+        Reviewed by Darin Adler.
+
+        New is always better, right?
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::mapToFile):
+        * wtf/FileSystem.h:
+        * wtf/persistence/PersistentCoders.cpp:
+        (WTF::Persistence::Coder<CString>::encode):
+        (WTF::Persistence::Coder<CString>::decode):
+        (WTF::Persistence::Coder<String>::encode):
+        (WTF::Persistence::decodeStringText):
+        (WTF::Persistence::Coder<SHA1::Digest>::encode):
+        (WTF::Persistence::Coder<SHA1::Digest>::decode):
+        * wtf/persistence/PersistentCoders.h:
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::Decoder):
+        (WTF::Persistence::Decoder::bufferIsLargeEnoughToContain const):
+        (WTF::Persistence::Decoder::bufferPointerForDirectRead):
+        (WTF::Persistence::Decoder::decodeFixedLengthData):
+        (WTF::Persistence::Decoder::decodeNumber):
+        (WTF::Persistence::Decoder::verifyChecksum):
+        * wtf/persistence/PersistentDecoder.h:
+        (WTF::Persistence::Decoder::length const):
+        (WTF::Persistence::Decoder::currentOffset const):
+        * wtf/persistence/PersistentEncoder.cpp:
+        (WTF::Persistence::Encoder::updateChecksumForData):
+        (WTF::Persistence::Encoder::encodeFixedLengthData):
+        (WTF::Persistence::Encoder::encodeChecksum):
+        * wtf/persistence/PersistentEncoder.h:
+
 2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize Object.assign and putDirectInternal

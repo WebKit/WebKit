@@ -432,7 +432,7 @@ String createTemporaryZipArchive(const String&)
 }
 #endif
 
-MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(const uint8_t*, size_t)>&)>&& apply, PlatformFileHandle* outputHandle)
+MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
 {
     constexpr bool failIfFileExists = true;
     auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::User, failIfFileExists);
@@ -452,9 +452,9 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
     void* map = const_cast<void*>(mappedFile.data());
     uint8_t* mapData = static_cast<uint8_t*>(map);
 
-    apply([&mapData](const uint8_t* chunk, size_t chunkSize) {
-        memcpy(mapData, chunk, chunkSize);
-        mapData += chunkSize;
+    apply([&mapData](Span<const uint8_t> chunk) {
+        memcpy(mapData, chunk.data(), chunk.size());
+        mapData += chunk.size();
         return true;
     });
 

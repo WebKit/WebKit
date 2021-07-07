@@ -42,7 +42,9 @@ namespace NetworkCache {
 Data Data::mapToFile(const String& path) const
 {
     FileSystem::PlatformFileHandle handle;
-    auto applyData = [&](const Function<bool(const uint8_t*, size_t)>& applier) { apply(applier); };
+    auto applyData = [&](const Function<bool(Span<const uint8_t>)>& applier) {
+        apply(applier);
+    };
     auto mappedFile = FileSystem::mapToFile(path, size(), WTFMove(applyData), &handle);
     if (!mappedFile)
         return { };
@@ -87,8 +89,8 @@ SHA1::Digest computeSHA1(const Data& data, const Salt& salt)
 {
     SHA1 sha1;
     sha1.addBytes(salt.data(), salt.size());
-    data.apply([&sha1](const uint8_t* data, size_t size) {
-        sha1.addBytes(data, size);
+    data.apply([&sha1](Span<const uint8_t> span) {
+        sha1.addBytes(span.data(), span.size());
         return true;
     });
 

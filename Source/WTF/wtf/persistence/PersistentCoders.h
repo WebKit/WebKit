@@ -149,7 +149,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
     static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T));
+        encoder.encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T) });
     }
     
     static std::optional<Vector<T, inlineCapacity>> decode(Decoder& decoder)
@@ -173,7 +173,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
         Vector<T, inlineCapacity> temp;
         temp.grow(size);
 
-        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T)))
+        if (!decoder.decodeFixedLengthData({ temp.data(), size * sizeof(T) }))
             return std::nullopt;
 
         return temp;
