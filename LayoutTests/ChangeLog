@@ -1,3 +1,12 @@
+2021-07-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Mac Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=227753
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-07-07  Eric Hutchison  <ehutchison@apple.com>
 
         REGRESSION (r274460?): Infinite recursion on fullscreen/full-screen-remove-ancestor.html in WTR::InjectedBundlePage::closeFullScreen
