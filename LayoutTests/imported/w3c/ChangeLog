@@ -1,3 +1,14 @@
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        URL host setter should pass host to URLParser instead of trying to encode it itself
+        https://bugs.webkit.org/show_bug.cgi?id=227749
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/url/url-setters-a-area.window-expected.txt:
+        * web-platform-tests/url/url-setters.any-expected.txt:
+        * web-platform-tests/url/url-setters.any.worker-expected.txt:
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         IDBIndex.keyPath should keep returning the same object

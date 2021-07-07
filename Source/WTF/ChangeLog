@@ -1,5 +1,19 @@
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
+        URL host setter should pass host to URLParser instead of trying to encode it itself
+        https://bugs.webkit.org/show_bug.cgi?id=227749
+
+        Reviewed by Chris Dumez.
+
+        For non-special schemes, the host is percent-encoded instead of punycode-encoded.
+        Allowing the URL parser to handle all input directly does the right thing for non-special schemes.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setHost):
+        (WTF::URL::setHostAndPort):
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
         URL path setter should add "./" before non-empty path and after empty host for URLs with non-special schemes
         https://bugs.webkit.org/show_bug.cgi?id=227750
 
