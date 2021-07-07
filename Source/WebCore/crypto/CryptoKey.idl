@@ -35,6 +35,7 @@ typedef (CryptoKeyAlgorithm or CryptoAesKeyAlgorithm or CryptoEcKeyAlgorithm or 
     Conditional=WEB_CRYPTO,
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
+    SecureContext,
     SkipVTableValidation
 ] interface CryptoKey {
     readonly attribute KeyType type;

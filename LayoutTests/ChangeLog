@@ -1,3 +1,15 @@
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        SubtleCrypto should only be exposed to secure contexts
+        https://bugs.webkit.org/show_bug.cgi?id=227725
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * http/wpt/crypto/historical-expected.txt: Added.
+        * http/wpt/crypto/historical.html: Added.
+
 2021-07-07  Chris Lord  <clord@igalia.com>
 
         [WPE] Fieldset elements can incorrectly get treated as opaque with async scrolling overflow areas enabled
