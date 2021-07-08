@@ -1,3 +1,17 @@
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        [WebCrypto] Support Elliptic Curve P-521 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=216755
+        <rdar://problem/69667220>
+
+        Reviewed by Alex Christensen.
+
+        Update / rebaseline a few tests now that we support P-521.
+
+        * crypto/subtle/ec-generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/ec-generate-key-malformed-parameters.html:
+        * crypto/subtle/ecdh-derive-bits-length-limits-expected.txt:
+
 2021-07-07  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur Release wk2 arm64 ] scrollbars/corner-resizer-window-inactive.html is a flaky image-only failure.

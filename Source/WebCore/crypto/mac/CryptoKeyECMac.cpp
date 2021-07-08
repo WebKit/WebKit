@@ -41,45 +41,21 @@ static const unsigned char IdEcPublicKey[] = {0x06, 0x07, 0x2a, 0x86, 0x48, 0xce
 static constexpr unsigned char Secp256r1[] = {0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07};
 // OID secp384r1 1.3.132.0.34
 static constexpr unsigned char Secp384r1[] = {0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22};
+// OID secp521r1 1.3.132.0.35
+static constexpr unsigned char Secp521r1[] = {0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x23};
+
 // Version 1. Per https://tools.ietf.org/html/rfc5915#section-3
 static const unsigned char PrivateKeyVersion[] = {0x02, 0x01, 0x01};
 // Tagged type [1]
 static const unsigned char TaggedType1 = 0xa1;
 
-// Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
-// We only support uncompressed point format.
-static bool doesUncompressedPointMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
+static constexpr size_t sizeCeil(float f)
 {
-    switch (curve) {
-    case CryptoKeyEC::NamedCurve::P256:
-        return size == 65;
-    case CryptoKeyEC::NamedCurve::P384:
-        return size == 97;
-    case CryptoKeyEC::NamedCurve::P521:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
+    auto s = static_cast<size_t>(f);
+    return f > s ? s + 1 : s;
 }
 
-// Per Section 2.3.5 of http://www.secg.org/sec1-v2.pdf
-static bool doesFieldElementMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
-{
-    switch (curve) {
-    case CryptoKeyEC::NamedCurve::P256:
-        return size == 32;
-    case CryptoKeyEC::NamedCurve::P384:
-        return size == 48;
-    case CryptoKeyEC::NamedCurve::P521:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-static size_t getKeySizeFromNamedCurve(CryptoKeyEC::NamedCurve curve)
+static constexpr size_t keySizeInBitsFromNamedCurve(CryptoKeyEC::NamedCurve curve)
 {
     switch (curve) {
     case CryptoKeyEC::NamedCurve::P256:
@@ -87,11 +63,29 @@ static size_t getKeySizeFromNamedCurve(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return 384;
     case CryptoKeyEC::NamedCurve::P521:
-        break;
+        return 521;
     }
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+static constexpr size_t keySizeInBytesFromNamedCurve(CryptoKeyEC::NamedCurve curve)
+{
+    return sizeCeil(keySizeInBitsFromNamedCurve(curve) / 8.);
+}
+
+// Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
+// We only support uncompressed point format.
+static constexpr bool doesUncompressedPointMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
+{
+    return (keySizeInBytesFromNamedCurve(curve) * 2 + 1) == size;
+}
+
+// Per Section 2.3.5 of http://www.secg.org/sec1-v2.pdf
+static constexpr bool doesFieldElementMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
+{
+    return keySizeInBytesFromNamedCurve(curve) == size;
 }
 
 size_t CryptoKeyEC::keySizeInBits() const
@@ -102,12 +96,12 @@ size_t CryptoKeyEC::keySizeInBits() const
 
 bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
 {
-    return curve == NamedCurve::P256 || curve == NamedCurve::P384;
+    return curve == NamedCurve::P256 || curve == NamedCurve::P384 || curve == NamedCurve::P521;
 }
 
 std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    size_t size = getKeySizeFromNamedCurve(curve);
+    size_t size = keySizeInBitsFromNamedCurve(curve);
     CCECCryptorRef ccPublicKey = nullptr;
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorGeneratePair(size, &ccPublicKey, &ccPrivateKey))
@@ -132,7 +126,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
 
 Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 {
-    size_t expectedSize = keySizeInBits() / 4 + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
+    size_t expectedSize = 2 * keySizeInBytes() + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
     Vector<uint8_t> result(expectedSize);
     size_t size = result.size();
     if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, m_platformKey.get()) || size != expectedSize))
@@ -145,7 +139,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
     if (!doesFieldElementMatchNamedCurve(curve, x.size()) || !doesFieldElementMatchNamedCurve(curve, y.size()))
         return nullptr;
 
-    size_t size = getKeySizeFromNamedCurve(curve);
+    size_t size = keySizeInBitsFromNamedCurve(curve);
     CCECCryptorRef ccPublicKey = nullptr;
     if (CCECCryptorCreateFromData(size, x.data(), x.size(), y.data(), y.size(), &ccPublicKey))
         return nullptr;
@@ -175,7 +169,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
 
 bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 {
-    size_t keySizeInBytes = keySizeInBits() / 8;
+    size_t keySizeInBytes = this->keySizeInBytes();
     size_t publicKeySize = keySizeInBytes * 2 + 1; // 04 + X + Y per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
     size_t privateKeySize = keySizeInBytes * 3 + 1; // 04 + X + Y + D
 
@@ -217,9 +211,8 @@ static size_t getOID(CryptoKeyEC::NamedCurve curve, const uint8_t*& oid)
         oidSize = sizeof(Secp384r1);
         break;
     case CryptoKeyEC::NamedCurve::P521:
-        ASSERT_NOT_REACHED();
-        oid = nullptr;
-        oidSize = 0;
+        oid = Secp521r1;
+        oidSize = sizeof(Secp521r1);
         break;
     }
     return oidSize;
@@ -232,6 +225,7 @@ static size_t getOID(CryptoKeyEC::NamedCurve curve, const uint8_t*& oid)
 // id-ecPublicKey OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840) ansi-X9-62(10045) keyType(2) 1 }
 // secp256r1 OBJECT IDENTIFIER      ::= { iso(1) member-body(2) us(840) ansi-X9-62(10045) curves(3) prime(1) 7 }
 // secp384r1 OBJECT IDENTIFIER      ::= { iso(1) identified-organization(3) certicom(132) curve(0) 34 }
+// secp521r1 OBJECT IDENTIFIER      ::= { iso(1) identified-organization(3) certicom(132) curve(0) 35 }
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     // The following is a loose check on the provided SPKI key, it aims to extract AlgorithmIdentifier, ECParameters, and Key.
@@ -272,7 +266,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
 
 Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
 {
-    size_t expectedKeySize = keySizeInBits() / 4 + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
+    size_t expectedKeySize = 2 * keySizeInBytes() + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
     Vector<uint8_t> keyBytes(expectedKeySize);
     size_t keySize = keyBytes.size();
     if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPublic, m_platformKey.get()) || keySize != expectedKeySize))
@@ -284,7 +278,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     const uint8_t* oid;
     size_t oidSize = getOID(namedCurve(), oid);
 
-    // SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1 + BIT STRING + length(?) + InitialOctet + Key size
+    // SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1/OID secp521r1 + BIT STRING + length(?) + InitialOctet + Key size
     size_t totalSize = sizeof(IdEcPublicKey) + oidSize + bytesNeededForEncodedLength(keySize + 1) + keySize + 4;
 
     Vector<uint8_t> result;
@@ -342,10 +336,11 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]); // Read length
 
-    if (keyData.size() < index + getKeySizeFromNamedCurve(curve) / 8)
+    size_t privateKeySize = keySizeInBytesFromNamedCurve(curve);
+    if (keyData.size() < index + privateKeySize)
         return nullptr;
     size_t privateKeyPos = index;
-    index += getKeySizeFromNamedCurve(curve) / 8 + 1; // Read privateKey, TaggedType1
+    index += privateKeySize + 1; // Read privateKey, TaggedType1
     if (keyData.size() < index + 1)
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length, BIT STRING
@@ -357,7 +352,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     Vector<uint8_t> keyBinary { keyData.data() + index, keyData.size() - index };
     if (!doesUncompressedPointMatchNamedCurve(curve, keyBinary.size()))
         return nullptr;
-    keyBinary.append(keyData.data() + privateKeyPos, getKeySizeFromNamedCurve(curve) / 8);
+    keyBinary.append(keyData.data() + privateKeyPos, privateKeySize);
 
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, keyBinary.data(), keyBinary.size(), ccECKeyPrivate, &ccPrivateKey))
@@ -368,7 +363,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
 
 Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 {
-    size_t keySizeInBytes = keySizeInBits() / 8;
+    size_t keySizeInBytes = this->keySizeInBytes();
     size_t expectedKeySize = keySizeInBytes * 3 + 1; // 04 + X + Y + D
     Vector<uint8_t> keyBytes(expectedKeySize);
     size_t keySize = keyBytes.size();
@@ -389,7 +384,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     size_t ecPrivateKeySize = sizeof(Version) + keySizeInBytes + bytesNeededForEncodedLength(taggedTypeSize) + bytesNeededForEncodedLength(publicKeySize) + publicKeySize + 4;
     // SEQUENCE + length(?) + ecPrivateKeySize
     size_t privateKeySize = bytesNeededForEncodedLength(ecPrivateKeySize) + ecPrivateKeySize + 1;
-    // VERSION + SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1 + OCTET STRING + length(?) + privateKeySize
+    // VERSION + SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1/OID secp521r1 + OCTET STRING + length(?) + privateKeySize
     size_t totalSize = sizeof(Version) + sizeof(IdEcPublicKey) + oidSize + bytesNeededForEncodedLength(privateKeySize) + privateKeySize + 3;
 
     Vector<uint8_t> result;

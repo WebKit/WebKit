@@ -1,5 +1,52 @@
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
+        [WebCrypto] Support Elliptic Curve P-521 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=216755
+        <rdar://problem/69667220>
+
+        Reviewed by Alex Christensen.
+
+        Add support for Elliptic Curve P-521 in WebCrypto for ECDSA and ECDH, on macOS.
+        Both Gecko and Blink already support this.
+
+        No new tests, rebaselined existing tests.
+
+        * crypto/mac/CryptoAlgorithmECDHMac.cpp:
+        (WebCore::CryptoAlgorithmECDH::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmECDSAMac.cpp:
+        Use std::ceil() when converting bits to bytes since 521 is not a multiple of 8.
+        This is as per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf, which indicates
+        we should use ceil().
+
+        (WebCore::signECDSA):
+        Stop assuming the length can be encoded in a single byte as this is not true with
+        P-521 (values >= 128 require 2 bytes).
+
+        (WebCore::verifyECDSA):
+        Do not reject the promise when CCECCryptorVerifyHash() fails and instead return
+        false to indicate that the signature fails. This was needed to pass a few more
+        WPT checks. We do not do much validation on r and s before passing them to
+        CommonCrypto and CCECCryptorVerifyHash() may return a kCCNotVerified error when
+        the input signature is invalid (invalid signatures are tested by WPT tests).
+
+        (WebCore::CryptoAlgorithmECDSA::platformSign):
+        (WebCore::CryptoAlgorithmECDSA::platformVerify):
+        * crypto/mac/CryptoKeyECMac.cpp:
+        (WebCore::doesUncompressedPointMatchNamedCurve):
+        (WebCore::doesFieldElementMatchNamedCurve):
+        (WebCore::getKeySizeFromNamedCurve):
+        (WebCore::CryptoKeyEC::platformSupportedCurve):
+        (WebCore::CryptoKeyEC::platformExportRaw const):
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        (WebCore::getOID):
+        (WebCore::CryptoKeyEC::platformExportSpki const):
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        (WebCore::CryptoKeyEC::platformExportPkcs8 const):
+        Add support for P-521 and use std::ceil() when converting bits to bytes since
+        521 is not a multiple of 8.
+
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
         [IndexedDB] Transaction should be inactive during structured clone
         https://bugs.webkit.org/show_bug.cgi?id=227773
 

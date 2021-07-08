@@ -36,7 +36,7 @@ shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, ex
 shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["wrapKey"])');
 shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["unwrapKey"])');
 // Not supported NamedCurve
-shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-521"}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-523"}, extractable, ["deriveKey"])');
 </script>
 
 <script src="../../resources/js-test-post.js"></script>
