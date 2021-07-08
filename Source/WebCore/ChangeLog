@@ -1,3 +1,30 @@
+2021-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Selection is misaligned on some images on twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=227775
+        rdar://77142364
+
+        Reviewed by Tim Horton.
+
+        On Twitter, image thumbnails consist of fully transparent image elements (`opacity: 0;`) that are overlaid over
+        `div` elements with a background image. The images for some of these transparent image elements sometimes don't
+        match the background image behind it (namely, the image is stretched to exactly fit the bounds of the
+        transparent image element in a way that does not preserve aspect ratio, whereas the background image is cropped
+        to cover the `div`). As such, Live Text in these image elements ends up misaligned against the background image
+        (which is actually visible to the user).
+
+        To address this, special case fully transparent images such that we take a snapshot of the page using the
+        absolute bounds of the transparent image and run OCR over this snapshot, instead of using the image data as-is.
+
+        Test: fast/images/text-recognition/image-overlay-in-transparent-image.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::containerRectForTextRecognition):
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+        * html/HTMLElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::updateElementsWithTextRecognitionResults):
+
 2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Clean up App Privacy Report code

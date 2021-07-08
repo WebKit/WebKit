@@ -3630,7 +3630,7 @@ void Page::updateElementsWithTextRecognitionResults()
         if (!is<RenderImage>(renderer))
             continue;
 
-        auto newContainerRect = enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
+        auto newContainerRect = protectedElement->containerRectForTextRecognition();
         if (containerRect == newContainerRect)
             continue;
 

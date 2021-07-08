@@ -1340,6 +1340,18 @@ bool HTMLElement::isImageOverlayText(const Node& node)
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+IntRect HTMLElement::containerRectForTextRecognition()
+{
+    auto* renderer = this->renderer();
+    if (!is<RenderImage>(renderer))
+        return { };
+
+    if (!renderer->opacity())
+        return { 0, 0, offsetWidth(), offsetHeight() };
+
+    return enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
+}
+
 void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& result, CacheTextRecognitionResults cacheTextRecognitionResults)
 {
     static MainThreadNeverDestroyed<const AtomString> imageOverlayLineClass("image-overlay-line", AtomString::ConstructFromLiteral);
@@ -1472,7 +1484,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
 
     downcast<RenderImage>(*renderer).setHasImageOverlay();
 
-    auto containerRect = enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
+    auto containerRect = containerRectForTextRecognition();
     auto convertToContainerCoordinates = [&](const FloatQuad& normalizedQuad) {
         auto quad = normalizedQuad;
         quad.scale(containerRect.width(), containerRect.height());

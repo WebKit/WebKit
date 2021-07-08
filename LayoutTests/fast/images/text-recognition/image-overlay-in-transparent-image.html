@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 400px;
+}
+
+.back {
+    object-fit: cover;
+}
+
+.front {
+    opacity: 0;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<img class="back" src="../resources/dice.png"></img>
+<img class="front" src="../resources/dice.png"></img>
+<script>
+addEventListener("load", () => {
+    const image = document.querySelector("img.front");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                }
+            ],
+        }
+    ]);
+
+    let text = internals.shadowRoot(image).querySelector(".image-overlay-text");
+    boundingRect = text.getBoundingClientRect();
+    shouldBe("boundingRect.width", "250");
+    shouldBe("boundingRect.height", "200");
+});
+</script>
+</body>
+</html>

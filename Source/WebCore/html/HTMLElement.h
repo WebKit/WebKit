@@ -139,6 +139,7 @@ public:
     WEBCORE_EXPORT static bool isImageOverlayText(const Node*);
 
 #if ENABLE(IMAGE_ANALYSIS)
+    IntRect containerRectForTextRecognition();
     enum class CacheTextRecognitionResults : bool { No, Yes };
     WEBCORE_EXPORT void updateWithTextRecognitionResult(const TextRecognitionResult&, CacheTextRecognitionResults = CacheTextRecognitionResults::Yes);
 #endif

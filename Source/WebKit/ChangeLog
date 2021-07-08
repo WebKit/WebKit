@@ -1,3 +1,27 @@
+2021-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Selection is misaligned on some images on twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=227775
+        rdar://77142364
+
+        Reviewed by Tim Horton.
+
+        See WebCore ChangeLog for more details.
+
+        * WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp:
+        (WebKit::createShareableBitmap):
+        * WebProcess/WebCoreSupport/ShareableBitmapUtilities.h:
+        (WebKit::createShareableBitmap):
+
+        Add an option to handle the scenario where the image renderer is fully transparent by falling back to a frame-
+        level snapshot, using the bounds of the image renderer.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestTextRecognition):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imagePositionInformation):
+        (WebKit::elementPositionInformation):
+
 2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Clean up App Privacy Report code

@@ -7406,7 +7406,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
     }
 
     auto& renderImage = downcast<RenderImage>(*renderer);
-    auto bitmap = createShareableBitmap(renderImage, std::nullopt, AllowAnimatedImages::No);
+    auto bitmap = createShareableBitmap(renderImage, { std::nullopt, AllowAnimatedImages::No, UseSnapshotForTransparentImages::Yes });
     if (!bitmap) {
         if (completion)
             completion({ });
