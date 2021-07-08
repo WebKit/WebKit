@@ -1,3 +1,19 @@
+2021-07-07  Saam Barati  <sbarati@apple.com>
+
+        JSArrayBufferView::byteOffsetConcurrently has a race when using PAC
+        https://bugs.webkit.org/show_bug.cgi?id=227765
+
+        Reviewed by Mark Lam.
+
+        We were calling JSArrayBufferView::vector(), which does PAC validation
+        using the length() of the array. However, this can race with JSArrayBufferView::detach,
+        which sets the length to zero, leading to sadness on the compiler thread.
+
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::vectorWithoutPACValidation const):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::byteOffsetImpl):
+
 2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix Object.assign fast path to accept undefined/null

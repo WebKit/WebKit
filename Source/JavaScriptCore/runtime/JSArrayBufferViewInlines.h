@@ -97,7 +97,7 @@ inline ResultType JSArrayBufferView::byteOffsetImpl()
     }
 
     ptrdiff_t delta =
-        bitwise_cast<uint8_t*>(vector()) - static_cast<uint8_t*>(buffer->data());
+        bitwise_cast<uint8_t*>(vectorWithoutPACValidation()) - static_cast<uint8_t*>(buffer->data());
 
     unsigned result = static_cast<unsigned>(delta);
     if (requester == Mutator)
