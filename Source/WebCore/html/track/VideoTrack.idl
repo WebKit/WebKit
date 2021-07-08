@@ -26,7 +26,7 @@
 [
     Conditional=VIDEO,
     GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction,
+    GenerateAddOpaqueRoot,
     Exposed=Window
 ] interface VideoTrack {
     readonly attribute DOMString id;

@@ -75,6 +75,13 @@ Element* TrackBase::element()
     return m_mediaElement.get();
 }
 
+void* TrackBase::opaqueRoot()
+{
+    if (auto* associatedElement = element())
+        return associatedElement->opaqueRoot();
+    return this;
+}
+
 void TrackBase::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     m_mediaElement = element;

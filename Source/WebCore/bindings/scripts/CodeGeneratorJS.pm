@@ -4889,8 +4889,10 @@ sub GenerateImplementation
             push(@implContent, "#endif\n");
         }
         if ($interface->extendedAttributes->{GenerateAddOpaqueRoot}) {
+            AddToImplIncludes("<wtf/GetPtr.h>");
             my $functionName = $interface->extendedAttributes->{GenerateAddOpaqueRoot};
-            push(@implContent, "    visitor.addOpaqueRoot(thisObject->wrapped().${functionName}());\n");
+            $functionName = "opaqueRoot" if $functionName eq "VALUE_IS_MISSING";
+            push(@implContent, "    visitor.addOpaqueRoot(WTF::getPtr(thisObject->wrapped().${functionName}()));\n");
         }
         if ($interface->extendedAttributes->{ReportExtraMemoryCost}) {
             push(@implContent, "    visitor.reportExtraMemoryVisited(thisObject->wrapped().memoryCost());\n");

@@ -27,7 +27,7 @@
     ActiveDOMObject,
     Conditional=VIDEO,
     GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction,
+    GenerateAddOpaqueRoot,
     Exposed=Window
 ] interface AudioTrackList : EventTarget {
     readonly attribute unsigned long length;

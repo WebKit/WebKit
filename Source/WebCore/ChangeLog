@@ -1,3 +1,40 @@
+2021-07-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove more custom binding code with GenerateAddOpaqueRoot
+        https://bugs.webkit.org/show_bug.cgi?id=227789
+
+        Reviewed by Chris Dumez.
+
+        Use GenerateAddOpaqueRoot extended IDL option to remove more custom bindings code.
+
+        Also made GenerateAddOpaqueRoot default to use wrapped object's opaqueRoot function.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAbortControllerCustom.cpp: Removed.
+        * bindings/js/JSAudioTrackCustom.cpp: Removed.
+        * bindings/js/JSAudioTrackListCustom.cpp: Removed.
+        * bindings/js/JSTextTrackCustom.cpp: Removed.
+        * bindings/js/JSTextTrackListCustom.cpp: Removed.
+        * bindings/js/JSVideoTrackCustom.cpp: Removed.
+        * bindings/js/JSVideoTrackListCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * dom/AbortController.h:
+        * dom/AbortController.idl:
+        * html/track/AudioTrack.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackList.idl:
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::opaqueRoot): Added.
+        * html/track/TrackBase.h:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::opaqueRoot const): Added.
+        * html/track/TrackListBase.h:
+        * html/track/VideoTrack.idl:
+        * html/track/VideoTrackList.idl:
+
 2021-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix some whitespace handling issues in URL setters

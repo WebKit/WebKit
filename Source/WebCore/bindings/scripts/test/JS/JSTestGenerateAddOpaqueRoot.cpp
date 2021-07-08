@@ -206,7 +206,7 @@ void JSTestGenerateAddOpaqueRoot::visitChildrenImpl(JSCell* cell, Visitor& visit
     auto* thisObject = jsCast<JSTestGenerateAddOpaqueRoot*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(thisObject->wrapped().ownerObjectConcurrently());
+    visitor.addOpaqueRoot(WTF::getPtr(thisObject->wrapped().ownerObjectConcurrently()));
 }
 
 DEFINE_VISIT_CHILDREN(JSTestGenerateAddOpaqueRoot);

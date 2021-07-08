@@ -65,6 +65,13 @@ Element* TrackListBase::element() const
     return m_element.get();
 }
 
+void* TrackListBase::opaqueRoot() const
+{
+    if (auto* associatedElement = element())
+        return associatedElement->opaqueRoot();
+    return nullptr;
+}
+
 unsigned TrackListBase::length() const
 {
     return m_inbandTracks.size();
