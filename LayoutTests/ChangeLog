@@ -1,3 +1,17 @@
+2021-07-08  Cameron McCormack  <heycam@apple.com>
+
+        Stop GraphicsLayerCA::recursiveCommitChanges recursion once cMaxLayerTreeDepth is reached
+        https://bugs.webkit.org/show_bug.cgi?id=227738
+        <rdar://42584284>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that changes made to GraphicsLayerCAs that are too deep
+        in the tree will be committed if they later become not too deep.
+
+        * fast/layers/deep-layer-update-expected.html: Added.
+        * fast/layers/deep-layer-update.html: Added.
+
 2021-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Selection is misaligned on some images on twitter.com

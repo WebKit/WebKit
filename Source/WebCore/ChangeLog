@@ -1,3 +1,38 @@
+2021-07-08  Cameron McCormack  <heycam@apple.com>
+
+        Stop GraphicsLayerCA::recursiveCommitChanges recursion once cMaxLayerTreeDepth is reached
+        https://bugs.webkit.org/show_bug.cgi?id=227738
+        <rdar://42584284>
+
+        Reviewed by Simon Fraser.
+
+        To avoid stack overflow in some configurations, stop
+        recursiveCommitChange recursion when we reach the same level that we
+        stop hooking up PlatformCALayers. This will leave GraphicsLayerCAs in
+        the tree with m_uncommittedChanges, but if we ever do another call to
+        recursiveCommitChange where the GraphicsLayerCA is now at an
+        appropriate depth (because some ancestors lost their structural
+        layers, for example), then we'll process the uncommitted changes at
+        that point.
+
+        Pull up the increment of commitState.treeDepth from
+        commitLayerChangesBeforeSublayers to recursiveCommitChanges so that
+        the commitLayerChangesBeforeSublayers call for a mask layer doesn't
+        contribute to the depth count.
+
+        Use structuralLayerPurpose() rather than null-checking
+        m_structuralLayer to determine whether we count an additional depth
+        level, since m_structuralLayer reflects whether we already have a
+        structural layer (which may or may not go away), and
+        structuralLayerPurpose() can tell us whether we will have a structural
+        layer.
+
+        Test: fast/layers/deep-layer-update.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+
 2021-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Selection is misaligned on some images on twitter.com

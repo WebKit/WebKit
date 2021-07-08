@@ -1648,8 +1648,6 @@ bool GraphicsLayerCA::needsCommit(const CommitState& commitState)
     return false;
 }
 
-// rootRelativeTransformForScaling is a transform from the root, but for layers with transform animations, it cherry-picked the state of the
-// animation that contributes maximally to the scale (on every layer with animations down the hierarchy).
 void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
     if (!needsCommit(commitState))
@@ -1657,6 +1655,10 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
 
     TransformState localState = state;
     CommitState childCommitState = commitState;
+
+    ++childCommitState.treeDepth;
+    if (structuralLayerPurpose() != NoStructuralLayer)
+        ++childCommitState.treeDepth;
 
     bool affectedByTransformAnimation = commitState.ancestorHasTransformAnimation;
 
@@ -1734,13 +1736,15 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     }
 
     bool hasDescendantsWithRunningTransformAnimations = false;
-    
-    for (auto& layer : children()) {
-        auto& currentChild = downcast<GraphicsLayerCA>(layer.get());
-        currentChild.recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
-        if (currentChild.isRunningTransformAnimation() || currentChild.hasDescendantsWithRunningTransformAnimations())
-            hasDescendantsWithRunningTransformAnimations = true;
+    if (childCommitState.treeDepth <= cMaxLayerTreeDepth) {
+        for (auto& layer : children()) {
+            auto& currentChild = downcast<GraphicsLayerCA>(layer.get());
+            currentChild.recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+
+            if (currentChild.isRunningTransformAnimation() || currentChild.hasDescendantsWithRunningTransformAnimations())
+                hasDescendantsWithRunningTransformAnimations = true;
+        }
     }
 
     commitState.totalBackdropFilterArea = childCommitState.totalBackdropFilterArea;
@@ -1857,10 +1861,6 @@ static bool isCustomBackdropLayerType(PlatformCALayer::LayerType layerType)
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
 {
     SetForScope<bool> committingChangesChange(m_isCommittingChanges, true);
-
-    ++commitState.treeDepth;
-    if (m_structuralLayer)
-        ++commitState.treeDepth;
 
     if (!m_uncommittedChanges) {
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
