@@ -1,3 +1,13 @@
+2021-07-07  Tim Horton  <timothy_horton@apple.com>
+
+        Add WKHoverPlatter and some knobs to tweak its appearance
+        https://bugs.webkit.org/show_bug.cgi?id=227735
+        <rdar://problem/79198262>
+
+        Reviewed by Sam Weinig.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         Set kVTCompressionPropertyKey_MaxKeyFrameInterval in VideoSampleBufferCompressor

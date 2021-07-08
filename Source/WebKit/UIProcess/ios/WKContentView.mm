@@ -326,6 +326,11 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     return _webView.getAutoreleased();
 }
 
+- (UIView *)rootContentView
+{
+    return _rootContentView.get();
+}
+
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
     [super willMoveToWindow:newWindow];

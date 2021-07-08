@@ -56,6 +56,8 @@
 #import "WKFormSelectControl.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHighlightLongPressGestureRecognizer.h"
+#import "WKHoverPlatter.h"
+#import "WKHoverPlatterParameters.h"
 #import "WKImageAnalysisGestureRecognizer.h"
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
@@ -128,6 +130,7 @@
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
 #import <WebCore/VisibleSelection.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/WebTextIndicatorLayer.h>
 #import <WebCore/WritingDirection.h>
@@ -136,6 +139,7 @@
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
@@ -894,6 +898,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpHoverGestureRecognizer];
 #endif
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+    _hoverPlatter = adoptNS([[WKHoverPlatter alloc] initWithView:self.rootContentView delegate:self]);
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
@@ -1079,6 +1087,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if ENABLE(HOVER_GESTURE_RECOGNIZER)
     [_hoverGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [_hoverPlatter invalidate];
+    _hoverPlatter = nil;
 #endif
 
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
@@ -4740,6 +4753,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _activeTextInteractionCount = 0;
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     [self _invalidateCurrentPositionInformation];
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [_hoverPlatter dismissPlatterWithAnimation:NO];
+#endif
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -9502,6 +9519,8 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         [self.window makeKeyWindow];
 
     _page->handleMouseEvent(*event);
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForMouse)
+        [_hoverPlatter setHoverPoint:event->position()];
 }
 
 - (void)_configureMouseGestureRecognizer
@@ -9536,9 +9555,20 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return;
 
     _page->handleMouseEvent(*event);
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForHover)
+        [_hoverPlatter setHoverPoint:event->position()];
 }
 
 #endif // ENABLE(HOVER_GESTURE_RECOGNIZER)
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+
+- (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler
+{
+    [self doAfterPositionInformationUpdate:completionHandler forRequest:request];
+}
+
+#endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 

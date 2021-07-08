@@ -94,6 +94,7 @@ enum class ViewStabilityFlag : uint8_t;
 - (void)_webViewDestroyed;
 
 - (WKWebView *)webView;
+- (UIView *)rootContentView;
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process;
 - (void)_processDidExit;
