@@ -1,3 +1,36 @@
+2021-07-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy smart pointers in PointerCaptureController
+        https://bugs.webkit.org/show_bug.cgi?id=227352
+
+        Reviewed by Wenson Hsieh.
+
+        Deployed Ref/RefPtr in more places in PointerCaptureController.
+        Also made PointerCaptureController::CapturingData ref counted.
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::pointerCaptureElement const):
+        (WebCore::PointerCaptureController::setPointerCapture):
+        (WebCore::PointerCaptureController::releasePointerCapture):
+        (WebCore::PointerCaptureController::hasPointerCapture):
+        (WebCore::PointerCaptureController::pointerLockWasApplied):
+        (WebCore::PointerCaptureController::elementWasRemoved):
+        (WebCore::PointerCaptureController::reset):
+        (WebCore::PointerCaptureController::updateHaveAnyCapturingElement):
+        (WebCore::PointerCaptureController::hasCancelledPointerEventForIdentifier const):
+        (WebCore::PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier const):
+        (WebCore::hierarchyHasCapturingEventListeners):
+        (WebCore::PointerCaptureController::dispatchEventForTouchAtIndex):
+        (WebCore::PointerCaptureController::pointerEventForMouseEvent):
+        (WebCore::PointerCaptureController::pointerEventWillBeDispatched):
+        (WebCore::PointerCaptureController::ensureCapturingDataForPointerEvent):
+        (WebCore::PointerCaptureController::pointerEventWasDispatched):
+        (WebCore::PointerCaptureController::cancelPointer):
+        (WebCore::PointerCaptureController::processPendingPointerCapture):
+        * page/PointerCaptureController.h:
+        (WebCore::PointerCaptureController::CapturingData::create):
+        (WebCore::PointerCaptureController::CapturingData::CapturingData):
+
 2021-07-08  Simon Fraser  <simon.fraser@apple.com>
 
         Scrollbar hidden when scroller has a negative z-index child
