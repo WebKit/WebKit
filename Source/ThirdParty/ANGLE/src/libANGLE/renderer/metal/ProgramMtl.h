@@ -153,6 +153,9 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
 
     std::array<uint32_t, mtl::kMaxShaderXFBs> getXfbBindings() const { return mXfbBindings; }
     std::string getTranslatedShaderSource(const gl::ShaderType shaderType) const { return mMslShaderTranslateInfo[shaderType].metalShaderSource; }
+    
+    mtl::TranslatedShaderInfo getTranslatedShaderInfo(const gl::ShaderType shaderType) const { return mMslShaderTranslateInfo[shaderType]; }
+    
     bool hasFlatAttribute();
     
     mtl::RenderPipelineCache *mMetalXfbRenderPipelineCache;

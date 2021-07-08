@@ -977,6 +977,7 @@ void DisplayMtl::initializeFeatures()
 
     ANGLE_FEATURE_CONDITION((&mFeatures), intelThinMipmapWorkaround, isIntel());
     ANGLE_FEATURE_CONDITION((&mFeatures), intelExplicitBoolCastWorkaround, isIntel() && GetMacOSVersion() < OSVersion(11, 0, 0));
+    ANGLE_FEATURE_CONDITION((&mFeatures), intelDisableFastMath, isIntel() && GetMacOSVersion() < OSVersion(12, 0, 0));
 
     angle::PlatformMethods *platform = ANGLEPlatformCurrent();
     platform->overrideFeaturesMtl(platform, &mFeatures);

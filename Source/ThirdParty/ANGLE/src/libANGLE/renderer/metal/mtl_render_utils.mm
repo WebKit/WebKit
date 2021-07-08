@@ -3046,17 +3046,17 @@ VertexFormatConversionUtils::getFloatConverstionRenderPipeline(ContextMtl *conte
 
 AutoObjCPtr<id<MTLLibrary>> TransformFeedbackUtils::createMslXfbLibrary(
     ContextMtl *contextMtl,
-    const std::string &translatedMsl)
+    const std::string &translatedMsl,
+    bool enableFastMath)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
         DisplayMtl *display     = contextMtl->getDisplay();
         id<MTLDevice> mtlDevice = display->getMetalDevice();
-
         // Convert to actual binary shader
         mtl::AutoObjCPtr<NSError *> err = nil;
         mtl::AutoObjCPtr<id<MTLLibrary>> mtlShaderLib =
-        mtl::CreateShaderLibrary(mtlDevice, translatedMsl, @{@"TRANSFORM_FEEDBACK_ENABLED": @"1"}, &err);
+        mtl::CreateShaderLibrary(mtlDevice, translatedMsl, @{@"TRANSFORM_FEEDBACK_ENABLED": @"1"}, enableFastMath, &err);
         if (err && !mtlShaderLib)
         {
             NSLog(@"%@", err.get());
@@ -3074,13 +3074,13 @@ AutoObjCPtr<id<MTLRenderPipelineState>> TransformFeedbackUtils::getTransformFeed
 {
     const ProgramMtl *programMtl = mtl::GetImpl(contextMtl->getState().getProgram());
     RenderPipelineCache &cache   = *programMtl->mMetalXfbRenderPipelineCache;
-
+    bool disableFastMath = contextMtl->getDisplay()->getFeatures().intelDisableFastMath.enabled &&  programMtl->getTranslatedShaderInfo(gl::ShaderType::Vertex).hasInvariantOrAtan;
     if (!cache.getVertexShader())
     {
         // Pipeline cache not intialized, do it now:
         ANGLE_MTL_OBJC_SCOPE
         {
-            auto shaderLib = createMslXfbLibrary(contextMtl, programMtl->getTranslatedShaderSource(gl::ShaderType::Vertex));
+            auto shaderLib = createMslXfbLibrary(contextMtl, programMtl->getTranslatedShaderSource(gl::ShaderType::Vertex), !disableFastMath);
             // Non specialized constants provided, use default creation function.
             EnsureVertexShaderOnlyPipelineCacheInitialized(contextMtl, SHADER_ENTRY_NAME, shaderLib,
                                                            &cache);

@@ -1,3 +1,72 @@
+2021-07-08  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r279606. rdar://problem/80339390
+
+    REGRESSION (r279466):  [Big Sur] webgl/1.0.3/conformance & webgl/2.0.0/conformance are failing
+    https://bugs.webkit.org/show_bug.cgi?id=227596
+    Provide Intel workaround for Big Sur systems. Atan and invariant have
+    issues on older systems, and require us to disable fastmath to produce correct results.
+    
+    Reviewed by Kenneth Russell.
+    
+    * include/platform/FeaturesMtl.h:
+    * src/compiler/translator/TranslatorMetalDirect.h:
+    (sh::TranslatorMetalReflection::reset):
+    * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+    (GenMetalTraverser::emitPostQualifier):
+    (GenMetalTraverser::visitUnary):
+    (GenMetalTraverser::visitAggregate):
+    * src/libANGLE/renderer/metal/DisplayMtl.mm:
+    (rx::DisplayMtl::initializeFeatures):
+    * src/libANGLE/renderer/metal/ProgramMtl.h:
+    (rx::ProgramMtl::getTranslatedShaderInfo const):
+    * src/libANGLE/renderer/metal/ProgramMtl.mm:
+    * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.h:
+    * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+    (rx::mtl::GlslangGetMSL):
+    * src/libANGLE/renderer/metal/mtl_render_utils.h:
+    * src/libANGLE/renderer/metal/mtl_render_utils.mm:
+    (rx::mtl::TransformFeedbackUtils::createMslXfbLibrary):
+    (rx::mtl::TransformFeedbackUtils::getTransformFeedbackRenderPipeline):
+    * src/libANGLE/renderer/metal/mtl_utils.h:
+    * src/libANGLE/renderer/metal/mtl_utils.mm:
+    (rx::mtl::CreateShaderLibrary):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279606 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-06  Kyle Piddington  <kpiddington@apple.com>
+
+            REGRESSION (r279466):  [Big Sur] webgl/1.0.3/conformance & webgl/2.0.0/conformance are failing
+            https://bugs.webkit.org/show_bug.cgi?id=227596
+            Provide Intel workaround for Big Sur systems. Atan and invariant have
+            issues on older systems, and require us to disable fastmath to produce correct results.
+
+            Reviewed by Kenneth Russell.
+
+            * include/platform/FeaturesMtl.h:
+            * src/compiler/translator/TranslatorMetalDirect.h:
+            (sh::TranslatorMetalReflection::reset):
+            * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+            (GenMetalTraverser::emitPostQualifier):
+            (GenMetalTraverser::visitUnary):
+            (GenMetalTraverser::visitAggregate):
+            * src/libANGLE/renderer/metal/DisplayMtl.mm:
+            (rx::DisplayMtl::initializeFeatures):
+            * src/libANGLE/renderer/metal/ProgramMtl.h:
+            (rx::ProgramMtl::getTranslatedShaderInfo const):
+            * src/libANGLE/renderer/metal/ProgramMtl.mm:
+            * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.h:
+            * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+            (rx::mtl::GlslangGetMSL):
+            * src/libANGLE/renderer/metal/mtl_render_utils.h:
+            * src/libANGLE/renderer/metal/mtl_render_utils.mm:
+            (rx::mtl::TransformFeedbackUtils::createMslXfbLibrary):
+            (rx::mtl::TransformFeedbackUtils::getTransformFeedbackRenderPipeline):
+            * src/libANGLE/renderer/metal/mtl_utils.h:
+            * src/libANGLE/renderer/metal/mtl_utils.mm:
+            (rx::mtl::CreateShaderLibrary):
+
 2021-07-01  Ben Nham  <nham@apple.com>
 
         Unreviewed, reverting r279172.
