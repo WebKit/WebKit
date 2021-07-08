@@ -1,3 +1,15 @@
+2021-07-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Expose SPI to opt out of Extensible SSO authentication
+        https://bugs.webkit.org/show_bug.cgi?id=227729
+        <rdar://problem/75647892>
+
+        Reviewed by Tim Horton.
+
+        Create new WKPreference to allow WebKit clients to opt out of Extensible SSO authentication.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
         URL host setter should pass host to URLParser instead of trying to encode it itself

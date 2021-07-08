@@ -759,6 +759,16 @@ EnumeratingAllNetworkInterfacesEnabled:
     WebKit:
       default: false
 
+ExtensibleSSOEnabled:
+  type: bool
+  getter: isExtensibleSSOEnabled
+  webcoreBinding: none
+  condition: HAVE(APP_SSO)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
 FTPDirectoryTemplatePath:
   type: String
   defaultValue:
