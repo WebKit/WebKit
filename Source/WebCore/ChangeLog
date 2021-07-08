@@ -1,3 +1,17 @@
+2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use JSC::Yarr::flagsString to get string representation of RegExp flags
+        https://bugs.webkit.org/show_bug.cgi?id=227790
+
+        Reviewed by Keith Miller.
+
+        This patch uses JSC::Yarr::flagsString function to retrieve string representation of
+        RegExp flags. This allows JSC to add flags without changing WebCore code.
+        Covered by existing tests.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+
 2021-07-08  Megan Gardner  <megan_gardner@apple.com>
 
         Add logging for legacy AppHighlight decoding to aid in future debugging.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +54,6 @@ enum class Flags : uint8_t {
 
 JS_EXPORT_PRIVATE std::optional<OptionSet<Flags>> parseFlags(StringView);
 using FlagsString = std::array<char, Yarr::numberOfFlags + 1>; // numberOfFlags + null-terminator
-FlagsString flagsString(OptionSet<Flags>);
+JS_EXPORT_PRIVATE FlagsString flagsString(OptionSet<Flags>);
 
 } } // namespace JSC::Yarr
