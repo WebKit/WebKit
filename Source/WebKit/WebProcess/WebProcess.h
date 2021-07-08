@@ -71,6 +71,10 @@
 #include <WebCore/PlatformDisplayLibWPE.h>
 #endif
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include <WebCore/CaptionUserPreferences.h>
+#endif
+
 namespace API {
 class Object;
 }
@@ -567,6 +571,9 @@ private:
 #endif
 
     void accessibilityPreferencesDidChange(const AccessibilityPreferences&);
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    void setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode, const Vector<String>&);
+#endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void colorPreferencesDidChange();

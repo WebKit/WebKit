@@ -1111,11 +1111,15 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
     if (_AXSInvertColorsEnabledApp(appID) != invertColorsEnabled)
         _AXSInvertColorsSetEnabledApp(invertColorsEnabled, appID);
 #endif
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(preferences.captionDisplayMode);
-    WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferences.preferredLanguages);
-#endif
 }
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode, const Vector<String>& preferredLanguages)
+{
+    WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(captionDisplayMode);
+    WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferredLanguages);
+}
+#endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcess::colorPreferencesDidChange()
