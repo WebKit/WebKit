@@ -161,6 +161,9 @@ static void transformContextForPainting(GraphicsContext& context, const FloatRec
     context.translate(dstRect.location() - srcRect.location());
     context.scale(FloatSize(hScale, -vScale));
     context.translate(0, -srcRect.height());
+
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=227808: Surely there needs to be a clip operation here,
+    // if the srcRect is smaller than the whole PDF.
 }
 
 // To avoid the jetsam on iOS, we are going to limit the size of all the PDF cachedImages to be 64MB.
@@ -246,6 +249,8 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     // We need to transform the coordinate system such that top-left of m_cachedImageRect will be mapped to the
     // top-left of dstRect. Although only m_cachedImageRect.size() of the image copied, the sizes of srcRect
     // and dstRect should be passed to this function because they are used to calculate the image scaling.
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=227809: Passing in m_cachedImageRect.location() for the
+    // source rect position doesn't seem correct here.
     transformContextForPainting(bufferContext, dstRect, FloatRect(m_cachedImageRect.location(), srcRect.size()));
     drawPDFPage(bufferContext);
 
@@ -275,10 +280,25 @@ ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect
             // of the source PDF was copied to 'm_cachedImageBuffer', the sizes of the source
             // and the destination rectangles will be equal and no scaling will be needed here.
             context.drawImageBuffer(*m_cachedImageBuffer, m_cachedImageRect);
-        }
-        else {
+        } else if (context.hasPlatformContext()) {
             transformContextForPainting(context, dstRect, srcRect);
             drawPDFPage(context);
+        } else {
+            // We can't draw the PDF directly because we have no platform context (probably because we're doing display list drawing).
+            // We also need to be careful about not getting terminated due to memory pressure.
+            //
+            // (scalar * width) * (scalar * height) = max number of pixels
+            // Solve for scalar...
+            // scalar = sqrt(max number of pixels / (width * height))
+            auto scalar = std::min(1.f, std::sqrt(static_cast<float>(s_maxCachedImageArea) / (dstRect.width() * dstRect.height())));
+            FloatRect localDestinationRect(FloatPoint(), dstRect.size() * scalar);
+            if (auto imageBuffer = ImageBuffer::createCompatibleBuffer(localDestinationRect.size(), context)) {
+                auto& bufferContext = imageBuffer->context();
+                transformContextForPainting(bufferContext, localDestinationRect, srcRect);
+                drawPDFPage(bufferContext);
+                context.drawImageBuffer(*imageBuffer, dstRect);
+            } else
+                return ImageDrawResult::DidNothing;
         }
     }
 

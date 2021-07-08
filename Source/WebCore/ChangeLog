@@ -1,3 +1,25 @@
+2021-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Draw PDFs using an intermediate ImageBuffer when using the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=227550
+
+        Reviewed by Tim Horton.
+
+        When drawing PDFs, we usually already have a cached ImageBuffer of the contents of the PDF.
+        However, in the situation where we don't have this cached ImageBuffer, we can't just draw
+        the PDF into the platformContext when we're using the GPU Process. So, instead, we need to
+        draw the PDF into an intermediate ImageBuffer and then send that to the GPU Process.
+
+        When we have a fully functional custom CGContext, we can use that to send all the PDF drawing
+        commands to the GPU Process, and this patch should then be reverted.
+
+        Test: fast/images/pdf-in-canvas.html
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw):
+        * platform/mac/LocalCurrentGraphicsContextMac.mm:
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+
 2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use JSC::Yarr::flagsString to get string representation of RegExp flags
