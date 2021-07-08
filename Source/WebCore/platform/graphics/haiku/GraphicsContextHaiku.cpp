@@ -69,7 +69,7 @@ void GraphicsContextHaiku::drawRect(const FloatRect& rect, float borderThickness
     else if (m_state.fillGradient) {
         m_state.fillGradient->fill(*this, rect);
     } else
-        m_view->FillRect(rect);
+        m_view->FillRect(rect, B_SOLID_LOW);
 
     // TODO: Support gradients
     if (strokeStyle() != NoStroke && borderThickness > 0.0f && strokeColor().isVisible())
