@@ -354,8 +354,8 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT bool calculateAndUpdateSourceUnlinkableToken(const String& serverPublicKeyBase64URL);
-    WEBCORE_EXPORT bool calculateAndUpdateSourceSecretToken(const String& serverResponseBase64URL);
+    WEBCORE_EXPORT std::optional<String> calculateAndUpdateSourceUnlinkableToken(const String& serverPublicKeyBase64URL);
+    WEBCORE_EXPORT std::optional<String> calculateAndUpdateSourceSecretToken(const String& serverResponseBase64URL);
 #endif
 
     void setSourceUnlinkableTokenValue(const String& value) { m_sourceUnlinkableToken.valueBase64URL = value; }

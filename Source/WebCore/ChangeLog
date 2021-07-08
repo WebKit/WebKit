@@ -1,3 +1,20 @@
+2021-07-07  John Wilander  <wilander@apple.com>
+
+        PCM: Add error logging for CryptoKit operations
+        https://bugs.webkit.org/show_bug.cgi?id=227731
+        <rdar://80221057>
+
+        Reviewed by Brent Fulgham.
+
+        Resolves three FIXMEs for error logging in PCM's CryptoKit operations.
+
+        No new tests. Only added logging.
+
+        * loader/PrivateClickMeasurement.h:
+        * loader/cocoa/PrivateClickMeasurementCocoa.mm:
+        (WebCore::PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken):
+        (WebCore::PrivateClickMeasurement::calculateAndUpdateSourceSecretToken):
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         Our structured cloning implementation does not encode all of RegExp's flags

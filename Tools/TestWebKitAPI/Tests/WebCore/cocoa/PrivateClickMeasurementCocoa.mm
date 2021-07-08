@@ -76,7 +76,8 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     auto *nsSpkiData = (__bridge NSData *)spkiData.get();
 
     // Continue the test.
-    EXPECT_TRUE(pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(nsSpkiData.bytes, nsSpkiData.length)));
+    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(nsSpkiData.bytes, nsSpkiData.length));
+    EXPECT_FALSE(errorMessage);
     auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 4ul);
     EXPECT_STREQ(sourceUnlinkableToken->getString("source_engagement_type"_s).utf8().data(), "click");
@@ -91,7 +92,8 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
 
     // Continue the test.
-    EXPECT_TRUE(pcm.calculateAndUpdateSourceSecretToken(base64URLEncodeToString([blindedSignature bytes], [blindedSignature length])));
+    errorMessage = pcm.calculateAndUpdateSourceSecretToken(base64URLEncodeToString([blindedSignature bytes], [blindedSignature length]));
+    EXPECT_FALSE(errorMessage);
     auto& persistentToken = pcm.sourceUnlinkableToken();
     EXPECT_TRUE(persistentToken);
     EXPECT_FALSE(persistentToken->tokenBase64URL.isEmpty());

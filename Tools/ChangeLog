@@ -1,5 +1,26 @@
 2021-07-07  John Wilander  <wilander@apple.com>
 
+        PCM: Add error logging for CryptoKit operations
+        https://bugs.webkit.org/show_bug.cgi?id=227731
+        <rdar://80221057>
+
+        Reviewed by Brent Fulgham.
+
+        Resolves three FIXMEs for error logging in PCM's CryptoKit operations.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+            Now expects an optional string instead of a bool from the function
+            calls which means EXPECT_TRUE has become EXPECT_FALSE. The optional
+            string is non-nullopt if it carries an error message.
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+            Now expects an optional string instead of a bool from the function
+            calls which means EXPECT_TRUE has become EXPECT_FALSE. The optional
+            string is non-nullopt if it carries an error message.
+
+2021-07-07  John Wilander  <wilander@apple.com>
+
         PCM: API test PrivateClickMeasurement.ValidBlindedSecret is failing on platforms with RSABSSA
         https://bugs.webkit.org/show_bug.cgi?id=227777
         <rdar://80291822>

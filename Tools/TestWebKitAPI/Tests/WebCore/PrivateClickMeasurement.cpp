@@ -320,11 +320,13 @@ TEST(PrivateClickMeasurement, InvalidBlindedSecret)
     EXPECT_TRUE(ephemeralNonce.isValid());
     pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
 
-    EXPECT_TRUE(pcm.calculateAndUpdateSourceUnlinkableToken(serverPublicKeyBase64URL));
+    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(serverPublicKeyBase64URL);
+    EXPECT_FALSE(errorMessage);
     sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 4ul);
 
-    EXPECT_FALSE(pcm.calculateAndUpdateSourceSecretToken(emptyString()));
+    errorMessage = pcm.calculateAndUpdateSourceSecretToken(emptyString());
+    EXPECT_TRUE(errorMessage);
 }
 #endif
 
