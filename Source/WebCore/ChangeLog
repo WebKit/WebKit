@@ -1,3 +1,20 @@
+2021-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] scroll-snap-align should use the box's writing-mode when the box is larger than the snapport
+        https://bugs.webkit.org/show_bug.cgi?id=227743
+
+        Reviewed by Simon Fraser.
+
+        No new tests. This fixes an existing WPT test:
+           - imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000.html
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::axesFlippedForWritingModeAndDirection): Added this helper which abstracts the process of
+        determining if the x-axis and y-axis are flipped given the style's writing mode and text direction.
+        (WebCore::updateSnapOffsetsForScrollableArea): When the inline axis of the box defining the snap area
+        is larger than the snapport, we use the box's writing mode and text-direction to determine if the
+        x-axis and y-axis are flipped.
+
 2021-07-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Merge Cairo::save and Cairo::restore into GraphicsContextCairo's methods
