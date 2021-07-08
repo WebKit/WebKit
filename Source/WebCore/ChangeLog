@@ -1,3 +1,18 @@
+2021-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Make backingProviderLayerCanIncludeLayer() a member function of BackingSharingState
+        https://bugs.webkit.org/show_bug.cgi?id=227818
+
+        Reviewed by Alan Bujtas.
+
+        Minor code refactor, no behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::BackingSharingState::canIncludeLayer const):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+        (WebCore::backingProviderLayerCanIncludeLayer): Deleted.
+
 2021-07-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove more custom binding code with GenerateAddOpaqueRoot

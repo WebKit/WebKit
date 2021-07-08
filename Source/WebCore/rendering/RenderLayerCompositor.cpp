@@ -259,6 +259,8 @@ public:
     {
         return m_backingSharingLayers.contains(&layer);
     }
+    
+    bool canIncludeLayer(const RenderLayer&) const;
 
     // Add a layer that would repaint into a layer in m_backingSharingLayers.
     // That repaint has to wait until we've set the provider's backing-sharing layers.
@@ -299,6 +301,15 @@ void RenderLayerCompositor::BackingSharingState::endBackingSharingSequence()
     issuePendingRepaints();
 
     m_backingProviderCandidate = nullptr;
+}
+
+bool RenderLayerCompositor::BackingSharingState::canIncludeLayer(const RenderLayer& layer) const
+{
+    // Disable sharing when painting shared layers doesn't work correctly.
+    if (layer.hasReflection())
+        return false;
+
+    return m_backingProviderCandidate && layer.ancestorLayerIsInContainingBlockChain(*m_backingProviderCandidate);
 }
 
 RenderLayer* RenderLayerCompositor::BackingSharingState::updateBeforeDescendantTraversal(RenderLayer& layer, bool willBeComposited)
@@ -951,15 +962,6 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     return true;
 }
 
-static bool backingProviderLayerCanIncludeLayer(const RenderLayer& sharedLayer, const RenderLayer& layer)
-{
-    // Disable sharing when painting shared layers doesn't work correctly.
-    if (layer.hasReflection())
-        return false;
-
-    return layer.ancestorLayerIsInContainingBlockChain(sharedLayer);
-}
-
 void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState, bool& descendantHas3DTransform)
 {
     layer.updateDescendantDependentFlags();
@@ -993,9 +995,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     }
 
     bool layerPaintsIntoProvidedBacking = false;
-    if (!willBeComposited && compositingState.subtreeIsCompositing && backingSharingState.backingProviderCandidate() && canBeComposited(layer) && backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate(), layer)) {
+    if (!willBeComposited && compositingState.subtreeIsCompositing && canBeComposited(layer) && backingSharingState.canIncludeLayer(layer)) {
         backingSharingState.appendSharingLayer(layer);
-        LOG(Compositing, " layer %p can share with %p", &layer, backingSharingState.backingProviderCandidate());
+        LOG_WITH_STREAM(Compositing, stream << " layer " << &layer << " can share with " << backingSharingState.backingProviderCandidate());
         compositingReason = IndirectCompositingReason::None;
         layerPaintsIntoProvidedBacking = true;
     }
@@ -1229,8 +1231,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         computeExtent(overlapMap, layer, layerExtent);
 
     if (layer.paintsIntoProvidedBacking()) {
-        ASSERT(backingSharingState.backingProviderCandidate());
-        ASSERT(backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate(), layer));
+        ASSERT(backingSharingState.canIncludeLayer(layer));
         backingSharingState.appendSharingLayer(layer);
         layerPaintsIntoProvidedBacking = true;
     }
