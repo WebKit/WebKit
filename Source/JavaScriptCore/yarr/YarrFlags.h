@@ -30,17 +30,29 @@
 
 namespace JSC { namespace Yarr {
 
+// Flags must be ordered in alphabet ordering.
+#define JSC_REGEXP_FLAGS(macro) \
+    macro('d', HasIndices, hasIndices, 0) \
+    macro('g', Global, global, 1) \
+    macro('i', IgnoreCase, ignoreCase, 2) \
+    macro('m', Multiline, multiline, 3) \
+    macro('s', DotAll, dotAll, 4) \
+    macro('u', Unicode, unicode, 5) \
+    macro('y', Sticky, sticky, 6) \
+
+#define JSC_COUNT_REGEXP_FLAG(key, name, lowerCaseName, index) + 1
+static constexpr unsigned numberOfFlags = 0 JSC_REGEXP_FLAGS(JSC_COUNT_REGEXP_FLAG);
+#undef JSC_COUNT_REGEXP_FLAG
+
 enum class Flags : uint8_t {
-    Global = 1 << 0,
-    IgnoreCase = 1 << 1,
-    Multiline = 1 << 2,
-    Sticky = 1 << 3,
-    Unicode = 1 << 4,
-    DotAll = 1 << 5,
-    HasIndices = 1 << 6,
-    DeletedValue = 1 << 7
+#define JSC_DEFINE_REGEXP_FLAG(key, name, lowerCaseName, index) name = 1 << index,
+    JSC_REGEXP_FLAGS(JSC_DEFINE_REGEXP_FLAG)
+#undef JSC_DEFINE_REGEXP_FLAG
+    DeletedValue = 1 << numberOfFlags,
 };
 
 JS_EXPORT_PRIVATE std::optional<OptionSet<Flags>> parseFlags(StringView);
+using FlagsString = std::array<char, Yarr::numberOfFlags + 1>; // numberOfFlags + null-terminator
+FlagsString flagsString(OptionSet<Flags>);
 
 } } // namespace JSC::Yarr

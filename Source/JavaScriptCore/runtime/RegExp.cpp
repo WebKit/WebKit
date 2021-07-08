@@ -51,21 +51,7 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, const String& 
         fputc('/', m_file);
         outputEscapedString(regExp->pattern(), true);
         fputc('/', m_file);
-        if (regExp->global())
-            fputc('g', m_file);
-        if (regExp->ignoreCase())
-            fputc('i', m_file);
-        if (regExp->hasIndices())
-            fputc('d', m_file);
-        if (regExp->multiline())
-            fputc('m', m_file);
-        if (regExp->dotAll())
-            fputc('s', m_file);
-        if (regExp->unicode())
-            fputc('u', m_file);
-        if (regExp->sticky())
-            fputc('y', m_file);
-        fprintf(m_file, "\n");
+        fprintf(m_file, "%s\n", Yarr::flagsString(regExp->flags()).data());
     }
 
     fprintf(m_file, " \"");
@@ -484,24 +470,7 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
 
 static CString regexpToSourceString(const RegExp* regExp)
 {
-    char postfix[7] = { '/', 0, 0, 0, 0, 0, 0 };
-    int index = 1;
-    if (regExp->global())
-        postfix[index++] = 'g';
-    if (regExp->ignoreCase())
-        postfix[index++] = 'i';
-    if (regExp->hasIndices())
-        postfix[index] = 'd';
-    if (regExp->multiline())
-        postfix[index] = 'm';
-    if (regExp->dotAll())
-        postfix[index++] = 's';
-    if (regExp->unicode())
-        postfix[index++] = 'u';
-    if (regExp->sticky())
-        postfix[index++] = 'y';
-
-    return toCString("/", regExp->pattern().impl(), postfix);
+    return toCString("/", regExp->pattern().impl(), "/", Yarr::flagsString(regExp->flags()).data());
 }
 
 void RegExp::dumpToStream(const JSCell* cell, PrintStream& out)

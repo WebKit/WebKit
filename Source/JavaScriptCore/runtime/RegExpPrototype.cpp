@@ -162,49 +162,24 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
     return JSValue::encode(thisRegExp);
 }
 
-typedef std::array<char, 7 + 1> FlagsString; // 6 different flags and a null character terminator.
-
-static inline FlagsString flagsString(JSGlobalObject* globalObject, JSObject* regexp)
+static inline Yarr::FlagsString flagsString(JSGlobalObject* globalObject, JSObject* regexp)
 {
-    FlagsString string;
-    string[0] = 0;
-
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue indicesValue = regexp->get(globalObject, vm.propertyNames->hasIndices);
-    RETURN_IF_EXCEPTION(scope, string);
-    JSValue globalValue = regexp->get(globalObject, vm.propertyNames->global);
-    RETURN_IF_EXCEPTION(scope, string);
-    JSValue ignoreCaseValue = regexp->get(globalObject, vm.propertyNames->ignoreCase);
-    RETURN_IF_EXCEPTION(scope, string);
-    JSValue multilineValue = regexp->get(globalObject, vm.propertyNames->multiline);
-    RETURN_IF_EXCEPTION(scope, string);
-    JSValue dotAllValue = regexp->get(globalObject, vm.propertyNames->dotAll);
-    RETURN_IF_EXCEPTION(scope, string);
-    JSValue unicodeValue = regexp->get(globalObject, vm.propertyNames->unicode);
-    RETURN_IF_EXCEPTION(scope, string);
-    JSValue stickyValue = regexp->get(globalObject, vm.propertyNames->sticky);
-    RETURN_IF_EXCEPTION(scope, string);
+    OptionSet<Yarr::Flags> flags;
 
-    unsigned index = 0;
-    if (indicesValue.toBoolean(globalObject))
-        string[index++] = 'd';
-    if (globalValue.toBoolean(globalObject))
-        string[index++] = 'g';
-    if (ignoreCaseValue.toBoolean(globalObject))
-        string[index++] = 'i';
-    if (multilineValue.toBoolean(globalObject))
-        string[index++] = 'm';
-    if (dotAllValue.toBoolean(globalObject))
-        string[index++] = 's';
-    if (unicodeValue.toBoolean(globalObject))
-        string[index++] = 'u';
-    if (stickyValue.toBoolean(globalObject))
-        string[index++] = 'y';
-    ASSERT(index < string.size());
-    string[index] = 0;
-    return string;
+#define JSC_RETRIEVE_REGEXP_FLAG(key, name, lowerCaseName, index) \
+    JSValue lowerCaseName##Value = regexp->get(globalObject, vm.propertyNames->lowerCaseName); \
+    RETURN_IF_EXCEPTION(scope, { }); \
+    if (lowerCaseName##Value.toBoolean(globalObject)) \
+        flags.add(Yarr::Flags::name);
+
+    JSC_REGEXP_FLAGS(JSC_RETRIEVE_REGEXP_FLAG)
+
+#undef JSC_RETRIEVE_REGEXP_FLAG
+
+    return Yarr::flagsString(flags);
 }
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))

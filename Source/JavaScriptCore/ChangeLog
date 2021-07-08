@@ -1,3 +1,25 @@
+2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up RegExp flag code
+        https://bugs.webkit.org/show_bug.cgi?id=227786
+
+        Reviewed by Filip Pizlo.
+
+        I found a bug in regexpToSourceString (used for RegExp's dump code), and it motivates me to clean up
+        all RegExp flag handling code. We define RegExp flags as a macro and updating that macro updates all
+        RegExp flag handling code too.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+        (JSC::regexpToSourceString):
+        * runtime/RegExp.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::flagsString):
+        * yarr/YarrFlags.cpp:
+        (JSC::Yarr::parseFlags):
+        (JSC::Yarr::flagsString):
+        * yarr/YarrFlags.h:
+
 2021-07-07  Saam Barati  <sbarati@apple.com>
 
         JSArrayBufferView::byteOffsetConcurrently has a race when using PAC

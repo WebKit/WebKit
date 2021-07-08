@@ -36,47 +36,16 @@ std::optional<OptionSet<Flags>> parseFlags(StringView string)
     OptionSet<Flags> flags;
     for (auto character : string.codeUnits()) {
         switch (character) {
-        case 'd':
-            if (flags.contains(Flags::HasIndices))
-                return std::nullopt;
-            flags.add(Flags::HasIndices);
+#define JSC_HANDLE_REGEXP_FLAG(key, name, lowerCaseName, _) \
+        case key: \
+            if (flags.contains(Flags::name)) \
+                return std::nullopt; \
+            flags.add(Flags::name); \
             break;
 
-        case 'g':
-            if (flags.contains(Flags::Global))
-                return std::nullopt;
-            flags.add(Flags::Global);
-            break;
+        JSC_REGEXP_FLAGS(JSC_HANDLE_REGEXP_FLAG)
 
-        case 'i':
-            if (flags.contains(Flags::IgnoreCase))
-                return std::nullopt;
-            flags.add(Flags::IgnoreCase);
-            break;
-
-        case 'm':
-            if (flags.contains(Flags::Multiline))
-                return std::nullopt;
-            flags.add(Flags::Multiline);
-            break;
-
-        case 's':
-            if (flags.contains(Flags::DotAll))
-                return std::nullopt;
-            flags.add(Flags::DotAll);
-            break;
-            
-        case 'u':
-            if (flags.contains(Flags::Unicode))
-                return std::nullopt;
-            flags.add(Flags::Unicode);
-            break;
-                
-        case 'y':
-            if (flags.contains(Flags::Sticky))
-                return std::nullopt;
-            flags.add(Flags::Sticky);
-            break;
+#undef JSC_HANDLE_REGEXP_FLAG
 
         default:
             return std::nullopt;
@@ -84,6 +53,26 @@ std::optional<OptionSet<Flags>> parseFlags(StringView string)
     }
 
     return std::make_optional(flags);
+}
+
+FlagsString flagsString(OptionSet<Flags> flags)
+{
+    FlagsString string;
+    unsigned index = 0;
+
+#define JSC_WRITE_REGEXP_FLAG(key, name, lowerCaseName, _) \
+    do { \
+        if (flags.contains(Flags::name)) \
+            string[index++] = key; \
+    } while (0);
+
+    JSC_REGEXP_FLAGS(JSC_WRITE_REGEXP_FLAG)
+
+#undef JSC_WRITE_REGEXP_FLAG
+
+    ASSERT(index < string.size());
+    string[index] = 0;
+    return string;
 }
 
 } } // namespace JSC::Yarr

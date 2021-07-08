@@ -57,14 +57,11 @@ public:
     static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
 
-    bool global() const { return m_flags.contains(Yarr::Flags::Global); }
-    bool ignoreCase() const { return m_flags.contains(Yarr::Flags::IgnoreCase); }
-    bool multiline() const { return m_flags.contains(Yarr::Flags::Multiline); }
-    bool sticky() const { return m_flags.contains(Yarr::Flags::Sticky); }
+    OptionSet<Yarr::Flags> flags() const { return m_flags; }
+#define JSC_DEFINE_REGEXP_FLAG_ACCESSOR(key, name, lowerCaseName, index) bool lowerCaseName() const { return m_flags.contains(Yarr::Flags::name); }
+    JSC_REGEXP_FLAGS(JSC_DEFINE_REGEXP_FLAG_ACCESSOR)
+#undef JSC_DEFINE_REGEXP_FLAG_ACCESSOR
     bool globalOrSticky() const { return global() || sticky(); }
-    bool unicode() const { return m_flags.contains(Yarr::Flags::Unicode); }
-    bool dotAll() const { return m_flags.contains(Yarr::Flags::DotAll); }
-    bool hasIndices() const { return m_flags.contains(Yarr::Flags::HasIndices); }
 
     const String& pattern() const { return m_patternString; }
 
