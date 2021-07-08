@@ -1,3 +1,23 @@
+2021-07-07  Mark Lam  <mark.lam@apple.com>
+
+        Heap::waitForCollector() needs to set m_mutatorDidRun.
+        https://bugs.webkit.org/show_bug.cgi?id=227782
+        rdar://78326474
+
+        Reviewed by Saam Barati.
+
+        Heap::waitForCollector() is one of 2 clients of Heap::stopIfNecessarySlow(unsigned oldState).
+        The other client, Heap::stopIfNecessarySlow() sets m_mutatorDidRun to true after
+        calling Heap::stopIfNecessarySlow(unsigned oldState).  Heap::waitForCollector()
+        needs to do the same.  Constraint solvers rely on this.
+
+        Without this, one fall out we've seen is that DOMGCOutputConstraint fails to
+        visitOutputConstraints, and as a result, opaqueRoots may not get updated.  This
+        issue was caught by the GC verifier.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::waitForCollector):
+
 2021-07-07  Michael Saboff  <msaboff@apple.com>
 
         fitcored crashes at JavaScriptCore: JSC::Heap::releaseAccessSlow

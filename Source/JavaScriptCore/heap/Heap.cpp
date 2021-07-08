@@ -1882,10 +1882,11 @@ void Heap::waitForCollector(const Func& func)
         if (stopIfNecessarySlow(oldState))
             continue;
         
+        m_mutatorDidRun = true;
         // FIXME: We wouldn't need this if stopIfNecessarySlow() had a mode where it knew to just
         // do the collection.
         relinquishConn();
-        
+
         if (done) {
             clearMutatorWaiting(); // Clean up just in case.
             return;
