@@ -29,15 +29,23 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithmHkdfParams.h"
-#include "CryptoKeyEC.h"
-#include "NotImplemented.h"
+#include "CryptoKeyRaw.h"
+#include "OpenSSLUtilities.h"
+#include <openssl/hkdf.h>
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams&, const CryptoKeyRaw&, size_t)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
-    notImplemented();
-    return Exception { NotSupportedError };
+    auto algorithm = digestAlgorithm(parameters.hashIdentifier);
+    if (!algorithm)
+        return Exception { NotSupportedError };
+
+    Vector<uint8_t> output(length / 8);
+    if (HKDF(output.data(), output.size(), algorithm, key.key().data(), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), parameters.infoVector().data(), parameters.infoVector().size()) <= 0)
+        return Exception { OperationError };
+
+    return output;
 }
 
 } // namespace WebCore

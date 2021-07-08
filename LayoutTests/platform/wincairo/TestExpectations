@@ -760,21 +760,6 @@ crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
 crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
 crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
 
-# HKDF and PBKDF2 are not yet supported.
-crypto/subtle/ecdh-import-key-derive-hkdf-key.html [ Skip ]
-crypto/subtle/ecdh-import-key-derive-pbkdf2-key.html [ Skip ]
-crypto/subtle/hkdf-derive-bits-length-limits.html [ Skip ]
-crypto/subtle/hkdf-derive-bits-malformed-parametrs.html [ Skip ]
-crypto/subtle/hkdf-import-key.html [ Skip ]
-crypto/subtle/hkdf-import-key-derive-bits.html [ Skip ]
-crypto/subtle/hkdf-import-key-derive-hmac-key.html [ Skip ]
-crypto/subtle/hkdf-import-key-malformed-parameters.html [ Skip ]
-crypto/subtle/pbkdf2-derive-bits-malformed-parametrs.html [ Skip ]
-crypto/subtle/pbkdf2-import-key.html [ Skip ]
-crypto/subtle/pbkdf2-import-key-derive-bits.html [ Skip ]
-crypto/subtle/pbkdf2-import-key-derive-hmac-key.html [ Skip ]
-crypto/subtle/pbkdf2-import-key-malformed-parameters.html [ Skip ]
-
 # Large salt should be supported.
 crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Failure ]
 

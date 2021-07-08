@@ -1,3 +1,14 @@
+2021-07-08  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement HKDF and PBKDF2 support
+        https://bugs.webkit.org/show_bug.cgi?id=227656
+
+        Reviewed by Fujii Hironori.
+
+        Enable HKDF and PBKDF2 tests.
+
+        * platform/wincairo/TestExpectations:
+
 2021-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Temporarily disable drawing large PDFs in display list drawing

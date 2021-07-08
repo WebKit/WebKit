@@ -1,3 +1,17 @@
+2021-07-08  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement HKDF and PBKDF2 support
+        https://bugs.webkit.org/show_bug.cgi?id=227656
+
+        Reviewed by Fujii Hironori.
+
+        * crypto/openssl/CryptoAlgorithmHKDFOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits): Implemented with HKDF().
+        * crypto/openssl/CryptoAlgorithmPBKDF2OpenSSL.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+        * crypto/openssl/CryptoAlgorithmRegistryOpenSSL.cpp: Implemented with PKCS5_PBKDF2_HMAC().
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Register HKDF and PBKDF2.
+
 2021-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Draw PDFs using an intermediate ImageBuffer when using the GPU process
