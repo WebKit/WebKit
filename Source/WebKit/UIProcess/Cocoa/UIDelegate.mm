@@ -35,6 +35,7 @@
 #import "MediaUtilities.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
+#import "TapHandlingResult.h"
 #import "UserMediaPermissionCheckProxy.h"
 #import "UserMediaPermissionRequestManagerProxy.h"
 #import "UserMediaPermissionRequestProxy.h"
@@ -47,6 +48,7 @@
 #import "WKStorageAccessAlert.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import "WKWebViewConfigurationInternal.h"
+#import "WKWebViewIOS.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
 #import "WebEventFactory.h"
@@ -158,6 +160,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
     m_delegateMethods.webViewDidNotHandleTapAsMeaningfulClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsMeaningfulClickAtPoint:)];
+    m_delegateMethods.webViewDidTapAtPointWithResult = [delegate respondsToSelector:@selector(_webView:didTapAtPoint:withResult:)];
     m_delegateMethods.presentingViewControllerForWebView = [delegate respondsToSelector:@selector(_presentingViewControllerForWebView:)];
 #endif
     m_delegateMethods.webViewIsMediaCaptureAuthorizedForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:)] || [delegate respondsToSelector:@selector(_webView:includeSensitiveMediaDeviceDetails:)];
@@ -1412,19 +1415,23 @@ void UIDelegate::UIClient::didNotHandleTapAsClick(const WebCore::IntPoint& point
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didNotHandleTapAsClickAtPoint:point];
 }
 
-void UIDelegate::UIClient::didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint& point)
+void UIDelegate::UIClient::didTapAtPoint(const WebCore::IntPoint& point, WebKit::TapHandlingResult result)
 {
     if (!m_uiDelegate)
-        return;
-
-    if (!m_uiDelegate->m_delegateMethods.webViewDidNotHandleTapAsMeaningfulClickAtPoint)
         return;
 
     auto delegate = m_uiDelegate->m_delegate.get();
     if (!delegate)
         return;
 
-    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didNotHandleTapAsMeaningfulClickAtPoint:point];
+    if (m_uiDelegate->m_delegateMethods.webViewDidTapAtPointWithResult)
+        [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didTapAtPoint:point withResult:wkTapHandlingResult(result)];
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: Remove this once all internal clients adopt -_webView:didTapAtPoint:withResult:.
+    if (m_uiDelegate->m_delegateMethods.webViewDidNotHandleTapAsMeaningfulClickAtPoint && result != WebKit::TapHandlingResult::MeaningfulClick)
+        [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didNotHandleTapAsMeaningfulClickAtPoint:point];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 UIViewController *UIDelegate::UIClient::presentingViewController()

@@ -2212,9 +2212,9 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
         exit(1);
 }
 
-void TestController::didNotHandleTapAsMeaningfulClick()
+void TestController::didHandleTap(bool wasMeaningful)
 {
-    m_currentInvocation->didNotHandleTapAsMeaningfulClick();
+    m_currentInvocation->didHandleTap(wasMeaningful);
 }
 
 void TestController::didBeginNavigationGesture(WKPageRef)

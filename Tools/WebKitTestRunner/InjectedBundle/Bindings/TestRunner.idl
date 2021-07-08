@@ -258,7 +258,7 @@ interface TestRunner {
     object neverInlineFunction(object function);
 
     // UI delegate hooks.
-    undefined installDidNotHandleTapAsMeaningfulClickCallback(object callback);
+    undefined installDidHandleTapCallback(object callback);
 
     // Swipe gestures
     undefined installDidBeginSwipeCallback(object callback);

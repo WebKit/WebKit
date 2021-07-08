@@ -1445,9 +1445,10 @@ void TestInvocation::outputText(const WTF::String& text)
     m_textOutput.append(text);
 }
 
-void TestInvocation::didNotHandleTapAsMeaningfulClick()
+void TestInvocation::didHandleTap(bool wasMeaningful)
 {
-    postPageMessage("CallDidNotHandleTapAsMeaningfulClickCallback");
+    auto messageBody = adoptWK(WKBooleanCreate(wasMeaningful));
+    postPageMessage("CallDidHandleTapCallback", messageBody);
 }
 
 void TestInvocation::didBeginSwipe()

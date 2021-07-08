@@ -25,6 +25,7 @@
 
 #import <WebKit/WKWebView.h>
 #import <WebKit/_WKElementAction.h>
+#import <WebKit/_WKTapHandlingResult.h>
 
 #if TARGET_OS_IPHONE
 
@@ -64,7 +65,7 @@
 - (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context;
 - (void)_requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
 - (void)_adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
-- (void)_didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point;
+- (void)_didTapAtPoint:(CGPoint)point withResult:(_WKTapHandlingResult)result;
 
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
 - (double)timePickerValueHour;

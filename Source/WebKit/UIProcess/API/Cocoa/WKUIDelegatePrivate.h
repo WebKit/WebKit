@@ -28,6 +28,7 @@
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
+#import <WebKit/_WKTapHandlingResult.h>
 #import <WebKit/_WKWebAuthenticationPanel.h>
 
 @class NSData;
@@ -164,7 +165,8 @@ struct UIEdgeInsets;
 - (BOOL)_webView:(WKWebView *)webView shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element WK_API_AVAILABLE(ios(9.0));
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray<_WKElementAction *> *)defaultActions;
 - (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point;
-- (void)_webView:(WKWebView *)webView didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point WK_API_AVAILABLE(ios(15.0));
+- (void)_webView:(WKWebView *)webView didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:didTapAtPoint:withResult:", ios(15.0, 15.0));
+- (void)_webView:(WKWebView *)webView didTapAtPoint:(CGPoint)point withResult:(_WKTapHandlingResult)result WK_API_AVAILABLE(ios(15.0));
 - (void)_webView:(WKWebView *)webView requestGeolocationAuthorizationForURL:(NSURL *)url frame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL authorized))decisionHandler WK_API_AVAILABLE(ios(11.0));
 - (BOOL)_webView:(WKWebView *)webView fileUploadPanelContentIsManagedWithInitiatingFrame:(WKFrameInfo *)frame;
 

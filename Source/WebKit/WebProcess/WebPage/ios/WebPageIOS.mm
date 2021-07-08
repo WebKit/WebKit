@@ -45,6 +45,7 @@
 #import "ShareableBitmapUtilities.h"
 #import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
+#import "TapHandlingResult.h"
 #import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
@@ -902,24 +903,23 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
-    bool shouldDispatchDidNotHandleTapAsMeaningfulClickAtPoint = ([&] {
+    auto tapHandlingResult = ([&] {
         if (!m_currentSyntheticClickMayNotBeMeaningful)
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
         if (oldFocusedElement != newFocusedElement)
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
         if (is<HTMLTextFormControlElement>(nodeRespondingToClick) || nodeRespondingToClick.hasEditableStyle())
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
         if (isProbablyMeaningfulClick(nodeRespondingToClick))
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
-        return true;
+        return TapHandlingResult::NonMeaningfulClick;
     })();
 
-    if (shouldDispatchDidNotHandleTapAsMeaningfulClickAtPoint)
-        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(roundedIntPoint(location)));
+    send(Messages::WebPageProxy::DidTapAtPoint(roundedIntPoint(location), tapHandlingResult));
 
     if (!tapWasHandled || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
@@ -935,7 +935,7 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEvent::M
     IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()) {
-        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+        send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
     } else if (m_interactionNode == nodeRespondingToClick)
         completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::OneFingerTap);
@@ -1143,7 +1143,7 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
     if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
         auto adjustedIntPoint = roundedIntPoint(adjustedPoint);
-        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+        send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
         return;
     }
@@ -1221,7 +1221,7 @@ void WebPage::commitPotentialTapFailed()
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
 
     auto adjustedIntPoint = roundedIntPoint(m_potentialTapLocation);
-    send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+    send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
     send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
 }
 

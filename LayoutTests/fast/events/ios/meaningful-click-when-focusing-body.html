@@ -19,26 +19,31 @@ jsTestIsAsync = true;
 addEventListener("load", async () => {
     description("This test exercises the 'meaningful click' heuristic in an editable body element, and requires WebKitTestRunner.");
 
-    didDispatchNonMeaningfulClickCallback = false;
-    testRunner.installDidNotHandleTapAsMeaningfulClickCallback(() => {
-        didDispatchNonMeaningfulClickCallback = true;
+    didHandleTap = false;
+    didHandleTapAsMeaningfulClick = false;
+    testRunner.installDidHandleTapCallback(wasMeaningful => {
+        didHandleTap = true;
+        didHandleTapAsMeaningfulClick = wasMeaningful;
     });
 
     await UIHelper.activateElementAndWaitForInputSession(document.body);
     await UIHelper.waitForDoubleTapDelay();
     testPassed("Focused body element");
-    shouldBeFalse("didDispatchNonMeaningfulClickCallback");
+    shouldBeTrue("didHandleTap");
+    shouldBeTrue("didHandleTapAsMeaningfulClick");
 
     testRunner.clearTestRunnerCallbacks();
-    didDispatchNonMeaningfulClickCallback = false;
-    testRunner.installDidNotHandleTapAsMeaningfulClickCallback(() => {
-        didDispatchNonMeaningfulClickCallback = true;
+    didHandleTap = false;
+    didHandleTapAsMeaningfulClick = false;
+    testRunner.installDidHandleTapCallback(wasMeaningful => {
+        didHandleTap = true;
+        didHandleTapAsMeaningfulClick = wasMeaningful;
     });
 
     await UIHelper.activateAt(100, 100);
     await UIHelper.waitForDoubleTapDelay();
     testPassed("Tapped inside body element");
-    shouldBeFalse("didDispatchNonMeaningfulClickCallback");
+    shouldBeTrue("didHandleTapAsMeaningfulClick");
 
     testRunner.clearTestRunnerCallbacks();
     document.getElementById("text").remove();

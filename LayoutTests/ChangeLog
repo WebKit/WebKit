@@ -1,3 +1,156 @@
+2021-07-08  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r279562. rdar://problem/80327101
+
+    [iOS] Augment -_webView:didNotHandleTapAsMeaningfulClickAtPoint: to include meaningful taps
+    https://bugs.webkit.org/show_bug.cgi?id=227666
+    rdar://80094962
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    The private UI delegate method `-_webView:didNotHandleTapAsMeaningfulClickAtPoint:` is currently only invoked
+    when a tap was not handled as a "meaningful" synthetic click (where the notion of "meaningful" is heuristically
+    determined). However, in order to support revised tab pill minimization behaviors, Safari requires knowledge of
+    taps that were handled as meaningful clicks as well.
+    
+    To support this, replace what is currently `-_webView:didNotHandleTapAsMeaningfulClickAtPoint:` with another
+    delegate method, `-_webView:didTapAtPoint:withResult:`, that is always invoked when a tap gesture is recognized
+    in the web view. The `result` parameter, a new `_WKTapHandlingResult` enum, then indicates to the client how the
+    tap was handled; this currently includes 3 values: one to indicate that the tap gesture did not result in a
+    synthetic click being dispatched, and two more to indicate whether the synthetic click that was dispatched as a
+    result of the tap was "meaningfully" handled.
+    
+    To facilitate the transition from `-_webView:didNotHandleTapAsMeaningfulClickAtPoint:` to the new SPI, we still
+    call the old SPI as long as the tap handling result type is not equal to TapHandlingResult::MeaningfulClick;
+    however, mark the old SPI as deprecated with `-_webView:didTapAtPoint:withResult:` as the replacement.
+    
+    Tests:  fast/events/ios/did-not-handle-meaningful-click.html
+            fast/events/ios/meaningful-click-when-focusing-body.html
+            fast/events/ios/meaningful-click-when-playing-media.html
+            fast/events/ios/non-meaningful-click-when-tapping-document.html
+    
+    * Shared/ios/TapHandlingResult.h: Added.
+    
+    Add a new C++ enum type to represent the tap handling result type (see description above).
+    
+    * UIProcess/API/APIUIClient.h:
+    (API::UIClient::didTapAtPoint):
+    (API::UIClient::didNotHandleTapAsMeaningfulClickAtPoint): Deleted.
+    * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+    * UIProcess/API/Cocoa/_WKTapHandlingResult.h: Added.
+    * UIProcess/API/ios/WKWebViewIOS.h:
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (wkTapHandlingResult):
+    
+    Add a helper method to convert from the WebKit::TapHandlingResult enum to the SPI-exposed _WKTapHandlingResult.
+    
+    * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+    * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+    (-[WKWebView _didTapAtPoint:withResult:]):
+    (-[WKWebView _didNotHandleTapAsMeaningfulClickAtPoint:]): Deleted.
+    * UIProcess/Cocoa/UIDelegate.h:
+    * UIProcess/Cocoa/UIDelegate.mm:
+    (WebKit::UIDelegate::setDelegate):
+    (WebKit::UIDelegate::UIClient::didTapAtPoint):
+    
+    Note that we still invoke the old UI delegate SPI here to ensure that these changes don't break Safari before
+    they have a chance to adopt the new SPI.
+    
+    (WebKit::UIDelegate::UIClient::didNotHandleTapAsMeaningfulClickAtPoint): Deleted.
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    
+    Replace the `DidNotHandleTapAsMeaningfulClickAtPoint` message with `DidTapAtPoint`, which takes both a location
+    and a flag indicating how the tap was handled by web content.
+    
+    * UIProcess/ios/PageClientImplIOS.h:
+    * UIProcess/ios/PageClientImplIOS.mm:
+    (WebKit::PageClientImpl::didTapAtPoint):
+    (WebKit::PageClientImpl::didNotHandleTapAsMeaningfulClickAtPoint): Deleted.
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::didTapAtPoint):
+    (WebKit::WebPageProxy::didNotHandleTapAsMeaningfulClickAtPoint): Deleted.
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::completeSyntheticClick):
+    
+    The meaningful tap heuristic no longer determines whether we send an IPC message or not, but rather the type of
+    TapHandlingResult to send (namely, whether to send NonMeaningfulClick or MeaningfulClick).
+    
+    (WebKit::WebPage::attemptSyntheticClick):
+    (WebKit::WebPage::handleTwoFingerTapAtPoint):
+    (WebKit::WebPage::commitPotentialTapFailed):
+    
+    Tools:
+    
+    Update the layout test harness to use the replacement SPI instead of the newly deprecated SPI. See
+    WebKit/ChangeLog for more details.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+    (WTR::InjectedBundle::didReceiveMessageToPage):
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::installDidHandleTapCallback):
+    (WTR::TestRunner::callDidHandleTapCallback):
+    (WTR::TestRunner::installDidNotHandleTapAsMeaningfulClickCallback): Deleted.
+    (WTR::TestRunner::callDidNotHandleTapAsMeaningfulClickCallback): Deleted.
+    
+    Rename this to just DidHandleTapCallback, and make it take a boolean argument indicating whether the tap was
+    handled as a meaningful click.
+    
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::didHandleTap):
+    (WTR::TestController::didNotHandleTapAsMeaningfulClick): Deleted.
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didHandleTap):
+    (WTR::TestInvocation::didNotHandleTapAsMeaningfulClick): Deleted.
+    * WebKitTestRunner/TestInvocation.h:
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+    (-[TestRunnerWKWebView _didTapAtPoint:withResult:]):
+    (-[TestRunnerWKWebView _didNotHandleTapAsMeaningfulClickAtPoint:]): Deleted.
+    
+    LayoutTests:
+    
+    Update the existing layout tests. The new UI delegate method should now be invoked in all of the cases; however,
+    we should only observe meaningful clicks in some of the below scenarios. See WebKit/ChangeLog for more details.
+    
+    * fast/events/ios/did-not-handle-meaningful-click-expected.txt:
+    * fast/events/ios/did-not-handle-meaningful-click.html:
+    * fast/events/ios/meaningful-click-when-focusing-body-expected.txt:
+    * fast/events/ios/meaningful-click-when-focusing-body.html:
+    * fast/events/ios/meaningful-click-when-playing-media-expected.txt:
+    * fast/events/ios/meaningful-click-when-playing-media.html:
+    * fast/events/ios/non-meaningful-click-when-tapping-document-expected.txt:
+    * fast/events/ios/non-meaningful-click-when-tapping-document.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279562 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Augment -_webView:didNotHandleTapAsMeaningfulClickAtPoint: to include meaningful taps
+            https://bugs.webkit.org/show_bug.cgi?id=227666
+            rdar://80094962
+
+            Reviewed by Tim Horton.
+
+            Update the existing layout tests. The new UI delegate method should now be invoked in all of the cases; however,
+            we should only observe meaningful clicks in some of the below scenarios. See WebKit/ChangeLog for more details.
+
+            * fast/events/ios/did-not-handle-meaningful-click-expected.txt:
+            * fast/events/ios/did-not-handle-meaningful-click.html:
+            * fast/events/ios/meaningful-click-when-focusing-body-expected.txt:
+            * fast/events/ios/meaningful-click-when-focusing-body.html:
+            * fast/events/ios/meaningful-click-when-playing-media-expected.txt:
+            * fast/events/ios/meaningful-click-when-playing-media.html:
+            * fast/events/ios/non-meaningful-click-when-tapping-document-expected.txt:
+            * fast/events/ios/non-meaningful-click-when-tapping-document.html:
+
 2021-06-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r279382. rdar://problem/79970297

@@ -137,6 +137,7 @@ struct TranslationContextMenuInfo;
 namespace WebKit {
 
 enum class UndoOrRedo : bool;
+enum class TapHandlingResult : uint8_t;
 
 class ContextMenuContextData;
 class DownloadProxy;
@@ -337,7 +338,7 @@ public:
 #endif
 #if PLATFORM(IOS_FAMILY)
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) = 0;
-    virtual void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&) = 0;
+    virtual void didTapAtPoint(const WebCore::IntPoint&, TapHandlingResult) = 0;
     virtual void didCompleteSyntheticClick() = 0;
 #endif
 
