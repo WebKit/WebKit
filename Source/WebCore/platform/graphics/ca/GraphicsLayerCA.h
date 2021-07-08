@@ -580,6 +580,8 @@ private:
 #endif
     };
     typedef uint64_t LayerChangeFlags;
+    static const char* layerChangeAsString(LayerChange);
+    static void dumpLayerChangeFlags(TextStream&, LayerChangeFlags);
     void addUncommittedChanges(LayerChangeFlags);
     bool hasDescendantsWithUncommittedChanges() const { return m_hasDescendantsWithUncommittedChanges; }
     void setHasDescendantsWithUncommittedChanges(bool);

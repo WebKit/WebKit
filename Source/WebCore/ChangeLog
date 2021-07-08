@@ -1,3 +1,16 @@
+2021-07-07  Cameron McCormack  <heycam@apple.com>
+
+        Add logging for GraphicsLayerCA::m_uncommittedChanges
+        https://bugs.webkit.org/show_bug.cgi?id=227783
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::layerChangeAsString):
+        (WebCore::GraphicsLayerCA::dumpLayerChangeFlags):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties const):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2021-07-07  John Wilander  <wilander@apple.com>
 
         PCM: Add error logging for CryptoKit operations
