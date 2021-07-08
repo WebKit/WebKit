@@ -77,15 +77,15 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
 
     // Continue the test.
     EXPECT_TRUE(pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(nsSpkiData.bytes, nsSpkiData.length)));
-    auto sourceSecretToken = pcm.tokenSignatureJSON();
-    EXPECT_EQ(sourceSecretToken->asObject()->size(), 4ul);
-    EXPECT_STREQ(sourceSecretToken->getString("source_engagement_type"_s).utf8().data(), "click");
-    EXPECT_STREQ(sourceSecretToken->getString("source_nonce"_s).utf8().data(), "ABCDEFabcdef0123456789");
-    EXPECT_FALSE(sourceSecretToken->getString("source_secret_token"_s).isEmpty());
-    EXPECT_EQ(sourceSecretToken->getInteger("version"_s), 2);
+    auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
+    EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 4ul);
+    EXPECT_STREQ(sourceUnlinkableToken->getString("source_engagement_type"_s).utf8().data(), "click");
+    EXPECT_STREQ(sourceUnlinkableToken->getString("source_nonce"_s).utf8().data(), "ABCDEFabcdef0123456789");
+    EXPECT_FALSE(sourceUnlinkableToken->getString("source_unlinkable_token"_s).isEmpty());
+    EXPECT_EQ(sourceUnlinkableToken->getInteger("version"_s), 2);
 
     // Generate the signature.
-    auto blindedMessage = base64URLDecode(sourceSecretToken->getString("source_secret_token"_s));
+    auto blindedMessage = base64URLDecode(sourceUnlinkableToken->getString("source_unlinkable_token"_s));
 
     auto blindedSignature = adoptNS([[NSMutableData alloc] initWithLength:modulusNBytes]);
     ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
