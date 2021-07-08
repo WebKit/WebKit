@@ -1388,3 +1388,5 @@ webkit.org/b/227776 [ BigSur Release arm64 ] scrollbars/corner-resizer-window-in
 
 webkit.org/b/227776 [ Catalina Release ] scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Crash ]
+
