@@ -1,3 +1,15 @@
+2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update Intl.Locale test after AppleICU update
+        https://bugs.webkit.org/show_bug.cgi?id=227788
+
+        Reviewed by Keith Miller.
+
+        This patch fixes Intl.Locale test since AppleICU fixes the ICU bug and starts producing the right results.
+
+        * stress/intl-long-locale-id-maximize-minimize.js:
+        (shouldBe):
+
 2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix Object.assign fast path to accept undefined/null
