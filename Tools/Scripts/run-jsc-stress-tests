@@ -788,7 +788,7 @@ def runBytecodeCacheNoAssertion(*optionalTestSpecificOptions)
 end
 
 def runFTLNoCJIT(*optionalTestSpecificOptions)
-    run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+    run("misc-ftl-no-cjit", "--useDataIC=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLNoCJITB3O0(*optionalTestSpecificOptions)
@@ -796,7 +796,7 @@ def runFTLNoCJITB3O0(*optionalTestSpecificOptions)
 end
 
 def runFTLNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--validateBCE=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--validateBCE=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", "--useDataIC=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLNoCJITNoPutStackValidate(*optionalTestSpecificOptions)
@@ -820,7 +820,7 @@ def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)
 end
 
 def runFTLEager(*optionalTestSpecificOptions)
-    run("ftl-eager", "--airForceBriggsAllocator=true", "--useRandomizingExecutableIslandAllocation=true", "--forcePolyProto=true", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-eager", "--airForceBriggsAllocator=true", "--useRandomizingExecutableIslandAllocation=true", "--forcePolyProto=true", "--useDataIC=true", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEagerWatchdog(*optionalTestSpecificOptions)
