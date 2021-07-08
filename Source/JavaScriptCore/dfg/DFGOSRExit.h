@@ -138,7 +138,7 @@ struct OSRExitState : RefCounted<OSRExitState> {
     Profiler::OSRExit* profilerExit { nullptr };
 };
 
-JSC_DECLARE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame*));
+JSC_DECLARE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame*, void*));
 JSC_DECLARE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (CallFrame*, void*, void*));
 JSC_DECLARE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM*, const OSRExitBase*, EncodedJSValue*));
 
@@ -149,7 +149,7 @@ JSC_DECLARE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM*, cons
 struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
-    friend void JIT_OPERATION_ATTRIBUTES operationCompileOSRExit(CallFrame*);
+    friend void JIT_OPERATION_ATTRIBUTES operationCompileOSRExit(CallFrame*, void*);
 
     CodeLocationLabel<JSInternalPtrTag> m_patchableJumpLocation;
     MacroAssemblerCodeRef<OSRExitPtrTag> m_code;
