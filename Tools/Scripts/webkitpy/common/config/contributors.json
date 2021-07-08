@@ -5969,6 +5969,15 @@
          "yi.4.shen@nokia.com"
       ]
    },
+   "Yijia Huang" : {
+      "emails" : [
+         "yijia_huang@apple.com"
+      ],
+      "nicks" : [
+         "yijia"
+      ],
+      "status" : "committer"
+   },
    "Yoav Weiss" : {
       "emails" : [
          "yoav@yoav.ws"
