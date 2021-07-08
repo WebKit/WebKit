@@ -1,3 +1,23 @@
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        Our structured cloning implementation does not encode all of RegExp's flags
+        https://bugs.webkit.org/show_bug.cgi?id=227779
+
+        Reviewed by Yusuke Suzuki.
+
+        Our structured cloning implementation does not encode all of RegExp's flags.
+        In particular, we are failing to encode the 'y', 'u', 's' and 'd' flags.
+
+        This is causing one of the checks to fail in WebKit on:
+        - http://wpt.live/IndexedDB/structured-clone.any.html?61-80
+
+        That subtest is passing in Firefox and Chrome.
+
+        Test: fast/dom/Window/post-message-regexp.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+
 2021-07-07  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for partially trimmed trailing whitespace

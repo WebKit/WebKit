@@ -1,3 +1,15 @@
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        Our structured cloning implementation does not encode all of RegExp's flags
+        https://bugs.webkit.org/show_bug.cgi?id=227779
+
+        Reviewed by Yusuke Suzuki.
+
+        Add layout test coverage.
+
+        * fast/dom/Window/post-message-regexp-expected.txt: Added.
+        * fast/dom/Window/post-message-regexp.html: Added.
+
 2021-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Only first set-cookie HTTP header in websocket http response is accepted
