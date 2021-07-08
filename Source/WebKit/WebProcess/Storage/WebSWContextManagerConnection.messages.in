@@ -24,7 +24,7 @@
 
 messages -> WebSWContextManagerConnection NotRefCounted {
     InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, String userAgent)
-    UpdateAppBoundValue(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:bool WebCore::LastNavigationWasAppBound lastNavigationWasAppBound)
+    UpdateAppInitiatedValue(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:bool WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
     StartFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody, String referrer)
     CancelFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier)
     ContinueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier)

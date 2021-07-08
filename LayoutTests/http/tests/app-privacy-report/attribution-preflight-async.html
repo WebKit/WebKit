@@ -1,4 +1,4 @@
-<p>Tests app bound requests get marked for sync preflights</p>
+<p>Tests app initiated requests get marked for async preflights</p>
 
 <pre id="console"></pre>
 <script>
@@ -19,30 +19,27 @@ var url = "http://localhost:8000/xmlhttprequest/resources/status-404-without-bod
 function runTest()
 {
     var req = new XMLHttpRequest();
-    req.open("GET", url, false);
+    req.open("GET", url, true);
     req.setRequestHeader("x-webkit", "foo");
 
-    try {
-        req.send(null);
-        log("PASS: " + req.responseText);
-    } catch (ex) {
-        log("PASS: " + ex);
-        var didLoadAppBoundRequest = testRunner.didLoadAppBoundRequest();
-        var didLoadNonAppBoundRequest = testRunner.didLoadNonAppBoundRequest();
+    req.onerror = function() {
+        var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+        var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
 
-        if (didLoadNonAppBoundRequest) {
-            log("FAIL did load non app-bound request");
+        if (didLoadNonAppInitiatedRequest) {
+            log("FAIL did load non app initiated request");
             testRunner.notifyDone();
         }
 
-        if (!didLoadAppBoundRequest) {
-            log("FAIL did not load app-bound request");
+        if (!didLoadAppInitiatedRequest) {
+            log("FAIL did not load app initiated request");
             testRunner.notifyDone();
         }
 
-        log("PASS successfully loaded only app-bound requests");
+        log("PASS successfully loaded only app initiated requests");
         testRunner.notifyDone();
     }
+    req.send(null);
 }
 
 runTest();

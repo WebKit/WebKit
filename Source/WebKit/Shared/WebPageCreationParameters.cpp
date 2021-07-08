@@ -173,7 +173,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(APP_BOUND_DOMAINS)
     encoder << limitsNavigationsToAppBoundDomains;
 #endif
-    encoder << lastNavigationWasAppBound;
+    encoder << lastNavigationWasAppInitiated;
     encoder << shouldRelaxThirdPartyCookieBlocking;
     encoder << canUseCredentialStorage;
 
@@ -581,7 +581,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.limitsNavigationsToAppBoundDomains))
         return std::nullopt;
 #endif
-    if (!decoder.decode(parameters.lastNavigationWasAppBound))
+    if (!decoder.decode(parameters.lastNavigationWasAppInitiated))
         return std::nullopt;
 
     if (!decoder.decode(parameters.shouldRelaxThirdPartyCookieBlocking))

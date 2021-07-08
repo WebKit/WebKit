@@ -417,14 +417,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->callDidReceiveLoadedSubresourceDomainsCallback(WTFMove(domains));
         return;
     }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveAppBoundRequestContextDataForDomain")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
-
-        auto resultString = toWTFString(static_cast<WKStringRef>(messageBody));
-        m_testRunner->callDidReceiveAppBoundRequestContextDataForDomainCallback(WTFMove(resultString));
-    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveAllSessionCredentialsCallback")) {
         m_testRunner->callDidRemoveAllSessionCredentialsCallback();

@@ -195,8 +195,8 @@ public:
 
     WEBCORE_EXPORT static bool equal(const ResourceRequest&, const ResourceRequest&);
 
-    bool isAppBound() const { return m_isAppBound; }
-    void setIsAppBound(bool isAppBound) { m_isAppBound = isAppBound; };
+    bool isAppInitiated() const { return m_isAppInitiated; }
+    void setIsAppInitiated(bool isAppInitiated) { m_isAppInitiated = isAppInitiated; };
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request
@@ -208,7 +208,7 @@ protected:
         , m_platformRequestBodyUpdated(true)
         , m_hiddenFromInspector(false)
         , m_isTopSite(false)
-        , m_isAppBound(false)
+        , m_isAppInitiated(true)
     {
     }
 
@@ -224,7 +224,7 @@ protected:
         , m_platformRequestBodyUpdated(false)
         , m_hiddenFromInspector(false)
         , m_isTopSite(false)
-        , m_isAppBound(false)
+        , m_isAppInitiated(true)
     {
     }
 
@@ -258,7 +258,7 @@ protected:
     mutable bool m_platformRequestBodyUpdated : 1;
     bool m_hiddenFromInspector : 1;
     bool m_isTopSite : 1;
-    bool m_isAppBound : 1;
+    bool m_isAppInitiated : 1;
 #if USE(SYSTEM_PREVIEW)
     std::optional<SystemPreviewInfo> m_systemPreviewInfo;
 #endif
@@ -294,7 +294,7 @@ ALWAYS_INLINE void ResourceRequestBase::encodeBase(Encoder& encoder) const
     encoder << m_isTopSite;
     encoder << m_priority;
     encoder << m_requester;
-    encoder << m_isAppBound;
+    encoder << m_isAppInitiated;
 }
 
 template<class Decoder>
@@ -372,11 +372,11 @@ ALWAYS_INLINE bool ResourceRequestBase::decodeBase(Decoder& decoder)
         return false;
     m_requester = *requester;
 
-    std::optional<bool> isAppBound;
-    decoder >> isAppBound;
-    if (!isAppBound)
+    std::optional<bool> isAppInitiated;
+    decoder >> isAppInitiated;
+    if (!isAppInitiated)
         return false;
-    m_isAppBound = *isAppBound;
+    m_isAppInitiated = *isAppInitiated;
 
     return true;
 }

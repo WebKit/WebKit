@@ -30,10 +30,10 @@
 #import <WebKit/WKWebProcessPlugInLoadDelegate.h>
 #import <wtf/RetainPtr.h>
 
-@interface InAppBrowserPrivacyPlugIn : NSObject <WKWebProcessPlugIn, WKWebProcessPlugInLoadDelegate>
+@interface AppPrivacyReportPlugIn : NSObject <WKWebProcessPlugIn, WKWebProcessPlugInLoadDelegate>
 @end
 
-@implementation InAppBrowserPrivacyPlugIn { }
+@implementation AppPrivacyReportPlugIn { }
 
 - (NSURLRequest *)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller frame:(WKWebProcessPlugInFrame *)frame willSendRequestForResource:(uint64_t)resource request:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
 {

@@ -147,7 +147,7 @@ void WebSWServerConnection::controlClient(ServiceWorkerClientIdentifier clientId
         unregisterServiceWorkerClient(clientIdentifier);
     });
 
-    ServiceWorkerClientData data { clientIdentifier, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, request.url(), request.isAppBound() ? WebCore::LastNavigationWasAppBound::Yes : WebCore::LastNavigationWasAppBound::No };
+    ServiceWorkerClientData data { clientIdentifier, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, request.url(), request.isAppInitiated() ? WebCore::LastNavigationWasAppInitiated::Yes : WebCore::LastNavigationWasAppInitiated::No };
     registerServiceWorkerClient(SecurityOriginData { registration.key().topOrigin() }, WTFMove(data), registration.identifier(), request.httpUserAgent());
 }
 
@@ -188,7 +188,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
     bool shouldSoftUpdate = registration && registration->shouldSoftUpdate(loader.parameters().options);
     if (worker->shouldSkipFetchEvent()) {
         if (shouldSoftUpdate)
-            registration->scheduleSoftUpdate(loader.isAppBound() ? WebCore::IsAppBound::Yes : WebCore::IsAppBound::No);
+            registration->scheduleSoftUpdate(loader.isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 
         return nullptr;
     }

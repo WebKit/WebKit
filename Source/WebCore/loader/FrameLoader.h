@@ -85,7 +85,7 @@ enum class NavigationPolicyDecision : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class UsedLegacyTLS : bool;
 enum class IsMainResource : bool { No, Yes };
-enum class ShouldUpdateAppBoundValue : bool { No, Yes };
+enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
 
 struct WindowFeatures;
 
@@ -317,7 +317,7 @@ public:
     bool alwaysAllowLocalWebarchive() const { return m_alwaysAllowLocalWebarchive; }
 
     // For subresource requests the FrameLoadType parameter has no effect and can be skipped.
-    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppBoundValue = ShouldUpdateAppBoundValue::Yes);
+    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppInitiatedValue = ShouldUpdateAppInitiatedValue::Yes);
 
     void scheduleRefreshIfNeeded(Document&, const String& content);
 

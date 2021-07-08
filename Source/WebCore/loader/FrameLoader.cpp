@@ -1493,7 +1493,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader)
     ResourceRequest& r = newDocumentLoader.request();
     // FIXME: Using m_loadType seems wrong here.
     // If we are only preparing to load the main resource, that is previous load's load type!
-    updateRequestAndAddExtraFields(r, IsMainResource::Yes, m_loadType, ShouldUpdateAppBoundValue::No);
+    updateRequestAndAddExtraFields(r, IsMainResource::Yes, m_loadType, ShouldUpdateAppInitiatedValue::No);
     FrameLoadType type;
 
     if (shouldTreatURLAsSameAsCurrent(newDocumentLoader.originalRequest().url())) {
@@ -2882,7 +2882,7 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
     return ResourceRequestCachePolicy::UseProtocolCachePolicy;
 }
 
-void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppBoundValue shouldUpdate)
+void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate)
 {
     // If the request came from a previous process due to process-swap-on-navigation then we should not modify the request.
     if (m_currentLoadContinuingState == LoadContinuingState::ContinuingWithRequest)
@@ -2952,8 +2952,8 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
         request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_frame.document()->encoding(), m_frame.settings().defaultTextEncodingName());
     }
 
-    if (shouldUpdate == ShouldUpdateAppBoundValue::Yes && m_frame.mainFrame().loader().documentLoader())
-        request.setIsAppBound(m_frame.mainFrame().loader().documentLoader()->lastNavigationWasAppBound());
+    if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes && m_frame.mainFrame().loader().documentLoader())
+        request.setIsAppInitiated(m_frame.mainFrame().loader().documentLoader()->lastNavigationWasAppInitiated());
 }
 
 void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content)

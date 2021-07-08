@@ -538,7 +538,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(APP_BOUND_DOMAINS)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)
 #endif
-    , m_lastNavigationWasAppBound(parameters.lastNavigationWasAppBound)
+    , m_lastNavigationWasAppInitiated(parameters.lastNavigationWasAppInitiated)
 #if ENABLE(APP_HIGHLIGHTS)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif
@@ -1670,7 +1670,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
-    setLastNavigationWasAppBound(loadParameters.request.isAppBound());
+    setLastNavigationWasAppInitiated(loadParameters.request.isAppInitiated());
 
 #if ENABLE(APP_BOUND_DOMAINS)
     setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
@@ -1774,6 +1774,7 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
 
 void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, ResourceResponse&& simulatedResponse)
 {
+    setLastNavigationWasAppInitiated(loadParameters.request.isAppInitiated());
     auto sharedBuffer = SharedBuffer::create(loadParameters.data.data(), loadParameters.data.size());
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), WTFMove(loadParameters.request), WTFMove(simulatedResponse), URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, SubstituteData::SessionHistoryVisibility::Visible);
 }
@@ -6595,7 +6596,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
 {
     Ref<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
-    documentLoader->setLastNavigationWasAppBound(m_lastNavigationWasAppBound);
+    documentLoader->setLastNavigationWasAppInitiated(m_lastNavigationWasAppInitiated);
 
     if (frame.isMainFrame()) {
         if (m_pendingNavigationID) {
@@ -7632,9 +7633,9 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::H
 }
 #endif
 
-void WebPage::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler(mainFrame()->document()->loader()->lastNavigationWasAppBound());
+    completionHandler(mainFrame()->document()->loader()->lastNavigationWasAppInitiated());
 }
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

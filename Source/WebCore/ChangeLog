@@ -1,3 +1,93 @@
+2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App Privacy Report code
+        https://bugs.webkit.org/show_bug.cgi?id=227326
+        <rdar://problem/79696849>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/app-privacy-report/attribution-load-url.html
+               http/tests/app-privacy-report/attribution-ping-load.html
+               http/tests/app-privacy-report/attribution-post-request.html
+               http/tests/app-privacy-report/attribution-preflight-async.html
+               http/tests/app-privacy-report/attribution-preflight-sync.html
+               http/tests/app-privacy-report/attribution-speculative-revalidation.html
+
+        Rename App Privacy Report code to better align with the code's purpose
+        of attributing loads to the app or not. The default value should
+        be app initiated based on the documentation, so this patch also adjusts
+        the default value as needed.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::lastNavigationWasAppInitiated const):
+        (WebCore::DocumentLoader::setLastNavigationWasAppInitiated):
+        (WebCore::DocumentLoader::lastNavigationWasAppBound const): Deleted.
+        (WebCore::DocumentLoader::setLastNavigationWasAppBound): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::updateRequestAndAddExtraFields):
+        * loader/FrameLoader.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::isAppInitiated const):
+        (WebCore::ResourceRequestBase::setIsAppInitiated):
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        (WebCore::ResourceRequestBase::encodeBase const):
+        (WebCore::ResourceRequestBase::decodeBase):
+        (WebCore::ResourceRequestBase::isAppBound const): Deleted.
+        (WebCore::ResourceRequestBase::setIsAppBound): Deleted.
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::lastNavigationWasAppInitiated):
+        (WebCore::ServiceWorkerInternals::lastNavigationWasAppBound): Deleted.
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.idl:
+        * workers/service/ServiceWorkerClientData.cpp:
+        (WebCore::ServiceWorkerClientData::isolatedCopy const):
+        (WebCore::ServiceWorkerClientData::from):
+        * workers/service/ServiceWorkerClientData.h:
+        (WebCore::ServiceWorkerClientData::encode const):
+        (WebCore::ServiceWorkerClientData::decode):
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::encode const):
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        (WebCore::ServiceWorkerThreadProxy::setLastNavigationWasAppInitiated):
+        (WebCore::ServiceWorkerThreadProxy::lastNavigationWasAppInitiated):
+        (WebCore::ServiceWorkerThreadProxy::setLastNavigationWasAppBound): Deleted.
+        (WebCore::ServiceWorkerThreadProxy::lastNavigationWasAppBound): Deleted.
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::startScriptFetch):
+        (WebCore::SWServer::updateWorker):
+        (WebCore::SWServer::clientIsAppInitiatedForRegistrableDomain):
+        (WebCore::SWServer::updateAppInitiatedValueForWorkers):
+        (WebCore::SWServer::registerServiceWorkerClient):
+        (WebCore::SWServer::unregisterServiceWorkerClient):
+        (WebCore::SWServer::clientIsAppBoundForRegistrableDomain): Deleted.
+        (WebCore::SWServer::updateAppBoundValueForWorkers): Deleted.
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::scheduleSoftUpdate):
+        * workers/service/server/SWServerRegistration.h:
+        (WebCore::SWServerRegistration::isAppInitiated):
+        (WebCore::SWServerRegistration::isAppBound): Deleted.
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::m_lastNavigationWasAppInitiated):
+        (WebCore::SWServerWorker::contextData const):
+        (WebCore::SWServerWorker::updateAppInitiatedValue):
+        (WebCore::m_lastNavigationWasAppBound): Deleted.
+        (WebCore::SWServerWorker::updateAppBoundValue): Deleted.
+        * workers/service/server/SWServerWorker.h:
+
 2021-07-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy smart pointers in PointerCaptureController

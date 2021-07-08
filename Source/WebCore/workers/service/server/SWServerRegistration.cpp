@@ -370,14 +370,14 @@ void SWServerRegistration::softUpdate()
     m_server.softUpdate(*this);
 }
 
-void SWServerRegistration::scheduleSoftUpdate(IsAppBound isAppBound)
+void SWServerRegistration::scheduleSoftUpdate(IsAppInitiated isAppInitiated)
 {
     // To avoid scheduling many updates during a single page load, we do soft updates on a 1 second delay and keep delaying
     // as long as soft update requests keep coming. This seems to match Chrome's behavior.
     if (m_softUpdateTimer.isActive())
         return;
 
-    m_isAppBound = isAppBound == IsAppBound::Yes;
+    m_isAppInitiated = isAppInitiated == IsAppInitiated::Yes;
 
     RELEASE_LOG(ServiceWorker, "SWServerRegistration::softUpdateIfNeeded");
     m_softUpdateTimer.startOneShot(softUpdateDelay);

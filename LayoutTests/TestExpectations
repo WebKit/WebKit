@@ -194,6 +194,9 @@ fast/speechrecognition/start-recognition-then-stop.html [ Skip ]
 fast/speechrecognition/start-second-recognition.html [ Skip ]
 fast/speechrecognition/ios/ [ Skip ]
 
+# app-privacy-report tests rely on WebKitAdditions
+http/tests/app-privacy-report/ [ Skip ]
+
 # Only partial support on Cocoa platforms.
 imported/w3c/web-platform-tests/speech-api/ [ Skip ]
 

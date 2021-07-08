@@ -419,8 +419,8 @@ public:
     WEBCORE_EXPORT bool setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&&);
 #endif
 
-    bool lastNavigationWasAppBound() const { return m_lastNavigationWasAppBound; }
-    void setLastNavigationWasAppBound(bool lastNavigationWasAppBound) { m_lastNavigationWasAppBound = lastNavigationWasAppBound; }
+    bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
+    void setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated) { m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated; }
 
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -659,7 +659,7 @@ private:
     bool m_allowsWebArchiveForMainFrame { false };
     bool m_allowsDataURLsForMainFrame { false };
 
-    bool m_lastNavigationWasAppBound { false };
+    bool m_lastNavigationWasAppInitiated { true };
 };
 
 inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest& request)

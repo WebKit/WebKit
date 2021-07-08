@@ -1339,7 +1339,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
 
 #if PLATFORM(COCOA)
-    setLastNavigationWasAppBound(request);
+    setLastNavigationWasAppInitiated(request);
 #endif
 
     loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain());
@@ -1500,7 +1500,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadSimulatedRequest:");
 
 #if PLATFORM(COCOA)
-    setLastNavigationWasAppBound(simulatedRequest);
+    setLastNavigationWasAppInitiated(simulatedRequest);
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -4539,7 +4539,8 @@ void WebPageProxy::preconnectTo(const URL& url)
         return;
 
     auto storedCredentialsPolicy = m_canUseCredentialStorage ? WebCore::StoredCredentialsPolicy::Use : WebCore::StoredCredentialsPolicy::DoNotUse;
-    websiteDataStore().networkProcess().preconnectTo(sessionID(), identifier(), webPageID(), url, userAgent(), storedCredentialsPolicy, isNavigatingToAppBoundDomain(), m_lastNavigationWasAppBound ? LastNavigationWasAppBound::Yes : LastNavigationWasAppBound::No);
+
+    websiteDataStore().networkProcess().preconnectTo(sessionID(), identifier(), webPageID(), url, userAgent(), storedCredentialsPolicy, isNavigatingToAppBoundDomain(), m_lastNavigationWasAppInitiated ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No);
 }
 
 void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
@@ -8203,7 +8204,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if ENABLE(APP_BOUND_DOMAINS)
     parameters.limitsNavigationsToAppBoundDomains = m_limitsNavigationsToAppBoundDomains;
 #endif
-    parameters.lastNavigationWasAppBound = m_lastNavigationWasAppBound;
+    parameters.lastNavigationWasAppInitiated = m_lastNavigationWasAppInitiated;
     parameters.shouldRelaxThirdPartyCookieBlocking = m_configuration->shouldRelaxThirdPartyCookieBlocking();
     parameters.canUseCredentialStorage = m_canUseCredentialStorage;
 
@@ -10735,14 +10736,14 @@ void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProx
 #endif
 
 #if PLATFORM(COCOA)
-void WebPageProxy::appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&& completionHandler)
+void WebPageProxy::appPrivacyReportTestingData(CompletionHandler<void(const AppPrivacyReportTestingData&)>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AppBoundNavigationData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AppPrivacyReportTestingData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
-void WebPageProxy::clearAppBoundNavigationData(CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::clearAppPrivacyReportTestingData(CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClearAppBoundNavigationData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClearAppPrivacyReportTestingData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 #endif
 

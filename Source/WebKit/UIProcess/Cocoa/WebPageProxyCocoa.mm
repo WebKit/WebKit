@@ -659,20 +659,18 @@ void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(boo
     sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
 }
 
-void WebPageProxy::setLastNavigationWasAppBound(ResourceRequest& request)
+void WebPageProxy::setLastNavigationWasAppInitiated(ResourceRequest& request)
 {
 #if ENABLE(APP_PRIVACY_REPORT)
-    auto *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    request.setIsAppBound(!nsRequest._isNonAppInitiated);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    auto isAppInitiated = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).attribution == NSURLRequestAttributionDeveloper;
+    request.setIsAppInitiated(isAppInitiated);
+    m_lastNavigationWasAppInitiated = isAppInitiated;
 #endif
-    m_lastNavigationWasAppBound = request.isAppBound();
 }
 
-void WebPageProxy::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::LastNavigationWasAppBound(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::LastNavigationWasAppInitiated(), WTFMove(completionHandler));
 }
 
 void WebPageProxy::grantAccessToAssetServices()

@@ -2416,32 +2416,19 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         _page->switchFromStaticFontRegistryToUserFontRegistry();
 }
 
-- (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler
+- (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->appBoundNavigationData([registrableDomain = WebCore::RegistrableDomain::uncheckedCreateFromHost(domain), completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
-        if (!appBoundData.contextData.contains(registrableDomain)) {
-            completionHandler(nil);
-            return;
-        }
-
-        completionHandler(appBoundData.contextData.get(registrableDomain).string());
+    _page->appPrivacyReportTestingData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appPrivacyReportTestingData) mutable {
+        completionHandler(appPrivacyReportTestingData.hasLoadedAppInitiatedRequestTesting);
     });
 }
 
-- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler
+- (void)_didLoadNonAppInitiatedRequest:(void (^)(BOOL result))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
-        completionHandler(appBoundData.hasLoadedAppBoundRequestTesting);
-    });
-}
-
-- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler
-{
-    THROW_IF_SUSPENDED;
-    _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
-        completionHandler(appBoundData.hasLoadedNonAppBoundRequestTesting);
+    _page->appPrivacyReportTestingData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appPrivacyReportTestingData) mutable {
+        completionHandler(appPrivacyReportTestingData.hasLoadedNonAppInitiatedRequestTesting);
     });
 }
 

@@ -92,9 +92,9 @@ void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWo
     send(Messages::WebSWContextManagerConnection::InstallServiceWorker { data, userAgent });
 }
 
-void WebSWServerToContextConnection::updateAppBoundValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppBound lastNavigationWasAppBound)
+void WebSWServerToContextConnection::updateAppInitiatedValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
 {
-    send(Messages::WebSWContextManagerConnection::UpdateAppBoundValue(serviceWorkerIdentifier, lastNavigationWasAppBound));
+    send(Messages::WebSWContextManagerConnection::UpdateAppInitiatedValue(serviceWorkerIdentifier, lastNavigationWasAppInitiated));
 }
 
 void WebSWServerToContextConnection::fireInstallEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)

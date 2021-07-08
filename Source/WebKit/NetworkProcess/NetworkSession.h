@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AppPrivacyReport.h"
 #include "NavigatingToAppBoundDomain.h"
 #include "PrefetchCache.h"
 #include "PrivateClickMeasurementNetworkLoader.h"
@@ -162,7 +163,7 @@ public:
     PrivateClickMeasurementManager& privateClickMeasurement() { return *m_privateClickMeasurement; }
 
 #if PLATFORM(COCOA)
-    AppBoundNavigationTestingData& appBoundNavigationTestingData() { return m_appBoundNavigationTestingData; }
+    AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
 #endif
 
     void addPrivateClickMeasurementNetworkLoader(std::unique_ptr<PrivateClickMeasurementNetworkLoader>&& loader) { m_privateClickMeasurementNetworkLoaders.add(WTFMove(loader)); }
@@ -220,7 +221,7 @@ protected:
 #endif
     
 #if PLATFORM(COCOA)
-    AppBoundNavigationTestingData m_appBoundNavigationTestingData;
+    AppPrivacyReportTestingData m_appPrivacyReportTestingData;
 #endif
 
     HashSet<std::unique_ptr<PrivateClickMeasurementNetworkLoader>> m_privateClickMeasurementNetworkLoaders;

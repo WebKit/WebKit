@@ -2116,26 +2116,14 @@ void TestRunner::didSetAppBoundDomainsCallback()
     callTestRunnerCallback(DidSetAppBoundDomainsCallbackID);
 }
 
-void TestRunner::appBoundRequestContextDataForDomain(JSStringRef domain, JSValueRef callback)
+bool TestRunner::didLoadAppInitiatedRequest()
 {
-    cacheTestRunnerCallback(AppBoundRequestContextDataForDomainCallbackID, callback);
-    postMessage("AppBoundRequestContextDataForDomain", domain);
+    return postSynchronousPageMessageReturningBoolean("DidLoadAppInitiatedRequest");
 }
 
-void TestRunner::callDidReceiveAppBoundRequestContextDataForDomainCallback(String&& contextDomain)
+bool TestRunner::didLoadNonAppInitiatedRequest()
 {
-    JSValueRef resultValue = JSValueMakeString(mainFrameJSContext(), createJSString(contextDomain.utf8().data()).get());
-    callTestRunnerCallback(AppBoundRequestContextDataForDomainCallbackID, 1, &resultValue);
-}
-
-bool TestRunner::didLoadAppBoundRequest()
-{
-    return postSynchronousPageMessageReturningBoolean("DidLoadAppBoundRequest");
-}
-
-bool TestRunner::didLoadNonAppBoundRequest()
-{
-    return postSynchronousPageMessageReturningBoolean("DidLoadNonAppBoundRequest");
+    return postSynchronousPageMessageReturningBoolean("DidLoadNonAppInitiatedRequest");
 }
 
 void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)

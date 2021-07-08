@@ -1,3 +1,41 @@
+2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App Privacy Report code
+        https://bugs.webkit.org/show_bug.cgi?id=227326
+        <rdar://problem/79696849>
+
+        Reviewed by Brent Fulgham.
+
+        Move App Privacy Report tests into their own directory.
+
+        * TestExpectations:
+        * http/tests/app-privacy-report/attribution-load-url-expected.txt: Added.
+        * http/tests/app-privacy-report/attribution-load-url.html: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-load-url.html.
+        * http/tests/app-privacy-report/attribution-ping-load-expected.txt: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-ping-load-expected.txt.
+        * http/tests/app-privacy-report/attribution-ping-load.html: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-ping-load.html.
+        * http/tests/app-privacy-report/attribution-post-request-expected.txt: Added.
+        * http/tests/app-privacy-report/attribution-post-request.html: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-post-request.html.
+        * http/tests/app-privacy-report/attribution-preflight-async-expected.txt: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async-expected.txt.
+        * http/tests/app-privacy-report/attribution-preflight-async.html: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async.html.
+        * http/tests/app-privacy-report/attribution-preflight-sync-expected.txt: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync-expected.txt.
+        * http/tests/app-privacy-report/attribution-preflight-sync.html: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync.html.
+        * http/tests/app-privacy-report/attribution-speculative-revalidation-expected.txt: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation-expected.txt.
+        * http/tests/app-privacy-report/attribution-speculative-revalidation.html: Renamed from LayoutTests/http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation.html.
+        * http/tests/app-privacy-report/resources/frame-with-authenticated-resource.py: Renamed from LayoutTests/http/tests/in-app-browser-privacy/resources/frame-with-authenticated-resource.py.
+        * http/tests/app-privacy-report/resources/post.py: Added.
+        * http/tests/app-privacy-report/resources/resource-with-auth.py: Renamed from LayoutTests/http/tests/in-app-browser-privacy/resources/resource-with-auth.py.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-load-url-expected.txt: Removed.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-post-request-expected.txt: Removed.
+        * http/tests/in-app-browser-privacy/context-string-for-subframe-expected.txt: Removed.
+        * http/tests/in-app-browser-privacy/context-string-for-subframe.html: Removed.
+        * http/tests/in-app-browser-privacy/context-string-preconnect-expected.txt: Removed.
+        * http/tests/in-app-browser-privacy/context-string-preconnect.html: Removed.
+        * http/tests/in-app-browser-privacy/context-string-preflight-expected.txt: Removed.
+        * http/tests/in-app-browser-privacy/context-string-preflight.html: Removed.
+        * http/tests/in-app-browser-privacy/resources/post.py: Removed.
+        * http/tests/navigation/resources/check-ping-app-initiated-data.py: Renamed from LayoutTests/http/tests/navigation/resources/check-ping-app-bound-data.py.
+        * platform/ios-wk2/TestExpectations:
+
 2021-07-08  Simon Fraser  <simon.fraser@apple.com>
 
         Scrollbar hidden when scroller has a negative z-index child

@@ -242,7 +242,7 @@ struct WebPageCreationParameters {
 #if ENABLE(APP_BOUND_DOMAINS)
     bool limitsNavigationsToAppBoundDomains { false };
 #endif
-    bool lastNavigationWasAppBound { false };
+    bool lastNavigationWasAppInitiated { true };
     bool canUseCredentialStorage { true };
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };

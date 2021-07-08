@@ -989,6 +989,7 @@
 		46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */; };
 		46F38E8C2416E6730059375A /* RunningBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */; };
 		46F9B26323526EF3006FE5FA /* WebBackForwardCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */; };
+		493102BD2683F3D0002BB885 /* AppPrivacyReport.h in Headers */ = {isa = PBXBuildFile; fileRef = 493102BC2683F3A5002BB885 /* AppPrivacyReport.h */; };
 		4973DF482422941F00E4C26A /* NavigatingToAppBoundDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */; };
 		4990002124D2429C00049CB4 /* WKRenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4990001F24D2429C00049CB4 /* WKRenderLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4990002424D24C2900049CB4 /* WKRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4990002324D24C1C00049CB4 /* WKRenderObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3940,6 +3941,7 @@
 		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
 		46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunningBoardServicesSPI.h; sourceTree = "<group>"; };
 		46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCacheEntry.h; sourceTree = "<group>"; };
+		493102BC2683F3A5002BB885 /* AppPrivacyReport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppPrivacyReport.h; sourceTree = "<group>"; };
 		4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatingToAppBoundDomain.h; sourceTree = "<group>"; };
 		4990001E24D2429C00049CB4 /* WKRenderLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderLayer.cpp; sourceTree = "<group>"; };
 		4990001F24D2429C00049CB4 /* WKRenderLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKRenderLayer.h; sourceTree = "<group>"; };
@@ -6717,6 +6719,7 @@
 				BC329D9916ACCE9900316DE2 /* APIWebArchive.mm */,
 				BC329D9F16ACD47800316DE2 /* APIWebArchiveResource.h */,
 				BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.mm */,
+				493102BC2683F3A5002BB885 /* AppPrivacyReport.h */,
 				515E7725183DD6F60007203F /* AsyncRequest.cpp */,
 				515E7726183DD6F60007203F /* AsyncRequest.h */,
 				1A2D956E12848564001EB962 /* AuxiliaryProcess.cpp */,
@@ -11908,6 +11911,7 @@
 				F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */,
 				F4EC94E32356CC57000BB614 /* ApplicationServicesSPI.h in Headers */,
 				1AD4C1931B39F33200ABC28E /* ApplicationStateTracker.h in Headers */,
+				493102BD2683F3D0002BB885 /* AppPrivacyReport.h in Headers */,
 				1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */,
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
 				1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */,

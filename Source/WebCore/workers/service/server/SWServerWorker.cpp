@@ -62,7 +62,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_registrableDomain(m_data.scriptURL)
     , m_scriptResourceMap(WTFMove(scriptResourceMap))
     , m_terminationTimer(*this, &SWServerWorker::terminationTimerFired)
-    , m_lastNavigationWasAppBound(m_server->clientIsAppBoundForRegistrableDomain(m_registrableDomain))
+    , m_lastNavigationWasAppInitiated(m_server->clientIsAppInitiatedForRegistrableDomain(m_registrableDomain))
 {
     m_data.scriptURL.removeFragmentIdentifier();
 
@@ -87,18 +87,18 @@ ServiceWorkerContextData SWServerWorker::contextData() const
 {
     ASSERT(m_registration);
 
-    return { std::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppBound, m_scriptResourceMap };
+    return { std::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppInitiated, m_scriptResourceMap };
 }
 
-void SWServerWorker::updateAppBoundValue(LastNavigationWasAppBound lastNavigationWasAppBound)
+void SWServerWorker::updateAppInitiatedValue(LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
 {
-    m_lastNavigationWasAppBound = lastNavigationWasAppBound;
+    m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated;
 
     if (!isRunning())
         return;
 
     if (auto* connection = contextConnection())
-        connection->updateAppBoundValue(identifier(), lastNavigationWasAppBound);
+        connection->updateAppInitiatedValue(identifier(), lastNavigationWasAppInitiated);
 }
 
 void SWServerWorker::terminate(CompletionHandler<void()>&& callback)

@@ -1453,8 +1453,8 @@ public:
     void invalidateMediaSessionCoordinator();
 #endif
 
-    void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
-    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
+    void setLastNavigationWasAppInitiated(bool wasAppBound) { m_lastNavigationWasAppInitiated = wasAppBound; }
+    void lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&);
 
     bool isParentProcessAWebBrowser() const;
 
@@ -2335,7 +2335,7 @@ private:
     bool m_navigationHasOccured { false };
 #endif
 
-    bool m_lastNavigationWasAppBound { false };
+    bool m_lastNavigationWasAppInitiated { true };
 
     bool m_canUseCredentialStorage { true };
 

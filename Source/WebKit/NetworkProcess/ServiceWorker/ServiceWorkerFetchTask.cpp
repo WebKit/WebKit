@@ -255,7 +255,7 @@ void ServiceWorkerFetchTask::softUpdateIfNeeded()
     if (!m_shouldSoftUpdate)
         return;
     if (auto* registration = m_loader.connectionToWebProcess().swConnection().server().getRegistration(m_serviceWorkerRegistrationIdentifier))
-        registration->scheduleSoftUpdate(m_loader.isAppBound() ? WebCore::IsAppBound::Yes : WebCore::IsAppBound::No);
+        registration->scheduleSoftUpdate(m_loader.isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 }
 
 } // namespace WebKit

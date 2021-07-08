@@ -1,3 +1,67 @@
+2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App Privacy Report code
+        https://bugs.webkit.org/show_bug.cgi?id=227326
+        <rdar://problem/79696849>
+
+        Reviewed by Brent Fulgham.
+
+        Delete testing functions related to attribution context. Move App
+        Privacy Report tests into their own file.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm: Added.
+        (TEST):
+        (catch):
+        (function):
+        (-[SWAppInitiatedRequestMessageHandler userContentController:didReceiveScriptMessage:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReportPlugIn.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacyPlugIn.mm.
+        (-[AppPrivacyReportPlugIn webProcessPlugInBrowserContextController:frame:willSendRequestForResource:request:redirectResponse:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[SWAppBoundRequestMessageHandler userContentController:didReceiveScriptMessage:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/app-privacy-report-iframe.html: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::didLoadAppInitiatedRequest):
+        (WTR::TestRunner::didLoadNonAppInitiatedRequest):
+        (WTR::TestRunner::appBoundRequestContextDataForDomain): Deleted.
+        (WTR::TestRunner::callDidReceiveAppBoundRequestContextDataForDomainCallback): Deleted.
+        (WTR::TestRunner::didLoadAppBoundRequest): Deleted.
+        (WTR::TestRunner::didLoadNonAppBoundRequest): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didLoadAppInitiatedRequest):
+        (WTR::TestController::didLoadNonAppInitiatedRequest):
+        (WTR::TestController::clearAppPrivacyReportTestingData):
+        (WTR::TestController::appBoundRequestContextDataForDomain): Deleted.
+        (WTR::TestController::didLoadAppBoundRequest): Deleted.
+        (WTR::TestController::didLoadNonAppBoundRequest): Deleted.
+        (WTR::TestController::clearAppBoundNavigationData): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveAppBoundRequestContextDataForDomain): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::didLoadAppInitiatedRequest):
+        (WTR::TestController::didLoadNonAppInitiatedRequest):
+        (WTR::TestController::clearAppPrivacyReportTestingData):
+        (WTR::TestController::appBoundRequestContextDataForDomain): Deleted.
+        (WTR::TestController::didLoadAppBoundRequest): Deleted.
+        (WTR::TestController::didLoadNonAppBoundRequest): Deleted.
+        (WTR::TestController::clearAppBoundNavigationData): Deleted.
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _didLoadAppInitiatedRequest:]):
+        (-[TestRunnerWKWebView _didLoadNonAppInitiatedRequest:]):
+        (-[TestRunnerWKWebView _appBoundNavigationDataForDomain:completionHandler:]): Deleted.
+        (-[TestRunnerWKWebView _didLoadAppBoundRequest:]): Deleted.
+        (-[TestRunnerWKWebView _didLoadNonAppBoundRequest:]): Deleted.
+
 2021-07-08  Garrett Davidson  <garrett_davidson@apple.com>
 
         Update the WebAuthenticationPanel.GetAssertionLA test to expect the right value

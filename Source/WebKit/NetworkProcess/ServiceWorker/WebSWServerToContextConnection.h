@@ -86,7 +86,7 @@ private:
 
     // Messages to the SW host WebProcess
     void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, const String& userAgent) final;
-    void updateAppBoundValue(WebCore::ServiceWorkerIdentifier, WebCore::LastNavigationWasAppBound) final;
+    void updateAppInitiatedValue(WebCore::ServiceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
     void terminateWorker(WebCore::ServiceWorkerIdentifier) final;

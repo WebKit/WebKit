@@ -95,7 +95,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     if (other.m_httpBody)
         setHTTPBody(other.m_httpBody->isolatedCopy());
     setAllowCookies(other.m_allowCookies);
-    setIsAppBound(other.isAppBound());
+    setIsAppInitiated(other.isAppInitiated());
 }
 
 bool ResourceRequestBase::isEmpty() const

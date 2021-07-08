@@ -377,7 +377,7 @@ class WebWheelEvent;
 class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
-struct AppBoundNavigationTestingData;
+struct AppPrivacyReportTestingData;
 struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
@@ -1942,10 +1942,10 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
-    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
-    void appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
-    void clearAppBoundNavigationData(CompletionHandler<void()>&&);
+    void setLastNavigationWasAppInitiated(WebCore::ResourceRequest&);
+    void lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&);
+    void appPrivacyReportTestingData(CompletionHandler<void(const AppPrivacyReportTestingData&)>&&);
+    void clearAppPrivacyReportTestingData(CompletionHandler<void()>&&);
 
     NSDictionary *contentsOfUserInterfaceItem(NSString *userInterfaceItem);
 
@@ -3056,7 +3056,7 @@ private:
 
     size_t m_suspendMediaPlaybackCounter { 0 };
 
-    bool m_lastNavigationWasAppBound { false };
+    bool m_lastNavigationWasAppInitiated { true };
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };
 

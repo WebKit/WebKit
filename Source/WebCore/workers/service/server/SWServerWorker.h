@@ -127,7 +127,7 @@ public:
     void setHasTimedOutAnyFetchTasks() { m_hasTimedOutAnyFetchTasks = true; }
     bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
     void didFailHeartBeatCheck();
-    void updateAppBoundValue(LastNavigationWasAppBound);
+    void updateAppInitiatedValue(LastNavigationWasAppInitiated);
 
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
@@ -158,7 +158,7 @@ private:
     bool m_hasTimedOutAnyFetchTasks { false };
     Vector<CompletionHandler<void()>> m_terminationCallbacks;
     Timer m_terminationTimer;
-    LastNavigationWasAppBound m_lastNavigationWasAppBound;
+    LastNavigationWasAppInitiated m_lastNavigationWasAppInitiated;
 };
 
 } // namespace WebCore

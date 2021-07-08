@@ -1,3 +1,136 @@
+2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App Privacy Report code
+        https://bugs.webkit.org/show_bug.cgi?id=227326
+        <rdar://problem/79696849>
+
+        Reviewed by Brent Fulgham.
+
+        Rename App Privacy Report code to better align with the code's purpose
+        of attributing loads to the app or not. The default value should
+        be app initiated based on the documentation, so this patch also adjusts
+        the default value as needed.
+
+        This also adopts the new NSURLRequest attribution API and removes
+        the deprecated _isNonAppInitiated SPI.
+
+        Covered by existing layout and API tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        (WebKit::NetworkProcess::appPrivacyReportTestingData):
+        (WebKit::NetworkProcess::clearAppPrivacyReportTestingData):
+        (WebKit::NetworkProcess::appBoundNavigationData): Deleted.
+        (WebKit::NetworkProcess::clearAppBoundNavigationData): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::isAppBound):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::appPrivacyReportTestingData):
+        (WebKit::NetworkSession::appBoundNavigationTestingData): Deleted.
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::softUpdateIfNeeded):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadFromNetwork):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::controlClient):
+        (WebKit::WebSWServerConnection::createFetchTask):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::updateAppInitiatedValue):
+        (WebKit::WebSWServerToContextConnection::updateAppBoundValue): Deleted.
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourceInfo::isAppInitiated const):
+        (WebKit::NetworkCache::SubresourceInfo::setIsAppInitiated):
+        (WebKit::NetworkCache::SubresourceInfo::isAppBound const): Deleted.
+        (WebKit::NetworkCache::SubresourceInfo::setIsAppBound): Deleted.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/AppPrivacyReport.h:
+        (WebKit::AppPrivacyReportTestingData::setDidPerformSoftUpdate):
+        (WebKit::AppPrivacyReportTestingData::clearAppPrivacyReportTestingData):
+        (WebKit::AppPrivacyReportTestingData::didLoadAppInitiatedRequest):
+        (WebKit::AppPrivacyReportTestingData::encode const):
+        (WebKit::AppPrivacyReportTestingData::decode):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData):
+        * Shared/NavigatingToAppBoundDomain.h:
+        (WebKit::AppBoundNavigationTestingData::setDidPerformSoftUpdate): Deleted.
+        (WebKit::AppBoundNavigationTestingData::clearAppBoundNavigationDataTesting): Deleted.
+        (WebKit::AppBoundNavigationTestingData::updateAppBoundNavigationTestingData): Deleted.
+        (WebKit::AppBoundNavigationTestingData::encode const): Deleted.
+        (WebKit::AppBoundNavigationTestingData::decode): Deleted.
+        (): Deleted.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didLoadAppInitiatedRequest:]):
+        (-[WKWebView _didLoadNonAppInitiatedRequest:]):
+        (-[WKWebView _appBoundNavigationDataForDomain:completionHandler:]): Deleted.
+        Removed now that we no longer need to test attribution context, that
+        is all it was used for.
+
+        (-[WKWebView _didLoadAppBoundRequest:]): Deleted.
+        (-[WKWebView _didLoadNonAppBoundRequest:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _lastNavigationWasAppInitiated:]):
+        (-[WKWebView _appPrivacyReportTestingData:]):
+        (-[WKWebView _clearAppPrivacyReportTestingData:]):
+        (-[WKWebView _lastNavigationWasAppBound:]): Deleted.
+        (-[WKWebView _appBoundNavigationData:]): Deleted.
+        (-[WKWebView _clearAppBoundNavigationData:]): Deleted.
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setLastNavigationWasAppInitiated):
+        (WebKit::WebPageProxy::lastNavigationWasAppInitiated):
+        (WebKit::WebPageProxy::setLastNavigationWasAppBound): Deleted.
+        (WebKit::WebPageProxy::lastNavigationWasAppBound): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::preconnectTo):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::appPrivacyReportTestingData):
+        (WebKit::WebPageProxy::clearAppPrivacyReportTestingData):
+        (WebKit::WebPageProxy::appBoundNavigationData): Deleted.
+        (WebKit::WebPageProxy::clearAppBoundNavigationData): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updateAppInitiatedValue):
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        (WebKit::WebSWContextManagerConnection::updateAppBoundValue): Deleted.
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::createDocumentLoader):
+        (WebKit::WebPage::lastNavigationWasAppInitiated):
+        (WebKit::WebPage::lastNavigationWasAppBound): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setLastNavigationWasAppInitiated):
+        (WebKit::WebPage::setLastNavigationWasAppBound): Deleted.
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-07-08  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Too easy to trigger navigation swipe on touchscreen

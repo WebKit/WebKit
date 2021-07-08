@@ -618,7 +618,7 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
     IPC::encode(encoder, requestToSerialize.get());
 
     encoder << resourceRequest.requester();
-    encoder << resourceRequest.isAppBound();
+    encoder << resourceRequest.isAppInitiated();
 }
 
 bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decoder, WebCore::ResourceRequest& resourceRequest)
@@ -640,13 +640,13 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
     if (!decoder.decode(requester))
         return false;
 
-    bool isAppBound;
-    if (!decoder.decode(isAppBound))
+    bool isAppInitiated;
+    if (!decoder.decode(isAppInitiated))
         return false;
 
     resourceRequest = WebCore::ResourceRequest(request->get());
     resourceRequest.setRequester(requester);
-    resourceRequest.setIsAppBound(isAppBound);
+    resourceRequest.setIsAppInitiated(isAppInitiated);
 
     return true;
 }

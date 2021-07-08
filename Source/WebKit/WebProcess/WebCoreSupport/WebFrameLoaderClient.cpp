@@ -243,11 +243,11 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned lon
     // The API can return a completely new request. We should ensure that at least the requester
     // is kept, so that if this is a main resource load it's still considered as such.
     auto requester = request.requester();
-    auto appBoundValue = request.isAppBound();
+    auto appInitiatedValue = request.isAppInitiated();
     webPage->injectedBundleResourceLoadClient().willSendRequestForFrame(*webPage, m_frame, identifier, request, redirectResponse);
     if (!request.isNull()) {
         request.setRequester(requester);
-        request.setIsAppBound(appBoundValue);
+        request.setIsAppInitiated(appInitiatedValue);
     }
 }
 

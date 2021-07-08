@@ -295,7 +295,7 @@
 		46FACF7423E8842300A9EBC6 /* beforeunload-slow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */; };
 		4908C71126094E41000B1B2F /* PrivateClickMeasurement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4908C70F26094E16000B1B2F /* PrivateClickMeasurement.mm */; };
 		4909EE3A2D09480C88982D56 /* Markable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC79F168BE454E579E417B05 /* Markable.cpp */; };
-		491AEEF82652E33500D530A8 /* InAppBrowserPrivacyPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 491AEEF42652DDD000D530A8 /* InAppBrowserPrivacyPlugIn.mm */; };
+		491AEEF82652E33500D530A8 /* AppPrivacyReportPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 491AEEF42652DDD000D530A8 /* AppPrivacyReportPlugIn.mm */; };
 		491F3D5226027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D4F26027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db */; };
 		491F3D5326027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D5026027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm */; };
 		491F3D5426027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D5126027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal */; };
@@ -313,6 +313,7 @@
 		498D030A26376B34009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 498D030926376B2C009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db */; };
 		4995A6F025E8772000E5F0A9 /* csp-document-uri-report.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4995A6EF25E876A300E5F0A9 /* csp-document-uri-report.html */; };
 		49AEEF6D2407359D00C87E4C /* InAppBrowserPrivacy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49AEEF6B2407358600C87E4C /* InAppBrowserPrivacy.mm */; };
+		49EF6AD52677C0BE007967DC /* AppPrivacyReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49EF6AD42677C0BE007967DC /* AppPrivacyReport.mm */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
 		510477721D298DDD009747EB /* IDBDeleteRecovery.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */; };
 		510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */; };
@@ -2118,7 +2119,7 @@
 		46FA2FED23846C9A000CCB0C /* HTTPHeaderMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderMap.cpp; sourceTree = "<group>"; };
 		46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "beforeunload-slow.html"; sourceTree = "<group>"; };
 		4908C70F26094E16000B1B2F /* PrivateClickMeasurement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurement.mm; sourceTree = "<group>"; };
-		491AEEF42652DDD000D530A8 /* InAppBrowserPrivacyPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InAppBrowserPrivacyPlugIn.mm; sourceTree = "<group>"; };
+		491AEEF42652DDD000D530A8 /* AppPrivacyReportPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppPrivacyReportPlugIn.mm; sourceTree = "<group>"; };
 		491F3D4F26027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = pcmWithoutFraudPreventionDatabase.db; sourceTree = "<group>"; };
 		491F3D5026027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pcmWithoutFraudPreventionDatabase.db-shm"; sourceTree = "<group>"; };
 		491F3D5126027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "pcmWithoutFraudPreventionDatabase.db-wal"; sourceTree = "<group>"; };
@@ -2137,6 +2138,7 @@
 		49AEEF682407276F00C87E4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49AEEF6B2407358600C87E4C /* InAppBrowserPrivacy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InAppBrowserPrivacy.mm; sourceTree = "<group>"; };
 		49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "in-app-browser-privacy-local-file.html"; sourceTree = "<group>"; };
+		49EF6AD42677C0BE007967DC /* AppPrivacyReport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppPrivacyReport.mm; sourceTree = "<group>"; };
 		4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMedia.cpp; sourceTree = "<group>"; };
 		4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia.html; sourceTree = "<group>"; };
 		4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ondevicechange.html; sourceTree = "<group>"; };
@@ -3387,6 +3389,8 @@
 				2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */,
 				A1798B8122431D65000764BD /* ApplePay.mm */,
 				63F668201F97C3AA0032EE51 /* ApplicationManifest.mm */,
+				49EF6AD42677C0BE007967DC /* AppPrivacyReport.mm */,
+				491AEEF42652DDD000D530A8 /* AppPrivacyReportPlugIn.mm */,
 				51B40D9D23AC960E00E05241 /* AsyncFunction.mm */,
 				834138C6203261B900F26960 /* AsyncPolicyForNavigationResponse.mm */,
 				3760C4F0211249AF00233ACC /* AttrStyle.mm */,
@@ -3475,7 +3479,6 @@
 				93BCBC8023CC6EE800CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm */,
 				F44A7D1F268D5C6900B49BB8 /* ImageAnalysisTests.mm */,
 				49AEEF6B2407358600C87E4C /* InAppBrowserPrivacy.mm */,
-				491AEEF42652DDD000D530A8 /* InAppBrowserPrivacyPlugIn.mm */,
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
 				CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */,
 				9399BA01237110AE008392BF /* IndexedDBInPageCache.mm */,
@@ -5347,6 +5350,7 @@
 				A1798B8222431D65000764BD /* ApplePay.mm in Sources */,
 				63F668221F97F7F90032EE51 /* ApplicationManifest.mm in Sources */,
 				6354F4D11F7C3AB500D89DF3 /* ApplicationManifestParser.cpp in Sources */,
+				49EF6AD52677C0BE007967DC /* AppPrivacyReport.mm in Sources */,
 				51B40D9E23AC962400E05241 /* AsyncFunction.mm in Sources */,
 				834138C7203261CA00F26960 /* AsyncPolicyForNavigationResponse.mm in Sources */,
 				7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */,
@@ -5509,7 +5513,6 @@
 				CDCF78A8244A32F700480311 /* FullscreenAlert.mm in Sources */,
 				CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */,
 				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
-				F44A7D20268D5C6900B49BB8 /* ImageAnalysisTests.mm in Sources */,
 				CDE77D2525A6591C00D4115E /* FullscreenPointerLeave.mm in Sources */,
 				CDDC7C6925FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
@@ -5543,6 +5546,7 @@
 				510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */,
 				5110FCFA1E01CDB8006F8D0B /* IDBIndexUpgradeToV2.mm in Sources */,
 				93BCBC8323CC6F2A00CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm in Sources */,
+				F44A7D20268D5C6900B49BB8 /* ImageAnalysisTests.mm in Sources */,
 				7B18417C2673860200ED4F8D /* ImageBufferTests.cpp in Sources */,
 				F44A9AF72649BBDD00E7CB16 /* ImmediateActionTests.mm in Sources */,
 				49AEEF6D2407359D00C87E4C /* InAppBrowserPrivacy.mm in Sources */,
@@ -5973,6 +5977,7 @@
 			files = (
 				077A5AF3230638A600A7105C /* AccessibilityTestPlugin.mm in Sources */,
 				37E7DD671EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm in Sources */,
+				491AEEF82652E33500D530A8 /* AppPrivacyReportPlugIn.mm in Sources */,
 				754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */,
 				5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
@@ -5988,7 +5993,6 @@
 				F4B0168425AE08F800E445C4 /* DisableSpellcheckPlugIn.mm in Sources */,
 				518EE51920A78CE500E024F3 /* DoubleDefersLoadingPlugin.mm in Sources */,
 				5CB5B3C21FFC55CF00C27BB0 /* FrameHandleSerialization.mm in Sources */,
-				491AEEF82652E33500D530A8 /* InAppBrowserPrivacyPlugIn.mm in Sources */,
 				F460F65B261119580064F2B6 /* InjectedBundleHitTestPlugIn.mm in Sources */,
 				0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */,
 				79C5D431209D768300F1E7CA /* InjectedBundleNodeHandleIsTextField.mm in Sources */,

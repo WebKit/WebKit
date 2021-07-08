@@ -1815,17 +1815,6 @@ webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ 
 
 http/tests/in-app-browser-privacy/ [ Pass ]
 
-# Some In-App Browser Privacy tests rely on functions in WebKitAdditions.
-http/tests/in-app-browser-privacy/context-string-for-subframe.html [ Skip ]
-http/tests/in-app-browser-privacy/context-string-preconnect.html [ Skip ]
-http/tests/in-app-browser-privacy/context-string-preflight.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-load-url.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-ping-load.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-post-request.html [ Skip ]
-
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
 webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]

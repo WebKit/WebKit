@@ -141,7 +141,7 @@ public:
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
 #endif
 
-    bool isAppBound();
+    bool isAppInitiated();
 
 private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&&);

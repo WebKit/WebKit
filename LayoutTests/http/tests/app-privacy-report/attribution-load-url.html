@@ -4,7 +4,7 @@
     <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout('runTest()', 0)">
-<div id="description">Test loadURL requests are succesfully attributed as app-bound.</div>
+<div id="description">Test loadURL requests are succesfully attributed as app initiated.</div>
 <pre id="console"></pre>
 <script>
     if (window.testRunner) {
@@ -13,7 +13,7 @@
     }
 
     function loadURL() {
-        document.location.href = destinationOrigin + "/in-app-browser-privacy/app-bound-attribution-load-url.html";
+        document.location.href = destinationOrigin + "/app-privacy-report/attribution-load-url.html";
     }
 
     function log(message) {
@@ -26,20 +26,20 @@
         if (document.location.origin === startingOrigin) {
             loadURL();
         } else {
-            var didLoadAppBoundRequest = testRunner.didLoadAppBoundRequest();
-            var didLoadNonAppBoundRequest = testRunner.didLoadNonAppBoundRequest();
+            var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+            var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
 
-            if (didLoadNonAppBoundRequest) {
-                log("FAIL did load non app-bound request");
+            if (didLoadNonAppInitiatedRequest) {
+                log("FAIL did load non app initiated request");
                 testRunner.notifyDone();
             }
 
-            if (!didLoadAppBoundRequest) {
-                log("FAIL did not load app-bound request");
+            if (!didLoadAppInitiatedRequest) {
+                log("FAIL did not load app initiated request");
                 testRunner.notifyDone();
             }
 
-            log("PASS successfully loaded only app-bound requests");
+            log("PASS successfully loaded only app initiated requests");
             testRunner.notifyDone();
         }
     }

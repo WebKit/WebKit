@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-enum class LastNavigationWasAppBound : bool;
+enum class LastNavigationWasAppInitiated : bool;
 
 struct ServiceWorkerContextData {
     struct ImportedScript {
@@ -89,7 +89,7 @@ struct ServiceWorkerContextData {
     URL scriptURL;
     WorkerType workerType;
     bool loadedFromDisk;
-    std::optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
+    std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
     HashMap<URL, ImportedScript> scriptResourceMap;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -102,7 +102,7 @@ template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
     encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy
-        << scriptURL << workerType << loadedFromDisk << lastNavigationWasAppBound << scriptResourceMap << certificateInfo;
+        << scriptURL << workerType << loadedFromDisk << lastNavigationWasAppInitiated << scriptResourceMap << certificateInfo;
 }
 
 template<class Decoder>
@@ -147,8 +147,8 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!decoder.decode(loadedFromDisk))
         return std::nullopt;
 
-    std::optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
-    if (!decoder.decode(lastNavigationWasAppBound))
+    std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
+    if (!decoder.decode(lastNavigationWasAppInitiated))
         return std::nullopt;
 
     HashMap<URL, ImportedScript> scriptResourceMap;
@@ -171,7 +171,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
         WTFMove(scriptURL),
         workerType,
         loadedFromDisk,
-        WTFMove(lastNavigationWasAppBound),
+        WTFMove(lastNavigationWasAppInitiated),
         WTFMove(scriptResourceMap)
     }};
 }

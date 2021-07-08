@@ -60,13 +60,13 @@ public:
 
     int processIdentifier() const;
 
-    void lastNavigationWasAppBound(Ref<DeferredPromise>&&);
+    void lastNavigationWasAppInitiated(Ref<DeferredPromise>&&);
 
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);
 
     ServiceWorkerIdentifier m_identifier;
-    RefPtr<DeferredPromise> m_lastNavigationWasAppBoundPromise;
+    RefPtr<DeferredPromise> m_lastNavigationWasAppInitiatedPromise;
 };
 
 } // namespace WebCore
