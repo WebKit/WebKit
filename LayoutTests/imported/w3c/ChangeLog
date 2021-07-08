@@ -1,3 +1,13 @@
+2021-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Canvas image rendering can render arbitrary DOM content in the GPU process, which is against policy (for now)
+        https://bugs.webkit.org/show_bug.cgi?id=227519
+        <rdar://problem/76678163>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt:
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         Our structured cloning implementation does not encode all of RegExp's flags

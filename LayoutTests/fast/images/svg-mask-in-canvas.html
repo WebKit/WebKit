@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>This test passes if you see a black rectangle with a green border below.</p>
+<div style="position: relative;">
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <div style="position: absolute; top: 47px; left: 97px; width: 6px; height: 206px; background: green;"></div>
+    <div style="position: absolute; top: 47px; left: 197px; width: 6px; height: 206px; background: green;"></div>
+    <div style="position: absolute; top: 47px; left: 97px; width: 106px; height: 6px; background: green;"></div>
+    <div style="position: absolute; top: 247px; left: 97px; width: 106px; height: 6px; background: green;"></div>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+let image = document.createElement("img");
+image.addEventListener("load", function() {
+    context.drawImage(image, 0, 0, 300, 300);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+image.src = "resources/mask.svg";
+</script>
+</body>
+</html>
