@@ -1484,8 +1484,6 @@ void RenderLayerCompositor::adjustOverflowScrollbarContainerLayers(RenderLayer& 
         if (!overflowContainerLayer)
             continue;
 
-        LOG_WITH_STREAM(Compositing, stream << "Moving overflow controls layer for " << overflowScrollingLayer << " to appear after " << lastContainedDescendant);
-
         overflowContainerLayer->removeFromParent();
 
         if (overflowBacking->hasAncestorClippingLayers())
@@ -1499,12 +1497,23 @@ void RenderLayerCompositor::adjustOverflowScrollbarContainerLayers(RenderLayer& 
         }
 
         auto* lastDescendantGraphicsLayer = lastContainedDescendantBacking->childForSuperlayers();
-        auto lastDescendantIndex = layerChildren.findMatching([&](auto& item) {
-            return item.ptr() == lastDescendantGraphicsLayer;
-        });
+        auto* overflowScrollerGraphicsLayer = overflowBacking->childForSuperlayers();
+        
+        std::optional<size_t> lastDescendantLayerIndex;
+        std::optional<size_t> scrollerLayerIndex;
+        for (size_t i = 0; i < layerChildren.size(); ++i) {
+            const auto* graphicsLayer = layerChildren[i].ptr();
+            if (graphicsLayer == lastDescendantGraphicsLayer)
+                lastDescendantLayerIndex = i;
+            else if (graphicsLayer == overflowScrollerGraphicsLayer)
+                scrollerLayerIndex = i;
+        }
 
-        if (lastDescendantIndex != notFound)
-            layerChildren.insert(lastDescendantIndex + 1, *overflowContainerLayer);
+        if (lastDescendantLayerIndex && scrollerLayerIndex) {
+            auto insertionIndex = std::max(lastDescendantLayerIndex.value() + 1, scrollerLayerIndex.value() + 1);
+            LOG_WITH_STREAM(Compositing, stream << "Moving overflow controls layer for " << overflowScrollingLayer << " to appear after " << lastContainedDescendant);
+            layerChildren.insert(insertionIndex, *overflowContainerLayer);
+        }
 
         overflowBacking->adjustOverflowControlsPositionRelativeToAncestor(stackingContextLayer);
     }

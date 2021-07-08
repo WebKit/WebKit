@@ -1,3 +1,23 @@
+2021-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrollbar hidden when scroller has a negative z-index child
+        https://bugs.webkit.org/show_bug.cgi?id=227545
+
+        Reviewed by Alan Bujtas.
+        
+        The code to ensure that overflow:scroll scrollbars appeared on top of composited descendant
+        layers had incorrect behavior if the only descendant had negative z-index; it would move the
+        overflow controls container layer to be after that descendant, and thus behind foreground
+        content.
+
+        Fix by inserting the overflow controls container layer in front of the frontmost of the
+        descendant and the scroller itself.
+
+        Test: compositing/scrolling/async-overflow-scrolling/negative-z-in-scroller-hidden-scrollbar.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::adjustOverflowScrollbarContainerLayers):
+
 2021-07-08  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [OpenSSL] Implement HKDF and PBKDF2 support

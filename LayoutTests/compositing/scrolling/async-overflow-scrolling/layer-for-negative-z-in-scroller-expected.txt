@@ -23,18 +23,6 @@
               )
             )
             (GraphicsLayer
-              (position 9.00 9.00)
-              (bounds 300.00 300.00)
-              (clips 1)
-              (children 1
-                (GraphicsLayer
-                  (position 285.00 0.00)
-                  (bounds 15.00 300.00)
-                  (drawsContent 1)
-                )
-              )
-            )
-            (GraphicsLayer
               (bounds 800.00 600.00)
             )
             (GraphicsLayer
@@ -55,6 +43,18 @@
                       (drawsContent 1)
                     )
                   )
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 9.00 9.00)
+              (bounds 300.00 300.00)
+              (clips 1)
+              (children 1
+                (GraphicsLayer
+                  (position 285.00 0.00)
+                  (bounds 15.00 300.00)
+                  (drawsContent 1)
                 )
               )
             )

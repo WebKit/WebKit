@@ -1,3 +1,14 @@
+2021-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrollbar hidden when scroller has a negative z-index child
+        https://bugs.webkit.org/show_bug.cgi?id=227545
+
+        Reviewed by Alan Bujtas.
+
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt: Rebaseline
+        * compositing/scrolling/async-overflow-scrolling/negative-z-in-scroller-hidden-scrollbar-expected.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/negative-z-in-scroller-hidden-scrollbar.html: Added.
+
 2021-07-08  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [OpenSSL] Implement HKDF and PBKDF2 support
