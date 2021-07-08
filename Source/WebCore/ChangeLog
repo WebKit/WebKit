@@ -1,3 +1,22 @@
+2021-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some whitespace handling issues in URL setters
+        https://bugs.webkit.org/show_bug.cgi?id=227806
+
+        Reviewed by Chris Dumez.
+
+        Covered by newly passing wpt tests.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getURLAttribute const):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::href const):
+        Don't remove whitespace before giving to completeURL, which will do that for us if it's a valid URL.
+        If it's not a valid URL, we want the original string, not the trimmed string.
+        * html/URLDecomposition.cpp:
+        (WebCore::parsePort):
+        Parse ports more like the URLParser, which ignores tabs and newlines.
+
 2021-07-08  Cameron McCormack  <heycam@apple.com>
 
         Stop GraphicsLayerCA::recursiveCommitChanges recursion once cMaxLayerTreeDepth is reached

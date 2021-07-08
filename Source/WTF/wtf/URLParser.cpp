@@ -714,7 +714,7 @@ std::optional<String> URLParser::maybeCanonicalizeScheme(StringView scheme)
     return scheme.convertToASCIILowercase();
 }
 
-bool URLParser::isSpecialScheme(const String& schemeArg)
+bool URLParser::isSpecialScheme(StringView schemeArg)
 {
     return scheme(schemeArg) != Scheme::NonSpecial;
 }
@@ -1106,9 +1106,13 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
     Vector<UChar> queryBuffer;
 
     unsigned endIndex = length;
-    while (UNLIKELY(endIndex && isC0ControlOrSpace(input[endIndex - 1]))) {
-        syntaxViolation(CodePointIterator<CharacterType>(input, input));
-        endIndex--;
+    if (UNLIKELY(nonUTF8QueryEncoding == URLTextEncodingSentinelAllowingC0AtEndOfHash))
+        nonUTF8QueryEncoding = nullptr;
+    else {
+        while (UNLIKELY(endIndex && isC0ControlOrSpace(input[endIndex - 1]))) {
+            syntaxViolation(CodePointIterator<CharacterType>(input, input));
+            endIndex--;
+        }
     }
     CodePointIterator<CharacterType> c(input, input + endIndex);
     CodePointIterator<CharacterType> authorityOrHostBegin;

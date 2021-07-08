@@ -1,3 +1,22 @@
+2021-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some whitespace handling issues in URL setters
+        https://bugs.webkit.org/show_bug.cgi?id=227806
+
+        Reviewed by Chris Dumez.
+
+        Setters should ignore tabs and newlines like the main parser does.
+        The protocol setter is problematic, which I reported in https://github.com/whatwg/url/issues/620
+
+        * wtf/URL.cpp:
+        (WTF::URL::setFragmentIdentifier):
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::isSpecialScheme):
+        (WTF::URLParser::parse):
+        * wtf/URLParser.h:
+        The URL.hash setter should allow trailing C0 and control characters, which we would otherwise trim.
+        Rather than introduce a new parameter, use a sentinel value for when we need to do this.
+
 2021-07-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Expose SPI to opt out of Extensible SSO authentication

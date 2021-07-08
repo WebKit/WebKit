@@ -170,15 +170,28 @@ String URLDecomposition::port() const
 // Outer optional is whether we could parse at all. Inner optional is "no port specified".
 static std::optional<std::optional<uint16_t>> parsePort(StringView string, StringView protocol)
 {
-    auto digitsOnly = string.left(countASCIIDigits(string));
-    if (digitsOnly.isEmpty())
+    // https://url.spec.whatwg.org/#port-state with state override given.
+    uint32_t port { 0 };
+    bool foundDigit = false;
+    for (size_t i = 0; i < string.length(); ++i) {
+        auto c = string[i];
+        // https://infra.spec.whatwg.org/#ascii-tab-or-newline
+        if (c == 0x0009 || c == 0x000A || c == 0x000D)
+            continue;
+        if (isASCIIDigit(c)) {
+            port = port * 10 + c - '0';
+            foundDigit = true;
+            if (port > std::numeric_limits<uint16_t>::max())
+                return std::nullopt;
+            continue;
+        }
+        if (!foundDigit)
+            return std::nullopt;
+        break;
+    }
+    if (!foundDigit || WTF::isDefaultPortForProtocol(static_cast<uint16_t>(port), protocol))
         return std::optional<uint16_t> { std::nullopt };
-    auto port = parseInteger<uint16_t>(digitsOnly);
-    if (!port)
-        return std::nullopt;
-    if (WTF::isDefaultPortForProtocol(*port, protocol))
-        return std::optional<uint16_t> { std::nullopt };
-    return { { *port } };
+    return {{ static_cast<uint16_t>(port) }};
 }
 
 void URLDecomposition::setPort(StringView value)

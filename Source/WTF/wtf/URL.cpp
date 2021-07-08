@@ -631,7 +631,7 @@ void URL::setFragmentIdentifier(StringView identifier)
     if (!m_isValid)
         return;
 
-    parse(makeString(StringView(m_string).left(m_queryEnd), '#', identifier));
+    *this = URLParser(makeString(StringView(m_string).left(m_queryEnd), '#', identifier), { }, URLTextEncodingSentinelAllowingC0AtEndOfHash).result();
 }
 
 void URL::removeFragmentIdentifier()
