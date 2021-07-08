@@ -1,3 +1,24 @@
+2021-07-07  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for partially trimmed trailing whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=227688
+
+        Reviewed by Antti Koivisto.
+
+        This patch fixes the case when as a result of the partially trimmed overflow content,
+        we don't need to conditionally hang the trailing end anymore.
+
+        https://drafts.csswg.org/css-text-3/#valdef-white-space-pre
+        "If white-space is set to pre-wrap, the UA must (unconditionally)
+        ...
+        It may also visually collapse the character advance widths of any that would otherwise overflow."
+
+        * layout/formattingContexts/inline/InlineLine.cpp:
+        (WebCore::Layout::Line::visuallyCollapsePreWrapOverflowContent):
+        (WebCore::Layout::Line::Run::removeTrailingWhitespace):
+        (WebCore::Layout::Line::Run::visuallyCollapseTrailingWhitespace):
+        * layout/formattingContexts/inline/InlineLine.h:
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         [WebCrypto] Support Elliptic Curve P-521 on Mac
