@@ -280,9 +280,9 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
         void execute(PaintingOperationReplay& replayer) override
         {
             auto& platformContext = contextForReplay(replayer);
-            Cairo::save(platformContext);
+            platformContext.save();
             Cairo::fillRect(platformContext, arg<0>(), arg<1>().get());
-            Cairo::restore(platformContext);
+            platformContext.restore();
         }
 
         void dump(TextStream& ts) override
@@ -744,7 +744,7 @@ void CairoOperationRecorder::save()
 
         void execute(PaintingOperationReplay& replayer) override
         {
-            Cairo::save(contextForReplay(replayer));
+            contextForReplay(replayer).save();
         }
 
         void dump(TextStream& ts) override
@@ -767,7 +767,7 @@ void CairoOperationRecorder::restore()
 
         void execute(PaintingOperationReplay& replayer) override
         {
-            Cairo::restore(contextForReplay(replayer));
+            contextForReplay(replayer).restore();
         }
 
         void dump(TextStream& ts) override

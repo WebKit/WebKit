@@ -155,9 +155,6 @@ void drawEllipse(GraphicsContextCairo&, const FloatRect&, const Color&, StrokeSt
 void drawFocusRing(GraphicsContextCairo&, const Path&, float, const Color&);
 void drawFocusRing(GraphicsContextCairo&, const Vector<FloatRect>&, float, const Color&);
 
-void save(GraphicsContextCairo&);
-void restore(GraphicsContextCairo&);
-
 void translate(GraphicsContextCairo&, float, float);
 void rotate(GraphicsContextCairo&, float);
 void scale(GraphicsContextCairo&, const FloatSize&);

@@ -102,7 +102,13 @@ GraphicsContextCairo* GraphicsContextCairo::platformContext() const
 void GraphicsContextCairo::save()
 {
     GraphicsContext::save();
-    Cairo::save(*this);
+
+    m_cairoStateStack.append(CairoState());
+    m_cairoState = &m_cairoStateStack.last();
+
+    cairo_save(m_cr.get());
+
+    m_private->save();
 }
 
 void GraphicsContextCairo::restore()
@@ -111,7 +117,27 @@ void GraphicsContextCairo::restore()
         return;
 
     GraphicsContext::restore();
-    Cairo::restore(*this);
+
+    if (m_cairoStateStack.isEmpty())
+        return;
+
+    if (m_cairoState->m_mask.pattern) {
+        cairo_pop_group_to_source(m_cr.get());
+
+        cairo_matrix_t matrix;
+        cairo_get_matrix(m_cr.get(), &matrix);
+        cairo_set_matrix(m_cr.get(), &m_cairoState->m_mask.matrix);
+        cairo_mask(m_cr.get(), m_cairoState->m_mask.pattern.get());
+        cairo_set_matrix(m_cr.get(), &matrix);
+    }
+
+    m_cairoStateStack.removeLast();
+    ASSERT(!m_cairoStateStack.isEmpty());
+    m_cairoState = &m_cairoStateStack.last();
+
+    cairo_restore(m_cr.get());
+
+    m_private->restore();
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -181,9 +207,9 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient)
     if (!pattern)
         return;
 
-    Cairo::save(*this);
+    save();
     Cairo::fillRect(*this, rect, pattern.get());
-    Cairo::restore(*this);
+    restore();
 }
 
 void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
@@ -426,36 +452,6 @@ cairo_t* GraphicsContextCairo::cr() const
 Vector<float>& GraphicsContextCairo::layers()
 {
     return m_layers;
-}
-
-void GraphicsContextCairo::saveInternal()
-{
-    m_cairoStateStack.append(CairoState());
-    m_cairoState = &m_cairoStateStack.last();
-
-    cairo_save(m_cr.get());
-}
-
-void GraphicsContextCairo::restoreInternal()
-{
-    if (m_cairoStateStack.isEmpty())
-        return;
-
-    if (m_cairoState->m_mask.pattern) {
-        cairo_pop_group_to_source(m_cr.get());
-
-        cairo_matrix_t matrix;
-        cairo_get_matrix(m_cr.get(), &matrix);
-        cairo_set_matrix(m_cr.get(), &m_cairoState->m_mask.matrix);
-        cairo_mask(m_cr.get(), m_cairoState->m_mask.pattern.get());
-        cairo_set_matrix(m_cr.get(), &matrix);
-    }
-
-    m_cairoStateStack.removeLast();
-    ASSERT(!m_cairoStateStack.isEmpty());
-    m_cairoState = &m_cairoStateStack.last();
-
-    cairo_restore(m_cr.get());
 }
 
 void GraphicsContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRect& rect)

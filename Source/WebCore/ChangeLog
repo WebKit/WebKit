@@ -1,3 +1,32 @@
+2021-07-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Merge Cairo::save and Cairo::restore into GraphicsContextCairo's methods
+        https://bugs.webkit.org/show_bug.cgi?id=227784
+
+        Reviewed by Žan Doberšek.
+
+        Cairo::save and Cairo::restore should be GraphicsContextCairo's
+        methods.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::fillShadowBuffer):
+        (WebCore::Cairo::save): Deleted.
+        (WebCore::Cairo::restore): Deleted.
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::fill):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::save):
+        (WebCore::GraphicsContextCairo::restore):
+        (WebCore::GraphicsContextCairo::fillRect):
+        (WebCore::GraphicsContextCairo::saveInternal): Deleted.
+        (WebCore::GraphicsContextCairo::restoreInternal): Deleted.
+        * platform/graphics/cairo/GraphicsContextCairo.h:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::fillRect):
+        (Nicosia::CairoOperationRecorder::save):
+        (Nicosia::CairoOperationRecorder::restore):
+
 2021-07-07  Cameron McCormack  <heycam@apple.com>
 
         Add logging for GraphicsLayerCA::m_uncommittedChanges

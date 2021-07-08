@@ -114,8 +114,6 @@ public:
 
     cairo_t* cr() const;
     Vector<float>& layers();
-    void saveInternal();
-    void restoreInternal();
     void pushImageMask(cairo_surface_t*, const FloatRect&);
     GraphicsContextPlatformPrivate* graphicsContextPrivate();
 

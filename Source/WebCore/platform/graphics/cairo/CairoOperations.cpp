@@ -190,7 +190,7 @@ static void drawShadowImage(GraphicsContextCairo& platformContext, ImageBuffer& 
 
 static void fillShadowBuffer(GraphicsContextCairo& platformContext, ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const ShadowState& shadowState)
 {
-    save(platformContext);
+    platformContext.save();
 
     if (auto nativeImage = layerImage.copyNativeImage(DontCopyBackingStore))
         clipToImageBuffer(platformContext, nativeImage->platformImage().get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
@@ -200,7 +200,7 @@ static void fillShadowBuffer(GraphicsContextCairo& platformContext, ImageBuffer&
     fillSource.color = shadowState.color;
     fillRect(platformContext, FloatRect(layerOrigin, expandedIntSize(layerSize)), fillSource, ShadowState());
 
-    restore(platformContext);
+    platformContext.restore();
 }
 
 static inline void drawPathShadow(GraphicsContextCairo& platformContext, const FillSource& fillSource, const StrokeSource& strokeSource, const ShadowState& shadowState, PathDrawingStyle drawingStyle)
@@ -1176,22 +1176,6 @@ void drawFocusRing(GraphicsContextCairo& platformContext, const Vector<FloatRect
     }
 
     drawFocusRing(platformContext, path, width, color);
-}
-
-void save(GraphicsContextCairo& platformContext)
-{
-    platformContext.saveInternal();
-
-    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
-        graphicsContextPrivate->save();
-}
-
-void restore(GraphicsContextCairo& platformContext)
-{
-    platformContext.restoreInternal();
-
-    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
-        graphicsContextPrivate->restore();
 }
 
 void translate(GraphicsContextCairo& platformContext, float x, float y)
