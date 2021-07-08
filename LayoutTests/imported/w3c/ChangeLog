@@ -1,3 +1,10 @@
+2021-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused URL test expectation files.
+
+        * web-platform-tests/url/historical-expected.txt: Removed.
+        * web-platform-tests/url/url-setters-expected.txt: Removed.
+
 2021-07-08  Chris Dumez  <cdumez@apple.com>
 
         [WebCrypto] deriveBits() fails if length is not a multiple of 8 for ECDH algorithm
