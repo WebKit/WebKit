@@ -2308,3 +2308,5 @@ webkit.org/b/215335 [ BigSur Release ] webanimations/css-transition-retargeting-
 webkit.org/b/223472 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Pass Failure ]
 
 webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
+
+webkit.org/b/207125 transitions/start-transform-transition.html [ Pass Failure ]
