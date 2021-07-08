@@ -68,12 +68,6 @@ void CryptoAlgorithmECDH::generateKey(const CryptoAlgorithmParameters& parameter
 
 void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    // We only accept length that is a multiple of 8.
-    if (length % 8) {
-        exceptionCallback(OperationError);
-        return;
-    }
-
     auto& ecParameters = downcast<CryptoAlgorithmEcdhKeyDeriveParams>(parameters);
 
     if (baseKey->type() != CryptoKey::Type::Private) {
@@ -105,11 +99,12 @@ void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters
             callback(WTFMove(*derivedKey));
             return;
         }
-        if (length / 8 > (*derivedKey).size()) {
+        auto lengthInBytes = std::ceil(length / 8.);
+        if (lengthInBytes > (*derivedKey).size()) {
             exceptionCallback(OperationError);
             return;
         }
-        (*derivedKey).shrink(length / 8);
+        (*derivedKey).shrink(lengthInBytes);
         callback(WTFMove(*derivedKey));
     };
 

@@ -55,8 +55,6 @@ crypto.subtle.importKey("jwk", jwkPrivateKey, { name: "ECDH", namedCurve: "P-256
     shouldReject('crypto.subtle.deriveBits({name: "ecdh", public: Symbol()}, privateKey, null)');
     shouldReject('crypto.subtle.deriveBits({name: "ecdh", public: { }}, privateKey, null)');
     shouldReject('crypto.subtle.deriveBits({name: "ecdh", public: 1}, privateKey, null)');
-    // Wrong length
-    shouldReject('crypto.subtle.deriveBits({ name:"ECDH", public:publicKey }, privateKey, 1)');
     // base key is public
     shouldReject('crypto.subtle.deriveBits({ name:"ECDH", public:publicKey }, publicKey, null)');
     // public key is private
