@@ -3123,6 +3123,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, node->structure());
         break;
 
+    case ObjectAssign: {
+        clobberWorld();
+        break;
+    }
+
     case ObjectCreate: {
         if (JSValue base = forNode(node->child1()).m_value) {
             JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);

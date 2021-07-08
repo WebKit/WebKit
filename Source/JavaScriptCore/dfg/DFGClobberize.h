@@ -1679,6 +1679,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case ObjectAssign: {
+        clobberTop();
+        return;
+    }
+
     case ObjectCreate: {
         switch (node->child1().useKind()) {
         case ObjectUse:

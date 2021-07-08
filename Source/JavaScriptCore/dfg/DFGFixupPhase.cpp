@@ -2892,6 +2892,7 @@ private:
         case FilterSetPrivateBrandStatus:
         case InvalidationPoint:
         case CreateArgumentsButterfly:
+        case ObjectAssign:
             break;
 #else // not ASSERT_ENABLED
         default:

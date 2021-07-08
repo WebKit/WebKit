@@ -194,20 +194,9 @@ void InlineWatchpointSet::freeFat()
     fat()->deref();
 }
 
-DeferredWatchpointFire::DeferredWatchpointFire(VM& vm)
-    : m_vm(vm)
-    , m_watchpointsToFire(ClearWatchpoint)
+void DeferredWatchpointFire::fireAllSlow()
 {
-}
-
-DeferredWatchpointFire::~DeferredWatchpointFire()
-{
-}
-
-void DeferredWatchpointFire::fireAll()
-{
-    if (m_watchpointsToFire.state() == IsWatched)
-        m_watchpointsToFire.fireAll(m_vm, *this);
+    m_watchpointsToFire.fireAll(m_vm, *this);
 }
 
 void DeferredWatchpointFire::takeWatchpointsToFire(WatchpointSet* watchpointsToFire)

@@ -2133,22 +2133,23 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
             slot.setNonconfigurable();
             return false;
         }
-        DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
 
         PropertyOffset offset = invalidOffset;
-        if (structure->isUncacheableDictionary())
+        if (structure->isUncacheableDictionary()) {
             offset = structure->removePropertyWithoutTransition(vm, propertyName, [] (const GCSafeConcurrentJSLocker&, PropertyOffset, PropertyOffset) { });
-        else {
+            ASSERT(!isValidOffset(structure->get(vm, propertyName, attributes)));
+            if (offset != invalidOffset)
+                thisObject->locationForOffset(offset)->clear();
+        } else {
+            DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
             structure = Structure::removePropertyTransition(vm, structure, propertyName, offset, &deferredWatchpointFire);
             slot.setHit(offset);
             ASSERT(structure->outOfLineCapacity() || !thisObject->structure(vm)->outOfLineCapacity());
             thisObject->setStructure(vm, structure);
+            ASSERT(!isValidOffset(structure->get(vm, propertyName, attributes)));
+            if (offset != invalidOffset)
+                thisObject->locationForOffset(offset)->clear();
         }
-
-        ASSERT(!isValidOffset(structure->get(vm, propertyName, attributes)));
-
-        if (offset != invalidOffset)
-            thisObject->locationForOffset(offset)->clear();
     } else
         slot.setConfigurableMiss();
 

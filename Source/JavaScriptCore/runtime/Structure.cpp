@@ -61,16 +61,6 @@ static SingleSlotTransitionWeakOwner& singleSlotTransitionWeakOwner()
     return owner;
 }
 
-inline Structure* StructureTransitionTable::singleTransition() const
-{
-    ASSERT(isUsingSingleSlot());
-    if (WeakImpl* impl = this->weakImpl()) {
-        if (impl->state() == WeakImpl::Live)
-            return jsCast<Structure*>(impl->jsValue().asCell());
-    }
-    return nullptr;
-}
-
 inline void StructureTransitionTable::setSingleTransition(Structure* structure)
 {
     ASSERT(isUsingSingleSlot());
@@ -85,15 +75,6 @@ bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attribu
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
         return transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind;
-    }
-    return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, transitionKind));
-}
-
-inline Structure* StructureTransitionTable::get(UniquedStringImpl* rep, unsigned attributes, TransitionKind transitionKind) const
-{
-    if (isUsingSingleSlot()) {
-        Structure* transition = singleTransition();
-        return (transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind) ? transition : nullptr;
     }
     return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, transitionKind));
 }
@@ -473,37 +454,6 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
         });
     
     return table;
-}
-
-Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
-{
-    ASSERT(!structure->isDictionary());
-    ASSERT(structure->isObject());
-
-    offset = invalidOffset;
-
-    if (structure->hasBeenDictionary())
-        return nullptr;
-
-    if (Structure* existingTransition = structure->m_transitionTable.get(uid, attributes, TransitionKind::PropertyAddition)) {
-        validateOffset(existingTransition->transitionOffset(), existingTransition->inlineCapacity());
-        offset = existingTransition->transitionOffset();
-        return existingTransition;
-    }
-
-    return nullptr;
-}
-
-Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset)
-{
-    ASSERT(!isCompilationThread());
-    return addPropertyTransitionToExistingStructureImpl(structure, propertyName.uid(), attributes, offset);
-}
-
-Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
-{
-    ConcurrentJSLocker locker(structure->m_lock);
-    return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, offset);
 }
 
 bool Structure::holesMustForwardToPrototype(VM& vm, JSObject* base) const

@@ -1459,6 +1459,7 @@ private:
         case ClearCatchLocals:
         case DataViewSet:
         case InvalidationPoint:
+        case ObjectAssign:
             break;
             
         // This gets ignored because it only pretends to produce a value.

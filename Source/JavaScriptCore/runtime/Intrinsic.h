@@ -94,6 +94,7 @@ enum Intrinsic : uint8_t {
     RegExpTestIntrinsic,
     RegExpTestFastIntrinsic,
     RegExpMatchFastIntrinsic,
+    ObjectAssignIntrinsic,
     ObjectCreateIntrinsic,
     ObjectGetOwnPropertyNamesIntrinsic,
     ObjectGetPrototypeOfIntrinsic,

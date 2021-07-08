@@ -3984,6 +3984,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ObjectAssign: {
+        compileObjectAssign(node);
+        break;
+    }
+
     case ObjectCreate: {
         compileObjectCreate(node);
         break;

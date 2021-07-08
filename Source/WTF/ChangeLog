@@ -1,3 +1,132 @@
+2021-07-08  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r279604. rdar://problem/80340434
+
+    [JSC] Optimize Object.assign and putDirectInternal
+    https://bugs.webkit.org/show_bug.cgi?id=227677
+    
+    Reviewed by Filip Pizlo.
+    
+    JSTests:
+    
+    * microbenchmarks/object-assign-replace.js: Added.
+    (test):
+    * microbenchmarks/object-assign-transition.js: Added.
+    (test):
+    
+    Source/JavaScriptCore:
+    
+    This patch improves Object.assign performance (and this requires putDirectInternal improvement).
+    
+    1. Object.assign is handled by DFG / FTL as ObjectAssign node
+    2. We found that putDirectInternal is suboptimal. This patch removes several bottlenecks. They are super critical from the measurement of
+       microbenchmarks.
+        2.1. Creating and destroying DeferredStructureTransitionWatchpointFire is not free. We should do that only when we need it.
+        2.2. Before r277620, we are checking m_replacementWatchpointSets's nullptr and that was fast. But after that, we are always
+             calling HashMap::get, and it is not inlined. This means that if we have StructureRareData, we are always calling HashMap::get
+             even though there is no m_replacementWatchpointSets set. This patch adds HashMap::isNullStorage to avoid this call by inlinely
+             check this via `LIKELY(m_replacementWatchpointSets.isNullStorage())`.
+        2.3. Structure::addPropertyTransitionToExistingStructure has very cheap fast path and we must inline them to get performance benefit
+             for major single-transition case.
+    
+    Added microbenchmarks show significant performance improvements. And Speedometer2 shows 0.6 - 1.0% improvement.
+    
+                                             ToT                     Patched
+    
+        object-assign-transition      105.2539+-0.2970     ^     88.8046+-0.2029        ^ definitely 1.1852x faster
+        object-assign-replace         116.1568+-0.0905     ^     75.0673+-0.0658        ^ definitely 1.5474x faster
+    
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * bytecode/Watchpoint.cpp:
+    (JSC::DeferredWatchpointFire::fireAllSlow):
+    (JSC::DeferredWatchpointFire::DeferredWatchpointFire): Deleted.
+    (JSC::DeferredWatchpointFire::~DeferredWatchpointFire): Deleted.
+    (JSC::DeferredWatchpointFire::fireAll): Deleted.
+    * bytecode/Watchpoint.h:
+    (JSC::DeferredWatchpointFire::DeferredWatchpointFire):
+    (JSC::DeferredWatchpointFire::fireAll):
+    (JSC::FireDetail::FireDetail): Deleted.
+    (JSC::FireDetail::~FireDetail): Deleted.
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGDoesGC.cpp:
+    (JSC::DFG::doesGC):
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    * dfg/DFGMayExit.cpp:
+    * dfg/DFGNodeType.h:
+    * dfg/DFGOperations.cpp:
+    (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+    * dfg/DFGOperations.h:
+    * dfg/DFGPredictionPropagationPhase.cpp:
+    * dfg/DFGSafeToExecute.h:
+    (JSC::DFG::safeToExecute):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileObjectAssign):
+    * dfg/DFGSpeculativeJIT.h:
+    * dfg/DFGSpeculativeJIT32_64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * dfg/DFGSpeculativeJIT64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * ftl/FTLCapabilities.cpp:
+    (JSC::FTL::canCompile):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+    (JSC::FTL::DFG::LowerDFGToB3::compileObjectAssign):
+    * runtime/Intrinsic.cpp:
+    (JSC::intrinsicName):
+    * runtime/Intrinsic.h:
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::deleteProperty):
+    * runtime/JSObjectInlines.h:
+    (JSC::JSObject::putDirectInternal):
+    * runtime/ObjectConstructor.cpp:
+    (JSC::objectAssignGeneric):
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/ObjectConstructor.h:
+    * runtime/ObjectConstructorInlines.h: Added.
+    (JSC::canPerformFastPropertyEnumerationForObjectAssign):
+    * runtime/Structure.cpp:
+    (JSC::StructureTransitionTable::singleTransition const): Deleted.
+    (JSC::StructureTransitionTable::get const): Deleted.
+    (JSC::Structure::addPropertyTransitionToExistingStructureImpl): Deleted.
+    (JSC::Structure::addPropertyTransitionToExistingStructure): Deleted.
+    (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently): Deleted.
+    * runtime/Structure.h:
+    * runtime/StructureInlines.h:
+    (JSC::Structure::didReplaceProperty):
+    (JSC::Structure::propertyReplacementWatchpointSet):
+    (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+    (JSC::Structure::addPropertyTransitionToExistingStructure):
+    (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+    (JSC::StructureTransitionTable::singleTransition const):
+    (JSC::StructureTransitionTable::get const):
+    
+    Source/WTF:
+    
+    * wtf/HashMap.h:
+    * wtf/HashSet.h:
+    * wtf/HashTable.h:
+    (WTF::HashTable::isNullStorage const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279604 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Optimize Object.assign and putDirectInternal
+            https://bugs.webkit.org/show_bug.cgi?id=227677
+
+            Reviewed by Filip Pizlo.
+
+            * wtf/HashMap.h:
+            * wtf/HashSet.h:
+            * wtf/HashTable.h:
+            (WTF::HashTable::isNullStorage const):
+
 2021-07-02  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Only use WebGL on Metal by default on safe versions of macOS
