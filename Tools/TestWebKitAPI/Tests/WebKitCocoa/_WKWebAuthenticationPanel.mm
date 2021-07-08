@@ -1427,7 +1427,6 @@ TEST(WebAuthenticationPanel, LAMakeCredentialRollBackCredential)
     EXPECT_EQ(status, errSecItemNotFound);
 }
 
-// Skip the test because of <rdar://problem/59635486>.
 #if PLATFORM(MAC)
 
 TEST(WebAuthenticationPanel, LAGetAssertion)
@@ -1918,7 +1917,7 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
         EXPECT_NULL(error);
 
         EXPECT_NOT_NULL(response);
-        EXPECT_WK_STREQ([response.clientDataJSON base64EncodedStringWithOptions:0], "eyJjaGFsbGVuZ2UiOiJBUUlEQkFFQ0F3UUJBZ01FQVFJREJBRUNBd1FCQWdNRUFRSURCQUVDQXdRIiwib3JpZ2luIjoiIiwidHlwZSI6IndlYmF1dGhuLmNyZWF0ZSJ9");
+        EXPECT_WK_STREQ([[NSString alloc] initWithData:response.clientDataJSON encoding:NSUTF8StringEncoding], "{\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"\",\"type\":\"webauthn.get\"}");
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
         EXPECT_WK_STREQ([response.authenticatorData base64EncodedStringWithOptions:0], "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFUFAAAAAA==");
@@ -1988,7 +1987,7 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 0lu);
 }
-#endif
+#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 
 } // namespace TestWebKitAPI
 

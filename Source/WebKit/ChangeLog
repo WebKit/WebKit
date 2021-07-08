@@ -1,3 +1,16 @@
+2021-07-08  Garrett Davidson  <garrett_davidson@apple.com>
+
+        _WKWebAuthenticationPanel is returning the wrong operation type in clientDataJSON
+        https://bugs.webkit.org/show_bug.cgi?id=227726
+        rdar://80073404
+
+        Reviewed by Kate Cheney.
+
+        The -getAssertion:... method was passing the wrong _WKWebAuthenticationType to produceClientDataJSON().
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel getAssertionWithChallenge:origin:options:completionHandler:]):
+
 2021-07-08  Per Arne  <pvollan@apple.com>
 
         Set Caption preferences in the UI process
