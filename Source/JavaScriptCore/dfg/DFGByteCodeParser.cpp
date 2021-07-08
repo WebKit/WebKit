@@ -2943,10 +2943,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             Node* target = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
             m_exitOK = true;
             addToGraph(ExitOK);
-            Node* source = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
-            m_exitOK = true;
-            addToGraph(ExitOK);
-            addToGraph(ObjectAssign, Edge(target, KnownCellUse), Edge(source, KnownCellUse));
+            addToGraph(ObjectAssign, Edge(target, KnownCellUse), Edge(get(virtualRegisterForArgumentIncludingThis(2, registerOffset))));
             setResult(target);
             return true;
         }

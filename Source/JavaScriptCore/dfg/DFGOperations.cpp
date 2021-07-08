@@ -310,7 +310,6 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-
     bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(vm, target) && target->canPerformFastPutInlineExcludingProto(vm) && target->isStructureExtensible(vm);
 
     if (targetCanPerformFastPut) {
@@ -363,6 +362,38 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
     }
 
     scope.release();
+    objectAssignGeneric(globalObject, vm, target, source);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* globalObject, JSObject* target, EncodedJSValue encodedSource))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(vm, target) && target->canPerformFastPutInlineExcludingProto(vm) && target->isStructureExtensible(vm);
+
+    JSValue sourceValue = JSValue::decode(encodedSource);
+    if (sourceValue.isUndefinedOrNull())
+        return;
+    JSObject* source = sourceValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (targetCanPerformFastPut) {
+        if (!source->staticPropertiesReified(vm)) {
+            source->reifyAllStaticProperties(globalObject);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+
+        if (canPerformFastPropertyEnumerationForObjectAssign(source->structure(vm))) {
+            Vector<RefPtr<UniquedStringImpl>, 8> properties;
+            MarkedArgumentBuffer values;
+            objectAssignFast(vm, target, source, properties, values);
+            return;
+        }
+    }
+
     objectAssignGeneric(globalObject, vm, target, source);
 }
 

@@ -54,6 +54,7 @@ JSC_DECLARE_JIT_OPERATION(operationObjectGetOwnPropertyNamesObject, JSArray*, (J
 JSC_DECLARE_JIT_OPERATION(operationObjectCreate, JSCell*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationObjectCreateObject, JSCell*, (JSGlobalObject*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject*, JSObject*, JSObject*));
+JSC_DECLARE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject*, JSObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject*, JSObject* constructor, uint32_t inlineCapacity));
 JSC_DECLARE_JIT_OPERATION(operationCreatePromise, JSCell*, (JSGlobalObject*, JSObject* constructor));
 JSC_DECLARE_JIT_OPERATION(operationCreateInternalPromise, JSCell*, (JSGlobalObject*, JSObject* constructor));

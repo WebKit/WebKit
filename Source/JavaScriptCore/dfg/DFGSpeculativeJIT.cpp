@@ -14052,16 +14052,40 @@ void SpeculativeJIT::compileObjectKeysOrObjectGetOwnPropertyNames(Node* node)
 void SpeculativeJIT::compileObjectAssign(Node* node)
 {
     SpeculateCellOperand target(this, node->child1());
-    SpeculateCellOperand source(this, node->child2());
 
-    GPRReg targetGPR = target.gpr();
-    GPRReg sourceGPR = source.gpr();
+    switch (node->child2().useKind()) {
+    case ObjectUse: {
+        SpeculateCellOperand source(this, node->child2());
 
-    flushRegisters();
-    callOperation(operationObjectAssignObject, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), targetGPR, sourceGPR);
-    m_jit.exceptionCheck();
+        GPRReg targetGPR = target.gpr();
+        GPRReg sourceGPR = source.gpr();
 
-    noResult(node);
+        speculateObject(node->child2(), sourceGPR);
+
+        flushRegisters();
+        callOperation(operationObjectAssignObject, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), targetGPR, sourceGPR);
+        m_jit.exceptionCheck();
+
+        noResult(node);
+        return;
+    }
+    case UntypedUse: {
+        JSValueOperand source(this, node->child2());
+
+        GPRReg targetGPR = target.gpr();
+        JSValueRegs sourceRegs = source.jsValueRegs();
+
+        flushRegisters();
+        callOperation(operationObjectAssignUntyped, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), targetGPR, sourceRegs);
+        m_jit.exceptionCheck();
+
+        noResult(node);
+        return;
+    }
+    default:
+        DFG_CRASH(m_jit.graph(), node, "Bad use kind");
+        return;
+    }
 }
 
 void SpeculativeJIT::compileObjectCreate(Node* node)

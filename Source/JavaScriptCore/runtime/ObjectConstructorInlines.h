@@ -53,4 +53,45 @@ ALWAYS_INLINE bool canPerformFastPropertyEnumerationForObjectAssign(Structure* s
     return true;
 }
 
+ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
+{
+    // |source| Structure does not have any getters. And target can perform fast put.
+    // So enumerating properties and putting properties are non observable.
+
+    // FIXME: It doesn't seem like we should have to do this in two phases, but
+    // we're running into crashes where it appears that source is transitioning
+    // under us, and even ends up in a state where it has a null butterfly. My
+    // leading hypothesis here is that we fire some value replacement watchpoint
+    // that ends up transitioning the structure underneath us.
+    // https://bugs.webkit.org/show_bug.cgi?id=187837
+
+    // FIXME: This fast path is very similar to ObjectConstructor' one. But extracting it to a function caused performance
+    // regression in object-assign-replace. Since the code is small and fast path, we keep both.
+
+    // Do not clear since Vector::clear shrinks the backing store.
+    properties.resize(0);
+    values.clear();
+    source->structure(vm)->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
+        if (entry.attributes & PropertyAttribute::DontEnum)
+            return true;
+
+        PropertyName propertyName(entry.key);
+        if (propertyName.isPrivateName())
+            return true;
+
+        properties.append(entry.key);
+        values.appendWithCrashOnOverflow(source->getDirect(entry.offset));
+
+        return true;
+    });
+
+    for (size_t i = 0; i < properties.size(); ++i) {
+        // FIXME: We could put properties in a batching manner to accelerate Object.assign more.
+        // https://bugs.webkit.org/show_bug.cgi?id=185358
+        PutPropertySlot putPropertySlot(target, true);
+        target->putOwnDataProperty(vm, properties[i].get(), values.at(i), putPropertySlot);
+    }
+}
+
+
 } // namespace JSC
