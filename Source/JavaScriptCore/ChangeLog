@@ -1,3 +1,27 @@
+2021-07-08  Keith Miller  <keith_miller@apple.com>
+
+        display-profiler-output should be able to print disassembly for the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=227798
+
+        Reviewed by Saam Barati.
+
+        Right now running JSC with the bytecode profiler will not print
+        disassembly for FTL code. This patch adds this support. In order to get
+        execution counts there is a callback at the transition between each
+        DFG node in the Air disassembler. Since B3 code move parts of
+        DFG nodes to different basic blocks we don't include execution
+        counts in the dump. However, the DFG-only graph printed before
+        the disassembly will still have the counts.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::dumpDisassembly):
+        * ftl/FTLState.h:
+        (JSC::FTL::State::dumpDisassembly):
+
 2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use JSC::Yarr::flagsString to get string representation of RegExp flags

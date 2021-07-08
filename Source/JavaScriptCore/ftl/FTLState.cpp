@@ -28,10 +28,15 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "AirCode.h"
+#include "AirDisassembler.h"
+#include "CodeBlockWithJITType.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
 #include "FTLPatchpointExceptionHandle.h"
+
+#include <wtf/RecursableLambda.h>
 
 namespace JSC { namespace FTL {
 
@@ -72,6 +77,83 @@ State::State(Graph& graph)
         });
 
     proc->setFrontendData(&graph);
+}
+
+void State::dumpDisassembly(PrintStream& out, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback)
+{
+    B3::Air::Disassembler* disassembler = proc->code().disassembler();
+
+    out.print("Generated ", graph.m_plan.mode(), " code for ", CodeBlockWithJITType(graph.m_codeBlock, JITType::FTLJIT), ", instructions size = ", graph.m_codeBlock->instructionsSize(), ":\n");
+
+    LinkBuffer& linkBuffer = *finalizer->b3CodeLinkBuffer;
+    B3::Value* currentB3Value = nullptr;
+    Node* currentDFGNode = nullptr;
+
+    HashSet<B3::Value*> printedValues;
+    HashSet<Node*> printedNodes;
+    const char* dfgPrefix = "DFG " "    ";
+    const char* b3Prefix  = "b3  " "          ";
+    const char* airPrefix = "Air " "              ";
+    const char* asmPrefix = "asm " "                ";
+
+    auto printDFGNode = [&] (Node* node) {
+        if (currentDFGNode == node)
+            return;
+
+        currentDFGNode = node;
+        if (!currentDFGNode)
+            return;
+
+        perDFGNodeCallback(node);
+
+        HashSet<Node*> localPrintedNodes;
+        WTF::Function<void(Node*)> printNodeRecursive = [&] (Node* node) {
+            if (printedNodes.contains(node) || localPrintedNodes.contains(node))
+                return;
+
+            localPrintedNodes.add(node);
+            graph.doToChildren(node, [&] (Edge child) {
+                printNodeRecursive(child.node());
+            });
+            graph.dump(out, dfgPrefix, node);
+        };
+        printNodeRecursive(node);
+        printedNodes.add(node);
+    };
+
+    auto printB3Value = [&] (B3::Value* value) {
+        if (currentB3Value == value)
+            return;
+
+        currentB3Value = value;
+        if (!currentB3Value)
+            return;
+
+        printDFGNode(bitwise_cast<Node*>(value->origin().data()));
+
+        HashSet<B3::Value*> localPrintedValues;
+        auto printValueRecursive = recursableLambda([&] (auto self, B3::Value* value) -> void {
+            if (printedValues.contains(value) || localPrintedValues.contains(value))
+                return;
+
+            localPrintedValues.add(value);
+            for (unsigned i = 0; i < value->numChildren(); i++)
+                self(value->child(i));
+            out.print(b3Prefix);
+            value->deepDump(proc.get(), out);
+            out.print("\n");
+        });
+
+        printValueRecursive(currentB3Value);
+        printedValues.add(value);
+    };
+
+    auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
+        printB3Value(inst.origin);
+    });
+
+    disassembler->dump(proc->code(), out, linkBuffer, airPrefix, asmPrefix, forEachInst);
+    linkBuffer.didAlreadyDisassemble();
 }
 
 State::~State()

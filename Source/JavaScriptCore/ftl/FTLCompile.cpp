@@ -55,7 +55,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     CodeBlock* codeBlock = graph.m_codeBlock;
     VM& vm = graph.m_vm;
 
-    if (shouldDumpDisassembly())
+    if (shouldDumpDisassembly() || vm.m_perBytecodeProfiler)
         state.proc->code().setDisassembler(makeUnique<B3::Air::Disassembler>());
 
     if (!shouldDumpDisassembly() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
@@ -171,79 +171,74 @@ void compile(State& state, Safepoint::Result& safepointResult)
     }
     state.jitCode->common.finalizeCatchEntrypoints(WTFMove(state.graph.m_catchEntrypoints));
 
-    if (B3::Air::Disassembler* disassembler = state.proc->code().disassembler()) {
-        PrintStream& out = WTF::dataFile();
+    if (shouldDumpDisassembly())
+        state.dumpDisassembly(WTF::dataFile());
 
-        out.print("Generated ", state.graph.m_plan.mode(), " code for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITType::FTLJIT), ", instructions size = ", state.graph.m_codeBlock->instructionsSize(), ":\n");
+    Profiler::Compilation* compilation = graph.compilation();
+    if (UNLIKELY(compilation)) {
+        compilation->addDescription(
+            Profiler::OriginStack(),
+            toCString("Generated FTL DFG IR for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ", instructions size = ", graph.m_codeBlock->instructionsSize(), ":\n"));
 
-        LinkBuffer& linkBuffer = *state.finalizer->b3CodeLinkBuffer;
-        B3::Value* currentB3Value = nullptr;
-        Node* currentDFGNode = nullptr;
+        graph.ensureSSADominators();
+        graph.ensureSSANaturalLoops();
 
-        HashSet<B3::Value*> printedValues;
-        HashSet<Node*> printedNodes;
-        const char* dfgPrefix = "DFG " "    ";
-        const char* b3Prefix  = "b3  " "          ";
-        const char* airPrefix = "Air " "              ";
-        const char* asmPrefix = "asm " "                ";
+        const char* prefix = "    ";
 
-        auto printDFGNode = [&] (Node* node) {
-            if (currentDFGNode == node)
-                return;
+        DumpContext dumpContext;
+        StringPrintStream out;
+        Node* lastNode = nullptr;
+        for (size_t blockIndex = 0; blockIndex < graph.numBlocks(); ++blockIndex) {
+            DFG::BasicBlock* block = graph.block(blockIndex);
+            if (!block)
+                continue;
 
-            currentDFGNode = node;
-            if (!currentDFGNode)
-                return;
+            graph.dumpBlockHeader(out, prefix, block, Graph::DumpLivePhisOnly, &dumpContext);
+            compilation->addDescription(Profiler::OriginStack(), out.toCString());
+            out.reset();
 
-            HashSet<Node*> localPrintedNodes;
-            WTF::Function<void(Node*)> printNodeRecursive = [&] (Node* node) {
-                if (printedNodes.contains(node) || localPrintedNodes.contains(node))
-                    return;
+            for (size_t nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
 
-                localPrintedNodes.add(node);
-                graph.doToChildren(node, [&] (Edge child) {
-                    printNodeRecursive(child.node());
-                });
-                graph.dump(out, dfgPrefix, node);
-            };
-            printNodeRecursive(node);
-            printedNodes.add(node);
-        };
+                Profiler::OriginStack stack;
 
-        auto printB3Value = [&] (B3::Value* value) {
-            if (currentB3Value == value)
-                return;
+                if (node->origin.semantic.isSet()) {
+                    stack = Profiler::OriginStack(
+                        *vm.m_perBytecodeProfiler, codeBlock, node->origin.semantic);
+                }
 
-            currentB3Value = value;
-            if (!currentB3Value)
-                return;
+                if (graph.dumpCodeOrigin(out, prefix, lastNode, node, &dumpContext)) {
+                    compilation->addDescription(stack, out.toCString());
+                    out.reset();
+                }
 
-            printDFGNode(bitwise_cast<Node*>(value->origin().data()));
+                graph.dump(out, prefix, node, &dumpContext);
+                compilation->addDescription(stack, out.toCString());
+                out.reset();
 
-            HashSet<B3::Value*> localPrintedValues;
-            auto printValueRecursive = recursableLambda([&] (auto self, B3::Value* value) -> void {
-                if (printedValues.contains(value) || localPrintedValues.contains(value))
-                    return;
+                if (node->origin.semantic.isSet())
+                    lastNode = node;
+            }
+        }
 
-                localPrintedValues.add(value);
-                for (unsigned i = 0; i < value->numChildren(); i++)
-                    self(value->child(i));
-                out.print(b3Prefix);
-                value->deepDump(state.proc.get(), out);
-                out.print("\n");
-            });
+        dumpContext.dump(out, prefix);
+        compilation->addDescription(Profiler::OriginStack(), out.toCString());
+        out.reset();
 
-            printValueRecursive(currentB3Value);
-            printedValues.add(value);
-        };
+        out.print("\n\n\n    FTL B3/Air Disassembly:\n");
+        compilation->addDescription(Profiler::OriginStack(), out.toCString());
+        out.reset();
 
-        auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
-            printB3Value(inst.origin);
-        });
+        state.dumpDisassembly(out, scopedLambda<void(Node*)>([&] (Node*) {
+            compilation->addDescription({ }, out.toCString());
+            out.reset();
+        }));
+        compilation->addDescription({ }, out.toCString());
+        out.reset();
 
-        disassembler->dump(state.proc->code(), out, linkBuffer, airPrefix, asmPrefix, forEachInst);
-        linkBuffer.didAlreadyDisassemble();
+        state.jitCode->common.compilation = compilation;
     }
+
 }
 
 } } // namespace JSC::FTL

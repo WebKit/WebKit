@@ -69,65 +69,6 @@ void link(State& state)
     CCallHelpers::Address frame = CCallHelpers::Address(
         CCallHelpers::stackPointerRegister, -static_cast<int32_t>(AssemblyHelpers::prologueStackPointerDelta()));
     
-    Profiler::Compilation* compilation = graph.compilation();
-    if (UNLIKELY(compilation)) {
-        compilation->addDescription(
-            Profiler::OriginStack(),
-            toCString("Generated FTL JIT code for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ", instructions size = ", graph.m_codeBlock->instructionsSize(), ":\n"));
-        
-        graph.ensureSSADominators();
-        graph.ensureSSANaturalLoops();
-        
-        const char* prefix = "    ";
-        
-        DumpContext dumpContext;
-        StringPrintStream out;
-        Node* lastNode = nullptr;
-        for (size_t blockIndex = 0; blockIndex < graph.numBlocks(); ++blockIndex) {
-            BasicBlock* block = graph.block(blockIndex);
-            if (!block)
-                continue;
-            
-            graph.dumpBlockHeader(out, prefix, block, Graph::DumpLivePhisOnly, &dumpContext);
-            compilation->addDescription(Profiler::OriginStack(), out.toCString());
-            out.reset();
-            
-            for (size_t nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                Node* node = block->at(nodeIndex);
-                
-                Profiler::OriginStack stack;
-                
-                if (node->origin.semantic.isSet()) {
-                    stack = Profiler::OriginStack(
-                        *vm.m_perBytecodeProfiler, codeBlock, node->origin.semantic);
-                }
-                
-                if (graph.dumpCodeOrigin(out, prefix, lastNode, node, &dumpContext)) {
-                    compilation->addDescription(stack, out.toCString());
-                    out.reset();
-                }
-                
-                graph.dump(out, prefix, node, &dumpContext);
-                compilation->addDescription(stack, out.toCString());
-                out.reset();
-                
-                if (node->origin.semantic.isSet())
-                    lastNode = node;
-            }
-        }
-        
-        dumpContext.dump(out, prefix);
-        compilation->addDescription(Profiler::OriginStack(), out.toCString());
-        out.reset();
-
-        out.print("    Disassembly:\n");
-        out.print("        <not implemented yet>\n");
-        compilation->addDescription(Profiler::OriginStack(), out.toCString());
-        out.reset();
-        
-        state.jitCode->common.compilation = compilation;
-    }
-
     switch (graph.m_plan.mode()) {
     case JITCompilationMode::FTL: {
         bool requiresArityFixup = codeBlock->numParameters() != 1;
@@ -233,7 +174,6 @@ void link(State& state)
         state.jitCode->initializeArityCheckEntrypoint(arityCheckCodeRef);
     }
 
-    
     state.finalizer->entrypointLinkBuffer = WTFMove(linkBuffer);
     state.finalizer->function = state.generatedFunction;
     state.finalizer->jitCode = state.jitCode;
