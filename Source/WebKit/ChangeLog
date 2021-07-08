@@ -1,3 +1,28 @@
+2021-07-08  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Too easy to trigger navigation swipe on touchscreen
+        https://bugs.webkit.org/show_bug.cgi?id=226745
+
+        Reviewed by Michael Catanzaro.
+
+        ViewGestureController uses both x and y deltas to figure out whether to proceed
+        with a swipe, in the cross-platform part of the code. However, that was optimized
+        out during the touch handling rewrite, bring it back.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseHandleWheelEvent):
+        (webkitWebViewBaseScroll):
+        (webkitWebViewBaseTouchDragUpdate):
+        (webkitWebViewBaseTouchDragEnd):
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas):
+        (WebKit::ViewGestureController::SwipeProgressTracker::handleEvent):
+        (WebKit::ViewGestureController::beginSimulatedSwipeInDirectionForTesting):
+        (WebKit::ViewGestureController::completeSimulatedSwipeInDirectionForTesting):
+
 2021-07-08  Garrett Davidson  <garrett_davidson@apple.com>
 
         _WKWebAuthenticationPanel is returning the wrong operation type in clientDataJSON
