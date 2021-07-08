@@ -7082,7 +7082,17 @@ private:
     void compileObjectAssign()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        vmCall(Void, operationObjectAssignObject, weakPointer(globalObject), lowCell(m_node->child1()), lowCell(m_node->child2()));
+        switch (m_node->child2().useKind()) {
+        case ObjectUse:
+            vmCall(Void, operationObjectAssignObject, weakPointer(globalObject), lowCell(m_node->child1()), lowObject(m_node->child2()));
+            return;
+        case UntypedUse:
+            vmCall(Void, operationObjectAssignUntyped, weakPointer(globalObject), lowCell(m_node->child1()), lowJSValue(m_node->child2()));
+            return;
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            return;
+        }
     }
 
     void compileObjectCreate()

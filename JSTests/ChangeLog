@@ -1,5 +1,56 @@
 2021-07-08  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r279690. rdar://problem/80339399
+
+    [JSC] Fix Object.assign fast path to accept undefined/null
+    https://bugs.webkit.org/show_bug.cgi?id=227769
+    rdar://80264271
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/object-assign-undefined.js: Added.
+    (test):
+    
+    Source/JavaScriptCore:
+    
+    Object.assign can accept undefined or null as a second (or latter) parameters.
+    If it is passed, the parameter is just ignored. Previous DFG / FTL optimization patch
+    does not handle this case.
+    
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    * dfg/DFGOperations.cpp:
+    (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+    * dfg/DFGOperations.h:
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileObjectAssign):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileObjectAssign):
+    * runtime/ObjectConstructor.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/ObjectConstructorInlines.h:
+    (JSC::objectAssignFast):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279690 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Fix Object.assign fast path to accept undefined/null
+            https://bugs.webkit.org/show_bug.cgi?id=227769
+            rdar://80264271
+
+            Reviewed by Saam Barati.
+
+            * stress/object-assign-undefined.js: Added.
+            (test):
+
+2021-07-08  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r279604. rdar://problem/80340434
 
     [JSC] Optimize Object.assign and putDirectInternal
