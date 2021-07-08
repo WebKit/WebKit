@@ -544,11 +544,13 @@ void GraphicsContextHaiku::updateState(const GraphicsContextState& state, Graphi
                 m_strokeStyle = B_SOLID_HIGH;
                 break;
             case DottedStroke:
+                m_view->SetLowColor(B_TRANSPARENT_COLOR);
                 m_strokeStyle = B_MIXED_COLORS;
                 break;
             case DashedStroke:
                 // FIXME: use a better dashed stroke!
                 notImplemented();
+                m_view->SetLowColor(B_TRANSPARENT_COLOR);
                 m_strokeStyle = B_MIXED_COLORS;
                 break;
             case NoStroke:
