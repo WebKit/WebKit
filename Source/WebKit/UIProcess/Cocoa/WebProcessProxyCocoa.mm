@@ -37,7 +37,6 @@
 #import "WKTypeRefWrapper.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
-#import <pal/cf/AudioToolboxSoftLink.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -53,9 +52,15 @@
 #import <JavaScriptCore/RemoteInspectorConstants.h>
 #endif
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include <WebCore/CaptionUserPreferencesMediaAF.h>
+#endif
+
 #if PLATFORM(MAC)
 #include "TCCSoftLink.h"
 #endif
+
+#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
 
@@ -207,6 +212,18 @@ void WebProcessProxy::enableRemoteInspectorIfNeeded()
     if (!shouldEnableRemoteInspector())
         return;
     send(Messages::WebProcess::EnableRemoteWebInspector(), 0);
+}
+#endif
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+void WebProcessProxy::setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode displayMode)
+{
+    WebCore::CaptionUserPreferencesMediaAF::platformSetCaptionDisplayMode(displayMode);
+}
+
+void WebProcessProxy::setCaptionLanguage(const String& language)
+{
+    WebCore::CaptionUserPreferencesMediaAF::platformSetPreferredLanguage(language);
 }
 #endif
 

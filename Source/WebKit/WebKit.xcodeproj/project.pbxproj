@@ -5921,6 +5921,8 @@
 		E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProvider.h; sourceTree = "<group>"; };
 		E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationUpdateProvider.cpp; sourceTree = "<group>"; };
 		E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebDeviceOrientationUpdateProvider.messages.in; sourceTree = "<group>"; };
+		E3A86FBB26958D830059264D /* WebCaptionPreferencesDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCaptionPreferencesDelegate.h; sourceTree = "<group>"; };
+		E3A86FBC26958E330059264D /* WebCaptionPreferencesDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCaptionPreferencesDelegate.cpp; sourceTree = "<group>"; };
 		E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityPreferences.cpp; sourceTree = "<group>"; };
 		E3BCE878267252120011D8DB /* AccessibilityPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPreferences.h; sourceTree = "<group>"; };
 		E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
@@ -9846,6 +9848,8 @@
 				F43A9CDE25D72E2D00990E26 /* ShareableBitmapUtilities.cpp */,
 				F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */,
 				CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */,
+				E3A86FBC26958E330059264D /* WebCaptionPreferencesDelegate.cpp */,
+				E3A86FBB26958D830059264D /* WebCaptionPreferencesDelegate.h */,
 				BC111A53112F4FBB00337BAB /* WebChromeClient.cpp */,
 				BC032D6010F4378D0058C15A /* WebChromeClient.h */,
 				3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */,

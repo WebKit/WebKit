@@ -153,7 +153,8 @@
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include <WebCore/CaptionUserPreferencesMediaAF.h>
+#import "WebCaptionPreferencesDelegate.h"
+#import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
@@ -462,6 +463,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     SystemSoundManager::singleton().setSystemSoundDelegate(makeUnique<WebSystemSoundDelegate>());
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    WebCore::CaptionUserPreferencesMediaAF::setCaptionPreferencesDelegate(makeUnique<WebCaptionPreferencesDelegate>());
+#endif
 
 #if PLATFORM(MAC)
     if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())

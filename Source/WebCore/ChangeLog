@@ -1,3 +1,29 @@
+2021-07-08  Per Arne  <pvollan@apple.com>
+
+        Set Caption preferences in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=227742
+        <rdar://79040526>
+
+        Reviewed by Eric Carlson.
+
+        Add a Caption user preferences delegate, which can be subclassed to perform the work in the UI process.
+
+        No new tests, since this is not trivial to add a test for. This has been manually tested.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::captionPreferencesDelegate):
+        (WebCore::CaptionUserPreferencesMediaAF::captionDisplayMode const):
+        (WebCore::CaptionUserPreferencesMediaAF::platformSetCaptionDisplayMode):
+        (WebCore::CaptionUserPreferencesMediaAF::setCaptionDisplayMode):
+        (WebCore::CaptionUserPreferencesMediaAF::setCaptionPreferencesDelegate):
+        (WebCore::CaptionUserPreferencesMediaAF::platformSetPreferredLanguage):
+        (WebCore::CaptionUserPreferencesMediaAF::setPreferredLanguage):
+        * page/CaptionUserPreferencesMediaAF.h:
+        * platform/CaptionPreferencesDelegate.h: Added.
+        (WebCore::CaptionPreferencesDelegate::~CaptionPreferencesDelegate):
+        (WebCore::CaptionPreferencesDelegate::setDisplayMode):
+
 2021-07-08  Martin Robinson  <mrobinson@igalia.com>
 
         [css-scroll-snap] scroll-snap-align should use the box's writing-mode when the box is larger than the snapport
