@@ -112,7 +112,6 @@ bool ScrollAnimatorGeneric::scroll(ScrollbarOrientation orientation, ScrollGranu
 bool ScrollAnimatorGeneric::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
     m_kineticAnimation->stop();
-    m_kineticAnimation->clearScrollHistory();
 
 #if ENABLE(SMOOTH_SCROLLING)
     if (m_smoothAnimation)
