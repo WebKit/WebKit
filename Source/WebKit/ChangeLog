@@ -1,3 +1,26 @@
+2021-07-07  Devin Rousso  <drousso@apple.com>
+
+        Extremely jumpy window resizing in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=167529
+        <rdar://problem/77568931>
+
+        Reviewed by Tim Horton.
+
+        Instead of computing the `m_pendingTopContentInset` inside `updateContentInsetsIfAutomatic`,
+        wait to do it until we're actually dispatching the value to the WebProcess, as it's possible
+        for the former to happen while still inside a layout, which could result in the wrong value.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateContentInsetsIfAutomatic):
+        (WebKit::WebViewImpl::topContentInset const):
+        (WebKit::WebViewImpl::setTopContentInset):
+        (WebKit::WebViewImpl::scheduleSetTopContentInsetDispatch): Added.
+        (WebKit::WebViewImpl::dispatchSetTopContentInset):
+        Still keep `m_pendingTopContentInset` so that manual calls to `setTopContentInset` can also
+        be batched with `updateContentInsetsIfAutomatic`, each taking precedence over the other if
+        called later.
+
 2021-07-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed follow-up to r279601 to address some assertions on the bots.

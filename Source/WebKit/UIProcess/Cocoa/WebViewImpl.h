@@ -709,6 +709,8 @@ private:
 
     bool supportsArbitraryLayoutModes() const;
     float intrinsicDeviceScaleFactor() const;
+
+    void scheduleSetTopContentInsetDispatch();
     void dispatchSetTopContentInset();
 
     void postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *);
@@ -768,8 +770,8 @@ private:
     bool m_windowOcclusionDetectionEnabled { true };
 
     bool m_automaticallyAdjustsContentInsets { false };
-    CGFloat m_pendingTopContentInset { 0 };
-    bool m_didScheduleSetTopContentInset { false };
+    std::optional<CGFloat> m_pendingTopContentInset;
+    bool m_didScheduleSetTopContentInsetDispatch { false };
     
     CGSize m_scrollOffsetAdjustment { 0, 0 };
 
