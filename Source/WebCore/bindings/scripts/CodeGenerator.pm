@@ -86,6 +86,8 @@ my %bufferSourceTypes = (
     "Uint32Array" => 1,
     "Uint8Array" => 1,
     "Uint8ClampedArray" => 1,
+    "BigInt64Array" => 1,
+    "BigUint64Array" => 1,
 );
 
 my %primitiveTypeHash = ( 

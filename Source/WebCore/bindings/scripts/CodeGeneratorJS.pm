@@ -6925,6 +6925,8 @@ sub GetBaseIDLType
         "Uint8ClampedArray" => "IDLUint8ClampedArray",
         "Float32Array" => "IDLFloat32Array",
         "Float64Array" => "IDLFloat64Array",
+        "BigInt64Array" => "IDLBigInt64Array",
+        "BigUint64Array" => "IDLBigUint64Array",
 
         # Non-WebIDL extensions
         "Date" => "IDLDate",

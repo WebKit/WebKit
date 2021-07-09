@@ -1,3 +1,28 @@
+2021-07-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add BigInt64Array and BigUint64Array support to crypto.getRandomValues
+        https://bugs.webkit.org/show_bug.cgi?id=227611
+
+        Reviewed by Chris Dumez.
+
+        Resync web-platform-tests/WebCryptoAPI/ directory.
+
+        * web-platform-tests/WebCryptoAPI/digest/test_digest-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_gcm-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.html: Added.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.js: Added.
+        (const.array.of.arrays.test):
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.worker.html: Added.
+        * web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/import_export/test_symmetric_importKey-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_hmac-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/w3c-import.log:
+
 2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix StructuredClone for streams to handle BigInt64Array / BigUint64Array

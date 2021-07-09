@@ -1,3 +1,39 @@
+2021-07-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add BigInt64Array and BigUint64Array support to crypto.getRandomValues
+        https://bugs.webkit.org/show_bug.cgi?id=227611
+
+        Reviewed by Chris Dumez.
+
+        Tests: imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.html
+               imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.worker.html
+
+        This patch updates crypto.getRandomValues so that this function can take BigInt64Array / BigUint64Array.
+        We also add BigInt64Array / BigUint64Array IDL support.
+
+        * bindings/js/JSDOMConvertBufferSource.h:
+        (WebCore::toPossiblySharedBigInt64Array):
+        (WebCore::toPossiblySharedBigUint64Array):
+        (WebCore::toUnsharedBigInt64Array):
+        (WebCore::toUnsharedBigUint64Array):
+        (WebCore::JSConverter<IDLFloat64Array>::convert):
+        (WebCore::Converter<IDLBigInt64Array>::convert):
+        (WebCore::JSConverter<IDLBigInt64Array>::convert):
+        (WebCore::Converter<IDLBigUint64Array>::convert):
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetBaseIDLType):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjDOMConstructor::construct):
+        (WebCore::jsTestObjPrototypeFunction_bigInt64Body):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestObjPrototypeFunction_bigUint64Body):
+        (WebCore::jsTestObjPrototypeFunction_bigInt64AllowSharedBody):
+        (WebCore::jsTestObjPrototypeFunction_bigUint64AllowSharedBody):
+        * bindings/scripts/test/TestObj.idl:
+        * page/Crypto.cpp:
+        (WebCore::Crypto::getRandomValues):
+
 2021-07-09  Tim Nguyen  <ntim@apple.com>
 
         Make topLayerElements() use Ref instead of RefPtr
