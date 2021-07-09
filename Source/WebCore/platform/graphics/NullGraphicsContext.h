@@ -147,9 +147,9 @@ private:
     void paintFrameForMedia(MediaPlayer&, const FloatRect&) final { }
 #endif
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !USE(CAIRO)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final { return nullptr; }
-#endif // OS(WINDOWS)
+#endif
 
 private:
     const PaintInvalidationReasons m_paintInvalidationReasons { PaintInvalidationReasons::None };

@@ -1,3 +1,41 @@
+2021-07-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo][Win] Remove unneeded GraphicsContextPlatformPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=227828
+
+        Reviewed by Don Olmstead.
+
+        GraphicsContextPlatformPrivate keeps HDC's transform syncing with
+        GraphicsContext's transform. However, WinCairo doesn't use it.
+
+        * platform/graphics/BifurcatedGraphicsContext.cpp:
+        * platform/graphics/BifurcatedGraphicsContext.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/NullGraphicsContext.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::State::setCTM):
+        (WebCore::Cairo::translate):
+        (WebCore::Cairo::rotate):
+        (WebCore::Cairo::scale):
+        (WebCore::Cairo::concatCTM):
+        (WebCore::Cairo::clip):
+        (WebCore::Cairo::clipPath):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        (WebCore::GraphicsContextCairo::save):
+        (WebCore::GraphicsContextCairo::restore):
+        (WebCore::GraphicsContextCairo::graphicsContextPrivate): Deleted.
+        * platform/graphics/cairo/GraphicsContextCairo.h:
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Removed.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate): Deleted.
+        (WebCore::GraphicsContextPlatformPrivate::flush): Deleted.
+        (WebCore::GraphicsContextCairo::deprecatedPrivateContext const): Deleted.
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        * platform/win/DragImageCairoWin.cpp:
+
 2021-07-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         SVGImageForContainer reports true for is<SVGImage>() but it doesn't inherit from SVGImage

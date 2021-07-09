@@ -372,7 +372,7 @@ void BifurcatedGraphicsContext::updateState(const GraphicsContextState& state, G
     m_secondaryContext.updateState(state, flags);
 }
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !USE(CAIRO)
 GraphicsContextPlatformPrivate* BifurcatedGraphicsContext::deprecatedPrivateContext() const
 {
     return m_primaryContext.deprecatedPrivateContext();

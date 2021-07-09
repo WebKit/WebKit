@@ -29,7 +29,6 @@
 #include "BitmapInfo.h"
 #include "CachedImage.h"
 #include "GraphicsContextCairo.h"
-#include "GraphicsContextPlatformPrivateCairo.h"
 #include "HWndDC.h"
 #include "Image.h"
 #include <cairo-win32.h>

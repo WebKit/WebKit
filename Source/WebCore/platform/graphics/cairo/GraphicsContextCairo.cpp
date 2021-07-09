@@ -40,7 +40,6 @@
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "Gradient.h"
-#include "GraphicsContextPlatformPrivateCairo.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -70,7 +69,6 @@ public:
 
 GraphicsContextCairo::GraphicsContextCairo(RefPtr<cairo_t>&& context)
     : m_cr(WTFMove(context))
-    , m_private(makeUnique<GraphicsContextPlatformPrivate>(cr()))
 {
     m_cairoStateStack.append(CairoState());
     m_cairoState = &m_cairoStateStack.last();
@@ -107,8 +105,6 @@ void GraphicsContextCairo::save()
     m_cairoState = &m_cairoStateStack.last();
 
     cairo_save(m_cr.get());
-
-    m_private->save();
 }
 
 void GraphicsContextCairo::restore()
@@ -136,8 +132,6 @@ void GraphicsContextCairo::restore()
     m_cairoState = &m_cairoStateStack.last();
 
     cairo_restore(m_cr.get());
-
-    m_private->restore();
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -467,11 +461,6 @@ void GraphicsContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRe
     cairo_pattern_set_matrix(m_cairoState->m_mask.pattern.get(), &matrix);
 
     cairo_push_group(m_cr.get());
-}
-
-GraphicsContextPlatformPrivate* GraphicsContextCairo::graphicsContextPrivate()
-{
-    return m_private.get();
 }
 
 } // namespace WebCore

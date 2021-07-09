@@ -132,7 +132,7 @@ public:
 
     void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !USE(CAIRO)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
 #endif
 

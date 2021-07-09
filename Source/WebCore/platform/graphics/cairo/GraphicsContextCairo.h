@@ -108,14 +108,9 @@ public:
 
     FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) final;
 
-#if OS(WINDOWS)
-    GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
-#endif
-
     cairo_t* cr() const;
     Vector<float>& layers();
     void pushImageMask(cairo_surface_t*, const FloatRect&);
-    GraphicsContextPlatformPrivate* graphicsContextPrivate();
 
 private:
     RefPtr<cairo_t> m_cr;
@@ -126,8 +121,6 @@ private:
 
     // Transparency layers.
     Vector<float> m_layers;
-
-    std::unique_ptr<GraphicsContextPlatformPrivate> m_private;
 };
 
 } // namespace WebCore
