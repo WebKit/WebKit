@@ -216,7 +216,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
     auto dispatchEnterOrLeaveEvent = [&](const String& type, Element& targetElement) {
         bool hasCapturingListenerInHierarchy = false;
-        for (RefPtr<ContainerNode> currentNode = targetElement; currentNode; currentNode = currentNode->parentInComposedTree()) {
+        for (RefPtr<ContainerNode> currentNode = &targetElement; currentNode; currentNode = currentNode->parentInComposedTree()) {
             if (currentNode->hasCapturingEventListeners(type)) {
                 hasCapturingListenerInHierarchy = true;
                 break;
@@ -224,7 +224,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         }
 
         Vector<Ref<Element>, 32> targetChain;
-        for (RefPtr element = targetElement; element; element = element->parentElementInComposedTree()) {
+        for (RefPtr element = &targetElement; element; element = element->parentElementInComposedTree()) {
             if (hasCapturingListenerInHierarchy || element->hasEventListeners(type))
                 targetChain.append(*element);
         }
@@ -243,7 +243,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     Ref capturingData = ensureCapturingDataForPointerEvent(pointerEvent);
 
     // Check if the target changed, which would require dispatching boundary events.
-    RefPtr<Element> previousTarget = capturingData.previousTarget;
+    RefPtr<Element> previousTarget = capturingData->previousTarget;
     RefPtr<Element> currentTarget = downcast<Element>(&target);
 
     capturingData->previousTarget = currentTarget;
