@@ -92,6 +92,7 @@
 #include "HTMLBaseElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormControlElement.h"
@@ -8397,6 +8398,32 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bo
     });
 
     return animations;
+}
+
+void Document::addToTopLayer(Element& element)
+{
+    // To add an element to a top layer, remove it from top layer and then append it to top layer.
+    m_topLayerElements.appendOrMoveToLast(&element);
+
+    element.invalidateStyle();
+}
+
+void Document::removeFromTopLayer(Element& element)
+{
+    if (!m_topLayerElements.remove(&element))
+        return;
+
+    element.invalidateStyle();
+}
+
+HTMLDialogElement* Document::activeModalDialog() const
+{
+    for (auto& element : makeReversedRange(m_topLayerElements)) {
+        if (is<HTMLDialogElement>(element))
+            return downcast<HTMLDialogElement>(element.get());
+    }
+
+    return nullptr;
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

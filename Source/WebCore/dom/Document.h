@@ -149,6 +149,7 @@ class HTMLAttachmentElement;
 class HTMLBodyElement;
 class HTMLCanvasElement;
 class HTMLCollection;
+class HTMLDialogElement;
 class HTMLDocument;
 class HTMLElement;
 class HTMLFrameOwnerElement;
@@ -1501,6 +1502,12 @@ public:
     DocumentTimelinesController* timelinesController() const { return m_timelinesController.get(); }
     WEBCORE_EXPORT DocumentTimelinesController& ensureTimelinesController();
 
+    void addToTopLayer(Element&);
+    void removeFromTopLayer(Element&);
+    const ListHashSet<RefPtr<Element>>& topLayerElements() const { return m_topLayerElements; }
+
+    HTMLDialogElement* activeModalDialog() const;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
@@ -2187,6 +2194,8 @@ private:
 
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
+
+    ListHashSet<RefPtr<Element>> m_topLayerElements;
 };
 
 Element* eventTargetElementForDocument(Document*);

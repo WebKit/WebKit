@@ -1,3 +1,26 @@
+2021-07-09  Tim Nguyen  <ntim@apple.com>
+
+        Add topLayerElements() and activeModalDialog() to Document
+        https://bugs.webkit.org/show_bug.cgi?id=227800
+
+        Reviewed by Antti Koivisto.
+
+        These DOM methods are a pre-requisite for a lot of dialog element accessibility work, aside from
+        the top layer rendering work.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addToTopLayer):
+        (WebCore::Document::removeFromTopLayer):
+        (WebCore::Document::activeModalDialog const):
+        * dom/Document.h:
+        (WebCore::Document::topLayerElements const):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::showModal):
+        (WebCore::HTMLDialogElement::close):
+        (WebCore::HTMLDialogElement::parseAttribute):
+
 2021-07-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE][libsoup] Test imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html crashes since it was imported

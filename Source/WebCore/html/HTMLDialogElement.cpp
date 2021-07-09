@@ -88,6 +88,8 @@ ExceptionOr<void> HTMLDialogElement::showModal()
         return Exception { InvalidStateError };
 
     setBooleanAttribute(openAttr, true);
+
+    document().addToTopLayer(*this);
     m_isModal = true;
 
     return { };
@@ -99,6 +101,7 @@ void HTMLDialogElement::close(const String& returnValue)
         return;
     
     setBooleanAttribute(openAttr, false);
+
     if (!returnValue.isNull())
         m_returnValue = returnValue;
 }
@@ -117,7 +120,11 @@ void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomStri
 
         // Emit close event
         if (oldValue != m_isOpen && !m_isOpen) {
-            m_isModal = false;
+            if (m_isModal) {
+                document().removeFromTopLayer(*this);
+                m_isModal = false;
+            }
+
             dialogCloseEventSender().cancelEvent(*this);
             dialogCloseEventSender().dispatchEventSoon(*this);
         }
