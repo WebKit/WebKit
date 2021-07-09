@@ -1,3 +1,19 @@
+2021-07-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE][libsoup] Test imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html crashes since it was imported
+        https://bugs.webkit.org/show_bug.cgi?id=227819
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add missings null-checks to avoid calling soup_cookie_jar_get_cookie_list_with_same_site_info()
+        with a null pointer in site_for_cookies argument.
+
+        Covered by existing tests.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::cookiesForSession):
+
 2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Unreviewed iOS build fix after
