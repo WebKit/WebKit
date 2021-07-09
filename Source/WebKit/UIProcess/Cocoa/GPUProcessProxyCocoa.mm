@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPUProcessProxy.h"
 
-#if HAVE(CONTACTSUI)
+#if ENABLE(GPU_PROCESS)
 
-#include <optional>
-#include <wtf/Forward.h>
+#include "GPUProcessCreationParameters.h"
 
-@class WKWebView;
-@protocol WKContactPickerDelegate;
+namespace WebKit {
 
-namespace WebCore {
-struct ContactInfo;
-struct ContactsRequestData;
+void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
+{
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    parameters.webCoreLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
+    parameters.webKitLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
+#endif
 }
 
-@interface WKContactPicker : NSObject
+}
 
-- (instancetype)initWithView:(WKWebView *)view;
-
-- (void)presentWithRequestData:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
-
-@property (nonatomic, weak) id<WKContactPickerDelegate> delegate;
-
-@end
-
-@protocol WKContactPickerDelegate <NSObject>
-@optional
-- (void)contactPickerDidPresent:(WKContactPicker *)contactPicker;
-- (void)contactPickerDidDismiss:(WKContactPicker *)contactPicker;
-@end
-
-@interface WKContactPicker (WKTesting)
-- (void)dismissWithContacts:(NSArray *)contacts;
-@end
-
-#endif // HAVE(CONTACTSUI)
+#endif

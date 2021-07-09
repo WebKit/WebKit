@@ -130,6 +130,8 @@ private:
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
 #endif
 
+    void platformInitializeGPUProcessParameters(GPUProcessCreationParameters&);
+
     ProcessThrottler m_throttler;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)

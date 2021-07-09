@@ -1,3 +1,26 @@
+2021-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Allow the UIProcess to set logging parameters in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=227822
+
+        Reviewed by Eric Carlson.
+
+        For release builds, logLevelString() will return an empty string. Instead, do the same thing
+        for GPUProcessProxy as we do for WebProcessPool: have a platform-specific initialization
+        function that, for Cocoa ports, reads log strings from NSUserDefaults.
+
+        Drive-by fix: Include <optional> in WKContentPicker.h to work around a unified build error.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/GPUProcessProxyCocoa.mm: Added.
+        (WebKit::GPUProcessProxy::platformInitializeGPUProcessParameters):
+        * UIProcess/Cocoa/WKContactPicker.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::GPUProcessProxy::platformInitializeGPUProcessParameters):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-07-09  Chris Dumez  <cdumez@apple.com>
 
         Validate keys in ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources() before using them with HashMap
