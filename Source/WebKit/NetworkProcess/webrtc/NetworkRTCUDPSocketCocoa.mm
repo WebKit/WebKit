@@ -279,8 +279,15 @@ RetainPtr<nw_connection_t> NetworkRTCUDPSocketCocoaConnections::createNWConnecti
         auto hostAddress = m_address.ipaddr().ToString();
         if (m_address.ipaddr().IsNil())
             hostAddress = m_address.hostname();
-        // FIXME: We should use m_address.port() instead of using 0
-        auto localEndpoint = adoptNS(nw_endpoint_create_host(hostAddress.c_str(), "0"));
+#if defined(NW_HAS_SHARE_LISTENER_PORT) && NW_HAS_SHARE_LISTENER_PORT
+        nw_parameters_allow_sharing_port_with_listener(parameters.get(), m_nwListener.get());
+        auto portString = String::number(m_address.port());
+        auto portValue = portString.utf8().data();
+#else
+        // rdar://80176676: we workaround local loop port reuse by using 0 instead of m_address.port().
+        auto portValue = "0";
+#endif
+        auto localEndpoint = adoptNS(nw_endpoint_create_host(hostAddress.c_str(), portValue));
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
