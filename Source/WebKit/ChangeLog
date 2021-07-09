@@ -1,3 +1,66 @@
+2021-07-09  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r279591. rdar://problem/80395422
+
+    Collect Accessibility preferences on a background queue
+    https://bugs.webkit.org/show_bug.cgi?id=227617
+    <rdar://80055168>
+    
+    Reviewed by Brent Fulgham.
+    
+    To avoid blocking the main thread of the UI process, collect Media Accessibility preferences on a background thread,
+    and send them to the WebContent process(es).
+    
+    * Shared/AccessibilityPreferences.cpp:
+    (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::encode):
+    (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::decode):
+    * Shared/AccessibilityPreferences.h:
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::accessibilityPreferences):
+    (WebKit::WebProcessPool::setMediaAccessibilityPreferences):
+    (WebKit::WebProcessPool::mediaAccessibilityPreferencesChangedCallback):
+    (WebKit::WebProcessPool::registerNotificationObservers):
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::initializeNewWebProcess):
+    * UIProcess/WebProcessPool.h:
+    * WebProcess/WebProcess.h:
+    * WebProcess/WebProcess.messages.in:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::accessibilityPreferencesDidChange):
+    (WebKit::WebProcess::setMediaAccessibilityPreferences):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279591 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-06  Per Arne  <pvollan@apple.com>
+
+            Collect Accessibility preferences on a background queue
+            https://bugs.webkit.org/show_bug.cgi?id=227617
+            <rdar://80055168>
+
+            Reviewed by Brent Fulgham.
+
+            To avoid blocking the main thread of the UI process, collect Media Accessibility preferences on a background thread,
+            and send them to the WebContent process(es).
+
+            * Shared/AccessibilityPreferences.cpp:
+            (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::encode):
+            (IPC::ArgumentCoder<WebKit::AccessibilityPreferences>::decode):
+            * Shared/AccessibilityPreferences.h:
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::accessibilityPreferences):
+            (WebKit::WebProcessPool::setMediaAccessibilityPreferences):
+            (WebKit::WebProcessPool::mediaAccessibilityPreferencesChangedCallback):
+            (WebKit::WebProcessPool::registerNotificationObservers):
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::initializeNewWebProcess):
+            * UIProcess/WebProcessPool.h:
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in:
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::accessibilityPreferencesDidChange):
+            (WebKit::WebProcess::setMediaAccessibilityPreferences):
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         NetworkRTCUDPSocketCocoa should update the port of its m_address field

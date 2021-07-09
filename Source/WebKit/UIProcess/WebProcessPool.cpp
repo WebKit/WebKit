@@ -814,6 +814,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     process.send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    setMediaAccessibilityPreferences(process);
+#endif
+
     if (m_automationSession)
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
 

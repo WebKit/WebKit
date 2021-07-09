@@ -202,4 +202,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ConsumeAudioComponentRegistrations(IPC::SharedBufferDataReference registrationData)
     AccessibilityPreferencesDidChange(struct WebKit::AccessibilityPreferences accessibilityPreferences)
 #endif
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    SetMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode displayMode, Vector<String> languages)
+#endif
 }
