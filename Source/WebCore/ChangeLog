@@ -1,3 +1,18 @@
+2021-07-09  Said Abou-Hallawa  <said@apple.com>
+
+        SVGInlineTextBox::acquirePaintingResource() should return false if the resource can't be applied
+        https://bugs.webkit.org/show_bug.cgi?id=227826
+        <rdar://79662757>
+
+        Reviewed by Simon Fraser.
+
+        Ensure RenderSVGResource::postApplyResource() is called only if the 
+        corresponding RenderSVGResource::applyResource() succeeds. Otherwise
+        the GraphicsContext stack state will be unbalanced.
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::acquirePaintingResource):
+
 2021-07-09  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Negative padding values are invalid (inline box)
