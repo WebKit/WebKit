@@ -1,3 +1,25 @@
+2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix StructuredClone for streams to handle BigInt64Array / BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=227571
+
+        Reviewed by Chris Dumez.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/FileAPI/blob/Blob-constructor.any-expected.txt:
+        * web-platform-tests/FileAPI/blob/Blob-constructor.any.js:
+        (test_blob):
+        * web-platform-tests/FileAPI/blob/Blob-constructor.any.worker-expected.txt:
+        * web-platform-tests/encoding/encodeInto.any-expected.txt:
+        * web-platform-tests/encoding/encodeInto.any.js:
+        (string_appeared_here.forEach.type.string_appeared_here.forEach):
+        (Float64Array.forEach.view.string_appeared_here.forEach): Deleted.
+        * web-platform-tests/encoding/encodeInto.any.worker-expected.txt:
+        * web-platform-tests/encoding/w3c-import.log:
+        * web-platform-tests/fetch/api/response/response-clone.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-clone.any.js:
+        * web-platform-tests/fetch/api/response/response-clone.any.worker-expected.txt:
+
 2021-07-08  Chris Dumez  <cdumez@apple.com>
 
         [IndexedDB] KeyPath validity checks should happen on the cloned value, not the original one

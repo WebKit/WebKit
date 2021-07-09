@@ -67,53 +67,47 @@ JSC_DEFINE_HOST_FUNCTION(cloneArrayBuffer, (JSGlobalObject* globalObject, CallFr
     return cloneArrayBufferImpl(globalObject, callFrame, CloneMode::Partial);
 }
 
-JSC_DEFINE_HOST_FUNCTION(structuredCloneArrayBuffer, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return cloneArrayBufferImpl(globalObject, callFrame, CloneMode::Full);
-}
-
-JSC_DEFINE_HOST_FUNCTION(structuredCloneArrayBufferView, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount());
 
-    JSValue value = callFrame->uncheckedArgument(0);
     VM& vm = globalObject->vm();
-    auto* bufferView = jsDynamicCast<JSArrayBufferView*>(vm, value);
-    ASSERT(bufferView);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* buffer = bufferView->unsharedBuffer();
-    if (!buffer) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        throwDataCloneError(*globalObject, scope);
-        return { };
+    JSValue value = callFrame->uncheckedArgument(0);
+
+    if (value.inherits<JSArrayBuffer>(vm))
+        RELEASE_AND_RETURN(scope, cloneArrayBufferImpl(globalObject, callFrame, CloneMode::Full));
+
+    if (value.inherits<JSArrayBufferView>(vm)) {
+        auto* bufferView = jsCast<JSArrayBufferView*>(value);
+        ASSERT(bufferView);
+
+        auto* buffer = bufferView->unsharedBuffer();
+        if (!buffer) {
+            throwDataCloneError(*globalObject, scope);
+            return { };
+        }
+        auto bufferClone = ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength());
+        Structure* structure = bufferView->structure(vm);
+
+#define CLONE_TYPED_ARRAY(name) \
+        do { \
+            if (bufferView->inherits<JS##name##Array>(vm)) \
+                RELEASE_AND_RETURN(scope, JSValue::encode(JS##name##Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()))); \
+        } while (0);
+
+        FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(CLONE_TYPED_ARRAY)
+
+#undef CLONE_TYPED_ARRAY
+
+        if (value.inherits<JSDataView>(vm))
+            RELEASE_AND_RETURN(scope, JSValue::encode(JSDataView::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length())));
     }
-    auto bufferClone = ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength());
-    Structure* structure = bufferView->structure(vm);
 
-    if (jsDynamicCast<JSInt8Array*>(vm, value))
-        return JSValue::encode(JSInt8Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSInt16Array*>(vm, value))
-        return JSValue::encode(JSInt16Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSInt32Array*>(vm, value))
-        return JSValue::encode(JSInt32Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSUint8Array*>(vm, value))
-        return JSValue::encode(JSUint8Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSUint8ClampedArray*>(vm, value))
-        return JSValue::encode(JSUint8ClampedArray::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSUint16Array*>(vm, value))
-        return JSValue::encode(JSUint16Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSUint32Array*>(vm, value))
-        return JSValue::encode(JSUint32Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSFloat32Array*>(vm, value))
-        return JSValue::encode(JSFloat32Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSFloat64Array*>(vm, value))
-        return JSValue::encode(JSFloat64Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-    if (jsDynamicCast<JSDataView*>(vm, value))
-        return JSValue::encode(JSDataView::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()));
-
-    ASSERT_NOT_REACHED();
-    return JSValue::encode(jsUndefined());
+    throwTypeError(globalObject, scope, "structuredClone not implemented for non-ArrayBuffer / non-ArrayBufferView"_s);
+    return { };
 }
 
 } // namespace WebCore

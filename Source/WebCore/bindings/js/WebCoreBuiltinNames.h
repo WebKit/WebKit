@@ -452,8 +452,7 @@ namespace WebCore {
     macro(streamReadable) \
     macro(streamWaiting) \
     macro(streamWritable) \
-    macro(structuredCloneArrayBuffer) \
-    macro(structuredCloneArrayBufferView) \
+    macro(structuredCloneForStream) \
     macro(timeline) \
     macro(top) \
     macro(textDecoderStreamDecoder) \

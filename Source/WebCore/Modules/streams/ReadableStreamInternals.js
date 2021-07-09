@@ -435,22 +435,6 @@ function readableStreamTee(stream, shouldClone)
     return [branch1, branch2];
 }
 
-function doStructuredClone(object)
-{
-    "use strict";
-
-    // FIXME: We should implement http://w3c.github.io/html/infrastructure.html#ref-for-structured-clone-4
-    // Implementation is currently limited to ArrayBuffer/ArrayBufferView to meet Fetch API needs.
-
-    if (object instanceof @ArrayBuffer)
-        return @structuredCloneArrayBuffer(object);
-
-    if (@ArrayBuffer.@isView(object))
-        return @structuredCloneArrayBufferView(object);
-
-    @throwTypeError("structuredClone not implemented for: " + object);
-}
-
 function readableStreamTeePullFunction(teeState, reader, shouldClone)
 {
     "use strict";
@@ -473,7 +457,7 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
             if (!teeState.canceled1)
                 @readableStreamDefaultControllerEnqueue(teeState.branch1.@readableStreamController, result.value);
             if (!teeState.canceled2)
-                @readableStreamDefaultControllerEnqueue(teeState.branch2.@readableStreamController, shouldClone ? @doStructuredClone(result.value) : result.value);
+                @readableStreamDefaultControllerEnqueue(teeState.branch2.@readableStreamController, shouldClone ? @structuredCloneForStream(result.value) : result.value);
         });
     }
 }

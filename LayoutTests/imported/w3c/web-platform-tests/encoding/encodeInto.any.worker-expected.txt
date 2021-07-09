@@ -97,6 +97,10 @@ PASS Invalid encodeInto() destination: Uint32Array, backed by: ArrayBuffer
 PASS Invalid encodeInto() destination: Uint32Array, backed by: SharedArrayBuffer
 PASS Invalid encodeInto() destination: Uint8ClampedArray, backed by: ArrayBuffer
 PASS Invalid encodeInto() destination: Uint8ClampedArray, backed by: SharedArrayBuffer
+PASS Invalid encodeInto() destination: BigInt64Array, backed by: ArrayBuffer
+PASS Invalid encodeInto() destination: BigInt64Array, backed by: SharedArrayBuffer
+PASS Invalid encodeInto() destination: BigUint64Array, backed by: ArrayBuffer
+PASS Invalid encodeInto() destination: BigUint64Array, backed by: SharedArrayBuffer
 PASS Invalid encodeInto() destination: Float32Array, backed by: ArrayBuffer
 PASS Invalid encodeInto() destination: Float32Array, backed by: SharedArrayBuffer
 PASS Invalid encodeInto() destination: Float64Array, backed by: ArrayBuffer

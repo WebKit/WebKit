@@ -1,3 +1,26 @@
+2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix StructuredClone for streams to handle BigInt64Array / BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=227571
+
+        Reviewed by Chris Dumez.
+
+        While we already support BigInt64Array / BigUint64Array handling even in DOM code,
+        we lack support of them only in fetch's structuredClone code (which is specialized one
+        to make it fast by bypassing serialization / deserialization).
+
+        This patch fixes the issue to complete BigInt64Array / BigUint64Array in all DOM code.
+
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamTeePullFunction):
+        (doStructuredClone): Deleted.
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        * bindings/js/StructuredClone.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2021-07-08  Chris Dumez  <cdumez@apple.com>
 
         Make sure SVG SMIL animations do not run in processes without any pages
