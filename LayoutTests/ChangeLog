@@ -1,3 +1,13 @@
+2021-07-08  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [Mac] media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=221017
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2021-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix some whitespace handling issues in URL setters
