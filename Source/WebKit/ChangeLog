@@ -1,3 +1,9 @@
+2021-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.32.2 release
+
+        * gtk/NEWS: Add release notes for 2.32.2
+
 2021-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Rework touch-based gesture controller

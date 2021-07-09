@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.32.2
+================
+
+What's new in WebKitGTK 2.32.2?
+
+  - Improve calculation of initial WebKitWebView size.
+  - Fix kinetic scrolling on touchpad with async scrolling off.
+  - Fix a crash on empty drag operation in X11.
+  - Fix rendering on HiDPI /4k screen and scaling.
+  - Handle null native surface for for surfaceless rendering.
+  - Fix JavaScriptCore crash on 32-bit big endian systems.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.32.1
 ================
 
