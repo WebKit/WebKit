@@ -99,7 +99,7 @@ enum class AvoidanceReason : uint64_t {
     InlineBoxNeedsLayer                          = 1LLU  << 59,
     InlineBoxHasBorderOrBorderImage              = 1LLU  << 60,
     InlineBoxHasBackground                       = 1LLU  << 61,
-    InlineBoxHasMarginOrPadding                  = 1LLU  << 62,
+    InlineBoxHasNegativeMargin                   = 1LLU  << 62,
     EndOfReasons                                 = 1LLU  << 63
 };
 
