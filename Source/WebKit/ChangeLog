@@ -1,3 +1,17 @@
+2021-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Validate keys in ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources() before using them with HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=227842
+
+        Reviewed by Kate Cheney.
+
+        Validate keys in ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources() before using them with HashMap,
+        to avoid potential crashes. We do not support storing (or looking up) a key with value 0 in a HashMap whose key type
+        is 'unsigned'.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources):
+
 2021-07-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make Coordinator playback commands more precise

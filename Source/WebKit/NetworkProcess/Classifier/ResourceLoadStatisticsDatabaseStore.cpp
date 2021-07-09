@@ -1386,10 +1386,12 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     if (notVeryPrevalentResourcesStatement) {
         while (notVeryPrevalentResourcesStatement->step() == SQLITE_ROW) {
             unsigned key = static_cast<unsigned>(notVeryPrevalentResourcesStatement->columnInt(0));
+            ASSERT(key);
+            if (!key)
+                continue;
             NotVeryPrevalentResources value({ RegistrableDomain::uncheckedCreateFromRegistrableDomainString(notVeryPrevalentResourcesStatement->columnText(1))
-                , notVeryPrevalentResourcesStatement->columnInt(2) ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low
-                , 0, 0, 0, 0 });
-            results.add(key, value);
+                , notVeryPrevalentResourcesStatement->columnInt(2) ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low , 0, 0, 0, 0 });
+            results.add(key, WTFMove(value));
         }
     }
 
@@ -1402,6 +1404,9 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     if (subresourceUnderTopFrameDomainsStatement) {
         while (subresourceUnderTopFrameDomainsStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->columnInt(0));
+            ASSERT(domainID);
+            if (!domainID)
+                continue;
             auto result = results.find(domainID);
             if (result != results.end())
                 result->value.subresourceUnderTopFrameDomainsCount = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->columnInt(1));
@@ -1412,6 +1417,9 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     if (subresourceUniqueRedirectsToCountStatement) {
         while (subresourceUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->columnInt(0));
+            ASSERT(domainID);
+            if (!domainID)
+                continue;
             auto result = results.find(domainID);
             if (result != results.end())
                 result->value.subresourceUniqueRedirectsToCount = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->columnInt(1));
@@ -1422,6 +1430,9 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     if (subframeUnderTopFrameDomainsCountStatement) {
         while (subframeUnderTopFrameDomainsCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->columnInt(0));
+            ASSERT(domainID);
+            if (!domainID)
+                continue;
             auto result = results.find(domainID);
             if (result != results.end())
                 result->value.subframeUnderTopFrameDomainsCount = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->columnInt(1));
@@ -1432,6 +1443,9 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     if (topFrameUniqueRedirectsToCountStatement) {
         while (topFrameUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->columnInt(0));
+            ASSERT(domainID);
+            if (!domainID)
+                continue;
             auto result = results.find(domainID);
             if (result != results.end())
                 result->value.topFrameUniqueRedirectsToCount = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->columnInt(1));
