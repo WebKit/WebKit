@@ -1,3 +1,45 @@
+2021-07-09  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Touchscreen navigation swipe doesn't work when the page scrolls horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=227691
+
+        Reviewed by Michael Catanzaro.
+
+        When the page scrolls horizontally, we have a separate code path for events that
+        WebCore didn't handle and which are considered safe to use to start a swipe
+        gesture. Unfortunately, that code relies on the NativeWebWheelEvents containing a
+        GdkEvent, which is only the case for actual scroll events, but not synthesized
+        scroll events on touchscreen, and the needed info (input source type and a proper
+        timestamp instead of the truncated one wallTimeForEventTime() produces) is not
+        stored in NativeWebWheelEvent.
+
+        While we don't have GdkEvents for every situation we synthesize wheel events in,
+        we do have them for touchscreen gestures. They aren't GdkScrollEvents, but that
+        isn't a problem - the only things we use that are specific to GdkScrollEvent are
+        scroll deltas and whether it's a scroll stop event, and that's also stored in
+        NativeWebWheelEvent, and we only need GdkEvent for the time and input source type,
+        where the event type doesn't really matter.
+
+        Since touch GdkEvents are controlled via event sequences rather than stop/propagate
+        return values, don't try and propagate them if web process has returned them: we've
+        already claimed their sequence before sending them to web process, so they will be
+        of no use to other widgets.
+
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        Add a GdkEvent parameter to the remaining constructor.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseZoomBegin):
+        (webkitWebViewBaseTouchDragBegin):
+        (webkitWebViewBaseTouchDragUpdate):
+        (webkitWebViewBaseTouchSwipe):
+        (webkitWebViewBaseSynthesizeWheelEvent):
+        Split into versions with and without a GdkEvent parameter.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
 2021-07-08  Adam Mazander  <mazander@apple.com>
 
         WebContent: Silence report of AppSupport denial

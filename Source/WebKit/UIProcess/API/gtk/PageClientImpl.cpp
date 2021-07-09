@@ -424,21 +424,27 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
 
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     if (controller && controller->isSwipeGestureEnabled()) {
-        double deltaX, deltaY;
-        gdk_event_get_scroll_deltas(event.nativeEvent(), &deltaX, &deltaY);
-        FloatSize delta(deltaX, deltaY);
+        FloatSize delta(-event.wheelTicks());
 
         int32_t eventTime = static_cast<int32_t>(gdk_event_get_time(event.nativeEvent()));
 
         GdkDevice* device = gdk_event_get_source_device(event.nativeEvent());
         GdkInputSource source = gdk_device_get_source(device);
 
-        bool isEnd = gdk_event_is_scroll_stop_event(event.nativeEvent()) ? true : false;
+        bool isEnd = event.phase() == WebWheelEvent::Phase::PhaseEnded;
 
         PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         controller->wheelEventWasNotHandledByWebCore(&scrollData);
         return;
     }
+
+    // Wheel events can have either scroll events or touch events attached to them.
+    // We only want to propagate scroll events; touch events are controlled via their
+    // event sequences and if we're scrolling with touch events, that sequence is
+    // already claimed and there's no point in propagating it.
+
+    if (gdk_event_get_event_type(event.nativeEvent()) != GDK_SCROLL)
+        return;
 
     webkitWebViewBaseForwardNextWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 

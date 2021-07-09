@@ -49,8 +49,9 @@ NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, const WebCore::IntPoin
 {
 }
 
-NativeWebWheelEvent::NativeWebWheelEvent(const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
+NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent *event, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
     : WebWheelEvent(WebEvent::Wheel, position, globalPosition, delta, wheelTicks, phase, momentumPhase, WebWheelEvent::ScrollByPixelWheelEvent, false, { }, WallTime::now())
+    , m_nativeEvent(event ? gdk_event_copy(event) : nullptr)
 {
 }
 
