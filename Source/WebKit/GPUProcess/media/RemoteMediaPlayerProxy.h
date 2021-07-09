@@ -301,6 +301,9 @@ private:
     void createAudioSourceProvider();
     void setShouldEnableAudioSourceProvider(bool);
 
+    void playAtHostTime(MonotonicTime);
+    void pauseAtHostTime(MonotonicTime);
+
     bool mediaPlayerPausedOrStalled() const;
     void currentTimeChanged(const MediaTime&);
 

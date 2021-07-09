@@ -1,3 +1,27 @@
+2021-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make Coordinator playback commands more precise
+        https://bugs.webkit.org/show_bug.cgi?id=227756
+
+        Reviewed by Eric Carlson.
+
+        Pass through new {play,pause}AtHostTime() and supports{Play,Pause}AtHostTime() methods
+        to and from the GPU process.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::getConfiguration):
+        (WebKit::RemoteMediaPlayerProxy::playAtHostTime):
+        (WebKit::RemoteMediaPlayerProxy::pauseAtHostTime):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::playAtHostTime):
+        (WebKit::MediaPlayerPrivateRemote::pauseAtHostTime):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerConfiguration.h:
+        (WebKit::RemoteMediaPlayerConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerConfiguration::decode):
+
 2021-07-09  Youenn Fablet  <youenn@apple.com>
 
         Use nw_parameters_allow_sharing_port_with_listener if available

@@ -931,6 +931,9 @@ private:
     void checkForAudioAndVideo();
     bool hasLiveSource() const;
 
+    void playPlayer();
+    void pausePlayer();
+
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }

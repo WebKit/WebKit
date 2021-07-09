@@ -166,6 +166,14 @@
 #include "VideoFullscreenModel.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "MediaSession.h"
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include "MediaSessionCoordinator.h"
+#endif
+
 namespace WTF {
 template <>
 struct LogArgument<URL> {
@@ -5326,7 +5334,7 @@ void HTMLMediaElement::updatePlayState()
 
     if (m_pausedInternal) {
         if (!m_player->paused())
-            m_player->pause();
+            pausePlayer();
         refreshCachedTime();
         m_playbackProgressTimer.stop();
         return;
@@ -5368,7 +5376,7 @@ void HTMLMediaElement::updatePlayState()
                 m_firstTimePlaying = false;
             }
 
-            m_player->play();
+            playPlayer();
         }
 
         startPlaybackProgressTimer();
@@ -5377,7 +5385,7 @@ void HTMLMediaElement::updatePlayState()
         schedulePlaybackControlsManagerUpdate();
 
         if (!playerPaused)
-            m_player->pause();
+            pausePlayer();
         refreshCachedTime();
 
         m_playbackProgressTimer.stop();
@@ -5394,6 +5402,48 @@ void HTMLMediaElement::updatePlayState()
     updateRenderer();
 
     checkForAudioAndVideo();
+}
+
+void HTMLMediaElement::playPlayer()
+{
+    ASSERT(m_player);
+    if (!m_player)
+        return;
+
+#if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_SESSION_COORDINATOR)
+    do {
+        if (!m_player->supportsPlayAtHostTime())
+            break;
+
+        auto* mediaSession = this->mediaSession().mediaSession();
+        if (!mediaSession)
+            break;
+
+        if (mediaSession->activeMediaElement() != this)
+            break;
+
+        auto currentPlaySessionCommand = mediaSession->coordinator().takeCurrentPlaySessionCommand();
+        if (!currentPlaySessionCommand)
+            break;
+
+        if (!currentPlaySessionCommand->hostTime)
+            break;
+
+        m_player->playAtHostTime(*currentPlaySessionCommand->hostTime);
+        return;
+    } while (false);
+#endif
+
+    m_player->play();
+}
+
+void HTMLMediaElement::pausePlayer()
+{
+    ASSERT(m_player);
+    if (!m_player)
+        return;
+
+    m_player->pause();
 }
 
 void HTMLMediaElement::checkForAudioAndVideo()

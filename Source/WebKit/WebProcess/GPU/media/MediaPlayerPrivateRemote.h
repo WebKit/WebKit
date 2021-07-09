@@ -392,6 +392,12 @@ private:
 
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
 
+    bool supportsPlayAtHostTime() const final { return m_configuration.supportsPlayAtHostTime; }
+    bool supportsPauseAtHostTime() const final { return m_configuration.supportsPauseAtHostTime; }
+    bool playAtHostTime(const MonotonicTime&) final;
+    bool pauseAtHostTime(const MonotonicTime&) final;
+
+
     WeakPtr<WebCore::MediaPlayer> m_player;
     Ref<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
 #if PLATFORM(COCOA)

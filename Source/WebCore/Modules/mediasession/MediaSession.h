@@ -111,6 +111,8 @@ public:
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
+    RefPtr<HTMLMediaElement> activeMediaElement() const;
+
 private:
     explicit MediaSession(Navigator&);
 
@@ -127,8 +129,6 @@ private:
     const char* activeDOMObjectName() const final { return "MediaSession"; }
     void suspend(ReasonForSuspension) final;
     void stop() final;
-
-    RefPtr<HTMLMediaElement> activeMediaElement() const;
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;

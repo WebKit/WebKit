@@ -251,7 +251,7 @@ WallTime WallTime::now()
 }
 
 #if OS(DARWIN)
-MonotonicTime MonotonicTime::fromMachAbsoluteTime(uint64_t machAbsoluteTime)
+static mach_timebase_info_data_t& machTimebaseInfo()
 {
     // Based on listing #2 from Apple QA 1398, but modified to be thread-safe.
     static mach_timebase_info_data_t timebaseInfo;
@@ -261,7 +261,17 @@ MonotonicTime MonotonicTime::fromMachAbsoluteTime(uint64_t machAbsoluteTime)
         ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
         ASSERT(timebaseInfo.denom);
     });
-    return fromRawSeconds((machAbsoluteTime * timebaseInfo.numer) / (1.0e9 * timebaseInfo.denom));
+    return timebaseInfo;
+}
+
+MonotonicTime MonotonicTime::fromMachAbsoluteTime(uint64_t machAbsoluteTime)
+{
+    return fromRawSeconds((machAbsoluteTime * machTimebaseInfo().numer) / (1.0e9 * machTimebaseInfo().denom));
+}
+
+uint64_t MonotonicTime::toMachAbsoluteTime() const
+{
+    return static_cast<uint64_t>((m_value * 1.0e9 * machTimebaseInfo().denom) / machTimebaseInfo().numer);
 }
 #endif
 

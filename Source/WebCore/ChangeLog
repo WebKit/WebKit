@@ -1,3 +1,59 @@
+2021-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make Coordinator playback commands more precise
+        https://bugs.webkit.org/show_bug.cgi?id=227756
+
+        Reviewed by Eric Carlson.
+
+        Add support for precise playback commands from MediaSessionCoordinator to the underlying MediaPlayer.
+
+        In the case where a play() command is issued to a HTMLMediaElement and:
+        - There is an active MediaSession
+        - The MediaSession's active HTMLMediaElement is the current one
+        - There is a pending playSession command
+        - That command has a hostTime parameter
+        - The MediaPlayer backing the element supports playing at a specific host time
+
+        Then use the MediaPlayer's playAtHostTime() facility to begin playback, synchronized with the specified
+        hostTime.
+
+        Add support for playAtHostTime() to both MediaPlayerPrivateAVFoundationObjC and MediaPlayerPrivateMediaSourceAVFObjC.
+
+        * Modules/mediasession/MediaSession.h:
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::playSession):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        (WebCore::MediaSessionCoordinator::currentPlaySessionCommand const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::playPlayer):
+        (WebCore::HTMLMediaElement::pausePlayer):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsPlayAtHostTime const):
+        (WebCore::MediaPlayer::supportsPauseAtHostTime const):
+        (WebCore::MediaPlayer::playAtHostTime):
+        (WebCore::MediaPlayer::pauseAtHostTime):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::supportsPlayAtHostTime const):
+        (WebCore::MediaPlayerPrivateInterface::supportsPauseAtHostTime const):
+        (WebCore::MediaPlayerPrivateInterface::playAtHostTime):
+        (WebCore::MediaPlayerPrivateInterface::pauseAtHostTime):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playAtHostTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::pauseAtHostTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPlayerRate):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playAtHostTime):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseAtHostTime):
+
 2021-07-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add BigInt64Array and BigUint64Array support to crypto.getRandomValues

@@ -1,3 +1,19 @@
+2021-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make Coordinator playback commands more precise
+        https://bugs.webkit.org/show_bug.cgi?id=227756
+
+        Reviewed by Eric Carlson.
+
+        Add a method to convert from a MonotonicTime to a MachAbsoluteTime.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::machTimebaseInfo):
+        (WTF::MonotonicTime::fromMachAbsoluteTime):
+        (WTF::MonotonicTime::toMachAbsoluteTime const):
+        * wtf/MonotonicTime.h:
+        * wtf/PlatformHave.h:
+
 2021-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix some whitespace handling issues in URL setters

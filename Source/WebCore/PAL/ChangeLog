@@ -1,3 +1,15 @@
+2021-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make Coordinator playback commands more precise
+        https://bugs.webkit.org/show_bug.cgi?id=227756
+
+        Reviewed by Eric Carlson.
+
+        Add SoftLink macros for CMClockMakeHostTimeFromSystemUnits.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+
 2021-07-07  Tim Horton  <timothy_horton@apple.com>
 
         Add WKHoverPlatter and some knobs to tweak its appearance

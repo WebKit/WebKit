@@ -413,6 +413,11 @@ public:
     void setRate(double);
     double requestedRate() const;
 
+    bool supportsPlayAtHostTime() const;
+    bool supportsPauseAtHostTime() const;
+    bool playAtHostTime(const MonotonicTime&);
+    bool pauseAtHostTime(const MonotonicTime&);
+
     bool preservesPitch() const;
     void setPreservesPitch(bool);
 

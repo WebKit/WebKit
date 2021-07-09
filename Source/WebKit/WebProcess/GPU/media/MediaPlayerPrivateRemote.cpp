@@ -1313,6 +1313,22 @@ bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& co
     return true;
 }
 
+bool MediaPlayerPrivateRemote::playAtHostTime(const MonotonicTime& time)
+{
+    if (!m_configuration.supportsPlayAtHostTime)
+        return false;
+    connection().send(Messages::RemoteMediaPlayerProxy::PlayAtHostTime(time), m_id);
+    return true;
+}
+
+bool MediaPlayerPrivateRemote::pauseAtHostTime(const MonotonicTime& time)
+{
+    if (!m_configuration.supportsPauseAtHostTime)
+        return false;
+    connection().send(Messages::RemoteMediaPlayerProxy::PauseAtHostTime(time), m_id);
+    return true;
+}
+
 void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));

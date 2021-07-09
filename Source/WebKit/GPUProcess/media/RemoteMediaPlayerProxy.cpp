@@ -114,6 +114,9 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     configuration.supportsFullscreen = m_player->supportsFullscreen();
     configuration.supportsPictureInPicture = m_player->supportsPictureInPicture();
     configuration.supportsAcceleratedRendering = m_player->supportsAcceleratedRendering();
+    configuration.supportsPlayAtHostTime = m_player->supportsPlayAtHostTime();
+    configuration.supportsPauseAtHostTime = m_player->supportsPauseAtHostTime();
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     configuration.canPlayToWirelessPlaybackTarget = m_player->canPlayToWirelessPlaybackTarget();
 #endif
@@ -1067,6 +1070,18 @@ void RemoteMediaPlayerProxy::setShouldEnableAudioSourceProvider(bool shouldEnabl
     if (auto* provider = m_player->audioSourceProvider())
         provider->setClient(shouldEnable ? m_remoteAudioSourceProvider.get() : nullptr);
 #endif
+}
+
+void RemoteMediaPlayerProxy::playAtHostTime(MonotonicTime time)
+{
+    if (m_player)
+        m_player->playAtHostTime(time);
+}
+
+void RemoteMediaPlayerProxy::pauseAtHostTime(MonotonicTime time)
+{
+    if (m_player)
+        m_player->pauseAtHostTime(time);
 }
 
 #if !RELEASE_LOG_DISABLED
