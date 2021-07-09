@@ -1,3 +1,14 @@
+2021-07-08  Adam Mazander  <mazander@apple.com>
+
+        WebContent: Silence report of AppSupport denial
+        https://bugs.webkit.org/show_bug.cgi?id=227375
+
+        Reviewed by Brent Fulgham.
+
+        Manual testing confirms AppSupport does not need access to WebContent.          Simplified. 
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] Tapping "Done" in Scribble when focusing an editable element should dismiss Quickboard
