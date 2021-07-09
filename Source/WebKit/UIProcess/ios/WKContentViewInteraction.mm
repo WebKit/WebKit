@@ -6916,17 +6916,24 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     }
 
     if (auto controller = std::exchange(_presentedFullScreenInputViewController, nil)) {
-        if ([navigationController viewControllers].lastObject == controller.get())
-            [navigationController popViewControllerAnimated:animated];
-        else
-            [controller dismissViewControllerAnimated:animated completion:nil];
-
-        [[controller transitionCoordinator] animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller] (id <UIViewControllerTransitionCoordinatorContext>) {
+        auto dispatchDidDismiss = makeBlockPtr([weakWebView = WeakObjCPtr<WKWebView>(_webView), controller] {
             auto strongWebView = weakWebView.get();
             id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
             if ([uiDelegate respondsToSelector:@selector(_webView:didDismissFocusedElementViewController:)])
                 [uiDelegate _webView:strongWebView.get() didDismissFocusedElementViewController:controller.get()];
-        }];
+        });
+
+        if ([navigationController viewControllers].lastObject == controller.get()) {
+            [navigationController popViewControllerAnimated:animated];
+            [[controller transitionCoordinator] animateAlongsideTransition:nil completion:[dispatchDidDismiss = WTFMove(dispatchDidDismiss)] (id <UIViewControllerTransitionCoordinatorContext>) {
+                dispatchDidDismiss();
+            }];
+        } else if (auto presentedViewController = retainPtr([controller presentedViewController])) {
+            [presentedViewController dismissViewControllerAnimated:animated completion:[controller, animated, dispatchDidDismiss = WTFMove(dispatchDidDismiss)] {
+                [controller dismissViewControllerAnimated:animated completion:dispatchDidDismiss.get()];
+            }];
+        } else
+            [controller dismissViewControllerAnimated:animated completion:dispatchDidDismiss.get()];
     }
 
 #if HAVE(QUICKBOARD_CONTROLLER)

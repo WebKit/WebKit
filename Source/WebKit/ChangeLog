@@ -1,3 +1,28 @@
+2021-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Tapping "Done" in Scribble when focusing an editable element should dismiss Quickboard
+        https://bugs.webkit.org/show_bug.cgi?id=227817
+        rdar://79931134
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        After using PUICQuickboardMessageViewController's PUICTextInput-based mode for presenting Scribble UI, we fail
+        to dismiss PUICQuickboardMessageViewController underneath `-dismissAllInputViewControllers:`, since Quickboard
+        is not the top-most view controller (instead, it ends up being PUICQuickboardRemoteViewController). As a result,
+        the call to `-dismissViewControllerAnimated:completion:` on the fullscreen input view controller ends up being
+        dropped on the floor.
+
+        Prior to adopting PUICQuickboardMessageViewController and remote text input on watchOS, this worked because the
+        delegate method `-quickboard:textEntered:` would only be invoked after the front-most view controller was done
+        dismissing, such that calling `-dismissViewControllerAnimated:completion:` on the fullscreen input view
+        controller would (correctly) dismiss it.
+
+        We can address this by checking whether the fullscreen input view controller itself has a presented view
+        controller in `-dismissAllInputViewControllers:`, and dismissing that first if necessary.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dismissAllInputViewControllers:]):
+
 2021-07-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Expose SPI to opt out of Extensible SSO authentication
