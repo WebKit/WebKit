@@ -1504,7 +1504,7 @@ public:
 
     void addToTopLayer(Element&);
     void removeFromTopLayer(Element&);
-    const ListHashSet<RefPtr<Element>>& topLayerElements() const { return m_topLayerElements; }
+    const ListHashSet<Ref<Element>>& topLayerElements() const { return m_topLayerElements; }
 
     HTMLDialogElement* activeModalDialog() const;
 
@@ -2195,7 +2195,7 @@ private:
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
 
-    ListHashSet<RefPtr<Element>> m_topLayerElements;
+    ListHashSet<Ref<Element>> m_topLayerElements;
 };
 
 Element* eventTargetElementForDocument(Document*);

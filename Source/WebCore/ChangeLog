@@ -1,3 +1,17 @@
+2021-07-09  Tim Nguyen  <ntim@apple.com>
+
+        Make topLayerElements() use Ref instead of RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=227839
+
+        Reviewed by Youenn Fablet.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addToTopLayer):
+        (WebCore::Document::removeFromTopLayer):
+        (WebCore::Document::activeModalDialog const):
+        * dom/Document.h:
+        (WebCore::Document::topLayerElements const):
+
 2021-07-09  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Support dark scrollbars
