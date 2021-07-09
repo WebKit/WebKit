@@ -1,3 +1,26 @@
+2021-07-09  Chris Dumez  <cdumez@apple.com>
+
+        [WebCrypto] deriveBits() incorrectly throws for PBKDF2 algorithm when the password is empty
+        https://bugs.webkit.org/show_bug.cgi?id=227810
+
+        Reviewed by Yusuke Suzuki.
+
+        deriveBits() was incorrectly throwing for PBKDF2 algorithm when the provided password was empty.
+        The reason for that was that we would pass a null key pointer to CCKeyDerivationPBKDF() in this
+        case and it was causing CCKeyDerivationPBKDF() to return an error, even though the key length is
+        0. To avoid this issue, we now pass an empty string as key to CCKeyDerivationPBKDF() instead of
+        a null pointer, when the length is 0.
+
+        This is causing Safari to fail subtests in the following WPT test:
+        - https://wpt.live/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html?5001-6000
+
+       Empty passwords are supported by both Chrome and Firefox.
+
+        No new tests, rebaselined existing tests.
+
+        * crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+
 2021-07-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make Coordinator playback commands more precise
