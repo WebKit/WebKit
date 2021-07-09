@@ -38,6 +38,8 @@ protected:
     bool usesOverlayScrollbars() const override;
     bool invalidateOnMouseEnterExit() override { return usesOverlayScrollbars(); }
 
+    void updateScrollbarOverlayStyle(Scrollbar&) override;
+
     bool paint(Scrollbar&, GraphicsContext&, const IntRect&) override;
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
 

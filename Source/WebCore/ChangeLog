@@ -1,3 +1,21 @@
+2021-07-09  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Support dark scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=227834
+
+        Reviewed by Michael Catanzaro.
+
+        Also adjust the colors in light variant to be closer to the GTK scrollbars, and
+        remove an unused variable.
+
+        Unfortunately this leaves the scrollbar corner when non-overlay scrollbars are used,
+        but it was already broken for light scrollbars as well.
+
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeAdwaita::paint):
+        * platform/adwaita/ScrollbarThemeAdwaita.h:
+
 2021-07-09  Tim Nguyen  <ntim@apple.com>
 
         Add topLayerElements() and activeModalDialog() to Document

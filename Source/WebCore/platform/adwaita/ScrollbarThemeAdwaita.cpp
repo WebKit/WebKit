@@ -43,13 +43,25 @@ static const unsigned overlayThumbSize = 5;
 static const unsigned minimumThumbSize = 40;
 static const unsigned thumbSize = 6;
 static const double scrollbarOpacity = 0.8;
-static constexpr auto scrollbarBackgroundColor = SRGBA<uint8_t> { 252, 252, 252 };
-static constexpr auto scrollbarBorderColor = SRGBA<uint8_t> { 220, 223, 227 };
-static constexpr auto overlayThumbBorderColor = Color::white.colorWithAlphaByte(100);
-static constexpr auto overlayThumbColor = SRGBA<uint8_t> { 46, 52, 54, 100 };
-static constexpr auto thumbHoveredColor = SRGBA<uint8_t> { 86, 91, 92 };
-static constexpr auto thumbPressedColor = SRGBA<uint8_t> { 27, 106, 203 };
-static constexpr auto thumbColor = SRGBA<uint8_t> { 126, 129, 130 };
+
+static constexpr auto scrollbarBackgroundColorLight = SRGBA<uint8_t> { 206, 206, 206 };
+static constexpr auto scrollbarBorderColorLight = SRGBA<uint8_t> { 205, 199, 194 };
+static constexpr auto overlayThumbBorderColorLight = Color::white.colorWithAlphaByte(100);
+static constexpr auto overlayThumbColorLight = SRGBA<uint8_t> { 46, 52, 54, 100 };
+static constexpr auto thumbHoveredColorLight = SRGBA<uint8_t> { 86, 91, 92 };
+static constexpr auto thumbColorLight = SRGBA<uint8_t> { 126, 129, 130 };
+
+static constexpr auto scrollbarBackgroundColorDark = SRGBA<uint8_t> { 49, 49, 49 };
+static constexpr auto scrollbarBorderColorDark = SRGBA<uint8_t> { 27, 27, 27 };
+static constexpr auto overlayThumbBorderColorDark = Color::black.colorWithAlphaByte(100);
+static constexpr auto overlayThumbColorDark = SRGBA<uint8_t> { 238, 238, 236, 100 };
+static constexpr auto thumbHoveredColorDark = SRGBA<uint8_t> { 201, 201, 199 };
+static constexpr auto thumbColorDark = SRGBA<uint8_t> { 164, 164, 163 };
+
+void ScrollbarThemeAdwaita::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
+{
+    scrollbar.invalidate();
+}
 
 bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 {
@@ -115,6 +127,29 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         opacity = 1;
     if (!opacity)
         return true;
+
+    SRGBA<uint8_t> scrollbarBackgroundColor;
+    SRGBA<uint8_t> scrollbarBorderColor;
+    SRGBA<uint8_t> overlayThumbBorderColor;
+    SRGBA<uint8_t> overlayThumbColor;
+    SRGBA<uint8_t> thumbHoveredColor;
+    SRGBA<uint8_t> thumbColor;
+
+    if (scrollbar.scrollableArea().useDarkAppearanceForScrollbars()) {
+        scrollbarBackgroundColor = scrollbarBackgroundColorDark;
+        scrollbarBorderColor = scrollbarBorderColorDark;
+        overlayThumbBorderColor = overlayThumbBorderColorDark;
+        overlayThumbColor = overlayThumbColorDark;
+        thumbHoveredColor = thumbHoveredColorDark;
+        thumbColor = thumbColorDark;
+    } else {
+        scrollbarBackgroundColor = scrollbarBackgroundColorLight;
+        scrollbarBorderColor = scrollbarBorderColorLight;
+        overlayThumbBorderColor = overlayThumbBorderColorLight;
+        overlayThumbColor = overlayThumbColorLight;
+        thumbHoveredColor = thumbHoveredColorLight;
+        thumbColor = thumbColorLight;
+    }
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
     if (opacity != 1) {
