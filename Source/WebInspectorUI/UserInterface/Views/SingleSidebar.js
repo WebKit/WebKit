@@ -183,10 +183,10 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
             return;
 
         if (this._navigationBar)
-            this._navigationBar.updateLayout(WI.View.LayoutReason.Resize);
+            this._navigationBar.needsLayout(WI.View.LayoutReason.Resize);
 
         if (this.selectedSidebarPanel)
-            this.selectedSidebarPanel.updateLayout(WI.View.LayoutReason.Resize);
+            this.selectedSidebarPanel.needsLayout(WI.View.LayoutReason.Resize);
 
         this.dispatchEventToListeners(WI.Sidebar.Event.WidthDidChange, {newWidth});
     }

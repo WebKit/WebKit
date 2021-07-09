@@ -1,3 +1,16 @@
+2021-07-09  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Perform sidebar panel and navigation bar layout asynchronously during resize
+        https://bugs.webkit.org/show_bug.cgi?id=227716
+
+        Reviewed by Devin Rousso.
+
+        Perform layout updates to the navigation bar and selected panel asynchronously so that they can be batched
+        together, instead of blocking on layout for each resize (of which there will be many during a dragging resize).
+
+        * UserInterface/Views/SingleSidebar.js:
+        (WI.SingleSidebar.prototype._recalculateWidth):
+
 2021-07-06  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Elements Tab Details Sidebar navigation items sometime wrap to a second line
