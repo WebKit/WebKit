@@ -261,7 +261,7 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
     if (!m_image)
         return &Image::nullImage();
 
-    if (m_image->isSVGImage()) {
+    if (m_image->drawsSVGImage()) {
         Image* image = m_svgImageCache->imageForRenderer(renderer);
         if (image != &Image::nullImage())
             return image;
@@ -271,7 +271,7 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
 
 bool CachedImage::hasSVGImage() const
 {
-    return m_image && m_image->isSVGImage();
+    return m_image && m_image->drawsSVGImage();
 }
 
 void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
@@ -284,7 +284,7 @@ void CachedImage::setContainerContextForClient(const CachedImageClient& client, 
         return;
     }
 
-    if (!m_image->isSVGImage()) {
+    if (!m_image->drawsSVGImage()) {
         m_image->setContainerSize(containerSize);
         return;
     }
@@ -297,7 +297,7 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
     if (!m_image)
         return { };
 
-    if (is<SVGImage>(*m_image) && sizeType == UsedSize)
+    if (m_image->drawsSVGImage() && sizeType == UsedSize)
         return m_svgImageCache->imageSizeForRenderer(renderer);
 
     return m_image->size(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::FromImage));

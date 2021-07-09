@@ -119,6 +119,7 @@
 		1C81802725FB09E200608B3E /* FontRegistrySandboxCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C81802625FB09E200608B3E /* FontRegistrySandboxCheck.mm */; };
 		1C8FA53A2685A6D500B7E49E /* StringWidth.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C8FA5392685A6D500B7E49E /* StringWidth.mm */; };
 		1C90420C2326E03C00BEF91E /* SelectionByWord.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C90420B2326E03C00BEF91E /* SelectionByWord.mm */; };
+		1C9DD9232697655B00274DB2 /* SVGImageCasts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9DD9222697655B00274DB2 /* SVGImageCasts.cpp */; };
 		1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */; };
 		1CACADA1230620AE0007D54C /* WKWebViewOpaque.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */; };
 		1CB2F27C24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */; };
@@ -1880,6 +1881,7 @@
 		1C81802625FB09E200608B3E /* FontRegistrySandboxCheck.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FontRegistrySandboxCheck.mm; sourceTree = "<group>"; };
 		1C8FA5392685A6D500B7E49E /* StringWidth.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = StringWidth.mm; sourceTree = "<group>"; };
 		1C90420B2326E03C00BEF91E /* SelectionByWord.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionByWord.mm; sourceTree = "<group>"; };
+		1C9DD9222697655B00274DB2 /* SVGImageCasts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageCasts.cpp; sourceTree = "<group>"; };
 		1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewOpaque.mm; sourceTree = "<group>"; };
 		1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthogonalFlowAvailableSize.mm; sourceTree = "<group>"; };
@@ -3765,6 +3767,7 @@
 				ECA680CD1E68CC0900731D20 /* StringUtilities.mm */,
 				CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */,
 				41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */,
+				1C9DD9222697655B00274DB2 /* SVGImageCasts.cpp */,
 				93A258981F92FF15003E510C /* TextCodec.cpp */,
 				CDC2C7141797089D00E627FB /* TimeRanges.cpp */,
 				7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */,
@@ -5791,6 +5794,7 @@
 				41E67A8525D16E83007B0A4C /* STUNMessageParsingTest.cpp in Sources */,
 				7CCE7ED21A411A7E00447C4C /* SubresourceErrorCrash.mm in Sources */,
 				51EB126724CB8753000CB030 /* SunLightApplicationGenericNES.mm in Sources */,
+				1C9DD9232697655B00274DB2 /* SVGImageCasts.cpp in Sources */,
 				4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */,
 				7CCE7EA81A411A1900447C4C /* SyntheticBackingScaleFactorWindow.m in Sources */,
 				E3EFB02F25506503003C2F96 /* SystemBeep.mm in Sources */,

@@ -47,7 +47,7 @@ static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, Compos
     FloatSize imageSize = image.size();
 
     // SVGImage resets the opacity when painting, so we have to use transparency layers to accurately paint one at a given opacity.
-    bool useTransparencyLayer = image.isSVGImage();
+    bool useTransparencyLayer = image.drawsSVGImage();
 
     GraphicsContextStateSaver stateSaver(context);
 

@@ -92,7 +92,7 @@ private:
 
     void startAnimationTimerFired();
 
-    explicit SVGImage(ImageObserver&);
+    WEBCORE_EXPORT explicit SVGImage(ImageObserver&);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { }) final;
     ImageDrawResult drawAsNativeImage(GraphicsContext&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { });
     ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { });

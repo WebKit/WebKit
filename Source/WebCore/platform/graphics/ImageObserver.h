@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ImageTypes.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

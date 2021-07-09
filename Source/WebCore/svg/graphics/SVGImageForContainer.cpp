@@ -27,6 +27,15 @@
 
 namespace WebCore {
 
+
+SVGImageForContainer::SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL)
+    : m_image(image)
+    , m_containerSize(containerSize)
+    , m_containerZoom(containerZoom)
+    , m_initialFragmentURL(initialFragmentURL)
+{
+}
+
 FloatSize SVGImageForContainer::size(ImageOrientation) const
 {
     FloatSize scaledContainerSize(m_containerSize);

@@ -1,3 +1,14 @@
+2021-07-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVGImageForContainer reports true for is<SVGImage>() but it doesn't inherit from SVGImage
+        https://bugs.webkit.org/show_bug.cgi?id=227807
+
+        Reviewed by Said Abou-Hallawa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/SVGImageCasts.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2021-07-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [webkitcorepy] run-webkit-tests may hang with python2 after r271683

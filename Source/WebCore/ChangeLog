@@ -1,3 +1,44 @@
+2021-07-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVGImageForContainer reports true for is<SVGImage>() but it doesn't inherit from SVGImage
+        https://bugs.webkit.org/show_bug.cgi?id=227807
+
+        Reviewed by Said Abou-Hallawa.
+
+        It's too easy to write code like:
+        if (is<SVGImage>(image))
+            downcast<SVGImage>(image).doSomething();
+
+        Test: SVGImageCasts.SVGImageForContainerIsNotSVGImage
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement const):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::effectiveImageDevicePixelRatio const):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageForRenderer):
+        (WebCore::CachedImage::hasSVGImage const):
+        (WebCore::CachedImage::setContainerContextForClient):
+        (WebCore::CachedImage::imageSizeForRenderer const):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::drawCrossfadeSubimage):
+        * platform/graphics/Image.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/Image.h:
+        (WebCore::Image::isSVGImageForContainer const):
+        (WebCore::Image::actsLikeSVGImage const):
+        * platform/graphics/ImageObserver.h:
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::SVGImageForContainer):
+        * svg/graphics/SVGImageForContainer.h:
+
 2021-07-09  Said Abou-Hallawa  <said@apple.com>
 
         SVGInlineTextBox::acquirePaintingResource() should return false if the resource can't be applied
