@@ -1,3 +1,14 @@
+2021-07-08  Chris Dumez  <cdumez@apple.com>
+
+        [IndexedDB] KeyPath validity checks should happen on the cloned value, not the original one
+        https://bugs.webkit.org/show_bug.cgi?id=227813
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/IndexedDB/clone-before-keypath-eval-expected.txt:
+
 2021-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix some whitespace handling issues in URL setters
