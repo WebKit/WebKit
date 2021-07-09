@@ -549,6 +549,66 @@ public:
         m_assembler.extr<64>(d, n, m, lsb.m_value);
     } 
 
+    void addLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void addRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void addUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void addLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void addRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void addUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void subLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void subRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void subUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void subLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void subRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void subUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
     void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
     {
         if (scratchForMask == InvalidGPRReg)

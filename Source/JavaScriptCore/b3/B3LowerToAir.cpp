@@ -2563,17 +2563,18 @@ private:
             append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
-            
+
         case Add: {
             if (tryAppendLea())
                 return;
+
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
 
             ASSERT(isValidForm(MultiplyAdd64, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp) 
                 == isValidForm(MultiplyAddSignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp));
             Air::Opcode multiplyAddOpcode = tryOpcodeForType(MultiplyAdd32, MultiplyAdd64, m_value->type());
             if (isValidForm(multiplyAddOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-                Value* left = m_value->child(0);
-                Value* right = m_value->child(1);
                 if (!imm(right) || m_valueToTmp[right]) {
                     auto tryMultiply = [&] (Value* v) -> bool { 
                         if (v->opcode() != Mul || !canBeInternal(v))
@@ -2594,7 +2595,7 @@ private:
                         Value* multiplyLeft = left->child(0);
                         Value* multiplyRight = left->child(1);
 
-                        // SMADDL: d = SExt32(n) *  SExt32(m) + a
+                        // SMADDL: d = SExt32(n) * SExt32(m) + a
                         if (multiplyAddOpcode == MultiplyAdd64 && trySExt32(multiplyLeft) && trySExt32(multiplyRight)) {
                             append(MultiplyAddSignExtend32, 
                                 tmp(multiplyLeft->child(0)), 
@@ -2617,16 +2618,51 @@ private:
                 }
             }
 
-            appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(m_value->child(0), m_value->child(1));
+            // add-with-shift Pattern: n + (m ShiftType amount)
+            auto tryOpcode = [&] (JSC::B3::Opcode opcode) -> Air::Opcode {
+                switch (opcode) {
+                case Shl:
+                    return tryOpcodeForType(AddLeftShift32, AddLeftShift64, m_value->type());
+                case SShr:
+                    return tryOpcodeForType(AddRightShift32, AddRightShift64, m_value->type());
+                case ZShr:
+                    return tryOpcodeForType(AddUnsignedRightShift32, AddUnsignedRightShift64, m_value->type());
+                default:
+                    return Air::Oops;
+                }
+            };
+
+            auto tryAppendAddAndShift = [&] (Value* left, Value* right) -> bool {
+                Air::Opcode opcode = tryOpcode(right->opcode());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                    return false;
+                if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
+                    return false;
+
+                uint64_t amount = right->child(1)->asInt();
+                uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
+                if (amount >= datasize)
+                    return false;
+
+                append(opcode, tmp(left), tmp(right->child(0)), imm(right->child(1)), tmp(m_value));
+                commitInternal(right);
+                return true;
+            };
+
+            if (tryAppendAddAndShift(left, right) || tryAppendAddAndShift(right, left))
+                return;
+
+            appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(left, right);
             return;
         }
 
         case Sub: {
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
+
             Air::Opcode multiplySubOpcode = tryOpcodeForType(MultiplySub32, MultiplySub64, m_value->type());
             if (multiplySubOpcode != Air::Oops
                 && isValidForm(multiplySubOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-                Value* left = m_value->child(0);
-                Value* right = m_value->child(1);
                 auto tryMultiply = [&] (Value* v) -> bool {
                     if (v->opcode() != Mul || !canBeInternal(v))
                         return false;
@@ -2675,7 +2711,41 @@ private:
                 }
             }
 
-            appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(m_value->child(0), m_value->child(1));
+            // sub-with-shift Pattern: n - (m ShiftType amount)
+            auto tryOpcode = [&] (JSC::B3::Opcode opcode) -> Air::Opcode {
+                switch (opcode) {
+                case Shl:
+                    return tryOpcodeForType(SubLeftShift32, SubLeftShift64, m_value->type());
+                case SShr:
+                    return tryOpcodeForType(SubRightShift32, SubRightShift64, m_value->type());
+                case ZShr:
+                    return tryOpcodeForType(SubUnsignedRightShift32, SubUnsignedRightShift64, m_value->type());
+                default:
+                    return Air::Oops;
+                }
+            };
+
+            auto tryAppendSubAndShift = [&] () -> bool {
+                Air::Opcode opcode = tryOpcode(right->opcode());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                    return false;
+                if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
+                    return false;
+
+                uint64_t amount = right->child(1)->asInt();
+                uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
+                if (amount >= datasize)
+                    return false;
+
+                append(opcode, tmp(left), tmp(right->child(0)), imm(right->child(1)), tmp(m_value));
+                commitInternal(right);
+                return true;
+            };
+
+            if (tryAppendSubAndShift())
+                return;
+
+            appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(left, right);
             return;
         }
 

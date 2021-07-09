@@ -1,3 +1,93 @@
+2021-07-08  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Air opcode add/sub-and-shift for ARM64 and select this instruction in Air
+        https://bugs.webkit.org/show_bug.cgi?id=227509
+
+        Reviewed by Saam Barati.
+
+        This patch includes two modifications:
+            1. Add add/sub-with-shift to Air opcode and the corresponding pattern match for 
+               instruction selection.
+            2. Minor fix in disassembler.
+
+        Given the operation:
+
+            add/sub Rd, Rn, Rm, ShiftType, amount
+
+        ADD/SUB (shifted register), adds/subs a register value Rn and an optionally-shifted register 
+        value Rm, and writes the result to the destination register Rd. The instruction selector 
+        can utilize this to lowering certain patterns in B3 IR before further Air optimization. 
+
+        The equivalent pattern would be:
+
+            d = n +/- (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = amount
+        Int @3 = ZShr(@1, @2)
+        Int @4 = Add/Sub(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Shift   %x1, amount, %x1, @3
+        Add/Sub %x0,    %x1, %x0, @4
+        Ret     %x0,              @5
+
+        // New optimized AIR
+        Add(Sub)Shift %x0, %x1, amount, %x0, @4
+        Ret           %x0,                   @5
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::addLeftShift32):
+        (JSC::MacroAssemblerARM64::addRightShift32):
+        (JSC::MacroAssemblerARM64::addUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::addLeftShift64):
+        (JSC::MacroAssemblerARM64::addRightShift64):
+        (JSC::MacroAssemblerARM64::addUnsignedRightShift64):
+        (JSC::MacroAssemblerARM64::subLeftShift32):
+        (JSC::MacroAssemblerARM64::subRightShift32):
+        (JSC::MacroAssemblerARM64::subUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::subLeftShift64):
+        (JSC::MacroAssemblerARM64::subRightShift64):
+        (JSC::MacroAssemblerARM64::subUnsignedRightShift64):
+        * assembler/testmasm.cpp:
+        (JSC::testAddWithLeftShift32):
+        (JSC::testAddWithRightShift32):
+        (JSC::testAddWithUnsignedRightShift32):
+        (JSC::testAddWithLeftShift64):
+        (JSC::testAddWithRightShift64):
+        (JSC::testAddWithUnsignedRightShift64):
+        (JSC::testSubWithLeftShift32):
+        (JSC::testSubWithRightShift32):
+        (JSC::testSubWithUnsignedRightShift32):
+        (JSC::testSubWithLeftShift64):
+        (JSC::testSubWithRightShift64):
+        (JSC::testSubWithUnsignedRightShift64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        (checkUsesInstruction):
+        * b3/testb3_2.cpp:
+        (testAddWithLeftShift32):
+        (testAddWithRightShift32):
+        (testAddWithUnsignedRightShift32):
+        (testAddWithLeftShift64):
+        (testAddWithRightShift64):
+        (testAddWithUnsignedRightShift64):
+        (testSubWithLeftShift32):
+        (testSubWithRightShift32):
+        (testSubWithUnsignedRightShift32):
+        (testSubWithLeftShift64):
+        (testSubWithRightShift64):
+        (testSubWithUnsignedRightShift64):
+        (addBitTests):
+        * disassembler/ARM64/A64DOpcode.cpp:
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcodeAddSubtractShiftedRegister::immediate6):
+        (JSC::ARM64Disassembler::A64DOpcodeLogicalShiftedRegister::immediate6):
+
 2021-07-08  Keith Miller  <keith_miller@apple.com>
 
         display-profiler-output should be able to print disassembly for the FTL

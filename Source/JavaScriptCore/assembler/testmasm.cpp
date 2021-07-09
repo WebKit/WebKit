@@ -1640,6 +1640,318 @@ void testExtractRegister64()
         }
     }
 }
+
+void testAddWithLeftShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto add32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.addLeftShift32(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(add32, n, m);
+                int32_t rhs = n + (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAddWithRightShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto add32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.addRightShift32(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(add32, n, m);
+                int32_t rhs = n + (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAddWithUnsignedRightShift32()
+{
+    Vector<uint32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto add32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.addUnsignedRightShift32(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint32_t lhs = invoke<uint32_t>(add32, n, m);
+                uint32_t rhs = static_cast<uint32_t>(n) + (static_cast<uint32_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAddWithLeftShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto add64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.addLeftShift64(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(add64, n, m);
+                int64_t rhs = n + (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAddWithRightShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto add64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.addRightShift64(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(add64, n, m);
+                int64_t rhs = n + (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAddWithUnsignedRightShift64()
+{
+    Vector<uint32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto add64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.addUnsignedRightShift64(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint64_t lhs = invoke<uint64_t>(add64, n, m);
+                uint64_t rhs = static_cast<uint64_t>(n) + (static_cast<uint64_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testSubWithLeftShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto sub32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.subLeftShift32(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(sub32, n, m);
+                int32_t rhs = n - (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testSubWithRightShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto sub32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.subRightShift32(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(sub32, n, m);
+                int32_t rhs = n - (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testSubWithUnsignedRightShift32()
+{
+    Vector<uint32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto sub32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.subUnsignedRightShift32(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint32_t lhs = invoke<uint32_t>(sub32, n, m);
+                uint32_t rhs = static_cast<uint32_t>(n) - (static_cast<uint32_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testSubWithLeftShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto sub64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.subLeftShift64(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(sub64, n, m);
+                int64_t rhs = n - (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testSubWithRightShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto sub64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.subRightShift64(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(sub64, n, m);
+                int64_t rhs = n - (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testSubWithUnsignedRightShift64()
+{
+    Vector<uint32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto sub64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.subUnsignedRightShift64(GPRInfo::argumentGPR0, 
+                        GPRInfo::argumentGPR1, 
+                        CCallHelpers::TrustedImm32(amount), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint64_t lhs = invoke<uint64_t>(sub64, n, m);
+                uint64_t rhs = static_cast<uint64_t>(n) - (static_cast<uint64_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)
@@ -3878,6 +4190,19 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testExtractSignedBitfield64());
     RUN(testExtractRegister32());
     RUN(testExtractRegister64());
+
+    RUN(testAddWithLeftShift32());
+    RUN(testAddWithRightShift32());
+    RUN(testAddWithUnsignedRightShift32());
+    RUN(testAddWithLeftShift64());
+    RUN(testAddWithRightShift64());
+    RUN(testAddWithUnsignedRightShift64());
+    RUN(testSubWithLeftShift32());
+    RUN(testSubWithRightShift32());
+    RUN(testSubWithUnsignedRightShift32());
+    RUN(testSubWithLeftShift64());
+    RUN(testSubWithRightShift64());
+    RUN(testSubWithUnsignedRightShift64());
 #endif
 
 #if CPU(ARM64E)
