@@ -458,7 +458,8 @@ class TaskPool(object):
 
                 if sys.version_info >= (3, 7):
                     worker.kill()
-                elif hasattr(signal, 'SIGKILL'):
+                # With python2 killing directly the workers causes the queue to hang on close() <https://webkit.org/b/227715>
+                elif hasattr(signal, 'SIGKILL') and sys.version_info.major > 2:
                     try:
                         os.kill(worker.pid, signal.SIGKILL)
                     except OSError as e:

@@ -1,3 +1,18 @@
+2021-07-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitcorepy] run-webkit-tests may hang with python2 after r271683
+        https://bugs.webkit.org/show_bug.cgi?id=227715
+
+        Reviewed by Philippe Normand.
+
+        When an exception is raised from a worker if the workers are terminated
+        via a SIGKILL signal that later causes the task-queue to hang at close().
+        The issue is not reproducible with python3. So keep the same behaviour for
+        python3, and for python2 just use terminate() to stop the workers.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (TaskPool.__exit__):
+
 2021-07-08  Yijia Huang  <yijia_huang@apple.com>
 
         Add Yijia Huang as a committer
