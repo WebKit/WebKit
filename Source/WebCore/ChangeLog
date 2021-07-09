@@ -1,3 +1,26 @@
+2021-07-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Increase contrast for textfields, checkboxes, and radio buttons
+        https://bugs.webkit.org/show_bug.cgi?id=227145
+        <rdar://problem/79470926>
+
+        Reviewed by Wenson Hsieh.
+
+        Updated textfields, checkboxes, and radio buttons to have a
+        secondaryLabelColor border, ensuring a higher contrast than the
+        existing appearance.
+
+        Additionally, checkboxes and radio buttons have been updated
+        to use the system fill color when empty.
+
+        * css/html.css:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::checkboxRadioBorderColor):
+        (WebCore::RenderThemeIOS::checkboxRadioBackgroundColor):
+        (WebCore::RenderThemeIOS::paintCheckbox):
+        (WebCore::RenderThemeIOS::paintRadio):
+
 2021-07-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Cairo][Win] Remove unneeded GraphicsContextPlatformPrivate

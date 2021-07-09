@@ -192,7 +192,7 @@ layer at (0,0) size 800x2672
           RenderInline {LABEL} at (0,0) size 231x19
             RenderText {#text} at (0,25) size 72x19
               text run at (0,25) width 72: "Comment: "
-            RenderTextControl {INPUT} at (73,26) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+            RenderTextControl {INPUT} at (73,26) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderText {#text} at (230,25) size 5x19
             text run at (230,25) width 5: " "
           RenderButton {INPUT} at (236,26) size 65x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]

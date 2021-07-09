@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
               text run at (0,0) width 61: "append cell"
         RenderText {#text} at (90,1) size 53x19
           text run at (90,1) width 53: "   tbody "
-        RenderTextControl {INPUT} at (144,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+        RenderTextControl {INPUT} at (144,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (196,1) size 42x19
           text run at (196,1) width 42: "   row "
-        RenderTextControl {INPUT} at (239,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+        RenderTextControl {INPUT} at (239,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (291,1) size 36x19
           text run at (291,1) width 36: "   col "
-        RenderTextControl {INPUT} at (328,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+        RenderTextControl {INPUT} at (328,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (380,1) size 75x19
           text run at (380,1) width 75: "   row span "
-        RenderTextControl {INPUT} at (456,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+        RenderTextControl {INPUT} at (456,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (508,1) size 70x19
           text run at (508,1) width 70: "   col span "
-        RenderTextControl {INPUT} at (579,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+        RenderTextControl {INPUT} at (579,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (631,1) size 21x19
           text run at (631,1) width 21: "     "
         RenderButton {INPUT} at (653,2) size 50x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
