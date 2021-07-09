@@ -2322,6 +2322,17 @@ webkit.org/b/227663 http/tests/security/webaudio-render-remote-audio-blocked-no-
 
 webkit.org/b/227665 fast/css/parsing-relative-color-syntax.html [ Failure ]
 
+webkit.org/b/227819 imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html [ Crash ]
+
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.html [ Failure ]
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.https.html [ Failure ]
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__host.header.html [ Failure ]
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__host.header.https.html [ Failure ]
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.html [ Failure ]
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.https.html [ Failure ]
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.header.html [ Failure ]
+webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/document-cookie.non-secure.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

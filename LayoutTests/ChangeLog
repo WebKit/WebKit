@@ -1,3 +1,25 @@
+2021-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of tests after r279585 and 279705
+
+        Re-baseline the tests that have consistent text output, mark the
+        ones that are flaky as failing and report a crash.
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/http/tests/websocket/tests/hybi/multiple-set-cookies-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/attributes/invalid-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/attributes/max-age-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/attributes/path-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/attributes/secure-non-secure-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/encoding/charset-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/name/name-ctl-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/ordering/ordering.sub-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/path/match-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/value/value-ctl-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/cookies/value/value-expected.txt: Added.
+
 2021-07-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [Mac] media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html is flaky timing out.
