@@ -1,5 +1,33 @@
 2021-07-08  Chris Dumez  <cdumez@apple.com>
 
+        Make sure SVG SMIL animations do not run in processes without any pages
+        https://bugs.webkit.org/show_bug.cgi?id=227720
+        <rdar://79625708>
+
+        Reviewed by Simon Fraser.
+
+        Make sure SVG SMIL animations do not run in processes without any pages.
+
+        We have seen traces / logging indicating that SVG SMIL animations may run in cached WebProcesses, thus
+        using CPU unnecessarily. Cached WebProcesses have no WebPage so this patch adds assertions to catch cases
+        where those animations run when there is no Page (and early returns in release to avoid doing unnecessary
+        work).
+
+        * page/Page.cpp:
+        (WebCore::Page::nonUtilityPageCount):
+        (WebCore::m_httpsUpgradeEnabled):
+        (WebCore::Page::~Page):
+        (WebCore::Page::isOnlyNonUtilityPage const):
+        * page/Page.h:
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::begin):
+        (WebCore::SMILTimeContainer::resume):
+        (WebCore::SMILTimeContainer::setElapsed):
+        (WebCore::SMILTimeContainer::startTimer):
+        (WebCore::SMILTimeContainer::updateAnimations):
+
+2021-07-08  Chris Dumez  <cdumez@apple.com>
+
         [IndexedDB] KeyPath validity checks should happen on the cloned value, not the original one
         https://bugs.webkit.org/show_bug.cgi?id=227813
 
