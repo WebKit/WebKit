@@ -331,9 +331,9 @@ static String buildList(const ContainerType& values)
 {
     StringBuilder builder;
     for (auto& value : values) {
-        if constexpr (std::is_arithmetic_v<std::remove_reference_t<decltype(value)>>) {
+        if constexpr (std::is_arithmetic_v<std::remove_reference_t<decltype(value)>>)
             builder.append(builder.isEmpty() ? "" : ", ", value);
-        } else
+        else
             builder.append(builder.isEmpty() ? "" : ", ", '"', value, '"');
     }
     return builder.toString();

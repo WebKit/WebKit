@@ -1,3 +1,10 @@
+2021-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed follow-up to r279802 to address review feedback from Sam Weinig.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::buildList):
+
 2021-07-09  Chris Dumez  <cdumez@apple.com>
 
         [ITP] Improve ResourceLoadStatisticsDatabaseStore's buildList() and use it in more places
