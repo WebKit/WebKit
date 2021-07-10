@@ -7912,7 +7912,7 @@ void Document::updateIntersectionObservations()
         auto timestamp = observer->nowTimestamp();
         if (!timestamp)
             continue;
-        for (Element* target : observer->observationTargets()) {
+        for (auto& target : observer->observationTargets()) {
             auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;
             auto index = targetRegistrations.findMatching([observer](auto& registration) {
                 return registration.observer.get() == observer;
@@ -7969,7 +7969,7 @@ void Document::updateIntersectionObservations()
                     { targetBoundingClientRect.x(), targetBoundingClientRect.y(), targetBoundingClientRect.width(), targetBoundingClientRect.height() },
                     { clientIntersectionRect.x(), clientIntersectionRect.y(), clientIntersectionRect.width(), clientIntersectionRect.height() },
                     intersectionRatio,
-                    target,
+                    target.get(),
                     thresholdIndex > 0,
                 }));
                 needNotify = true;

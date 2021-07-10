@@ -1,3 +1,23 @@
+2021-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ResizeObserver / IntersectionObserver memory leak on detached & out of reference elements
+        https://bugs.webkit.org/show_bug.cgi?id=227194
+        <rdar://problem/79839851>
+
+        Reviewed by Chris Dumez.
+
+        Added regression tests for leaking nodes with IntersectionObserver and ResizeObsever.
+
+        Also rewrote intersection-observer/root-element-deleted.html since the test was previously asserting
+        that IntersectionObserver.root becomes null if it was no longer in the document, which is wrong.
+
+        * intersection-observer/intersection-observer-should-not-leak-observed-nodes-expected.txt: Added.
+        * intersection-observer/intersection-observer-should-not-leak-observed-nodes.html: Added.
+        * intersection-observer/root-element-deleted-expected.txt:
+        * intersection-observer/root-element-deleted.html:
+        * resize-observer/resize-observer-should-not-leak-observed-nodes-expected.txt: Added.
+        * resize-observer/resize-observer-should-not-leak-observed-nodes.html: Added.
+
 2021-07-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: [ macOS wk2 ] inspector/canvas/create-context-bitmaprenderer.html is flaky failing

@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ResizeObserverEnabled=true ] -->
+<html>
+<body>
+<pre id="log">This tests observing an element with an ResizeObserver and removing the element from the document.
+The element should become eligible for GC at some point.
+
+</pre>
+<script src="../resources/gc.js"></script>
+<script>
+
+let initialNodeCount;
+function runTest()
+{
+    if (!window.testRunner || !window.internals) {
+        log.textContent += 'FAIL - This test requires internals'; 
+        return;
+    }
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    initialNodeCount = internals.referencingNodeCount(document);
+
+    const resizeObserverCount = 100;
+    for (let i = 0; i < resizeObserverCount; ++i)
+        createResizeObserver();
+
+    requestAnimationFrame(() => {
+        gc();
+        setTimeout(() => {
+            gc();
+            log.textContent += internals.referencingNodeCount(document) < initialNodeCount + resizeObserverCount * 0.95 ? 'PASS' : 'FAIL - Less than 20% of nodes were collected.'
+            testRunner.notifyDone();
+        }, 0);
+    });
+}
+
+function createResizeObserver()
+{
+    const element = document.createElement('div');
+    const resizeObserver = new ResizeObserver(() => { }).observe(element);
+}
+
+onload = runTest;
+
+</script>
+</body>
+</html>

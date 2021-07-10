@@ -1,3 +1,93 @@
+2021-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ResizeObserver / IntersectionObserver memory leak on detached & out of reference elements
+        https://bugs.webkit.org/show_bug.cgi?id=227194
+        <rdar://problem/79839851>
+
+        Reviewed by Chris Dumez.
+
+        The memory leak was caused by ResizeObserver and IntersectionObserver keeping their respective
+        JS wrapper objects alive so long as there are some observed elements by having pending
+        activity as ActiveDOMObjects. This is not the right GC model for these JS wrapper objects
+        since there is no obvious end to these activities. So long as the observed nodes are alive,
+        ResizeObserver and IntersectionObserver may get new observation entries queued later.
+
+        To address this issue, this patch reworks the way ResizeObserver and IntersectionObserver keep
+        their JS wrappers alive. Namely, they're no longer ActiveDOMObjects. Instead, their JS wrappers
+        would use their respective observed nodes as opaque roots. i.e. so long as any of the observed
+        nodes are kept alive by GC, then its observer's JS wrapper is kept alive.
+
+        ResizeObserver had an additional bug that every observed node was kept using GCReachableRef,
+        which obviously leaked every observed node until the observations were explicitly cleared.
+        This patch makes only the target elements of the active observations (i.e. there are entries
+        to be delivered to the observer callback) are kept alive with GCReachableRef as done with
+        IntersectionObserver and MutationObserver.
+
+        Finally, this patch fixes the bug that IntersectionObserver wasn't keeping its root node alive.
+        We even had a test which was testing this erroneously behavior. The test has been rewritten to
+        expect the new behavior.
+
+        Tests: intersection-observer/intersection-observer-should-not-leak-observed-nodes.html
+               intersection-observer/root-element-deleted.html
+               resize-observer/resize-observer-should-not-leak-observed-nodes.html
+
+        * bindings/js/JSIntersectionObserverCustom.cpp:
+        (WebCore::JSIntersectionObserver::visitAdditionalChildren): Add the root node as an opaque root.
+        This has an effect of keeping the root node alive so long as IntersectionObserver is alive.
+        (WebCore::JSIntersectionObserverOwner::isReachableFromOpaqueRoots): Added.
+        * bindings/js/JSResizeObserverCustom.cpp:
+        (WebCore::JSResizeObserverOwner::isReachableFromOpaqueRoots): Added.
+        * dom/Document.cpp:
+        (WebCore::Document::updateIntersectionObservations):
+        * html/LazyLoadFrameObserver.cpp:
+        (WebCore::LazyLoadFrameObserver::isObserved const):
+        * html/LazyLoadImageObserver.cpp:
+        (WebCore::LazyLoadImageObserver::isObserved const):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::create):
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        (WebCore::IntersectionObserver::~IntersectionObserver):
+        (WebCore::IntersectionObserver::isObserving const): Added.
+        (WebCore::IntersectionObserver::observe):
+        (WebCore::IntersectionObserver::virtualHasPendingActivity const): Deleted.
+        (WebCore::IntersectionObserver::activeDOMObjectName const): Deleted.
+        (WebCore::IntersectionObserver::stop): Deleted.
+        (WebCore::IntersectionObserver::isReachableFromOpaqueRoots const): Added.
+        * page/IntersectionObserver.h:
+        (WebCore::IntersectionObserver::root const):
+        (WebCore::IntersectionObserver::observationTargets const):
+        (WebCore::IntersectionObserver::hasObservationTargets const):
+        * page/IntersectionObserver.idl:
+        * page/ResizeObservation.cpp:
+        (WebCore::ResizeObservation::create):
+        (WebCore::ResizeObservation::ResizeObservation):
+        (WebCore::ResizeObservation::targetElementDepth const):
+        * page/ResizeObservation.h:
+        (WebCore::ResizeObservation::target const):
+        (WebCore::ResizeObservation): Renamed m_pendingTargets to m_activeObservationTargets to reflect
+        the new semantics.
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::ResizeObserver):
+        (WebCore::ResizeObserver::observe): Don't store the new observation target with GCReachableRef as
+        that would result in an immediate leak of this element.
+        (WebCore::ResizeObserver::gatherObservations): Now that we have an active observation (i.e. there
+        is an entry to be delivered to the JS callback), store the target element using GCReachableRef.
+        This keeps the JS wrapper of this target element alive between now and when the JS callback is
+        notified of this element's resize. Without this GCReachableRef, JS wrapper of the element can be
+        erroneously collected when there is no JS reference to the element and the element is no longer in
+        any live document. Note that this GC behavior is already tested by existing tests. This patch
+        simply delays the use of GCReachableRef from when ResizeObserver started observing this element
+        to when we created an active observation for the element; this is because GCReachableRef like
+        a pending activity of ActiveDOMObject is only appropriate when there is a definite end to it.
+        (WebCore::ResizeObserver::isReachableFromOpaqueRoots const): Added.
+        (WebCore::ResizeObserver::removeAllTargets):
+        (WebCore::ResizeObserver::removeObservation):
+        (WebCore::ResizeObserver::virtualHasPendingActivity const): Deleted.
+        (WebCore::ResizeObserver::activeDOMObjectName const): Deleted.
+        (WebCore::ResizeObserver::stop): Deleted.
+        * page/ResizeObserver.h:
+        * page/ResizeObserver.idl:
+
 2021-07-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Increase contrast for textfields, checkboxes, and radio buttons

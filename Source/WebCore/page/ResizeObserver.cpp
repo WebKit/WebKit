@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "ResizeObserverEntry.h"
+#include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 
 namespace WebCore {
 
@@ -40,11 +41,9 @@ Ref<ResizeObserver> ResizeObserver::create(Document& document, Ref<ResizeObserve
 }
 
 ResizeObserver::ResizeObserver(Document& document, Ref<ResizeObserverCallback>&& callback)
-    : ActiveDOMObject(callback->scriptExecutionContext())
-    , m_document(makeWeakPtr(document))
+    : m_document(makeWeakPtr(document))
     , m_callback(WTFMove(callback))
 {
-    suspendIfNeeded();
 }
 
 ResizeObserver::~ResizeObserver()
@@ -69,8 +68,7 @@ void ResizeObserver::observe(Element& target)
     auto& observerData = target.ensureResizeObserverData();
     observerData.observers.append(makeWeakPtr(this));
 
-    m_observations.append(ResizeObservation::create(&target));
-    m_pendingTargets.append(target);
+    m_observations.append(ResizeObservation::create(target));
 
     if (m_document) {
         m_document->addResizeObserver(*this);
@@ -107,6 +105,7 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
             if (depth > deeperThan) {
                 observation->updateObservationSize(currentSize);
                 m_activeObservations.append(observation.get());
+                m_activeObservationTargets.append(*observation->target());
                 minObservedDepth = std::min(depth, minObservedDepth);
             } else
                 m_hasSkippedObservations = true;
@@ -133,6 +132,15 @@ void ResizeObserver::deliverObservations()
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 
+bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
+{
+    for (auto& observation : m_observations) {
+        if (auto* target = observation->target(); target && visitor.containsOpaqueRoot(target->opaqueRoot()))
+            return true;
+    }
+    return false;
+}
+
 bool ResizeObserver::removeTarget(Element& target)
 {
     auto* observerData = target.resizeObserverData();
@@ -149,14 +157,14 @@ void ResizeObserver::removeAllTargets()
         bool removed = removeTarget(*observation->target());
         ASSERT_UNUSED(removed, removed);
     }
-    m_pendingTargets.clear();
+    m_activeObservationTargets.clear();
     m_activeObservations.clear();
     m_observations.clear();
 }
 
 bool ResizeObserver::removeObservation(const Element& target)
 {
-    m_pendingTargets.removeFirstMatching([&target](auto& pendingTarget) {
+    m_activeObservationTargets.removeFirstMatching([&target](auto& pendingTarget) {
         return pendingTarget.ptr() == &target;
     });
 
@@ -167,22 +175,6 @@ bool ResizeObserver::removeObservation(const Element& target)
     return m_observations.removeFirstMatching([&target](auto& observation) {
         return observation->target() == &target;
     });
-}
-
-bool ResizeObserver::virtualHasPendingActivity() const
-{
-    return (hasObservations() && m_document) || !m_activeObservations.isEmpty();
-}
-
-const char* ResizeObserver::activeDOMObjectName() const
-{
-    return "ResizeObserver";
-}
-
-void ResizeObserver::stop()
-{
-    disconnect();
-    m_callback = nullptr;
 }
 
 } // namespace WebCore
