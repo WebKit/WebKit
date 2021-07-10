@@ -6,7 +6,7 @@ PASS baseURI
 PASS referrer
 PASS title
 PASS contentType
-FAIL readyState assert_equals: expected "complete" but got "interactive"
+PASS readyState
 PASS location
 PASS defaultView
 PASS body
