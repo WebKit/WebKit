@@ -326,6 +326,19 @@ static const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>&
     return expectedTableAndIndexQueries;
 }
 
+template <typename ContainerType>
+static String buildList(const ContainerType& values)
+{
+    StringBuilder builder;
+    for (auto& value : values) {
+        if constexpr (std::is_arithmetic_v<std::remove_reference_t<decltype(value)>>) {
+            builder.append(builder.isEmpty() ? "" : ", ", value);
+        } else
+            builder.append(builder.isEmpty() ? "" : ", ", '"', value, '"');
+    }
+    return builder.toString();
+}
+
 HashSet<ResourceLoadStatisticsDatabaseStore*>& ResourceLoadStatisticsDatabaseStore::allStores()
 {
     ASSERT(!RunLoop::isMain());
@@ -1275,19 +1288,11 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
     return thirdPartyDataList;
 }
 
-static String domainsToString(const HashSet<RegistrableDomain>& domains)
-{
-    StringBuilder builder;
-    for (const auto& domainName : domains)
-        builder.append(builder.isEmpty() ? "" : ", ", '"', domainName.string(), '"');
-    return builder.toString();
-}
-
 void ResourceLoadStatisticsDatabaseStore::incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&& domains)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET dataRecordsRemoved = dataRecordsRemoved + 1 WHERE registrableDomain IN (", domainsToString(domains), ")"));
+    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET dataRecordsRemoved = dataRecordsRemoved + 1 WHERE registrableDomain IN (", buildList(domains), ")"));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::incrementStatisticsForDomains failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -1344,15 +1349,6 @@ unsigned ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomains
     return numberOfRecursiveCalls;
 }
 
-template <typename IteratorType>
-static String buildList(const WTF::IteratorRange<IteratorType>& values)
-{
-    StringBuilder builder;
-    for (auto domainID : values)
-        builder.append(builder.isEmpty() ? "" : ", ", domainID);
-    return builder.toString();
-}
-
 void ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent()
 {
     ASSERT(!RunLoop::isMain());
@@ -1370,7 +1366,7 @@ void ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPreval
             prevalentDueToRedirect.insert(topFrameRedirectStatement->columnInt(0));
     }
 
-    auto markPrevalentStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(WTF::IteratorRange<StdSet<unsigned>::iterator>(prevalentDueToRedirect.begin(), prevalentDueToRedirect.end())), ")"));
+    auto markPrevalentStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(prevalentDueToRedirect), ")"));
     if (!markPrevalentStatement || markPrevalentStatement->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent failed to execute, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -1395,10 +1391,7 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
         }
     }
 
-    StringBuilder builder;
-    for (auto value : results.keys())
-        builder.append(builder.isEmpty() ? "" : ", ", value);
-    auto domainIDsOfInterest = builder.toString();
+    auto domainIDsOfInterest = buildList(results.keys());
 
     auto subresourceUnderTopFrameDomainsStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
     if (subresourceUnderTopFrameDomainsStatement) {
@@ -1697,7 +1690,7 @@ void ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains(const HashSe
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains was not completed due to failed insert attempt", this);
     }
 
-    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 1 WHERE registrableDomain IN (", domainsToString(domains), ")"));
+    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 1 WHERE registrableDomain IN (", buildList(domains), ")"));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -2027,7 +2020,7 @@ void ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent(StdSet<unsigned>
 {
     ASSERT(!RunLoop::isMain());
 
-    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(WTF::IteratorRange<StdSet<unsigned>::iterator>(domains.begin(), domains.end())), ")"));
+    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(domains), ")"));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -2621,7 +2614,7 @@ void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&&
     if (domainIDsToClear.isEmpty())
         return;
 
-    auto listToClear = buildList(WTF::IteratorRange<Vector<unsigned>::iterator>(domainIDsToClear.begin(), domainIDsToClear.end()));
+    auto listToClear = buildList(domainIDsToClear);
 
     auto clearGrandfatheringStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 0 WHERE domainID IN (", listToClear, ")"));
     if (!clearGrandfatheringStatement)
@@ -2784,7 +2777,7 @@ void ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded()
     while (recordsToPrune->step() == SQLITE_ROW)
         entriesToPrune.append(recordsToPrune->columnInt(0));
 
-    auto listToPrune = buildList(WTF::IteratorRange<Vector<unsigned>::iterator>(entriesToPrune.begin(), entriesToPrune.end()));
+    auto listToPrune = buildList(entriesToPrune);
 
     auto pruneCommand = m_database.prepareStatementSlow(makeString("DELETE from ObservedDomains WHERE domainID IN (", listToPrune, ")"));
     if (!pruneCommand || pruneCommand->step() != SQLITE_DONE) {

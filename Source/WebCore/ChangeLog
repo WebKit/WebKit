@@ -1,3 +1,14 @@
+2021-07-09  Chris Dumez  <cdumez@apple.com>
+
+        [ITP] Improve ResourceLoadStatisticsDatabaseStore's buildList() and use it in more places
+        https://bugs.webkit.org/show_bug.cgi?id=227843
+
+        Reviewed by Sam Weinig.
+
+        Support passing a RegistrableDomain directly to StringBuilder::append().
+
+        * platform/RegistrableDomain.h:
+
 2021-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         ResizeObserver / IntersectionObserver memory leak on detached & out of reference elements
