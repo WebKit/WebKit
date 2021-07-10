@@ -1,3 +1,48 @@
+2021-07-09  Tim Nguyen  <ntim@apple.com>
+
+        Import blink reference tests for <dialog> element
+        https://bugs.webkit.org/show_bug.cgi?id=227802
+
+        Reviewed by Simon Fraser.
+
+        From third_party/blink/web_tests/html/dialog/ in the Chromium repo.
+        Only imported reference tests.
+
+        * TestExpectations:
+        * imported/blink/dialog/backdrop-descendant-selector-expected.html: Added.
+        * imported/blink/dialog/backdrop-descendant-selector.html: Added.
+        * imported/blink/dialog/backdrop-does-not-inherit-expected.html: Added.
+        * imported/blink/dialog/backdrop-does-not-inherit.html: Added.
+        * imported/blink/dialog/backdrop-dynamic-style-change-expected.html: Added.
+        * imported/blink/dialog/backdrop-dynamic-style-change.html: Added.
+        * imported/blink/dialog/backdrop-in-flow-expected.html: Added.
+        * imported/blink/dialog/backdrop-in-flow.html: Added.
+        * imported/blink/dialog/backdrop-stacking-order-expected.html: Added.
+        * imported/blink/dialog/backdrop-stacking-order.html: Added.
+        * imported/blink/dialog/element-removed-from-top-layer-has-original-position-expected.html: Added.
+        * imported/blink/dialog/element-removed-from-top-layer-has-original-position.html: Added.
+        * imported/blink/dialog/inert-node-is-not-highlighted-expected.html:
+        * imported/blink/dialog/modal-dialog-backdrop-expected.html: Added.
+        * imported/blink/dialog/modal-dialog-backdrop.html: Added.
+        * imported/blink/dialog/modal-dialog-generated-content-expected.html: Added.
+        * imported/blink/dialog/modal-dialog-generated-content.html: Added.
+        * imported/blink/dialog/removed-element-is-removed-from-top-layer-expected.html: Added.
+        * imported/blink/dialog/removed-element-is-removed-from-top-layer.html: Added.
+        * imported/blink/dialog/resources/dialog.css: Added.
+        (.pseudodialog):
+        * imported/blink/dialog/top-layer-containing-block-expected.html: Added.
+        * imported/blink/dialog/top-layer-containing-block.html: Added.
+        * imported/blink/dialog/top-layer-display-none-expected.html: Added.
+        * imported/blink/dialog/top-layer-display-none.html: Added.
+        * imported/blink/dialog/top-layer-nesting-expected.html: Added.
+        * imported/blink/dialog/top-layer-nesting.html: Added.
+        * imported/blink/dialog/top-layer-stacking-correct-order-remove-readd-expected.html: Added.
+        * imported/blink/dialog/top-layer-stacking-correct-order-remove-readd.html: Added.
+        * imported/blink/dialog/top-layer-stacking-dynamic-expected.html: Added.
+        * imported/blink/dialog/top-layer-stacking-dynamic.html: Added.
+        * imported/blink/dialog/top-layer-stacking-expected.html: Added.
+        * imported/blink/dialog/top-layer-stacking.html: Added.
+
 2021-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         ResizeObserver / IntersectionObserver memory leak on detached & out of reference elements
