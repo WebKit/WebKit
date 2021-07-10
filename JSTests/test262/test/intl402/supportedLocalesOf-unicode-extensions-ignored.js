@@ -11,20 +11,18 @@ includes: [testIntl.js]
 ---*/
 
 testWithIntlConstructors(function (Constructor) {
-    var info = getLocaleSupportInfo(Constructor);
 
     // this test should work equally for both matching algorithms
     ["lookup", "best fit"].forEach(function (matcher) {
+        var opt = {localeMatcher: matcher};
+        var info = getLocaleSupportInfo(Constructor, opt);
         var allLocales = info.supported.concat(info.byFallback, info.unsupported);
         allLocales.forEach(function (locale) {
             var validExtension = "-u-co-phonebk-nu-latn";
             var invalidExtension = "-u-nu-invalid";
-            var supported1 = Constructor.supportedLocalesOf([locale],
-                {localeMatcher: matcher});
-            var supported2 = Constructor.supportedLocalesOf([locale + validExtension],
-                {localeMatcher: matcher});
-            var supported3 = Constructor.supportedLocalesOf([locale + invalidExtension],
-                {localeMatcher: matcher});
+            var supported1 = Constructor.supportedLocalesOf([locale], opt);
+            var supported2 = Constructor.supportedLocalesOf([locale + validExtension], opt));
+            var supported3 = Constructor.supportedLocalesOf([locale + invalidExtension], opt));
             if (supported1.length === 1) {
                 assert.sameValue(supported2.length, 1, "#1.1: Presence of Unicode locale extension sequence affects whether locale " + locale + " is considered supported with matcher " + matcher + ".");
                 assert.sameValue(supported3.length, 1, "#1.2: Presence of Unicode locale extension sequence affects whether locale " + locale + " is considered supported with matcher " + matcher + ".");

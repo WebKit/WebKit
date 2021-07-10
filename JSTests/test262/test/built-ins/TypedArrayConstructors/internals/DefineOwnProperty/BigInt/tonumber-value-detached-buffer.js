@@ -5,7 +5,7 @@ esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
     Defining a typed array element to a value that, when converted to the typed
     array element type, detaches the typed array's underlying buffer, should return
-    false and not modify the typed array.
+    true and not modify the typed array.
 info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc )
 
@@ -51,8 +51,8 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.sameValue(
     Reflect.defineProperty(ta, 0, desc),
-    false,
-    'Reflect.defineProperty(ta, 0, {value: {valueOf() {$DETACHBUFFER(ta.buffer); return 42n;}}}) must return false'
+    true,
+    'Reflect.defineProperty(ta, 0, {value: {valueOf() {$DETACHBUFFER(ta.buffer); return 42n;}}}) must return true'
   );
 
   assert.sameValue(ta[0], undefined, 'The value of ta[0] is expected to equal `undefined`');

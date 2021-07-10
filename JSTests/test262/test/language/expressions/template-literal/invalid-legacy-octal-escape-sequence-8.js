@@ -5,8 +5,18 @@ esid: sec-template-literal-lexical-components
 description: >
     Invalid octal escape sequence (regardless of the presence of Annex B)
 info: |
-    A conforming implementation must not use the extended definition of
-    EscapeSequence described in B.1.2 when parsing a TemplateCharacter.
+  TemplateCharacter ::
+    $ [lookahead ≠ {]
+    \ TemplateEscapeSequence
+    \ NotEscapeSequence
+    LineContinuation
+    LineTerminatorSequence
+    SourceCharacter but not one of ` or \ or $ or LineTerminator
+  TemplateEscapeSequence ::
+    CharacterEscapeSequence
+    0 [lookahead ∉ DecimalDigit]
+    HexEscapeSequence
+    UnicodeEscapeSequence
 negative:
   phase: parse
   type: SyntaxError

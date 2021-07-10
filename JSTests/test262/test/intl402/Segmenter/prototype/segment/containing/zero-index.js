@@ -52,6 +52,9 @@ const index_to_zeros = [
     "-4.9e-1",
     "4.9E-1",
     "-4.9E-1",
+    { toString(){ return "-0.1"; } },
+    { valueOf(){ return 0.1; } },
+    { [Symbol.toPrimitive](){ return -0.1; } },
 ];
 
 granularities.forEach(

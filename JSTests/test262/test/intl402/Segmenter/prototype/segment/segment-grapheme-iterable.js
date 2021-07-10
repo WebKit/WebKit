@@ -7,6 +7,7 @@ esid: sec-Intl.Segmenter.prototype.segment
 description: Verifies the behavior for the "segment" function of the Segmenter prototype object.
 info: |
     Intl.Segmenter.prototype.segment( string )
+includes: [compareArray.js]
 features: [Intl.Segmenter]
 ---*/
 
@@ -31,12 +32,22 @@ for (const text of [
     ]) {
   let segments = [];
   for (const v of seg.segment(text)) {
-    assert.sameValue(undefined, v.isWordLike);
-    assert.sameValue(false, v.hasOwnProperty("isWordLike"));
     assert.sameValue("string", typeof v.segment);
-    assert(v.segment.length > 0);
+    assert.sameValue(true, v.segment.length > 0, "length > 0");
+
+    assert.sameValue("number", typeof v.index);
+    assert.sameValue(true, v.index >= 0, "index >= 0");
+    assert.sameValue(true, v.index < text.length, "index < input.length");
+
     assert.sameValue("string", typeof v.input);
     assert.sameValue(text, v.input);
+
+    assert.sameValue(undefined, v.isWordLike);
+    assert.sameValue(false, v.hasOwnProperty("isWordLike"));
+
+    assert.sameValue(text.slice(v.index, v.index + v.segment.length), v.segment);
+    assert.compareArray(Object.getOwnPropertyNames(v), ["segment", "index", "input"]);
+
     segments.push(v.segment);
   }
   assert.sameValue(text, segments.join(''));

@@ -4,8 +4,18 @@
 es6id: 16.1
 description: Invalid octal escape sequence
 info: |
-    TemplateCharacter (11.8.6) must not be extended to include
-    LegacyOctalEscapeSequence as defined in B.1.2.
+  TemplateCharacter ::
+    $ [lookahead ≠ {]
+    \ TemplateEscapeSequence
+    \ NotEscapeSequence
+    LineContinuation
+    LineTerminatorSequence
+    SourceCharacter but not one of ` or \ or $ or LineTerminator
+  TemplateEscapeSequence ::
+    CharacterEscapeSequence
+    0 [lookahead ∉ DecimalDigit]
+    HexEscapeSequence
+    UnicodeEscapeSequence
 negative:
   phase: parse
   type: SyntaxError

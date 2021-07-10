@@ -20,8 +20,8 @@ info: |
         ZeroToThree OctalDigit OctalDigit
 
     The production CharacterEscape :: LegacyOctalEscapeSequence evaluates by
-    evaluating the SV of the LegacyOctalEscapeSequence (see B.1.2) and
-    returning its character result.
+    evaluating the SV of the LegacyOctalEscapeSequence and returning its
+    character result.
 ---*/
 
 assert.sameValue(/\1/.exec('\x01')[0], '\x01', '\\1');

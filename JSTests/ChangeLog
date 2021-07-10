@@ -1,3 +1,747 @@
+2021-07-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=227851
+
+        Reviewed by Mark Lam.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/harness/compareArray.js:
+        (assert.compareArray):
+        * test262/harness/regExpUtils.js:
+        (buildString):
+        (): Deleted.
+        * test262/harness/sta.js:
+        (Test262Error.thrower):
+        * test262/harness/testIntl.js:
+        (getLocaleSupportInfo):
+        * test262/latest-changes-summary.txt:
+        * test262/test/annexB/language/literals/regexp/legacy-octal-escape.js:
+        * test262/test/built-ins/ArrayBuffer/options-maxbytelength-diminuitive.js: Added.
+        * test262/test/built-ins/ArrayBuffer/options-maxbytelength-excessive.js: Added.
+        * test262/test/built-ins/ArrayBuffer/options-maxbytelength-negative.js: Added.
+        * test262/test/built-ins/ArrayBuffer/options-maxbytelength-object.js: Added.
+        (options.maxByteLength.toString):
+        (options.maxByteLength.valueOf):
+        * test262/test/built-ins/ArrayBuffer/options-maxbytelength-poisoned.js: Added.
+        (options.get maxByteLength):
+        * test262/test/built-ins/ArrayBuffer/options-maxbytelength-undefined.js: Added.
+        * test262/test/built-ins/ArrayBuffer/options-non-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/detached-buffer.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/invoked-as-accessor.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/invoked-as-func.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/length.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/name.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/prop-desc.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/return-maxbytelength-non-resizable.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/return-maxbytelength-resizable.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/this-has-no-arraybufferdata-internal.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/this-is-not-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/maxByteLength/this-is-sharedarraybuffer.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/detached-buffer.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/invoked-as-accessor.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/invoked-as-func.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/length.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/name.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/prop-desc.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/return-resizable.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/this-has-no-arraybufferdata-internal.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/this-is-not-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resizable/this-is-sharedarraybuffer.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/descriptor.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/extensible.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/length.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/name.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/new-length-excessive.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/new-length-negative.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/new-length-non-number.js: Added.
+        (newLength.toString):
+        (newLength.valueOf):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/nonconstructor.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/resize-grow.js: Added.
+        (catch):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/resize-same-size-zero-explicit.js: Added.
+        (catch):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/resize-same-size-zero-implicit.js: Added.
+        (catch):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/resize-same-size.js: Added.
+        (catch):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/resize-shrink-zero-explicit.js: Added.
+        (catch):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/resize-shrink-zero-implicit.js: Added.
+        (catch):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/resize-shrink.js: Added.
+        (catch):
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/this-is-detached.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/this-is-not-arraybuffer-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/this-is-not-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/this-is-not-resizable-arraybuffer-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/resize/this-is-sharedarraybuffer.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/descriptor.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/extensible.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-larger.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-same.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-smaller.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-zero.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-larger.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-same.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-smaller.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-zero.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/length.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/name.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/new-length-excessive.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/new-length-non-number.js: Added.
+        (newLength.toString):
+        (newLength.valueOf):
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/nonconstructor.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/this-is-detached.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/this-is-not-arraybuffer-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/this-is-not-object.js: Added.
+        * test262/test/built-ins/ArrayBuffer/prototype/transfer/this-is-sharedarraybuffer.js: Added.
+        * test262/test/built-ins/DataView/prototype/byteLength/resizable-array-buffer-auto.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/byteLength/resizable-array-buffer-fixed.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/byteOffset/resizable-array-buffer-auto.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/byteOffset/resizable-array-buffer-fixed.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getBigInt64/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getBigUint64/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getFloat32/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getFloat64/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getInt16/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getInt32/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getInt8/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getUint16/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getUint32/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/getUint8/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setBigInt64/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setBigUint64/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setFloat32/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setFloat64/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setInt16/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setInt32/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setInt8/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setUint16/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setUint32/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/DataView/prototype/setUint8/resizable-buffer.js: Added.
+        (catch):
+        * test262/test/built-ins/Error/cause_abrupt.js:
+        (has):
+        (options.get cause):
+        * test262/test/built-ins/Object/hasOwn/descriptor.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_exists.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter.js: Added.
+        (base.get foo):
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_and_setter.js: Added.
+        (base.get foo):
+        (base.set foo):
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_and_setter_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_and_setter_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_and_setter_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_and_setter_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_getter_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_nonwritable_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_nonwritable_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_nonwritable_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_nonwritable_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_setter.js: Added.
+        (base.set foo):
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_setter_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_setter_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_setter_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_setter_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_writable_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_writable_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_writable_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_inherited_writable_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_nonexistent.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter.js: Added.
+        (o.get foo):
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_and_setter.js: Added.
+        (o.get foo):
+        (o.set foo):
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_and_setter_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_and_setter_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_and_setter_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_and_setter_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_getter_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_nonwritable_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_nonwritable_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_nonwriteable_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_nonwriteable_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_property_exists.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_setter.js: Added.
+        (o.set foo):
+        * test262/test/built-ins/Object/hasOwn/hasown_own_setter_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_setter_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_setter_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_setter_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_writable_configurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_writable_configurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_writable_nonconfigurable_enumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/hasown_own_writable_nonconfigurable_nonenumerable.js: Added.
+        * test262/test/built-ins/Object/hasOwn/length.js: Added.
+        * test262/test/built-ins/Object/hasOwn/name.js: Added.
+        * test262/test/built-ins/Object/hasOwn/not-a-constructor.js: Added.
+        * test262/test/built-ins/Object/hasOwn/prototype.js: Added.
+        * test262/test/built-ins/Object/hasOwn/symbol_own_property.js: Added.
+        * test262/test/built-ins/Object/hasOwn/symbol_property_toPrimitive.js: Added.
+        (wrapper.Symbol.toPrimitive):
+        * test262/test/built-ins/Object/hasOwn/symbol_property_toString.js: Added.
+        (wrapper.toString):
+        (wrapper.valueOf):
+        * test262/test/built-ins/Object/hasOwn/symbol_property_valueOf.js: Added.
+        (wrapper.valueOf):
+        * test262/test/built-ins/Object/hasOwn/toobject_before_topropertykey.js: Added.
+        (coercibleKey1.get toString):
+        (coercibleKey1.get valueOf):
+        (coercibleKey2.Symbol.toPrimitive):
+        * test262/test/built-ins/Object/hasOwn/toobject_null.js: Added.
+        * test262/test/built-ins/Object/hasOwn/toobject_undefined.js: Added.
+        * test262/test/built-ins/Promise/race/resolve-element-function-extensible.js: Removed.
+        * test262/test/built-ins/Promise/race/resolve-element-function-name.js: Removed.
+        * test262/test/built-ins/Promise/race/resolve-element-function-nonconstructor.js: Removed.
+        * test262/test/built-ins/Promise/race/resolve-element-function-prototype.js: Removed.
+        * test262/test/built-ins/SharedArrayBuffer/options-maxbytelength-diminuitive.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/options-maxbytelength-excessive.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/options-maxbytelength-negative.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/options-maxbytelength-object.js: Added.
+        (options.maxByteLength.toString):
+        (options.maxByteLength.valueOf):
+        * test262/test/built-ins/SharedArrayBuffer/options-maxbytelength-poisoned.js: Added.
+        (options.get maxByteLength):
+        * test262/test/built-ins/SharedArrayBuffer/options-maxbytelength-undefined.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/options-non-object.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/descriptor.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/extensible.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/grow-larger-size.js: Added.
+        (catch):
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/grow-same-size.js: Added.
+        (catch):
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/grow-smaller-size.js: Added.
+        (catch):
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/length.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/name.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/new-length-excessive.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/new-length-negative.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/new-length-non-number.js: Added.
+        (newLength.toString):
+        (newLength.valueOf):
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/nonconstructor.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/this-is-not-arraybuffer-object.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/this-is-not-object.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/this-is-not-resizable-arraybuffer-object.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/grow/this-is-sharedarraybuffer.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/invoked-as-accessor.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/invoked-as-func.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/length.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/name.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/prop-desc.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/return-growable.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/this-has-no-arraybufferdata-internal.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/this-is-arraybuffer.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/growable/this-is-not-object.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/invoked-as-accessor.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/invoked-as-func.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/length.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/name.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/prop-desc.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/return-maxbytelength-growable.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/return-maxbytelength-non-growable.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/this-has-no-arraybufferdata-internal.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/this-is-arraybuffer.js: Added.
+        * test262/test/built-ins/SharedArrayBuffer/prototype/maxByteLength/this-is-not-object.js: Added.
+        * test262/test/built-ins/Symbol/for/description.js: Added.
+        (symbol.Symbol.toString):
+        * test262/test/built-ins/Temporal/now/instant/extensible.js: Added.
+        * test262/test/built-ins/Temporal/now/instant/length.js: Added.
+        * test262/test/built-ins/Temporal/now/instant/name.js: Added.
+        * test262/test/built-ins/Temporal/now/instant/not-a-constructor.js: Added.
+        * test262/test/built-ins/Temporal/now/instant/prop-desc.js: Added.
+        * test262/test/built-ins/Temporal/now/instant/return-value-distinct.js: Added.
+        * test262/test/built-ins/Temporal/now/instant/return-value-prototype.js: Added.
+        * test262/test/built-ins/Temporal/now/instant/return-value-value.js: Added.
+        * test262/test/built-ins/Temporal/now/timeZone/extensible.js: Added.
+        * test262/test/built-ins/Temporal/now/timeZone/length.js: Added.
+        * test262/test/built-ins/Temporal/now/timeZone/name.js: Added.
+        * test262/test/built-ins/Temporal/now/timeZone/new-object.js: Added.
+        * test262/test/built-ins/Temporal/now/timeZone/not-a-constructor.js: Added.
+        * test262/test/built-ins/Temporal/now/timeZone/prop-desc.js: Added.
+        * test262/test/built-ins/Temporal/now/timeZone/return-value.js: Added.
+        * test262/test/built-ins/TypedArray/prototype/at/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/byteLength/resizable-array-buffer-auto.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/byteLength/resizable-array-buffer-fixed.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/byteOffset/resizable-array-buffer-auto.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/byteOffset/resizable-array-buffer-fixed.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/copyWithin/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/entries/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/every/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.every):
+        * test262/test/built-ins/TypedArray/prototype/fill/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/filter/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.filter):
+        * test262/test/built-ins/TypedArray/prototype/find/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.find):
+        * test262/test/built-ins/TypedArray/prototype/findIndex/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.findIndex):
+        * test262/test/built-ins/TypedArray/prototype/forEach/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.forEach):
+        * test262/test/built-ins/TypedArray/prototype/includes/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/indexOf/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/join/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/keys/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/lastIndexOf/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/length/resizable-array-buffer-auto.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/length/resizable-array-buffer-fixed.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/map/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.map):
+        * test262/test/built-ins/TypedArray/prototype/reduce/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.reduce):
+        * test262/test/built-ins/TypedArray/prototype/reduceRight/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.reduceRight):
+        * test262/test/built-ins/TypedArray/prototype/reverse/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/set/typedarray-arg-set-values-same-buffer-same-type-resized.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/set/typedarray-arg-target-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/slice/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/some/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        (testWithTypedArrayConstructors.TA.array.some):
+        * test262/test/built-ins/TypedArray/prototype/sort/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/toLocaleString/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArray/prototype/values/return-abrupt-from-this-out-of-bounds.js: Added.
+        (testWithTypedArrayConstructors.TA.catch):
+        * test262/test/built-ins/TypedArrayConstructors/ctors/buffer-arg/excessive-offset-throws-resizable-ab.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/out-of-bounds-when-species-retrieved-different-type.js: Added.
+        (testWithTypedArrayConstructors.):
+        (testWithTypedArrayConstructors.get var):
+        (testWithTypedArrayConstructors.onGetSpecies):
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/out-of-bounds-when-species-retrieved-same-type.js: Added.
+        (testWithTypedArrayConstructors.):
+        (testWithTypedArrayConstructors.get var):
+        (testWithTypedArrayConstructors.onGetSpecies):
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/detached-buffer-realm.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/detached-buffer-throws-realm.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/detached-buffer-throws.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-not-numeric-index-throws.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-numericindex-accessor-desc-throws.js: Added.
+        (testWithBigIntTypedArrayConstructors.):
+        (testWithBigIntTypedArrayConstructors.get assert):
+        (testWithBigIntTypedArrayConstructors.set assert):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-numericindex-desc-configurable.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-numericindex-desc-not-configurable-throws.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-numericindex-desc-not-enumerable-throws.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-numericindex-desc-not-writable-throws.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/tonumber-value-detached-buffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/detached-buffer-realm.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/detached-buffer-throws-realm.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/detached-buffer-throws.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-not-numeric-index-throws.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex-accessor-desc-throws.js: Added.
+        (testWithTypedArrayConstructors.):
+        (testWithTypedArrayConstructors.get assert):
+        (testWithTypedArrayConstructors.set assert):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex-desc-configurable.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex-desc-not-configurable-throws.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex-desc-not-enumerable-throws.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex-desc-not-writable-throws.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/tonumber-value-detached-buffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Delete/key-is-symbol.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/HasProperty/resizable-array-buffer-auto.js: Added.
+        (inspect):
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/HasProperty/resizable-array-buffer-fixed.js: Added.
+        (inspect):
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/integer-indexes-resizable-array-buffer-auto.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/integer-indexes-resizable-array-buffer-fixed.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/intl402/DateTimeFormat/constructor-options-style-conflict.js: Added.
+        * test262/test/intl402/Locale/prototype/calendars/branding.js: Added.
+        * test262/test/intl402/Locale/prototype/calendars/name.js: Added.
+        * test262/test/intl402/Locale/prototype/calendars/output-array.js: Added.
+        * test262/test/intl402/Locale/prototype/calendars/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/collations/branding.js: Added.
+        * test262/test/intl402/Locale/prototype/collations/name.js: Added.
+        * test262/test/intl402/Locale/prototype/collations/output-array-values.js: Added.
+        * test262/test/intl402/Locale/prototype/collations/output-array.js: Added.
+        * test262/test/intl402/Locale/prototype/collations/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/hourCycles/branding.js: Added.
+        * test262/test/intl402/Locale/prototype/hourCycles/name.js: Added.
+        * test262/test/intl402/Locale/prototype/hourCycles/output-array-values.js: Added.
+        * test262/test/intl402/Locale/prototype/hourCycles/output-array.js: Added.
+        * test262/test/intl402/Locale/prototype/hourCycles/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/numberingSystems/branding.js: Added.
+        * test262/test/intl402/Locale/prototype/numberingSystems/name.js: Added.
+        * test262/test/intl402/Locale/prototype/numberingSystems/output-array.js: Added.
+        * test262/test/intl402/Locale/prototype/numberingSystems/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/textInfo/branding.js: Added.
+        * test262/test/intl402/Locale/prototype/textInfo/name.js: Added.
+        * test262/test/intl402/Locale/prototype/textInfo/output-object-keys.js: Added.
+        * test262/test/intl402/Locale/prototype/textInfo/output-object.js: Added.
+        * test262/test/intl402/Locale/prototype/textInfo/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/timeZones/branding.js: Added.
+        * test262/test/intl402/Locale/prototype/timeZones/name.js: Added.
+        * test262/test/intl402/Locale/prototype/timeZones/output-array-sorted.js: Added.
+        * test262/test/intl402/Locale/prototype/timeZones/output-array.js: Added.
+        * test262/test/intl402/Locale/prototype/timeZones/output-undefined.js: Added.
+        * test262/test/intl402/Locale/prototype/timeZones/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/weekInfo/branding.js: Added.
+        * test262/test/intl402/Locale/prototype/weekInfo/name.js: Added.
+        * test262/test/intl402/Locale/prototype/weekInfo/output-object-keys.js: Added.
+        * test262/test/intl402/Locale/prototype/weekInfo/output-object.js: Added.
+        * test262/test/intl402/Locale/prototype/weekInfo/prop-desc.js: Added.
+        * test262/test/intl402/Segmenter/constructor/supportedLocalesOf/locales-specific.js:
+        * test262/test/intl402/Segmenter/prototype/segment/containing/iswordlike.js:
+        (other_granularities.forEach):
+        * test262/test/intl402/Segmenter/prototype/segment/containing/one-index.js:
+        (toString):
+        (valueOf):
+        (Symbol.toPrimitive):
+        * test262/test/intl402/Segmenter/prototype/segment/containing/out-of-bound-index.js:
+        (toString):
+        (valueOf):
+        (Symbol.toPrimitive):
+        * test262/test/intl402/Segmenter/prototype/segment/containing/word-iswordlike.js:
+        (inputs.forEach):
+        * test262/test/intl402/Segmenter/prototype/segment/containing/zero-index.js:
+        (toString):
+        (valueOf):
+        (Symbol.toPrimitive):
+        * test262/test/intl402/Segmenter/prototype/segment/segment-grapheme-iterable.js:
+        (const.v.of.seg.segment):
+        * test262/test/intl402/Segmenter/prototype/segment/segment-sentence-iterable.js:
+        (const.v.of.seg.segment):
+        * test262/test/intl402/Segmenter/prototype/segment/segment-word-iterable.js:
+        (const.v.of.seg.segment):
+        * test262/test/intl402/fallback-locales-are-supported.js:
+        (testWithIntlConstructors):
+        * test262/test/intl402/supportedLocalesOf-consistent-with-resolvedOptions.js:
+        (testWithIntlConstructors):
+        * test262/test/intl402/supportedLocalesOf-unicode-extensions-ignored.js:
+        (testWithIntlConstructors.):
+        (testWithIntlConstructors):
+        * test262/test/language/expressions/arrow-function/extensibility.js: Added.
+        (assert.Object.isExtensible):
+        * test262/test/language/expressions/arrow-function/syntax/arrowparameters-cover-initialize-2.js:
+        * test262/test/language/expressions/assignment/S11.13.1_A7_T1.js: Removed.
+        * test262/test/language/expressions/assignment/S11.13.1_A7_T2.js: Removed.
+        * test262/test/language/expressions/assignment/target-member-computed-reference-null.js: Added.
+        (DummyError):
+        (prop):
+        (expr):
+        (prop.toString):
+        * test262/test/language/expressions/assignment/target-member-computed-reference-undefined.js: Added.
+        (DummyError):
+        (prop):
+        (expr):
+        (prop.toString):
+        * test262/test/language/expressions/assignment/target-member-identifier-reference-null.js: Added.
+        * test262/test/language/expressions/assignment/target-member-identifier-reference-undefined.js: Added.
+        * test262/test/language/expressions/assignment/target-super-computed-reference-null.js: Added.
+        (C.m):
+        (C):
+        * test262/test/language/expressions/assignment/target-super-identifier-reference-null.js: Added.
+        (C.m):
+        (C):
+        * test262/test/language/expressions/delete/member-computed-reference-null.js: Added.
+        * test262/test/language/expressions/delete/member-computed-reference-undefined.js: Added.
+        * test262/test/language/expressions/delete/member-identifier-reference-null.js: Added.
+        * test262/test/language/expressions/delete/member-identifier-reference-undefined.js: Added.
+        * test262/test/language/expressions/delete/super-property-null-base.js: Added.
+        (C.m):
+        (C):
+        * test262/test/language/expressions/dynamic-import/2nd-param-assert-enumeration-abrupt.js: Added.
+        (options.ownKeys):
+        (options.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-assert-enumeration.js: Added.
+        (options.ownKeys):
+        (options.get _):
+        (options.getOwnPropertyDescriptor):
+        (options.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-assert-non-object.js: Added.
+        (test):
+        (string_appeared_here.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-assert-undefined.js: Added.
+        (then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-assert-value-abrupt.js: Added.
+        (assert.get string_appeared_here):
+        (then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-assert-value-non-string.js: Added.
+        (test):
+        (string_appeared_here.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-await-expr.js: Added.
+        * test262/test/language/expressions/dynamic-import/2nd-param-await-ident.js: Added.
+        (await):
+        (await.undefined.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-evaluation-abrupt-return.js: Added.
+        (iter):
+        * test262/test/language/expressions/dynamic-import/2nd-param-evaluation-abrupt-throw.js: Added.
+        (throwError):
+        * test262/test/language/expressions/dynamic-import/2nd-param-evaluation-sequence.js: Added.
+        * test262/test/language/expressions/dynamic-import/2nd-param-get-assert-error.js: Added.
+        (options.get assert):
+        (options.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-in.js: Added.
+        (promise.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-non-object.js: Added.
+        (test):
+        (string_appeared_here.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-trailing-comma-fulfill.js: Added.
+        (then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-trailing-comma-reject.js: Added.
+        (import.toString):
+        (then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-yield-expr.js: Added.
+        (iter):
+        (promise.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param-yield-ident-invalid.js: Added.
+        * test262/test/language/expressions/dynamic-import/2nd-param-yield-ident-valid.js: Added.
+        (yield.then):
+        * test262/test/language/expressions/dynamic-import/2nd-param_FIXTURE.js: Added.
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-assignment-expression-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-not-extensible-args.js:
+        (let.f):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-arrow-function-await-not-extensible-args.js:
+        (async await):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-arrow-function-return-await-not-extensible-args.js:
+        (async await):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-arrow-function-return-await-not-extensible-no-trailing-comma.js: Removed.
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-await-not-extensible-args.js:
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-not-extensible-args.js:
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-return-await-not-extensible-args.js:
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-return-await-not-extensible-no-trailing-comma.js: Removed.
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-gen-await-not-extensible-args.js:
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-block-labeled-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-block-not-extensible-args.js:
+        (DONOTEVALUATE):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-do-while-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-else-braceless-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-else-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-function-not-extensible-args.js:
+        (fn):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-function-return-not-extensible-args.js:
+        (fn):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-if-braceless-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-if-braceless-not-extensible-no-trailing-comma.js: Removed.
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-if-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-while-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-with-expression-not-extensible-args.js:
+        (with.import):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/nested-with-not-extensible-args.js:
+        (with):
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/top-level-not-extensible-args.js:
+        * test262/test/language/expressions/dynamic-import/syntax/invalid/top-level-not-extensible-no-trailing-comma.js: Removed.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-arrow-assignment-expression-trailing-comma-first.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-assignment-expression-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-arrow-assignment-expression-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-assignment-expression-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-arrow-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-not-extensible-no-trailing-comma.js.
+        (let.f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-arrow-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-not-extensible-args.js.
+        (let.f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-arrow-function-await-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-arrow-function-await-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-arrow-function-await-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-arrow-function-await-not-extensible-args.js.
+        (async await):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-arrow-function-return-await-trailing-comma-first.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-assignment-expression-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-arrow-function-return-await-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-assignment-expression-not-extensible-args.js.
+        (async await):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-function-await-trailing-comma-first.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-await-not-extensible-args.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-function-await-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-await-not-extensible-args.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-function-return-await-trailing-comma-first.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-await-not-extensible-args.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-function-return-await-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-await-not-extensible-args.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-function-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-await-not-extensible-no-trailing-comma.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-function-trailing-comma-second.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-function-not-extensible-no-trailing-comma.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-gen-await-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-gen-await-not-extensible-no-trailing-comma.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-async-gen-await-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-async-gen-await-not-extensible-args.js.
+        (async f):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-block-labeled-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-block-labeled-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-block-labeled-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-block-labeled-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-block-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-block-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-block-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-block-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-do-while-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-do-while-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-do-while-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-do-while-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-else-braceless-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-else-braceless-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-else-braceless-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-else-braceless-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-else-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-else-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-else-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-else-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-function-return-trailing-comma-first.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-function-return-not-extensible-args.js.
+        (fn):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-function-return-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-function-return-not-extensible-args.js.
+        (fn):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-function-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-function-not-extensible-no-trailing-comma.js.
+        (fn):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-function-trailing-comma-second.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-function-return-not-extensible-no-trailing-comma.js.
+        (fn):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-if-braceless-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-assignment-expression-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-if-braceless-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-arrow-assignment-expression-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-if-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-if-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-if-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-if-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-while-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-while-not-extensible-no-trailing-comma.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-while-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-while-not-extensible-args.js.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-with-expression-trailing-comma-first.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-with-not-extensible-args.js.
+        (with.import):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-with-expression-trailing-comma-second.js: Copied from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-with-not-extensible-args.js.
+        (with.import):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-with-trailing-comma-first.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-with-not-extensible-no-trailing-comma.js.
+        (with):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/nested-with-trailing-comma-second.js: Renamed from JSTests/test262/test/language/expressions/dynamic-import/syntax/invalid/nested-with-expression-not-extensible-no-trailing-comma.js.
+        (with):
+        * test262/test/language/expressions/dynamic-import/syntax/valid/top-level-trailing-comma-first.js: Added.
+        * test262/test/language/expressions/dynamic-import/syntax/valid/top-level-trailing-comma-second.js: Added.
+        * test262/test/language/expressions/dynamic-import/trailing-comma-fulfill.js: Added.
+        (then):
+        * test262/test/language/expressions/dynamic-import/trailing-comma-reject.js: Added.
+        (import.toString):
+        (then):
+        * test262/test/language/expressions/template-literal/invalid-legacy-octal-escape-sequence-8.js:
+        * test262/test/language/expressions/template-literal/invalid-legacy-octal-escape-sequence-9.js:
+        * test262/test/language/expressions/template-literal/invalid-legacy-octal-escape-sequence.js:
+        * test262/test/language/import/json-extensibility-array.js: Added.
+        * test262/test/language/import/json-extensibility-object.js: Added.
+        * test262/test/language/import/json-idempotency-indirect_FIXTURE.js: Added.
+        * test262/test/language/import/json-idempotency.js: Added.
+        (then):
+        * test262/test/language/import/json-invalid.js: Added.
+        * test262/test/language/import/json-named-bindings.js: Added.
+        * test262/test/language/import/json-value-array.js: Added.
+        * test262/test/language/import/json-value-boolean.js: Added.
+        * test262/test/language/import/json-value-null.js: Added.
+        * test262/test/language/import/json-value-number.js: Added.
+        * test262/test/language/import/json-value-object.js: Added.
+        * test262/test/language/import/json-value-string.js: Added.
+        * test262/test/language/import/json-via-namespace.js: Added.
+        * test262/test/language/literals/numeric/legacy-octal-integer-strict.js:
+        * test262/test/language/literals/numeric/legacy-octal-integer.js: Renamed from JSTests/test262/test/annexB/language/literals/numeric/legacy-octal-integer.js.
+        * test262/test/language/literals/numeric/non-octal-decimal-integer-strict.js:
+        * test262/test/language/literals/numeric/non-octal-decimal-integer.js: Renamed from JSTests/test262/test/annexB/language/literals/numeric/non-octal-decimal-integer.js.
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-1-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-2-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-3-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-4-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-5-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-6-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-7-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-8-non-strict.js: Added.
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-8-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-8-strict.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-9-non-strict.js: Added.
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-9-strict-explicit-pragma.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-9-strict.js:
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-strict.js:
+        * test262/test/language/literals/string/legacy-octal-escape-sequence-strict.js:
+        * test262/test/language/literals/string/legacy-octal-escape-sequence.js: Renamed from JSTests/test262/test/annexB/language/literals/string/legacy-octal-escape-sequence.js.
+        * test262/test/language/module-code/early-dup-assert-key-export.js: Added.
+        * test262/test/language/module-code/early-dup-assert-key-import-nobinding.js: Added.
+        * test262/test/language/module-code/early-dup-assert-key-import-withbinding.js: Added.
+        * test262/test/language/module-code/early-export-ill-formed-string.js:
+        * test262/test/language/module-code/eval-gtbndng-indirect-faux-assertion.js: Added.
+        * test262/test/language/module-code/import-assertion-1_FIXTURE.js: Added.
+        * test262/test/language/module-code/import-assertion-2_FIXTURE.js: Added.
+        * test262/test/language/module-code/import-assertion-3_FIXTURE.js: Added.
+        * test262/test/language/module-code/import-assertion-empty.js: Added.
+        * test262/test/language/module-code/import-assertion-key-identifiername.js: Added.
+        * test262/test/language/module-code/import-assertion-key-string-double.js: Added.
+        * test262/test/language/module-code/import-assertion-key-string-single.js: Added.
+        * test262/test/language/module-code/import-assertion-many.js: Added.
+        * test262/test/language/module-code/import-assertion-newlines.js: Added.
+        * test262/test/language/module-code/import-assertion-trlng-comma.js: Added.
+        * test262/test/language/module-code/import-assertion-value-string-double.js: Added.
+        * test262/test/language/module-code/import-assertion-value-string-single.js: Added.
+        * test262/test/language/module-code/instn-star-as-props-dflt-skip.js:
+        * test262/test/language/module-code/top-level-await/dfs-invariant-async_FIXTURE.js: Added.
+        * test262/test/language/module-code/top-level-await/dfs-invariant-direct-1_FIXTURE.js: Added.
+        * test262/test/language/module-code/top-level-await/dfs-invariant-direct-2_FIXTURE.js: Added.
+        * test262/test/language/module-code/top-level-await/dfs-invariant-indirect_FIXTURE.js: Added.
+        * test262/test/language/module-code/top-level-await/dfs-invariant.js: Added.
+        * test262/test/language/statements/for-of/head-lhs-async-escaped.js: Added.
+        * test262/test/language/statements/for-of/head-lhs-async-parens.js: Added.
+        * test262/test262-Revision.txt:
+
 2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update Intl.Locale test after AppleICU update

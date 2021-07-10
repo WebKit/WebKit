@@ -128,12 +128,13 @@ function taintArray() {
  * Gets locale support info for the given constructor object, which must be one
  * of Intl constructors.
  * @param {object} Constructor the constructor for which to get locale support info
+ * @param {object} options the options while calling the constructor
  * @return {object} locale support info with the following properties:
  *   supported: array of fully supported language tags
  *   byFallback: array of language tags that are supported through fallbacks
  *   unsupported: array of unsupported language tags
  */
-function getLocaleSupportInfo(Constructor) {
+function getLocaleSupportInfo(Constructor, options) {
   var languages = ["zh", "es", "en", "hi", "ur", "ar", "ja", "pa"];
   var scripts = ["Latn", "Hans", "Deva", "Arab", "Jpan", "Hant", "Guru"];
   var countries = ["CN", "IN", "US", "PK", "JP", "TW", "HK", "SG", "419"];
@@ -163,7 +164,7 @@ function getLocaleSupportInfo(Constructor) {
   var unsupported = [];
   for (i = 0; i < allTags.length; i++) {
     var request = allTags[i];
-    var result = new Constructor([request], {localeMatcher: "lookup"}).resolvedOptions().locale;
+    var result = new Constructor([request], options).resolvedOptions().locale;
     if (request === result) {
       supported.push(request);
     } else if (request.indexOf(result) === 0) {

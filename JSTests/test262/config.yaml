@@ -24,6 +24,12 @@ skip:
     - regexp-lookbehind
     - legacy-regexp
     - cleanupSome
+    - Intl.Locale-info
+    - resizable-arraybuffer
+    - Object.hasOwn
+    - Temporal
+    - import-assertions
+    - json-modules
   paths:
   files:
     # Slightly different formatting. We should update test262 side.

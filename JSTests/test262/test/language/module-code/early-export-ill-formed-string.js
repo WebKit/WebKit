@@ -8,8 +8,8 @@ info: |
     ModuleExportName : StringLiteral
 
     It is a Syntax Error if IsStringWellFormedUnicode of the StringValue of StringLiteral is *false*.
+flags: [module]
 negative:
-  flags: module
   phase: parse
   type: SyntaxError
 features: [arbitrary-module-namespace-names]
