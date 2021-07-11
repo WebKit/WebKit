@@ -371,16 +371,14 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
 }
 
 template<typename Visitor>
-bool PolymorphicAccess::propagateTransitions(Visitor& visitor) const
+void PolymorphicAccess::propagateTransitions(Visitor& visitor) const
 {
-    bool result = true;
     for (unsigned i = 0; i < size(); ++i)
-        result &= at(i).propagateTransitions(visitor);
-    return result;
+        at(i).propagateTransitions(visitor);
 }
 
-template bool PolymorphicAccess::propagateTransitions(AbstractSlotVisitor&) const;
-template bool PolymorphicAccess::propagateTransitions(SlotVisitor&) const;
+template void PolymorphicAccess::propagateTransitions(AbstractSlotVisitor&) const;
+template void PolymorphicAccess::propagateTransitions(SlotVisitor&) const;
 
 template<typename Visitor>
 void PolymorphicAccess::visitAggregateImpl(Visitor& visitor)

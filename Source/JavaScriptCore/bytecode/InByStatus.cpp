@@ -139,7 +139,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
         return InByStatus(NoInformation);
 
     case CacheType::InByIdSelf: {
-        Structure* structure = stubInfo->u.byIdSelf.baseObjectStructure.get();
+        Structure* structure = stubInfo->inlineAccessBaseStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return InByStatus(TakesSlowPath);
         CacheableIdentifier identifier = stubInfo->identifier();
