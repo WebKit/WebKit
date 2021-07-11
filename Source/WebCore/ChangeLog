@@ -1,3 +1,28 @@
+2021-07-11  Chris Dumez  <cdumez@apple.com>
+
+        XMLSerializer.serializeToString() doesn't properly escape \n, \n and \t
+        https://bugs.webkit.org/show_bug.cgi?id=227844
+
+        Reviewed by Darin Adler.
+
+        XMLSerializer.serializeToString() doesn't properly escape \n, \n and \t.
+
+        This is causing the "check XMLSerializer.serializeToString escapes attribute values for roundtripping" subtest to fail in WebKit on:
+        http://wpt.live/domparsing/XMLSerializer-serializeToString.html
+
+        Chrome and Firefox both escape these and pass this WPT subtest.
+
+        The specification does not indicate we should escape those:
+        - https://w3c.github.io/DOM-Parsing/#dfn-serializing-an-attribute-value
+        But there is an open bug about this:
+        - https://github.com/w3c/DOM-Parsing/issues/59
+
+        No new tests, rebaselined existing test.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::elementCannotHaveEndTag):
+        * editing/MarkupAccumulator.h:
+
 2021-07-10  Chris Dumez  <cdumez@apple.com>
 
         document.readyState should be "complete" after calling DOMParser.parseFromString()

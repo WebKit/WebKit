@@ -1,3 +1,14 @@
+2021-07-11  Chris Dumez  <cdumez@apple.com>
+
+        XMLSerializer.serializeToString() doesn't properly escape \n, \n and \t
+        https://bugs.webkit.org/show_bug.cgi?id=227844
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that one more subtest is passing.
+
+        * web-platform-tests/domparsing/XMLSerializer-serializeToString-expected.txt:
+
 2021-07-10  Chris Dumez  <cdumez@apple.com>
 
         document.readyState should be "complete" after calling DOMParser.parseFromString()
