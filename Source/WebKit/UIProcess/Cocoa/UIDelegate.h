@@ -240,7 +240,6 @@ private:
 #endif
         bool webViewActionsForElementDefaultActions : 1;
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
-        bool webViewDidNotHandleTapAsMeaningfulClickAtPoint : 1;
         bool webViewDidTapAtPointWithResult : 1;
         bool presentingViewControllerForWebView : 1;
 #endif

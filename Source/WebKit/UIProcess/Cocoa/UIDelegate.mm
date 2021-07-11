@@ -159,7 +159,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
-    m_delegateMethods.webViewDidNotHandleTapAsMeaningfulClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsMeaningfulClickAtPoint:)];
     m_delegateMethods.webViewDidTapAtPointWithResult = [delegate respondsToSelector:@selector(_webView:didTapAtPoint:withResult:)];
     m_delegateMethods.presentingViewControllerForWebView = [delegate respondsToSelector:@selector(_presentingViewControllerForWebView:)];
 #endif
@@ -1426,12 +1425,6 @@ void UIDelegate::UIClient::didTapAtPoint(const WebCore::IntPoint& point, WebKit:
 
     if (m_uiDelegate->m_delegateMethods.webViewDidTapAtPointWithResult)
         [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didTapAtPoint:point withResult:wkTapHandlingResult(result)];
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: Remove this once all internal clients adopt -_webView:didTapAtPoint:withResult:.
-    if (m_uiDelegate->m_delegateMethods.webViewDidNotHandleTapAsMeaningfulClickAtPoint && result != WebKit::TapHandlingResult::MeaningfulClick)
-        [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didNotHandleTapAsMeaningfulClickAtPoint:point];
-    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 UIViewController *UIDelegate::UIClient::presentingViewController()
