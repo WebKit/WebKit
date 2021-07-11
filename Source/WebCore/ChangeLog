@@ -1,3 +1,30 @@
+2021-07-10  Chris Dumez  <cdumez@apple.com>
+
+        document.readyState should be "complete" after calling DOMParser.parseFromString()
+        https://bugs.webkit.org/show_bug.cgi?id=227846
+
+        Reviewed by Ryosuke Niwa.
+
+        document.readyState should be "complete" after calling DOMParser.parseFromString().
+
+        This is causing the following WPT test to fail in WebKit:
+        http://wpt.live/domparsing/xmldomparser.html
+
+        Both Gecko and Blink report the correct readyState here.
+
+        No new tests, rebaselined existing test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::explicitClose):
+        explicitClose() normally calls checkCompleted() which calls FrameLoader::checkCompleted(),
+        which ends up setting the document's ready state to "complete" and then calling
+        Document::implicitClose(). However, when the document has no frame (which is the case
+        for a document just created via DOMParser.parseFromString()), we would call
+        Document::implicitClose() directly, since we don't have a FrameLoader. As a result,
+        the document's ready state would stay "interactive". To address the issue, we now set
+        the document's ready state to "complete" before calling implicitClose(), similarly to
+        what FrameLoader::checkCompleted() would have done.
+
 2021-07-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279803.
