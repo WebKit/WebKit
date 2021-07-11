@@ -47,7 +47,7 @@ public:
     BView* m_view;
     GraphicsContext* m_context;
 
-    RefPtr<NativeImage> m_image;
+    PlatformImagePtr m_image;
 };
 
 } // namespace WebCore

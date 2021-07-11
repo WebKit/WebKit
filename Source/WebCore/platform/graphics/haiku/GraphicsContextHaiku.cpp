@@ -81,6 +81,11 @@ void GraphicsContextHaiku::drawRect(const FloatRect& rect, float borderThickness
 
 void GraphicsContextHaiku::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
+    drawBitmap(image.platformImage().get(), imageSize, destRect, srcRect, options);
+}
+
+void GraphicsContextHaiku::drawBitmap(BBitmap* image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
     m_view->PushState();
     setCompositeOperation(options.compositeOperator());
 
@@ -94,7 +99,7 @@ void GraphicsContextHaiku::drawNativeImage(NativeImage& image, const FloatSize& 
     if (options.interpolationQuality() > InterpolationQuality::Low)
         flags |= B_FILTER_BITMAP_BILINEAR;
 
-    m_view->DrawBitmapAsync(image.platformImage().get(), BRect(srcRect), BRect(destRect), flags);
+    m_view->DrawBitmapAsync(image, BRect(srcRect), BRect(destRect), flags);
 
     m_view->PopState();
 }
@@ -289,20 +294,27 @@ void GraphicsContextHaiku::clipPath(const Path& path, WindRule windRule)
 
 
 void GraphicsContextHaiku::drawPattern(NativeImage& image, const WebCore::FloatSize& size, const FloatRect& destRect,
+    const FloatRect& tileRect, const AffineTransform& transform,
+    const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    drawBitmap(image.platformImage().get(), size, destRect, tileRect, transform, phase, spacing, options);
+}
+
+void GraphicsContextHaiku::drawBitmap(BBitmap* image, const WebCore::FloatSize& size, const FloatRect& destRect,
     const FloatRect& tileRect, const AffineTransform&,
     const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&)
 {
-    if (!image.platformImage()->IsValid()) // If the image hasn't fully loaded.
+    if (!image->IsValid()) // If the image hasn't fully loaded.
         return;
 
     // Figure out if the image has any alpha transparency, we can use faster drawing if not
     bool hasAlpha = false;
 
-    uint8* bits = reinterpret_cast<uint8*>(image.platformImage()->Bits());
-    uint32 width = image.platformImage()->Bounds().IntegerWidth() + 1;
-    uint32 height = image.platformImage()->Bounds().IntegerHeight() + 1;
+    uint8* bits = reinterpret_cast<uint8*>(image->Bits());
+    uint32 width = image->Bounds().IntegerWidth() + 1;
+    uint32 height = image->Bounds().IntegerHeight() + 1;
 
-    uint32 bytesPerRow = image.platformImage()->BytesPerRow();
+    uint32 bytesPerRow = image->BytesPerRow();
     for (uint32 y = 0; y < height && !hasAlpha; y++) {
         uint8* p = bits;
         for (uint32 x = 0; x < width && !hasAlpha; x++) {
@@ -325,7 +337,7 @@ void GraphicsContextHaiku::drawPattern(NativeImage& image, const WebCore::FloatS
     phaseOffsetX -= std::trunc(phaseOffsetX / tileRect.width()) * tileRect.width();
     phaseOffsetY -= std::trunc(phaseOffsetY / tileRect.height()) * tileRect.height();
     m_view->DrawTiledBitmapAsync(
-        image.platformImage().get(), destRect, BPoint(phaseOffsetX, phaseOffsetY));
+        image, destRect, BPoint(phaseOffsetX, phaseOffsetY));
     m_view->PopState();
 }
 

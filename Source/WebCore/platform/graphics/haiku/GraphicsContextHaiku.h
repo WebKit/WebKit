@@ -87,6 +87,8 @@ public:
     void save() override;
     void restore() override;
 
+    void drawBitmap(BBitmap*, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { });
+    void drawBitmap(BBitmap*, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
     BView* m_view;
     pattern m_strokeStyle;
 };
