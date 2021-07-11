@@ -1,3 +1,15 @@
+2021-07-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Workaround test262.report bug by making $ properties enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=227855
+
+        Reviewed by Alexey Shvayka.
+
+        test262.report's harness has a bug and it reports incorrect results for JSC on tests using $262 properties.
+        This patch introduces a workaround which makes properties of $ enumerable.
+
+        * jsc.cpp:
+
 2021-07-08  Yijia Huang  <yijia_huang@apple.com>
 
         Add Air opcode add/sub-and-shift for ARM64 and select this instruction in Air
