@@ -42,6 +42,10 @@
 #include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
 namespace WebCore {
 
 static const int textFieldBorderSize = 1;
@@ -606,5 +610,15 @@ void RenderThemeAdwaita::adjustListButtonStyle(RenderStyle& style, const Element
         style.setMarginLeft(Length(-2, LengthType::Fixed));
 }
 #endif // ENABLE(DATALIST_ELEMENT)
+
+#if PLATFORM(GTK)
+Seconds RenderThemeAdwaita::caretBlinkInterval() const
+{
+    gboolean shouldBlink;
+    gint time;
+    g_object_get(gtk_settings_get_default(), "gtk-cursor-blink", &shouldBlink, "gtk-cursor-blink-time", &time, nullptr);
+    return shouldBlink ? 500_us * time : 0_s;
+}
+#endif
 
 } // namespace WebCore

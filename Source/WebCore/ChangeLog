@@ -1,5 +1,19 @@
 2021-07-12  Alexander Mikhaylenko  <alexm@gnome.org>
 
+        [GTK] Adwaita entries should follow the system cursor blink settings
+        https://bugs.webkit.org/show_bug.cgi?id=227856
+
+        Reviewed by Adrian Perez de Castro.
+
+        Get the caret blink interval from GtkSettings if available, same as it was done
+        for the GTK theme before.
+
+        * rendering/RenderThemeAdwaita.cpp:
+        (WebCore::RenderThemeAdwaita::caretBlinkInterval const):
+        * rendering/RenderThemeAdwaita.h:
+
+2021-07-12  Alexander Mikhaylenko  <alexm@gnome.org>
+
         [GTK4] Scrollbar click doesn't work as expected when native scrollbars are off
         https://bugs.webkit.org/show_bug.cgi?id=226331
 
