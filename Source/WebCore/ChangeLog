@@ -1,3 +1,37 @@
+2021-07-12  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support drawing scrollbar corner
+        https://bugs.webkit.org/show_bug.cgi?id=227868
+
+        Reviewed by Michael Catanzaro.
+
+        With dark scrollbars supported, the lack of scroll corner for non-overlay
+        scrollbars becomes very noticeable. Implement it.
+
+        To properly draw them, we need to know whether scrollbars are dark, and whether
+        the vertical scrollbar is on the left. Hence, pass ScrollableArea to
+        paintScrollCorner() so we can query it.
+
+        Only cover non-system scrollbars, it would take considerable amount of work to
+        make it work for system as well.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paintScrollCorner):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::paintScrollCorner):
+        (WebCore::ScrollbarTheme::defaultPaintScrollCorner):
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::paintScrollCorner):
+        * platform/adwaita/ScrollbarThemeAdwaita.h:
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paintScrollCorner):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::paintScrollCorner):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::paintScrollCorner):
+        * rendering/RenderScrollbarTheme.h:
+
 2021-07-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unreviewed, reverting r279778.

@@ -1,3 +1,14 @@
+2021-07-12  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support drawing scrollbar corner
+        https://bugs.webkit.org/show_bug.cgi?id=227868
+
+        Reviewed by Michael Catanzaro.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::paintControlForLayerInContext):
+        Update the paintScrollCorner() call.
+
 2021-07-12  Imanol Fernandez  <ifernandez@igalia.com>
 
         Cross platform compilation of PlatformXRSystem and PlatformXRSystemProxy

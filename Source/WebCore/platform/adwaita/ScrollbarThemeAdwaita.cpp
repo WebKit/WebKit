@@ -242,6 +242,31 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
     return true;
 }
 
+void ScrollbarThemeAdwaita::paintScrollCorner(ScrollableArea& scrollableArea, GraphicsContext& graphicsContext, const IntRect& cornerRect)
+{
+    if (graphicsContext.paintingDisabled())
+        return;
+
+    SRGBA<uint8_t> scrollbarBackgroundColor;
+    SRGBA<uint8_t> scrollbarBorderColor;
+
+    if (scrollableArea.useDarkAppearanceForScrollbars()) {
+        scrollbarBackgroundColor = scrollbarBackgroundColorDark;
+        scrollbarBorderColor = scrollbarBorderColorDark;
+    } else {
+        scrollbarBackgroundColor = scrollbarBackgroundColorLight;
+        scrollbarBorderColor = scrollbarBorderColorLight;
+    }
+
+    IntRect borderRect = IntRect(cornerRect.location(), IntSize(hoveredScrollbarBorderSize, hoveredScrollbarBorderSize));
+
+    if (scrollableArea.shouldPlaceVerticalScrollbarOnLeft())
+        borderRect.move(cornerRect.width() - hoveredScrollbarBorderSize, 0);
+
+    graphicsContext.fillRect(cornerRect, scrollbarBackgroundColor);
+    graphicsContext.fillRect(borderRect, scrollbarBorderColor);
+}
+
 ScrollbarButtonPressAction ScrollbarThemeAdwaita::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
     gboolean warpSlider = FALSE;

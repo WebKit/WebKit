@@ -1374,7 +1374,7 @@ void RenderLayerScrollableArea::paintScrollCorner(GraphicsContext& context, cons
     // We don't want to paint a corner if we have overlay scrollbars, since we need
     // to see what is behind it.
     if (!hasOverlayScrollbars())
-        ScrollbarTheme::theme().paintScrollCorner(context, absRect);
+        ScrollbarTheme::theme().paintScrollCorner(*this, context, absRect);
 }
 
 void RenderLayerScrollableArea::drawPlatformResizerImage(GraphicsContext& context, const LayoutRect& resizerCornerRect)

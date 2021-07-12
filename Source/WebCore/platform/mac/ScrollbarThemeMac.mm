@@ -564,7 +564,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
     return true;
 }
 
-void ScrollbarThemeMac::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
+void ScrollbarThemeMac::paintScrollCorner(ScrollableArea&, GraphicsContext& context, const IntRect& cornerRect)
 {
     if (context.paintingDisabled())
         return;
