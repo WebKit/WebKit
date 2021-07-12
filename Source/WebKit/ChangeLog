@@ -1,3 +1,22 @@
+2021-07-12  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Incorrect deprecation declaration for -[WKWebView closeAllMediaPresentations:]
+        https://bugs.webkit.org/show_bug.cgi?id=227860
+        <rdar://80376777>
+
+        Reviewed by Sam Weinig.
+
+        In r277645, we added a deprecation declaration for -closeAllMediaPresentations:completion, but
+        that API was never shipped in a release. The actual shipped API, -closeAllMediaPresentations,
+        was removed entirely, leading to bincompat crashes when binaries built against older SDKs are
+        run against newer OSs.
+
+        Correct the deprecated API declaration, and re-add support for -closeAllMediaPresentations.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView closeAllMediaPresentations]):
+
 2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] Make a few additional adjustments to support system minimum layout margins

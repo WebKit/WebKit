@@ -934,6 +934,11 @@ static bool validateArgument(id argument)
     return false;
 }
 
+- (void)closeAllMediaPresentations
+{
+    [self closeAllMediaPresentationsWithCompletionHandler:^{ }];
+}
+
 - (void)closeAllMediaPresentations:(void (^)(void))completionHandler
 {
     [self closeAllMediaPresentationsWithCompletionHandler:completionHandler];

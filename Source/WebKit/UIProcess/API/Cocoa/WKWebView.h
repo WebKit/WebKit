@@ -343,9 +343,7 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureState) {
  @discussion Includes picture-in-picture and fullscreen.
  */
 - (void)closeAllMediaPresentationsWithCompletionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
-#ifndef __swift__
-- (void)closeAllMediaPresentations:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("closeAllMediaPresentationsWithCompletionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
-#endif
+- (void)closeAllMediaPresentations WK_API_DEPRECATED_WITH_REPLACEMENT("closeAllMediaPresentationsWithCompletionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
 
 /*! @abstract Pauses media playback in WKWebView.
  @discussion Pauses media playback. Media in the page can be restarted by calling play() on a media element or resume() on an AudioContext in JavaScript. A user can also use media controls to play media content after it has been paused.
