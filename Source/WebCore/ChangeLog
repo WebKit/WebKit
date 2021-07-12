@@ -1,3 +1,15 @@
+2021-07-12  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK4] Scrollbar click doesn't work as expected when native scrollbars are off
+        https://bugs.webkit.org/show_bug.cgi?id=226331
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make Adwaita scrollbar theme follow the GTK setting if possible.
+
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::handleMousePressEvent):
+
 2021-07-11  Chris Dumez  <cdumez@apple.com>
 
         :link and :visited pseudo-class selectors should not match <link> elements

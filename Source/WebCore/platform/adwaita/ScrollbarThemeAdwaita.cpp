@@ -34,6 +34,10 @@
 #include "Scrollbar.h"
 #include "ThemeAdwaita.h"
 
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
 namespace WebCore {
 
 static const unsigned scrollbarSize = 13;
@@ -233,13 +237,21 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
 
 ScrollbarButtonPressAction ScrollbarThemeAdwaita::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
+    gboolean warpSlider = FALSE;
     switch (pressedPart) {
     case BackTrackPart:
     case ForwardTrackPart:
+#if PLATFORM(GTK)
+        g_object_get(gtk_settings_get_default(),
+            "gtk-primary-button-warps-slider",
+            &warpSlider, nullptr);
+#endif
         // The shift key or middle/right button reverses the sense.
         if (event.shiftKey() || event.button() != LeftButton)
-            return ScrollbarButtonPressAction::CenterOnThumb;
-        return ScrollbarButtonPressAction::Scroll;
+            warpSlider = !warpSlider;
+        return warpSlider ?
+            ScrollbarButtonPressAction::CenterOnThumb:
+            ScrollbarButtonPressAction::Scroll;
     case ThumbPart:
         if (event.button() != RightButton)
             return ScrollbarButtonPressAction::StartDrag;
