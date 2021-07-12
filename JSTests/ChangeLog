@@ -1,5 +1,16 @@
 2021-07-12  Saam Barati  <sbarati@apple.com>
 
+        Run some tests for fewer iterations to prevent test timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=227879
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/get-by-val-negative-array-index.js:
+        * microbenchmarks/memcpy-typed-loop-small.js:
+        * microbenchmarks/put-by-val-negative-array-index.js:
+
+2021-07-12  Saam Barati  <sbarati@apple.com>
+
         stress/wasm-loop-consistency.js should require the --useExecutableAllocationFuzz=false JSC option
         https://bugs.webkit.org/show_bug.cgi?id=227876
 

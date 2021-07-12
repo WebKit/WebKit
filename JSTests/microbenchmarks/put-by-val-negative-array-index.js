@@ -11,10 +11,10 @@ noInline(foo);
 
 const arr = new Array(10).fill({});
 let result = 0;
-for (let i = 0; i < 1e6; i++) {
+for (let i = 0; i < 1e5; i++) {
     result += foo(arr, i % arr.length);
 }
-for (let i = 0; i < 1e6; i++) {
+for (let i = 0; i < 1e5; i++) {
     result += foo(arr, i % arr.length);
     if (!(i % arr.length))
         result += foo(arr, -1);
