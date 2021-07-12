@@ -176,7 +176,7 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollD
 
     if (isEventStop(event)) {
         startAnimation();
-        return false;
+        return true;
     }
 
     uint32_t eventTime = event->eventTime;

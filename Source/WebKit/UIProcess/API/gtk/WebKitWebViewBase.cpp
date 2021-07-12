@@ -2014,13 +2014,6 @@ static void webkitWebViewBaseTouchDragEnd(WebKitWebViewBase* webViewBase, gdoubl
         gtk_gesture_drag_get_start_point(GTK_GESTURE_DRAG(gesture), &x, &y);
         unsigned modifiers = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
         webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Release, GDK_BUTTON_PRIMARY, GDK_BUTTON1_MASK, x + offsetX, y + offsetY, modifiers, 0, touchPointerEventType());
-    } else {
-        ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
-        if (controller && controller->isSwipeGestureEnabled()) {
-            int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture)));
-            PlatformGtkScrollData scrollData = { .delta = FloatSize(), .eventTime = eventTime, .source = GDK_SOURCE_TOUCHSCREEN, .isEnd = true };
-            controller->handleScrollWheelEvent(&scrollData);
-        }
     }
 }
 
@@ -2040,6 +2033,14 @@ static void webkitWebViewBaseTouchSwipe(WebKitWebViewBase* webViewBase, gdouble 
     if (gtk_gesture_get_point(gesture, gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture)), &x, &y)) {
         auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
         auto* event = gtk_gesture_get_last_event(gesture, sequence);
+
+        ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
+        if (controller && controller->isSwipeGestureEnabled()) {
+            int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture)));
+            PlatformGtkScrollData scrollData = { .delta = FloatSize(), .eventTime = eventTime, .source = GDK_SOURCE_TOUCHSCREEN, .isEnd = true };
+            if (controller->handleScrollWheelEvent(&scrollData))
+                return;
+        }
 
         webkitWebViewBaseSynthesizeWheelEvent(webViewBase, event, -velocityX, -velocityY, x, y, WheelEventPhase::NoPhase, WheelEventPhase::Began);
     }
