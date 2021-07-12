@@ -1,5 +1,18 @@
 2021-07-11  Chris Dumez  <cdumez@apple.com>
 
+        :link and :visited pseudo-class selectors should not match <link> elements
+        https://bugs.webkit.org/show_bug.cgi?id=227847
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/link-expected.txt:
+
+2021-07-11  Chris Dumez  <cdumez@apple.com>
+
         XMLSerializer.serializeToString() doesn't properly escape \n, \n and \t
         https://bugs.webkit.org/show_bug.cgi?id=227844
 

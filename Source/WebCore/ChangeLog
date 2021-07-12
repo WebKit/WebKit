@@ -1,5 +1,23 @@
 2021-07-11  Chris Dumez  <cdumez@apple.com>
 
+        :link and :visited pseudo-class selectors should not match <link> elements
+        https://bugs.webkit.org/show_bug.cgi?id=227847
+
+        Reviewed by Sam Weinig.
+
+        :link, :visited and :any-link should only match <a> and <area> elements as per:
+        - https://drafts.csswg.org/selectors/#the-any-link-pseudo
+
+        Blink and Gecko match the specification. However, WebKit was incorrectly matching
+        <link> elements too.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+
+2021-07-11  Chris Dumez  <cdumez@apple.com>
+
         XMLSerializer.serializeToString() doesn't properly escape \n, \n and \t
         https://bugs.webkit.org/show_bug.cgi?id=227844
 

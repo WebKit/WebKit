@@ -171,10 +171,6 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString
         return;
     }
     if (name == hrefAttr) {
-        bool wasLink = isLink();
-        setIsLink(!value.isNull() && !shouldProhibitLinks(this));
-        if (wasLink != isLink())
-            invalidateStyleForSubtree();
         process();
         return;
     }

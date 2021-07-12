@@ -1,3 +1,21 @@
+2021-07-11  Chris Dumez  <cdumez@apple.com>
+
+        :link and :visited pseudo-class selectors should not match <link> elements
+        https://bugs.webkit.org/show_bug.cgi?id=227847
+
+        Reviewed by Sam Weinig.
+
+        Update / Rebaseline existing tests due to behavior change.
+
+        * fast/css/link-basics-expected.html:
+        * fast/css/link-basics.html:
+        * fast/selectors/any-link-basics-expected.txt:
+        * fast/selectors/link-basics-expected.txt:
+        * fast/selectors/link-basics-xhtml-expected.txt:
+        * fast/selectors/resources/html-link-type-tests.js:
+        (testHTMLTagsForLink):
+        * fast/selectors/webkit-any-link-basics-expected.txt:
+
 2021-07-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
