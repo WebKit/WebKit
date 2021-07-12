@@ -1,3 +1,21 @@
+2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Make a few additional adjustments to support system minimum layout margins
+        https://bugs.webkit.org/show_bug.cgi?id=227859
+        rdar://80113612
+
+        Reviewed by Tim Horton.
+
+        Reduce the default minimum viewport scale on watchOS to avoid horizontal scrolling when loading wide fixed-
+        viewport-width web content. See WebKit ChangeLog for more details.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::platformDeviceWidthOverride):
+        (WebCore::platformMinimumScaleForWebpage):
+        (WebCore::shouldOverrideShrinkToFitArgument):
+        (WebCore::ViewportConfiguration::nativeWebpageParametersWithShrinkToFit):
+        (WebCore::ViewportConfiguration::webpageParameters):
+
 2021-07-12  Tyler Wilcock  <twilco.o@protonmail.com>
 
         AX: Add ARIA role "image" as a new role, and leave "img" as a synonym

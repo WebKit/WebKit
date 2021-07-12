@@ -45,7 +45,7 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 }
 #endif // ASSERT_ENABLED
 
-static float platformDeviceWidthOverride()
+static constexpr float platformDeviceWidthOverride()
 {
 #if PLATFORM(WATCHOS)
     return 320;
@@ -54,7 +54,16 @@ static float platformDeviceWidthOverride()
 #endif
 }
 
-static bool shouldOverrideShrinkToFitArgument()
+static constexpr double platformMinimumScaleForWebpage()
+{
+#if PLATFORM(WATCHOS)
+    return 0.1;
+#else
+    return 0.25;
+#endif
+}
+
+static constexpr bool shouldOverrideShrinkToFitArgument()
 {
 #if PLATFORM(WATCHOS)
     return true;
@@ -372,7 +381,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParameters
 {
     Parameters parameters = ViewportConfiguration::nativeWebpageParametersWithoutShrinkToFit();
     parameters.allowsShrinkToFit = true;
-    parameters.minimumScale = 0.25;
+    parameters.minimumScale = platformMinimumScaleForWebpage();
     parameters.initialScaleIsSet = false;
     return parameters;
 }
@@ -384,7 +393,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
     parameters.widthIsSet = true;
     parameters.allowsUserScaling = true;
     parameters.allowsShrinkToFit = true;
-    parameters.minimumScale = 0.25;
+    parameters.minimumScale = platformMinimumScaleForWebpage();
     parameters.maximumScale = 5;
     return parameters;
 }

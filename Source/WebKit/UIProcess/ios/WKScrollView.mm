@@ -131,6 +131,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 #endif
+    BOOL _contentInsetWasExternallyOverridden;
     CGFloat _keyboardBottomInsetAdjustment;
     BOOL _scrollEnabledByClient;
     BOOL _scrollEnabledInternal;
@@ -270,6 +271,14 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 - (void)setContentInset:(UIEdgeInsets)contentInset
 {
     [super setContentInset:contentInset];
+
+    _contentInsetWasExternallyOverridden = YES;
+#if PLATFORM(WATCHOS)
+    if (_contentScrollInsetInternal) {
+        _contentScrollInsetInternal = std::nullopt;
+        [self _updateContentScrollInset];
+    }
+#endif // PLATFORM(WATCHOS)
 
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
@@ -433,6 +442,11 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
 - (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets
 {
+#if PLATFORM(WATCHOS)
+    if (_contentInsetWasExternallyOverridden)
+        return NO;
+#endif // PLATFORM(WATCHOS)
+
     if (_contentScrollInsetFromClient)
         return NO;
 
@@ -450,6 +464,10 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         super.contentScrollInset = *insets;
     else if (auto insets = _contentScrollInsetInternal)
         super.contentScrollInset = *insets;
+#if PLATFORM(WATCHOS)
+    else if (_contentInsetWasExternallyOverridden)
+        super.contentScrollInset = UIEdgeInsetsZero;
+#endif // PLATFORM(WATCHOS)
     else
         ASSERT_NOT_REACHED();
 }

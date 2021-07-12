@@ -1,3 +1,32 @@
+2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Make a few additional adjustments to support system minimum layout margins
+        https://bugs.webkit.org/show_bug.cgi?id=227859
+        rdar://80113612
+
+        Reviewed by Tim Horton.
+
+        Add support for simulating arbitrary horizontal (trailing and leading) values for `-systemMinimumLayoutMargin`
+        in WebKitTestRunner, via a new "horizontalSystemMinimumLayoutMargin" test option. By default, this is 0.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        (WTR::TestOptions::keyTypeMapping):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::horizontalSystemMinimumLayoutMargin const):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[PlatformWebViewController systemMinimumLayoutMargins]):
+
+        Override this UIViewController method and replace the leading and trailing layout margin values with the values
+        from test options.
+
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Additionally make a slight adjustment here to avoid calling `-setContentInset` on the scroll view in between
+        tests if the content insets aren't changing. This is needed in order for the new layout test to work on watchOS.
+
 2021-07-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         SVGImageForContainer reports true for is<SVGImage>() but it doesn't inherit from SVGImage

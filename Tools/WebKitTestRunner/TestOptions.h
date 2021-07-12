@@ -73,6 +73,7 @@ public:
     bool useRemoteLayerTree() const { return boolTestRunnerFeatureValue("useRemoteLayerTree"); }
     bool useThreadedScrolling() const { return boolTestRunnerFeatureValue("useThreadedScrolling"); }
     double contentInsetTop() const { return doubleTestRunnerFeatureValue("contentInset.top"); }
+    double horizontalSystemMinimumLayoutMargin() const { return doubleTestRunnerFeatureValue("horizontalSystemMinimumLayoutMargin"); }
     double deviceScaleFactor() const { return doubleTestRunnerFeatureValue("deviceScaleFactor"); }
     double viewHeight() const { return doubleTestRunnerFeatureValue("viewHeight"); }
     double viewWidth() const { return doubleTestRunnerFeatureValue("viewWidth"); }

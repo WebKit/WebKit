@@ -1,3 +1,18 @@
+2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Make a few additional adjustments to support system minimum layout margins
+        https://bugs.webkit.org/show_bug.cgi?id=227859
+        rdar://80113612
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test that uses the new test option to verify that nonzero horizontal system minimum layout
+        margins shrink the width of the viewport on watchOS (this test also disables watchOS device adaptations and uses
+        a device-width viewport with `initial-scale=1` such that we can simply check the value of `innerWidth`).
+
+        * fast/viewport/watchos/viewport-with-system-minimum-layout-margins-expected.txt: Added.
+        * fast/viewport/watchos/viewport-with-system-minimum-layout-margins.html: Added.
+
 2021-07-12  Tyler Wilcock  <twilco.o@protonmail.com>
 
         AX: Add ARIA role "image" as a new role, and leave "img" as a synonym

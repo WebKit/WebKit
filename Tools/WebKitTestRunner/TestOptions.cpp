@@ -159,6 +159,7 @@ const TestFeatures& TestOptions::defaults()
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
+            { "horizontalSystemMinimumLayoutMargin", 0 },
             { "deviceScaleFactor", 1 },
             { "viewHeight", 600 },
             { "viewWidth", 800 },
@@ -210,6 +211,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
+        { "horizontalSystemMinimumLayoutMargin", TestHeaderKeyType::DoubleTestRunner },
         { "deviceScaleFactor", TestHeaderKeyType::DoubleTestRunner },
         { "viewHeight", TestHeaderKeyType::DoubleTestRunner },
         { "viewWidth", TestHeaderKeyType::DoubleTestRunner },
