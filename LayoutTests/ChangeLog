@@ -1,3 +1,28 @@
+2021-07-12  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        AX: Add ARIA role "image" as a new role, and leave "img" as a synonym
+        https://bugs.webkit.org/show_bug.cgi?id=224615
+
+        Reviewed by Chris Fleizach.
+
+        The "image" role is replacing the "img" role (though "img" is not
+        going away), so "image" should be returned from `computedRoleString`.
+
+        * accessibility/image-role-is-synonomous-with-img-role-expected.txt: Added.
+        * accessibility/image-role-is-synonomous-with-img-role.html: Added.
+
+        * accessibility/roles-computedRoleString-expected.txt:
+        * accessibility/roles-computedRoleString.html:
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * platform/glib/accessibility/roles-computedRoleString-expected.txt:
+        * platform/gtk/accessibility/gtk/xml-roles-exposed-expected.txt:
+        * platform/gtk/accessibility/image-link-expected.txt:
+        * platform/gtk/inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/wpe/accessibility/image-link-expected.txt:
+        All the tests in this group have been updated to expect "image"
+        instead of "img".
+
 2021-07-12  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] media/playlist-inherits-user-gesture.html is timing out

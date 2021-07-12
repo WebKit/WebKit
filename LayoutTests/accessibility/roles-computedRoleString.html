@@ -28,10 +28,10 @@
 <h5 data-role="heading" data-platform="atk,mac" class="ex">X</h5>
 <h5 data-role="heading" data-platform="atk,mac" class="ex">X</h6>
 <hr data-role="separator" data-platform="atk,mac" class="ex">
-<img data-role="img" data-platform="atk,mac" class="ex" data-note=":not([src]):not([alt])">
+<img data-role="image" data-platform="atk,mac" class="ex" data-note=":not([src]):not([alt])">
 <img data-role="" data-platform="atk,mac" class="ex" alt="" data-note="[alt='']">
-<img data-role="img" data-platform="atk,mac" class="ex" src="foo.png" data-note="[src]:not([alt])">
-<img data-role="img" data-platform="atk,mac" class="ex" alt="X" data-note="[alt='X']">
+<img data-role="image" data-platform="atk,mac" class="ex" src="foo.png" data-note="[src]:not([alt])">
+<img data-role="image" data-platform="atk,mac" class="ex" alt="X" data-note="[alt='X']">
 <input type="button" value="X" data-role="button" data-platform="atk,mac" class="ex" data-note="[type='button']">
 <input type="checkbox" data-role="checkbox" data-platform="atk,mac" class="ex" data-note="[type='checkbox']">
 <input type="date" data-role=""data-platform="atk,mac" class="ex" data-note="[type='date']">
@@ -190,7 +190,7 @@
 <div role="form"                     data-role="form" data-platform="atk,mac" class="ex">X</div>
 <div role="graphics-document"        data-role="document" data-platform="atk,mac" class="ex">X</div>
 <div role="graphics-object"          data-role="group" data-platform="atk,mac" class="ex">X</div>
-<div role="graphics-symbol"          data-role="img" data-platform="atk,mac" class="ex">X</div>
+<div role="graphics-symbol"          data-role="image" data-platform="atk,mac" class="ex">X</div>
 <div role="grid"                     data-role="grid" data-platform="atk,mac" class="ex">
     <div role="rowgroup"             data-role="rowgroup" data-platform="atk,mac" class="ex">
         <div role="row"              data-role="row" data-platform="atk,mac" class="ex">
@@ -203,7 +203,7 @@
 <div role="feed"                     data-role="feed" data-platform="atk,mac" class="ex">X</div>
 <div role="group"                    data-role="group" data-platform="atk,mac" class="ex">X</div>
 <div role="heading"                  data-role="heading" data-platform="atk,mac" class="ex">X</div>
-<div role="img"                      data-role="img" data-platform="atk,mac" class="ex">X</div>
+<div role="img"                      data-role="image" data-platform="atk,mac" class="ex">X</div>
 <div role="insertion"                data-role="insertion" data-platform="atk,mac" class="ex">X</div>
 <div role="link"                     data-role="link" data-platform="atk,mac" class="ex">X</div>
 <div role="list"                     data-role="list" data-platform="atk,mac" class="ex">
@@ -293,16 +293,16 @@ bar"                                 data-role="" data-platform="atk,mac" class=
 <!-- ==================================================================================================== -->
 <!-- implicit role parsing tests -->
 <!-- ==================================================================================================== -->
-<img role="foo" src="foo.png"        data-role="img" alt="X" data-platform="atk,mac" class="ex">
-<img role="foo bar" src="foo.png"    data-role="img" alt="X" data-platform="atk,mac" class="ex">
-<img role="foo  bar" src="foo.png"    data-role="img" alt="X" data-platform="atk,mac" class="ex"><!-- [sic] Two spaces in role string -->
-<img role="foo	bar" src="foo.png"   data-role="img" alt="X" data-platform="atk,mac" class="ex"><!-- [sic] Newline in role string -->
+<img role="foo" src="foo.png"        data-role="image" alt="X" data-platform="atk,mac" class="ex">
+<img role="foo bar" src="foo.png"    data-role="image" alt="X" data-platform="atk,mac" class="ex">
+<img role="foo  bar" src="foo.png"    data-role="image" alt="X" data-platform="atk,mac" class="ex"><!-- [sic] Two spaces in role string -->
+<img role="foo	bar" src="foo.png"   data-role="image" alt="X" data-platform="atk,mac" class="ex"><!-- [sic] Newline in role string -->
 <img role="foo	
-bar" src="foo.png"                   data-role="img" alt="X" data-platform="atk,mac" class="ex"><!-- [sic] Tab char in role string -->
+bar" src="foo.png"                   data-role="image" alt="X" data-platform="atk,mac" class="ex"><!-- [sic] Tab char in role string -->
 <img role="text" src="foo.png"       data-role="text" alt="X" data-platform="atk,mac" class="ex">
 <img role="text img" src="foo.png"   data-role="text" alt="X" data-platform="atk,mac" class="ex">
-<img role="img text" src="foo.png"   data-role="img" alt="X" data-platform="atk,mac" class="ex">
-<img role="presentation"             data-role="img" data-note="[aria-label]" alt="X" src="foo.png" aria-label="X" data-platform="atk,mac" class="ex"><!-- presentation with global attr should fallback to implicit role -->
+<img role="img text" src="foo.png"   data-role="image" alt="X" data-platform="atk,mac" class="ex">
+<img role="presentation"             data-role="image" data-note="[aria-label]" alt="X" src="foo.png" aria-label="X" data-platform="atk,mac" class="ex"><!-- presentation with global attr should fallback to implicit role -->
 <a href="#" role="foo bar"           data-role="link" data-platform="atk,mac" class="ex">X</a>
 </div>
 

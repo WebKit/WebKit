@@ -1,3 +1,20 @@
+2021-07-12  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        AX: Add ARIA role "image" as a new role, and leave "img" as a synonym
+        https://bugs.webkit.org/show_bug.cgi?id=224615
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/image-role-is-synonomous-with-img-role.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap):
+        Add "image" ARIA role as a synonym for the "img" ARIA role, both of
+        which map to the AccessibilityRole::Image WebCore representation.
+
+        Also hardcode the ARIA reverse role map to return "image" for
+        the AccessibilityRole::Image key.
+
 2021-07-12  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK][WPE] Support drawing scrollbar corner

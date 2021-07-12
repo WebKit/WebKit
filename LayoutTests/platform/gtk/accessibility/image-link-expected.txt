@@ -41,6 +41,6 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: LayoutTests/accessibility/resources/cake.png
-AXPlatformAttributes: computed-role:img, tag:img, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:image, tag:img, toolkit:WebKitGtk
 
 

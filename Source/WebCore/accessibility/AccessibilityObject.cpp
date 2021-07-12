@@ -2124,6 +2124,8 @@ static void initializeRoleMap()
         { "rowheader"_s, AccessibilityRole::RowHeader },
         { "group"_s, AccessibilityRole::ApplicationGroup },
         { "heading"_s, AccessibilityRole::Heading },
+        // The "image" role is synonymous with the "img" role. https://w3c.github.io/aria/#image
+        { "image"_s, AccessibilityRole::Image },
         { "img"_s, AccessibilityRole::Image },
         { "insertion"_s, AccessibilityRole::Insertion },
         { "link"_s, AccessibilityRole::WebCoreLink },
@@ -2184,6 +2186,7 @@ static void initializeRoleMap()
         gAriaRoleMap->set(roles[i].ariaRole, roles[i].webcoreRole);
         gAriaReverseRoleMap->set(static_cast<int>(roles[i].webcoreRole), roles[i].ariaRole);
     }
+    gAriaReverseRoleMap->set(static_cast<int>(AccessibilityRole::Image), "image"_s);
 }
 
 static ARIARoleMap& ariaRoleMap()

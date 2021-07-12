@@ -438,7 +438,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:img, xml-roles:img, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:image, xml-roles:img, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXInsertion
 AXParent: AXWebArea
@@ -1239,7 +1239,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:img, xml-roles:doc-cover, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:image, xml-roles:doc-cover, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXSection
 AXParent: AXWebArea
@@ -1811,7 +1811,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:img, xml-roles:graphics-symbol, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:image, xml-roles:graphics-symbol, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXParagraph
 AXParent: AXWebArea
