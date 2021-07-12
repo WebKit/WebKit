@@ -1390,3 +1390,7 @@ webkit.org/b/227776 [ Catalina Release ] scrollbars/corner-resizer-window-inacti
 
 webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Crash ]
 
+webkit.org/b/227874 [ BigSur Release ] fullscreen/full-screen-remove-children.html [ Pass Crash ]
+
+
+
