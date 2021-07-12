@@ -1,3 +1,27 @@
+2021-07-12  Garrett Davidson  <garrett_davidson@apple.com>
+
+        _WKWebAuthenticationPanel escapes slashes in origin
+        https://bugs.webkit.org/show_bug.cgi?id=227724
+        rdar://80232742
+
+        Reviewed by Kate Cheney.
+
+        Update both the makeCredential and getAssertion tests to use an origin.
+
+        WebAuthenticationPanel.GetAssertionLA:
+        This test wasn't using an origin or RPID. Update it to use both. This means both
+        clientDataJSON and authenticatorData changed. Update both to the new expected
+        values, using as much plaintext as possible.
+
+        WebAuthenticationPanel.MakeCredentialLA:
+        This test should have caught this issue, but the origin being passed here isn't
+        valid, because it didn't have a scheme. Per the WebAuthn spec, origins used by
+        WebAuthn MUST start with "https://". Also update this test to use plaintext
+        instead of base64 for clientDataJSON.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-07-12  Tim Horton  <timothy_horton@apple.com>
 
         BifurcatedGraphicsContext can't draw text

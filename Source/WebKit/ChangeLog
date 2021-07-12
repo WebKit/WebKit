@@ -1,3 +1,16 @@
+2021-07-12  Garrett Davidson  <garrett_davidson@apple.com>
+
+        _WKWebAuthenticationPanel escapes slashes in origin
+        https://bugs.webkit.org/show_bug.cgi?id=227724
+        rdar://80232742
+
+        Reviewed by Kate Cheney.
+
+        Tell NSJSONSerialization not to try to escapes slashes, like those in the scheme of an origin.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (produceClientDataJson):
+
 2021-07-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Make WebKit observe spatial audio accessibility settings

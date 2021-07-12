@@ -73,7 +73,7 @@ static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NS
     [dictionary setObject:base64URLEncodeToString(challenge.bytes, challenge.length) forKey:@"challenge"];
     [dictionary setObject:origin forKey:@"origin"];
 
-    return [NSJSONSerialization dataWithJSONObject:dictionary.get() options:NSJSONWritingSortedKeys error:nil];
+    return [NSJSONSerialization dataWithJSONObject:dictionary.get() options:(NSJSONWritingSortedKeys | NSJSONWritingWithoutEscapingSlashes) error:nil];
 }
 
 static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
