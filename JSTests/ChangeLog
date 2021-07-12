@@ -1,3 +1,12 @@
+2021-07-12  Saam Barati  <sbarati@apple.com>
+
+        stress/wasm-loop-consistency.js should require the --useExecutableAllocationFuzz=false JSC option
+        https://bugs.webkit.org/show_bug.cgi?id=227876
+
+        Reviewed by Mark Lam.
+
+        * stress/wasm-loop-consistency.js:
+
 2021-07-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update test262
