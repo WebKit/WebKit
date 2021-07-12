@@ -40,12 +40,12 @@
 
 namespace WebCore {
 
-static const unsigned scrollbarSize = 13;
+static const unsigned scrollbarSize = 15;
 static const unsigned hoveredScrollbarBorderSize = 1;
 static const unsigned thumbBorderSize = 1;
 static const unsigned overlayThumbSize = 5;
 static const unsigned minimumThumbSize = 40;
-static const unsigned thumbSize = 6;
+static const unsigned thumbMargin = 3;
 static const double scrollbarOpacity = 0.8;
 
 static constexpr auto scrollbarBackgroundColorLight = SRGBA<uint8_t> { 206, 206, 206 };
@@ -174,38 +174,45 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         graphicsContext.fillRect(frame, scrollbarBorderColor);
     }
 
+    int thumbCornerSize;
     int thumbPos = thumbPosition(scrollbar);
     int thumbLen = thumbLength(scrollbar);
     IntRect thumb = rect;
     if (scrollbar.hoveredPart() == NoPart && usesOverlayScrollbars()) {
+        int overlayThumbMargin = thumbMargin - thumbBorderSize;
+        thumbCornerSize = overlayThumbSize / 2;
+
         if (scrollbar.orientation() == VerticalScrollbar) {
             if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
-                thumb.move(hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
+                thumb.move(0, thumbPos + overlayThumbMargin);
             else
-                thumb.move(scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
+                thumb.move(scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize, thumbPos + overlayThumbMargin);
             thumb.setWidth(overlayThumbSize);
-            thumb.setHeight(thumbLen - thumbBorderSize * 2);
+            thumb.setHeight(thumbLen - overlayThumbMargin * 2);
         } else {
-            thumb.move(thumbPos + thumbBorderSize, scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize);
-            thumb.setWidth(thumbLen - thumbBorderSize * 2);
+            thumb.move(thumbPos + thumbMargin, scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize);
+            thumb.setWidth(thumbLen - overlayThumbMargin * 2);
             thumb.setHeight(overlayThumbSize);
         }
     } else {
+        int thumbSize = scrollbarSize - hoveredScrollbarBorderSize - thumbMargin * 2;
+        thumbCornerSize = thumbSize / 2;
+
         if (scrollbar.orientation() == VerticalScrollbar) {
             if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
-                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2) - hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
+                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2) - hoveredScrollbarBorderSize, thumbPos + thumbMargin);
             else
-                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2), thumbPos + thumbBorderSize);
+                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2), thumbPos + thumbMargin);
             thumb.setWidth(thumbSize);
-            thumb.setHeight(thumbLen - thumbBorderSize * 2);
+            thumb.setHeight(thumbLen - thumbMargin * 2);
         } else {
-            thumb.move(thumbPos + thumbBorderSize, scrollbarSize - (scrollbarSize / 2 + thumbSize / 2));
-            thumb.setWidth(thumbLen - thumbBorderSize * 2);
+            thumb.move(thumbPos + thumbMargin, scrollbarSize - (scrollbarSize / 2 + thumbSize / 2));
+            thumb.setWidth(thumbLen - thumbMargin * 2);
             thumb.setHeight(thumbSize);
         }
     }
 
-    FloatSize corner(4, 4);
+    FloatSize corner(thumbCornerSize, thumbCornerSize);
     Path path;
     if (scrollbar.hoveredPart() == NoPart && usesOverlayScrollbars()) {
         path.addRoundedRect(thumb, corner);
