@@ -1,3 +1,19 @@
+2021-07-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279493.
+        https://bugs.webkit.org/show_bug.cgi?id=227878
+
+        Web Inspector: Can't reveal local overrides in the sidebar if
+        lots of scripts are visible
+
+        Reverted changeset:
+
+        "Web Inspector: [Regression: r279271] Sources: Breakpoints
+        section in navigation sidebar disappears when Web Inspector
+        becomes taller than 650px"
+        https://bugs.webkit.org/show_bug.cgi?id=227597
+        https://commits.webkit.org/r279493
+
 2021-07-09  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Perform sidebar panel and navigation bar layout asynchronously during resize
