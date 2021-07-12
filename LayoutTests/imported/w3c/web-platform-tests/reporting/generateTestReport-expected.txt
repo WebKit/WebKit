@@ -1,0 +1,3 @@
+
+FAIL Generate Test Report Can't find variable: ReportingObserver
+

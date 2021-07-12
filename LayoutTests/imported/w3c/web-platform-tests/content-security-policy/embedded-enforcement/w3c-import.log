@@ -14,8 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/allow_csp_from-header.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/blocked-iframe-are-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/change-csp-attribute-and-history-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/iframe-csp-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required-csp-header-cascade.html
@@ -30,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-nonces.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-none.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-self.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-source_list-wildcards.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-strict_dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-unsafe_eval.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-unsafe_hashes.html

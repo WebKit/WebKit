@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-error-event-fires.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-hash-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-hash-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-hash-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-hash-default-src-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-imported-style-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-imported-style-blocked.html

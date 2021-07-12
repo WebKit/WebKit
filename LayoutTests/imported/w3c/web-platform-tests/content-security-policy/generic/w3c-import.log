@@ -34,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_8.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_8_1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_9.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/invalid-characters-in-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/negativeTests.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/no-default-src.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/no-default-src.sub.html.sub.headers
@@ -43,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/positiveTest.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/test-case.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/unreached.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/wildcardHostTest.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/wildcardHostTestFailure.js

@@ -1,0 +1,14 @@
+
+FAIL Content Security Policy: Expects allowed for worklet-paint to same-https origin and keep-origin redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-paint to same-https origin and no-redirect redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects blocked for worklet-paint to cross-https origin and keep-origin redirection from https context. assert_unreached: main promise resolved unexpectedly Reached unreachable code
+FAIL Content Security Policy: Expects blocked for worklet-paint to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+FAIL Content Security Policy: Expects blocked for worklet-paint to cross-https origin and no-redirect redirection from https context. assert_unreached: main promise resolved unexpectedly Reached unreachable code
+FAIL Content Security Policy: Expects blocked for worklet-paint to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+FAIL Content Security Policy: Expects blocked for worklet-paint to cross-https origin and swap-origin redirection from https context. assert_unreached: main promise resolved unexpectedly Reached unreachable code
+FAIL Content Security Policy: Expects blocked for worklet-paint to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+FAIL Content Security Policy: Expects blocked for worklet-paint to same-https origin and swap-origin redirection from https context. assert_unreached: main promise resolved unexpectedly Reached unreachable code
+FAIL Content Security Policy: Expects blocked for worklet-paint to same-https origin and swap-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+

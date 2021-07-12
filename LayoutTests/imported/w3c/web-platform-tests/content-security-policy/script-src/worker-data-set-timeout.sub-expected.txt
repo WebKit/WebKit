@@ -1,0 +1,3 @@
+
+FAIL Shared worker with data: url inherits CSP Can't find variable: SharedWorker
+

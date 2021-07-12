@@ -1,0 +1,3 @@
+
+FAIL sandbox directive for SharedWorker Can't find variable: SharedWorker
+

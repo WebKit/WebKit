@@ -15,9 +15,12 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-inside-csp.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/meta-element.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-allow-scripts-subframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-allow-scripts.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-empty-subframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-empty.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/service-worker-sandbox.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/shared-worker-sandbox.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/window-reuse-sandboxed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/window-reuse-unsandboxed.html

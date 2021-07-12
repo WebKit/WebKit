@@ -378,6 +378,7 @@
     "web-platform-tests/quirks/unitless-length": "import", 
     "web-platform-tests/referrer-policy": "import", 
     "web-platform-tests/remote-playback": "import", 
+    "web-platform-tests/reporting": "import", 
     "web-platform-tests/requestidlecallback": "import", 
     "web-platform-tests/resize-observer": "import", 
     "web-platform-tests/resize-observer/": "import", 

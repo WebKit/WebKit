@@ -14,7 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicated-inheritance.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicated-script.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/shared-inheritance.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/shared-script.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-connect-src.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-connect-src.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-script-src.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-script-src.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-connect-src.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-report-only.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-script-src.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-connect-src.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-report-only.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-script-src.sub.html

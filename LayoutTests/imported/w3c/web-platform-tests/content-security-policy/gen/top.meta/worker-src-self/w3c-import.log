@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/script-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/script-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import-data.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import-data.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-animation-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-animation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-audio-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-layout-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-layout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-paint-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-paint.https.html

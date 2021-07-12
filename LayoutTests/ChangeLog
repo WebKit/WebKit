@@ -1,3 +1,13 @@
+2021-07-12  Chris Dumez  <cdumez@apple.com>
+
+        Resync content-security-policy web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227651
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-07-12  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur Release wk2 ]fullscreen/full-screen-remove-children.html is a flaky crash.

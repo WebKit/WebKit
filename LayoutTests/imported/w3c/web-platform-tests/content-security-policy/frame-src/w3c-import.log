@@ -22,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-redirect.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-redirect.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-sandboxed-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-sandboxed-allowed.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-self-unique-origin.html
