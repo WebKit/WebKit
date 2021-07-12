@@ -321,6 +321,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     , m_pid(pid)
     , m_reason(reason)
 {
+    ASSERT(isMainRunLoop());
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
     ASSERT(runningBoardAssertionName);
     if (!pid) {
@@ -365,6 +366,7 @@ void ProcessAssertion::acquireSync()
 
 ProcessAssertion::~ProcessAssertion()
 {
+    ASSERT(isMainRunLoop());
     RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 
     if (m_rbsAssertion) {
