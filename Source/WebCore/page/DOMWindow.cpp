@@ -2343,7 +2343,7 @@ void DOMWindow::removeAllEventListeners()
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    if (RefPtr document = this->document())
+    if (auto* document = this->document())
         document->didRemoveEventTargetNode(*document);
 #endif
 
