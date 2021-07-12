@@ -1,3 +1,27 @@
+2021-07-12  Tim Horton  <timothy_horton@apple.com>
+
+        BifurcatedGraphicsContext can't draw text
+        https://bugs.webkit.org/show_bug.cgi?id=227883
+
+        Reviewed by Wenson Hsieh.
+
+        API test: BifurcatedGraphicsContextTests.TextInBifurcatedContext
+
+        * platform/graphics/BifurcatedGraphicsContext.cpp:
+        (WebCore::BifurcatedGraphicsContext::save):
+        (WebCore::BifurcatedGraphicsContext::restore):
+        (WebCore::BifurcatedGraphicsContext::paintFrameForMedia):
+        (WebCore::BifurcatedGraphicsContext::drawText):
+        (WebCore::BifurcatedGraphicsContext::drawGlyphs):
+        (WebCore::BifurcatedGraphicsContext::drawEmphasisMarks):
+        (WebCore::BifurcatedGraphicsContext::drawBidiText):
+        * platform/graphics/BifurcatedGraphicsContext.h:
+        Bifurcate a few methods I somehow missed in the original patch.
+
+        Also, call GraphicsContext's implementation of save and restore
+        from the overridden version, because we confusingly currently use
+        the top-level context's state stack.
+
 2021-07-12  Simon Fraser  <simon.fraser@apple.com>
 
         Add a StyleSheets log channel and some logging
