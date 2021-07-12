@@ -1941,3 +1941,5 @@ webkit.org/b/226826 http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
 webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/227881 fast/canvas/canvas-overloads-strokeText.html [ Pass Crash ]
+
+webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
