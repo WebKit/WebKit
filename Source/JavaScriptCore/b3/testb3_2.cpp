@@ -874,19 +874,6 @@ void testMulArgNegArg(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == a * (-b));
 }
 
-void testMulNegArgArg(int a, int b)
-{
-    Procedure proc;
-    BasicBlock* root = proc.addBlock();
-    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    Value* negA = root->appendNew<Value>(proc, Neg, Origin(), argA);
-    Value* result = root->appendNew<Value>(proc, Mul, Origin(), negA, argB);
-    root->appendNew<Value>(proc, Return, Origin(), result);
-
-    CHECK(compileAndRun<int>(proc, a, b) == (-a) * b);
-}
-
 void testMulArgImm(int64_t a, int64_t b)
 {
     Procedure proc;
@@ -1014,7 +1001,7 @@ void testMulAddArgsLeft()
     for (auto a : testValues) {
         for (auto b : testValues) {
             for (auto c : testValues)
-                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value * b.value + c.value);
+                CHECK_EQ(invoke<int64_t>(*code, a.value, b.value, c.value), a.value * b.value + c.value);
         }
     }
 }
@@ -1039,14 +1026,14 @@ void testMulAddArgsRight()
     for (auto a : testValues) {
         for (auto b : testValues) {
             for (auto c : testValues)
-                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value + b.value * c.value);
+                CHECK_EQ(invoke<int64_t>(*code, a.value, b.value, c.value), a.value + b.value * c.value);
         }
     }
 }
 
 void testMulAddSignExtend32ArgsLeft()
 {
-    // d = SExt32(n) *  SExt32(m) + a
+    // d = SExt32(n) * SExt32(m) + a
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
@@ -1112,6 +1099,84 @@ void testMulAddSignExtend32ArgsRight()
             for (auto m : int32Operands()) {
                 int64_t lhs = invoke<int64_t>(*code, a.value, n.value, m.value);
                 int64_t rhs = a.value + static_cast<int64_t>(n.value) * static_cast<int64_t>(m.value);
+                CHECK(lhs == rhs);
+            }
+        }
+    }
+}
+
+void testMulAddZeroExtend32ArgsLeft()
+{
+    // d = ZExt32(n) * ZExt32(m) + a
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* nValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    Value* mValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+    Value* aValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* addValue = root->appendNew<Value>(proc, Add, Origin(), mulValue, aValue);
+    root->appendNewControlValue(proc, Return, Origin(), addValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "umaddl");
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto a : int64Operands()) {
+                uint32_t un = n.value;
+                uint32_t um = m.value;
+                int64_t lhs = invoke<int64_t>(*code, un, um, a.value);
+                int64_t rhs = static_cast<int64_t>(un) * static_cast<int64_t>(um) + a.value;
+                CHECK(lhs == rhs);
+            }
+        }
+    }
+}
+
+void testMulAddZeroExtend32ArgsRight()
+{
+    // d = a + ZExt32(n) * ZExt32(m)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* aValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* nValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+    Value* mValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* addValue = root->appendNew<Value>(proc, Add, Origin(), aValue, mulValue);
+    root->appendNewControlValue(proc, Return, Origin(), addValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "umaddl");
+
+    for (auto a : int64Operands()) {
+        for (auto n : int32Operands()) {
+            for (auto m : int32Operands()) {
+                uint32_t un = n.value;
+                uint32_t um = m.value;
+                int64_t lhs = invoke<int64_t>(*code, a.value, un, um);
+                int64_t rhs = a.value + static_cast<int64_t>(un) * static_cast<int64_t>(um);
                 CHECK(lhs == rhs);
             }
         }
@@ -1194,7 +1259,7 @@ void testMulSubArgsLeft()
     for (auto a : testValues) {
         for (auto b : testValues) {
             for (auto c : testValues)
-                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value * b.value - c.value);
+                CHECK_EQ(invoke<int64_t>(*code, a.value, b.value, c.value), a.value * b.value - c.value);
         }
     }
 }
@@ -1219,7 +1284,7 @@ void testMulSubArgsRight()
     for (auto a : testValues) {
         for (auto b : testValues) {
             for (auto c : testValues)
-                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value - b.value * c.value);
+                CHECK_EQ(invoke<int64_t>(*code, a.value, b.value, c.value), a.value - b.value * c.value);
         }
     }
 }
@@ -1275,12 +1340,12 @@ void testMulSubArgsRight32()
     for (auto a : testValues) {
         for (auto b : testValues) {
             for (auto c : testValues)
-                CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value - b.value * c.value);
+                CHECK_EQ(invoke<int32_t>(*code, a.value, b.value, c.value), a.value - b.value * c.value);
         }
     }
 }
 
-void testMulSubSignExtend32Args()
+void testMulSubSignExtend32()
 {
     // d = a - SExt32(n) * SExt32(m)
     Procedure proc;
@@ -1317,6 +1382,62 @@ void testMulSubSignExtend32Args()
     }
 }
 
+void testMulSubZeroExtend32()
+{
+    // d = a - ZExt32(n) * ZExt32(m)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* aValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* nValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+    Value* mValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* subValue = root->appendNew<Value>(proc, Sub, Origin(), aValue, mulValue);
+    root->appendNewControlValue(proc, Return, Origin(), subValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "umsubl");
+
+    for (auto a : int64Operands()) {
+        for (auto n : int32Operands()) {
+            for (auto m : int32Operands()) {
+                uint32_t un = n.value;
+                uint32_t um = m.value;
+                int64_t lhs = invoke<int64_t>(*code, a.value, un, um);
+                int64_t rhs = a.value - static_cast<int64_t>(un) * static_cast<int64_t>(um);
+                CHECK(lhs == rhs);
+            }
+        }
+    }
+}
+
+void testMulNegArgArg(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* negA = root->appendNew<Value>(proc, Neg, Origin(), argA);
+    Value* result = root->appendNew<Value>(proc, Mul, Origin(), negA, argB);
+    root->appendNew<Value>(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc);
+    if (isARM64() && JSC::Options::defaultB3OptLevel() > 1)
+        checkUsesInstruction(*code, "mneg");
+    CHECK_EQ(invoke<int32_t>(*code, a, b), (-a) * b);
+}
+
 void testMulNegArgs()
 {
     Procedure proc;
@@ -1330,11 +1451,13 @@ void testMulNegArgs()
     root->appendNewControlValue(proc, Return, Origin(), added);
 
     auto code = compileProc(proc);
+    if (isARM64() && JSC::Options::defaultB3OptLevel() > 1)
+        checkUsesInstruction(*code, "mneg");
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
         for (auto b : testValues) {
-            CHECK(invoke<int64_t>(*code, a.value, b.value) == -(a.value * b.value));
+            CHECK_EQ(invoke<int64_t>(*code, a.value, b.value), -(a.value * b.value));
         }
     }
 }
@@ -1354,11 +1477,82 @@ void testMulNegArgs32()
     root->appendNewControlValue(proc, Return, Origin(), added);
 
     auto code = compileProc(proc);
+    if (isARM64() && JSC::Options::defaultB3OptLevel() > 1)
+        checkUsesInstruction(*code, "mneg");
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
-        for (auto b : testValues) {
-            CHECK(invoke<int32_t>(*code, a.value, b.value) == -(a.value * b.value));
+        for (auto b : testValues)
+            CHECK_EQ(invoke<int32_t>(*code, a.value, b.value), -(a.value * b.value));
+    }
+}
+
+void testMulNegSignExtend32()
+{
+    // d = - (SExt32(n) * SExt32(m))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* nValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    Value* mValue = root->appendNew<Value>(
+        proc, SExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* negValue = root->appendNew<Value>(proc, Neg, Origin(), mulValue);
+    root->appendNewControlValue(proc, Return, Origin(), negValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "smnegl");
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            int64_t lhs = invoke<int64_t>(*code, n.value, m.value);
+            int64_t rhs = -(static_cast<int64_t>(n.value) * static_cast<int64_t>(m.value));
+            CHECK(lhs == rhs);
+        }
+    }
+}
+
+void testMulNegZeroExtend32()
+{
+    // d = - (ZExt32(n) * ZExt32(m))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* nValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    Value* mValue = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    Value* mulValue = root->appendNew<Value>(proc, Mul, Origin(), nValue, mValue);
+    Value* negValue = root->appendNew<Value>(proc, Neg, Origin(), mulValue);
+    root->appendNewControlValue(proc, Return, Origin(), negValue);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "umnegl");
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            uint32_t un = n.value;
+            uint32_t um = m.value;
+            int64_t lhs = invoke<int64_t>(*code, un, um);
+            int64_t rhs = -(static_cast<int64_t>(un) * static_cast<int64_t>(um));
+            CHECK(lhs == rhs);
         }
     }
 }

@@ -921,7 +921,7 @@ void testMultiplySignExtend32()
     }
 }
 
-void testMultiplyAddSignExtend32Left()
+void testMultiplyAddSignExtend32()
 {
     // d = SExt32(n) * SExt32(m) + a
     auto add = compile([=] (CCallHelpers& jit) {
@@ -944,25 +944,28 @@ void testMultiplyAddSignExtend32Left()
     }
 }
 
-void testMultiplyAddSignExtend32Right()
+void testMultiplyAddZeroExtend32()
 {
-    // d = a + SExt32(n) * SExt32(m)
+    // d = ZExt32(n) * ZExt32(m) + a
     auto add = compile([=] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
 
-        jit.multiplyAddSignExtend32(GPRInfo::argumentGPR1, 
+        jit.multiplyAddZeroExtend32(GPRInfo::argumentGPR0, 
+            GPRInfo::argumentGPR1, 
             GPRInfo::argumentGPR2, 
-            GPRInfo::argumentGPR0, 
             GPRInfo::returnValueGPR);
 
         emitFunctionEpilogue(jit);
         jit.ret();
     });
 
-    for (auto a : int64Operands()) {
-        for (auto n : int32Operands()) {
-            for (auto m : int32Operands())
-                CHECK_EQ(invoke<int64_t>(add, a, n, m), a + static_cast<int64_t>(n) * static_cast<int64_t>(m));
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto a : int64Operands()) {
+                uint32_t un = n;
+                uint32_t um = m;
+                CHECK_EQ(invoke<int64_t>(add, n, m, a), static_cast<int64_t>(un) * static_cast<int64_t>(um) + a);
+            }
         }
     }
 }
@@ -1091,7 +1094,7 @@ void testSub64ArgImm64()
 
 void testMultiplySubSignExtend32()
 {
-    // d = a - SExt32(n) *  SExt32(m)
+    // d = a - SExt32(n) * SExt32(m)
     auto sub = compile([=] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
 
@@ -1108,6 +1111,71 @@ void testMultiplySubSignExtend32()
         for (auto n : int32Operands()) {
             for (auto m : int32Operands())
                 CHECK_EQ(invoke<int64_t>(sub, a, n, m), a - static_cast<int64_t>(n) * static_cast<int64_t>(m));
+        }
+    }
+}
+
+void testMultiplySubZeroExtend32()
+{
+    // d = a - (ZExt32(n) * ZExt32(m))
+    auto sub = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.multiplySubZeroExtend32(GPRInfo::argumentGPR1, 
+            GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR0, 
+            GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : int64Operands()) {
+        for (auto n : int32Operands()) {
+            for (auto m : int32Operands()) {
+                uint32_t un = n;
+                uint32_t um = m;
+                CHECK_EQ(invoke<int64_t>(sub, a, n, m), a - static_cast<int64_t>(un) * static_cast<int64_t>(um));
+            }
+        }
+    }
+}
+
+void testMultiplyNegSignExtend32()
+{
+    // d = - (SExt32(n) * SExt32(m))
+    auto neg = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.multiplyNegSignExtend32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands())
+            CHECK_EQ(invoke<int64_t>(neg, n, m), -(static_cast<int64_t>(n) * static_cast<int64_t>(m)));
+    }
+}
+
+void testMultiplyNegZeroExtend32()
+{
+    // d = - ZExt32(n) * ZExt32(m)
+    auto neg = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.multiplyNegZeroExtend32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            uint32_t un = n;
+            uint32_t um = m;
+            CHECK_EQ(invoke<uint64_t>(neg, n, m), -(static_cast<uint64_t>(un) * static_cast<uint64_t>(um)));
         }
     }
 }
@@ -4164,9 +4232,12 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testSub64Imm64());
     RUN(testSub64ArgImm64());
 
-    RUN(testMultiplyAddSignExtend32Left());
-    RUN(testMultiplyAddSignExtend32Right());
+    RUN(testMultiplyAddSignExtend32());
+    RUN(testMultiplyAddZeroExtend32());
     RUN(testMultiplySubSignExtend32());
+    RUN(testMultiplySubZeroExtend32());
+    RUN(testMultiplyNegSignExtend32());
+    RUN(testMultiplyNegZeroExtend32());
 
     RUN(testExtractUnsignedBitfield32());
     RUN(testExtractUnsignedBitfield64());

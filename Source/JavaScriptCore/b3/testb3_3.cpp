@@ -3370,13 +3370,18 @@ void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testMulAddArgsRight32());
     RUN(testMulAddSignExtend32ArgsLeft());
     RUN(testMulAddSignExtend32ArgsRight());
+    RUN(testMulAddZeroExtend32ArgsLeft());
+    RUN(testMulAddZeroExtend32ArgsRight());
     RUN(testMulSubArgsLeft());
     RUN(testMulSubArgsRight());
     RUN(testMulSubArgsLeft32());
     RUN(testMulSubArgsRight32());
-    RUN(testMulSubSignExtend32Args());
+    RUN(testMulSubSignExtend32());
+    RUN(testMulSubZeroExtend32());
     RUN(testMulNegArgs());
     RUN(testMulNegArgs32());
+    RUN(testMulNegSignExtend32());
+    RUN(testMulNegZeroExtend32());
     
     RUN_BINARY(testMulArgNegArg, int64Operands(), int64Operands())
     RUN_BINARY(testMulNegArgArg, int64Operands(), int64Operands())

@@ -770,7 +770,7 @@ public:
 
     void multiplyNeg32(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
     {
-        m_assembler.msub<32>(dest, mulLeft, mulRight, ARM64Registers::zr);
+        m_assembler.mneg<32>(dest, mulLeft, mulRight);
     }
 
     void multiplyAdd64(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
@@ -783,6 +783,11 @@ public:
         m_assembler.smaddl(dest, mulLeft, mulRight, summand);
     }
 
+    void multiplyAddZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        m_assembler.umaddl(dest, mulLeft, mulRight, summand);
+    }
+
     void multiplySub64(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
     {
         m_assembler.msub<64>(dest, mulLeft, mulRight, minuend);
@@ -793,9 +798,24 @@ public:
         m_assembler.smsubl(dest, mulLeft, mulRight, minuend);
     }
 
+    void multiplySubZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        m_assembler.umsubl(dest, mulLeft, mulRight, minuend);
+    }
+
     void multiplyNeg64(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
     {
-        m_assembler.msub<64>(dest, mulLeft, mulRight, ARM64Registers::zr);
+        m_assembler.mneg<64>(dest, mulLeft, mulRight);
+    }
+
+    void multiplyNegSignExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
+    {
+        m_assembler.smnegl(dest, mulLeft, mulRight);
+    }
+
+    void multiplyNegZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
+    {
+        m_assembler.umnegl(dest, mulLeft, mulRight);
     }
 
     void multiplySignExtend32(RegisterID left, RegisterID right, RegisterID dest)
