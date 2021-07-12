@@ -552,9 +552,6 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
         return false;
 
     auto cookieURI = sameSiteInfo.isSameSite ? urlToSoupURI(url) : nullptr;
-    if (!cookieURI)
-        return false;
-
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list_with_same_site_info(cookieStorage(), uri.get(), firstPartyURI.get(), cookieURI.get(), TRUE, sameSiteInfo.isSafeHTTPMethod, sameSiteInfo.isTopSite));
 #else
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list(cookieStorage(), uri.get(), TRUE));
@@ -595,9 +592,6 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
         return { { }, false };
 
     auto cookieURI = sameSiteInfo.isSameSite ? urlToSoupURI(url) : nullptr;
-    if (!cookieURI)
-        return { { }, false };
-
     GSList* cookies = soup_cookie_jar_get_cookie_list_with_same_site_info(session.cookieStorage(), uri.get(), firstPartyURI.get(), cookieURI.get(), forHTTPHeader, sameSiteInfo.isSafeHTTPMethod, sameSiteInfo.isTopSite);
 #else
     GSList* cookies = soup_cookie_jar_get_cookie_list(session.cookieStorage(), uri.get(), forHTTPHeader);
