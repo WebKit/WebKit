@@ -129,8 +129,9 @@
         return nil;
 
     std::initializer_list<NSString*> domains = {
-#if PLATFORM(IOS_FAMILY)
         @"com.apple.Accessibility",
+        @"com.apple.mediaaccessibility",
+#if PLATFORM(IOS_FAMILY)
         @"com.apple.AdLib",
         @"com.apple.SpeakSelection",
         @"com.apple.UIKit",
@@ -149,7 +150,6 @@
         @"com.apple.avfoundation.videoperformancehud",
         @"com.apple.driver.AppleBluetoothMultitouch.mouse",
         @"com.apple.driver.AppleBluetoothMultitouch.trackpad",
-        @"com.apple.mediaaccessibility",
         @"com.apple.speech.voice.prefs",
         @"com.apple.universalaccess",
 #endif

@@ -1,3 +1,17 @@
+2021-07-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make WebKit observe spatial audio accessibility settings
+        https://bugs.webkit.org/show_bug.cgi?id=227848
+
+        Reviewed by Sam Weinig.
+
+        Allow mac and iOS to read from accessibility domains.
+        Allow mac sandbox to read from com.apple.Accessibility.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKPreferenceObserver init]):
+
 2021-07-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r279835.
