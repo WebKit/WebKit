@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "HTMLLinkElement.h"
 #include "HTMLStyleElement.h"
+#include "Logging.h"
 #include "MediaList.h"
 #include "Node.h"
 #include "SVGStyleElement.h"
@@ -36,6 +37,9 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+
+#include <wtf/HexNumber.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -247,6 +251,8 @@ bool CSSStyleSheet::canAccessRules() const
 
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)
 {
+    LOG_WITH_STREAM(StyleSheets, stream << "CSSStyleSheet " << this << " insertRule() " << ruleString << " at " << index);
+
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
     if (index > length())
@@ -269,6 +275,8 @@ ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsign
 
 ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
 {
+    LOG_WITH_STREAM(StyleSheets, stream << "CSSStyleSheet " << this << " deleteRule(" << index << ")");
+
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
     if (index >= length())
@@ -288,6 +296,8 @@ ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
 
 ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& style, std::optional<unsigned> index)
 {
+    LOG_WITH_STREAM(StyleSheets, stream << "CSSStyleSheet " << this << " addRule() selector " << selector << " style " << style << " at " << index);
+
     auto text = makeString(selector, " { ", style, !style.isEmpty() ? " " : "", '}');
     auto insertRuleResult = insertRule(text, index.value_or(length()));
     if (insertRuleResult.hasException())
@@ -372,6 +382,11 @@ Style::Scope* CSSStyleSheet::styleScope()
 void CSSStyleSheet::clearChildRuleCSSOMWrappers()
 {
     m_childRuleCSSOMWrappers.clear();
+}
+
+String CSSStyleSheet::debugDescription() const
+{
+    return makeString("CSSStyleSheet "_s, "0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', href());
 }
 
 CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMutationType mutationType, StyleRuleKeyframes* insertedKeyframesRule)

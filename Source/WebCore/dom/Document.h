@@ -90,6 +90,10 @@ class CallFrame;
 class InputCursor;
 }
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AXObjectCache;
@@ -1617,6 +1621,8 @@ public:
 
     WEBCORE_EXPORT JSC::VM& vm() final;
 
+    String debugDescription() const;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClassFlags = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -2236,6 +2242,8 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
 {
     return &document().contextDocument();
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const Document&);
 
 } // namespace WebCore
 

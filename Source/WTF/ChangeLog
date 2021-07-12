@@ -1,3 +1,15 @@
+2021-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a StyleSheets log channel and some logging
+        https://bugs.webkit.org/show_bug.cgi?id=227880
+
+        Reviewed by Alan Bujtas.
+
+        Make it possible to feed Ref<> and RefPtr<> into TextStream.
+
+        * wtf/text/TextStream.h:
+        (WTF::operator<<):
+
 2021-07-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make Coordinator playback commands more precise

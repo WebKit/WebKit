@@ -1,3 +1,45 @@
+2021-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a StyleSheets log channel and some logging
+        https://bugs.webkit.org/show_bug.cgi?id=227880
+
+        Reviewed by Alan Bujtas.
+
+        Add some logging to help debug issues when pages dynamically build style sheets.
+
+        Also make Document loggable.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::insertRule):
+        (WebCore::CSSStyleSheet::deleteRule):
+        (WebCore::CSSStyleSheet::addRule):
+        (WebCore::CSSStyleSheet::debugDescription const):
+        * css/CSSStyleSheet.h:
+        * css/StyleSheet.cpp:
+        (WebCore::operator<<):
+        * css/StyleSheet.h:
+        * dom/Document.cpp:
+        (WebCore::Document::debugDescription const):
+        (WebCore::operator<<):
+        * dom/Document.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::debugDescription const):
+        * html/HTMLLinkElement.h:
+        * platform/Logging.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::imageBufferResult):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::addPendingSheet):
+        (WebCore::Style::Scope::addStyleSheetCandidateNode):
+        (WebCore::Style::Scope::collectActiveStyleSheets):
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        * xml/XSLStyleSheet.h:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::debugDescription const):
+
 2021-07-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, partial revert of r279661 to address crashes on iOS Debug.

@@ -265,7 +265,7 @@ void FilterEffect::clearResultsRecursive()
 
 ImageBuffer* FilterEffect::imageBufferResult()
 {
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " imageBufferResult(). Existing image buffer " << m_imageBufferResult <<  " m_premultipliedImageResult " << m_premultipliedImageResult << " m_unmultipliedImageResult " << m_unmultipliedImageResult);
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " imageBufferResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult << " m_unmultipliedImageResult " << m_unmultipliedImageResult);
 
     if (!hasResult())
         return nullptr;

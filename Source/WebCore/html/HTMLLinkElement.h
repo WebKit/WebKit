@@ -123,6 +123,8 @@ private:
 
     void finishParsingChildren() final;
 
+    String debugDescription() const final;
+
     enum PendingSheetType : uint8_t { Unknown, ActiveSheet, InactiveSheet };
     void addPendingSheet(PendingSheetType);
 

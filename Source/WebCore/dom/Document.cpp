@@ -263,6 +263,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/VM.h>
 #include <ctime>
+#include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -8886,6 +8887,24 @@ void Document::canvasDestroyed(CanvasBase& canvasBase)
 JSC::VM& Document::vm()
 {
     return commonVM();
+}
+
+String Document::debugDescription() const
+{
+    StringBuilder builder;
+
+    builder.append("Document 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    if (frame() && frame()->isMainFrame())
+        builder.append(" (main frame)"_s);
+
+    builder.append(' ', documentURI());
+    return builder.toString();
+}
+
+TextStream& operator<<(TextStream& ts, const Document& document)
+{
+    ts << document.debugDescription();
+    return ts;
 }
 
 } // namespace WebCore

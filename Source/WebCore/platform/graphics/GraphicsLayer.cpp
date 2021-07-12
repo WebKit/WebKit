@@ -949,7 +949,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (m_maskLayer) {
         ts << indent << "(mask layer";
         if (behavior & LayerTreeAsTextDebug)
-            ts << " " << m_maskLayer;
+            ts << " " << m_maskLayer.get();
         ts << ")\n";
 
         TextStream::IndentScope indentScope(ts);
@@ -959,7 +959,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (m_replicaLayer) {
         ts << indent << "(replica layer";
         if (behavior & LayerTreeAsTextDebug)
-            ts << " " << m_replicaLayer;
+            ts << " " << m_replicaLayer.get();
         ts << ")\n";
 
         TextStream::IndentScope indentScope(ts);
