@@ -356,7 +356,9 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         if (Options::logJITCodeForPerf())
             return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
 #endif
-        return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
+        if (Options::useJITCage())
+            return PageReservation::reserve(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
+        return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
     };
 
     reservation.pageReservation = tryCreatePageReservation(reservation.size);
