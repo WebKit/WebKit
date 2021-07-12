@@ -1,3 +1,130 @@
+2021-07-12  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-overflow from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227849
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import based on 1d6a9a37bc.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-overflow/clip-001.html:
+        * web-platform-tests/css/css-overflow/clip-002-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-002.html: Added.
+        * web-platform-tests/css/css-overflow/clip-003-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-003.html: Added.
+        * web-platform-tests/css/css-overflow/clip-004-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-004.html: Added.
+        * web-platform-tests/css/css-overflow/clip-005-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-005.html: Added.
+        * web-platform-tests/css/css-overflow/clip-006-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-006.html: Added.
+        * web-platform-tests/css/css-overflow/clip-007-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-007.html: Added.
+        * web-platform-tests/css/css-overflow/dynamic-visible-to-clip-001.html:
+        * web-platform-tests/css/css-overflow/incremental-scroll-expected.html: Added.
+        * web-platform-tests/css/css-overflow/incremental-scroll.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl-2-expected.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl-2.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl-expected.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-007-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-007.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-008-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-008.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-009-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-009.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-010-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-010.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-011-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-011.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-001-crash.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-002-crash.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-cant-scroll-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-cant-scroll.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-content-visual-overflow-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-content-visual-overflow.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-hit-testing.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-001-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-001.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-002-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-002.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-003-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-003.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-004-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-004.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-005-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-005.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-006-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-006.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-007-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-007.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-intersection-observer.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-invalidation-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-invalidation.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-scroll-size.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-empty-child-box-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/overflow-empty-child-box.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-hidden-resize-with-stacking-context-child-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-hidden-resize-with-stacking-context-child.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin-dynamic-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin-dynamic.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-no-frameset-propagation-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-no-frameset-propagation.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-padding.html:
+        * web-platform-tests/css/css-overflow/overflow-replaced-element-001-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/overflow-replaced-element-001.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-scroll-resize-visibility-hidden-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-scroll-resize-visibility-hidden.html: Added.
+        * web-platform-tests/css/css-overflow/parsing/overflow-computed-expected.txt:
+        * web-platform-tests/css/css-overflow/parsing/overflow-computed.html:
+        * web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-invalid.html:
+        * web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-valid.html:
+        * web-platform-tests/css/css-overflow/scrollable-overflow-float-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-float.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-self-collapsing-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-self-collapsing.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-textarea-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-textarea.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-001-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-002-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-002.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-003-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-003.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-001-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-002-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-002.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-003-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-003.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-004-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-004.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-005-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-005.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-006-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-006.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-002.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-003.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-004.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-005.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-006.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-007.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-rtl-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-001.html: Added.
+        * web-platform-tests/css/css-overflow/w3c-import.log:
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-036-expected.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-036.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-037-expected.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-037.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-dynamic-001.html: Added.
+
 2021-07-11  Chris Dumez  <cdumez@apple.com>
 
         :link and :visited pseudo-class selectors should not match <link> elements

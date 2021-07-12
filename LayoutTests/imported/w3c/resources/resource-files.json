@@ -467,6 +467,8 @@
         "web-platform-tests/css/css-lists/list-style-type-armenian-002.xht",
         "web-platform-tests/css/css-lists/list-style-type-armenian-003.xht",
         "web-platform-tests/css/css-multicol/multicol-rule-large-002.xht",
+        "web-platform-tests/css/css-overflow/overflow-clip-001-crash.html",
+        "web-platform-tests/css/css-overflow/overflow-clip-002-crash.html",
         "web-platform-tests/css/css-pseudo/placeholder-input-number-notref.html",
         "web-platform-tests/css/css-scroll-snap/support/scroll-target-align-001-iframe.html",
         "web-platform-tests/css/css-scroll-snap/support/scroll-target-margin-001-iframe.html",

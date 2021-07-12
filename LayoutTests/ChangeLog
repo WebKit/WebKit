@@ -1,3 +1,15 @@
+2021-07-12  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-overflow from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227849
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Skip some tests, for example some rely on
+        unimplemented overflow: clip property.
+
+        * TestExpectations:
+
 2021-07-11  Chris Dumez  <cdumez@apple.com>
 
         :link and :visited pseudo-class selectors should not match <link> elements
