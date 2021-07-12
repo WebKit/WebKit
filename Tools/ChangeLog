@@ -1,3 +1,19 @@
+2021-07-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Add a new GTK layout tester bot to build.webkit.org that runs with --skip-failing-tests switch
+        https://bugs.webkit.org/show_bug.cgi?id=227744
+
+        Reviewed by Jonathan Bedard.
+
+        On the EWS the layout tests run with this switch --skip-failing-tests
+        which changes the order in which tests are run (those expected to fail
+        are not scheduled). I think this may be causing different results on
+        other tests (like unexpected failures or unexpected flakies).
+        Having a bot in build.webkit.org running with this switch will help
+        to detect and garden those cases.
+
+        * CISupport/build-webkit-org/config.json:
+
 2021-07-12  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Incorrect deprecation declaration for -[WKWebView closeAllMediaPresentations:]
