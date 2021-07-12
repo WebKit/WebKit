@@ -1040,7 +1040,7 @@ void WebPageProxy::didAttachToRunningProcess()
     m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
     ASSERT(!m_xrSystem);
     m_xrSystem = makeUnique<PlatformXRSystem>(*this);
 #endif
@@ -7816,7 +7816,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_speechRecognitionPermissionManager = nullptr;
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
     if (m_xrSystem) {
         m_xrSystem->invalidate();
         m_xrSystem = nullptr;

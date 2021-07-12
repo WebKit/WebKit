@@ -1,3 +1,49 @@
+2021-07-12  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Cross platform compilation of PlatformXRSystem and PlatformXRSystemProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226919
+
+        Reviewed by Dean Jackson.
+
+        PlatformXRSystem and PlatformXRSystemProxy are only compiled in Cocoa platform while WPE uses OpenXR,
+        which only has code in WebCore. In order to run WebKit based WebXR on non-cocoa VR Standalone devices
+        we also need to split the code and IPC messages between UIProcess/WebProcess.
+
+        The existing PlatformXRSystem/PlatformXRSystemProxy pattern fits very well to the VR standalone scenario.
+        This patch ensures that the existing code can be used in more platforms other than Cocoa.
+
+        Tested by WebXR WPT.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * Shared/XR/XRDeviceIdentifier.h: Renamed from Source/WebKit/Shared/Cocoa/XRDeviceIdentifier.h.
+        * Shared/XR/XRDeviceInfo.cpp: Renamed from Source/WebKit/Shared/Cocoa/XRDeviceInfo.mm.
+        * Shared/XR/XRDeviceInfo.h: Renamed from Source/WebKit/Shared/Cocoa/XRDeviceInfo.h.
+        * Shared/XR/XRDeviceProxy.cpp: Renamed from Source/WebKit/Shared/Cocoa/XRDeviceProxy.mm.
+        * Shared/XR/XRDeviceProxy.h: Renamed from Source/WebKit/Shared/Cocoa/XRDeviceProxy.h.
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp: Add include to fix compilation error
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/PlatformXRCoordinator.mm: Copied from Source/WebKit/WebProcess/cocoa/PlatformXRSystemProxy.messages.in.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/XR/PlatformXRCoordinator.h: Renamed from Source/WebKit/UIProcess/Cocoa/PlatformXRCoordinator.h.
+        * UIProcess/XR/PlatformXRSystem.cpp: Renamed from Source/WebKit/UIProcess/Cocoa/PlatformXRSystem.mm.
+        * UIProcess/XR/PlatformXRSystem.h: Renamed from Source/WebKit/UIProcess/Cocoa/PlatformXRSystem.h.
+        * UIProcess/XR/PlatformXRSystem.messages.in: Renamed from Source/WebKit/UIProcess/Cocoa/PlatformXRSystem.messages.in.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::xrSystemProxy):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/XR/PlatformXRSystemProxy.cpp: Renamed from Source/WebKit/WebProcess/cocoa/PlatformXRSystemProxy.mm.
+        * WebProcess/XR/PlatformXRSystemProxy.h: Renamed from Source/WebKit/WebProcess/cocoa/PlatformXRSystemProxy.h.
+        * WebProcess/XR/PlatformXRSystemProxy.messages.in: Renamed from Source/WebKit/WebProcess/cocoa/PlatformXRSystemProxy.messages.in.
+
 2021-07-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove an unused deprecated private UI delegate method

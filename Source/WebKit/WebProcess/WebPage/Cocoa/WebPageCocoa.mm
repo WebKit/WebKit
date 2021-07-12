@@ -443,15 +443,6 @@ void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHa
     completionHandler(FloatSize(plugin->pdfDocumentSizeForPrinting()));
 }
 
-#if ENABLE(WEBXR)
-PlatformXRSystemProxy& WebPage::xrSystemProxy()
-{
-    if (!m_xrSystemProxy)
-        m_xrSystemProxy = std::unique_ptr<PlatformXRSystemProxy>(new PlatformXRSystemProxy(*this));
-    return *m_xrSystemProxy;
-}
-#endif
-
 #if ENABLE(DATA_DETECTION)
 
 void WebPage::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)

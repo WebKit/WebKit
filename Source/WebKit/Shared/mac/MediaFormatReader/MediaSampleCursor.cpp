@@ -29,6 +29,7 @@
 #if ENABLE(WEBM_FORMAT_READER)
 
 #include "MediaTrackReader.h"
+#include <WebCore/Logging.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>

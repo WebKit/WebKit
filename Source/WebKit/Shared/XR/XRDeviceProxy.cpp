@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "XRDeviceProxy.h"
+#include "config.h"
+#include "XRDeviceProxy.h"
 
 #if ENABLE(WEBXR)
 
-#import "PlatformXRSystemProxy.h"
-#import "XRDeviceInfo.h"
+#include "PlatformXRSystemProxy.h"
+#include "XRDeviceInfo.h"
 
 using namespace PlatformXR;
 

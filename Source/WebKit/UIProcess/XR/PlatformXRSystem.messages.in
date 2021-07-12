@@ -22,42 +22,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#import "config.h"
-#import "XRDeviceInfo.h"
-
+ 
 #if ENABLE(WEBXR)
 
-#import "WebCoreArgumentCoders.h"
-
-namespace WebKit {
-
-void XRDeviceInfo::encode(IPC::Encoder& encoder) const
-{
-    encoder << identifier << supportsOrientationTracking << supportsStereoRendering << features << recommendedResolution;
+messages -> PlatformXRSystem NotRefCounted {
+    EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos) Async
+    InitializeTrackingAndRendering()
+    ShutDownTrackingAndRendering()
+    RequestFrame() -> (struct PlatformXR::Device::FrameData frameData) Async
+    SubmitFrame()
 }
 
-std::optional<XRDeviceInfo> XRDeviceInfo::decode(IPC::Decoder& decoder)
-{
-    XRDeviceInfo deviceFeatures;
-    if (!decoder.decode(deviceFeatures.identifier))
-        return std::nullopt;
-
-    if (!decoder.decode(deviceFeatures.supportsOrientationTracking))
-        return std::nullopt;
-
-    if (!decoder.decode(deviceFeatures.supportsStereoRendering))
-        return std::nullopt;
-
-    if (!decoder.decode(deviceFeatures.features))
-        return std::nullopt;
-
-    if (!decoder.decode(deviceFeatures.recommendedResolution))
-        return std::nullopt;
-
-    return deviceFeatures;
-}
-
-}
-
-#endif // ENABLE(WEBXR)
+#endif

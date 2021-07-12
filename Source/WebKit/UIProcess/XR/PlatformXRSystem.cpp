@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PlatformXRSystem.h"
+#include "config.h"
+#include "PlatformXRSystem.h"
 
 #if ENABLE(WEBXR)
 
-#import "PlatformXRCoordinator.h"
-#import "PlatformXRSystemMessages.h"
-#import "PlatformXRSystemProxyMessages.h"
-#import "WebPageProxy.h"
-#import "WebProcessProxy.h"
+#include "PlatformXRCoordinator.h"
+#include "PlatformXRSystemMessages.h"
+#include "PlatformXRSystemProxyMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 
@@ -107,9 +107,7 @@ void PlatformXRSystem::submitFrame()
 
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/PlatformXRSystemAdditions.mm>
-#else
+#if !USE(APPLE_INTERNAL_SDK)
 namespace WebKit {
 
 PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()

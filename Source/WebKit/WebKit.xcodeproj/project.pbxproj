@@ -1116,12 +1116,6 @@
 		51FAEC3A1B0657630009C4E7 /* AuxiliaryProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAEC371B0657310009C4E7 /* AuxiliaryProcessMessages.h */; };
 		51FAEC3B1B0657680009C4E7 /* AuxiliaryProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FAEC361B0657310009C4E7 /* AuxiliaryProcessMessageReceiver.cpp */; };
 		51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */; };
-		525080B1261BDE6C00678AEE /* XRDeviceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 525080AE261BDE6B00678AEE /* XRDeviceIdentifier.h */; };
-		525080B2261BDE6C00678AEE /* XRDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 525080AF261BDE6C00678AEE /* XRDeviceInfo.h */; };
-		5263E257261E73DF0018D47D /* XRDeviceProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5263E255261E73DF0018D47D /* XRDeviceProxy.h */; };
-		5263E25A261E93A70018D47D /* PlatformXRCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5263E24D261E6FB90018D47D /* PlatformXRCoordinator.h */; };
-		5263E25B261E93AB0018D47D /* PlatformXRSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5263E24F261E72EB0018D47D /* PlatformXRSystem.h */; };
-		5263E25F261E96EF0018D47D /* PlatformXRSystemProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5263E25D261E96DF0018D47D /* PlatformXRSystemProxy.h */; };
 		5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */; };
@@ -2569,6 +2563,19 @@
 		0FFED98F23A3203700EEF459 /* WKWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewMac.mm; sourceTree = "<group>"; };
 		0FFED99023A3203800EEF459 /* WKWebViewMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewMac.h; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		118502562673B01600A6425E /* PlatformXRSystemProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformXRSystemProxy.h; sourceTree = "<group>"; };
+		118502572673B01600A6425E /* PlatformXRSystemProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformXRSystemProxy.messages.in; sourceTree = "<group>"; };
+		118502582673B01600A6425E /* PlatformXRSystemProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformXRSystemProxy.cpp; sourceTree = "<group>"; };
+		1185025A2673B07100A6425E /* PlatformXRSystem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformXRSystem.cpp; sourceTree = "<group>"; };
+		1185025B2673B07100A6425E /* PlatformXRCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformXRCoordinator.h; sourceTree = "<group>"; };
+		1185025C2673B07100A6425E /* PlatformXRSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformXRSystem.h; sourceTree = "<group>"; };
+		1185025D2673B07100A6425E /* PlatformXRSystem.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformXRSystem.messages.in; sourceTree = "<group>"; };
+		1185025E2673B0A700A6425E /* PlatformXRCoordinator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformXRCoordinator.mm; sourceTree = "<group>"; };
+		118502612673B0DA00A6425E /* XRDeviceProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceProxy.h; sourceTree = "<group>"; };
+		118502622673B0DA00A6425E /* XRDeviceProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XRDeviceProxy.cpp; sourceTree = "<group>"; };
+		118502632673B0DA00A6425E /* XRDeviceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceIdentifier.h; sourceTree = "<group>"; };
+		118502642673B0DA00A6425E /* XRDeviceInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XRDeviceInfo.cpp; sourceTree = "<group>"; };
+		118502652673B0DA00A6425E /* XRDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceInfo.h; sourceTree = "<group>"; };
 		1A002D3E196B329400B9AD44 /* _WKSessionState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSessionState.mm; sourceTree = "<group>"; };
 		1A002D3F196B329400B9AD44 /* _WKSessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSessionState.h; sourceTree = "<group>"; };
 		1A002D42196B337000B9AD44 /* _WKSessionStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSessionStateInternal.h; sourceTree = "<group>"; };
@@ -4196,18 +4203,6 @@
 		51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = NetworkProcessConnection.messages.in; path = Network/NetworkProcessConnection.messages.in; sourceTree = "<group>"; };
 		51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoader.cpp; sourceTree = "<group>"; };
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoader.h; sourceTree = "<group>"; };
-		525080AD261BDE6B00678AEE /* XRDeviceInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRDeviceInfo.mm; sourceTree = "<group>"; };
-		525080AE261BDE6B00678AEE /* XRDeviceIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRDeviceIdentifier.h; sourceTree = "<group>"; };
-		525080AF261BDE6C00678AEE /* XRDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRDeviceInfo.h; sourceTree = "<group>"; };
-		5263E24D261E6FB90018D47D /* PlatformXRCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformXRCoordinator.h; sourceTree = "<group>"; };
-		5263E24E261E72EB0018D47D /* PlatformXRSystem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformXRSystem.mm; sourceTree = "<group>"; };
-		5263E24F261E72EB0018D47D /* PlatformXRSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformXRSystem.h; sourceTree = "<group>"; };
-		5263E250261E72EC0018D47D /* PlatformXRSystem.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformXRSystem.messages.in; sourceTree = "<group>"; };
-		5263E254261E73DE0018D47D /* XRDeviceProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRDeviceProxy.mm; sourceTree = "<group>"; };
-		5263E255261E73DF0018D47D /* XRDeviceProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRDeviceProxy.h; sourceTree = "<group>"; };
-		5263E25C261E96DF0018D47D /* PlatformXRSystemProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformXRSystemProxy.mm; sourceTree = "<group>"; };
-		5263E25D261E96DF0018D47D /* PlatformXRSystemProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformXRSystemProxy.h; sourceTree = "<group>"; };
-		5263E25E261E96E00018D47D /* PlatformXRSystemProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformXRSystemProxy.messages.in; sourceTree = "<group>"; };
 		5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKProtectionSpaceNS.h; path = mac/WKProtectionSpaceNS.h; sourceTree = "<group>"; };
 		5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKProtectionSpaceNS.mm; path = mac/WKProtectionSpaceNS.mm; sourceTree = "<group>"; };
 		52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerProxy.h; sourceTree = "<group>"; };
@@ -6446,6 +6441,39 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
+		118502552673B01600A6425E /* XR */ = {
+			isa = PBXGroup;
+			children = (
+				118502582673B01600A6425E /* PlatformXRSystemProxy.cpp */,
+				118502562673B01600A6425E /* PlatformXRSystemProxy.h */,
+				118502572673B01600A6425E /* PlatformXRSystemProxy.messages.in */,
+			);
+			path = XR;
+			sourceTree = "<group>";
+		};
+		118502592673B07100A6425E /* XR */ = {
+			isa = PBXGroup;
+			children = (
+				1185025B2673B07100A6425E /* PlatformXRCoordinator.h */,
+				1185025A2673B07100A6425E /* PlatformXRSystem.cpp */,
+				1185025C2673B07100A6425E /* PlatformXRSystem.h */,
+				1185025D2673B07100A6425E /* PlatformXRSystem.messages.in */,
+			);
+			path = XR;
+			sourceTree = "<group>";
+		};
+		118502602673B0DA00A6425E /* XR */ = {
+			isa = PBXGroup;
+			children = (
+				118502632673B0DA00A6425E /* XRDeviceIdentifier.h */,
+				118502642673B0DA00A6425E /* XRDeviceInfo.cpp */,
+				118502652673B0DA00A6425E /* XRDeviceInfo.h */,
+				118502622673B0DA00A6425E /* XRDeviceProxy.cpp */,
+				118502612673B0DA00A6425E /* XRDeviceProxy.h */,
+			);
+			path = XR;
+			sourceTree = "<group>";
+		};
 		1A0EC6B0124BBD36007EF4A5 /* PluginProcess */ = {
 			isa = PBXGroup;
 			children = (
@@ -6712,6 +6740,7 @@
 				1AAE058C1279DCD400852418 /* Plugins */,
 				2D2E04761F5BEC4F00BB25ED /* RemoteLayerTree */,
 				1ABF43781A368035003FB0E6 /* WebsiteData */,
+				118502602673B0DA00A6425E /* XR */,
 				E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */,
 				E3BCE878267252120011D8DB /* AccessibilityPreferences.h */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
@@ -7072,10 +7101,7 @@
 				1ABC3DF31899E437004F0626 /* NavigationState.mm */,
 				5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */,
 				5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */,
-				5263E24D261E6FB90018D47D /* PlatformXRCoordinator.h */,
-				5263E24F261E72EB0018D47D /* PlatformXRSystem.h */,
-				5263E250261E72EC0018D47D /* PlatformXRSystem.messages.in */,
-				5263E24E261E72EB0018D47D /* PlatformXRSystem.mm */,
+				1185025E2673B0A700A6425E /* PlatformXRCoordinator.mm */,
 				CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */,
 				CDA29A221CBEB61A00901CCF /* PlaybackSessionManagerProxy.messages.in */,
 				CDA29A1F1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.mm */,
@@ -8364,11 +8390,6 @@
 				C14D306524B794E700480387 /* XPCEndpoint.mm */,
 				C14D306824B794E700480387 /* XPCEndpointClient.h */,
 				C14D306624B794E700480387 /* XPCEndpointClient.mm */,
-				525080AE261BDE6B00678AEE /* XRDeviceIdentifier.h */,
-				525080AF261BDE6C00678AEE /* XRDeviceInfo.h */,
-				525080AD261BDE6B00678AEE /* XRDeviceInfo.mm */,
-				5263E255261E73DF0018D47D /* XRDeviceProxy.h */,
-				5263E254261E73DE0018D47D /* XRDeviceProxy.mm */,
 			);
 			name = cocoa;
 			path = Cocoa;
@@ -9358,9 +9379,6 @@
 				C1A152D624E5A29A00978C8B /* HandleXPCEndpointMessages.mm */,
 				C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */,
 				C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */,
-				5263E25D261E96DF0018D47D /* PlatformXRSystemProxy.h */,
-				5263E25E261E96E00018D47D /* PlatformXRSystemProxy.messages.in */,
-				5263E25C261E96DF0018D47D /* PlatformXRSystemProxy.mm */,
 				446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
@@ -9826,6 +9844,7 @@
 				BC032D5D10F437220058C15A /* WebCoreSupport */,
 				BC032D5E10F4372B0058C15A /* WebPage */,
 				1AAC4DDE16B1CBF6009425E3 /* WebStorage */,
+				118502552673B01600A6425E /* XR */,
 				BCE9C0CF1485965D00E33D61 /* WebConnectionToUIProcess.cpp */,
 				BCE9C0D01485965D00E33D61 /* WebConnectionToUIProcess.h */,
 				BC111AE3112F5C2600337BAB /* WebProcess.cpp */,
@@ -9993,6 +10012,7 @@
 				1AAF089E192681AC00B6390C /* UserContent */,
 				57608294202BD84900116678 /* WebAuthentication */,
 				1A53C2A31A325691004E8C70 /* WebsiteData */,
+				118502592673B07100A6425E /* XR */,
 				E1513C64166EABB200149FCB /* AuxiliaryProcessProxy.cpp */,
 				E1513C65166EABB200149FCB /* AuxiliaryProcessProxy.h */,
 				46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */,
@@ -12218,9 +12238,6 @@
 				2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */,
 				2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */,
 				BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */,
-				5263E25A261E93A70018D47D /* PlatformXRCoordinator.h in Headers */,
-				5263E25B261E93AB0018D47D /* PlatformXRSystem.h in Headers */,
-				5263E25F261E96EF0018D47D /* PlatformXRSystemProxy.h in Headers */,
 				446DC64C24A2D8E50061F390 /* PlaybackSessionContextIdentifier.h in Headers */,
 				CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */,
 				CDA29A291CBEB67A00901CCF /* PlaybackSessionManagerMessages.h in Headers */,
@@ -13118,9 +13135,6 @@
 				C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */,
 				C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */,
 				BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */,
-				525080B1261BDE6C00678AEE /* XRDeviceIdentifier.h in Headers */,
-				525080B2261BDE6C00678AEE /* XRDeviceInfo.h in Headers */,
-				5263E257261E73DF0018D47D /* XRDeviceProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

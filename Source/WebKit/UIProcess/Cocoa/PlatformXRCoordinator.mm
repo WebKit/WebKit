@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(COCOA) && ENABLE(WEBXR)
+#import "config.h"
+#import "PlatformXRCoordinator.h"
 
-messages -> PlatformXRSystemProxy NotRefCounted {
-    SessionDidEnd(WebKit::XRDeviceIdentifier deviceIdentifier)
-}
+#if ENABLE(WEBXR) && USE(APPLE_INTERNAL_SDK)
 
-#endif
+#import <WebKitAdditions/PlatformXRSystemAdditions.mm>
+
+#endif // ENABLE(WEBXR) && USE(APPLE_INTERNAL_SDK)

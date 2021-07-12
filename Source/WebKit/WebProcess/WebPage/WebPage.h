@@ -145,7 +145,7 @@ typedef struct _AtkObject AtkObject;
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
 #include "PlatformXRSystemProxy.h"
 #endif
 
@@ -1462,7 +1462,7 @@ public:
     void textAutosizingUsesIdempotentModeChanged();
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
 
@@ -2363,7 +2363,7 @@ private:
     Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingTextRecognition;
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
     std::unique_ptr<PlatformXRSystemProxy> m_xrSystemProxy;
 #endif
     

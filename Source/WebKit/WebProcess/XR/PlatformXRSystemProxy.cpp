@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PlatformXRSystemProxy.h"
+#include "config.h"
+#include "PlatformXRSystemProxy.h"
 
 #if ENABLE(WEBXR)
 
-#import "PlatformXRCoordinator.h"
-#import "PlatformXRSystemMessages.h"
-#import "PlatformXRSystemProxyMessages.h"
-#import "WebPage.h"
-#import "WebProcess.h"
-#import "XRDeviceInfo.h"
-#import <wtf/Vector.h>
+#include "PlatformXRCoordinator.h"
+#include "PlatformXRSystemMessages.h"
+#include "PlatformXRSystemProxyMessages.h"
+#include "WebPage.h"
+#include "WebProcess.h"
+#include "XRDeviceInfo.h"
+#include <wtf/Vector.h>
 
 using namespace PlatformXR;
 

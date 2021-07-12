@@ -22,15 +22,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#if PLATFORM(COCOA) && ENABLE(WEBXR)
 
-messages -> PlatformXRSystem NotRefCounted {
-    EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos) Async
-    InitializeTrackingAndRendering()
-    ShutDownTrackingAndRendering()
-    RequestFrame() -> (struct PlatformXR::Device::FrameData frameData) Async
-    SubmitFrame()
-}
+#pragma once
 
-#endif
+#if ENABLE(WEBXR)
+
+#include "MessageReceiver.h"
+#include "WebCoreArgumentCoders.h"
+#include <WebCore/PlatformXR.h>
+
+namespace WebKit {
+
+class PlatformXRCoordinator;
+class WebPageProxy;
+
+struct XRDeviceInfo;
+
+class PlatformXRSystem : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PlatformXRSystem(WebPageProxy&);
+    virtual ~PlatformXRSystem();
+
+    void invalidate();
+
+private:
+    static PlatformXRCoordinator* xrCoordinator();
+
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    // Message handlers
+    void enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&&);
+    void initializeTrackingAndRendering();
+    void shutDownTrackingAndRendering();
+    void requestFrame(CompletionHandler<void(PlatformXR::Device::FrameData&&)>&&);
+    void submitFrame();
+
+    WebPageProxy& m_page;
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(WEBXR)

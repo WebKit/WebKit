@@ -7319,6 +7319,15 @@ void WebPage::textAutosizingUsesIdempotentModeChanged()
 }
 #endif // ENABLE(TEXT_AUTOSIZING)
 
+#if ENABLE(WEBXR) && !USE(OPENXR)
+PlatformXRSystemProxy& WebPage::xrSystemProxy()
+{
+    if (!m_xrSystemProxy)
+        m_xrSystemProxy = std::unique_ptr<PlatformXRSystemProxy>(new PlatformXRSystemProxy(*this));
+    return *m_xrSystemProxy;
+}
+#endif
+
 void WebPage::setOverriddenMediaType(const String& mediaType)
 {
     if (mediaType == m_overriddenMediaType)
