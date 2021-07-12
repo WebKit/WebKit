@@ -1,3 +1,12 @@
+2021-07-12  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [Mac wk1 Debug] webaudio/audioworket-out-of-memory.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=227845
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-07-12  Eric Hutchison  <ehutchison@apple.com>
 
         Updating test expectations for imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html.
