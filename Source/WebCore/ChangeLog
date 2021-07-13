@@ -1,5 +1,30 @@
 2021-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        PUA characters have the wrong advance in the fast text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=227896
+        <rdar://problem/80037103>
+
+        Reviewed by Tim Horton.
+
+        There were 2 problems:
+        1. We were passing a UChar32 to this function:
+               static bool treatAsSpace(UChar c) { return c == ' ' ... }
+               This means that passing in U+10020 erroneously returns true
+        2. Because of https://bugs.webkit.org/show_bug.cgi?id=221356,
+               if the prevous character is in SMP, our logic to determine
+               the previous advance would erroneously return 0.
+
+        Test: fast/text/pua-charactersTreatedAsSpace.html
+
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::treatAsSpace):
+        (WebCore::FontCascade::treatAsZeroWidthSpace):
+        (WebCore::FontCascade::treatAsZeroWidthSpaceInComplexScript):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+
+2021-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Fix the Apple internal iOS Simulator build
 
         Unreviewed.
