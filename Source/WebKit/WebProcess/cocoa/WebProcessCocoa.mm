@@ -1167,7 +1167,7 @@ static const WTF::String& invertColorsPreferenceKey()
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if !(HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)) && PLATFORM(IOS_FAMILY)
 static const WTF::String& increaseContrastPreferenceKey()
 {
     static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));

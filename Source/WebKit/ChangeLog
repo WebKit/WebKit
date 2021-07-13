@@ -1,3 +1,11 @@
+2021-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the Apple Internal iOS build
+
+        Unreviewed.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2021-07-12  Tim Horton  <timothy_horton@apple.com>
 
         Make WebKit's UserInterfaceIdiom operate in terms of the exceptions, not the rule
