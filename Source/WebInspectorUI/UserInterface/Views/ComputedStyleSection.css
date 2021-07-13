@@ -148,9 +148,7 @@
     color: var(--text-color-secondary);
 }
 
-.computed-style-section .property-trace-item .property .name,
-.computed-style-section .property-trace-item .property .colon,
-.computed-style-section .property-trace-item .property .semicolon {
+.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .contextual-documentation-button) {
     display: none;
 }
 
