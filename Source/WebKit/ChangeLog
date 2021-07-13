@@ -1,3 +1,20 @@
+2021-07-13  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] RemoteMediaPlayerProxy may not send the latest "naturalSize" to MediaPlayerPrivateRemote
+        https://bugs.webkit.org/show_bug.cgi?id=227894
+
+        Reviewed by Jer Noble.
+
+        When a `MediaPlayerPrivateMediaSourceAVFObjC` in the GPU process changes its `naturalSize`,
+        the new value will be sent to the WebContent process in the IPC message
+        `MediaPlayerPrivateRemote::SizeChanged`. However, `RemoteMediaPlayerProxy` won't update
+        `m_cachedState.naturalSize`. So the next `MediaPlayerPrivateRemote::UpdateCachedState`
+        message will use the old `naturalSize` and the WebContent process will drop the correct value
+        after receiving the message.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerSizeChanged):
+
 2021-07-13  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r279647.

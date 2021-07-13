@@ -659,7 +659,8 @@ void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
 
 void RemoteMediaPlayerProxy::mediaPlayerSizeChanged()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::SizeChanged(m_player->naturalSize()), m_id);
+    m_cachedState.naturalSize = m_player->naturalSize();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::SizeChanged(m_cachedState.naturalSize), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged()
