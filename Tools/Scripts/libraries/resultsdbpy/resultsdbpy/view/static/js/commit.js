@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import {ErrorDisplay, escapeHTML, paramsToQuery, queryToParams} from '/assets/js/common.js';
+import {ErrorDisplay, escapeHTML, linkify, paramsToQuery, queryToParams} from '/assets/js/common.js';
 
 const TIMESTAMP_TO_UUID_MULTIPLIER = 100;
 
@@ -118,8 +118,8 @@ function CommitTable(commits, repositoryIds = [], oneLine = false) {
                             if (!cell.commit.message)
                                 return '';
                             if (oneLine)
-                                return `<br><div>${escapeHTML(cell.commit.message.split('\n')[0])}</div>`;
-                            return `<br><div>${escapeHTML(cell.commit.message)}</div>`;
+                                return `<br><div>${linkify(escapeHTML(cell.commit.message.split('\n')[0]))}</dv>`;
+                            return `<br><div>${linkify(escapeHTML(cell.commit.message))}</div>`;
                         }()}
                     </td>`;
                 }).join('')}

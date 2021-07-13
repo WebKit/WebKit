@@ -139,6 +139,10 @@ function escapeHTML(text) {
   });
 }
 
+function linkify(text) {
+    return text.replace(/\b(https?|rdar):\/{2}[^\s<>&]+[^\.\s<>&,]/gmi, `<a href="$&" target="_blank">$&</a>`);
+}
+
 function deepCompare(a, b) {
     if (a === b)
         return true;
@@ -193,4 +197,4 @@ function elapsedTime(startTimestamp, endTimestamp)
     return result;
 }
 
-export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, percentage, elapsedTime};
+export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, linkify, percentage, elapsedTime};
