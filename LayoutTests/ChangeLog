@@ -1,3 +1,15 @@
+2021-07-13  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update baselines after r279673
+        https://bugs.webkit.org/show_bug.cgi?id=227886
+
+        Unreviewed test gardening.
+
+        * platform/gtk/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/wpe/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/wpe/fast/multicol/vertical-lr/nested-columns-expected.txt:
+
 2021-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         PUA characters have the wrong advance in the fast text codepath
