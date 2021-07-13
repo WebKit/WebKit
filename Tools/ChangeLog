@@ -1,3 +1,22 @@
+2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Allow layout tests to specify app initiated loads or not
+        https://bugs.webkit.org/show_bug.cgi?id=227825
+        <rdar://problem/80355582>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test option that specifies whether the test should mark the
+        main page navigation as app-initiated or not.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        (WTR::TestOptions::keyTypeMapping):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::isAppInitiated const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
 2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Expose support for client certificate auth

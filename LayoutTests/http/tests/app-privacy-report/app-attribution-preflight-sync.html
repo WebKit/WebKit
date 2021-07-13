@@ -1,4 +1,5 @@
-<p>Tests app initiated requests get marked for async preflights</p>
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=true ] -->
+<p>Tests app initiated requests get marked for sync preflights</p>
 
 <pre id="console"></pre>
 <script>
@@ -19,10 +20,14 @@ var url = "http://localhost:8000/xmlhttprequest/resources/status-404-without-bod
 function runTest()
 {
     var req = new XMLHttpRequest();
-    req.open("GET", url, true);
+    req.open("GET", url, false);
     req.setRequestHeader("x-webkit", "foo");
 
-    req.onerror = function() {
+    try {
+        req.send(null);
+        log("PASS: " + req.responseText);
+    } catch (ex) {
+        log("PASS: " + ex);
         var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
         var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
 
@@ -39,7 +44,6 @@ function runTest()
         log("PASS successfully loaded only app initiated requests");
         testRunner.notifyDone();
     }
-    req.send(null);
 }
 
 runTest();

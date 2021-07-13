@@ -1,3 +1,41 @@
+2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Allow layout tests to specify app initiated loads or not
+        https://bugs.webkit.org/show_bug.cgi?id=227825
+        <rdar://problem/80355582>
+
+        Reviewed by Brent Fulgham.
+
+        Added new tests to cover the user initiated case.
+
+        * http/tests/app-privacy-report/app-attribution-load-url-expected.txt: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-load-url-expected.txt.
+        * http/tests/app-privacy-report/app-attribution-load-url.html: Copied from LayoutTests/http/tests/app-privacy-report/attribution-load-url.html.
+        * http/tests/app-privacy-report/app-attribution-ping-load-expected.txt: Copied from LayoutTests/http/tests/app-privacy-report/attribution-ping-load-expected.txt.
+        * http/tests/app-privacy-report/app-attribution-ping-load.html: Copied from LayoutTests/http/tests/app-privacy-report/attribution-ping-load.html.
+        * http/tests/app-privacy-report/app-attribution-post-request-expected.txt: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-post-request-expected.txt.
+        * http/tests/app-privacy-report/app-attribution-post-request.html: Copied from LayoutTests/http/tests/app-privacy-report/attribution-post-request.html.
+        * http/tests/app-privacy-report/app-attribution-preflight-async-expected.txt: Copied from LayoutTests/http/tests/app-privacy-report/attribution-preflight-async-expected.txt.
+        * http/tests/app-privacy-report/app-attribution-preflight-async.html: Copied from LayoutTests/http/tests/app-privacy-report/attribution-preflight-async.html.
+        * http/tests/app-privacy-report/app-attribution-preflight-sync-expected.txt: Copied from LayoutTests/http/tests/app-privacy-report/attribution-preflight-sync-expected.txt.
+        * http/tests/app-privacy-report/app-attribution-preflight-sync.html: Copied from LayoutTests/http/tests/app-privacy-report/attribution-preflight-sync.html.
+        * http/tests/app-privacy-report/app-attribution-speculative-revalidation-expected.txt: Copied from LayoutTests/http/tests/app-privacy-report/attribution-speculative-revalidation-expected.txt.
+        * http/tests/app-privacy-report/app-attribution-speculative-revalidation.html: Copied from LayoutTests/http/tests/app-privacy-report/attribution-speculative-revalidation.html.
+        * http/tests/app-privacy-report/resources/app-initiated-post.py: Copied from LayoutTests/http/tests/app-privacy-report/resources/post.py.
+        * http/tests/app-privacy-report/resources/user-initiated-post.py: Renamed from LayoutTests/http/tests/app-privacy-report/resources/post.py.
+        * http/tests/app-privacy-report/user-attribution-load-url-expected.txt: Added.
+        * http/tests/app-privacy-report/user-attribution-load-url.html: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-load-url.html.
+        * http/tests/app-privacy-report/user-attribution-ping-load-expected.txt: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-ping-load-expected.txt.
+        * http/tests/app-privacy-report/user-attribution-ping-load.html: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-ping-load.html.
+        * http/tests/app-privacy-report/user-attribution-post-request-expected.txt: Added.
+        * http/tests/app-privacy-report/user-attribution-post-request.html: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-post-request.html.
+        * http/tests/app-privacy-report/user-attribution-preflight-async-expected.txt: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-preflight-async-expected.txt.
+        * http/tests/app-privacy-report/user-attribution-preflight-async.html: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-preflight-async.html.
+        * http/tests/app-privacy-report/user-attribution-preflight-sync-expected.txt: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-preflight-sync-expected.txt.
+        * http/tests/app-privacy-report/user-attribution-preflight-sync.html: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-preflight-sync.html.
+        * http/tests/app-privacy-report/user-attribution-speculative-revalidation-expected.txt: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-speculative-revalidation-expected.txt.
+        * http/tests/app-privacy-report/user-attribution-speculative-revalidation.html: Renamed from LayoutTests/http/tests/app-privacy-report/attribution-speculative-revalidation.html.
+        * http/tests/navigation/resources/check-ping-user-initiated-data.py: Added.
+
 2021-07-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r279705.

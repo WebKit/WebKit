@@ -1,3 +1,42 @@
+2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Allow layout tests to specify app initiated loads or not
+        https://bugs.webkit.org/show_bug.cgi?id=227825
+        <rdar://problem/80355582>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/app-privacy-report/app-attribution-load-url.html
+               http/tests/app-privacy-report/app-attribution-ping-load.html
+               http/tests/app-privacy-report/app-attribution-post-request.html
+               http/tests/app-privacy-report/app-attribution-preflight-async.html
+               http/tests/app-privacy-report/app-attribution-preflight-sync.html
+               http/tests/app-privacy-report/app-attribution-speculative-revalidation.html
+               http/tests/app-privacy-report/user-attribution-load-url.html
+               http/tests/app-privacy-report/user-attribution-ping-load.html
+               http/tests/app-privacy-report/user-attribution-post-request.html
+               http/tests/app-privacy-report/user-attribution-preflight-async.html
+               http/tests/app-privacy-report/user-attribution-preflight-sync.html
+               http/tests/app-privacy-report/user-attribution-speculative-revalidation.html
+
+        Add a parameter to the WebView configuration that allows a test to
+        override the default NSURLRequest attribution value. We don't need
+        this to be dynamic per-test, so we can store it in the configuration.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::appInitiatedOverrideValueForTesting const):
+        (API::PageConfiguration::setAppInitiatedOverrideValueForTesting):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (toWKAttributionOverrideTesting):
+        (toAttributionOverrideTesting):
+        (-[WKWebViewConfiguration _setAppInitiatedOverrideValueForTesting:]):
+        (-[WKWebViewConfiguration _appInitiatedOverrideValueForTesting]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setLastNavigationWasAppInitiated):
+
 2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Expose support for client certificate auth

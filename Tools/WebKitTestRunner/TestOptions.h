@@ -59,6 +59,7 @@ public:
     bool ignoreSynchronousMessagingTimeouts() const { return boolTestRunnerFeatureValue("ignoreSynchronousMessagingTimeouts"); }
     bool ignoresViewportScaleLimits() const { return boolTestRunnerFeatureValue("ignoresViewportScaleLimits"); }
     bool isAppBoundWebView() const { return boolTestRunnerFeatureValue("isAppBoundWebView"); }
+    bool isAppInitiated() const { return boolTestRunnerFeatureValue("isAppInitiated"); }
     bool runSingly() const { return boolTestRunnerFeatureValue("runSingly"); }
     bool shouldHandleRunOpenPanel() const { return boolTestRunnerFeatureValue("shouldHandleRunOpenPanel"); }
     bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }

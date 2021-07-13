@@ -27,6 +27,7 @@
 #import "WebPageProxy.h"
 
 #import "APIAttachment.h"
+#import "APIPageConfiguration.h"
 #import "APIUIClient.h"
 #import "CocoaImage.h"
 #import "Connection.h"
@@ -663,6 +664,9 @@ void WebPageProxy::setLastNavigationWasAppInitiated(ResourceRequest& request)
 {
 #if ENABLE(APP_PRIVACY_REPORT)
     auto isAppInitiated = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).attribution == NSURLRequestAttributionDeveloper;
+    if (m_configuration->appInitiatedOverrideValueForTesting() != AttributionOverrideTesting::NoOverride)
+        isAppInitiated = m_configuration->appInitiatedOverrideValueForTesting() == AttributionOverrideTesting::AppInitiated;
+
     request.setIsAppInitiated(isAppInitiated);
     m_lastNavigationWasAppInitiated = isAppInitiated;
 #endif
