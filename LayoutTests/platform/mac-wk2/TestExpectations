@@ -1392,5 +1392,4 @@ webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Cra
 
 webkit.org/b/227874 [ BigSur Release ] fullscreen/full-screen-remove-children.html [ Pass Crash ]
 
-
-
+webkit.org/b/227890 fast/canvas/canvas-path-addPath.html [ Pass Timeout ]
