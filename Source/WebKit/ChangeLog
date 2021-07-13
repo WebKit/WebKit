@@ -1,3 +1,17 @@
+2021-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r279069): http/tests/websocket/tests/hybi/too-long-payload.html is a constant timeout when using NSURLSESSION_WEBSOCKET
+        https://bugs.webkit.org/show_bug.cgi?id=227923
+        <rdar://80343436>
+
+        Reviewed by Chris Dumez.
+
+        We need to add a large maximum frame size that was first introduced to WebKit in r91243
+        Covered by existing tests.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+
 2021-07-13  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] RemoteMediaPlayerProxy may not send the latest "naturalSize" to MediaPlayerPrivateRemote
