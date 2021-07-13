@@ -1,3 +1,17 @@
+2021-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r279647.
+        <rdar://80519938>
+
+        Introduced a crash
+
+        Reverted changeset:
+
+        "XPC services should release their os transaction when given a
+        SIGTERM signal"
+        https://bugs.webkit.org/show_bug.cgi?id=227747
+        https://commits.webkit.org/r279647
+
 2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Unreviewed iOS/tvOS/watchOS build fix.
