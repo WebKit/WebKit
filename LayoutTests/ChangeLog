@@ -1,3 +1,16 @@
+2021-07-13  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Test gardening, remove platform specific expected files
+        https://bugs.webkit.org/show_bug.cgi?id=227908
+
+        These tests now pass with the generic expected files.
+        Unreviewed test gardening.
+
+        * platform/glib/crypto/subtle/ec-generate-key-malformed-parameters-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-self-allow-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey-expected.txt: Removed.
+
 2021-07-13 Eric Hutchison <ehutchison@apple.com>
 
         [ Mac wk2 ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html is flaky failing.
