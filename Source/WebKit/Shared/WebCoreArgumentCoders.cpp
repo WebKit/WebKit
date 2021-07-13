@@ -932,6 +932,9 @@ std::optional<WebCore::PluginInfo> ArgumentCoder<PluginInfo>::decode(Decoder& de
 void ArgumentCoder<AuthenticationChallenge>::encode(Encoder& encoder, const AuthenticationChallenge& challenge)
 {
     encoder << challenge.protectionSpace() << challenge.proposedCredential() << challenge.previousFailureCount() << challenge.failureResponse() << challenge.error();
+#if USE(SOUP)
+    encoder << challenge.tlsPasswordFlags();
+#endif
 }
 
 bool ArgumentCoder<AuthenticationChallenge>::decode(Decoder& decoder, AuthenticationChallenge& challenge)
@@ -955,8 +958,18 @@ bool ArgumentCoder<AuthenticationChallenge>::decode(Decoder& decoder, Authentica
     ResourceError error;
     if (!decoder.decode(error))
         return false;
-    
+
+#if USE(SOUP)
+    uint32_t tlsPasswordFlags;
+    if (!decoder.decode(tlsPasswordFlags))
+        return false;
+#endif
+
     challenge = AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error);
+
+#if USE(SOUP)
+    challenge.setTLSPasswordFlags(tlsPasswordFlags);
+#endif
     return true;
 }
 

@@ -28,6 +28,8 @@
 #include "AuthenticationChallengeBase.h"
 #include "AuthenticationClient.h"
 
+typedef struct _GTlsClientConnection GTlsClientConnection;
+typedef struct _GTlsPassword GTlsPassword;
 typedef struct _SoupAuth SoupAuth;
 typedef struct _SoupMessage SoupMessage;
 
@@ -45,12 +47,18 @@ public:
     }
 
     AuthenticationChallenge(SoupMessage*, SoupAuth*, bool retrying);
+    AuthenticationChallenge(SoupMessage*, GTlsClientConnection*);
+    AuthenticationChallenge(SoupMessage*, GTlsPassword*);
     AuthenticationClient* authenticationClient() const { RELEASE_ASSERT_NOT_REACHED(); }
 #if USE(SOUP2)
     SoupMessage* soupMessage() const { return m_soupMessage.get(); }
 #endif
     SoupAuth* soupAuth() const { return m_soupAuth.get(); }
+    GTlsPassword* tlsPassword() const { return m_tlsPassword.get(); }
     void setProposedCredential(const Credential& credential) { m_proposedCredential = credential; }
+
+    uint32_t tlsPasswordFlags() const { return m_tlsPasswordFlags; }
+    void setTLSPasswordFlags(uint32_t tlsPasswordFlags) { m_tlsPasswordFlags = tlsPasswordFlags; }
 
 private:
     friend class AuthenticationChallengeBase;
@@ -60,6 +68,8 @@ private:
     GRefPtr<SoupMessage> m_soupMessage;
 #endif
     GRefPtr<SoupAuth> m_soupAuth;
+    GRefPtr<GTlsPassword> m_tlsPassword;
+    uint32_t m_tlsPasswordFlags { 0 };
 };
 
 } // namespace WebCore

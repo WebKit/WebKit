@@ -40,6 +40,7 @@ public:
     WebKitTestServer(ServerOptions option)
         : WebKitTestServer(ServerOptionsBitSet().set(option)) { }
 
+    SoupServer* soupServer() const { return m_soupServer.get(); }
     const URL& baseURL() const { return m_baseURL; }
     unsigned port() const;
     CString getURIForPath(const char* path) const;

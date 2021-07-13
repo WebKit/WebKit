@@ -125,6 +125,8 @@ static const char* authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSpa
     case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
         ASSERT_NOT_REACHED();
         break;
+    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+        return "Certificate PIN";
     case ProtectionSpaceAuthenticationSchemeOAuth:
         return "OAuth";
     case ProtectionSpaceAuthenticationSchemeUnknown:

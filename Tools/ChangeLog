@@ -1,3 +1,32 @@
+2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Expose support for client certificate auth
+        https://bugs.webkit.org/show_bug.cgi?id=200805
+
+        Reviewed by Michael Catanzaro.
+
+        Add a simple implementation in MiniBrowser using a file chooser to ask for the certificate from a file and unit
+        tests for the client certificate request. Unfortunately we can't easily test pin certificates.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (certificateDialogResponse):
+        (webViewAuthenticate):
+        (browserTabConstructed):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (ClientSideCertificateTest::acceptCertificateCallback):
+        (ClientSideCertificateTest::requestStartedCallback):
+        (ClientSideCertificateTest::authenticateCallback):
+        (ClientSideCertificateTest::ClientSideCertificateTest):
+        (ClientSideCertificateTest::~ClientSideCertificateTest):
+        (ClientSideCertificateTest::authenticate):
+        (ClientSideCertificateTest::acceptCertificate):
+        (ClientSideCertificateTest::waitForAuthenticationRequest):
+        (testClientSideCertificate):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+        (WebKitTestServer::soupServer const):
+
 2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         New malloc algorithm

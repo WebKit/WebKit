@@ -357,6 +357,7 @@ webkit_authentication_request_get_proposed_credential
 webkit_authentication_request_set_proposed_credential
 webkit_authentication_request_get_realm
 webkit_authentication_request_get_scheme
+webkit_authentication_request_get_certificate_pin_flags
 webkit_authentication_request_is_for_proxy
 
 <SUBSECTION Standard>
@@ -378,12 +379,15 @@ webkit_credential_get_type
 WebKitCredential
 WebKitCredentialPersistence
 webkit_credential_new
+webkit_credential_new_for_certificate_pin
+webkit_credential_new_for_certificate
 webkit_credential_copy
 webkit_credential_free
 webkit_credential_get_password
 webkit_credential_get_persistence
 webkit_credential_get_username
 webkit_credential_has_password
+webkit_credential_get_certificate
 </SECTION>
 
 <SECTION>

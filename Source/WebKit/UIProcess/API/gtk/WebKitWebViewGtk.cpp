@@ -34,8 +34,24 @@
 
 gboolean webkitWebViewAuthenticate(WebKitWebView* webView, WebKitAuthenticationRequest* request)
 {
-    CredentialStorageMode credentialStorageMode = webkit_authentication_request_can_save_credentials(request) ? AllowPersistentStorage : DisallowPersistentStorage;
-    webkitWebViewBaseAddDialog(WEBKIT_WEB_VIEW_BASE(webView), webkitAuthenticationDialogNew(request, credentialStorageMode));
+    switch (webkit_authentication_request_get_scheme(request)) {
+    case WEBKIT_AUTHENTICATION_SCHEME_DEFAULT:
+    case WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC:
+    case WEBKIT_AUTHENTICATION_SCHEME_HTTP_DIGEST:
+    case WEBKIT_AUTHENTICATION_SCHEME_HTML_FORM:
+    case WEBKIT_AUTHENTICATION_SCHEME_NTLM:
+    case WEBKIT_AUTHENTICATION_SCHEME_NEGOTIATE:
+    case WEBKIT_AUTHENTICATION_SCHEME_SERVER_TRUST_EVALUATION_REQUESTED:
+    case WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN: {
+        CredentialStorageMode credentialStorageMode = webkit_authentication_request_can_save_credentials(request) ? AllowPersistentStorage : DisallowPersistentStorage;
+        webkitWebViewBaseAddDialog(WEBKIT_WEB_VIEW_BASE(webView), webkitAuthenticationDialogNew(request, credentialStorageMode));
+        break;
+    }
+    case WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED:
+    case WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_PIN_REQUESTED:
+        webkit_authentication_request_authenticate(request, nullptr);
+        break;
+    }
 
     return TRUE;
 }

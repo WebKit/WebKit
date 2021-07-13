@@ -1,3 +1,45 @@
+2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Expose support for client certificate auth
+        https://bugs.webkit.org/show_bug.cgi?id=200805
+
+        Reviewed by Michael Catanzaro.
+
+        Add new API to handle certificate and pin certificate authentication requests.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest):
+        (WebKit::NetworkDataTaskSoup::completeAuthentication):
+        (WebKit::NetworkDataTaskSoup::cancelAuthentication):
+        (WebKit::NetworkDataTaskSoup::authenticate):
+        (WebKit::NetworkDataTaskSoup::continueAuthenticate):
+        (WebKit::NetworkDataTaskSoup::requestCertificateCallback):
+        (WebKit::NetworkDataTaskSoup::requestCertificatePasswordCallback):
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<AuthenticationChallenge>::encode):
+        (IPC::ArgumentCoder<AuthenticationChallenge>::decode):
+        * Shared/glib/ArgumentCodersGLib.cpp:
+        (IPC::ArgumentCoder<GRefPtr<GTlsCertificate>>::encode):
+        (IPC::ArgumentCoder<GRefPtr<GTlsCertificate>>::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<Credential>::encodePlatformData):
+        (IPC::ArgumentCoder<Credential>::decodePlatformData):
+        * UIProcess/API/glib/WebKitAuthenticationRequest.cpp:
+        (webkit_authentication_request_get_certificate_pin_flags):
+        * UIProcess/API/glib/WebKitCredential.cpp:
+        (webkit_credential_new_for_certificate_pin):
+        (webkit_credential_new_for_certificate):
+        (webkit_credential_get_certificate):
+        * UIProcess/API/gtk/WebKitAuthenticationRequest.h:
+        * UIProcess/API/gtk/WebKitCredential.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkitWebViewAuthenticate):
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitAuthenticationRequest.h:
+        * UIProcess/API/wpe/WebKitCredential.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2021-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the Apple Internal iOS build

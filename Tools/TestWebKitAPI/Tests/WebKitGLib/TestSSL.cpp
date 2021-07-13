@@ -477,6 +477,171 @@ static void testTLSErrorsEphemeral(EphemeralSSLTest* test, gconstpointer)
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
 }
 
+#if !USE(SOUP2)
+class ClientSideCertificateTest : public LoadTrackingTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ClientSideCertificateTest);
+
+    static gboolean acceptCertificateCallback(SoupServerMessage* message, GTlsCertificate* certificate, GTlsCertificateFlags errors, ClientSideCertificateTest* test)
+    {
+        bool acceptedCertificate = test->acceptCertificate(errors);
+        g_object_set_data_full(G_OBJECT(message), acceptedCertificate ? "accepted-certificate" : "rejected-certificate", g_object_ref(certificate), g_object_unref);
+        return acceptedCertificate;
+    }
+
+    static void requestStartedCallback(SoupServer*, SoupServerMessage* message, ClientSideCertificateTest* test)
+    {
+        g_signal_connect(message, "accept-certificate", G_CALLBACK(acceptCertificateCallback), test);
+    }
+
+    static gboolean authenticateCallback(WebKitWebView*, WebKitAuthenticationRequest* request, ClientSideCertificateTest* test)
+    {
+        test->authenticate(request);
+        return TRUE;
+    }
+
+    ClientSideCertificateTest()
+    {
+        CString resourcesDir = Test::getResourcesDir();
+        GUniquePtr<char> sslCertificateFile(g_build_filename(resourcesDir.data(), "test-cert.pem", nullptr));
+        GUniquePtr<char> sslKeyFile(g_build_filename(resourcesDir.data(), "test-key.pem", nullptr));
+        GUniqueOutPtr<GError> error;
+        m_clientCertificate = adoptGRef(g_tls_certificate_new_from_files(sslCertificateFile.get(), sslKeyFile.get(), &error.outPtr()));
+        g_assert_no_error(error.get());
+
+        soup_server_set_tls_auth_mode(kHttpsServer->soupServer(), G_TLS_AUTHENTICATION_REQUIRED);
+        g_signal_connect(kHttpsServer->soupServer(), "request-started", G_CALLBACK(requestStartedCallback), this);
+        g_signal_connect(m_webView, "authenticate", G_CALLBACK(authenticateCallback), this);
+    }
+
+    ~ClientSideCertificateTest()
+    {
+        soup_server_set_tls_auth_mode(kHttpsServer->soupServer(), G_TLS_AUTHENTICATION_NONE);
+        g_signal_handlers_disconnect_by_data(kHttpsServer->soupServer(), this);
+    }
+
+    void authenticate(WebKitAuthenticationRequest* request)
+    {
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
+        m_authenticationRequest = request;
+        g_main_loop_quit(m_mainLoop);
+    }
+
+    bool acceptCertificate(GTlsCertificateFlags errors)
+    {
+        if (m_rejectClientCertificates)
+            return false;
+
+        // We always expect errors because we are using a self-signed certificate,
+        // but only G_TLS_CERTIFICATE_UNKNOWN_CA flags should be present.
+        return !errors || errors == G_TLS_CERTIFICATE_UNKNOWN_CA;
+    }
+
+    WebKitAuthenticationRequest* waitForAuthenticationRequest()
+    {
+        m_authenticationRequest = nullptr;
+        g_main_loop_run(m_mainLoop);
+        return m_authenticationRequest.get();
+    }
+
+    GRefPtr<WebKitAuthenticationRequest> m_authenticationRequest;
+    GRefPtr<GTlsCertificate> m_clientCertificate;
+    bool m_rejectClientCertificates { false };
+};
+
+static void testClientSideCertificate(ClientSideCertificateTest* test, gconstpointer)
+{
+    // Ignore server certificate errors.
+    auto* websiteDataManager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
+    WebKitTLSErrorsPolicy originalPolicy = webkit_website_data_manager_get_tls_errors_policy(websiteDataManager);
+    webkit_website_data_manager_set_tls_errors_policy(websiteDataManager, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
+    // Cancel the authentiation request.
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    auto* request = test->waitForAuthenticationRequest();
+    g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "");
+    g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED);
+    g_assert_false(webkit_authentication_request_is_for_proxy(request));
+    g_assert_false(webkit_authentication_request_is_retry(request));
+    auto* origin = webkit_authentication_request_get_security_origin(request);
+    g_assert_nonnull(origin);
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, kHttpsServer->baseURL().protocol().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, kHttpsServer->baseURL().host().toString().utf8());
+    g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, kHttpsServer->port());
+    webkit_security_origin_unref(origin);
+    webkit_authentication_request_cancel(request);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::ProvisionalLoadFailed);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+    g_assert_error(test->m_error.get(), WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED);
+    test->m_loadEvents.clear();
+
+    // Complete the request with no credential.
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    request = test->waitForAuthenticationRequest();
+    webkit_authentication_request_authenticate(request, nullptr);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::ProvisionalLoadFailed);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+    // Sometimes glib-networking fails to report the error as certificate required and we end up
+    // with connection reset by peer because the server closes the connection.
+    if (!g_error_matches(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_CLOSED))
+        g_assert_error(test->m_error.get(), G_TLS_ERROR, G_TLS_ERROR_CERTIFICATE_REQUIRED);
+    test->m_loadEvents.clear();
+
+    // Complete the request with a credential with no certificate.
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    request = test->waitForAuthenticationRequest();
+    WebKitCredential* credential = webkit_credential_new_for_certificate(nullptr, WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
+    webkit_authentication_request_authenticate(request, credential);
+    webkit_credential_free(credential);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::ProvisionalLoadFailed);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+    if (!g_error_matches(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_CLOSED))
+        g_assert_error(test->m_error.get(), G_TLS_ERROR, G_TLS_ERROR_CERTIFICATE_REQUIRED);
+    test->m_loadEvents.clear();
+
+    // Complete the request with a credential with an invalid certificate.
+    test->m_rejectClientCertificates = true;
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    request = test->waitForAuthenticationRequest();
+    credential = webkit_credential_new_for_certificate(test->m_clientCertificate.get(), WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
+    webkit_authentication_request_authenticate(request, credential);
+    webkit_credential_free(credential);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::ProvisionalLoadFailed);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+    if (!g_error_matches(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_CLOSED))
+        g_assert_error(test->m_error.get(), G_TLS_ERROR, G_TLS_ERROR_CERTIFICATE_REQUIRED);
+    test->m_loadEvents.clear();
+    test->m_rejectClientCertificates = false;
+
+    // Complete the request with a credential with a valid certificate.
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    request = test->waitForAuthenticationRequest();
+    credential = webkit_credential_new_for_certificate(test->m_clientCertificate.get(), WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
+    webkit_authentication_request_authenticate(request, credential);
+    webkit_credential_free(credential);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+    test->m_loadEvents.clear();
+
+    webkit_website_data_manager_set_tls_errors_policy(websiteDataManager, originalPolicy);
+}
+#endif
+
 #if USE(SOUP2)
 static void httpsServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -577,6 +742,9 @@ void beforeAll()
     TLSErrorsTest::add("WebKitWebView", "load-failed-with-tls-errors", testLoadFailedWithTLSErrors);
     WebSocketTest::add("WebKitWebView", "web-socket-tls-errors", testWebSocketTLSErrors);
     EphemeralSSLTest::add("WebKitWebView", "ephemeral-tls-errors", testTLSErrorsEphemeral);
+#if !USE(SOUP2)
+    ClientSideCertificateTest::add("WebKitWebView", "client-side-certificate", testClientSideCertificate);
+#endif
 }
 
 void afterAll()

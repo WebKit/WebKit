@@ -238,6 +238,8 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
         g_signal_connect(m_soupMessage.get(), "wrote-headers", G_CALLBACK(wroteHeadersCallback), this);
         g_signal_connect(m_soupMessage.get(), "wrote-body", G_CALLBACK(wroteBodyCallback), this);
     }
+    g_signal_connect(m_soupMessage.get(), "request-certificate", G_CALLBACK(requestCertificateCallback), this);
+    g_signal_connect(m_soupMessage.get(), "request-certificate-password", G_CALLBACK(requestCertificatePasswordCallback), this);
 #endif
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
     g_signal_connect(m_soupMessage.get(), "starting", G_CALLBACK(startingCallback), this);
@@ -683,6 +685,73 @@ static inline bool isAuthenticationFailureStatusCode(int httpStatusCode)
     return httpStatusCode == SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED || httpStatusCode == SOUP_STATUS_UNAUTHORIZED;
 }
 
+void NetworkDataTaskSoup::completeAuthentication(const AuthenticationChallenge& challenge, const Credential& credential)
+{
+    switch (challenge.protectionSpace().authenticationScheme()) {
+    case ProtectionSpaceAuthenticationSchemeDefault:
+    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case ProtectionSpaceAuthenticationSchemeNTLM:
+    case ProtectionSpaceAuthenticationSchemeNegotiate:
+    case ProtectionSpaceAuthenticationSchemeOAuth:
+        soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
+        break;
+    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested: {
+#if USE(SOUP2)
+        ASSERT_NOT_REACHED();
+#else
+        CString password = credential.password().utf8();
+        g_tls_password_set_value(challenge.tlsPassword(), reinterpret_cast<const unsigned char*>(password.data()), password.length());
+        soup_message_tls_client_certificate_password_request_complete(m_soupMessage.get());
+#endif
+        break;
+    }
+    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+#if USE(SOUP2)
+        ASSERT_NOT_REACHED();
+#else
+        soup_message_set_tls_client_certificate(m_soupMessage.get(), credential.certificate());
+#endif
+        break;
+    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case ProtectionSpaceAuthenticationSchemeUnknown:
+        break;
+    }
+}
+
+void NetworkDataTaskSoup::cancelAuthentication(const AuthenticationChallenge& challenge)
+{
+    switch (challenge.protectionSpace().authenticationScheme()) {
+    case ProtectionSpaceAuthenticationSchemeDefault:
+    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case ProtectionSpaceAuthenticationSchemeNTLM:
+    case ProtectionSpaceAuthenticationSchemeNegotiate:
+    case ProtectionSpaceAuthenticationSchemeOAuth:
+        soup_auth_cancel(challenge.soupAuth());
+        break;
+    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+#if USE(SOUP2)
+        ASSERT_NOT_REACHED();
+#else
+        soup_message_tls_client_certificate_password_request_complete(m_soupMessage.get());
+#endif
+        break;
+    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+#if USE(SOUP2)
+        ASSERT_NOT_REACHED();
+#else
+        soup_message_set_tls_client_certificate(m_soupMessage.get(), nullptr);
+#endif
+        break;
+    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case ProtectionSpaceAuthenticationSchemeUnknown:
+        break;
+    }
+}
+
 void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
 {
     ASSERT(m_soupMessage);
@@ -703,7 +772,8 @@ void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
                     // Store the credential back, possibly adding it as a default for this directory.
                     m_session->networkStorageSession()->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-                soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
+
+                completeAuthentication(challenge, credential);
                 return;
             }
         }
@@ -737,11 +807,13 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
 {
     m_client->didReceiveChallenge(AuthenticationChallenge(challenge), NegotiatedLegacyTLS::No, [this, protectedThis = makeRef(*this), challenge](AuthenticationChallengeDisposition disposition, const Credential& credential) {
         if (m_state == State::Canceling || m_state == State::Completed) {
+            cancelAuthentication(challenge);
             clearRequest();
             return;
         }
 
         if (disposition == AuthenticationChallengeDisposition::Cancel) {
+            cancelAuthentication(challenge);
             cancel();
             didFail(cancelledError(m_currentRequest));
             return;
@@ -762,9 +834,9 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
                 }
             }
 
-            soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
+            completeAuthentication(challenge, credential);
         } else
-            soup_auth_cancel(challenge.soupAuth());
+            cancelAuthentication(challenge);
 
 #if USE(SOUP2)
         soup_session_unpause_message(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), challenge.soupMessage());
@@ -1192,6 +1264,28 @@ void NetworkDataTaskSoup::gotBodyCallback(SoupMessage* soupMessage, NetworkDataT
     auto* metrics = soup_message_get_metrics(soupMessage);
     task->m_networkLoadMetrics.responseBodyBytesReceived = soup_message_metrics_get_response_body_bytes_received(metrics);
     task->m_networkLoadMetrics.responseBodyDecodedSize = soup_message_metrics_get_response_body_size(metrics);
+}
+
+gboolean NetworkDataTaskSoup::requestCertificateCallback(SoupMessage* soupMessage, GTlsClientConnection* connection, NetworkDataTaskSoup* task)
+{
+    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+        task->clearRequest();
+        return FALSE;
+    }
+    ASSERT(task->m_soupMessage.get() == soupMessage);
+    task->authenticate(AuthenticationChallenge(soupMessage, connection));
+    return TRUE;
+}
+
+gboolean NetworkDataTaskSoup::requestCertificatePasswordCallback(SoupMessage* soupMessage, GTlsPassword* tlsPassword, NetworkDataTaskSoup* task)
+{
+    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+        task->clearRequest();
+        return FALSE;
+    }
+    ASSERT(task->m_soupMessage.get() == soupMessage);
+    task->authenticate(AuthenticationChallenge(soupMessage, tlsPassword));
+    return TRUE;
 }
 #endif
 

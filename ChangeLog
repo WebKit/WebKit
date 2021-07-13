@@ -1,3 +1,15 @@
+2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Expose support for client certificate auth
+        https://bugs.webkit.org/show_bug.cgi?id=200805
+
+        Reviewed by Michael Catanzaro.
+
+        Bump libsoup3 required version.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-06-24  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r236846): WPE shouldn't depend on OpenGL ES 3
