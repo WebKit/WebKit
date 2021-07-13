@@ -1,3 +1,12 @@
+2021-07-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Upload layout-tests results immediately after running layout-tests
+        https://bugs.webkit.org/show_bug.cgi?id=227889
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * CISupport/build-webkit-org/factories.py:
+
 2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Allow layout tests to specify app initiated loads or not
