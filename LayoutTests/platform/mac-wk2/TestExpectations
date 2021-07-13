@@ -305,7 +305,7 @@ webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
 webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 # Flaky everywhere.
-webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Pass Failure ]
+webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Pass Failure Crash ]
 
 webkit.org/b/114572 platform/mac-wk2/plugins/mouse-events-scaled.html [ Pass Failure ]
 
@@ -1392,5 +1392,3 @@ webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Cra
 webkit.org/b/227874 [ BigSur Release ] fullscreen/full-screen-remove-children.html [ Pass Crash ]
 
 webkit.org/b/227890 fast/canvas/canvas-path-addPath.html [ Pass Timeout ]
-
-webkit.org/b/227910 imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]

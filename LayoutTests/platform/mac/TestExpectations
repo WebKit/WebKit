@@ -2193,7 +2193,7 @@ webkit.org/b/223043 [ BigSur ] webrtc/multi-audio.html [ Pass Failure ]
 
 webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels.html [ Failure ]
 
-webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
+webkit.org/b/223271 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
 
 webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
@@ -2287,7 +2287,17 @@ webkit.org/b/225258 [ arm64 ] js/dom/Promise-reject-large-string.html [ Pass Fai
 
 webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
 
-webkit.org/b/223645 [ BigSur ] media/video-played-ranges-1.html [ Pass Failure ]
+webkit.org/b/223645 [ BigSur+ ] media/video-played-ranges-1.html [ Pass Failure ]
+
+webkit.org/b/226828 media/modern-media-controls/overflow-support/chapters.html [ Pass Failure Timeout ]
+
+# rdar://80345970 ([ Mac ] imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html is a flaky failure)
+imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html [ Pass Failure Crash ]
+
+webkit.org/b/227910 imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
+
+# rdar://80345578 ([ Mac iOS Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html is flaky crashing)
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure Crash ]
 
 webkit.org/b/225804 imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html [ Pass Failure ]
 

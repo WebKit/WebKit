@@ -1,3 +1,14 @@
+2021-07-13  Truitt Savell  <tsavell@apple.com>
+
+        Creating or modifying expectations for many test failing on Monterey
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-07-13  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Test gardening, remove platform specific expected files
