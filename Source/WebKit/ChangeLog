@@ -1,3 +1,11 @@
+2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Unreviewed iOS/tvOS/watchOS build fix.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+
 2021-07-13  Chris Dumez  <cdumez@apple.com>
 
         Regression(r279601) ProcessAssertion may get destroyed on a background thread

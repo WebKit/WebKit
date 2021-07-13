@@ -48,7 +48,7 @@ class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 
-#if ENABLE(APP_PRIVACY_REPORT)
+#if PLATFORM(IOS_FAMILY)
 enum class AttributionOverrideTesting : uint8_t {
     NoOverride,
     UserInitiated,
@@ -179,7 +179,7 @@ public:
     void setAttributedBundleIdentifier(WTF::String&& identifier) { m_attributedBundleIdentifier = WTFMove(identifier); }
     const WTF::String& attributedBundleIdentifier() const { return m_attributedBundleIdentifier; }
 
-#if ENABLE(APP_PRIVACY_REPORT)
+#if PLATFORM(IOS_FAMILY)
     WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting() const { return m_appInitiatedOverrideValueForTesting; }
     void setAppInitiatedOverrideValueForTesting(WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting) { m_appInitiatedOverrideValueForTesting = appInitiatedOverrideValueForTesting; }
 #endif
@@ -236,7 +236,7 @@ private:
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
     WTF::String m_attributedBundleIdentifier;
 
-#if ENABLE(APP_PRIVACY_REPORT)
+#if PLATFORM(IOS_FAMILY)
     WebKit::AttributionOverrideTesting m_appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
 #endif
 };
