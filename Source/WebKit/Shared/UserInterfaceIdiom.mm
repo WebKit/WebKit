@@ -34,48 +34,48 @@
 namespace WebKit {
 
 enum class UserInterfaceIdiomState : uint8_t {
-    IsPadOrMac,
-    IsNotPadOrMac,
+    IsPhoneOrWatch,
+    IsNotPhoneOrWatch,
     Unknown,
 };
 
-static UserInterfaceIdiomState userInterfaceIdiomIsPadState = UserInterfaceIdiomState::Unknown;
+static UserInterfaceIdiomState userInterfaceIdiomState = UserInterfaceIdiomState::Unknown;
 
-bool currentUserInterfaceIdiomIsPadOrMac()
+bool currentUserInterfaceIdiomIsPhoneOrWatch()
 {
     // FIXME: We should get rid of this function and have callers make explicit decisions for all of iPhone/iPad/macOS.
 
-    if (userInterfaceIdiomIsPadState == UserInterfaceIdiomState::Unknown)
+    if (userInterfaceIdiomState == UserInterfaceIdiomState::Unknown)
         updateCurrentUserInterfaceIdiom();
 
-    return userInterfaceIdiomIsPadState == UserInterfaceIdiomState::IsPadOrMac;
+    return userInterfaceIdiomState == UserInterfaceIdiomState::IsPhoneOrWatch;
 }
 
-void setCurrentUserInterfaceIdiomIsPadOrMac(bool isPadOrMac)
+void setCurrentUserInterfaceIdiomIsPhoneOrWatch(bool isPhoneOrWatch)
 {
-    userInterfaceIdiomIsPadState = isPadOrMac ? UserInterfaceIdiomState::IsPadOrMac : UserInterfaceIdiomState::IsNotPadOrMac;
+    userInterfaceIdiomState = isPhoneOrWatch ? UserInterfaceIdiomState::IsPhoneOrWatch : UserInterfaceIdiomState::IsNotPhoneOrWatch;
 }
 
 bool updateCurrentUserInterfaceIdiom()
 {
-    bool wasPadOrMac = userInterfaceIdiomIsPadState == UserInterfaceIdiomState::IsPadOrMac;
-    bool isPadOrMac = false;
+    bool wasPhoneOrWatch = userInterfaceIdiomState == UserInterfaceIdiomState::IsPhoneOrWatch;
+    bool isPhoneOrWatch = false;
 
     // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
     // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
     // but is not sufficient in the application case.
     if (![UIApplication sharedApplication]) {
         auto deviceClass = WebCore::deviceClass();
-        isPadOrMac = deviceClass == MGDeviceClassiPad || deviceClass == MGDeviceClassMac;
+        isPhoneOrWatch = deviceClass == MGDeviceClassiPhone || deviceClass == MGDeviceClassiPod || deviceClass == MGDeviceClassWatch;
     } else {
         auto idiom = [[UIDevice currentDevice] userInterfaceIdiom];
-        isPadOrMac = idiom == UIUserInterfaceIdiomPad || idiom == UIUserInterfaceIdiomMac;
+        isPhoneOrWatch = idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch;
     }
 
-    if (wasPadOrMac == isPadOrMac)
+    if (wasPhoneOrWatch == isPhoneOrWatch)
         return false;
 
-    setCurrentUserInterfaceIdiomIsPadOrMac(isPadOrMac);
+    setCurrentUserInterfaceIdiomIsPhoneOrWatch(isPhoneOrWatch);
     return true;
 }
 

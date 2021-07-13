@@ -475,7 +475,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
         [[_contentView formAccessoryView] showAutoFillButtonWithTitle:title];
     else
         [[_contentView formAccessoryView] hideAutoFillButton];
-    if (WebKit::currentUserInterfaceIdiomIsPadOrMac())
+    if (!WebKit::currentUserInterfaceIdiomIsPhoneOrWatch())
         [_contentView reloadInputViews];
 }
 
@@ -1550,7 +1550,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
                 if (_focusRequiresStrongPasswordAssistance)
                     return true;
 
-                if (!WebKit::currentUserInterfaceIdiomIsPadOrMac())
+                if (WebKit::currentUserInterfaceIdiomIsPhoneOrWatch())
                     return true;
             }
 
@@ -2241,7 +2241,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         if (self._shouldUseContextMenusForFormControls)
             return NO;
 #endif
-        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+        return WebKit::currentUserInterfaceIdiomIsPhoneOrWatch();
     }
     default:
         return YES;
@@ -2302,7 +2302,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         fontSize:_focusedElementInformation.nodeFontSize
         minimumScale:_focusedElementInformation.minimumScaleFactor
         maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
-        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !WebKit::currentUserInterfaceIdiomIsPadOrMac()
+        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && WebKit::currentUserInterfaceIdiomIsPhoneOrWatch()
         forceScroll:[self requiresAccessoryView]];
 }
 
@@ -3319,7 +3319,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         if (self._shouldUseContextMenusForFormControls)
             return NO;
 #endif
-        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+        return WebKit::currentUserInterfaceIdiomIsPhoneOrWatch();
     }
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
@@ -3332,7 +3332,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::Week:
-        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+        return WebKit::currentUserInterfaceIdiomIsPhoneOrWatch();
     }
 }
 
@@ -4910,7 +4910,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
-    if (WebKit::currentUserInterfaceIdiomIsPadOrMac()) {
+    if (!WebKit::currentUserInterfaceIdiomIsPhoneOrWatch()) {
         [accessoryView setClearVisible:NO];
         return;
     }
@@ -7778,7 +7778,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (BOOL)_shouldUseLegacySelectPopoverDismissalBehavior
 {
-    if (!WebKit::currentUserInterfaceIdiomIsPadOrMac())
+    if (WebKit::currentUserInterfaceIdiomIsPhoneOrWatch())
         return NO;
 
     if (_focusedElementInformation.elementType != WebKit::InputType::Select)

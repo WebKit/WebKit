@@ -116,10 +116,10 @@ void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformat
     }
 #endif
 
-    if (currentUserInterfaceIdiomIsPadOrMac())
-        m_suggestionsControl = adoptNS([[WKDataListSuggestionsPopover alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
-    else
+    if (currentUserInterfaceIdiomIsPhoneOrWatch())
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsPicker alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
+    else
+        m_suggestionsControl = adoptNS([[WKDataListSuggestionsPopover alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
 
     [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
 }

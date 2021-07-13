@@ -1,3 +1,68 @@
+2021-07-12  Tim Horton  <timothy_horton@apple.com>
+
+        Make WebKit's UserInterfaceIdiom operate in terms of the exceptions, not the rule
+        https://bugs.webkit.org/show_bug.cgi?id=227885
+        <rdar://problem/79987158>
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests, no change in behavior.
+
+        In general, we consider the macOS/iPad behavior the "normal" WebKit behavior,
+        and exceptions to that for iPhone or Watch are just that: exceptions.
+
+        To bring the code in line with this understanding, make places that
+        we make decisions based on UIUserInterfaceIdiom take macOS/iPad behavior
+        as the default, and make iPhone/Watch the special cases.
+
+        * Shared/UserInterfaceIdiom.h:
+        * Shared/UserInterfaceIdiom.mm:
+        (WebKit::currentUserInterfaceIdiomIsPhoneOrWatch):
+        (WebKit::setCurrentUserInterfaceIdiomIsPhoneOrWatch):
+        Also, lump iPod Touch in with iPhone when checking based on device class.
+
+        (WebKit::updateCurrentUserInterfaceIdiom):
+        (WebKit::currentUserInterfaceIdiomIsPadOrMac): Deleted.
+        (WebKit::setCurrentUserInterfaceIdiomIsPadOrMac): Deleted.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+        (WebKit::defaultTextAutosizingUsesIdempotentMode):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setAccessoryViewCustomButtonTitle:]):
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]):
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView _elementTypeRequiresAccessoryView:]):
+        (-[WKContentView _updateAccessory]):
+        (-[WKContentView _shouldUseLegacySelectPopoverDismissalBehavior]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (WebKit::WebDataListSuggestionsDropdownIOS::show):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingSupported):
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker show:fromRect:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]):
+        (-[WKFileUploadPanel _presentMenuOptionForCurrentInterfaceIdiom:]):
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectMultiplePicker configurePresentation]):
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::userInterfaceIdiomDidChange):
+
 2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Turn on `USE(OS_STATE)` when building with a non-Apple-internal SDK

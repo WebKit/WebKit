@@ -312,7 +312,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
 #if PLATFORM(IOS_FAMILY)
-    setCurrentUserInterfaceIdiomIsPadOrMac(parameters.currentUserInterfaceIdiomIsPad);
+    setCurrentUserInterfaceIdiomIsPhoneOrWatch(parameters.currentUserInterfaceIdiomIsPhoneOrWatch);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
     RenderThemeIOS::setContentSizeCategory(parameters.contentSizeCategory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -1015,9 +1015,9 @@ void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
 }
 
-void WebProcess::userInterfaceIdiomDidChange(bool isPadOrMac)
+void WebProcess::userInterfaceIdiomDidChange(bool isPhoneOrWatch)
 {
-    WebKit::setCurrentUserInterfaceIdiomIsPadOrMac(isPadOrMac);
+    WebKit::setCurrentUserInterfaceIdiomIsPhoneOrWatch(isPhoneOrWatch);
 }
 
 bool WebProcess::shouldFreezeOnSuspension() const

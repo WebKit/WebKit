@@ -119,10 +119,10 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
     float minimumScrollDistance;
     if ([m_contentView bounds].size.width <= m_webPageProxy.unobscuredContentRect().width())
         minimumScrollDistance = smartMagnificationPanScrollThresholdZoomedOut;
-    else if (currentUserInterfaceIdiomIsPadOrMac())
-        minimumScrollDistance = smartMagnificationPanScrollThresholdIPad;
-    else
+    else if (currentUserInterfaceIdiomIsPhoneOrWatch())
         minimumScrollDistance = smartMagnificationPanScrollThresholdIPhone;
+    else
+        minimumScrollDistance = smartMagnificationPanScrollThresholdIPad;
 
     // For replaced elements like images, we want to fit the whole element
     // in the view, so scale it down enough to make both dimensions fit if possible.
