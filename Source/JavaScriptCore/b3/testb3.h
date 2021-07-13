@@ -681,6 +681,7 @@ void testIToD32Imm(int32_t value);
 void testIToF32Imm(int32_t value);
 void testIToDReducedToIToF64Arg();
 void testIToDReducedToIToF32Arg();
+void testStoreZeroReg();
 void testStore32(int value);
 void testStoreConstant(int value);
 void testStoreConstantPtr(intptr_t value);

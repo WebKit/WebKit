@@ -338,6 +338,7 @@ void run(const char* filter)
     RUN_UNARY(testCheckAddRemoveCheckWithSExt32, int32Operands());
     RUN_UNARY(testCheckAddRemoveCheckWithZExt32, int32Operands());
 
+    RUN(testStoreZeroReg());
     RUN(testStore32(44));
     RUN(testStoreConstant(49));
     RUN(testStoreConstantPtr(49));

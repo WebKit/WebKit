@@ -2888,6 +2888,83 @@ void testIToDReducedToIToF32Arg()
         CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
 }
 
+void testStoreZeroReg()
+{
+    // Direct addressing
+    {
+        int32_t slot32 = 0xbaadbeef;
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), 0);
+        root->appendNew<MemoryValue>(
+            proc, Store, Origin(), value,
+            root->appendNew<ConstPtrValue>(proc, Origin(), &slot32), 0);
+        root->appendNewControlValue(proc, Return, Origin(), value);
+
+        auto code = compileProc(proc);
+        invoke<int>(*code);
+        CHECK_EQ(slot32, 0);
+    }
+
+    {
+        int64_t slot64 = 0xbaadbeef;
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const64Value>(proc, Origin(), 0);
+        root->appendNew<MemoryValue>(
+            proc, Store, Origin(), value,
+            root->appendNew<ConstPtrValue>(proc, Origin(), &slot64), 0);
+        root->appendNewControlValue(proc, Return, Origin(), value);
+
+        auto code = compileProc(proc);
+        invoke<int>(*code);
+        CHECK_EQ(slot64, 0);
+    }
+
+    // Indexed addressing
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), 0);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* displacement = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* baseDisplacement = root->appendNew<Value>(proc, Add, Origin(), displacement, base);
+        Value* address = root->appendNew<Value>(proc, Add, Origin(), baseDisplacement, offset);
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, address, 0);
+        root->appendNewControlValue(proc, Return, Origin(), value);
+
+        int32_t slot32 = 0xbaadbeef;
+        compileAndRun<int32_t>(proc, &slot32, 1);
+        CHECK_EQ(slot32, 0);
+    }
+
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const64Value>(proc, Origin(), 0);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* displacement = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* baseDisplacement = root->appendNew<Value>(proc, Add, Origin(), displacement, base);
+        Value* address = root->appendNew<Value>(proc, Add, Origin(), baseDisplacement, offset);
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, address, 0);
+        root->appendNewControlValue(proc, Return, Origin(), value);
+
+        int64_t slot64 = 0xbaadbeef;
+        compileAndRun<int64_t>(proc, &slot64, 1);
+        CHECK_EQ(slot64, 0);
+    }
+}
+
 void testStore32(int value)
 {
     Procedure proc;

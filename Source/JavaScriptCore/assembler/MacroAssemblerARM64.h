@@ -1731,16 +1731,6 @@ public:
         m_assembler.str<64>(src, dest, simm);
     }
     
-    void storeZero64(ImplicitAddress address)
-    {
-        store64(ARM64Registers::zr, address);
-    }
-    
-    void storeZero64(BaseIndex address)
-    {
-        store64(ARM64Registers::zr, address);
-    }
-    
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
@@ -1838,16 +1828,6 @@ public:
         store32(dataTempRegister, address);
     }
 
-    void storeZero32(ImplicitAddress address)
-    {
-        store32(ARM64Registers::zr, address);
-    }
-
-    void storeZero32(BaseIndex address)
-    {
-        store32(ARM64Registers::zr, address);
-    }
-
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
@@ -1891,16 +1871,6 @@ public:
 
         moveToCachedReg(imm, dataMemoryTempRegister());
         store16(dataTempRegister, address);
-    }
-
-    void storeZero16(ImplicitAddress address)
-    {
-        store16(ARM64Registers::zr, address);
-    }
-
-    void storeZero16(BaseIndex address)
-    {
-        store16(ARM64Registers::zr, address);
     }
 
     void store8(RegisterID src, BaseIndex address)

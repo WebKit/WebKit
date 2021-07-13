@@ -702,6 +702,11 @@ private:
         return Arg();
     }
 
+    Arg zeroReg()
+    {
+        return Arg::zeroReg();
+    }
+
     Arg immOrTmp(Value* value)
     {
         if (Arg result = imm(value))
@@ -1094,17 +1099,17 @@ private:
     {
         using namespace Air;
         if (auto imm_value = imm(value)) {
-            if (isARM64() && imm_value.value() == 0) {
+            if (!imm_value.value()) {
                 switch (move.opcode) {
                 default:
                     break;
                 case Air::Move32:
-                    if (isValidForm(StoreZero32, dest.kind()) && dest.isValidForm(Width32))
-                        return Inst(StoreZero32, m_value, dest);
+                    if (isValidForm(Store32, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width32))
+                        return Inst(Store32, m_value, zeroReg(), dest);
                     break;
                 case Air::Move:
-                    if (isValidForm(StoreZero64, dest.kind()) && dest.isValidForm(Width64))
-                        return Inst(StoreZero64, m_value, dest);
+                    if (isValidForm(Store64, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width64))
+                        return Inst(Store64, m_value, zeroReg(), dest);
                     break;
                 }
             }

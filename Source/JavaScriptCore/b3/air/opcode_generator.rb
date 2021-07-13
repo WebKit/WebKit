@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
 end
 
 def isArch(token)
@@ -303,7 +303,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
         advance
         result
     end
@@ -473,6 +473,14 @@ class Parser
                                 end
                                 if signature[index].bank != "G"
                                     parseError("Form has an immediate for a non-general-purpose argument")
+                                end
+                            end
+                            if kind.name == "ZeroReg"
+                                if signature[index].role != "U"
+                                    parseError("Zero immediate must be a use argument")
+                                end
+                                if signature[index].bank != "G"
+                                    parseError("Zero immediate must be a general-purpose argument")
                                 end
                             end
                         }
@@ -926,6 +934,7 @@ writeH("OpcodeGenerated") {
                 when "ResCond"
                 when "DoubleCond"
                 when "StatusCond"
+                when "ZeroReg"
                 else
                     raise "Unexpected kind: #{kind.name}"
                 end
@@ -1220,6 +1229,8 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asTrustedImm32()"
                 when "BigImm", "BitImm64"
                     outp.print "args[#{index}].asTrustedImm64()"
+                when "ZeroReg"
+                    outp.print "args[#{index}].asZeroReg()"
                 when "SimpleAddr", "Addr", "ExtendedOffsetAddr"
                     outp.print "args[#{index}].asAddress()"
                 when "Index"

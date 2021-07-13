@@ -1,3 +1,60 @@
+2021-07-13  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new Air::Arg kind ZeroReg to let AIR recognise the new instructions/forms accepting zero register in ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227510
+
+        Reviewed by Saam Barati.
+
+        B3 is designed to be portable to many kinds of CPUs. However, to effectively 
+        compile code to different CPUs, the compiler must eventually make explicit 
+        instruction set details. Then, Air is introduced, and it is designed to target 
+        individual CPU architectures and generate instructions specific to those CPUs. 
+
+        Previously, Air don't recognize the zero register. This problem has been pointed 
+        out in #174821, which was trying to introduce the new opcodes to handle the zero 
+        register. 
+
+        To solve this problem in a modular reasoning approach, a new Air operand ZeroReg 
+        should be introduced. Its goal is to closely match the CPU instructions 
+        accepting the zero register in ARM64. Another reason is that the new overloads 
+        of the instructions taking the zero register can benefit instruction selection 
+        with this implementation. 
+
+        Here, the ZeroReg is added as a new kind for Air::Arg, which acts as a "high 
+        level" operand to be emitted with the associative opcodes. In ARM64, the ZeroReg 
+        would be emitted as a zero register.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::storeZero64): Deleted.
+        (JSC::MacroAssemblerARM64::storeZero32): Deleted.
+        (JSC::MacroAssemblerARM64::storeZero16): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::storeZero32): Deleted.
+        (JSC::MacroAssemblerX86Common::storeZero16): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storeZero64): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::jsHash const):
+        (JSC::B3::Air::Arg::dump const):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::zeroReg):
+        (JSC::B3::Air::Arg::isZeroReg const):
+        (JSC::B3::Air::Arg::isGP const):
+        (JSC::B3::Air::Arg::isFP const):
+        (JSC::B3::Air::Arg::isValidForm const):
+        (JSC::B3::Air::Arg::asZeroReg const):
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.h:
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_3.cpp:
+        (testStoreZeroReg):
+
 2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         New malloc algorithm

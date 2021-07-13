@@ -102,6 +102,7 @@ unsigned Arg::jsHash() const
         break;
     case Imm:
     case BitImm:
+    case ZeroReg:
     case CallArg:
     case RelCond:
     case ResCond:
@@ -158,6 +159,9 @@ void Arg::dump(PrintStream& out) const
         return;
     case BitImm64:
         out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
+        return;
+    case ZeroReg:
+        out.print("%%xzr");
         return;
     case SimpleAddr:
         out.print("(", base(), ")");
@@ -235,6 +239,9 @@ void printInternal(PrintStream& out, Arg::Kind kind)
         return;
     case Arg::BitImm64:
         out.print("BitImm64");
+        return;
+    case Arg::ZeroReg:
+        out.print("ZeroReg");
         return;
     case Arg::SimpleAddr:
         out.print("SimpleAddr");
