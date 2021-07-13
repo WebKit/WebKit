@@ -1,3 +1,19 @@
+2021-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r279601) ProcessAssertion may get destroyed on a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=227875
+        <rdar://76972252>
+
+        Reviewed by Geoffrey Garen.
+
+        r279601 added an internal WorkQueue to ProcessAssertion, so that we could acquire the RunningBoard assertion
+        asynchronously on the background queue. When dispatching to the background queue, we capture |protectedThis|,
+        which means that ProcessAssertion may now get destroyed on the background queue. To address the isuse, we
+        now make sure to dispatch |protectedThis| back to the main thread in acquireAsync().
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::acquireAsync):
+
 2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Allow layout tests to specify app initiated loads or not
