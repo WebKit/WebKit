@@ -1,3 +1,11 @@
+2021-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the Apple internal iOS Simulator build
+
+        Unreviewed.
+
+        * dom/Node.h:
+
 2021-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Can't finish loading some websites after r271946 started throttling low priority resources
