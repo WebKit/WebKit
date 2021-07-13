@@ -175,9 +175,11 @@ private:
     String m_password;
     unsigned long m_authType { CURLAUTH_ANY };
     bool m_shouldDisableServerTrustEvaluation { false };
-    bool m_shouldSuspend { false };
     bool m_enableMultipart { false };
 
+    enum class StartState : uint8_t { StartSuspended, WaitingForStart, DidStart };
+    StartState m_startState;
+    
     std::unique_ptr<CurlHandle> m_curlHandle;
     CurlFormDataStream m_formDataStream;
     std::unique_ptr<CurlMultipartHandle> m_multipartHandle;

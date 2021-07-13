@@ -1,3 +1,28 @@
+2021-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Can't finish loading some websites after r271946 started throttling low priority resources
+        https://bugs.webkit.org/show_bug.cgi?id=227863
+
+        Reviewed by Don Olmstead.
+
+        NetworkLoadScheduler started throttling low priority resource
+        loading since r271946. It uses curl_easy_pause to pause the
+        resource loads. CURLMOPT_MAX_HOST_CONNECTIONS is set to 6 to limit
+        the number of connections per host. In the certain condition,
+        curl_multi_fdset can constantly return -1 if 6 handles of the same
+        host are paused.
+
+        This patch changes CurlRequest::start not to actually start the
+        job if it is suspended.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::start):
+        (WebCore::CurlRequest::suspend):
+        (WebCore::CurlRequest::resume):
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::setRequestPaused):
+        * platform/network/curl/CurlRequest.h:
+
 2021-07-12  Tim Horton  <timothy_horton@apple.com>
 
         BifurcatedGraphicsContext can't draw text
