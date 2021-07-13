@@ -1,3 +1,20 @@
+2021-07-13  Said Abou-Hallawa  <said@apple.com>
+
+        [CG] REGRESSION(r278863): The destination rectangle is truncated when the sub-image is used
+        https://bugs.webkit.org/show_bug.cgi?id=227614
+        <rdar://79840643>
+
+        Reviewed by Simon Fraser.
+
+        This patch gets the calculation of the destRect in the case of the sub-
+        image as it was before r278863.
+
+        The size of the destRect has to be equal to the backend size of the
+        ImageBuffer in logical coordinates.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContextCG::drawNativeImage):
+
 2021-07-13  Kyle Piddington  <kpiddington@apple.com>
 
         rAF driven WebGL submits excessive amount of GPU work when frames are slow

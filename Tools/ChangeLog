@@ -1,3 +1,17 @@
+2021-07-13  Said Abou-Hallawa  <said@apple.com>
+
+        [CG] REGRESSION(r278863): The destination rectangle is truncated when the sub-image is used
+        https://bugs.webkit.org/show_bug.cgi?id=227614
+        <rdar://79840643>
+
+        Reviewed by Simon Fraser.
+
+        Add an API test to test drawing an ImageBuffer into another and both
+        have the logicalSize scaled such that they have pixels.
+
+        * TestWebKitAPI/Tests/WebCore/ImageBufferTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-07-13  Kevin Neal  <kevin_neal@apple.com>
 
         [results.webkit.org] linkify urls in commit messages

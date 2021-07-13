@@ -49,4 +49,56 @@ TEST(ImageBufferTests, ImageBufferSubTypeCreateCreatesSubtypes)
     EXPECT_NE(nullptr, displayListUnaccelerated);
 }
 
+TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = PixelFormat::BGRA8;
+    FloatSize logicalSize { 392, 44 };
+    float scale = 1.91326535;
+    auto frontImageBuffer = ImageBuffer::create(logicalSize, RenderingMode::Accelerated, scale, colorSpace, pixelFormat, nullptr);
+    auto backImageBuffer = ImageBuffer::create(logicalSize, RenderingMode::Accelerated, scale, colorSpace, pixelFormat, nullptr);
+    
+    auto strokeRect = FloatRect { { }, logicalSize };
+    strokeRect.inflate(-0.5);
+    auto fillRect = strokeRect;
+    fillRect.inflate(-1);
+
+    auto& frontContext = frontImageBuffer->context();
+    auto& backContext = backImageBuffer->context();
+
+    frontContext.setShouldAntialias(false);
+    backContext.setShouldAntialias(false);
+
+    frontContext.setStrokeColor(Color::red);
+    frontContext.strokeRect(strokeRect, 1);
+    
+    frontContext.fillRect(fillRect, Color::green);
+
+    for (int i = 0; i < 1000; ++i) {
+        backContext.drawImageBuffer(*frontImageBuffer, WebCore::FloatPoint { }, { WebCore::CompositeOperator::Copy });
+        frontContext.drawImageBuffer(*backImageBuffer, WebCore::FloatPoint { }, { WebCore::CompositeOperator::Copy });
+    }
+
+    auto checkGreenPixel = [&](ImageBuffer& imageBuffer, int x, int y) {
+        PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace };
+        auto frontPixelBuffer = imageBuffer.getPixelBuffer(format, { x, y, 1, 1 });
+        auto& data = frontPixelBuffer->data();
+
+        EXPECT_EQ(data.item(0), 0x00);
+        EXPECT_EQ(data.item(1), 0xff);
+        EXPECT_EQ(data.item(2), 0x00);
+        EXPECT_EQ(data.item(3), 0xff);
+    };
+
+    checkGreenPixel(*frontImageBuffer, fillRect.x()    + 1, fillRect.y()    + 1);
+    checkGreenPixel(*frontImageBuffer, fillRect.maxX() - 1, fillRect.y()    + 1);
+    checkGreenPixel(*frontImageBuffer, fillRect.x()    + 1, fillRect.maxY() - 1);
+    checkGreenPixel(*frontImageBuffer, fillRect.maxX() - 1, fillRect.maxY() - 1);
+
+    checkGreenPixel(*backImageBuffer, fillRect.x()    + 1, fillRect.y()    + 1);
+    checkGreenPixel(*backImageBuffer, fillRect.maxX() - 1, fillRect.y()    + 1);
+    checkGreenPixel(*backImageBuffer, fillRect.x()    + 1, fillRect.maxY() - 1);
+    checkGreenPixel(*backImageBuffer, fillRect.maxX() - 1, fillRect.maxY() - 1);
+}
+
 }
