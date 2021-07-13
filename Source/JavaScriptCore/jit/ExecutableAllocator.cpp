@@ -33,12 +33,18 @@
 #include "LinkBuffer.h"
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
-#include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
 #include <wtf/ProcessID.h>
+#include <wtf/RedBlackTree.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
+
+#if USE(LIBPAS_JIT_HEAP)
+#include <bmalloc/jit_heap.h>
+#else
+#include <wtf/MetaAllocator.h>
+#endif
 
 #if HAVE(IOS_JIT_RESTRICTIONS)
 #include <wtf/cocoa/Entitlements.h>
@@ -448,7 +454,9 @@ public:
             }
 #else
             m_allocator.addFreshFreeSpace(reservation.base, reservation.size);
+#if !USE(LIBPAS_JIT_HEAP)
             ASSERT(bytesReserved() == reservation.size); // Since our executable memory is fixed-sized, bytesReserved is never changed after initialization.
+#endif
 #endif
         }
     }
@@ -465,7 +473,9 @@ public:
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
     {
-#if ENABLE(JUMP_ISLANDS)
+#if USE(LIBPAS_JIT_HEAP)
+        return ExecutableMemoryHandle::createImpl(sizeInBytes);
+#elif ENABLE(JUMP_ISLANDS)
         Locker locker { getLock() };
 
         unsigned start = 0;
@@ -489,6 +499,7 @@ public:
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
+#if !USE(LIBPAS_JIT_HEAP)
     // Non atomic
     size_t bytesAllocated() 
     {
@@ -514,6 +525,7 @@ public:
         });
         return result;
     }
+#endif
 
     bool isInAllocatedMemory(const AbstractLocker& locker, void* address)
     {
@@ -535,6 +547,7 @@ public:
     }
 #endif
 
+#if !USE(LIBPAS_JIT_HEAP)
     MetaAllocator::Statistics currentStatistics()
     {
         Locker locker { getLock() };
@@ -547,9 +560,25 @@ public:
         });
         return result;
     }
+#endif // !USE(LIBPAS_JIT_HEAP)
+
+#if USE(LIBPAS_JIT_HEAP)
+    void handleWillBeReleased(ExecutableMemoryHandle& handle)
+    {
+#if ENABLE(JUMP_ISLANDS)
+        if (m_islandsForJumpSourceLocation.isEmpty())
+            return;
+        
+        Locker locker { getLock() };
+        handleWillBeReleased(locker, handle);
+#else // ENABLE(JUMP_ISLANDS) -> so !ENABLE(JUMP_ISLANDS)
+        UNUSED_PARAM(handle);
+#endif // ENABLE(JUMP_ISLANDS) -> so end of !ENABLE(JUMP_ISLANDS)
+    }
+#endif // USE(LIBPAS_JIT_HEAP)
 
 #if ENABLE(JUMP_ISLANDS)
-    void handleWillBeReleased(const LockHolder& locker, MetaAllocatorHandle& handle)
+    void handleWillBeReleased(const LockHolder& locker, ExecutableMemoryHandle& handle)
     {
         if (m_islandsForJumpSourceLocation.isEmpty())
             return;
@@ -685,15 +714,44 @@ private:
 #endif // ENABLE(JUMP_ISLANDS)
 
 private:
-    class Allocator : public MetaAllocator {
+    class Allocator
+#if !USE(LIBPAS_JIT_HEAP)
+        : public MetaAllocator
+#endif
+    {
+#if !USE(LIBPAS_JIT_HEAP)
         using Base = MetaAllocator;
+#endif
     public:
         Allocator(FixedVMPoolExecutableAllocator& allocator)
+#if !USE(LIBPAS_JIT_HEAP)
             : Base(allocator.getLock(), jitAllocationGranule, pageSize()) // round up all allocations to 32 bytes
-            , m_fixedAllocator(allocator)
+            ,
+#else
+            :
+#endif
+            m_fixedAllocator(allocator)
         {
         }
 
+#if USE(LIBPAS_JIT_HEAP)
+        void addFreshFreeSpace(void* start, size_t sizeInBytes)
+        {
+            RELEASE_ASSERT(!m_start);
+            RELEASE_ASSERT(!m_end);
+            m_start = reinterpret_cast<uintptr_t>(start);
+            m_end = m_start + sizeInBytes; 
+            jit_heap_add_fresh_memory(pas_range_create(m_start, m_end));
+        }
+
+        bool isInAllocatedMemory(const AbstractLocker&, void* address)
+        {
+            uintptr_t addressAsInt = reinterpret_cast<uintptr_t>(address);
+            return addressAsInt >= m_start && addressAsInt < m_end;
+        }
+#endif // USE(LIBPAS_JIT_HEAP)
+
+#if !USE(LIBPAS_JIT_HEAP)
         FreeSpacePtr allocateNewSpace(size_t&) override
         {
             // We're operating in a fixed pool, so new allocation is always prohibited.
@@ -709,8 +767,13 @@ private:
         {
             m_fixedAllocator.m_reservation.decommit(page, pageSize() * count);
         }
+#endif // !USE(LIBPAS_JIT_HEAP)
 
         FixedVMPoolExecutableAllocator& m_fixedAllocator;
+#if USE(LIBPAS_JIT_HEAP)
+        uintptr_t m_start { 0 };
+        uintptr_t m_end { 0 };
+#endif // USE(LIBPAS_JIT_HEAP)
     };
 
 #if ENABLE(JUMP_ISLANDS)
@@ -748,11 +811,13 @@ private:
             return islandsPerPage;
         }
 
+#if !USE(LIBPAS_JIT_HEAP)
         void release(const LockHolder& locker, MetaAllocatorHandle& handle) final
         {
             m_fixedAllocator.handleWillBeReleased(locker, handle);
             Base::release(locker, handle);
         }
+#endif
 
         void* allocateIsland()
         {
@@ -880,14 +945,21 @@ bool ExecutableAllocator::isValid() const
 
 bool ExecutableAllocator::underMemoryPressure()
 {
+#if USE(LIBPAS_JIT_HEAP)
+    return Base::underMemoryPressure();
+#else // USE(LIBPAS_JIT_HEAP) -> so start of !USE(LIBPAS_JIT_HEAP)
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::underMemoryPressure();
     return allocator->bytesAllocated() > allocator->bytesReserved() / 2;
+#endif // USE(LIBPAS_JIT_HEAP) -> so end of !USE(LIBPAS_JIT_HEAP)
 }
 
 double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 {
+#if USE(LIBPAS_JIT_HEAP)
+    return Base::memoryPressureMultiplier(addedMemoryUsage);
+#else // USE(LIBPAS_JIT_HEAP) -> so start of !USE(LIBPAS_JIT_HEAP)
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::memoryPressureMultiplier(addedMemoryUsage);
@@ -904,6 +976,7 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
     if (result < 1.0)
         result = 1.0;
     return result;
+#endif // USE(LIBPAS_JIT_HEAP) -> so end of !USE(LIBPAS_JIT_HEAP)
 }
 
 RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes, JITCompilationEffort effort)
@@ -911,10 +984,12 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::allocate(sizeInBytes, effort);
+#if !USE(LIBPAS_JIT_HEAP)
     if (Options::logExecutableAllocation()) {
         MetaAllocator::Statistics stats = allocator->currentStatistics();
         dataLog("Allocating ", sizeInBytes, " bytes of executable memory with ", stats.bytesAllocated, " bytes allocated, ", stats.bytesReserved, " bytes reserved, and ", stats.bytesCommitted, " committed.\n");
     }
+#endif
 
     if (effort != JITCompilationCanFail && Options::reportMustSucceedExecutableAllocations()) {
         dataLog("Allocating ", sizeInBytes, " bytes of executable memory with JITCompilationMustSucceed.\n");
@@ -925,6 +1000,7 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
         && doExecutableAllocationFuzzingIfEnabled() == PretendToFailExecutableAllocation)
         return nullptr;
 
+#if !USE(LIBPAS_JIT_HEAP)
     if (effort == JITCompilationCanFail) {
         // Don't allow allocations if we are down to reserve.
         size_t bytesAllocated = allocator->bytesAllocated() + sizeInBytes;
@@ -936,6 +1012,7 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
             return nullptr;
         }
     }
+#endif // !USE(LIBPAS_JIT_HEAP)
 
     RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes);
     if (!result) {
@@ -973,10 +1050,14 @@ Lock& ExecutableAllocator::getLock() const
 
 size_t ExecutableAllocator::committedByteCount()
 {
+#if USE(LIBPAS_JIT_HEAP)
+    return Base::committedByteCount();
+#else // USE(LIBPAS_JIT_HEAP) -> so start of !USE(LIBPAS_JIT_HEAP)
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::committedByteCount();
     return allocator->bytesCommitted();
+#endif // USE(LIBPAS_JIT_HEAP) -> so end of !USE(LIBPAS_JIT_HEAP)
 }
 
 #if ENABLE(META_ALLOCATOR_PROFILE)
@@ -1109,6 +1190,33 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     RELEASE_ASSERT_NOT_REACHED();
 #endif
 }
+
+#if USE(LIBPAS_JIT_HEAP)
+RefPtr<ExecutableMemoryHandle> ExecutableMemoryHandle::createImpl(size_t sizeInBytes)
+{
+    void* key = jit_heap_try_allocate(sizeInBytes);
+    if (!key)
+        return nullptr;
+    return adoptRef(new ExecutableMemoryHandle(MemoryPtr::makeFromRawPointer(key)));
+}
+
+ExecutableMemoryHandle::~ExecutableMemoryHandle()
+{
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    allocator->handleWillBeReleased(*this);
+    jit_heap_deallocate(key());
+}
+
+size_t ExecutableMemoryHandle::sizeInBytes() const
+{
+    return jit_heap_get_size(key());
+}
+
+void ExecutableMemoryHandle::shrink(size_t newSizeInBytes)
+{
+    jit_heap_shrink(key(), newSizeInBytes);
+}
+#endif
 
 } // namespace JSC
 

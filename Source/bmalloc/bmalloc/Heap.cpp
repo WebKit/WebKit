@@ -48,29 +48,31 @@
 
 namespace bmalloc {
 
+#if BUSE(LIBPAS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+#endif
 Heap::Heap(HeapKind kind, LockHolder&)
     : m_kind { kind }, m_constants { *HeapConstants::get() }
 {
+#if BUSE(LIBPAS)
+    RELEASE_BASSERT(!"Should not be using Heap if BUSE(LIBPAS)");
+#endif
     BASSERT(!Environment::get()->isDebugHeapEnabled());
 
     Gigacage::ensureGigacage();
 #if GIGACAGE_ENABLED
     if (usingGigacage()) {
-        void* gigacageBasePtr = this->gigacageBasePtr();
-        RELEASE_BASSERT(gigacageBasePtr);
-        uint64_t random[2];
-        cryptoRandom(reinterpret_cast<unsigned char*>(random), sizeof(random));
-        size_t gigacageSize = Gigacage::maxSize(gigacageKind(kind));
-        size_t size = roundDownToMultipleOf(vmPageSize(), gigacageSize - (random[0] % Gigacage::maximumCageSizeReductionForSlide));
-        m_gigacageSize = size;
-        ptrdiff_t offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize - size));
-        void* base = reinterpret_cast<unsigned char*>(gigacageBasePtr) + offset;
-        m_largeFree.add(LargeRange(base, size, 0, 0, base));
+        void* base = Gigacage::allocBase(gigacageKind(m_kind));
+        m_largeFree.add(LargeRange(base, Gigacage::size(gigacageKind(m_kind)), 0, 0, base));
     }
 #endif
     
     m_scavenger = Scavenger::get();
 }
+#if BUSE(LIBPAS)
+#pragma clang diagnostic pop
+#endif
 
 bool Heap::usingGigacage()
 {
@@ -84,7 +86,7 @@ void* Heap::gigacageBasePtr()
 
 size_t Heap::gigacageSize()
 {
-    return m_gigacageSize;
+    return Gigacage::size(gigacageKind(m_kind));
 }
 
 size_t Heap::freeableMemory(UniqueLockHolder&)

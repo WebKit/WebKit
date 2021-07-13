@@ -1,3 +1,19 @@
+2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        New malloc algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=226404
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduce flags for using libpas as the ExecutableAllocator.
+
+        Explicitly ask for gigacage initialization, since libpas prefers it this way right now.
+
+        * wtf/FastTLS.h:
+        * wtf/PlatformUse.h:
+        * wtf/Threading.cpp:
+        (WTF::initialize):
+
 2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Turn on `USE(OS_STATE)` when building with a non-Apple-internal SDK

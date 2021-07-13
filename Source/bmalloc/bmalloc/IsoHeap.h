@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,13 @@
 #include "IsoConfig.h"
 #include "Mutex.h"
 
+#if BUSE(LIBPAS)
+#ifndef PAS_BMALLOC
+#define PAS_BMALLOC 1
+#endif
+#include "bmalloc_heap_ref.h"
+#endif
+
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
 #include <malloc/malloc.h>
 #endif
@@ -44,6 +51,46 @@ namespace api {
 //
 // It's not valid to create an IsoHeap except in static storage.
 
+#if BUSE(LIBPAS)
+BEXPORT void* isoAllocate(pas_heap_ref& heapRef);
+BEXPORT void* isoTryAllocate(pas_heap_ref& heapRef);
+BEXPORT void isoDeallocate(void* ptr);
+
+template<typename Type>
+struct IsoHeap {
+    constexpr IsoHeap(const char* = nullptr) { }
+    
+    void* allocate()
+    {
+        return isoAllocate(heap);
+    }
+    
+    void* tryAllocate()
+    {
+        return isoTryAllocate(heap);
+    }
+    
+    void deallocate(void* p)
+    {
+        isoDeallocate(p);
+    }
+    
+    void scavenge()
+    {
+    }
+    
+    void initialize()
+    {
+    }
+    
+    bool isInitialized()
+    {
+        return true;
+    }
+    
+    pas_heap_ref heap { BMALLOC_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(sizeof(Type), alignof(Type)) };
+};
+#else // BUSE(LIBPAS) -> so !BUSE(LIBPAS)
 template<typename Type>
 struct IsoHeap {
     typedef IsoConfig<sizeof(Type)> Config;
@@ -80,6 +127,7 @@ struct IsoHeap {
     malloc_zone_t* m_zone;
 #endif
 };
+#endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 
 // Use this together with MAKE_BISO_MALLOCED_IMPL.
 #define MAKE_BISO_MALLOCED(isoType, exportMacro) \

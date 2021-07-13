@@ -163,6 +163,7 @@ BINLINE size_t mask(Kind kind)
     return gigacageSizeToMask(maxSize(kind));
 }
 
+BEXPORT void* allocBase(Kind);
 BEXPORT size_t size(Kind);
 BEXPORT size_t footprint(Kind);
 

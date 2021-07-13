@@ -53,6 +53,8 @@ IsoHeap<Type>::IsoHeap(const char* heapClass)
 }
 #endif
 
+#if !BUSE(LIBPAS)
+
 template<typename Type>
 void* IsoHeap<Type>::allocate()
 {
@@ -108,6 +110,8 @@ auto IsoHeap<Type>::impl() -> IsoHeapImpl<Config>&
     IsoTLS::ensureHeap(*this);
     return *m_impl;
 }
+
+#endif // !BUSE(LIBPAS)
 
 // This is most appropraite for template classes.
 #define MAKE_BISO_MALLOCED_INLINE(isoType) \

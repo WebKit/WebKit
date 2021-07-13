@@ -50,7 +50,6 @@ namespace bmalloc {
 
 class BulkDecommit;
 class BumpAllocator;
-class DebugHeap;
 class HeapConstants;
 class Scavenger;
 
@@ -135,7 +134,6 @@ private:
 
     Scavenger* m_scavenger { nullptr };
 
-    size_t m_gigacageSize { 0 };
     size_t m_footprint { 0 };
     size_t m_freeableMemory { 0 };
 

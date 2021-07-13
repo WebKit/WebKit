@@ -309,6 +309,20 @@
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
 
+/* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
+#if !defined(BENABLE_LIBPAS)
+#if BCPU(ARM64) && BOS(MAC)
+#define BENABLE_LIBPAS 1
+#else
+#define BENABLE_LIBPAS 0
+#endif
+#endif
+
+/* BUSE(LIBPAS) is using libpas for bmalloc replacement. */
+#if !defined(BUSE_LIBPAS)
+#define BUSE_LIBPAS 0
+#endif
+
 #if !defined(BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K)
 #define BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K 1
 #endif

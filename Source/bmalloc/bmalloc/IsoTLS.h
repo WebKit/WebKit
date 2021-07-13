@@ -93,16 +93,6 @@ private:
     template<typename Func>
     void forEachEntry(const Func&);
     
-    enum class MallocFallbackState : uint8_t {
-        Undecided,
-        FallBackToMalloc,
-        DoNotFallBack
-    };
-    
-    BEXPORT static MallocFallbackState s_mallocFallbackState;
-    
-    BEXPORT static void determineMallocFallbackState();
-    
     IsoTLSEntry* m_lastEntry { nullptr };
     unsigned m_extent { 0 };
     unsigned m_capacity { 0 };

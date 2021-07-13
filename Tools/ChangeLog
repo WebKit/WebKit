@@ -1,3 +1,14 @@
+2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        New malloc algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=226404
+
+        Reviewed by Yusuke Suzuki.
+
+        Disable the IsoHeap tests if we're using libpas. Libpas has its own tests.
+
+        * TestWebKitAPI/Tests/WTF/bmalloc/IsoHeap.cpp:
+
 2021-07-12  Garrett Davidson  <garrett_davidson@apple.com>
 
         _WKWebAuthenticationPanel escapes slashes in origin

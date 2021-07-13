@@ -349,6 +349,7 @@
 		0F4F29E018B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */; };
 		0F4F828C1E31B9760075184C /* StochasticSpaceTimeMutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F828A1E31B9710075184C /* StochasticSpaceTimeMutatorScheduler.h */; };
 		0F50AF3C193E8B3900674EE8 /* DFGStructureClobberState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F50AF3B193E8B3900674EE8 /* DFGStructureClobberState.h */; };
+		0F5193F7266C432D00483A2C /* ExecutableMemoryHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5193F6266C432D00483A2C /* ExecutableMemoryHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5513A61D5A682C00C32BD8 /* FreeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5513A51D5A682A00C32BD8 /* FreeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55989717C86C5600A1E543 /* ToNativeFromValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55F0F214D1063600AC7649 /* AbstractPC.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2672,6 +2673,7 @@
 		0F4F82891E31B9710075184C /* StochasticSpaceTimeMutatorScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StochasticSpaceTimeMutatorScheduler.cpp; sourceTree = "<group>"; };
 		0F4F828A1E31B9710075184C /* StochasticSpaceTimeMutatorScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StochasticSpaceTimeMutatorScheduler.h; sourceTree = "<group>"; };
 		0F50AF3B193E8B3900674EE8 /* DFGStructureClobberState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureClobberState.h; path = dfg/DFGStructureClobberState.h; sourceTree = "<group>"; };
+		0F5193F6266C432D00483A2C /* ExecutableMemoryHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableMemoryHandle.h; sourceTree = "<group>"; };
 		0F5513A51D5A682A00C32BD8 /* FreeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FreeList.h; sourceTree = "<group>"; };
 		0F5513A71D5A68CB00C32BD8 /* FreeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FreeList.cpp; sourceTree = "<group>"; };
 		0F55989717C86C5600A1E543 /* ToNativeFromValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToNativeFromValue.h; sourceTree = "<group>"; };
@@ -6248,6 +6250,7 @@
 				0FF054F81AC35B4400E5BE57 /* ExecutableAllocationFuzz.h */,
 				A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */,
 				A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */,
+				0F5193F6266C432D00483A2C /* ExecutableMemoryHandle.h */,
 				0F24E53E17EA9F5900ABB217 /* FPRInfo.h */,
 				0F766D2D15A8DCDD008F363E /* GCAwareJITStubRoutine.cpp */,
 				0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */,
@@ -9800,6 +9803,7 @@
 				147341CC1DC02D7200AA29BA /* ExecutableBase.h in Headers */,
 				E35A0B9D220AD87A00AC4474 /* ExecutableBaseInlines.h in Headers */,
 				14142E531B796EDD00F4BF4B /* ExecutableInfo.h in Headers */,
+				0F5193F7266C432D00483A2C /* ExecutableMemoryHandle.h in Headers */,
 				0F60FE901FFC37020003320A /* ExecutableToCodeBlockEdge.h in Headers */,
 				0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */,
 				0F44A7B020BF68620022B171 /* ExitFlag.h in Headers */,

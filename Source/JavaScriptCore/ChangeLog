@@ -1,3 +1,46 @@
+2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        New malloc algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=226404
+
+        Reviewed by Yusuke Suzuki.
+
+        Switch the ExecutableAllocator to the libpas jit_heap. The libpas jit_heap uses two size
+        categories of bitfit and a large heap, and is happy to do its approximate first-fit in any
+        ranges of memory you give it. Jit_heap never allocates metadata inside the memory it manages.
+        Allocations and deallocations take a constant-bounded amount of time except for unusual
+        situations, and are protected by fine-grained locking in most cases. Decommit follows libpas
+        scavenging policy. This alone is a speed-up on Speedometer (probably about 1% or more).
+
+        Also expose some libpas introspection via $vm.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerCodeRef.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableMemoryHandle::createImpl):
+        (JSC::ExecutableMemoryHandle::~ExecutableMemoryHandle):
+        (JSC::ExecutableMemoryHandle::sizeInBytes const):
+        (JSC::ExecutableMemoryHandle::shrink):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableMemoryHandle.h: Added.
+        (JSC::ExecutableMemoryHandle::start const):
+        (JSC::ExecutableMemoryHandle::end const):
+        (JSC::ExecutableMemoryHandle::startAsInteger const):
+        (JSC::ExecutableMemoryHandle::endAsInteger const):
+        (JSC::ExecutableMemoryHandle::containsIntegerAddress const):
+        (JSC::ExecutableMemoryHandle::contains const):
+        (JSC::ExecutableMemoryHandle::key const):
+        (JSC::ExecutableMemoryHandle::dump const):
+        (JSC::ExecutableMemoryHandle::ExecutableMemoryHandle):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
 2021-07-12  Mark Lam  <mark.lam@apple.com>
 
         Revert r277027: breaks GC.

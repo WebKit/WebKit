@@ -38,6 +38,12 @@ IsoHeapImpl<Config>::IsoHeapImpl()
     , m_inlineDirectory(*this)
     , m_allocator(*this)
 {
+#if BUSE(LIBPAS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+    RELEASE_BASSERT(!"Should not be using IsoHeapImpl if BUSE(LIBPAS)");
+#pragma clang diagnostic pop
+#endif
 }
 
 template<typename Config>

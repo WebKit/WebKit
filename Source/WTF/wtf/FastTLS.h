@@ -37,7 +37,6 @@ namespace WTF {
 // system's KEY2.
 #define WTF_FAST_TLS_KEY0 __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY2
 #define WTF_FAST_TLS_KEY1 __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY3
-#define WTF_FAST_TLS_KEY2 __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY4
 
 // NOTE: We should manage our use of these keys here. If you want to use a key for something,
 // put a #define in here to give your key a symbolic name. This ensures that we don't
@@ -46,7 +45,6 @@ namespace WTF {
 #define WTF_THREAD_DATA_KEY WTF_FAST_TLS_KEY0
 #define WTF_WASM_CONTEXT_KEY WTF_FAST_TLS_KEY1
 #define WTF_TESTING_KEY WTF_WASM_CONTEXT_KEY // So far, this key is only used in places that don't do WebAssembly, so it's OK that they share the same key.
-#define WTF_GC_TLC_KEY WTF_FAST_TLS_KEY2
 
 #if ENABLE(FAST_TLS_JIT)
 inline unsigned fastTLSOffsetForKey(unsigned long slot)

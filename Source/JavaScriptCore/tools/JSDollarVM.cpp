@@ -62,6 +62,18 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/BPlatform.h>
+#if BUSE(LIBPAS)
+#ifndef PAS_BMALLOC
+#define PAS_BMALLOC 1
+#endif
+#include <bmalloc/pas_debug_spectrum.h>
+#include <bmalloc/pas_fd_stream.h>
+#include <bmalloc/pas_heap_lock.h>
+#endif
+#endif
+
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyHelpers.h"
 #include "WasmModuleInformation.h"
@@ -2025,6 +2037,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionIsPrivateSymbol);
+static JSC_DECLARE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum);
 #if ENABLE(JIT)
 static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpJITSizeStatistics);
@@ -3640,6 +3653,20 @@ JSC_DEFINE_HOST_FUNCTION(functionIsPrivateSymbol, (JSGlobalObject*, CallFrame* c
     return JSValue::encode(jsBoolean(asSymbol(callFrame->argument(0))->uid().isPrivate()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+#if !USE(SYSTEM_MALLOC)
+#if BUSE(LIBPAS)
+    pas_heap_lock_lock();
+    pas_debug_spectrum_dump(&pas_log_stream.base);
+    pas_debug_spectrum_reset();
+    pas_heap_lock_unlock();
+#endif
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
 #if ENABLE(JIT)
 JSC_DEFINE_HOST_FUNCTION(functionJITSizeStatistics, (JSGlobalObject* globalObject, CallFrame*))
 {
@@ -3839,6 +3866,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "toUncacheableDictionary", functionToUncacheableDictionary, 1);
 
     addFunction(vm, "isPrivateSymbol", functionIsPrivateSymbol, 1);
+    addFunction(vm, "dumpAndResetPasDebugSpectrum", functionDumpAndResetPasDebugSpectrum, 0);
 
 #if ENABLE(JIT)
     addFunction(vm, "jitSizeStatistics", functionJITSizeStatistics, 0);

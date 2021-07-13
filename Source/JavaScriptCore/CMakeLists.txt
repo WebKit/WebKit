@@ -760,6 +760,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/AssemblyHelpersSpoolers.h
     jit/CCallHelpers.h
     jit/ExecutableAllocator.h
+    jit/ExecutableMemoryHandle.h
     jit/FPRInfo.h
     jit/GCAwareJITStubRoutine.h
     jit/GPRInfo.h
