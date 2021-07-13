@@ -1,3 +1,22 @@
+2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Turn on `USE(OS_STATE)` when building with a non-Apple-internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=227884
+
+        Reviewed by Tim Horton.
+
+        Instead of directly importing <os/state_private.h>, introduce a new SPI header (OSStateSPI.h) that simply
+        includes <os/state_private.h> on internal builds, and falls back to function declarations when using the non-
+        internal SDK.
+
+        * Platform/spi/Cocoa/OSStateSPI.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
+        Drive-by fix: additionally restore the minimum `objectVersion` to 52 rather than 54. This was unintentionally
+        bumped in r279133.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2021-07-12  Garrett Davidson  <garrett_davidson@apple.com>
 
         _WKWebAuthenticationPanel escapes slashes in origin

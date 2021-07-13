@@ -231,7 +231,7 @@
 #define USE_OS_LOG 1
 #endif
 
-#if PLATFORM(COCOA) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(COCOA)
 #define USE_OS_STATE 1
 #endif
 

@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import "NetworkConnectionToWebProcessMessages.h"
 #import "NetworkProcessConnection.h"
+#import "OSStateSPI.h"
 #import "ObjCObjectGraph.h"
 #import "ProcessAssertion.h"
 #import "SandboxExtension.h"
@@ -148,9 +149,6 @@
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
 
-#if USE(OS_STATE)
-#import <os/state_private.h>
-#endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #import "WebCaptionPreferencesDelegate.h"

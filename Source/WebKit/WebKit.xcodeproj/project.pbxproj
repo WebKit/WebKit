@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2042,6 +2042,7 @@
 		F4D985C82690FC1200BBCCBE /* _WKTapHandlingResult.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D985C72690FBEF00BBCCBE /* _WKTapHandlingResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4D985CB2691096600BBCCBE /* TapHandlingResult.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E2B44A268FDE1A00327ABC /* TapHandlingResult.h */; };
 		F4DB54E62319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DB54E42319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h */; };
+		F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EB4AFC269CD23600D297AE /* OSStateSPI.h */; };
 		F4EC94E32356CC57000BB614 /* ApplicationServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D04E2821F7C73D0076741D /* ApplicationServicesSPI.h */; };
 		F4FE0A3B24632B60002631E1 /* CocoaColor.h in Headers */ = {isa = PBXBuildFile; fileRef = F4FE0A3A24632B10002631E1 /* CocoaColor.h */; };
 		F6113E25126CE1820057D0A7 /* APIUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */; };
@@ -6031,6 +6032,7 @@
 		F4DB54E42319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKHighlightLongPressGestureRecognizer.h; path = ios/WKHighlightLongPressGestureRecognizer.h; sourceTree = "<group>"; };
 		F4DB54E52319E733009E3155 /* WKHighlightLongPressGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKHighlightLongPressGestureRecognizer.mm; path = ios/WKHighlightLongPressGestureRecognizer.mm; sourceTree = "<group>"; };
 		F4E2B44A268FDE1A00327ABC /* TapHandlingResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TapHandlingResult.h; path = ios/TapHandlingResult.h; sourceTree = "<group>"; };
+		F4EB4AFC269CD23600D297AE /* OSStateSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSStateSPI.h; sourceTree = "<group>"; };
 		F4F59AD32065A5C9006CAA46 /* WKSelectMenuListViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSelectMenuListViewController.mm; path = ios/forms/WKSelectMenuListViewController.mm; sourceTree = "<group>"; };
 		F4F59AD42065A5CA006CAA46 /* WKSelectMenuListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKSelectMenuListViewController.h; path = ios/forms/WKSelectMenuListViewController.h; sourceTree = "<group>"; };
 		F4FE0A3A24632B10002631E1 /* CocoaColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CocoaColor.h; sourceTree = "<group>"; };
@@ -7989,6 +7991,7 @@
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 				41DD72AA2682167300A90C71 /* NWParametersSPI.h */,
+				F4EB4AFC269CD23600D297AE /* OSStateSPI.h */,
 				5CB6AE432609799C00B6ED5A /* ReasonSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
 				448AC24D267135A600B28921 /* SynapseSPI.h */,
@@ -12217,6 +12220,7 @@
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
 				41DD72AB2682167300A90C71 /* NWParametersSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
+				F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,
 				BC6EDAA6111271C600E7678B /* PageClient.h in Headers */,
 				0FCB4E4618BBE044000FCFC9 /* PageClientImplIOS.h in Headers */,
