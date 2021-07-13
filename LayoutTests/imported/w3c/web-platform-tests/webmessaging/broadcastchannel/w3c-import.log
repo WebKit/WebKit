@@ -14,9 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/basics.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/basics.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html
-/LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/interface.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/interface.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/origin.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/sandbox.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/workers.html

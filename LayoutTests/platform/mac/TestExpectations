@@ -1704,8 +1704,6 @@ webkit.org/b/208519 [ Catalina ] webanimations/accelerated-animation-slot-invali
 
 webkit.org/b/208722 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-max-value.htm [ Pass Failure ]
 
-webkit.org/b/208832 imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_Blob.htm [ Pass Failure ]
-
 webkit.org/b/208592 svg/custom/object-sizing-explicit-height.xhtml [ Pass Failure ]
 
 webkit.org/b/209257 svg/as-object/object-box-sizing-no-width-height.html [ Pass Failure ]

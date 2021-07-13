@@ -1,5 +1,17 @@
 2021-07-13  Chris Dumez  <cdumez@apple.com>
 
+        Resync webmessaging WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227919
+
+        Reviewed by Geoffrey Garen.
+
+        Resync webmessaging WPT tests from upstream 42c571ee2ec9742f0c46ca.
+
+        * resources/resource-files.json:
+        * web-platform-tests/webmessaging/*: Updated.
+
+2021-07-13  Chris Dumez  <cdumez@apple.com>
+
         Revoking Blob URL after calling XMLHttpRequest::open() causes the XHR to fail
         https://bugs.webkit.org/show_bug.cgi?id=227821
 
