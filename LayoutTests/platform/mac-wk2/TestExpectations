@@ -1279,7 +1279,6 @@ webkit.org/b/223292 [ arm64 ] fast/table/multiple-captions-crash4.html [ Pass Im
 webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure Timeout ]
 
 # webkit.org/b/223385 Two imported webrtc tests are flakey text failing only on Apple Silicon
-[ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
 
 webkit.org/b/223387 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
@@ -1393,3 +1392,5 @@ webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Cra
 webkit.org/b/227874 [ BigSur Release ] fullscreen/full-screen-remove-children.html [ Pass Crash ]
 
 webkit.org/b/227890 fast/canvas/canvas-path-addPath.html [ Pass Timeout ]
+
+webkit.org/b/227910 imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
