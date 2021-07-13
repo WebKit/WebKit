@@ -1,3 +1,20 @@
+2021-07-13  Martin Robinson  <mrobinson@igalia.com>
+
+        RenderLayerScrollableArea::updateScrollPosition assumes that it can scroll to the targeted scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=227803
+
+        Reviewed by Simon Fraser.
+
+        No new tests. This is covered by an existing WPT test:
+          - web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps.html
+
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::scrollToOffset): Modified this method to return the snapped
+        scroll offset.
+        (WebCore::RenderLayerScrollableArea::updateScrollPosition): Instead of using the original target offset,
+        use the return value from scrollToOffset to adjust the output rectangle.
+        * rendering/RenderLayerScrollableArea.h: Update the method definition.
+
 2021-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         PUA characters have the wrong advance in the fast text codepath

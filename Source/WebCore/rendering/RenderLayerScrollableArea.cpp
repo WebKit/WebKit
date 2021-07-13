@@ -254,14 +254,14 @@ bool RenderLayerScrollableArea::requestScrollPositionUpdate(const ScrollPosition
     return false;
 }
 
-void RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset, const ScrollPositionChangeOptions& options)
+ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset, const ScrollPositionChangeOptions& options)
 {
     if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
         scrollAnimator().cancelAnimations();
 
     ScrollOffset clampedScrollOffset = options.clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
     if (clampedScrollOffset == this->scrollOffset())
-        return;
+        return clampedScrollOffset;
 
     auto previousScrollType = currentScrollType();
     setCurrentScrollType(options.type);
@@ -277,6 +277,7 @@ void RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset,
     }
 
     setCurrentScrollType(previousScrollType);
+    return snappedOffset;
 }
 
 void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
@@ -1754,8 +1755,9 @@ std::optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const 
     ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
     if (clampedScrollOffset != scrollOffset() || currentScrollBehaviorStatus() != ScrollBehaviorStatus::NotInAnimation) {
         ScrollOffset oldScrollOffset = scrollOffset();
-        scrollToOffset(clampedScrollOffset, options);
-        IntSize scrollOffsetDifference = clampedScrollOffset - oldScrollOffset;
+        ScrollOffset realScrollOffset = scrollToOffset(clampedScrollOffset, options);
+
+        IntSize scrollOffsetDifference = realScrollOffset - oldScrollOffset;
         auto localExposeRectScrolled = localExposeRect;
         localExposeRectScrolled.move(-scrollOffsetDifference);
         return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), UseTransforms).boundingBox());
