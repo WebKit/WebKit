@@ -1,3 +1,46 @@
+2021-07-13  Kyle Piddington  <kpiddington@apple.com>
+
+        rAF driven WebGL submits excessive amount of GPU work when frames are slow
+        https://bugs.webkit.org/show_bug.cgi?id=227059
+
+        Reviewed by Dean Jackson.
+
+        Advertise GL_ARB_sync for the Metal backend.
+    Since GL_ARB_sync is core in OpenGL ES 3.0 and the Metal backend advertises OpenGL ES 3.0,
+    the API must be working already.
+
+        Limit in-flight WebGL frames to three frames. Do not continue preparation for display
+    until the commands for the oldest frame have been executed by the GPU.
+
+        This limits the impact slow frames have, especially in the
+    case where the compositor skip frames and WebKit would issue a new slow frame
+    on top of the skipped frame.
+
+        An additional change ensures that Nvidia configs, which do not support MTLEvents
+        to a level of conformance required (See http://crbug.com/1136673), continue to run. The more powerful eGPUs will not experience throttling to the same level as integrated GPUS.
+
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContextGLAttributes.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::waitAndUpdateOldestFrame):
+        * platform/graphics/angle/GraphicsContextGLANGLEUtilities.h:
+        (WebCore::ScopedGLFence::ScopedGLFence):
+        (WebCore::ScopedGLFence::~ScopedGLFence):
+        (WebCore::ScopedGLFence::operator=):
+        (WebCore::ScopedGLFence::reset):
+        (WebCore::ScopedGLFence::abandon):
+        (WebCore::ScopedGLFence::fenceSync):
+        (WebCore::ScopedGLFence::operator GLsync const):
+        (WebCore::ScopedGLFence::operator bool const):
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::InitializeEGLDisplay):
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::prepareForDisplay):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2021-07-13  Chris Dumez  <cdumez@apple.com>
 
         Revoking Blob URL after calling XMLHttpRequest::open() causes the XHR to fail

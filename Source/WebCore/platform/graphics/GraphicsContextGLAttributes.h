@@ -62,7 +62,8 @@ struct GraphicsContextGLAttributes {
     using WebGLVersion = GraphicsContextGLWebGLVersion;
     WebGLVersion webGLVersion { WebGLVersion::WebGL1 };
 #if PLATFORM(COCOA)
-    bool useMetal { false };
+    bool useMetal { true };
+    bool hasFenceSync { false };
 #endif
 #if ENABLE(WEBXR)
     bool xrCompatible { false };
