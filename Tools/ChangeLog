@@ -1,3 +1,13 @@
+2021-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        >4K Referer should have tailing /
+        https://bugs.webkit.org/show_bug.cgi?id=227795
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
 2021-07-13  Said Abou-Hallawa  <said@apple.com>
 
         [CG] REGRESSION(r278863): The destination rectangle is truncated when the sub-image is used
