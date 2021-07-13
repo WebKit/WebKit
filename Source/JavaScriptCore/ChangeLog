@@ -1,3 +1,39 @@
+2021-07-12  Mark Lam  <mark.lam@apple.com>
+
+        Revert r277027: breaks GC.
+        https://bugs.webkit.org/show_bug.cgi?id=227888
+
+        Reviewed by Saam Barati.
+
+        The patch in r277027 to make deletion of GCAwareJITStubRoutines incremental has a
+        bug: the routine may not be deleted yet by the incremental sweeper before the next
+        GC cycle, and the GC will not be happy visiting dead cell pointers in that routine.
+        There is also another bug with the triggering of sweeping.
+
+        For now, we're reverting the patch, and will revisit this at a later time.
+
+        * CMakeLists.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::sweepSynchronously):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::mayHaveJITStubRoutinesToDelete): Deleted.
+        (JSC::Heap::deleteDeadJITStubRoutines): Deleted.
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        (JSC::JITStubRoutineSet::traceMarkedStubRoutines):
+        (JSC::JITStubRoutineSet::mayHaveRoutinesToDelete): Deleted.
+        (JSC::JITStubRoutineSet::notifyHaveRoutinesToDelete): Deleted.
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::observeZeroRefCount):
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::createSelfManagedRoutine):
+
 2021-07-12  Yijia Huang  <yijia_huang@apple.com>
 
         Add SMNEGL, UMNEGL, UMADDL, and UMSUBL for ARM64 and select this instruction in Air

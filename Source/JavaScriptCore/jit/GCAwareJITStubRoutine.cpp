@@ -67,7 +67,6 @@ void GCAwareJITStubRoutine::observeZeroRefCount()
     RELEASE_ASSERT(!m_refCount);
 
     m_isJettisoned = true;
-    JITStubRoutineSet::notifyHaveRoutinesToDelete();
 }
 
 void GCAwareJITStubRoutine::deleteFromGC()
