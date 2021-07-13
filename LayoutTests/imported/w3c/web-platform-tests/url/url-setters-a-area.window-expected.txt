@@ -340,6 +340,16 @@ PASS <a>: Setting <javascript://x/>.port = '12'
 PASS <area>: Setting <javascript://x/>.port = '12'
 PASS <a>: Setting <mailto:me@example.net>.pathname = '/foo' Cannot-be-a-base don’t have a path
 PASS <area>: Setting <mailto:me@example.net>.pathname = '/foo' Cannot-be-a-base don’t have a path
+PASS <a>: Setting <file:///some/path>.pathname = '' Special URLs cannot have their paths erased
+PASS <area>: Setting <file:///some/path>.pathname = '' Special URLs cannot have their paths erased
+PASS <a>: Setting <foo://somehost/some/path>.pathname = '' Non-special URLs can have their paths erased
+PASS <area>: Setting <foo://somehost/some/path>.pathname = '' Non-special URLs can have their paths erased
+PASS <a>: Setting <foo:///some/path>.pathname = '' Non-special URLs with an empty host can have their paths erased
+PASS <area>: Setting <foo:///some/path>.pathname = '' Non-special URLs with an empty host can have their paths erased
+PASS <a>: Setting <foo:/some/path>.pathname = '' Path-only URLs cannot have their paths erased
+PASS <area>: Setting <foo:/some/path>.pathname = '' Path-only URLs cannot have their paths erased
+PASS <a>: Setting <foo:/some/path>.pathname = 'test' Path-only URLs always have an initial slash
+PASS <area>: Setting <foo:/some/path>.pathname = 'test' Path-only URLs always have an initial slash
 PASS <a>: Setting <unix:/run/foo.socket?timeout=10>.pathname = '/var/log/../run/bar.socket'
 PASS <area>: Setting <unix:/run/foo.socket?timeout=10>.pathname = '/var/log/../run/bar.socket'
 PASS <a>: Setting <https://example.net#nav>.pathname = 'home'

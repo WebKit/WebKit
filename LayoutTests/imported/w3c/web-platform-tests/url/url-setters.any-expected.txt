@@ -170,6 +170,11 @@ PASS URL: Setting <sc:///>.port = '12'
 PASS URL: Setting <sc://x/>.port = '12'
 PASS URL: Setting <javascript://x/>.port = '12'
 PASS URL: Setting <mailto:me@example.net>.pathname = '/foo' Cannot-be-a-base don’t have a path
+PASS URL: Setting <file:///some/path>.pathname = '' Special URLs cannot have their paths erased
+PASS URL: Setting <foo://somehost/some/path>.pathname = '' Non-special URLs can have their paths erased
+PASS URL: Setting <foo:///some/path>.pathname = '' Non-special URLs with an empty host can have their paths erased
+PASS URL: Setting <foo:/some/path>.pathname = '' Path-only URLs cannot have their paths erased
+PASS URL: Setting <foo:/some/path>.pathname = 'test' Path-only URLs always have an initial slash
 PASS URL: Setting <unix:/run/foo.socket?timeout=10>.pathname = '/var/log/../run/bar.socket'
 PASS URL: Setting <https://example.net#nav>.pathname = 'home'
 PASS URL: Setting <https://example.net#nav>.pathname = '../home'

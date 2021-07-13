@@ -643,4 +643,6 @@ PASS Parsing: <abc:rootless> against <abc://host/path>
 PASS Parsing: <abc:rootless> against <abc:/path>
 PASS Parsing: <abc:rootless> against <abc:path>
 PASS Parsing: <abc:/rooted> against <abc://host/path>
+PASS Parsing: <#> against <null>
+PASS Parsing: <?> against <null>
 

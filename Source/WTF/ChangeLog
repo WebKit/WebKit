@@ -1,3 +1,15 @@
+2021-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        Update and fix URL WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=227820
+
+        Reviewed by Chris Dumez.
+
+        There was an edge case where if we set a path to an empty string, it would add a slash.  No more.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setPath):
+
 2021-07-13  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Remove USE_64KB_PAGE_BLOCK
