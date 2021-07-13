@@ -161,6 +161,9 @@ class Git(Scm):
                     intersected = _append(branch, hash, revision=revision)
 
             finally:
+                # If our `git log` operation failed, we can't count on the validity of our cache
+                if log and log.returncode:
+                    return
                 if log:
                     log.kill()
 
