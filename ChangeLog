@@ -1,3 +1,20 @@
+2021-07-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Remove USE_64KB_PAGE_BLOCK
+        https://bugs.webkit.org/show_bug.cgi?id=227905
+
+        Reviewed by Yusuke Suzuki.
+
+        I added the USE_64KB_PAGE_BLOCK build option in bug #217989 for use by RHEL. But going
+        forward, I don't need it anymore, and can maintain it downstream where it is needed. (This
+        option might also be useful to SUSE, but they already don't use it, so won't miss it.)
+
+        I've seen users who don't understand the consequences of this option enabling it on x86_64,
+        even though there are serious negative consequences and zero benefits to using it. So let's
+        get rid of it.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Expose support for client certificate auth
