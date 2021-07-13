@@ -1,3 +1,18 @@
+2021-07-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Allow runtime opt-out of GL rendering
+        https://bugs.webkit.org/show_bug.cgi?id=227873
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In some cases GL rendering is not really useful, such as on machines without GPU. In those
+        cases currently Mesa's llvmpipe is used, introducing CPU and RAM usage increase compared to
+        the non-gl rendering path. For these cases the user can set a new env var,
+        WEBKIT_GST_DISABLE_GL_SINK=1, allowing the player to use the Cairo sink.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSinkGL):
+
 2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Expose support for client certificate auth
