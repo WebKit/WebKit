@@ -1,3 +1,36 @@
+2021-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Revoking Blob URL after calling XMLHttpRequest::open() causes the XHR to fail
+        https://bugs.webkit.org/show_bug.cgi?id=227821
+
+        Reviewed by Alex Christensen.
+
+        Revoking Blob URL after calling XMLHttpRequest::open() causes the XHR to fail. This doesn't match the behavior of
+        other browsers and is causing WebKit to fail one of the subtests on:
+        - http://wpt.live/FileAPI/url/url-with-xhr.any.html
+
+        XMLHttpRequest::open() now extends the lifetime of the Blob URL as necessary in order to complete the load.
+
+        No new tests, rebaselined existing tests.
+
+        * fileapi/BlobURL.cpp:
+        (WebCore::URLWithBlobURLLifetimeExtension::URLWithBlobURLLifetimeExtension):
+        (WebCore::URLWithBlobURLLifetimeExtension::~URLWithBlobURLLifetimeExtension):
+        * fileapi/BlobURL.h:
+        (WebCore::BlobURLLifeTimeExtender::url const):
+        * loader/PolicyChecker.cpp:
+        (WebCore::FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary const):
+        (WebCore::FrameLoader::PolicyChecker::checkNavigationPolicy):
+        * loader/PolicyChecker.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::setResponseType):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::prepareToSend):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::createRequest):
+        * xml/XMLHttpRequest.h:
+
 2021-07-13  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Allow runtime opt-out of GL rendering

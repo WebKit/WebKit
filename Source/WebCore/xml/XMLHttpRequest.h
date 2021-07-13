@@ -22,6 +22,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "BlobURL.h"
 #include "ExceptionOr.h"
 #include "FormData.h"
 #include "ResourceResponse.h"
@@ -215,7 +216,7 @@ private:
 
     std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
-    URL m_url;
+    URLWithBlobURLLifetimeExtension m_url;
     String m_method;
     HTTPHeaderMap m_requestHeaders;
     RefPtr<FormData> m_requestEntityBody;

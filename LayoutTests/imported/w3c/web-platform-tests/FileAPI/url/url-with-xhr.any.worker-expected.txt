@@ -12,5 +12,5 @@ PASS XHR with method "OPTIONS" should fail
 PASS XHR with method "PUT" should fail
 PASS XHR with method "CUSTOM" should fail
 PASS XHR should return Content-Type from Blob
-FAIL Revoke blob URL after open(), will fetch assert_unreached: Got unexpected error event Reached unreachable code
+PASS Revoke blob URL after open(), will fetch
 

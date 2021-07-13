@@ -1,3 +1,15 @@
+2021-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Revoking Blob URL after calling XMLHttpRequest::open() causes the XHR to fail
+        https://bugs.webkit.org/show_bug.cgi?id=227821
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/FileAPI/url/url-with-xhr.any-expected.txt:
+        * web-platform-tests/FileAPI/url/url-with-xhr.any.worker-expected.txt:
+
 2021-07-13  Martin Robinson  <mrobinson@igalia.com>
 
         RenderLayerScrollableArea::updateScrollPosition assumes that it can scroll to the targeted scroll position
