@@ -1,3 +1,12 @@
+2021-07-14  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        REGRESSION (r279806): [ iOS/macOS ] fast/canvas/canvas-overloads-strokeText.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=227881
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-14  Chris Dumez  <cdumez@apple.com>
 
         Fix type of exceptions thrown in the WebAudio API
