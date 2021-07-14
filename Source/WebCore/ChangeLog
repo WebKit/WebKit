@@ -1,5 +1,18 @@
 2021-07-13  Jean-Yves Avenard  <jya@apple.com>
 
+        MediaSessionManagerCocoa::ensureCodecsRegistered() isn't thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=227940
+
+        Reviewed by Maciej Stachowiak.
+
+        C++11 static initializers aren't thread-safe due to architectural and compilation
+        option choices. So we use Grand Central Dispatch's dispatch_once instead.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::ensureCodecsRegistered):
+
+2021-07-13  Jean-Yves Avenard  <jya@apple.com>
+
         SourceBuffer.abort() doesn't go back to state WAITING_FOR_SEGMENT properly
         https://bugs.webkit.org/show_bug.cgi?id=227559
         <rdar://problem/79996056>
