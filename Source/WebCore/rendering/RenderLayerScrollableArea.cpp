@@ -1293,7 +1293,7 @@ void RenderLayerScrollableArea::paintOverflowControls(GraphicsContext& context, 
 {
     // Don't do anything if we have no overflow.
     auto& renderer = m_layer.renderer();
-    if (!renderer.hasOverflowClip())
+    if (!renderer.hasNonVisibleOverflow())
         return;
 
     if (!showsOverflowControls())
@@ -1636,7 +1636,7 @@ void RenderLayerScrollableArea::updateScrollCornerStyle()
 {
     auto& renderer = m_layer.renderer();
     RenderElement* actualRenderer = rendererForScrollbar(renderer);
-    auto corner = renderer.hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &actualRenderer->style()) : nullptr;
+    auto corner = renderer.hasNonVisibleOverflow() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &actualRenderer->style()) : nullptr;
 
     if (!corner) {
         clearScrollCorner();
@@ -1664,7 +1664,7 @@ void RenderLayerScrollableArea::updateResizerStyle()
 {
     auto& renderer = m_layer.renderer();
     RenderElement* actualRenderer = rendererForScrollbar(renderer);
-    auto resizer = renderer.hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::Resizer }, &actualRenderer->style()) : nullptr;
+    auto resizer = renderer.hasNonVisibleOverflow() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::Resizer }, &actualRenderer->style()) : nullptr;
 
     if (!resizer) {
         clearResizer();
@@ -1776,7 +1776,7 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
     if (renderer.parent())
         restrictedByLineClamp = !renderer.parent()->style().lineClamp().isNone();
 
-    if (renderer.hasOverflowClip() && !restrictedByLineClamp) {
+    if (renderer.hasNonVisibleOverflow() && !restrictedByLineClamp) {
         ScrollOffset newScrollOffset = scrollOffset() + delta;
         scrollToOffset(newScrollOffset);
         if (scrolledArea)

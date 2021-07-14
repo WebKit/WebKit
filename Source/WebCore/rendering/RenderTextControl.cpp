@@ -211,7 +211,7 @@ void RenderTextControl::layoutExcludedChildren(bool relayoutChildren)
 bool RenderTextControl::canScroll() const
 {
     auto innerText = innerTextElement();
-    return innerText && innerText->renderer() && innerText->renderer()->hasOverflowClip();
+    return innerText && innerText->renderer() && innerText->renderer()->hasNonVisibleOverflow();
 }
 
 int RenderTextControl::innerLineHeight() const

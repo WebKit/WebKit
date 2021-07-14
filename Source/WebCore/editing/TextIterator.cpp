@@ -201,7 +201,7 @@ static inline bool fullyClipsContents(Node& node)
     if (!is<RenderBox>(*renderer))
         return false;
     auto& box = downcast<RenderBox>(*renderer);
-    if (!box.hasOverflowClip())
+    if (!box.hasNonVisibleOverflow())
         return false;
 
     // Quirk to keep copy/paste in the CodeMirror editor version used in Jenkins working.

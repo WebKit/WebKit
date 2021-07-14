@@ -637,7 +637,7 @@ inline LayoutIntegration::LineLayout* RenderBlockFlow::modernLineLayout()
 
 inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
 {
-    if (element() && element()->isRootEditableElement() && hasOverflowClip() && style().isLeftToRightDirection() && !paddingEnd())
+    if (element() && element()->isRootEditableElement() && hasNonVisibleOverflow() && style().isLeftToRightDirection() && !paddingEnd())
         return caretWidth;
     return { };
 }

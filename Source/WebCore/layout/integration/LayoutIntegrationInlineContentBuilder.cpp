@@ -60,10 +60,10 @@ inline Layout::InlineLineGeometry::EnclosingTopAndBottom operator+(const Layout:
 inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutUnit lineBoxLogicalWidth, InlineLayoutUnit lineContentLogicalWidth)
 {
     // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
-    auto endPadding = flow.hasOverflowClip() ? flow.paddingEnd() : 0_lu;
+    auto endPadding = flow.hasNonVisibleOverflow() ? flow.paddingEnd() : 0_lu;
     if (!endPadding)
         endPadding = flow.endPaddingWidthForCaret();
-    if (flow.hasOverflowClip() && !endPadding && flow.element() && flow.element()->isRootEditableElement())
+    if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && flow.element()->isRootEditableElement())
         endPadding = 1;
     lineContentLogicalWidth += endPadding;
     return std::max(lineBoxLogicalWidth, lineContentLogicalWidth);

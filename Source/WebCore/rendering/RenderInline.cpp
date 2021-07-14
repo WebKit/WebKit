@@ -891,7 +891,7 @@ LayoutRect RenderInline::clippedOverflowRect(const RenderLayerModelObject* repai
     if (hitRepaintContainer || !containingBlock)
         return repaintRect;
 
-    if (containingBlock->hasOverflowClip())
+    if (containingBlock->hasNonVisibleOverflow())
         containingBlock->applyCachedClipAndScrollPosition(repaintRect, repaintContainer, context);
 
     repaintRect = containingBlock->computeRect(repaintRect, repaintContainer, context);
@@ -957,7 +957,7 @@ std::optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const Layo
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     adjustedRect.setLocation(topLeft);
-    if (localContainer->hasOverflowClip()) {
+    if (localContainer->hasNonVisibleOverflow()) {
         // FIXME: Respect the value of context.options.
         SetForScope<OptionSet<VisibleRectContextOption>> change(context.options, context.options | VisibleRectContextOption::ApplyCompositedContainerScrolls);
         bool isEmpty = !downcast<RenderBox>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);

@@ -272,7 +272,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
                 placeholder->renderer()->setNeedsLayout(MarkContainingBlockChain);
         }
     }
-    setHasOverflowClip(false);
+    setHasNonVisibleOverflow(false);
 }
 
 bool RenderTextControlSingleLine::hasControlClip() const

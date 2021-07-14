@@ -1630,7 +1630,7 @@ bool Document::isBodyPotentiallyScrollable(HTMLBodyElement& body)
     //   overflow-x or overflow-y properties is not visible.
     // - The element's used value of the overflow-x or overflow-y properties is not visible.
     //
-    // FIXME: We should use RenderObject::hasOverflowClip() instead of Element::computedStyle() but
+    // FIXME: We should use RenderObject::hasNonVisibleOverflow() instead of Element::computedStyle() but
     // the used values are currently not correctly updated. See https://webkit.org/b/182292.
     return body.renderer()
         && documentElement()->computedStyle()
@@ -7843,7 +7843,7 @@ static std::optional<IntersectionObservationState> computeIntersectionState(Fram
 
         if (observer.root() == &target.document())
             localRootBounds = frameView.layoutViewportRect();
-        else if (rootRenderer->hasOverflowClip())
+        else if (rootRenderer->hasNonVisibleOverflow())
             localRootBounds = rootRenderer->contentBoxRect();
         else
             localRootBounds = { FloatPoint(), rootRenderer->size() };

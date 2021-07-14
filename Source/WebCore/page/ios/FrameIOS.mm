@@ -560,7 +560,7 @@ Node* Frame::nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocatio
 
             auto& style = renderer->style();
 
-            if (renderer->hasOverflowClip()
+            if (renderer->hasNonVisibleOverflow()
                 && (style.overflowY() == Overflow::Auto || style.overflowY() == Overflow::Scroll
                 || style.overflowX() == Overflow::Auto || style.overflowX() == Overflow::Scroll)) {
                 scrollingAncestor = node;

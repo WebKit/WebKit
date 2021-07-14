@@ -1058,7 +1058,7 @@ void RenderFragmentedFlow::addFragmentsOverflowFromChild(const RenderBox* box, c
         
         fragment->addLayoutOverflowForBox(box, childLayoutOverflowRect);
 
-        if (child->hasSelfPaintingLayer() || box->hasOverflowClip()) {
+        if (child->hasSelfPaintingLayer() || box->hasNonVisibleOverflow()) {
             if (fragment == endFragment)
                 break;
             continue;

@@ -885,7 +885,7 @@ void RenderMultiColumnSet::addOverflowFromChildren()
     
     LayoutRect lastRect = columnRectAt(colCount - 1);
     addLayoutOverflow(lastRect);
-    if (!hasOverflowClip())
+    if (!hasNonVisibleOverflow())
         addVisualOverflow(lastRect);
 }
 

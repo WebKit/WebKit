@@ -1718,8 +1718,8 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
     // difficult to figure out in general (especially in the middle of doing layout), so we only handle the
     // simple case of an anonymous block truncating when it's parent is clipped.
     auto* parent = m_flow.parent();
-    bool hasTextOverflow = (style().textOverflow() == TextOverflow::Ellipsis && m_flow.hasOverflowClip())
-        || (m_flow.isAnonymousBlock() && parent && parent->isRenderBlock() && parent->style().textOverflow() == TextOverflow::Ellipsis && parent->hasOverflowClip());
+    bool hasTextOverflow = (style().textOverflow() == TextOverflow::Ellipsis && m_flow.hasNonVisibleOverflow())
+        || (m_flow.isAnonymousBlock() && parent && parent->isRenderBlock() && parent->style().textOverflow() == TextOverflow::Ellipsis && parent->hasNonVisibleOverflow());
 
     // Walk all the lines and delete our ellipsis line boxes if they exist.
     if (hasTextOverflow)
@@ -2123,18 +2123,18 @@ bool LegacyLineLayout::matchedEndLine(LineLayoutState& layoutState, const Inline
 
 void LegacyLineLayout::addOverflowFromInlineChildren()
 {
-    LayoutUnit endPadding = m_flow.hasOverflowClip() ? m_flow.paddingEnd() : 0_lu;
+    LayoutUnit endPadding = m_flow.hasNonVisibleOverflow() ? m_flow.paddingEnd() : 0_lu;
     // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
     if (!endPadding)
         endPadding = m_flow.endPaddingWidthForCaret();
-    if (m_flow.hasOverflowClip() && !endPadding && m_flow.element() && m_flow.element()->isRootEditableElement() && style().isLeftToRightDirection())
+    if (m_flow.hasNonVisibleOverflow() && !endPadding && m_flow.element() && m_flow.element()->isRootEditableElement() && style().isLeftToRightDirection())
         endPadding = 1;
     for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         m_flow.addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
         RenderFragmentContainer* fragment = m_flow.enclosingFragmentedFlow() ? curr->containingFragment() : nullptr;
         if (fragment)
             fragment->addLayoutOverflowForBox(&m_flow, curr->paddedLayoutOverflowRect(endPadding));
-        if (!m_flow.hasOverflowClip()) {
+        if (!m_flow.hasNonVisibleOverflow()) {
             LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
             m_flow.addVisualOverflow(childVisualOverflowRect);
             if (fragment)

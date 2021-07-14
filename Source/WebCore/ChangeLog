@@ -1,3 +1,156 @@
+2021-07-14  Rob Buis  <rbuis@igalia.com>
+
+        Rename hasOverflowClip() to prepare for the real overflow:clip
+        https://bugs.webkit.org/show_bug.cgi?id=227899
+
+        Reviewed by Simon Fraser.
+
+        Rename hasOverflowClip() to prepare for the real overflow:clip.
+
+        No new tests since no change in behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::isBodyPotentiallyScrollable):
+        (WebCore::computeIntersectionState):
+        * dom/Element.cpp:
+        (WebCore::Element::scrollTo):
+        (WebCore::Element::scrollByUnits):
+        * editing/TextIterator.cpp:
+        (WebCore::fullyClipsContents):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::lineOverflowWidth):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::nodeRespondingToScrollWheelEvents):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::LegacyLineLayout::layoutLineBoxes):
+        (WebCore::LegacyLineLayout::addOverflowFromInlineChildren):
+        * rendering/RenderBlock.cpp:
+        (WebCore::OverflowEventDispatcher::OverflowEventDispatcher):
+        (WebCore::RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction):
+        (WebCore::RenderBlock::updateScrollInfoAfterLayout):
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::isSelectionRoot const):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::adjustForBorderFit const):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::endPaddingWidthForCaret const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateFromStyle):
+        (WebCore::RenderBox::scrollWidth const):
+        (WebCore::RenderBox::scrollHeight const):
+        (WebCore::RenderBox::scrollLeft const):
+        (WebCore::RenderBox::scrollTop const):
+        (WebCore::RenderBox::setScrollLeft):
+        (WebCore::RenderBox::setScrollTop):
+        (WebCore::RenderBox::setScrollPosition):
+        (WebCore::RenderBox::includeVerticalScrollbarSize const):
+        (WebCore::RenderBox::includeHorizontalScrollbarSize const):
+        (WebCore::RenderBox::intrinsicScrollbarLogicalWidth const):
+        (WebCore::RenderBox::requiresLayerWithScrollableArea const):
+        (WebCore::RenderBox::canBeProgramaticallyScrolled const):
+        (WebCore::RenderBox::usesCompositedScrolling const):
+        (WebCore::RenderBox::hasAutoScrollbar const):
+        (WebCore::RenderBox::hasAlwaysPresentScrollbar const):
+        (WebCore::RenderBox::scrollPosition const):
+        (WebCore::RenderBox::cachedSizeForOverflowClip const):
+        (WebCore::RenderBox::backgroundHasOpaqueTopLayer const):
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::popContentsClip):
+        (WebCore::RenderBox::computeVisibleRectInContainer const):
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::scrollsOverflowX const):
+        (WebCore::RenderBox::scrollsOverflowY const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::mayCauseRepaintInsideViewport const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasClipOrNonVisibleOverflow const):
+        (WebCore::RenderElement::hasClipOrOverflowClip const): Deleted.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::hitTestChildren):
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::shouldClipFragmentedFlowContent const):
+        (WebCore::RenderFragmentContainer::layoutOverflowRectForBoxForPropagation):
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::addFragmentsOverflowFromChild):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRect const):
+        (WebCore::RenderInline::computeVisibleRectInContainer const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly const):
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        (WebCore::RenderLayer::enclosingOverflowClipLayer const):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::allowsCurrentScroll const):
+        (WebCore::RenderLayer::canResize const):
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::setupFontSubpixelQuantization):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clippingLayerBox):
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enclosingNonStackingClippingLayer const):
+        (WebCore::RenderLayerCompositor::computeAncestorClippingStack const):
+        (WebCore::RenderLayerCompositor::clipsCompositingDescendants):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::paintOverflowControls):
+        (WebCore::RenderLayerScrollableArea::updateScrollCornerStyle):
+        (WebCore::RenderLayerScrollableArea::updateResizerStyle):
+        (WebCore::RenderLayerScrollableArea::scrollByRecursively):
+        * rendering/RenderLayoutState.cpp:
+        (WebCore::RenderLayoutState::RenderLayoutState):
+        (WebCore::RenderLayoutState::computeOffsets):
+        (WebCore::RenderLayoutState::computeClipRect):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::addOverflowFromListMarker):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::addOverflowFromChildren):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingScrollableContainerForSnapping const):
+        (WebCore::objectIsRelayoutBoundary):
+        (WebCore::RenderObject::computeVisibleRectInContainer const):
+        (WebCore::RenderObject::outputRenderObject const):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasNonVisibleOverflow const):
+        (WebCore::RenderObject::setHasNonVisibleOverflow):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        (WebCore::RenderObject::hasOverflowClip const): Deleted.
+        (WebCore::RenderObject::setHasOverflowClip): Deleted.
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::styleDidChange):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::canScroll const):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::updateFromStyle):
+
 2021-07-14  Chris Dumez  <cdumez@apple.com>
 
         Fix type of exceptions thrown in the WebAudio API
