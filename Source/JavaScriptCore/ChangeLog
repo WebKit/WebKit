@@ -1,3 +1,22 @@
+2021-07-13  Robin Morisset  <rmorisset@apple.com>
+
+        Invalid machine code emitted by SpeculativeJIT::emitObjectOrOtherBranch
+        https://bugs.webkit.org/show_bug.cgi?id=227869
+        <rdar://problem/80457566>
+
+        Reviewed by Mark Lam.
+
+        SpeculativeJIT::emitObjectOrOtherBranch used to check the validity of the masqueradesAsUndefined watchpoint twice, and assumed that it could not change in between.
+        That is clearly incorrect as the main thread is running concurrently with it, and so the watchpoint could fire at any time.
+        The fix is trivial: just check the validity once, and store the result in a boolean.
+        If the watchpoint triggers later that is fine: we'll notice and cancel the compilation (see WatchpointCollectionPhase, Plan::isStillValid() and Plan::finalize()).
+        The change only protects us from rare and hard-to-reproduce crashes on debug builds caused by an ASSERT firing.
+
+        I did not add a testcase, as I can only reproduce the bug by adding an extra wait in the middle of emitObjectOrOtherBranch.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+
 2021-07-13  Yijia Huang  <yijia_huang@apple.com>
 
         Add a new Air::Arg kind ZeroReg to let AIR recognise the new instructions/forms accepting zero register in ARM64
