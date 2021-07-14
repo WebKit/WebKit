@@ -1,3 +1,37 @@
+2021-07-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Push OS state dumping logic down from WebProcess to AuxiliaryProcess
+        https://bugs.webkit.org/show_bug.cgi?id=227916
+
+        Reviewed by Tim Horton.
+
+        Refactor state dumping registration code in preparation for supporting state dumping in the GPU process on Cocoa
+        platforms when triggering system diagnostics. The logic that currently lives in
+        `WebProcess::registerWithStateDumper` is comprised of two parts: (1) code that calls `os_state_add_handler` with
+        a `os_state_data_t` provider, and (2) code that builds a dictionary containing diagnostic information specific
+        to the web process.
+
+        Since GPUProcess will require only the former, we hoist logic for (1) into the superclass (AuxiliaryProcess) so
+        that both GPUProcess and WebProcess can invoke it, and refactor (2) to be a virtual method that may be
+        overridden by subclasses to provide process-specific information.
+
+        * Shared/AuxiliaryProcess.h:
+        (WebKit::AuxiliaryProcess::additionalStateForDiagnosticReport const):
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::registerWithStateDumper):
+
+        Additionally make this take the title string that will be used to label the state data, to avoid the need for a
+        second subclassing method to provide the title.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::additionalStateForDiagnosticReport const):
+
+        Pull logic for collecting diagnostic information in the web process out into a separate helper method.
+
+        (WebKit::WebProcess::platformInitializeProcess):
+        (WebKit::WebProcess::registerWithStateDumper): Deleted.
+
 2021-07-13  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r279069): http/tests/websocket/tests/hybi/too-long-payload.html is a constant timeout when using NSURLSESSION_WEBSOCKET

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AuxiliaryProcess.h"
 
+#import "OSStateSPI.h"
 #import "WKCrashReporter.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FloatingPointEnvironment.h>
@@ -81,4 +82,52 @@ void AuxiliaryProcess::platformStopRunLoop()
     XPCServiceExit(WTFMove(m_priorityBoostMessage));
 }
 
+#if USE(OS_STATE)
+
+void AuxiliaryProcess::registerWithStateDumper(ASCIILiteral title)
+{
+    os_state_add_handler(dispatch_get_main_queue(), [this, title] (os_state_hints_t hints) {
+        @autoreleasepool {
+            os_state_data_t os_state = nullptr;
+
+            // Only gather state on faults and sysdiagnose. It's overkill for
+            // general error messages.
+            if (hints->osh_api == OS_STATE_API_ERROR)
+                return os_state;
+
+            auto stateDictionary = additionalStateForDiagnosticReport();
+
+            // Submitting an empty process state object may provide an
+            // indication of the existance of private sessions, which we'd like
+            // to hide, so don't return empty dictionaries.
+            if (![stateDictionary count])
+                return os_state;
+
+            // Serialize the accumulated process state so that we can put the
+            // result in an os_state_data_t structure.
+            NSError *error = nil;
+            auto data = [NSPropertyListSerialization dataWithPropertyList:stateDictionary.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:&error];
+
+            if (!data) {
+                ASSERT(data);
+                return os_state;
+            }
+
+            auto neededSize = OS_STATE_DATA_SIZE_NEEDED(data.length);
+            os_state = (os_state_data_t)malloc(neededSize);
+            if (os_state) {
+                memset(os_state, 0, neededSize);
+                os_state->osd_type = OS_STATE_DATA_SERIALIZED_NSCF_OBJECT;
+                os_state->osd_data_size = data.length;
+                strlcpy(os_state->osd_title, title.characters(), sizeof(os_state->osd_title));
+                memcpy(os_state->osd_data, data.bytes, data.length);
+            }
+
+            return os_state;
+        }
+    });
 }
+
+#endif // USE(OS_STATE)
+
+} // namespace WebKit
