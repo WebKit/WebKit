@@ -1944,4 +1944,6 @@ webkit.org/b/227881 fast/canvas/canvas-overloads-strokeText.html [ Pass Crash ]
 
 webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
 
+webkit.org/b/227931 imported/w3c/web-platform-tests/css/conditional/idlharness.html [ Pass Failure ]
+
 webkit.org/b/227890 fast/canvas/canvas-path-addPath.html [ Pass Timeout ]
