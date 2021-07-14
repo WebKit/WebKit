@@ -1,3 +1,11 @@
+2021-07-14  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, test gardening.
+
+        * stress/bit-op-with-object-returning-int32.js:
+        * stress/bitwise-not-fixup-rules.js:
+        (jscOptions):
+
 2021-07-14  Mark Lam  <mark.lam@apple.com>
 
         Check for out of memory in JSC::globalFuncEscape() and JSC::globalFuncUnescape().

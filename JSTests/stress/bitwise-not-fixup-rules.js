@@ -10,7 +10,7 @@ function foo(a) {
 }
 noInline(foo);
 
-if (jscOptions().useExecutableAllocationFuzz !== true) {
+if (!jscOptions().useExecutableAllocationFuzz) {
     let c = 0;
     let o = {
         valueOf: () => {

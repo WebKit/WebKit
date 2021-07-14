@@ -9,7 +9,7 @@ function bitAnd(a, b) {
 }
 noInline(bitAnd);
 
-if (jscOptions().useExecutableAllocationFuzz !== true) {
+if (!jscOptions().useExecutableAllocationFuzz) {
 
     var o = { valueOf: () => 0b1101 };
 
