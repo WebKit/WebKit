@@ -1,3 +1,20 @@
+2021-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        Link against Catalyst ANGLE-shared.dylib when linking Catalyst WebCore.framework
+        https://bugs.webkit.org/show_bug.cgi?id=227965
+        <rdar://76284889>
+
+        Reviewed by Tim Horton.
+
+        r274742 put the dylib into the correct location, but when linking WebCore we are still looking in the
+        location of the non-Catalyst dylib, which happens to have all the symbols we are looking for so linking succeeds.
+        At runtime, though, we realize we are opening the wrong dylib and bad things happen.
+
+        The solution is to look in the Catalyst WebCore framework directory when WK_USE_ALTERNATE_FRAMEWORKS_DIR is YES,
+        which is only in the Catalyst build.
+
+        * Configurations/WebCore.xcconfig:
+
 2021-07-14  Mark Lam  <mark.lam@apple.com>
 
         Speculative fix for failed scope.releaseAssertNoException() after calls to JSMap::create().
