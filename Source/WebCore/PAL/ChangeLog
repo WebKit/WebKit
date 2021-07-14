@@ -1,3 +1,10 @@
+2021-07-14  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r279912 (239661@main); Adopt HAVE(SYSTEM_STATUS) macro.
+
+        * pal/ios/SystemStatusSoftLink.h:
+        * pal/ios/SystemStatusSoftLink.mm:
+
 2021-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Dynamically set capture attribution

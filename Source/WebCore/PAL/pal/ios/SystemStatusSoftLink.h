@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+#if HAVE(SYSTEM_STATUS)
 
 #import <wtf/SoftLinking.h>
 

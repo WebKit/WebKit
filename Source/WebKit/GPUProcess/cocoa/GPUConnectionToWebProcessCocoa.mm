@@ -39,7 +39,7 @@ namespace WebKit {
 #if ENABLE(MEDIA_STREAM)
 bool GPUConnectionToWebProcess::setCaptureAttributionString()
 {
-#if PLATFORM(IOS)
+#if HAVE(SYSTEM_STATUS)
     if (![PAL::getSTDynamicActivityAttributionPublisherClass() respondsToSelector:@selector(setCurrentAttributionStringWithFormat:auditToken:)])
         return true;
 

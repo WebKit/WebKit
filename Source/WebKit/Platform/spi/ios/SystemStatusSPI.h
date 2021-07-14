@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if HAVE(SYSTEM_STATUS)
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <SystemStatus/STDynamicActivityAttributionPublisher.h>
@@ -40,3 +41,4 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
+#endif // HAVE(SYSTEM_STATUS)

@@ -1,3 +1,9 @@
+2021-07-14  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r279912 (239661@main); Add a HAVE(SYSTEM_STATUS) macro.
+
+        * wtf/PlatformHave.h:
+
 2021-07-13  Alex Christensen  <achristensen@webkit.org>
 
         Update and fix URL WPT tests
