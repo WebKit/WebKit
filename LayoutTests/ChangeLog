@@ -1,3 +1,12 @@
+2021-07-13  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac wk2] inspector/canvas/setShaderProgramDisabled.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=227922.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-13  Truitt Savell  <tsavell@apple.com>
 
         Creating or modifying expectations for many test failing on Monterey
