@@ -64,7 +64,11 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
     // When this method is invoked, the user agent must run the following steps:
     // 1. Let promise be a new promise.
     // 2. Run the following steps in parallel:
-    document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakDocument = makeWeakPtr(document), promise = WTFMove(promise)] () mutable {
+    document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), weakDocument = makeWeakPtr(document), promise = WTFMove(promise)] () mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         // 2.1. Let configuration be the value of this object's configuration value.
         // 2.2. Let use distinctive identifier be true if the value of configuration's distinctiveIdentifier member is "required" and false otherwise.
         bool useDistinctiveIdentifier = m_configuration->distinctiveIdentifier == MediaKeysRequirement::Required;

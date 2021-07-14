@@ -32,6 +32,7 @@
 
 #include "MediaKeySystemConfiguration.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class DeferredPromise;
 class Document;
 class MediaKeys;
 
-class MediaKeySystemAccess : public RefCounted<MediaKeySystemAccess> {
+class MediaKeySystemAccess : public RefCounted<MediaKeySystemAccess>, public CanMakeWeakPtr<MediaKeySystemAccess> {
 public:
     static Ref<MediaKeySystemAccess> create(const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
     ~MediaKeySystemAccess();

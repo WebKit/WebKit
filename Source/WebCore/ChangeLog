@@ -1,3 +1,21 @@
+2021-07-14  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Null-pointer deref in MediaKeySystemAccess::createMediaKeys()
+        https://bugs.webkit.org/show_bug.cgi?id=227911
+        <rdar://80325855>
+
+        Reviewed by Chris Dumez.
+
+        In r278481, we moved from a (timer-based) GenericTaskQueue to the document's event loop, but in so
+        doing, allowed the passed-in lambda to be called after the underlying object had been destroyed.
+        Make MediaKeySystemAccess a CanMakeWeakPtr and pass in a WeakPtr to the lambda. To ensure that the
+        lambda itself keeps MediaKeySystemAccess during the execution of the lambda, also add a Ref to
+        the object after null-checking weakThis.
+
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        (WebCore::MediaKeySystemAccess::createMediaKeys):
+        * Modules/encryptedmedia/MediaKeySystemAccess.h:
+
 2021-07-14  Rob Buis  <rbuis@igalia.com>
 
         Rename hasOverflowClip() to prepare for the real overflow:clip
