@@ -1,3 +1,15 @@
+2021-07-14  Michael Saboff  <msaboff@apple.com>
+
+        [macOS] Add new entitlement to limit process to a single JIT region
+        https://bugs.webkit.org/show_bug.cgi?id=227956
+
+        Reviewed by Mark Lam.
+
+        This macOS entitlement limits a process to a single JIT region.
+        This matches the behavior on iOS.
+
+        * Scripts/process-entitlements.sh:
+
 2021-07-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Dump basic RemoteRenderingBackend state when taking system diagnostics

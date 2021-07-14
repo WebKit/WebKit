@@ -1,3 +1,16 @@
+2021-07-14  Michael Saboff  <msaboff@apple.com>
+
+        [macOS] Add new entitlement to limit process to a single JIT region
+        https://bugs.webkit.org/show_bug.cgi?id=227956
+
+        Reviewed by Mark Lam.
+
+        This macOS entitlement limits a process to a single JIT region.
+        This matches the behavior on iOS.
+
+        * Scripts/process-entitlements.sh:
+        * entitlements.plist:
+
 2021-07-14  Mark Lam  <mark.lam@apple.com>
 
         Speculative fix for failed scope.releaseAssertNoException() after calls to JSMap::create().
