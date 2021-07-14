@@ -394,6 +394,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
         }
     }
 
+    scope.release();
     objectAssignGeneric(globalObject, vm, target, source);
 }
 
