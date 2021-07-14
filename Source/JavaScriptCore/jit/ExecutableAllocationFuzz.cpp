@@ -41,6 +41,8 @@ unsigned numberOfExecutableAllocationFuzzChecks()
 
 ExecutableAllocationFuzzResult doExecutableAllocationFuzzing()
 {
+    static WeakRandom random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber());
+
     ASSERT(Options::useExecutableAllocationFuzz());
 
     if (Options::fireExecutableAllocationFuzzRandomly()) {
@@ -59,29 +61,25 @@ ExecutableAllocationFuzzResult doExecutableAllocationFuzzing()
         return AllowNormalExecutableAllocation;
     }
     
-    unsigned oldValue;
-    unsigned newValue;
-    do {
-        oldValue = s_numberOfExecutableAllocationFuzzChecks.load();
-        newValue = oldValue + 1;
-    } while (!s_numberOfExecutableAllocationFuzzChecks.compareExchangeWeak(oldValue, newValue));
-    
-    if (newValue == Options::fireExecutableAllocationFuzzAt()) {
+    unsigned numChecks = s_numberOfExecutableAllocationFuzzChecks.value++;
+
+    if (numChecks == Options::fireExecutableAllocationFuzzAt()) {
         if (Options::verboseExecutableAllocationFuzz()) {
             dataLog("Will pretend to fail executable allocation.\n");
             WTFReportBacktrace();
         }
         return PretendToFailExecutableAllocation;
     }
-    
+
     if (Options::fireExecutableAllocationFuzzAtOrAfter()
-        && newValue >= Options::fireExecutableAllocationFuzzAtOrAfter()) {
+        && numChecks >= Options::fireExecutableAllocationFuzzAtOrAfter()) {
         if (Options::verboseExecutableAllocationFuzz()) {
             dataLog("Will pretend to fail executable allocation.\n");
             WTFReportBacktrace();
         }
         return PretendToFailExecutableAllocation;
-    }
+    } else if (!Options::fireExecutableAllocationFuzzAt() && random.getUint32() < UINT_MAX * Options::randomIntegrityAuditRate())
+        return PretendToFailExecutableAllocation;
     
     return AllowNormalExecutableAllocation;
 }

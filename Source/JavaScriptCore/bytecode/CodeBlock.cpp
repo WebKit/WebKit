@@ -2481,6 +2481,10 @@ void CodeBlock::countReoptimization()
 unsigned CodeBlock::numberOfDFGCompiles()
 {
     ASSERT(JITCode::isBaselineCode(jitType()));
+
+    // FIXME: We don't really do a good job tracking when a compilation failed because of executable allocation fuzzing. https://bugs.webkit.org/show_bug.cgi?id=226276
+    if (Options::useExecutableAllocationFuzz())
+        return 1000000;
     if (Options::testTheFTL()) {
         if (m_didFailFTLCompilation)
             return 1000000;
