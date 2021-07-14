@@ -1,3 +1,33 @@
+2021-07-14  Said Abou-Hallawa  <said@apple.com>
+
+        RenderElement::updateFillImages must fix the clients of the CSS image whose URL is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=227926
+        <rdar://80457956>
+
+        Reviewed by Simon Fraser.
+
+        Per CSS2 specs, if the value of the url() is the empty string, then it
+        must be resolved to the URL of the style sheet which is an invalid URI
+        for an image. The issue https://github.com/w3c/csswg-drafts/issues/2211
+        was filed to change this behavior.
+
+        In RenderElement::updateFillImages() we fix the old and new fill images
+        only if they are different. But we consider them equal if their URIs are
+        equal and they are not data URIs. If the two URIs are empty strings, the
+        fill images will be considered equal although their CachedImages might
+        be different.
+
+        We need to fix the clients of the fill images always if their CachedImages 
+        have errorOccured() true or have hasImage() false.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::updateFillImages):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::hasImage const):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleImage.h:
+        (WebCore::StyleImage::hasImage const):
+
 2021-07-13  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSessionManagerCocoa::ensureCodecsRegistered() isn't thread-safe

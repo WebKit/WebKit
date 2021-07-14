@@ -363,6 +363,10 @@ void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer
                 return false;
             if (layer1->image() && layer1->image()->usesDataProtocol())
                 return false;
+            if (auto styleImage = layer1->image()) {
+                if (styleImage->errorOccurred() || !styleImage->hasImage() || styleImage->usesDataProtocol())
+                    return false;
+            }
         }
 
         return !layer1 && !layer2;

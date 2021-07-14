@@ -180,6 +180,13 @@ bool StyleCachedImage::hasClient(RenderElement& renderer) const
     return m_cachedImage->hasClient(renderer);
 }
 
+bool StyleCachedImage::hasImage() const
+{
+    if (!m_cachedImage)
+        return false;
+    return m_cachedImage->hasImage();
+}
+
 RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const
 {
     ASSERT(!m_isPending);
