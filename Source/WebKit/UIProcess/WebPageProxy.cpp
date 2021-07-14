@@ -110,6 +110,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventConversion.h"
+#include "WebFrame.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
@@ -136,6 +137,7 @@
 #include "WebPopupMenuProxy.h"
 #include "WebPreferences.h"
 #include "WebPreferencesKeys.h"
+#include "WebProcess.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -5101,11 +5103,21 @@ void WebPageProxy::didSameDocumentNavigationForFrame(FrameIdentifier frameID, ui
 void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
 {
 #if ENABLE(MEDIA_STREAM)
-    if (m_userMediaPermissionRequestManager)
+    if (m_userMediaPermissionRequestManager) {
         m_userMediaPermissionRequestManager->resetAccess(frameID);
+
+#if ENABLE(GPU_PROCESS)
+        if (auto* gpuProcess = m_process->processPool().gpuProcess()) {
+            if (auto* frame = m_process->webFrame(frameID))
+                gpuProcess->updateCaptureOrigin(SecurityOriginData::fromURL(frame->url()), m_process->coreProcessIdentifier());
+        }
+#endif
+    }
+
 #else
     UNUSED_PARAM(frameID);
 #endif
+    
     m_isQuotaIncreaseDenied = false;
 
     m_speechRecognitionPermissionManager = nullptr;
@@ -8418,6 +8430,7 @@ void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& reque
 
     auto& gpuProcess = process().processPool().ensureGPUProcess();
     gpuProcess.updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), m_process->coreProcessIdentifier(), WTFMove(callback));
+    gpuProcess.updateCaptureOrigin(request.topLevelDocumentSecurityOrigin().data(), m_process->coreProcessIdentifier());
 #if PLATFORM(IOS_FAMILY)
     gpuProcess.setOrientationForMediaCapture(m_deviceOrientation);
 #endif
@@ -10602,12 +10615,12 @@ void WebPageProxy::gpuProcessExited(GPUProcessTerminationReason)
     pageClient().gpuProcessDidExit();
 
 #if ENABLE(MEDIA_STREAM)
-    bool shouldAllowAudioCapture = isCapturingAudio() && preferences().captureAudioInGPUProcessEnabled();
-    bool shouldAllowVideoCapture = isCapturingVideo() && preferences().captureVideoInGPUProcessEnabled();
-    bool shouldAllowDisplayCapture = false;
-    if (shouldAllowAudioCapture || shouldAllowVideoCapture) {
+    bool activeAudioCapture = isCapturingAudio() && preferences().captureAudioInGPUProcessEnabled();
+    bool activeVideoCapture = isCapturingVideo() && preferences().captureVideoInGPUProcessEnabled();
+    bool activeDisplayCapture = false;
+    if (activeAudioCapture || activeVideoCapture) {
         auto& gpuProcess = process().processPool().ensureGPUProcess();
-        gpuProcess.updateCaptureAccess(shouldAllowAudioCapture, shouldAllowVideoCapture, shouldAllowDisplayCapture, m_process->coreProcessIdentifier(), [] { });
+        gpuProcess.updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, m_process->coreProcessIdentifier(), [] { });
     }
 #endif
 }

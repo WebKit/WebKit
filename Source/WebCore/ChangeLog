@@ -1,3 +1,15 @@
+2021-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Dynamically set capture attribution
+        https://bugs.webkit.org/show_bug.cgi?id=227871
+        rdar://70241665
+
+        Reviewed by Jer Noble.
+
+        No new tests, tested manually.
+
+        * en.lproj/Localizable.strings:
+
 2021-07-14  Said Abou-Hallawa  <said@apple.com>
 
         RenderElement::updateFillImages must fix the clients of the CSS image whose URL is invalid

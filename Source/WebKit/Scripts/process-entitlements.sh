@@ -309,6 +309,10 @@ function ios_family_process_gpu_entitlements()
 
     plistbuddy Add :seatbelt-profiles array
     plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.GPU
+
+    plistbuddy Add :com.apple.systemstatus.activityattribution bool YES
+    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name array
+    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name:0 string com.apple.systemstatus.activityattribution
 }
 
 function ios_family_process_webauthn_entitlements()

@@ -1,3 +1,15 @@
+2021-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Dynamically set capture attribution
+        https://bugs.webkit.org/show_bug.cgi?id=227871
+        rdar://70241665
+
+        Reviewed by Jer Noble.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/ios/SystemStatusSoftLink.h: Added.
+        * pal/ios/SystemStatusSoftLink.mm: Added.
+
 2021-07-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make Coordinator playback commands more precise

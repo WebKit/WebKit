@@ -312,6 +312,12 @@ void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapt
     completionHandler();
 }
 
+void GPUProcess::updateCaptureOrigin(const WebCore::SecurityOriginData& originData, ProcessIdentifier processID)
+{
+    if (auto* connection = webProcessConnection(processID))
+        connection->updateCaptureOrigin(originData);
+}
+
 void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& extensions)
 {
     for (auto& extension : extensions)

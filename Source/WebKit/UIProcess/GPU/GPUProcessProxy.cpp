@@ -280,6 +280,10 @@ void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVide
     sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
 }
 
+void GPUProcessProxy::updateCaptureOrigin(const WebCore::SecurityOriginData& originData, WebCore::ProcessIdentifier processID)
+{
+    send(Messages::GPUProcess::UpdateCaptureOrigin { originData, processID }, 0);
+}
 
 void GPUProcessProxy::addMockMediaDevice(const WebCore::MockMediaDevice& device)
 {
