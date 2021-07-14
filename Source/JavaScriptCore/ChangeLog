@@ -1,3 +1,38 @@
+2021-07-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        libpas executable-allocator should reserve more than 256KB for non-fail region at least
+        https://bugs.webkit.org/show_bug.cgi?id=227927
+
+        Reviewed by Keith Miller.
+
+        libpas jit_heap has mediam allocator which allocates 128KB pages at once. However, our JSC stress tests are setting 100KB
+        for small executable memory tests. As a result, under this configuration, we fail immediately after using medium allocator.
+
+        But this test's "total size of executable memory is 100KB" is unrealistic: it is possible that only 100KB memory remains,
+        but it is impossible that we reserve only 25KB for non-fail reservation. In production, we are always reserving 128MB. So
+        this configuration is not realistic actually.
+
+        So, this patch changes,
+
+            1. If non-fail region is less than 256KB, then we add 256KB and keep this 256KB as non-fail executable allocation. If not,
+                use 0.25 ratio as we are doing. This means that Options::jitMemoryReservationSize configures failable region of
+                executable memory.
+            2. We also revive bytesReserved and bytesAllocated to make memoryPressureMultiplier and early-fail allocation (when there is
+                not enough memory and allocation can fail, then we should fail).
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableMemoryHandle::createImpl):
+        (JSC::ExecutableMemoryHandle::~ExecutableMemoryHandle):
+        (JSC::ExecutableMemoryHandle::shrink):
+        (JSC::ExecutableMemoryHandle::sizeInBytes const): Deleted.
+        * jit/ExecutableMemoryHandle.h:
+        (JSC::ExecutableMemoryHandle::sizeInBytes const):
+        (JSC::ExecutableMemoryHandle::ExecutableMemoryHandle):
+
 2021-07-14  Mark Lam  <mark.lam@apple.com>
 
         Placate exception checker validation in operationObjectAssignUntyped.

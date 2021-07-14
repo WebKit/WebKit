@@ -68,7 +68,7 @@ public:
         return startAsInteger() + sizeInBytes();
     }
 
-    JS_EXPORT_PRIVATE size_t sizeInBytes() const;
+    size_t sizeInBytes() const { return m_sizeInBytes; }
 
     bool containsIntegerAddress(uintptr_t address) const
     {
@@ -95,11 +95,14 @@ public:
     }
 
 private:
-    ExecutableMemoryHandle(MemoryPtr start)
-        : m_start(start)
+    ExecutableMemoryHandle(MemoryPtr start, size_t sizeInBytes)
+        : m_sizeInBytes(sizeInBytes)
+        , m_start(start)
     {
+        ASSERT(sizeInBytes == m_sizeInBytes); // executable memory region does not exceed 4GB.
     }
 
+    unsigned m_sizeInBytes;
     MemoryPtr m_start;
 };
 #else // USE(LIBPAS_JIT_HEAP) -> so start of !USE(LIBPAS_JIT_HEAP) case
