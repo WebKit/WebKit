@@ -324,8 +324,12 @@ class CompileJSCOnly(CompileWebKit):
 
 
 class InstallBuiltProduct(shell.ShellCommand):
+    name = 'install-built-product'
+    description = ['Installing Built Product']
+    descriptionDone = ['Installed Built Product']
     command = ["python3", "Tools/Scripts/install-built-product",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+
 
 class ArchiveBuiltProduct(shell.ShellCommand):
     command = ["python3", "Tools/CISupport/built-product-archive",

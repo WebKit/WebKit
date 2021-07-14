@@ -2034,8 +2034,12 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
 
 
 class InstallBuiltProduct(shell.ShellCommand):
+    name = 'install-built-product'
+    description = ['Installing Built Product']
+    descriptionDone = ['Installed Built Product']
     command = ["python3", "Tools/Scripts/install-built-product",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+
 
 class CleanBuild(shell.Compile):
     name = 'delete-WebKitBuild-directory'
