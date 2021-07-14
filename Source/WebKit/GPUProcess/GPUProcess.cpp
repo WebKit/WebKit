@@ -251,6 +251,10 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
 
     WebCore::setPresentingApplicationPID(parameters.parentPID);
+
+#if USE(OS_STATE)
+    registerWithStateDumper("GPUProcess state"_s);
+#endif
 }
 
 void GPUProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)

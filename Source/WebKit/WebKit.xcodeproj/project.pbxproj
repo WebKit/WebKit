@@ -2016,6 +2016,7 @@
 		F4094CBE25530540003D73E3 /* DisplayListWriterHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = F4094CB92553047E003D73E3 /* DisplayListWriterHandle.h */; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F40BBB41257FF46E0067463A /* GPUProcessWakeupMessageArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = F40BBB40257FF46E0067463A /* GPUProcessWakeupMessageArguments.h */; };
+		F414CE2D269DE6EA00BD216A /* RemoteRenderingBackendState.h in Headers */ = {isa = PBXBuildFile; fileRef = F414CE2C269DE6EA00BD216A /* RemoteRenderingBackendState.h */; };
 		F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */ = {isa = PBXBuildFile; fileRef = F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */; };
 		F430E9422247335F005FE053 /* WebsiteMetaViewportPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */; };
 		F430E94422473DFF005FE053 /* WebContentMode.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E94322473DB8005FE053 /* WebContentMode.h */; };
@@ -5990,6 +5991,8 @@
 		F40BBB40257FF46E0067463A /* GPUProcessWakeupMessageArguments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessWakeupMessageArguments.h; sourceTree = "<group>"; };
 		F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionContext.h; path = ios/WebAutocorrectionContext.h; sourceTree = "<group>"; };
 		F41056612130699A0092281D /* APIAttachmentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = APIAttachmentCocoa.mm; sourceTree = "<group>"; };
+		F414CE2A269DDED100BD216A /* GPUProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUProcessCocoa.mm; path = cocoa/GPUProcessCocoa.mm; sourceTree = "<group>"; };
+		F414CE2C269DE6EA00BD216A /* RemoteRenderingBackendState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackendState.h; sourceTree = "<group>"; };
 		F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionData.h; path = ios/WebAutocorrectionData.h; sourceTree = "<group>"; };
 		F42D634022A0EFD300D2FB3A /* WebAutocorrectionData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebAutocorrectionData.mm; path = ios/WebAutocorrectionData.mm; sourceTree = "<group>"; };
 		F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMetaViewportPolicy.h; sourceTree = "<group>"; };
@@ -8964,6 +8967,7 @@
 				550640A324071A6100AAE045 /* RemoteRenderingBackend.h */,
 				550640A424071C2100AAE045 /* RemoteRenderingBackend.messages.in */,
 				460889FF261FA8A900E2500D /* RemoteRenderingBackendCreationParameters.h */,
+				F414CE2C269DE6EA00BD216A /* RemoteRenderingBackendState.h */,
 				726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */,
 				726D56DE253A64810002EF90 /* RemoteResourceCache.h */,
 				7BCF70CA2614935E00E4FB70 /* ScopedRenderingResourcesRequest.cpp */,
@@ -11696,6 +11700,14 @@
 			path = cache;
 			sourceTree = "<group>";
 		};
+		F414CE27269DDE8000BD216A /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F414CE2A269DDED100BD216A /* GPUProcessCocoa.mm */,
+			);
+			name = cocoa;
+			sourceTree = "<group>";
+		};
 		F638955A133BF57D008941D5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -12338,6 +12350,7 @@
 				1AC1338618590C4600F3EC05 /* RemoteObjectRegistryMessages.h in Headers */,
 				46088A00261FA8BC00E2500D /* RemoteRenderingBackend.h in Headers */,
 				46088A01261FA8C400E2500D /* RemoteRenderingBackendCreationParameters.h in Headers */,
+				F414CE2D269DE6EA00BD216A /* RemoteRenderingBackendState.h in Headers */,
 				0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */,

@@ -33,6 +33,7 @@
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteRenderingBackendState.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
 #include "ScopedRenderingResourcesRequest.h"
@@ -94,6 +95,8 @@ public:
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
 
+    RemoteRenderingBackendState lastKnownState() const;
+
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
     void startListeningForIPC();
@@ -117,6 +120,8 @@ private:
 
     std::optional<SharedMemory::IPCHandle> updateSharedMemoryForGetPixelBufferHelper(size_t byteCount);
     void updateRenderingResourceRequest();
+
+    void updateLastKnownState(RemoteRenderingBackendState);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -145,6 +150,7 @@ private:
     struct PendingWakeupInformation {
         GPUProcessWakeupMessageArguments arguments;
         std::optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;
+        RemoteRenderingBackendState state { RemoteRenderingBackendState::Initialized };
 
         bool shouldPerformWakeup(WebCore::RenderingResourceIdentifier identifier) const
         {
@@ -169,6 +175,7 @@ private:
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
     RefPtr<WebCore::ImageBuffer> m_currentMaskImageBuffer;
+    Atomic<RemoteRenderingBackendState> m_lastKnownState { RemoteRenderingBackendState::Initialized };
 };
 
 } // namespace WebKit

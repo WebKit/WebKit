@@ -1,3 +1,73 @@
+2021-07-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Dump basic RemoteRenderingBackend state when taking system diagnostics
+        https://bugs.webkit.org/show_bug.cgi?id=227917
+
+        Reviewed by Tim Horton.
+
+        Make it possible to diagnose issues where the GPU Process is stuck (e.g. failing to acknowledge context flushes
+        from the web process) by dumping information about the states of all RemoteRenderingBackends in the GPU process.
+        See comments below for more detail.
+
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::remoteRenderingBackendMap const):
+
+        Expose this const getter, so that GPUProcess can iterate over remote rendering backends when collecting
+        diagnostic information in `additionalStateForDiagnosticReport()`.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/cocoa/GPUProcessCocoa.mm: Added.
+        (WebKit::GPUProcess::additionalStateForDiagnosticReport const):
+
+        Override this method and return a dictionary containing information about each RemoteRenderingBackend for all
+        GPUConnectionToWebProcesses. This is an example of a state dictionary:
+
+        ```
+        {
+            "RemoteRenderingBackend states" =     {
+                <WP ID> =         {
+                    <RRB ID> = FinishedReplayingDisplayList;
+                };
+            };
+        }
+        ```
+
+        Importantly, this reveals RemoteRenderingBackends that are stuck waiting for newly created display list item
+        buffers, missing cached resources, or destination image buffers (essentially a special case of "missing cached
+        resources"), and also cases where display list playback infinitely loops or otherwise hangs.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+        (WebKit::RemoteRenderingBackend::lastKnownState const):
+        (WebKit::RemoteRenderingBackend::updateLastKnownState):
+
+        Add a state flag to RemoteRenderingBackend, so that it can remember its last known state. This state is updated
+        when entering or exiting the main display list processing loop (`wakeUpAndApplyDisplayList`); if we're about to
+        go to sleep with pending wakeup arguments, then we'll set the last known state to one of the `WaitingFor_______`
+        states.
+
+        This state is wrapped in an Atomic, since it's only updated from the rendering backend's background queue, but
+        it's only read from within the OS state handler block on the main queue.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackendState.h: Added.
+
+        Add a new 8-bit enum representing the state of a RemoteRenderingBackend. See above for more details.
+
+        (WebKit::name):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushWithTimeout):
+
+        Add fault logging in the case where we've reached the maximum number of timeouts while waiting for a display
+        list context flush. Importantly, we include the remote rendering backend's identifier here to make it easier to
+        correlate with information from GPU Process state dumping above.
+
 2021-07-14  Devin Rousso  <drousso@apple.com>
 
         [iOS] REGRESSION(r279720): changing Subtitles to Off doesn't hide them or do anything

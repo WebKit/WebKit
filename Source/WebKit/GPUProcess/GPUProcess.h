@@ -137,6 +137,9 @@ private:
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
+#if USE(OS_STATE)
+    RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
+#endif
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
     void setWebMParserEnabled(bool);

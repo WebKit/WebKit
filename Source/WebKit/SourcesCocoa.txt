@@ -59,6 +59,7 @@ NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 
 GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm
+GPUProcess/cocoa/GPUProcessCocoa.mm
 GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
 GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm @no-unify
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp

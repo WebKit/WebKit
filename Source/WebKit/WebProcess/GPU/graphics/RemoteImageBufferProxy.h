@@ -145,6 +145,9 @@ protected:
                 ++numberOfTimeouts;
         }
         LOG_WITH_STREAM(SharedDisplayLists, stream << "Done waiting: " << MonotonicTime::now() - startTime << "; " << numberOfTimeouts << " timeout(s)");
+
+        if (UNLIKELY(numberOfTimeouts >= maximumNumberOfTimeouts))
+            RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded timeout while waiting for flush in remote rendering backend: %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
     }
 
     WebCore::ImageBufferBackend* ensureBackendCreated() const override

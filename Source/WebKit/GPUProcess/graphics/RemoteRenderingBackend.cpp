@@ -244,14 +244,19 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
             if (!destination) {
                 ASSERT(!m_pendingWakeupInfo);
-                m_pendingWakeupInfo = {{{ handle.identifier(), offset, *result.nextDestinationImageBuffer, reason }, std::nullopt }};
+                m_pendingWakeupInfo = {{
+                    { handle.identifier(), offset, *result.nextDestinationImageBuffer, reason },
+                    std::nullopt,
+                    RemoteRenderingBackendState::WaitingForDestinationImageBuffer
+                }};
             }
         }
 
         if (result.reasonForStopping == DisplayList::StopReplayReason::MissingCachedResource) {
             m_pendingWakeupInfo = {{
                 { handle.identifier(), offset, destination->renderingResourceIdentifier(), reason },
-                result.missingCachedResourceIdentifier
+                result.missingCachedResourceIdentifier,
+                RemoteRenderingBackendState::WaitingForCachedResource
             }};
         }
 
@@ -293,6 +298,9 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
     ASSERT(!RunLoop::isMain());
 
     TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
+
+    updateLastKnownState(RemoteRenderingBackendState::BeganReplayingDisplayList);
+
     auto destinationImageBuffer = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier));
     MESSAGE_CHECK(destinationImageBuffer, "Missing destination image buffer");
 
@@ -318,11 +326,20 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
         destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle, arguments.reason);
     }
     LOG_WITH_STREAM(SharedDisplayLists, stream << "Going back to sleep.");
+
+    if (m_pendingWakeupInfo)
+        updateLastKnownState(m_pendingWakeupInfo->state);
+    else
+        updateLastKnownState(RemoteRenderingBackendState::FinishedReplayingDisplayList);
 }
 
 void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, WebCore::RenderingResourceIdentifier destinationIdentifier)
 {
-    m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, std::nullopt }};
+    m_pendingWakeupInfo = {{
+        { identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified },
+        std::nullopt,
+        RemoteRenderingBackendState::WaitingForItemBuffer
+    }};
 }
 
 std::optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemoryForGetPixelBufferHelper(size_t byteCount)
@@ -623,6 +640,18 @@ void RemoteRenderingBackend::updateRenderingResourceRequest()
 bool RemoteRenderingBackend::allowsExitUnderMemoryPressure() const
 {
     return m_remoteResourceCache.imageBuffers().isEmpty() && m_remoteResourceCache.nativeImages().isEmpty();
+}
+
+RemoteRenderingBackendState RemoteRenderingBackend::lastKnownState() const
+{
+    ASSERT(RunLoop::isMain());
+    return m_lastKnownState.load();
+}
+
+void RemoteRenderingBackend::updateLastKnownState(RemoteRenderingBackendState state)
+{
+    ASSERT(!RunLoop::isMain());
+    m_lastKnownState.storeRelaxed(state);
 }
 
 } // namespace WebKit

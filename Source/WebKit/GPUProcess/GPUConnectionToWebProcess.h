@@ -160,6 +160,10 @@ public:
 #if ENABLE(WEBGL)
     void releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier);
 #endif
+
+    using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
+    const RemoteRenderingBackendMap& remoteRenderingBackendMap() const { return m_remoteRenderingBackendMap; }
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID, GPUProcessConnectionParameters&&);
 
@@ -262,7 +266,6 @@ private:
     bool m_allowsDisplayCapture { false };
 #endif
 
-    using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
     RemoteRenderingBackendMap m_remoteRenderingBackendMap;
 #if ENABLE(WEBGL)
     using RemoteGraphicsContextGLMap = HashMap<GraphicsContextGLIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGraphicsContextGL>>;
