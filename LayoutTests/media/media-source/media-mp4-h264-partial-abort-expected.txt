@@ -1,0 +1,57 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+Append the init segment in two chunks
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+Divide the init segment in two.
+RUN(random = randomNumber(1, 720))
+RUN(partial1 = loader.initSegment().slice(0, random))
+RUN(partial2 = loader.initSegment().slice(random))
+RUN(sourceBuffer.appendBuffer(partial1))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(partial2))
+EVENT(loadedmetadata)
+EVENT(update)
+Append the two partial media segments in reverse order. Separated with an abort
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3).slice(0, 45000)))
+EVENT(update)
+RUN(sourceBuffer.abort())
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) >= '3.541') OK
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+EXPECTED (sourceBuffer.buffered.end(0) >= '0.708') OK
+EXPECTED (sourceBuffer.buffered.end(1) >= '3.541') OK
+Clean sourcebuffer of all content.
+Ensure an init segment is accepted right after an aborted partial media segment
+RUN(sourceBuffer.abort())
+RUN(sourceBuffer.remove(0, 100))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3).slice(0, 45000)))
+EVENT(update)
+RUN(sourceBuffer.abort())
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) >= '3.541') OK
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+EXPECTED (sourceBuffer.buffered.end(0) >= '0.708') OK
+EXPECTED (sourceBuffer.buffered.end(1) >= '3.541') OK
+Same as above without waiting for the first append to complete. This is not a deterministic speced behaviour
+Clean sourcebuffer of all content.
+RUN(sourceBuffer.abort())
+RUN(sourceBuffer.remove(0, 100))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3).slice(0, 45000)))
+RUN(sourceBuffer.abort())
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) >= '0.708') OK
+END OF TEST
+

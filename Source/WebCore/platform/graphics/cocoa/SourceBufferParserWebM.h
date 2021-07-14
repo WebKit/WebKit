@@ -83,9 +83,6 @@ public:
     void flushPendingAudioBuffers();
     void setMinimumAudioSampleDuration(float);
     
-    using CallOnClientThreadCallback = WTF::Function<void(WTF::Function<void()>&&)>;
-    void setCallOnClientThreadCallback(CallOnClientThreadCallback&&);
-
     void setLogger(const WTF::Logger&, const void* identifier) final;
 
     void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t, std::optional<size_t> byteRangeOffset);
@@ -160,6 +157,12 @@ public:
             return webm::Status(webm::Status::kInvalidElementId);
         }
 
+        virtual void reset()
+        {
+            m_currentPacketSize = std::nullopt;
+            m_partialBytesRead = 0;
+        }
+
     protected:
         std::optional<size_t> m_currentPacketSize;
         // Size of the currently parsed packet, possibly incomplete.
@@ -185,8 +188,11 @@ public:
         {
         }
 
+#if ENABLE(VP9)
+        void reset() final;
+#endif
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-        
+
     private:
         void createSampleBuffer(const CMTime&, int, const webm::FrameMetadata&);
         const char* logClassName() const { return "VideoTrackData"; }
@@ -211,6 +217,7 @@ public:
         }
 
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
+        void reset() final;
         void createSampleBuffer(std::optional<size_t> latestByteRangeOffset = std::nullopt);
 
     private:
@@ -263,6 +270,7 @@ private:
     webm::Status m_status;
     std::unique_ptr<webm::WebmParser> m_parser;
     bool m_initializationSegmentEncountered { false };
+    bool m_initializationSegmentProcessed { false };
     uint32_t m_timescale { 1000 };
     uint64_t m_currentTimecode { 0 };
 
@@ -275,8 +283,6 @@ private:
     std::optional<BlockVariant> m_currentBlock;
     std::optional<uint64_t> m_rewindToPosition;
     float m_minimumAudioSampleDuration { 2 };
-
-    CallOnClientThreadCallback m_callOnClientThreadCallback;
 
     RefPtr<const WTF::Logger> m_logger;
     const void* m_logIdentifier { nullptr };

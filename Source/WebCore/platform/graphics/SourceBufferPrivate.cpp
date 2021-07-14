@@ -170,7 +170,8 @@ void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded)
     updateBufferedFromTrackBuffers(isEnded);
 
     if (m_client) {
-        m_client->sourceBufferPrivateAppendComplete(parsingSucceeded ? SourceBufferPrivateClient::AppendResult::AppendSucceeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
+        if (!m_didReceiveSampleErrored)
+            m_client->sourceBufferPrivateAppendComplete(parsingSucceeded ? SourceBufferPrivateClient::AppendResult::AppendSucceeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
     }
 }
@@ -829,7 +830,7 @@ bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivat
 
 void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
 {
-    if (!m_isAttached)
+    if (!m_isAttached || m_didReceiveSampleErrored)
         return;
 
     // 3.5.1 Segment Parser Loop
@@ -843,6 +844,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
 
     if ((!m_receivedFirstInitializationSegment || m_pendingInitializationSegmentForChangeType) && m_client) {
         m_client->sourceBufferPrivateAppendError(true);
+        m_didReceiveSampleErrored = true;
         return;
     }
 

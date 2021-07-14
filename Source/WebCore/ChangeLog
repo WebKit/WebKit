@@ -1,3 +1,106 @@
+2021-07-13  Jean-Yves Avenard  <jya@apple.com>
+
+        SourceBuffer.abort() doesn't go back to state WAITING_FOR_SEGMENT properly
+        https://bugs.webkit.org/show_bug.cgi?id=227559
+        <rdar://problem/79996056>
+
+        Reviewed by Jer Noble.
+
+        Per spec, calling sourcebuffer.abort method should allow you to add a new segment
+        immediately after, as abort moves the append state back to WAITING_FOR_SEGMENT.
+        A segment can be either an init segment or a media segment.
+        We used to discard all further content until an init segment was encountered.
+        This could be problematic due to the typical use case of abort:
+        1- Seek to a location
+        2- Append a partial media segment long enough to finish seeking and display the
+         new content at the new position.
+        If multiple seeks were done in rapid succession, abort() is called right after
+        before starting the new seek so that we can add the new segment, regardless of what
+        was appended before.
+        YouTube applies a workaround for Safari where it will always append an init segment
+        after calling abort, this is different to what they do with Firefox (and likely Chrome).
+        To be able to resume after appending a partial media segment we must ensure that the
+        SourceBufferParser is always left in a sane context, and not be interrupted at some
+        random points. The abort() call used to interrupt the buffer parsing on the fly and
+        then reset things which would require a new init segment to restart.
+        Instead we always fully parse the pending buffer received befofe the call to abort
+        and drop all demuxed samples.
+        The SourceBufferParserAVFObjC could already properly deal with discontinuity unlike
+        SourceBufferParserWebM.
+        To ensure that buffers sent after the call to abort() are only ever processed once
+        the pending ones have been parsed, and in order to avoid having blocking calls
+        we play with the order in which tasks are scheduled.
+
+        Fly-by fixes:
+        - The SourceBufferParser handle two type of parser: SourceBufferParser and the
+        platform specific AVStreamDataParser. Rename the accessor method to more clearly
+        differentate which parser we are dealing with.
+        - The SourceBufferParserWebM and SourceBufferPrivateAVFObjC used different task dispatching
+        mechanisms. We make them both share the same one now found in the base class.
+        - If SourceBufferPrivateAVFObjC::m_hasPendingAppendCompletedCallback had been set prior an
+        abort() it wouldn't have been reset, causing the need for a new init segment.
+        - If abort() had been called while samples were pending, the source buffer content was
+        undefined if timestamp offset or append windows start/end were changed immediately after.
+        - When an error occurs during the Segment Parser Loop, we should abort and run the append
+        error algorithm. We instead fired an error event for each sample found in the media segment.
+        In a debug built it was have asserted. We can't actually abort, so instead we ignore all
+        further samples once an error is encountered.
+
+        Tests: media/media-source/media-mp4-h264-partial-abort.html
+               media/media-source/media-webm-opus-partial-abort.html
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::~CDMSessionAVContentKeySession): rename method.
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::~CDMSessionAVStreamSession): rename method.
+        (WebCore::CDMSessionAVStreamSession::update): rename method.
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm: rename method.
+        (WebCore::CDMSessionMediaSourceAVFObjC::addSourceBuffer): rename method.
+        (WebCore::CDMSessionMediaSourceAVFObjC::removeSourceBuffer): rename method.
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.h: rename method, remove
+        now unused member.
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::removeCodedFrames): Postpone call to ensure
+        we are running the remove frame algorithm once all pending frames have been processed.
+        (WebCore::SourceBufferParserAVFObjC::resetParserState): Remove use of m_discardSamplesUntilNextInitializationSegment.
+        (WebCore::SourceBufferParserAVFObjC::didParseStreamDataAsAsset): Change to base dispatch method.
+        (WebCore::SourceBufferParserAVFObjC::didFailToParseStreamDataWithError): Change to base dispatch method.
+        (WebCore::SourceBufferParserAVFObjC::didProvideMediaDataForTrackID): Change to base dispatch method.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h: Rename methods. Remove no longer used
+        members.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::didParseInitializationData): No longer use a Cancellable task
+        as we never cancel it anymore.
+        (WebCore::SourceBufferPrivateAVFObjC::append): re-schedule the append task immediately to ensure
+        that processed packets flushed on the parser queue during abort are handled in the right order on
+        the main thread.
+        (WebCore::SourceBufferPrivateAVFObjC::appendCompleted): Check that abort wasn't called since append started
+        to ensure that no updateend event is incorrectly fired twice.
+        (WebCore::SourceBufferPrivateAVFObjC::abort): Abort is now a no-op that only set the m_abortCalled member.
+        (WebCore::SourceBufferPrivateAVFObjC::resetParserState): Change the order of operations so that the
+        SourceBufferParser is only reset after it has finished processing its data.
+        (WebCore::SourceBufferPrivateAVFObjC::destroyStreamDataParser): Use rename method.
+        (WebCore::SourceBufferPrivateAVFObjC::removedFromMediaSource): Use rename method.
+        (WebCore::SourceBufferPrivateAVFObjC::streamDataParser const): Renamed method from "parser"
+        (WebCore::SourceBufferPrivateAVFObjC::attemptToDecrypt): Use renamed method.
+        * platform/graphics/cocoa/SourceBufferParser.cpp:
+        (WebCore::callOnMainThreadCallback): Move dispatch method from SourceBufferParserWebM
+        (WebCore::SourceBufferParser::setCallOnClientThreadCallback):
+        (WebCore::SourceBufferParser::SourceBufferParser):
+        * platform/graphics/cocoa/SourceBufferParser.h:
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::SourceBufferParserWebM):
+        (WebCore::SourceBufferParserWebM::resetParserState): Don't clear the data set by parsing
+        the previous init segment. Set the parsing state to waiting for a new segment if an
+        init segment has been fully parsed.
+        (WebCore::SourceBufferParserWebM::OnElementEnd):
+        (WebCore::SourceBufferParserWebM::OnEbml):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::reset):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::reset):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+
 2021-07-13  Alex Christensen  <achristensen@webkit.org>
 
         >4K Referer should have tailing /
