@@ -45,6 +45,7 @@
 #import "WebFrame.h"
 #import "WebInspector.h"
 #import "WebPage.h"
+#import "WebPageGroupProxy.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessDataStoreParameters.h"
 #import "WebProcessMessages.h"
@@ -69,6 +70,7 @@
 #import <WebCore/MainThreadSharedTimer.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
+#import <WebCore/PageGroup.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformMediaSessionManager.h>
@@ -1078,6 +1080,11 @@ void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreference
 {
     WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(captionDisplayMode);
     WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferredLanguages);
+
+    for (auto& pageGroup : m_pageGroupMap.values()) {
+        if (auto* captionPreferences = pageGroup->corePageGroup()->captionPreferences())
+            captionPreferences->captionPreferencesChanged();
+    }
 }
 #endif
 

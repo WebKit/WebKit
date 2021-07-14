@@ -5695,7 +5695,7 @@ void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 void Document::registerForCaptionPreferencesChangedCallbacks(HTMLMediaElement& element)
 {
     if (page())
-        page()->group().captionPreferences().setInterestedInCaptionPreferenceChanges();
+        page()->group().ensureCaptionPreferences().setInterestedInCaptionPreferenceChanges();
 
     m_captionPreferencesChangedElements.add(element);
 }

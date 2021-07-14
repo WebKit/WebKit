@@ -4025,7 +4025,7 @@ void HTMLMediaElement::addTextTrack(Ref<TextTrack>&& track)
         Document& document = this->document();
         document.registerForCaptionPreferencesChangedCallbacks(*this);
         if (Page* page = document.page())
-            m_captionDisplayMode = page->group().captionPreferences().captionDisplayMode();
+            m_captionDisplayMode = page->group().ensureCaptionPreferences().captionDisplayMode();
     }
 
     ensureTextTracks().append(WTFMove(track));
@@ -4180,7 +4180,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     ASSERT(group.tracks.size());
 
     Page* page = document().page();
-    CaptionUserPreferences* captionPreferences = page ? &page->group().captionPreferences() : 0;
+    CaptionUserPreferences* captionPreferences = page ? &page->group().ensureCaptionPreferences() : 0;
     CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::Automatic;
 
     // First, find the track in the group that should be enabled (if any).
@@ -4456,7 +4456,7 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
     if (!document().page())
         return;
 
-    auto& captionPreferences = document().page()->group().captionPreferences();
+    auto& captionPreferences = document().page()->group().ensureCaptionPreferences();
     CaptionUserPreferences::CaptionDisplayMode displayMode;
     if (trackToSelect == &TextTrack::captionMenuOffItem())
         displayMode = CaptionUserPreferences::ForcedOnly;
@@ -6613,7 +6613,7 @@ void HTMLMediaElement::captionPreferencesChanged()
     if (!document().page())
         return;
 
-    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences().captionDisplayMode();
+    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().ensureCaptionPreferences().captionDisplayMode();
     if (captionDisplayMode() == displayMode)
         return;
 
@@ -6625,7 +6625,7 @@ CaptionUserPreferences::CaptionDisplayMode HTMLMediaElement::captionDisplayMode(
 {
     if (!m_captionDisplayMode) {
         if (document().page())
-            m_captionDisplayMode = document().page()->group().captionPreferences().captionDisplayMode();
+            m_captionDisplayMode = document().page()->group().ensureCaptionPreferences().captionDisplayMode();
         else
             m_captionDisplayMode = CaptionUserPreferences::Automatic;
     }
@@ -7111,7 +7111,7 @@ void HTMLMediaElement::setOverridePreferredDynamicRangeMode(DynamicRangeMode mod
 Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() const
 {
     if (Page* page = document().page())
-        return page->group().captionPreferences().preferredAudioCharacteristics();
+        return page->group().ensureCaptionPreferences().preferredAudioCharacteristics();
     return Vector<String>();
 }
 
