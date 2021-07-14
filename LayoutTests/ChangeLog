@@ -1,3 +1,12 @@
+2021-07-14  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GStreamer] mark media/media-source/media-webm-vorbis-partial.html and media/media-source/media-webm-opus-partial.html as failing
+        https://bugs.webkit.org/show_bug.cgi?id=227934
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-07-13  Jean-Yves Avenard  <jya@apple.com>
 
         SourceBuffer.abort() doesn't go back to state WAITING_FOR_SEGMENT properly
