@@ -33,6 +33,7 @@
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
+#include "VMTrapsInlines.h"
 #include "WebAssemblyModuleRecord.h"
 
 namespace JSC {
@@ -50,8 +51,8 @@ AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, const I
 
 void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
-    DeferTermination deferScope(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    DeferTerminationForAWhile deferScope(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));

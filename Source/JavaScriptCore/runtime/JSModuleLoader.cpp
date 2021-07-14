@@ -41,6 +41,7 @@
 #include "ObjectConstructor.h"
 #include "Parser.h"
 #include "ParserError.h"
+#include "VMTrapsInlines.h"
 
 namespace JSC {
 
@@ -98,6 +99,7 @@ JSModuleLoader::JSModuleLoader(VM& vm, Structure* structure)
 
 void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
+    DeferTerminationForAWhile deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     Base::finishCreation(vm);

@@ -1,3 +1,14 @@
+2021-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Speculative fix for failed scope.releaseAssertNoException() after calls to JSMap::create().
+        https://bugs.webkit.org/show_bug.cgi?id=227964
+        rdar://78013960
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::getBackingMap):
+
 2021-07-14  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Null-pointer deref in MediaKeySystemAccess::createMediaKeys()

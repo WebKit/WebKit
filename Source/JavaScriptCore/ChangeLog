@@ -1,3 +1,35 @@
+2021-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Speculative fix for failed scope.releaseAssertNoException() after calls to JSMap::create().
+        https://bugs.webkit.org/show_bug.cgi?id=227964
+        rdar://78013960
+
+        Reviewed by Yusuke Suzuki.
+
+        There have been reports of flaky failures on the scope.releaseAssertNoException()
+        after the call to JSMap::create() in JSModuleLoader::finishCreation().
+
+        The scope.releaseAssertNoException() says that we don't expect the JSMap::create()
+        to ever throw an exception.  If the assertion is true, the only way that we can
+        see an exception there is if we're throwing an asynchronous TerminationException.
+
+        Since JSModuleLoader::finishCreation() does not have any long running loops, we can
+        just DeferTerminationForAWhile and let the next exception check site throw the
+        asynchronous TerminationException.  We don't want to just use DeferTermination
+        because it will throw the TerminationException right at the end of
+        JSModuleLoader::finishCreation(), and the caller of JSModuleLoader::finishCreation()
+        may be similarly not expecting an exception to be thrown there.
+
+        Also apply the same treatment to AbstractModuleRecord::finishCreation(), and
+        getBackingMap() in WebCore for the same reason.  Other than those, other sites that
+        call JSMap::create() already check for exceptions.  So, those sites do not need to
+        DeferTerminationForAWhile.
+
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::finishCreation):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::finishCreation):
+
 2021-07-14  Keith Miller  <keith_miller@apple.com>
 
         Convert small JIT pool tests into executable fuzzing
