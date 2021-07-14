@@ -1,3 +1,14 @@
+2021-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Check for out of memory in JSC::globalFuncEscape() and JSC::globalFuncUnescape().
+        https://bugs.webkit.org/show_bug.cgi?id=227962
+        rdar://78392251
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-07-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         libpas executable-allocator should reserve more than 256KB for non-fail region at least
