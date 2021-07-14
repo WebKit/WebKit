@@ -1,3 +1,14 @@
+2021-07-14  Kevin Neal  <kevin_neal@apple.com>
+
+        [Tools] linkify first line of commit message in tooltip
+        https://bugs.webkit.org/show_bug.cgi?id=227968
+        <rdar://problem/80596878>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale):
+
 2021-07-14  Keith Miller  <keith_miller@apple.com>
 
         Convert small JIT pool tests into executable fuzzing

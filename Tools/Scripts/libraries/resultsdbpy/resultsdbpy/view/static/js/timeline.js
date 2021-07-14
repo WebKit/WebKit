@@ -24,7 +24,7 @@
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
-import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams} from '/assets/js/common.js';
+import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams, linkify} from '/assets/js/common.js';
 import {Expectations} from '/assets/js/expectations.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {ToolTip} from '/assets/js/tooltip.js';
@@ -193,7 +193,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
                     Time: ${new Date(node.label.timestamp * 1000).toLocaleString()}
                     ${node.label.author ? `<br>Author: ${escapeHTML(node.label.author.name)}
                             &#60<a href="mailto:${escapeHTML(node.label.author.emails[0])}">${escapeHTML(node.label.author.emails[0])}</a>&#62` : ''}
-                    ${node.label.message ? `<br><div>${escapeHTML(node.label.message.split('\n')[0])}</div>` : ''}
+                    ${node.label.message ? `<br><div>${linkify(escapeHTML(node.label.message.split('\n')[0]))}</div>` : ''}
                 </div>`,
                 node.tipPoints.map((point) => {
                     return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
