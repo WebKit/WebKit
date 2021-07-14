@@ -59,7 +59,7 @@ PASS   The return value of MediaStreamAudioSourceNode.connect(ChannelMergerNode,
 PASS < [media-group] All assertions passed. (total 6 assertions)
 PASS > [invalid-operation]
 PASS   Connecting with an invalid output threw IndexSizeError: "Output index exceeds number of outputs".
-PASS   Connecting to a node from the different context threw SyntaxError: "Source and destination nodes belong to different audio contexts".
+PASS   Connecting to a node from the different context threw InvalidAccessError: "Source and destination nodes belong to different audio contexts".
 PASS < [invalid-operation] All assertions passed. (total 2 assertions)
 PASS > [verification]
 PASS   The output of chained connection of gain nodes contains only the constant 0.125.

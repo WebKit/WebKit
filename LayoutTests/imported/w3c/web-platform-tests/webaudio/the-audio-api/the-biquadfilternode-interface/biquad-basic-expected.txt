@@ -25,8 +25,8 @@ PASS > [exceptions-getFrequencyData]
 PASS   getFrequencyResponse(null, new Float32Array(1), new Float32Array(1)) threw TypeError: "Argument 1 ('frequencyHz') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array".
 PASS   getFrequencyResponse(new Float32Array(1), null, new Float32Array(1)) threw TypeError: "Argument 2 ('magResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array".
 PASS   getFrequencyResponse(new Float32Array(1), new Float32Array(1), null) threw TypeError: "Argument 3 ('phaseResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array".
-PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(1), new Float32Array(20)) threw InvalidStateError: "The arrays passed as arguments must have the same length".
-PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(20), new Float32Array(1)) threw InvalidStateError: "The arrays passed as arguments must have the same length".
+PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(1), new Float32Array(20)) threw InvalidAccessError: "The arrays passed as arguments must have the same length".
+PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(20), new Float32Array(1)) threw InvalidAccessError: "The arrays passed as arguments must have the same length".
 PASS < [exceptions-getFrequencyData] All assertions passed. (total 5 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

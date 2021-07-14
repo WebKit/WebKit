@@ -1,3 +1,35 @@
+2021-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Fix type of exceptions thrown in the WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=227959
+
+        Reviewed by Yusuke Suzuki.
+
+        The upstream webaudio web-platform-tests were updated to validate the types of
+        exceptions thrown by various WebAudio APIs. It became obvious that our implementation
+        was not always throwing the right exception type and didn't match other browsers.
+
+        This patch updates our WebAudio implementation to keep the WebAudio WPT tests passing
+        now that they properly validate exception types.
+        
+        No new tests, re-sync'd and rebaselined existing WPT webaudio tests.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::setChannelCount):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createScriptProcessor):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::getFrequencyResponse):
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::setChannelCount):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::create):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::setChannelCount):
+
 2021-07-14  Devin Rousso  <drousso@apple.com>
 
         [iOS] REGRESSION(r279720): changing Subtitles to Off doesn't hide them or do anything

@@ -3,13 +3,13 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test"
 PASS Audit report
 PASS > [test] OfflineAudioContext constructor
-PASS   new OfflineAudioContext(1, 0, 44100) threw SyntaxError: "length cannot be 0".
-PASS   context0 = new OfflineAudioContext(2, 512, 2999) threw SyntaxError: "sampleRate is not in range".
+PASS   new OfflineAudioContext(1, 0, 44100) threw NotSupportedError: "length cannot be 0".
+PASS   context0 = new OfflineAudioContext(2, 512, 2999) threw NotSupportedError: "sampleRate is not in range".
 PASS   context1 = new OfflineAudioContext(2, 512, 3000) did not throw an exception.
 PASS   context1.length is equal to 512.
 PASS   context2 = new OfflineAudioContext(2, 1024, 384000) did not throw an exception.
 PASS   context2.length is equal to 1024.
-PASS   context3 = new OfflineAudioContext(2, 1024, 384001) threw SyntaxError: "sampleRate is not in range".
+PASS   context3 = new OfflineAudioContext(2, 1024, 384001) threw NotSupportedError: "sampleRate is not in range".
 PASS   context4 = new OfflineAudioContext(2, 2048, 8000) did not throw an exception.
 PASS   context4.length is equal to 2048.
 PASS   context5 = new OfflineAudioContext(2, 4096, 11025) did not throw an exception.

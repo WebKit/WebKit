@@ -89,7 +89,7 @@ void ChannelSplitterNode::process(size_t framesToProcess)
 ExceptionOr<void> ChannelSplitterNode::setChannelCount(unsigned channelCount)
 {
     if (channelCount != numberOfOutputs())
-        return Exception { IndexSizeError, "Channel count must be set to number of outputs."_s };
+        return Exception { InvalidStateError, "Channel count must be set to number of outputs."_s };
     
     return AudioNode::setChannelCount(channelCount);
 }

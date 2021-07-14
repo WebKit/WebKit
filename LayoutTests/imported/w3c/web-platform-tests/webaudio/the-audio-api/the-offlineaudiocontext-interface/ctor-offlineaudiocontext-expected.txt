@@ -28,9 +28,9 @@ PASS   c2.destination.channelCountMode is equal to explicit.
 PASS   c2.destination.channelInterpretation is equal to speakers.
 PASS < [options-1] All assertions passed. (total 10 assertions)
 PASS > [options-2] Invalid options
-PASS   new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw SyntaxError: "Number of channels is not in range".
-PASS   new OfflineAudioContext({"length":0,"sampleRate":8000}) threw SyntaxError: "length cannot be 0".
-PASS   new OfflineAudioContext({"length":1,"sampleRate":1}) threw SyntaxError: "sampleRate is not in range".
+PASS   new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw NotSupportedError: "Number of channels is not in range".
+PASS   new OfflineAudioContext({"length":0,"sampleRate":8000}) threw NotSupportedError: "length cannot be 0".
+PASS   new OfflineAudioContext({"length":1,"sampleRate":1}) threw NotSupportedError: "sampleRate is not in range".
 PASS < [options-2] All assertions passed. (total 3 assertions)
 PASS > [options-3] Valid options
 PASS   c = new OfflineAudioContext{"length":1,"sampleRate":8000}) did not throw an exception.

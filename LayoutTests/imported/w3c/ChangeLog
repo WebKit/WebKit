@@ -1,3 +1,45 @@
+2021-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Fix type of exceptions thrown in the WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=227959
+
+        Reviewed by Yusuke Suzuki.
+
+        Resync WebAudio WPT tests from upstream 04ab41dced1f354873cab0 to gain test coverage and
+        rebaseline those tests.
+
+        * web-platform-tests/webaudio/resources/audit.js:
+        (Should.prototype.throw):
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/ctor-analyser-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-method-chaining-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/different-contexts-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/different-contexts.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-dynamic.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-dynamic.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-constructor-options.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/dynamic-register-processor.js: Added.
+        (ProcessorA.prototype.process):
+        (ProcessorA):
+        (ProcessorB):
+        (ProcessorB.prototype.process):
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/ctor-biquadfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelsplitternode-interface/ctor-channelsplitter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelsplitternode-interface/ctor-channelsplitter.html:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/ctor-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/ctor-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/ctor-iirfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiodestinationnode-interface/ctor-mediastreamaudiodestination-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/ctor-offlineaudiocontext-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/ctor-oscillator-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/ctor-waveshaper-expected.txt:
+
 2021-07-13  Alex Christensen  <achristensen@webkit.org>
 
         Update and fix URL WPT tests

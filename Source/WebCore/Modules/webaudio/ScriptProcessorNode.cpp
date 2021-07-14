@@ -256,7 +256,7 @@ ExceptionOr<void> ScriptProcessorNode::setChannelCount(unsigned channelCount)
     ASSERT(isMainThread());
 
     if (channelCount != this->channelCount())
-        return Exception { NotSupportedError, "ScriptProcessorNode's channelCount cannot be changed"_s };
+        return Exception { IndexSizeError, "ScriptProcessorNode's channelCount cannot be changed"_s };
     return { };
 }
 

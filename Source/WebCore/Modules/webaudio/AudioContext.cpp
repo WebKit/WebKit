@@ -103,7 +103,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
         contextOptions.sampleRate = *defaultSampleRateForTesting();
 
     if (contextOptions.sampleRate && !isSupportedSampleRate(*contextOptions.sampleRate))
-        return Exception { SyntaxError, "sampleRate is not in range"_s };
+        return Exception { NotSupportedError, "sampleRate is not in range"_s };
     
     auto audioContext = adoptRef(*new AudioContext(document, contextOptions));
     audioContext->suspendIfNeeded();

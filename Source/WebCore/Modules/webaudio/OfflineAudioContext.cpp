@@ -56,11 +56,11 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
     if (!is<Document>(context))
         return Exception { NotSupportedError, "OfflineAudioContext is only supported in Document contexts"_s };
     if (!options.numberOfChannels || options.numberOfChannels > maxNumberOfChannels)
-        return Exception { SyntaxError, "Number of channels is not in range"_s };
+        return Exception { NotSupportedError, "Number of channels is not in range"_s };
     if (!options.length)
-        return Exception { SyntaxError, "length cannot be 0"_s };
+        return Exception { NotSupportedError, "length cannot be 0"_s };
     if (!isSupportedSampleRate(options.sampleRate))
-        return Exception { SyntaxError, "sampleRate is not in range"_s };
+        return Exception { NotSupportedError, "sampleRate is not in range"_s };
 
     auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), options));
     audioContext->suspendIfNeeded();
