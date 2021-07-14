@@ -1,3 +1,23 @@
+2021-07-14  Michael Saboff  <msaboff@apple.com>
+
+        [BMalloc] Lazily allocate physical pages
+        https://bugs.webkit.org/show_bug.cgi?id=227957
+
+        Reviewed by Mark Lam.
+
+        For the Darwin platform we don't need to call madvise(..., MADV_FREE_REUSE) to commit physical
+        memory to back a range of allocated virtual memory.  Instead the kernel will commit pages
+        as they are touched.  This can reduce the footprint of a process when there is sparse access
+        of allocated memory.
+
+        Also fixed a minor bug where we allocate memory, but don't update the amount of physical memory
+        associated with it.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::tryAllocateLargeChunk):
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmAllocatePhysicalPages):
+
 2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         New malloc algorithm

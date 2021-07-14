@@ -215,7 +215,11 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 {
     vmValidatePhysical(p, vmSize);
 #if BOS(DARWIN)
-    SYSCALL(madvise(p, vmSize, MADV_FREE_REUSE));
+    BUNUSED_PARAM(p);
+    BUNUSED_PARAM(vmSize);
+    // For the Darwin platform, we don't need to call madvise(..., MADV_FREE_REUSE)
+    // to commit physical memory to back a range of allocated virtual memory.
+    // Instead the kernel will commit pages as they are touched.
 #else
     SYSCALL(madvise(p, vmSize, MADV_NORMAL));
 #if BOS(LINUX)

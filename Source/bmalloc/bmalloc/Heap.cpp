@@ -586,7 +586,7 @@ LargeRange Heap::tryAllocateLargeChunk(size_t alignment, size_t size)
     PerProcess<Zone>::get()->addRange(Range(memory, size));
 #endif
 
-    return LargeRange(memory, size, 0, 0, memory);
+    return LargeRange(memory, size, size, size, static_cast<char*>(memory) + size);
 }
 
 size_t Heap::largeSize(UniqueLockHolder&, void* object)
