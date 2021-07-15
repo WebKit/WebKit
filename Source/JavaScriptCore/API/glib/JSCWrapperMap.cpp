@@ -80,7 +80,7 @@ JSObject* WrapperMap::createJSWrappper(JSGlobalContextRef jsContext, JSClassRef 
     ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     JSGlobalObject* globalObject = toJS(jsContext);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto* object = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(globalObject, globalObject->glibWrapperObjectStructure(), jsClass, nullptr);
     if (wrappedObject) {
         object->setWrappedObject(new JSC::JSCGLibWrapperObject(wrappedObject, destroyFunction));

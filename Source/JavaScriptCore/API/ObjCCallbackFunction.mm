@@ -710,7 +710,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
 
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
     auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTFMove(arguments), WTFMove(result));
     const String& name = impl->name();
     return toRef(JSC::ObjCCallbackFunction::create(vm, globalObject, name, WTFMove(impl)));

@@ -60,7 +60,7 @@ void mark(JSMarkerRef markerRef, JSObjectRef objectRef)
 void JSContextGroupAddMarkingConstraint(JSContextGroupRef group, JSMarkingConstraint constraintCallback, void *userData)
 {
     VM& vm = *toJS(group);
-    JSLockHolder locker(vm);
+    
     
     unsigned constraintIndex = constraintCounter.exchangeAdd(1);
     

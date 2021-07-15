@@ -41,7 +41,7 @@ JSWeakObjectMapRef JSWeakObjectMapCreate(JSContextRef context, void* privateData
 {
     JSGlobalObject* globalObject = toJS(context);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto map = OpaqueJSWeakObjectMap::create(vm, privateData, callback);
     globalObject->registerWeakMap(map.ptr());
     return map.ptr();
@@ -55,7 +55,7 @@ void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSO
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     JSObject* obj = toJS(object);
     if (!obj)
         return;

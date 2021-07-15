@@ -76,7 +76,7 @@ GRefPtr<JSCException> jscExceptionCreate(JSCContext* context, JSValueRef jsExcep
     auto* jsContext = jscContextGetJSContext(context);
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
     exception->priv->jsException.set(vm, toJS(JSValueToObject(jsContext, jsException, nullptr)));
     // The context has a strong reference to the exception, so we can't ref the context. We use a weak
     // pointer instead to invalidate the exception if the context is destroyed before.

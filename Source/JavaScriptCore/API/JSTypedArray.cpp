@@ -149,7 +149,7 @@ JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef valueRef,
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     JSValue value = toJS(globalObject, valueRef);
     if (!value.isObject())
@@ -166,7 +166,7 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
@@ -185,7 +185,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
@@ -207,7 +207,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
@@ -232,7 +232,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
@@ -254,7 +254,7 @@ void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSV
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     JSObject* object = toJS(objectRef);
 
     if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object)) {
@@ -308,7 +308,7 @@ JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef,
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     JSObject* object = toJS(objectRef);
 
 
@@ -326,7 +326,7 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto buffer = ArrayBuffer::createFromBytes(bytes, byteLength, createSharedTask<void(void*)>([=](void* p) {
@@ -345,7 +345,7 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     JSObject* object = toJS(objectRef);
 
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object)) {

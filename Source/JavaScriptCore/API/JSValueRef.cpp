@@ -246,7 +246,7 @@ bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* ex
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue jsA = toJS(globalObject, a);
@@ -282,7 +282,7 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue jsValue = toJS(globalObject, value);
@@ -379,7 +379,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     return toRef(globalObject, jsString(vm, string ? string->string() : String()));
 }
@@ -410,7 +410,7 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue value = toJS(globalObject, apiValue);
@@ -443,7 +443,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue jsValue = toJS(globalObject, value);
@@ -462,7 +462,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue jsValue = toJS(globalObject, value);
@@ -481,7 +481,7 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue jsValue = toJS(globalObject, value);

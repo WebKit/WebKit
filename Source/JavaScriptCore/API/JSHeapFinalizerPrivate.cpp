@@ -31,13 +31,13 @@
 void JSContextGroupAddHeapFinalizer(JSContextGroupRef group, JSHeapFinalizer finalizer, void *userData)
 {
     JSC::VM* vm = toJS(group);
-    JSC::JSLockHolder locker(vm);
+    
     vm->heap.addHeapFinalizerCallback(JSC::HeapFinalizerCallback(finalizer, userData));
 }
 
 void JSContextGroupRemoveHeapFinalizer(JSContextGroupRef group, JSHeapFinalizer finalizer, void *userData)
 {
     JSC::VM* vm = toJS(group);
-    JSC::JSLockHolder locker(vm);
+    
     vm->heap.removeHeapFinalizerCallback(JSC::HeapFinalizerCallback(finalizer, userData));
 }

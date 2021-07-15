@@ -502,7 +502,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 {
     JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
 
     NSUInteger argumentCount = [argumentArray count];
     JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
@@ -525,7 +525,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 {
     JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
 
     NSUInteger argumentCount = [argumentArray count];
     JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
@@ -548,7 +548,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 {
     JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
 
     NSUInteger argumentCount = [arguments count];
     JSC::MarkedJSValueRefArray argumentArray([_context JSGlobalContextRef], argumentCount);

@@ -119,7 +119,7 @@
 {
     JSC::JSGlobalObject* globalObject = toJS(m_context);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
 
     if (script.type == kJSScriptTypeProgram) {
         JSValueRef exceptionValue = nullptr;
@@ -151,7 +151,7 @@
 {
     JSC::JSGlobalObject* globalObject = toJS(m_context);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
 
     if (script.type != kJSScriptTypeModule) {
         self.exceptionHandler(self, [JSValue valueWithNewErrorFromMessage:@"script is not a module" inContext:self]);
@@ -177,7 +177,7 @@
 {
     JSC::JSGlobalObject* globalObject = toJS(m_context);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
 
     globalObject->setIsITML();
 }
@@ -186,7 +186,7 @@
 {
     JSC::JSGlobalObject* globalObject = toJS(m_context);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
     if (value)
         m_exception.set(vm, toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
     else

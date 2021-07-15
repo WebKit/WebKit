@@ -162,7 +162,7 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     gcProtect(globalObject);
     vm.ref();
@@ -173,7 +173,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     bool protectCountIsZero = vm.heap.unprotect(globalObject);
     if (protectCountIsZero)
@@ -189,7 +189,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     return toRef(jsCast<JSObject*>(globalObject->methodTable(vm)->toThis(globalObject, globalObject, ECMAMode::sloppy())));
 }
@@ -225,7 +225,7 @@ JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     String name = globalObject->name();
     if (name.isNull())
@@ -243,7 +243,7 @@ void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name)
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     globalObject->setName(name ? name->string() : String());
 }
@@ -257,7 +257,7 @@ void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObje
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     JSObject* object = toJS(function);
     if (!object->isCallable(vm)) {

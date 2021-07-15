@@ -955,7 +955,7 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     auto* jsContext = context->priv->jsContext.get();
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+    
 
     URL sourceURL = uri ? URL({ }, uri) : URL();
     JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURL },
