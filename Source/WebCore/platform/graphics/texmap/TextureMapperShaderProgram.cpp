@@ -233,6 +233,7 @@ static const char* fragmentTemplateCommon =
         uniform SamplerType s_samplerY;
         uniform SamplerType s_samplerU;
         uniform SamplerType s_samplerV;
+        uniform SamplerType s_samplerA;
         uniform sampler2D s_contentTexture;
         uniform SamplerExternalOESType s_externalOESTexture;
         uniform float u_opacity;
@@ -278,6 +279,15 @@ static const char* fragmentTemplateCommon =
             float u = SamplerFunction(s_samplerU, texCoord).r;
             float v = SamplerFunction(s_samplerV, texCoord).r;
             vec4 data = vec4(yuvToRgb(y, u, v), 1.0);
+            color = u_textureColorSpaceMatrix * data;
+        }
+        void applyTextureYUVA(inout vec4 color, vec2 texCoord)
+        {
+            float y = SamplerFunction(s_samplerY, texCoord).r;
+            float u = SamplerFunction(s_samplerU, texCoord).r;
+            float v = SamplerFunction(s_samplerV, texCoord).r;
+            float a = SamplerFunction(s_samplerA, texCoord).r;
+            vec4 data = vec4(yuvToRgb(y, u, v), a);
             color = u_textureColorSpaceMatrix * data;
         }
         void applyTextureNV12(inout vec4 color, vec2 texCoord)
@@ -485,11 +495,12 @@ static const char* fragmentTemplateCommon =
             vec2 texCoord = transformTexCoord();
             applyManualRepeatIfNeeded(texCoord);
             applyTextureRGBIfNeeded(color, texCoord);
-            applyPremultiplyIfNeeded(color);
             applyTextureYUVIfNeeded(color, texCoord);
+            applyTextureYUVAIfNeeded(color, texCoord);
             applyTextureNV12IfNeeded(color, texCoord);
             applyTextureNV21IfNeeded(color, texCoord);
             applyTexturePackedYUVIfNeeded(color, texCoord);
+            applyPremultiplyIfNeeded(color);
             applySolidColorIfNeeded(color);
             applyAntialiasingIfNeeded(color);
             applyOpacityIfNeeded(color);
@@ -519,6 +530,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     StringBuilder optionsApplierBuilder;
     SET_APPLIER_FROM_OPTIONS(TextureRGB);
     SET_APPLIER_FROM_OPTIONS(TextureYUV);
+    SET_APPLIER_FROM_OPTIONS(TextureYUVA);
     SET_APPLIER_FROM_OPTIONS(TextureNV12);
     SET_APPLIER_FROM_OPTIONS(TextureNV21);
     SET_APPLIER_FROM_OPTIONS(TexturePackedYUV);

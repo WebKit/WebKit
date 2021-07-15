@@ -50,16 +50,17 @@ namespace WebCore {
     macro(shadowOffset) \
     macro(roundedRectNumber) \
     macro(roundedRect) \
-    macro(roundedRectInverseTransformMatrix) \
+    macro(roundedRectInverseTransformMatrix)
 
-#define TEXMAP_SAMPLER_VARIABLES(macro) \
-    macro(sampler) \
-    macro(samplerY) \
-    macro(samplerU) \
-    macro(samplerV) \
-    macro(mask) \
-    macro(contentTexture) \
-    macro(externalOESTexture) \
+#define TEXMAP_SAMPLER_VARIABLES(macro)           \
+    macro(sampler)                                \
+    macro(samplerY)                               \
+    macro(samplerU)                               \
+    macro(samplerV)                               \
+    macro(samplerA)                               \
+    macro(mask)                                   \
+    macro(contentTexture)                         \
+    macro(externalOESTexture)
 
 #define TEXMAP_VARIABLES(macro) \
     TEXMAP_ATTRIBUTE_VARIABLES(macro) \
@@ -104,6 +105,7 @@ public:
         TextureExternalOES = 1L << 22,
         RoundedRectClip  = 1L << 23,
         Premultiply      = 1L << 24,
+        TextureYUVA      = 1L << 25,
     };
 
     enum class VariableID {
