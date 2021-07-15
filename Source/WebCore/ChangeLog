@@ -1,3 +1,26 @@
+2021-07-15  Tim Nguyen  <ntim@apple.com>
+
+        <dialog> element: do not perform close() method steps when removing open attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=227872
+
+        Reviewed by Chris Dumez.
+
+        Test: web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open.html
+
+        The close function now follows the steps at: https://html.spec.whatwg.org/multipage/interactive-elements.html#close-the-dialog
+
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::show):
+        (WebCore::HTMLDialogElement::showModal):
+        (WebCore::HTMLDialogElement::close):
+        (WebCore::HTMLDialogElement::dispatchPendingEvent):
+        (WebCore::HTMLDialogElement::isOpen const): Deleted.
+        (WebCore::HTMLDialogElement::returnValue): Deleted.
+        (WebCore::HTMLDialogElement::setReturnValue): Deleted.
+        (WebCore::HTMLDialogElement::parseAttribute): Deleted.
+        (WebCore::HTMLDialogElement::isModal const): Deleted.
+        * html/HTMLDialogElement.h:
+
 2021-07-15  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r279119?): [iOS] ASSERTION FAILED: !m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread() seen with 3 WebKitLegacy media API tests

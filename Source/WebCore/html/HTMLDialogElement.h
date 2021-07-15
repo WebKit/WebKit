@@ -37,11 +37,11 @@ class HTMLDialogElement final : public HTMLElement {
 public:
     template<typename... Args> static Ref<HTMLDialogElement> create(Args&&... args) { return adoptRef(*new HTMLDialogElement(std::forward<Args>(args)...)); }
     ~HTMLDialogElement();
-    
-    bool isOpen() const;
 
-    const String& returnValue();
-    void setReturnValue(String&&);
+    bool isOpen() const { return hasAttribute(HTMLNames::openAttr); }
+
+    const String& returnValue() const { return m_returnValue; }
+    void setReturnValue(String&& value) { m_returnValue = WTFMove(value); }
 
     void show();
     ExceptionOr<void> showModal();
@@ -49,16 +49,13 @@ public:
 
     void dispatchPendingEvent(DialogEventSender*);
 
-    bool isModal() const;
+    bool isModal() const { return m_isModal; };
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
-
     String m_returnValue;
     bool m_isModal { false };
-    bool m_isOpen { false };
 };
 
 } // namespace WebCore

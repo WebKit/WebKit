@@ -53,27 +53,12 @@ HTMLDialogElement::~HTMLDialogElement()
     dialogCloseEventSender().cancelEvent(*this);
 }
 
-bool HTMLDialogElement::isOpen() const
-{
-    return m_isOpen;
-}
-
-const String& HTMLDialogElement::returnValue()
-{
-    return m_returnValue;
-}
-
-void HTMLDialogElement::setReturnValue(String&& returnValue)
-{
-    m_returnValue = WTFMove(returnValue);
-}
-
 void HTMLDialogElement::show()
 {
     // If the element already has an open attribute, then return.
     if (isOpen())
         return;
-    
+
     setBooleanAttribute(openAttr, true);
 }
 
@@ -89,54 +74,41 @@ ExceptionOr<void> HTMLDialogElement::showModal()
 
     setBooleanAttribute(openAttr, true);
 
-    document().addToTopLayer(*this);
     m_isModal = true;
+
+    // FIXME: Only add dialog to top layer if it's not already in it. (webkit.org/b/227907)
+    document().addToTopLayer(*this);
+
+    // FIXME: Add steps 8 & 9 from spec. (webkit.org/b/227537)
 
     return { };
 }
 
-void HTMLDialogElement::close(const String& returnValue)
+void HTMLDialogElement::close(const String& result)
 {
     if (!isOpen())
         return;
-    
+
     setBooleanAttribute(openAttr, false);
 
-    if (!returnValue.isNull())
-        m_returnValue = returnValue;
+    m_isModal = false;
+
+    if (!result.isNull())
+        m_returnValue = result;
+
+    // FIXME: Only remove dialog from top layer if it's inside it. (webkit.org/b/227907)
+    document().removeFromTopLayer(*this);
+
+    // FIXME: Add step 6 from spec. (webkit.org/b/227537)
+
+    dialogCloseEventSender().cancelEvent(*this);
+    dialogCloseEventSender().dispatchEventSoon(*this);
 }
 
 void HTMLDialogElement::dispatchPendingEvent(DialogEventSender* eventSender)
 {
     ASSERT_UNUSED(eventSender, eventSender == &dialogCloseEventSender());
     dispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-}
-
-void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{
-    if (name == openAttr) {
-        bool oldValue = m_isOpen;
-        m_isOpen = !value.isNull();
-
-        // Emit close event
-        if (oldValue != m_isOpen && !m_isOpen) {
-            if (m_isModal) {
-                document().removeFromTopLayer(*this);
-                m_isModal = false;
-            }
-
-            dialogCloseEventSender().cancelEvent(*this);
-            dialogCloseEventSender().dispatchEventSoon(*this);
-        }
-        return;
-    }
-    
-    HTMLElement::parseAttribute(name, value);
-}
-
-bool HTMLDialogElement::isModal() const
-{
-    return m_isModal;
 }
 
 }
