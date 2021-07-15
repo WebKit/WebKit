@@ -1,3 +1,26 @@
+2021-07-15  Mark Lam  <mark.lam@apple.com>
+
+        JITWorklist::waitUntilAllPlansForVMAreReady() should also be notified when plans are cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=228003
+        rdar://78314543
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, it only gets notified when plans are done compiling.  As a result, if
+        JITWorklist::waitUntilAllPlansForVMAreReady() found non-ready plans and started
+        waiting, and those plans were canceled, then JITWorklist::waitUntilAllPlansForVMAreReady()
+        can hang indefinitely.
+
+        This patch renames JITWorklist::::m_planCompiled to m_planCompiledOrCancelled,
+        and notifies it also when plans are cancelled.
+
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::waitUntilAllPlansForVMAreReady):
+        (JSC::JITWorklist::removeMatchingPlansForVM):
+        * jit/JITWorklist.h:
+        * jit/JITWorklistThread.cpp:
+        (JSC::JITWorklistThread::work):
+
 2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add samplingProfilerIgnoreExternalSourceID option

@@ -142,7 +142,7 @@ auto JITWorklistThread::work() -> WorkResult
 
         RELEASE_ASSERT(!m_plan->vm()->heap.worldIsStopped());
         m_worklist.m_readyPlans.append(WTFMove(m_plan));
-        m_worklist.m_planCompiled.notifyAll();
+        m_worklist.m_planCompiledOrCancelled.notifyAll();
     }
 
     return WorkResult::Continue;

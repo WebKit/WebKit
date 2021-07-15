@@ -122,7 +122,7 @@ private:
     Box<Lock> m_lock;
 
     Ref<AutomaticThreadCondition> m_planEnqueued;
-    Condition m_planCompiled;
+    Condition m_planCompiledOrCancelled;
 };
 
 } // namespace JSC
