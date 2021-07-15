@@ -54,6 +54,8 @@ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
     SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE TRUE)
 endif ()
 
+
+
 # FIXME: JSCOnly on WIN32 seems to only work with fully static build
 # https://bugs.webkit.org/show_bug.cgi?id=172862
 if (NOT ENABLE_STATIC_JSC AND NOT WIN32)
@@ -105,7 +107,11 @@ else ()
     SET_AND_EXPOSE_TO_BUILD(WTF_DEFAULT_EVENT_LOOP 0)
 endif ()
 
-find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
+if (DEFINED ENV{ICU_INCLUDE_DIRS})
+    set(ICU_INCLUDE_DIRS "$ENV{ICU_INCLUDE_DIRS}" CACHE "" INTERNAL FORCE)
+endif ()
+
+find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
 if (APPLE)
     add_definitions(-DU_DISABLE_RENAMING=1)
 endif ()
