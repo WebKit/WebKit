@@ -50,10 +50,7 @@ using namespace JSC;
 
 ::JSType JSValueGetType(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return kJSTypeUndefined;
-    }
+   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -80,10 +77,7 @@ using namespace JSC;
 
 bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -95,10 +89,7 @@ bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+  
 
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
@@ -111,10 +102,7 @@ bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+  
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -126,10 +114,7 @@ bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -141,10 +126,7 @@ bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsString(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+  
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -156,10 +138,7 @@ bool JSValueIsString(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+ 
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -171,10 +150,7 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+ 
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -186,10 +162,7 @@ bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsArray(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+  
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
@@ -199,10 +172,7 @@ bool JSValueIsArray(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+  
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
@@ -212,10 +182,7 @@ bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass)
 {
-    if (!ctx || !jsClass) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+ 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
@@ -240,10 +207,7 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
 
 bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+    
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
@@ -261,10 +225,7 @@ bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* ex
 
 bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+  
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
 
@@ -276,10 +237,7 @@ bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
 
 bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObjectRef constructor, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+ 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
@@ -298,10 +256,7 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
 
 JSValueRef JSValueMakeUndefined(JSContextRef ctx)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -313,10 +268,7 @@ JSValueRef JSValueMakeUndefined(JSContextRef ctx)
 
 JSValueRef JSValueMakeNull(JSContextRef ctx)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -328,10 +280,7 @@ JSValueRef JSValueMakeNull(JSContextRef ctx)
 
 JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -343,10 +292,7 @@ JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
 
 JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -358,10 +304,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 
 JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
@@ -373,10 +316,7 @@ JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description)
 
 JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
@@ -386,10 +326,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
     String str = string->string();
@@ -404,10 +341,7 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 
 JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsigned indent, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
@@ -424,10 +358,7 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
 
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+ 
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
 
@@ -437,10 +368,7 @@ bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 
 double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return PNaN;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
@@ -456,10 +384,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
 
 JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
@@ -475,10 +400,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
@@ -494,10 +416,6 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 
 void JSValueProtect(JSContextRef ctx, JSValueRef value)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
 
