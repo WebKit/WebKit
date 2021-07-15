@@ -1,3 +1,15 @@
+2021-07-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename scrollRectIntoView to scrollContainingScrollViewsToRevealRect for clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=227995
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scrollContainingScrollViewsToRevealRect const):
+        (WebKit::WebChromeClient::scrollRectIntoView const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2021-07-15  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Expand GPU sandbox to support multi-target AirPlay

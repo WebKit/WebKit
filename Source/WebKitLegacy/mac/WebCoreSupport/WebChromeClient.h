@@ -112,7 +112,7 @@ private:
     PlatformPageClient platformPageClient() const final;
     void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;
     void intrinsicContentsSizeChanged(const WebCore::IntSize&) const final { }
-    void scrollRectIntoView(const WebCore::IntRect&) const final;
+    void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final;
 
     void setStatusbarText(const String&) override;
 

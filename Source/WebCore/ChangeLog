@@ -1,3 +1,23 @@
+2021-07-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename scrollRectIntoView to scrollContainingScrollViewsToRevealRect for clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=227995
+
+        Reviewed by Tim Horton.
+
+        No behavior change.
+
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scrollContainingScrollViewsToRevealRect const):
+        (WebCore::Chrome::scrollRectIntoView const): Deleted.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scrollContainingScrollViewsToRevealRect const):
+        (WebCore::ChromeClient::scrollRectIntoView const): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2021-07-15  Brady Eidson  <beidson@apple.com>
 
         Use WeakPtr with UniqueIDBDatabaseConnection

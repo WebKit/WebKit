@@ -1,3 +1,15 @@
+2021-07-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename scrollRectIntoView to scrollContainingScrollViewsToRevealRect for clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=227995
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scrollContainingScrollViewsToRevealRect const):
+        (WebChromeClient::scrollRectIntoView const): Deleted.
+
 2021-07-14  Rob Buis  <rbuis@igalia.com>
 
         Rename hasOverflowClip() to prepare for the real overflow:clip
