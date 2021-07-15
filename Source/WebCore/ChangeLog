@@ -1,3 +1,42 @@
+2021-07-15  Brady Eidson  <beidson@apple.com>
+
+        Use WeakPtr with UniqueIDBDatabaseConnection
+        <rdar://79447808> and https://bugs.webkit.org/show_bug.cgi?id=227969
+
+        Reviewed by Geoff Garen.
+
+        No new tests possible.
+        
+        Noticed this raw ptr which was raw to break a ref cycle.
+        WeakPtr works better.
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::databaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abort):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abortWithoutCallback):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::commit):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::objectStoreIdentifiers):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::didActivateInBackingStore):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::databaseConnection): Deleted.
+
 2021-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         Improve multicol logging in render tree dumps, and cleanup
