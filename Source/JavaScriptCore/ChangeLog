@@ -1,3 +1,19 @@
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Harden defaultTimeZone retrieval
+        https://bugs.webkit.org/show_bug.cgi?id=227996
+        rdar://80540300
+
+        Reviewed by Mark Lam.
+
+        We received the report that "UTC" can appear in Intl.DateTimeFormat's default timezone.
+        While we cannot reproduce it, this patch attempts to avoid using TimeZone from UCalendar
+        so that the code gets the same to the old defaultTimeZone implementation.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::DateCache::defaultTimeZone):
+        (JSC::DateCache::timeZoneCacheSlow):
+
 2021-07-15  Mark Lam  <mark.lam@apple.com>
 
         JITWorklist::waitUntilAllPlansForVMAreReady() should also be notified when plans are cancelled.
