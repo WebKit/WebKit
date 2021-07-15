@@ -331,9 +331,9 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
    
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-  
-    return toRef(globalObject, string->isExternal() ? jsOwnedString(vm, string->string()) : jsString(vm, string->string()));
     
+
+    return toRef(globalObject, jsString(vm, string ? string->string() : String()));
 }
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
@@ -407,6 +407,25 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         number = PNaN;
     return number;
+}
+
+JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue jsValue = toJS(globalObject, value);
+    
+    auto stringRef(OpaqueJSString::tryCreate(jsValue.toWTFString(globalObject)));
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        stringRef = nullptr;
+    return stringRef.leakRef();
 }
 
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
