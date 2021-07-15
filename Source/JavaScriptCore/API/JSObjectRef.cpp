@@ -278,7 +278,7 @@ JSObjectRef JSObjectMakeDeferredPromise(JSContextRef ctx, JSObjectRef* resolve, 
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(globalObject);
+    
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSPromise::DeferredData data = JSPromise::createDeferredData(globalObject, globalObject->promiseConstructor());
@@ -299,7 +299,7 @@ JSValueRef JSObjectGetPrototype(JSContextRef ctx, JSObjectRef object)
         return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
 
     JSObject* jsObject = toJS(object); 
     return toRef(globalObject, jsObject->getPrototypeDirect(globalObject->vm()));
@@ -802,7 +802,7 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
         return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
 
     VM& vm = globalObject->vm();
 

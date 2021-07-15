@@ -53,7 +53,7 @@ using namespace JSC;
    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     JSValue jsValue = toJS(globalObject, value);
 #else
     JSValue jsValue = toJS(value);
@@ -80,7 +80,7 @@ bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
 
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toJS(globalObject, value).isUndefined();
 #else
     return toJS(value).isUndefined();
@@ -93,7 +93,7 @@ bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
 
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toJS(globalObject, value).isNull();
 #else
     return !value || toJS(value).isNull();
@@ -105,7 +105,7 @@ bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toJS(globalObject, value).isBoolean();
 #else
     return toJS(value).isBoolean();
@@ -117,7 +117,7 @@ bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toJS(globalObject, value).isNumber();
 #else
     return toJS(value).isNumber();
@@ -129,7 +129,7 @@ bool JSValueIsString(JSContextRef ctx, JSValueRef value)
   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toJS(globalObject, value).isString();
 #else
     return value && toJS(value).isString();
@@ -141,7 +141,7 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
  
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toJS(globalObject, value).isObject();
 #else
     return value && toJS(value).isObject();
@@ -153,7 +153,7 @@ bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value)
  
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toJS(globalObject, value).isSymbol();
 #else
     return value && toJS(value).isSymbol();
@@ -165,7 +165,7 @@ bool JSValueIsArray(JSContextRef ctx, JSValueRef value)
   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(globalObject);
+    
 
     return toJS(globalObject, value).inherits<JSArray>(vm);
 }
@@ -175,7 +175,7 @@ bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(globalObject);
+    
 
     return toJS(globalObject, value).inherits<DateInstance>(vm);
 }
@@ -185,7 +185,7 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
  
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(globalObject);
+    
 
     JSValue jsValue = toJS(globalObject, value);
     
@@ -227,7 +227,7 @@ bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
 {
   
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
 
     JSValue jsA = toJS(globalObject, a);
     JSValue jsB = toJS(globalObject, b);
@@ -259,7 +259,7 @@ JSValueRef JSValueMakeUndefined(JSContextRef ctx)
    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toRef(globalObject, jsUndefined());
 #else
     return toRef(jsUndefined());
@@ -271,7 +271,7 @@ JSValueRef JSValueMakeNull(JSContextRef ctx)
    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toRef(globalObject, jsNull());
 #else
     return toRef(jsNull());
@@ -283,7 +283,7 @@ JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toRef(globalObject, jsBoolean(value));
 #else
     return toRef(jsBoolean(value));
@@ -295,7 +295,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toRef(globalObject, jsNumber(purifyNaN(value)));
 #else
     return toRef(jsNumber(purifyNaN(value)));
@@ -307,7 +307,7 @@ JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description)
    
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(globalObject);
+    
 
     if (!description)
         return toRef(globalObject, Symbol::create(vm));
@@ -328,7 +328,7 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 {
    
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     String str = string->string();
     unsigned length = str.length();
     if (!length || str.is8Bit()) {
@@ -360,7 +360,7 @@ bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 {
  
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
 
     JSValue jsValue = toJS(globalObject, value);
     return jsValue.toBoolean(globalObject);
@@ -417,7 +417,7 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 void JSValueProtect(JSContextRef ctx, JSValueRef value)
 {
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
 
     JSValue jsValue = toJSForGC(globalObject, value);
     gcProtect(jsValue);
@@ -426,7 +426,7 @@ void JSValueProtect(JSContextRef ctx, JSValueRef value)
 void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
 {
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
 
     JSValue jsValue = toJSForGC(globalObject, value);
     gcUnprotect(jsValue);

@@ -211,7 +211,7 @@ JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
         return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
 
     return toGlobalRef(globalObject);
 }

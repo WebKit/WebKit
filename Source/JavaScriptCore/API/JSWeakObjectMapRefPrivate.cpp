@@ -72,7 +72,7 @@ JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* k
         return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     return toRef(jsCast<JSObject*>(map->map().get(key)));
 }
 
@@ -83,7 +83,7 @@ void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key)
         return;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    JSLockHolder locker(globalObject);
+    
     map->map().remove(key);
 }
 
