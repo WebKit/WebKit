@@ -1,3 +1,14 @@
+2021-07-15  Brady Eidson  <beidson@apple.com>
+
+        MemoryIDBBackingStore cleanup.
+        <rdar://79497380> and https://bugs.webkit.org/show_bug.cgi?id=227993
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::registerObjectStore):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+
 2021-07-15  Tim Nguyen  <ntim@apple.com>
 
         <dialog> element: do not perform close() method steps when removing open attribute.
