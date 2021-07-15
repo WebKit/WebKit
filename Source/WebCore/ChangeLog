@@ -1,3 +1,16 @@
+2021-07-15  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r279119?): [iOS] ASSERTION FAILED: !m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread() seen with 3 WebKitLegacy media API tests
+        https://bugs.webkit.org/show_bug.cgi?id=227930
+        <rdar://problem/80545962>
+
+        Reviewed by Eric Carlson.
+
+        Dispatch to the WebThread if necessary.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+
 2021-07-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid-July 2021 edition
