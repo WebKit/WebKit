@@ -1,3 +1,16 @@
+2021-07-14  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r279851.
+
+        Overrode previously set test expectations.
+
+        Reverted changeset:
+
+        "[Mac wk1 Debug] webaudio/audioworket-out-of-memory.html is a
+        flaky timeout."
+        https://bugs.webkit.org/show_bug.cgi?id=227845
+        https://commits.webkit.org/r279851
+
 2021-07-14  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         REGRESSION (r279806): [ iOS/macOS ] fast/canvas/canvas-overloads-strokeText.html is a flaky crash
