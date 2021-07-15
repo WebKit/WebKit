@@ -1,3 +1,40 @@
+2021-07-14  Devin Rousso  <drousso@apple.com>
+
+        Implement Array.prototype.findLast and Array.prototype.findLastIndex
+        https://bugs.webkit.org/show_bug.cgi?id=227939
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/array-findLast.html: Added.
+        * js/array-findLast-expected.txt: Added.
+        * js/script-tests/array-findLast.js: Added.
+        (passUndefined):
+        (passZero):
+        (passNull):
+        (passFalse):
+        (passEmptyString):
+        (passEven):
+        (passAfter5):
+        (toObject):
+        (findItemAddedDuringSearch):
+        (numberOfCallbacksInFindInArrayWithHoles):
+        (throwError):
+
+        * js/array-findLastIndex.html: Added.
+        * js/array-findLastIndex-expected.txt: Added.
+        * js/script-tests/array-findLastIndex.js: Added.
+        (passUndefined):
+        (passZero):
+        (passNull):
+        (passFalse):
+        (passEmptyString):
+        (passEven):
+        (passAfter5):
+        (toObject):
+        (findItemAddedDuringSearch):
+        (numberOfCallbacksInFindIndexInArrayWithHoles):
+        (throwError):
+
 2021-07-14  Eric Hutchison  <ehutchison@apple.com>
 
         Update expectations for webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html.

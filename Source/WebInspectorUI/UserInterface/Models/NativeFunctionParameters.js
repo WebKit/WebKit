@@ -249,6 +249,8 @@ WI.NativePrototypeFunctionParameters = {
         filter: "callback, [thisArg]",
         find: "callback, [thisArg]",
         findIndex: "callback, [thisArg]",
+        findLast: "callback, [thisArg]",
+        findLastIndex: "callback, [thisArg]",
         forEach: "callback, [thisArg]",
         includes: "searchValue, [startIndex=0]",
         indexOf: "searchValue, [startIndex=0]",

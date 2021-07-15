@@ -254,6 +254,25 @@ function find(callback /*, thisArg */)
     return @undefined;
 }
 
+function findLast(callback /*, thisArg */)
+{
+    "use strict";
+
+    var array = @toObject(this, "Array.prototype.findLast requires that |this| not be null or undefined");
+    var length = @toLength(array.length);
+
+    if (!@isCallable(callback))
+        @throwTypeError("Array.prototype.findLast callback must be a function");
+
+    var thisArg = @argument(1);
+    for (var i = length - 1; i >= 0; i--) {
+        var element = array[i];
+        if (callback.@call(thisArg, element, i, array))
+            return element;
+    }
+    return @undefined;
+}
+
 function findIndex(callback /*, thisArg */)
 {
     "use strict";
@@ -266,6 +285,24 @@ function findIndex(callback /*, thisArg */)
     
     var thisArg = @argument(1);
     for (var i = 0; i < length; i++) {
+        if (callback.@call(thisArg, array[i], i, array))
+            return i;
+    }
+    return -1;
+}
+
+function findLastIndex(callback /*, thisArg */)
+{
+    "use strict";
+
+    var array = @toObject(this, "Array.prototype.findLastIndex requires that |this| not be null or undefined");
+    var length = @toLength(array.length);
+
+    if (!@isCallable(callback))
+        @throwTypeError("Array.prototype.findLastIndex callback must be a function");
+
+    var thisArg = @argument(1);
+    for (var i = length - 1; i >= 0; i--) {
         if (callback.@call(thisArg, array[i], i, array))
             return i;
     }

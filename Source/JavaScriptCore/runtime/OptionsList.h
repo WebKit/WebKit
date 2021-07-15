@@ -550,6 +550,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
+    v(Bool, useArrayFindLastMethod, false, Normal, "Expose the findLast() and findLastIndex() methods on Array and %TypedArray%.") \
 
 
 enum OptionEquivalence {
