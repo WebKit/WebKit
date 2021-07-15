@@ -1,3 +1,19 @@
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add samplingProfilerIgnoreExternalSourceID option
+        https://bugs.webkit.org/show_bug.cgi?id=227985
+
+        Reviewed by Mark Lam.
+
+        We can ignore sourceID when aggregating samples. By doing so, we can open Speedometer2 style iframes
+        and still aggregate all the functions even though each script in iframe has different source ID.
+
+        * runtime/OptionsList.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        * runtime/SamplingProfiler.h:
+
 2021-07-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid-July 2021 edition

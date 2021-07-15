@@ -78,6 +78,8 @@ public:
         C,
         Unknown,
     };
+    static constexpr intptr_t internalSourceID = -1;
+    static constexpr intptr_t aggregatedExternalSourceID = -2;
 
     struct StackFrame {
         StackFrame(ExecutableBase* executable)

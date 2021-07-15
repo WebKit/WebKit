@@ -905,16 +905,16 @@ intptr_t SamplingProfiler::StackFrame::sourceID()
     case FrameType::Host:
     case FrameType::C:
     case FrameType::Wasm:
-        return -1;
+        return internalSourceID;
 
     case FrameType::Executable:
         if (executable->isHostFunction())
-            return -1;
+            return internalSourceID;
 
         return static_cast<ScriptExecutable*>(executable)->sourceID();
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return -1;
+    return internalSourceID;
 }
 
 String SamplingProfiler::StackFrame::url()
@@ -1052,7 +1052,12 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
             hash = stream.toString();
         } else
             hash = "<nil>"_s;
-        auto frameDescription = makeString(frame.displayName(m_vm), '#', hash, ':', frame.sourceID());
+        intptr_t sourceID = frame.sourceID();
+        if (Options::samplingProfilerIgnoreExternalSourceID()) {
+            if (sourceID != internalSourceID)
+                sourceID = aggregatedExternalSourceID;
+        }
+        auto frameDescription = makeString(frame.displayName(m_vm), '#', hash, ':', sourceID);
         functionCounts.add(frameDescription, 0).iterator->value++;
         totalSamples++;
     }
