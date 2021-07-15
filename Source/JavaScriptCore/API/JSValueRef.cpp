@@ -50,7 +50,7 @@ using namespace JSC;
 
 ::JSType JSValueGetType(JSContextRef ctx, JSValueRef value)
 {
-    
+   
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     
@@ -411,10 +411,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
 
 JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+   
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     
