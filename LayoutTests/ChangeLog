@@ -1,3 +1,14 @@
+2021-07-15  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227986
+
+        Unreviewed.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/10a8411ba8ed0012da5ecefc6eba9956a13b2c21
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission-expected.txt:
+
 2021-07-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][Pipewire] Implement getDisplayMedia() backend
