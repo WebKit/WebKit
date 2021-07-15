@@ -1,3 +1,15 @@
+2021-07-15  Peng Liu  <peng.liu6@apple.com>
+
+        Reddit PiP video pauses when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=227999
+
+        Reviewed by Jer Noble.
+
+        Enable the `requiresUserGestureToPauseInPictureInPicture` quirk for reddit.com.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::requiresUserGestureToPauseInPictureInPicture const):
+
 2021-07-15  Megan Gardner  <megan_gardner@apple.com>
 
         Rename scrollRectIntoView to scrollContainingScrollViewsToRevealRect for clarity.
