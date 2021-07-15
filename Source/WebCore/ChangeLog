@@ -1,3 +1,24 @@
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Sync XHR 'load' event is always has total/loaded=0
+        https://bugs.webkit.org/show_bug.cgi?id=228004
+
+        Reviewed by Alex Christensen.
+
+        XMLHttpRequest::didReceiveData() was not calling XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent()
+        for sync XHRs because we don't want to fire 'progress' events for sync XHR. However, dispatchThrottledProgressEvent()
+        also updates XMLHttpRequestProgressEventThrottle's m_loaded / m_total members and we do want those to get updated for
+        sync XHRs, since they get used later on for the 'load' event.
+
+        No new tests, rebaselined existing test.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::updateProgress):
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent): Deleted.
+        * xml/XMLHttpRequestProgressEventThrottle.h:
+
 2021-07-15  Sihui Liu  <sihui_liu@apple.com>
 
         Do not abort ongoing IDB transaction synchronously on non-imminent PrepareToSuspend message
