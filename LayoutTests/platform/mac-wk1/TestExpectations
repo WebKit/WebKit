@@ -1321,3 +1321,5 @@ webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]
 
 webkit.org/b/227973 [ BigSur Debug arm64 ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Timeout ]
 webkit.org/b/227973 [ BigSur Release arm64 ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Timeout ]
+
+webkit.org/b/227973 [ BigSur Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html [ Pass Failure ]
