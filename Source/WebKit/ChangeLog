@@ -1,3 +1,13 @@
+2021-07-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Expand GPU sandbox to support multi-target AirPlay
+        https://bugs.webkit.org/show_bug.cgi?id=227972
+        <rdar://problem/76029596>
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-07-15  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Can't click links with touchscreen
