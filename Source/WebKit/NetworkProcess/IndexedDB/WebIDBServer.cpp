@@ -115,17 +115,34 @@ void WebIDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, co
     });
 }
 
-void WebIDBServer::suspend() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+bool WebIDBServer::suspend(SuspensionCondition suspensionCondition) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(RunLoop::isMain());
 
     if (m_isSuspended)
-        return;
+        return true;
+
+    RELEASE_LOG(ProcessSuspension, "%p - WebIDBServer::suspend(), suspensionCondition=%s", this, suspensionCondition == SuspensionCondition::Always ? "Always" : "IfIdle");
 
     m_isSuspended = true;
     m_serverLock.lock();
-    if (m_server)
+
+    if (!m_server)
+        return true;
+
+    if (suspensionCondition == SuspensionCondition::Always) {
         m_server->stopDatabaseActivitiesOnMainThread();
+        return true;
+    }
+
+    // Suspend to avoid starting new transactions if there is no ongoing transaction.
+    if (!m_server->hasDatabaseActivitiesOnMainThread())
+        return true;
+
+    // Resume to allow ongoing transactions to be finished.
+    m_serverLock.unlock();
+    m_isSuspended = false;
+    return false;
 }
 
 void WebIDBServer::resume() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
@@ -134,6 +151,8 @@ void WebIDBServer::resume() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     if (!m_isSuspended)
         return;
+
+    RELEASE_LOG(ProcessSuspension, "%p - WebIDBServer::resume()", this);
 
     m_isSuspended = false;
     m_serverLock.unlock();

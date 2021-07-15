@@ -107,6 +107,7 @@ public:
     StorageQuotaManager::Decision requestSpace(const ClientOrigin&, uint64_t taskSize);
     WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
 
+    WEBCORE_EXPORT bool hasDatabaseActivitiesOnMainThread() const;
     WEBCORE_EXPORT void stopDatabaseActivitiesOnMainThread();
 
 private:

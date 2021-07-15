@@ -767,6 +767,22 @@ void IDBServer::upgradeFilesIfNecessary()
         FileSystem::makeAllDirectories(newVersionDirectory);
 }
 
+bool IDBServer::hasDatabaseActivitiesOnMainThread() const
+{
+    ASSERT(isMainThread());
+    ASSERT(m_lock.isHeld());
+
+    if (m_sessionID.isEphemeral())
+        return false;
+
+    for (auto& database : m_uniqueIDBDatabaseMap.values()) {
+        if (!database->identifier().isTransient() && database->hasActiveTransactions())
+            return true;
+    }
+    
+    return false;
+}
+
 void IDBServer::stopDatabaseActivitiesOnMainThread()
 {
     ASSERT(isMainThread());

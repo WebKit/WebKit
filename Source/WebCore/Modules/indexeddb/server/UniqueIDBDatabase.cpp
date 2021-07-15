@@ -1191,6 +1191,13 @@ void UniqueIDBDatabase::immediateClose()
     close();
 }
 
+bool UniqueIDBDatabase::hasActiveTransactions() const
+{
+    ASSERT(isMainThread());
+
+    return !m_inProgressTransactions.isEmpty();
+}
+
 void UniqueIDBDatabase::abortActiveTransactions()
 {
     ASSERT(isMainThread());

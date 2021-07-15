@@ -486,6 +486,7 @@ private:
     Ref<WebIDBServer> createWebIDBServer(PAL::SessionID);
     void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
     void removeWebIDBServerIfPossible(PAL::SessionID);
+    void suspendIDBServers(bool isSuspensionImminent);
 
 #if ENABLE(SERVICE_WORKER)
     void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
@@ -583,7 +584,7 @@ private:
 
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;
     HashMap<PAL::SessionID, RefPtr<WebIDBServer>> m_webIDBServers;
-    bool m_shouldSuspendIDBServer { false };
+    bool m_shouldSuspendIDBServers { false };
     
 #if ENABLE(SERVICE_WORKER)
     struct ServiceWorkerInfo {

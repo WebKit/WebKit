@@ -2211,14 +2211,36 @@ void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandle
     prepareToSuspend(true, WTFMove(completionHandler));
 }
 
+void NetworkProcess::suspendIDBServers(bool isSuspensionImminent)
+{
+    m_shouldSuspendIDBServers = true;
+
+    bool allSuspended = true;
+    auto condition = isSuspensionImminent ? WebIDBServer::SuspensionCondition::Always : WebIDBServer::SuspensionCondition::IfIdle;
+    for (auto& server : m_webIDBServers.values())
+        allSuspended &= server->suspend(condition);
+
+    if (allSuspended)
+        return;
+
+    RunLoop::main().dispatchAfter(5_s, [this, weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+
+        if (!m_shouldSuspendIDBServers)
+            return;
+        
+        for (auto& server : m_webIDBServers.values())
+            server->suspend(WebIDBServer::SuspensionCondition::Always);
+    });
+}
+
 void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent=%d", this, isSuspensionImminent);
 
 #if PLATFORM(IOS_FAMILY)
-    for (auto& server : m_webIDBServers.values())
-        server->suspend();
-    m_shouldSuspendIDBServer = true;
+    suspendIDBServers(isSuspensionImminent);
 #endif
 
     lowMemoryHandler(Critical::Yes);
@@ -2282,7 +2304,7 @@ void NetworkProcess::resume()
 #if PLATFORM(IOS_FAMILY)
     for (auto& server : m_webIDBServers.values())
         server->resume();
-    m_shouldSuspendIDBServer = false;
+    m_shouldSuspendIDBServers = false;
 #endif
 
     m_storageManagerSet->resume();
@@ -2347,8 +2369,8 @@ Ref<WebIDBServer> NetworkProcess::createWebIDBServer(PAL::SessionID sessionID)
     };
 
     auto result = WebIDBServer::create(sessionID, path, WTFMove(spaceRequester));
-    if (m_shouldSuspendIDBServer)
-        result->suspend();
+    if (m_shouldSuspendIDBServers)
+        result->suspend(WebIDBServer::SuspensionCondition::Always);
     return result;
 }
 

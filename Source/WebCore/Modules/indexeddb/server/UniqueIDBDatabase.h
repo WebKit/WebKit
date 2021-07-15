@@ -107,6 +107,7 @@ public:
     void handleDelete(IDBConnectionToClient&, const IDBRequestData&);
     void immediateClose();
 
+    bool hasActiveTransactions() const;
     void abortActiveTransactions();
     bool tryClose();
 

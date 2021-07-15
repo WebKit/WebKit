@@ -1,3 +1,37 @@
+2021-07-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Do not abort ongoing IDB transaction synchronously on non-imminent PrepareToSuspend message
+        https://bugs.webkit.org/show_bug.cgi?id=227778
+        <rdar://problem/80602557>
+
+        Reviewed by Chris Dumez.
+
+        Currently we abort IDB transactions and suspend IDB thread synchronously in NetworkProcess::prepareToSuspend.
+        As UI process does not know the file locking state in network process now (because network process tracks
+        the state and takes the assertion by itself), UI process may send non-imminent PrepareToSuspend more often,
+        and we may abort transaction too aggressively (e.g. UI process may send the message as soon as app is in 
+        background). To fix the possible regression of data loss, we will schedule a task with 5s delay to abort
+        transactions after prepareToSuspend. In this case, transactions finished in 5s can have a chance to finish.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::suspendIDBServers):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::createWebIDBServer):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::setIsHoldingLockedFiles):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::setPrepareForInvalidationHandler):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKRBSAssertionDelegate dealloc]):
+        (-[WKRBSAssertionDelegate assertionWillInvalidate:]):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+        (WebKit::ProcessAssertion::processAssertionWillBeInvalidated):
+
 2021-07-15  Megan Gardner  <megan_gardner@apple.com>
 
         Rename scrollRectIntoView to scrollContainingScrollViewsToRevealRect for clarity.
