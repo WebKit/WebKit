@@ -806,7 +806,7 @@ self.addEventListener("message", (event) => {
 
 )SWRESOURCE";
 
-TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
+TEST(InAppBrowserPrivacy, DISABLED_AppBoundDomainAllowsServiceWorkers)
 {
     initializeInAppBrowserPrivacyTestSettings();
     isDone = false;

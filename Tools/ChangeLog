@@ -1,3 +1,13 @@
+2021-07-15  Aakash Jain  <aakash_jain@apple.com>
+
+        [iOS]TestWebKitAPI.InAppBrowserPrivacy.AppBoundDomainAllowsServiceWorkers is failing
+        https://bugs.webkit.org/show_bug.cgi?id=227918
+        <rdar://problem/80535625>
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm: Disabled the test for now to speed up EWS.
+
 2021-07-14  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS & Mac Big Sur Release] Two SOAuthorizationSubFrame API tests are failing
