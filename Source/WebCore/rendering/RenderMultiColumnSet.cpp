@@ -42,15 +42,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnSet);
 
 RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow, RenderStyle&& style)
     : RenderFragmentContainerSet(fragmentedFlow.document(), WTFMove(style), fragmentedFlow)
-    , m_computedColumnCount(1)
-    , m_computedColumnWidth(0)
-    , m_computedColumnHeight(0)
-    , m_availableColumnHeight(0)
-    , m_columnHeightComputed(false)
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
-    , m_minimumColumnHeight(0)
-    , m_spaceShortageForSizeContainment(0)
 {
 }
 

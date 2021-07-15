@@ -164,7 +164,7 @@ private:
     typedef HashMap<const RenderBox*, std::unique_ptr<RenderBoxFragmentInfo>> RenderBoxFragmentInfoMap;
     RenderBoxFragmentInfoMap m_renderBoxFragmentInfo;
 
-    bool m_isValid : 1;
+    bool m_isValid { false };
 };
 
 class CurrentRenderFragmentContainerMaintainer {

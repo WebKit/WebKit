@@ -1,3 +1,30 @@
+2021-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve multicol logging in render tree dumps, and cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=227994
+
+        Reviewed by Alan Bujtas.
+
+        For a RenderFragmentedFlow dump the list of fragment containers, and clean up the existing
+        dumping of containers for a renderer inside a fragmented flow. Also dump column information
+        for RenderMultiColumnSet.
+
+        Use initializers for member variables in various fragmentation-related renderers.
+
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::RenderFragmentContainer):
+        * rendering/RenderFragmentContainer.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::RenderMultiColumnFlow):
+        * rendering/RenderMultiColumnFlow.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::enclosingFragmentedFlowFromRenderer):
+        (WebCore::RenderObject::outputRegionsInformation const):
+        (WebCore::RenderObject::outputRenderObject const):
+
 2021-07-15  Brady Eidson  <beidson@apple.com>
 
         MemoryIDBBackingStore cleanup.

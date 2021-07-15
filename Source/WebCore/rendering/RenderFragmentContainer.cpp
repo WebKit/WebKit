@@ -52,14 +52,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentContainer);
 RenderFragmentContainer::RenderFragmentContainer(Element& element, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(element, WTFMove(style))
     , m_fragmentedFlow(fragmentedFlow)
-    , m_isValid(false)
 {
 }
 
 RenderFragmentContainer::RenderFragmentContainer(Document& document, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(document, WTFMove(style))
     , m_fragmentedFlow(fragmentedFlow)
-    , m_isValid(false)
 {
 }
 

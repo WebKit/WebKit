@@ -138,6 +138,8 @@ public:
     LayoutRect columnRectAt(unsigned index) const;
     unsigned columnCount() const;
 
+    LayoutUnit columnGap() const;
+
 private:
     void addOverflowFromChildren() override;
     
@@ -168,7 +170,6 @@ private:
     const char* renderName() const override;
 
     LayoutUnit calculateMaxColumnHeight() const;
-    LayoutUnit columnGap() const;
 
     LayoutUnit columnLogicalLeft(unsigned) const;
     LayoutUnit columnLogicalTop(unsigned) const;
@@ -197,11 +198,11 @@ private:
 
     LayoutUnit calculateBalancedHeight(bool initial) const;
 
-    unsigned m_computedColumnCount; // Used column count (the resulting 'N' from the pseudo-algorithm in the multicol spec)
+    unsigned m_computedColumnCount { 1 }; // Used column count (the resulting 'N' from the pseudo-algorithm in the multicol spec)
     LayoutUnit m_computedColumnWidth; // Used column width (the resulting 'W' from the pseudo-algorithm in the multicol spec)
     LayoutUnit m_computedColumnHeight;
     LayoutUnit m_availableColumnHeight;
-    bool m_columnHeightComputed;
+    bool m_columnHeightComputed { false };
 
     // The following variables are used when balancing the column set.
     LayoutUnit m_maxColumnHeight; // Maximum column height allowed.
@@ -220,7 +221,7 @@ private:
     public:
         ContentRun(LayoutUnit breakOffset)
             : m_breakOffset(breakOffset)
-            , m_assumedImplicitBreaks(0) { }
+        { }
 
         unsigned assumedImplicitBreaks() const { return m_assumedImplicitBreaks; }
         void assumeAnotherImplicitBreak() { m_assumedImplicitBreaks++; }
@@ -232,7 +233,7 @@ private:
 
     private:
         LayoutUnit m_breakOffset; // Flow thread offset where this run ends.
-        unsigned m_assumedImplicitBreaks; // Number of implicit breaks in this run assumed so far.
+        unsigned m_assumedImplicitBreaks { 0 }; // Number of implicit breaks in this run assumed so far.
     };
     Vector<ContentRun, 1> m_contentRuns;
 };
