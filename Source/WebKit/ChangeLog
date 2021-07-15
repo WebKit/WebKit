@@ -1,3 +1,31 @@
+2021-07-15  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Can't click links with touchscreen
+        https://bugs.webkit.org/show_bug.cgi?id=226679
+
+        Reviewed by Michael Catanzaro.
+
+        Currently, when we emulate mouse events for touch, we send events with touch
+        pointer type, however the way we do it doesn't really match how touch type
+        events are supposed to behave: for example, we won't send a press event until
+        a finger release, and will then send both together. And touch pointer type
+        events are also supposed to support multitouch (or at least they do in iOS),
+        while with this scheme they really can't.
+
+        Not only all of this produces weird results for pointer events, but the actual
+        mouse emulation doesn't really work as intended. For example, when tapping
+        empty space on the page, and then a link, the latter won't do anything.
+        Meanwhile, it's possible to accidentally open a link while pinch zooming.
+
+        Switch back to emulating mouse pointer type events for now, as it was before
+        the rewrite to avoid this. Touch pointer type events don't work properly
+        anyway.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTouchRelease):
+        (webkitWebViewBaseTouchDragUpdate):
+        (webkitWebViewBaseTouchDragEnd):
+
 2021-07-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid-July 2021 edition
