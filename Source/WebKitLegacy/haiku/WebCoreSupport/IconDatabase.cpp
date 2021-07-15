@@ -1090,8 +1090,8 @@ void IconDatabase::performURLImport()
     // we use it or not). This code works anyway because the IconDatabase downloads icons again if they are older than 4 days,
     // so if the timestamp goes back in time more than those 30 days we can be sure that the icon was not used at all.
     auto query = m_syncDB.prepareStatement("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > (?) ;"_s);
-    query->bindInt(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds()));
-    if (!query) {
+    if (!query || query->bindInt(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK)
+    {
         LOG_ERROR("Unable to prepare icon url import query");
         return;
     }
