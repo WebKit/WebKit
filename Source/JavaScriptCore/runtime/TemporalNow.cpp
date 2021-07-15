@@ -20,7 +20,9 @@
 #include "config.h"
 #include "TemporalNow.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 #include "ObjectPrototype.h"
 
 namespace JSC {

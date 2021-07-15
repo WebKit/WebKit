@@ -20,7 +20,9 @@
 #include "config.h"
 #include "TemporalObject.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 #include "ObjectPrototype.h"
 #include "TemporalNow.h"
 

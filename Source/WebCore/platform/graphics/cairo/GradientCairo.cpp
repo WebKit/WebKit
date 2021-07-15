@@ -34,7 +34,7 @@
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "ColorBlending.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCairo.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

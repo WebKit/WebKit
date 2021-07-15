@@ -44,7 +44,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIntersectionObserver);
 
 bool JSIntersectionObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, const char**reason)
 {
-    if (jsCast<JSIntersectionObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
+    if (JSC::jsCast<JSIntersectionObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
         if (UNLIKELY(reason))
             *reason = "Reachable from observed nodes";
         return true;

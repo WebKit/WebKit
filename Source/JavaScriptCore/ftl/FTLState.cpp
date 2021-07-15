@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirDisassembler.h"
+#include "B3ValueInlines.h"
 #include "CodeBlockWithJITType.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLJITCode.h"

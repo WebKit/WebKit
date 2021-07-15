@@ -32,6 +32,7 @@
 
 #include "AXObjectCache.h"
 
+#include "AXImage.h"
 #include "AXIsolatedObject.h"
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
@@ -89,6 +90,7 @@
 #include "Page.h"
 #include "Range.h"
 #include "RenderAttachment.h"
+#include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"

@@ -29,6 +29,7 @@
 #if !PLATFORM(IOS_FAMILY)
 
 #include "WKBase.h"
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 

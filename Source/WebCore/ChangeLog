@@ -1,3 +1,23 @@
+2021-07-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid-July 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=227981
+
+        Unreviewed non-unified build fixes.
+
+        * accessibility/AXObjectCache.cpp: Add missing AXImage.h and RenderImage.h headers.
+        * bindings/js/JSIntersectionObserverCustom.cpp:
+        (WebCore::JSIntersectionObserverOwner::isReachableFromOpaqueRoots): Add missing namespace to
+        usage of JSC::jsCast<T>() template.
+        * bindings/js/JSResizeObserverCustom.cpp: Add missing Element.h and JSNodeCustom.h headers.
+        (WebCore::JSResizeObserverOwner::isReachableFromOpaqueRoots): Add missing namespace to usage
+        of JSC::jsCast<T>() template.
+        * css/CSSCrossfadeValue.h: Add missing forward declaration of Style::BuilderState.
+        * css/parser/CSSPropertyParserWorkerSafe.cpp: Add missing ParsingUtilities.h header.
+        * platform/graphics/cairo/GradientCairo.cpp: Replace GraphicsContext.h header with
+        GraphicsContextCairo.h to avoid errors about undefined types.
+        * rendering/style/RenderStyleConstants.cpp: Add missing CSSPrimitiveValueMappings.h header.
+
 2021-07-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][Pipewire] Implement getDisplayMedia() backend
