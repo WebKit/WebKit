@@ -83,7 +83,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     // We keep the lock here
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
     startingLineNumber = std::max(1, startingLineNumber);
 
@@ -101,7 +101,7 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+    
 
 
     startingLineNumber = std::max(1, startingLineNumber);

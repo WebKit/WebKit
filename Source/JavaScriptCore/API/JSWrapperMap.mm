@@ -549,6 +549,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     JSC::Structure* structure = [self structureInContext:context];
 
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
+    JSC::VM& vm = globalObject->vm();
     
 
     auto wrapper = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(globalObject, structure, m_classRef, 0);
