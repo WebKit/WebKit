@@ -1140,6 +1140,8 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
 
+webkit.org/b/227987 http/tests/media/media-stream/get-display-media-prompt.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1521,15 +1523,6 @@ http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]
-
-# No support for screen capture
-fast/mediastream/screencapture-user-gesture.html [ Skip ]
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
-webkit.org/b/210926 fast/mediastream/get-display-media-muted.html [ Skip ]
-webkit.org/b/210926 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
-webkit.org/b/191007 http/tests/media/media-stream/get-display-media-prompt.html [ Skip ]
 
 # Modern-media-controls support
 webkit.org/b/182502 http/tests/media/modern-media-controls [ Skip ]

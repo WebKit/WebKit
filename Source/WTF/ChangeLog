@@ -1,3 +1,13 @@
+2021-07-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Pipewire] Implement getDisplayMedia() backend
+        https://bugs.webkit.org/show_bug.cgi?id=210926
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Enable screen-capture if libportal
+        was found.
+
 2021-07-14  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r279912 (239661@main); Add a HAVE(SYSTEM_STATUS) macro.

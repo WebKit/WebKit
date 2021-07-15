@@ -45,7 +45,7 @@ GStreamerAudioCapturer::GStreamerAudioCapturer(GStreamerCaptureDevice device)
 }
 
 GStreamerAudioCapturer::GStreamerAudioCapturer()
-    : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, AudioCaptureSampleRate, nullptr)))
+    : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, AudioCaptureSampleRate, nullptr)), CaptureDevice::DeviceType::Microphone)
 {
 }
 

@@ -978,7 +978,7 @@ const IntSize RealtimeMediaSource::size() const
     return size;
 }
 
-void RealtimeMediaSource::setIntrinsicSize(const IntSize& size)
+void RealtimeMediaSource::setIntrinsicSize(const IntSize& size, bool notifyObservers)
 {
     if (m_intrinsicSize == size)
         return;
@@ -987,6 +987,8 @@ void RealtimeMediaSource::setIntrinsicSize(const IntSize& size)
     
     auto currentSize = this->size();
     m_intrinsicSize = size;
+    if (!notifyObservers)
+        return;
 
     if (currentSize != this->size()) {
         scheduleDeferredTask([this] {
@@ -1097,7 +1099,11 @@ void RealtimeMediaSource::scheduleDeferredTask(Function<void()>&& function)
 
 const String& RealtimeMediaSource::hashedId() const
 {
-    ASSERT(!m_hashedID.isEmpty());
+#ifndef NDEBUG
+    auto deviceType = this->deviceType();
+    if (deviceType != CaptureDevice::DeviceType::Screen && deviceType != CaptureDevice::DeviceType::Window)
+        ASSERT(!m_hashedID.isEmpty());
+#endif
     return m_hashedID;
 }
 

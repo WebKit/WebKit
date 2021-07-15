@@ -28,6 +28,10 @@
 #include "GStreamerCaptureDevice.h"
 #include "RealtimeMediaSourceFactory.h"
 
+#if USE(PIPEWIRE)
+#include <libportal/portal.h>
+#endif
+
 namespace WebCore {
 
 class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
@@ -66,15 +70,32 @@ private:
     GStreamerVideoCaptureDeviceManager() = default;
 };
 
-class GStreamerDisplayCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
+class GStreamerDisplayCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<GStreamerDisplayCaptureDeviceManager>;
 public:
     static GStreamerDisplayCaptureDeviceManager& singleton();
-    CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Screen; }
-private:
-    GStreamerDisplayCaptureDeviceManager() = default;
-};
+    const Vector<CaptureDevice>& captureDevices() final { return m_devices; };
+    void computeCaptureDevices(CompletionHandler<void()>&&) final;
 
+protected:
+#if USE(PIPEWIRE)
+    void setSession(XdpSession*);
+#endif
+    void sessionStarted();
+    void notifyClient();
+    void sessionWasClosed();
+
+private:
+    GStreamerDisplayCaptureDeviceManager();
+    ~GStreamerDisplayCaptureDeviceManager();
+
+    CompletionHandler<void()> m_callback;
+    Vector<CaptureDevice> m_devices;
+#if USE(PIPEWIRE)
+    GRefPtr<XdpPortal> m_portal;
+    GRefPtr<XdpSession> m_session;
+#endif
+};
 }
 
 #endif // ENABLE(MEDIA_STREAM)  && USE(GSTREAMER)

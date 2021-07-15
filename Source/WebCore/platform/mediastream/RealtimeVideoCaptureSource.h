@@ -73,6 +73,8 @@ protected:
     void dispatchMediaSampleToObservers(MediaSample&);
     const Vector<IntSize>& standardVideoSizes();
 
+    void ensureIntrinsicSizeMaintainsAspectRatio();
+
 private:
     struct CaptureSizeAndFrameRate {
         RefPtr<VideoPreset> encodingPreset;

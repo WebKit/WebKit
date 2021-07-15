@@ -635,6 +635,7 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
     gboolean enabled = webkit_settings_get_enable_media_stream(settings);
     webkit_settings_set_enable_media_stream(settings, TRUE);
+    webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
 
     test->clear(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT, 0);
 
@@ -681,6 +682,7 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     g_assert_null(dataList);
 
     webkit_settings_set_enable_media_stream(settings, enabled);
+    webkit_settings_set_enable_mock_capture_devices(settings, enabled);
 }
 
 static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)

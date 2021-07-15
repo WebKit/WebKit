@@ -1,3 +1,87 @@
+2021-07-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Pipewire] Implement getDisplayMedia() backend
+        https://bugs.webkit.org/show_bug.cgi?id=210926
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Display capture is now supported by GStreamer ports. When requested, the capture device
+        manager queries the host through the libportal API. The user is presented with a prompt
+        allowing to select either a monitor or an application window. Once selected, the manager
+        creates the associated CaptureDevice, passing the pipewire file descriptor along. The
+        existing GStreamer video capture source infrastructure is reused, leveraging the GStreamer
+        pipewiresrc element to generate a live video stream of the display device.
+
+        As display capture devices need to respect the aspect-ratio of the video frame, taking into
+        account max-{widther,height}, some code was reused from the Cocoa display capture code and
+        placed in RealtimeVideoCaptureSource as ensureIntrinsicSizeMaintainsAspectRatio().
+
+        Unfortunately this aspect-ratio enforcing feature is currently used only for mock capture
+        sources. The GStreamer pipewiresrc doesn't support caps renegotiation well yet, so we can't
+        comply with the aspect-ratio enforcing, for the time being.
+
+        This patch is covered by newly unskipped layout tests and API tests.
+
+        * platform/GStreamer.cmake:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setIntrinsicSize):
+        (WebCore::RealtimeMediaSource::hashedId const):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        (WebCore::RealtimeVideoCaptureSource::ensureIntrinsicSizeMaintainsAspectRatio):
+        * platform/mediastream/RealtimeVideoCaptureSource.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::sourceSettingsChanged):
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp:
+        (WebCore::GStreamerAudioCapturer::GStreamerAudioCapturer):
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp:
+        (WebCore::GStreamerDisplayCaptureDeviceManager::GStreamerDisplayCaptureDeviceManager):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::~GStreamerDisplayCaptureDeviceManager):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::computeCaptureDevices):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::setSession):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::sessionStarted):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::notifyClient):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::sessionWasClosed):
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.h:
+        * platform/mediastream/gstreamer/GStreamerCapturer.cpp:
+        (WebCore::GStreamerCapturer::GStreamerCapturer):
+        (WebCore::GStreamerCapturer::Observer::~Observer):
+        (WebCore::GStreamerCapturer::addObserver):
+        (WebCore::GStreamerCapturer::removeObserver):
+        (WebCore::GStreamerCapturer::forEachObserver):
+        (WebCore::GStreamerCapturer::createSource):
+        * platform/mediastream/gstreamer/GStreamerCapturer.h:
+        (WebCore::GStreamerCapturer::Observer::sourceCapsChanged):
+        (WebCore::GStreamerCapturer::deviceType const):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::create):
+        (WebCore::GStreamerVideoCaptureSource::createPipewireSource):
+        (WebCore::GStreamerVideoCaptureSource::GStreamerVideoCaptureSource):
+        (WebCore::m_deviceType):
+        (WebCore::GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource):
+        (WebCore::GStreamerVideoCaptureSource::sourceCapsChanged):
+        (WebCore::GStreamerVideoCaptureSource::startProducingData):
+        (WebCore::GStreamerVideoCaptureSource::stopProducingData):
+        (WebCore::m_capturer): Deleted.
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp:
+        (WebCore::initializeDebugCategory):
+        (WebCore::GStreamerVideoCapturer::GStreamerVideoCapturer):
+        (WebCore::GStreamerVideoCapturer::createSource):
+        (WebCore::GStreamerVideoCapturer::setPipewireFD):
+        (WebCore::GStreamerVideoCapturer::setSize):
+        (WebCore::GStreamerVideoCapturer::setFrameRate):
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.h:
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockRealtimeVideoSource::create):
+        (WebCore::MockRealtimeVideoSourceGStreamer::createMockDisplayCaptureSource):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::capabilities):
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2021-07-15  Philippe Normand  <pnormand@igalia.com> and Miguel Gomez  <magomez@igalia.com>
 
         [GStreamer][GL] A420 compositing support

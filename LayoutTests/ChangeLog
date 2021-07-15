@@ -1,3 +1,12 @@
+2021-07-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Pipewire] Implement getDisplayMedia() backend
+        https://bugs.webkit.org/show_bug.cgi?id=210926
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unskip now-passing getDisplayMedia tests.
+
 2021-07-15  Ziran Sun  <zsun@igalia.com>
 
         Resync web-platform-tests/css/css-grid tests from upstream

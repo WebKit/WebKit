@@ -131,6 +131,10 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
             capabilities.setDeviceId(hashedId());
             updateCapabilities(capabilities);
             capabilities.setDeviceId(hashedId());
+        } else if (mockDisplay()) {
+            capabilities.setWidth(CapabilityValueOrRange(72, WTF::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
+            capabilities.setHeight(CapabilityValueOrRange(45, WTF::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));
+            capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
         } else {
             capabilities.setWidth(CapabilityValueOrRange(72, 2880));
             capabilities.setHeight(CapabilityValueOrRange(45, 1800));
@@ -428,6 +432,9 @@ void MockRealtimeVideoSource::generateFrame()
         m_delayUntil = MonotonicTime();
     }
 
+    if (mockDisplay() && !m_frameNumber)
+        ensureIntrinsicSizeMaintainsAspectRatio();
+
     ImageBuffer* buffer = imageBuffer();
     if (!buffer)
         return;
@@ -435,7 +442,7 @@ void MockRealtimeVideoSource::generateFrame()
     GraphicsContext& context = buffer->context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto size = captureSize();
+    auto size = this->size();
     FloatRect frameRect(FloatPoint(), size);
 
     context.fillRect(FloatRect(FloatPoint(), size), m_fillColor);

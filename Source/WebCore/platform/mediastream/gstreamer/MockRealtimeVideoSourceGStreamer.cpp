@@ -44,7 +44,18 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
     auto source = adoptRef(*new MockRealtimeVideoSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
-            return WTFMove(error->message);
+            return WTFMove(error.value().badConstraint);
+    }
+
+    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
+}
+
+CaptureSourceOrError MockRealtimeVideoSourceGStreamer::createMockDisplayCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
+{
+    auto source = MockRealtimeVideoSourceGStreamer::createForMockDisplayCapturer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt));
+    if (constraints) {
+        if (auto error = source->applyConstraints(*constraints))
+            return WTFMove(error.value().badConstraint);
     }
 
     return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
