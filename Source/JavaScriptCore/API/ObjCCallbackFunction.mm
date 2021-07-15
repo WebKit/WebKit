@@ -475,7 +475,7 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
     // (1) We don't want to support the C-API's confusing drops-locks-once policy - should only drop locks if we can do so recursively.
     // (2) We're calling some JSC internals that require us to be on the 'inside' - e.g. createTypeError.
     // (3) We need to be locked (per context would be fine) against conflicting usage of the ObjCCallbackFunction's NSInvocation.
-    JSC::JSLockHolder locker(toJS(callerContext));
+    
 
     ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(toJS(function));
     ObjCCallbackFunctionImpl* impl = callback->impl();
@@ -506,7 +506,7 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
 static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerContext, JSObjectRef constructor, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     ASSERT(exception && !*exception);
-    JSC::JSLockHolder locker(toJS(callerContext));
+    
 
     ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(toJS(constructor));
     ObjCCallbackFunctionImpl* impl = callback->impl();

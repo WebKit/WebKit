@@ -47,7 +47,7 @@ WrapperMap::~WrapperMap()
 GRefPtr<JSCValue> WrapperMap::gobjectWrapper(JSCContext* jscContext, JSValueRef jsValue)
 {
     auto* jsContext = jscContextGetJSContext(jscContext);
-    JSC::JSLockHolder locker(toJS(jsContext));
+    
     ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     GRefPtr<JSCValue> value = m_cachedGObjectWrappers.get(jsValue);
     if (!value) {

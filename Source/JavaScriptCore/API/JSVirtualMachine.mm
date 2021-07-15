@@ -173,7 +173,7 @@ static id getInternalObjcObject(id object)
         if (!object || !owner)
             return;
 
-        JSC::JSLockHolder locker(toJS(m_group));
+        
         if ([self isOldExternalObject:owner] && ![self isOldExternalObject:object])
             [self addExternalRememberedObject:owner];
 
@@ -204,7 +204,7 @@ static id getInternalObjcObject(id object)
         if (!object || !owner)
             return;
 
-        JSC::JSLockHolder locker(toJS(m_group));
+        
 
         Locker externalDataMutexLocker { m_externalDataMutex };
         NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];

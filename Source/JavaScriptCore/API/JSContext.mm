@@ -386,7 +386,7 @@
 
 - (JSValue *)wrapperForObjCObject:(id)object
 {
-    JSC::JSLockHolder locker(toJS(m_context));
+    
     return [[self wrapperMap] jsWrapperForObject:object inContext:self];
 }
 
@@ -397,7 +397,7 @@
 
 - (JSValue *)wrapperForJSObject:(JSValueRef)value
 {
-    JSC::JSLockHolder locker(toJS(m_context));
+    
     return [[self wrapperMap] objcWrapperForJSValueRef:value inContext:self];
 }
 
