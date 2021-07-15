@@ -444,6 +444,8 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 void JSValueProtect(JSContextRef ctx, JSValueRef value)
 {
     JSGlobalObject* globalObject = toJS(ctx);
+    
+
     JSValue jsValue = toJSForGC(globalObject, value);
     gcProtect(jsValue);
 }
