@@ -53,7 +53,12 @@ class Separator : public TIntermTraverser
                                                 new TType(structure, true), SymbolType::Empty);
                 instanceType = new TType(structure, false);
             }
+            if (type.isArray())
+            {
+                instanceType->makeArrays(type.getArraySizes());
+            }
             instanceType->setQualifier(type.getQualifier());
+            
             auto *instanceVar = new TVariable(mSymbolTable, var.name(), instanceType,
                                               symbolType, var.extension());
 

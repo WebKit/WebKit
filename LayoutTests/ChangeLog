@@ -1,3 +1,14 @@
+2021-07-15  Kyle Piddington  <kpiddington@apple.com>
+
+        WebGL2 demo doesn't work due to failing compilation to metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=226865
+
+        Fix translation of struct-arrays to contain the array type as well.
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/shader-with-struct-array.html: Added.
+        * fast/canvas/webgl/shader-with-struct-array-expected.txt: Added.
+
 2021-07-15  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [Big Sur wk1 Debug] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html is a flaky failure.
