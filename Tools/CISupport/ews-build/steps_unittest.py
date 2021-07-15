@@ -46,7 +46,8 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch,
                    CompileWebKit, CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard, InstallGtkDependencies, InstallWpeDependencies,
+                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard,
+                   InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
@@ -4403,6 +4404,46 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE)
+        return self.runStep()
+
+
+class TestInstallBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(InstallBuiltProduct())
+        self.setProperty('fullPlatform', 'ios-14')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/install-built-product', '--platform=ios-14', '--release'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed Built Product')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(InstallBuiltProduct())
+        self.setProperty('fullPlatform', 'ios-14')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/install-built-product', '--platform=ios-14', '--debug'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Installed Built Product (failure)')
         return self.runStep()
 
 
