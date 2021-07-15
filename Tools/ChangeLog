@@ -1,3 +1,23 @@
+2021-07-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS & Mac Big Sur Release] Two SOAuthorizationSubFrame API tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=227925
+        <rdar://problem/80543830>
+
+        Reviewed by Kate Cheney.
+
+        In Bug 227729 I added a number of extra tests that an Extensible SSO delegate method
+        was called. I did a search/paste and added them to all SSO flows without much detailed
+        analysis. Testing shows that on Simulator, these delegate are not always called, perhaps
+        because the test case involves loads to live websites that might take longer than the
+        hard-coded timeout used to move to the next step of the test.
+
+        Because these failures are slowing down our EWS, I'm removing these two checks. We
+        can consider adding them back if we need such checks in the future.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (TestWebKitAPI::TEST):
+
 2021-07-14  Kevin Neal  <kevin_neal@apple.com>
 
         [Tools] linkify first line of commit message in tooltip

@@ -2580,11 +2580,6 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnore)
     Util::sleep(0.5);
     // Make sure we don't intercept the iframe.
     EXPECT_FALSE(authorizationPerformed);
-#if PLATFORM(MAC)
-    EXPECT_TRUE(policyForAppSSOPerformed);
-#else
-    EXPECT_FALSE(policyForAppSSOPerformed);
-#endif
 }
 
 TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyAllowAsync)
@@ -2637,11 +2632,6 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnoreAsync)
     Util::sleep(0.5);
     // Make sure we don't intercept the iframe.
     EXPECT_FALSE(authorizationPerformed);
-#if PLATFORM(MAC)
-    EXPECT_TRUE(policyForAppSSOPerformed);
-#else
-    EXPECT_FALSE(policyForAppSSOPerformed);
-#endif
 }
 
 TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
