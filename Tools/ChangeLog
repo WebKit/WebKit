@@ -1,3 +1,9 @@
+2021-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, update my status in contributors.json to reviewer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-07-15  Aakash Jain  <aakash_jain@apple.com>
 
         Add unit-tests for InstallBuiltProduct step
