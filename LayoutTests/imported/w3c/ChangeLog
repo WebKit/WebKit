@@ -1,3 +1,50 @@
+2021-07-15  Ziran Sun  <zsun@igalia.com>
+
+        Resync web-platform-tests/css/css-grid tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227901
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-004-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-3-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-3.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-4-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-4.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10-expected.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8-expected.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9-expected.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html: Removed.
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html: Removed.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative.html.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-contribution-negative-margins-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-contribution-negative-margins.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-004.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-005.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-restart-algorithm-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-restart-algorithm.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/w3c-import.log:
+
 2021-07-14  Chris Dumez  <cdumez@apple.com>
 
         Fix type of exceptions thrown in the WebAudio API
