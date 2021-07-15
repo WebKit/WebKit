@@ -1,16 +1,15 @@
-# WebKit with patches
+# WebKit Fork
 
 This is a fork of WebKit used by a new JavaScript bundler. It's not designed for usage outside the bundler.
 
 The changes to WebKit are as follows:
 
-- Many of the locks in the C API are removed. Locking is handled internally by the bundler.
-- `JSString` iterator that exposes the pointer of each nested `JSRopeString`'s underlying buffer to a callback without flattening/allocating an entirely new string. This is useful for native code piping strings from JavaScript to elsewhere, or manually allocating strings outside of `WTF::String`. `console.log` or server-side rendering (when not using streams) are examples.
-- `ExternalStringImpl` now supports static strings. This is somewhat of a hack; the better solution for this case is a script that generates all the static strings at compile time using `NeverDestroyed<StaticStringImpl>`, however need to figure out a way to do that well from Zig.
-- Several additional methods exposed in the C API, such as a fast path for checking string equality from UTF8. In a future version, all the changes to the C API should be removed in place of a new API that looks more like WebCore but with C bindings.
-- `OptionsJSC.cmake` changes to always build with debug symbols, amongst other things.
+- The locks in the C API are removed. Locking is handled internally by the bundler.
 
-Still need to figure out how to get the remote inspector to work.
+The planned changes to WebKit are as follows:
+
+- Support `import` statements and expressions from the C API
+- Zero-allocation string reading/writing for the C API
 
 ---
 
