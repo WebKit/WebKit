@@ -1220,7 +1220,7 @@ webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-i
 
 webkit.org/b/219516 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
 
-webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Pass ]
+[ BigSur Release ] webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Pass ImageOnlyFailure ]
 webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
