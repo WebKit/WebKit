@@ -1,5 +1,19 @@
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
+        FetchResponse.formData() should reject promise with a TypeError if the body is null
+        https://bugs.webkit.org/show_bug.cgi?id=228007
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/fetch/api/request/request-consume-empty.any-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-empty.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.any.worker-expected.txt:
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
         Sync XHR 'load' event is always has total/loaded=0
         https://bugs.webkit.org/show_bug.cgi?id=228004
 

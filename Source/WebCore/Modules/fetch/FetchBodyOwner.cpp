@@ -186,7 +186,7 @@ void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
     }
 
     if (isBodyNullOrOpaque()) {
-        promise->reject();
+        promise->reject(TypeError);
         return;
     }
     if (isDisturbedOrLocked()) {
