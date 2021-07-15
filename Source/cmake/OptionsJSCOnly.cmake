@@ -54,15 +54,6 @@ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
 endif ()
 
 
-if (APPLE)
-    
-    # SET_AND_EXPOSE_TO_BUILD(USE_FOUNDATION TRUE)
-    # SET_AND_EXPOSE_TO_BUILD(USE_CF TRUE)
-    # SET_AND_EXPOSE_TO_BUILD(USE_CF_RETAIN_PTR TRUE)
-    # SET_AND_EXPOSE_TO_BUILD(USE_EXPORT_MACROS TRUE)
-    # SET_AND_EXPOSE_TO_BUILD(USE_APPLE_INTERNAL_SDK TRUE)
-endif ()
-
 
 # FIXME: JSCOnly on WIN32 seems to only work with fully static build
 # https://bugs.webkit.org/show_bug.cgi?id=172862
