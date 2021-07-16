@@ -1398,3 +1398,5 @@ webkit.org/b/227874 [ BigSur Release ] fullscreen/full-screen-remove-children.ht
 webkit.org/b/227890 fast/canvas/canvas-path-addPath.html [ Pass Timeout ]
 
 webkit.org/b/227881 fast/canvas/canvas-overloads-strokeText.html [ Pass Crash ]
+
+webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Failure Timeout ]

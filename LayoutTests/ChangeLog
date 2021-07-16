@@ -1,3 +1,12 @@
+2021-07-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [MacOS wk2] inspector/canvas/setShaderProgramHighlighted.html is flaky failing and timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=228030
+
+        Unreviewed test gardeing.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-16  Truitt Savell  <tsavell@apple.com>
 
         Modify expectations for media/modern-media-controls/overflow-support/chapters.html
