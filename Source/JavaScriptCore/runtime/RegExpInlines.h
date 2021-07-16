@@ -27,6 +27,7 @@
 #include "Yarr.h"
 #include "YarrInterpreter.h"
 #include "YarrJIT.h"
+#include "YarrMatchingContextHolder.h"
 
 #define REGEXP_FUNC_TEST_DATA_GEN 0
 
@@ -131,7 +132,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     if (m_state == JITCode) {
         {
             ASSERT(m_regExpJITCode);
-            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode.get(), matchFrom);
+            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode.get(), this, matchFrom);
 
             if (s.is8Bit())
                 result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), offsetVector, regExpContext).start;
@@ -144,7 +145,10 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
             byteCodeCompileIfNecessary(&vm);
             if (m_state == ParseError)
                 return throwError();
-            result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
+            {
+                Yarr::MatchingContextHolder regExpContext(vm, nullptr, this, matchFrom);
+                result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
+            }
         }
 
 #if ENABLE(YARR_JIT_DEBUG)
@@ -157,7 +161,10 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
 #endif
     } else
 #endif
+    {
+        Yarr::MatchingContextHolder regExpContext(vm, nullptr, this, matchFrom);
         result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
+    }
 
     // FIXME: The YARR engine should handle unsigned or size_t length matches.
     // The YARR Interpreter is "unsigned" clean, while the YARR JIT hasn't been addressed.
@@ -255,12 +262,11 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
         return throwError();
 
 #if ENABLE(YARR_JIT)
-    MatchResult result;
-
     if (m_state == JITCode) {
+        MatchResult result;
         {
             ASSERT(m_regExpJITCode);
-            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode.get(), matchFrom);
+            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode.get(), this, matchFrom);
 
             if (s.is8Bit())
                 result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), regExpContext);
@@ -284,19 +290,23 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
 
     int offsetVectorSize = (m_numSubpatterns + 1) * 2;
     int* offsetVector;
+    int result;
     Vector<int, 32> nonReturnedOvector;
     nonReturnedOvector.grow(offsetVectorSize);
     offsetVector = nonReturnedOvector.data();
-    int r = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
+    {
+        Yarr::MatchingContextHolder regExpContext(vm, nullptr, this, matchFrom);
+        result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
+    }
 #if REGEXP_FUNC_TEST_DATA_GEN
     RegExpFunctionalTestCollector::get()->outputOneTest(this, s, startOffset, offsetVector, result);
 #endif
 
-    if (r >= 0) {
+    if (result >= 0) {
 #if ENABLE(REGEXP_TRACING)
         m_rtMatchOnlyFoundCount++;
 #endif
-        return MatchResult(r, reinterpret_cast<unsigned*>(offsetVector)[1]);
+        return MatchResult(result, reinterpret_cast<unsigned*>(offsetVector)[1]);
     }
 
     return MatchResult::failed();

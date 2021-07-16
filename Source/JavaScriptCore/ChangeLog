@@ -1,5 +1,140 @@
 2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] SamplingProfiler should recognize RegExp execution
+        https://bugs.webkit.org/show_bug.cgi?id=201702
+
+        Reviewed by Saam Barati.
+
+        This patch extends SamplingProfiler to recognize RegExp execution. We record
+        executing RegExp in VM via MatchingContextHolder so that SamplingProfiler can detect it.
+        We use MatchingContextHolder even if the RegExp is interpreter mode so that we can still
+        catch non-JIT RegExp in SamplingProfiler.
+
+        The example output is the following.
+
+            Sampling rate: 1000.000000 microseconds. Total samples: 1830
+            Top functions as <numSamples  'functionName#hash:sourceID'>
+               466    'Exec#<nil>:4'
+               225    '/(^|[^\\])\"\\\/Qngr\((-?[0-9]+)\)\\\/\"/g#<nil>:-1'
+               173    'runBlock1#<nil>:4'
+                88    '/NQ_VQ/g#<nil>:-1'
+                83    '/d2/g#<nil>:-1'
+                78    '/d1/g#<nil>:-1'
+                70    '/\s?;\s?/#<nil>:-1'
+                68    'replace#<nil>:3'
+                50    '/(((\w+):\/\/)([^\/:]*)(:(\d+))?)?([^#?]*)(\?([^#]*))?(#(.*))?/#<nil>:-1'
+                49    'runBlock0#<nil>:4'
+                46    '#<nil>:-1'
+                24    '/^\s*|\s*$/g#<nil>:-1'
+
+
+            Sampling rate: 1000.000000 microseconds. Total samples: 1830
+
+            Tier breakdown:
+            -----------------------------------
+            LLInt:                    13  (0.710383%)
+            Baseline:                 54  (2.950820%)
+            DFG:                     187  (10.218579%)
+            FTL:                     612  (33.442623%)
+            js builtin:               73  (3.989071%)
+            Wasm:                      0  (0.000000%)
+            Host:                      0  (0.000000%)
+            RegExp:                  907  (49.562842%)
+            C/C++:                     0  (0.000000%)
+            Unknown Executable:       57  (3.114754%)
+
+
+            Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>
+               378    'Exec#<nil>:FTL:bc#27'
+               225    '/(^|[^\\])\"\\\/Qngr\((-?[0-9]+)\)\\\/\"/g#<nil>:RegExp:<nil>'
+                88    '/NQ_VQ/g#<nil>:RegExp:<nil>'
+                83    '/d2/g#<nil>:RegExp:<nil>'
+                78    '/d1/g#<nil>:RegExp:<nil>'
+                70    '/\s?;\s?/#<nil>:RegExp:<nil>'
+                62    'replace#<nil>:FTL:bc#63'
+                53    'Exec#<nil>:DFG:bc#27'
+                50    '/(((\w+):\/\/)([^\/:]*)(:(\d+))?)?([^#?]*)(\?([^#]*))?(#(.*))?/#<nil>:RegExp:<nil>'
+                46    '#<nil>:None:<nil>'
+                42    'runBlock1#<nil>:FTL:bc#1795'
+                29    'runBlock1#<nil>:FTL:bc#1849'
+                29    'runBlock1#<nil>:FTL:bc#1741'
+                24    '/^\s*|\s*$/g#<nil>:RegExp:<nil>'
+                17    'runBlock1#<nil>:DFG:bc#1741'
+                17    'runBlock1#<nil>:DFG:bc#1795'
+                16    '/\b\w+\b/g#<nil>:RegExp:<nil>'
+                14    '/TNQP=([^;]*)/i#<nil>:RegExp:<nil>'
+                13    '/%\w?$/#<nil>:RegExp:<nil>'
+                12    '/^ba/#<nil>:RegExp:<nil>'
+                11    '/^\s*(\S*(\s+\S+)*)\s*$/#<nil>:RegExp:<nil>'
+                10    'runBlock0#<nil>:FTL:bc#400'
+                10    'runBlock1#<nil>:DFG:bc#1849'
+                10    'Exec#<nil>:DFG:bc#16'
+                 9    '/(?:ZFVR.(\d+\.\d+))|(?:(?:Sversbk|TenaCnenqvfb|Vprjrnfry).(\d+\.\d+))|(?:Bcren.(\d+\.\d+))|(?:NccyrJroXvg.(\d+(?:\.\d+)?))/#<nil>:RegExp:<nil>'
+                 8    '/##yv18##/gi#<nil>:RegExp:<nil>'
+                 8    '/([a-zA-Z]|\s)+/#<nil>:RegExp:<nil>'
+                 7    '/JroXvg\/(\S+)/#<nil>:RegExp:<nil>'
+                 7    'runBlock0#<nil>:FTL:bc#2671'
+                 7    '/^([#.]?)((?:[\w\u0128-\uffff*_-]|\\.)*)/#<nil>:RegExp:<nil>'
+                 6    '/##oe##/gi#<nil>:RegExp:<nil>'
+                 6    'runBlock1#<nil>:FTL:bc#124'
+                 6    '/[+, ]/#<nil>:RegExp:<nil>'
+                 6    'runBlock1#<nil>:FTL:bc#1903'
+                 6    'replace#<nil>:DFG:bc#63'
+                 5    'runBlock0#<nil>:FTL:bc#3378'
+                 5    '/'/g#<nil>:RegExp:<nil>'
+                 5    '/##yv20##/gi#<nil>:RegExp:<nil>'
+                 4    '/\?[\w\W]*(sevraqvq|punaaryvq|tebhcvq)=([^\&\?#]*)/i#<nil>:RegExp:<nil>'
+                 4    'load#<nil>:None:<nil>'
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::matchCompareWithInterpreter):
+        (JSC::RegExp::dumpToStream):
+        (JSC::appendLineTerminatorEscape<LChar>):
+        (JSC::appendLineTerminatorEscape<UChar>):
+        (JSC::escapePattern):
+        (JSC::RegExp::escapedPattern const): Moved from RegExpPrototype.cpp to implement RegExp::toSourceString and RegExp::escapedPattern.
+        (JSC::RegExp::toSourceString const):
+        (JSC::regexpToSourceString): Deleted.
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::appendLineTerminatorEscape<LChar>): Deleted.
+        (JSC::appendLineTerminatorEscape<UChar>): Deleted.
+        (JSC::regExpProtoGetterSourceInternal): Deleted.
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+        (JSC::SamplingProfiler::StackFrame::functionStartLine):
+        (JSC::SamplingProfiler::StackFrame::functionStartColumn):
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::StackFrame::url):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        (WTF::printInternal):
+        * runtime/SamplingProfiler.h:
+        * runtime/VM.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::MatchingContextHolder::MatchingContextHolder): Deleted.
+        (JSC::Yarr::MatchingContextHolder::~MatchingContextHolder): Deleted.
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::MatchingContextHolder::offsetOfStackLimit): Deleted.
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBuffer): Deleted.
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBufferSize): Deleted.
+        * yarr/YarrMatchingContextHolder.h: Added.
+        (JSC::Yarr::MatchingContextHolder::offsetOfStackLimit):
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBuffer):
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBufferSize):
+        (JSC::Yarr::MatchingContextHolder::MatchingContextHolder):
+        (JSC::Yarr::MatchingContextHolder::~MatchingContextHolder):
+
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Harden defaultTimeZone retrieval
         https://bugs.webkit.org/show_bug.cgi?id=227996
         rdar://80540300

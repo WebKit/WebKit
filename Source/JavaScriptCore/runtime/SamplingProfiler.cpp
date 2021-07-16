@@ -366,6 +366,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             CallFrame* callFrame;
             void* machinePC;
             bool topFrameIsLLInt = false;
+            RegExp* regExp = nullptr;
             void* llintPC;
             {
                 PlatformRegisters registers;
@@ -385,16 +386,16 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761
             if (ExecutableAllocator::singleton().isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
-                if (m_vm.isExecutingInRegExpJIT) {
-                    // FIXME: We're executing a regexp. Lets gather more intersting data.
-                    // https://bugs.webkit.org/show_bug.cgi?id=152729
+                regExp = m_vm.m_executingRegExp;
+                if (regExp)
                     callFrame = m_vm.topCallFrame; // We need to do this or else we'd fail our backtrace validation b/c this isn't a JS frame.
-                }
             } else if (LLInt::isLLIntPC(machinePC)) {
                 topFrameIsLLInt = true;
                 // We're okay to take a normal stack trace when the PC
                 // is in LLInt code.
             } else {
+                // RegExp evaluation is leaf. So if RegExp evaluation exists, we can say it is RegExp evaluation is the top user-visible frame.
+                regExp = m_vm.m_executingRegExp;
                 // We resort to topCallFrame to see if we can get anything
                 // useful. We usually get here when we're executing C code.
                 callFrame = m_vm.topCallFrame;
@@ -434,7 +435,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
                     stackTrace.uncheckedAppend(frame);
                 }
 
-                m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, WTFMove(stackTrace) });
+                m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, regExp, WTFMove(stackTrace) });
 
                 if (didRunOutOfVectorSpace)
                     m_currentFrames.grow(m_currentFrames.size() * 1.25);
@@ -592,7 +593,14 @@ void SamplingProfiler::processUnverifiedStackTraces()
         // Prepend the top-most inlined frame if needed and gather
         // location information about where the top frame is executing.
         size_t startIndex = 0;
-        if (unprocessedStackTrace.frames.size() && !!unprocessedStackTrace.frames[0].verifiedCodeBlock) {
+        if (unprocessedStackTrace.regExp) {
+            // If the stack-trace is annotated with RegExp, the top-frame must be RegExp since RegExp evaluation is leaf function.
+            appendEmptyFrame();
+            stackTrace.frames.last().regExp = unprocessedStackTrace.regExp;
+            stackTrace.frames.last().frameType = FrameType::RegExp;
+            stackTrace.frames.last().semanticLocation.isRegExp = true;
+            m_liveCellPointers.add(unprocessedStackTrace.regExp);
+        } else if (!unprocessedStackTrace.frames.isEmpty() && !!unprocessedStackTrace.frames[0].verifiedCodeBlock) {
             CodeBlock* topCodeBlock = unprocessedStackTrace.frames[0].verifiedCodeBlock;
             if (unprocessedStackTrace.topFrameIsLLInt) {
                 // We reuse LLInt CodeBlocks for the baseline JIT, so we need to check for both jit types.
@@ -735,8 +743,11 @@ void SamplingProfiler::clearData()
 
 String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
 {
-    if (!callee)
+    if (!callee) {
+        if (regExp)
+            return regExp->toSourceString();
         return String();
+    }
 
     DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -782,11 +793,15 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         }
 #endif
         return "(unknown C PC)"_s;
+
     case FrameType::Unknown:
         return "(unknown)"_s;
 
     case FrameType::Host:
         return "(host)"_s;
+
+    case FrameType::RegExp:
+        return "(regexp)"_s;
 
     case FrameType::Wasm:
 #if ENABLE(WEBASSEMBLY)
@@ -825,6 +840,9 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
     case FrameType::Unknown:
     case FrameType::C:
         return "(unknown)"_s;
+
+    case FrameType::RegExp:
+        return "(regexp)"_s;
 
     case FrameType::Host:
         return "(host)"_s;
@@ -866,6 +884,7 @@ int SamplingProfiler::StackFrame::functionStartLine()
     switch (frameType) {
     case FrameType::Unknown:
     case FrameType::Host:
+    case FrameType::RegExp:
     case FrameType::C:
     case FrameType::Wasm:
         return -1;
@@ -884,6 +903,7 @@ unsigned SamplingProfiler::StackFrame::functionStartColumn()
     switch (frameType) {
     case FrameType::Unknown:
     case FrameType::Host:
+    case FrameType::RegExp:
     case FrameType::C:
     case FrameType::Wasm:
         return std::numeric_limits<unsigned>::max();
@@ -903,6 +923,7 @@ intptr_t SamplingProfiler::StackFrame::sourceID()
     switch (frameType) {
     case FrameType::Unknown:
     case FrameType::Host:
+    case FrameType::RegExp:
     case FrameType::C:
     case FrameType::Wasm:
         return internalSourceID;
@@ -922,6 +943,7 @@ String SamplingProfiler::StackFrame::url()
     switch (frameType) {
     case FrameType::Unknown:
     case FrameType::Host:
+    case FrameType::RegExp:
     case FrameType::C:
     case FrameType::Wasm:
         return emptyString();
@@ -1115,6 +1137,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     String builtin = "js builtin"_s;
     String wasm = "Wasm"_s;
     String host = "Host"_s;
+    String regexp = "RegExp"_s;
     String cpp = "C/C++"_s;
     String unknownFrame = "Unknown Frame"_s;
     String unknownExecutable = "Unknown Executable"_s;
@@ -1127,6 +1150,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         func(builtin);
         func(wasm);
         func(host);
+        func(regexp);
         func(cpp);
         func(unknownFrame);
         func(unknownExecutable);
@@ -1143,21 +1167,23 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
             if (location.hasBytecodeIndex())
                 bytecodeIndex = toString(location.bytecodeIndex);
             else
-                bytecodeIndex = "<nil>";
+                bytecodeIndex = "<nil>"_s;
 
             if (location.hasCodeBlockHash()) {
                 StringPrintStream stream;
                 location.codeBlockHash.dump(stream);
                 codeBlockHash = stream.toString();
             } else
-                codeBlockHash = "<nil>";
+                codeBlockHash = "<nil>"_s;
 
             if (wasmCompilationMode)
                 jitType = Wasm::makeString(wasmCompilationMode.value());
+            else if (location.isRegExp)
+                jitType = "RegExp"_s;
             else
                 jitType = JITCode::typeName(location.jitType);
 
-            return makeString("#", codeBlockHash, ":", jitType, ":", bytecodeIndex);
+            return makeString('#', codeBlockHash, ':', jitType, ':', bytecodeIndex);
         };
 
         StackFrame& frame = stackTrace.frames.first();
@@ -1206,6 +1232,9 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
                 break;
             case SamplingProfiler::FrameType::Host:
                 tierName = host;
+                break;
+            case SamplingProfiler::FrameType::RegExp:
+                tierName = regexp;
                 break;
             case SamplingProfiler::FrameType::C:
                 tierName = cpp;
@@ -1290,6 +1319,9 @@ void printInternal(PrintStream& out, SamplingProfiler::FrameType frameType)
         break;
     case SamplingProfiler::FrameType::Host:
         out.print("Host");
+        break;
+    case SamplingProfiler::FrameType::RegExp:
+        out.print("RegExp");
         break;
     case SamplingProfiler::FrameType::C:
     case SamplingProfiler::FrameType::Unknown:

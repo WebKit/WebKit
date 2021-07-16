@@ -34,7 +34,9 @@ function updateCallingContextTree(root) {
     }
 }
 
-function doesTreeHaveStackTrace(tree, stackTrace, isRunFromRunTest = true, verbose = false) {
+const VERBOSE = false;
+
+function doesTreeHaveStackTrace(tree, stackTrace, isRunFromRunTest = true) {
     // stack trace should be top-down array with the deepest
     // call frame at index 0.
     if (isRunFromRunTest)
@@ -46,8 +48,10 @@ function doesTreeHaveStackTrace(tree, stackTrace, isRunFromRunTest = true, verbo
     for (let i = stackTrace.length; i--; ) {
         node = node.children[stackTrace[i]];
         if (!node) {
-            if (verbose)
+            if (VERBOSE) {
                 print("failing on " + i + " : " + stackTrace[i]);
+                print(JSON.stringify(tree));
+            }
             return false;
         }
     }
@@ -60,7 +64,6 @@ function makeTree() {
     return root;
 }
 
-const VERBOSE = false;
 // This test suite assumes that "runTest" is being called
 // from the global scope.
 function runTest(func, stackTrace) {

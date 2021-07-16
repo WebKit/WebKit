@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@ class ExecutablePool;
 
 namespace Yarr {
 
+class MatchingContextHolder;
 class YarrCodeBlock;
 
 enum class JITFailureReason : uint8_t {
@@ -53,27 +54,6 @@ enum class JITFailureReason : uint8_t {
     FixedCountParenthesizedSubpattern,
     ParenthesisNestedTooDeep,
     ExecutableMemoryAllocationFailure,
-};
-
-class MatchingContextHolder {
-    WTF_FORBID_HEAP_ALLOCATION;
-public:
-    MatchingContextHolder(VM&, YarrCodeBlock*, MatchFrom matchFrom = MatchFrom::VMThread);
-    ~MatchingContextHolder();
-
-    static ptrdiff_t offsetOfStackLimit() { return OBJECT_OFFSETOF(MatchingContextHolder, m_stackLimit); }
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    static ptrdiff_t offsetOfPatternContextBuffer() { return OBJECT_OFFSETOF(MatchingContextHolder, m_patternContextBuffer); }
-    static ptrdiff_t offsetOfPatternContextBufferSize() { return OBJECT_OFFSETOF(MatchingContextHolder, m_patternContextBufferSize); }
-#endif
-
-private:
-    VM& m_vm;
-    void* m_stackLimit;
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    void* m_patternContextBuffer { nullptr };
-    unsigned m_patternContextBufferSize { 0 };
-#endif
 };
 
 #if CPU(ARM64E)

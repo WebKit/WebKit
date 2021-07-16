@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -136,6 +136,10 @@ public:
     DECLARE_INFO;
 
     RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
+
+    String escapedPattern() const;
+
+    String toSourceString() const;
 
 private:
     friend class RegExpCache;

@@ -32,6 +32,7 @@
 #include "Yarr.h"
 #include "YarrCanonicalize.h"
 #include "YarrDisassembler.h"
+#include "YarrMatchingContextHolder.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Threading.h>
 
@@ -43,34 +44,6 @@ namespace JSC { namespace Yarr {
 #if CPU(ARM64E)
 JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToYarrJITAfter, vmEntryToYarrJITAfter);
 #endif
-
-MatchingContextHolder::MatchingContextHolder(VM& vm, YarrCodeBlock* yarrCodeBlock, MatchFrom matchFrom)
-    : m_vm(vm)
-{
-    if (matchFrom == MatchFrom::VMThread)
-        m_stackLimit = vm.softStackLimit();
-    else {
-        StackBounds stack = Thread::current().stack();
-        m_stackLimit = stack.recursionLimit(Options::reservedZoneSize());
-    }
-
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    if (yarrCodeBlock->usesPatternContextBuffer()) {
-        m_patternContextBuffer = m_vm.acquireRegExpPatternContexBuffer();
-        m_patternContextBufferSize = VM::patternContextBufferSize;
-    }
-#else
-    UNUSED_PARAM(yarrCodeBlock);
-#endif
-}
-
-MatchingContextHolder::~MatchingContextHolder()
-{
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    if (m_patternContextBuffer)
-        m_vm.releaseRegExpPatternContexBuffer();
-#endif
-}
 
 template<YarrJITCompileMode compileMode>
 class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
@@ -3771,14 +3744,10 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 #elif CPU(MIPS)
         // Do nothing.
 #endif
-
-        store8(TrustedImm32(1), &m_vm->isExecutingInRegExpJIT);
     }
 
     void generateReturn()
     {
-        store8(TrustedImm32(0), &m_vm->isExecutingInRegExpJIT);
-
 #if CPU(X86_64)
 #if OS(WINDOWS)
         // Store the return value in the allocated space pointed by rcx.
@@ -3821,7 +3790,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 #elif CPU(MIPS)
         // Do nothing
 #endif
-
 #if CPU(ARM64E)
         if (Options::useJITCage())
             farJump(TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToYarrJITAfter)), OperationPtrTag);

@@ -217,6 +217,9 @@ class Database;
 namespace DOMJIT {
 class Signature;
 }
+namespace Yarr {
+class MatchingContextHolder;
+}
 
 struct EntryFrame;
 struct HashTable;
@@ -983,7 +986,7 @@ public:
     const Instruction* targetInterpreterPCForThrow;
     uint32_t osrExitIndex;
     void* osrExitJumpDestination;
-    bool isExecutingInRegExpJIT { false };
+    RegExp* m_executingRegExp { nullptr };
 
     // The threading protocol here is as follows:
     // - You can call scratchBufferForSize from any thread.

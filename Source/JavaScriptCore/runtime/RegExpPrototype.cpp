@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2020 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,6 @@
 #include "JSCJSValue.h"
 #include "JSGlobalObject.h"
 #include "JSStringInlines.h"
-#include "Lexer.h"
 #include "RegExpObject.h"
 #include "RegExpObjectInlines.h"
 #include "StringRecursionChecker.h"
@@ -339,113 +338,6 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterFlags, (JSGlobalObject* globalObject, 
     return JSValue::encode(jsString(vm, flags.data()));
 }
 
-template <typename CharacterType>
-static inline void appendLineTerminatorEscape(StringBuilder&, CharacterType);
-
-template <>
-inline void appendLineTerminatorEscape<LChar>(StringBuilder& builder, LChar lineTerminator)
-{
-    if (lineTerminator == '\n')
-        builder.append('n');
-    else
-        builder.append('r');
-}
-
-template <>
-inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar lineTerminator)
-{
-    if (lineTerminator == '\n')
-        builder.append('n');
-    else if (lineTerminator == '\r')
-        builder.append('r');
-    else if (lineTerminator == 0x2028)
-        builder.append("u2028");
-    else
-        builder.append("u2029");
-}
-
-template <typename CharacterType>
-static inline JSValue regExpProtoGetterSourceInternal(JSGlobalObject* globalObject, const String& pattern, const CharacterType* characters, unsigned length)
-{
-    VM& vm = globalObject->vm();
-    bool previousCharacterWasBackslash = false;
-    bool inBrackets = false;
-    bool shouldEscape = false;
-
-    // 15.10.6.4 specifies that RegExp.prototype.toString must return '/' + source + '/',
-    // and also states that the result must be a valid RegularExpressionLiteral. '//' is
-    // not a valid RegularExpressionLiteral (since it is a single line comment), and hence
-    // source cannot ever validly be "". If the source is empty, return a different Pattern
-    // that would match the same thing.
-    if (!length)
-        return jsNontrivialString(vm, "(?:)"_s);
-
-    // early return for strings that don't contain a forwards slash and LineTerminator
-    for (unsigned i = 0; i < length; ++i) {
-        CharacterType ch = characters[i];
-        if (!previousCharacterWasBackslash) {
-            if (inBrackets) {
-                if (ch == ']')
-                    inBrackets = false;
-            } else {
-                if (ch == '/') {
-                    shouldEscape = true;
-                    break;
-                }
-                if (ch == '[')
-                    inBrackets = true;
-            }
-        }
-
-        if (Lexer<CharacterType>::isLineTerminator(ch)) {
-            shouldEscape = true;
-            break;
-        }
-
-        if (previousCharacterWasBackslash)
-            previousCharacterWasBackslash = false;
-        else
-            previousCharacterWasBackslash = ch == '\\';
-    }
-
-    if (!shouldEscape)
-        return jsString(vm, pattern);
-
-    previousCharacterWasBackslash = false;
-    inBrackets = false;
-    StringBuilder result;
-    for (unsigned i = 0; i < length; ++i) {
-        CharacterType ch = characters[i];
-        if (!previousCharacterWasBackslash) {
-            if (inBrackets) {
-                if (ch == ']')
-                    inBrackets = false;
-            } else {
-                if (ch == '/')
-                    result.append('\\');
-                else if (ch == '[')
-                    inBrackets = true;
-            }
-        }
-
-        // escape LineTerminator
-        if (Lexer<CharacterType>::isLineTerminator(ch)) {
-            if (!previousCharacterWasBackslash)
-                result.append('\\');
-
-            appendLineTerminatorEscape<CharacterType>(result, ch);
-        } else
-            result.append(ch);
-
-        if (previousCharacterWasBackslash)
-            previousCharacterWasBackslash = false;
-        else
-            previousCharacterWasBackslash = ch == '\\';
-    }
-
-    return jsString(vm, result.toString());
-}
-
 JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSource, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -459,10 +351,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSource, (JSGlobalObject* globalObject,
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.source getter can only be called on a RegExp object"_s);
     }
 
-    String pattern = regexp->regExp()->pattern();
-    if (pattern.is8Bit())
-        return JSValue::encode(regExpProtoGetterSourceInternal(globalObject, pattern, pattern.characters8(), pattern.length()));
-    return JSValue::encode(regExpProtoGetterSourceInternal(globalObject, pattern, pattern.characters16(), pattern.length()));
+    return JSValue::encode(jsString(vm, regexp->regExp()->escapedPattern()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSearchFast, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -1,5 +1,20 @@
 2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] SamplingProfiler should recognize RegExp execution
+        https://bugs.webkit.org/show_bug.cgi?id=201702
+
+        Reviewed by Saam Barati.
+
+        * stress/sampling-profiler-regexp.js: Added.
+        (platformSupportsSamplingProfiler.getText):
+        (platformSupportsSamplingProfiler.test):
+        (platformSupportsSamplingProfiler.baz):
+        (platformSupportsSamplingProfiler):
+        * stress/sampling-profiler/samplingProfiler.js: Extend samplingProfiler to show better error information when VERBOSE = true.
+        (doesTreeHaveStackTrace):
+
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Harden defaultTimeZone retrieval
         https://bugs.webkit.org/show_bug.cgi?id=227996
 
