@@ -1023,6 +1023,11 @@ WebCore::Color PageClientImpl::contentViewBackgroundColor()
     return [m_contentView backgroundColor].CGColor;
 }
 
+void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
+{
+    [m_contentView _scrollToRect:targetRect withOrigin:origin minimumScrollDistance:0];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

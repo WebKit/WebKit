@@ -2570,6 +2570,11 @@ void WebViewImpl::updateTitlebarAdjacencyState()
 
 #endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 
+void WebViewImpl::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin)
+{
+    m_page->scrollToRect(targetRect, origin);
+}
+
 NSView *WebViewImpl::hitTest(CGPoint point)
 {
     NSView *hitView = [m_view _web_superHitTest:NSPointFromCGPoint(point)];

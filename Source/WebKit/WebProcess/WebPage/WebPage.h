@@ -1133,6 +1133,8 @@ public:
 
     bool alwaysShowsHorizontalScroller() const { return m_alwaysShowsHorizontalScroller; };
     bool alwaysShowsVerticalScroller() const { return m_alwaysShowsVerticalScroller; };
+    
+    void scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin);
 
     void setMinimumSizeForAutoLayout(const WebCore::IntSize&);
     WebCore::IntSize minimumSizeForAutoLayout() const { return m_minimumSizeForAutoLayout; }

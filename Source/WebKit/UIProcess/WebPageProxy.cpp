@@ -10753,6 +10753,16 @@ void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProx
 }
 #endif
 
+void WebPageProxy::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
+{
+    pageClient().requestScrollToRect(targetRect, origin);
+}
+
+void WebPageProxy::scrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
+{
+    send(Messages::WebPage::ScrollToRect(targetRect, origin));
+}
+
 #if PLATFORM(COCOA)
 void WebPageProxy::appPrivacyReportTestingData(CompletionHandler<void(const AppPrivacyReportTestingData&)>&& completionHandler)
 {

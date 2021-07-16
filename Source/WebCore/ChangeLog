@@ -1,3 +1,46 @@
+2021-07-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Pipe App Highlight scrolling through UI Process in preparation for Note Overlay avoidance.
+        https://bugs.webkit.org/show_bug.cgi?id=227914
+
+        Reviewed by Tim Horton.
+
+        In order to correctly avoid the note overlay that can potentially obscure the web view,
+        we need to pipe the scrolling through the UI process. This patch does that work
+        and will be followed up shortly by one that does the actual work of overlay avoidance.
+        For iOS, this just uses the main frame UI Scrolling that we already use, but for 
+        mac, we need to do the last scroll in the web process after adjusting it with the overlay 
+        information.
+
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::AppHighlightStorage::attemptToRestoreHighlightAndScroll):
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView):
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::setSelection):
+        * editing/Editor.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveWithoutValidationTo):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::updateAndRevealSelection):
+        (WebCore::FrameSelection::revealSelection):
+        * editing/FrameSelection.h:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scrollMainFrameToRevealRect const):
+        (WebCore::Chrome::scrollRectIntoView const): Deleted.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scrollMainFrameToRevealRect const):
+        (WebCore::ChromeClient::scrollRectIntoView const): Deleted.
+        * page/ScrollBehavior.cpp:
+        (WebCore::useSmoothScrolling):
+        * page/ScrollBehavior.h:
+        * platform/ScrollTypes.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        * rendering/RenderLayer.h:
+
 2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK][WPE] Support color-schemes CSS property

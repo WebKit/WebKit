@@ -145,6 +145,7 @@ public:
 #endif
 
     void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final { }
+    void scrollMainFrameToRevealRect(const WebCore::IntRect&) const final { }
 
 #if ENABLE(VIDEO)
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;

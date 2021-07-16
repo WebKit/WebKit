@@ -546,6 +546,8 @@ public:
     void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);
 
     void didRestoreScrollPosition();
+    
+    void scrollToRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
 
     void setTotalHeightOfBanners(CGFloat totalHeightOfBanners) { m_totalHeightOfBanners = totalHeightOfBanners; }
     CGFloat totalHeightOfBanners() const { return m_totalHeightOfBanners; }

@@ -510,6 +510,8 @@ messages -> WebPageProxy {
 #endif
 
     DidRestoreScrollPosition()
+    
+    RequestScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
     GetLoadDecisionForIcon(struct WebCore::LinkIcon icon, WebKit::CallbackID callbackID)
 

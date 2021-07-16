@@ -164,6 +164,7 @@ class EmptyChromeClient : public ChromeClient {
     void setCursorHiddenUntilMouseMoves(bool) final { }
 
     void scrollContainingScrollViewsToRevealRect(const IntRect&) const final { }
+    void scrollMainFrameToRevealRect(const IntRect&) const final { }
 
     void attachRootGraphicsLayer(Frame&, GraphicsLayer*) final { }
     void attachViewOverlayGraphicsLayer(GraphicsLayer*) final { }

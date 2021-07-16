@@ -1,3 +1,44 @@
+2021-07-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Pipe App Highlight scrolling through UI Process in preparation for Note Overlay avoidance.
+        https://bugs.webkit.org/show_bug.cgi?id=227914
+
+        Reviewed by Tim Horton.
+
+        In order to correctly avoid the note overlay that can potentially obscure the web view,
+        we need to pipe the scrolling through the UI process. This patch does that work
+        and will be followed up shortly by one that does the actual work of overlay avoidance.
+        For iOS, this just uses the main frame UI Scrolling that we already use, but for 
+        mac, we need to do the last scroll in the web process after adjusting it with the overlay 
+        information. 
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestScrollToRect):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::requestScrollToRect):
+        (WebKit::WebPageProxy::scrollToRect):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::scrollToRect):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestScrollToRect):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestScrollToRect):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scrollMainFrameToRevealRect const):
+        (WebKit::WebChromeClient::scrollRectIntoView const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::scrollToRect):
+
 2021-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] PSON: accessibility doesn't work after a cross site navigation

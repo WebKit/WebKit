@@ -139,6 +139,11 @@ void Chrome::scrollContainingScrollViewsToRevealRect(const IntRect& rect) const
     m_client.scrollContainingScrollViewsToRevealRect(rect);
 }
 
+void Chrome::scrollMainFrameToRevealRect(const IntRect& rect) const
+{
+    m_client.scrollMainFrameToRevealRect(rect);
+}
+
 void Chrome::setWindowRect(const FloatRect& rect) const
 {
     m_client.setWindowRect(rect);

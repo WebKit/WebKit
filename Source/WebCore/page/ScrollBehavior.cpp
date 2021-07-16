@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-bool useSmoothScrolling(ScrollBehavior behavior, Element* associatedElement, SmoothScrollFeatureEnablement overrideFeatureEnablement)
+bool useSmoothScrolling(ScrollBehavior behavior, Element* associatedElement)
 {
     if (!associatedElement)
         return false;
@@ -43,7 +43,7 @@ bool useSmoothScrolling(ScrollBehavior behavior, Element* associatedElement, Smo
     if (associatedElement == associatedElement->document().scrollingElement())
         associatedElement = associatedElement->document().documentElement();
 
-    if (!associatedElement->renderer() || (overrideFeatureEnablement == SmoothScrollFeatureEnablement::Default && !associatedElement->document().settings().CSSOMViewSmoothScrollingEnabled()))
+    if (!associatedElement->renderer() || !associatedElement->document().settings().CSSOMViewSmoothScrollingEnabled())
         return false;
 
     // https://drafts.csswg.org/cssom-view/#scrolling

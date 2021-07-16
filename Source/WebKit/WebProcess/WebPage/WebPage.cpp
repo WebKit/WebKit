@@ -7679,6 +7679,11 @@ void WebPage::modelElementPreviewDidObtainContextId(const WebCore::ElementContex
 }
 #endif
 
+void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin)
+{
+    mainFrameView()->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

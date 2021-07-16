@@ -97,6 +97,11 @@ void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::In
     notImplemented();
 }
 
+void PageClientImpl::requestScrollToRect(const WebCore::FloatRect&, const WebCore::FloatPoint&)
+{
+    notImplemented();
+}
+
 WebCore::FloatPoint PageClientImpl::viewScrollPosition()
 {
     return { };

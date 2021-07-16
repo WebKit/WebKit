@@ -271,7 +271,7 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
         if (textIndicator)
             m_document->page()->chrome().client().setTextIndicator(textIndicator->data());
         
-        TemporarySelectionChange selectionChange(*strongDocument, { range.value() }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::SmoothScroll, TemporarySelectionOption::OverrideSmoothScrollFeatureEnablment });
+        TemporarySelectionChange selectionChange(*strongDocument, { range.value() }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::SmoothScroll });
     }
 
     return true;
