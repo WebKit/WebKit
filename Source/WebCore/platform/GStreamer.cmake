@@ -46,13 +46,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoCommon.cpp
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.cpp
-        platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoder.cpp
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.cpp
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoFrameLibWebRTC.cpp
         platform/mediastream/libwebrtc/gstreamer/LibWebRTCProviderGStreamer.cpp
         platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp
         platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp
-        platform/mediastream/libwebrtc/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp
         platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp
         platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp
 
@@ -63,8 +61,10 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
+        platform/mediastream/gstreamer/GStreamerVideoEncoder.cpp
         platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp
         platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp
+        platform/mediastream/gstreamer/RealtimeMediaSourceCenterGStreamer.cpp
     )
 
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS

@@ -1,5 +1,35 @@
 2021-07-16  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] RealtimeMediaSourceCenter and VideoEncoder are not libwebrtc-specific
+        https://bugs.webkit.org/show_bug.cgi?id=228020
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Those two are actually not using libwebrtc-related code, so a better place for them is
+        platform/mediastream/gstreamer.
+
+        * platform/GStreamer.cmake:
+        * platform/mediastream/gstreamer/GStreamerVideoEncoder.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoder.cpp.
+        (Encoders::singleton):
+        (Encoders::registerEncoder):
+        (Encoders::definition):
+        (webrtcVideoEncoderGetProperty):
+        (webrtcVideoEncoderSetBitrate):
+        (webrtcVideoEncoderSetEncoder):
+        (webrtcVideoEncoderSetFormat):
+        (webrtcVideoEncoderSetProperty):
+        (setBitrateKbitPerSec):
+        (setBitrateBitPerSec):
+        (webrtcVideoEncoderConstructed):
+        (webkit_webrtc_video_encoder_class_init):
+        * platform/mediastream/gstreamer/GStreamerVideoEncoder.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoder.h.
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterGStreamer.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp.
+        (WebCore::RealtimeMediaSourceCenter::defaultAudioCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultVideoCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultDisplayCaptureFactory):
+
+2021-07-16  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] LibWebRTC files should be in libwebrtc/gstreamer
         https://bugs.webkit.org/show_bug.cgi?id=227991
 
