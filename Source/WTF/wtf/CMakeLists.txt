@@ -388,6 +388,8 @@ set(WTF_PUBLIC_HEADERS
     unicode/UTF8Conversion.h
 
     unicode/icu/ICUHelpers.h
+
+    ForkExtras.h
 )
 
 set(WTF_SOURCES

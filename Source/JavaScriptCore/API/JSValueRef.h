@@ -28,9 +28,24 @@
 
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/WebKitAvailability.h>
+#include <wtf/ForkExtras.h>
 
+#ifdef __cplusplus
+namespace JSC {
+class JSCell;
+class JSString;
+class JSString;
+}
+#define JSCJSCell JSC::JSCell
+#define JSCJSString JSC::JSString
+#define JSCJSString JSC::JSString
+#endif
 #ifndef __cplusplus
 #include <stdbool.h>
+
+typedef struct JSCJSCell JSCJSCell;
+typedef struct JSCJSString JSCJSString;
+typedef struct JSCJSString JSCJSString;
 #endif
 
 /*!
@@ -377,8 +392,18 @@ JS_EXPORT void JSValueProtect(JSContextRef ctx, JSValueRef value);
 */
 JS_EXPORT void JSValueUnprotect(JSContextRef ctx, JSValueRef value);
 
+
+// Extra functions
+JS_EXPORT bool JSValueIsEqualString(JSContextRef ctx, JSValueRef value, const char* ptr, size_t length, JSValueRef* exception);
+
+JS_EXPORT void* JSValueGetCell(JSContextRef ctx, JSValueRef value);
+JS_EXPORT void JSValueReleaseCell(JSCJSCell *cell);
+JS_EXPORT size_t JSStringLength(JSCJSString *string);
+JS_EXPORT void JSStringIterate(JSCJSString *string, jsstring_iterator *iter);
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* JSValueRef_h */
+

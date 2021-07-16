@@ -37,7 +37,7 @@
 #include "Protect.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
-
+#include <wtf/ForkExtras.h>
 #if PLATFORM(MAC)
 #include <mach-o/dyld.h>
 #endif
@@ -50,12 +50,13 @@ using namespace JSC;
 
 ::JSType JSValueGetType(JSContextRef ctx, JSValueRef value)
 {
-   
+    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     
     JSValue jsValue = toJS(globalObject, value);
 #else
+    UNUSED_PARAM(ctx);
     JSValue jsValue = toJS(value);
 #endif
 
@@ -83,6 +84,7 @@ bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
     
     return toJS(globalObject, value).isUndefined();
 #else
+    UNUSED_PARAM(ctx);
     return toJS(value).isUndefined();
 #endif
 }
@@ -96,6 +98,7 @@ bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
     
     return toJS(globalObject, value).isNull();
 #else
+    UNUSED_PARAM(ctx);
     return !value || toJS(value).isNull();
 #endif
 }
@@ -108,6 +111,7 @@ bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
     
     return toJS(globalObject, value).isBoolean();
 #else
+    UNUSED_PARAM(ctx);
     return toJS(value).isBoolean();
 #endif
 }
@@ -120,6 +124,7 @@ bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
     
     return toJS(globalObject, value).isNumber();
 #else
+    UNUSED_PARAM(ctx);
     return toJS(value).isNumber();
 #endif
 }
@@ -132,6 +137,7 @@ bool JSValueIsString(JSContextRef ctx, JSValueRef value)
     
     return toJS(globalObject, value).isString();
 #else
+    UNUSED_PARAM(ctx);
     return value && toJS(value).isString();
 #endif
 }
@@ -144,6 +150,7 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
     
     return toJS(globalObject, value).isObject();
 #else
+    UNUSED_PARAM(ctx);
     return value && toJS(value).isObject();
 #endif
 }
@@ -156,6 +163,7 @@ bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value)
     
     return toJS(globalObject, value).isSymbol();
 #else
+    UNUSED_PARAM(ctx);
     return value && toJS(value).isSymbol();
 #endif
 }
@@ -262,6 +270,7 @@ JSValueRef JSValueMakeUndefined(JSContextRef ctx)
     
     return toRef(globalObject, jsUndefined());
 #else
+    UNUSED_PARAM(ctx);
     return toRef(jsUndefined());
 #endif
 }
@@ -274,6 +283,7 @@ JSValueRef JSValueMakeNull(JSContextRef ctx)
     
     return toRef(globalObject, jsNull());
 #else
+    UNUSED_PARAM(ctx);
     return toRef(jsNull());
 #endif
 }
@@ -286,6 +296,7 @@ JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
     
     return toRef(globalObject, jsBoolean(value));
 #else
+    UNUSED_PARAM(ctx);
     return toRef(jsBoolean(value));
 #endif
 }
@@ -298,6 +309,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
     
     return toRef(globalObject, jsNumber(purifyNaN(value)));
 #else
+    UNUSED_PARAM(ctx);
     return toRef(jsNumber(purifyNaN(value)));
 #endif
 }
@@ -319,9 +331,9 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
    
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
+  
+    return toRef(globalObject, jsMaybeOwnedString(vm, String()));
     
-
-    return toRef(globalObject, jsString(vm, string ? string->string() : String()));
 }
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
@@ -356,6 +368,21 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
     return OpaqueJSString::tryCreate(result).leakRef();
 }
 
+JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue jsValue = toJS(globalObject, value);
+    
+    auto stringRef(OpaqueJSString::tryCreate(jsValue.toWTFString(globalObject)));
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        stringRef = nullptr;
+    return stringRef.leakRef();
+}
+
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 {
  
@@ -382,22 +409,6 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
     return number;
 }
 
-JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
-{
-   
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
-    
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    JSValue jsValue = toJS(globalObject, value);
-    
-    auto stringRef(OpaqueJSString::tryCreate(jsValue.toWTFString(globalObject)));
-    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
-        stringRef = nullptr;
-    return stringRef.leakRef();
-}
-
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
    
@@ -417,8 +428,6 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 void JSValueProtect(JSContextRef ctx, JSValueRef value)
 {
     JSGlobalObject* globalObject = toJS(ctx);
-    
-
     JSValue jsValue = toJSForGC(globalObject, value);
     gcProtect(jsValue);
 }
@@ -430,4 +439,47 @@ void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
 
     JSValue jsValue = toJSForGC(globalObject, value);
     gcUnprotect(jsValue);
+}
+
+bool JSValueIsEqualString(JSContextRef ctx, JSValueRef value, const char* ptr, size_t length, JSValueRef* exception) {
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue jsValue = toJS(globalObject, value);
+
+
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow || !isJSString(jsValue))
+        return false;
+    
+
+    return static_cast<JSString*>(jsValue.asCell())->equal(globalObject, ptr, length);
+}
+
+void* JSValueGetCell(JSContextRef ctx, JSValueRef value) {
+    JSC::JSValue result = bitwise_cast<JSC::JSValue>(value);
+    if (!result.isCell()) {
+        return nullptr;
+    }
+    JSC:JSCell* cell = result.asCell();
+    gcProtect(cell);
+
+    return cell;
+}
+
+void JSValueReleaseCell(JSC::JSCell *cell) {
+    gcUnprotect(cell);
+}
+
+size_t JSStringLength(JSC::JSString *string) {
+    return string->length();
+}
+
+void JSStringIterate(JSC::JSString *string, jsstring_iterator *iter) {
+    string->value(iter);
+}
+
+uint8_t JSCellType(JSC::JSCell *cell) {
+    return cell->type();
 }

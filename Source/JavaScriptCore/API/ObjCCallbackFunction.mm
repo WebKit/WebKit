@@ -470,6 +470,7 @@ private:
 static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     ASSERT(exception && !*exception);
+    UNUSED_PARAM(callerContext);
 
     // Retake the API lock - we need this for a few reasons:
     // (1) We don't want to support the C-API's confusing drops-locks-once policy - should only drop locks if we can do so recursively.

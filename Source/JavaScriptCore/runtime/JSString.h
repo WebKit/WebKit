@@ -36,6 +36,7 @@
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringView.h>
+#include <wtf/ForkExtras.h>
 
 #if OS(DARWIN)
 #include <mach/vm_param.h>
@@ -231,10 +232,16 @@ public:
 
     bool is8Bit() const;
 
+    // --- ADDED ---
+    inline bool equal(JSGlobalObject*, const char* ptr, size_t len) const;
+    inline void value(jsstring_iterator* iterator) const;
+    // --- ADDED ---
+
 protected:
     friend class JSValue;
 
     JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, JSString* other) const;
+    JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, const char* ptr, size_t len) const;
     bool isSubstring() const;
 
     mutable uintptr_t m_fiber;
@@ -684,6 +691,11 @@ private:
     friend JSString* jsString(JSGlobalObject*, const String&, const String&, const String&);
     friend JSString* jsSubstringOfResolved(VM&, GCDeferralContext*, JSString*, unsigned, unsigned);
     friend JSString* jsSubstring(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
+
+
+    JS_EXPORT_PRIVATE void iterRope(jsstring_iterator*) const;
+    NEVER_INLINE void iterRopeSlowCase(jsstring_iterator*) const;
+    void iterRopeInternalNoSubstring(jsstring_iterator*) const;
 };
 
 JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);
@@ -795,6 +807,22 @@ inline const String& JSString::value(JSGlobalObject* globalObject) const
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRope(globalObject);
     return valueInternal();
+}
+
+inline void JSString::value(jsstring_iterator* iterator) const
+{
+      if (isRope()) {
+          static_cast<const JSRopeString*>(this)->iterRope(iterator);
+          return;
+      }
+
+ 
+    auto internal = valueInternal().impl();
+    if (this->is8Bit()) {
+        iterator->append8(iterator, (void*)internal->characters8(), internal->length());
+    } else {
+        iterator->append16(iterator, (void*)internal->characters16(), internal->length());
+    }
 }
 
 inline const String& JSString::tryGetValue(bool allocationAllowed) const

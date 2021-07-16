@@ -38,6 +38,22 @@ WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::create(const UCha
     return adoptRef(*new ExternalStringImpl(characters, length, WTFMove(free)));
 }
 
+WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(const LChar* characters, unsigned length)
+{
+    return adoptRef(*new ExternalStringImpl(characters, length));
+}
+
+WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(const char* string)
+{
+    return adoptRef(*new ExternalStringImpl(reinterpret_cast<const LChar*>(string), strlen(string)));
+}
+
+WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(const UChar* characters, unsigned length)
+{
+    return adoptRef(*new ExternalStringImpl(characters, length));
+}
+
+
 ExternalStringImpl::ExternalStringImpl(const LChar* characters, unsigned length, ExternalStringImplFreeFunction&& free) 
     : StringImpl(characters, length, ConstructWithoutCopying)
     , m_free(WTFMove(free))
@@ -52,6 +68,23 @@ ExternalStringImpl::ExternalStringImpl(const UChar* characters, unsigned length,
 {
     ASSERT(m_free);
     m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
+}
+
+ExternalStringImpl::ExternalStringImpl(const LChar* characters, unsigned length) 
+    : StringImpl(characters, length, ConstructWithoutCopying)
+{
+    m_free = nullptr;
+    m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
+    m_refCount |= s_refCountFlagIsStaticString;
+}
+
+ExternalStringImpl::ExternalStringImpl(const UChar* characters, unsigned length)
+    : StringImpl(characters, length, ConstructWithoutCopying)
+    
+{
+    m_free = nullptr;
+    m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
+    m_refCount |= s_refCountFlagIsStaticString;
 }
 
 } // namespace WTF

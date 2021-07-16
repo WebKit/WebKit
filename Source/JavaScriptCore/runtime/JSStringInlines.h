@@ -44,6 +44,14 @@ bool JSString::equal(JSGlobalObject* globalObject, JSString* other) const
     return WTF::equal(*valueInternal().impl(), *other->valueInternal().impl());
 }
 
+// --- ADDED ---
+bool JSString::equal(JSGlobalObject* globalObject, const char* ptr, size_t len) const
+{
+    if (isRope())
+        return equalSlowCase(globalObject, ptr, len);
+    return WTF::equal(valueInternal().impl(), (reinterpret_cast<const LChar*>(ptr)), len);
+}
+
 template<typename StringType>
 inline JSValue jsMakeNontrivialString(VM& vm, StringType&& string)
 {
