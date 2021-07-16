@@ -838,6 +838,13 @@
 		FF2D2F5525C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
 		FF582E1626544FC4006DA5B8 /* ProvokingVertexHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF582E1426544FC4006DA5B8 /* ProvokingVertexHelper.mm */; };
 		FF582E1726544FC4006DA5B8 /* ProvokingVertexHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */; };
+		FFDA50CC269F848200AE11E2 /* blit.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEAA25818D6800894E24 /* blit.metal */; };
+		FFDA50CD269F848200AE11E2 /* clear.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB125818D6800894E24 /* clear.metal */; };
+		FFDA50CE269F848200AE11E2 /* copy_buffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEAF25818D6800894E24 /* copy_buffer.metal */; };
+		FFDA50CF269F848200AE11E2 /* gen_indices.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB325818D6800894E24 /* gen_indices.metal */; };
+		FFDA50D0269F848200AE11E2 /* gen_mipmap.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB225818D6800894E24 /* gen_mipmap.metal */; };
+		FFDA50D1269F848200AE11E2 /* rewrite_indices.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF582E1826544FE5006DA5B8 /* rewrite_indices.metal */; };
+		FFDA50D2269F848200AE11E2 /* visibility.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEAB25818D6800894E24 /* visibility.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -863,6 +870,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 31CDFDF32491819E00486F27;
 			remoteInfo = "ANGLE (dynamic)";
+		};
+		FFDA50D3269F84A000AE11E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FFDA50C4269F845100AE11E2;
+			remoteInfo = ANGLEMetalLib;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1813,6 +1827,8 @@
 		FF81FF9A2581A3C200894E24 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
 		FFA0C2C525CB6A7600105306 /* NameEmbeddedUniformStructsMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameEmbeddedUniformStructsMetal.cpp; sourceTree = "<group>"; };
 		FFA0C2C625CB6A7700105306 /* NameEmbeddedUniformStructsMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameEmbeddedUniformStructsMetal.h; sourceTree = "<group>"; };
+		FFDA50D6269F9E5800AE11E2 /* create_mtl_internal_shaders.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = create_mtl_internal_shaders.py; sourceTree = "<group>"; };
+		FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AngleMetalLib.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2769,6 +2785,7 @@
 			children = (
 				31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */,
 				31CDFDEF24917F8900486F27 /* ANGLE-static.xcconfig */,
+				FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
 				A1B89B89221E003A00EB4CEA /* SDKVariant.xcconfig */,
@@ -3056,6 +3073,7 @@
 				FF81FEAD25818D6800894E24 /* common.h */,
 				FF81FEAC25818D6800894E24 /* constants.h */,
 				FF81FEAF25818D6800894E24 /* copy_buffer.metal */,
+				FFDA50D6269F9E5800AE11E2 /* create_mtl_internal_shaders.py */,
 				FF81FEB025818D6800894E24 /* format_autogen.h */,
 				FF81FEB325818D6800894E24 /* gen_indices.metal */,
 				FF81FEB225818D6800894E24 /* gen_mipmap.metal */,
@@ -3571,6 +3589,7 @@
 			buildConfigurationList = 31CDFDF52491819E00486F27 /* Build configuration list for PBXNativeTarget "ANGLE (dynamic)" */;
 			buildPhases = (
 				31CDFDF02491819E00486F27 /* Headers */,
+				FFDA50D5269F895400AE11E2 /* Bake Metal Library to NSData */,
 				31CDFDF12491819E00486F27 /* Sources */,
 				31CDFDF22491819E00486F27 /* Frameworks */,
 				31CD00CE2491974C00486F27 /* CopyFiles */,
@@ -3581,11 +3600,26 @@
 				31A9E9A0249AA04200C7E243 /* PBXBuildRule */,
 			);
 			dependencies = (
+				FFDA50D4269F84A000AE11E2 /* PBXTargetDependency */,
 			);
 			name = "ANGLE (dynamic)";
 			productName = "ANGLE (dynamic)";
 			productReference = 31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
+		};
+		FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FFDA50CB269F845100AE11E2 /* Build configuration list for PBXNativeTarget "ANGLEMetalLib" */;
+			buildPhases = (
+				FFDA50C3269F845100AE11E2 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ANGLEMetalLib;
+			productName = ANGLEMetalLib;
+			productType = "com.apple.product-type.metal-library";
 		};
 /* End PBXNativeTarget section */
 
@@ -3604,6 +3638,10 @@
 						CreatedOnToolsVersion = 12.0;
 						ProvisioningStyle = Automatic;
 					};
+					FFDA50C4269F845100AE11E2 = {
+						CreatedOnToolsVersion = 13.0;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */;
@@ -3620,6 +3658,7 @@
 			targets = (
 				31DB794F2491C33300982878 /* ANGLE */,
 				31CDFDF32491819E00486F27 /* ANGLE (dynamic) */,
+				FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */,
 			);
 		};
 /* End PBXProject section */
@@ -3642,6 +3681,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.py\"\n";
+		};
+		FFDA50D5269F895400AE11E2 /* Bake Metal Library to NSData */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/ANGLEMetalLib.metallib",
+				"$(SRCROOT)/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py",
+			);
+			name = "Bake Metal Library to NSData";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/mtl_default_shaders_compiled.inc",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"build\" ] || [ \"${ACTION}\" = \"install\" ]; then\necho python \"${SRCROOT}/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py\" \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\npython \"${SRCROOT}/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py\" \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -4053,6 +4113,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FFDA50C3269F845100AE11E2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFDA50CC269F848200AE11E2 /* blit.metal in Sources */,
+				FFDA50CD269F848200AE11E2 /* clear.metal in Sources */,
+				FFDA50CE269F848200AE11E2 /* copy_buffer.metal in Sources */,
+				FFDA50CF269F848200AE11E2 /* gen_indices.metal in Sources */,
+				FFDA50D0269F848200AE11E2 /* gen_mipmap.metal in Sources */,
+				FFDA50D1269F848200AE11E2 /* rewrite_indices.metal in Sources */,
+				FFDA50D2269F848200AE11E2 /* visibility.metal in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -4060,6 +4134,11 @@
 			isa = PBXTargetDependency;
 			target = 31CDFDF32491819E00486F27 /* ANGLE (dynamic) */;
 			targetProxy = 31DB79562491C35400982878 /* PBXContainerItemProxy */;
+		};
+		FFDA50D4269F84A000AE11E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */;
+			targetProxy = FFDA50D3269F84A000AE11E2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4088,7 +4167,6 @@
 		31DB79502491C33300982878 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -4096,7 +4174,6 @@
 		31DB79512491C33300982878 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -4104,7 +4181,6 @@
 		31DB79522491C33300982878 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -4130,6 +4206,27 @@
 			buildSettings = {
 			};
 			name = Release;
+		};
+		FFDA50C8269F845100AE11E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		FFDA50C9269F845100AE11E2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		FFDA50CA269F845100AE11E2 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
 		};
 /* End XCBuildConfiguration section */
 
@@ -4160,6 +4257,16 @@
 				FB39D0711200ED9200088E69 /* Debug */,
 				FB39D0721200ED9200088E69 /* Release */,
 				5D7C59DB1208C6C3001C873E /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		FFDA50CB269F845100AE11E2 /* Build configuration list for PBXNativeTarget "ANGLEMetalLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFDA50C8269F845100AE11E2 /* Debug */,
+				FFDA50C9269F845100AE11E2 /* Release */,
+				FFDA50CA269F845100AE11E2 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
