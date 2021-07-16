@@ -1,5 +1,14 @@
 2021-07-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [MacOS wk2] inspector/canvas/recording-bitmaprenderer-frameCount.html is flaky failing and timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=228034
+
+        Unreviewed test gardeing.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-07-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [MacOS wk2] inspector/canvas/setShaderProgramHighlighted.html is flaky failing and timing out.
         https://bugs.webkit.org/show_bug.cgi?id=228030
 
