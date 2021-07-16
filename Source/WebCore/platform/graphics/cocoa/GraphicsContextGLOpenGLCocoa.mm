@@ -169,7 +169,7 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
 {
     // If ANGLE is not loaded, we can fail immediately.
     if (!isANGLEAvailable()) {
-        LOG(WebGL, "ANGLE shared library was not loaded. Can't make GraphicsContextGL.");
+        WTFLogAlways("ANGLE shared library was not loaded. Can't make GraphicsContextGL.");
         return nullptr;
     }
 

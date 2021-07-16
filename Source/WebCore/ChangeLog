@@ -1,3 +1,17 @@
+2021-07-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make the lack of an ANGLE dylib unconditionally log
+        https://bugs.webkit.org/show_bug.cgi?id=228010
+
+        Reviewed by Dean Jackson.
+
+        WebCore should complain louder when all of WebGL is disabled because of a packaging misconfiguration.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::create):
+
 2021-07-16  Megan Gardner  <megan_gardner@apple.com>
 
         Pipe App Highlight scrolling through UI Process in preparation for Note Overlay avoidance.
