@@ -1,3 +1,26 @@
+2021-07-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Remove CSS Regions perf tests
+        https://bugs.webkit.org/show_bug.cgi?id=228016
+
+        Reviewed by Ryosuke Niwa.
+
+        The feature has been removed long time ago, so let's do the same with the associated perf tests.
+
+        * Layout/RegionsAuto.html: Removed.
+        * Layout/RegionsAutoMaxHeight.html: Removed.
+        * Layout/RegionsExtendingSelectionMixedContent.html: Removed.
+        * Layout/RegionsFixed.html: Removed.
+        * Layout/RegionsFixedShort.html: Removed.
+        * Layout/RegionsSelectAllMixedContent.html: Removed.
+        * Layout/RegionsSelection.html: Removed.
+        * Layout/RegionsShapes.html: Removed.
+        * Layout/Shapes/RegionsShapesNoShapes.html: Removed.
+        * Layout/Shapes/resources/RegionsShapesContent.html: Removed.
+        * Layout/Shapes/resources/RegionsShapesContentNoShapes.html: Removed.
+        * Layout/resources/regions.css: Removed.
+        * Layout/resources/regions.js: Removed.
+
 2021-06-03  Said Abou-Hallawa  <said@apple.com>
 
         [MotionMark] Controller.filterOutOutliers() sorts the frameLengths array incorrectly
