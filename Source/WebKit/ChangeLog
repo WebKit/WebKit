@@ -1,3 +1,38 @@
+2021-07-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r277820): Can't scroll up and down using trackpad in Mail message viewer when in Slide Over
+        https://bugs.webkit.org/show_bug.cgi?id=228033
+        rdar://80663917
+
+        Reviewed by Tim Horton.
+
+        This started happening after the changes in r277820, since UIHoverGestureRecognizer contained several internal
+        facilities in UIKit for avoiding failure dependencies to other (non-hover) gestures. After removing the
+        subclass, various UIKit gestures now attempt to add failure requirements to WKMouseGestureRecognizer, thereby
+        linking WKMouseGestureRecognizer to other gestures in the gesture dependency graph.
+
+        This means that all gestures connected to the same subgraph as WKMouseGestureRecognizer are unable to be reset
+        until WKMouseGestureRecognizer transitions to either Ended or Failed state; however, since this only happens
+        once the trackpad goes into idle state, these subgraph-connected gestures can effectively only recognize once
+        per trackpad interaction (resetting only after the trackpad goes idle). Since scroll view pan gesture
+        recognizers are indirectly connected to WKMouseGestureRecognizer in Slide Over mode, this manifests in scrolling
+        being unresponsive after an initial scroll gesture has ended.
+
+        To address this, we subclass UIHoverGestureRecognizer once again, and (unfortunately) also restore the IPI
+        override for `-_shouldReceiveTouch:forEvent:recognizerView:`, to ensure that we're still able to detect and
+        dispatch `mousedown` and `mousemove` events.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKContentView gestureRecognizer:shouldReceivePress:]):
+
+        Remove a couple of delegate overridees here, which are now unnecessary since WKMouseGestureRecognizer is a
+        UIHoverGestureRecognizer once again.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.h:
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer _shouldReceiveTouch:forEvent:recognizerView:]):
+
 2021-07-16  Kate Cheney  <katherine_cheney@apple.com>
 
         macOS Safari network sessions not being marked as being from a browser

@@ -1758,9 +1758,6 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
 
-    if (gestureRecognizer == _mouseGestureRecognizer)
-        return [_mouseGestureRecognizer mouseTouch] == touch;
-
     if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
         return touch.type != UITouchTypeIndirectPointer;
 #endif
@@ -1783,10 +1780,6 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press
 {
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    if (gestureRecognizer == _mouseGestureRecognizer)
-        return NO;
-#endif
 #if ENABLE(HOVER_GESTURE_RECOGNIZER)
     if (gestureRecognizer == _hoverGestureRecognizer)
         return NO;
