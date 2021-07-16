@@ -85,4 +85,13 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+bool defaultWebMParserEnabled();
+#endif
+
+#if ENABLE(VP9)
+bool defaultVP8DecoderEnabled();
+bool defaultVP9DecoderEnabled();
+#endif
+
 } // namespace WebKit

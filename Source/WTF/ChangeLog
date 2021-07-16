@@ -1,3 +1,14 @@
+2021-07-15  Jean-Yves Avenard  <jya@apple.com>
+
+        [Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure (Enable VP8/VP9/Vorbis/Opus in WebKitLegacy)
+        https://bugs.webkit.org/show_bug.cgi?id=228005
+        rdar://80346720
+
+        Reviewed by Jer Noble.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Enable VP8/VP9/Vorbis/Opus
+        codecs for WebKitLegacy, no reasons they weren't already enabled.
+
 2021-07-15  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Fix the build warning below since r279895.

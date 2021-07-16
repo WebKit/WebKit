@@ -315,6 +315,7 @@ bool defaultVP9SWDecoderEnabledOnBattery()
 
     return false;
 }
+#endif // ENABLE(VP9)
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -328,6 +329,5 @@ bool defaultWebMParserEnabled()
 }
 
 #endif // ENABLE(MEDIA_SOURCE)
-#endif // ENABLE(VP9)
 
 } // namespace WebKit

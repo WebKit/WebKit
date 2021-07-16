@@ -243,12 +243,12 @@ public:
 #endif
 
 #if ENABLE(VORBIS)
-    void setVorbisDecoderEnabled(bool isEnabled) { m_vorbisDecoderEnabled = isEnabled; }
+    WEBCORE_EXPORT void setVorbisDecoderEnabled(bool isEnabled);
     bool vorbisDecoderEnabled() const { return m_vorbisDecoderEnabled; }
 #endif
 
 #if ENABLE(OPUS)
-    void setOpusDecoderEnabled(bool isEnabled) { m_opusDecoderEnabled = isEnabled; }
+    WEBCORE_EXPORT void setOpusDecoderEnabled(bool isEnabled);
     bool opusDecoderEnabled() const { return m_opusDecoderEnabled; }
 #endif
 

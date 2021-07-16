@@ -1082,10 +1082,11 @@ VP8DecoderEnabled:
   webcoreBinding: none
   condition: ENABLE(VP9)
   defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultVP8DecoderEnabled()
     WebKit:
       default: WebKit::defaultVP8DecoderEnabled()
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 VP9DecoderEnabled:
   type: bool
   humanReadableName: "VP9 decoder"
@@ -1095,7 +1096,7 @@ VP9DecoderEnabled:
     WebCore:
       default: false
     WebKitLegacy:
-      default: false
+      default: WebKit::defaultVP9DecoderEnabled()
     WebKit:
       default: WebKit::defaultVP9DecoderEnabled()
 
@@ -1253,10 +1254,10 @@ WebMParserEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   humanReadableName: "WebM MSE parser"
   humanReadableDescription: "Enable WebM MSE parser"
-  condition: ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+  condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: WebKit::defaultWebMParserEnabled()
     WebKit:
       default: WebKit::defaultWebMParserEnabled()
 

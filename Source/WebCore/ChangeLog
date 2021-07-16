@@ -1,5 +1,22 @@
 2021-07-15  Jean-Yves Avenard  <jya@apple.com>
 
+        [Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure (Enable VP8/VP9/Vorbis/Opus in WebKitLegacy)
+        https://bugs.webkit.org/show_bug.cgi?id=228005
+        rdar://80346720
+
+        Reviewed by Jer Noble.
+
+        There are already tests running under Wk1 that will exercise this code (and will no longer fail)
+
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::setVorbisDecoderEnabled):
+        Carry settings to PlatformMediaSessionManager
+        (WebCore::RuntimeEnabledFeatures::setOpusDecoderEnabled):
+        Carry settings to PlatformMediaSessionManager
+        * page/RuntimeEnabledFeatures.h:
+
+2021-07-15  Jean-Yves Avenard  <jya@apple.com>
+
         [MSE] sequence mode is broken if GPU Process is enabled
         https://bugs.webkit.org/show_bug.cgi?id=227864
         <rdar://problem/80445041>

@@ -287,4 +287,39 @@ bool defaultWheelEventGesturesBecomeNonBlocking()
 
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+
+bool defaultWebMParserEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("webm_parser");
+#endif
+
+    return true;
+}
+
+#endif // ENABLE(MEDIA_SOURCE)
+
+#if ENABLE(VP9)
+
+bool defaultVP8DecoderEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("vp8_decoder");
+#endif
+
+    return false;
+}
+
+bool defaultVP9DecoderEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("vp9_decoder");
+#endif
+
+    return true;
+}
+
+#endif // ENABLE(VP9)
+
 } // namespace WebKit

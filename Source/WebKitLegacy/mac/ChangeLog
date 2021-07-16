@@ -1,3 +1,17 @@
+2021-07-15  Jean-Yves Avenard  <jya@apple.com>
+
+        [Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure (Enable VP8/VP9/Vorbis/Opus in WebKitLegacy)
+        https://bugs.webkit.org/show_bug.cgi?id=228005
+        rdar://80346720
+
+        Reviewed by Jer Noble.
+
+        * WebView/WebPreferencesDefaultValues.h: Add relevant settings getter methods.
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultWebMParserEnabled):
+        (WebKit::defaultVP8DecoderEnabled):
+        (WebKit::defaultVP9DecoderEnabled):
+
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for BroadcastChannel behind a runtime flag
