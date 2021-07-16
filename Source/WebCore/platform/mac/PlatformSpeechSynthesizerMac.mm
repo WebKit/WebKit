@@ -227,7 +227,10 @@ static NSString *speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *use
     if (!userLocale)
         return nil;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return (__bridge NSString *)GetIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale);
+#pragma clang diagnostic pop
 }
 
 void PlatformSpeechSynthesizer::initializeVoiceList()

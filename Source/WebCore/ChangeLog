@@ -1,3 +1,14 @@
+2021-07-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix Apple internal build
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::speechSynthesisGetDefaultVoiceIdentifierForLocale):
+
 2021-07-16  Brady Eidson  <beidson@apple.com>
 
         FetchBodySource/FetchBodyOwner cleanup
