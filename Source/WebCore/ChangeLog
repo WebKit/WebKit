@@ -1,3 +1,28 @@
+2021-07-15  Jean-Yves Avenard  <jya@apple.com>
+
+        [MSE] sequence mode is broken if GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=227864
+        <rdar://problem/80445041>
+
+        Reviewed by Jer Noble.
+
+        When the source buffer's mode is set to sequence, the timestampOffset attribute
+        should be updated after each appendBuffer operation. However, when the GPU process
+        is enabled, the timestampOffset calculations are all done in the GPU process and
+        its result wasn't communicated back to the WebContent process leading its value
+        to always be 0 on read.
+        Fly-by fix: the timestamp offset calculation was incorrect, per spec
+        https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
+        step 3.5.8.3.1 we read:
+        // Set timestampOffset equal to group start timestamp - presentation timestamp.
+        but the code did otherwise.
+
+        Test: media/media-source/media-mp4-h264-sequence-mode.html
+
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::didReceiveSample): Offset m_timestampOffset by
+        the sample's presentation timestamp
+
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for BroadcastChannel behind a runtime flag

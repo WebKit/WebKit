@@ -1,3 +1,20 @@
+2021-07-15  Jean-Yves Avenard  <jya@apple.com>
+
+        [MSE] sequence mode is broken if GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=227864
+        <rdar://problem/80445041>
+
+        Reviewed by Jer Noble.
+
+        Note: we had tests checking on the correctness of the operation; however it's
+        using a mock SourceBuffer which doesn't run in the GPU process. Doing bug 225367
+        should be a priority so we get better code coverage and such bugs don't skip
+        under the radar.
+        To get around this issue, we write a new test that uses a mp4 and a h264 video track.
+
+        * media/media-source/media-mp4-h264-sequence-mode-expected.txt: Added.
+        * media/media-source/media-mp4-h264-sequence-mode.html: Added.
+
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for BroadcastChannel behind a runtime flag

@@ -414,12 +414,14 @@ void SourceBufferPrivateRemote::sourceBufferPrivateAppendError(bool decodeError)
         m_client->sourceBufferPrivateAppendError(decodeError);
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, const PlatformTimeRanges& buffered, uint64_t totalTrackBufferSizeInBytes)
+void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, const PlatformTimeRanges& buffered, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
 {
     setBufferedRanges(buffered);
     m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
-    if (m_client)
+    if (m_client) {
+        setTimestampOffset(timestampOffset);
         m_client->sourceBufferPrivateAppendComplete(appendResult);
+    }
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)

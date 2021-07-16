@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-mp4-h264-sequence-mode</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var random;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function randomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            consoleWrite('Append the init segment');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            testExpected('sourceBuffer.timestampOffset', '0');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.timestampOffset', '0');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.start(0)', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '2');
+
+            run('sourceBuffer.mode="sequence"');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.timestampOffset', '1');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '3');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
