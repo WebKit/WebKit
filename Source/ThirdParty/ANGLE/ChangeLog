@@ -1,3 +1,25 @@
+2021-07-16  Kyle Piddington  <kpiddington@apple.com>
+
+        Build Default Metal library offline
+        https://bugs.webkit.org/show_bug.cgi?id=227333
+
+        <rdar://79923371>
+
+        This patch compiles and creates a Metal library at build time, storing
+        the library as a compiled binary file. This library is baked into the dylib, 
+        and is loaded at context creation time.
+
+        Unlike the previous version of this patch, this patch does not save or store the .metallib on disk, but rather
+        bakes it into a binary.
+        
+        Reviewed by Kenneth Russell.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeShaderLibrary):
+        * src/libANGLE/renderer/metal/mtl_utils.h:
+
 2021-07-15  Kyle Piddington  <kpiddington@apple.com>
 
         WebGL2 demo doesn't work due to failing compilation to metal backend
