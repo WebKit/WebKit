@@ -1,3 +1,21 @@
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for BroadcastChannel behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227924
+
+        Reviewed by Sam Weinig.
+
+        Add BroadcastChannelRegistry implementation for WebKitLegacy.
+
+        * Sources.txt:
+        * WebCoreSupport/WebBroadcastChannelRegistry.cpp: Added.
+        (WebBroadcastChannelRegistry::getOrCreate):
+        (WebBroadcastChannelRegistry::registerChannel):
+        (WebBroadcastChannelRegistry::unregisterChannel):
+        (WebBroadcastChannelRegistry::postMessage):
+        * WebCoreSupport/WebBroadcastChannelRegistry.h: Added.
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2021-06-21  Sihui Liu  <sihui_liu@apple.com>
 
         Make InProcessIDBServer use WorkQueue instead of Thread

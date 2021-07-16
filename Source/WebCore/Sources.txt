@@ -887,6 +887,7 @@ dom/BeforeLoadEvent.cpp
 dom/BeforeTextInsertedEvent.cpp
 dom/BeforeUnloadEvent.cpp
 dom/BoundaryPoint.cpp
+dom/BroadcastChannel.cpp
 dom/CDATASection.cpp
 dom/CharacterData.cpp
 dom/ChildListMutationScope.cpp
@@ -2853,6 +2854,7 @@ JSBlob.cpp
 JSBlobCallback.cpp
 JSBlobEvent.cpp
 JSBlobPropertyBag.cpp
+JSBroadcastChannel.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCSSAnimation.cpp

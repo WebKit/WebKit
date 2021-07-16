@@ -415,6 +415,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/AddEventListenerOptions.h
     dom/Attr.h
     dom/Attribute.h
+    dom/BroadcastChannel.h
+    dom/BroadcastChannelIdentifier.h
+    dom/BroadcastChannelRegistry.h
     dom/BoundaryPoint.h
     dom/CDATASection.h
     dom/CallbackResult.h

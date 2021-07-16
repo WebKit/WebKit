@@ -31,6 +31,7 @@
 #include "AppHighlight.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
+#include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"
 #include "ColorChooser.h"
 #include "ContextMenuClient.h"
@@ -1163,6 +1164,20 @@ private:
 #endif
 };
 
+class EmptyBroadcastChannelRegistry final : public BroadcastChannelRegistry {
+public:
+    static Ref<EmptyBroadcastChannelRegistry> create()
+    {
+        return adoptRef(*new EmptyBroadcastChannelRegistry);
+    }
+private:
+    EmptyBroadcastChannelRegistry() = default;
+
+    void registerChannel(const SecurityOriginData&, const String&, BroadcastChannelIdentifier) final { }
+    void unregisterChannel(const SecurityOriginData&, const String&, BroadcastChannelIdentifier) final { }
+    void postMessage(const SecurityOriginData&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&) final { }
+};
+
 PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
 {
     PageConfiguration pageConfiguration {
@@ -1177,7 +1192,8 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         makeUniqueRef<EmptyProgressTrackerClient>(),
         makeUniqueRef<EmptyFrameLoaderClient>(),
         makeUniqueRef<DummySpeechRecognitionProvider>(),
-        makeUniqueRef<EmptyMediaRecorderProvider>()
+        makeUniqueRef<EmptyMediaRecorderProvider>(),
+        EmptyBroadcastChannelRegistry::create()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

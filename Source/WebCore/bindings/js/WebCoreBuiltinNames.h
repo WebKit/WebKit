@@ -64,6 +64,7 @@ namespace WebCore {
     macro(BaseAudioContext) \
     macro(BeforeLoadEvent) \
     macro(BlobEvent) \
+    macro(BroadcastChannel) \
     macro(Cache) \
     macro(CacheStorage) \
     macro(Client) \

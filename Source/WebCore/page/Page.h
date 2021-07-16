@@ -93,6 +93,7 @@ class AlternativeTextClient;
 class ApplicationCacheStorage;
 class AuthenticatorCoordinator;
 class BackForwardController;
+class BroadcastChannelRegistry;
 class CacheStorageProvider;
 class Chrome;
 class ContextMenuController;
@@ -280,6 +281,9 @@ public:
     WEBCORE_EXPORT const String& groupName() const;
 
     PageGroup& group();
+
+    BroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
+    WEBCORE_EXPORT void setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&&); // Only used by WebKitLegacy.
 
     WEBCORE_EXPORT static void forEachPage(const WTF::Function<void(Page&)>&);
     static unsigned nonUtilityPageCount();
@@ -1083,6 +1087,7 @@ private:
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
     Ref<UserContentProvider> m_userContentProvider;
     Ref<VisitedLinkStore> m_visitedLinkStore;
+    Ref<BroadcastChannelRegistry> m_broadcastChannelRegistry;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
     HashSet<ActivityStateChangeObserver*> m_activityStateChangeObservers;
 

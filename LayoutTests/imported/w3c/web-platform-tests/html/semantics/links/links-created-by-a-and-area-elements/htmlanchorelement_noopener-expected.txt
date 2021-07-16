@@ -1,10 +1,8 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: BroadcastChannel
 
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: BroadcastChannel
 
 PASS Check that rel=noopener with target=_self does a normal load
 PASS Check that rel=noopener with target=_parent does a normal load
 PASS Check that rel=noopener with target=_top does a normal load
-NOTRUN Check that targeting of rel=noopener with a given name reuses an existing window with that name
+FAIL Check that targeting of rel=noopener with a given name reuses an existing window with that name assert_equals: expected object "[object Window]" but got null
+PASS Check that targeting of rel=noopener with a given name reuses an existing subframe with that name
 

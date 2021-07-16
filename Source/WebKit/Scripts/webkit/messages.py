@@ -271,6 +271,7 @@ def types_that_cannot_be_forward_declared():
         'MachSendRight',
         'MediaTime',
         'String',
+        'WebCore::BroadcastChannelIdentifier',
         'WebCore::DestinationColorSpace',
         'WebCore::DiagnosticLoggingDomain',
         'WebCore::DictationContext',

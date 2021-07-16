@@ -1,3 +1,28 @@
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for BroadcastChannel behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227924
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * fast/html/broadcast-channel-between-different-sessions-expected.txt: Added.
+        * fast/html/broadcast-channel-between-different-sessions.html: Added.
+        * fast/html/resources/broadcast-channel-between-different-sessions-window.html: Added.
+        Add layout test coverage to make sure that windows belonging to different session are unable to communicate
+        via BroadcastChannel.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+        Update test expectations now that we support BroadcastChannel.
+
 2021-07-15  Eric Hutchison  <ehutchison@apple.com>
 
         inspector/canvas/setRecordingAutoCaptureFrameCount.html is flaky failing.

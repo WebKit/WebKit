@@ -156,6 +156,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     NetworkProcess/IndexedDB/WebIDBServer
 
+    NetworkProcess/NetworkBroadcastChannelRegistry
     NetworkProcess/NetworkConnectionToWebProcess
     NetworkProcess/NetworkContentRuleListManager
     NetworkProcess/NetworkProcess
@@ -280,6 +281,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/UserContent/WebUserContentController
 
+    WebProcess/WebCoreSupport/WebBroadcastChannelRegistry
     WebProcess/WebCoreSupport/WebSpeechRecognitionConnection
 
     WebProcess/WebPage/DrawingArea

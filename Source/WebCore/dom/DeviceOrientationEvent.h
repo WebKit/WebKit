@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class DeviceOrientationData;
+class Document;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class DeviceOrientationEvent final : public Event {

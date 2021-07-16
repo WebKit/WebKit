@@ -1,5 +1,74 @@
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
+        Add initial support for BroadcastChannel behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227924
+
+        Reviewed by Sam Weinig.
+
+        Add initial support for BroadcastChannel behind a runtime flag, off by default:
+        - https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts
+
+        Both Firefox and Blink have been supporting BroadcastChannel for a long time.
+
+        The implementation is complete and spec-compliant. It works both in Window and Worker environments,
+        in WebKit1 and WebKit2. However, the feature is off-by-default because of privacy concerns that have
+        not been addresssed yet:
+        - https://github.com/whatwg/html/issues/5803
+
+        We should be able to add partioning to address the privacy concerns and ship this later on. In the mean
+        time though, having a working BroadcastChannel implementation in the context of layout tests is already
+        very useful because a lot of Web-Platform-Tests are relying on it to test other Web features. This means
+        better test coverage for WebKit.
+
+        Tests:
+        - fast/html/broadcast-channel-between-different-sessions.html
+        - Rebaselined WPT tests
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/BroadcastChannel.cpp: Added.
+        (WebCore::channelToContextIdentifier):
+        (WebCore::BroadcastChannel::BroadcastChannel):
+        (WebCore::BroadcastChannel::~BroadcastChannel):
+        (WebCore::BroadcastChannel::postMessage):
+        (WebCore::BroadcastChannel::close):
+        (WebCore::BroadcastChannel::dispatchMessageTo):
+        (WebCore::BroadcastChannel::dispatchMessage):
+        (WebCore::BroadcastChannel::ensureOnMainThread):
+        (WebCore::BroadcastChannel::activeDOMObjectName const):
+        (WebCore::BroadcastChannel::eventListenersDidChange):
+        (WebCore::BroadcastChannel::virtualHasPendingActivity const):
+        * dom/BroadcastChannel.h: Added.
+        (WebCore::BroadcastChannel::create):
+        (WebCore::BroadcastChannel::identifier const):
+        (WebCore::BroadcastChannel::name const):
+        * dom/BroadcastChannel.idl: Added.
+        * dom/BroadcastChannelIdentifier.h: Added.
+        * dom/BroadcastChannelRegistry.h: Added.
+        (WebCore::BroadcastChannelRegistry::~BroadcastChannelRegistry):
+        * dom/DeviceOrientationAndMotionAccessController.h:
+        * dom/DeviceOrientationEvent.cpp:
+        * dom/DeviceOrientationEvent.h:
+        * dom/EventTargetFactory.in:
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setBroadcastChannelRegistry):
+        * page/Page.h:
+        (WebCore::Page::broadcastChannelRegistry):
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
         FetchResponse.formData() should reject promise with a TypeError if the body is null
         https://bugs.webkit.org/show_bug.cgi?id=228007
 

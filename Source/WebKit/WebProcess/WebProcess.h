@@ -133,6 +133,7 @@ class UserData;
 class WaylandCompositorDisplay;
 class WebAuthnProcessConnection;
 class WebAutomationSessionProxy;
+class WebBroadcastChannelRegistry;
 class WebCacheStorageProvider;
 class WebCookieJar;
 class WebCompiledContentRuleListData;
@@ -335,6 +336,7 @@ public:
     WebAutomationSessionProxy* automationSessionProxy() { return m_automationSessionProxy.get(); }
 
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
+    WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
 
@@ -661,6 +663,7 @@ private:
 #endif
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
+    Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
     Ref<WebCookieJar> m_cookieJar;
     WebSocketChannelManager m_webSocketChannelManager;
 

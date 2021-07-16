@@ -87,6 +87,19 @@ BlankAnchorTargetImpliesNoOpenerEnabled:
     WebCore:
       default: true
 
+# We have to resolve the privacy issue in https://github.com/whatwg/html/issues/5803 before we can enable this.
+BroadcastChannelEnabled:
+  type: bool
+  humanReadableName: "BroadcastChannel API"
+  humanReadableDescription: "BroadcastChannel API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CFNetworkNetworkLoaderEnabled:
   type: bool
   humanReadableName: "Experimental network loader"

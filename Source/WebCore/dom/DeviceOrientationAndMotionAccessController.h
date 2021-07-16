@@ -29,6 +29,7 @@
 
 #include "DeviceOrientationOrMotionPermissionState.h"
 #include "ExceptionOr.h"
+#include "SecurityOriginData.h"
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

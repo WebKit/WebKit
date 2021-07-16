@@ -378,10 +378,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interfac
 
 webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 
-# Requires BroadcastChannel.
-imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window.html [ Skip ]
-
 # Requires additional test infrastructure.
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 
@@ -1642,7 +1638,6 @@ webkit.org/b/201356 mathml/presentation/stretchy-depth-height-symmetric.html [ S
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/MessageEvent_onmessage_postMessage_infinite_loop.html [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/MessageEvent_properties.htm [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/Transferred_objects_unusable.sub.htm [ Skip ]
-webkit.org/b/161472 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/workers.html [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/event.data.sub.htm [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/event.origin.sub.htm [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/event.ports.sub.htm [ Skip ]

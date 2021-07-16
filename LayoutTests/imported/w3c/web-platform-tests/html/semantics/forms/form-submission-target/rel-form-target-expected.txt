@@ -1,9 +1,11 @@
 
-FAIL <form rel=""> with <form target> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noopener"> with <form target> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noreferrer"> with <form target> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="opener"> with <form target> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noopener noreferrer"> with <form target> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noreferrer opener"> with <form target> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="opener noopener"> with <form target> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
+Harness Error (TIMEOUT), message = null
+
+PASS <form rel=""> with <form target>
+FAIL <form rel="noopener"> with <form target> assert_false: opener expected false got true
+FAIL <form rel="noreferrer"> with <form target> assert_equals: referrer expected "" but got "http://localhost:8800/html/semantics/forms/form-submission-target/rel-form-target.html"
+PASS <form rel="opener"> with <form target>
+FAIL <form rel="noopener noreferrer"> with <form target> assert_equals: referrer expected "" but got "http://localhost:8800/html/semantics/forms/form-submission-target/rel-form-target.html"
+FAIL <form rel="noreferrer opener"> with <form target> assert_equals: referrer expected "" but got "http://localhost:8800/html/semantics/forms/form-submission-target/rel-form-target.html"
+FAIL <form rel="opener noopener"> with <form target> assert_false: opener expected false got true
 

@@ -1,5 +1,46 @@
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
+        Add initial support for BroadcastChannel behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227924
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT tests now that more tests are running and we are passing more checks.
+
+        * web-platform-tests/FileAPI/url/url-in-tags-revoke.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-open-noreferrer-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/report-only-require-corp.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp.https-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/broadcastchannel-success.https-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-base-target-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-button-target-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-form-target-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-input-target-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base-expected.txt:
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success-and-failure-expected.txt:
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success-expected.txt:
+        * web-platform-tests/webmessaging/MessageEvent-trusted.any-expected.txt:
+        * web-platform-tests/webmessaging/MessageEvent-trusted.any.worker-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/basics-expected.txt: Removed.
+        * web-platform-tests/webmessaging/broadcastchannel/basics.any-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/basics.any.worker-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/blobs-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/interface-expected.txt: Removed.
+        * web-platform-tests/webmessaging/broadcastchannel/interface.any-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/interface.any.worker-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/sandbox-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/workers-expected.txt: Added.
+        * web-platform-tests/webmessaging/multi-globals/broadcastchannel-current.sub-expected.txt:
+        * web-platform-tests/webstorage/storage_session_window_noopener.window-expected.txt:
+        * web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt:
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
         FetchResponse.formData() should reject promise with a TypeError if the body is null
         https://bugs.webkit.org/show_bug.cgi?id=228007
 
