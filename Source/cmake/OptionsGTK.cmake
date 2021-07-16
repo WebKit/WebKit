@@ -279,6 +279,7 @@ endif ()
 add_definitions(-DSVN_REVISION="${SVN_REVISION}")
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})
+SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 
 # GUri is available in GLib since version 2.66, but we only want to use it if version is >= 2.67.1.
 if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1")

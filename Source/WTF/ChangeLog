@@ -1,3 +1,13 @@
+2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support color-schemes CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=208204
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/PlatformHave.h:
+        Enable HAVE_OS_DARK_MODE_SUPPORT for GTK and WPE.
+
 2021-07-15  Jean-Yves Avenard  <jya@apple.com>
 
         [Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure (Enable VP8/VP9/Vorbis/Opus in WebKitLegacy)

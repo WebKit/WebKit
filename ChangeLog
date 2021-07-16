@@ -1,3 +1,15 @@
+2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support color-schemes CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=208204
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsGTK.cmake:
+        Enable HAVE_OS_DARK_MODE_SUPPORT.
+        * Source/cmake/OptionsWPE.cmake:
+        Enable ENABLE_DARK_MODE_CSS and HAVE_OS_DARK_MODE_SUPPORT.
+
 2021-07-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, CMake fix-up after r279940

@@ -1,3 +1,67 @@
+2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support color-schemes CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=208204
+
+        Reviewed by Adrian Perez de Castro.
+
+        Last time we tried enabling dark mode, we broke many webpages since we couldn't have diferent
+        controls, and more importantly, different system colors and defaults for pages that do and
+        don't support dark mode.
+
+        Now that we don't use GTK for this, we can try again. This time, use hardcoded system colors
+        and return different colors depending on StyleColor::Options::UseDarkAppearance.
+
+        To avoid dark-on-dark text on entries, we also need to enable HAVE_OS_DARK_MODE_SUPPORT for GTK
+        and make sure it's passed to use agent CSS. And since Adwaita controls are also used in WPE, we
+        need to enable it for WPE as well, and since WPE didn't have ENABLE_DARK_MODE_CSS, flip  that as
+        well, all in lockstep.
+
+        No new tests, reenabled the existing css-dark-mode tests.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        Pass HAVE_OS_DARK_MODE_SUPPORT to user agent CSS.
+        * css/CSSValueKeywords.in:
+        Expose -webkit-control-background for anything with HAVE_OS_DARK_MODE_SUPPORT.
+        * css/themeAdwaita.css:
+        (input[type="search"]::-webkit-search-results-button,):
+        (input[type="search"]::-webkit-search-cancel-button):
+        (body[dir="rtl"] input[type="search"]::-webkit-search-cancel-button):
+        (input[type="search"]::-webkit-search-results-button:hover,):
+        (input[type="search"]::-webkit-search-cancel-button:hover): Deleted.
+        Use mask images instead of content so we can recolor them. Change
+        color on hover as opacity and inherit entry's color otherwise to
+        make sure it's legible with dark appearance.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateBackgroundRecursively):
+        Use CSSValueWindow for background instead of CSSValueAppleSystemControlBackground
+        when the latter is not available.
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::focusColor):
+        (WebCore::ThemeAdwaita::paintFocus):
+        (WebCore::ThemeAdwaita::paintArrow):
+        (WebCore::ThemeAdwaita::paint):
+        (WebCore::ThemeAdwaita::paintCheckbox):
+        (WebCore::ThemeAdwaita::paintRadio):
+        (WebCore::ThemeAdwaita::paintButton):
+        (WebCore::ThemeAdwaita::paintSpinButton):
+        * platform/adwaita/ThemeAdwaita.h:
+        * rendering/RenderThemeAdwaita.cpp:
+        (WebCore::RenderThemeAdwaita::platformFocusRingColor const):
+        (WebCore::RenderThemeAdwaita::systemColor const):
+        (WebCore::RenderThemeAdwaita::paintTextField):
+        (WebCore::RenderThemeAdwaita::adjustTextFieldStyle const):
+        (WebCore::RenderThemeAdwaita::adjustTextAreaStyle const):
+        (WebCore::RenderThemeAdwaita::adjustSearchFieldStyle const):
+        Add a border radius to the default style, so the background doesn't bleed through
+        the corners.
+        (WebCore::RenderThemeAdwaita::paintMenuList):
+        (WebCore::RenderThemeAdwaita::paintProgressBar):
+        (WebCore::RenderThemeAdwaita::paintSliderTrack):
+        (WebCore::RenderThemeAdwaita::paintSliderThumb):
+        * rendering/RenderThemeAdwaita.h:
+
 2021-07-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] RealtimeMediaSourceCenter and VideoEncoder are not libwebrtc-specific

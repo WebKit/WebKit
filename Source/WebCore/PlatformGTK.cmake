@@ -61,6 +61,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/enchant/TextCheckerEnchant.h
 )
 
+set(CSS_VALUE_PLATFORM_DEFINES "HAVE_OS_DARK_MODE_SUPPORT=1")
+
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsAdwaita.css
     ${WEBCORE_DIR}/css/themeAdwaita.css

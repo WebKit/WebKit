@@ -1923,10 +1923,7 @@ webkit.org/b/201264 mathml/presentation/foreign-element-in-token.html [ Failure 
 webkit.org/b/202227 compositing/backing/layer-outside-tiled-parent.html [ Failure ]
 webkit.org/b/202228 compositing/layer-creation/fixed-position-descendants-out-of-view.html [ Failure ]
 
-webkit.org/b/202229 css-dark-mode/color-scheme-css.html [ Failure ]
-webkit.org/b/202229 css-dark-mode/color-scheme-meta.html [ Failure ]
-webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Crash Failure ]
-webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
+webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Pass Crash ]
 
 webkit.org/b/202744 compositing/layer-creation/absolute-in-async-overflow-scroll.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
