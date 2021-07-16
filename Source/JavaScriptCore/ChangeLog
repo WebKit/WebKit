@@ -1,3 +1,16 @@
+2021-07-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279916.
+        https://bugs.webkit.org/show_bug.cgi?id=228037
+
+        some of tests are timing out
+
+        Reverted changeset:
+
+        "Convert small JIT pool tests into executable fuzzing"
+        https://bugs.webkit.org/show_bug.cgi?id=226279
+        https://commits.webkit.org/r279916
+
 2021-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] RegExp::dumpToStream must not ref Strings since it is called concurrently
