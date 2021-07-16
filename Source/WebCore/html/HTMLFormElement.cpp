@@ -55,6 +55,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
+#include "SubmitEvent.h"
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
@@ -268,7 +269,6 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     m_shouldSubmit = false;
 
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
-
     if (shouldValidate) {
         auto submitElement = makeRefPtr(submitter ? submitter : findSubmitter(event));
         if (submitElement && submitElement->formNoValidate())
@@ -289,7 +289,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
 
     auto protectedThis = makeRef(*this);
 
-    auto submitEvent = Event::create(eventNames().submitEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
+    auto submitEvent = SubmitEvent::create(submitter);
     dispatchEvent(submitEvent);
 
     // Event handling could have resulted in m_shouldSubmit becoming true as a side effect, too.

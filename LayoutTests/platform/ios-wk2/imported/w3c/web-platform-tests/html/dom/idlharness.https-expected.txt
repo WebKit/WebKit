@@ -3766,13 +3766,13 @@ PASS ValidityState interface: document.createElement("input").validity must inhe
 PASS ValidityState interface: document.createElement("input").validity must inherit property "badInput" with the proper type
 PASS ValidityState interface: document.createElement("input").validity must inherit property "customError" with the proper type
 PASS ValidityState interface: document.createElement("input").validity must inherit property "valid" with the proper type
-FAIL SubmitEvent interface: existence and properties of interface object assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface object length assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface object name assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: attribute submitter assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
+PASS SubmitEvent interface: existence and properties of interface object
+PASS SubmitEvent interface object length
+PASS SubmitEvent interface object name
+PASS SubmitEvent interface: existence and properties of interface prototype object
+PASS SubmitEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS SubmitEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS SubmitEvent interface: attribute submitter
 FAIL FormDataEvent interface: existence and properties of interface object assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
 FAIL FormDataEvent interface object length assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
 FAIL FormDataEvent interface object name assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing

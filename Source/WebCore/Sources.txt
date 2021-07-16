@@ -1298,6 +1298,7 @@ html/RubyElement.cpp
 html/RubyTextElement.cpp
 html/SearchInputType.cpp
 html/StepRange.cpp
+html/SubmitEvent.cpp
 html/SubmitInputType.cpp
 html/TelephoneInputType.cpp
 html/TextDocument.cpp
@@ -3673,6 +3674,7 @@ JSStylePropertyMap.cpp
 JSStylePropertyMapReadOnly.cpp
 JSStyleSheet.cpp
 JSStyleSheetList.cpp
+JSSubmitEvent.cpp
 JSSubtleCrypto.cpp
 JSText.cpp
 JSTextDecoder.cpp

@@ -1,5 +1,42 @@
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
+        Implement 'SubmitEvent' interface
+        https://bugs.webkit.org/show_bug.cgi?id=202978
+
+        Reviewed by Alex Christensen.
+
+        Implement 'SubmitEvent' interface as per:
+        - https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#submitevent
+
+        Both Chrome and Firefox already ship this.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.in:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitIfPossible):
+        * html/SubmitEvent.cpp: Added.
+        (WebCore::SubmitEvent::create):
+        (WebCore::SubmitEvent::SubmitEvent):
+        (WebCore::SubmitEvent::eventInterface const):
+        * html/SubmitEvent.h: Added.
+        (WebCore::SubmitEvent::submitter const):
+        * html/SubmitEvent.idl: Added.
+
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::handleDOMActivateEvent):
+        Make sure SubmitInputType::handleDOMActivateEvent() passes its element as submitter
+        when submitting the form. One of the subtests in html/semantics/forms/form-submission-0/implicit-submission.optional.html
+        covers this.
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
         Add support for MediaError.message
         https://bugs.webkit.org/show_bug.cgi?id=228008
 

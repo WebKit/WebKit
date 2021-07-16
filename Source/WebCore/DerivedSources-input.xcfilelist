@@ -1051,6 +1051,7 @@ $(PROJECT_DIR)/html/MediaEncryptedEvent.idl
 $(PROJECT_DIR)/html/MediaError.idl
 $(PROJECT_DIR)/html/OffscreenCanvas.idl
 $(PROJECT_DIR)/html/RadioNodeList.idl
+$(PROJECT_DIR)/html/SubmitEvent.idl
 $(PROJECT_DIR)/html/TextMetrics.idl
 $(PROJECT_DIR)/html/TimeRanges.idl
 $(PROJECT_DIR)/html/URLSearchParams.idl

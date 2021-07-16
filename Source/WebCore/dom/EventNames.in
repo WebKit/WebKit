@@ -35,6 +35,7 @@ PageTransitionEvent
 PopStateEvent
 ProgressEvent
 PromiseRejectionEvent
+SubmitEvent
 TextEvent
 TransitionEvent
 UIEvent
