@@ -1320,6 +1320,9 @@ webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 
 webkit.org/b/227366 [ BigSur ] http/tests/preload/onload_event.html [ Pass Timeout ]
 
+# rdar://80331434 ([ Mac WK1 Release ] accessibility/loading-iframe-sends-notification.html is a flaky timeout)
+[ Release ] accessibility/loading-iframe-sends-notification.html [ Pass Timeout ]
+
 webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]
 
 webkit.org/b/227973 [ BigSur Debug arm64 ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Timeout ]
