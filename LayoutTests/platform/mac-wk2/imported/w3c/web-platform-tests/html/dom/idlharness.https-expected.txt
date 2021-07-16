@@ -1398,7 +1398,7 @@ PASS MediaError interface: constant MEDIA_ERR_DECODE on interface prototype obje
 PASS MediaError interface: constant MEDIA_ERR_SRC_NOT_SUPPORTED on interface object
 PASS MediaError interface: constant MEDIA_ERR_SRC_NOT_SUPPORTED on interface prototype object
 PASS MediaError interface: attribute code
-FAIL MediaError interface: attribute message assert_true: The prototype object must have a property "message" expected true got false
+PASS MediaError interface: attribute message
 PASS MediaError must be primary interface of errorVideo.error
 PASS Stringification of errorVideo.error
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_ABORTED" with the proper type
@@ -1406,7 +1406,7 @@ PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_NET
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_DECODE" with the proper type
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_SRC_NOT_SUPPORTED" with the proper type
 PASS MediaError interface: errorVideo.error must inherit property "code" with the proper type
-FAIL MediaError interface: errorVideo.error must inherit property "message" with the proper type assert_inherits: property "message" not found in prototype chain
+PASS MediaError interface: errorVideo.error must inherit property "message" with the proper type
 PASS AudioTrackList interface: existence and properties of interface object
 PASS AudioTrackList interface object length
 PASS AudioTrackList interface object name

@@ -1,3 +1,28 @@
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Add support for MediaError.message
+        https://bugs.webkit.org/show_bug.cgi?id=228008
+
+        Reviewed by Alex Christensen.
+
+        Add support for MediaError.message:
+        - https://html.spec.whatwg.org/multipage/media.html#mediaerror
+
+        Both Chrome and Firefox already support this.
+
+        No new tests, rebaselined existing test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::noneSupported):
+        (WebCore::HTMLMediaElement::mediaLoadingFailedFatally):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        * html/MediaError.h:
+        (WebCore::MediaError::create):
+        (WebCore::MediaError::message const):
+        (WebCore::MediaError::MediaError):
+        * html/MediaError.idl:
+
 2021-07-15  Jean-Yves Avenard  <jya@apple.com>
 
         [Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure (Enable VP8/VP9/Vorbis/Opus in WebKitLegacy)
