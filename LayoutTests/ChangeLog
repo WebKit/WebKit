@@ -1,3 +1,12 @@
+2021-07-16  Eric Hutchison  <ehutchison@apple.com>
+
+        Updated test expectations for inspector/canvas/css-canvas-clients.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=174272.
+
+        Unreviewed test gardeing.
+
+        * platform/mac/TestExpectations:
+
 2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK][WPE] Support color-schemes CSS property
