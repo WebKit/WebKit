@@ -22,12 +22,7 @@
 #include "libANGLE/renderer/metal/SyncMtl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc"
-#include "libANGLE/renderer/metal/mtl_utils.h"
 #include "platform/Platform.h"
-
-#ifdef ANGLE_METAL_XCODE_BUILDS_SHADERS
-#include "mtl_default_shaders_compiled.inc"
-#endif
 
 #include "EGL/eglext.h"
 
@@ -998,16 +993,23 @@ angle::Result DisplayMtl::initializeShaderLibrary()
 #ifdef ANGLE_METAL_XCODE_BUILDS_SHADERS
     mDefaultShadersAsyncInfo.reset(new DefaultShaderAsyncInfoMtl);
 
-    const uint8_t *compiled_shader_binary;
-    size_t compiled_shader_binary_len;
-    compiled_shader_binary     = gMetalBinaryShaders;
-    compiled_shader_binary_len = gMetalBinaryShaders_len;
-    mtl::AutoObjCPtr<NSError *> err = nil;
-    mtl::AutoObjCPtr<id<MTLLibrary>> mDefaultShaders = mtl::CreateShaderLibraryFromBinary(getMetalDevice(), compiled_shader_binary,
-                                                                        compiled_shader_binary_len, &err);
-    mDefaultShadersAsyncInfo->defaultShaders = std::move(mDefaultShaders.get());
-    mDefaultShadersAsyncInfo->defaultShadersCompileError = std::move(err.get());
+    NSString *path = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].bundlePath;
+    NSError *error = nullptr;
+    mDefaultShadersAsyncInfo->defaultShaders =
+        [getMetalDevice() newDefaultLibraryWithBundle:[NSBundle bundleWithPath:path] error:&error];
+
+    if (error && !mDefaultShadersAsyncInfo->defaultShaders)
+    {
+        ANGLE_MTL_OBJC_SCOPE
+        {
+            ERR() << "Internal error: newDefaultLibraryWithBundle failed. "
+                  << error.localizedDescription.UTF8String;
+        }
+        mDefaultShadersAsyncInfo->defaultShadersCompileError = std::move(error);
+        return angle::Result::Stop;
+    }
     mDefaultShadersAsyncInfo->compiled = true;
+
 #else
     mDefaultShadersAsyncInfo.reset(new DefaultShaderAsyncInfoMtl);
 

@@ -1,3 +1,15 @@
+2021-07-16  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r279980.
+
+        Broke Internal Builds
+
+        Reverted changeset:
+
+        "Build Default Metal library offline"
+        https://bugs.webkit.org/show_bug.cgi?id=227333
+        https://commits.webkit.org/r279980
+
 2021-07-16  Kyle Piddington  <kpiddington@apple.com>
 
         Build Default Metal library offline
