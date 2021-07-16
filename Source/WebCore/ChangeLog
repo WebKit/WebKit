@@ -1,3 +1,123 @@
+2021-07-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] LibWebRTC files should be in libwebrtc/gstreamer
+        https://bugs.webkit.org/show_bug.cgi?id=227991
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        For consistency purposes, the GStreamer backend modules used by LibWebRTC are now in
+        platform/mediastream/libwebrtc/gstreamer. platform/mediastream/ contains the pure GStreamer
+        modules related with media capture.
+
+        * platform/GStreamer.cmake:
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoCommon.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoCommon.cpp.
+        (WebCore::createH264Format):
+        (WebCore::supportedH264Formats):
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoCommon.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoCommon.h.
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp.
+        (WebCore::GStreamerVideoDecoder::GStreamerVideoDecoder):
+        (WebCore::GStreamerVideoDecoder::decodebinPadAddedCb):
+        (WebCore::GStreamerVideoDecoder::pipeline):
+        (WebCore::GStreamerVideoDecoder::makeElement):
+        (WebCore::GStreamerVideoDecoder::handleError):
+        (WebCore::GStreamerVideoDecoder::CreateFilter):
+        (WebCore::GStreamerVideoDecoder::pullSample):
+        (WebCore::GStreamerVideoDecoder::GetCapsForFrame):
+        (WebCore::GStreamerVideoDecoder::AddDecoderIfSupported):
+        (WebCore::GStreamerVideoDecoder::ConfigureSupportedDecoder):
+        (WebCore::GStreamerVideoDecoder::GstDecoderFactory):
+        (WebCore::GStreamerVideoDecoder::HasGstDecoder):
+        (WebCore::H264Decoder::H264Decoder):
+        (WebCore::VP8Decoder::VP8Decoder):
+        (WebCore::VP8Decoder::Create):
+        (WebCore::VP9Decoder::VP9Decoder):
+        (WebCore::VP9Decoder::Create):
+        (WebCore::GStreamerVideoDecoderFactory::CreateVideoDecoder):
+        (WebCore::GStreamerVideoDecoderFactory::GStreamerVideoDecoderFactory):
+        (WebCore::GStreamerVideoDecoderFactory::GetSupportedFormats const):
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.h.
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoder.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoEncoder.cpp.
+        (Encoders::singleton):
+        (Encoders::registerEncoder):
+        (Encoders::definition):
+        (webrtcVideoEncoderGetProperty):
+        (webrtcVideoEncoderSetBitrate):
+        (webrtcVideoEncoderSetEncoder):
+        (webrtcVideoEncoderSetFormat):
+        (webrtcVideoEncoderSetProperty):
+        (setBitrateKbitPerSec):
+        (setBitrateBitPerSec):
+        (webrtcVideoEncoderConstructed):
+        (webkit_webrtc_video_encoder_class_init):
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoder.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoEncoder.h.
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp.
+        (WebCore::GStreamerEncodedImageBuffer::create):
+        (WebCore::GStreamerEncodedImageBuffer::getBuffer const):
+        (WebCore::GStreamerEncodedImageBuffer::getVideoResolution const):
+        (WebCore::GStreamerEncodedImageBuffer::GStreamerEncodedImageBuffer):
+        (WebCore::GStreamerVideoEncoder::GStreamerVideoEncoder):
+        (WebCore::GStreamerVideoEncoder::pipeline):
+        (WebCore::GStreamerVideoEncoder::makeElement):
+        (WebCore::GStreamerVideoEncoder::returnFromFlowReturn):
+        (WebCore::GStreamerVideoEncoder::createEncoder):
+        (WebCore::GStreamerVideoEncoder::AddCodecIfSupported):
+        (WebCore::GStreamerVideoEncoder::Caps):
+        (WebCore::GStreamerVideoEncoder::ConfigureSupportedCodec):
+        (WebCore::GStreamerVideoEncoder::SetRestrictionCaps):
+        (WebCore::GStreamerH264Encoder::GStreamerH264Encoder):
+        (WebCore::GStreamerVideoEncoderFactory::CreateVideoEncoder):
+        (WebCore::GStreamerVideoEncoderFactory::GStreamerVideoEncoderFactory):
+        (WebCore::GStreamerVideoEncoderFactory::GetSupportedFormats const):
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.h.
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoFrameLibWebRTC.cpp: Renamed from Source/WebCore/platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.cpp.
+        (WebCore::GStreamerSampleFromLibWebRTCVideoFrame):
+        (WebCore::GStreamerVideoFrameLibWebRTC::create):
+        (WebCore::LibWebRTCVideoFrameFromGStreamerSample):
+        (WebCore::GStreamerVideoFrameLibWebRTC::ToI420):
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoFrameLibWebRTC.h: Renamed from Source/WebCore/platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.h.
+        (WebCore::GStreamerVideoFrameLibWebRTC::GStreamerVideoFrameLibWebRTC):
+        (WebCore::GStreamerVideoFrameLibWebRTC::takeSample):
+        * platform/mediastream/libwebrtc/gstreamer/LibWebRTCProviderGStreamer.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/LibWebRTCProviderGStreamer.cpp.
+        (WebCore::LibWebRTCProvider::create):
+        (WebCore::LibWebRTCProvider::webRTCAvailable):
+        (WebCore::LibWebRTCProviderGStreamer::createDecoderFactory):
+        (WebCore::LibWebRTCProviderGStreamer::createEncoderFactory):
+        * platform/mediastream/libwebrtc/gstreamer/LibWebRTCProviderGStreamer.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/LibWebRTCProviderGStreamer.h.
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp.
+        (WebCore::RealtimeIncomingAudioSource::create):
+        (WebCore::RealtimeIncomingAudioSourceLibWebRTC::create):
+        (WebCore::RealtimeIncomingAudioSourceLibWebRTC::RealtimeIncomingAudioSourceLibWebRTC):
+        (WebCore::RealtimeIncomingAudioSourceLibWebRTC::OnData):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.h: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.h.
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp.
+        (WebCore::RealtimeIncomingVideoSource::create):
+        (WebCore::RealtimeIncomingVideoSourceLibWebRTC::create):
+        (WebCore::RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC):
+        (WebCore::RealtimeIncomingVideoSourceLibWebRTC::OnFrame):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.h: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.h.
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp.
+        (WebCore::RealtimeMediaSourceCenter::defaultAudioCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultVideoCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultDisplayCaptureFactory):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp.
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC):
+        (WebCore::RealtimeOutgoingAudioSource::create):
+        (WebCore::libwebrtcAudioFormat):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::isReachingBufferedAudioDataHighLimit):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::isReachingBufferedAudioDataLowLimit):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::hasBufferedEnoughData):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.h: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.h.
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp.
+        (WebCore::RealtimeOutgoingVideoSource::create):
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::create):
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC):
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable):
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.h: Renamed from Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.h.
+
 2021-07-15  Chris Dumez  <cdumez@apple.com>
 
         Implement 'SubmitEvent' interface

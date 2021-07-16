@@ -1,3 +1,12 @@
+2021-07-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] LibWebRTC files should be in libwebrtc/gstreamer
+        https://bugs.webkit.org/show_bug.cgi?id=227991
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2021-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, update my status in contributors.json to reviewer.

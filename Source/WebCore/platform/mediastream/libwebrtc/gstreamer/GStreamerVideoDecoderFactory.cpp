@@ -281,13 +281,13 @@ public:
 
     static GRefPtr<GstElementFactory> GstDecoderFactory(const char *capsStr)
     {
-        auto all_decoders = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER,
+        auto allDecoders = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER,
             GST_RANK_MARGINAL);
         auto caps = adoptGRef(gst_caps_from_string(capsStr));
-        auto decoders = gst_element_factory_list_filter(all_decoders,
+        auto decoders = gst_element_factory_list_filter(allDecoders,
             caps.get(), GST_PAD_SINK, FALSE);
 
-        gst_plugin_feature_list_free(all_decoders);
+        gst_plugin_feature_list_free(allDecoders);
         GRefPtr<GstElementFactory> res;
         if (decoders)
             res = GST_ELEMENT_FACTORY(decoders->data);
