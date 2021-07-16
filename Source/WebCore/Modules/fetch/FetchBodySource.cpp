@@ -32,7 +32,7 @@
 namespace WebCore {
 
 FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner)
-    : m_bodyOwner(&bodyOwner)
+    : m_bodyOwner(makeWeakPtr(bodyOwner))
 {
 }
 
@@ -68,7 +68,6 @@ void FetchBodySource::doPull()
 void FetchBodySource::doCancel()
 {
     m_isCancelling = true;
-    ASSERT(m_bodyOwner || m_isClosed);
     if (!m_bodyOwner)
         return;
 
@@ -79,6 +78,7 @@ void FetchBodySource::doCancel()
 void FetchBodySource::close()
 {
 #if ASSERT_ENABLED
+    ASSERT(!m_isClosed);
     m_isClosed = true;
 #endif
 

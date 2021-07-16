@@ -1,3 +1,20 @@
+2021-07-16  Brady Eidson  <beidson@apple.com>
+
+        FetchBodySource/FetchBodyOwner cleanup
+        <rdar://80318044> and https://bugs.webkit.org/show_bug.cgi?id=228035
+
+        Reviewed by Geoffrey Garen.
+
+        FetchBodyOwner should have a WeakPtr factory, and FetchBodySource should use it.
+        
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchBodySource.cpp:
+        (WebCore::FetchBodySource::FetchBodySource):
+        (WebCore::FetchBodySource::doCancel):
+        (WebCore::FetchBodySource::close):
+        * Modules/fetch/FetchBodySource.h:
+        * Modules/fetch/FetchResponse.h:
+
 2021-07-16  Alan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Update the fragmented status of the renderer when it becomes in-flow
