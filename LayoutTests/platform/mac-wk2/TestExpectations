@@ -1399,6 +1399,8 @@ webkit.org/b/227890 fast/canvas/canvas-path-addPath.html [ Pass Timeout ]
 
 webkit.org/b/227881 fast/canvas/canvas-overloads-strokeText.html [ Pass Crash ]
 
+webkit.org/b/227881 inspector/canvas/requestClientNodes-css.html [ Pass Timeout ]
+
 webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Failure Timeout ]
 
 webkit.org/b/228034 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure Timeout ]

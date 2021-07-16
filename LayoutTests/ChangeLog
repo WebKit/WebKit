@@ -1,3 +1,12 @@
+2021-07-16  Eric Hutchison  <ehutchison@apple.com>
+
+        Multiple Canvas tests flaky crash, flaky fail.
+        https://bugs.webkit.org/show_bug.cgi?id=227881.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [MacOS wk2] inspector/canvas/recording-bitmaprenderer-frameCount.html is flaky failing and timing out.
