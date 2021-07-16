@@ -1,3 +1,65 @@
+2021-07-16  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Bundle libraries for remote execution in run-jsc-benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=227579
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Similarly to run-jsc-stress-tests, introduce a bundling step that
+        ships all library dependencies to the remote system when using
+        run-jsc-benchmarks --remote.
+
+        This patch factors out the code to
+        - lookup the ELF interpreter/libraries and to
+        - strip the rpath and create a wrapper script
+        from generate-bundle and places it webkitpy/binary_bundling.
+
+        It also introduces a simpler script that only bundles a single
+        binary (bundle-binary) and switches run-jsc-benchmarks and
+        run-jsc-stress-tests to use it.
+
+        It also updates run-jsc-benchmark to propagate any environment
+        variables intended for consumption by the JSC binary.
+
+        * Scripts/generate-bundle: Factor out reusable bundling code.
+        * Scripts/run-jsc-benchmarks: Do bundling and variable propagation.
+        * Scripts/run-jsc-stress-tests: Switch to bundle-binary.
+        * Scripts/webkitpy/binary_bundling/__init__.py: Added.
+        * Scripts/webkitpy/binary_bundling/bundle.py: Added.
+        (BinaryBundler):
+        (BinaryBundler.__init__):
+        (BinaryBundler.destination_dir):
+        (BinaryBundler.copy_and_remove_rpath):
+        (BinaryBundler.generate_wrapper_script):
+        * Scripts/webkitpy/binary_bundling/ldd.py: Added.
+        (SharedObjectResolver):
+        (SharedObjectResolver.__init__):
+        (SharedObjectResolver._run_cmd_and_get_output):
+        (SharedObjectResolver._get_interpreter_objname):
+        (SharedObjectResolver._get_libs_and_interpreter):
+        (SharedObjectResolver._ldd_recursive_get_libs_and_interpreter):
+        (SharedObjectResolver.get_libs_and_interpreter):
+
+        * Scripts/bundle-binary: Added.
+        * Scripts/generate-bundle:
+        * Scripts/run-jsc-benchmarks:
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitpy/binary_bundling/__init__.py: Added.
+        * Scripts/webkitpy/binary_bundling/bundle.py: Added.
+        (BinaryBundler):
+        (BinaryBundler.__init__):
+        (BinaryBundler.destination_dir):
+        (BinaryBundler.copy_and_remove_rpath):
+        (BinaryBundler.generate_wrapper_script):
+        * Scripts/webkitpy/binary_bundling/ldd.py: Added.
+        (SharedObjectResolver):
+        (SharedObjectResolver.__init__):
+        (SharedObjectResolver._run_cmd_and_get_output):
+        (SharedObjectResolver._get_interpreter_objname):
+        (SharedObjectResolver._get_libs_and_interpreter):
+        (SharedObjectResolver._ldd_recursive_get_libs_and_interpreter):
+        (SharedObjectResolver.get_libs_and_interpreter):
+
 2021-07-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] LibWebRTC files should be in libwebrtc/gstreamer

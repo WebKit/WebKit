@@ -237,6 +237,7 @@ $includeSixSpeed = false
 $includeTailBench = true
 $includeBigIntBench = false
 $includePrivateFieldsBench = false
+$ldd=nil
 $measureGC=false
 $benchmarkPattern=nil
 $verbosity=0
@@ -1413,18 +1414,38 @@ class VM
     @extraEnv[key] = val
     @@extraEnvSet[key] = true
   end
-  
+
+  def copyIntoBenchPathBundle(basename, outputdir)
+    bundle_binary = (SCRIPT_PATH.dirname + 'bundle-binary').realpath
+    cmd = Shellwords.join([
+                            bundle_binary,
+                            '--dest-dir', outputdir,
+                            @path
+                          ])
+    $stderr.puts ">> #{cmd}" if $verbosity>=2
+    raise unless system(cmd)
+    @path = "#{basename}/jsc"
+  end
+
   def copyIntoBenchPath
     raise unless canCopyIntoBenchPath
     basename, filename = Benchfile.uniqueFilename("vm")
     raise unless Dir.mkdir(filename)
+    if not $remoteHosts.empty? and `uname` == 'Linux'
+      copyIntoBenchPathBundle(basename, Shellwords.shellescape(filename.to_s))
+      return
+    end
+
     @libPath.each {
       | libPathPart |
       cmd = "cp -a #{Shellwords.shellescape(libPathPart)}/* #{Shellwords.shellescape(filename.to_s)}"
       $stderr.puts ">> #{cmd}" if $verbosity>=2
       raise unless system(cmd)
     }
-    @path = "#{basename}/#{@relativeBinPath}"
+    cmd = "cp -a #{@path} #{Shellwords.shellescape(filename.to_s)}"
+    $stderr.puts ">> #{cmd}" if $verbosity>=2
+    raise unless system(cmd)
+    @path = "#{basename}/jsc"
     @libPath = [basename]
   end
   
@@ -2389,7 +2410,17 @@ def wrap(str, columns)
   }
   result + curLine + "\n"
 end
-  
+
+def exportJSCEnvironmentVariables
+  buf = ""
+  ENV.each {
+    | name, value |
+    next unless name.start_with?("JSC_")
+    buf << "export #{name}=#{Shellwords.shellescape(value)}\n"
+  }
+  buf
+end
+
 def runAndGetResults
   results = nil
   Dir.chdir(BENCH_DATA_PATH) {
@@ -3055,6 +3086,8 @@ begin
       $dependencies.push(Pathname.new(arg).realpath)
     when '--config'
       $configPath = Pathname.new(arg)
+    when '--ldd'
+      $ldd = arg
     when '--help'
       usage
     else
@@ -3611,6 +3644,7 @@ begin
   if $prepare
     File.open("#{BENCH_DATA_PATH}/runscript", "w") {
       | file |
+      file.puts exportJSCEnvironmentVariables
       file.puts "echo -e \"HOSTNAME:\\c\""
       file.puts "hostname"
       file.puts "echo"

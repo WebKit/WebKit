@@ -1919,37 +1919,22 @@ def prepareBundle
             end
 
             if $remote and $hostOS == "linux"
-                generate_bundle = (Pathname.new(THIS_SCRIPT_PATH).dirname + 'generate-bundle').realpath
+                bundle_binary = (Pathname.new(THIS_SCRIPT_PATH).dirname + 'bundle-binary').realpath
                 Dir.mktmpdir {
                     | tmpdir |
                     # Generate bundle in a temporary directory so that
                     # we can safely pick it up regardless of its name
                     # (it's the only zip file there).
                     cmdline = [
-                        generate_bundle.to_s,
-                        "--platform=gtk",
-                        "--bundle=jsc",
-                        "--syslibs=bundle-all",
-                        "--no-strip",
-                        "--compression=tar.xz",
-                        ($buildType == "release") ? "--release" : "--debug",
-                        "--destination=#{tmpdir}"
+                        bundle_binary.to_s,
+                        "--dest-dir=#{$jscPath.dirname}",
+                        "--log-level=debug",
+                        $jscPath.to_s
                     ]
                     if not $ldd.nil?
                         cmdline << "--ldd=#{$ldd}"
                     end
                     mysys(cmdline)
-                    archives = Dir.glob("#{tmpdir}/*.tar.xz")
-                    if archives.size != 1
-                        raise "Expected exactly one entry in tmpdir, not #{archives}"
-                    end
-                    # Note: we overwrite 'jsc'. This obviously conflicts with
-                    # !copyVM but, then gain, so does $remote.
-                    mysys(["tar",
-                           "-C",
-                           $jscPath.dirname.to_s,
-                           "-xf",
-                           archives[0]])
                 }
             end
         }
