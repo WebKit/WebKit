@@ -266,6 +266,17 @@ CURLMcode CurlMultiHandle::getFdSet(fd_set& readFdSet, fd_set& writeFdSet, fd_se
     return curl_multi_fdset(m_multiHandle, &readFdSet, &writeFdSet, &excFdSet, &maxFd);
 }
 
+CURLMcode CurlMultiHandle::poll(const Vector<curl_waitfd>& extraFds, int timeoutMS)
+{
+    int numFds = 0;
+    return curl_multi_poll(m_multiHandle, const_cast<curl_waitfd*>(extraFds.data()), extraFds.size(), timeoutMS, &numFds);
+}
+
+CURLMcode CurlMultiHandle::wakeUp()
+{
+    return curl_multi_wakeup(m_multiHandle);
+}
+
 CURLMcode CurlMultiHandle::perform(int& runningHandles)
 {
     return curl_multi_perform(m_multiHandle, &runningHandles);

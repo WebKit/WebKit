@@ -174,6 +174,8 @@ public:
     CURLMcode removeHandle(CURL*);
 
     CURLMcode getFdSet(fd_set&, fd_set&, fd_set&, int&);
+    CURLMcode poll(const Vector<curl_waitfd>&, int);
+    CURLMcode wakeUp();
     CURLMcode perform(int&);
     CURLMsg* readInfo(int&);
 

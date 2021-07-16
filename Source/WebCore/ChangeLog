@@ -1,3 +1,26 @@
+2021-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Use curl_multi_poll and curl_multi_wakeup instead of select
+        https://bugs.webkit.org/show_bug.cgi?id=227966
+
+        Reviewed by Don Olmstead.
+
+        libcurl 7.68.0 added curl_multi_poll and curl_multi_wakeup.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlMultiHandle::poll): Added.
+        (WebCore::CurlMultiHandle::wakeUp): Added.
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequestScheduler.cpp:
+        (WebCore::CurlRequestScheduler::add):
+        (WebCore::CurlRequestScheduler::callOnWorkerThread):
+        (WebCore::CurlRequestScheduler::startOrWakeUpThread):
+        (WebCore::CurlRequestScheduler::wakeUpThreadIfPossible): Added.
+        (WebCore::CurlRequestScheduler::stopThread):
+        (WebCore::CurlRequestScheduler::workerThread):
+        (WebCore::CurlRequestScheduler::startThreadIfNeeded): Deleted.
+        * platform/network/curl/CurlRequestScheduler.h:
+
 2021-07-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make the lack of an ANGLE dylib unconditionally log

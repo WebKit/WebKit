@@ -51,7 +51,8 @@ public:
     void callOnWorkerThread(WTF::Function<void()>&&);
 
 private:
-    void startThreadIfNeeded();
+    void startOrWakeUpThread();
+    void wakeUpThreadIfPossible();
     void stopThreadIfNoMoreJobRunning();
     void stopThread();
 
@@ -72,7 +73,8 @@ private:
     HashSet<CurlRequestSchedulerClient*> m_activeJobs;
     HashMap<CURL*, CurlRequestSchedulerClient*> m_clientMaps;
 
-    std::unique_ptr<CurlMultiHandle> m_curlMultiHandle;
+    Lock m_multiHandleMutex;
+    std::optional<CurlMultiHandle> m_curlMultiHandle;
 
     long m_maxConnects;
     long m_maxTotalConnections;
