@@ -1,3 +1,31 @@
+2021-07-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Provide API to access SVN cache
+        https://bugs.webkit.org/show_bug.cgi?id=228000
+        <rdar://problem/80646471>
+
+        Reviewed by Dewei Zhu.
+
+        Create a Svn cache with the same API as the Git cache. This allows
+        git and svn to share logic when inserting identifiers in `log` and `blame`.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.Cache.path): Path to cahce file.
+        (Svn.Cache.populate): Fill cache from `svn log` operation.
+        (Svn.Cache.to_hash): Svn is unaware of hashes, and can never map them.
+        (Svn.Cache.to_revision): Map identifiers to revisions.
+        (Svn.Cache.to_identifier): Map revisions to identifiers.
+        (Svn.__init__): Use cache object instead of _metadata_cache.
+        (Svn._commit_count): Access cache object.
+        (Svn._branch_for): Ditto.
+        (Svn.commit): Ditto.
+        (Svn._cache_path): Deleted.
+        (Svn._cache_revisions): Deleted.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_revision_cache):
+
 2021-07-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] RealtimeMediaSourceCenter and VideoEncoder are not libwebrtc-specific

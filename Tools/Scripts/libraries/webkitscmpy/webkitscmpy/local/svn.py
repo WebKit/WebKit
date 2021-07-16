@@ -29,6 +29,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 from datetime import datetime, timedelta
 
@@ -38,8 +39,171 @@ from webkitscmpy import Commit, Contributor, Version
 
 
 class Svn(Scm):
-    LOG_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
-    CACHE_VERSION = Version(1)
+    class Cache(object):
+        LOG_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
+        VERSION = Version(1)
+
+        def __init__(self, repo, guranteed_for=10):
+            self.repo = repo
+            self._last_populated = {}
+            self._guranteed_for = guranteed_for
+
+            if os.path.exists(self.path):
+                try:
+                    with open(self.path, 'r') as file:
+                        self._data = json.load(file)
+                except BaseException:
+                    self._data = dict(version=str(self.VERSION))
+            else:
+                self._data = dict(version=str(self.VERSION))
+
+        @property
+        def path(self):
+            return os.path.join(self.repo.root_path, '.svn', 'webkitscmpy-cache.json')
+
+        def populate(self, branch=None):
+            branch = branch or self.repo.default_branch
+            if self._last_populated.get(branch, 0) + self._guranteed_for > time.time():
+                return
+
+            is_default_branch = branch == self.repo.default_branch
+            if branch not in self._data:
+                self._data[branch] = [0] if is_default_branch else []
+            pos = len(self._data[branch])
+
+            # If we aren't on the default branch, we will need the default branch to determine when
+            # our  branch  intersects with the default branch.
+            if not is_default_branch:
+                self.populate(branch=self.repo.default_branch)
+
+            try:
+                did_warn = False
+                count = 0
+                log = None
+
+                if is_default_branch or '/' in branch:
+                    branch_arg = '^/{}'.format(branch)
+                else:
+                    branch_arg = '^/branches/{}'.format(branch)
+
+                kwargs = dict()
+                if sys.version_info >= (3, 0):
+                    kwargs = dict(encoding='utf-8')
+
+                self._last_populated[branch] = time.time()
+                log = subprocess.Popen(
+                    [self.repo.executable(), 'log', '-q', branch_arg],
+                    cwd=self.repo.root_path,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    **kwargs
+                )
+                if log.poll():
+                    raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
+
+                default_count = 0
+                line = log.stdout.readline()
+                while line:
+                    match = self.LOG_RE.match(line)
+                    if match:
+                        if not did_warn:
+                            count += 1
+                            if count > 1000:
+                                self.repo.log('Caching commit data for {}, this will take a few minutes...'.format(branch))
+                                did_warn = True
+
+                        revision = int(match.group('revision'))
+                        if pos > 0 and self._data[branch][pos - 1] == revision:
+                            break
+                        if not is_default_branch:
+                            if revision in self._data[self.repo.default_branch]:
+                                # Only handle 2 sequential cross-branch commits
+                                if default_count > 2:
+                                    break
+                                default_count += 1
+                            else:
+                                default_count = 0
+                        self._data[branch].insert(pos, revision)
+                    line = log.stdout.readline()
+            finally:
+                if log:
+                    log.kill()
+
+            if default_count:
+                self._data[branch] = self._data[branch][default_count - 1:]
+            if self._data[self.repo.default_branch][0] == [0]:
+                self._data['identifier'] = len(self._data[branch])
+
+            try:
+                with open(self.path, 'w') as file:
+                    json.dump(self._data, file, indent=4)
+            except (IOError, OSError):
+                self.repo.log("Failed to write SVN cache to '{}'".format(self.path))
+
+            return self._data[branch]
+
+        def to_hash(self, **kwargs):
+            return None
+
+        def to_revision(self, hash=None, identifier=None, populate=True, branch=None):
+            if hash:
+                return None
+            parts = Commit._parse_identifier(identifier, do_assert=False)
+            if not parts:
+                return None
+
+            _, b_count, branch = parts
+            if branch not in self._data and populate:
+                self.populate(branch=branch)
+            if branch not in self._data:
+                return None
+
+            if b_count < 0:
+                bp_identifier = self.to_identifier(revision=self._data[branch][0])
+                if not bp_identifier:
+                    return None
+                index = int(bp_identifier.split('@')[0]) + b_count
+                if index <= 0:
+                    return None
+                return self._data[self.repo.default_branch][index]
+            if b_count >= len(self._data[branch]) and populate:
+                self.populate(branch=branch)
+            if b_count >= len(self._data[branch]):
+                return None
+            return self._data[branch][b_count]
+
+        def to_identifier(self, hash=None, revision=None, populate=True, branch=None):
+            if hash:
+                return None
+
+            revision = Commit._parse_revision(revision, do_assert=False)
+            if not revision:
+                return None
+
+            branch = branch or self.repo.branch
+            if branch not in self._data and populate:
+                self.populate(branch=branch)
+            if branch not in self._data:
+                return None
+
+            index = bisect.bisect_left(self._data[branch], revision)
+            exists = index < len(self._data[branch]) and self._data[branch][index] == revision
+            if not exists:
+                self.populate(branch=branch)
+                index = bisect.bisect_left(self._data[branch], revision)
+                exists = index < len(self._data[branch]) and self._data[branch] == revision
+
+            if not exists or not index:
+                if branch != self.repo.default_branch:
+                    return self.to_identifier(branch=self.repo.default_branch, populate=populate)
+                return None
+
+            if branch == self.repo.default_branch:
+                return '{}@trunk'.format(index, self.repo.default_branch)
+
+            branch_point = bisect.bisect_left(self._data[self.repo.default_branch], self._data[branch][0])
+            return '{}.{}@{}'.format(branch_point, index, branch)
+
 
     @classmethod
     @decorators.Memoize()
@@ -50,7 +214,7 @@ class Svn(Scm):
     def is_checkout(cls, path):
         return run([cls.executable(), 'info'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=True):
         super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
 
         self._root_path = self.path
@@ -59,14 +223,7 @@ class Svn(Scm):
         if not self.root_path:
             raise OSError('Provided path {} is not a svn repository'.format(path))
 
-        if os.path.exists(self._cache_path):
-            try:
-                with open(self._cache_path) as file:
-                    self._metadata_cache = json.load(file)
-            except BaseException:
-                self._metadata_cache = dict(version=str(self.CACHE_VERSION))
-        else:
-            self._metadata_cache = dict(version=str(self.CACHE_VERSION))
+        self.cache = self.Cache(self) if cached else None
 
     @decorators.Memoize(cached=False)
     def info(self, branch=None, revision=None, tag=None):
@@ -125,105 +282,28 @@ class Svn(Scm):
     def tags(self):
         return self.list('tags')
 
-    @property
-    def _cache_path(self):
-        return os.path.join(self.root_path, '.svn', 'webkitscmpy-cache.json')
-
-    def _cache_revisions(self, branch=None):
-        branch = branch or self.default_branch
-        is_default_branch = branch == self.default_branch
-        if branch not in self._metadata_cache:
-            self._metadata_cache[branch] = [0] if is_default_branch else []
-        pos = len(self._metadata_cache[branch])
-
-        # If we aren't on the default branch, we will need the default branch to determine when
-        # our  branch  intersects with the default branch.
-        if not is_default_branch:
-            self._cache_revisions(branch=self.default_branch)
-
-        try:
-            did_warn = False
-            count = 0
-            log = None
-
-            if is_default_branch or '/' in branch:
-                branch_arg = '^/{}'.format(branch)
-            else:
-                branch_arg = '^/branches/{}'.format(branch)
-
-            kwargs = dict()
-            if sys.version_info >= (3, 0):
-                kwargs = dict(encoding='utf-8')
-
-            log = subprocess.Popen(
-                [self.executable(), 'log', '-q', branch_arg],
-                cwd=self.root_path,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                **kwargs
-            )
-            if log.poll():
-                raise self.Exception("Failed to construct branch history for '{}'".format(branch))
-
-            default_count = 0
-            line = log.stdout.readline()
-            while line:
-                match = self.LOG_RE.match(line)
-                if match:
-                    if not did_warn:
-                        count += 1
-                        if count > 1000:
-                            self.log('Caching commit data for {}, this will take a few minutes...'.format(branch))
-                            did_warn = True
-
-                    revision = int(match.group('revision'))
-                    if pos > 0 and self._metadata_cache[branch][pos - 1] == revision:
-                        break
-                    if not is_default_branch:
-                        if revision in self._metadata_cache[self.default_branch]:
-                            # Only handle 2 sequential cross-branch commits
-                            if default_count > 2:
-                                break
-                            default_count += 1
-                        else:
-                            default_count = 0
-                    self._metadata_cache[branch].insert(pos, revision)
-                line = log.stdout.readline()
-        finally:
-            if log:
-                log.kill()
-
-        if default_count:
-            self._metadata_cache[branch] = self._metadata_cache[branch][default_count - 1:]
-        if self._metadata_cache[self.default_branch][0] == [0]:
-            self._metadata_cache['identifier'] = len(self._metadata_cache[branch])
-
-        try:
-            with open(self._cache_path, 'w') as file:
-                json.dump(self._metadata_cache, file, indent=4)
-        except (IOError, OSError):
-            self.log("Failed to write SVN cache to '{}'".format(self._cache_path))
-
-        return self._metadata_cache[branch]
-
     def _commit_count(self, revision=None, branch=None):
         branch = branch or self.default_branch
+        if not self.cache:
+            raise self.Exception('No available cache, cannot count commits')
 
         if revision:
-            if revision not in self._metadata_cache[branch]:
+            if revision not in self.cache._data[branch]:
                 if 'branch' not in branch and branch != 'trunk':
                     sys.stderr.write("Check if 'r{}' is a tag\n".format(revision))
                 raise self.Exception("Failed to find '{}' on '{}'".format(revision, branch))
-            return bisect.bisect_left(self._metadata_cache[branch], int(revision))
+            return bisect.bisect_left(self.cache._data[branch], int(revision))
         if branch == self.default_branch:
-            return len(self._metadata_cache[branch])
-        return self._commit_count(revision=self._metadata_cache[branch][0], branch=self.default_branch)
+            return len(self.cache._data[branch])
+        return self._commit_count(revision=self.cache._data[branch][0], branch=self.default_branch)
 
     def remote(self, name=None):
         return self.info(cached=True)['Repository Root']
 
     def _branch_for(self, revision):
-        candidates = [branch for branch, revisions in self._metadata_cache.items() if branch != 'version' and revision in revisions]
+        if not self.cache:
+            raise self.Exception('No available cache, cannot determine branch')
+        candidates = [branch for branch, revisions in self.cache._data.items() if branch != 'version' and revision in revisions]
         candidate = self.prioritize_branches(candidates) if candidates else None
 
         # In the default branch case, we don't even need to ask the remote
@@ -276,6 +356,8 @@ class Svn(Scm):
                 raise ValueError('Cannot define both revision and identifier')
             if tag:
                 raise ValueError('Cannot define both tag and identifier')
+            if not self.cache:
+                raise self.Exception('No available cache, cannot access by identifier')
 
             parsed_branch_point, identifier, parsed_branch = Commit._parse_identifier(identifier, do_assert=True)
             if parsed_branch:
@@ -293,11 +375,11 @@ class Svn(Scm):
 
             # Populate mapping of revisions on their respective branches if we don't have enough revisions on the
             # branch specified by the provided identifier
-            if not self._metadata_cache.get(branch, []) or identifier >= len(self._metadata_cache.get(branch, [])):
+            if not self.cache._data.get(branch, []) or identifier >= len(self.cache._data.get(branch, [])):
                 if branch != self.default_branch:
-                    self._cache_revisions(branch=self.default_branch)
-                self._cache_revisions(branch=branch)
-            if identifier > len(self._metadata_cache.get(branch, [])):
+                    self.cache.populate(branch=self.default_branch)
+                self.cache.populate(branch=branch)
+            if identifier > len(self.cache._data.get(branch, [])):
                 raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
 
             if identifier <= 0:
@@ -309,11 +391,11 @@ class Svn(Scm):
 
                 branch = self.default_branch
 
-            revision = self._metadata_cache[branch][identifier]
+            revision = self.cache._data[branch][identifier]
             info = self.info(cached=True, branch=branch, revision=revision)
             branch = self._branch_for(revision)
-            if not self._metadata_cache.get(branch, []) or identifier >= len(self._metadata_cache.get(branch, [])):
-                self._cache_revisions(branch=branch)
+            if not self.cache._data.get(branch, []) or identifier >= len(self.cache._data.get(branch, [])):
+                self.cache.populate(branch=branch)
 
         # Determine the commit info and branch for a given revision
         elif revision:
@@ -352,11 +434,11 @@ class Svn(Scm):
             ) * (1 if tz_diff[0] == '-' else -1)
 
         # Compute the identifier if the function did not receive one and we were asked to
-        if include_identifier and not identifier:
-            if branch != self.default_branch and revision > self._metadata_cache.get(self.default_branch, [0])[-1]:
-                self._cache_revisions(branch=self.default_branch)
-            if revision not in self._metadata_cache.get(branch, []):
-                self._cache_revisions(branch=branch)
+        if self.cache and include_identifier and not identifier:
+            if branch != self.default_branch and revision > self.cache._data.get(self.default_branch, [0])[-1]:
+                self.cache.populate(branch=self.default_branch)
+            if revision not in self.cache._data.get(branch, []):
+                self.cache.populate(branch=branch)
             identifier = self._commit_count(revision=revision, branch=branch)
 
         branch_point = None if not include_identifier or branch == self.default_branch else self._commit_count(branch=branch)
