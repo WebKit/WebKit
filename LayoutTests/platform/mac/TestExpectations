@@ -2287,7 +2287,7 @@ webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
 
 webkit.org/b/223645 [ BigSur+ ] media/video-played-ranges-1.html [ Pass Failure ]
 
-webkit.org/b/226828 media/modern-media-controls/overflow-support/chapters.html [ Pass Failure Timeout ]
+webkit.org/b/226828 [ BigSur+ ] media/modern-media-controls/overflow-support/chapters.html [ Pass Failure Timeout ]
 
 # rdar://80345970 ([ Mac ] imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html is a flaky failure)
 imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html [ Pass Failure Crash ]
