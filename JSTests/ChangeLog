@@ -1,3 +1,14 @@
+2021-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] RegExp::dumpToStream must not ref Strings since it is called concurrently
+        https://bugs.webkit.org/show_bug.cgi?id=228031
+        rdar://80686425
+
+        Reviewed by Mark Lam.
+
+        * stress/regexp-dump-concurrently.js: Added.
+        (let.code):
+
 2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] SamplingProfiler should recognize RegExp execution

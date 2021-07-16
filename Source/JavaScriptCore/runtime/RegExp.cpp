@@ -471,7 +471,9 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
 
 void RegExp::dumpToStream(const JSCell* cell, PrintStream& out)
 {
-    out.print(jsCast<const RegExp*>(cell)->toSourceString());
+    // This function can be called concurrently. So we must not ref m_pattern.
+    auto* regExp = jsCast<const RegExp*>(cell);
+    out.print(toCString("/", regExp->pattern().impl(), "/", Yarr::flagsString(regExp->flags()).data()));
 }
 
 template <typename CharacterType>
