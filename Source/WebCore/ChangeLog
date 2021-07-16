@@ -1,3 +1,18 @@
+2021-07-16  Alan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Update the fragmented status of the renderer when it becomes in-flow
+        https://bugs.webkit.org/show_bug.cgi?id=228025
+        <rdar://80458138>
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensures that we update fragmented status of the renderer when it becomes in-flow and not just when the containing block's childrenInline status needs updating.
+        (e.g. the block renderer goes from out-of-flow to in-flow, and the containing block already has block level children, we don't call childFlowStateChangesAndAffectsParentBlock)
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::normalizeTreeAfterStyleChange): Move the update logic out from childFlowStateChangesAndAffectsParentBlock to here and run it unconditionally.
+        (WebCore::RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock):
+
 2021-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Use curl_multi_poll and curl_multi_wakeup instead of select
