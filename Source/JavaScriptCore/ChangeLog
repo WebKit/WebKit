@@ -1,3 +1,16 @@
+2021-07-15  Keith Miller  <keith_miller@apple.com>
+
+        Alias JSC graph dumping options
+        https://bugs.webkit.org/show_bug.cgi?id=228015
+
+        Reviewed by Yusuke Suzuki.
+
+        My brain seems to associate the phases with the tier we are compiling in
+        rather than the type of graph we are processing. At this point it's
+        probably easier to just add an alias rather than convince me otherwise.
+
+        * runtime/OptionsList.h:
+
 2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] SamplingProfiler should recognize RegExp execution

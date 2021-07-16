@@ -565,6 +565,10 @@ enum OptionEquivalence {
     v(showDisassembly, dumpDisassembly, SameOption) \
     v(showDFGDisassembly, dumpDFGDisassembly, SameOption) \
     v(showFTLDisassembly, dumpFTLDisassembly, SameOption) \
+    v(dumpGraphAtEachDFGFTLPhase, dumpDFGFTLGraphAtEachPhase, SameOption) \
+    v(dumpGraphAtEachDFGPhase, dumpDFGGraphAtEachPhase, SameOption) \
+    v(dumpGraphAtEachB3Phase, dumpB3GraphAtEachPhase, SameOption) \
+    v(dumpGraphAtEachAirPhase, dumpAirGraphAtEachPhase, SameOption) \
     v(alwaysDoFullCollection, useGenerationalGC, InvertedOption) \
     v(enableOSREntryToDFG, useOSREntryToDFG, SameOption) \
     v(enableOSREntryToFTL, useOSREntryToFTL, SameOption) \
