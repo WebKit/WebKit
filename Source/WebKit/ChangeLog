@@ -1,3 +1,21 @@
+2021-07-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        macOS Safari network sessions not being marked as being from a browser
+        https://bugs.webkit.org/show_bug.cgi?id=228028
+        <rdar://problem/80648664>
+
+        Reviewed by Brent Fulgham.
+
+        Move WebKitAdditions to open source to communicate full web browser
+        status to the networking stack. In the macOS case, we don't have
+        a full browser entitlement, so we should check for Safari.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::SessionWrapper::initialize):
+        The name com.apple.WebKit.InAppBrowser is not the most accurate name,
+        but changing it would require syncing with other parts of the network
+        stack. We should do this in a separate bug.
+
 2021-07-16  Tim Horton  <timothy_horton@apple.com>
 
         Adopt BifurcatedGraphicsContext for backing store + display list RemoteLayerBackingStore
