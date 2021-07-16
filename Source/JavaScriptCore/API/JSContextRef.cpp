@@ -224,7 +224,7 @@ JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
     }
 
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
+
     
 
     String name = globalObject->name();
@@ -242,7 +242,7 @@ void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name)
     }
 
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
+
     
 
     globalObject->setName(name ? name->string() : String());

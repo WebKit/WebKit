@@ -142,8 +142,8 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < parameterCount; i++)
-        args.append(parameterNames[i]->isExternal() ? jsOwnedString(vm, parameterNames[i]->string()) : jsString(vm, parameterNames[i]->string()));
-    args.append(body->isExternal() ? jsOwnedString(vm, body->string()) : jsString(vm, body->string()));
+        args.append(parameterNames[i]->string()->isExternal() ? jsOwnedString(vm, parameterNames[i]->string()) : jsString(vm, parameterNames[i]->string()));
+    args.append(parameterNames[i]->string()->isExternal() ? jsOwnedString(vm, body->string()) : jsString(vm, body->string()));
     if (UNLIKELY(args.hasOverflowed())) {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         throwOutOfMemoryError(globalObject, throwScope);

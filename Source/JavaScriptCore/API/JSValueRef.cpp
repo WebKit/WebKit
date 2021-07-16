@@ -50,7 +50,7 @@ using namespace JSC;
 
 ::JSType JSValueGetType(JSContextRef ctx, JSValueRef value)
 {
-   
+    
 #if !CPU(ADDRESS64)
     JSGlobalObject* globalObject = toJS(ctx);
     
@@ -331,9 +331,9 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
    
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
+  
+    return toRef(globalObject, jsMaybeOwnedString(vm, String()));
     
-
-    return toRef(globalObject, jsString(vm, string ? string->string() : String()));
 }
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
@@ -409,22 +409,6 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
     return number;
 }
 
-JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
-{
-   
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
-    
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    JSValue jsValue = toJS(globalObject, value);
-    
-    auto stringRef(OpaqueJSString::tryCreate(jsValue.toWTFString(globalObject)));
-    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
-        stringRef = nullptr;
-    return stringRef.leakRef();
-}
-
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
    
@@ -444,8 +428,6 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 void JSValueProtect(JSContextRef ctx, JSValueRef value)
 {
     JSGlobalObject* globalObject = toJS(ctx);
-    
-
     JSValue jsValue = toJSForGC(globalObject, value);
     gcProtect(jsValue);
 }
