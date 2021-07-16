@@ -1,3 +1,50 @@
+2021-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt BifurcatedGraphicsContext for backing store + display list RemoteLayerBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=226425
+        <rdar://77929299>
+
+        Reviewed by Sam Weinig.
+
+        Instead of "display list backed RemoteLayerBackingStore" being its own
+        backing store type, we make "includes a display list" a separate bit.
+        This way, we can paint both a bitmap (IOSurface or CG bitmap, all
+        exactly as it normally is), and also carry a sidecar display list.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::decode):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::supportsPartialRepaint):
+        We can't partially repaint the display list, and require its rendering
+        to match the painted backing store, so disable partial repaint entirely
+        if display lists are being used.
+
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        Adopt BifurcatedGraphicsContext in order to paint into the aforementioned
+        bitmap and display list simultaneously.
+        A future patch may abstract this into a new ImageBuffer type
+        instead of polluting RemoteLayerBackingStore with it.
+
+        Leave a temporary workaround for a CoreAnimation bug, which can be
+        disabled via `defaults write`, but is enabled by default.
+
+        (WebKit::layerContentsForBufferHandle):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+        * UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.h:
+        * UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm:
+        (-[WKCompositingLayer _setWKContents:withDisplayList:]):
+        (-[WKCompositingLayer _setWKContentsDisplayList:]): Deleted.
+        (-[WKCompositingLayer _wkContentsDisplayList]): Deleted.
+        Pass the display list data to CoreAnimation alongside the bitmap.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::updateBackingStore):
+
 2021-07-16  Megan Gardner  <megan_gardner@apple.com>
 
         Pipe App Highlight scrolling through UI Process in preparation for Note Overlay avoidance.

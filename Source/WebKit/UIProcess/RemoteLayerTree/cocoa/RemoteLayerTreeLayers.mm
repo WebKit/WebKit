@@ -36,11 +36,7 @@
 #import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
 #endif
 
-@implementation WKCompositingLayer {
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    RetainPtr<CFDataRef> _contentsDisplayList;
-#endif
-}
+@implementation WKCompositingLayer
 
 - (NSString *)description
 {
@@ -48,23 +44,14 @@
 }
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-- (void)_setWKContentsDisplayList:(CFDataRef)data
+- (void)_setWKContents:(id)contents withDisplayList:(CFDataRef)data
 {
-    _contentsDisplayList = data;
-    [self setNeedsDisplay];
+    self.contents = contents;
+    [self setValue:(id)data forKeyPath:WKCGDisplayListContentsKey];
+    
+    
 }
 
-- (CFDataRef)_wkContentsDisplayList
-{
-    return _contentsDisplayList.get();
-}
-
-- (void)drawInContext:(CGContextRef)context
-{
-    if (!_contentsDisplayList)
-        return;
-    WKCGContextDrawCGCommandsEncodedData(context, _contentsDisplayList.get(), nullptr);
-}
 #endif // ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
 @end

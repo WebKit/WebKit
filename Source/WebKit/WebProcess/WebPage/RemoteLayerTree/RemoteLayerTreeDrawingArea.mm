@@ -387,10 +387,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     for (auto& layer : layerTransaction.changedLayers()) {
         if (layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
             hadAnyChangedBackingStore = true;
-            if (layer->properties().backingStore) {
-                if (auto pendingFlusher = layer->properties().backingStore->takePendingFlusher())
-                    flushers.append(WTFMove(pendingFlusher));
-            }
+            if (layer->properties().backingStore)
+                flushers.appendVector(layer->properties().backingStore->takePendingFlushers());
         }
 
         layer->didCommit();
