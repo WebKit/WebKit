@@ -1,3 +1,12 @@
+2021-07-15  Eric Hutchison  <ehutchison@apple.com>
+
+        inspector/canvas/setRecordingAutoCaptureFrameCount.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=228011.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-07-15  Kyle Piddington  <kpiddington@apple.com>
 
         WebGL2 demo doesn't work due to failing compilation to metal backend
