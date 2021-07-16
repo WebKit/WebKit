@@ -1,3 +1,21 @@
+2021-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] PSON: accessibility doesn't work after a cross site navigation
+        https://bugs.webkit.org/show_bug.cgi?id=228021
+
+        Reviewed by Adrian Perez de Castro.
+
+        The provisional page is not handling the BindAccessibilityTree message and we never embed the new web process
+        plug into the UI process socket.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::bindAccessibilityTree): Save the a11y plug ID.
+        (WebKit::ProvisionalPageProxy::didReceiveMessage): Handle BindAccessibilityTree message.
+        * UIProcess/ProvisionalPageProxy.h:
+        (WebKit::ProvisionalPageProxy::accessibilityPlugID): Returns the a11y plug ID.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToProvisionalPage): If the provisional page has a plug ID, bind the a11y tree.
+
 2021-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKMouseGestureRecognizer should not have failure requirements on WKDeferringGestureRecognizer

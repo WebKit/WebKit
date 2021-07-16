@@ -411,6 +411,13 @@ void ProvisionalPageProxy::registerWebProcessAccessibilityToken(const IPC::DataR
 }
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+void ProvisionalPageProxy::bindAccessibilityTree(const String& plugID)
+{
+    m_accessibilityPlugID = plugID;
+}
+#endif
+
 #if ENABLE(CONTENT_FILTERING)
 void ProvisionalPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
 {
@@ -466,6 +473,13 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::WebPageProxy::RegisterWebProcessAccessibilityToken::name()) {
         IPC::handleMessage<Messages::WebPageProxy::RegisterWebProcessAccessibilityToken>(decoder, this, &ProvisionalPageProxy::registerWebProcessAccessibilityToken);
+        return;
+    }
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    if (decoder.messageName() == Messages::WebPageProxy::BindAccessibilityTree::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::BindAccessibilityTree>(decoder, this, &ProvisionalPageProxy::bindAccessibilityTree);
         return;
     }
 #endif
