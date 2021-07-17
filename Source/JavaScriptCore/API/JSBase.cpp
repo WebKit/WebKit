@@ -75,18 +75,20 @@ JSValueRef JSEvaluateScriptInternal(const JSLockHolder&, JSContextRef ctx, JSObj
 
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURLString, int startingLineNumber, JSValueRef* exception)
 {
-    if (!ctx) {
+  if (!ctx) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
+
+    // We keep the lock here
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    
+    JSLockHolder locker(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURL = sourceURLString ? URL({ }, sourceURLString->string()) : URL();
-    SourceCode source = makeSource(script->string(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
+    SourceCode source = makeSource(script->rawString(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
 
     return JSEvaluateScriptInternal(locker, ctx, thisObject, source, exception);
 }
@@ -99,12 +101,13 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    
+    JSLockHolder locker(vm);
+
 
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURL = sourceURLString ? URL({ }, sourceURLString->string()) : URL();
-    SourceCode source = makeSource(script->string(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
+    SourceCode source = makeSource(script->rawString(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
     
     JSValue syntaxException;
     bool isValidSyntax = checkSyntax(globalObject, source, &syntaxException);
