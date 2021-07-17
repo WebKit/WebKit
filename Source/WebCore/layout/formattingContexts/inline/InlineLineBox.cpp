@@ -34,55 +34,6 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::InlineLevelBox::InlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type)
-    : m_layoutBox(makeWeakPtr(layoutBox))
-    , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
-    , m_type(type)
-{
-}
-
-void LineBox::InlineLevelBox::setBaseline(InlineLayoutUnit baseline)
-{
-    // FIXME: Remove legacy rounding.
-    m_baseline = roundToInt(baseline);
-}
-
-void LineBox::InlineLevelBox::setDescent(InlineLayoutUnit descent)
-{
-    // FIXME: Remove legacy rounding.
-    m_descent = roundToInt(descent);
-}
-
-void LineBox::InlineLevelBox::setLayoutBounds(const LayoutBounds& layoutBounds)
-{
-    // FIXME: Remove legacy rounding.
-    m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) };
-}
-
-void LineBox::InlineLevelBox::setLogicalTop(InlineLayoutUnit logicalTop)
-{
-    // FIXME: Remove legacy rounding.
-    m_logicalRect.setTop(roundToInt(logicalTop));
-}
-
-void LineBox::InlineLevelBox::setLogicalHeight(InlineLayoutUnit logicalHeight)
-{
-    // FIXME: Remove legacy rounding.
-    m_logicalRect.setHeight(roundToInt(logicalHeight));
-}
-
-void LineBox::InlineLevelBox::setHasContent()
-{
-    ASSERT(isInlineBox());
-    m_hasContent = true;
-}
-
-bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
-{
-    auto verticalAlignment = layoutBox().style().verticalAlign();
-    return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
-}
-
 LineBox::LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount)
     : m_logicalRect(logicalTopleft, InlineLayoutSize { lineLogicalWidth, { } })
     , m_contentLogicalWidth(contentLogicalWidth)

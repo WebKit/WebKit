@@ -47,7 +47,7 @@ InlineLayoutUnit InlineFormattingQuirks::initialLineHeight() const
     return rootStyle.lineHeight().isNegative() ? rootStyle.fontMetrics().floatHeight() : rootStyle.computedLineHeight();
 }
 
-bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
+bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
     ASSERT(!layoutState().inStandardsMode());
     if (inlineLevelBox.isLineBreakBox()) {

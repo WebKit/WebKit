@@ -1,3 +1,99 @@
+2021-07-17  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move InlineLevelBox class to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=228045
+
+        Reviewed by Sam Weinig.
+
+        LineBox class has grown a lot since the subclass of InlineLevelBox has been introduced.
+        It is also in preparation for merging LineBox and LineBoxGeometry classes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::setVerticalGeometryForInlineBox const):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::SimplifiedVerticalAlignment):
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment):
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::align):
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::adjust):
+        (WebCore::Layout::InlineFormattingGeometry::inlineLevelBoxAffectsLineBox const):
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingQuirks.cpp:
+        (WebCore::Layout::InlineFormattingQuirks::inlineLevelBoxAffectsLineBox const):
+        * layout/formattingContexts/inline/InlineFormattingQuirks.h:
+        * layout/formattingContexts/inline/InlineLevelBox.h: Added.
+        (WebCore::Layout::InlineLevelBox::baseline const):
+        (WebCore::Layout::InlineLevelBox::descent const):
+        (WebCore::Layout::InlineLevelBox::LayoutBounds::height const):
+        (WebCore::Layout::InlineLevelBox::LayoutBounds::operator== const):
+        (WebCore::Layout::InlineLevelBox::layoutBounds const):
+        (WebCore::Layout::InlineLevelBox::hasContent const):
+        (WebCore::Layout::InlineLevelBox::verticalAlign const):
+        (WebCore::Layout::InlineLevelBox::layoutBox const):
+        (WebCore::Layout::InlineLevelBox::style const):
+        (WebCore::Layout::InlineLevelBox::isInlineBox const):
+        (WebCore::Layout::InlineLevelBox::isRootInlineBox const):
+        (WebCore::Layout::InlineLevelBox::isAtomicInlineLevelBox const):
+        (WebCore::Layout::InlineLevelBox::isLineBreakBox const):
+        (WebCore::Layout::InlineLevelBox::type const):
+        (WebCore::Layout::InlineLevelBox::logicalRect const):
+        (WebCore::Layout::InlineLevelBox::logicalTop const):
+        (WebCore::Layout::InlineLevelBox::logicalBottom const):
+        (WebCore::Layout::InlineLevelBox::logicalLeft const):
+        (WebCore::Layout::InlineLevelBox::logicalWidth const):
+        (WebCore::Layout::InlineLevelBox::logicalHeight const):
+        (WebCore::Layout::InlineLevelBox::setLogicalWidth):
+        (WebCore::Layout::InlineLevelBox::setLogicalHeight):
+        (WebCore::Layout::InlineLevelBox::setLogicalTop):
+        (WebCore::Layout::InlineLevelBox::setBaseline):
+        (WebCore::Layout::InlineLevelBox::setDescent):
+        (WebCore::Layout::InlineLevelBox::setLayoutBounds):
+        (WebCore::Layout::InlineLevelBox::InlineLevelBox):
+        (WebCore::Layout::m_type):
+        (WebCore::Layout::InlineLevelBox::setHasContent):
+        (WebCore::Layout::InlineLevelBox::hasLineBoxRelativeAlignment const):
+        (WebCore::Layout::InlineLevelBox::createAtomicInlineLevelBox):
+        (WebCore::Layout::InlineLevelBox::createInlineBox):
+        (WebCore::Layout::InlineLevelBox::createLineBreakBox):
+        (WebCore::Layout::InlineLevelBox::createGenericInlineLevelBox):
+        * layout/formattingContexts/inline/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::InlineLevelBox::InlineLevelBox): Deleted.
+        (WebCore::Layout::m_type): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::setBaseline): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::setDescent): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::setLayoutBounds): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::setLogicalTop): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::setLogicalHeight): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::setHasContent): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::hasLineBoxRelativeAlignment const): Deleted.
+        * layout/formattingContexts/inline/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineLevelBox::baseline const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::descent const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::LayoutBounds::height const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::LayoutBounds::operator== const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::layoutBounds const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::hasContent const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::verticalAlign const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::layoutBox const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::style const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::isInlineBox const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::isRootInlineBox const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::isAtomicInlineLevelBox const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::isLineBreakBox const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::type const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::logicalRect const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::logicalTop const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::logicalBottom const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::logicalLeft const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::logicalWidth const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::logicalHeight const): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::setLogicalWidth): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::createAtomicInlineLevelBox): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::createInlineBox): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::createLineBreakBox): Deleted.
+        (WebCore::Layout::LineBox::InlineLevelBox::createGenericInlineLevelBox): Deleted.
+
 2021-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         getBoundingClientRect() returns the incorrect rectangle on elements whose parent element is set -webkit-column-count
