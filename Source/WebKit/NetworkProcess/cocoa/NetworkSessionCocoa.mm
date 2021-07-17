@@ -578,7 +578,10 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
         bool shouldIgnoreHSTS = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
-            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID())->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
+            auto* storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
+            NSURL *firstPartyForCookies = networkDataTask->isTopLevelNavigation() ? request.URL : request.mainDocumentURL;
+            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
+                && storageSession->shouldBlockCookies(firstPartyForCookies, request.URL, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
                 request = downgradeRequest(request);
                 ASSERT([request.URL.scheme isEqualToString:@"http"]);
@@ -616,7 +619,9 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
         bool shouldIgnoreHSTS = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
-            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID())->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
+            auto* storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
+            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
+                && storageSession->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
                 request = downgradeRequest(request);
                 ASSERT([request.URL.scheme isEqualToString:@"http"]);
@@ -1249,6 +1254,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration._usesNWLoader = parameters.useNetworkLoader;
 #endif
 
+    if (parameters.allowsHSTSWithUntrustedRootCertificate && [configuration respondsToSelector:@selector(_allowsHSTSWithUntrustedRootCertificate)])
+        configuration._allowsHSTSWithUntrustedRootCertificate = YES;
+    
 #if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
     configuration._preventsAppSSO = true;
 #endif

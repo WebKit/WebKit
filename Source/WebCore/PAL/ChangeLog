@@ -1,3 +1,12 @@
+2021-07-16  Alex Christensen  <achristensen@webkit.org>
+
+        Prevent HSTS tracking mitigation for top level navigation requests
+        https://bugs.webkit.org/show_bug.cgi?id=227936
+
+        Reviewed by Brady Eidson.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2021-07-14  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r279912 (239661@main); Adopt HAVE(SYSTEM_STATUS) macro.

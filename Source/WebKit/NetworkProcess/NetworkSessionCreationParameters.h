@@ -99,6 +99,7 @@ struct NetworkSessionCreationParameters {
     bool preventsSystemHTTPProxyAuthentication { false };
     bool appHasRequestedCrossWebsiteTrackingPermission { false };
     bool useNetworkLoader { false };
+    bool allowsHSTSWithUntrustedRootCertificate { false };
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

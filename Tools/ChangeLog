@@ -1,5 +1,20 @@
 2021-07-16  Alex Christensen  <achristensen@webkit.org>
 
+        Prevent HSTS tracking mitigation for top level navigation requests
+        https://bugs.webkit.org/show_bug.cgi?id=227936
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/HSTS.mm: Added.
+        (TestWebKitAPI::hasRadar80550123):
+        (TestWebKitAPI::hstsWebViewAndDelegate):
+        (TestWebKitAPI::hstsServer):
+        (TestWebKitAPI::TEST):
+
+2021-07-16  Alex Christensen  <achristensen@webkit.org>
+
         Network access prevention SPI should prevent preconnecting, and it should first allow injected bundle to change request
         https://bugs.webkit.org/show_bug.cgi?id=228044
         <rdar://72995136>

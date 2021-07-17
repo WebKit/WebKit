@@ -96,6 +96,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_preventsSystemHTTPProxyAuthentication = this->m_preventsSystemHTTPProxyAuthentication;
     copy->m_standaloneApplicationURL = this->m_standaloneApplicationURL;
     copy->m_enableInAppBrowserPrivacyForTesting = this->m_enableInAppBrowserPrivacyForTesting;
+    copy->m_allowsHSTSWithUntrustedRootCertificate = this->m_allowsHSTSWithUntrustedRootCertificate;
 #if PLATFORM(COCOA)
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));

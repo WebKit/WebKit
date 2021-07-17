@@ -1,5 +1,37 @@
 2021-07-16  Alex Christensen  <achristensen@webkit.org>
 
+        Prevent HSTS tracking mitigation for top level navigation requests
+        https://bugs.webkit.org/show_bug.cgi?id=227936
+
+        Reviewed by Brady Eidson.
+
+        Use NSURLRequest.URL as the first party for cookies for HSTS purposes during redirects instead of NSURLRequest.mainDocumentURL,
+        which hasn't been updated because CFNetwork doesn't know that this is the main document request and when redirected, the main document URL also changes.
+
+        Covered by API tests, which will start covering this case once rdar://80550123 is integrated.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration allowsHSTSWithUntrustedRootCertificate]):
+        (-[_WKWebsiteDataStoreConfiguration setAllowsHSTSWithUntrustedRootCertificate:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::allowsHSTSWithUntrustedRootCertificate const):
+        (WebKit::WebsiteDataStoreConfiguration::setAllowsHSTSWithUntrustedRootCertificate):
+
+2021-07-16  Alex Christensen  <achristensen@webkit.org>
+
         Network access prevention SPI should prevent preconnecting, and it should first allow injected bundle to change request
         https://bugs.webkit.org/show_bug.cgi?id=228044
         <rdar://72995136>

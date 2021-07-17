@@ -2386,6 +2386,7 @@
 		5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClickAutoFillButton.mm; sourceTree = "<group>"; };
 		5CB3CE381FA1691700C3A2D6 /* WKWebViewConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfiguration.mm; sourceTree = "<group>"; };
 		5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIDelegate.mm; sourceTree = "<group>"; };
+		5CB5990A269E74EC002A7CFF /* HSTS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HSTS.mm; sourceTree = "<group>"; };
 		5CB5B3BD1FFC517E00C27BB0 /* FrameHandleSerialization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FrameHandleSerialization.mm; sourceTree = "<group>"; };
 		5CB7AFDB23C451E400E49CF3 /* ResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		5CBAA7F324327F6B00564A8B /* TestUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestUIDelegate.h; path = cocoa/TestUIDelegate.h; sourceTree = "<group>"; };
@@ -3476,6 +3477,7 @@
 				07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */,
 				2DADF26221CB8F32003D3E3A /* GetResourceData.mm */,
 				465E2806255B2A690063A787 /* GPUProcess.mm */,
+				5CB5990A269E74EC002A7CFF /* HSTS.mm */,
 				51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */,
 				EB230D3E245E726300C66AD1 /* IDBCheckpointWAL.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,

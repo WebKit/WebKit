@@ -479,6 +479,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setEnableInAppBrowserPrivacyForTesting(enable);
 }
 
+- (BOOL)allowsHSTSWithUntrustedRootCertificate
+{
+    return _configuration->allowsHSTSWithUntrustedRootCertificate();
+}
+
+- (void)setAllowsHSTSWithUntrustedRootCertificate:(BOOL)allows
+{
+    _configuration->setAllowsHSTSWithUntrustedRootCertificate(allows);
+}
+
 - (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting
 {
     return _configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();
