@@ -1,3 +1,19 @@
+2021-07-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView javascript injection doesn't work if app includes WKAppBoundDomains
+        https://bugs.webkit.org/show_bug.cgi?id=227589
+        <rdar://problem/80327452>
+
+        Reviewed by Brent Fulgham.
+
+        Added new tests. Removed localhost and 127.0.0.1 from the Info.plist
+        to avoid false positive tests. Replace them with other domains so we
+        still test the max count.
+
+        * TestWebKitAPI/Info.plist:
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+
 2021-07-16  Alex Christensen  <achristensen@webkit.org>
 
         Prevent HSTS tracking mitigation for top level navigation requests

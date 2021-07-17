@@ -1,3 +1,26 @@
+2021-07-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView javascript injection doesn't work if app includes WKAppBoundDomains
+        https://bugs.webkit.org/show_bug.cgi?id=227589
+        <rdar://problem/80327452>
+
+        Reviewed by Brent Fulgham.
+
+        Apps should not have to specify localhost in their Info.plist in order
+        to load local content in app-bound mode. This patch adds a check for
+        localhost or a loopback IP address and forces an app into app-bound
+        mode in this case.
+
+        Since all layout tests use localhost and 127.0.0.1 as test domains,
+        this patch also adds a check for enableInAppBrowserPrivacyForTesting()
+        which determines if we are running layout tests and does not trigger
+        this check in that case so we can test other behavior.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::shouldTreatURLProtocolAsAppBound):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2021-07-16  Alex Christensen  <achristensen@webkit.org>
 
         Prevent HSTS tracking mitigation for top level navigation requests

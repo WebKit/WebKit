@@ -283,6 +283,7 @@ private:
     HashSet<WebCore::RegistrableDomain> m_appBoundDomains;
     bool m_hasServiceWorkerEntitlement { false };
     bool m_hasReceivedAppBoundDomains { false };
+    unsigned m_uniqueRegistrationCount { 0 };
 };
 
 } // namespace WebCore

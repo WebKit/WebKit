@@ -1,3 +1,30 @@
+2021-07-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView javascript injection doesn't work if app includes WKAppBoundDomains
+        https://bugs.webkit.org/show_bug.cgi?id=227589
+        <rdar://problem/80327452>
+
+        Reviewed by Brent Fulgham.
+
+        Update service worker code to always allow workers on localhost to be
+        registered. Also add logic so localhost registrations aren't added
+        to the total count of 3 registrations.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistration):
+        We only want to increment the count if this registration is not
+        already in the mapping, otherwise it gets double counted.
+
+        (WebCore::SWServer::removeRegistration):
+        Ditto for removing a registration, we should only decrement the count
+        if we find a matching key.
+
+        (WebCore::SWServer::validateRegistrationDomain):
+        (WebCore::SWServer::removeFromScopeToRegistrationMap):
+        Ditto.
+
+        * workers/service/server/SWServer.h:
+
 2021-07-16  Alex Christensen  <achristensen@webkit.org>
 
         Network access prevention SPI should prevent preconnecting, and it should first allow injected bundle to change request

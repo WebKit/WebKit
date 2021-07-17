@@ -184,6 +184,9 @@ void SWServer::didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier serviceWorkerI
 
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
 {
+    if (!m_scopeToRegistrationMap.contains(registration->key()) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(registration->key().topOrigin().host))
+        m_uniqueRegistrationCount++;
+
     m_originStore->add(registration->key().topOrigin());
     auto registrationID = registration->identifier();
     ASSERT(!m_scopeToRegistrationMap.contains(registration->key()));
@@ -198,8 +201,11 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
     ASSERT(registration);
     
     auto it = m_scopeToRegistrationMap.find(registration->key());
-    if (it != m_scopeToRegistrationMap.end() && it->value == registration.get())
+    if (it != m_scopeToRegistrationMap.end() && it->value == registration.get()) {
         m_scopeToRegistrationMap.remove(it);
+        if (!SecurityOrigin::isLocalHostOrLoopbackIPAddress(registration->key().topOrigin().host))
+            m_uniqueRegistrationCount--;
+    }
 
     m_originStore->remove(registration->key().topOrigin());
     if (m_registrationStore)
@@ -343,16 +349,16 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminati
 void SWServer::validateRegistrationDomain(WebCore::RegistrableDomain domain, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (m_hasServiceWorkerEntitlement || m_hasReceivedAppBoundDomains) {
-        completionHandler(m_appBoundDomains.contains(domain) && m_scopeToRegistrationMap.keys().size() < maxRegistrationCount);
+        completionHandler(SecurityOrigin::isLocalHostOrLoopbackIPAddress(domain.string()) || (m_appBoundDomains.contains(domain) && m_uniqueRegistrationCount < maxRegistrationCount));
         return;
     }
-    
+
     m_appBoundDomainsCallback([this, weakThis = makeWeakPtr(this), domain = WTFMove(domain), completionHandler = WTFMove(completionHandler)](auto&& appBoundDomains) mutable {
         if (!weakThis)
             return;
         m_hasReceivedAppBoundDomains = true;
         m_appBoundDomains = WTFMove(appBoundDomains);
-        completionHandler(m_appBoundDomains.contains(domain) && m_scopeToRegistrationMap.keys().size() < maxRegistrationCount);
+        completionHandler(SecurityOrigin::isLocalHostOrLoopbackIPAddress(domain.string()) || (m_appBoundDomains.contains(domain) && m_uniqueRegistrationCount < maxRegistrationCount));
     });
 }
 
@@ -1011,6 +1017,9 @@ void SWServer::handleLowMemoryWarning()
 
 void SWServer::removeFromScopeToRegistrationMap(const ServiceWorkerRegistrationKey& key)
 {
+    if (m_scopeToRegistrationMap.contains(key) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(key.topOrigin().host))
+        m_uniqueRegistrationCount--;
+
     m_scopeToRegistrationMap.remove(key);
 }
 
