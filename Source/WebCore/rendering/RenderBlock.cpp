@@ -2796,7 +2796,7 @@ void RenderBlock::absoluteQuadsIgnoringContinuation(const FloatRect& logicalRect
     // FIXME: This is wrong for block-flows that are horizontal.
     // https://bugs.webkit.org/show_bug.cgi?id=46781
     auto* fragmentedFlow = enclosingFragmentedFlow();
-    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this, logicalRect.y(), logicalRect.maxY()))
+    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         quads.append(localToAbsoluteQuad(logicalRect, UseTransforms, wasFixed));
 }
 

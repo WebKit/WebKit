@@ -522,6 +522,36 @@ unsigned RenderMultiColumnSet::columnIndexAtOffset(LayoutUnit offset, ColumnInde
     return static_cast<float>(offset - fragmentedFlowLogicalTop) / computedColumnHeight();
 }
 
+std::pair<unsigned, unsigned> RenderMultiColumnSet::firstAndLastColumnsFromOffsets(LayoutUnit topOffset, LayoutUnit bottomOffset) const
+{
+    auto portionRect = fragmentedFlowPortionRect();
+
+    // Handle the offset being out of range.
+    auto fragmentedFlowLogicalTop = isHorizontalWritingMode() ? portionRect.y() : portionRect.x();
+    auto fragmentedFlowLogicalBottom = isHorizontalWritingMode() ? portionRect.maxY() : portionRect.maxX();
+
+    auto computeColumnIndex = [&](LayoutUnit offset, bool isBottom) -> unsigned {
+        if (offset < fragmentedFlowLogicalTop)
+            return 0;
+
+        if (offset >= fragmentedFlowLogicalBottom)
+            return columnCount() - 1;
+
+        // Sometimes computedColumnHeight() is 0 here: see https://bugs.webkit.org/show_bug.cgi?id=132884
+        auto columnHeight = computedColumnHeight();
+        if (!columnHeight)
+            return 0;
+
+        auto columnIndex = static_cast<float>(offset - fragmentedFlowLogicalTop) / columnHeight;
+        if (isBottom && WTF::isIntegral(columnIndex) && columnIndex > 0)
+            columnIndex -= 1;
+
+        return static_cast<unsigned>(columnIndex);
+    };
+
+    return { computeColumnIndex(topOffset, false), computeColumnIndex(bottomOffset, true) };
+}
+
 LayoutRect RenderMultiColumnSet::fragmentedFlowPortionRectAt(unsigned index) const
 {
     LayoutRect portionRect = fragmentedFlowPortionRect();
@@ -677,6 +707,7 @@ void RenderMultiColumnSet::repaintFragmentedFlowContent(const LayoutRect& repain
     LayoutUnit repaintLogicalTop = isHorizontalWritingMode() ? fragmentedFlowRepaintRect.y() : fragmentedFlowRepaintRect.x();
     LayoutUnit repaintLogicalBottom = (isHorizontalWritingMode() ? fragmentedFlowRepaintRect.maxY() : fragmentedFlowRepaintRect.maxX()) - 1;
     
+    // FIXME: this should use firstAndLastColumnsFromOffsets.
     unsigned startColumn = columnIndexAtOffset(repaintLogicalTop);
     unsigned endColumn = columnIndexAtOffset(repaintLogicalBottom);
     
@@ -695,6 +726,35 @@ void RenderMultiColumnSet::repaintFragmentedFlowContent(const LayoutRect& repain
         flipForWritingMode(colRect);
         repaintFragmentedFlowContentRectangle(repaintRect, fragmentedFlowPortion, colRect.location(), &fragmentedFlowOverflowPortion);
     }
+}
+
+Vector<LayoutRect> RenderMultiColumnSet::fragmentRectsForFlowContentRect(const LayoutRect& rect)
+{
+    auto fragmentedFlowRect = rect;
+    fragmentedFlow()->flipForWritingMode(fragmentedFlowRect);
+
+    auto logicalTop = isHorizontalWritingMode() ? fragmentedFlowRect.y() : fragmentedFlowRect.x();
+    auto logicalBottom = isHorizontalWritingMode() ? fragmentedFlowRect.maxY() : fragmentedFlowRect.maxX();
+
+    auto startAndEndColumns = firstAndLastColumnsFromOffsets(logicalTop, logicalBottom);
+
+    Vector<LayoutRect> perColumnRects;
+    
+    LayoutUnit colGap = columnGap();
+    unsigned colCount = columnCount();
+    for (unsigned i = startAndEndColumns.first; i <= startAndEndColumns.second; i++) {
+        auto colRect = columnRectAt(i);
+        flipForWritingMode(colRect);
+        
+        auto fragmentedFlowPortion = fragmentedFlowPortionRectAt(i);
+        auto fragmentedFlowOverflowPortion = fragmentedFlowPortionOverflowRect(fragmentedFlowPortion, i, colCount, colGap);
+
+        auto rectInColumn = fragmentedFlowContentRectangle(rect, fragmentedFlowPortion, colRect.location(), &fragmentedFlowOverflowPortion);
+        flipForWritingMode(rectInColumn);
+        perColumnRects.append(rectInColumn);
+    }
+
+    return perColumnRects;
 }
 
 LayoutUnit RenderMultiColumnSet::initialBlockOffsetForPainting() const
@@ -756,6 +816,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
     
     // Figure out the start and end columns and only check within that range so that we don't walk the
     // entire column set.
+    // FIXME: this should use firstAndLastColumnsFromOffsets.
     unsigned startColumn = columnIndexAtOffset(layerLogicalTop);
     unsigned endColumn = columnIndexAtOffset(layerLogicalBottom);
     

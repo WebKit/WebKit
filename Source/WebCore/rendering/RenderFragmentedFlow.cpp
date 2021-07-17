@@ -218,6 +218,34 @@ void RenderFragmentedFlow::repaintRectangleInFragments(const LayoutRect& repaint
         fragment->repaintFragmentedFlowContent(repaintRect);
 }
 
+bool RenderFragmentedFlow::absoluteQuadsForBox(Vector<FloatQuad>& quads, bool* wasFixed, const RenderBox* box) const
+{
+    if (!hasValidFragmentInfo())
+        return false;
+
+    auto boxRect = FloatRect { { }, box->size() };
+    auto boxRectInFlowCoordinates = LayoutRect { box->localToContainerQuad(boxRect, this).boundingBox() };
+
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!computedFragmentRangeForBox(box, startFragment, endFragment))
+        return false;
+
+    for (auto it = m_fragmentList.find(startFragment), end = m_fragmentList.end(); it != end; ++it) {
+        auto* fragment = *it;
+        auto rectsInFragment = fragment->fragmentRectsForFlowContentRect(boxRectInFlowCoordinates);
+        for (auto rect : rectsInFragment) {
+            auto absoluteQuad = fragment->localToAbsoluteQuad(FloatRect(rect), UseTransforms, wasFixed);
+            quads.append(absoluteQuad);
+        }
+
+        if (fragment == endFragment)
+            break;
+    }
+
+    return true;
+}
+
 class RenderFragmentedFlow::FragmentSearchAdapter {
 public:
     explicit FragmentSearchAdapter(LayoutUnit offset)

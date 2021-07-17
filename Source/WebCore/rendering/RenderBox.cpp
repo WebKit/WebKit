@@ -632,12 +632,11 @@ void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumul
 
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    FloatRect localRect(0, 0, width(), height());
-
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
+    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         return;
 
+    auto localRect = FloatRect { 0, 0, width(), height() };
     quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 }
 

@@ -1,3 +1,28 @@
+2021-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        getBoundingClientRect() returns the incorrect rectangle on elements whose parent element is set -webkit-column-count
+        https://bugs.webkit.org/show_bug.cgi?id=99959
+        rdar://80106111
+
+        Reviewed by Alan Bujtas.
+
+        These tests have all progressed.
+
+        * fast/multicol/client-rects-spanners-complex.html:
+        * fast/multicol/client-rects-spanners.html:
+        * fast/multicol/client-rects.html:
+        * fast/multicol/newmulticol/client-rects.html:
+        * imported/blink/fast/multicol/client-rects-rtl-expected.html:
+        * imported/blink/fast/multicol/client-rects-rtl.html: This test appeared to be hand-coded to the incorrect old behavior.
+        * platform/ios/fast/multicol/client-rects-expected.txt:
+        * platform/ios/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/ios/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/ios/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/mac/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/mac/fast/multicol/newmulticol/client-rects-expected.txt:
+
 2021-07-16  Eric Hutchison  <ehutchison@apple.com>
 
         [MacOS Release wk1] media/modern-media-controls/volume-support/volume-support-drag-to-mute.html is a flaky fail and timeout.

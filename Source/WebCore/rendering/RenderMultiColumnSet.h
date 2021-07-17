@@ -165,6 +165,8 @@ private:
 
     void adjustFragmentBoundsFromFragmentedFlowPortionRect(LayoutRect& fragmentBounds) const override;
 
+    Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) final;
+
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
     const char* renderName() const override;
@@ -184,6 +186,8 @@ private:
         AssumeNewColumns // Allow column indices outside the range of already existing columns.
     };
     unsigned columnIndexAtOffset(LayoutUnit, ColumnIndexCalculationMode = ClampToExistingColumns) const;
+
+    std::pair<unsigned, unsigned> firstAndLastColumnsFromOffsets(LayoutUnit topOffset, LayoutUnit bottomOffset) const;
 
     void setAndConstrainColumnHeight(LayoutUnit);
 

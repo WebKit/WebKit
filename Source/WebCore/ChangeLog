@@ -1,3 +1,49 @@
+2021-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        getBoundingClientRect() returns the incorrect rectangle on elements whose parent element is set -webkit-column-count
+        https://bugs.webkit.org/show_bug.cgi?id=99959
+        rdar://80106111
+
+        Reviewed by Alan Bujtas.
+        
+        getBoundingClientRect() and getClientRects() for elements inside multicol had a quick
+        and dirty implementation that just mapped the element center point into a column. This
+        resulted in odd, negative top/left in some cases.
+
+        Fix by correctly generating multiple rects for elements that span columns, following
+        the repaint code path that already knew how to do this correctly.
+        
+        The entry point is RenderFragmentContainer::absoluteQuadsForBox() which now has a
+        real implementation. For each fragment that the box covers, it calls fragmentRectsForFlowContentRect()
+        which generates one or more rects; RenderMultiColumnSet overrides this to
+        compute rects for multicol.
+
+        We have to take care not to eliminate empty rects, since the API does return these.
+
+        Tested by existing tests.
+
+        * dom/Element.cpp:
+        (WebCore::Element::absoluteEventBounds):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteQuadsIgnoringContinuation const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteQuads const):
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::fragmentedFlowContentRectangle):
+        (WebCore::RenderFragmentContainer::fragmentRectsForFlowContentRect):
+        * rendering/RenderFragmentContainer.h:
+        (WebCore::RenderFragmentContainer::absoluteQuadsForBoxInFragment): Deleted.
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::absoluteQuadsForBox const):
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderMultiColumnFlow.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::firstAndLastColumnsFromOffsets const):
+        (WebCore::RenderMultiColumnSet::repaintFragmentedFlowContent):
+        (WebCore::RenderMultiColumnSet::fragmentRectsForFlowContentRect):
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        * rendering/RenderMultiColumnSet.h:
+
 2021-07-16  Kate Cheney  <katherine_cheney@apple.com>
 
         WKWebView javascript injection doesn't work if app includes WKAppBoundDomains

@@ -1528,8 +1528,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
             if (RenderFragmentedFlow* fragmentedFlow = box.enclosingFragmentedFlow()) {
                 bool wasFixed = false;
                 Vector<FloatQuad> quads;
-                FloatRect localRect(0, 0, box.width(), box.height());
-                if (fragmentedFlow->absoluteQuadsForBox(quads, &wasFixed, &box, localRect.y(), localRect.maxY())) {
+                if (fragmentedFlow->absoluteQuadsForBox(quads, &wasFixed, &box)) {
                     result = LayoutRect(unitedBoundingBoxes(quads));
                     computedBounds = true;
                 } else {

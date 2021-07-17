@@ -119,7 +119,7 @@ public:
     bool canHaveGeneratedChildren() const override { return true; }
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
-    virtual void absoluteQuadsForBoxInFragment(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
+    virtual Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&);
 
 protected:
     RenderFragmentContainer(Element&, RenderStyle&&, RenderFragmentedFlow*);
@@ -137,6 +137,8 @@ protected:
 
     LayoutRect overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType);
     void repaintFragmentedFlowContentRectangle(const LayoutRect& repaintRect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0);
+
+    LayoutRect fragmentedFlowContentRectangle(const LayoutRect&, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0);
 
     void computeOverflowFromFragmentedFlow();
 
