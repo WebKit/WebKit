@@ -1,3 +1,22 @@
+2021-07-16  Alex Christensen  <achristensen@webkit.org>
+
+        Network access prevention SPI should prevent preconnecting, and it should first allow injected bundle to change request
+        https://bugs.webkit.org/show_bug.cgi?id=228044
+        <rdar://72995136>
+
+        Reviewed by Tim Horton.
+
+        WKWebViewConfiguration._loadsFromNetwork and its successor _allowedNetworkHosts have two issues:
+        1. They allow link rel=preconnect to still preconnect to a host.  While this doesn't reveal much information, it does reveal some.
+        2. It blocks loads before giving the injected bundle a chance to change the scheme of the request.  This SPI is relatively new and
+           intended to replace the injected bundle, but the user from this radar needs to have an injected bundle make changes first.
+
+        Both problems are fixed and covered by API tests.
+
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        * page/Page.h:
+
 2021-07-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix Apple internal build

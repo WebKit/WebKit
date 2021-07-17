@@ -1,3 +1,14 @@
+2021-07-16  Alex Christensen  <achristensen@webkit.org>
+
+        Network access prevention SPI should prevent preconnecting, and it should first allow injected bundle to change request
+        https://bugs.webkit.org/show_bug.cgi?id=228044
+        <rdar://72995136>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+
 2021-07-16  John Wilander  <wilander@apple.com>
 
         PCM: Add early return when unlinkable token is used and add more happy path Web Inspector logging

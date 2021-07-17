@@ -524,6 +524,7 @@
 		5CB5B3C21FFC55CF00C27BB0 /* FrameHandleSerialization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB5B3BD1FFC517E00C27BB0 /* FrameHandleSerialization.mm */; };
 		5CB7AFDC23C4529700E49CF3 /* ResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7AFDB23C451E400E49CF3 /* ResourceLoadDelegate.mm */; };
 		5CBAA7FB2440EA0200564A8B /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBAA7FA2440EA0200564A8B /* CFNetwork.framework */; };
+		5CC8B20626A2535F00909603 /* SchemeChangingPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC8B16226A2527C00909603 /* SchemeChangingPlugIn.mm */; };
 		5CCB10E1213457D300AC5AF0 /* ResponsivenessTimer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB10E02134579D00AC5AF0 /* ResponsivenessTimer.mm */; };
 		5CCB10E2213457D500AC5AF0 /* ResponsivenessTimerDoesntFireEarly.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB10DD2134579C00AC5AF0 /* ResponsivenessTimerDoesntFireEarly.mm */; };
 		5CCB10E3213457D800AC5AF0 /* RestoreSessionStateWithoutNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB10DE2134579D00AC5AF0 /* RestoreSessionStateWithoutNavigation.mm */; };
@@ -2390,6 +2391,7 @@
 		5CBAA7F324327F6B00564A8B /* TestUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestUIDelegate.h; path = cocoa/TestUIDelegate.h; sourceTree = "<group>"; };
 		5CBAA7F424327F6B00564A8B /* TestUIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestUIDelegate.mm; path = cocoa/TestUIDelegate.mm; sourceTree = "<group>"; };
 		5CBAA7FA2440EA0200564A8B /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		5CC8B16226A2527C00909603 /* SchemeChangingPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchemeChangingPlugIn.mm; sourceTree = "<group>"; };
 		5CCB10DD2134579C00AC5AF0 /* ResponsivenessTimerDoesntFireEarly.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResponsivenessTimerDoesntFireEarly.mm; sourceTree = "<group>"; };
 		5CCB10DE2134579D00AC5AF0 /* RestoreSessionStateWithoutNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RestoreSessionStateWithoutNavigation.mm; sourceTree = "<group>"; };
 		5CCB10DF2134579D00AC5AF0 /* ShouldGoToBackForwardListItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShouldGoToBackForwardListItem.mm; sourceTree = "<group>"; };
@@ -3588,6 +3590,7 @@
 				F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */,
 				5CA985512113CB8C0057EB6B /* SafeBrowsing.mm */,
 				95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */,
+				5CC8B16226A2527C00909603 /* SchemeChangingPlugIn.mm */,
 				CE0947362063223B003C9BA0 /* SchemeRegistry.mm */,
 				51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */,
 				5C683471235ACC7C0041E6B1 /* ServiceWorkerTCPServer.h */,
@@ -6006,6 +6009,7 @@
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */,
 				5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */,
+				5CC8B20626A2535F00909603 /* SchemeChangingPlugIn.mm in Sources */,
 				DFB80E38261512C1002D4771 /* TestAwakener.mm in Sources */,
 				7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */,
 				7C83E03D1D0A60D600FEBCF3 /* UtilitiesCocoa.mm in Sources */,

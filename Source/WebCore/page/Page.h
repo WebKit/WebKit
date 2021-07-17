@@ -814,7 +814,7 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
     bool loadsSubresources() const { return m_loadsSubresources; }
-    bool allowsLoadFromURL(const URL&) const;
+    WEBCORE_EXPORT bool allowsLoadFromURL(const URL&) const;
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }

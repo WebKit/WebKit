@@ -133,6 +133,10 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (m_frame.loader().documentLoader())
         m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url().string());
 
+    // Notifying the FrameLoaderClient may cause the frame to be destroyed.
+    Ref<Frame> protectedFrame(m_frame);
+    m_frame.loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
+
     if (auto* page = m_frame.page()) {
         if (!page->loadsSubresources()) {
             if (!m_frame.isMainFrame() || (m_initialRequestIdentifier && *m_initialRequestIdentifier != identifier))
@@ -140,10 +144,6 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
         } else if (!page->allowsLoadFromURL(request.url()))
             request = { };
     }
-    
-    // Notifying the FrameLoaderClient may cause the frame to be destroyed.
-    Ref<Frame> protect(m_frame);
-    m_frame.loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
     if (!request.isNull() && oldRequestURL != request.url().string() && m_frame.loader().documentLoader())
