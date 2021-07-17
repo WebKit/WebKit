@@ -332,7 +332,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
   
-    return toRef(globalObject, jsMaybeOwnedString(vm, String()));
+    return toRef(globalObject, string->isExternal() ? jsOwnedString(vm, string->string()) : jsString(vm, string->string()));
     
 }
 
