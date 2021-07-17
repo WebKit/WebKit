@@ -20,5 +20,5 @@ if (platformSupportsSamplingProfiler()) {
             test(regexp);
     }
 
-    runTest(baz, ["/(.+)/gi", "", "test", "baz"]);
+    runTest(baz, "/(.+)/gi");
 }

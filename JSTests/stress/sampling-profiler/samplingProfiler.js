@@ -36,13 +36,37 @@ function updateCallingContextTree(root) {
 
 const VERBOSE = false;
 
-function doesTreeHaveStackTrace(tree, stackTrace, isRunFromRunTest = true) {
+function doesTreeHaveStackTrace(tree, stackTraceOrString, isRunFromRunTest = true) {
+    if (typeof stackTraceOrString === 'string') {
+        // Let's ensure that this signature exists in the stack trace.
+        function check(node) {
+            for (let name of Object.keys(node.children)) {
+                if (name === stackTraceOrString)
+                    return true;
+                else {
+                    if (check(node.children[name]))
+                        return true;
+                }
+            }
+            return false;
+        }
+        if (!check(tree)) {
+            if (VERBOSE) {
+                print("failing");
+                print(JSON.stringify(tree));
+            }
+            return false;
+        }
+        return true;
+    }
+
     // stack trace should be top-down array with the deepest
     // call frame at index 0.
+    let stackTrace = null;
     if (isRunFromRunTest)
-        stackTrace = [...stackTrace, "runTest", "(program)"];
+        stackTrace = [...stackTraceOrString, "runTest", "(program)"];
     else
-        stackTrace = [...stackTrace];
+        stackTrace = [...stackTraceOrString];
     
     let node = tree;
     for (let i = stackTrace.length; i--; ) {
@@ -66,7 +90,7 @@ function makeTree() {
 
 // This test suite assumes that "runTest" is being called
 // from the global scope.
-function runTest(func, stackTrace) {
+function runTest(func, stackTraceOrString) {
     const timeToFail = 50000;
     let startTime = Date.now();
     let root = makeNode("<root>");
@@ -76,7 +100,7 @@ function runTest(func, stackTrace) {
                 func();
             }
             updateCallingContextTree(root);
-            if (doesTreeHaveStackTrace(root, stackTrace)) {
+            if (doesTreeHaveStackTrace(root, stackTraceOrString)) {
                 if (VERBOSE)
                     print(`Time to finish: ${Date.now() - startTime}`);
                 return;
