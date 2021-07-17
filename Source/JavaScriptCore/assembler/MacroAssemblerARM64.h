@@ -1367,6 +1367,17 @@ public:
     }
 
     // Memory access operations:
+    Assembler::ExtendType indexExtendType(BaseIndex address)
+    {
+        switch (address.extend) {
+        case Extend::ZExt32:
+            return Assembler::UXTW;
+        case Extend::SExt32:
+            return Assembler::SXTW;
+        case Extend::None:
+            return Assembler::UXTX;
+        }
+    }
 
     void load64(ImplicitAddress address, RegisterID dest)
     {
@@ -1380,12 +1391,12 @@ public:
     void load64(BaseIndex address, RegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.ldr<64>(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldr<64>(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldr<64>(dest, address.base, memoryTempRegister);
     }
 
@@ -1479,12 +1490,12 @@ public:
     void load32(BaseIndex address, RegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.ldr<32>(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldr<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldr<32>(dest, address.base, memoryTempRegister);
     }
 
@@ -1526,12 +1537,12 @@ public:
     void load16(BaseIndex address, RegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 1)) {
-            m_assembler.ldrh(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldrh(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldrh(dest, address.base, memoryTempRegister);
     }
 
@@ -1570,12 +1581,12 @@ public:
     void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 1)) {
-            m_assembler.ldrsh<32>(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldrsh<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldrsh<32>(dest, address.base, memoryTempRegister);
     }
 
@@ -1601,12 +1612,12 @@ public:
     void load8(BaseIndex address, RegisterID dest)
     {
         if (!address.offset && !address.scale) {
-            m_assembler.ldrb(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldrb(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldrb(dest, address.base, memoryTempRegister);
     }
     
@@ -1635,12 +1646,12 @@ public:
     void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         if (!address.offset && !address.scale) {
-            m_assembler.ldrsb<32>(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldrsb<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldrsb<32>(dest, address.base, memoryTempRegister);
     }
 
@@ -1674,12 +1685,12 @@ public:
     void store64(RegisterID src, BaseIndex address)
     {
         if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.str<64>(src, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.str<64>(src, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.str<64>(src, address.base, memoryTempRegister);
     }
     
@@ -1781,12 +1792,12 @@ public:
     void store32(RegisterID src, BaseIndex address)
     {
         if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.str<32>(src, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.str<32>(src, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.str<32>(src, address.base, memoryTempRegister);
     }
 
@@ -1848,12 +1859,12 @@ public:
     void store16(RegisterID src, BaseIndex address)
     {
         if (!address.offset && (!address.scale || address.scale == 1)) {
-            m_assembler.strh(src, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.strh(src, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.strh(src, address.base, memoryTempRegister);
     }
 
@@ -1876,12 +1887,12 @@ public:
     void store8(RegisterID src, BaseIndex address)
     {
         if (!address.offset && !address.scale) {
-            m_assembler.strb(src, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.strb(src, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.strb(src, address.base, memoryTempRegister);
     }
 
@@ -2189,12 +2200,12 @@ public:
     void loadDouble(BaseIndex address, FPRegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.ldr<64>(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldr<64>(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldr<64>(dest, address.base, memoryTempRegister);
     }
     
@@ -2216,12 +2227,12 @@ public:
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.ldr<32>(dest, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.ldr<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldr<32>(dest, address.base, memoryTempRegister);
     }
 
@@ -2473,12 +2484,12 @@ public:
     void storeDouble(FPRegisterID src, BaseIndex address)
     {
         if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.str<64>(src, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.str<64>(src, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.str<64>(src, address.base, memoryTempRegister);
     }
 
@@ -2494,12 +2505,12 @@ public:
     void storeFloat(FPRegisterID src, BaseIndex address)
     {
         if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.str<32>(src, address.base, address.index, Assembler::UXTX, address.scale);
+            m_assembler.str<32>(src, address.base, address.index, indexExtendType(address), address.scale);
             return;
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.str<32>(src, address.base, memoryTempRegister);
     }
 

@@ -297,6 +297,314 @@ void testReturnVoid()
     compileAndRun<void>(proc);
 }
 
+void testLoadZeroExtendIndexAddress()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] (uint32_t index, int32_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* baseValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, ZExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), baseValue, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<Value>(
+            proc, Return, Origin(), 
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(amount == 2 ? ".*ldr.*uxtw#2.*" : ".*ldr.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        intptr_t addr = bitwise_cast<intptr_t>(&num);
+        intptr_t base = addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount));
+        CHECK_EQ(invoke<int32_t>(*code, base, index), num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int32Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test32(index.value, num.value, amount);
+        }
+    }
+
+    auto test64 = [&] (uint32_t index, int64_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* baseValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, ZExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), baseValue, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<Value>(
+            proc, Return, Origin(), 
+            root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(amount == 3 ? ".*ldr.*uxtw#3.*" : ".*ldr.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        intptr_t addr = bitwise_cast<intptr_t>(&num);
+        intptr_t base = addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount));
+        CHECK_EQ(invoke<int64_t>(*code, base, index), num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int64Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test64(index.value, num.value, amount);
+        }
+    }
+}
+
+void testLoadSignExtendIndexAddress()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] (int32_t index, int32_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* baseValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, SExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), baseValue, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<Value>(
+            proc, Return, Origin(), 
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(amount == 2 ? ".*ldr.*sxtw#2.*" : ".*ldr.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        intptr_t addr = bitwise_cast<intptr_t>(&num);
+        intptr_t base = addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount));
+        CHECK_EQ(invoke<int32_t>(*code, base, index), num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int32Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test32(index.value, num.value, amount);
+        }
+    }
+
+    auto test64 = [&] (int32_t index, int64_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* baseValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, SExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), baseValue, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<Value>(
+            proc, Return, Origin(), 
+            root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(amount == 3 ? ".*ldr.*sxtw#3.*" : ".*ldr.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        intptr_t addr = bitwise_cast<intptr_t>(&num);
+        intptr_t base = addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount));
+        CHECK_EQ(invoke<int64_t>(*code, base, index), num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int64Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test64(index.value, num.value, amount);
+        }
+    }
+}
+
+void testStoreZeroExtendIndexAddress()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] (uint32_t index, int32_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), num);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, ZExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), base, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, address);
+        root->appendNew<Value>(proc, Return, Origin(), value);
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(amount == 2 ? ".*str.*uxtw#2.*" : ".*str.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        int32_t slot = 12341234;
+        intptr_t addr = bitwise_cast<intptr_t>(&slot);
+        invoke<int32_t>(*code, addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount)), index);
+        CHECK_EQ(slot, num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int32Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test32(index.value, num.value, amount);
+        }
+    }
+
+    auto test64 = [&] (uint32_t index, int64_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const64Value>(proc, Origin(), num);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, ZExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), base, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, address);
+        root->appendNew<Value>(proc, Return, Origin(), value);
+
+        auto code = compileProc(proc);
+        if (isARM64() && amount == 3) {
+            std::string regex(amount == 3 ? ".*str.*uxtw#3.*" : ".*str.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        int64_t slot = 12341234;
+        intptr_t addr = bitwise_cast<intptr_t>(&slot);
+        invoke<int64_t>(*code, addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount)), index);
+        CHECK_EQ(slot, num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int64Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test64(index.value, num.value, amount);
+        }
+    }
+}
+
+void testStoreSignExtendIndexAddress()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] (int32_t index, int32_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), num);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, SExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), base, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, address);
+        root->appendNew<Value>(proc, Return, Origin(), value);
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(amount == 2 ? ".*str.*sxtw#2.*" : ".*str.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        int32_t slot = 12341234;
+        intptr_t addr = bitwise_cast<intptr_t>(&slot);
+        invoke<int32_t>(*code, addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount)), index);
+        CHECK_EQ(slot, num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int32Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test32(index.value, num.value, amount);
+        }
+    }
+
+    auto test64 = [&] (int32_t index, int64_t num, int32_t amount) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const64Value>(proc, Origin(), num);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* index32 = root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* index64 = root->appendNew<Value>(proc, SExt32, Origin(), index32);
+        Value* scale = root->appendNew<Const32Value>(proc, Origin(), amount);
+        Value* address = root->appendNew<Value>(
+            proc, Add, Origin(), base, 
+            root->appendNew<Value>(proc, Shl, Origin(), index64, scale));
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, address);
+        root->appendNew<Value>(proc, Return, Origin(), value);
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(amount == 3 ? ".*str.*sxtw#3.*" : ".*str.*[.*,.*].*");
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        int64_t slot = 12341234;
+        intptr_t addr = bitwise_cast<intptr_t>(&slot);
+        invoke<int64_t>(*code, addr - (static_cast<intptr_t>(index) << static_cast<intptr_t>(amount)), index);
+        CHECK_EQ(slot, num);
+    };
+
+    for (auto index : int32Operands()) {
+        for (auto num : int64Operands()) {
+            for (int32_t amount = 0; amount < 10; ++amount)
+                test64(index.value, num.value, amount);
+        }
+    }
+}
+
 void testAddArg(int a)
 {
     Procedure proc;
@@ -5944,6 +6252,11 @@ void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN_BINARY(testBitXorTreeArgImm, int64Operands(), int64Operands());
     RUN_UNARY(testBitAndTreeArg32, int32Operands());
     RUN_UNARY(testBitOrTreeArg32, int32Operands());
+
+    RUN(testLoadZeroExtendIndexAddress());
+    RUN(testLoadSignExtendIndexAddress());
+    RUN(testStoreZeroExtendIndexAddress());
+    RUN(testStoreSignExtendIndexAddress());
 }
 
 #endif // ENABLE(B3_JIT)

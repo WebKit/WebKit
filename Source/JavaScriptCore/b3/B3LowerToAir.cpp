@@ -499,6 +499,31 @@ private:
         return true;
     }
 
+    bool isMergeableValue(Value* v, B3::Opcode b3Opcode, bool checkCanBeInternal)
+    { 
+        if (v->opcode() != b3Opcode)
+            return false;
+        if (checkCanBeInternal && !canBeInternal(v))
+            return false;
+        if (m_locked.contains(v->child(0)))
+            return false;
+        return true;
+    }
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    Arg indexArg(Tmp base, Value* index, unsigned scale, Int offset)
+    {
+#if CPU(ARM64)
+        // Maybe, the ideal approach is to introduce a decorator (Index@EXT) to the Air operand 
+        // to provide an extension opportunity for the specific form under the Air opcode.
+        if (isMergeableValue(index, ZExt32, false))
+            return Arg::index(base, tmp(index->child(0)), scale, offset, MacroAssembler::Extend::ZExt32);
+        if (isMergeableValue(index, SExt32, false))
+            return Arg::index(base, tmp(index->child(0)), scale, offset, MacroAssembler::Extend::SExt32);
+#endif
+        return Arg::index(base, tmp(index), scale, offset);
+    }
+
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     std::optional<unsigned> scaleForShl(Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
@@ -549,7 +574,7 @@ private:
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
                     return Arg();
-                return Arg::index(tmp(base), tmp(index->child(0)), *scale, offset);
+                return indexArg(tmp(base), index->child(0), *scale, offset);
             };
 
             if (Arg result = tryIndex(left, right))
@@ -561,7 +586,7 @@ private:
                 || !Arg::isValidIndexForm(1, offset, width))
                 return fallback();
             
-            return Arg::index(tmp(left), tmp(right), 1, offset);
+            return indexArg(tmp(left), right, 1, offset);
         }
 
         case Shl: {
@@ -574,7 +599,7 @@ private:
                 || !Arg::isValidIndexForm(1, offset, width))
                 return fallback();
 
-            return Arg::index(tmp(left), tmp(left), 1, offset);
+            return indexArg(tmp(left), left, 1, offset);
         }
 
         case FramePointer:
@@ -594,7 +619,7 @@ private:
             // perhaps more importantly, it would allow us to avoid a truncating
             // move. See: https://bugs.webkit.org/show_bug.cgi?id=163465
 
-            return Arg::index(Tmp(wasmAddress->pinnedGPR()), tmp(pointer), 1, offset);
+            return indexArg(Tmp(wasmAddress->pinnedGPR()), pointer, 1, offset);
         }
 
         default:
@@ -2117,7 +2142,7 @@ private:
             ASSERT(!m_locked.contains(shl->child(0)));
             ASSERT(!m_locked.contains(other));
             
-            append(leaOpcode, Arg::index(tmp(other), tmp(shl->child(0)), *scale, offset), tmp(m_value));
+            append(leaOpcode, indexArg(tmp(other), shl->child(0), *scale, offset), tmp(m_value));
             commitInternal(innerAdd);
             commitInternal(shl);
             return true;
@@ -2134,7 +2159,7 @@ private:
             return false;
         ASSERT(!m_locked.contains(value->child(0)));
         ASSERT(!m_locked.contains(value->child(1)));
-        append(leaOpcode, Arg::index(tmp(value->child(0)), tmp(value->child(1)), 1, offset), tmp(m_value));
+        append(leaOpcode, indexArg(tmp(value->child(0)), value->child(1), 1, offset), tmp(m_value));
         commitInternal(innerAdd);
         return true;
     }
@@ -2490,15 +2515,6 @@ private:
     void lower()
     {
         using namespace Air;
-
-        auto isMergeableB3Opcode = [&] (Value* v, B3::Opcode b3Opcode) -> bool { 
-            if (v->opcode() != b3Opcode || !canBeInternal(v))
-                return false;
-            if (m_locked.contains(v->child(0)))
-                return false;
-            return true;
-        };
-
         switch (m_value->opcode()) {
         case B3::Nop: {
             // Yes, we will totally see Nop's because some phases will replaceWithNop() instead of
@@ -2599,10 +2615,10 @@ private:
                         if (airOpcode != MultiplyAdd64)
                             return Air::Oops;
                         // SMADDL: d = SExt32(n) * SExt32(m) + a
-                        if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                        if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
                             return MultiplyAddSignExtend32;
                         // UMADDL: d = ZExt32(n) * ZExt32(m) + a
-                        if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                        if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
                             return MultiplyAddZeroExtend32;
                         return Air::Oops;
                     };
@@ -2687,10 +2703,10 @@ private:
                     if (airOpcode != MultiplySub64)
                         return Air::Oops;
                     // SMSUBL: d = a - SExt32(n) * SExt32(m)
-                    if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                    if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
                         return MultiplySubSignExtend32;
                     // UMSUBL: d = a - ZExt32(n) * ZExt32(m)
-                    if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                    if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
                         return MultiplySubZeroExtend32;
                     return Air::Oops;
                 };
@@ -2766,10 +2782,10 @@ private:
                     if (airOpcode != MultiplyNeg64)
                         return Air::Oops;
                     // SMNEGL: d = -(SExt32(n) * SExt32(m))
-                    if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                    if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
                         return MultiplyNegSignExtend32;
                     // UMNEGL: d = -(ZExt32(n) * ZExt32(m))
-                    if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                    if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
                         return MultiplyNegZeroExtend32;
                     return Air::Oops;
                 };

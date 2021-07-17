@@ -1,3 +1,100 @@
+2021-07-16  Yijia Huang  <yijia_huang@apple.com>
+
+        Add ExtendType to Air::Arg Index to fully utilize address computation in memory instruction for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227970
+
+        Reviewed by Saam Barati.
+
+        The pattern recognition of address computation in the instructions, e.g., Load 
+        Resistor (LDR), Store Register (STR), etc., can benefit the instruction selector.
+        Then, the Air operand BaseIndex containing base, index, and scale is introduced 
+        to Air opcode. However, the <extend> option of index address is not fully leveraged 
+        in the previous implementation. 
+
+        To fill that gap, this patch adds a new member, MacroAssembler::Extend, to the current 
+        design of BaseIndex to trigger zero/sign extension on the Index address. And this is 
+        enabled for Store/Load with valid index address and shift amount.
+
+        Maybe, the ideal approach is to introduce a decorator (Index@EXT) to the Air operand 
+        to provide an extension opportunity for the specific form of the Air opcode.
+
+        Load Register (LDR) calculates an address from a base register value and an 
+        offset register value, loads a word from memory, and writes it to a register. 
+        The offset register value can optionally be shifted and extended.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = Z/SExt32(Trunc(ArgumentReg(%x1)))
+        Int @2 = scale
+        Int @3 = Shl(@1, @2)
+        Int @4 = Add(@0, @3)
+        Int @5 = Load(@4, ControlDependent|Reads:Top)
+        Void@6 = Return(@5, Terminal)
+
+        // Old optimized AIR
+        Move               %x1, %x1, @1
+        Move (%x0,%x1,2^scale), %x0, @5
+        Ret                %x0,      @6
+
+        // New optimized AIR
+        Move (%x0,%x1,2^scale), %x0, @5
+        Ret                %x0,      @6
+
+        Store Register (STR) calculates an address from a base register value and an 
+        offset register value, and stores a 32-bit word or a 64-bit doubleword to the 
+        calculated address, from a register.
+
+        Given B3 IR:
+        Int @0 = value
+        Int @1 = ArgumentReg(%x0)
+        Int @2 = Z/SExt32(Trunc(ArgumentReg(%x1))
+        Int @3 = scale
+        Int @4 = Shl(@2, @3)
+        Int @5 = Add(@1, @4)
+        Void@6 = Store(@0, @5, ControlDependent|Writes:Top)
+        Void@7 = Return(@0, Terminal)
+
+        // Old optimized AIR
+        Move32    %x1,               %x1, @2
+        Store32  %xzr, (%x0,%x1,2^scale), @6
+        Move       $0,               %x0, @7
+        Ret32     %x0,                    @7
+
+        // New optimized AIR
+        Store32  %xzr, (%x0,%x1,2^scale), @6
+        Move       $0,               %x0, @7
+        Ret32     %x0,                    @7
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::BaseIndex::BaseIndex):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::indexExtendType):
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::loadFloat):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        (JSC::MacroAssemblerARM64::storeFloat):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::index):
+        (JSC::B3::Air::Arg::asBaseIndex const):
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testLoadZeroExtendIndexAddress):
+        (testLoadSignExtendIndexAddress):
+        (testStoreZeroExtendIndexAddress):
+        (testStoreSignExtendIndexAddress):
+        (addBitTests):
+
 2021-07-16  Saam Barati  <sbarati@apple.com>
 
         Grab the lock in FTL::Thunks::keyForSlowPathCallThunk

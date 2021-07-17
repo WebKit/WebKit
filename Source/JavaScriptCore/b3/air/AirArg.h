@@ -629,7 +629,7 @@ public:
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    static Arg index(Air::Tmp base, Air::Tmp index, unsigned scale, Int offset)
+    static Arg index(Air::Tmp base, Air::Tmp index, unsigned scale, Int offset, MacroAssembler::Extend extend = MacroAssembler::Extend::None)
     {
         ASSERT(base.isGP());
         ASSERT(index.isGP());
@@ -640,6 +640,7 @@ public:
         result.m_index = index;
         result.m_scale = static_cast<int32_t>(scale);
         result.m_offset = offset;
+        result.m_extend = extend;
         return result;
     }
 
@@ -1379,7 +1380,7 @@ public:
         ASSERT(isIndex());
         return MacroAssembler::BaseIndex(
             m_base.gpr(), m_index.gpr(), static_cast<MacroAssembler::Scale>(logScale()),
-            static_cast<Value::OffsetType>(m_offset));
+            static_cast<Value::OffsetType>(m_offset), m_extend);
     }
 
     MacroAssembler::RelationalCondition asRelationalCondition() const
@@ -1484,6 +1485,7 @@ public:
 private:
     int64_t m_offset { 0 };
     Kind m_kind { Invalid };
+    MacroAssembler::Extend m_extend { MacroAssembler::Extend::None };
     int32_t m_scale { 1 };
     Air::Tmp m_base;
     Air::Tmp m_index;
