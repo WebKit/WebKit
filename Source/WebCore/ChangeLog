@@ -1,3 +1,17 @@
+2021-07-18  Sam Weinig  <weinig@apple.com>
+
+        Fix canvas overflow checking to use CheckedArithmatic rather than adhoc floating point mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=228058
+
+        Reviewed by Dean Jackson.
+
+        We have CheckedArithmatic just for this case. Use it.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::shouldAccelerate const):
+        (WebCore::HTMLCanvasElement::createImageBuffer const):
+        * html/HTMLCanvasElement.h:
+
 2021-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [AX] Keyboard text candidates don't update when changing selection using Switch Control

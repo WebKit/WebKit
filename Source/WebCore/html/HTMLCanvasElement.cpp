@@ -862,11 +862,16 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 
 bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 {
-    auto& settings = document().settings();
-
-    auto area = size.area<RecordOverflow>();
-    if (area.hasOverflowed())
+    auto checkedArea = size.area<RecordOverflow>();
+    if (checkedArea.hasOverflowed())
         return false;
+
+    return shouldAccelerate(checkedArea.value());
+}
+
+bool HTMLCanvasElement::shouldAccelerate(unsigned area) const
+{
+    auto& settings = document().settings();
 
     if (area > settings.maximumAccelerated2dCanvasSize())
         return false;
@@ -874,7 +879,6 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     return settings.canvasUsesAcceleratedDrawing();
 #else
-    UNUSED_PARAM(size);
     return false;
 #endif
 }
@@ -927,27 +931,29 @@ void HTMLCanvasElement::createImageBuffer() const
     m_hasCreatedImageBuffer = true;
     m_didClearImageBuffer = true;
 
-    // Perform multiplication as floating point to avoid overflow
-    if (float(width()) * height() > maxCanvasArea) {
+    auto checkedArea = size().area<RecordOverflow>();
+
+    if (checkedArea.hasOverflowed() || checkedArea > maxCanvasArea) {
         auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea, ").");
         document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return;
     }
-    
+
     // Make sure we don't use more pixel memory than the system can support.
-    size_t requestedPixelMemory = 4 * width() * height();
-    if (activePixelMemory() + requestedPixelMemory > maxActivePixelMemory()) {
+    auto checkedRequestedPixelMemory = (4 * checkedArea) + activePixelMemory();
+    if (checkedRequestedPixelMemory.hasOverflowed() || checkedRequestedPixelMemory > maxActivePixelMemory()) {
         auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
         document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return;
     }
 
-    if (!width() || !height())
+    unsigned area = checkedArea.value();
+    if (!area)
         return;
 
     auto hostWindow = (document().view() && document().view()->root()) ? document().view()->root()->hostWindow() : nullptr;
 
-    auto renderingMode = shouldAccelerate(size()) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto renderingMode = shouldAccelerate(area) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
     // FIXME: Add a new setting for DisplayList drawing on canvas.
     auto useDisplayList = m_usesDisplayListDrawing.value_or(document().settings().displayListDrawingEnabled()) ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
 
