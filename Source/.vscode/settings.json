@@ -1,0 +1,14 @@
+{
+  "cmake.configureOnOpen": false,
+  "files.exclude": {
+    "ThirdParty/": true,
+    "WebDriver": true,
+    "WebInspectorUI/": true,
+    "WebKit": true,
+    "WebKitBuild": true,
+    "WebKitLegacy": true
+  },
+  "files.associations": {
+    "memory": "cpp"
+  }
+}

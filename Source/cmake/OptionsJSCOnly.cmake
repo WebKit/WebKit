@@ -3,9 +3,9 @@ find_package(Threads REQUIRED)
 if (MSVC)
     include(OptionsMSVC)
 else ()
-    set(CMAKE_C_VISIBILITY_PRESET hidden)
-    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+    set(CMAKE_C_VISIBILITY_PRESET default)
+    set(CMAKE_CXX_VISIBILITY_PRESET default)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN OFF)
 endif ()
 
 add_definitions(-DBUILDING_JSCONLY__)
@@ -42,7 +42,7 @@ set(ENABLE_WEBKIT_LEGACY OFF)
 set(ENABLE_WEBKIT OFF)
 set(ENABLE_WEBINSPECTORUI OFF)
 set(ENABLE_WEBGL OFF)
-
+set(ENABLE_REMOTE_INSPECTOR OFF)
 if (WIN32)
     set(ENABLE_API_TESTS OFF)
 else ()
@@ -53,9 +53,7 @@ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
     SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE TRUE)
 endif ()
 
-
-
-
+set(ENABLE_UNIFIED_BUILDS OFF)
 
 # FIXME: JSCOnly on WIN32 seems to only work with fully static build
 # https://bugs.webkit.org/show_bug.cgi?id=172862
