@@ -1,3 +1,19 @@
+2021-07-18  David Kilzer  <ddkilzer@apple.com>
+
+        Ignore weak external symbols in clang coverage builds using check-for-weak-vtables-and-externals
+        <https://webkit.org/b/228063>
+        <rdar://problem/80477138>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/check-for-weak-vtables-and-externals:
+        - Ignore weak symbols from llvm when building with
+          coverage enabled.  This fixes the build.
+        * coverage/coverage.xcconfig:
+        (UNEXPORTED_SYMBOL_LDFLAGS_FOR_COVERAGE): Remove.
+        - Can't use -unexported_symbol and -exported_symbol
+          together, so remove this.
+
 2021-07-16  Kate Cheney  <katherine_cheney@apple.com>
 
         WKWebView javascript injection doesn't work if app includes WKAppBoundDomains
