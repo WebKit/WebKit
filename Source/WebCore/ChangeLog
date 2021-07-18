@@ -1,3 +1,29 @@
+2021-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [AX] Keyboard text candidates don't update when changing selection using Switch Control
+        https://bugs.webkit.org/show_bug.cgi?id=228051
+        rdar://79944295
+
+        Reviewed by Tim Horton.
+
+        See WebKit ChangeLog for more details.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+
+        Call the new EditorClient methods added below. Additionally, drive-by fix `setSelectedVisiblePositionRange` so
+        that it also performs a user-triggered selection change in the case where the range is not collapsed; this
+        matches the behavior of `setSelectedTextRange` as well.
+
+        * page/EditorClient.h:
+        (WebCore::EditorClient::willChangeSelectionForAccessibility):
+        (WebCore::EditorClient::didChangeSelectionForAccessibility):
+
+        Add new EditorClient hooks, `(will|did)ChangeSelectionForAccessibility`, that accessibility code can call before
+        and after it triggers a selection change; we use these two codepaths above when using the "Previous/Next
+        Character", "Previous/Next Word", and "Previous/Next Line" Switch Control menu actions.
+
 2021-07-17  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move InlineLevelBox class to its own file
