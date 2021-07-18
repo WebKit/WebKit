@@ -20,6 +20,7 @@
 #pragma once
 
 #include "JSObject.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
