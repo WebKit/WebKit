@@ -1864,6 +1864,7 @@ webkit.org/b/209461 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-001.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-002.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-003.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-011.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-012.html [ ImageOnlyFailure ]

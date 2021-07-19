@@ -1447,7 +1447,6 @@ imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dy
 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009.html [ ImageOnlyFailure ]

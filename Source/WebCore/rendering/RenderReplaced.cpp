@@ -102,6 +102,8 @@ void RenderReplaced::layout()
     ASSERT(needsLayout());
     
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+
+    LayoutRect oldContentRect = replacedContentRect();
     
     setHeight(minimumReplacedHeight());
 
@@ -115,6 +117,9 @@ void RenderReplaced::layout()
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();
+
+    if (replacedContentRect() != oldContentRect)
+        setPreferredLogicalWidthsDirty(true);
 }
 
 void RenderReplaced::intrinsicSizeChanged()
