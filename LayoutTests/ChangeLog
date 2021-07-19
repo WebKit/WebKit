@@ -1,5 +1,14 @@
 2021-07-19  Eric Hutchison  <ehutchison@apple.com>
 
+        [MacOS Wk1] media/video-pause-immediately.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=227136.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-07-19  Eric Hutchison  <ehutchison@apple.com>
+
         [Mac wk1 Debug] webaudio/audioworket-out-of-memory.html is a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=227845.
 

@@ -1332,4 +1332,6 @@ webkit.org/b/228042 [ Release ] media/modern-media-controls/volume-support/volum
 
 webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
+webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
+
 webkit.org/b/227973 [ BigSur Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html [ Pass Failure ]
