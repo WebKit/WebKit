@@ -1,5 +1,21 @@
 2021-07-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [build.webkit.org] lldb-webkit-test is failing on Catalina queues
+        https://bugs.webkit.org/show_bug.cgi?id=227946
+
+        Reviewed by Aakash Jain.
+
+        The changes to lldb-webkit-test to support the Python 3 version of lldb present in the
+        Big Sur-aligned Xcode have made it incompatible with Catalin's Python 2 version.
+
+        Rather than creating and defending the results for two different versions of the lldb-webkit-test
+        script, disable this test step for Catalina.
+
+        * CISupport/build-webkit-org/factories.py:
+        (TestFactory.__init__):
+
+2021-07-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed infrastructure fix, remove bot that is out for hardware repair.
 
         * CISupport/ews-build/config.json:
