@@ -2760,6 +2760,23 @@ bool RenderBox::isStretchingColumnFlexItem() const
 }
 
 // FIXME: Can/Should we move this inside specific layout classes (flex. grid)? Can we refactor columnFlexItemHasStretchAlignment logic?
+bool RenderBox::hasStretchedLogicalHeight() const
+{
+    auto& style = this->style();
+    if (!style.logicalHeight().isAuto() || style.marginBefore().isAuto() || style.marginAfter().isAuto())
+        return false;
+    RenderBlock* containingBlock = this->containingBlock();
+    if (!containingBlock) {
+        // We are evaluating align-self/justify-self, which default to 'normal' for the root element.
+        // The 'normal' value behaves like 'start' except for Flexbox Items, which obviously should have a container.
+        return false;
+    }
+    if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
+        return style.resolvedJustifySelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch;
+    return style.resolvedAlignSelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch;
+}
+
+// FIXME: Can/Should we move this inside specific layout classes (flex. grid)? Can we refactor columnFlexItemHasStretchAlignment logic?
 bool RenderBox::hasStretchedLogicalWidth() const
 {
     auto& style = this->style();
@@ -5249,6 +5266,9 @@ bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
 bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
 {
     if (shouldIgnoreAspectRatio())
+        return false;
+
+    if (isGridItem() && shouldComputeSizeAsReplaced() && hasStretchedLogicalWidth() && hasStretchedLogicalHeight())
         return false;
 
     auto isResolvablePercentageHeight = [&] {

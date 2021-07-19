@@ -1,3 +1,22 @@
+2021-07-19  Ziran Sun  <zsun@igalia.com>
+
+        [CSS-grid] Ignore the aspect-ratio of a replaced element if stretch alignments are applied to both axes
+        https://bugs.webkit.org/show_bug.cgi?id=227573
+
+        Reviewed by Javier Fernandez.
+
+        As discussed in https://github.com/w3c/csswg-drafts/issues/5713, for the replaced element as a grid item,
+        when both axes have stretch alignments applied and there is no auto margin(s) presented, the aspect ratio
+        should be ignored if there is any. 
+
+        Part of this patch is an import of Chromium CL at
+        https://chromium-review.googlesource.com/c/chromium/src/+/2651651
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasStretchedLogicalHeight const):
+        (WebCore::RenderBox::shouldComputeLogicalWidthFromAspectRatio const):
+        * rendering/RenderBox.h:
+
 2021-07-18  Sam Weinig  <weinig@apple.com>
 
         Fix canvas overflow checking to use CheckedArithmatic rather than adhoc floating point mechanism

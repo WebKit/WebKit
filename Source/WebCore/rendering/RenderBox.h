@@ -436,6 +436,7 @@ override;
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
     bool sizesLogicalWidthToFitContent(SizeType) const;
 
+    bool hasStretchedLogicalHeight() const;
     bool hasStretchedLogicalWidth() const;
     bool isStretchingColumnFlexItem() const;
     bool columnFlexItemHasStretchAlignment() const;

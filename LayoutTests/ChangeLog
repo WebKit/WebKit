@@ -1,3 +1,14 @@
+2021-07-19  Ziran Sun  <zsun@igalia.com>
+
+        [CSS-grid] Ignore the aspect-ratio of a replaced element if stretch alignments are applied to both axes
+        https://bugs.webkit.org/show_bug.cgi?id=227573
+
+        Reviewed by Javier Fernandez.
+
+        Two grid WPT tests are now passing.
+
+        * TestExpectations:
+
 2021-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         getBoundingClientRect() returns the incorrect rectangle on elements whose parent element is set -webkit-column-count
