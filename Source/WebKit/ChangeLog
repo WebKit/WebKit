@@ -1,5 +1,20 @@
 2021-07-19  Patrick Angle  <pangle@apple.com>
 
+        [Cocoa] Web Inspector: Service workers can't be inspected in Safari Technology Preview
+        https://bugs.webkit.org/show_bug.cgi?id=228001
+
+        Reviewed by Per Arne Vollan.
+
+        For inspecting targets in the WebProcess, like Service Workers, we read the `ShowDevelopMenu` default on Cocoa
+        platforms to determine if remote inspection should be allowed, but the sandbox broker bundle identifier used to
+        read that preference is different for Safari Technology Preview. We need to read the preference with the
+        appropriate sandbox broker bundle identifier when the host application is Safari Technology Preview.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::shouldEnableRemoteInspector):
+
+2021-07-19  Patrick Angle  <pangle@apple.com>
+
         [Cocoa] Web Inspector: REGRESSION(r271294) Service workers on iOS can't be inspected
         https://bugs.webkit.org/show_bug.cgi?id=227971
 
