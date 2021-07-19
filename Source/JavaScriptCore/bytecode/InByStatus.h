@@ -104,6 +104,7 @@ public:
     // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
     void filter(const StructureSet&);
     
+    DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);
 

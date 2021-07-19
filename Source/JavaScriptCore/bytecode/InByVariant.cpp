@@ -74,6 +74,14 @@ bool InByVariant::attemptToMerge(const InByVariant& other)
 }
 
 template<typename Visitor>
+void InByVariant::visitAggregateImpl(Visitor& visitor)
+{
+    m_identifier.visitAggregate(visitor);
+}
+
+DEFINE_VISIT_AGGREGATE(InByVariant);
+
+template<typename Visitor>
 void InByVariant::markIfCheap(Visitor& visitor)
 {
     m_structureSet.markIfCheap(visitor);
