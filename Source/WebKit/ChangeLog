@@ -1,3 +1,10 @@
+2021-07-19  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::nameForBackingStoreType):
+
 2021-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [AX] Keyboard text candidates don't update when changing selection using Switch Control
