@@ -1,3 +1,12 @@
+2021-07-19  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [MacOS wk1 Release] media/modern-media-controls/scrubber-support/scrubber-support-drag.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=228091
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-07-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html as flaky on WK1.
