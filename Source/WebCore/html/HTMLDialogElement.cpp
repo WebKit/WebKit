@@ -25,8 +25,8 @@
 
 #include "config.h"
 #include "HTMLDialogElement.h"
+#include "EventLoop.h"
 #include "EventNames.h"
-#include "EventSender.h"
 
 #include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -37,20 +37,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDialogElement);
 
 using namespace HTMLNames;
 
-static DialogEventSender& dialogCloseEventSender()
-{
-    static NeverDestroyed<DialogEventSender> sharedCloseEventSender(eventNames().closeEvent);
-    return sharedCloseEventSender;
-}
-
 HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
-}
-
-HTMLDialogElement::~HTMLDialogElement()
-{
-    dialogCloseEventSender().cancelEvent(*this);
 }
 
 void HTMLDialogElement::show()
@@ -101,14 +90,9 @@ void HTMLDialogElement::close(const String& result)
 
     // FIXME: Add step 6 from spec. (webkit.org/b/227537)
 
-    dialogCloseEventSender().cancelEvent(*this);
-    dialogCloseEventSender().dispatchEventSoon(*this);
-}
-
-void HTMLDialogElement::dispatchPendingEvent(DialogEventSender* eventSender)
-{
-    ASSERT_UNUSED(eventSender, eventSender == &dialogCloseEventSender());
-    dispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    document().eventLoop().queueTask(TaskSource::UserInteraction, [protectedThis = GCReachableRef { *this }] {
+        protectedThis->dispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
 }
 
 }
