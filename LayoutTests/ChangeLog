@@ -1,3 +1,12 @@
+2021-07-19  Robert Jenner  <Jenner@apple.com>
+
+        [BigSur Wk1 Release] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-023.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=225495
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-07-19  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ macOS iOS ] crypto/crypto-random-values-oom.html is a flakey timeout.
