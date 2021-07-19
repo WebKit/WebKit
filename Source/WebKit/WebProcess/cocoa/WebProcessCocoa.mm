@@ -292,8 +292,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
 #endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    if (SandboxExtension::consumePermanently(parameters.enableRemoteWebInspectorExtensionHandle))
-        Inspector::RemoteInspector::setNeedMachSandboxExtension(false);
+    Inspector::RemoteInspector::setNeedMachSandboxExtension(!SandboxExtension::consumePermanently(parameters.enableRemoteWebInspectorExtensionHandle));
 #endif
 #endif
 

@@ -1,3 +1,22 @@
+2021-07-19  Patrick Angle  <pangle@apple.com>
+
+        [Cocoa] Web Inspector: REGRESSION(r271294) Service workers on iOS can't be inspected
+        https://bugs.webkit.org/show_bug.cgi?id=227971
+
+        Reviewed by Per Arne Vollan.
+
+        r271294 fixed inspecting Service Workers on macOS, but in the process broke inspecting Service Workers on iOS.
+        For iOS, previously a flag was set to mark RemoteInspector as needing to wait for a Sandbox Extension handle,
+        but after r271294 this flag will no longer be cleared properly, as the handle is acquired and consumed prior to
+        the point in initialization that iOS was special cased to wait for the handle. To resolve this, we now set the
+        flag once based on whether we were able to acquire a handle, which due to the changes in r270326 will already
+        have been done by the time we are initializing a WebProcess.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-07-19  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.
