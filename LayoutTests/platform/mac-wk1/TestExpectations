@@ -1330,4 +1330,6 @@ webkit.org/b/227973 [ BigSur Release arm64 ] http/tests/security/frameNavigation
 
 webkit.org/b/228042 [ Release ] media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Pass Timeout Failure ]
 
+webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/227973 [ BigSur Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html [ Pass Failure ]
