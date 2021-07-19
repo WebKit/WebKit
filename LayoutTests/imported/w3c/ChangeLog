@@ -1,5 +1,16 @@
 2021-07-19  Chris Dumez  <cdumez@apple.com>
 
+        HTMLImageElement.decoding should reflect the decoding content attribute, limited to only known values
+        https://bugs.webkit.org/show_bug.cgi?id=228081
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+
+2021-07-19  Chris Dumez  <cdumez@apple.com>
+
         FetchResponse.formData() should not reject promise if the body is null and the MIME Type is "application/x-www-form-urlencoded"
         https://bugs.webkit.org/show_bug.cgi?id=228085
 
