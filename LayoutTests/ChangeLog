@@ -1,5 +1,14 @@
 2021-07-19  Eric Hutchison  <ehutchison@apple.com>
 
+        [ BigSur Release wk1 ] media/video-restricted-no-preload-auto.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228084.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-07-19  Eric Hutchison  <ehutchison@apple.com>
+
         [MacOS Wk1] media/video-pause-immediately.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=227136.
 
