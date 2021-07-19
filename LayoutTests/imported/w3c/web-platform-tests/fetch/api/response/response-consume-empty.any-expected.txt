@@ -4,7 +4,7 @@ PASS Consume response's body as blob
 PASS Consume response's body as arrayBuffer
 PASS Consume response's body as json (error case)
 PASS Consume response's body as formData with correct multipart type (error case)
-FAIL Consume response's body as formData with correct urlencoded type promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Consume response's body as formData with correct urlencoded type
 PASS Consume response's body as formData without correct type (error case)
 PASS Consume empty blob response body as arrayBuffer
 PASS Consume empty text response body as arrayBuffer

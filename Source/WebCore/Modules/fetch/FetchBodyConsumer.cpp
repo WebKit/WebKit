@@ -124,7 +124,7 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
 }
 
 // https://fetch.spec.whatwg.org/#concept-body-package-data
-static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, const String& contentType, const uint8_t* data, size_t length)
+RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* context, const String& contentType, const uint8_t* data, size_t length)
 {
     auto parseMultipartPart = [context] (const uint8_t* part, size_t partLength, DOMFormData& form) -> bool {
         const uint8_t* headerEnd = static_cast<const uint8_t*>(memmem(part, partLength, "\r\n\r\n", 4));
@@ -229,7 +229,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         promise->resolve<IDLDOMString>(TextResourceDecoder::textFromUTF8(data, length));
         return;
     case FetchBodyConsumer::Type::FormData:
-        if (auto formData = packageFormData(context, contentType, data, length))
+        if (auto formData = FetchBodyConsumer::packageFormData(context, contentType, data, length))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(TypeError);

@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class Blob;
+class DOMFormData;
 class FetchBodySource;
 class ReadableStream;
 
@@ -72,6 +73,8 @@ public:
     void setSource(Ref<FetchBodySource>&&);
 
     void setAsLoading() { m_isLoading = true; }
+
+    static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext*, const String& contentType, const uint8_t* data, size_t length);
 
 private:
     Ref<Blob> takeAsBlob(ScriptExecutionContext*);
