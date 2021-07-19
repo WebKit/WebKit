@@ -296,7 +296,7 @@ void IDBRequest::dispatchEvent(Event& event)
     ASSERT(!isContextStopped());
 
     auto protectedThis = makeRef(*this);
-    m_dispatchingEvent = true;
+    m_eventBeingDispatched = &event;
 
     if (event.type() != eventNames().blockedEvent)
         m_readyState = ReadyState::Done;
@@ -320,7 +320,7 @@ void IDBRequest::dispatchEvent(Event& event)
     if (!m_hasPendingActivity)
         m_hasPendingActivity = isOpenDBRequest() && (event.type() == eventNames().upgradeneededEvent || event.type() == eventNames().blockedEvent);
 
-    m_dispatchingEvent = false;
+    m_eventBeingDispatched = nullptr;
     if (!m_transaction)
         return;
 
@@ -344,7 +344,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    if (m_dispatchingEvent) {
+    if (m_eventBeingDispatched) {
         ASSERT(!m_hasUncaughtException);
         m_hasUncaughtException = true;
         return;
@@ -567,5 +567,15 @@ void IDBRequest::clearWrappers()
     );
 }
 
+bool IDBRequest::willAbortTransactionAfterDispatchingEvent() const
+{
+    if (!m_eventBeingDispatched)
+        return false;
+
+    if (m_hasUncaughtException)
+        return true;
+
+    return !m_eventBeingDispatched->defaultPrevented() && m_eventBeingDispatched->type() == eventNames().errorEvent;
+}
 
 } // namespace WebCore

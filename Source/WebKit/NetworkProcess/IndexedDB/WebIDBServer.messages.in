@@ -24,7 +24,7 @@ messages -> WebIDBServer {
     DeleteDatabase(WebCore::IDBRequestData requestData)
     OpenDatabase(WebCore::IDBRequestData requestData)
     AbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier)
-    CommitTransaction(WebCore::IDBResourceIdentifier transactionIdentifier)
+    CommitTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, uint64_t pendingRequestCount)
     DidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
     CreateObjectStore(WebCore::IDBRequestData requestData, WebCore::IDBObjectStoreInfo info)
     DeleteObjectStore(WebCore::IDBRequestData requestData, String objectStoreName)

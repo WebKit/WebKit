@@ -182,12 +182,12 @@ void WebIDBServer::abortTransaction(const WebCore::IDBResourceIdentifier& transa
     m_server->abortTransaction(transactionIdentifier);
 }
 
-void WebIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier)
+void WebIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
 {
     ASSERT(!RunLoop::isMain());
 
     Locker locker { m_serverLock };
-    m_server->commitTransaction(transactionIdentifier);
+    m_server->commitTransaction(transactionIdentifier, pendingRequestCount);
 }
 
 void WebIDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)

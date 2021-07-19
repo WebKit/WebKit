@@ -125,6 +125,7 @@ public:
     IndexedDB::RequestType requestType() const { return m_requestType; }
 
     void setTransactionOperationID(uint64_t transactionOperationID) { m_currentTransactionOperationID = transactionOperationID; }
+    bool willAbortTransactionAfterDispatchingEvent() const;
 
 protected:
     IDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, IndexedDB::RequestType);
@@ -197,8 +198,8 @@ private:
 
     bool m_shouldExposeTransactionToDOM { true };
     bool m_hasPendingActivity { true };
-    bool m_dispatchingEvent { false };
     bool m_hasUncaughtException { false };
+    RefPtr<Event> m_eventBeingDispatched;
 };
 
 } // namespace WebCore

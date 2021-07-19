@@ -27,6 +27,7 @@
 
 #include "IDBError.h"
 #include "IDBTransactionInfo.h"
+#include <wtf/Deque.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -65,7 +66,7 @@ public:
 
     void abort();
     void abortWithoutCallback();
-    void commit();
+    void commit(uint64_t pendingRequestCount);
 
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
@@ -100,6 +101,7 @@ private:
     Vector<uint64_t> m_objectStoreIdentifiers;
 
     std::optional<IDBError> m_mainThreadAbortResult;
+    Deque<IDBError> m_requestResults;
 };
 
 } // namespace IDBServer

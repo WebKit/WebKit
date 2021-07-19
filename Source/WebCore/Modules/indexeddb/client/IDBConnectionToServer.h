@@ -108,7 +108,7 @@ public:
     void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&);
     WEBCORE_EXPORT void didIterateCursor(const IDBResultData&);
 
-    void commitTransaction(const IDBResourceIdentifier& transactionIdentifier);
+    void commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount);
     WEBCORE_EXPORT void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&);

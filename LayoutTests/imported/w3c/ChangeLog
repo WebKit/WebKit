@@ -1,3 +1,19 @@
+2021-07-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement IDBTransaction.commit()
+        https://bugs.webkit.org/show_bug.cgi?id=227815
+        <rdar://problem/80651270>
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/IndexedDB/idb-explicit-commit-throw.any-expected.txt:
+        * web-platform-tests/IndexedDB/idb-explicit-commit-throw.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/idb-explicit-commit.any-expected.txt: Some test is timed out as our backend does
+        not support running multiple transactions simultaneously now.
+        * web-platform-tests/IndexedDB/idb-explicit-commit.any.worker-expected.txt: Ditto.
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+
 2021-07-19  Chris Dumez  <cdumez@apple.com>
 
         HTMLImageElement.decoding should reflect the decoding content attribute, limited to only known values

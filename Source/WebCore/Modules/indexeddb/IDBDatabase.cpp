@@ -356,8 +356,9 @@ void IDBDatabase::didStartTransaction(IDBTransaction& transaction)
     ASSERT(!m_versionChangeTransaction);
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    // It is possible for the client to have aborted a transaction before the server replies back that it has started.
-    if (m_abortingTransactions.contains(transaction.info().identifier()))
+    // It is possible for the client to have aborted or committed a transaction
+    // before the server replies back that it has started.
+    if (m_abortingTransactions.contains(transaction.info().identifier()) || m_committingTransactions.contains(transaction.info().identifier()))
         return;
 
     m_activeTransactions.set(transaction.info().identifier(), &transaction);

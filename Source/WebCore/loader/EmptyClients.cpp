@@ -181,7 +181,7 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         void deleteDatabase(const IDBRequestData&) final { }
         void openDatabase(const IDBRequestData&) final { }
         void abortTransaction(const IDBResourceIdentifier&) final { }
-        void commitTransaction(const IDBResourceIdentifier&) final { }
+        void commitTransaction(const IDBResourceIdentifier&, uint64_t) final { }
         void didFinishHandlingVersionChangeTransaction(uint64_t, const IDBResourceIdentifier&) final { }
         void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final { }
         void deleteObjectStore(const IDBRequestData&, const String&) final { }

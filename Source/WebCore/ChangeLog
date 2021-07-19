@@ -1,3 +1,79 @@
+2021-07-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement IDBTransaction.commit()
+        https://bugs.webkit.org/show_bug.cgi?id=227815
+        <rdar://problem/80651270>
+
+        Reviewed by Brady Eidson.
+
+        Spec: https://www.w3.org/TR/IndexedDB/#dom-idbtransaction-commit
+
+        Commit request for IDBTransaction is created automatically after all its requests are completed and success 
+        events of those requests are fired. IDBTransaction.commit() lets client create commit request, without waiting
+        for the result of requests, so the commit can happen sooner. 
+
+        In our implementation, if pending requests before the commit request are completed successfully, commit request 
+        will be executed directly in the backend and dose not affect by things happening in request event handler. If 
+        some pending request before the commit request has error, the commit request will be treated as abort request, 
+        as commit() means no client operation, including error handling, should happen after it.
+
+        Rebaselined existing tests.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::didStartTransaction):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::willAbortTransactionAfterDispatchingEvent const): 
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::abortDueToFailedRequest):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::abortInternal):
+        (WebCore::IDBTransaction::stop):
+        (WebCore::IDBTransaction::handleOperationsCompletedOnServer):
+        (WebCore::IDBTransaction::commit): If commit() is called in event handler for error event, and the error is 
+        handled before the call, we will create a commit requet. Otherwise, it is ignored as transaction will abort
+        due to the error.
+        (WebCore::IDBTransaction::commitInternal):
+        (WebCore::IDBTransaction::commitOnServer):
+        (WebCore::IDBTransaction::didCommit): didCommit used to be called after all requests are done and events are 
+        fired. As commit request can now be handled and replied before other requests, we need to make sure complete 
+        event of transaction is fired after success event of requests, by tracking completion of the last request before 
+        commit request.
+        (WebCore::IDBTransaction::operationCompletedOnClient):
+        (WebCore::IDBTransaction::autoCommit):
+        (WebCore::IDBTransaction::internalAbort): Deleted.
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::commitTransaction):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::commitTransaction):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::commitTransaction):
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::commit):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::iterateCursor):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        * loader/EmptyClients.cpp:
+
 2021-07-19  Tim Nguyen  <ntim@apple.com>
 
         Port <dialog> close event to modern event handling code

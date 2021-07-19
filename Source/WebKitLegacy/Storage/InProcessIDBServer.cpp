@@ -270,11 +270,11 @@ void InProcessIDBServer::abortTransaction(const WebCore::IDBResourceIdentifier& 
     });
 }
 
-void InProcessIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier& resourceIdentifier)
+void InProcessIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier& resourceIdentifier, uint64_t pendingCountRequest)
 {
-    dispatchTask([this, protectedThis = makeRef(*this), resourceIdentifier = resourceIdentifier.isolatedCopy()] {
+    dispatchTask([this, protectedThis = makeRef(*this), resourceIdentifier = resourceIdentifier.isolatedCopy(), pendingCountRequest] {
         Locker locker { m_serverLock };
-        m_server->commitTransaction(resourceIdentifier);
+        m_server->commitTransaction(resourceIdentifier, pendingCountRequest);
     });
 }
 

@@ -38,9 +38,8 @@
     readonly attribute DOMException? error;
 
     IDBObjectStore objectStore(DOMString name);
-    // FIXME: Implement 'commit'.
-    // undefined commit();
     undefined abort();
+    undefined commit();
 
     // Event handlers:
     attribute EventHandler onabort;

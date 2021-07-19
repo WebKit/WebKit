@@ -62,7 +62,7 @@ public:
     virtual void deleteDatabase(const IDBRequestData&) = 0;
     virtual void openDatabase(const IDBRequestData&) = 0;
     virtual void abortTransaction(const IDBResourceIdentifier&) = 0;
-    virtual void commitTransaction(const IDBResourceIdentifier&) = 0;
+    virtual void commitTransaction(const IDBResourceIdentifier&, uint64_t pendingRequestCount) = 0;
     virtual void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&) = 0;
     virtual void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) = 0;
     virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) = 0;

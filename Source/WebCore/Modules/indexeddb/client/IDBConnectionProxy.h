@@ -91,7 +91,7 @@ public:
     void openDBRequestCancelled(const IDBRequestData&);
 
     void establishTransaction(IDBTransaction&);
-    void commitTransaction(IDBTransaction&);
+    void commitTransaction(IDBTransaction&, uint64_t pendingRequestCount);
     void abortTransaction(IDBTransaction&);
 
     void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
