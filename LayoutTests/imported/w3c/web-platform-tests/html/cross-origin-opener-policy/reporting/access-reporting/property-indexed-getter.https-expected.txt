@@ -1,0 +1,8 @@
+
+FAIL cross-origin > w => w[0] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL cross-origin > w => w[1] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL cross-origin > w => w[-1] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL same-site > w => w[0] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL same-site > w => w[1] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL same-site > w => w[-1] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+

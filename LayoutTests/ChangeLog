@@ -1,3 +1,10 @@
+2021-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, land test baselines for cross-origin-opener-policy tests
+        https://bugs.webkit.org/show_bug.cgi?id=228080
+
+        * TestExpectations:
+
 2021-07-19  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [MacOS wk2 & iOS] 2 fast/canvas tests are flaky timeouts

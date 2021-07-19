@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancelled
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigation-report-from-opener-navigation Test timed out
+

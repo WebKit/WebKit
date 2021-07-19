@@ -1,11 +1,11 @@
 
-FAIL Same-origin popup with coop/coep Can't find variable: BroadcastChannel
-FAIL Same-site popup with coop/coep Can't find variable: BroadcastChannel
-FAIL Same-origin popup with coop unsafe-inherit/coep Can't find variable: BroadcastChannel
-FAIL Same-site popup with coop unsafe-inherit/coep Can't find variable: BroadcastChannel
-FAIL Same-origin popup with coop unsafe-inherit without coep Can't find variable: BroadcastChannel
-FAIL Same-site popup with coop unsafe-inherit without coep Can't find variable: BroadcastChannel
-FAIL Same-origin popup without coep Can't find variable: BroadcastChannel
-FAIL Same-site popup without coep Can't find variable: BroadcastChannel
+PASS Same-origin popup with coop/coep
+FAIL historical: "same-site" popup with coop/coep assert_equals: name expected "" but got "same-site-popup-with-coop/coep"
+FAIL Same-origin popup with coop unsafe-none/coep assert_equals: name expected "" but got "popup-with-coop-unsafe-none/coep"
+FAIL historical: "same-site" popup with coop unsafe-none/coep assert_equals: name expected "" but got "same-site-popup-with-coop-unsafe-none/coep"
+FAIL Same-origin popup with coop unsafe-none without coep assert_equals: name expected "" but got "popup-with-coop-unsafe-none-without-coep"
+FAIL historical: "same-site" popup with coop unsafe-none without coep assert_equals: name expected "" but got "same-site-popup-with-coop-unsafe-none-without-coep"
+FAIL Same-origin popup without coep assert_equals: name expected "" but got "popup-without-coep"
+FAIL historical: "same-site" popup without coep assert_equals: name expected "" but got "same-site-popup-without-coep"
 FAIL Bonus: window.crossOriginIsolated assert_true: expected true got undefined
 

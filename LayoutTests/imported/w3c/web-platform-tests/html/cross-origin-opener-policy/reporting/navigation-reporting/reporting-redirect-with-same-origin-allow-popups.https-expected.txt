@@ -1,0 +1,4 @@
+
+FAIL Same origin openee redirected to same-origin with same-origin-allow-popups assert_equals: opener expected "false" but got "true"
+FAIL Cross origin openee redirected to same-origin with same-origin-allow-popups assert_equals: opener expected "false" but got "true"
+

@@ -1,0 +1,3 @@
+
+FAIL Cross-Origin-Opener-Policy and a blob URL popup assert_equals: expected "blob:https://localhost:9443/f3a32c4f-d84f-4bb0-be11-ef1d389533b3" but got "blob:https://localhost:9443/c25cf73f-1128-4431-a76d-a9a79ff038e2"
+
