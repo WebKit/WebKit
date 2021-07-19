@@ -1,3 +1,15 @@
+2021-07-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION(?): alpha slider doesn't match alpha input for `transparent` in color picker
+        https://bugs.webkit.org/show_bug.cgi?id=227941
+        <rdar://problem/80557438>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Slider.js:
+        (WI.Slider.prototype.set value):
+        When the initial value was set to 0, `set value` was exiting early when the passed value was 0.
+
 2021-07-19  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Elements: selecting a sibling node in the breadcrumb navigation doesn't do anything
