@@ -1,5 +1,24 @@
 2021-07-19  Ziran Sun  <zsun@igalia.com>
 
+        [css-grid] Images as grid items should use the overridingLogicalHeight when defined to compute the logical width
+        https://bugs.webkit.org/show_bug.cgi?id=227984
+
+        Reviewed by Javier Fernandez.
+
+        As discussed in https://github.com/w3c/csswg-drafts/issues/5713, for images as grid items, when
+        stretch alignment is only applied in one axis we should respect aspect-ratio on the other.
+         
+        When computing the logical width using an intrinsic aspect ratio, RenderReplaced should use the
+        overridingLogicalHeight whenever defined just as how it does for flex items. This change is to
+        replace the use of intrinsic (non-stretched) logical height in current code with the overridingLogicalHeight. 
+
+        This allows us to pass an additional of 9 grid WPT tests.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth const):
+
+2021-07-19  Ziran Sun  <zsun@igalia.com>
+
         [css-grid] Use correct block-size to resolve min-content
         https://bugs.webkit.org/show_bug.cgi?id=227167
 

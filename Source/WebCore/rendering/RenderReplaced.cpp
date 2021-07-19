@@ -550,11 +550,10 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
         bool hasIntrinsicWidth = constrainedSize.hasIntrinsicWidth || constrainedSize.width() > 0;
         bool hasIntrinsicHeight = constrainedSize.hasIntrinsicHeight || constrainedSize.height() > 0;
 
-        // For flex items where the logical height has been overriden then we should use that size to compute the replaced width as long as the flex item has
-        // an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic width or height.
-        // There are also elements with intrinsic sizes but without intrinsic ratio (like an iframe). We cannot apply this rule to grid items because the grid
-        // container can distort aspect ratios in case of "align-self: stretch" for example (see https://drafts.csswg.org/css-grid/#grid-item-sizing).
-        if (intrinsicRatio && isFlexItem() && hasOverridingLogicalHeight() && hasIntrinsicWidth && hasIntrinsicHeight)
+        // For flex or grid items where the logical height has been overriden then we should use that size to compute the replaced width as long as the flex or
+        // grid item has an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic
+        // width or height. There are also elements with intrinsic sizes but without intrinsic ratio (like an iframe).
+        if (intrinsicRatio && (isFlexItem() || isGridItem()) && hasOverridingLogicalHeight() && hasIntrinsicWidth && hasIntrinsicHeight)
             return computeReplacedLogicalWidthRespectingMinMaxWidth(roundToInt(round(overridingContentLogicalHeight() * intrinsicRatio)), shouldComputePreferred);
 
         // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
