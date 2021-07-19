@@ -1,3 +1,10 @@
+2021-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html as flaky on WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=228089
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-07-19  Eric Hutchison  <ehutchison@apple.com>
 
         [ Mac wk2 ]Updated test expectations for media/video-seek-with-negative-playback.html and removed obsolete expectations in platforms/mac.
