@@ -4940,10 +4940,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     [self.inputDelegate selectionDidChange:self];
 
-    if (_selectionChangeNestingLevel)
+    if (_selectionChangeNestingLevel) {
+        // FIXME (228083): Some layout tests end up triggering unbalanced calls to -endSelectionChange.
+        // We should investigate why this happens, (ideally) prevent it from happening, and then assert
+        // that `_selectionChangeNestingLevel` is nonzero when calling -endSelectionChange.
         _selectionChangeNestingLevel--;
-    else
-        ASSERT_NOT_REACHED();
+    }
 }
 
 - (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction

@@ -1,3 +1,22 @@
+2021-07-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Revert a debug assertion that was added in r280019
+        https://bugs.webkit.org/show_bug.cgi?id=228051
+
+        Reviewed by Tim Horton.
+
+        Several existing (non-accessibility-related) editing tests appear to hit this debug assertion that was added in
+        r280019, which indicates that it's currently possible to call `-selectionDidChange:` without a balanced call to
+        `-selectionWillChange:`, even before the changes in r280019.
+
+        For the time being, replace this assertion with a FIXME referencing a followup bug to investigate why this is
+        the case: https://webkit.org/b/228083. Thankfully, since the decrementing of `_selectionChangeNestingLevel` is
+        idempotent once the level reaches 0, no other changes are needed to ensure that we don't end up with underflow
+        in `_selectionChangeNestingLevel`.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView endSelectionChange]):
+
 2021-07-19  Patrick Angle  <pangle@apple.com>
 
         [Cocoa] Web Inspector: Service workers can't be inspected in Safari Technology Preview
