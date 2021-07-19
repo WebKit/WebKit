@@ -1,3 +1,9 @@
+2021-07-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed infrastructure fix, remove bot that is out for hardware repair.
+
+        * CISupport/ews-build/config.json:
+
 2021-07-18  David Kilzer  <ddkilzer@apple.com>
 
         Ignore weak external symbols in clang coverage builds using check-for-weak-vtables-and-externals
