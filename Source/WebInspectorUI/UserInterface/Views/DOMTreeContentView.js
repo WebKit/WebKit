@@ -181,7 +181,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             }
 
             var pathComponent = new WI.DOMTreeElementPathComponent(treeElement, treeElement.representedObject);
-            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.Clicked, this._pathComponentSelected, this);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.Clicked, this._handlePathComponentSelected, this);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._handlePathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             treeElement = treeElement.parent;
         }
@@ -531,7 +532,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
-    _pathComponentSelected(event)
+    _handlePathComponentSelected(event)
     {
         if (!event.data.pathComponent)
             return;
