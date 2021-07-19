@@ -1,3 +1,13 @@
+2021-07-19  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add another Protocol Version (iOS 15.0)
+        https://bugs.webkit.org/show_bug.cgi?id=228079
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Protocol/Legacy/15.0/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-15.0.json: Added.
+
 2021-07-15  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Regression (r278607) Jump to CSS variable declaration from Computed panel not working
